@@ -1,0 +1,1018 @@
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
+
+// ===== vdc5_shrd_init @ 2011d080 (284 bytes)
+
+/* Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states
+   0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4
+   and the read records 0x208DCD2C [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the
+   shared tables 0x208DCxxx] */
+
+void vdc5_shrd_init(int param_1)
+
+{
+  int iVar1;
+  undefined1 *puVar2;
+  uint uVar3;
+  
+  iVar1 = 0;
+  do {
+    (&DAT_208dce04)[iVar1 + param_1 * 9] = 0;
+    (&DAT_208dce16)[iVar1 + param_1 * 9] = 0;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 9);
+  iVar1 = param_1 * 0x10;
+  (&DAT_208dccc4)[iVar1] = 4;
+  (&DAT_208dccc5)[iVar1] = 0;
+  (&DAT_208dccc8)[iVar1] = 0;
+  (&DAT_208dccc9)[iVar1] = 1;
+  (&DAT_208dccca)[iVar1] = 0;
+  *(undefined4 *)(&DAT_208dcccc + iVar1) = 0;
+  *(undefined4 *)(&DAT_208dccd0 + iVar1) = 0;
+  if ((&DAT_2080040e)[param_1] == '\0') {
+    (&DAT_208dccc6)[iVar1] = 0;
+    (&DAT_208dccc7)[iVar1] = 0;
+  }
+  uVar3 = 0;
+  do {
+    puVar2 = &DAT_208dcce4 + uVar3 * 0xc + param_1 * 0x24;
+    *puVar2 = 0;
+    puVar2[1] = 0;
+    puVar2[2] = 0;
+    *(undefined4 *)(puVar2 + 4) = 0;
+    *(undefined2 *)(puVar2 + 8) = 0;
+    *(undefined2 *)(puVar2 + 10) = 0;
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 3);
+  uVar3 = 0;
+  do {
+    puVar2 = &DAT_208dcd2c + uVar3 * 0x12 + param_1 * 0x6c;
+    *puVar2 = 0;
+    puVar2[1] = 1;
+    puVar2[2] = 0;
+    puVar2[3] = 0;
+    puVar2[4] = 0;
+    *(undefined2 *)(puVar2 + 6) = 0;
+    *(undefined2 *)(puVar2 + 8) = 0;
+    *(undefined2 *)(puVar2 + 10) = 0;
+    *(undefined2 *)(puVar2 + 0xc) = 0;
+    *(undefined2 *)(puVar2 + 0xe) = 0;
+    *(undefined2 *)(puVar2 + 0x10) = 0;
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 6);
+  DAT_2080040d = 2;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_init_param @ 2011d19c (68 bytes)
+
+/* Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param
+   byte 0; 5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_init_param(int param_1,char *param_2)
+
+{
+  (&DAT_208dccc4)[param_1 * 0x10] = *param_2;
+  if (*param_2 == '\x05' || *param_2 == '\x06') {
+    (&DAT_208dccc5)[param_1 * 0x10] = 1;
+  }
+  if (*(int *)(param_2 + 4) != 0) {
+    DAT_2080040d = *(undefined1 *)(*(int *)(param_2 + 4) + 5);
+  }
+  return;
+}
+
+
+// ===== vdc5_shrd_set_terminate @ 2011d1e0 (20 bytes)
+
+/* [fact] clears lvds_ref (+1) of the channel's common block; Ghidra FUN_2011d1e0 (T24 round 5) */
+
+void vdc5_shrd_set_terminate(int param_1)
+
+{
+  (&DAT_208dccc5)[param_1 * 0x10] = 0;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_input_param @ 2011d1f4 (84 bytes)
+
+/* [fact] sets the video-input flag and the input colour space and select; Ghidra calls it
+   vdc5_shrd_terminate (T24 round 5) */
+
+void vdc5_shrd_set_input_param(int param_1,char *param_2)
+
+{
+  (&DAT_2080040e)[param_1] = 1;
+  param_1 = param_1 * 0x10;
+  if ((*param_2 == '\0') || (2 < **(byte **)(param_2 + 0xc))) {
+    (&DAT_208dccc6)[param_1] = 1;
+  }
+  else {
+    (&DAT_208dccc6)[param_1] = 0;
+  }
+  (&DAT_208dccc7)[param_1] = *param_2;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_sync_param @ 2011d248 (20 bytes)
+
+/* Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 +
+   0x10*ch [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables
+   0x208DCxxx] */
+
+void vdc5_shrd_set_sync_param(int param_1,int param_2)
+
+{
+  (&DAT_208dccc8)[param_1 * 0x10] = *(undefined1 *)(param_2 + 1);
+  return;
+}
+
+
+// ===== vdc5_sum_product @ 2011d25c (88 bytes)
+
+/* [fact] 11-bit signed coefficients, sum / 256 + offset, clamped 0..255; Ghidra FUN_2011d25c (T24
+   round 5) */
+
+int vdc5_sum_product(int param_1,int param_2,int param_3,int param_4,int param_5,int param_6,
+                    int param_7)
+
+{
+  int iVar1;
+  
+  if (0x3ff < param_4) {
+    param_4 = param_4 + -0x800;
+  }
+  if (0x3ff < param_5) {
+    param_5 = param_5 + -0x800;
+  }
+  if (0x3ff < param_6) {
+    param_6 = param_6 + -0x800;
+  }
+  iVar1 = param_3 * param_6 + param_2 * param_5 + param_1 * param_4;
+  param_7 = param_7 + ((int)(iVar1 + ((uint)(iVar1 >> 0x1f) >> 0x18)) >> 8);
+  if (param_7 < 0) {
+    param_7 = 0;
+  }
+  else if (0xff < param_7) {
+    param_7 = 0xff;
+  }
+  return param_7;
+}
+
+
+// ===== vdc5_shrd_set_output_param @ 2011d2b4 (192 bytes)
+
+/* Shared-parameter update of r_vdc5_display_output (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_output_param(int param_1,int param_2)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  
+  *(undefined4 *)(&DAT_208dcccc + param_1 * 0x10) = *(undefined4 *)(param_2 + 0x2c);
+  uVar1 = *(uint *)(param_2 + 0x2c);
+  uVar6 = (uVar1 & 0xffffff) >> 0x10;
+  uVar5 = (uVar1 & 0xffff) >> 8;
+  uVar1 = uVar1 & 0xff;
+  iVar2 = vdc5_sum_product(uVar6,uVar5,uVar1,0x4d,0x96,0x1d,0);
+  uVar3 = vdc5_sum_product(uVar6,uVar5,uVar1,0x7d5,0x7ab,0x80,0x80);
+  iVar4 = vdc5_sum_product(uVar6,uVar5,uVar1,0x80,0x795,0x7eb,0x80);
+  *(uint *)(&DAT_208dccd0 + param_1 * 0x10) = iVar4 << 0x10 | iVar2 << 8 | uVar3;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_write_param @ 2011d374 (124 bytes)
+
+/* Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record
+   0x208DCCE4[ch][layer] (format, swap, frame buffer, size) [fact]; Renesas r_vdc5_shared_param.c
+   [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_write_param(int param_1,int param_2,int param_3)
+
+{
+  undefined1 *puVar1;
+  undefined2 uVar2;
+  
+  puVar1 = &DAT_208dcce4 + param_2 * 0xc + param_1 * 0x24;
+  if (param_2 == 2) {
+    *puVar1 = 0;
+    puVar1[1] = 0;
+  }
+  else {
+    *puVar1 = *(undefined1 *)(param_3 + 0xf);
+    puVar1[1] = *(undefined1 *)(param_3 + 0x13);
+  }
+  if (*(char *)(param_3 + 0x11) == '\0' || *(char *)(param_3 + 0x11) == '\x03') {
+    puVar1[2] = 1;
+  }
+  else {
+    puVar1[2] = 0;
+  }
+  *(undefined4 *)(puVar1 + 4) = *(undefined4 *)(param_3 + 0x28);
+  if (param_2 == 2) {
+    uVar2 = *(undefined2 *)(param_3 + 2);
+  }
+  else {
+    uVar2 = *(undefined2 *)(param_3 + 10);
+  }
+  *(undefined2 *)(puVar1 + 8) = uVar2;
+  if (param_2 == 2) {
+    uVar2 = *(undefined2 *)(param_3 + 6);
+  }
+  else {
+    uVar2 = *(undefined2 *)(param_3 + 0xc);
+  }
+  *(undefined2 *)(puVar1 + 10) = uVar2;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_chg_write_param @ 2011d3f0 (72 bytes)
+
+/* Shared-parameter update of r_vdc5_change_write_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_write_param(int param_1,int param_2,int param_3)
+
+{
+  undefined *puVar1;
+  undefined2 uVar2;
+  
+  puVar1 = &DAT_208dcce4 + param_2 * 0xc + param_1 * 0x24;
+  if (param_2 == 2) {
+    *(undefined2 *)(puVar1 + 8) = *(undefined2 *)(param_3 + 2);
+    uVar2 = *(undefined2 *)(param_3 + 6);
+  }
+  else {
+    *puVar1 = *(undefined1 *)(param_3 + 0xf);
+    *(undefined2 *)(puVar1 + 8) = *(undefined2 *)(param_3 + 10);
+    uVar2 = *(undefined2 *)(param_3 + 0xc);
+  }
+  *(undefined2 *)(puVar1 + 10) = uVar2;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_read_param @ 2011d438 (220 bytes)
+
+/* Shared-parameter update of r_vdc5_read_data_control (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_read_param(int param_1,int param_2,undefined1 *param_3)
+
+{
+  undefined2 uVar1;
+  undefined *puVar2;
+  
+  puVar2 = &DAT_208dcd2c + param_2 * 0x12 + param_1 * 0x6c;
+  *puVar2 = *param_3;
+  puVar2[1] = param_3[1];
+  puVar2[2] = param_3[0x11];
+  puVar2[3] = param_3[0x11] == '\b' || param_3[0x11] == '\t';
+  puVar2[4] = param_3[0x10];
+  *(undefined2 *)(puVar2 + 6) = *(undefined2 *)(param_3 + 0x14);
+  *(undefined2 *)(puVar2 + 8) = *(undefined2 *)(param_3 + 0x16);
+  *(undefined2 *)(puVar2 + 10) = *(undefined2 *)(param_3 + 0x18);
+  *(undefined2 *)(puVar2 + 0xc) = *(undefined2 *)(param_3 + 0x1a);
+  if (*(undefined2 **)(param_3 + 0xc) == (undefined2 *)0x0) {
+    if (param_3[1] == '\x01' || param_2 == 5) {
+      *(undefined2 *)(puVar2 + 0xe) = *(undefined2 *)(param_3 + 0x16);
+      uVar1 = *(undefined2 *)(param_3 + 0x1a);
+    }
+    else {
+      param_1 = param_1 * 0x24;
+      if (param_2 == 0) {
+        uVar1 = *(undefined2 *)(&DAT_208dccec + param_1);
+      }
+      else {
+        uVar1 = *(undefined2 *)(&DAT_208dccf8 + param_1);
+      }
+      *(undefined2 *)(puVar2 + 0xe) = uVar1;
+      if (param_2 == 0) {
+        uVar1 = *(undefined2 *)(&DAT_208dccee + param_1);
+      }
+      else {
+        uVar1 = *(undefined2 *)(&DAT_208dccfa + param_1);
+      }
+    }
+  }
+  else {
+    *(undefined2 *)(puVar2 + 0xe) = **(undefined2 **)(param_3 + 0xc);
+    uVar1 = *(undefined2 *)(*(int *)(param_3 + 0xc) + 2);
+  }
+  *(undefined2 *)(puVar2 + 0x10) = uVar1;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_chg_read_param @ 2011d514 (104 bytes)
+
+/* Shared-parameter update of r_vdc5_change_read_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_read_param(int param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  undefined2 *puVar2;
+  
+  iVar1 = param_2 * 0x12 + param_1 * 0x6c;
+  puVar2 = *(undefined2 **)(param_3 + 8);
+  if (puVar2 != (undefined2 *)0x0) {
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 6) = *puVar2;
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 8) = puVar2[1];
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 10) = puVar2[2];
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 0xc) = puVar2[3];
+  }
+  if (*(undefined2 **)(param_3 + 4) != (undefined2 *)0x0) {
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 0xe) = **(undefined2 **)(param_3 + 4);
+    *(undefined2 *)(&DAT_208dcd2c + iVar1 + 0x10) = *(undefined2 *)(*(int *)(param_3 + 4) + 2);
+  }
+  return;
+}
+
+
+// ===== vdc5_shrd_set_cascade @ 2011d57c (16 bytes)
+
+/* [fact] stores r1 at common + 5; Ghidra FUN_2011d57c (T24 round 5) */
+
+void vdc5_shrd_set_cascade(int param_1,undefined1 param_2)
+
+{
+  (&DAT_208dccc9)[param_1 * 0x10] = param_2;
+  return;
+}
+
+
+// ===== vdc5_shrd_set_und_sel @ 2011d58c (16 bytes)
+
+/* [fact] stores r1 at common + 6; Ghidra FUN_2011d58c (T24 round 5) */
+
+void vdc5_shrd_set_und_sel(int param_1,undefined1 param_2)
+
+{
+  (&DAT_208dccca)[param_1 * 0x10] = param_2;
+  return;
+}
+
+
+// ===== vdc5_shrd_get_panel_clksel @ 2011d59c (12 bytes)
+
+/* [fact] common + 0; Ghidra FUN_2011d59c (T24 round 5) */
+
+undefined1 vdc5_shrd_get_panel_clksel(int param_1)
+
+{
+  return (&DAT_208dccc4)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_lvds_clk_ref @ 2011d5a8 (36 bytes)
+
+/* [fact] lvds_ref of channel 0 or 1; Ghidra FUN_2011d5a8 (T24 round 5) */
+
+undefined1 vdc5_shrd_get_lvds_clk_ref(void)
+
+{
+  undefined1 uVar1;
+  
+  if ((DAT_208dccc5 != '\0') || (uVar1 = 0, DAT_208dccd5 != '\0')) {
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+
+
+// ===== vdc5_shrd_get_color_space @ 2011d5cc (16 bytes)
+
+/* [fact] common + 2; Ghidra FUN_2011d5cc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_color_space(int param_1)
+
+{
+  return (&DAT_208dccc6)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_input_select @ 2011d5dc (16 bytes)
+
+/* [fact] common + 3; Ghidra FUN_2011d5dc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_input_select(int param_1)
+
+{
+  return (&DAT_208dccc7)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_vs_in_sel @ 2011d5ec (16 bytes)
+
+/* [fact] common + 4; Ghidra FUN_2011d5ec (T24 round 5) */
+
+undefined1 vdc5_shrd_get_vs_in_sel(int param_1)
+
+{
+  return (&DAT_208dccc8)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_cascade @ 2011d5fc (16 bytes)
+
+/* [fact] common + 5; Ghidra FUN_2011d5fc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_cascade(int param_1)
+
+{
+  return (&DAT_208dccc9)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_und_sel @ 2011d60c (16 bytes)
+
+/* [fact] common + 6; Ghidra FUN_2011d60c (T24 round 5) */
+
+undefined1 vdc5_shrd_get_und_sel(int param_1)
+
+{
+  return (&DAT_208dccca)[param_1 * 0x10];
+}
+
+
+// ===== vdc5_shrd_get_bg_color @ 2011d61c (24 bytes)
+
+/* [fact] common + 8 (RGB) or + 0xC; Ghidra FUN_2011d61c (T24 round 5) */
+
+undefined4 vdc5_shrd_get_bg_color(int param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  
+  if (param_2 == 0) {
+    uVar1 = *(undefined4 *)(&DAT_208dcccc + param_1 * 0x10);
+  }
+  else {
+    uVar1 = *(undefined4 *)(&DAT_208dccd0 + param_1 * 0x10);
+  }
+  return uVar1;
+}
+
+
+// ===== vdc5_shrd_get_writing_mode @ 2011d634 (24 bytes)
+
+/* [fact] scaler block + 0; Ghidra FUN_2011d634 (T24 round 5) */
+
+undefined1 vdc5_shrd_get_writing_mode(int param_1,int param_2)
+
+{
+  return (&DAT_208dcce4)[param_2 * 0xc + param_1 * 0x24];
+}
+
+
+// ===== vdc5_shrd_get_interlace @ 2011d64c (28 bytes)
+
+/* [fact] scaler block + 1; Ghidra FUN_2011d64c (T24 round 5) */
+
+undefined1 vdc5_shrd_get_interlace(int param_1,int param_2)
+
+{
+  return (&DAT_208dcce5)[param_1 * 0x24 + param_2 * 0xc];
+}
+
+
+// ===== vdc5_shrd_get_color_space_fb_wr @ 2011d668 (28 bytes)
+
+/* [fact] scaler block + 2; Ghidra FUN_2011d668 (T24 round 5) */
+
+undefined1 vdc5_shrd_get_color_space_fb_wr(int param_1,int param_2)
+
+{
+  return (&DAT_208dcce6)[param_1 * 0x24 + param_2 * 0xc];
+}
+
+
+// ===== vdc5_shrd_get_fr_buff_btm @ 2011d684 (28 bytes)
+
+/* [fact] scaler block + 4; Ghidra FUN_2011d684 (T24 round 5) */
+
+undefined4 vdc5_shrd_get_fr_buff_btm(int param_1,int param_2)
+
+{
+  return *(undefined4 *)(&DAT_208dcce8 + param_1 * 0x24 + param_2 * 0xc);
+}
+
+
+// ===== vdc5_shrd_get_ln_off_dir @ 2011d6a0 (28 bytes)
+
+/* [fact] graphics block + 0; Ghidra FUN_2011d6a0 (T24 round 5) */
+
+undefined1 vdc5_shrd_get_ln_off_dir(int param_1,int param_2)
+
+{
+  return (&DAT_208dcd2c)[param_2 * 0x12 + param_1 * 0x6c];
+}
+
+
+// ===== vdc5_shrd_get_sel_fb_addr_sig @ 2011d6bc (32 bytes)
+
+/* [fact] graphics block + 1; Ghidra FUN_2011d6bc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_sel_fb_addr_sig(int param_1,int param_2)
+
+{
+  return (&DAT_208dcd2d)[param_1 * 0x6c + param_2 * 0x12];
+}
+
+
+// ===== vdc5_shrd_get_graphics_format @ 2011d6dc (32 bytes)
+
+/* [fact] graphics block + 2; Ghidra FUN_2011d6dc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_graphics_format(int param_1,int param_2)
+
+{
+  return (&DAT_208dcd2e)[param_1 * 0x6c + param_2 * 0x12];
+}
+
+
+// ===== vdc5_shrd_get_color_space_fb_rd @ 2011d6fc (32 bytes)
+
+/* [fact] graphics block + 3; Ghidra FUN_2011d6fc (T24 round 5) */
+
+undefined1 vdc5_shrd_get_color_space_fb_rd(int param_1,int param_2)
+
+{
+  return (&DAT_208dcd2f)[param_1 * 0x6c + param_2 * 0x12];
+}
+
+
+// ===== vdc5_shrd_get_measure_folding @ 2011d71c (32 bytes)
+
+/* [fact] graphics block + 4; Ghidra FUN_2011d71c (T24 round 5) */
+
+undefined1 vdc5_shrd_get_measure_folding(int param_1,int param_2)
+
+{
+  return (&DAT_208dcd30)[param_1 * 0x6c + param_2 * 0x12];
+}
+
+
+// ===== vdc5_shrd_get_display_area @ 2011d73c (32 bytes)
+
+/* [fact] address of graphics block + 6; Ghidra FUN_2011d73c (T24 round 5) */
+
+undefined * vdc5_shrd_get_display_area(int param_1,int param_2)
+
+{
+  return &DAT_208dcd32 + param_1 * 0x6c + param_2 * 0x12;
+}
+
+
+// ===== vdc5_shrd_get_fr_buff_width_rd @ 2011d75c (32 bytes)
+
+/* [fact] address of graphics block + 0xE; Ghidra FUN_2011d75c (T24 round 5) */
+
+undefined * vdc5_shrd_get_fr_buff_width_rd(int param_1,int param_2)
+
+{
+  return &DAT_208dcd3a + param_1 * 0x6c + param_2 * 0x12;
+}
+
+
+// ===== vdc5_shrd_get_lvds_ch @ 2011d77c (12 bytes)
+
+/* [fact] byte 0x2080040D; Ghidra FUN_2011d77c (T24 round 5) */
+
+undefined1 vdc5_shrd_get_lvds_ch(void)
+
+{
+  return DAT_2080040d;
+}
+
+
+// ===== vdc5_shrd_state_ptr @ 2011d788 (60 bytes)
+
+/* (ch, n): pointer to state byte n (0..3) of channel ch at 0x20800410 + 4*ch, n = 4 gives
+   0x2080040C [fact] */
+
+undefined * vdc5_shrd_state_ptr(int param_1,undefined4 param_2)
+
+{
+  undefined *puVar1;
+  
+  param_1 = param_1 * 4;
+  puVar1 = (undefined *)(param_1 + 0x20800410);
+  switch(param_2) {
+  case 0:
+    goto switchD_2011d794_caseD_0;
+  case 1:
+    puVar1 = (undefined *)(param_1 + 0x20800411);
+switchD_2011d794_caseD_0:
+    return puVar1;
+  case 2:
+    return (undefined *)(param_1 + 0x20800412);
+  case 3:
+    return (undefined *)(param_1 + 0x20800413);
+  case 4:
+    return &DAT_2080040c;
+  default:
+    return (undefined *)0x0;
+  }
+}
+
+
+// ===== vdc5_shrd_set_state @ 2011d7d8 (24 bytes)
+
+/* (ch, n, value): sets that state byte [fact] */
+
+void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_3)
+
+{
+  undefined1 *puVar1;
+  
+                    /* pointer to state byte n [doc] */
+  puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
+  if (puVar1 != (undefined1 *)0x0) {
+    *puVar1 = param_3;
+  }
+  return;
+}
+
+
+// ===== vdc5_shrd_set_resource @ 2011d7f0 (64 bytes)
+
+/* (ch, id, value): resource state 0x208DCE04[ch*9 + id]; id -1 sets every resource not marked in
+   use (0x208DCE16) [fact] */
+
+void vdc5_shrd_set_resource(int param_1,int param_2,undefined1 param_3)
+
+{
+  uint i;
+  
+  param_1 = param_1 * 9;
+  if (param_2 == -1) {
+    i = 0;
+    do {
+      if ((&DAT_208dce16)[i + param_1] == '\0') {
+        (&DAT_208dce04)[i + param_1] = param_3;
+      }
+      i = i + 1;
+    } while (i < 9);
+  }
+  else {
+    (&DAT_208dce04)[param_2 + param_1] = param_3;
+  }
+  return;
+}
+
+
+// ===== vdc5_shrd_get_state @ 2011d830 (28 bytes)
+
+/* (ch, n): state byte via vdc5_shrd_state_ptr, 0 for a bad n; the API calls check n = 0/1/2/3 == 1
+   before working (error codes 9/10/11/12) [fact] */
+
+undefined1 vdc5_shrd_get_state(void)
+
+{
+  undefined1 *puVar1;
+  undefined1 uVar2;
+  
+  uVar2 = 0;
+                    /* pointer to state byte n [doc] */
+  puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
+  if (puVar1 != (undefined1 *)0x0) {
+    uVar2 = *puVar1;
+  }
+  return uVar2;
+}
+
+
+// ===== r_vdc5_shrd_get_resource @ 2011d84c (20 bytes)
+
+/* (ch, id): resource state 0x208DCE04[ch*9 + id] [fact]; VDC5 driver shared parameters [inference]
+    */
+
+undefined1 r_vdc5_shrd_get_resource(int param_1,int param_2)
+
+{
+  return (&DAT_208dce04)[param_2 + param_1 * 9];
+}
+
+
+// ===== r_vdc5_shrd_rw_enable @ 2011d860 (52 bytes)
+
+/* (ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use [fact] */
+
+void r_vdc5_shrd_rw_enable(int param_1,int param_2)
+
+{
+  if ((param_2 != -1) && ((&DAT_208dce04)[param_2 + param_1 * 9] != '\0')) {
+    (&DAT_208dce16)[param_2 + param_1 * 9] = 1;
+  }
+  return;
+}
+
+
+// ===== r_vdc5_shrd_rw_disable @ 2011d8b4 (52 bytes)
+
+/* (ch, id): the same flag = 0 [fact] */
+
+void r_vdc5_shrd_rw_disable(int param_1,int param_2)
+
+{
+  if ((param_2 != -1) && ((&DAT_208dce04)[param_2 + param_1 * 9] != '\0')) {
+    (&DAT_208dce16)[param_2 + param_1 * 9] = 0;
+  }
+  return;
+}
+
+
+// ===== vdc5_shrd_res_idle @ 2011d8e8 (56 bytes)
+
+/* 1 when resource id is set up (0x208DCE04) and not in use (0x208DCE16) [fact] */
+
+undefined4 vdc5_shrd_res_idle(int param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  
+  if (((&DAT_208dce04)[param_2 + param_1 * 9] == '\0') ||
+     ((&DAT_208dce16)[param_2 + param_1 * 9] != '\0')) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+
+
+// ===== vdc5_shrd_res_busy @ 2011d920 (56 bytes)
+
+/* 1 when resource id is set up and in use [fact] */
+
+undefined4 vdc5_shrd_res_busy(int param_1,int param_2)
+
+{
+  undefined4 uVar1;
+  
+  if (((&DAT_208dce04)[param_2 + param_1 * 9] == '\0') ||
+     ((&DAT_208dce16)[param_2 + param_1 * 9] == '\0')) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+
+
+// ===== vdc5_shrd_get_oir_rw_proc_enabled @ 2011d958 (80 bytes)
+
+/* [fact] 1 if layer 2 or 8 has its resource and runs (0x208DCE04/0x208DCE16 + 2, + 8); Ghidra
+   FUN_2011d958 (T24 round 5) */
+
+undefined4 vdc5_shrd_get_oir_rw_proc_enabled(int param_1)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = 0;
+  param_1 = param_1 * 9;
+  if (((&DAT_208dce06)[param_1] != '\0') && ((&DAT_208dce18)[param_1] != '\0')) {
+    uVar1 = 1;
+  }
+  if (((&DAT_208dce0c)[param_1] != '\0') && ((&DAT_208dce1e)[param_1] != '\0')) {
+    uVar1 = 1;
+  }
+  return uVar1;
+}
+
+
+// ===== rspi_hw_config @ 2011d9a8 (1272 bytes)
+
+/* (ch, mode) mode 0 master SPBR=1 BRDV=3, mode 1 slave; 8-bit MSB-first CPOL0 CPHA1; regs table
+   0x20166B4C */
+
+undefined4 rspi_hw_config(uint param_1,int param_2)
+
+{
+  undefined **ppuVar1;
+  undefined4 uVar2;
+  
+  uVar2 = 0;
+  if (param_1 < 6) {
+    ppuVar1 = &PTR_RSPI_SPCR_0_20166b4c + param_1 * 0xb;
+    if (param_2 == 0) {
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPBR_0_20166b54)[param_1 * 0xb],1,0,0xff);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw8((&PTR_RSPI_SPCKD_0_20166b5c)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SSLND_0_20166b60)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPND_0_20166b64)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPSCR_0_20166b68)[param_1 * 0xb],0,0,3);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],3,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],2,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],5,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8(*ppuVar1,0,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,1,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
+    }
+    else if (param_2 == 1) {
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,5,0x20);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,4,0x10);
+      reg_rmw8((&PTR_RSPI_SPPCR_0_20166b50)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SSLP_0_20166b74)[param_1 * 0xb],0,0,1);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPDCR_0_20166b58)[param_1 * 0xb],1,5,0x60);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xf,0x8000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xe,0x4000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xd,0x2000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,0xc,0x1000);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],7,8,0xf00);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,7,0x80);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,2,0xc);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],0,1,2);
+      reg_rmw16((&PTR_RSPI_SPCMD0_0_20166b6c)[param_1 * 0xb],1,0);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],1,6,0x40);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],3,4,0x30);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,0,7);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,7,0x80);
+      reg_rmw8((&PTR_RSPI_SPBFCR_0_20166b70)[param_1 * 0xb],0,6,0x40);
+      reg_rmw8(*ppuVar1,1,7,0x80);
+      reg_rmw8(*ppuVar1,0,6,0x40);
+      reg_rmw8(*ppuVar1,1,5,0x20);
+      reg_rmw8(*ppuVar1,0,4,0x10);
+      reg_rmw8(*ppuVar1,0,3,8);
+      reg_rmw8(*ppuVar1,0,2,4);
+    }
+    else {
+      uVar2 = 0xff;
+    }
+  }
+  else {
+    uVar2 = 0xff;
+  }
+  return uVar2;
+}
+
+
+// ===== FUN_2011dea0 @ 2011dea0 (4 bytes)
+
+void FUN_2011dea0(void)
+
+{
+  return;
+}
+
+
+// ===== rspi0_open @ 2011dea4 (124 bytes)
+
+/* STBCR10 bit7, SPTI/SPRI ISRs, GIC 0x110/0x10F, slave config */
+
+undefined4 rspi0_open(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
+    gic_enable_irq(0x110);
+    gic_enable_irq(0x10f);
+                    /* Programs one channel as master [doc] */
+    uVar2 = rspi_hw_config(0,1);
+    return uVar2;
+  }
+  return 0xff;
+}
+
+
+// ===== rspi1_open @ 2011df20 (124 bytes)
+
+/* master config */
+
+undefined4 rspi1_open(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
+    gic_enable_irq(0x113);
+    gic_enable_irq(0x112);
+                    /* Programs one channel as master [doc] */
+    uVar2 = rspi_hw_config(1,0);
+    return uVar2;
+  }
+  return 0xff;
+}
+
+
+// ===== rspi2_open @ 2011df9c (124 bytes)
+
+/* slave (SDR link) */
+
+undefined4 rspi2_open(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166ad4);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
+    gic_enable_irq(0x116);
+    gic_enable_irq(0x115);
+                    /* Programs one channel as master [doc] */
+    uVar2 = rspi_hw_config(2,1);
+    return uVar2;
+  }
+  return 0xff;
+}
+
+
+// ===== rspi3_open @ 2011e018 (132 bytes)
+
+/* slave, also SPEI */
+
+undefined4 rspi3_open(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166afc);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
+    gic_enable_irq(0x119);
+    gic_enable_irq(0x118);
+    gic_enable_irq(0x117);
+                    /* Programs one channel as master [doc] */
+    uVar2 = rspi_hw_config(3,1);
+    return uVar2;
+  }
+  return 0xff;
+}
+
+
+// ===== rspi4_open @ 2011e09c (124 bytes)
+
+/* slave (DSP link) */
+
+undefined4 rspi4_open(void)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 in_r3;
+  
+  reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
+  uVar1 = itron_acre_isr(0,0x20166b24);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
+    gic_enable_irq(0x11c);
+    gic_enable_irq(0x11b);
+                    /* Programs one channel as master [doc] */
+    uVar2 = rspi_hw_config(4,1);
+    return uVar2;
+  }
+  return 0xff;
+}
+

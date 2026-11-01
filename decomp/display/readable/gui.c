@@ -3162,7 +3162,7 @@ void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_read_data_control @ 2011af34  (1052 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_read_data_control @ 2011af34  (1052 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_read_data_control: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ReadDataControl
  *     [inference: one register function per API, same order as the API functions]
@@ -3291,14 +3291,14 @@ LAB_2011b244:
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_change_read_process @ 2011b498  (868 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_change_read_process @ 2011b498  (576 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ChangeReadProcess
  *     [inference: one register function per API, same order as the API functions]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== vdc5_reg_change_read_process @ 2011b498 (868 bytes)
+// ===== vdc5_reg_change_read_process @ 2011b498 (576 bytes)
 
 /* Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block,
    called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
@@ -3308,87 +3308,46 @@ LAB_2011b244:
 void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
 
 {
-  undefined *puVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  uint *puVar5;
-  uint uVar6;
-  undefined4 uVar7;
-  undefined4 uVar8;
-  undefined4 uVar9;
-  uint uVar10;
-  undefined4 unaff_r4;
-  undefined4 *puVar11;
-  undefined4 unaff_r5;
-  undefined4 unaff_r6;
-  undefined4 unaff_r7;
-  undefined4 unaff_r8;
-  undefined4 unaff_lr;
+  uint uVar1;
+  undefined4 uVar2;
+  undefined4 uVar3;
+  undefined4 uVar4;
+  uint uVar5;
+  undefined4 *puVar6;
   
-  uVar6 = vdc5_shrd_get_sel_fb_addr_sig();
-  uVar7 = vdc5_shrd_get_display_area(param_1,param_2);
-  uVar8 = vdc5_shrd_get_fr_buff_width_rd(param_1,param_2);
-  uVar9 = vdc5_confirm_graphics_enlargement(param_2,uVar6,uVar8,uVar7);
+  uVar1 = vdc5_shrd_get_sel_fb_addr_sig();
+  uVar2 = vdc5_shrd_get_display_area(param_1,param_2);
+  uVar3 = vdc5_shrd_get_fr_buff_width_rd(param_1,param_2);
+  uVar4 = vdc5_confirm_graphics_enlargement(param_2,uVar1,uVar3,uVar2);
   if (param_2 < 2 || param_2 == 5) {
-    vdc5_set_scaler_graphics(param_1,param_2,uVar8,uVar7,uVar6,uVar9);
+    vdc5_set_scaler_graphics(param_1,param_2,uVar3,uVar2,uVar1,uVar4);
   }
-  puVar11 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
-  if ((*param_3 != 0) && (*(uint *)puVar11[3] = *param_3 & 0xfffffff8, uVar6 < 2)) {
-    uVar7 = vdc5_shrd_get_graphics_format(param_1,param_2);
-    *(uint *)puVar11[7] = *(uint *)puVar11[7] & 0xffffffc0;
-    uVar10 = vdc5_display_start_pixel(*param_3,uVar7);
-    *(uint *)puVar11[7] = uVar10 | *(uint *)puVar11[7];
+  puVar6 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
+  if ((*param_3 != 0) && (*(uint *)puVar6[3] = *param_3 & 0xfffffff8, uVar1 < 2)) {
+    uVar2 = vdc5_shrd_get_graphics_format(param_1,param_2);
+    *(uint *)puVar6[7] = *(uint *)puVar6[7] & 0xffffffc0;
+    uVar5 = vdc5_display_start_pixel(*param_3,uVar2);
+    *(uint *)puVar6[7] = uVar5 | *(uint *)puVar6[7];
   }
   if (param_3[1] != 0) {
-    *(uint *)puVar11[6] = *(uint *)puVar11[6] & 0xf800ffff;
-    *(uint *)puVar11[6] = *(uint *)puVar11[6] | (uint)*(ushort *)param_3[1] * 0x10000 - 0x10000;
-    *(uint *)puVar11[7] = *(uint *)puVar11[7] & 0xf800ffff;
-    *(uint *)puVar11[7] =
-         (uint)*(ushort *)(param_3[1] + 2) * 0x10000 - 0x10000 | *(uint *)puVar11[7];
+    *(uint *)puVar6[6] = *(uint *)puVar6[6] & 0xf800ffff;
+    *(uint *)puVar6[6] = *(uint *)puVar6[6] | (uint)*(ushort *)param_3[1] * 0x10000 - 0x10000;
+    *(uint *)puVar6[7] = *(uint *)puVar6[7] & 0xf800ffff;
+    *(uint *)puVar6[7] = (uint)*(ushort *)(param_3[1] + 2) * 0x10000 - 0x10000 | *(uint *)puVar6[7];
   }
   if (((char *)param_3[3] != (char *)0x0) && (*(char *)param_3[3] != -1)) {
-    *(uint *)puVar11[8] = *(uint *)puVar11[8] & 0xfffffffc;
-    *(uint *)puVar11[8] = *(uint *)puVar11[8] | (int)*(char *)param_3[3];
+    *(uint *)puVar6[8] = *(uint *)puVar6[8] & 0xfffffffc;
+    *(uint *)puVar6[8] = *(uint *)puVar6[8] | (int)*(char *)param_3[3];
   }
   if ((ushort *)param_3[2] != (ushort *)0x0) {
-    *(uint *)puVar11[9] = (uint)*(ushort *)param_3[2] << 0x10;
-    *(uint *)puVar11[9] = *(uint *)puVar11[9] | (uint)*(ushort *)(param_3[2] + 2);
-    *(uint *)puVar11[10] = (uint)*(ushort *)(param_3[2] + 4) << 0x10;
-    *(uint *)puVar11[10] = *(uint *)puVar11[10] | (uint)*(ushort *)(param_3[2] + 6);
+    *(uint *)puVar6[9] = (uint)*(ushort *)param_3[2] << 0x10;
+    *(uint *)puVar6[9] = *(uint *)puVar6[9] | (uint)*(ushort *)(param_3[2] + 2);
+    *(uint *)puVar6[10] = (uint)*(ushort *)(param_3[2] + 4) << 0x10;
+    *(uint *)puVar6[10] = *(uint *)puVar6[10] | (uint)*(ushort *)(param_3[2] + 6);
   }
-  *(uint *)*puVar11 = *(uint *)*puVar11 | 0x11;
+  *(uint *)*puVar6 = *(uint *)*puVar6 | 0x11;
   if (param_2 < 2) {
-    iVar2 = vdc5_shrd_get_cascade();
-    iVar3 = vdc5_set_cascade(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,
-                             unaff_r8,unaff_lr);
-                    /* resource state 0x208DCE04[ch9 + id] [doc] */
-    iVar4 = r_vdc5_shrd_get_resource(param_1,3);
-    if (iVar4 != 0) {
-      iVar4 = param_1 * 0x210;
-      puVar1 = &DAT_201662c0;
-      if (iVar3 == 0) {
-        iVar2 = vdc5_shrd_get_und_sel(param_1);
-        puVar5 = *(uint **)(&DAT_20166440 + iVar4);
-        if (iVar2 == 0) {
-          *puVar5 = *puVar5 & 0xfffffffb;
-          puVar1 = &DAT_20166318;
-        }
-        else {
-          *puVar5 = *puVar5 | 4;
-        }
-        **(uint **)(&DAT_20166440 + iVar4) = **(uint **)(&DAT_20166440 + iVar4) & 0xfffffffc;
-        **(uint **)(&DAT_20166440 + iVar4) = **(uint **)(&DAT_20166440 + iVar4) | 3;
-        **(undefined4 **)(&DAT_20166444 + iVar4) = **(undefined4 **)(puVar1 + iVar4 + 0x24);
-        **(undefined4 **)(&DAT_20166448 + iVar4) = **(undefined4 **)(puVar1 + iVar4 + 0x28);
-      }
-      else if (iVar2 == 0) {
-        **(uint **)(&DAT_20166440 + iVar4) = **(uint **)(&DAT_20166440 + iVar4) | 4;
-        **(uint **)(&DAT_20166440 + iVar4) = **(uint **)(&DAT_20166440 + iVar4) & 0xfffffffc;
-        **(uint **)(&DAT_20166440 + iVar4) = **(uint **)(&DAT_20166440 + iVar4) | 1;
-      }
-      **(uint **)(&DAT_20166420 + iVar4) = **(uint **)(&DAT_20166420 + iVar4) | 0x110;
-    }
+    vdc5_change_graphics_vin(param_1,param_2,uVar1,uVar4);
     return;
   }
   return;
@@ -3396,7 +3355,7 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_start_process @ 2011b8b8  (208 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_start_process @ 2011b8b8  (208 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_start_process: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StartProcess [inference: one
  *     register function per API, same order as the API functions]
@@ -3446,7 +3405,7 @@ void vdc5_reg_start_process(int param_1,int param_2,int *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_stop_process @ 2011b988  (192 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_stop_process @ 2011b988  (192 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_stop_process: its only callee in the 0x201193EC..0x2011CA00 block, called after
  *     the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StopProcess [inference: one
  *     register function per API, same order as the API functions]
@@ -3493,7 +3452,7 @@ void vdc5_reg_stop_process(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_video_noise_reduction @ 2011bb84  (264 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_video_noise_reduction @ 2011bb84  (264 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_video_noise_reduction: its only callee in the 0x201193EC..0x2011CA00 block,
  *     called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
  *     VDC5_VideoNoiseReduction [inference: one register function per API, same order as the API functions]
@@ -3546,7 +3505,7 @@ void vdc5_reg_video_noise_reduction(int param_1,int param_2,byte *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_image_color_matrix @ 2011bc8c  (36 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_image_color_matrix @ 2011bc8c  (36 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_image_color_matrix: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageColorMatrix
  *     [inference: one register function per API, same order as the API functions]
@@ -3571,7 +3530,7 @@ void vdc5_reg_image_color_matrix(int param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_image_enhancement @ 2011bf00  (180 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_image_enhancement @ 2011bf00  (180 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_image_enhancement: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageEnhancement
  *     [inference: one register function per API, same order as the API functions]
@@ -3607,7 +3566,7 @@ void vdc5_reg_image_enhancement
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_image_black_stretch @ 2011bfc4  (164 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_image_black_stretch @ 2011bfc4  (164 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_image_black_stretch: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_ImageBlackStretch
  *     [inference: one register function per API, same order as the API functions]
@@ -3648,7 +3607,7 @@ void vdc5_reg_image_black_stretch(int param_1,int param_2,int param_3,ushort *pa
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_alpha_blending @ 2011c068  (176 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_alpha_blending @ 2011c068  (176 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_alpha_blending: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_AlphaBlending
  *     [inference: one register function per API, same order as the API functions]
@@ -3690,7 +3649,7 @@ void vdc5_reg_alpha_blending(int param_1,int param_2,int *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_alpha_blending_rect @ 2011c22c  (308 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_alpha_blending_rect @ 2011c22c  (308 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_alpha_blending_rect: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_AlphaBlendingRect
  *     [inference: one register function per API, same order as the API functions]
@@ -3758,7 +3717,7 @@ void vdc5_reg_alpha_blending_rect(int param_1,int param_2,int param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * rgb5_to_8 @ 2011c360  (28 bytes, 8 callers, export file 2011a8cc_2011d080.c)
+ * rgb5_to_8 @ 2011c360  (28 bytes, 8 callers, export file 2011a8cc_2011d014.c)
  * Purpose: (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -3775,7 +3734,7 @@ uint rgb5_to_8(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rgb4_to_8 @ 2011c37c  (12 bytes, 3 callers, export file 2011a8cc_2011d080.c)
+ * rgb4_to_8 @ 2011c37c  (12 bytes, 3 callers, export file 2011a8cc_2011d014.c)
  * Purpose: (v): 4-bit colour component scaled to 8 bits (v * 0x11) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -3792,7 +3751,7 @@ int rgb4_to_8(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rgb6_to_8 @ 2011c388  (28 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * rgb6_to_8 @ 2011c388  (28 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -3809,7 +3768,7 @@ uint rgb6_to_8(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_chromakey @ 2011c4d4  (224 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_chromakey @ 2011c4d4  (224 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_chromakey: its only callee in the 0x201193EC..0x2011CA00 block, called after the
  *     shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Chromakey [inference: one
  *     register function per API, same order as the API functions]
@@ -3867,7 +3826,7 @@ void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_clut @ 2011c5e4  (264 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_clut @ 2011c5e4  (264 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_clut: its only callee in the 0x201193EC..0x2011CA00 block, called after the
  *     shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Clut [inference: one register
  *     function per API, same order as the API functions]
@@ -3922,7 +3881,7 @@ LAB_2011c6d8:
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_display_calibration @ 2011c6ec  (368 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_display_calibration @ 2011c6ec  (368 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_display_calibration: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_DisplayCalibration
  *     [inference: one register function per API, same order as the API functions]
@@ -3986,7 +3945,7 @@ void vdc5_reg_display_calibration(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_reg_gamma_correction @ 2011c950  (176 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_reg_gamma_correction @ 2011c950  (176 bytes, 1 callers, export file 2011a8cc_2011d014.c)
  * Purpose: Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block, called
  *     after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_GammaCorrection
  *     [inference: one register function per API, same order as the API functions]
@@ -4023,7 +3982,7 @@ void vdc5_reg_gamma_correction(int param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_init @ 2011d080  (284 bytes, 1 callers, export file 2011a8cc_2011d080.c)
+ * vdc5_shrd_init @ 2011d080  (284 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states
  *     0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4 and the read
  *     records 0x208DCD2C [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables
@@ -4094,8 +4053,9 @@ void vdc5_shrd_init(int param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_init_param @ 2011d19c  (68 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_init_param @ 2011d19c  (68 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param byte 0;
  *     5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
@@ -4123,7 +4083,7 @@ void vdc5_shrd_set_init_param(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_input_param @ 2011d1f4  (84 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_input_param @ 2011d1f4  (84 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter part of r_vdc5_video_input: video-input flag 0x2080040E[ch], input colour space (YCbCr
  *     for the decoder and external YCbCr) and select [fact]. Was `vdc5_shrd_terminate` (T24 round 5)
  * Tag: [fact]
@@ -4151,7 +4111,7 @@ void vdc5_shrd_set_input_param(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_sync_param @ 2011d248  (20 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_sync_param @ 2011d248  (20 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 + 0x10*ch
  *     [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
@@ -4172,7 +4132,7 @@ void vdc5_shrd_set_sync_param(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_output_param @ 2011d2b4  (192 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_output_param @ 2011d2b4  (192 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_display_output (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
@@ -4207,7 +4167,7 @@ void vdc5_shrd_set_output_param(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_write_param @ 2011d374  (124 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_write_param @ 2011d374  (124 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record
  *     0x208DCCE4[ch][layer] (format, swap, frame buffer, size) [fact]; Renesas r_vdc5_shared_param.c [inference:
  *     writes only the shared tables 0x208DCxxx]
@@ -4261,7 +4221,7 @@ void vdc5_shrd_set_write_param(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_chg_write_param @ 2011d3f0  (72 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_chg_write_param @ 2011d3f0  (72 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_change_write_process (its caller) [fact]; Renesas
  *     r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
@@ -4294,7 +4254,7 @@ void vdc5_shrd_set_chg_write_param(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_read_param @ 2011d438  (220 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_read_param @ 2011d438  (220 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_read_data_control (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
@@ -4353,7 +4313,7 @@ void vdc5_shrd_set_read_param(int param_1,int param_2,undefined1 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_chg_read_param @ 2011d514  (104 bytes, 1 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_chg_read_param @ 2011d514  (104 bytes, 1 callers, export file 2011d080_2011e09c.c)
  * Purpose: Shared-parameter update of r_vdc5_change_read_process (its caller) [fact]; Renesas r_vdc5_shared_param.c
  *     [inference: writes only the shared tables 0x208DCxxx]
  * Tag: [fact] [inference]
@@ -4387,7 +4347,7 @@ void vdc5_shrd_set_chg_read_param(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_state_ptr @ 2011d788  (60 bytes, 2 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_state_ptr @ 2011d788  (60 bytes, 2 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, n): pointer to state byte n (0..3) of channel ch at 0x20800410 + 4*ch, n = 4 gives 0x2080040C
  *     [fact]
  * Tag: [fact]
@@ -4425,7 +4385,7 @@ switchD_2011d794_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_state @ 2011d7d8  (24 bytes, 7 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_state @ 2011d7d8  (24 bytes, 7 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, n, value): sets that state byte [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4449,7 +4409,7 @@ void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_set_resource @ 2011d7f0  (64 bytes, 3 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_set_resource @ 2011d7f0  (64 bytes, 3 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, id, value): resource state 0x208DCE04[ch*9 + id]; id -1 sets every resource not marked in use
  *     (0x208DCE16) [fact]
  * Tag: [fact]
@@ -4483,7 +4443,7 @@ void vdc5_shrd_set_resource(int param_1,int param_2,undefined1 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_get_state @ 2011d830  (28 bytes, 12 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_get_state @ 2011d830  (28 bytes, 12 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, n): state byte via vdc5_shrd_state_ptr, 0 for a bad n; the API calls check n = 0/1/2/3 == 1 before
  *     working (error codes 9/10/11/12) [fact]
  * Tag: [fact]
@@ -4511,7 +4471,7 @@ undefined1 vdc5_shrd_get_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_vdc5_shrd_get_resource @ 2011d84c  (20 bytes, 15 callers, export file 2011d19c_2011e118.c)
+ * r_vdc5_shrd_get_resource @ 2011d84c  (20 bytes, 15 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, id): resource state 0x208DCE04[ch*9 + id] ; VDC5 driver shared parameters [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4529,7 +4489,7 @@ undefined1 r_vdc5_shrd_get_resource(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * r_vdc5_shrd_rw_enable @ 2011d860  (52 bytes, 8 callers, export file 2011d19c_2011e118.c)
+ * r_vdc5_shrd_rw_enable @ 2011d860  (52 bytes, 8 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, id): flag 0x208DCE16[ch*9 + id] = 1 when the resource is in use [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4549,7 +4509,7 @@ void r_vdc5_shrd_rw_enable(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * r_vdc5_shrd_rw_disable @ 2011d8b4  (52 bytes, 8 callers, export file 2011d19c_2011e118.c)
+ * r_vdc5_shrd_rw_disable @ 2011d8b4  (52 bytes, 8 callers, export file 2011d080_2011e09c.c)
  * Purpose: (ch, id): the same flag = 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4569,7 +4529,7 @@ void r_vdc5_shrd_rw_disable(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_res_idle @ 2011d8e8  (56 bytes, 5 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_res_idle @ 2011d8e8  (56 bytes, 5 callers, export file 2011d080_2011e09c.c)
  * Purpose: 1 when resource id is set up (0x208DCE04) and not in use (0x208DCE16) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4595,7 +4555,7 @@ undefined4 vdc5_shrd_res_idle(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_shrd_res_busy @ 2011d920  (56 bytes, 4 callers, export file 2011d19c_2011e118.c)
+ * vdc5_shrd_res_busy @ 2011d920  (56 bytes, 4 callers, export file 2011d080_2011e09c.c)
  * Purpose: 1 when resource id is set up and in use [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4621,7 +4581,7 @@ undefined4 vdc5_shrd_res_busy(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_init @ 20120d38  (108 bytes, 1 callers, export file 201200b4_20120d38.c)
+ * afscope_init @ 20120d38  (108 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: gui_start: clears the AF-FFT ring indices, builds the colour tables of 0x208DCE3C / 0x208DD53C and sets
  *     the 600-byte record 0x208DD73C (first 200 bytes 0xFF) [fact]
  * Tag: [fact]
@@ -4648,8 +4608,9 @@ void afscope_init(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * affft_wf_freeze_set @ 20120d4c  (20 bytes, 1 callers, export file 20120d40_20124744.c)
+ * affft_wf_freeze_set @ 20120d4c  (20 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: (v): 0x208DD994 = v; affft_wf_add_row adds no row while it is set; gui_screen_update sets it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4668,7 +4629,7 @@ void affft_wf_freeze_set(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_clear @ 20120d58  (8 bytes, 1 callers, export file 20120d40_20124744.c)
+ * afscope_clear @ 20120d58  (8 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: afscope_obj_clear(0x208DCE3C); scope_area_setup calls it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -4686,7 +4647,7 @@ void afscope_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * affft_spectrum_columns @ 20120d60  (152 bytes, 1 callers, export file 20120d40_20124744.c)
+ * affft_spectrum_columns @ 20120d60  (152 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: (colour set, out): the 200 AF-FFT bins stretched to 391 columns through 0x208DCE3C / 0x208DCF3C; returns
  *     the height 0x27 (gui.md) [fact]
  * Tag: [fact]
@@ -4725,7 +4686,7 @@ undefined4 affft_spectrum_columns(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * affft_bins_get @ 20120d84  (92 bytes, 1 callers, export file 20120d40_20124744.c)
+ * affft_bins_get @ 20120d84  (92 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: 200 AF-FFT bins of 0x208DD73C through copy_inverted_words and the table 0x208DD23C; returns the bar
  *     height 0x2C (#179) [fact]
  * Tag: [fact]
@@ -4754,7 +4715,7 @@ undefined4 affft_bins_get(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * affft_wf_add_row @ 20120d90  (168 bytes, 1 callers, export file 20120d40_20124744.c)
+ * affft_wf_add_row @ 20120d90  (168 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: Writes one colour-mapped AF-FFT row (palette 0x208DD53C) into the next slot of the ring 0x208DD99C
  *     unless 0x208DD994 is set (gui.md) [fact]
  * Tag: [fact]
@@ -4798,7 +4759,7 @@ void affft_wf_add_row(void)
 
 
 /* -----------------------------------------------------------------------------
- * affft_wf_row_addr @ 20120d98  (56 bytes, 1 callers, export file 20120d40_20124744.c)
+ * affft_wf_row_addr @ 20120d98  (56 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: (i): address of the i-th newest AF-FFT waterfall row in the ring 0x208DD99C (0x30E bytes per row, index
  *     object 0x208F0B14) [fact]
  * Tag: [fact]
@@ -4820,7 +4781,7 @@ undefined * affft_wf_row_addr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * osc_column_pairs @ 20120da4  (192 bytes, 1 callers, export file 20120d40_20124744.c)
+ * osc_column_pairs @ 20120da4  (192 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: (colour set, out): the oscilloscope {max, min} pairs of the 400-byte half 0x208DD804 stretched to 391
  *     columns and mapped through 0x208DD03C or 0x208DD13C (gui.md osc_draw) [fact]
  * Tag: [fact]
@@ -4863,7 +4824,7 @@ void osc_column_pairs(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gui_mouse_middle_poll @ 20121044  (256 bytes, 1 callers, export file 20120d40_20124744.c)
+ * gui_mouse_middle_poll @ 20121044  (256 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: Middle mouse button events (mouse_middle_get_event): soft key from gui_middle_key, sent with
  *     mainlink_send_touch_key [fact]
  * Tag: [fact]
@@ -4925,7 +4886,7 @@ switchD_20121064_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * gui_mouse_right_poll @ 20121318  (372 bytes, 1 callers, export file 20120d40_20124744.c)
+ * gui_mouse_right_poll @ 20121318  (372 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: Right mouse button events (mouse_right_get_event): soft key from gui_right_key, press / long press /
  *     release sent with mainlink_send_touch_key [fact]
  * Tag: [fact]
@@ -5003,7 +4964,7 @@ switchD_20121348_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * gui_input_poll @ 201217b0  (128 bytes, 1 callers, export file 20120d40_20124744.c)
+ * gui_input_poll @ 201217b0  (128 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: gui_main_loop: usbkbd_screen_settings, sends E4 (leave screen saver) once on screen 0x7B, polls touch
  *     keys of both layers, then gui_mouse_right_poll and gui_mouse_middle_poll [fact]
  * Tag: [fact]
@@ -5042,7 +5003,7 @@ void gui_input_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * cursor_window_update @ 201218a4  (168 bytes, 7 callers, export file 20120d40_20124744.c)
+ * cursor_window_update @ 201218a4  (168 bytes, 7 callers, export file 20120cb0_20124528.c)
  * Purpose: Mouse position -> cursor window 0x20808584 (cursor_rect_calc) and r_vdc5_change_read_process for both
  *     channels [fact]
  * Tag: [fact]
@@ -5082,7 +5043,7 @@ void cursor_window_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_progress_bar @ 201219b8  (312 bytes, 13 callers, export file 20120d40_20124744.c)
+ * gui_draw_progress_bar @ 201219b8  (312 bytes, 13 callers, export file 20120cb0_20124528.c)
  * Purpose: (fb, x, y, percent): frame and bar 0xCE x 0x10, percent clamped to 100 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -5118,7 +5079,7 @@ void gui_draw_progress_bar(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_affft_overlay @ 20121af0  (160 bytes, 2 callers, export file 20120d40_20124744.c)
+ * filter_graph_affft_overlay @ 20121af0  (160 bytes, 2 callers, export file 20120cb0_20124528.c)
  * Purpose: bars of affft_bins_get into empty pixels of the filter graph (row 129, x 521..720) when status byte 9
  *     bit 3 (MAIN 0x9C5C) is set (#179) [fact]
  * Tag: [fact]
@@ -5167,7 +5128,7 @@ void filter_graph_affft_overlay(int param_1,int param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * main_status_icons @ 20121e88  (1600 bytes, 1 callers, export file 20120d40_20124744.c)
+ * main_status_icons @ 20121e88  (1600 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: REC/MSG/LOCK/... indicator row, scope SPAN/SPEED labels [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -5334,7 +5295,7 @@ LAB_20121f38:
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_draw_markers @ 201224c8  (160 bytes, 2 callers, export file 20120d40_20124744.c)
+ * filter_graph_draw_markers @ 201224c8  (160 bytes, 2 callers, export file 20120cb0_20124528.c)
  * Purpose: (fb, mode): marker sprites on row 0x81 at the computed positions (0x208007E4 + 0x1B1 ...) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -5379,7 +5340,7 @@ void filter_graph_draw_markers(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_draw_edges @ 20122638  (356 bytes, 3 callers, export file 20120d40_20124744.c)
+ * filter_graph_draw_edges @ 20122638  (356 bytes, 3 callers, export file 20120cb0_20124528.c)
  * Purpose: (fb, mode, ...): draws the passband slopes and edges for the mode group (FUN_20136670 lines,
  *     FUN_20121B90 edge sprites) [fact for the calls]
  * Tag: [fact]
@@ -5451,7 +5412,7 @@ void filter_graph_draw_edges(undefined4 param_1,undefined4 param_2,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * filter_passband_calc @ 20122d00  (772 bytes, 4 callers, export file 20120d40_20124744.c)
+ * filter_passband_calc @ 20122d00  (772 bytes, 4 callers, export file 20120cb0_20124528.c)
  * Purpose: (out, mode, ...): passband edge pixels for the mode group (SSB/CW/AM/FM/DATA cases; DATA uses
  *     data_offset_be) into the records 0x208007DC / 0x208007E2 [fact for the fields]
  * Tag: [fact]
@@ -5582,7 +5543,7 @@ void filter_passband_calc(short *param_1,undefined4 param_2,uint param_3,uint pa
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_state_update @ 20123088  (784 bytes, 2 callers, export file 20120d40_20124744.c)
+ * filter_graph_state_update @ 20123088  (784 bytes, 2 callers, export file 20120cb0_20124528.c)
  * Purpose: (state 0x208F4600): reads IF SHIFT, NOTCH and CONTOUR from the current frame (shift_be, notch_be,
  *     contour_be) and derives the per-mode graph values [fact for the fields]
  * Tag: [fact]
@@ -5760,7 +5721,7 @@ LAB_201233c4:
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_small @ 201233d4  (472 bytes, 1 callers, export file 20120d40_20124744.c)
+ * filter_graph_small @ 201233d4  (472 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: gui_main_loop draws it instead of main_filter_graph while 0x208F4633 is 0: the same passband computation
  *     (filter_graph_state_update, filter_passband_calc) and curve/edge drawing in the 0x164 x 0x45 box at (x 0x1BB,
  *     y 0x6D), without the value texts and buttons; skipped while gui_scope_draw_hold_set holds [fact]
@@ -5843,7 +5804,7 @@ void filter_graph_small(void)
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_buttons @ 201235ac  (604 bytes, 1 callers, export file 20120d40_20124744.c)
+ * filter_graph_buttons @ 201235ac  (604 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: Bottom row of main_filter_graph: four 0x58 x 0x31 sprite buttons at y 0x116, x 0x1BB / 0x214 / 0x26D /
  *     0x2C6 with on/off sprites from the tables 0x208008C8.. [fact]
  * Tag: [fact]
@@ -5941,7 +5902,7 @@ void filter_graph_buttons(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * filter_graph_value_text @ 2012384c  (884 bytes, 1 callers, export file 20120d40_20124744.c)
+ * filter_graph_value_text @ 2012384c  (884 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: (fb, sel): value line under the graph: tick marks and the "%dHz" values of the selected function
  *     (0x208F460A / 4612 / 461A / 461E / 4626) right-aligned at y 0xE2 [fact]
  * Tag: [fact]
@@ -6076,7 +6037,7 @@ void filter_graph_value_text(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * main_filter_graph @ 20123c04  (704 bytes, 1 callers, export file 20120d40_20124744.c)
+ * main_filter_graph @ 20123c04  (704 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: SHIFT/WIDTH/NOTCH/CONTOUR/APF graph [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -6172,7 +6133,7 @@ void main_filter_graph(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_markers_draw @ 20123ec4  (1464 bytes, 2 callers, export file 20120d40_20124744.c)
+ * scope_markers_draw @ 20123ec4  (1464 bytes, 2 callers, export file 20120cb0_20124528.c)
  * Purpose: (r0 = 1 MULTI / 0 large) red 0xF800 RX/TX marker frames on graphics 1; zeroes range 0x208007D4
  *     [inference]
  * Tag: [inference]
@@ -6416,7 +6377,7 @@ LAB_2012442c:
 
 
 /* -----------------------------------------------------------------------------
- * scope_markers_update @ 201244d8  (80 bytes, 1 callers, export file 20120d40_20124744.c)
+ * scope_markers_update @ 201244d8  (80 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: checks 0x20800482 / 0x208004D0, tail-branches to scope_markers_draw(layout) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -6674,7 +6635,7 @@ LAB_2012442c:
 
 
 /* -----------------------------------------------------------------------------
- * scope_draw_frame @ 20124528  (484 bytes, 1 callers, export file 20120d40_20124744.c)
+ * scope_draw_frame @ 20124528  (484 bytes, 1 callers, export file 20120cb0_20124528.c)
  * Purpose: per GUI frame: 3DSS (mode 8/9) or 2D renderers by 0x208004D0/D2 (gui.md Scope drawing) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -6751,9 +6712,8 @@ LAB_201246dc:
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope_text_view_draw @ 2012470c  (1132 bytes, 1 callers, export file 20120d40_20124744.c)
+ * scope_text_view_draw @ 2012470c  (1132 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -6943,7 +6903,7 @@ LAB_20131eb8:
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_audio_error @ 20124744  (200 bytes, 18 callers, export file 20120d40_20124744.c)
+ * mainlink_send_audio_error @ 20124744  (200 bytes, 18 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (code): E7 (PlayList owner 0x2080048E = 1) or E8 status frame with b1 = 0xFF and the error code
  *     (mainlink.md) [fact]
  * Tag: [fact]
@@ -7014,8 +6974,9 @@ LAB_20124808:
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * audio_screen_poll @ 201248f8  (380 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * audio_screen_poll @ 201248f8  (380 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: gui_screen_update: voice-message / PlayList supervision: stops record or playback when the card goes or
  *     an audio error occurs and reports it (mainlink_send_audio_error, E7/E8 states) [fact]
  * Tag: [fact]
@@ -7083,7 +7044,7 @@ undefined4 audio_screen_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * playlist_entry_size @ 20124a74  (36 bytes, 3 callers, export file 20124848_2012c6c4.c)
+ * playlist_entry_size @ 20124a74  (36 bytes, 3 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (top, row, *out): word +0x30 of the 0x34-byte PlayList entry 0x208F1234[top + row] [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -7101,7 +7062,7 @@ void playlist_entry_size(int param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * playlist_entry_name @ 20124a98  (32 bytes, 3 callers, export file 20124848_2012c6c4.c)
+ * playlist_entry_name @ 20124a98  (32 bytes, 3 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (top, row, dst): strcpy of the file name of PlayList entry 0x208F1234[top + row] (0x34 bytes per entry)
  *     [fact]
  * Tag: [fact]
@@ -7121,7 +7082,7 @@ void playlist_entry_name(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * playlist_entry_text @ 20124ab8  (36 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * playlist_entry_text @ 20124ab8  (36 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (top, row, dst): strcpy of the text at +0x26 of PlayList entry top + row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -7139,7 +7100,7 @@ void playlist_entry_text(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scr_playlist @ 20124c24  (4304 bytes, 2 callers, export file 20124848_2012c6c4.c)
+ * scr_playlist @ 20124c24  (4304 bytes, 2 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x3A: voice/REC PLAY LIST [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -7597,7 +7558,7 @@ LAB_20125cbc:
 
 
 /* -----------------------------------------------------------------------------
- * playlist_play_poll @ 20125d8c  (232 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * playlist_play_poll @ 20125d8c  (232 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: gui_screen_update: PlayList playback supervision: owner 0x2080048E, stops playback at 100 %
  *     (play_progress) or when the screen leaves 0x3A or the card goes, error E7 on loss [fact]
  * Tag: [fact]
@@ -7658,7 +7619,7 @@ bool playlist_play_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * touch_calibration @ 20125e78  (244 bytes, 5 callers, export file 20124848_2012c6c4.c)
+ * touch_calibration @ 20125e78  (244 bytes, 5 callers, export file 2012470c_2012c2d8.c)
  * Purpose: `TOUCH THE CROSS`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -7715,7 +7676,7 @@ void touch_calibration(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scr_sd_menu @ 201261e0  (456 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_sd_menu @ 201261e0  (456 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x43: SD card load/save/format [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -7845,7 +7806,7 @@ LAB_20126304:
 
 
 /* -----------------------------------------------------------------------------
- * scr_info @ 201263e8  (696 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_info @ 201263e8  (696 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x34: information / CERTIFICATIONS, FCC ID K6620801X50 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -7903,7 +7864,7 @@ void scr_info(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gui_apply_display_cfg @ 201266ec  (304 bytes, 3 callers, export file 20124848_2012c6c4.c)
+ * gui_apply_display_cfg @ 201266ec  (304 bytes, 3 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x24: DVI on/off, DVI resolution, LCD contrast [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -7967,7 +7928,7 @@ LAB_201267bc:
 
 
 /* -----------------------------------------------------------------------------
- * gui_button_draw @ 2012681c  (248 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * gui_button_draw @ 2012681c  (248 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (fb, y, x, sprite index): button box (outline boxes) with the sprite from the table 0x208022A0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -7996,7 +7957,7 @@ void gui_button_draw(uint param_1,uint param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * gui_button_draw_shadow @ 20126914  (324 bytes, 5 callers, export file 20124848_2012c6c4.c)
+ * gui_button_draw_shadow @ 20126914  (324 bytes, 5 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (fb, y, x, sprite index): like gui_button_draw with a 0x4A69 drop shadow, sprites from 0x2080228C; used
  *     by confirm_dialog_draw and the update screens [fact]
  * Tag: [fact]
@@ -8029,7 +7990,7 @@ void gui_button_draw_shadow(uint param_1,uint param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * confirm_dialog_draw @ 20126a58  (1084 bytes, 3 callers, export file 20124848_2012c6c4.c)
+ * confirm_dialog_draw @ 20126a58  (1084 bytes, 3 callers, export file 2012470c_2012c2d8.c)
  * Purpose: OK? dialog (scr_confirm, update_error_screen) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8187,7 +8148,7 @@ void confirm_dialog_draw(int param_1,int param_2,uint param_3,uint param_4,int p
 
 
 /* -----------------------------------------------------------------------------
- * scr_confirm @ 20126ebc  (108 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_confirm @ 20126ebc  (108 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x70: OK / CANCEL dialog [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8223,7 +8184,7 @@ void scr_confirm(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scr_setup_menu @ 20126f28  (676 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_setup_menu @ 20126f28  (676 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x62: MENU list, 8 rows of {5, 20, 3} chars [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8319,7 +8280,7 @@ void scr_setup_menu(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * keyboard_draw_keys @ 201271cc  (904 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * keyboard_draw_keys @ 201271cc  (904 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: scr_keyboard key grid (CR/LF labels) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8486,7 +8447,7 @@ LAB_20127424:
 
 
 /* -----------------------------------------------------------------------------
- * scr_keyboard @ 201275e8  (1340 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_keyboard @ 201275e8  (1340 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x50: on-screen keyboard (Caps, Space, ENT, ABC, #%^) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8788,7 +8749,7 @@ void scr_keyboard(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scr_memory_list @ 20127b24  (1516 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_memory_list @ 20127b24  (1516 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x41: MEMORY CH LIST [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -8944,7 +8905,7 @@ void scr_memory_list(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_plain_rows @ 201281c0  (540 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_plain_rows @ 201281c0  (540 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: Right pane, plain form: 30-byte text rows from payload +0x119 at the 75-px row pitch 0x2080064E, plus
  *     the BACK button [fact]
  * Tag: [fact]
@@ -9014,7 +8975,7 @@ void text_list_plain_rows(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_row_value @ 201283fc  (360 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_row_value @ 201283fc  (360 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (row, frame): row label (21 characters at +0x11C) and its value text (+0x131, length in +0x11A),
  *     right-trimmed, with the value box sprite [fact]
  * Tag: [fact]
@@ -9077,7 +9038,7 @@ void text_list_row_value(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_row_slider @ 20128564  (416 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_row_slider @ 20128564  (416 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (row, frame): row label and value text with the three bar sprites 0x208022B4 / B8 / BC around the value
  *     [fact]
  * Tag: [fact]
@@ -9141,7 +9102,7 @@ void text_list_row_slider(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_row_done @ 20128704  (348 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_row_done @ 20128704  (348 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (row, frame): row label and a "DONE" button box; text_list_item_rows frames it when selected [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -9193,7 +9154,7 @@ void text_list_row_done(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_item_rows @ 20128860  (1104 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_item_rows @ 20128860  (1104 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: Right pane, item form: 45-byte rows from payload +0x119; a row whose value text is "DONE" ->
  *     text_list_row_done, type 3 with a flag -> text_list_row_slider, else text_list_row_value; scroll bar, page
  *     arrows and BACK [fact]
@@ -9304,7 +9265,7 @@ LAB_20128bf0:
 
 
 /* -----------------------------------------------------------------------------
- * text_list_left_pane @ 20128d00  (404 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_left_pane @ 20128d00  (404 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: Left pane of the text list: up to 8 entries of 13 characters from payload +0xB1 (0x68 bytes compared for
  *     changes) with their icon sprites from the table 0x2016DC7A [fact]
  * Tag: [fact]
@@ -9375,7 +9336,7 @@ void text_list_left_pane(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_background @ 20128e94  (184 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_background @ 20128e94  (184 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: Clears layer 2 and draws the title bar, the left pane and the right pane boxes from the layout words
  *     0x208005C4.. [fact]
  * Tag: [fact]
@@ -9404,7 +9365,7 @@ void text_list_background(void)
 
 
 /* -----------------------------------------------------------------------------
- * text_list_draw @ 20128f4c  (264 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * text_list_draw @ 20128f4c  (264 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: scr_text_list body [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -9458,7 +9419,7 @@ LAB_20129000:
 
 
 /* -----------------------------------------------------------------------------
- * scr_text_list @ 20129054  (184 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_text_list @ 20129054  (184 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x40: text list with LF/CR glyphs, DONE/BACK [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -9508,7 +9469,7 @@ void scr_text_list(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * voice_msg_play_rec @ 2012910c  (676 bytes, 2 callers, export file 20124848_2012c6c4.c)
+ * voice_msg_play_rec @ 2012910c  (676 bytes, 2 callers, export file 2012470c_2012c2d8.c)
  * Purpose: Voice-message screen action: "MSG_CH%d" file in the .wav list: play_start, or rec_start with the TX
  *     frequency "%08d" as tag, rec_stop / play_stop; reports E8 states and audio errors [fact]
  * Tag: [fact]
@@ -9657,7 +9618,7 @@ LAB_20129398:
 
 
 /* -----------------------------------------------------------------------------
- * vfo_audio_status_draw @ 201293f8  (2000 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * vfo_audio_status_draw @ 201293f8  (2000 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: REC/PLAY state on the VFO screen (%04d, %3d) (inference) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -9882,7 +9843,7 @@ void vfo_audio_status_draw(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * clar_offset_format @ 20129c44  (172 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * clar_offset_format @ 20129c44  (172 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (hz, buf): signed offset clamped to -9999..9999 as up to 4 digits right-aligned at buf+4 with a leading
  *     '+' or '-' [fact]
  * Tag: [fact]
@@ -9944,7 +9905,7 @@ void clar_offset_format(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_clar_draw @ 20129cf0  (348 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * vfo_clar_draw @ 20129cf0  (348 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: scr_vfo part: clarifier field from main_vfo.side (+0x42) and main_vfo.clar_be (+0x43), drawn while byte
  *     0x49 low nibble = 9; offset text by clar_offset_format (gui.md frequency display words 0x2080051C..) [fact
  *     for the fields]
@@ -10007,7 +9968,7 @@ void vfo_clar_draw(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_digits_draw @ 20129e4c  (280 bytes, 3 callers, export file 20124848_2012c6c4.c)
+ * vfo_digits_draw @ 20129e4c  (280 bytes, 3 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (digits, mode, layout, glyph table): draws the frequency digits of a VFO block with the per-mode digit
  *     positions from the layout record [fact]
  * Tag: [fact]
@@ -10077,7 +10038,7 @@ LAB_20129ef4:
 
 
 /* -----------------------------------------------------------------------------
- * vfo_sub_draw @ 20129f64  (1676 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * vfo_sub_draw @ 20129f64  (1676 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: scr_vfo part: the other side's VFO block (frame +0x46.., digits +0x4A, tag +0x4F) with its state labels,
  *     redrawn on change [fact for the fields]
  * Tag: [fact]
@@ -10315,7 +10276,7 @@ LAB_2012a4b4:
 
 
 /* -----------------------------------------------------------------------------
- * scr_vfo @ 2012a6a4  (636 bytes, 2 callers, export file 20124848_2012c6c4.c)
+ * scr_vfo @ 2012a6a4  (636 bytes, 2 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x39: frequency digits [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -10409,7 +10370,7 @@ LAB_2012a8d8:
 
 
 /* -----------------------------------------------------------------------------
- * scr_func_panel @ 2012a9ec  (908 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_func_panel @ 2012a9ec  (908 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x37: FUNC panel (CONTRAST, DIMMER, MIC GAIN, ...) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -10561,7 +10522,7 @@ switchD_2012abd4_caseD_6:
 
 
 /* -----------------------------------------------------------------------------
- * scr_value_popup @ 2012ade0  (680 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_value_popup @ 2012ade0  (680 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x31: setting name + value popup (tables at 0x208026DC..) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -10645,7 +10606,7 @@ void scr_value_popup(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * select_popup_frame_draw @ 2012b0f0  (204 bytes, 5 callers, export file 20124848_2012c6c4.c)
+ * select_popup_frame_draw @ 2012b0f0  (204 bytes, 5 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (row, x): frame and fill of one item cell of the selection popup (cell sizes 0x2016E620) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -10680,7 +10641,7 @@ void select_popup_frame_draw(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scr_select_popup @ 2012c1b4  (4200 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scr_select_popup @ 2012c1b4  (4200 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: packet 0x30: METER / MODE selection popups [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11133,7 +11094,7 @@ LAB_2012bb34:
 
 
 /* -----------------------------------------------------------------------------
- * gui_payload_changed @ 2012c2d8  (328 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * gui_payload_changed @ 2012c2d8  (328 bytes, 1 callers, export file 2012470c_2012c2d8.c)
  * Purpose: (frame, old): 1 when the screen payload differs from the previous frame for screens
  *     0x30/0x31/0x37/0x39/0x41/0x70 (compare lengths 7/10/0x1A7/0x50/0xAD/0x4A), 0 if not, -1 for a new screen or
  *     other ids [fact]
@@ -11204,9 +11165,8 @@ uint gui_payload_changed(ml_frame *frame,ml_frame *old)
   return 0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * audio_error_check @ 2012c4a0  (248 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * audio_error_check @ 2012c4a0  (248 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: audio_state/audio_error/audio_clear_error [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11256,7 +11216,7 @@ void audio_error_check(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_speed_update @ 2012c6c4  (108 bytes, 1 callers, export file 20124848_2012c6c4.c)
+ * scope_speed_update @ 2012c6c4  (108 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (frame, old, force): on a change of byte 0x12 bits 4-7 (SPEED, clamped to 5) calls scope2d_set_speed
  *     and, unless drawing is held, the 3DSS line period 0x208085B0 from ROM 0x203A70A8 [fact]
  * Tag: [fact]
@@ -11288,8 +11248,9 @@ void scope_speed_update(ml_frame *frame,ml_frame *old,int flag)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * multi_panel_label_draw @ 2012c71c  (912 bytes, 3 callers, export file 2012c71c_20131f74.c)
+ * multi_panel_label_draw @ 2012c71c  (912 bytes, 3 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (frame, part): labels of the MULTI panel parts (oscilloscope / AF-FFT, from the osc byte +0x71) or the
  *     text-view header (part 0) at the layout words 0x20800722..0x2080074E [fact for the callers; inference for the
  *     part roles]
@@ -11410,7 +11371,7 @@ LAB_2012c814:
 
 
 /* -----------------------------------------------------------------------------
- * multi_panel_labels_update @ 2012caac  (180 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * multi_panel_labels_update @ 2012caac  (180 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: when byte 1, scope mode, vfo_flags bits or osc (+0x71) change, redraws the panel
  *     labels with multi_panel_label_draw (text view: part 0; MULTI layout: parts 2 and 3) [fact]
  * Tag: [fact]
@@ -11446,7 +11407,7 @@ void multi_panel_labels_update(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_number_runs @ 2012cb60  (168 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * gui_draw_number_runs @ 2012cb60  (168 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (fb, y, x, value): draws a number digit by digit from the glyph table 0x2080092C (value % 10), with a
  *     leading glyph 0x20800924 [fact]
  * Tag: [fact]
@@ -11487,7 +11448,7 @@ void gui_draw_number_runs(int param_1,int param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scope_freq_scale_draw @ 2012cf30  (900 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * scope_freq_scale_draw @ 2012cf30  (900 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: frequency scale of the scope area from op_freq_be, dial_freq_be, scope_start_be
  *     and span_ccf (redrawn on change): numbers with gui_draw_number_runs at the span step table 0x2016D6E8 [fact
  *     for the fields]
@@ -11635,7 +11596,7 @@ void scope_freq_scale_draw(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * scope_area_frame_draw @ 2012d19c  (380 bytes, 6 callers, export file 2012c71c_20131f74.c)
+ * scope_area_frame_draw @ 2012d19c  (380 bytes, 6 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scope frame sprites (layout words 0x208004F4/F6) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11702,7 +11663,7 @@ void scope_area_frame_draw(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_spectrum_height @ 2012d318  (132 bytes, 3 callers, export file 2012c71c_20131f74.c)
+ * scope2d_spectrum_height @ 2012d318  (132 bytes, 3 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (expanded): 2D spectrum height for the current layout (0x208004D0, MULTI 0x20800482, waterfall size
  *     0x208004D2): 100 / 140 / 60 / 210 / 40 / 80, the values of the spectrum height table in gui.md [fact]
  * Tag: [fact]
@@ -11754,7 +11715,7 @@ undefined4 scope2d_spectrum_height(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_mode_split @ 2012d3b8  (40 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * scope_mode_split @ 2012d3b8  (40 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: byte 2 -> 0/1/2 spectrum/waterfall split (inference) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11782,7 +11743,7 @@ byte scope_mode_split(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_mode_sub @ 2012d404  (36 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * scope_mode_sub @ 2012d404  (36 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: byte 2 -> 0/1/2 sub-setting [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11812,7 +11773,7 @@ byte scope_mode_sub(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_mode_is_2d @ 2012d458  (28 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * scope_mode_is_2d @ 2012d458  (28 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: byte 2: 0-2 -> 0 (3DSS), 3-11 -> 1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11842,7 +11803,7 @@ byte scope_mode_is_2d(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_mode_decode @ 2012d4a4  (164 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * scope_mode_decode @ 2012d4a4  (164 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: packet 0x20 bytes 1-3 -> 0x20800482, 0x208004D0..D2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -11874,7 +11835,7 @@ void scope_mode_decode(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_area_setup @ 2012d52c  (864 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * scope_area_setup @ 2012d52c  (864 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: packet 0x20 scope bytes changed: clear area, decode mode, reset history [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -12009,7 +11970,7 @@ void scope_area_setup(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * main_left_boxes_draw @ 2012d8bc  (828 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * main_left_boxes_draw @ 2012d8bc  (828 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte entry of
  *     0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when ATT/IPO/DNF (+0x0C), the
  *     CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change [fact for the table and fields]
@@ -12147,7 +12108,7 @@ void main_left_boxes_draw(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * main_bottom_row_draw @ 2012dbf8  (460 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * main_bottom_row_draw @ 2012dbf8  (460 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of 0x2016E304, the
  *     touch table of keys 0x1000..0x1009 (input.md) [fact for the table]
  * Tag: [fact]
@@ -12215,7 +12176,7 @@ void main_bottom_row_draw(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_state_label_draw @ 2012ddc4  (828 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * vfo_state_label_draw @ 2012ddc4  (828 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (state, channel, flag): VFO-state indicator next to the mode label: sprite by state 1..10 (VFO, memory,
  *     memory tune, PMS, QMB, 60 m, EMG, split RX/TX per ml_vfo.state) with the channel number [fact for the state
  *     switch]
@@ -12337,7 +12298,7 @@ void vfo_state_label_draw(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mode_state_draw @ 2012e1a4  (216 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * vfo_mode_state_draw @ 2012e1a4  (216 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: draws the mode label (table 0x20802FF4 by main_vfo.mode) and the VFO-state /
  *     channel indicator (vfo_state_label_draw) when main_vfo mode/state/channel or vfo_flags bit 7 change [fact]
  * Tag: [fact]
@@ -12387,7 +12348,7 @@ void vfo_mode_state_draw(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * cw_zero_in_draw @ 2012e27c  (332 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * cw_zero_in_draw @ 2012e27c  (332 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: scr_main_layout part: when the CW indicator (frame +0x0D bit 7) or the 4-byte zero_in field (+0x15)
  *     changes, draws the CW sprite and one white cell per set bit of the 25-bit zero-in bar at the layout words
  *     0x20800508..0x2080051A (gui.md "main screen parts") [fact]
@@ -12433,7 +12394,7 @@ void cw_zero_in_draw(ml_frame *frame,ml_frame *old,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * scope_color_decode @ 2012e3c8  (24 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * scope_color_decode @ 2012e3c8  (24 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (byte, *a, *b): low nibble clamped to 10 into both outputs; the COLOR field of packet 0x20 byte 0x12
  *     (gui.md) [fact]
  * Tag: [fact]
@@ -12458,7 +12419,7 @@ void scope_color_decode(byte param_1,byte *param_2,byte *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scr_main_layout @ 2012e3e0  (964 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * scr_main_layout @ 2012e3e0  (964 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: main screen static parts (scope frame, mode/filter labels) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -12591,7 +12552,7 @@ LAB_2012e4d4:
 
 
 /* -----------------------------------------------------------------------------
- * textterm_frame_update @ 2012e678  (80 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * textterm_frame_update @ 2012e678  (80 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (frame, old): P2_15 = 1, resets the terminal TX line when the text view or the VFO bits change, then
  *     textterm_send_all [fact]
  * Tag: [fact]
@@ -12615,7 +12576,7 @@ void textterm_frame_update(ml_frame *frame,ml_frame *old)
 
 
 /* -----------------------------------------------------------------------------
- * screen_saver_exit @ 2012e6c8  (124 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * screen_saver_exit @ 2012e6c8  (124 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: layers back after 0x7B [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -12650,7 +12611,7 @@ void screen_saver_exit(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_start_stop @ 2012e744  (352 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * rec_start_stop @ 2012e744  (352 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: packet 0x3F: start/stop recording to SD with a time-stamp name [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -12740,7 +12701,7 @@ LAB_2012e7f0:
 
 
 /* -----------------------------------------------------------------------------
- * gui_change_flags_update @ 2012e9a8  (204 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * gui_change_flags_update @ 2012e9a8  (204 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (frame, old): sets the change flags 0x208F4638..0x208F463D (expanded area, two settings bytes,
  *     filter-graph switch, screens 0x40/0x43/0x3A, popup 0x30 with payload 0xFF, ...) from the saved copy
  *     0x208F0B18 [fact]
@@ -12782,7 +12743,7 @@ void gui_change_flags_update(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gui_frame_save @ 2012ea74  (324 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * gui_frame_save @ 2012ea74  (324 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: gui_screen_update: copies the frame into gui_frame_saved (0x240 bytes), runs gui_change_flags_update and
  *     copies 0x12 bytes 0x208F462C -> 0x208F0B18 [fact]
  * Tag: [fact]
@@ -12850,7 +12811,7 @@ LAB_2012eb7c:
 
 
 /* -----------------------------------------------------------------------------
- * gui_screen_update @ 2012ebb8  (2912 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * gui_screen_update @ 2012ebb8  (2912 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `gui_screen_update`: packet compare and dispatch
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13271,7 +13232,7 @@ LAB_2012f698:
 
 
 /* -----------------------------------------------------------------------------
- * opening_check_main @ 2012f734  (416 bytes, 4 callers, export file 2012c71c_20131f74.c)
+ * opening_check_main @ 2012f734  (416 bytes, 4 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13357,7 +13318,7 @@ uint opening_check_main(void)
 
 
 /* -----------------------------------------------------------------------------
- * opening_screen @ 2012f8d4  (1216 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * opening_screen @ 2012f8d4  (1216 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13538,7 +13499,7 @@ LAB_2012fb90:
 
 
 /* -----------------------------------------------------------------------------
- * logo_fade_in @ 2012fd94  (568 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * logo_fade_in @ 2012fd94  (568 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `opening_screen` / `opening_check_main` / `logo_fade_in`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13618,7 +13579,7 @@ void logo_fade_in(void)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_wait_status @ 20130024  (324 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * mainlink_wait_status @ 20130024  (324 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: waits up to 5 s for the first MAIN status packet [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -13688,7 +13649,7 @@ bool mainlink_wait_status(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_main_loop @ 20130188  (1044 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * gui_main_loop @ 20130188  (1044 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `gui_main_loop`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13889,7 +13850,7 @@ LAB_20130450:
 
 
 /* -----------------------------------------------------------------------------
- * screenshot_popup @ 2013059c  (384 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * screenshot_popup @ 2013059c  (384 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: `screenshot_popup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -13932,7 +13893,7 @@ void screenshot_popup(void)
 
 
 /* -----------------------------------------------------------------------------
- * textterm_send_setting @ 20130c90  (1052 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * textterm_send_setting @ 20130c90  (1052 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (item 0..15, frame, force): sends one terminal setting as a 3-byte frame (item + 0x11, value) over
  *     uart4_send when the frame field changed (text sets, osc +0x71, RTTY/PSK bytes +0x67..+0x6F) [fact]
  * Tag: [fact]
@@ -14135,7 +14096,7 @@ switchD_20130ca0_caseD_b:
 
 
 /* -----------------------------------------------------------------------------
- * textterm_send_all @ 201310ec  (68 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * textterm_send_all @ 201310ec  (68 bytes, 2 callers, export file 2012c4a0_201315c0.c)
  * Purpose: Sends settings 0..15 except 11 and 12 with textterm_send_setting [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -14164,7 +14125,7 @@ void textterm_send_all(ml_frame *frame,int flag)
 
 
 /* -----------------------------------------------------------------------------
- * textterm_rx_push @ 20131130  (36 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * textterm_rx_push @ 20131130  (36 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC); decode_text_rx
  *     feeds it [fact]
  * Tag: [fact]
@@ -14185,7 +14146,7 @@ void textterm_rx_push(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * decode_text_rx @ 20131154  (512 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * decode_text_rx @ 20131154  (512 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -14286,7 +14247,7 @@ LAB_2013129c:
 
 
 /* -----------------------------------------------------------------------------
- * pkt23_tx_text @ 20131354  (492 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * pkt23_tx_text @ 20131354  (492 bytes, 1 callers, export file 2012c4a0_201315c0.c)
  * Purpose: third scope view: text terminal (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -14449,7 +14410,7 @@ switchD_201313b0_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * textterm_rx_clear @ 201315a4  (28 bytes, 7 callers, export file 2012c71c_20131f74.c)
+ * textterm_rx_clear @ 201315a4  (28 bytes, 7 callers, export file 2012c4a0_201315c0.c)
  * Purpose: Clears the 64-byte answer ring 0x208F4BAC and its indices 0x208F4BEC/ED [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -14469,7 +14430,7 @@ void textterm_rx_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * textterm_rx_expect @ 201315c0  (120 bytes, 9 callers, export file 2012c71c_20131f74.c)
+ * textterm_rx_expect @ 201315c0  (120 bytes, 9 callers, export file 2012c4a0_201315c0.c)
  * Purpose: (byte): pops the next byte of the answer ring; 1 when it equals byte [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -14499,9 +14460,8 @@ undefined4 textterm_rx_expect(uint param_1)
   return 0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * textterm_tx_poll @ 20131638  (1204 bytes, 1 callers, export file 2012c71c_20131f74.c)
+ * textterm_tx_poll @ 20131638  (1204 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: gui_main_loop: state machine 0x208F4BAA of the text terminal on the SCIF4 link: ESC (0x1B) setting
  *     frames with the text sets (frame +0x70), 0x10 / 0x110 commands and the TX text one character at a time (0x1D
  *     + character from 0x208F489F), waiting for the answer bytes (textterm_rx_expect) [fact]
@@ -14758,7 +14718,7 @@ LAB_20131af4:
 
 
 /* -----------------------------------------------------------------------------
- * textterm_view_frame @ 20131f74  (768 bytes, 2 callers, export file 2012c71c_20131f74.c)
+ * textterm_view_frame @ 20131f74  (768 bytes, 2 callers, export file 20131638_201333f0.c)
  * Purpose: scope_area_setup: frame of the text-terminal view (RX area, TX area, two buttons) from the layout words
  *     0x208084DC.. / 0x20808500.. (gui.md "third view"); clears the terminal state first [fact]
  * Tag: [fact]
@@ -14815,8 +14775,9 @@ void textterm_view_frame(undefined1 param_1,uint param_2,uint param_3,undefined4
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * fwupdate_menu_screen_thunk @ 201322c8  (16 bytes, 0 callers, export file 201322ac_20133440.c)
+ * fwupdate_menu_screen_thunk @ 201322c8  (16 bytes, 0 callers, export file 20131638_201333f0.c)
  * Purpose: mov r1, r0; ldr r0, =0x208F4BF4; mov r2, #0; b fwupdate_menu_screen (0x2015A500): the fourth of the
  *     update-UI thunks of update.md [fact: words at 0x201322C8..0x201322D4]
  * Tag: [fact]
@@ -14962,7 +14923,7 @@ void fwupdate_menu_screen_thunk(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_screen_thunk @ 201322d8  (12 bytes, 0 callers, export file 201322ac_20133440.c)
+ * fwupdate_select_screen_thunk @ 201322d8  (12 bytes, 0 callers, export file 20131638_201333f0.c)
  * Purpose: fwupdate_select_screen(0x208F4BF4, frame) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -14980,7 +14941,7 @@ void fwupdate_select_screen_thunk(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_module_start @ 20132320  (120 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_module_start @ 20132320  (120 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_module_start` / `vdc5_module_stop` (STBCR9 0xFCFE0438)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15017,7 +14978,7 @@ void vdc5_module_start(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_module_stop @ 20132398  (100 bytes, 2 callers, export file 201322ac_20133440.c)
+ * vdc5_module_stop @ 20132398  (100 bytes, 2 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_module_start` / `vdc5_module_stop` (STBCR9 0xFCFE0438)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15061,7 +15022,7 @@ void vdc5_module_stop(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * lcd_tcon_cfg_ch0 @ 201323fc  (68 bytes, 1 callers, export file 201322ac_20133440.c)
+ * lcd_tcon_cfg_ch0 @ 201323fc  (68 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: TCON pin table for the parallel RGB TFT (ch0) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15088,7 +15049,7 @@ void lcd_tcon_cfg_ch0(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dvi_tcon_cfg_ch1 @ 20132440  (92 bytes, 1 callers, export file 201322ac_20133440.c)
+ * dvi_tcon_cfg_ch1 @ 20132440  (92 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: TCON pin table for the LVDS/DVI channel (ch1), 800x480 or 800x600 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15115,7 +15076,7 @@ void dvi_tcon_cfg_ch1(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * lvds_pll_cfg @ 2013249c  (104 bytes, 3 callers, export file 201322ac_20133440.c)
+ * lvds_pll_cfg @ 2013249c  (104 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: `lvds_pll_cfg`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15146,7 +15107,7 @@ void lvds_pll_cfg(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_sync_setup @ 20132504  (228 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_sync_setup @ 20132504  (228 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_sync_setup` / `vdc5_output_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15202,7 +15163,7 @@ uint vdc5_sync_setup(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_output_setup @ 201325e8  (152 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_output_setup @ 201325e8  (152 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_sync_setup` / `vdc5_output_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15259,7 +15220,7 @@ uint vdc5_output_setup(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cursor_rect_calc @ 20132680  (124 bytes, 3 callers, export file 201322ac_20133440.c)
+ * cursor_rect_calc @ 20132680  (124 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: 12x21 mouse-cursor window for graphics 3 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15289,7 +15250,7 @@ void cursor_rect_calc(short *param_1,int param_2,short param_3,short param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fb_get_layer_addr @ 201326fc  (88 bytes, 179 callers, export file 201322ac_20133440.c)
+ * fb_get_layer_addr @ 201326fc  (88 bytes, 179 callers, export file 20131638_201333f0.c)
  * Purpose: buffer index → address / front buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15328,7 +15289,7 @@ undefined * fb_get_layer_addr(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_layers_setup @ 2013276c  (920 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_layers_setup @ 2013276c  (920 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_layers_setup`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15468,7 +15429,7 @@ uint vdc5_layers_setup(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_layers_stop @ 20132b58  (60 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_layers_stop @ 20132b58  (60 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: stop all layers and release [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15494,7 +15455,7 @@ void vdc5_layers_stop(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_channel_shutdown @ 20132b94  (44 bytes, 3 callers, export file 201322ac_20133440.c)
+ * vdc5_channel_shutdown @ 20132b94  (44 bytes, 3 callers, export file 20131638_201333f0.c)
  * Purpose: stop layers, terminate the channel, clock off [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15518,7 +15479,7 @@ void vdc5_channel_shutdown(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dvi_set_resolution @ 20132bc0  (268 bytes, 1 callers, export file 201322ac_20133440.c)
+ * dvi_set_resolution @ 20132bc0  (268 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: `dvi_set_resolution`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15571,7 +15532,7 @@ byte dvi_set_resolution(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gui_start @ 20132ccc  (428 bytes, 1 callers, export file 201322ac_20133440.c)
+ * gui_start @ 20132ccc  (428 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: VDC5 ch0/ch1 set-up, then the GUI loop
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15649,7 +15610,7 @@ void gui_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * fb_get_front_addr @ 20132e78  (88 bytes, 2 callers, export file 201322ac_20133440.c)
+ * fb_get_front_addr @ 20132e78  (88 bytes, 2 callers, export file 20131638_201333f0.c)
  * Purpose: buffer index → address / front buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15688,7 +15649,7 @@ void * fb_get_front_addr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fb_cache_clean_buf @ 20132ee8  (16 bytes, 0 callers, export file 201322ac_20133440.c)
+ * fb_cache_clean_buf @ 20132ee8  (16 bytes, 0 callers, export file 20131638_201333f0.c)
  * Purpose: (n): dcache_clean_range of frame buffer n (0x600BB800, 0x605048A0, 0x60177000, 0x60000000, 0x60232800,
  *     0x602EE000), 0xBB800 bytes each except the last [fact]
  * Tag: [fact]
@@ -15728,7 +15689,7 @@ void fb_cache_clean_buf(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gui_area_dirty_set @ 20132f44  (16 bytes, 15 callers, export file 201322ac_20133440.c)
+ * gui_area_dirty_set @ 20132f44  (16 bytes, 15 callers, export file 20131638_201333f0.c)
  * Purpose: (i): 0x208F4D80[i] = 1 ; a redraw request per screen area (meter, scope) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -15746,7 +15707,7 @@ void gui_area_dirty_set(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * clmap_buf_get @ 20132f6c  (8 bytes, 1 callers, export file 201322ac_20133440.c)
+ * clmap_buf_get @ 20132f6c  (8 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: Returns 0x605C0C60, the buffer sd_clmap_prepare gives to fs_clmap_attach_scan [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -15763,7 +15724,7 @@ undefined * clmap_buf_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * fb_clear_all @ 20132f84  (32 bytes, 1 callers, export file 201322ac_20133440.c)
+ * fb_clear_all @ 20132f84  (32 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: clears all frame buffers (T11a)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15782,7 +15743,7 @@ void fb_clear_all(void)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_vline_cb @ 20133014  (56 bytes, 1 callers, export file 201322ac_20133440.c)
+ * vdc5_vline_cb @ 20133014  (56 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15804,7 +15765,7 @@ void vdc5_vline_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_vline_int_setup @ 2013304c  (28 bytes, 2 callers, export file 201322ac_20133440.c)
+ * vdc5_vline_int_setup @ 2013304c  (28 bytes, 2 callers, export file 20131638_201333f0.c)
  * Purpose: VLINE interrupt, no callback [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15828,7 +15789,7 @@ uint vdc5_vline_int_setup(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_vline_cb_enable @ 20133068  (20 bytes, 1 callers, export file 201322ac_20133440.c)
+ * vdc5_vline_cb_enable @ 20133068  (20 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: VLINE callback = vdc5_vline_cb [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15850,7 +15811,7 @@ uint vdc5_vline_cb_enable(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_vline_cb_disable @ 2013307c  (20 bytes, 1 callers, export file 201322ac_20133440.c)
+ * vdc5_vline_cb_disable @ 2013307c  (20 bytes, 1 callers, export file 20131638_201333f0.c)
  * Purpose: calls `FUN_20117c14`; 20 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -15870,7 +15831,7 @@ uint vdc5_vline_cb_disable(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_wait_frames @ 20133090  (24 bytes, 11 callers, export file 201322ac_20133440.c)
+ * vdc5_wait_frames @ 20133090  (24 bytes, 11 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15890,7 +15851,7 @@ void vdc5_wait_frames(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_isr_create @ 201330a8  (44 bytes, 2 callers, export file 201322ac_20133440.c)
+ * vdc5_isr_create @ 201330a8  (44 bytes, 2 callers, export file 20131638_201333f0.c)
  * Purpose: `vdc5_isr_create` / `vdc5_vline_cb` / `vdc5_wait_frames`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -15914,7 +15875,7 @@ int vdc5_isr_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_large_thunk @ 201335d8  (32 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope3d_render_large_thunk @ 201335d8  (32 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: -> scope3d_render_large (this = 0x20907F78) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15932,7 +15893,7 @@ void scope3d_render_large_thunk(uint n,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_small_thunk @ 201335f8  (32 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope3d_render_small_thunk @ 201335f8  (32 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: -> scope3d_render_small (this = 0x20907F78) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -15950,7 +15911,7 @@ void scope3d_render_small_thunk(uint n,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_history_clear_thunk @ 20133618  (8 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope3d_history_clear_thunk @ 20133618  (8 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: scope3d_history_clear(0x20907F78); scope_area_setup calls it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -15968,7 +15929,7 @@ void scope3d_history_clear_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_tables_init @ 20133620  (340 bytes, 8 callers, export file 20133484_20134318.c)
+ * scope3d_tables_init @ 20133620  (340 bytes, 8 callers, export file 20133418_20134304.c)
  * Purpose: Builds the 3DSS line offset tables 0x20907F7C/7FF4 (30 lines, mode 8) and 0x2090806C/80A8 (15 lines,
  *     mode 9), takes the work buffer and clears the history [fact]
  * Tag: [fact]
@@ -16042,7 +16003,7 @@ void scope3d_tables_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_buf_get @ 20133640  (12 bytes, 4 callers, export file 20133484_20134318.c)
+ * scope3d_buf_get @ 20133640  (12 bytes, 4 callers, export file 20133418_20134304.c)
  * Purpose: Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels use it
  *     as a back buffer [fact]
  * Tag: [fact]
@@ -16061,7 +16022,7 @@ undefined4 scope3d_buf_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_set @ 20133658  (240 bytes, 28 callers, export file 20133484_20134318.c)
+ * layer_alpha_rect_set @ 20133658  (240 bytes, 28 callers, export file 20133418_20134304.c)
  * Purpose: `layer_alpha_rect_set` / `layer_fade`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -16120,7 +16081,7 @@ uint layer_alpha_rect_set(uint param_1,int param_2,uint param_3,undefined4 *para
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_reapply @ 20133748  (36 bytes, 4 callers, export file 20133484_20134318.c)
+ * layer_alpha_rect_reapply @ 20133748  (36 bytes, 4 callers, export file 20133418_20134304.c)
  * Purpose: calls `r_vdc5_alpha_blending_rect`; 36 B, callers: 4 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -16141,7 +16102,7 @@ uint layer_alpha_rect_reapply(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_hit @ 2013376c  (140 bytes, 1 callers, export file 20133484_20134318.c)
+ * layer_alpha_rect_hit @ 2013376c  (140 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: pixel inside a layer's opaque alpha window (screen capture) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -16174,7 +16135,7 @@ uint layer_alpha_rect_hit(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_off @ 201337f8  (120 bytes, 6 callers, export file 20133484_20134318.c)
+ * layer_alpha_rect_off @ 201337f8  (120 bytes, 6 callers, export file 20133418_20134304.c)
  * Purpose: calls `layer_alpha_rect_set`; 120 B, callers: 6 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -16214,7 +16175,7 @@ void layer_alpha_rect_off(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * layer_alpha_rect_opaque @ 20133870  (128 bytes, 6 callers, export file 20133484_20134318.c)
+ * layer_alpha_rect_opaque @ 20133870  (128 bytes, 6 callers, export file 20133418_20134304.c)
  * Purpose: full-screen window, alpha 0xFF [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -16256,7 +16217,7 @@ void layer_alpha_rect_opaque(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * layer_fade @ 2013396c  (160 bytes, 3 callers, export file 20133484_20134318.c)
+ * layer_fade @ 2013396c  (160 bytes, 3 callers, export file 20133418_20134304.c)
  * Purpose: `layer_alpha_rect_set` / `layer_fade`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -16304,7 +16265,7 @@ void layer_fade(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * layer_hide @ 20133a0c  (44 bytes, 5 callers, export file 20133484_20134318.c)
+ * layer_hide @ 20133a0c  (44 bytes, 5 callers, export file 20133418_20134304.c)
  * Purpose: `layer_hide` / `layer_show` (both channels)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -16323,7 +16284,7 @@ void layer_hide(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * layer_show @ 20133a38  (84 bytes, 6 callers, export file 20133484_20134318.c)
+ * layer_show @ 20133a38  (84 bytes, 6 callers, export file 20133418_20134304.c)
  * Purpose: `layer_hide` / `layer_show` (both channels)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -16353,7 +16314,7 @@ void layer_show(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gui_update_layers @ 20133a8c  (436 bytes, 57 callers, export file 20133484_20134318.c)
+ * gui_update_layers @ 20133a8c  (436 bytes, 57 callers, export file 20133418_20134304.c)
  * Purpose: flip graphics 1/2 on both channels, copy-forward
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -16421,7 +16382,7 @@ void gui_update_layers(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_flip_one @ 20133c40  (316 bytes, 2 callers, export file 20133484_20134318.c)
+ * gui_flip_one @ 20133c40  (316 bytes, 2 callers, export file 20133418_20134304.c)
  * Purpose: flip only graphics 1 (0) or graphics 2 (1); brackets screen capture [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -16474,7 +16435,7 @@ void gui_flip_one(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fb_layer2_save @ 20133d7c  (44 bytes, 1 callers, export file 20133484_20134318.c)
+ * fb_layer2_save @ 20133d7c  (44 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -16496,7 +16457,7 @@ void fb_layer2_save(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fb_layer2_restore @ 20133da8  (44 bytes, 1 callers, export file 20133484_20134318.c)
+ * fb_layer2_restore @ 20133da8  (44 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -16519,7 +16480,7 @@ void fb_layer2_restore(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_peak_set @ 20133dec  (36 bytes, 2 callers, export file 20133484_20134318.c)
+ * scope_peak_set @ 20133dec  (36 bytes, 2 callers, export file 20133418_20134304.c)
  * Purpose: (level): passes the PEAK level to both 3D objects 0x20470294 / 0x20474C68 (gui.md: packet 0x20 byte
  *     0x10) [fact]
  * Tag: [fact]
@@ -16540,7 +16501,7 @@ void scope_peak_set(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_objects_init @ 201342b4  (448 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope_objects_init @ 201342b4  (448 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and its
  *     hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default ramps and resets
  *     the waterfall banks [fact]
@@ -16594,7 +16555,7 @@ void scope_objects_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_bank_reset @ 201342d0  (12 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope_obj_bank_reset @ 201342d0  (12 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: (mode): scope_wf_bank_set(0x2047963C, mode); packet 0x20 byte 7 bit 7 calls it with 0 (gui.md "resets
  *     the 3D engine object") [fact]
  * Tag: [fact]
@@ -16615,7 +16576,7 @@ void scope_obj_bank_reset(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_palette_set @ 201342dc  (256 bytes, 2 callers, export file 20133484_20134318.c)
+ * scope_palette_set @ 201342dc  (256 bytes, 2 callers, export file 20133418_20134304.c)
  * Purpose: (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68 from the
  *     ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12 bits 0-3) [fact]
  * Tag: [fact]
@@ -16650,7 +16611,7 @@ void scope_palette_set(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_freeze_a_set @ 201342f8  (24 bytes, 2 callers, export file 20133484_20134318.c)
+ * scope_freeze_a_set @ 201342f8  (24 bytes, 2 callers, export file 20133418_20134304.c)
  * Purpose: (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md); gui_screen_update sets
  *     it [fact]
  * Tag: [fact]
@@ -16670,7 +16631,7 @@ void scope_freeze_a_set(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_freeze_b_set @ 20134304  (24 bytes, 2 callers, export file 20133484_20134318.c)
+ * scope_freeze_b_set @ 20134304  (24 bytes, 2 callers, export file 20133418_20134304.c)
  * Purpose: (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -16686,9 +16647,8 @@ void scope_freeze_b_set(undefined1 param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope_history_reset @ 20134310  (8 bytes, 1 callers, export file 20133484_20134318.c)
+ * scope_history_reset @ 20134310  (8 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: Calls scope_obj_history_clear on the scope object 0x2047963C; scope3d_history_clear uses it (gui.md)
  *     [fact]
  * Tag: [fact]
@@ -16708,7 +16668,7 @@ void scope_history_reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_redraw_history @ 20134318  (452 bytes, 2 callers, export file 20133484_20134318.c)
+ * scope3d_redraw_history @ 20134318  (452 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: every N frames: re-project lines 29..2 (14..2) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -16778,8 +16738,9 @@ LAB_20157b88:
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * scope3d_add_line @ 20134328  (588 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope3d_add_line @ 20134328  (588 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: newest line = per-point max of the last N history rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -16867,7 +16828,7 @@ LAB_201582f8:
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_vscale @ 20134358  (68 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope3d_vscale @ 20134358  (68 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9) (gui.md
  *     3DSS step 4) [fact]
  * Tag: [fact]
@@ -16897,7 +16858,7 @@ undefined2 scope3d_vscale(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_line_offset @ 20134368  (88 bytes, 4 callers, export file 20134328_2013519c.c)
+ * scope3d_line_offset @ 20134368  (88 bytes, 4 callers, export file 20134310_2013512c.c)
  * Purpose: (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 /
  *     0x203D9A9E [fact]
  * Tag: [fact]
@@ -16940,7 +16901,7 @@ undefined2 scope3d_line_offset(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_levels_get @ 2013437c  (20 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope_levels_get @ 2013437c  (20 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: (index, out): per-column levels of the scope object for layout index / mode (method 0x20157C50, gui.md)
  *     [fact]
  * Tag: [fact]
@@ -16960,7 +16921,7 @@ void scope_levels_get(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_record_hold_copy @ 20134390  (8 bytes, 0 callers, export file 20134328_2013519c.c)
+ * scope_record_hold_copy @ 20134390  (8 bytes, 0 callers, export file 20134310_2013512c.c)
  * Purpose: Copies the 850-byte scope record to the hold copy 0x2048360D (spi-links.md) [fact for the doc; the
  *     8-byte body tail-calls into 0x20157C50]
  * Tag: [fact]
@@ -17002,7 +16963,7 @@ LAB_20157cc4:
 
 
 /* -----------------------------------------------------------------------------
- * scope_ramp_get @ 20134398  (44 bytes, 3 callers, export file 20134328_2013519c.c)
+ * scope_ramp_get @ 20134398  (44 bytes, 3 callers, export file 20134310_2013512c.c)
  * Purpose: (mode 8/9/other): second colour ramp from the objects 0x20474D04 / 0x20478550 / 0x20474C78 (gui.md 3DSS
  *     front trace) [fact]
  * Tag: [fact]
@@ -17030,7 +16991,7 @@ void scope_ramp_get(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_line_markers @ 20134408  (36 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope3d_line_markers @ 20134408  (36 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17048,7 +17009,7 @@ int scope3d_line_markers(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_wf_add_row @ 20134414  (16 bytes, 4 callers, export file 20134328_2013519c.c)
+ * scope_wf_add_row @ 20134414  (16 bytes, 4 callers, export file 20134310_2013512c.c)
  * Purpose: (record): adds a waterfall row to the scope object (method 0x20157D3C, gui.md 2D renderer step 2) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17067,7 +17028,7 @@ void scope_wf_add_row(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_wf_add_row_mode @ 20134424  (16 bytes, 0 callers, export file 20134328_2013519c.c)
+ * scope_wf_add_row_mode @ 20134424  (16 bytes, 0 callers, export file 20134310_2013512c.c)
  * Purpose: (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17086,7 +17047,7 @@ void scope_wf_add_row_mode(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_wf_row_addr @ 20134434  (116 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope_wf_row_addr @ 20134434  (116 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row (gui.md)
  *     [fact]
  * Tag: [fact]
@@ -17111,7 +17072,7 @@ int scope_wf_row_addr(uint param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_layout_set @ 20134480  (120 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope3d_layout_set @ 20134480  (120 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables
  *     0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) [fact]
  * Tag: [fact]
@@ -17146,7 +17107,7 @@ void scope3d_layout_set(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_reset_bank0 @ 2013448c  (12 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope_reset_bank0 @ 2013448c  (12 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: scope_obj_reset_bank0(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17164,7 +17125,7 @@ void scope_reset_bank0(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_reset_bank1 @ 20134498  (8 bytes, 2 callers, export file 20134328_2013519c.c)
+ * scope_reset_bank1 @ 20134498  (8 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: scope_obj_reset_bank1(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17182,7 +17143,7 @@ void scope_reset_bank1(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_indices_clear @ 201344a8  (8 bytes, 0 callers, export file 20134328_2013519c.c)
+ * scope_indices_clear @ 201344a8  (8 bytes, 0 callers, export file 20134310_2013512c.c)
  * Purpose: scope_obj_indices_clear(0x2047963C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17200,7 +17161,7 @@ void scope_indices_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * capture_merge_row @ 201344c8  (88 bytes, 2 callers, export file 20134328_2013519c.c)
+ * capture_merge_row @ 201344c8  (88 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: overlay one layer row; 0 = transparent unless inside an alpha window [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -17232,7 +17193,7 @@ void capture_merge_row(ushort param_1,int param_2,int param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * rgb565_row_to_bgr24 @ 20134520  (76 bytes, 1 callers, export file 20134328_2013519c.c)
+ * rgb565_row_to_bgr24 @ 20134520  (76 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: no direct calls; 76 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -17264,7 +17225,7 @@ void rgb565_row_to_bgr24(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * bmp_write_screen @ 2013456c  (216 bytes, 2 callers, export file 20134328_2013519c.c)
+ * bmp_write_screen @ 2013456c  (216 bytes, 2 callers, export file 20134310_2013512c.c)
  * Purpose: capture / `bmp_write_screen`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -17307,7 +17268,7 @@ undefined4 bmp_write_screen(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * screen_capture_bmp @ 20134644  (416 bytes, 1 callers, export file 20134328_2013519c.c)
+ * screen_capture_bmp @ 20134644  (416 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: capture / `bmp_write_screen`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -17381,7 +17342,7 @@ LAB_20134794:
 
 
 /* -----------------------------------------------------------------------------
- * debug_screenshot_root @ 20134854  (256 bytes, 1 callers, export file 20134328_2013519c.c)
+ * debug_screenshot_root @ 20134854  (256 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: `debug_overlay_draw` / `debug_screenshot_root`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -17429,7 +17390,7 @@ void debug_screenshot_root(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_search_files @ 20134978  (860 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_search_files @ 20134978  (860 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu byte 1 = 1..4: title from 0x208085FC, "Searching files...", builds the file list
  *     (sdmenu_list_files -> 0x209096B0, count 0x20909CF0) and answers 0xC3 (byte 1 + 0x40); mainlink_send_sd_absent
  *     without a card [fact]
@@ -17541,7 +17502,7 @@ void sdmenu_scr_search_files(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_file_list @ 20134984  (944 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_file_list @ 20134984  (944 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x41..0x44 step 1: draws the file rows (75-px pitch, highlight frame 0xF980 for the selected
  *     row, scroll bar gui_scrollbar_draw with count 0x20909CF0) [fact]
  * Tag: [fact]
@@ -17618,7 +17579,7 @@ LAB_20161e8c:
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_loading @ 20134990  (692 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_loading @ 20134990  (692 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x41/0x43 step 0x10: "LOADING", sdmenu_select_load + sdmenu_request loop with progress bar,
  *     then sdmenu_req_save; returns non-zero when the transfer to MAIN follows [fact]
  * Tag: [fact]
@@ -17736,7 +17697,7 @@ LAB_201615c8:
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_load_wait @ 2013499c  (408 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_load_wait @ 2013499c  (408 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu step 0x10 after sdmenu_scr_loading: "PROCESSING", progress bar from sdmenu_xfer_len until
  *     all bytes went or MAIN's frame changes [fact]
  * Tag: [fact]
@@ -17790,7 +17751,7 @@ void sdmenu_scr_load_wait(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_name_check @ 201349a8  (232 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_name_check @ 201349a8  (232 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 2: default file name (sdmenu_default_name) or sdmenu_file_exists for the
  *     chosen row, answer in a 0xC3 frame [fact]
  * Tag: [fact]
@@ -17867,7 +17828,7 @@ void sdmenu_scr_name_check(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_name_lookup @ 201349b4  (236 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_name_lookup @ 201349b4  (236 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 3: finds the typed name (strcasecmp over the 16-byte list 0x209096B0) and
  *     checks sdmenu_file_exists, answer in 0xC3 [fact]
  * Tag: [fact]
@@ -17940,7 +17901,7 @@ void sdmenu_scr_name_lookup(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_save_xfer @ 201349c0  (584 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_save_xfer @ 201349c0  (584 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 4: "PROCESSING", sdmenu_req_load, progress from sdmenu_xfer_len until done or
  *     MAIN's frame changes [fact]
  * Tag: [fact]
@@ -18030,7 +17991,7 @@ void sdmenu_scr_save_xfer(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_saving @ 201349cc  (708 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_saving @ 201349cc  (708 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x42/0x44 step 0x10: "SAVING", blank name -> sdmenu_default_name, sdmenu_select +
  *     sdmenu_request loop with progress bar, answer 0xC3 [fact]
  * Tag: [fact]
@@ -18151,7 +18112,7 @@ void sdmenu_scr_saving(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_info @ 201349d8  (424 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_info @ 201349d8  (424 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu byte 1 = 5: sd_info_screen(0x20909CF4) and a 0xC3 answer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18227,7 +18188,7 @@ void sdmenu_scr_info(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_info_text @ 201349e4  (524 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_info_text @ 201349e4  (524 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x45: draws the two text lines 0x20909CF4 / 0x20909D34 that sd_info_screen filled, with
  *     separators [fact]
  * Tag: [fact]
@@ -18269,7 +18230,7 @@ void sdmenu_scr_info_text(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_card_check @ 201349f0  (348 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_card_check @ 201349f0  (348 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu byte 1 = 8: sd_present -> 0xC3 answer with status 1 (card) or 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18341,7 +18302,7 @@ void sdmenu_scr_card_check(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_format_confirm @ 201349fc  (560 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_format_confirm @ 201349fc  (560 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x48 step 1: "FORMAT SD CARD" confirmation screen [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18385,7 +18346,7 @@ void sdmenu_scr_format_confirm(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdmenu_scr_format_run @ 20134a08  (496 bytes, 1 callers, export file 20134328_2013519c.c)
+ * sdmenu_scr_format_run @ 20134a08  (496 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: scr_sd_menu 0x48 step 0x10: "Now format in progress...", sd_format_request loop with progress bar,
  *     sd_format_done, answer 0xC3 [fact]
  * Tag: [fact]
@@ -18465,7 +18426,7 @@ void sdmenu_scr_format_run(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * meter_draw @ 20134abc  (616 bytes, 1 callers, export file 20134328_2013519c.c)
+ * meter_draw @ 20134abc  (616 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: `meter_draw` (181-step bar, peak hold) / `meter_draw_scale`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18590,7 +18551,7 @@ LAB_20134cec:
 
 
 /* -----------------------------------------------------------------------------
- * meter_draw_scale @ 20134d24  (176 bytes, 1 callers, export file 20134328_2013519c.c)
+ * meter_draw_scale @ 20134d24  (176 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: `meter_draw` (181-step bar, peak hold) / `meter_draw_scale`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18622,7 +18583,7 @@ void meter_draw_scale(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * test_disp_init @ 20134e0c  (100 bytes, 0 callers, export file 20134328_2013519c.c)
+ * test_disp_init @ 20134e0c  (100 bytes, 0 callers, export file 20134310_2013512c.c)
  * Purpose: replay task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18656,7 +18617,7 @@ void test_disp_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * debug_cmd_line_read @ 20134e70  (364 bytes, 1 callers, export file 20134328_2013519c.c)
+ * debug_cmd_line_read @ 20134e70  (364 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: `debug_replay_send_cmd` / `debug_cmd_line_read`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18734,7 +18695,7 @@ uint debug_cmd_line_read(short *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * debug_replay_send_cmd @ 20134fdc  (268 bytes, 1 callers, export file 20134328_2013519c.c)
+ * debug_replay_send_cmd @ 20134fdc  (268 bytes, 1 callers, export file 20134310_2013512c.c)
  * Purpose: `debug_replay_send_cmd` / `debug_cmd_line_read`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18796,7 +18757,7 @@ undefined4 debug_replay_send_cmd(void)
 
 
 /* -----------------------------------------------------------------------------
- * test_disp_start @ 2013518c  (16 bytes, 1 callers, export file 20134328_2013519c.c)
+ * test_disp_start @ 2013518c  (16 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: set flag 1 -> task_test_disp runs the replay [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -18814,7 +18775,7 @@ void test_disp_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * test_disp_stop @ 2013519c  (16 bytes, 1 callers, export file 20134328_2013519c.c)
+ * test_disp_stop @ 2013519c  (16 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: no direct calls; 16 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18828,8 +18789,9 @@ void test_disp_stop(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * test_disp_state @ 201351ac  (12 bytes, 1 callers, export file 201351ac_201374ac.c)
+ * test_disp_state @ 201351ac  (12 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: 1 = running, 2 = idle [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -18846,7 +18808,7 @@ byte test_disp_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * div10_round @ 201353f8  (80 bytes, 5 callers, export file 201351ac_201374ac.c)
+ * div10_round @ 201353f8  (80 bytes, 5 callers, export file 2013518c_20137490.c)
  * Purpose: no direct calls; 80 B, callers: 5 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18881,7 +18843,7 @@ int div10_round(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * bcd_to_bin @ 20135458  (24 bytes, 12 callers, export file 201351ac_201374ac.c)
+ * bcd_to_bin @ 20135458  (24 bytes, 12 callers, export file 2013518c_20137490.c)
  * Purpose: no direct calls; 24 B, callers: 12 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18896,7 +18858,7 @@ int bcd_to_bin(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * be16_load @ 20135470  (24 bytes, 26 callers, export file 201351ac_201374ac.c)
+ * be16_load @ 20135470  (24 bytes, 26 callers, export file 2013518c_20137490.c)
  * Purpose: no direct calls; 24 B, callers: 26 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18911,7 +18873,7 @@ ushort be16_load(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * be32_load @ 20135498  (36 bytes, 8 callers, export file 201351ac_201374ac.c)
+ * be32_load @ 20135498  (36 bytes, 8 callers, export file 2013518c_20137490.c)
  * Purpose: no direct calls; 36 B, callers: 8 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18927,7 +18889,7 @@ uint be32_load(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * str_rtrim @ 201354ec  (60 bytes, 9 callers, export file 201351ac_201374ac.c)
+ * str_rtrim @ 201354ec  (60 bytes, 9 callers, export file 2013518c_20137490.c)
  * Purpose: calls `strlen`; 60 B, callers: 9 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -18951,7 +18913,7 @@ void str_rtrim(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fb_blit_raw @ 20135534  (88 bytes, 14 callers, export file 201351ac_201374ac.c)
+ * fb_blit_raw @ 20135534  (88 bytes, 14 callers, export file 2013518c_20137490.c)
  * Purpose: `fb_blit_raw`(fb, y, x, src, w, h): raw RGB565
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -18981,7 +18943,7 @@ void fb_blit_raw(int param_1,int param_2,int param_3,int param_4,int param_5,int
 
 
 /* -----------------------------------------------------------------------------
- * fb_rect_in_bounds @ 2013558c  (48 bytes, 5 callers, export file 201351ac_201374ac.c)
+ * fb_rect_in_bounds @ 2013558c  (48 bytes, 5 callers, export file 2013518c_20137490.c)
  * Purpose: (y, x, w, h) inside 800x480 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -19009,7 +18971,7 @@ undefined4 fb_rect_in_bounds(uint param_1,uint param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fb_clear_rect @ 201355bc  (72 bytes, 93 callers, export file 201351ac_201374ac.c)
+ * fb_clear_rect @ 201355bc  (72 bytes, 93 callers, export file 2013518c_20137490.c)
  * Purpose: `fb_clear_rect`(fb, y, x, w, h): fill with 0 (transparent)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19039,7 +19001,7 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
 
 
 /* -----------------------------------------------------------------------------
- * fb_clear_rect_checked @ 20135604  (84 bytes, 3 callers, export file 201351ac_201374ac.c)
+ * fb_clear_rect_checked @ 20135604  (84 bytes, 3 callers, export file 2013518c_20137490.c)
  * Purpose: calls `fb_clear_rect`, `fb_rect_in_bounds`; 84 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -19061,7 +19023,7 @@ bool fb_clear_rect_checked(int param_1,int param_2,int param_3,int param_4,undef
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_rect @ 20135658  (128 bytes, 175 callers, export file 201351ac_201374ac.c)
+ * fb_fill_rect @ 20135658  (128 bytes, 175 callers, export file 2013518c_20137490.c)
  * Purpose: (fb, color, y, x, w, h); color 0 → `fb_clear_rect`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19099,7 +19061,7 @@ void fb_fill_rect(int param_1,int param_2,int param_3,int param_4,int param_5,in
 
 
 /* -----------------------------------------------------------------------------
- * fb_draw_frame @ 2013573c  (172 bytes, 8 callers, export file 201351ac_201374ac.c)
+ * fb_draw_frame @ 2013573c  (172 bytes, 8 callers, export file 2013518c_20137490.c)
  * Purpose: rectangle outline / outline with cut corners
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19125,7 +19087,7 @@ void fb_draw_frame(uint param_1,uint param_2,int param_3,int param_4,int param_5
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_runs @ 201358d0  (160 bytes, 294 callers, export file 201351ac_201374ac.c)
+ * gui_draw_runs @ 201358d0  (160 bytes, 294 callers, export file 2013518c_20137490.c)
  * Purpose: draw a run sprite at (y, x) (294 callers)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19168,7 +19130,7 @@ void gui_draw_runs(int param_1,int param_2,int param_3,void *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_runs32 @ 201359bc  (156 bytes, 15 callers, export file 201351ac_201374ac.c)
+ * gui_draw_runs32 @ 201359bc  (156 bytes, 15 callers, export file 2013518c_20137490.c)
  * Purpose: run sprite with u32 runs (`gui_draw_runs32`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19213,7 +19175,7 @@ void gui_draw_runs32(int param_1,int param_2,int param_3,void *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_box @ 20135aa4  (52 bytes, 38 callers, export file 201351ac_201374ac.c)
+ * fb_fill_box @ 20135aa4  (52 bytes, 38 callers, export file 2013518c_20137490.c)
  * Purpose: `fb_fill_box` (fb, y, x, w, h, color) / same with w, h swapped
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19231,7 +19193,7 @@ void fb_fill_box(uint param_1,uint param_2,uint param_3,uint param_4,uint param_
 
 
 /* -----------------------------------------------------------------------------
- * fb_fill_box_t @ 20135ad8  (52 bytes, 26 callers, export file 201351ac_201374ac.c)
+ * fb_fill_box_t @ 20135ad8  (52 bytes, 26 callers, export file 2013518c_20137490.c)
  * Purpose: `fb_fill_box` (fb, y, x, w, h, color) / same with w, h swapped
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19249,7 +19211,7 @@ void fb_fill_box_t(uint param_1,uint param_2,uint param_3,uint param_4,uint para
 
 
 /* -----------------------------------------------------------------------------
- * sprite_unpack @ 20135b0c  (96 bytes, 3 callers, export file 201351ac_201374ac.c)
+ * sprite_unpack @ 20135b0c  (96 bytes, 3 callers, export file 2013518c_20137490.c)
  * Purpose: `sprite_unpack` to a w×h buffer
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19280,7 +19242,7 @@ void sprite_unpack(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_hex @ 20135b6c  (168 bytes, 4 callers, export file 201351ac_201374ac.c)
+ * gui_draw_hex @ 20135b6c  (168 bytes, 4 callers, export file 2013518c_20137490.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19326,7 +19288,7 @@ void gui_draw_hex(int param_1,uint param_2,int param_3,int param_4,int param_5)
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_dec @ 20135c14  (212 bytes, 22 callers, export file 201351ac_201374ac.c)
+ * gui_draw_dec @ 20135c14  (212 bytes, 22 callers, export file 2013518c_20137490.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19386,7 +19348,7 @@ void gui_draw_dec(int param_1,undefined4 param_2,int param_3,int param_4,int par
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_hex_color @ 20135ce8  (236 bytes, 3 callers, export file 201351ac_201374ac.c)
+ * gui_draw_hex_color @ 20135ce8  (236 bytes, 3 callers, export file 2013518c_20137490.c)
  * Purpose: hex / decimal / recoloured hex numbers in the 10×15 font
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19450,7 +19412,7 @@ void gui_draw_hex_color(int param_1,uint param_2,int param_3,int param_4,int par
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text @ 20135dd4  (108 bytes, 74 callers, export file 201351ac_201374ac.c)
+ * gui_draw_text @ 20135dd4  (108 bytes, 74 callers, export file 2013518c_20137490.c)
  * Purpose: `gui_draw_text`(fb, str, y, x, pitch, font)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19481,7 +19443,7 @@ void gui_draw_text(int param_1,int param_2,int param_3,int param_4,int param_5,i
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text_words @ 20135ec0  (288 bytes, 14 callers, export file 201351ac_201374ac.c)
+ * gui_draw_text_words @ 20135ec0  (288 bytes, 14 callers, export file 2013518c_20137490.c)
  * Purpose: text with half-width spaces / centred on x
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19555,7 +19517,7 @@ void gui_draw_text_words(uint param_1,uint param_2,uint param_3,int param_4,uint
 
 
 /* -----------------------------------------------------------------------------
- * gui_draw_text_centered @ 20135ff0  (156 bytes, 53 callers, export file 201351ac_201374ac.c)
+ * gui_draw_text_centered @ 20135ff0  (156 bytes, 53 callers, export file 2013518c_20137490.c)
  * Purpose: text with half-width spaces / centred on x
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19597,7 +19559,7 @@ void gui_draw_text_centered
 
 
 /* -----------------------------------------------------------------------------
- * debug_dump_rx_frame @ 201360b0  (216 bytes, 1 callers, export file 201351ac_201374ac.c)
+ * debug_dump_rx_frame @ 201360b0  (216 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: (buf, last, n): F2 debug overlay (gui.md): hex dump of the MAIN-link RX frame ml_rx_frame (0x200 bytes)
  *     at x 200, rows of 14 px, keeping a copy in 0x20909DB4 to redraw only on change [fact]
  * Tag: [fact]
@@ -19658,7 +19620,7 @@ void debug_dump_rx_frame(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * debug_dump_rx_buf2 @ 20136188  (264 bytes, 1 callers, export file 201351ac_201374ac.c)
+ * debug_dump_rx_buf2 @ 20136188  (264 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: (buf, last, n): F2 debug overlay: hex dump of the second RX buffer 0x2045F4A0 (0x20 bytes) plus the last
  *     received command byte g_ml.last_rx_cmd, copy in 0x20909FF4 [fact]
  * Tag: [fact]
@@ -19722,7 +19684,7 @@ void debug_dump_rx_buf2(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fb_draw_round_frame @ 20136290  (264 bytes, 12 callers, export file 201351ac_201374ac.c)
+ * fb_draw_round_frame @ 20136290  (264 bytes, 12 callers, export file 2013518c_20137490.c)
  * Purpose: rectangle outline / outline with cut corners
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19757,7 +19719,7 @@ void fb_draw_round_frame(uint param_1,uint param_2,uint param_3,int param_4,int 
 
 
 /* -----------------------------------------------------------------------------
- * fb_draw_round_frame_wrap @ 20136398  (40 bytes, 18 callers, export file 201351ac_201374ac.c)
+ * fb_draw_round_frame_wrap @ 20136398  (40 bytes, 18 callers, export file 2013518c_20137490.c)
  * Purpose: Tail call to fb_draw_round_frame (arguments lost in the decompile); list and pop-up screens frame their
  *     boxes with it [fact]
  * Tag: [fact]
@@ -19777,7 +19739,7 @@ void fb_draw_round_frame_wrap(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_scrollbar_draw @ 201363c0  (452 bytes, 5 callers, export file 201351ac_201374ac.c)
+ * gui_scrollbar_draw @ 201363c0  (452 bytes, 5 callers, export file 2013518c_20137490.c)
  * Purpose: (fb, y, x, w, h, pos, count, min, colour): framed track with a 0x632C thumb sized and placed from pos /
  *     count (idivmod); used by scr_info, text_list_item_rows and the SD-menu file screens [fact]
  * Tag: [fact]
@@ -19827,7 +19789,7 @@ void gui_scrollbar_draw(uint param_1,uint param_2,int param_3,int param_4,uint p
 
 
 /* -----------------------------------------------------------------------------
- * debug_overlay_draw @ 201367b4  (2056 bytes, 1 callers, export file 201351ac_201374ac.c)
+ * debug_overlay_draw @ 201367b4  (2056 bytes, 1 callers, export file 2013518c_20137490.c)
  * Purpose: `debug_overlay_draw` / `debug_screenshot_root`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -19976,7 +19938,7 @@ void debug_overlay_draw(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac8_m2m_start @ 201378b0  (84 bytes, 4 callers, export file 201376c4_20139590.c)
+ * dmac8_m2m_start @ 201378b0  (84 bytes, 4 callers, export file 201374a0_20139330.c)
  * Purpose: `dmac8_m2m_start`: DMAC ch0 (0xE8200400) memory copy
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -20009,7 +19971,7 @@ void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_obj_clear @ 201571e8  (36 bytes, 3 callers, export file 201567f4_2015863c.c)
+ * afscope_obj_clear @ 201571e8  (36 bytes, 3 callers, export file 20156748_20158568.c)
  * Purpose: (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20029,7 +19991,7 @@ void afscope_obj_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy_inverted_words @ 20157214  (36 bytes, 4 callers, export file 201567f4_2015863c.c)
+ * copy_inverted_words @ 20157214  (36 bytes, 4 callers, export file 20156748_20158568.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20051,7 +20013,7 @@ void copy_inverted_words(undefined4 param_1,uint *param_2,uint *param_3,uint par
 
 
 /* -----------------------------------------------------------------------------
- * scope_wf_bank_set @ 201576f4  (108 bytes, 4 callers, export file 201567f4_2015863c.c)
+ * scope_wf_bank_set @ 201576f4  (108 bytes, 4 callers, export file 20156748_20158568.c)
  * Purpose: (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 = 0), 1
  *     selects bank 1, 2 clears both banks [fact]
  * Tag: [fact]
@@ -20084,7 +20046,7 @@ void scope_wf_bank_set(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_history_clear @ 20157778  (116 bytes, 4 callers, export file 201567f4_2015863c.c)
+ * scope_obj_history_clear @ 20157778  (116 bytes, 4 callers, export file 20156748_20158568.c)
  * Purpose: (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope object
  *     [fact]
  * Tag: [fact]
@@ -20110,7 +20072,7 @@ void scope_obj_history_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy_inverted_words_b @ 201577f8  (36 bytes, 2 callers, export file 201567f4_2015863c.c)
+ * copy_inverted_words_b @ 201577f8  (36 bytes, 2 callers, export file 20156748_20158568.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words); scope_history_push uses
  *     it [fact]
  * Tag: [fact]
@@ -20134,7 +20096,7 @@ void copy_inverted_words_b(undefined4 param_1,uint *param_2,uint *param_3,uint p
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_reset_bank0 @ 201578c8  (40 bytes, 1 callers, export file 201567f4_2015863c.c)
+ * scope_obj_reset_bank0 @ 201578c8  (40 bytes, 1 callers, export file 20156748_20158568.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20155,7 +20117,7 @@ void scope_obj_reset_bank0(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_levels_get @ 20157c50  (224 bytes, 2 callers, export file 201567f4_2015863c.c)
+ * scope_obj_levels_get @ 20157c50  (224 bytes, 2 callers, export file 20156748_20158568.c)
  * Purpose: (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while SPEED
  *     STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method behind
  *     scope_levels_get) [fact]
@@ -20199,7 +20161,7 @@ LAB_20157cc4:
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_wf_add_row @ 20157d3c  (552 bytes, 2 callers, export file 201567f4_2015863c.c)
+ * scope_obj_wf_add_row @ 20157d3c  (552 bytes, 2 callers, export file 20156748_20158568.c)
  * Purpose: (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), adds
  *     the level offset to each point (clamp_add_u8, 0..255) into the current waterfall bank (gui.md:
  *     scope_wf_add_row) [fact for the calls]
@@ -20301,7 +20263,7 @@ void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_reset_bank1 @ 20158568  (40 bytes, 1 callers, export file 201567f4_2015863c.c)
+ * scope_obj_reset_bank1 @ 20158568  (40 bytes, 1 callers, export file 20156748_20158568.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20320,9 +20282,8 @@ void scope_obj_reset_bank1(int param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope_obj_indices_clear @ 20158590  (104 bytes, 1 callers, export file 201567f4_2015863c.c)
+ * scope_obj_indices_clear @ 20158590  (104 bytes, 1 callers, export file 20158590_2015b8f8.c)
  * Purpose: (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20343,7 +20304,7 @@ int scope_obj_indices_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_obj_init @ 201587fc  (60 bytes, 2 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_obj_init @ 201587fc  (60 bytes, 2 callers, export file 20158590_2015b8f8.c)
  * Purpose: (obj): resets the three sub-objects (+0x10, +0x9C, +0x38E8) and byte 0; used for the 3D objects
  *     0x20470294 / 0x20474C68 by scope_objects_init [fact]
  * Tag: [fact]
@@ -20366,7 +20327,7 @@ void scope3d_obj_init(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * touch_wait_tap @ 20158fd0  (132 bytes, 2 callers, export file 2015869c_2015bb7c.c)
+ * touch_wait_tap @ 20158fd0  (132 bytes, 2 callers, export file 20158590_2015b8f8.c)
  * Purpose: Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or 4), a
  *     release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and fwupdate_insert_sd_screen wait with it
  *     [fact]
@@ -20407,7 +20368,7 @@ void touch_wait_tap(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_line_render @ 2015b8f8  (176 bytes, 2 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_line_render @ 2015b8f8  (176 bytes, 2 callers, export file 20158590_2015b8f8.c)
  * Purpose: (buf, i, y, x0, mode, ...): one 3DSS line: levels (FUN_201343c4), colour ramp scope_ramp_get, markers
  *     scope3d_line_markers, scale scope3d_vscale, then scope3d_draw_line at x = 5i + x0, width 0x317 - 10i (gui.md
  *     3DSS step 4) [fact]
@@ -20449,9 +20410,8 @@ void scope3d_line_render(undefined4 param_1,int param_2,undefined4 param_3,int p
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope3d_history_clear @ 2015b9a8  (28 bytes, 2 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_history_clear @ 2015b9a8  (28 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: Resets the history (0x20134310) and clears 0x6B080 bytes of the 3D buffer *0x208085B4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20470,7 +20430,7 @@ void scope3d_history_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_large @ 2015b9cc  (240 bytes, 1 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_render_large @ 2015b9cc  (240 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: mode 8: 29 lines, 222/274 rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20533,7 +20493,7 @@ void scope3d_render_large(void *param_1,uint n,int param_3,ushort *param_4,uint 
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_line_render_alt @ 2015bacc  (176 bytes, 0 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_line_render_alt @ 2015bacc  (176 bytes, 0 callers, export file 2015b9a8_2015f040.c)
  * Purpose: Identical copy of scope3d_line_render that scope3d_render_large uses when its third argument is non-zero
  *     [fact]
  * Tag: [fact]
@@ -20576,7 +20536,7 @@ void scope3d_line_render_alt
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_small @ 2015bb7c  (236 bytes, 1 callers, export file 2015869c_2015bb7c.c)
+ * scope3d_render_small @ 2015bb7c  (236 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: mode 9: 14 lines, 104/156 rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20630,8 +20590,9 @@ void scope3d_render_small(void *param_1,uint n,int param_3,ushort *param_4,uint 
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * scope3d_draw_line @ 2015bc6c  (484 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope3d_draw_line @ 2015bc6c  (484 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: line i at x = 5i+4, width 791-10i [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20739,7 +20700,7 @@ void scope3d_draw_line(int param_1,int param_2,int param_3,int param_4,int param
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_scope @ 2015c558  (304 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
+ * touch_hit_scope @ 2015c558  (304 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2), expanded
  *     flag; input.md lists it for soft keys 0x1016..0x1019 [fact]
  * Tag: [fact]
@@ -20823,7 +20784,7 @@ undefined4 touch_hit_scope(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_set_speed @ 2015d1c4  (204 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_set_speed @ 2015d1c4  (204 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -20883,7 +20844,7 @@ void scope2d_set_speed(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_set_color @ 2015d2a8  (92 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_set_color @ 2015d2a8  (92 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -20928,7 +20889,7 @@ void scope2d_set_color(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * multi_panel_draw @ 2015d334  (128 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * multi_panel_draw @ 2015d334  (128 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -20953,7 +20914,7 @@ void multi_panel_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_normal @ 2015d3b8  (212 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_draw_normal @ 2015d3b8  (212 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -20995,7 +20956,7 @@ void scope2d_draw_normal(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_front_large @ 2015d49c  (104 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope3d_front_large @ 2015d49c  (104 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21026,7 +20987,7 @@ void scope3d_front_large(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_multi @ 2015d508  (208 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_draw_multi @ 2015d508  (208 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21068,7 +21029,7 @@ void scope2d_draw_multi(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_front_small @ 2015d5e8  (100 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope3d_front_small @ 2015d5e8  (100 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21099,7 +21060,7 @@ void scope3d_front_small(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * osc_draw @ 2015d650  (188 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
+ * osc_draw @ 2015d650  (188 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21142,7 +21103,7 @@ void osc_draw(int param_1,int param_2,int param_3,undefined4 param_4,int param_5
 
 
 /* -----------------------------------------------------------------------------
- * scope_front_trace_draw @ 2015d70c  (360 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope_front_trace_draw @ 2015d70c  (360 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21228,7 +21189,7 @@ void scope_front_trace_draw
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_size0 @ 2015d874  (212 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_draw_size0 @ 2015d874  (212 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21270,7 +21231,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_expand @ 2015d958  (212 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_draw_expand @ 2015d958  (212 bytes, 2 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21312,7 +21273,7 @@ void scope2d_draw_expand(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * affft_waterfall_blit @ 2015da3c  (96 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
+ * affft_waterfall_blit @ 2015da3c  (96 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21335,7 +21296,7 @@ void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int pa
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_waterfall_blit @ 2015da9c  (228 bytes, 4 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_waterfall_blit @ 2015da9c  (228 bytes, 4 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21369,7 +21330,7 @@ void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,u
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_spectrum_fill @ 2015db80  (268 bytes, 4 callers, export file 2015bc6c_2015f0c4.c)
+ * scope2d_spectrum_fill @ 2015db80  (268 bytes, 4 callers, export file 2015b9a8_2015f040.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21451,7 +21412,7 @@ void scope2d_spectrum_fill
 
 
 /* -----------------------------------------------------------------------------
- * affft_spectrum_draw @ 2015dc90  (156 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
+ * affft_spectrum_draw @ 2015dc90  (156 bytes, 1 callers, export file 2015b9a8_2015f040.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21503,7 +21464,7 @@ void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefin
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map0_init @ 20160c70  (124 bytes, 1 callers, export file 2015f0cc_20162c10.c)
+ * afscope_map0_init @ 20160c70  (124 bytes, 1 callers, export file 2015f05c_20160e44.c)
  * Purpose: Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on 0x27
  *     (39, the AF-FFT spectrum height of gui.md) [fact]
  * Tag: [fact]
@@ -21548,7 +21509,7 @@ void afscope_map0_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map2_init @ 20160cf0  (92 bytes, 1 callers, export file 2015f0cc_20162c10.c)
+ * afscope_map2_init @ 20160cf0  (92 bytes, 1 callers, export file 2015f05c_20160e44.c)
  * Purpose: Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21582,7 +21543,7 @@ void afscope_map2_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map1_init @ 20160d50  (144 bytes, 1 callers, export file 2015f0cc_20162c10.c)
+ * afscope_map1_init @ 20160d50  (144 bytes, 1 callers, export file 2015f05c_20160e44.c)
  * Purpose: Map 1 (obj +0x100): the same curve as map 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21627,7 +21588,7 @@ void afscope_map1_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map3_init @ 20160de4  (92 bytes, 1 callers, export file 2015f0cc_20162c10.c)
+ * afscope_map3_init @ 20160de4  (92 bytes, 1 callers, export file 2015f05c_20160e44.c)
  * Purpose: Map 3 (obj +0x300): the same curve as map 2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21661,7 +21622,7 @@ void afscope_map3_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map4_init @ 20160e44  (144 bytes, 1 callers, export file 2015f0cc_20162c10.c)
+ * afscope_map4_init @ 20160e44  (144 bytes, 1 callers, export file 2015f05c_20160e44.c)
  * Purpose: Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the bar
  *     height affft_bins_get returns) [fact]
  * Tag: [fact]
@@ -21706,9 +21667,8 @@ void afscope_map4_init(int param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope3d_widths_init @ 20164334  (44 bytes, 2 callers, export file 20163b48_2016479c.c)
+ * scope3d_widths_init @ 20164334  (44 bytes, 2 callers, export file 20163a40_201646bc.c)
  * Purpose: (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21739,7 +21699,7 @@ void scope3d_widths_init(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_advance @ 20164360  (28 bytes, 1 callers, export file 20163b48_2016479c.c)
+ * ring100_advance @ 20164360  (28 bytes, 1 callers, export file 20163a40_201646bc.c)
  * Purpose: (idx): returns *idx and advances it with ring100_next; affft_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21763,7 +21723,7 @@ undefined4 ring100_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_advance @ 20164388  (28 bytes, 2 callers, export file 20163b48_2016479c.c)
+ * ring133_advance @ 20164388  (28 bytes, 2 callers, export file 20163a40_201646bc.c)
  * Purpose: (idx): returns *idx and advances it; scope_obj_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21787,7 +21747,7 @@ undefined4 ring133_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_reset @ 201643a4  (12 bytes, 3 callers, export file 20163b48_2016479c.c)
+ * ring133_reset @ 201643a4  (12 bytes, 3 callers, export file 20163a40_201646bc.c)
  * Purpose: (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21805,7 +21765,7 @@ void ring133_reset(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_advance @ 201643b0  (28 bytes, 2 callers, export file 20163b48_2016479c.c)
+ * ring20_advance @ 201643b0  (28 bytes, 2 callers, export file 20163a40_201646bc.c)
  * Purpose: (idx): returns *idx and advances it; scope_history_push [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21829,7 +21789,7 @@ undefined4 ring20_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_advance @ 201643cc  (28 bytes, 1 callers, export file 20163b48_2016479c.c)
+ * ring30_advance @ 201643cc  (28 bytes, 1 callers, export file 20163a40_201646bc.c)
  * Purpose: (idx): returns *idx and advances it; scope3d_redraw_history [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21853,7 +21813,7 @@ undefined4 ring30_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_offset @ 20164758  (44 bytes, 1 callers, export file 20163b48_2016479c.c)
+ * ring100_offset @ 20164758  (44 bytes, 1 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21870,7 +21830,7 @@ int ring100_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_next @ 20164788  (20 bytes, 1 callers, export file 20163b48_2016479c.c)
+ * ring100_next @ 20164788  (20 bytes, 1 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 100 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21893,7 +21853,7 @@ int ring100_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_offset @ 2016479c  (48 bytes, 2 callers, export file 20163b48_2016479c.c)
+ * ring133_offset @ 2016479c  (48 bytes, 2 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21914,8 +21874,9 @@ int ring133_offset(int *param_1,int param_2)
   return ((iVar1 >> 7) - (iVar1 >> 0x1f)) * -0x85 + uVar2;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ring133_next @ 201647d0  (20 bytes, 1 callers, export file 201647d0_20164fa4.c)
+ * ring133_next @ 201647d0  (20 bytes, 1 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 133 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21938,7 +21899,7 @@ int ring133_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_offset @ 201647e4  (44 bytes, 8 callers, export file 201647d0_20164fa4.c)
+ * ring20_offset @ 201647e4  (44 bytes, 8 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21956,7 +21917,7 @@ int ring20_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_next @ 20164814  (20 bytes, 1 callers, export file 201647d0_20164fa4.c)
+ * ring20_next @ 20164814  (20 bytes, 1 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 20 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21979,7 +21940,7 @@ int ring20_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_offset @ 20164828  (48 bytes, 4 callers, export file 201647d0_20164fa4.c)
+ * ring30_offset @ 20164828  (48 bytes, 4 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22002,7 +21963,7 @@ int ring30_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_next @ 2016485c  (20 bytes, 1 callers, export file 201647d0_20164fa4.c)
+ * ring30_next @ 2016485c  (20 bytes, 1 callers, export file 20164714_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 30 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md

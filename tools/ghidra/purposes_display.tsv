@@ -123,8 +123,8 @@
 2011e290	rspi2_rx_isr	clear SPRIE, flag	inference	spi-links.md
 2011e308	rspi0_tx_isr	clear SPTIE, flag 0x2080041D	inference	spi-links.md
 2011e3fc	rspi0_read_burst	dummy 0xFF writes, wait RX	inference	spi-links.md
-2011f278	rspi_read	PIO read in chunks of the RX trigger level	fact	spi-links.md
-2011f718	rspi_write	PIO write by TX trigger level	fact	spi-links.md
+2011f494	rspi_read	the argument checks	fact	spi-links.md
+2011f718	rspi_write	the argument checks	fact	spi-links.md
 2011f8f8	rspi_wait_tx_end	Spins on SPSR.TEND	fact	spi-links.md
 2011febc	userdef_riic0_init_rx_full	Clears the ch0 receive-full flag 0x20800454	inference	peripherals.md
 2011fecc	userdef_riic1_init_rx_full	Clears the ch1 receive-full flag 0x20800455	inference	peripherals.md

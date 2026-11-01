@@ -432,7 +432,7 @@ void pclink_tx_trailer_init(void)
 }
 
 
-// ===== pclink_tx_dma_start @ 20112158 (60 bytes)
+// ===== pclink_tx_dma_start @ 20112158 (40 bytes)
 
 /* DMA ch9 0x60501000 -> SPDR0, 0x1000 */
 
@@ -445,7 +445,7 @@ void pclink_tx_dma_start(void)
   DMAC_N0DA_9 = 0xe800c804;
                     /* Next0 Transaction Byte 9 [sfr] */
   DMAC_N0TB_9 = 0x1000;
-  reg_rmw32(&DMAC_CHCTRL_9,1,0);
+  dmac9_enable();
   return;
 }
 
