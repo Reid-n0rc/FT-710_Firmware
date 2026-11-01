@@ -625,7 +625,10 @@ def _init_worker():
     global _CHK
     _CHK = Checker()
     import atexit
+    import multiprocessing.util
     atexit.register(_CHK.close)
+    # pool workers leave through os._exit, which skips atexit; multiprocessing runs its own finalizers first
+    multiprocessing.util.Finalize(_CHK, _CHK.close, exitpriority=10)
 
 
 def _check_one(job):
@@ -653,9 +656,15 @@ def run_jobs(jobs, n):
             yield _check_one(j)
         _CHK.close()
         return
-    with multiprocessing.Pool(n, initializer=_init_worker) as pool:
+    pool = multiprocessing.Pool(n, initializer=_init_worker)
+    try:
         for r in pool.imap_unordered(_check_one, jobs):
             yield r
+        pool.close()        # not terminate(): the workers must run their finalizers (Ghidra, temporary copies)
+    except BaseException:
+        pool.terminate()
+        raise
+    pool.join()
 
 
 def cmd_check(args):
