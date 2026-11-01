@@ -1,4 +1,5 @@
 # Original addresses of the data the recreated DISPLAY functions refer to by name (globals) or by section
 # (<object>:<section> for file-local data). Columns: symbol, address, evidence.
-symbol	address	evidence
+symbol	address	evidence	fill (keep: not randomised by the check)
 crc_table	208d9560	[fact] crc16_a001_table_init and crc32_make_table store their 256 words there (literal 0x20100A90); crc16_a001 and crc32_update read it
+gpio_port_regs	20800000	[fact] pointers to Pn (0xFCFE3000 + 4n), .data2 start; gpio_cfg_reset & co. index it (literal 0x20800000), gpio_early_init stores 0xFCFE301C into entry 7	keep

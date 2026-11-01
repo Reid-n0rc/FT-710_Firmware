@@ -22,7 +22,8 @@ word through their output pointer, and are recorded with their arguments. Periph
 memory hooks, see equiv_m33_emu.py on the Unicorn bug they trigger).
 
 Inputs: r0..r3 and the first four stack slots drawn like equiv_m33_emu.py (small integers, 32-bit values, pointers
-to random buffers or strings); the data words the function refers to filled with the same random bytes; PRESETS
+to random buffers or strings); the data words the function refers to filled with the same random bytes (except those
+src/display/data_symbols.tsv marks keep, such as the GPIO port table); PRESETS
 build valid structures where a function walks one.
 
 Equivalent when the original and the recompiled function issue the same set of CP15 operations (a static comparison:
@@ -171,7 +172,10 @@ class Resolver:
         self.img = img
         self.funcs = orig_functions()
         self.alias = {r[0]: r[1] for r in read_tsv(ALIAS_TSV)[1:]}
-        self.data = {r[0]: int(r[1], 16) for r in read_tsv(DATA_TSV)[1:]}
+        rows = read_tsv(DATA_TSV)[1:]
+        self.data = {r[0]: int(r[1], 16) for r in rows}
+        # data the trials do not randomise: tables the image sets up before main (column fill = keep)
+        self.keep = {int(r[1], 16) for r in rows if len(r) > 3 and r[3] == 'keep'}
         self.by_addr = {a: (n, s, t) for n, (a, s, t) in self.funcs.items()}
 
     def func(self, name):
@@ -593,9 +597,26 @@ def flat_l1(rng, args):
     return [(0x2044C000, b''.join(struct.pack('<I', 0x10C02 + (i << 20)) for i in range(4096)))]
 
 
+def gpio_args(rng, args, ptr=False):
+    """(port, pin, func, mode) as the GPIO helpers take them: port 0..11 (sometimes 12..15), pin 0..15, alternative
+    function 0..9, mode 0..4; gpio_cfg_mask takes (Pn address or 0, mask | value << 16, flag)."""
+    regs = args['regs']
+    port = rng.choice(list(range(12)) * 3 + [12, 15])
+    if ptr:
+        regs[0] = rng.choice([0, 0xFCFE3000 + 4 * min(port, 11)])
+        regs[1] = rng.getrandbits(16) | (rng.choice([0, 0, 1, rng.getrandbits(16)]) << 16)
+        regs[2] = rng.choice([0, 1])
+    else:
+        regs[0], regs[1], regs[2], regs[3] = port, rng.randrange(16), rng.randrange(10), rng.randrange(5)
+    return []
+
+
 PRESETS = {'mmu_enable': flat_l1, '__aeabi_memcpy': lambda r, a: copy_fill(r, a, 'memcpy'), '__aeabi_memcpy4': lambda r, a: copy_fill(r, a, 'memcpy4'),
            '__aeabi_memset': lambda r, a: copy_fill(r, a, 'memset'), '__aeabi_memclr': lambda r, a: copy_fill(r, a, 'memclr'),
            '__aeabi_memclr4': lambda r, a: copy_fill(r, a, 'memclr4')}
+PRESETS.update({n: gpio_args for n in ('gpio_cfg_reset', 'gpio_cfg_out_low', 'gpio_cfg_out_high', 'gpio_cfg_input',
+                                     'gpio_set_alt_func', 'gpio_cfg_alt', 'gpio_read_bit', 'gpio_read_port_bit')})
+PRESETS['gpio_cfg_mask'] = lambda rng, args: gpio_args(rng, args, True)
 PRESETS.update({n: two_strings for n in ('strcmp', 'strcasecmp', 'strstr', 'strcat', 'strcpy')})
 PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('strncmp', 'strncasecmp', 'memcmp',
                                                                              'strncpy')})
@@ -627,7 +648,7 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
             name, styp, ssec, _, _ = obj.sym_info(r['r_info_sym'])
             key = name if styp != 'STT_SECTION' else f'{os.path.basename(obj.path)}:{ssec}'
             a = res.data.get(key)
-            if a is not None and not (BASE <= a < 0x2042C000):
+            if a is not None and not (BASE <= a < 0x2042C000) and a not in res.keep:
                 refs.add(a)
     rsize = returns_value(obj, fname)
     starts = sorted(a for a, _, _ in res.funcs.values())

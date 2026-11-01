@@ -7,13 +7,14 @@
 # The image was built with armcc (ARM Compiler 5), which is not available: nothing here can be byte-identical, and any
 # arm-none-eabi GCC will do (T24 used xPack 10.2.1-1.1, the M33's compiler). The image uses the armcc soft-float
 # library (__aeabi_dadd & co. in .text), so the build is soft-float too. -fno-tree-loop-distribute-patterns keeps
-# GCC from turning the copy and fill loops of lib/memory.c into calls of themselves.
+# GCC from turning the copy and fill loops of lib/memory.c into calls of themselves. -fno-ipa-ra: every call follows
+# the AAPCS (the check runs the callees as the image's own code, which does not keep the registers GCC would assume).
 CROSS ?= arm-none-eabi-
 CC := $(CROSS)gcc
 OUT := out
 
 CFLAGS := -std=gnu99 -g -O2 -marm -mcpu=cortex-a9 -mfloat-abi=soft -ffreestanding -fno-builtin -fno-common \
-          -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-tree-loop-distribute-patterns -Wall -Wextra -Wno-unused-parameter -Iinclude
+          -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-tree-loop-distribute-patterns -fno-ipa-ra -Wall -Wextra -Wno-unused-parameter -Iinclude
 
 SRCS := $(wildcard app/*.c lib/*.c drivers/*.c)
 OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRCS))
