@@ -438,15 +438,15 @@
 20107d8c	usbkbd_leds_refresh	scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device, usbkbd_set_leds) [fact]
 20117030	display_power_down	Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off, stops the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and QF lines, else switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low [fact]
 # --- L1 data cache maintenance
-201010e0	dcache_setway_all	(op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations]
-20100fd8	dcache_invalidate_range	(addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2)) when addr or size is 0 [fact]
-20101088	dcache_clean_invalidate_range	(addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and sdhi_read_block use it [fact]
+201010e0	dcache_setway_all	(op): walks every set and way of the data and unified cache levels in CLIDR up to the level of coherence: op 0 (and below) invalidate (DCISW), 1 clean (DCCSW), 2 (and above) clean and invalidate (DCCISW) [fact: cmp op, #1; mcrlt c7,c6,2 / mcreq c7,c10,2 / mcrgt c7,c14,2] (T24 round 3: 0 and 2 were the other way round)
+20100fd8	dcache_clean_invalidate_range	(addr, size): DCCIMVAC (mcr c7,c14,1) per cache line over the range, or clean and invalidate the whole cache by set/way (dcache_setway_all(2)) when addr or size is 0 [fact]. Was dcache_invalidate_range (T24 round 3: the CP15 operation is clean and invalidate)
+20101088	dcache_invalidate_range	(addr, size): DCIMVAC (mcr c7,c6,1) per cache line over the range, or invalidate the whole cache by set/way (dcache_setway_all(0)) when addr or size is 0; Reset_Handler, task_audio_codec and sdhi_read_block use it [fact]. Was dcache_clean_invalidate_range (T24 round 3: the CP15 operation is invalidate)
 # --- CP15 cache control and small helpers
 20100efc	icache_disable	SCTLR: clears the I bit (12) when it is set [fact]
 20100f20	dcache_disable	SCTLR: clears the C bit (2) when it is set [fact]
 20100f44	icache_enable	SCTLR: sets the I bit (12) [fact]
 20100f64	dcache_enable	SCTLR: sets the C bit (2) [fact]
-2010101c	dcache_invalidate_all	dcache_setway_all(2) (invalidate by set/way) [fact]
+2010101c	dcache_clean_invalidate_all	dcache_setway_all(2): clean and invalidate by set/way (DCCISW) [fact]. Was dcache_invalidate_all (T24 round 3)
 201341cc	clamp_add_u8	(a, b): a + b clamped to 0..255 [fact]
 20135448	xorshift32_step	(x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 [fact]
 20135488	be16_store	(v, dst): stores v big-endian (high byte first) [fact]
