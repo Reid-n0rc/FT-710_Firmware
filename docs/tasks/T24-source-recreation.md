@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.31 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck; MAIN 2.82 % re-implemented, round 1, GCC for RX and Ghidra p-code emulation: CC-RX not obtainable) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 12.42 % re-implemented, round 6; MAIN 2.82 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -860,6 +860,163 @@ the functions). Register names come from `tools/ghidra/sfr_rx651.tsv` through a 
   (about 72 KB) [fact: docs/memory-maps.md]. *Open: whether the flash update writes that range; would be settled by
   the SFL loader's erase/write ranges (T04).*
 
+## DISPLAY, round 6 (2026-11-01)
+
+### Plan (round 6)
+
+1. The gap: round 5's plan (in place, then RAM2 with a recreated `reset_in_ram`), after settling whether anything
+   writes into 0x20920000.. through a computed pointer (an emulated boot with a write watch).
+2. A general rule in `display_link.py` for function addresses the recreated code stores as data.
+3. More code, biggest self-contained first: the rest of the VDC5 register layer and `vdc5_layers_setup`, RSPI,
+   DMAC, the large SDHI functions, the file system, the MAIN link, the update code, as far as the round goes.
+4. One compiler for the DISPLAY tree, selected by the Makefile.
+5. `status.tsv`, linkcheck, readability stats; Ghidra names with evidence, proved on a copy.
+
+### DISPLAY: is RAM2 free? An emulated boot (round 6)
+
+`tools/display_boot_emu.py` (new) boots the image in Unicorn as the CPU sees it after the boot loader called bank 1:
+the file in the flash window at 0x18400000, PC at its `Reset_Handler` (0x1840002C), SPIBSC1 0x3FEFB018 non-zero (so
+`boot_select_bank` is skipped, boot-rtos.md section 1). It runs the image's own `reset_in_ram` (copies, MMU on),
+`__main`, `__scatterload`, `__rt_entry`, `main`, the NORTi kernel, the tasks and the GUI. Machine model: on-chip RAM
+and its page-interleaved mirror 0x60000000.. as one host buffer mapped twice (Table 53.1); peripherals read back the
+last value written, XORed with seeded random bits half of the time (polling loops end); the GIC CPU interface's
+ICCIAR returns the interrupt being injected; every 50,000 instructions, when the CPU has IRQs unmasked, an IRQ
+exception is entered as the CPU would (IRQ mode, SPSR, LR + 4, VBAR + 0x18) with an ID drawn from the image's GIC
+handler table 0x208DC1E0 (the OSTM0 tick 0x86 half of the time, then the 25 other registered sources); SVCs enter
+the image's `SVC_Handler`; PMCCNTR advances by 256 at each read (Unicorn does not count cycles, and
+`cpu_delay_cycles4` & co. spin on it: the first runs stalled there). The watched range (whole pages
+0x2091D000..0x2097FFFF and the same pages of the mirror) is mapped with `mmio_map`, so every access is seen with its
+PC without a Unicorn memory hook.
+
+Results **[fact: the runs]**: seeds 1, 2, 3 (1.5·10⁹ instructions each; seeds 1 and 2 again with the cycle-counter
+model): 33 kernel tasks created, `task_root` and `gui_main_loop` reached, 684..709 of the 2,214 Ghidra functions
+executed, about 28,000 interrupts; **no access at all at or above 0x2091D570** (464 below it, the C library's
+libspace and the end of `.bss2`). Control run (watch extended to 0x209A0000): the pool writes of `itron_acre_tsk`,
+`knl_freelist_alloc`, `itron_act_tsk`, the ISR stubs and `bootinfo_load` are recorded with their PCs, and the first
+pool block is `task_root`'s stack 0x20980028..0x20982027 (filled with its ID); in the runs 5,672 of its 8,192 bytes
+stayed unused, so its overflow, the one thing that would grow down into RAM2, did not come near. The C library heap
+base is 0x20A00000 (`__user_initial_stackheap` 0x201172EC: 0x20980000 + 0x80000) **[fact]**, outside the range.
+`reset_in_ram` makes 0x20800000..0x209FFFFF cacheable (`mmu_set_cacheable` at 0x201000FC) and the flat L1 table
+leaves it executable (XN = 0) **[fact]**, which settles round 5's MMU question. **RAM2 = 0x20920000..0x2097FFFF
+stays as planned.** Open: paths the emulation does not reach (about 1,500 functions, e.g. the update and USB code
+that need real SD-card and USB data) could still write there through a computed pointer; would be settled by
+running them with recorded peripheral data, or on a radio with a RAM fill pattern checked after use.
+
+### DISPLAY: the hybrid link, round 6
+
+`tools/display_link.py` places each linked function **in place** when its GCC code fits into the original extent,
+the original is A32, and nothing outside the extent refers into it past the entry (a scan of the image's branches,
+literal words, PC-relative loads and ADRs), otherwise into the **gap**, and what does not fit there into **RAM2**
+(`.recreated2` in `display.ld`; its bytes at file offset 0x340000). With RAM2 in use the hybrid links
+`startup/vectors.S` assembled with `-DRAM2_LOAD`: its `reset_in_ram` copies RAM2 from flash in the nine words the
+original branches over (0x20100104..0x20100127, its literals in the padding at 0x201000CC), while the MMU and caches
+are still off, as the image's own copies run. `--gap-limit N` forces RAM2 (the gap still has room: 43,452 of
+82,928 bytes with everything linked).
+
+Rules found by booting the hybrid in emulation (`display_boot_emu.py --compare`, which boots both images and checks
+for no fault, as many tasks, the GUI loop, RAM2 loaded intact and nothing in the watched range above RAM2):
+
+- **Shared literal pools.** The first in-place link overwrote a literal at 0x20140118 that the unlisted function at
+  0x2013FE68 loads, and the hybrid faulted (`sdhi0_clock_on` + 0x70 read an instruction word as an address). The
+  reference scan now includes PC-relative loads and ADRs **[fact]**.
+- **Registers beyond the C return.** `_ll_udiv10` returns the remainder in r2 as well, and `_fp_digits` adds '0' to
+  r2 after the call (0x20155C8A) **[fact]**; the C recreation returned only r0:r1, passed the check, and the hybrid
+  hung in a `snprintf` of `vk_key_name`. It is now an assembly transcription (`lib/aeabi_ldiv.S`, identical).
+  `equiv_display_emu.py abicheck` (new) scans every direct call of a recreated function in the image for a read of
+  r1, r2, r3 or ip after the call that the GCC code may change and does not return: one site,
+  `sdhi_error_reset` keeps r2, r3, ip across `sdhi_soft_reset` (0x201407C4..0x201407D8; armcc knows the callee in the
+  same file) **[fact]**. `display_link.py` holds such functions back (links the original) until their callers are
+  recreated too.
+- **The reset path.** `Reset_Handler` calls its callees from the flash bank before any copy, and `reset_in_ram`
+  calls `spibsc0_init` and `boot_select_bank` after copying only 0x20100000..0x20100BBF **[fact: vectors.S]**. From
+  the image's static call graph, `display_link.py` keeps the first group out of RAM2 (a PC-relative branch from the
+  flash copy finds the gap in flash, not RAM2) and the second in place within the first copy or original:
+  `gpio_cfg_reset` is held back.
+
+**Function addresses as data.** Where the recreated code takes the address of a linked recreated function
+(`R_ARM_ABS32`, `MOVW`/`MOVT` in an allocated section; not a call), `display_link.py` retargets the relocation in the
+object copy to an absolute symbol at the function's original entry (Thumb bit included), which the patch forwards to
+the recreation: 14 such references (the TCON function table of `vdc5_reg.c`, the line-interrupt callback of
+`gui_vdc5.c`). Round 5's alias `vdc5_vline_cb_entry` is gone.
+
+Result (`make link`): 487 recreated functions linked, 103 in place (10,020 bytes), 384 in the gap 0x2042BC10..0x204365CB (43,452 of 82,928 bytes), RAM2 empty; 384 entries patched (9,115 bytes of the image changed), none too short; 55 byte-identical left as they are; 2 held back (`gpio_cfg_reset`: reset path, `sdhi_soft_reset`: abicheck). With `--gap-limit 15000`: 134 in the gap, 250 (27,232 bytes) in RAM2. **linkcheck: 487 of 487 agree, for the default hybrid and for the one with RAM2 forced** (100 trials per
+entry, in-place entries included). linkcheck leaves RAM2 out of the memory comparison and requires both runs to
+change it alike (an argument pointer can point there). The first RAM2 run had three "differs" in the shared-parameter
+getters (`vdc5_shrd_get_ln_off_dir` & co.), not a code difference: with a pointer as table index the read lands
+anywhere, here in RAM2, which holds code in the hybrid and zeros in the image; the getters now get an index 0..5
+(their verdicts in `status.tsv` stay equivalent with that preset). Emulated boot (seed 1, 1.5·10⁹ instructions each) **[fact: the runs]**: the
+default hybrid **agrees with the original** (33 tasks, the GUI loop, 154 recreated functions executed, nothing in
+0x2091D000..0x2097FFFF), and so does the hybrid with RAM2 forced (`--gap-limit 15000`: 250 functions, 27,232
+bytes in RAM2, loaded intact by the recreated `reset_in_ram`; 157 recreated functions executed). Earlier versions
+of the hybrid failed this check twice, for the shared literal pool and for `_ll_udiv10` (above).
+
+### DISPLAY: compiler (round 6)
+
+The DISPLAY Makefile is pinned to **xPack GNU Arm Embedded GCC 10.2.1-1.1** (`XPACK=` its directory or `CROSS=` its
+prefix; another `-dumpversion` stops the build unless `ANY_GCC=1`). Reasons (also in the README and the Makefile):
+the check verifies the code GCC emits and, where a trial reads past a table, the verdict depends on `.rodata`
+layout (round 5's follow-up: GCC 13.2.1 and 10.2.1 disagreed); xPack publishes this exact version for Linux, macOS
+and Windows, while the default `arm-none-eabi-gcc` is whatever the system ships; it is the M33 image's own compiler
+and DISPLAY rounds 3 to 5 used it. `status.tsv` of this round is from it.
+
+### DISPLAY: code (round 6)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `drivers/vdc5_reg.c` | 28 | image enhancement (sharpness, LTI), alpha rectangle and und_sel, colour conversion and `rgb4/5/6_to_8`, chroma key, CLUT, gamma; write data control (Ghidra `vdc5_config`) and its change with scaling down; the scaler background colour; cascade, VIN layer, scaling up, start pixel, enlargement check; `vdc5_ratio_one` (no caller) |
+| `app/gui_vdc5.c` | 5 | `fb_get_layer_addr`, `cursor_rect_calc`, `vdc5_layers_setup`, `vdc5_layers_stop`, `vdc5_channel_shutdown` |
+| `drivers/rspi.c` (new) | 45 | the per-channel RSPI helpers: flags, receive and transmit ISRs, transmit wait, TEND wait, delay, the GIC stubs of the generic ISRs |
+| `lib/aeabi_ldiv.S` | 1 | `_ll_udiv10`, from C to assembly (above) |
+
+Findings **[fact]**: the write side of the scaler stores the ratio 0x1000 (1.0) for vertical scaling whether the
+output is smaller or not (0x2011A2C4..0x2011A2D8); this driver version's colour conversion drops the alpha of
+ARGB1555 / ARGB4444; `vdc5_layers_setup` starts graphics 0..2 with display selects 2, 3, 3, then waits 0x3458 loop
+passes with `dmb oshst` and one frame. Harness: presets for the helpers that take a register-address table entry
+(`VDC5_TABLE_ARGS`), CLUT blocks with a small colour count, the layer formats drawn into the shared parameters,
+the image-enhancement arguments; `RET_SIZE` for `_ll_udiv10` (r0..r3) and `__rt_udiv10` (r0:r1). A mutation
+(threshold shift 8 → 9 in `vdc5_set_gamma_threshold`) is reported as differing.
+
+Not done this round: the register parts of read data control and of its change (0x2011AF34, 0x2011B498, 1,920
+bytes: Ghidra's C of them is broken, they need the disassembly), the RSPI driver core (`rspi_hw_config`, open,
+read and write, the read bursts), DMAC, the large SDHI functions, the file system, the MAIN link and the update
+code. The time went into the gap and the boot emulation, which found three defects of the hybrid image that no
+per-function check could see.
+
+### DISPLAY: results (status.tsv, round 6)
+
+| Verdict | Ghidra functions | Bytes (of 396,256) |
+|---|---:|---:|
+| identical | 54 | 3,974 |
+| equivalent | 489 | 45,222 |
+| differs | 0 | 0 |
+| not yet | 1,673 | 347,060 |
+
+**Re-implemented: 12.42 %** (49,196 bytes; round 5: 10.31 %), with the pinned xPack GCC 10.2.1, 200 trials per
+function. The 13 new identical functions: `_ll_udiv10`, `rgb4_to_8`, `vdc5_ratio_one` and the ten RSPI GIC stubs.
+
+### DISPLAY: Ghidra (round 6)
+
+`tools/ghidra/names_display.tsv` gains 18 names with evidence (also in `names_display.T24r6.tsv`): the VDC5 helpers
+above, and `vdc5_config` → `vdc5_reg_write_data_control`. No new entries. Proved on a copy
+(`/home/user/ghidra_tasks/t24r6/disp`, OWNER root): ApplyNames **1,917 applied, 0 failed**; ExportFuncModes: the
+new names, no change of any entry, size or mode [fact: apply.log, modes.tsv there]. Commands for the canonical project
+(repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the alias rows of the round-6 names in `src/display/aliases.tsv` are redundant.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -868,9 +1025,9 @@ the functions). Register names come from `tools/ghidra/sfr_rx651.tsv` through a 
 3. Apply the round-3 Ghidra changes to the canonical projects with the commands above (M33: the `printf_float_none`
    entry; DISPLAY: the CP15 renames and the four new names), and DISPLAY rounds 4 and 5 with the round-5 command
    block (FixFuncEntries with `entries_display.T24r5.tsv`, ApplyNames), and re-export (T23 rules).
-4. DISPLAY, next by size and self-containment: the rest of the VDC5 register layer (write/read data control,
-   scaling, cascade, VIN, enhancement, alpha rectangle, chroma key, CLUT, gamma; about 6.5 KB) and
-   `vdc5_layers_setup`, then RSPI (7.6 KB), DMAC, the rest of SDHI, USB, the file system, the MAIN link and the
+4. DISPLAY, next by size and self-containment: the register parts of read data control and its change
+   (0x2011AF34, 0x2011B498; from the disassembly, Ghidra's C is broken), the RSPI driver core (`rspi_hw_config`,
+   open, read, write, read bursts; 7 KB), DMAC, the large SDHI functions, USB, the file system, the MAIN link and the
    update code; then the application.
 5. DISPLAY build: the hybrid image links and passes linkcheck; before the next round's code goes in, the in-place
    placement and the second region RAM2 of "the gap and the second region" (round 5); a source-only image needs the
@@ -882,3 +1039,9 @@ the functions). Register names come from `tools/ghidra/sfr_rx651.tsv` through a 
 7. MAIN: the next functions (BSP, soft timers, C library, then the links and the CAT code), the semantics of the
    instruction forms only the GCC code uses, the Ghidra entries of the unlisted helpers, and the CC-RX version if the
    owner can obtain CC-RX ("MAIN, round 1").
+
+5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation. Open:
+   calls through function pointers for `abicheck` (direct calls only so far); the functions the emulated boot does
+   not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the
+   OSTM tick).
+6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.

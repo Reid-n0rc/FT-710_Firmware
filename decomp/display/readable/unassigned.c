@@ -1470,20 +1470,25 @@ void vdc5_set_input_cntrl_color_mtx(int param_1,int param_2)
 }
 
 
-/* -- FUN_2011a288: 0 callers, export file 201189f8_2011a848.c; not on a subsystem page */
-// ===== FUN_2011a288 @ 2011a288 (8 bytes)
+/* -- vdc5_ratio_one: 0 callers, export file 201189f8_2011a848.c; not on a subsystem page */
+// ===== vdc5_ratio_one @ 2011a288 (8 bytes)
 
-undefined4 FUN_2011a288(void)
+/* [fact] mov r0, #0x1000; bx lr; no caller; Ghidra FUN_2011a288 (T24 round 6) */
+
+undefined4 vdc5_ratio_one(void)
 
 {
   return 0x1000;
 }
 
 
-/* -- FUN_2011a290: 2 callers, export file 201189f8_2011a848.c; not on a subsystem page */
-// ===== FUN_2011a290 @ 2011a290 (260 bytes)
+/* -- vdc5_set_scaling_down: 2 callers, export file 201189f8_2011a848.c; not on a subsystem page */
+// ===== vdc5_set_scaling_down @ 2011a290 (260 bytes)
 
-void FUN_2011a290(int param_1,int param_2,int param_3)
+/* [fact] SCL0_DS1/DS4/DS5/DS6 and US1/US6 from the scaling block; called by 0x2011A394 and
+   0x2011A6C8 (0x2011A574, 0x2011A78C); Ghidra FUN_2011a290 (T24 round 6) */
+
+void vdc5_set_scaling_down(int param_1,int param_2,int param_3)
 
 {
   ushort uVar1;
@@ -1553,10 +1558,13 @@ void vdc5_set_img_qa_improver_color_mtx(int param_1,int param_2,int param_3)
 }
 
 
-/* -- FUN_2011a848: 1 callers, export file 201189f8_2011a848.c; not on a subsystem page */
-// ===== FUN_2011a848 @ 2011a848 (132 bytes)
+/* -- vdc5_set_scaler_background_color: 1 callers, export file 201189f8_2011a848.c; not on a subsystem page */
+// ===== vdc5_set_scaler_background_color @ 2011a848 (132 bytes)
 
-void FUN_2011a848(int param_1,int param_2,undefined4 param_3)
+/* [fact] SCL0_OVR1 and GRx_BASE from vdc5_shrd_get_bg_color, for scaler 0 or 1; called from
+   0x2011B2CC; Ghidra FUN_2011a848 (T24 round 6) */
+
+void vdc5_set_scaler_background_color(int param_1,int param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -1594,10 +1602,13 @@ void FUN_2011a848(int param_1,int param_2,undefined4 param_3)
 // ## from 2011a8cc_2011d080.c: 32 functions
 // ####################################################################################################
 
-/* -- FUN_2011a8cc: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011a8cc @ 2011a8cc (276 bytes)
+/* -- vdc5_set_cascade: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_cascade @ 2011a8cc (276 bytes)
 
-undefined4 FUN_2011a8cc(int param_1,int param_2,int param_3,int param_4)
+/* [fact] GR1_AB1 bit 28, SCL0_FRC3 bit 8 of both scalers, vdc5_shrd_set_cascade; returns the state;
+   called by 0x2011A9E0 and 0x2011B3A0; Ghidra FUN_2011a8cc (T24 round 6) */
+
+undefined4 vdc5_set_cascade(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -1642,10 +1653,13 @@ undefined4 FUN_2011a8cc(int param_1,int param_2,int param_3,int param_4)
 }
 
 
-/* -- FUN_2011a9e0: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011a9e0 @ 2011a9e0 (236 bytes)
+/* -- vdc5_setup_graphics_vin: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_setup_graphics_vin @ 2011a9e0 (236 bytes)
 
-void FUN_2011a9e0(int param_1,int param_2)
+/* [fact] the cascade (0x2011A8CC) and the VIN layer's GR_AB1..5 (synthesizer [ch][4]); called from
+   0x2011B2AC; Ghidra FUN_2011a9e0 (T24 round 6) */
+
+void vdc5_setup_graphics_vin(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -1653,7 +1667,7 @@ void FUN_2011a9e0(int param_1,int param_2)
   int iVar3;
   uint *puVar4;
   
-  iVar2 = FUN_2011a8cc();
+  iVar2 = vdc5_set_cascade();
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
   iVar3 = r_vdc5_shrd_get_resource(param_1,3);
   if ((iVar2 == 0) && ((iVar3 != 0 || (param_2 == 0)))) {
@@ -1680,10 +1694,13 @@ void FUN_2011a9e0(int param_1,int param_2)
 }
 
 
-/* -- FUN_2011aad8: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011aad8 @ 2011aad8 (32 bytes)
+/* -- vdc5_display_start_pixel: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_display_start_pixel @ 2011aad8 (32 bytes)
 
-uint FUN_2011aad8(uint param_1,int param_2)
+/* [fact] ((base & 7) << 3) / bits-per-pixel table 0x20165C70 [format], & 0x3F; called from
+   0x2011B10C and 0x2011B578; Ghidra FUN_2011aad8 (T24 round 6) */
+
+uint vdc5_display_start_pixel(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -1694,11 +1711,14 @@ uint FUN_2011aad8(uint param_1,int param_2)
 }
 
 
-/* -- FUN_2011aaf8: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011aaf8 @ 2011aaf8 (480 bytes)
+/* -- vdc5_set_scaling_up: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_scaling_up @ 2011aaf8 (480 bytes)
 
-void FUN_2011aaf8(ushort *param_1,int param_2,undefined4 param_3,int param_4,int param_5,int param_6
-                 ,int param_7)
+/* [fact] SCL0_US1/US5/US6 and DS1/DS5/DS6 by buffer size, area, interlace and writing mode; called
+   by 0x2011ACD8 (0x2011AE6C); Ghidra FUN_2011aaf8 (T24 round 6) */
+
+void vdc5_set_scaling_up(ushort *param_1,int param_2,undefined4 param_3,int param_4,int param_5,
+                        int param_6,int param_7)
 
 {
   uint *puVar1;
@@ -1763,10 +1783,15 @@ LAB_2011aca0:
 }
 
 
-/* -- FUN_2011acd8: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011acd8 @ 2011acd8 (500 bytes)
+/* -- vdc5_set_scaler_graphics: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_scaler_graphics @ 2011acd8 (500 bytes)
 
-void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int param_5,int param_6)
+/* [fact] the scaler (0, 1 or OIR by graphics id) read side: SCL0_US2..4 and US8, the up-scaling
+   (0x2011AAF8), GRx_FLM4 from SCL1_WR4; called from 0x2011AF94 and 0x2011B514; Ghidra FUN_2011acd8
+   (T24 round 6) */
+
+void vdc5_set_scaler_graphics
+               (int param_1,int param_2,ushort *param_3,ushort *param_4,int param_5,int param_6)
 
 {
   undefined4 uVar1;
@@ -1814,7 +1839,7 @@ void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int pa
         uVar8 = 1;
       }
       uVar3 = vdc5_shrd_get_ln_off_dir(param_1,param_2);
-      FUN_2011aaf8(param_3,param_4,uVar2,uVar8,uVar1,uVar3,puVar6);
+      vdc5_set_scaling_up(param_3,param_4,uVar2,uVar8,uVar1,uVar3,puVar6);
     }
     *(uint *)*puVar6 = *(uint *)*puVar6 | 0x2111;
     if (param_5 == 1) {
@@ -1830,10 +1855,13 @@ void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int pa
 }
 
 
-/* -- FUN_2011aecc: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011aecc @ 2011aecc (104 bytes)
+/* -- vdc5_confirm_graphics_enlargement: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_confirm_graphics_enlargement @ 2011aecc (104 bytes)
 
-undefined4 FUN_2011aecc(uint param_1,int param_2,ushort *param_3,int param_4)
+/* [fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4;
+   Ghidra FUN_2011aecc (T24 round 6) */
+
+undefined4 vdc5_confirm_graphics_enlargement(uint param_1,int param_2,ushort *param_3,int param_4)
 
 {
   if (param_2 == 1) {
@@ -1955,10 +1983,13 @@ void vdc5_reg_release_data_control(int param_1,int param_2)
 }
 
 
-/* -- FUN_2011bcb0: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011bcb0 @ 2011bcb0 (220 bytes)
+/* -- vdc5_set_enhancement_lti: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_enhancement_lti @ 2011bcb0 (220 bytes)
 
-void FUN_2011bcb0(int param_1,char *param_2,int param_3)
+/* [fact] the ADJx_ENH_LTI1/2 writes (+0x2C/+0x30), second call of 0x2011BF00; Ghidra FUN_2011bcb0
+   (T24 round 6) */
+
+void vdc5_set_enhancement_lti(int param_1,char *param_2,int param_3)
 
 {
   uint uVar1;
@@ -1995,10 +2026,13 @@ void FUN_2011bcb0(int param_1,char *param_2,int param_3)
 }
 
 
-/* -- FUN_2011bd8c: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011bd8c @ 2011bd8c (372 bytes)
+/* -- vdc5_set_enhancement_sharpness: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_enhancement_sharpness @ 2011bd8c (372 bytes)
 
-void FUN_2011bd8c(int param_1,char *param_2,int param_3)
+/* [fact] the ADJx_ENH_SHP1..6 writes of the image-enhancement call (vdc5_reg_image_enhancement
+   0x2011BF00 calls it first, table at +0x14..+0x28); Ghidra FUN_2011bd8c (T24 round 6) */
+
+void vdc5_set_enhancement_sharpness(int param_1,char *param_2,int param_3)
 
 {
   uint uVar1;
@@ -2041,10 +2075,13 @@ void FUN_2011bd8c(int param_1,char *param_2,int param_3)
 }
 
 
-/* -- FUN_2011c118: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c118 @ 2011c118 (92 bytes)
+/* -- vdc5_set_alpha_rect_area: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_alpha_rect_area @ 2011c118 (92 bytes)
 
-void FUN_2011c118(ushort *param_1,int param_2)
+/* [fact] GRx_AB4/AB5 from the area and GRx_AB2/AB3, called by vdc5_reg_alpha_blending_rect; Ghidra
+   FUN_2011c118 (T24 round 6) */
+
+void vdc5_set_alpha_rect_area(ushort *param_1,int param_2)
 
 {
   uint uVar1;
@@ -2066,10 +2103,13 @@ void FUN_2011c118(ushort *param_1,int param_2)
 }
 
 
-/* -- FUN_2011c174: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c174 @ 2011c174 (184 bytes)
+/* -- vdc5_set_und_sel: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_und_sel @ 2011c174 (184 bytes)
 
-void FUN_2011c174(int param_1,int param_2)
+/* [fact] vdc5_shrd_get_und_sel / set_und_sel, then the VIN layer's GR_AB1..3; called by
+   vdc5_reg_alpha_blending_rect; Ghidra FUN_2011c174 (T24 round 6) */
+
+void vdc5_set_und_sel(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -2103,10 +2143,13 @@ void FUN_2011c174(int param_1,int param_2)
 }
 
 
-/* -- FUN_2011c3a4: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c3a4 @ 2011c3a4 (256 bytes)
+/* -- vdc5_color_conversion: 2 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_color_conversion @ 2011c3a4 (256 bytes)
 
-uint FUN_2011c3a4(undefined4 param_1,uint param_2)
+/* [fact] switch on the graphics format calling rgb4/5/6_to_8 and vdc5_color_to_agbr; called by
+   vdc5_reg_chromakey; Ghidra FUN_2011c3a4 (T24 round 6) */
+
+uint vdc5_color_conversion(undefined4 param_1,uint param_2)
 
 {
   int iVar1;
@@ -2152,10 +2195,13 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
 }
 
 
-/* -- FUN_2011c5b4: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c5b4 @ 2011c5b4 (48 bytes)
+/* -- vdc5_set_clut: 1 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_clut @ 2011c5b4 (48 bytes)
 
-void FUN_2011c5b4(uint *param_1,undefined4 *param_2)
+/* [fact] copies color_num words to the CLUT RAM pointer of 0x201666E0; called by vdc5_reg_clut;
+   Ghidra FUN_2011c5b4 (T24 round 6) */
+
+void vdc5_set_clut(uint *param_1,undefined4 *param_2)
 
 {
   undefined4 *puVar1;
@@ -2175,10 +2221,13 @@ void FUN_2011c5b4(uint *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_2011c85c: 3 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c85c @ 2011c85c (72 bytes)
+/* -- vdc5_set_gamma_gain: 3 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_gamma_gain @ 2011c85c (72 bytes)
 
-void FUN_2011c85c(ushort *param_1,int param_2)
+/* [fact] 16 registers of two halfwords, called with the GAM_x_LUT pointers of 0x201667D8 + 0x4C ch;
+   Ghidra FUN_2011c85c (T24 round 6) */
+
+void vdc5_set_gamma_gain(ushort *param_1,int param_2)
 
 {
   ushort *puVar1;
@@ -2201,10 +2250,13 @@ void FUN_2011c85c(ushort *param_1,int param_2)
 }
 
 
-/* -- FUN_2011c8a4: 3 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
-// ===== FUN_2011c8a4 @ 2011c8a4 (172 bytes)
+/* -- vdc5_set_gamma_threshold: 3 callers, export file 2011a8cc_2011d080.c; not on a subsystem page */
+// ===== vdc5_set_gamma_threshold @ 2011c8a4 (172 bytes)
 
-void FUN_2011c8a4(byte *param_1,undefined4 *param_2)
+/* [fact] 3 + 7 x 4 bytes into GAM_x_AREA1..8 (0x20166818 + 0x4C ch); Ghidra FUN_2011c8a4 (T24 round
+   6) */
+
+void vdc5_set_gamma_threshold(byte *param_1,undefined4 *param_2)
 
 {
   uint i;

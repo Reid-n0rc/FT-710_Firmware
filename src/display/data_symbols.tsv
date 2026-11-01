@@ -68,3 +68,12 @@ gui_frame_stamp	208f4db8	[fact] PMCCNTR stamp {delta, last} of vdc5_vline_cb (cy
 gui_vsync	2080858c	[fact] frame pacing: +0x10 frames to wait (vdc5_wait_frames), +0x18 frame count (vdc5_vline_cb)
 gui_vline_int	20907f58	[fact] the vdc5_int_t {type 3, callback, line 0} of vdc5_vline_int_setup / _cb_enable / _cb_disable
 vdc5_vline_cisr	203a706c	[fact] T_CISR of the graphics-3 line interrupt passed to itron_acre_isr by vdc5_isr_create (gui.md: GIC 78, handler 0x20118638)
+vdc5_regaddr_clut	201666e0	[fact] VDC5 CLUT RAM addresses [ch][6] (.rodata): vdc5_reg_clut 0x2011C5E4 indexes it with 6 ch + gr
+vdc5_regaddr_gamma	201667d0	[fact] VDC5 gamma register addresses [ch] of 0x130 bytes (.rodata, GAM_SW first): vdc5_reg_gamma_correction 0x2011C950
+vdc5_gr_format_bits	20165c70	[fact] bits per pixel of the 12 graphics formats (16, 32, 16, 16, 32, 8, 4, 1, 32, 32, 16, 32), read by 0x2011AAD8 (literal)	keep
+gui_cursor_pos	20808574	[fact] the mouse cursor position {x, y} per channel (.data2 words, read as halfwords): cursor_rect_calc 0x20132680 (literals 0x20808574..0x20808580)
+gui_cursor_rect	20808584	[fact] the cursor window (vdc5_period_rect_t) vdc5_layers_setup 0x2013276C stores and points gui_layers[2].area at
+gui_layers	208f4d50	[fact] three 16-byte records {frame buffer, ?, area, ?} of graphics layers 1..3, written by vdc5_layers_setup (0x208F4D50, 0x208F4D60, 0x208F4D70..7C)
+rspi_rx_done	20800418	[fact] receive-done flags of RSPI0..4 (bytes), set by rspiN_rx_isr and cleared by rspiN_clear_rx_flag (literal 0x20800418, strb [r1, #n])
+rspi_tx_done	2080041d	[fact] transmit-done flags of RSPI0..4 (bytes), set by rspiN_tx_isr, polled by rspiN_tx_wait (literal 0x2080041D)
+rspi_rx_count	208dce28	[fact] receive interrupt counts of RSPI0 and RSPI1, incremented by rspi0_rx_isr / rspi1_rx_isr (literals 0x208DCE28, 0x208DCE2C)
