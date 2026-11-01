@@ -131,3 +131,5 @@ sd_card_write_protected	0x2013fd70	[fact] (index): bit 5 of +0x68 of the drive 0
 fs_byte_pair_sum	0x2014d8b4	[fact] sbfx r1, r0, #8, #8; sxtab; sxtb: the signed sum of the two low bytes; Ghidra FUN_2014d8b4
 fs_last_error_get	0x201447f4	[fact] returns the word at 0x20808BA4 (the last error fs_set_error stores); Ghidra FUN_201447f4
 __aeabi_idiv	__aeabi_idivmod	[fact] the image has only __aeabi_idivmod 0x20155480 (quotient in r0, remainder in r1, RTABI), which GCC-compiled signed division calls as __aeabi_idiv (fs/fat_table.c)
+fat_detect_superfloppy	0x20148e80	[fact] fat_find_volume's tail call (b at 0x2014918C) when sector 0 has no usable partition: first sector 0, the type from the boot-sector names; no Ghidra entry
+fs_drive_attach_512	fs_drive_attach_thunk	[fact] calls fs_drive_attach with the sixth argument 0x200 (mov ip, #0x200 at 0x2014A81C)

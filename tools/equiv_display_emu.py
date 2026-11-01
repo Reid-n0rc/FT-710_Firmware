@@ -1722,28 +1722,43 @@ PRESETS['fs_memmove'] = fs_move_args
 PRESETS['fs_memset'] = lambda rng, args: fs_len_args(rng, args, 2, 3)
 
 
-# The RAM disk's two routines, A32, assembled from this source with the pinned GNU as (round 9):
+# The RAM disk's routines, A32, assembled with the pinned GNU as from this source (round 9):
 #   drv:    (drive, command, sector, buffer, [sp] count): command 1 reads, 2 writes count sectors at drive->first
-#           (+0x30) + sector of the disk; -1 past its end; any other command returns 0. The file system's driver
-#           entry (drive +0x18), as sd_driver_op is for the SD card.
+#           (+0x30) + sector of the disk, -1 past its end; 7 mounts as sd_mount_volume does (fat_find_volume on
+#           sector 0, fat_mount on the volume's first sector, for FAT32 fat32_fsinfo_read on its FSInfo sector,
+#           the image's functions on the disk's bytes in place; -4 when they fail); any other command returns 0.
+#           The file system's driver entry (drive +0x18), as sd_driver_op is for the SD card.
 #   sdread: (sector, buffer, count, card): the SD operation table's read slot (+0x58), sector addressing.
-#   drv:    ldr ip,[sp]; cmp r1,#1; cmpne r1,#2; movne r0,#0; bxne lr; push {r4-r6,lr}; ldr r4,[r0,#0x30];
-#           add r2,r2,r4; ldr r4,disk; ldr r5,nsect; add r0,r2,ip; cmp r0,r5; mvnhi r0,#0; pophi {r4-r6,pc};
-#           add r4,r4,r2,lsl #9; lsls ip,ip,#9; beq 2f; cmp r1,#1; moveq r5,r4; moveq r6,r3; movne r5,r3;
-#           movne r6,r4; 1: ldrb r0,[r5],#1; strb r0,[r6],#1; subs ip,ip,#1; bne 1b; 2: mov r0,#0; pop {r4-r6,pc}
+#   drv:    ldr ip,[sp]; cmp r1,#7; beq 3f; cmp r1,#1; cmpne r1,#2; movne r0,#0; bxne lr; push {r4-r6,lr};
+#           ldr r4,[r0,#0x30]; add r2,r2,r4; ldr r4,disk; ldr r5,nsect; add r0,r2,ip; cmp r0,r5; mvnhi r0,#0;
+#           pophi {r4-r6,pc}; add r4,r4,r2,lsl #9; lsls ip,ip,#9; beq 2f; cmp r1,#1; moveq r5,r4; moveq r6,r3;
+#           movne r5,r3; movne r6,r4; 1: ldrb r0,[r5],#1; strb r0,[r6],#1; subs ip,ip,#1; bne 1b;
+#           2: mov r0,#0; pop {r4-r6,pc}
+#       3:  push {r4-r6,lr}; mov r4,r0; ldr r5,disk; mov r1,r5; ldr ip,a_find; blx ip; cmp r0,#0; mvnne r0,#3;
+#           popne {r4-r6,pc}; ldr r0,[r4,#0x30]; ldr r6,nsect; cmp r0,r6; mvnhs r0,#3; pophs {r4-r6,pc};
+#           add r1,r5,r0,lsl #9; mov r0,r4; ldr ip,a_mount; blx ip; cmp r0,#0; mvnlt r0,#3; poplt {r4-r6,pc};
+#           ldrb r0,[r4,#0x10]; cmp r0,#0x20; movne r0,#0; popne {r4-r6,pc}; ldr r0,[r4,#0x30];
+#           ldrh r1,[r4,#0x3a]; add r0,r0,r1; cmp r0,r6; movhs r0,#0; pophs {r4-r6,pc}; add r1,r5,r0,lsl #9;
+#           mov r0,r4; ldr ip,a_fsinfo; blx ip; mov r0,#0; pop {r4-r6,pc}
 #   sdread: push {r4-r6,lr}; ldr r4,disk; ldr r5,nsect; add ip,r0,r2; cmp ip,r5; mvnhi r0,#0; pophi {r4-r6,pc};
 #           add r4,r4,r0,lsl #9; lsls ip,r2,#9; beq 2f; 1: ldrb r0,[r4],#1; strb r0,[r1],#1; subs ip,ip,#1;
 #           bne 1b; 2: mov r0,#0; pop {r4-r6,pc}
-#   disk: .word DISK; nsect: .word DISK_SECTORS
+#   disk: .word DISK; nsect: .word DISK_SECTORS; a_find, a_mount, a_fsinfo: .word 0x201490F8, 0x20148FCC,
+#   0x20148F40 (fat_find_volume, fat_mount, fat32_fsinfo_read)
 RAMDISK_CODE = SCRATCH_ARGS + 0x1F000
-RAMDISK_DRV, RAMDISK_SDREAD = RAMDISK_CODE, RAMDISK_CODE + 0x70
+RAMDISK_DRV, RAMDISK_SDREAD = RAMDISK_CODE, RAMDISK_CODE + 0x10C
 RAMDISK_WORDS = [
-    0xe59dc000, 0xe3510001, 0x13510002, 0x13a00000, 0x112fff1e, 0xe92d4070, 0xe5904030, 0xe0822004, 0xe59f4088,
-    0xe59f5088, 0xe082000c, 0xe1500005, 0x83e00000, 0x88bd8070, 0xe0844482, 0xe1b0c48c, 0x0a000008, 0xe3510001,
-    0x01a05004, 0x01a06003, 0x11a05003, 0x11a06004, 0xe4d50001, 0xe4c60001, 0xe25cc001, 0x1afffffb, 0xe3a00000,
-    0xe8bd8070, 0xe92d4070, 0xe59f4034, 0xe59f5034, 0xe080c002, 0xe15c0005, 0x83e00000, 0x88bd8070, 0xe0844480,
-    0xe1b0c482, 0x0a000003, 0xe4d40001, 0xe4c10001, 0xe25cc001, 0x1afffffb, 0xe3a00000, 0xe8bd8070, DISK,
-    DISK_SECTORS]
+    0xe59dc000, 0xe3510007, 0x0a00001a, 0xe3510001, 0x13510002, 0x13a00000, 0x112fff1e, 0xe92d4070, 0xe5904030,
+    0xe0822004, 0xe59f411c, 0xe59f511c, 0xe082000c, 0xe1500005, 0x83e00000, 0x88bd8070, 0xe0844482, 0xe1b0c48c,
+    0x0a000008, 0xe3510001, 0x01a05004, 0x01a06003, 0x11a05003, 0x11a06004, 0xe4d50001, 0xe4c60001, 0xe25cc001,
+    0x1afffffb, 0xe3a00000, 0xe8bd8070, 0xe92d4070, 0xe1a04000, 0xe59f50c4, 0xe1a01005, 0xe59fc0c4, 0xe12fff3c,
+    0xe3500000, 0x13e00003, 0x18bd8070, 0xe5940030, 0xe59f60a8, 0xe1500006, 0x23e00003, 0x28bd8070, 0xe0851480,
+    0xe1a00004, 0xe59fc098, 0xe12fff3c, 0xe3500000, 0xb3e00003, 0xb8bd8070, 0xe5d40010, 0xe3500020, 0x13a00000,
+    0x18bd8070, 0xe5940030, 0xe1d413ba, 0xe0800001, 0xe1500006, 0x23a00000, 0x28bd8070, 0xe0851480, 0xe1a00004,
+    0xe59fc058, 0xe12fff3c, 0xe3a00000, 0xe8bd8070, 0xe92d4070, 0xe59f4034, 0xe59f5034, 0xe080c002, 0xe15c0005,
+    0x83e00000, 0x88bd8070, 0xe0844480, 0xe1b0c482, 0x0a000003, 0xe4d40001, 0xe4c10001, 0xe25cc001, 0x1afffffb,
+    0xe3a00000, 0xe8bd8070,
+    DISK, DISK_SECTORS, 0x201490F8, 0x20148FCC, 0x20148F40]
 _CARDS = None
 
 
@@ -1799,7 +1814,8 @@ def fs_vol_args(rng, args, kind):
     d2[0x11] = ord(rng.choice('JKI'))
     code = struct.pack(f'<{len(RAMDISK_WORDS)}I', *RAMDISK_WORDS)
     args['buffers'] = [b for b in args['buffers'] if not FS_DRIVE <= b[0] < FS_DRIVE + 0x2000] + \
-        [(FS_DRIVE, bytes(d)), (FS_DRIVE2, bytes(d2)), (RAMDISK_CODE, code),
+        [(FS_DRIVE, bytes(d)), (FS_DRIVE2, bytes(d2)), (FS_DRIVE + 0x200, bytes(rng.getrandbits(8) for _ in range(0x74))),
+         (RAMDISK_CODE, code),
          (FS_WORK, bytes(rng.getrandbits(8) for _ in range(0x1000)))]
     args['disk'] = img
     args['vol'] = vol
@@ -1818,7 +1834,13 @@ def fs_vol_args(rng, args, kind):
             data[rng.randrange(512)] ^= 1 << rng.randrange(8)
         args['buffers'] += [(at, bytes(data))]
         regs[1] = at
-    fill = [(0x20808BA0, struct.pack('<I', FS_DRIVE)), (0x20808B90, struct.pack('<I', rng.choice([1, 1, 1, 0])))]
+    # the layer's tables as fs_init left them (0x20808B90..0x20808B9F): a drive table of 1 or 2 records of 0x450
+    # bytes and a file table of 1..3 of 0x24C, or none (not initialised)
+    args['buffers'] += [(SCRATCH_ARGS + 0x16000, bytes(rng.getrandbits(8) for _ in range(0x900))),
+                        (SCRATCH_ARGS + 0x18000, bytes(rng.getrandbits(8) for _ in range(0x700)))]
+    tables = struct.pack('<IhxxIhxx', rng.choice([SCRATCH_ARGS + 0x16000] * 3 + [0]), rng.choice([1, 2]),
+                         SCRATCH_ARGS + 0x18000, rng.choice([1, 2, 3]))
+    fill = [(0x20808BA0, struct.pack('<I', FS_DRIVE)), (0x20808B90, tables)]
     # the drive-lock tables (fs_lock_a / fs_lock_b, 0x2091D4C0 / 0x2091D4E8): five semaphores, mostly created, an
     # entry already holding the drive's letter now and then; zero after __scatterload, every lock failed (-34)
     for at in (0x2091D4C0, 0x2091D4E8):
@@ -1890,11 +1912,39 @@ def fs_spec_args(rng, args, spec):
             'B': lambda: FS_WORK + 0xC0C,
             'O': lambda: FS_OUT,
             'K': lambda: rng.choice([0, 1, 1, 2]),
-            'L': lambda: rng.choice([0x49, 0x49, 0x4A, 0x4B, 0x41, rng.getrandbits(8)]),
+            'L': lambda: rng.choice([0x49, 0x49, 0x4A, 0x4B, 0x41, 0x69, rng.getrandbits(8)]),
+            'X': lambda: fs_card_sector(rng, args, vol),
+            'F': lambda: rng.choice([RAMDISK_DRV, 0x20138660, 0x20138660, VDC5_STUB_FN]),
+            'R': lambda: rng.choice([0, 0, 1]),
+            'Y': lambda: rng.choice([512, 512, 512, 0x400, 0x8000, 0]),
+            'T': lambda: SCRATCH_ARGS + 0x16000,
+            'U': lambda: SCRATCH_ARGS + 0x18000,
+            'n': lambda: rng.choice([0, 1, 2]),
+            'Z': lambda: rng.getrandbits(32),
+            'Q': lambda: rng.choice([FS_DRIVE + 0x200, FS_DRIVE + 0x200, FS_DRIVE2]),
         }[k]())
     for i, v in enumerate(vals):
         regs[i] = v
     return fill
+
+
+def fs_card_sector(rng, args, vol):
+    """A sector buffer holding the card's MBR, its boot sector, FSInfo sector or backup boot sector, now and then
+    with one bit flipped, or a boot sector with another type name (FAT12/16/32 swapped, EXFAT, none)."""
+    at = SCRATCH_ARGS + 0xC000
+    img = args['disk']
+    sec = rng.choice([0, vol.start, vol.start, vol.start + 1, vol.start + 6])
+    data = bytearray(img[sec * 512:(sec + 1) * 512])
+    k = rng.random()
+    if k < 0.15:
+        data[rng.randrange(512)] ^= 1 << rng.randrange(8)
+    elif k < 0.3:
+        o = rng.choice([3, 0x36, 0x52])
+        data[o:o + 5] = rng.choice([b'FAT12', b'FAT16', b'FAT32', b'EXFAT', b'NTFS '])
+    elif k < 0.4:
+        data[0x1C2] = rng.choice([1, 4, 6, 7, 0x0B, 0x0C, 0x0E, 0x83, 0])
+    args['buffers'] = [b for b in args['buffers'] if b[0] != at] + [(at, bytes(data))]
+    return at
 
 
 FS_SPECS = {
@@ -1907,8 +1957,43 @@ FS_SPECS = {
     'fat32_fsinfo_write_locked': 'DW', 'fs_dev_op1': 'DSBK', 'fs_dev_op2': 'DSBK', 'fat_clust2sect': 'DC',
     'fat_sect2clust': 'DS', 'fat_sector_is_cluster_first': 'DS', 'fs_drive_check_mounted': 'D',
     'fs_drive_check_writable': 'D', 'fs_lock_a': 'D', 'fs_unlock_a': 'D', 'fs_lock_b': 'D', 'fs_unlock_b': 'D',
+    'fat_detect_superfloppy': 'DX', 'fat32_fsinfo_read': 'DX', 'fat_mount': 'DX', 'fat_find_volume': 'DX',
+    'fs_check_ready': 'D', 'fs_init': 'TnUn', 'fs_drive_attach': 'QLFZRY', 'fs_drive_attach_512': 'QLFZR',
+    'fs_exit': 'D', 'fs_vol_clear_geometry': 'D', 'fs_drive_mount': 'D', 'fs_drive_unmount': 'D',
+    'fs_drive_detach': 'D',
 }
 PRESETS.update({n: (lambda rng, args, sp=spec: fs_spec_args(rng, args, sp)) for n, spec in FS_SPECS.items()})
+
+
+def sd_mount_args(rng, args):
+    """sd_mount_volume / sd_drive_mount (round 9): the round-8 drive preset, but the card is a synthetic one in the
+    RAM disk: the handle's operation table is a copy whose read slot 22 (+0x58) is the RAM disk's sdread, the card
+    uses block addressing (flags bit 1) and a speed other than 2 and 3 now and then (those ask slot 16 first), so
+    that the MBR, the boot sector and the FSInfo sector are the card's (round 8: random sector data never held an
+    MBR, and both stayed under the coverage floor)."""
+    fill = sd_handle_args(rng, args, 'drv')
+    img, vol = rng.choice(fat_cards())
+    if rng.random() < 0.2:
+        disk = bytearray(img)
+        disk[rng.choice([0x1FE, 0x1C6, vol.start * 512 + 0x52, vol.start * 512 + 0x0D])] ^= 0xFF
+        img = bytes(disk)
+    ctx, h = SCRATCH_ARGS + 0xC000, SCRATCH_ARGS + 0xB000
+    bufs = dict(args['buffers'])
+    c = bytearray(bufs[ctx])
+    struct.pack_into('<HH', c, 0x2C0, struct.unpack_from('<H', c, 0x2C0)[0] | 2, rng.choice([0, 1, 4, 2]))
+    ops = SCRATCH_ARGS + 0xB400
+    tbl = bytearray(_image_bytes(SDHI_OPS, 26 * 4))
+    struct.pack_into('<I', tbl, 22 * 4, RAMDISK_SDREAD)
+    if rng.random() < 0.8:
+        struct.pack_into('<I', tbl, 16 * 4, 0x20138660)     # slot 16 (tuning) answering 0
+    code = struct.pack(f'<{len(RAMDISK_WORDS)}I', *RAMDISK_WORDS)
+    args['buffers'] = [b for b in args['buffers'] if b[0] not in (ctx, h)] + \
+        [(ctx, bytes(c)), (h, struct.pack('<II', ctx, ops)), (ops, bytes(tbl)), (RAMDISK_CODE, code)]
+    args['disk'] = img
+    return fill
+
+
+PRESETS.update({n: sd_mount_args for n in ('sd_mount_volume', 'sd_drive_mount')})
 
 
 def byte_check(res, obj, fname, shndx, off, oaddr):
