@@ -79,7 +79,9 @@ of `ppips_*.db`. Two refinements were needed **[fact, found while testing]**:
   pin to `DMUX` when no FASM PIP selects another source); the tool assumes them, since the design clearly uses them.
 - An INT `IMUX`/`BYP_ALT`/`FAN_ALT` wire with no driving PIP is VCC (prjxray `default` pseudo-PIP), and a LUT with no
   INIT bits has INIT = 0, so its O6/O5 are constant 0. Vivado writes `PRECYINIT.C0` into slices without a carry chain,
-  so CARRY4s are emitted for every slice and dropped (iteratively, along chains) when no output is used.
+  so CARRY4s are emitted for every slice and dropped (iteratively, along chains) when no output is used. "Output"
+  includes the per-bit carries CO[0..2], which a slice reads through `xOUTMUX.CY` / `xFFMUX.CY`; until #232 only O[0..3]
+  and CO[3] counted, see [section 4](#4-structural-verilog-smoke-test-and-simulation-t15d) ("Dropped carry outputs").
 
 **SLICE model** (UG474 + prjxray fuzzer READMEs 011-019): LUT6, or LUT6_2 when O5 is used; FF type from
 `FFSYNC`/`LATCH`/`ZRST` (FDRE/FDSE sync, FDCE/FDPE async, LDCE/LDPE latch) and INIT from `ZINI` (Z = inverted);
@@ -94,7 +96,7 @@ keep all routed site pins and their FASM features.
 |---|---|---|
 | LUT6 / LUT6_2 | 19,431 / 7,177 | 26,608 = T13 LUT count |
 | FDRE / FDCE / FDSE / FDPE | 22,044 / 8,784 / 498 / 58 | 31,384 = T13 FF count; no latches |
-| CARRY4 (outputs used) | 3,692 | T13 lower bound 3,398 |
+| CARRY4 (outputs used) | 3,779 (3,692 before #232) | T13 lower bound 3,398 |
 | MUXF7 / MUXF8 | 251 / 30 | |
 | RAMD64E + RAMD32 (LUT RAM, all `SMALL` = RAM32M-style pairs) | 336 + 336 | 336 `xLUT.RAM` |
 | SRLC32E (221 SRL LUTs, 220 of them SRL16 pairs) | 441 | 221 `xLUT.SRL` |
@@ -103,7 +105,7 @@ keep all routed site pins and their FASM features.
 | IOB / IDDR / ODDR | 116 / 14 / 17 | 110 ILOGIC and 30 OLOGIC are plain pass-through; the 124 IDELAYs only carry Vivado's default (`IDELAY_TYPE_FIXED`) and are not used; unused pins carry only `PULLTYPE`/`IN_TERM`/`SLEW` |
 | MMCME2_ADV / BUFGCTRL / BUFHCE / BUFR / BUFIO | 2 / 7 / 16 / 1 / 1 | BUFIO and BUFR carry no FASM features; they are kept when their output is used |
 
-127,648 nets: 125,597 with exactly one driver, **none with two or more**, and 2,051 without a driver. The undriven
+128,343 nets (since #232; 127,648 before): 126,293 with exactly one driver, **none with two or more**, and 2,050 without a driver. The undriven
 ones are unused hard-block inputs (ILOGIC clocks, DSP cascade inputs at the bottom of a column, unused IOB O/T, BRAM
 cascade pins); only 3 fabric pins (2 SRL data inputs in a `DI_DMC31` chain, 1 FF D) are left unexplained **[fact]**. The flip-flop clocks come from 6 BUFHCE outputs (4,000-7,300 FFs each) and one BUFR (83 FFs) **[fact]**,
 see [section 3](#3-recognized-blocks-t15c).
@@ -849,6 +851,21 @@ DSP48_X1Y26.P with a 1 MHz tone: delay 23 against 7 clocks, every bit matching a
 used, hide this; any fast signal is scrambled, with errors near full scale whatever the tone level, which is what #214 saw on M17.
 Fixed in `tools/xc7_netlist.py` (both halves `A[4]` = GND); rebuild `build/sdr/netlist.json` and `ft710_sdr.v` before any further
 data-path simulation.
+
+**Dropped carry outputs (#232) [fact].** A slice can pass the carry out of one bit of its CARRY4 (CO[0], CO[1] or CO[2]) to
+its AMUX/BMUX/CMUX pin or FF with `xOUTMUX.CY` / `xFFMUX.CY`; `tools/xc7_netlist.py` modelled those pins, but its pruning step
+dropped a CARRY4 unless O[0..3] or CO[3] had a load. In 30 slices the only load is such a CO[k] (for example `SLICE_X8Y17`:
+`PRECYINIT.CIN`, `AOUTMUX.CY`, the carry out above the 32-bit pre-adder `SLICE_X8Y9..X8Y16`), so those CARRY4s, and the
+57 CARRY4s below them whose only load was the next carry in, were dropped: **87 CARRY4s**. Their loads were then undriven,
+and an undriven IMUX/BYP/FAN pin reads as VCC (section 2), so **825 pins** read 1 instead of a carry: 701 LUT inputs and 124
+FF clock enables (whole comparator chains such as `SLICE_X23Y125..Y133` and `SLICE_X29Y123..Y131`, whose result is one
+CO[k], included). FASM routing confirms the lost connections: `SLICE_X36Y17/BLUT` (used in all six inputs by its INIT) has
+PIPs on B1, B4 and B6 (`INT_L_X24Y17.IMUX_L15.ER1END3`, `IMUX_L27.EE2END1`, `IMUX_L12.WL1END1`) that trace back to
+`LOGIC_OUTS20` (AMUX) of `CLBLM_R_X7Y17`, `CLBLM_R_X11Y17` and `LOGIC_OUTS_L20` of `CLBLL_L_X28Y18`, i.e. `SLICE_X8Y17`,
+`SLICE_X14Y17` and `SLICE_X44Y18`, the three slices above the pre-adder chains of 3.9. Fixed by counting CO[0..2] as
+outputs (the selftest now builds a slice whose only load is CO[0] through `AOUTMUX.CY`); the cell count goes from
+63,648 to 63,735. The UART smoke test of `bootstrap.sh --only sdr` still gives the documented replies (`r010437` on UART B,
+`0104` and the `[IF]>` prompt on the console). The effect on the RX decimator is in 3.9.
 
 **Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits; see 3.5, #91),
 RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not emitted (prjxray has no feature for SAME_EDGE_PIPELINED; both enum bits read 0, 3.7), OLOGIC T inversion not decoded (tri-state
