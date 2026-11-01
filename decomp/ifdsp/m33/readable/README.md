@@ -12,4 +12,4 @@ page, the page link and the caller count. Assignment rules: see the docstring of
 |---|---|---:|---:|
 | [control-link.c](control-link.c) | [control-link.md](../../../../docs/code/ifdsp/control-link.md) | 26 | 2,660 |
 | [ipc.c](ipc.c) | [ipc.md](../../../../docs/code/ifdsp/ipc.md) | 60 | 3,560 |
-| [m33-platform.c](m33-platform.c) | [m33-platform.md](../../../../docs/code/ifdsp/m33-platform.md) | 341 | 22,204 |
+| [m33-platform.c](m33-platform.c) | [m33-platform.md](../../../../docs/code/ifdsp/m33-platform.md) | 341 | 22,196 |

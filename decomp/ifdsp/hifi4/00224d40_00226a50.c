@@ -1,178 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== Thread_Spi_entry @ 00224aa4 (655 bytes)
-
-void Thread_Spi_entry(void)
-
-{
-  undefined6 uVar1;
-  undefined4 uVar2;
-  int iVar3;
-  byte bVar4;
-  uint uVar5;
-  undefined2 uVar6;
-  ulonglong uVar7;
-  undefined8 uVar8;
-  undefined8 uVar9;
-  undefined8 uVar10;
-  undefined1 in_st_PSINTLEVEL;
-  undefined1 in_st_PSUM;
-  undefined1 in_st_PSWOE;
-  undefined1 in_st_PSEXCM;
-  undefined1 in_st_PSCALLINC;
-  undefined1 in_st_PSOWB;
-  undefined1 *puVar11;
-  undefined *puVar12;
-  uint uVar13;
-  undefined8 uVar14;
-  undefined4 uStack_40;
-  undefined1 auStack_3c [4];
-  int iStack_38;
-  uint uStack_34;
-  undefined4 uStack_30;
-  
-  spi_fc1_dma_init();
-  uVar2 = spi_tx_buffer_ptr();
-  memset(uVar2,1,200);
-  memset(&DAT_00266490,1,400);
-  spi_tx_buffer_write(200,&DAT_00266490,400);
-  uVar9 = const_s(0);
-  uVar10 = 0x3dfa35de;
-  uVar8 = 0x40c90fdb;
-  uVar14 = ae_mov(uVar9);
-  puVar11 = &DAT_00266490;
-  do {
-    uVar7 = (ulonglong)(uint)((float)uVar14 + (float)uVar10);
-    uVar6 = olt_s(uVar8,uVar7);
-    if (SUB21(uVar6,0)) {
-      do {
-        uVar14 = ae_l32_i(0xc0c90fdb);
-        uVar7 = (ulonglong)(uint)((float)uVar7 + (float)uVar14);
-        uVar6 = olt_s(uVar8,uVar7);
-      } while (SUB21(uVar6,0));
-    }
-    uVar6 = olt_s(uVar7,uVar9);
-    uStack_30 = ae_s32_l_i(uVar7);
-    if (SUB21(uVar6,0)) {
-      do {
-        uVar7 = (ulonglong)(uint)((float)uVar7 + (float)uVar8);
-        uVar6 = olt_s(uVar7,uVar9);
-      } while (SUB21(uVar6,0));
-      uStack_30 = ae_s32_l_i(uVar7);
-    }
-    uVar14 = ae_l32_i(uStack_30);
-    scl_cosinef();
-    uStack_40 = ae_s32_l_i(uVar14);
-    FUN_00224df0(&uStack_40,auStack_3c,1);
-    puVar11[1] = auStack_3c[0];
-    uVar14 = ae_l32_i(uStack_30);
-    *puVar11 = auStack_3c[0];
-    uVar8 = ae_l32_i(0x40c90fdb);
-    uVar9 = ae_l32_i(0);
-    puVar11 = puVar11 + 2;
-    uVar10 = ae_l32_i(0x3dfa35de);
-  } while (puVar11 != &DAT_00266620);
-  spi_tx_buffer_write(200,&DAT_00266490,400);
-  iVar3 = spi_tx_buffer_ptr();
-  *(undefined1 *)(iVar3 + 600) = 0;
-  *(undefined1 *)(iVar3 + 0x259) = 0;
-  *(undefined1 *)(iVar3 + 0x25a) = 0;
-  *(undefined1 *)(iVar3 + 0x25b) = 0;
-  iVar3 = spi_tx_buffer_ptr();
-  memset(iVar3 + 0x25c,0xf0,0xf9c);
-  do {
-    do {
-      while( true ) {
-        do {
-          iVar3 = xos_msgq_get(PTR_DAT_002374f4,&iStack_38);
-        } while (iVar3 != 0);
-        if (iStack_38 == 0) break;
-        if (iStack_38 == 1) {
-          spi_rx_buffer_ptr();
-          playback_ring_fill();
-        }
-      }
-    } while (DAT_002642a0 < 7);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
-    ;
-    uStack_34 = uVar5 & 0xf;
-    if (uStack_34 < 2) {
-      uVar1 = wsr_ps(uVar5 & 0xfffffff0 | 2);
-      in_st_PSWOE = (undefined1)uVar1;
-      in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
-      in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
-      in_st_PSUM = (undefined1)((uint6)uVar1 >> 0x18);
-      in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
-      in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
-      rsync();
-    }
-    iVar3 = 0;
-    puVar12 = &DAT_00266620;
-    do {
-      memcpy(puVar12,&DAT_00263d60 + (uint)DAT_002642a2 * 0x60,0x60);
-      iVar3 = iVar3 + 1;
-      puVar12 = puVar12 + 0x60;
-      if (DAT_002642a2 < 0xd) {
-        DAT_002642a2 = DAT_002642a2 + 1;
-      }
-      else {
-        DAT_002642a2 = 0;
-      }
-      DAT_002642a0 = DAT_002642a0 - 1;
-    } while (iVar3 != 7);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
-    ;
-    uVar1 = wsr_ps(uStack_34 | uVar5 & 0xfffffff0);
-    in_st_PSWOE = (undefined1)uVar1;
-    in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
-    in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
-    in_st_PSUM = (undefined1)((uint6)uVar1 >> 0x18);
-    in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
-    in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
-    rsync();
-    bkfiraf_process(DAT_002642a8,&DAT_00266b20,&DAT_00266620,0xa8);
-    uVar14 = ae_l32_ip(DAT_00266b20);
-    DAT_002668c0 = ae_s32_l_ip(uVar14);
-    uVar14 = ae_l32_ip(DAT_00266b3c);
-    uVar5 = (uint)DAT_00264b68;
-    DAT_002668c4 = ae_s32_l_ip(uVar14);
-    if (uVar5 < 0xe9) {
-      uVar14 = ae_l32_ip(DAT_002668c0);
-      uVar2 = ae_s32_l_i(uVar14);
-      *(undefined4 *)(&DAT_00264768 + (uint)DAT_00264b69 * 4) = uVar2;
-      bVar4 = 0;
-      if (DAT_00264b69 != 0xff) {
-        bVar4 = DAT_00264b69 + 1;
-      }
-      uVar5 = DAT_00264b68 + 1 & 0xff;
-      DAT_00264b68 = (byte)(DAT_00264b68 + 1);
-      DAT_00264b69 = bVar4;
-    }
-    if (uVar5 >> 7 != 0) {
-      uVar13 = (uint)DAT_00264b6a;
-      DAT_00264b68 = (char)uVar5 - 1;
-      uVar14 = ae_l32_i(*(undefined4 *)(&DAT_00264768 + uVar13 * 4));
-      DAT_00264b6a = DAT_00264b6a + 1;
-      DAT_00266920 = ae_s32_l_ip(uVar14);
-      if (0xfe < uVar13) {
-        DAT_00264b6a = 0;
-      }
-      FUN_00224060(&DAT_00266920);
-      iVar3 = spectrum_frame(&DAT_00266920);
-      if (iVar3 != 0) {
-        spi_tx_buffer_ptr();
-        FUN_00223fe8();
-        iVar3 = spi_tx_buffer_ptr();
-        FUN_002244c8(iVar3 + 200);
-        iVar3 = spi_tx_buffer_ptr();
-        rec_ring_read_to_spi(iVar3 + 600);
-        spi_fc1_start();
-      }
-    }
-  } while( true );
-}
-
-
 // ===== spi_post_tx_done @ 00224d40 (23 bytes)
 
 void spi_post_tx_done(void)
@@ -2225,5 +2052,40 @@ undefined * FUN_0022689c(uint param_1,int param_2)
     return puVar4;
   }
   return (undefined *)0x0;
+}
+
+
+// ===== xos_msgq_create @ 00226a50 (82 bytes)
+
+/* called by Thread_Ipc and the other thread creators [inference] */
+
+undefined4 xos_msgq_create(int param_1,int param_2,uint param_3,uint param_4)
+
+{
+  undefined4 uVar1;
+  undefined2 uVar2;
+  
+  if (((param_1 == 0) || (param_2 == 0)) || ((param_3 & 3) != 0)) {
+    uVar1 = 0xffff0001;
+  }
+  else {
+    ae_s16i_n(param_4,param_1,0);
+    *(uint *)(param_1 + 4) = param_3;
+    *(short *)(param_1 + 2) = (short)param_2;
+    *(int *)(param_1 + 0x1c) = param_1 + 0x18;
+    *(int *)(param_1 + 0x10) = param_1 + 0xc;
+    uVar1 = 0;
+    *(undefined2 *)(param_1 + 8) = 0;
+    *(undefined2 *)(param_1 + 10) = 0;
+    *(undefined4 *)(param_1 + 0xc) = 0;
+    uVar2 = 1;
+    *(undefined4 *)(param_1 + 0x18) = 0;
+    if ((param_4 & 1) != 0) {
+      uVar2 = 2;
+    }
+    *(undefined2 *)(param_1 + 0x14) = uVar2;
+    *(undefined2 *)(param_1 + 0x20) = uVar2;
+  }
+  return uVar1;
 }
 

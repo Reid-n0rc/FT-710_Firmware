@@ -19023,7 +19023,7 @@ LAB_00216503:
 }
 
 /* -----------------------------------------------------------------------------
- * USART_TransferReceiveDMACallback @ 00216718  (55 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferReceiveDMACallback @ 00216718  (55 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c static [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19053,7 +19053,7 @@ void USART_TransferReceiveDMACallback(undefined4 param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferCreateHandleDMA @ 00216750  (118 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferCreateHandleDMA @ 00216750  (118 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c: callbacks 0x2166F0 / 0x216718, IRQ 0x216914 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19098,7 +19098,7 @@ USART_TransferCreateHandleDMA
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferSendDMA @ 002167c8  (96 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferSendDMA @ 002167c8  (96 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19132,7 +19132,7 @@ undefined * USART_TransferSendDMA(int param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferReceiveDMA @ 0021682c  (102 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferReceiveDMA @ 0021682c  (102 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19166,7 +19166,7 @@ undefined * USART_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferAbortSendDMA @ 00216894  (18 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferAbortSendDMA @ 00216894  (18 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19186,7 +19186,7 @@ void USART_TransferAbortSendDMA(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferAbortReceiveDMA @ 002168a8  (18 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferAbortReceiveDMA @ 002168a8  (18 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19206,7 +19206,7 @@ void USART_TransferAbortReceiveDMA(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferGetReceiveCountDMA @ 002168bc  (41 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferGetReceiveCountDMA @ 002168bc  (41 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19233,7 +19233,7 @@ undefined4 USART_TransferGetReceiveCountDMA(undefined4 param_1,int param_2,int *
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferGetSendCountDMA @ 002168e8  (41 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferGetSendCountDMA @ 002168e8  (41 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19260,7 +19260,7 @@ undefined4 USART_TransferGetSendCountDMA(undefined4 param_1,int param_2,int *par
 
 
 /* -----------------------------------------------------------------------------
- * USART_TransferDMAHandleIRQ @ 00216914  (41 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * USART_TransferDMAHandleIRQ @ 00216914  (41 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_usart_dma.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19287,7 +19287,7 @@ void USART_TransferDMAHandleIRQ(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_SetTick @ 00216940  (45 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * UTICK_SetTick @ 00216940  (45 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c: UTICK0 0x4000F000, callback 0x239084 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19307,7 +19307,7 @@ void UTICK_SetTick(dword *param_1,int param_2,uint param_3,undefined4 param_4)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_Init @ 00216970  (196 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * UTICK_Init @ 00216970  (196 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19337,7 +19337,7 @@ void UTICK_Init(dword *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_Deinit @ 00216a38  (180 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * UTICK_Deinit @ 00216a38  (180 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19372,7 +19372,7 @@ void UTICK_Deinit(dword *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_GetStatusFlags @ 00216aec  (10 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * UTICK_GetStatusFlags @ 00216aec  (10 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19390,7 +19390,7 @@ undefined4 UTICK_GetStatusFlags(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_ClearStatusFlags @ 00216af8  (12 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * UTICK_ClearStatusFlags @ 00216af8  (12 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c; called by UTICK_HandleIRQ [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19409,7 +19409,7 @@ void UTICK_ClearStatusFlags(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK_HandleIRQ @ 00216b04  (15 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * UTICK_HandleIRQ @ 00216b04  (15 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19430,7 +19430,7 @@ void UTICK_HandleIRQ(undefined4 param_1,code *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK0_DriverIRQHandler @ 00216b14  (18 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * UTICK0_DriverIRQHandler @ 00216b14  (18 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_utick.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19448,7 +19448,7 @@ void UTICK0_DriverIRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * WWDT_GetDefaultConfig @ 00216b30  (37 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * WWDT_GetDefaultConfig @ 00216b30  (37 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_wwdt.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19474,7 +19474,7 @@ void WWDT_GetDefaultConfig(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * WWDT_Init @ 00216b58  (420 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * WWDT_Init @ 00216b58  (420 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_wwdt.c: clock 0x200628, SDK_DelayAtLeastUs [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19565,7 +19565,7 @@ void WWDT_Init(dword *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * WWDT_Deinit @ 00216d00  (173 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * WWDT_Deinit @ 00216d00  (173 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_wwdt.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19622,7 +19622,7 @@ void WWDT_Deinit(dword *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * WWDT_Refresh @ 00216db0  (20 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * WWDT_Refresh @ 00216db0  (20 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_wwdt.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19643,7 +19643,7 @@ void WWDT_Refresh(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * WWDT_ClearStatusFlags @ 00216dc4  (45 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * WWDT_ClearStatusFlags @ 00216dc4  (45 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: fsl_wwdt.c, last SDK driver function [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -19672,7 +19672,7 @@ void WWDT_ClearStatusFlags(uint *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vec_complex2mag @ 00216e00  (1708 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * vec_complex2mag @ 00216e00  (1708 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP complexf/vec_complex2mag: |x| per bin (abs, max/min, sqrt0.s, divn.s, 0x400000); used by
  *     spectral_nr_frame [inference]
  * Tag: [inference]
@@ -20119,7 +20119,7 @@ void vec_complex2mag(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fft_spectrumf @ 00218640  (1314 bytes, 3 callers, export file 00216718_0021ab3c.c)
+ * fft_spectrumf @ 00218640  (1314 bytes, 3 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP fft/fft_spectrum: (y, x, N, mode): returns at once unless N is a power of 2 and mode is 0 (power)
  *     or 1 (magnitude, sqrt0.s) [fact]
  * Tag: [fact]
@@ -20321,7 +20321,7 @@ void fft_spectrumf(int param_1,int param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scl_antilognf @ 00218cf0  (355 bytes, 4 callers, export file 00216718_0021ab3c.c)
+ * scl_antilognf @ 00218cf0  (355 bytes, 4 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP mathf: expftbl_Q30 0x200720, no alog10f table; used by soft_knee_compressor / soft_knee_limiter
  *     [inference]
  * Tag: [inference]
@@ -20439,7 +20439,7 @@ void scl_antilognf(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_lognf @ 00219320  (561 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * scl_lognf @ 00219320  (561 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP mathf: lognf_tbl 0x2007E0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -20599,7 +20599,7 @@ undefined4 scl_lognf(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vec_atan2f @ 00219800  (2215 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * vec_atan2f @ 00219800  (2215 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP mathf: vector atan2 (recip0.s, atanftbl, pi); used by spectral_nr_frame [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -21300,7 +21300,7 @@ void vec_atan2f(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,uint
 
 
 /* -----------------------------------------------------------------------------
- * vec_log10f @ 0021a0b0  (1661 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * vec_log10f @ 0021a0b0  (1661 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP mathf: vector log10 (float.sx2, log10f_tbl) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -21839,7 +21839,7 @@ void vec_log10f(undefined4 *param_1,undefined4 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scl_bexpf @ 0021a730  (97 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * scl_bexpf @ 0021a730  (97 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP vectorf: block exponent of one float (2^24 scaling for subnormals) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -21883,7 +21883,7 @@ int scl_bexpf(void)
 
 
 /* -----------------------------------------------------------------------------
- * vec_bexpf @ 0021a7a0  (274 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * vec_bexpf @ 0021a7a0  (274 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP vectorf: max |x| over the vector, then exponent [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -21995,7 +21995,7 @@ int vec_bexpf(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vec_maxf @ 0021a8c0  (164 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * vec_maxf @ 0021a8c0  (164 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP vectorf: max.s loop from -inf (0x2008B8) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22067,7 +22067,7 @@ void vec_maxf(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vec_minf @ 0021a970  (169 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * vec_minf @ 0021a970  (169 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: NDSP vectorf: min.s loop from +inf (0x2008BC) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22143,7 +22143,7 @@ void vec_minf(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * env_init @ 0021aa90  (46 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * env_init @ 0021aa90  (46 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: memset, platform_init [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22175,7 +22175,7 @@ undefined4 env_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_deinit @ 0021aac0  (34 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * env_deinit @ 0021aac0  (34 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: platform_deinit [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22206,7 +22206,7 @@ undefined4 env_deinit(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_allocate_memory @ 0021aae4  (12 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * env_allocate_memory @ 0021aae4  (12 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: malloc [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22226,7 +22226,7 @@ undefined4 env_allocate_memory(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_free_memory @ 0021aaf0  (12 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * env_free_memory @ 0021aaf0  (12 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: free [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22246,7 +22246,7 @@ void env_free_memory(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_memset @ 0021aafc  (16 bytes, 7 callers, export file 00216718_0021ab3c.c)
+ * env_memset @ 0021aafc  (16 bytes, 7 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22264,7 +22264,7 @@ void env_memset(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * env_memcpy @ 0021ab0c  (16 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * env_memcpy @ 0021ab0c  (16 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22282,7 +22282,7 @@ void env_memcpy(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * env_strcmp @ 0021ab1c  (16 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * env_strcmp @ 0021ab1c  (16 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: strcmp [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22302,7 +22302,7 @@ undefined4 env_strcmp(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * env_strncpy @ 0021ab2c  (16 bytes, 3 callers, export file 00216718_0021ab3c.c)
+ * env_strncpy @ 0021ab2c  (16 bytes, 3 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: strncpy [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22320,7 +22320,7 @@ void env_strncpy(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * env_strncmp @ 0021ab3c  (18 bytes, 0 callers, export file 00216718_0021ab3c.c)
+ * env_strncmp @ 0021ab3c  (18 bytes, 0 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c: strncmp [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22338,8 +22338,9 @@ undefined4 env_strncmp(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   return uVar1;
 }
 
+
 /* -----------------------------------------------------------------------------
- * env_mb @ 0021ab50  (7 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * env_mb @ 0021ab50  (7 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22354,9 +22355,8 @@ void env_mb(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * env_rmb @ 0021ab58  (7 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * env_rmb @ 0021ab58  (7 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22373,7 +22373,7 @@ void env_rmb(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_wmb @ 0021ab60  (7 bytes, 4 callers, export file 0021ab50_0021b2f8.c)
+ * env_wmb @ 0021ab60  (7 bytes, 4 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22390,7 +22390,7 @@ void env_wmb(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_map_vatopa @ 0021ab68  (12 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * env_map_vatopa @ 0021ab68  (12 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_vatopa [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22410,7 +22410,7 @@ undefined4 env_map_vatopa(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_map_patova @ 0021ab74  (12 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * env_map_patova @ 0021ab74  (12 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_patova [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22430,7 +22430,7 @@ undefined4 env_map_patova(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_create_mutex @ 0021ab80  (11 bytes, 3 callers, export file 0021ab50_0021b2f8.c)
+ * env_create_mutex @ 0021ab80  (11 bytes, 3 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22448,7 +22448,7 @@ undefined4 env_create_mutex(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_delete_mutex @ 0021ab8c  (5 bytes, 3 callers, export file 0021ab50_0021b2f8.c)
+ * env_delete_mutex @ 0021ab8c  (5 bytes, 3 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22465,7 +22465,7 @@ void env_delete_mutex(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_sleep_msec @ 0021aba4  (10 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * env_sleep_msec @ 0021aba4  (10 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_time_delay [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22483,7 +22483,7 @@ void env_sleep_msec(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_unregister_isr @ 0021abc4  (22 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * env_unregister_isr @ 0021abc4  (22 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: isr_table 0x2390A0 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22506,7 +22506,7 @@ void env_unregister_isr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_enable_interrupt @ 0021abdc  (10 bytes, 6 callers, export file 0021ab50_0021b2f8.c)
+ * env_enable_interrupt @ 0021abdc  (10 bytes, 6 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_interrupt_enable [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22524,7 +22524,7 @@ void env_enable_interrupt(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_disable_interrupt @ 0021abe8  (10 bytes, 6 callers, export file 0021ab50_0021b2f8.c)
+ * env_disable_interrupt @ 0021abe8  (10 bytes, 6 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_interrupt_disable [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22542,7 +22542,7 @@ void env_disable_interrupt(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_map_memory @ 0021abf4  (20 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * env_map_memory @ 0021abf4  (20 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform_map_mem_region [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22560,7 +22560,7 @@ void env_map_memory(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
 
 
 /* -----------------------------------------------------------------------------
- * env_disable_cache @ 0021ac08  (11 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * env_disable_cache @ 0021ac08  (11 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_env_bm.c: platform cache flush/disable [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22579,7 +22579,7 @@ void env_disable_cache(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_in_isr @ 0021ad64  (7 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * platform_in_isr @ 0021ad64  (7 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c (imxrt600_hifi4) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22596,7 +22596,7 @@ undefined4 platform_in_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_interrupt_enable @ 0021ad6c  (27 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_interrupt_enable @ 0021ad6c  (27 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c: xos_interrupt_enable [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22620,7 +22620,7 @@ void platform_interrupt_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_interrupt_disable @ 0021ad88  (27 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_interrupt_disable @ 0021ad88  (27 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c: xos_interrupt_disable [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22644,7 +22644,7 @@ void platform_interrupt_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_map_mem_region @ 0021ada4  (5 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_map_mem_region @ 0021ada4  (5 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22661,7 +22661,7 @@ void platform_map_mem_region(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_cache_all_flush_invalidate @ 0021adac  (5 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_cache_all_flush_invalidate @ 0021adac  (5 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22678,7 +22678,7 @@ void platform_cache_all_flush_invalidate(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_cache_disable @ 0021adb4  (5 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_cache_disable @ 0021adb4  (5 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22695,7 +22695,7 @@ void platform_cache_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_vatopa @ 0021adbc  (5 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_vatopa @ 0021adbc  (5 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22712,7 +22712,7 @@ void platform_vatopa(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_patova @ 0021adc4  (5 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_patova @ 0021adc4  (5 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22729,7 +22729,7 @@ void platform_patova(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_init @ 0021adcc  (23 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_init @ 0021adcc  (23 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c: env_create_mutex(platform lock 0x2390D0) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22754,7 +22754,7 @@ undefined4 platform_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_deinit @ 0021ade4  (18 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_deinit @ 0021ade4  (18 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_platform.c: env_delete_mutex [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22773,7 +22773,7 @@ void platform_deinit(void)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_rx_callback @ 0021ae00  (207 bytes, 4 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_rx_callback @ 0021ae00  (207 bytes, 4 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c static; passed to virtqueue_create by the init functions [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22829,7 +22829,7 @@ LAB_0021ae71:
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_tx_callback @ 0021aed4  (19 bytes, 4 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_tx_callback @ 0021aed4  (19 bytes, 4 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c static [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22852,7 +22852,7 @@ void rpmsg_lite_tx_callback(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vq_tx_remote @ 0021aee8  (21 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_tx_remote @ 0021aee8  (21 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_add_consumed_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22877,7 +22877,7 @@ void vq_tx_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * vq_tx_alloc_remote @ 0021af00  (18 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_tx_alloc_remote @ 0021af00  (18 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_get_available_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22897,7 +22897,7 @@ undefined4 vq_tx_alloc_remote(undefined4 param_1,undefined4 param_2,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * vq_rx_remote @ 0021af14  (18 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_rx_remote @ 0021af14  (18 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_get_available_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22917,7 +22917,7 @@ undefined4 vq_rx_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * vq_rx_free_remote @ 0021af28  (21 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_rx_free_remote @ 0021af28  (21 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_add_consumed_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22942,7 +22942,7 @@ void vq_rx_free_remote(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * vq_tx_master @ 0021af40  (19 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_tx_master @ 0021af40  (19 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_add_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22967,7 +22967,7 @@ void vq_tx_master(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * vq_tx_alloc_master @ 0021af54  (18 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_tx_alloc_master @ 0021af54  (18 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_get_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -22987,7 +22987,7 @@ undefined4 vq_tx_alloc_master(undefined4 param_1,undefined4 param_2,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * vq_rx_master @ 0021af68  (18 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_rx_master @ 0021af68  (18 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_get_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23007,7 +23007,7 @@ undefined4 vq_rx_master(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * vq_rx_free_master @ 0021af7c  (19 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * vq_rx_free_master @ 0021af7c  (19 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: virtqueue_add_buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23032,7 +23032,7 @@ void vq_rx_free_master(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_notify @ 0021af90  (11 bytes, 14 callers, export file 0021ab50_0021b2f8.c)
+ * virtqueue_notify @ 0021af90  (11 bytes, 14 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c static: platform_notify [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23050,7 +23050,7 @@ void virtqueue_notify(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_destroy_ept @ 0021b034  (63 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_destroy_ept @ 0021b034  (63 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: RL_ERR_PARAM -5003; called by rpmsg_ns_unbind [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23088,7 +23088,7 @@ undefined4 rpmsg_lite_destroy_ept(int param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_alloc_tx_buffer @ 0021b190  (166 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_alloc_tx_buffer @ 0021b190  (166 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c: waits with env_sleep_msec [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23153,7 +23153,7 @@ LAB_0021b230:
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_send_nocopy @ 0021b238  (188 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_send_nocopy @ 0021b238  (188 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23202,7 +23202,7 @@ rpmsg_lite_send_nocopy(int param_1,undefined4 *param_2,undefined4 param_3,int pa
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_release_rx_buffer @ 0021b2f8  (81 bytes, 0 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_release_rx_buffer @ 0021b2f8  (81 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg_lite.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23226,8 +23226,9 @@ undefined4 rpmsg_lite_release_rx_buffer(undefined4 *param_1,int param_2)
   return 0xffffec75;
 }
 
+
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_deinit @ 0021b664  (104 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_lite_deinit @ 0021b664  (104 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg_lite.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23263,7 +23264,7 @@ undefined4 rpmsg_lite_deinit(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_ns_rx_cb @ 0021b6d0  (99 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_ns_rx_cb @ 0021b6d0  (99 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg_ns.c static; passed to rpmsg_lite_create_ept by rpmsg_ns_bind [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23295,7 +23296,7 @@ undefined4 rpmsg_ns_rx_cb(int param_1,int param_2,undefined4 param_3,undefined4 
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_ns_unbind @ 0021b768  (16 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_ns_unbind @ 0021b768  (16 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg_ns.c: rpmsg_lite_destroy_ept [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23315,7 +23316,7 @@ undefined4 rpmsg_ns_unbind(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_create @ 0021b7c0  (148 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_create @ 0021b7c0  (148 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c: env_allocate_memory, ERROR_VQUEUE_INVLD_PARAM -3004 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23366,7 +23367,7 @@ virtqueue_create(undefined2 param_1,undefined4 param_2,int *param_3,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_create_static @ 0021b854  (140 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_create_static @ 0021b854  (140 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c; called by both init functions [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23413,7 +23414,7 @@ virtqueue_create_static
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_add_buffer @ 0021b8e8  (77 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_add_buffer @ 0021b8e8  (77 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23447,7 +23448,7 @@ undefined4 virtqueue_add_buffer(int param_1,undefined2 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_fill_avail_buffers @ 0021b938  (123 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_fill_avail_buffers @ 0021b938  (123 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23496,7 +23497,7 @@ undefined4 virtqueue_fill_avail_buffers(int param_1,undefined4 param_2,undefined
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_buffer @ 0021b9b4  (95 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_get_buffer @ 0021b9b4  (95 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23536,7 +23537,7 @@ undefined4 virtqueue_get_buffer(int param_1,undefined4 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_buffer_length @ 0021ba14  (15 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_get_buffer_length @ 0021ba14  (15 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23553,7 +23554,7 @@ undefined4 virtqueue_get_buffer_length(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_free @ 0021ba24  (24 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_free @ 0021ba24  (24 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c: env_free_memory [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23577,7 +23578,7 @@ void virtqueue_free(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_free_static @ 0021ba3c  (21 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_free_static @ 0021ba3c  (21 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23599,7 +23600,7 @@ void virtqueue_free_static(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_available_buffer @ 0021ba54  (84 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_get_available_buffer @ 0021ba54  (84 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23632,7 +23633,7 @@ undefined4 virtqueue_get_available_buffer(int param_1,undefined4 param_2,undefin
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_add_consumed_buffer @ 0021baa8  (54 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_add_consumed_buffer @ 0021baa8  (54 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23664,7 +23665,7 @@ undefined4 virtqueue_add_consumed_buffer(int param_1,uint param_2,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_fill_used_buffers @ 0021bae0  (98 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_fill_used_buffers @ 0021bae0  (98 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23709,7 +23710,7 @@ undefined4 virtqueue_fill_used_buffers(int param_1,int param_2,undefined4 param_
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_enable_cb @ 0021bb44  (16 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_enable_cb @ 0021bb44  (16 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c: vq_ring_enable_interrupt [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23729,7 +23730,7 @@ undefined4 virtqueue_enable_cb(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_disable_cb @ 0021bb54  (46 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_disable_cb @ 0021bb54  (46 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23757,7 +23758,7 @@ void virtqueue_disable_cb(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_kick @ 0021bb84  (90 bytes, 3 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_kick @ 0021bb84  (90 bytes, 3 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23794,7 +23795,7 @@ void virtqueue_kick(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_dump @ 0021bbe0  (62 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_dump @ 0021bbe0  (62 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c: printf of "VQ: %s - size=%d;..." 0x2062E4 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23827,7 +23828,7 @@ void virtqueue_dump(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_desc_size @ 0021bc20  (50 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_get_desc_size @ 0021bc20  (50 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c order [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23853,7 +23854,7 @@ undefined4 virtqueue_get_desc_size(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vq_ring_init @ 0021bc54  (130 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * vq_ring_init @ 0021bc54  (130 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c; called by rpmsg_lite_master_init [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23903,7 +23904,7 @@ ulonglong vq_ring_init(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vq_ring_enable_interrupt @ 0021bcd8  (73 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * vq_ring_enable_interrupt @ 0021bcd8  (73 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c static; called by virtqueue_enable_cb [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23938,7 +23939,7 @@ undefined4 vq_ring_enable_interrupt(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_notification @ 0021bd24  (16 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * virtqueue_notification @ 0021bd24  (16 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: virtqueue.c: called by env_isr [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -23958,7 +23959,7 @@ void virtqueue_notification(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_msgq_delete @ 00226aa4  (147 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_delete @ 00226aa4  (147 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: wakes the waiters with 0xFFFF000E [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24031,7 +24032,7 @@ undefined4 xos_msgq_delete(ushort *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_msgq_put_timeout @ 00226bc4  (293 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_put_timeout @ 00226bc4  (293 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: 0xFFFF000C (full) and a timer (0x2283E0) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24143,7 +24144,7 @@ int xos_msgq_put_timeout(int param_1,int param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * xos_msgq_get_timeout @ 00226d7c  (295 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_get_timeout @ 00226d7c  (295 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: 0xFFFF000D (empty) and a timer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24255,7 +24256,7 @@ int xos_msgq_get_timeout(int param_1,int param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_create @ 0022700c  (73 bytes, 3 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_create @ 0022700c  (73 bytes, 3 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS; called by Thread_Ipc_entry for the reply mutex and by the clib lock init [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24286,7 +24287,7 @@ undefined4 xos_mutex_create(undefined4 *param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_delete @ 00227058  (122 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_delete @ 00227058  (122 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: 0xFFFF0007 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24345,7 +24346,7 @@ undefined4 xos_mutex_delete(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_lock_timeout @ 00227168  (197 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_lock_timeout @ 00227168  (197 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: as xos_mutex_lock plus a timer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24427,7 +24428,7 @@ int xos_mutex_lock_timeout(int *param_1,undefined4 param_2,int param_3,int param
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_trylock @ 00227294  (84 bytes, 0 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_trylock @ 00227294  (84 bytes, 0 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS: returns 0xFFFF0004 when locked [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24478,7 +24479,7 @@ LAB_002272d7:
 
 
 /* -----------------------------------------------------------------------------
- * __malloc_lock @ 00228dc0  (43 bytes, 5 callers, export file 00228564_0022b880.c)
+ * __malloc_lock @ 00228dc0  (43 bytes, 5 callers, export file 00228634_0022b8ac.c)
  * Purpose: XOS clib support: xos_mutex_lock(0x2CD6B0); called by _malloc_r, _free_r, _realloc_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24506,7 +24507,7 @@ void __malloc_lock(void)
 
 
 /* -----------------------------------------------------------------------------
- * __malloc_unlock @ 00228df0  (43 bytes, 20 callers, export file 00228564_0022b880.c)
+ * __malloc_unlock @ 00228df0  (43 bytes, 20 callers, export file 00228634_0022b8ac.c)
  * Purpose: XOS clib support: xos_mutex_unlock(0x2CD6B0) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24529,7 +24530,7 @@ void __malloc_unlock(void)
 
 
 /* -----------------------------------------------------------------------------
- * _sbrk_r @ 00228e34  (42 bytes, 5 callers, export file 00228564_0022b880.c)
+ * _sbrk_r @ 00228e34  (42 bytes, 5 callers, export file 00228634_0022b8ac.c)
  * Purpose: heap break 0x2CD6D8.. limit; called by _malloc_r / _malloc_trim_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24558,7 +24559,7 @@ undefined * _sbrk_r(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * xos_clib_reent_init @ 00228e84  (290 bytes, 1 callers, export file 00228564_0022b880.c)
+ * xos_clib_reent_init @ 00228e84  (290 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: XOS clib support: per-thread _reent init (rand48 seeds 0x330E 0xABCD 0x1234 0xE66D 0xDEEC); called by
  *     xos_thread_create [inference]
  * Tag: [inference]
@@ -24639,7 +24640,7 @@ void xos_clib_reent_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sqrtf @ 00229a20  (224 bytes, 10 callers, export file 00228564_0022b880.c)
+ * sqrtf @ 00229a20  (224 bytes, 10 callers, export file 00228634_0022b8ac.c)
  * Purpose: w_sqrtf.c wrapper: core 0x235C8C, _LIB_VERSION 0x237ACC, matherr name "sqrtf" 0x20641C, __errno [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -24726,7 +24727,7 @@ void sqrtf(void)
 
 
 /* -----------------------------------------------------------------------------
- * __ieee754_powf @ 00229b10  (2019 bytes, 1 callers, export file 00228564_0022b880.c)
+ * __ieee754_powf @ 00229b10  (2019 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: e_powf.c: 36 of its 43 distinct constants equal newlib's (bp, dp_h, L1..L6, P1..P5, lg2, ovt) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -25065,7 +25066,7 @@ LAB_0022a0c0:
 
 
 /* -----------------------------------------------------------------------------
- * __ieee754_rem_pio2f @ 0022a320  (725 bytes, 2 callers, export file 00228564_0022b880.c)
+ * __ieee754_rem_pio2f @ 0022a320  (725 bytes, 2 callers, export file 00228634_0022b8ac.c)
  * Purpose: e_rem_pio2f.c: 11 constants equal newlib's (pio2_1, pio2_1t, invpio2, npio2_hw); called by sinf [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -25242,7 +25243,7 @@ int __ieee754_rem_pio2f(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __kernel_cosf @ 0022a610  (218 bytes, 5 callers, export file 00228564_0022b880.c)
+ * __kernel_cosf @ 0022a610  (218 bytes, 5 callers, export file 00228634_0022b8ac.c)
  * Purpose: k_cosf.c: C1..C6 coefficients; called by sinf and cosf [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -25281,7 +25282,7 @@ undefined4 __kernel_cosf(void)
 
 
 /* -----------------------------------------------------------------------------
- * __kernel_rem_pio2f @ 0022a6f0  (3349 bytes, 1 callers, export file 00228564_0022b880.c)
+ * __kernel_rem_pio2f @ 0022a6f0  (3349 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: k_rem_pio2f.c: tables 0x205DE0.. (init_jk, PIo2); called by __ieee754_rem_pio2f [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26134,7 +26135,7 @@ LAB_0022afca:
 
 
 /* -----------------------------------------------------------------------------
- * __kernel_sinf @ 0022b420  (163 bytes, 5 callers, export file 00228564_0022b880.c)
+ * __kernel_sinf @ 0022b420  (163 bytes, 5 callers, export file 00228634_0022b8ac.c)
  * Purpose: k_sinf.c: S1..S6 coefficients; called by sinf and cosf [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26163,7 +26164,7 @@ void __kernel_sinf(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * matherr @ 0022b4d0  (22 bytes, 7 callers, export file 00228564_0022b880.c)
+ * matherr @ 0022b4d0  (22 bytes, 7 callers, export file 00228634_0022b8ac.c)
  * Purpose: s_matherr.c default: compares arg1 with itself, returns 0 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26181,7 +26182,7 @@ undefined4 matherr(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rint @ 0022b4f0  (396 bytes, 2 callers, export file 00228564_0022b880.c)
+ * rint @ 0022b4f0  (396 bytes, 2 callers, export file 00228634_0022b8ac.c)
  * Purpose: s_rint.c (double): TWO52 table 0x205E50, __adddf3 then __subdf3; used by the powf wrapper [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26271,7 +26272,7 @@ LAB_0022b584:
 
 
 /* -----------------------------------------------------------------------------
- * fabsf @ 0022b680  (21 bytes, 2 callers, export file 00228564_0022b880.c)
+ * fabsf @ 0022b680  (21 bytes, 2 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_fabs.c: bits & 0x7FFFFFFF [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26293,7 +26294,7 @@ void fabsf(void)
 
 
 /* -----------------------------------------------------------------------------
- * finitef @ 0022b6a0  (29 bytes, 6 callers, export file 00228564_0022b880.c)
+ * finitef @ 0022b6a0  (29 bytes, 6 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_finite.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26317,7 +26318,7 @@ undefined4 finitef(void)
 
 
 /* -----------------------------------------------------------------------------
- * __fpclassifyf @ 0022b6c0  (79 bytes, 4 callers, export file 00228564_0022b880.c)
+ * __fpclassifyf @ 0022b6c0  (79 bytes, 4 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_fpclassify.c: zero / subnormal / normal / inf / nan bounds [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26350,7 +26351,7 @@ undefined4 __fpclassifyf(void)
 
 
 /* -----------------------------------------------------------------------------
- * nanf @ 0022b710  (13 bytes, 1 callers, export file 00228564_0022b880.c)
+ * nanf @ 0022b710  (13 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_nan.c: 0x7FC00000 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26368,7 +26369,7 @@ void nanf(void)
 
 
 /* -----------------------------------------------------------------------------
- * scalbnf @ 0022b720  (226 bytes, 5 callers, export file 00228564_0022b880.c)
+ * scalbnf @ 0022b720  (226 bytes, 5 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_scalbn.c: two25 0x4C000000, 50000 limit [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26432,7 +26433,7 @@ void scalbnf(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copysignf @ 0022b810  (37 bytes, 3 callers, export file 00228564_0022b880.c)
+ * copysignf @ 0022b810  (37 bytes, 3 callers, export file 00228634_0022b8ac.c)
  * Purpose: sf_copysign.c; called by scalbnf [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26457,7 +26458,7 @@ void copysignf(void)
 
 
 /* -----------------------------------------------------------------------------
- * __truncdfsf2 @ 0022b8ac  (188 bytes, 8 callers, export file 0022b8ac_00230440.c)
+ * __truncdfsf2 @ 0022b8ac  (188 bytes, 8 callers, export file 00228634_0022b8ac.c)
  * Purpose: double -> float (XCC soft double); used by the powf / sqrtf wrappers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26508,9 +26509,8 @@ uint __truncdfsf2(int param_1,uint param_2)
   return uVar4;
 }
 
-
 /* -----------------------------------------------------------------------------
- * __extendsfdf2 @ 0022b96c  (100 bytes, 15 callers, export file 0022b8ac_00230440.c)
+ * __extendsfdf2 @ 0022b96c  (100 bytes, 15 callers, export file 0022b96c_002304f0.c)
  * Purpose: float -> double (XCC soft double); first conversion in the powf / sqrtf wrappers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26552,7 +26552,7 @@ longlong __extendsfdf2(void)
 
 
 /* -----------------------------------------------------------------------------
- * __errno @ 0022ba10  (10 bytes, 34 callers, export file 0022b8ac_00230440.c)
+ * __errno @ 0022ba10  (10 bytes, 34 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib errno.c: &_impure_ptr->_errno (0x237F00); 10 callers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26569,7 +26569,7 @@ undefined * __errno(void)
 
 
 /* -----------------------------------------------------------------------------
- * exit @ 0022ba20  (32 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * exit @ 0022ba20  (32 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib exit.c: __call_exitprocs, then _exit [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26594,7 +26594,7 @@ undefined4 exit(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * malloc @ 0022ba40  (20 bytes, 3 callers, export file 0022b8ac_00230440.c)
+ * malloc @ 0022ba40  (20 bytes, 3 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib malloc.c: _malloc_r(_impure_ptr); called by SDK_Malloc, env_allocate_memory [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26614,7 +26614,7 @@ undefined4 malloc(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * free @ 0022ba60  (17 bytes, 4 callers, export file 0022b8ac_00230440.c)
+ * free @ 0022ba60  (17 bytes, 4 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib malloc.c: _free_r(_impure_ptr) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26632,7 +26632,7 @@ void free(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _malloc_r @ 0022ba80  (1297 bytes, 7 callers, export file 0022b8ac_00230440.c)
+ * _malloc_r @ 0022ba80  (1297 bytes, 7 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mallocr.c (dlmalloc): __malloc_lock / __malloc_unlock, sbrk [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26967,7 +26967,7 @@ LAB_0022bdf6:
 
 
 /* -----------------------------------------------------------------------------
- * _printf_r @ 0022bfb0  (49 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * _printf_r @ 0022bfb0  (49 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib printf.c: _vfprintf_r(ptr, stdout of ptr) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -26987,7 +26987,7 @@ undefined4 _printf_r(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * printf @ 0022bff0  (55 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * printf @ 0022bff0  (55 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib printf.c: _impure_ptr; called by virtqueue_dump [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27007,7 +27007,7 @@ undefined4 printf(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * srand @ 0022c030  (20 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * srand @ 0022c030  (20 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib rand.c: _impure_ptr->_new._reent._rand_next [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27029,7 +27029,7 @@ void srand(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rand @ 0022c050  (75 bytes, 2 callers, export file 0022b8ac_00230440.c)
+ * rand @ 0022c050  (75 bytes, 2 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib rand.c: LCG multiplier 6364136223846793005 (0x5851F42D4C957F2D) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27063,7 +27063,7 @@ uint rand(void)
 
 
 /* -----------------------------------------------------------------------------
- * cleanup_glue @ 0022c0a0  (30 bytes, 2 callers, export file 0022b8ac_00230440.c)
+ * cleanup_glue @ 0022c0a0  (30 bytes, 2 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib reent.c static, recursive, frees the glue chain [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27084,7 +27084,7 @@ void cleanup_glue(undefined4 param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _reclaim_reent @ 0022c0c0  (140 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * _reclaim_reent @ 0022c0c0  (140 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib reent.c: frees the per-thread buffers; called from the XOS clib thread cleanup [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27144,7 +27144,7 @@ void _reclaim_reent(undefined *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _wrapup_reent @ 0022c150  (56 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * _wrapup_reent @ 0022c150  (56 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib reent.c: runs atexit functions and __cleanup [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27179,7 +27179,7 @@ void _wrapup_reent(undefined *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * strcmp @ 0022c190  (328 bytes, 4 callers, export file 0022b8ac_00230440.c)
+ * strcmp @ 0022c190  (328 bytes, 4 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib strcmp (word-at-a-time, 0x40404040 hack); called by env_strcmp and _setlocale_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27295,7 +27295,7 @@ LAB_0022c291:
 
 
 /* -----------------------------------------------------------------------------
- * strncmp @ 0022c2e0  (148 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * strncmp @ 0022c2e0  (148 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib strncmp (0xFEFEFEFF / 0x80808080); called by env_strncmp [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27352,7 +27352,7 @@ int strncmp(uint *param_1,uint *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * strncpy @ 0022c3bc  (175 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * strncpy @ 0022c3bc  (175 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib strncpy; called by env_strncpy [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27496,7 +27496,7 @@ SUB_0022c3e0:
 
 
 /* -----------------------------------------------------------------------------
- * __sbprintf @ 0022c4d0  (175 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __sbprintf @ 0022c4d0  (175 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib vfprintf.c: unbuffered-stream helper (vfprintf into a stack buffer, fflush) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27552,7 +27552,7 @@ int __sbprintf(undefined4 param_1,int param_2,undefined4 param_3,undefined4 para
 
 
 /* -----------------------------------------------------------------------------
- * vfprintf @ 0022c590  (31 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * vfprintf @ 0022c590  (31 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib vfprintf.c: _vfprintf_r(_impure_ptr) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -27574,7 +27574,7 @@ vfprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * _vfprintf_r @ 0022c5b0  (8131 bytes, 4 callers, export file 0022b8ac_00230440.c)
+ * _vfprintf_r @ 0022c5b0  (8131 bytes, 4 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib vfprintf.c (8,320 bytes): __sinit, __swsetup_r, __sprint_r, _dtoa_r, _localeconv_r, strlen
  *     [inference]
  * Tag: [inference]
@@ -29473,7 +29473,7 @@ switchD_0022c735_caseD_20:
 
 
 /* -----------------------------------------------------------------------------
- * __swsetup_r @ 0022e630  (214 bytes, 4 callers, export file 0022b8ac_00230440.c)
+ * __swsetup_r @ 0022e630  (214 bytes, 4 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib wsetup.c: __sinit, __smakebuf_r, _free_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -29547,7 +29547,7 @@ undefined4 __swsetup_r(undefined4 *param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __call_exitprocs @ 0022e740  (204 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __call_exitprocs @ 0022e740  (204 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib __call_atexit.c: callx through the atexit list, free (weak reference 0x22BA60) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -29620,7 +29620,7 @@ LAB_0022e749:
 
 
 /* -----------------------------------------------------------------------------
- * quorem @ 0022e810  (372 bytes, 2 callers, export file 0022b8ac_00230440.c)
+ * quorem @ 0022e810  (372 bytes, 2 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib dtoa.c static; calls __mcmp [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -29738,7 +29738,7 @@ uint quorem(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _dtoa_r @ 0022e990  (4063 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * _dtoa_r @ 0022e990  (4063 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib dtoa.c (4,208 bytes): 14 of 15 distinctive constants of newlib's _dtoa_r, 9999 (0x270F) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30561,7 +30561,7 @@ LAB_0022f134:
 
 
 /* -----------------------------------------------------------------------------
- * __sflush_r @ 0022fa00  (373 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __sflush_r @ 0022fa00  (373 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib fflush.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30659,7 +30659,7 @@ LAB_0022fb05:
 
 
 /* -----------------------------------------------------------------------------
- * _fflush_r @ 0022fb80  (39 bytes, 11 callers, export file 0022b8ac_00230440.c)
+ * _fflush_r @ 0022fb80  (39 bytes, 11 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib fflush.c: __sinit, __sflush_r; 6 callers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30685,7 +30685,7 @@ undefined4 _fflush_r(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fflush @ 0022fbb0  (40 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * fflush @ 0022fbb0  (40 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib fflush.c: _fwalk_reent(_GLOBAL_REENT, _fflush_r) when fp is NULL [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30709,7 +30709,7 @@ undefined4 fflush(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __sfmoreglue @ 0022fbe0  (51 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __sfmoreglue @ 0022fbe0  (51 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: _malloc_r, memset [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30736,7 +30736,7 @@ undefined4 * __sfmoreglue(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __sfp @ 0022fc20  (170 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * __sfp @ 0022fc20  (170 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: lock, __sfmoreglue, memset [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30799,7 +30799,7 @@ undefined4 * __sfp(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _cleanup_r @ 0022fce0  (14 bytes, 4 callers, export file 0022b8ac_00230440.c)
+ * _cleanup_r @ 0022fce0  (14 bytes, 4 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: _fwalk(ptr, _fclose_r) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30817,7 +30817,7 @@ void _cleanup_r(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _cleanup @ 0022fcf0  (13 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * _cleanup @ 0022fcf0  (13 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: _cleanup_r(_GLOBAL_REENT) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30835,7 +30835,7 @@ void _cleanup(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sinit @ 0022fd00  (263 bytes, 8 callers, export file 0022b8ac_00230440.c)
+ * __sinit @ 0022fd00  (263 bytes, 8 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: installs __sread/__swrite/__sseek/__sclose (0x230D80..0x230E40) on stdin/out/err [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30916,7 +30916,7 @@ void __sinit(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __fp_lock_all @ 0022fe10  (19 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * __fp_lock_all @ 0022fe10  (19 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: _fwalk(_impure_ptr, __fp_lock 0x235F80) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30935,7 +30935,7 @@ void __fp_lock_all(void)
 
 
 /* -----------------------------------------------------------------------------
- * __fp_unlock_all @ 0022fe30  (19 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * __fp_unlock_all @ 0022fe30  (19 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib findfp.c: _fwalk(_impure_ptr, __fp_unlock 0x235F90) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -30954,7 +30954,7 @@ void __fp_unlock_all(void)
 
 
 /* -----------------------------------------------------------------------------
- * _free_r @ 0022fe50  (564 bytes, 16 callers, export file 0022b8ac_00230440.c)
+ * _free_r @ 0022fe50  (564 bytes, 16 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mallocr.c: __malloc_lock, _malloc_trim_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31127,7 +31127,7 @@ LAB_0022feea:
 
 
 /* -----------------------------------------------------------------------------
- * _malloc_trim_r @ 00230090  (197 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * _malloc_trim_r @ 00230090  (197 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mallocr.c: sbrk(0), sbrk(-extra) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31174,7 +31174,7 @@ undefined4 _malloc_trim_r(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _setlocale_r @ 00230160  (52 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * _setlocale_r @ 00230160  (52 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib locale.c: compares with "C", "POSIX" (0x206478), "" [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31200,7 +31200,7 @@ undefined * _setlocale_r(undefined4 param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __locale_mb_cur_max @ 002301b0  (10 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __locale_mb_cur_max @ 002301b0  (10 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib locale.c: current locale 0x238330 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31217,7 +31217,7 @@ undefined4 __locale_mb_cur_max(void)
 
 
 /* -----------------------------------------------------------------------------
- * _localeconv_r @ 002301e0  (8 bytes, 2 callers, export file 0022b8ac_00230440.c)
+ * _localeconv_r @ 002301e0  (8 bytes, 2 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib localeconv.c: lconv 0x238334; used by _vfprintf_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31234,7 +31234,7 @@ undefined ** _localeconv_r(void)
 
 
 /* -----------------------------------------------------------------------------
- * setlocale @ 002301f0  (24 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * setlocale @ 002301f0  (24 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib locale.c: _setlocale_r(_impure_ptr) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31254,7 +31254,7 @@ undefined4 setlocale(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * localeconv @ 00230210  (18 bytes, 0 callers, export file 0022b8ac_00230440.c)
+ * localeconv @ 00230210  (18 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib localeconv.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31274,7 +31274,7 @@ undefined4 localeconv(void)
 
 
 /* -----------------------------------------------------------------------------
- * __smakebuf_r @ 00230230  (260 bytes, 1 callers, export file 0022b8ac_00230440.c)
+ * __smakebuf_r @ 00230230  (260 bytes, 1 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib makebuf.c: __swhatbuf_r, _malloc_r; 0x800 / 0xF000 st_mode masks [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31355,7 +31355,7 @@ LAB_00230290:
 
 
 /* -----------------------------------------------------------------------------
- * memchr @ 00230340  (139 bytes, 3 callers, export file 0022b8ac_00230440.c)
+ * memchr @ 00230340  (139 bytes, 3 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib memchr; called by _vfprintf_r, _vfiprintf_r and __sfvwrite_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31405,7 +31405,7 @@ uint * memchr(uint *param_1,char param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _Balloc @ 002303d0  (98 bytes, 10 callers, export file 0022b8ac_00230440.c)
+ * _Balloc @ 002303d0  (98 bytes, 10 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mprec.c: freelist, _calloc_r; 8 callers in dtoa [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31451,7 +31451,7 @@ int * _Balloc(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __multadd @ 00230440  (159 bytes, 11 callers, export file 0022b8ac_00230440.c)
+ * __multadd @ 00230440  (159 bytes, 11 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mprec.c: _Balloc, Bcopy (memcpy), _Bfree [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31496,8 +31496,9 @@ int __multadd(undefined4 param_1,int param_2,int param_3,uint param_4)
   return param_2;
 }
 
+
 /* -----------------------------------------------------------------------------
- * __s2b @ 002304f0  (159 bytes, 0 callers, export file 002304f0_00233984.c)
+ * __s2b @ 002304f0  (159 bytes, 0 callers, export file 0022b96c_002304f0.c)
  * Purpose: newlib mprec.c: __multadd [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31557,9 +31558,8 @@ int __s2b(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 para
   return iVar4;
 }
 
-
 /* -----------------------------------------------------------------------------
- * __i2b @ 002305a0  (29 bytes, 3 callers, export file 002304f0_00233984.c)
+ * __i2b @ 002305a0  (29 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: _Balloc(1) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31581,7 +31581,7 @@ int __i2b(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __multiply @ 002305c0  (388 bytes, 3 callers, export file 002304f0_00233984.c)
+ * __multiply @ 002305c0  (388 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31705,7 +31705,7 @@ void __multiply(undefined4 param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __pow5mult @ 00230750  (157 bytes, 4 callers, export file 002304f0_00233984.c)
+ * __pow5mult @ 00230750  (157 bytes, 4 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: p05 table {5, 25, 125} 0x205F40 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31764,7 +31764,7 @@ void __pow5mult(int param_1,undefined4 param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __lshift @ 00230800  (197 bytes, 6 callers, export file 002304f0_00233984.c)
+ * __lshift @ 00230800  (197 bytes, 6 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31834,7 +31834,7 @@ void __lshift(undefined4 param_1,int param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __mdiff @ 002308e0  (316 bytes, 1 callers, export file 002304f0_00233984.c)
+ * __mdiff @ 002308e0  (316 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: __mcmp, _Balloc [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31926,7 +31926,7 @@ int __mdiff(undefined4 param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __ulp @ 00230a30  (88 bytes, 0 callers, export file 002304f0_00233984.c)
+ * __ulp @ 00230a30  (88 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: (P-1) << 20 = 0xFCC00000 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -31956,7 +31956,7 @@ ulonglong __ulp(undefined4 param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __b2d @ 00230a90  (223 bytes, 2 callers, export file 002304f0_00233984.c)
+ * __b2d @ 00230a90  (223 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: __hi0bits, 0x3FF00000 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32017,7 +32017,7 @@ ulonglong __b2d(int param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __d2b @ 00230b70  (202 bytes, 1 callers, export file 002304f0_00233984.c)
+ * __d2b @ 00230b70  (202 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: __lo0bits, __hi0bits [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32081,7 +32081,7 @@ void __d2b(undefined4 param_1,undefined4 param_2,uint param_3,uint param_4,int *
 
 
 /* -----------------------------------------------------------------------------
- * __ratio @ 00230c40  (115 bytes, 0 callers, export file 002304f0_00233984.c)
+ * __ratio @ 00230c40  (115 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: __b2d twice, __divdf3 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32127,7 +32127,7 @@ undefined4 __ratio(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _mprec_log10 @ 00230cc0  (73 bytes, 0 callers, export file 002304f0_00233984.c)
+ * _mprec_log10 @ 00230cc0  (73 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mprec.c: tens table 0x206010, x10.0 (0x40240000) loop [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32159,7 +32159,7 @@ undefined8 _mprec_log10(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __sread @ 00230d80  (54 bytes, 4 callers, export file 002304f0_00233984.c)
+ * __sread @ 00230d80  (54 bytes, 4 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib stdio.c: _read_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32184,7 +32184,7 @@ int __sread(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4
 
 
 /* -----------------------------------------------------------------------------
- * __swrite @ 00230dc0  (58 bytes, 4 callers, export file 002304f0_00233984.c)
+ * __swrite @ 00230dc0  (58 bytes, 4 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib stdio.c: _lseek_r on append, _write_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32211,7 +32211,7 @@ undefined4 __swrite(undefined4 param_1,int param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * __sseek @ 00230e00  (63 bytes, 4 callers, export file 002304f0_00233984.c)
+ * __sseek @ 00230e00  (63 bytes, 4 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib stdio.c: _lseek_r, __SOFF 0x1000 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32237,7 +32237,7 @@ int __sseek(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4
 
 
 /* -----------------------------------------------------------------------------
- * __sclose @ 00230e40  (16 bytes, 4 callers, export file 002304f0_00233984.c)
+ * __sclose @ 00230e40  (16 bytes, 4 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib stdio.c: _close_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32257,7 +32257,7 @@ undefined4 __sclose(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strlen @ 00230e50  (102 bytes, 3 callers, export file 002304f0_00233984.c)
+ * strlen @ 00230e50  (102 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib strlen (word-at-a-time) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32306,7 +32306,7 @@ LAB_00230ea5:
 
 
 /* -----------------------------------------------------------------------------
- * __sprint_r @ 00230ec0  (145 bytes, 51 callers, export file 002304f0_00233984.c)
+ * __sprint_r @ 00230ec0  (145 bytes, 51 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib vfprintf.c: __sfputwc loop (wide streams) or __sfvwrite_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32369,7 +32369,7 @@ undefined4 __sprint_r(undefined4 param_1,int param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __sbprintf_i @ 00230f60  (175 bytes, 1 callers, export file 002304f0_00233984.c)
+ * __sbprintf_i @ 00230f60  (175 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib vfiprintf.c copy of __sbprintf (vfiprintf into a stack buffer, fflush) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32425,7 +32425,7 @@ int __sbprintf_i(undefined4 param_1,int param_2,undefined4 param_3,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * vfiprintf @ 00231020  (31 bytes, 0 callers, export file 002304f0_00233984.c)
+ * vfiprintf @ 00231020  (31 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib vfiprintf.c: _vfiprintf_r(_impure_ptr) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -32447,7 +32447,7 @@ vfiprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * _vfiprintf_r @ 00231040  (1298 bytes, 2 callers, export file 002304f0_00233984.c)
+ * _vfiprintf_r @ 00231040  (1298 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib vfiprintf.c (integer-only printf, 5,168 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -33534,7 +33534,7 @@ LAB_00231636:
 
 
 /* -----------------------------------------------------------------------------
- * __swhatbuf_r @ 00232470  (44 bytes, 1 callers, export file 002304f0_00233984.c)
+ * __swhatbuf_r @ 00232470  (44 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib makebuf.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -33559,7 +33559,7 @@ undefined4 __swhatbuf_r(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _calloc_r @ 002324a0  (112 bytes, 2 callers, export file 002304f0_00233984.c)
+ * _calloc_r @ 002324a0  (112 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib: _malloc_r then memset; called by _Balloc [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -33611,7 +33611,7 @@ undefined4 * _calloc_r(undefined4 param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _fclose_r @ 00232520  (146 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _fclose_r @ 00232520  (146 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib fclose.c: _fflush_r, _free_r, sfp locks; fclose follows inside this listing entry (0x2325D0, used
  *     by _cleanup_r) [inference]
  * Tag: [inference]
@@ -33663,7 +33663,7 @@ undefined4 _fclose_r(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __fputwc @ 002325f0  (245 bytes, 2 callers, export file 002304f0_00233984.c)
+ * __fputwc @ 002325f0  (245 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib fputwc.c: __locale_mb_cur_max, _wcrtomb_r, __swbuf_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -33747,7 +33747,7 @@ uint __fputwc(undefined4 param_1,uint param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fputwc @ 00232700  (40 bytes, 0 callers, export file 002304f0_00233984.c)
+ * fputwc @ 00232700  (40 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib fputwc.c: _impure_ptr, __sinit, __fputwc [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -33770,7 +33770,7 @@ undefined4 fputwc(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __sfvwrite_r @ 00232730  (895 bytes, 1 callers, export file 002304f0_00233984.c)
+ * __sfvwrite_r @ 00232730  (895 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib fvwrite.c: __swsetup_r, _realloc_r, memchr, _fflush_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34003,7 +34003,7 @@ LAB_00232919:
 
 
 /* -----------------------------------------------------------------------------
- * _realloc_r @ 00232af0  (1270 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _realloc_r @ 00232af0  (1270 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib mallocr.c: malloc lock, memmove, _free_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34308,7 +34308,7 @@ joined_r0x00232bf4:
 
 
 /* -----------------------------------------------------------------------------
- * __swbuf_r @ 00233010  (194 bytes, 3 callers, export file 002304f0_00233984.c)
+ * __swbuf_r @ 00233010  (194 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib wbuf.c: __sinit, __swsetup_r, _fflush_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34371,7 +34371,7 @@ LAB_00233075:
 
 
 /* -----------------------------------------------------------------------------
- * __swbuf @ 002330e0  (24 bytes, 0 callers, export file 002304f0_00233984.c)
+ * __swbuf @ 002330e0  (24 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib wbuf.c: _impure_ptr [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34391,7 +34391,7 @@ undefined4 __swbuf(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _wcrtomb_r @ 00233100  (85 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _wcrtomb_r @ 00233100  (85 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib wcrtomb.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34425,7 +34425,7 @@ int _wcrtomb_r(undefined4 *param_1,int param_2,undefined4 param_3,undefined4 *pa
 
 
 /* -----------------------------------------------------------------------------
- * wcrtomb @ 00233160  (97 bytes, 0 callers, export file 002304f0_00233984.c)
+ * wcrtomb @ 00233160  (97 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib wcrtomb.c: _impure_ptr [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34464,7 +34464,7 @@ int wcrtomb(int param_1,undefined4 param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _read_r @ 00233220  (37 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _read_r @ 00233220  (37 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib reent read: calls the 8-byte read stub 0x23329C [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34493,7 +34493,7 @@ int _read_r(undefined4 param_1,undefined4 param_2,undefined1 *param_3,int param_
 
 
 /* -----------------------------------------------------------------------------
- * _write_r @ 00233250  (40 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _write_r @ 00233250  (40 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: newlib reent write [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34525,7 +34525,7 @@ void _write_r(undefined4 param_1,undefined4 param_2,char *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * _exit @ 002332a4  (29 bytes, 1 callers, export file 002304f0_00233984.c)
+ * _exit @ 002332a4  (29 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: board/runtime exit: data cache write-back (0x236450), then halts [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34548,12 +34548,12 @@ void _exit(void)
 
 
 /* -----------------------------------------------------------------------------
- * fft_realf_ie @ 00233670  (631 bytes, 3 callers, export file 002304f0_00233984.c)
+ * fft_realf_ie @ 00233670  (768 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: NDSP fft/fft_ief: real FFT, calls fft_cplxf_ie then splits with conjc.s [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
  */
-// ===== fft_realf_ie @ 00233670 (631 bytes)
+// ===== fft_realf_ie @ 00233670 (768 bytes)
 
 /* NDSP fft/fft_ief: real FFT, calls fft_cplxf_ie then splits with conjc.s [inference] */
 
@@ -34786,7 +34786,7 @@ longlong fft_realf_ie(undefined8 *param_1,undefined8 *param_2,int param_3,int pa
 
 
 /* -----------------------------------------------------------------------------
- * bkfiraf_alloc @ 00233970  (20 bytes, 0 callers, export file 002304f0_00233984.c)
+ * bkfiraf_alloc @ 00233970  (20 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: NDSP fir/firblkf: 8 * align4(M) + 23 bytes [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34803,7 +34803,7 @@ int bkfiraf_alloc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * bkfirf_alloc @ 00233cf0  (22 bytes, 0 callers, export file 00233a10_00236080.c)
+ * bkfirf_alloc @ 00233cf0  (22 bytes, 0 callers, export file 002305a0_00233cf0.c)
  * Purpose: NDSP fir/firblkf: (M, extIR) -> 4M + (extIR ? 0 : 4M) + 23, exactly NDSP's formula [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34825,9 +34825,8 @@ int bkfirf_alloc(int param_1,int param_2)
   return param_1 * 4 + iVar1 + 0x17;
 }
 
-
 /* -----------------------------------------------------------------------------
- * bkfirf_init @ 00233d08  (102 bytes, 0 callers, export file 00233a10_00236080.c)
+ * bkfirf_init @ 00233d08  (102 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP fir/firblkf [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -34881,7 +34880,7 @@ LAB_00233d44:
 
 
 /* -----------------------------------------------------------------------------
- * bkfirf_process @ 00233d70  (311 bytes, 0 callers, export file 00233a10_00236080.c)
+ * bkfirf_process @ 00233d70  (311 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP fir/firblkf: circular delay line (ae_l32x2.xc) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35036,7 +35035,7 @@ void bkfirf_process(int *param_1,undefined4 param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * iir_cascade_alloc @ 002340f0  (11 bytes, 0 callers, export file 00233a10_00236080.c)
+ * iir_cascade_alloc @ 002340f0  (11 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP iirf bqriirf_df2 / df2t alloc: 32 M + 30 bytes (both variants have this size; which one is not
  *     settled) [inference]
  * Tag: [inference]
@@ -35055,7 +35054,7 @@ int iir_cascade_alloc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vec_float2int @ 00234750  (309 bytes, 3 callers, export file 00233a10_00236080.c)
+ * vec_float2int @ 00234750  (309 bytes, 3 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP mathf: trunc.sx2 loop; float -> Q31 for codec_out_sink, rec_resample_sink, txaf_out_push
  *     [inference]
  * Tag: [inference]
@@ -35169,7 +35168,7 @@ void vec_float2int(undefined4 *param_1,undefined8 *param_2,int param_3,uint para
 
 
 /* -----------------------------------------------------------------------------
- * vec_int2float @ 00234890  (347 bytes, 3 callers, export file 00233a10_00236080.c)
+ * vec_int2float @ 00234890  (347 bytes, 3 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP mathf: float.sx2 loop; Q31 -> float for codec_in_fifo_pop, playback_ring_fill [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35294,7 +35293,7 @@ void vec_int2float(undefined4 *param_1,undefined8 *param_2,int param_3,uint para
 
 
 /* -----------------------------------------------------------------------------
- * vec_addf @ 002349f0  (341 bytes, 0 callers, export file 00233a10_00236080.c)
+ * vec_addf @ 002349f0  (341 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP vectorf: add.s loop [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35500,7 +35499,7 @@ void vec_addf(undefined4 *param_1,undefined8 *param_2,undefined4 param_3,uint pa
 
 
 /* -----------------------------------------------------------------------------
- * vec_dotf @ 00234b50  (130 bytes, 0 callers, export file 00233a10_00236080.c)
+ * vec_dotf @ 00234b50  (130 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP vectorf: madd.s reduction [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35555,7 +35554,7 @@ void vec_dotf(undefined8 *param_1,undefined4 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vec_scale_sf @ 00234e00  (315 bytes, 7 callers, export file 00233a10_00236080.c)
+ * vec_scale_sf @ 00234e00  (315 bytes, 7 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP vectorf: y = clamp(x * s, fmin, fmax) (mul.s, max.s, min.s) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35681,7 +35680,7 @@ void vec_scale_sf(undefined4 *param_1,undefined4 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vec_shiftf @ 00235190  (472 bytes, 0 callers, export file 00233a10_00236080.c)
+ * vec_shiftf @ 00235190  (472 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: NDSP vectorf: y = x * 2^t [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -35886,7 +35885,7 @@ void vec_shiftf(undefined4 *param_1,undefined8 *param_2,int param_3,uint param_4
 
 
 /* -----------------------------------------------------------------------------
- * __adddf3 @ 00235510  (92 bytes, 9 callers, export file 00233a10_00236080.c)
+ * __adddf3 @ 00235510  (92 bytes, 9 callers, export file 00233d08_00236170.c)
  * Purpose: XCC soft double using the HiFi4 f64 assist ops (f64cmpl/f64addc/f64rnd); first of the two calls in rint
  *     [inference]
  * Tag: [inference]
@@ -36049,7 +36048,7 @@ __adddf3(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined
 
 
 /* -----------------------------------------------------------------------------
- * __subdf3 @ 00235570  (189 bytes, 8 callers, export file 00233a10_00236080.c)
+ * __subdf3 @ 00235570  (189 bytes, 8 callers, export file 00233d08_00236170.c)
  * Purpose: XCC soft double; second call in rint (w - TWO52) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36210,7 +36209,7 @@ __subdf3(int param_1,undefined4 param_2,int param_3,undefined4 param_4,undefined
 
 
 /* -----------------------------------------------------------------------------
- * __muldf3 @ 00235630  (392 bytes, 19 callers, export file 00233a10_00236080.c)
+ * __muldf3 @ 00235630  (392 bytes, 19 callers, export file 00233d08_00236170.c)
  * Purpose: XCC soft double (mull/muluh on the significands); _mprec_log10 multiplies by 10.0 with it [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36386,7 +36385,7 @@ undefined8 __muldf3(uint param_1,undefined4 param_2,uint param_3,undefined4 para
 
 
 /* -----------------------------------------------------------------------------
- * __divdf3 @ 002357c0  (275 bytes, 7 callers, export file 00233a10_00236080.c)
+ * __divdf3 @ 002357c0  (275 bytes, 7 callers, export file 00233d08_00236170.c)
  * Purpose: XCC soft double; __ratio and the 0/0 of the sqrtf wrapper [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36531,7 +36530,7 @@ LAB_002357cf:
 
 
 /* -----------------------------------------------------------------------------
- * __muldi3 @ 002358e0  (23 bytes, 1 callers, export file 00233a10_00236080.c)
+ * __muldi3 @ 002358e0  (23 bytes, 1 callers, export file 00233d08_00236170.c)
  * Purpose: 64 x 64 -> 64 multiply (mull/muluh); used by xos_get_cpu_load [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36549,7 +36548,7 @@ undefined8 __muldi3(uint param_1,int param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * __recipsf2 @ 00235b80  (39 bytes, 0 callers, export file 00233a10_00236080.c)
+ * __recipsf2 @ 00235b80  (39 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: XCC/libgcc Xtensa ieee754-sf: 1/x with recip0.s + 2 Newton steps [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36578,7 +36577,7 @@ void __recipsf2(void)
 
 
 /* -----------------------------------------------------------------------------
- * __rsqrtsf2 @ 00235c50  (59 bytes, 0 callers, export file 00233a10_00236080.c)
+ * __rsqrtsf2 @ 00235c50  (59 bytes, 0 callers, export file 00233d08_00236170.c)
  * Purpose: XCC/libgcc Xtensa ieee754-sf: 1/sqrt(x) with rsqrt0.s [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36614,7 +36613,7 @@ void __rsqrtsf2(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sfp_lock_acquire @ 00235f40  (5 bytes, 3 callers, export file 00233a10_00236080.c)
+ * __sfp_lock_acquire @ 00235f40  (5 bytes, 3 callers, export file 00233d08_00236170.c)
  * Purpose: newlib findfp.c; called by __sfp, __fp_lock_all, _fclose_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36631,7 +36630,7 @@ void __sfp_lock_acquire(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sfp_lock_release @ 00235f50  (5 bytes, 4 callers, export file 00233a10_00236080.c)
+ * __sfp_lock_release @ 00235f50  (5 bytes, 4 callers, export file 00233d08_00236170.c)
  * Purpose: newlib findfp.c [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36648,7 +36647,7 @@ void __sfp_lock_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sinit_lock_acquire @ 00235f60  (5 bytes, 1 callers, export file 00233a10_00236080.c)
+ * __sinit_lock_acquire @ 00235f60  (5 bytes, 1 callers, export file 00233d08_00236170.c)
  * Purpose: newlib findfp.c; called by __sinit [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36665,7 +36664,7 @@ void __sinit_lock_acquire(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sinit_lock_release @ 00235f70  (5 bytes, 2 callers, export file 00233a10_00236080.c)
+ * __sinit_lock_release @ 00235f70  (5 bytes, 2 callers, export file 00233d08_00236170.c)
  * Purpose: newlib findfp.c; called by __sinit [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36682,7 +36681,7 @@ void __sinit_lock_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * _fwalk @ 00235fa0  (84 bytes, 3 callers, export file 00233a10_00236080.c)
+ * _fwalk @ 00235fa0  (84 bytes, 3 callers, export file 00233d08_00236170.c)
  * Purpose: newlib fwalk.c; called by _cleanup_r and __fp_lock_all / __fp_unlock_all [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36725,7 +36724,7 @@ uint _fwalk(int param_1,code *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _fwalk_reent @ 00236000  (89 bytes, 1 callers, export file 00233a10_00236080.c)
+ * _fwalk_reent @ 00236000  (89 bytes, 1 callers, export file 00233d08_00236170.c)
  * Purpose: newlib fwalk.c; fflush(NULL) walks with _fflush_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36768,7 +36767,7 @@ uint _fwalk_reent(int param_1,code *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _Bfree @ 00236060  (24 bytes, 10 callers, export file 00233a10_00236080.c)
+ * _Bfree @ 00236060  (24 bytes, 10 callers, export file 00233d08_00236170.c)
  * Purpose: newlib mprec.c (sequence match 0.95 with newlib's _Bfree) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36793,7 +36792,7 @@ void _Bfree(int param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __hi0bits @ 00236080  (80 bytes, 3 callers, export file 00233a10_00236080.c)
+ * __hi0bits @ 00236080  (80 bytes, 3 callers, export file 00233d08_00236170.c)
  * Purpose: newlib mprec.c; called by __b2d, __d2b, _dtoa_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36830,8 +36829,9 @@ int __hi0bits(uint param_1)
   return iVar1;
 }
 
+
 /* -----------------------------------------------------------------------------
- * __lo0bits @ 002360e0  (131 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * __lo0bits @ 002360e0  (131 bytes, 2 callers, export file 00233d08_00236170.c)
  * Purpose: newlib mprec.c; called by __d2b [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36890,7 +36890,7 @@ int __lo0bits(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __mcmp @ 00236170  (74 bytes, 8 callers, export file 002360e0_2402063c.c)
+ * __mcmp @ 00236170  (74 bytes, 8 callers, export file 00233d08_00236170.c)
  * Purpose: newlib mprec.c; called by quorem, __mdiff, _dtoa_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -36928,9 +36928,8 @@ int __mcmp(int param_1,int param_2)
   return 0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * memmove @ 00236300  (222 bytes, 9 callers, export file 002360e0_2402063c.c)
+ * memmove @ 00236300  (222 bytes, 9 callers, export file 002361d0_2402063c.c)
  * Purpose: newlib memmove; called by __sfvwrite_r and _realloc_r [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37009,7 +37008,7 @@ undefined1  [12] memmove(byte *param_1,byte *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _close_r @ 00236420  (7 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _close_r @ 00236420  (7 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: stub: returns 0; called by __sclose [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37026,7 +37025,7 @@ undefined4 _close_r(void)
 
 
 /* -----------------------------------------------------------------------------
- * _lseek_r @ 00236430  (13 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _lseek_r @ 00236430  (13 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: stub: errno = 29 (ESPIPE), returns -1; called by __swrite / __sseek [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37044,7 +37043,7 @@ undefined4 _lseek_r(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_dcache_all_writeback @ 00236450  (25 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * xthal_dcache_all_writeback @ 00236450  (25 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: Xtensa HAL: diwb over 256 lines [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37063,7 +37062,7 @@ void xthal_dcache_all_writeback(void)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_get_ccount @ 00236470  (8 bytes, 5 callers, export file 002360e0_2402063c.c)
+ * xthal_get_ccount @ 00236470  (8 bytes, 5 callers, export file 002361d0_2402063c.c)
  * Purpose: Xtensa HAL: rsr.ccount; used by SDK_DelayAtLeastUs [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37084,7 +37083,7 @@ undefined4 xthal_get_ccount(void)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_dcache_all_writeback_inv @ 002364b0  (25 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * xthal_dcache_all_writeback_inv @ 002364b0  (25 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: Xtensa HAL: diwbi over 256 lines; called by xthal_set_region_attribute [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37103,7 +37102,7 @@ void xthal_dcache_all_writeback_inv(void)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_icache_all_invalidate @ 002364d0  (36 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * xthal_icache_all_invalidate @ 002364d0  (36 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: Xtensa HAL: iii loop; called by xthal_set_region_attribute [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37126,7 +37125,7 @@ void xthal_icache_all_invalidate(void)
 
 
 /* -----------------------------------------------------------------------------
- * __floatunsidf @ 002364f4  (10 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * __floatunsidf @ 002364f4  (10 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: XCC soft double (4-instruction sequence equal to libgcc's) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md
@@ -37149,7 +37148,7 @@ undefined8 __floatunsidf(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __floatsidf @ 00236500  (49 bytes, 6 callers, export file 002360e0_2402063c.c)
+ * __floatsidf @ 00236500  (49 bytes, 6 callers, export file 002361d0_2402063c.c)
  * Purpose: XCC soft double (sequence match 0.92 with libgcc __floatsidf) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4-libraries.md

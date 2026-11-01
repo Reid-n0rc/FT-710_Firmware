@@ -1,39 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== apf_peak_filter @ 0021c818 (104 bytes)
-
-/* reg 0x45: resonator (1) or FIR band-pass (2-4) */
-
-void apf_peak_filter(undefined *param_1,undefined *param_2)
-
-{
-  int iVar1;
-  
-  apf_config();
-  iVar1 = ae_l16ui_n(&DAT_00244510,2);
-  if (iVar1 - 1U < 4) {
-    if (param_1 == param_2) {
-      memcpy(&DAT_00245360,param_1,0xc0);
-      iVar1 = ae_l16ui_n(&DAT_00244510,2);
-      param_1 = &DAT_00245360;
-    }
-    if (iVar1 == 1) {
-      iir_cascade_process(DAT_00244518,param_2,param_1,0x30);
-      return;
-    }
-    if (iVar1 - 2U < 3) {
-      bkfiraf_process(DAT_0024451c,param_2,param_1,0x30);
-      return;
-    }
-  }
-  else if (param_1 != param_2) {
-    memcpy(param_2,param_1,0xc0);
-    return;
-  }
-  return;
-}
-
-
 // ===== nlms_auto_notch_init @ 0021c890 (26 bytes)
 
 /* memset 0x245420 (0xC98 bytes), weight 1.0; placed before nlms_auto_notch [inference] */
@@ -3342,6 +3308,64 @@ void ctcss_init(void)
   memset(&DAT_00253654,0,800);
   DAT_00253650 = 0;
   DAT_00253652 = 0;
+  return;
+}
+
+
+// ===== ctcss_config @ 0021f7ec (207 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x0021f856) */
+/* reg 0x53 */
+
+void ctcss_config(void)
+
+{
+  undefined6 uVar1;
+  uint uVar2;
+  undefined1 in_st_PSINTLEVEL;
+  undefined1 in_st_PSUM;
+  undefined1 in_st_PSWOE;
+  undefined1 in_st_PSEXCM;
+  undefined1 in_st_PSCALLINC;
+  undefined1 in_st_PSOWB;
+  uint uVar3;
+  
+  uVar3 = (uint)DAT_200700a6;
+  if (DAT_00253640._2_2_ != uVar3) {
+    ae_s16i_n(uVar3,&DAT_00253640,2);
+    if ((((DAT_200700a6 >> 0xc & 1) == 0) || ((DAT_200700a6 & 0xfff) == 0)) ||
+       (0x32 < (uVar3 & 0xfff))) {
+      ae_s16i_n(0,&DAT_00253640,0);
+      DAT_00253644 = 0;
+    }
+    else {
+      ae_s16i_n(1,&DAT_00253640,0);
+      DAT_00253644 = DAT_200700a6;
+      DAT_00253648 = iir_cascade_init(&DAT_00253980,4,&DAT_00236940,1);
+      DAT_0025364c = iir_cascade_init(&DAT_00253a20,8,&DAT_00236990,1);
+      ae_l32_i(FLOAT_ARRAY_00204be0[uVar3 & 0xfff]);
+      ctcss_goertzel_init();
+    }
+    DAT_00253646 = 0;
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    ;
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
+      in_st_PSWOE = (undefined1)uVar1;
+      in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
+      in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
+      in_st_PSUM = (undefined1)((uint6)uVar1 >> 0x18);
+      in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
+      in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
+      rsync();
+    }
+    DAT_20070002 = DAT_20070002 & 0xffbf;
+    uVar2 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    ;
+    wsr_ps(uVar3 & 0xf | uVar2 & 0xfffffff0);
+    rsync();
+    return;
+  }
   return;
 }
 
