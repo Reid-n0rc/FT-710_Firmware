@@ -202,7 +202,7 @@ column is tagged per row.
 | 0x00 | 0x1B736 | read by `sdr_init` | boot | read only | SDR firmware version, BCD: 0x0104 → `V01-04` (stored at 0x144A, returned by `VE2;`) **[inference: matches SR V01-04]** |
 | 0x01 | 0x1B738 | read by `sdr_init` | boot | read only | Unknown. It is read and must answer, otherwise boot error 0x20B36=3 **[fact]** |
 | 0x03 | 0x1B73A | `sdr_upd_r03` | all | 0xE63D if TX-side frequency ≤ 62 500 000 Hz, else 0xE61D | Control word. Bit 5 changes at 62.5 MHz: fs/2 of a 125 MSPS converter, or fs/4 at 250 MSPS; since it follows the TX frequency it may concern the DAC **[inference; ADC rate open, [system.md O7](../system.md#8-contradictions-and-open-questions)]** |
-| 0x04 | 0x1B73C | `sdr_upd_r04` | RX | 0xE519 | constant **[meaning unknown]** |
+| 0x04 | 0x1B73C | `sdr_upd_r04` | RX | 0xE519 | constant. **Bit 10 = sum ADC channels A + B, bit 11 = channel B with an overload switch to A × 8** (FPGA reset state: bit 11 set, bit 10 clear); 0xE519 sets bit 10 and clears bit 11, so in RX the FPGA adds the two channels ([sdr/netlist.md 3.7](../sdr/netlist.md), #172) **[fact, simulation]**. The other bits are unknown |
 | 0x08 / 0x09 | 0x1B73E / 0x1B740 | `sdr_upd_r08_tx_freq` | all | high/low word of 0x20F50 (Hz). PSK: −1000/1500/2000 (0x9A79). CW keying in an SSB mode (`FUN_fffba192`==3): ∓(300 + 10·KP 0x9C04) | **TX NCO frequency** **[inference]** |
 | 0x0A | 0x1B742 | `sdr_upd_r0a_demod` | all, only while 0x1204D≠0 | 0 = CW (modes 2,3, or CW in SSB), 1 = AM (4,5), 2 = FM (6,7,10,11), 3 = LSB/DATA-L (0,8), 4 = USB/DATA-U/PSK (1,9,14), 5 = RTTY (12,13) | **Modulation class** of the active side **[inference]** |
 | 0x0B | 0x1B744 | `sdr_upd_r0b_band` | all | per-band word, table 0xFFF87FFA (RX: 105…117) / 0xFFF87FFE (TX: 96…128), 8-byte rows | Open: what the FPGA does with it (the values are constants from the ROM table 0xFFF87FFA, not from the EEPROM alignment table); would be settled by an FPGA netlist simulation that traces this register's flip-flops ([sdr/netlist.md](../sdr/netlist.md)) |
@@ -416,7 +416,7 @@ bridge offsets above were checked in the disassembly.
 
 1. The DISPLAY side of the bridge (T11c): which `mainlink` command is sub-command 1, whether the image data goes
    through registers 0x30/0x31 or over SPI, and how 0x32/0x33 are interpreted.
-2. The FPGA meaning of registers 0x03, 0x04, 0x0D, 0x0F, 0x12–0x15, 0x1B, 0x1C, 0x23, 0x24 and 0x26. Reading them
+2. The FPGA meaning of registers 0x03, 0x04 (except bits 10/11), 0x0D, 0x0F, 0x12–0x15, 0x1B, 0x1C, 0x23, 0x24 and 0x26. Reading them
    back with `SPSR` would be safe (read only), but that needs the owner's approval because it talks to the radio.
 3. ~~The settings at 0x9AA1, 0x9AD2, 0x9AD3 and 0x9B14 need their EX-menu names.~~ CW WAVE SHAPE, NB REJECTION, NB WIDTH, RBW; 0x9B16/0x9B17 (reg 0x26) are 2D / 3DSS DISP SENSITIVITY (#74).
 4. ~~How `boot_error` 0x20B36 is shown to the user.~~ Answered (#60): `ERROR CODE : 003` on the DISPLAY, see [display-link.md](display-link.md#boot-error-report).
