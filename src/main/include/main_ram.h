@@ -98,6 +98,9 @@ extern uint8_t atu_ac;                    /* 0x1B3AD */
 extern uint8_t atu_tc;                    /* 0x1B3AF */
 
 /* TX/RX sequencer (docs/code/main/tx-protection.md) */
+extern uint8_t pc_keying_active;          /* 0x12050: PC keying of a CW mode (ptt_source_select) */
+extern uint8_t pc_key_last;               /* 0x12051: last P14 level seen by trx_sequencer in TX */
+extern uint8_t spk_route;                 /* 0x20FCC: speaker route 0..4 (speaker_route) */
 extern uint8_t ptt_source;                /* 0x1204D: what keyed TX [fact: ptt_source_get 0xFFFB6EC7] */
 
 #endif

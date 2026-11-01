@@ -2841,3 +2841,9 @@ fffe46f9	msg_cw_slot_key_latched_2	msg_cw_slot_key_latched(2) (6-byte wrapper) [
 fffe46ff	msg_cw_slot_key_latched_3	msg_cw_slot_key_latched(3) (6-byte wrapper) [fact: fffe46ff]; only caller ladder_key_task (remote-keypad key code)
 fffe4705	msg_cw_slot_key_latched_4	msg_cw_slot_key_latched(4) (6-byte wrapper) [fact: fffe4705]; only caller ladder_key_task (remote-keypad key code)
 fffe470b	msg_cw_slot_key_latched_5	msg_cw_slot_key_latched(5) (6-byte wrapper) [fact: fffe470b]; only caller ladder_key_task (remote-keypad key code)
+# --- T24 MAIN round 3: tables and flags the recreated DSP setters and trx_sequencer use (src/main/data_symbols.tsv)
+fff87f1a	@dnr_tables	7 x 16 s16 DNR register values by DNR level, 0x20 bytes apart: 0x400B, 0x400D, 0x4022, 0x4023, 0x4025, reg 0x40, 0x4026 [fact: dsp_set_dnr_400b 0xFFF9FCD0 reads 0xFFF87F1A + 2 x level; the other six setters 0x20 apart]
+fff805ac	@rf_gain_curve	u8 DSP reg 0x67 value by RF gain / 4 [fact: dsp_set_rf_gain 0xFFF9FC2A]
+00012050	@pc_keying_active	1 = PC keying of a CW mode (set by ptt_source_select) [fact: trx_sequencer 0xFFFB839D tests it in TX; tx-protection.md]
+00012051	@pc_key_last	last ETUN_TXINH_REQ (P14) level seen in TX; 1 on entering TX [fact: trx_sequencer 0xFFFB8308, 0xFFFB83D1]
+00020fcc	@spk_route	speaker route 0..4, 4 = all off [fact: speaker_route 0xFFFB8ABF writes it; trx_sequencer 0xFFFB827A reads it; peripherals.md]

@@ -17,7 +17,7 @@
 //                                                      -> {"blocks":{addr:{"blocks":[...],"isr":b,"found":b}}}
 //   {"op":"run", "bases":[N,...], "loads":[[addr,"hex"]], "entry":A, "regs":{"R1":v,...}, "sp":S,
 //    "stack":[w,...] (words at SP+4.., [SP] = the return address), "seed":s, "budget":n,
-//    "stubs":{addr:[name,nargs]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
+//    "stubs":{addr:[name,nargs(,ptr_arg,len_arg)]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
 //    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions)}
 //     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
@@ -29,7 +29,9 @@
 // peripheral I/O 0x80000..0xFFFFF and 0x7FC000..0x7FFFFF. A load from I/O returns a value from a seeded sequence
 // (java.util.Random(seed), or "mmio_fixed") and is recorded with every I/O store; any access elsewhere ends the run
 // as a fault. A call to a stub address records (name, R1..R4 and stack arguments), sets R1 from the same seeded
-// sequence and returns (RX BSR/JSR push the return address; the caller pops stack arguments). The string compare
+// sequence and returns (RX BSR/JSR push the return address; the caller pops stack arguments). With ptr_arg and
+// len_arg (0-based argument numbers), the call also records the bytes the pointer argument points to, at most
+// 0x6000 (a buffer on the stack has an address that depends on the callers' frames; its content does not). The string compare
 // pcodeops of the module (scmpu, suntil, swhile) are implemented here after the RXv2 software manual R01US0071EJ0100
 // (SCMPU p. 184, SUNTIL p. 196, SWHILE p. 198), because the module leaves them as named operations (T21c), and
 // JMP Rs is executed here, because the module's "PC = Rs" does not branch in the emulator (T22a listed it as not
@@ -287,7 +289,9 @@ public class EquivMainEmu extends GhidraScript {
         if (q.has("stubs"))
             for (Map.Entry<String, JsonElement> e : q.getAsJsonObject("stubs").entrySet()) {
                 JsonArray a = e.getValue().getAsJsonArray();
-                stubs.put(Long.decode(e.getKey()), new String[]{a.get(0).getAsString(), a.get(1).getAsString()});
+                stubs.put(Long.decode(e.getKey()), a.size() >= 4
+                        ? new String[]{a.get(0).getAsString(), a.get(1).getAsString(), a.get(2).getAsString(), a.get(3).getAsString()}
+                        : new String[]{a.get(0).getAsString(), a.get(1).getAsString()});
             }
         Set<Long> cover = new HashSet<>();
         if (q.has("cover")) for (JsonElement e : q.getAsJsonArray("cover")) cover.add(lv(e));
@@ -334,6 +338,13 @@ public class EquivMainEmu extends GhidraScript {
                     for (int k = 0; k < n; k++) {
                         if (k < 4) c.add(r.reg("R" + (k + 1)));
                         else c.add(readLE(shared, csp + 4L * (k - 3)));
+                    }
+                    if (stub.length >= 4) {
+                        int pi = Integer.parseInt(stub[2]), li = Integer.parseInt(stub[3]);
+                        long ptr = c.get(1 + pi).getAsLong(), len = c.get(1 + li).getAsLong() & 0xFFFF;
+                        if (len > 0x6000) len = 0x6000;
+                        if (ptr >= 0 && ptr + len <= 0x40000)
+                            c.add(hex(shared.inspectConcrete(ram.getAddress(ptr), (int) len), 0, (int) len));
                     }
                     calls.add(c);
                     long ret = new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];

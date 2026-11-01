@@ -23,18 +23,23 @@ original addresses. What the code does: [docs/code/main/](../../docs/code/main/R
 | `bsp/r_bsp.c` | `R_BSP_InterruptRequestEnable/Disable` and the CC-RX intrinsic helpers `get_bpsw`, `get_bpc`, `get_extb`, `get_acc_hi`, `get_acc_mi` |
 | `app/settings.c` | the settings store: the RAM mirror of the EEPROM at 0x464F, `eeprom_init`, `eeprom_load_all`, `eeprom_hdr_update`, the `eeprom_save_*` family, `settings_defaults`, `reset_memch`/`reset_menu`, `eeprom_read_raw`/`_write_raw` (round 2) |
 | `app/reglink.h` | the register-link protocol shared by the DSP (SCI4) and SDR (SCI5) links: frame, sum, reply check, write-if-changed, over a constant link description (round 2) |
-| `app/dsp_link.c` | `dsp_send_frame`, `dsp_check_reply`, `dsp_sum8`, `dsp_reply_sum_ok`, `dsp_set_demod` and the constant and route-table register setters (round 2) |
-| `app/sdr_link.c` | the SCI5 glue (`sdr_link_start`, `sdr_rx_*`, `sdr_send_cmd`), `sdr_send_frame`, `sdr_poll_reply`, `sdr_sum8`, `sdr_check_hex_sum` and the constant / one-setting register updaters (round 2) |
+| `app/dsp_link.c` | `dsp_send_frame`, `dsp_check_reply`, `dsp_sum8`, `dsp_reply_sum_ok`, `dsp_set_demod` and the constant and route-table register setters (round 2); the TX audio, parametric EQ, AMC, CTCSS, DNR, DNF, CONTOUR, APF, notch, HCUT/LCUT, AF tone, AGC, RF gain, AESS and IF-AGC setters (`struct af_menu` over the six mode-group menus) and `dsp_shadow_store` as a register -> slot table (round 3) |
+| `app/sdr_link.c` | the SCI5 glue (`sdr_link_start`, `sdr_rx_*`, `sdr_send_cmd`), `sdr_send_frame`, `sdr_poll_reply`, `sdr_sum8`, `sdr_check_hex_sum` and the constant / one-setting register updaters (round 2); `sdr_upd_r18_rx_freq`, `sdr_upd_r1d_notch`, `sdr_upd_r1e_passband` (one passband-centre helper) and `sdr_shadow_update` (round 3) |
 | `app/cat_link.c` | the CAT ring, ports and busy flags (`cat_ring_*`, `cat_send_reply`, `cat_tx_done_sci0/2/3`, `cat_tx_busy`), `sum8`, `cat_checksum_ok`, `cat_reply_error`, `cat_ID`, `cat_QI/QR/QS/EN/FS`, `cat_ai_holdoff`, `cat_rand8` (round 2) |
 | `app/display_link.c` | the SCI1 glue, ACK/NAK, `displink_tx_start`/`_resend`/`_put_sum`, `displink_copy_if_changed`, `mem_zero` and the send-if-changed frame senders 0x20, 0x24, 0x37, 0x39, 0x41, 0x50, 0x62, 0x70, plus 0x23 and the 0x60 hello (round 2) |
-| `app/trx_lines.c` | the TX/RX sequencer's lines: `tx_line_get`, `rx_line_get`, `send_a_get`, `send_a_set`/`send_b_set` (gated by ETUN_TXINH_REQ and TX), `ptt_source_get` (round 2) |
+| `app/trx_lines.c` | the TX/RX sequencer's lines: `tx_line_get`, `rx_line_get`, `send_a_get`, `send_a_set`/`send_b_set` (gated by ETUN_TXINH_REQ and TX), `ptt_source_get` (round 2); `trx_sequencer`, the RX->TX / TX->RX state machine (round 3) |
+| `app/cat_parse.c` | `cat_parse` (ring and E9 slot, mnemonic lookup, power-off gate, reply), `cat_dispatch` with one case per `enum cat_cmd` index (echo, length test, handler; decomp/main/cat_dispatch.tsv), `cat_dispatch_ext`, `cat_ext_SP` (round 3) |
+| `app/cat_handlers.c` | the CAT read/set handlers AG AI AO AV BA BC BI CS CT DN EX FN GP KP KR KS LK MA MB MS MX NB NL NR PA PL PR PS RA RG RL SC SD SM ST TX UP VD VG VX ZI (round 3) |
 | `app/tuner.c`, `app/keyer.c` | `tuner_task` (dispatch by TUNER SELECT), `tuner_init`, `atu_ac_get`/`atu_tc_get`; `keyer_init`, `keyer_state_clear`, `keyer_ring_next`, `keyer_sidetone_off` (round 2) |
-| `include/main.h`, `include/main_ram.h`, `include/r_cg_sci.h` | the image's functions the recreated code calls, its RAM variables, the SCI prototypes |
+| `include/main.h`, `include/main_ram.h`, `include/r_cg_sci.h`, `include/cat_cmds.h` | the image's functions the recreated code calls, its RAM variables, the SCI prototypes, the CAT handler prototypes |
 | `data_symbols.tsv` | RAM variables used by the recreated code → original address, with evidence |
 | `aliases.tsv` | recreated functions whose name is not the Ghidra name (none yet) |
 
 The register macros (`SCI0_SCR`, `ICU_GENBL0`, ...) are generated at build time into `out/include/iodefine.h` from
-`tools/ghidra/sfr_rx651.tsv` by `tools/main_iodefine.py`, so the source uses the names decomp/main uses.
+`tools/ghidra/sfr_rx651.tsv` by `tools/main_iodefine.py`, so the source uses the names decomp/main uses. The typed state blocks
+(`g_ui`, `g_opstate`, `g_cfg105`, `memch`, ...) come the same way from `tools/ghidra/structs_main.h` (T23c) into
+`out/include/ft710_state.h` (`tools/main_structs.py`): packed structs with filler arrays and an offset assert per
+field, with the enums of `tools/ghidra/enums_main.h`; `equiv_main_emu.py` places those globals at their addresses.
 
 ## Build and check
 
@@ -49,7 +54,7 @@ python3 -I tools/readability_stats.py readme                               # the
 The check needs the decoded image (`build/FT-710_MAIN_V0112.bin`, or `FT710_BUILD=<dir>`), a copy of the MAIN Ghidra
 project (`FT710_MAIN_PROJECT=<dir>`, default `/home/user/ghidra_tasks/t24main/proj`; each worker copies it again and
 opens it read-only), the rx62t module installed in Ghidra (docs/tooling.md) and `rx-elf-ld` (`RX_BINUTILS=<prefix>`).
-`status` with 200 trials and 3 workers takes about 30 minutes for the current 256 functions. It needs the RX module with `tools/ghidra/rx62t-gccforms-fix.patch` (`tools/bootstrap.sh --only rx`; or `GHIDRA_HEADLESS` pointing at a Ghidra that has it): GCC's `REVL Rd,Rd` (`eeprom_hdr_update`) needs the fix. `eeprom_read`/`eeprom_write` are stubs in the checks of their callers (`STUBS`).
+`status` with 200 trials and 3 workers takes about 45 minutes for the current functions. It needs the RX module with `tools/ghidra/rx62t-gccforms-fix.patch` (`tools/bootstrap.sh --only rx`; or `GHIDRA_HEADLESS` pointing at a Ghidra that has it): GCC's `REVL Rd,Rd` (`eeprom_hdr_update`) needs the fix. `eeprom_read`/`eeprom_write` are stubs in the checks of their callers (`STUBS`).
 
 ## Writing a function
 

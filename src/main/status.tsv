@@ -76,20 +76,20 @@ fff91087	bsp_swint_release_access_control	53			not yet	0
 fff910c3	bsp_swint_execute_task	327			not yet	0	
 fff9120a	vec027_ICU_SWINT	15			not yet	0	
 fff91219	vec026_ICU_SWINT2	15			not yet	0	
-fff91228	FUN_fff91228	32			not yet	0	
-fff91248	FUN_fff91248	4			not yet	0	
+fff91228	chg_pmusr	32			not yet	0	
+fff91248	set_bpsw	4			not yet	0	
 fff9124c	get_bpsw	19	get_bpsw	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff9125f	FUN_fff9125f	4			not yet	0	
+fff9125f	set_bpc	4			not yet	0	
 fff91263	get_bpc	19	get_bpc	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff91276	FUN_fff91276	4			not yet	0	
+fff91276	set_extb	4			not yet	0	
 fff9127a	get_extb	19	get_extb	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff9128d	FUN_fff9128d	4			not yet	0	
-fff91291	FUN_fff91291	4			not yet	0	
+fff9128d	set_acc_hi	4			not yet	0	
+fff91291	set_acc_lo	4			not yet	0	
 fff91295	get_acc_hi	19	get_acc_hi	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fff912a8	get_acc_mi	19	get_acc_mi	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff912bb	FUN_fff912bb	4			not yet	0	
-fff912bf	FUN_fff912bf	4			not yet	0	
-fff912c3	FUN_fff912c3	4			not yet	0	
+fff912bb	byte_bset	4			not yet	0	
+fff912bf	byte_bclr	4			not yet	0	
+fff912c3	byte_bnot	4			not yet	0	
 fff912c7	sbrk	60	sbrk	lib/runtime.o	equivalent	60	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 fff91303	get_iclk_freq_hz	212			not yet	0	
 fff913d7	hw_init_clock	4			not yet	0	
@@ -108,6 +108,7 @@ fff92475	mpc_pin_functions_init	820	mpc_pin_functions_init	drivers/r_cg_init.o	e
 fff927a9	R_IWDT_Create	37	R_IWDT_Create	drivers/r_cg_misc.o	equivalent	37	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 fff927ce	iwdt_refresh	17	iwdt_refresh	drivers/r_cg_misc.o	equivalent	17	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fff927df	R_IWDT_Create_UserInit	1	R_IWDT_Create_UserInit	drivers/r_cg_misc.o	identical	1	byte-identical at the original address (1 bytes)
+fff927e0	iwdt_error_nmi_cb	5			not yet	0	
 fff927e5	R_DA_Create	65	R_DA_Create	drivers/r_cg_misc.o	equivalent	65	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 fff92826	R_DA0_Start	15	R_DA0_Start	drivers/r_cg_misc.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fff92835	R_DA0_Stop	8	R_DA0_Stop	drivers/r_cg_misc.o	identical	8	byte-identical at the original address (8 bytes)
@@ -507,59 +508,59 @@ fff9db37	dsp_set_r0f	47	dsp_set_r0f	app/dsp_link.o	equivalent	47	differential em
 fff9db66	dsp_set_r11	49	dsp_set_r11	app/dsp_link.o	equivalent	49	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
 fff9db97	dsp_set_r12	47	dsp_set_r12	app/dsp_link.o	equivalent	47	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
 fff9dbc6	dsp_set_r13	49	dsp_set_r13	app/dsp_link.o	equivalent	49	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
-fff9dbf7	dsp_set_tx_gain	147			not yet	0	
-fff9dc8a	dsp_set_vox_gain	90			not yet	0	
-fff9dce4	dsp_set_antivox	134			not yet	0	
-fff9dd6a	dsp_set_peq_freq	380			not yet	0	
-fff9dee6	dsp_set_peq_level	239			not yet	0	
-fff9dfd5	dsp_set_peq_bw	216			not yet	0	
-fff9e0ad	dsp_set_proc	126			not yet	0	
-fff9e12b	dsp_set_tx_bpf	244			not yet	0	
+fff9dbf7	dsp_set_tx_gain	147	dsp_set_tx_gain	app/dsp_link.o	equivalent	147	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 72% of 18 blocks reached)
+fff9dc8a	dsp_set_vox_gain	90	dsp_set_vox_gain	app/dsp_link.o	equivalent	90	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 83% of 6 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): sub r, r, r
+fff9dce4	dsp_set_antivox	134	dsp_set_antivox	app/dsp_link.o	equivalent	134	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 92% of 12 blocks reached)
+fff9dd6a	dsp_set_peq_freq	380	dsp_set_peq_freq	app/dsp_link.o	equivalent	380	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 93% of 43 blocks reached)
+fff9dee6	dsp_set_peq_level	239	dsp_set_peq_level	app/dsp_link.o	equivalent	239	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 22 blocks reached)
+fff9dfd5	dsp_set_peq_bw	216	dsp_set_peq_bw	app/dsp_link.o	equivalent	216	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 19 blocks reached)
+fff9e0ad	dsp_set_proc	126	dsp_set_proc	app/dsp_link.o	equivalent	126	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 81% of 16 blocks reached)
+fff9e12b	dsp_set_tx_bpf	244	dsp_set_tx_bpf	app/dsp_link.o	equivalent	244	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 88% of 24 blocks reached)
 fff9e21f	dsp_set_r30	76	dsp_set_r30	app/dsp_link.o	equivalent	76	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached)
-fff9e26b	dsp_set_r31	197			not yet	0	
-fff9e330	dsp_set_r32	197			not yet	0	
-fff9e3f5	dsp_set_amc_release	139			not yet	0	
-fff9e480	dsp_set_amc_level	156			not yet	0	
-fff9e51c	dsp_set_ctcss_enc	152			not yet	0	
+fff9e26b	dsp_set_r31	197	dsp_set_r31	app/dsp_link.o	equivalent	197	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 89% of 27 blocks reached)
+fff9e330	dsp_set_r32	197	dsp_set_r32	app/dsp_link.o	equivalent	197	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 89% of 27 blocks reached)
+fff9e3f5	dsp_set_amc_release	139	dsp_set_amc_release	app/dsp_link.o	equivalent	139	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 74% of 19 blocks reached)
+fff9e480	dsp_set_amc_level	156	dsp_set_amc_level	app/dsp_link.o	equivalent	156	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 85% of 20 blocks reached)
+fff9e51c	dsp_set_ctcss_enc	152	dsp_set_ctcss_enc	app/dsp_link.o	equivalent	152	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 81% of 16 blocks reached)
 fff9e5b4	dsp_set_r36	48	dsp_set_r36	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 fff9e5e4	dsp_set_r37	48	dsp_set_r37	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 fff9e614	dsp_set_r38	48	dsp_set_r38	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
-fff9e644	dsp_set_fm_flag	117			not yet	0	
-fff9e6b9	dsp_set_r3b	151			not yet	0	
-fff9e750	dsp_set_dnr_r40	116			not yet	0	
-fff9e7c4	dsp_set_dnf	173			not yet	0	
-fff9e871	dsp_set_contour	307			not yet	0	
-fff9e9a4	dsp_set_contour_level	86			not yet	0	
-fff9e9fa	dsp_set_contour_width	63			not yet	0	
-fff9ea39	dsp_set_apf	174			not yet	0	
-fff9eae7	dsp_set_hcut	551			not yet	0	
-fff9ed0e	dsp_set_lcut	550			not yet	0	
-fff9ef34	dsp_set_tone_freq	381			not yet	0	
-fff9f0b1	dsp_set_tone_gain	480			not yet	0	
-fff9f291	dsp_set_tone_q	367			not yet	0	
+fff9e644	dsp_set_fm_flag	117	dsp_set_fm_flag	app/dsp_link.o	equivalent	117	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 79% of 14 blocks reached)
+fff9e6b9	dsp_set_r3b	151	dsp_set_r3b	app/dsp_link.o	equivalent	151	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 20 blocks reached)
+fff9e750	dsp_set_dnr_r40	116	dsp_set_dnr_r40	app/dsp_link.o	equivalent	116	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+fff9e7c4	dsp_set_dnf	173	dsp_set_dnf	app/dsp_link.o	equivalent	173	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 19 blocks reached)
+fff9e871	dsp_set_contour	307	dsp_set_contour	app/dsp_link.o	equivalent	307	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 21 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): revw r, r
+fff9e9a4	dsp_set_contour_level	86	dsp_set_contour_level	app/dsp_link.o	equivalent	86	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fff9e9fa	dsp_set_contour_width	63	dsp_set_contour_width	app/dsp_link.o	equivalent	63	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
+fff9ea39	dsp_set_apf	174	dsp_set_apf	app/dsp_link.o	equivalent	174	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 92% of 13 blocks reached)
+fff9eae7	dsp_set_hcut	551	dsp_set_hcut	app/dsp_link.o	equivalent	551	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 41 blocks reached)
+fff9ed0e	dsp_set_lcut	550	dsp_set_lcut	app/dsp_link.o	equivalent	550	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 41 blocks reached)
+fff9ef34	dsp_set_tone_freq	381	dsp_set_tone_freq	app/dsp_link.o	equivalent	381	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 87% of 52 blocks reached)
+fff9f0b1	dsp_set_tone_gain	480	dsp_set_tone_gain	app/dsp_link.o	equivalent	480	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 87% of 54 blocks reached)
+fff9f291	dsp_set_tone_q	367	dsp_set_tone_q	app/dsp_link.o	equivalent	367	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 88% of 50 blocks reached)
 fff9f400	dsp_set_r51	48	dsp_set_r51	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
-fff9f430	dsp_set_am_notch	152			not yet	0	
-fff9f4c8	dsp_set_ctcss_dec	131			not yet	0	
+fff9f430	dsp_set_am_notch	152	dsp_set_am_notch	app/dsp_link.o	equivalent	152	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 77% of 13 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): revw r, r
+fff9f4c8	dsp_set_ctcss_dec	131	dsp_set_ctcss_dec	app/dsp_link.o	equivalent	131	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 10 blocks reached)
 fff9f54b	dsp_set_r56	48	dsp_set_r56	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
 fff9f57b	dsp_set_affft_att	75	dsp_set_affft_att	app/dsp_link.o	equivalent	75	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
-fff9f5c6	dsp_set_osc	114			not yet	0	
+fff9f5c6	dsp_set_osc	114	dsp_set_osc	app/dsp_link.o	equivalent	114	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 86% of 7 blocks reached)
 fff9f638	dsp_set_cw_pitch	73	dsp_set_cw_pitch	app/dsp_link.o	equivalent	73	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
-fff9f681	dsp_set_agc	1261			not yet	0	
-fff9fb6e	dsp_set_freq_range_param	188			not yet	0	
-fff9fc2a	dsp_set_rf_gain	118			not yet	0	
+fff9f681	dsp_set_agc	1261	dsp_set_agc	app/dsp_link.o	equivalent	1261	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 71% of 124 blocks reached)
+fff9fb6e	dsp_set_freq_range_param	188	dsp_set_freq_range_param	app/dsp_link.o	equivalent	188	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 90% of 20 blocks reached)
+fff9fc2a	dsp_set_rf_gain	118	dsp_set_rf_gain	app/dsp_link.o	equivalent	118	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached)
 fff9fca0	dsp_set_r68	48	dsp_set_r68	app/dsp_link.o	equivalent	48	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
-fff9fcd0	dsp_set_dnr_400b	129			not yet	0	
-fff9fd51	dsp_set_dnr_400d	129			not yet	0	
-fff9fdd2	dsp_set_aess	88			not yet	0	
-fff9fe2a	dsp_set_dnr_4022	133			not yet	0	
-fff9feaf	dsp_set_dnr_4023	129			not yet	0	
-fff9ff30	dsp_set_dnr_4025	129			not yet	0	
-fff9ffb1	dsp_set_dnr_4026	129			not yet	0	
+fff9fcd0	dsp_set_dnr_400b	129	dsp_set_dnr_400b	app/dsp_link.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+fff9fd51	dsp_set_dnr_400d	129	dsp_set_dnr_400d	app/dsp_link.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+fff9fdd2	dsp_set_aess	88	dsp_set_aess	app/dsp_link.o	equivalent	88	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+fff9fe2a	dsp_set_dnr_4022	133	dsp_set_dnr_4022	app/dsp_link.o	equivalent	133	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 14 blocks reached)
+fff9feaf	dsp_set_dnr_4023	129	dsp_set_dnr_4023	app/dsp_link.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+fff9ff30	dsp_set_dnr_4025	129	dsp_set_dnr_4025	app/dsp_link.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+fff9ffb1	dsp_set_dnr_4026	129	dsp_set_dnr_4026	app/dsp_link.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
 fffa0032	dsp_status1_filter	270			not yet	0	
 fffa0140	dsp_status2_filter	178			not yet	0	
 fffa01f2	dsp_status3_filter	115			not yet	0	
 fffa0265	dsp_status4_filter	277			not yet	0	
-fffa037a	dsp_shadow_store	1884			not yet	0	
+fffa037a	dsp_shadow_store	1884	dsp_shadow_store	app/dsp_link.o	equivalent	1884	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 96% of 175 blocks reached)
 fffa0ad6	dsp_check_reply	118	dsp_check_reply	app/dsp_link.o	equivalent	118	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 69% of 13 blocks reached)
 fffa0b4c	dsp_send_frame	181	dsp_send_frame	app/dsp_link.o	equivalent	181	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 80% of 10 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
 fffa0c01	dsp_sum8	45	dsp_sum8	app/dsp_link.o	equivalent	45	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
@@ -588,12 +589,12 @@ fffa19dd	sdr_upd_r13	49	sdr_upd_r13	app/sdr_link.o	equivalent	49	differential em
 fffa1a0e	sdr_upd_r14_mode	124			not yet	0	
 fffa1a8a	sdr_init_r15	49	sdr_init_r15	app/sdr_link.o	equivalent	49	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 75% of 4 blocks reached)
 fffa1abb	sdr_upd_r16_filter	430			not yet	0	
-fffa1c69	sdr_upd_r18_rx_freq	872			not yet	0	
+fffa1c69	sdr_upd_r18_rx_freq	872	sdr_upd_r18_rx_freq	app/sdr_link.o	equivalent	872	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 89% of 65 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): revw r, r, shar n, r
 fffa1fd1	sdr_upd_r1a_nb_level	120			not yet	0	
 fffa2049	sdr_upd_r1b	102			not yet	0	
 fffa20af	sdr_upd_r1c	72	sdr_upd_r1c	app/sdr_link.o	equivalent	72	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 9 blocks reached)
-fffa20f7	sdr_upd_r1d_notch	897			not yet	0	
-fffa2478	sdr_upd_r1e_passband	599			not yet	0	
+fffa20f7	sdr_upd_r1d_notch	897	sdr_upd_r1d_notch	app/sdr_link.o	equivalent	897	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 86% of 56 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): neg r, r, revw r, r
+fffa2478	sdr_upd_r1e_passband	599	sdr_upd_r1e_passband	app/sdr_link.o	equivalent	599	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 83% of 47 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): neg r, r, revw r, r
 fffa26cf	sdr_upd_r1f_width	137			not yet	0	
 fffa2758	sdr_upd_r20_scope_freq	402			not yet	0	
 fffa28ea	sdr_upd_r22_scope_span	168			not yet	0	
@@ -602,17 +603,17 @@ fffa29e5	sdr_init_r24	49	sdr_init_r24	app/sdr_link.o	equivalent	49	differential 
 fffa2a16	sdr_upd_r25_tx_drive	377			not yet	0	
 fffa2b8f	sdr_upd_r26	116			not yet	0	
 fffa2c03	sdr_upd_r27_scope_level	156			not yet	0	
-fffa2c9f	sdr_shadow_update	856			not yet	0	
+fffa2c9f	sdr_shadow_update	856	sdr_shadow_update	app/sdr_link.o	equivalent	856	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 79 blocks reached)
 fffa2ff7	sdr_wait_reply	140			not yet	0	
 fffa3083	sdr_poll_reply	118	sdr_poll_reply	app/sdr_link.o	equivalent	118	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 62% of 13 blocks reached)
 fffa30f9	sdr_send_frame	181	sdr_send_frame	app/sdr_link.o	equivalent	181	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 80% of 10 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
 fffa31ae	sdr_sum8	45	sdr_sum8	app/sdr_link.o	equivalent	45	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
 fffa31db	sdr_check_hex_sum	75	sdr_check_hex_sum	app/sdr_link.o	equivalent	75	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 78% of 9 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
 fffa3226	sdr_bridge_mode	598			not yet	0	
-fffa347c	cat_parse	630			not yet	0	
-fffa36f2	cat_ext_SP	824			not yet	0	
-fffa3a2a	cat_dispatch_ext	324			not yet	0	
-fffa3b6e	cat_dispatch	4803			not yet	0	
+fffa347c	cat_parse	630	cat_parse	app/cat_parse.o	equivalent	630	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 90% of 77 blocks reached)
+fffa36f2	cat_ext_SP	824	cat_ext_SP	app/cat_parse.o	equivalent	824	differential emulation (Ghidra p-code): 200 trials agree (172 returned normally, 97% of 128 blocks reached, 28 trials inconclusive); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mov.b r, [r+]
+fffa3a2a	cat_dispatch_ext	324	cat_dispatch_ext	app/cat_parse.o	equivalent	324	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 40 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mov.b r, [r+]
+fffa3b6e	cat_dispatch	4803	cat_dispatch	app/cat_parse.o	equivalent	4803	differential emulation (Ghidra p-code): 200 trials agree (196 returned normally, 55% of 598 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mov.b r, [r+]
 fffa4e31	cat_SP_sdr_reg	94			not yet	0	
 fffa4e8f	cat_SP_dev4_reg	94			not yet	0	
 fffa4eed	cat_SP_adc_dump	524			not yet	0	
@@ -629,17 +630,17 @@ fffa5c90	cat_ext_EO	847			not yet	0
 fffa5fdf	cat_ext_PE	1166			not yet	0	
 fffa646d	cat_AB	359			not yet	0	
 fffa65d4	cat_AC	659			not yet	0	
-fffa6867	cat_AG	223			not yet	0	
-fffa6946	cat_AI	224			not yet	0	
+fffa6867	cat_AG	223	cat_AG	app/cat_handlers.o	equivalent	223	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 16 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+fffa6946	cat_AI	224	cat_AI	app/cat_handlers.o	equivalent	224	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 26 blocks reached)
 fffa6a26	cat_AM	329			not yet	0	
-fffa6b6f	cat_AO	302			not yet	0	
+fffa6b6f	cat_AO	302	cat_AO	app/cat_handlers.o	equivalent	302	differential emulation (Ghidra p-code): 200 trials agree (199 returned normally, 100% of 26 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
 fffa6c9d	cat_AS	575			not yet	0	
-fffa6edc	cat_AV	316			not yet	0	
-fffa7018	cat_BA	359			not yet	0	
-fffa717f	cat_BC	346			not yet	0	
+fffa6edc	cat_AV	316	cat_AV	app/cat_handlers.o	equivalent	316	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 28 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+fffa7018	cat_BA	359	cat_BA	app/cat_handlers.o	equivalent	359	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 98% of 48 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b r, [r+], or n[r].b, r
+fffa717f	cat_BC	346	cat_BC	app/cat_handlers.o	equivalent	346	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 98% of 41 blocks reached)
 fffa72d9	cat_BD	659			not yet	0	
 fffa756c	cat_BU	640			not yet	0	
-fffa77ec	cat_BI	316			not yet	0	
+fffa77ec	cat_BI	316	cat_BI	app/cat_handlers.o	equivalent	316	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 39 blocks reached)
 fffa7928	cat_BM	329			not yet	0	
 fffa7a71	cat_BP	836			not yet	0	
 fffa7db5	cat_BS	492			not yet	0	
@@ -647,78 +648,78 @@ fffa7fa1	cat_CF	980			not yet	0
 fffa8375	cat_CH	414			not yet	0	
 fffa8513	cat_CN	389			not yet	0	
 fffa8698	cat_CO	1280			not yet	0	
-fffa8b98	cat_CS	225			not yet	0	
-fffa8c79	cat_CT	273			not yet	0	
+fffa8b98	cat_CS	225	cat_CS	app/cat_handlers.o	equivalent	225	differential emulation (Ghidra p-code): 200 trials agree (155 returned normally, 52% of 23 blocks reached)
+fffa8c79	cat_CT	273	cat_CT	app/cat_handlers.o	equivalent	273	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 91% of 22 blocks reached)
 fffa8d8a	cat_DA	671			not yet	0	
-fffa9029	cat_DN	300			not yet	0	
-fffa9155	cat_UP	300			not yet	0	
+fffa9029	cat_DN	300	cat_DN	app/cat_handlers.o	equivalent	300	differential emulation (Ghidra p-code): 200 trials agree (132 returned normally, 98% of 43 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): or n[r].b, r
+fffa9155	cat_UP	300	cat_UP	app/cat_handlers.o	equivalent	300	differential emulation (Ghidra p-code): 200 trials agree (132 returned normally, 98% of 43 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): or n[r].b, r
 fffa9281	cat_DT	967			not yet	0	
 fffa9648	cat_EM	736			not yet	0	
 fffa9928	cat_EN	15	cat_EN	app/cat_link.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fffa9937	cat_EX	134			not yet	0	
+fffa9937	cat_EX	134	cat_EX	app/cat_handlers.o	equivalent	134	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 15 blocks reached)
 fffa99bd	cat_FA_FB	729			not yet	0	
-fffa9c96	cat_FN	167			not yet	0	
+fffa9c96	cat_FN	167	cat_FN	app/cat_handlers.o	equivalent	167	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 86% of 14 blocks reached)
 fffa9d3d	cat_FS	17	cat_FS	app/cat_link.o	equivalent	17	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fffa9d4e	cat_FT	469			not yet	0	
 fffa9f23	cat_GT	764			not yet	0	
-fffaa21f	cat_GP	326			not yet	0	
+fffaa21f	cat_GP	326	cat_GP	app/cat_handlers.o	equivalent	326	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 74% of 46 blocks reached)
 fffaa365	cat_ID	55	cat_ID	app/cat_link.o	equivalent	55	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fffaa39c	cat_IF_OI	839			not yet	0	
 fffaa6e3	cat_IS	546			not yet	0	
 fffaa905	cat_KM	817			not yet	0	
-fffaac36	cat_KP	284			not yet	0	
-fffaad52	cat_KR	152			not yet	0	
-fffaadea	cat_KS	303			not yet	0	
+fffaac36	cat_KP	284	cat_KP	app/cat_handlers.o	equivalent	284	differential emulation (Ghidra p-code): 200 trials agree (193 returned normally, 100% of 22 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+fffaad52	cat_KR	152	cat_KR	app/cat_handlers.o	equivalent	152	differential emulation (Ghidra p-code): 200 trials agree (158 returned normally, 93% of 14 blocks reached)
+fffaadea	cat_KS	303	cat_KS	app/cat_handlers.o	equivalent	303	differential emulation (Ghidra p-code): 200 trials agree (198 returned normally, 100% of 26 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
 fffaaf19	cat_KY	390			not yet	0	
-fffab09f	cat_LK	208			not yet	0	
+fffab09f	cat_LK	208	cat_LK	app/cat_handlers.o	equivalent	208	differential emulation (Ghidra p-code): 200 trials agree (149 returned normally, 94% of 18 blocks reached)
 fffab16f	cat_LM	654			not yet	0	
-fffab3fd	cat_MA	123			not yet	0	
-fffab478	cat_MB	123			not yet	0	
+fffab3fd	cat_MA	123	cat_MA	app/cat_handlers.o	equivalent	123	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 88% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mov.b r, [r+]
+fffab478	cat_MB	123	cat_MB	app/cat_handlers.o	equivalent	123	differential emulation (Ghidra p-code): 200 trials agree (129 returned normally, 88% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mov.b r, [r+]
 fffab4f3	cat_MC	734			not yet	0	
 fffab7d1	cat_MD	659			not yet	0	
 fffaba64	cat_MG	406			not yet	0	
 fffabbfa	cat_ML	683			not yet	0	
 fffabea5	cat_MR	992			not yet	0	
 fffac285	cat_MT	561			not yet	0	
-fffac4b6	cat_MS	126			not yet	0	
+fffac4b6	cat_MS	126	cat_MS	app/cat_handlers.o	equivalent	126	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 fffac534	cat_MW	1145			not yet	0	
-fffac9ad	cat_MX	154			not yet	0	
+fffac9ad	cat_MX	154	cat_MX	app/cat_handlers.o	equivalent	154	differential emulation (Ghidra p-code): 200 trials agree (164 returned normally, 89% of 18 blocks reached)
 fffaca47	cat_NA	542			not yet	0	
-fffacc65	cat_NB	131			not yet	0	
-fffacce8	cat_NL	313			not yet	0	
-ffface21	cat_NR	157			not yet	0	
+fffacc65	cat_NB	131	cat_NB	app/cat_handlers.o	equivalent	131	differential emulation (Ghidra p-code): 200 trials agree (158 returned normally, 100% of 12 blocks reached)
+fffacce8	cat_NL	313	cat_NL	app/cat_handlers.o	equivalent	313	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 96% of 24 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+ffface21	cat_NR	157	cat_NR	app/cat_handlers.o	equivalent	157	differential emulation (Ghidra p-code): 200 trials agree (194 returned normally, 94% of 16 blocks reached)
 fffacebe	cat_OS	323			not yet	0	
-fffad001	cat_PA	161			not yet	0	
+fffad001	cat_PA	161	cat_PA	app/cat_handlers.o	equivalent	161	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 16 blocks reached)
 fffad0a2	cat_PB	415			not yet	0	
 fffad241	cat_PC	550			not yet	0	
-fffad467	cat_PL	302			not yet	0	
-fffad595	cat_PR	257			not yet	0	
-fffad696	cat_PS	110			not yet	0	
+fffad467	cat_PL	302	cat_PL	app/cat_handlers.o	equivalent	302	differential emulation (Ghidra p-code): 200 trials agree (199 returned normally, 100% of 26 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+fffad595	cat_PR	257	cat_PR	app/cat_handlers.o	equivalent	257	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 96% of 23 blocks reached)
+fffad696	cat_PS	110	cat_PS	app/cat_handlers.o	equivalent	110	differential emulation (Ghidra p-code): 200 trials agree (196 returned normally, 100% of 8 blocks reached)
 fffad704	cat_QI	5	cat_QI	app/cat_link.o	identical	5	byte-identical at the original address (5 bytes)
 fffad709	cat_QR	5	cat_QR	app/cat_link.o	identical	5	byte-identical at the original address (5 bytes)
 fffad70e	cat_QS	10	cat_QS	app/cat_link.o	identical	10	byte-identical at the original address (10 bytes)
-fffad718	cat_RA	150			not yet	0	
-fffad7ae	cat_RG	309			not yet	0	
+fffad718	cat_RA	150	cat_RA	app/cat_handlers.o	equivalent	150	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): or r, r, r
+fffad7ae	cat_RG	309	cat_RG	app/cat_handlers.o	equivalent	309	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 23 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
 fffad8e3	cat_RI	355			not yet	0	
-fffada46	cat_RL	311			not yet	0	
+fffada46	cat_RL	311	cat_RL	app/cat_handlers.o	equivalent	311	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 26 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, sub r, r, r
 fffadb7d	cat_RM	345			not yet	0	
-fffadcd6	cat_SC	196			not yet	0	
-fffadd9a	cat_SD	284			not yet	0	
+fffadcd6	cat_SC	196	cat_SC	app/cat_handlers.o	equivalent	196	differential emulation (Ghidra p-code): 200 trials agree (196 returned normally, 96% of 26 blocks reached)
+fffadd9a	cat_SD	284	cat_SD	app/cat_handlers.o	equivalent	284	differential emulation (Ghidra p-code): 200 trials agree (194 returned normally, 100% of 22 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
 fffadeb6	cat_SF	1044			not yet	0	
 fffae2ca	cat_SH	897			not yet	0	
-fffae64b	cat_SM	129			not yet	0	
+fffae64b	cat_SM	129	cat_SM	app/cat_handlers.o	equivalent	129	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mul r, r, r
 fffae6cc	cat_SQ	388			not yet	0	
 fffae850	cat_SS	2917			not yet	0	
-fffaf3b5	cat_ST	185			not yet	0	
+fffaf3b5	cat_ST	185	cat_ST	app/cat_handlers.o	equivalent	185	differential emulation (Ghidra p-code): 200 trials agree (159 returned normally, 85% of 20 blocks reached)
 fffaf46e	cat_SV	345			not yet	0	
 fffaf5c7	cat_TS	497			not yet	0	
-fffaf7b8	cat_TX	188			not yet	0	
-fffaf874	cat_VD	332			not yet	0	
-fffaf9c0	cat_VG	283			not yet	0	
+fffaf7b8	cat_TX	188	cat_TX	app/cat_handlers.o	equivalent	188	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 20 blocks reached)
+fffaf874	cat_VD	332	cat_VD	app/cat_handlers.o	equivalent	332	differential emulation (Ghidra p-code): 200 trials agree (198 returned normally, 100% of 28 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
+fffaf9c0	cat_VG	283	cat_VG	app/cat_handlers.o	equivalent	283	differential emulation (Ghidra p-code): 200 trials agree (199 returned normally, 100% of 22 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r, mul r, r, r
 fffafadb	cat_VM	738			not yet	0	
 fffafdbd	cat_VS	483			not yet	0	
-fffaffa0	cat_VX	206			not yet	0	
-fffb006e	cat_ZI	190			not yet	0	
+fffaffa0	cat_VX	206	cat_VX	app/cat_handlers.o	equivalent	206	differential emulation (Ghidra p-code): 200 trials agree (155 returned normally, 100% of 20 blocks reached)
+fffb006e	cat_ZI	190	cat_ZI	app/cat_handlers.o	equivalent	190	differential emulation (Ghidra p-code): 200 trials agree (133 returned normally, 62% of 24 blocks reached)
 fffb012c	mem_find_byte	58			not yet	0	
 fffb0166	cat_reply_error	28	cat_reply_error	app/cat_link.o	equivalent	28	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fffb0182	cat_checksum_ok	45	cat_checksum_ok	app/cat_link.o	equivalent	45	differential emulation (Ghidra p-code): 200 trials agree (121 returned normally, 100% of 4 blocks reached, 79 trials inconclusive)
@@ -993,7 +994,7 @@ fffb7b65	af_mute_update	391			not yet	0
 fffb7cec	fm_noise_squelch	373			not yet	0	
 fffb7e61	signal_level_squelch	270			not yet	0	
 fffb7f6f	ptt_inputs_read	394			not yet	0	
-fffb80f9	trx_sequencer	1193			not yet	0	
+fffb80f9	trx_sequencer	1193	trx_sequencer	app/trx_lines.o	equivalent	1193	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 60% of 173 blocks reached)
 fffb85a2	ptt_source_select	326			not yet	0	
 fffb86e8	ptt_arbiter	794			not yet	0	
 fffb8a02	tx_audio_select	138			not yet	0	
