@@ -217,6 +217,17 @@ void vdc5_shrd_set_resource(unsigned ch, int layer, unsigned state);
 int r_vdc5_shrd_get_resource(unsigned ch, int layer);
 int vdc5_shrd_res_idle(unsigned ch, int layer);
 int vdc5_shrd_res_busy(unsigned ch, int layer);
+uint8_t vdc5_shrd_get_vs_in_sel(unsigned ch);
+uint8_t vdc5_shrd_get_cascade(unsigned ch);
+uint8_t vdc5_shrd_get_und_sel(unsigned ch);
+uint8_t vdc5_shrd_get_writing_mode(unsigned ch, unsigned sc);
+uint8_t vdc5_shrd_get_interlace(unsigned ch, unsigned sc);
+uint8_t vdc5_shrd_get_ln_off_dir(unsigned ch, unsigned gr);
+uint8_t vdc5_shrd_get_sel_fb_addr_sig(unsigned ch, unsigned gr);
+uint8_t vdc5_shrd_get_graphics_format(unsigned ch, unsigned gr);
+uint8_t vdc5_shrd_get_measure_folding(unsigned ch, unsigned gr);
+vdc5_period_rect_t *vdc5_shrd_get_display_area(unsigned ch, unsigned gr);
+vdc5_width_read_fb_t *vdc5_shrd_get_fr_buff_width_rd(unsigned ch, unsigned gr);
 
 /* the register layer (the image's, not recreated yet) */
 void vdc5_reg_initialize(unsigned ch, const vdc5_init_t *param);
@@ -225,7 +236,7 @@ void vdc5_wait_200us(void);
 void vdc5_reg_video_input(unsigned ch, const vdc5_input_t *param);
 void vdc5_reg_sync_control(unsigned ch, const vdc5_sync_ctrl_t *param);
 void vdc5_reg_display_output(unsigned ch, const vdc5_output_t *param);
-void vdc5_config(unsigned ch, unsigned sc, const vdc5_write_t *param);
+void vdc5_reg_write_data_control(unsigned ch, unsigned sc, const vdc5_write_t *param);
 void vdc5_reg_change_write_process(unsigned ch, unsigned sc, const void *param);
 void vdc5_reg_read_data_control(unsigned ch, unsigned gr, const vdc5_read_t *param);
 void vdc5_reg_change_read_process(unsigned ch, unsigned gr, const vdc5_read_chg_t *param);

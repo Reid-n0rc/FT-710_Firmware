@@ -163,7 +163,7 @@ int r_vdc5_write_data_control(unsigned ch, int layer, const vdc5_write_t *param)
         }
     }
     vdc5_shrd_set_write_param(ch, sc, param);
-    vdc5_config(ch, sc, param);
+    vdc5_reg_write_data_control(ch, sc, param);
     vdc5_shrd_set_resource(ch, layer, 1);
     return VDC5_OK;
 }
