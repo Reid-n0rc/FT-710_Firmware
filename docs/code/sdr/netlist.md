@@ -79,7 +79,9 @@ of `ppips_*.db`. Two refinements were needed **[fact, found while testing]**:
   pin to `DMUX` when no FASM PIP selects another source); the tool assumes them, since the design clearly uses them.
 - An INT `IMUX`/`BYP_ALT`/`FAN_ALT` wire with no driving PIP is VCC (prjxray `default` pseudo-PIP), and a LUT with no
   INIT bits has INIT = 0, so its O6/O5 are constant 0. Vivado writes `PRECYINIT.C0` into slices without a carry chain,
-  so CARRY4s are emitted for every slice and dropped (iteratively, along chains) when no output is used.
+  so CARRY4s are emitted for every slice and dropped (iteratively, along chains) when no output is used. "Output"
+  includes the per-bit carries CO[0..2], which a slice reads through `xOUTMUX.CY` / `xFFMUX.CY`; until #232 only O[0..3]
+  and CO[3] counted, see [section 4](#4-structural-verilog-smoke-test-and-simulation-t15d) ("Dropped carry outputs").
 
 **SLICE model** (UG474 + prjxray fuzzer READMEs 011-019): LUT6, or LUT6_2 when O5 is used; FF type from
 `FFSYNC`/`LATCH`/`ZRST` (FDRE/FDSE sync, FDCE/FDPE async, LDCE/LDPE latch) and INIT from `ZINI` (Z = inverted);
@@ -94,7 +96,7 @@ keep all routed site pins and their FASM features.
 |---|---|---|
 | LUT6 / LUT6_2 | 19,431 / 7,177 | 26,608 = T13 LUT count |
 | FDRE / FDCE / FDSE / FDPE | 22,044 / 8,784 / 498 / 58 | 31,384 = T13 FF count; no latches |
-| CARRY4 (outputs used) | 3,692 | T13 lower bound 3,398 |
+| CARRY4 (outputs used) | 3,779 (3,692 before #232) | T13 lower bound 3,398 |
 | MUXF7 / MUXF8 | 251 / 30 | |
 | RAMD64E + RAMD32 (LUT RAM, all `SMALL` = RAM32M-style pairs) | 336 + 336 | 336 `xLUT.RAM` |
 | SRLC32E (221 SRL LUTs, 220 of them SRL16 pairs) | 441 | 221 `xLUT.SRL` |
@@ -103,7 +105,7 @@ keep all routed site pins and their FASM features.
 | IOB / IDDR / ODDR | 116 / 14 / 17 | 110 ILOGIC and 30 OLOGIC are plain pass-through; the 124 IDELAYs only carry Vivado's default (`IDELAY_TYPE_FIXED`) and are not used; unused pins carry only `PULLTYPE`/`IN_TERM`/`SLEW` |
 | MMCME2_ADV / BUFGCTRL / BUFHCE / BUFR / BUFIO | 2 / 7 / 16 / 1 / 1 | BUFIO and BUFR carry no FASM features; they are kept when their output is used |
 
-127,648 nets: 125,597 with exactly one driver, **none with two or more**, and 2,051 without a driver. The undriven
+128,343 nets (since #232; 127,648 before): 126,293 with exactly one driver, **none with two or more**, and 2,050 without a driver. The undriven
 ones are unused hard-block inputs (ILOGIC clocks, DSP cascade inputs at the bottom of a column, unused IOB O/T, BRAM
 cascade pins); only 3 fabric pins (2 SRL data inputs in a `DI_DMC31` chain, 1 FF D) are left unexplained **[fact]**. The flip-flop clocks come from 6 BUFHCE outputs (4,000-7,300 FFs each) and one BUFR (83 FFs) **[fact]**,
 see [section 3](#3-recognized-blocks-t15c).
@@ -787,15 +789,73 @@ flowchart LR
   drivers predicts DOA at a latency of 2 clocks (DOA_REG = 1) on 42 of 42 checkable clocks **[fact, simulation]**, but that
   RAM is written only 3 times in 15,000 clocks, so its stored words could not be checked in that window.
 
-**What is left [open].** The first non-linear element is inside the second-stage loop: MAC DSP48_X1Y0..3 → accumulators →
-write registers → RAMB18_X0Y0..3, X0Y8/9, X1Y2/3 → pre-adders X14Y9 / X36Y5 → operand mux → b. Because the loop feeds itself,
-one wrong element anywhere in it makes all of it non-linear. Candidates: the accumulators' load/clear control (the two
-dynamic-OPMODE DSPs of 3.5, or a fabric clear), the write path into those RAMs (the 14-bit second tile with an unused pin),
-and the RAMB36 x18 equivalence assumed for those tiles. Would be settled by a run that also probes the b-register CE and the
-accumulator chains' control inputs and dumps at least 50,000 clocks, so that (1) the products formed in the first-stage slots
-(selects X14Y6, X15Y8) can be followed into their accumulator, and (2) every word written into RAMB18_X0Y2/3 can be compared
-with what the pre-adders later read back. Until then the carrier placement per mode (USB, LSB, CW, AM, FM) cannot be read
-from the model, and #232 stays open.
+**The first wrong element: the sign bit of b (a netlist-tool bug) [fact].** A 2,126-probe build (b, the A/B/P pins of
+DSP48_X1Y0..3, every non-constant pin of the eight second-stage RAM halves, 1,800 FFs in the fan-in of their DI pins and
+the fan-out of the MAC, the CE/R nets of those FFs, the b CE `SLICE_X29Y10/BLUT` and the 12 operand-mux selects), dumped on
+every clock from 700,000 to 800,000 (100,001 clocks; tone onset at 700,000, runs at 0, 400 and 800 LSB; netlist before the
+fix below, except where marked):
+- **b is the first bus that is not linear.** At clock 730,042 (select `SLICE_X15Y8/CLUT` → chain `SLICE_X44Y10`) b is 0 at
+  400 LSB and **0x0_FFFF_FFFF** (+4,294,967,295) at 800 LSB: the chain word −1 arrived with bits 32..34 clear. Bits 32..34 of b
+  (`SLICE_X37Y14/BFF` → DSP48_X1Y1.B15..B17) are an OR of `SLICE_X32Y8/CLUT` (register sources), `SLICE_X35Y15/BLUT` and
+  `SLICE_X36Y17/BLUT`; the last one takes the three chain selects on I1, I2, I4, and its INIT 0x44F444F4FFFF44F4 depends on all
+  six inputs, but the netlist had I0, I3 and I5 tied to 1, which makes it 0 for every select. So every negative pre-adder word
+  of the chains X8Y9, X14Y9 and X44Y10 was loaded into b as a positive 33-bit number (+2³²), and the products, the window sums
+  and the words written back into the second-stage RAMs were dominated by 2³²·c·[x < 0]: a function of the sign of the signal
+  only, which is why everything after it was the same at 400, 800 and 1,200 LSB.
+- **Cause:** the CARRY4 pruning bug of [section 4](#4-structural-verilog-smoke-test-and-simulation-t15d) ("Dropped carry
+  outputs"). The three lost inputs are the carry outs `SLICE_X8Y17`, `SLICE_X14Y17`, `SLICE_X44Y18` CO[0] (`AOUTMUX.CY`), the
+  bit above each 32-bit pre-adder; `SLICE_X36Y13` CO[0] (above chain X36Y5) was lost the same way.
+- **The other candidates are cleared.** (1) Accumulator control: DSP48_X1Y0..3 have constant OPMODE/ALUMODE/CE/RST pins
+  (X1Y0: P = A·B; X1Y1: P = (PCIN ≫ 17) + A·B; X1Y2: P = PCIN + A·B; X1Y3: P = (PCIN ≫ 17) + A·B, a 35 × 42-bit product
+  b·c split as b = b_hi·2¹⁷ + b_lo, c = c_hi·2¹⁷ + c_lo, with the B inputs of X1Y2/X1Y3 delayed so the four partial products
+  line up) **[fact, cells]**. The fabric accumulator `SLICE_X46Y0..Y18` (76 bits) adds the product on every clock with no
+  load/clear term in its LUTs (sync reset `SLICE_X13Y13/CLUT`, CE `SLICE_X13Y13/DLUT`), and `SLICE_X45Y0..Y18` subtracts two
+  snapshots of the same source taken under two different CEs (`SLICE_X30Y3/DLUT`, `SLICE_X31Y6/BLUT`): an integrate-and-
+  difference window sum, linear in modular arithmetic **[inference, from the LUT INITs]**; `SLICE_X42Y7..Y17` rounds it
+  (bits 31 up) and LUTs such as `SLICE_X40Y15/BLUT` clamp it on overflow before the write registers (CE `SLICE_X31Y5/ALUT`).
+  (2) RAM write path: all eight halves share one address, WE (`SLICE_X13Y8/BFF`) and EN (`SLICE_X29Y3/AFF`); they are written
+  19 times in 100,001 clocks (one word every 5,208–5,209 clocks, i.e. at 24 kHz, address +1 each time), and a software memory
+  built from WE/ADDRA/DI predicts DOA on **874 of 874** checkable clocks for each of the four tiles **[fact, simulation]**. The
+  "unused pin" is consistent on both sides: in the second (14-bit) tile of each chain the pre-adder reads lower 0..7 and upper
+  0..2, 4..6, i.e. two 7-bit bytes of the RAMB36 interleave, and neither DI nor DO of upper pin 3/7 or the parity pins is
+  used **[fact, cells]**. (3) RAMB36 as two RAMB18 halves: these tiles carry no BRAM36 width flag, both halves are x9 TDP
+  (`READ/WRITE_WIDTH_x_9`, `DOA_REG`/`DOB_REG`, WRITE_FIRST since neither `WRITE_MODE_x_READ_FIRST` nor `_NO_CHANGE` is set,
+  prjxray `segbits_bram_l.db`), with identical address, WE and EN nets, which a RAMB36 x18 with the interleave of 4.4
+  matches **[inference]**; no difference showed in the RAM check above.
+- **After the fix** (netlist rebuilt with `tools/bootstrap.sh --only sdr`) b stays small and linear in the same window
+  (largest |b| 8 at 800 LSB, the ±1 rounding steps of the first stage), and nothing reaches the second-stage RAMs or
+  DSP48_X0Y6.B in those 100,000 clocks **[fact, simulation]**.
+
+**Carrier position per mode [fact, simulation].** `ddc_main` with MAIN's RX register set for each mode at dial 10 MHz (18
+frames: 0x03, 0x04, 0x08/09, 0x0A, 0x0B = 0x006A, 0x0E, 0x0F, 0x12/13, 0x14, 0x15, 0x16, 0x18/19, 0x1D, 0x1E, 0x1F with the
+values of [main/sdr-link.md](../main/sdr-link.md); the scope, NB, RTTY, CW-shape and TX-drive registers left at reset; all
+frames ACKed `06`), a 2,000 LSB tone on both channels, 4.6 M clocks, FFT of the 1,094 M17 frames after clock 2.7 M (frame
+period 1,736 clocks = 72.005 kHz, Hann window, bin 66 Hz). The two half-frames of each frame carry the same signal (A ≈ B,
+the spectrum of A + jB is symmetric), i.e. a real IF:
+
+| Mode (0x0A) | NCO 0x18/19 | Tone | Line in the 72 kHz IF | Carrier (dial) at |
+|---|---|---|---|---|
+| USB (4) | 10,001,500 | dial + 1,000 Hz | 16,981 Hz | 17,981 Hz ≈ fs/4, upper sideband inverted |
+| LSB (3) | 9,998,500 | dial − 1,000 Hz | 19,021 Hz | 18,021 Hz ≈ fs/4 |
+| CW-U (0), width 500 | 10,000,000 | dial + 700 Hz | 17,113 / 17,442 Hz (two bins) | ≈ 18 kHz |
+| AM (1) | 10,000,000 | dial | 24,023 Hz | 24,023 Hz ≈ fs/3 |
+| FM (2) | 10,000,000 | dial | 24,023 Hz | 24,023 Hz ≈ fs/3 |
+
+So the FPGA puts the SSB/CW carrier at fs/4 and the AM/FM carrier at fs/3, which is where the HiFi4 expects SSB/CW and FM
+([ifdsp/dsp-chains.md](../ifdsp/dsp-chains.md)); in USB the audio is inverted around fs/4 (tone above the carrier → below
+18 kHz) and in LSB it is not **[fact for the line positions, inference for the carrier from the NCO offset]**.
+
+**Still open: the output level.** The line holds only 14–27 % of the output power and the words stay near full scale
+(RMS 1.5·10⁹); at 1,000 LSB the USB line is as strong as at 2,000 LSB (amplitude 1.07·10⁹ against 9.8·10⁸) **[fact,
+simulation]**. So the frequency now gets through but the amplitude still does not. A hard limiter would put about 80 % of
+the power into the line; this does not look like one **[inference]**. Open: which stage after the fix still loses the
+amplitude (an FPGA AGC or a remaining model error); would be settled by the probed onset runs above repeated over at least
+2 M clocks with the tone on from clock 0, so that the second stage and DSP48_X0Y6/X0Y11 carry signal, or by a capture of
+`RX_DATA` on a radio (needs the owner's approval). #232 stays open for that point.
+
+**Reg 0x0B [fact].** For 10 MHz `gen_subband_of_freq` returns 5 (first boundary above 10 MHz is 11.8 MHz, table
+0xFFF887CC), and row 5 of the table at 0xFFF87FFA is {0x006A, 0x1800, 0x0060, 0x0A00}, so MAIN writes **0x006A** in RX (and
+0x0060 in TX), not the 0x006E used in the runs above (0x006E is row 9, 17.8–20 MHz). The mode runs use 0x006A.
 
 Reproduce (derived files under `build/sdr/vl/`, never commit):
 
@@ -807,6 +867,8 @@ NET=$PWD/PROBED.v PROBE_W=<words> PROBE_PORTS=1 MAIN=ddc_main.cpp OBJ=OBJ VDEFS=
 # PROBE_FROM beyond the run: without it every probe toggle is printed (gigabytes)
 ADC_FROM=700000 PROBE_FROM=999999999 GAP_BITS=10 DUMP=0-<words-1>:700000:790000:1 ADC=tone:10002000:400 \
   build/sdr/vl/OBJ/Vft710_sdr 790000 w000A0004 w00180098 w00199680 w0004E519
+# mode runs (unprobed build: MAIN=ddc_main.cpp OBJ=obj_ddc, same VDEFS): FRAMES = MAIN's 18 RX registers for the mode
+GAP_BITS=2 HALF_FROM=0 ADC=tone:10001000:2000 build/sdr/vl/obj_ddc/Vft710_sdr 4600000 FRAMES   # USB; FFT the H lines
 ```
 
 ## 4. Structural Verilog, smoke test and simulation (T15d)
@@ -849,6 +911,21 @@ DSP48_X1Y26.P with a 1 MHz tone: delay 23 against 7 clocks, every bit matching a
 used, hide this; any fast signal is scrambled, with errors near full scale whatever the tone level, which is what #214 saw on M17.
 Fixed in `tools/xc7_netlist.py` (both halves `A[4]` = GND); rebuild `build/sdr/netlist.json` and `ft710_sdr.v` before any further
 data-path simulation.
+
+**Dropped carry outputs (#232) [fact].** A slice can pass the carry out of one bit of its CARRY4 (CO[0], CO[1] or CO[2]) to
+its AMUX/BMUX/CMUX pin or FF with `xOUTMUX.CY` / `xFFMUX.CY`; `tools/xc7_netlist.py` modelled those pins, but its pruning step
+dropped a CARRY4 unless O[0..3] or CO[3] had a load. In 30 slices the only load is such a CO[k] (for example `SLICE_X8Y17`:
+`PRECYINIT.CIN`, `AOUTMUX.CY`, the carry out above the 32-bit pre-adder `SLICE_X8Y9..X8Y16`), so those CARRY4s, and the
+57 CARRY4s below them whose only load was the next carry in, were dropped: **87 CARRY4s**. Their loads were then undriven,
+and an undriven IMUX/BYP/FAN pin reads as VCC (section 2), so **825 pins** read 1 instead of a carry: 701 LUT inputs and 124
+FF clock enables (whole comparator chains such as `SLICE_X23Y125..Y133` and `SLICE_X29Y123..Y131`, whose result is one
+CO[k], included). FASM routing confirms the lost connections: `SLICE_X36Y17/BLUT` (used in all six inputs by its INIT) has
+PIPs on B1, B4 and B6 (`INT_L_X24Y17.IMUX_L15.ER1END3`, `IMUX_L27.EE2END1`, `IMUX_L12.WL1END1`) that trace back to
+`LOGIC_OUTS20` (AMUX) of `CLBLM_R_X7Y17`, `CLBLM_R_X11Y17` and `LOGIC_OUTS_L20` of `CLBLL_L_X28Y18`, i.e. `SLICE_X8Y17`,
+`SLICE_X14Y17` and `SLICE_X44Y18`, the three slices above the pre-adder chains of 3.9. Fixed by counting CO[0..2] as
+outputs (the selftest now builds a slice whose only load is CO[0] through `AOUTMUX.CY`); the cell count goes from
+63,648 to 63,735. The UART smoke test of `bootstrap.sh --only sdr` still gives the documented replies (`r010437` on UART B,
+`0104` and the `[IF]>` prompt on the console). The effect on the RX decimator is in 3.9.
 
 **Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits; see 3.5, #91),
 RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not emitted (prjxray has no feature for SAME_EDGE_PIPELINED; both enum bits read 0, 3.7), OLOGIC T inversion not decoded (tri-state
