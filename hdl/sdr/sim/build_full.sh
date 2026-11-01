@@ -44,6 +44,8 @@ EXTRA=""
 [ "$TOP" = cosim_top ] && EXTRA="$HERE/cosim_top.v $HERE/../uart_link.v $HERE/../uart_rx.v"
 XC=""
 [ -n "$PROBE_W" ] && XC="-DPROBE_W=$PROBE_W"
+# PROBE_PORTS=1: the netlist has 32-bit ports probe_w<k> and $OBJ/probe_ports.h defines PROBE_WORD (ddc_main.cpp)
+[ -n "$PROBE_PORTS" ] && XC="$XC -DPROBE_PORTS"
 timeout 3000 verilator --cc --exe --build -j "${JOBS:-16}" -O3 --x-assign fast --x-initial fast \
   -Wno-fatal -Wno-lint -Wno-style $VDEFS --top-module "$TOP" --prefix Vft710_sdr \
   --output-split 30000 --output-split-cfuncs 3000 -CFLAGS "-O1 -fno-var-tracking $XC" -Mdir "$OBJ" \

@@ -18,7 +18,7 @@ endpoint number) cannot be read. Those claims are tagged **[inference: L32R]** (
 
 1. **Boot handshake (the only IPC that is used).** The M33 releases the DSP, then the two cores step their 3-bit MU flags
    through 1 → 2 → 3, with SEMA42 gate 0 as a token. The M33 does not start its tasks, or accept MAIN's register writes,
-   until the DSP has reached flag 3. **[fact: M33 `app_main` 0x0008106C; DSP `Thread_Ipc` 0x0021C3B4]**
+   until the DSP has reached flag 3. **[fact: M33 `main` 0x0008106C; DSP `Thread_Ipc` 0x0021C3B4]**
 2. **rpmsg-lite link (built but idle).** The M33 is the rpmsg master over shared memory at 0x20020000 with endpoint 0x28. The
    DSP is the remote, with endpoint 0x1E. Messages are fixed 0x98-byte SRTM-style requests and responses, copied from NXP's
    RT685 `dsp_xaf` demo pattern. **No M33 code writes the send queue**, so no request is ever sent, and the DSP only answers
@@ -36,7 +36,7 @@ endpoint number) cannot be read. Those claims are tagged **[inference: L32R]** (
 ```mermaid
 flowchart LR
   subgraph M33["Cortex-M33 (FreeRTOS)"]
-    AM["app_main<br/>0x8106C"]
+    AM["main<br/>0x8106C"]
     IRT["IpcRecvTask<br/>0x85FC6"]
     IST["IpcSendTask<br/>0x80F50"]
     Q[("queue 0x886E0<br/>8 x 0x98<br/>no writer")]
@@ -104,13 +104,13 @@ So the DSP is started once per power cycle. A DSP crash can only be recovered by
 do (its reset line to Q2002 is outside this image). **[inference]**
 
 Note that `ipc_init` (the rpmsg master) runs **before** `BOARD_DSP_Init`. The vrings are already set up, and the master's
-first doorbell is already sitting in MU-A TR1, before the DSP executes its first instruction. **[fact: call order in `app_main`]**
+first doorbell is already sitting in MU-A TR1, before the DSP executes its first instruction. **[fact: call order in `main`]**
 
 ## Startup handshake
 
 ```mermaid
 sequenceDiagram
-  participant M as M33 app_main
+  participant M as M33 main
   participant HW as MU / SEMA42
   participant D as DSP main / Thread_Ipc
   M->>M: regfile_clear (0x20070000, 64 KB)
@@ -119,7 +119,7 @@ sequenceDiagram
   M->>D: BOARD_DSP_Init: copy images, DSPSTALL = 0
   D->>D: main 0x21C498: 0x20060000.. uncached (xthal), regfile_set_defaults
   D->>D: create Thread_Main, Thread_Ipc, audio threads, xos_start
-  M->>HW: SEMA42_Init, SEMA42_ResetAllGates(0x40 = all)
+  M->>HW: SEMA42_Init, SEMA42_ResetGate(0x40 = all)
   M->>HW: MU_SetFlags(MUA, 1)
   D->>HW: Thread_Ipc: MU_Init(MUB), msgq (10 x 0x98)
   D->>HW: rpmsg_lite_remote_init(0x20020000), wait link up
@@ -162,7 +162,7 @@ What the handshake guarantees **[inference]**:
   0x0008115C only; DSP literals 0x002069B0 used only by 0x00213D10 and `Thread_Ipc`]** The DSP never releases the gate: with the
   FLIX-aware listing, no other code loads that literal **[fact, #184]**.
 
-The handshake has no timeouts. If the DSP never reaches flag 3, the M33 spins in `app_main` forever. No console comes up, and
+The handshake has no timeouts. If the DSP never reaches flag 3, the M33 spins in `main` forever. No console comes up, and
 MAIN's `i DB00` / register frames go unanswered. **[fact: busy loops without a counter]**
 
 ## rpmsg-lite instance
@@ -207,7 +207,7 @@ sequenceDiagram
 
 The M33 MU interrupt is enabled in two steps: `platform_init` sets NVIC priority and enable, and on first use
 `platform_init_interrupt` sets MU-A CR RIE1. `platform_interrupt_enable`/`disable` count nested masks of NVIC IRQ 34. **[fact]**
-On the DSP side the MU-B interrupt reaches the HiFi4 through the INPUTMUX: the M33's `app_main` attaches `kINPUTMUX_MuBToDspInterrupt`
+On the DSP side the MU-B interrupt reaches the HiFi4 through the INPUTMUX: the M33's `main` attaches `kINPUTMUX_MuBToDspInterrupt`
 (source 21) to `DSP_INT_SEL[1]`, and the DSP handles it as XOS IRQ 6 (`MU_B_IRQHandler`). The other DSP interrupt selections follow the
 same rule, DSP IRQ = `DSP_INT_SEL` index + 5: index 17 ← DMAC0 (source 19) = IRQ 22, index 18 ← DMAC1 (source 20) = IRQ 23
 ([hifi4.md](hifi4.md)) **[fact for the three pairs, inference for the rule]**.
@@ -216,7 +216,7 @@ same rule, DSP IRQ = `DSP_INT_SEL` index + 5: index 17 ← DMAC0 (source 19) = I
 
 | vq | Name (M33 view) | Direction | Buffers posted by M33 | Who adds / who consumes |
 |---|---|---|---|---|
-| 0 | `rx_vq` | DSP → M33 | 0x20020800, 0x20020A00 (avail) | DSP takes a buffer from avail, fills it, puts it on used, rings vector 0. M33 `rpmsg_lite_rx_callback` → `rpmsg_queue_rx_cb` → FreeRTOS queue → `IpcRecvTask` copies it out and returns it (`rpmsg_queue_nocopy_free` 0x00081BE8) **[fact: M33 code]** |
+| 0 | `rx_vq` | DSP → M33 | 0x20020800, 0x20020A00 (avail) | DSP takes a buffer from avail, fills it, puts it on used, rings vector 0. M33 `rpmsg_lite_rx_callback` → `rpmsg_queue_rx_cb` → FreeRTOS queue → `IpcRecvTask` copies it out and returns it (`rpmsg_lite_release_rx_buffer` 0x00081BE8) **[fact: M33 code]** |
 | 1 | `tx_vq` | M33 → DSP | 0x20020C00, 0x20020E00 (used, i.e. free for the master) | M33 `rpmsg_lite_send` takes one (`vq_tx_alloc_master`), writes header + payload, adds it to avail, kicks vector 1 **[fact]** |
 
 ## Message format
@@ -341,7 +341,7 @@ inference: DSP ownership, see T12e]**
 
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
-| 0x0008106C | `app_main` | `app_main` | Handshake: SEMA42 init/reset, flags 1 → wait 1 → lock gate 0, flags 2, unlock → wait 3; then regs 0/0x4000/1 and task creation **[fact]** |
+| 0x0008106C | `main` | `main` | Handshake: SEMA42 init/reset, flags 1 → wait 1 → lock gate 0, flags 2, unlock → wait 3; then regs 0/0x4000/1 and task creation **[fact]** |
 | 0x00084AD8 | `BOARD_DSP_Init` | `BOARD_DSP_Init` | DSP clocks, `DSP_Init`, image copy, DSPSTALL = 0 **[fact]** |
 | 0x00083E48 | `DSP_Init` | `DSP_Init` | DSP memory power-up and reset release **[inference]** |
 | 0x00084A50 | `ipc_init` | `ipc_init` | master init (0x20020000, 0x20000, link 0), queue, endpoint 0x28, remote = 0x1E **[fact]** |
@@ -356,7 +356,7 @@ inference: DSP ownership, see T12e]**
 | 0x00081DEC | `virtqueue_create` | `virtqueue_create` | 0x68-byte vq struct **[fact]** |
 | 0x00081AFC | `rpmsg_lite_send` | `rpmsg_lite_send` | blocking send with 1-tick retry **[fact]** |
 | 0x00081A88 | `rpmsg_queue_recv` | `rpmsg_queue_recv` | **[fact]** |
-| 0x00081BE8 | `rpmsg_queue_nocopy_free` | `rpmsg_queue_nocopy_free` | return rx buffer **[fact]** |
+| 0x00081BE8 | `rpmsg_lite_release_rx_buffer` | `rpmsg_lite_release_rx_buffer` | return rx buffer **[fact]** |
 | 0x000861DA | `rpmsg_queue_create` | `rpmsg_queue_create` | queue of `vq_nentries` × 12 B **[fact]** |
 | 0x000862B2 | `rpmsg_lite_create_ept` | `rpmsg_lite_create_ept` | **[fact]** |
 | 0x000861B8 | (label) | `rpmsg_queue_rx_cb` | endpoint callback → queue, returns RL_HOLD **[fact]** |
@@ -377,10 +377,10 @@ inference: DSP ownership, see T12e]**
 | 0x00081914 | (none) | `platform_notify` | MU-A TR1 = vector << 16 under platform_lock **[fact]** |
 | 0x000818B8 | `MU_A_IRQHandler` | `MU_A_IRQHandler` | RF1 → RR1 >> 16 → isr_table → vq callback (+0x30) **[fact]** |
 | 0x00086106 / 0x00086120 / 0x0008616E | `FUN_…` | `env_create_queue` / `env_put_queue` / `env_get_queue` | FreeRTOS queue wrappers (ISR-aware) **[fact]** |
-| 0x00086086 / 0x0008608C / 0x00086092 / 0x0008606A | `FUN_…` | `env_mb` / `env_rmb` / `env_wmb` / `env_map_vatopa` | **[fact]** |
+| 0x00086086 / 0x0008608C / 0x00086092 / 0x0008606A | `FUN_…` | `env_mb` / `env_rmb` / `env_wmb` / `platform_vatopa` | **[fact]** |
 | 0x000860A0 / 0x000860C4 / 0x000860DE / 0x00086072 | `env_create_mutex` … `env_free_memory` | same | **[fact]** |
 | 0x00086F14 / 0x00086EFE / 0x000842C8 | `MU_SetFlags` / `MU_SendMsg` / `MU_Init` | `MU_SetFlags` / `MU_SendMsg` / `MU_Init` | **[fact]** |
-| 0x000848F4 / 0x00087008 / 0x00086FEC | `SEMA42_Init` / `SEMA42_ResetAllGates` / `SEMA42_Lock` | same | **[fact]** |
+| 0x000848F4 / 0x00087008 / 0x00086FEC | `SEMA42_Init` / `SEMA42_ResetGate` / `SEMA42_Lock` | same | **[fact]** |
 
 ### HiFi4
 
@@ -413,7 +413,7 @@ inference: DSP ownership, see T12e]**
 | Address | Name (proposed) | Contents |
 |---|---|---|
 | 0x000886E0 | `ipc_send_queue` | FreeRTOS queue handle, 8 × 0x98, never written to **[fact]** |
-| 0x000886E4 | `task_handles` | {CommandTask, IpcSendTask, IpcRecvTask} handles, cleared by `app_main` **[fact]** |
+| 0x000886E4 | `task_handles` | {CommandTask, IpcSendTask, IpcRecvTask} handles, cleared by `main` **[fact]** |
 | 0x00088B54 / 58 / 5C / 60 | `ipc_remote_addr` / `ipc_ept` / `ipc_queue` / `ipc_rl` | 0x1E, endpoint, rpmsg queue, rpmsg-lite instance **[fact]** |
 | 0x0008870C / 0x00088710 / 0x00088714 | `disable_counter` / `isr_counter` / `platform_lock` | rpmsg platform layer **[fact]** |
 | 0x00088718 / 0x0008871C / 0x00088720 | `env_init_counter` / `env_sema` / `isr_table[32]` | rpmsg env layer **[fact]** |

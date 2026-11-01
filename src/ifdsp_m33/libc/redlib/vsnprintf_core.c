@@ -1,35 +1,50 @@
 /*
- * FT-710 IFDSP M33 (T24): the formatted output the application uses (sprintf, snprintf, vsprintf), in place of the
- * image's C library (NXP Redlib, closed source: a 2.7 KB core at 0x84EB0 behind sprintf 0x85A9C, snprintf 0x85B08 and
- * vsprintf 0x85B80). Supports what the application's formats need: %d %i %u %x %X %c %s %%, the 0 flag and a width.
- * The image's stdio streams (stdin/stdout/stderr on the "no host" stubs) are not recreated: nothing writes to them
- * (docs/code/ifdsp/m33-platform.md section 9).
+ * FT-710 IFDSP M33 (T24): the printf core of the image's C library (NXP Redlib, closed source; 0x84EB0, 2778 bytes).
+ * NOT YET RECREATED: this is a reduced stand-in with the original's interface, so that the program links and runs.
+ *
+ * Interface [fact: callers 0x85A9C, 0x85B08, 0x85B80 and the core's prologue 0x84EB0]: (stream, 64-bit limit in r2:r3,
+ * format, va_list, hook); characters are counted in a 32-bit int, and stored while count < limit: `if (--f->wcount
+ * < 0) fputc(c, f); else *f->ptr++ = c`. The original also parses the flags + - 0 space #, `*` width and precision,
+ * the length modifiers l ll L q h hh j z t, and the conversions a c d e f g i n o p s u x X (the floating-point ones
+ * through the hook) [fact: comparisons in 0x84EB0..0x85130]. This stand-in handles c d i u x X s % with the 0 flag
+ * and a width, the conversions the application uses (docs/code/ifdsp/control-link.md, ipc.md).
+ * Open: a full recreation; would be settled by translating 0x84EB0..0x85989 and checking it with tools/equiv_m33_emu.py
+ * against the original (a format-string argument generator is needed for that check).
  */
 #include <stdarg.h>
-#include <stddef.h>
-#include <stdio.h>
+#include "redlib_file.h"
+
+extern int fputc(int c, redlib_file_t *f);
 
 typedef struct
 {
-    char *buf;
-    size_t size; /* bytes the buffer holds, terminator included */
-    size_t len;
+    redlib_file_t *f;
+    long long max;
+    int n;
 } out_t;
 
-static void put(out_t *o, char c)
+static void put(out_t *o, int c)
 {
-    if (o->len + 1 < o->size)
+    if (o->n < o->max)
     {
-        o->buf[o->len] = c;
+        if (--o->f->wcount < 0)
+        {
+            fputc(c, o->f);
+        }
+        else
+        {
+            *o->f->ptr++ = (unsigned char)c;
+        }
     }
-    o->len++;
+    o->n++;
 }
 
-int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
+int vsnprintf_core(redlib_file_t *f, long long max, const char *fmt, va_list ap, int (*hook)(void))
 {
-    out_t o = {buf, size, 0};
+    out_t o = {f, max, 0};
     char tmp[12];
 
+    (void)hook;
     for (; *fmt; fmt++)
     {
         if (*fmt != '%')
@@ -37,7 +52,7 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
             put(&o, *fmt);
             continue;
         }
-        char pad = ' ';
+        char pad  = ' ';
         int width = 0;
         fmt++;
         if (*fmt == '0')
@@ -58,8 +73,8 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
             case 'i':
             {
                 long x = va_arg(ap, int);
-                neg = x < 0;
-                v = neg ? -(unsigned long)x : (unsigned long)x;
+                neg    = x < 0;
+                v      = neg ? -(unsigned long)x : (unsigned long)x;
                 goto number10;
             }
             case 'u':
@@ -75,7 +90,7 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
             case 'X':
             {
                 const char *digits = (*fmt == 'x') ? "0123456789abcdef" : "0123456789ABCDEF";
-                v = va_arg(ap, unsigned int);
+                v                  = va_arg(ap, unsigned int);
                 do
                 {
                     tmp[sizeof(tmp) - 1 - n++] = digits[v & 15U];
@@ -85,11 +100,11 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
             }
             case 'c':
                 tmp[sizeof(tmp) - 1] = (char)va_arg(ap, int);
-                n = 1;
+                n                    = 1;
                 break;
             case 's':
                 s = va_arg(ap, const char *);
-                if (s == NULL)
+                if (s == 0)
                 {
                     s = "(null)";
                 }
@@ -102,11 +117,8 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
                 put(&o, '%');
                 continue;
             case 0:
-                fmt--;
-                continue;
+                return o.n;
             default:
-                put(&o, '%');
-                put(&o, *fmt);
                 continue;
         }
         if (*fmt != 's')
@@ -130,36 +142,5 @@ int vsnprintf(char *buf, size_t size, const char *fmt, va_list ap)
             put(&o, s[k]);
         }
     }
-    if (o.size != 0)
-    {
-        o.buf[(o.len < o.size) ? o.len : o.size - 1] = 0;
-    }
-    return (int)o.len;
-}
-
-int vsprintf(char *buf, const char *fmt, va_list ap)
-{
-    return vsnprintf(buf, (size_t)-1, fmt, ap);
-}
-
-int sprintf(char *buf, const char *fmt, ...)
-{
-    va_list ap;
-    int n;
-
-    va_start(ap, fmt);
-    n = vsprintf(buf, fmt, ap);
-    va_end(ap);
-    return n;
-}
-
-int snprintf(char *buf, size_t size, const char *fmt, ...)
-{
-    va_list ap;
-    int n;
-
-    va_start(ap, fmt);
-    n = vsnprintf(buf, size, fmt, ap);
-    va_end(ap);
-    return n;
+    return o.n;
 }

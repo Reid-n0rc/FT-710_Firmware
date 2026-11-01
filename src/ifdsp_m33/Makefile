@@ -47,10 +47,13 @@ VENDOR_SRC := \
                      rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.c common/llist.c)
 
 # Recreated sources (this directory).
-OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c)
+OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c libc/redlib/*.c)
+
+# Hand-written assembly of the C library (libc/redlib/*.S).
+OWN_ASM := $(wildcard libc/redlib/*.S)
 
 SRC := $(VENDOR_SRC) $(OWN_SRC)
-OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRC))
+OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRC)) $(patsubst %.S,$(OUT)/obj/%.o,$(OWN_ASM))
 
 # The HiFi4 images (Yaesu's DSP code, never committed), decoded by tools/bootstrap.sh into build/.
 BUILD ?= ../../build
@@ -58,18 +61,29 @@ DSP_IMAGE0 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_0_tcm.bin
 DSP_IMAGE1 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin
 DSP_IMAGE2 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_2_sram_data.bin
 
-# Link order = the order of the objects in the image (functions.tsv addresses): FreeRTOS portasm, the application,
-# rpmsg-lite, the FreeRTOS kernel, the SDK drivers in file-name order, the board files, the C library.
+# Link order = the order of the objects in the image (src/ifdsp_m33/status.tsv addresses, T24 round 2): the
+# application, rpmsg-lite, the FreeRTOS kernel, the SDK drivers by file name (the IDE project keeps them flat in one
+# drivers/ folder), the board files, the C library members in the order their functions appear. The linker script
+# sorts input sections by alignment (16, 4, then 2), so each group of the image is in this order.
 o = $(OUT)/obj/$(1).o
+SDK_ORDER := fsl_clock fsl_common fsl_common_arm fsl_ctimer fsl_dma fsl_dmic fsl_dsp fsl_flexcomm fsl_flexspi fsl_gpio \
+             fsl_hashcrypt fsl_i3c fsl_iap fsl_inputmux fsl_mu fsl_ostimer fsl_otfad fsl_pint fsl_power fsl_reset \
+             fsl_sctimer fsl_sema42 fsl_usart fsl_usdhc fsl_utick
+LIBC_ORDER := crt redlib/memcpy redlib/memset redlib/heap redlib/csys_alloc ctype redlib/stdio_init redlib/streams \
+              redlib/vsnprintf_core redlib/printf redlib/setvbuf string redlib/cdigit_value redlib/strtoul_core \
+              redlib/strtoul redlib/sbrk redlib/errno redlib/cwrite_buffer redlib/fflush redlib/fseek redlib/ftell \
+              redlib/check_heap redlib/file_clear_flag20 redlib/fputc redlib/cfdopen redlib/file_flush_write_buffer \
+              redlib/cfclose redlib/remove redlib/cfflush1 redlib/uldivmod redlib/memcpy_body redlib/sys
 LINK_OBJ := \
-  $(call o,$(FR)/portable/GCC/ARM_CM33_NTZ/non_secure/portasm) \
   $(foreach f,codec regfile uart ipc main pwm console semihost_hardfault console_frame,$(call o,app/$(f))) \
   $(foreach f,rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform rpmsg_lite/porting/environment/rpmsg_env_freertos \
-              rpmsg_lite/rpmsg_queue rpmsg_lite/rpmsg_lite virtio/virtqueue common/llist,$(call o,$(RL)/$(f))) \
-  $(foreach f,portable/MemMang/heap_4 portable/GCC/ARM_CM33_NTZ/non_secure/port event_groups list queue tasks timers,$(call o,$(FR)/$(f))) \
-  $(sort $(filter $(OUT)/obj/$(SDK)/%,$(OBJ))) \
+              rpmsg_lite/rpmsg_queue common/llist rpmsg_lite/rpmsg_lite virtio/virtqueue,$(call o,$(RL)/$(f))) \
+  $(foreach f,portable/MemMang/heap_4 portable/GCC/ARM_CM33_NTZ/non_secure/port portable/GCC/ARM_CM33_NTZ/non_secure/portasm \
+              event_groups list queue tasks timers,$(call o,$(FR)/$(f))) \
+  $(foreach b,$(SDK_ORDER),$(filter %/$(b).o,$(OBJ))) \
+  $(filter %/startup_mimxrt685s.o %/system_MIMXRT685S_cm33.o,$(OBJ)) \
   $(foreach f,board clock_config dsp_ipc dsp_support peripherals pin_mux,$(call o,board/$(f))) \
-  $(foreach f,crt ctype stdio stdlib string,$(call o,libc/$(f))) \
+  $(foreach f,$(LIBC_ORDER),$(call o,libc/$(f))) \
   $(OUT)/obj/board/dsp_image.o
 
 all: $(OBJ) $(OUT)/ifdsp_m33.elf
@@ -82,6 +96,10 @@ $(OUT)/ifdsp_m33.elf: $(LINK_OBJ) ifdsp_m33.ld
 	$(CC) $(CPUFLAGS) -nostdlib -Wl,--gc-sections -Wl,-Map,$(OUT)/ifdsp_m33.map -T ifdsp_m33.ld $(LINK_OBJ) -lgcc -o $@
 	$(CROSS)objcopy -O binary $@ $(OUT)/ifdsp_m33_0x08001000.bin
 	$(CROSS)size $@
+
+$(OUT)/obj/libc/redlib/%.o: libc/redlib/%.S
+	@mkdir -p $(dir $@)
+	$(CC) $(CPUFLAGS) -c $< -o $@
 
 $(OUT)/obj/%.o: %.c
 	@mkdir -p $(dir $@)

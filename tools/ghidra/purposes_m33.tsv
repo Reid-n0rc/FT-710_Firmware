@@ -4,7 +4,7 @@
 # address	name	purpose	tag (fact / inference, from the doc row)	doc page
 0008000c	IAP_FlexspiNorAutoConfig	r6 = ROM API tree 0x1303F000	inference	m33-platform.md
 00080050	delay	fsl_power.c busy loop	inference	m33-platform.md
-000802aa	initFlexSPI	FlexSPI enable, SWRESET, wait DLL lock	inference	m33-platform.md
+000802a8	initFlexSPI	FlexSPI enable, SWRESET, wait DLL lock	fact	m33-platform.md
 0008032c	initXip	re-enable FlexSPI clock and initFlexSPI after deep sleep	inference	m33-platform.md
 00080a18	OTFAD_Init	true entry of FUN_00080A24	inference	m33-platform.md
 00080a60	vRestoreContextOfFirstTask	PSPLIM/CONTROL=2/PSP from pxCurrentTCB	inference	m33-platform.md
@@ -16,8 +16,9 @@
 00080c78	regfile_set_bits	word[reg] |= v in a critical section	fact	control-link.md
 00080ca4	uart0_write	Copy bytes into the TX ring	fact	control-link.md
 00080e50	FLEXCOMM0_IRQHandler	One byte per interrupt	fact	control-link.md
+00080f0c	uart0_printf	formats into 0x88C2C	fact	m33-platform.md
 00080fe8	ipc_print_dsp_reply	category/command text on the console	fact	ipc.md
-0008106c	app_main	SEMA42 init/reset, flags 1	fact	ipc.md
+0008106c	main	SEMA42 init/reset, flags 1	fact	ipc.md
 00081164	sct0_pwm_callback	Every 400 periods	fact	control-link.md
 0008138c	console_printf	vsprintf into 0x88DF0	fact	control-link.md
 00081430	console_rx_char	Line editor, tokenizer and both command interpreters	fact	control-link.md
@@ -26,10 +27,15 @@
 000819b4	platform_init	MU_Init, NVIC IRQ 34 prio 0x60 + enable, platform_lock	fact	ipc.md
 000819e8	env_init	env counter, semaphore, isr_table clear, platform_init	fact	ipc.md
 00081a60	env_register_isr	isr_table[32] at 0x88720	fact	ipc.md
+00081a74	env_isr	virtqueue interrupt dispatch for one vector	fact	m33-platform.md
 00081afc	rpmsg_lite_send	blocking send with 1-tick retry	fact	ipc.md
-00081be8	rpmsg_queue_nocopy_free	return rx buffer	fact	ipc.md
+00082138	xPortStartScheduler	sets PendSV/SysTick priority, starts the first task	fact	m33-platform.md
 000821d0	prvIdleTask	"IDLE" task entry	fact	m33-platform.md
+00082f48	xTimerPendFunctionCallFromISR	queues a deferred call to the timer task	fact	m33-platform.md
+00083318	CLOCK_GetClockOutClkFreq	clock frequency of the ClockOut function clock	fact	m33-platform.md
+000833c0	CLOCK_GetFRGClock	fractional rate generator output clock	fact	m33-platform.md
 000838a8	CLOCK_SetFRGClock	FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15	inference	m33-platform.md
+00083ce4	CTIMER_GenericIRQHandler	dispatches CTIMER callbacks for one instance	fact	m33-platform.md
 00083d5c	DMA_IRQHandle	fsl_dma.c channel interrupt dispatcher	inference	m33-platform.md
 00083e48	DSP_Init	DSP memory power-up and reset release	inference	ipc.md
 00083f88	FLEXCOMM1_DriverIRQHandler	IRQ15, generic fsl_flexcomm handler	fact	m33-platform.md
@@ -40,8 +46,9 @@
 00085d84	_Cwrite_buffer	Flush FILE buffer through __sys_write	inference	m33-platform.md
 00085f70	__check_heap_overflow	new_end >= 0xA2EF8	fact	m33-platform.md
 00085f88	aic3204_select_right_input	Page 1, R55 = 0x10	fact	control-link.md
-00086014	is_hex_string	All chars in 0-9A-Fa-f	fact	control-link.md
+0008606c	platform_patova	physical to virtual address, identity map	fact	m33-platform.md
 00086ec4	hashcrypt_save_running_hash	n = 5 if ctx byte +0x44 == 1	inference	m33-platform.md
+000872ae	__main	Redlib C entry	fact	m33-platform.md
 000872c4	free	Marks block 0x10000000 and merges free successors	inference	m33-platform.md
 000874b0	fputc	FILE output slow path, 19 callers	inference	m33-platform.md
 000875f0	_Cfdopen	Opens fd with mode "r"/"w"/"a"[+][b] into a FILE	inference	m33-platform.md

@@ -249,84 +249,75 @@ uint POWER_CalculateSafetyCount(int param_1)
 }
 
 
-// ===== initFlexSPI @ 000802aa (124 bytes)
+// ===== initFlexSPI @ 000802a8 (126 bytes)
 
-/* fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) [inference] */
+/* fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) [inference]. Entry is the ldr at
+   0x802A8 before the push (GCC clone initFlexSPI.constprop.0, byte-identical) [fact: T24
+   (src/ifdsp_m33/status.tsv)]; Ghidra started it at 0x802AA, entries_m33.tsv moves it (T24 round 2)
+    */
 
 void initFlexSPI(void)
 
 {
-  uint uVar1;
+  dword dVar1;
   uint uVar2;
-  int iVar3;
-  uint *in_r3;
-  uint uVar4;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
   
-  *in_r3 = *in_r3 & 0xfffffffd;
-  *in_r3 = *in_r3 | 1;
+                    /* Module Control 0 [sfr] */
+  uVar3 = FLEXSPI_MCR0;
+  FLEXSPI_MCR0 = uVar3 & 0xfffffffd;
+  uVar3 = FLEXSPI_MCR0;
+  FLEXSPI_MCR0 = uVar3 | 1;
   do {
-  } while ((int)(*in_r3 << 0x1f) < 0);
-  if ((int)(in_r3[0x30] << 0x1f) < 0) {
-    uVar2 = in_r3[0x3a];
-    if ((in_r3[0x18] & 0x7fffff) == 0) {
-      uVar4 = 0;
-      if ((in_r3[0x19] & 0x7fffff) != 0) {
-        uVar4 = 3;
+    iVar4 = FLEXSPI_MCR0;
+  } while (iVar4 << 0x1f < 0);
+  dVar1 = FLEXSPI_DLLCRA;
+  if ((int)(dVar1 << 0x1f) < 0) {
+    uVar3 = FLEXSPI_STS2;
+    dVar1 = FLEXSPI_FLSHA1CR0;
+    if ((dVar1 & 0x7fffff) == 0) {
+      dVar1 = FLEXSPI_FLSHA2CR0;
+      uVar5 = 0;
+      if ((dVar1 & 0x7fffff) != 0) {
+        uVar5 = 3;
       }
     }
     else {
-      uVar4 = 3;
+      uVar5 = 3;
     }
                     /* Flash Control 0 [sfr] */
-    uVar1 = FLEXSPI_FLSHB1CR0;
-    if (((uVar1 & 0x7fffff) != 0) || (uVar1 = FLEXSPI_FLSHB2CR0, (uVar1 & 0x7fffff) != 0)) {
-      uVar4 = uVar4 | 0x30000;
+    uVar2 = FLEXSPI_FLSHB1CR0;
+    if (((uVar2 & 0x7fffff) != 0) || (uVar2 = FLEXSPI_FLSHB2CR0, (uVar2 & 0x7fffff) != 0)) {
+      uVar5 = uVar5 | 0x30000;
     }
-    iVar3 = 10;
+    iVar4 = 10;
     do {
       while( true ) {
                     /* Status 2 [sfr] */
-        uVar1 = FLEXSPI_STS2;
-        if ((uVar4 & ~uVar1) == 0) {
-          iVar3 = 100;
+        uVar2 = FLEXSPI_STS2;
+        if ((uVar5 & ~uVar2) == 0) {
+          iVar4 = 100;
           do {
-            iVar3 = iVar3 + -1;
-          } while (iVar3 != 0);
+            iVar4 = iVar4 + -1;
+          } while (iVar4 != 0);
           return;
         }
-        if (uVar1 == uVar2) break;
-        iVar3 = 10;
-        uVar2 = uVar1;
+        if (uVar2 == uVar3) break;
+        iVar4 = 10;
+        uVar3 = uVar2;
       }
-      iVar3 = iVar3 + -1;
-    } while (iVar3 != 0);
+      iVar4 = iVar4 + -1;
+    } while (iVar4 != 0);
   }
   return;
 }
 
 
-// ===== initXip @ 0008032c (26 bytes)
+// ===== initXip @ 0008032c (24 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x000802a8) */
-/* WARNING: Removing unreachable block (ram,0x000802bc) */
-/* WARNING: Removing unreachable block (ram,0x000802c2) */
-/* WARNING: Removing unreachable block (ram,0x000802ca) */
-/* WARNING: Removing unreachable block (ram,0x00080314) */
-/* WARNING: Removing unreachable block (ram,0x000802d6) */
-/* WARNING: Removing unreachable block (ram,0x000802e0) */
-/* WARNING: Removing unreachable block (ram,0x000802e2) */
-/* WARNING: Removing unreachable block (ram,0x000802ec) */
-/* WARNING: Removing unreachable block (ram,0x000802f4) */
-/* WARNING: Removing unreachable block (ram,0x000802f8) */
-/* WARNING: Removing unreachable block (ram,0x000802fc) */
-/* WARNING: Removing unreachable block (ram,0x000802fe) */
-/* WARNING: Removing unreachable block (ram,0x0008031c) */
-/* WARNING: Removing unreachable block (ram,0x00080320) */
-/* WARNING: Removing unreachable block (ram,0x00080324) */
-/* WARNING: Removing unreachable block (ram,0x0008030a) */
-/* WARNING: Removing unreachable block (ram,0x0008030e) */
-/* WARNING: Removing unreachable block (ram,0x00080318) */
-/* WARNING: Removing unreachable block (ram,0x00080312) */
+/* WARNING: Removing unreachable block (ram,0x00080338) */
 /* fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra)
    [inference] */
 
@@ -337,9 +328,12 @@ void initXip(void)
 }
 
 
-// ===== POWER_EnterSleep_mode1 @ 0008034c (182 bytes)
+// ===== POWER_EnterRbb @ 0008034c (182 bytes)
 
-void POWER_EnterSleep_mode1(void)
+/* byte-identical to POWER_EnterRbb of mcux-sdk MCUX_2.11.0 fsl_power.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]. Was POWER_EnterSleep_mode1 (T24 round 2) */
+
+void POWER_EnterRbb(void)
 
 {
   bool bVar1;
@@ -413,9 +407,12 @@ void POWER_EnterSleep_mode1(void)
 }
 
 
-// ===== POWER_EnterSleep_mode2 @ 00080414 (182 bytes)
+// ===== POWER_EnterFbb @ 00080414 (182 bytes)
 
-void POWER_EnterSleep_mode2(void)
+/* byte-identical to POWER_EnterFbb of mcux-sdk MCUX_2.11.0 fsl_power.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]. Was POWER_EnterSleep_mode2 (T24 round 2) */
+
+void POWER_EnterFbb(void)
 
 {
   bool bVar1;
@@ -489,9 +486,12 @@ void POWER_EnterSleep_mode2(void)
 }
 
 
-// ===== POWER_EnterSleep_mode3 @ 000804dc (174 bytes)
+// ===== POWER_EnterNbb @ 000804dc (174 bytes)
 
-uint POWER_EnterSleep_mode3(void)
+/* byte-identical to POWER_EnterNbb of mcux-sdk MCUX_2.11.0 fsl_power.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]. Was POWER_EnterSleep_mode3 (T24 round 2) */
+
+uint POWER_EnterNbb(void)
 
 {
   bool bVar1;
@@ -1408,6 +1408,26 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
 }
 
 
+// ===== uart0_printf @ 00080f0c (44 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to uart0_printf of src/ifdsp_m33/app/uart.c (recreated)
+   [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]; vsprintf into 0x88C2C, then uart0_write
+   [fact: 0x80F0C] (T24 round 2) */
+
+void uart0_printf(char *format)
+
+{
+  int strlen_ret;
+  undefined1 auStack_c [12];
+  
+  vsprintf(&DAT_00088c2c,format,auStack_c);
+  strlen_ret = strlen((uint *)&DAT_00088c2c);
+                    /* Copy bytes into the TX ring [doc] */
+  uart0_write(&DAT_00088c2c,strlen_ret);
+  return;
+}
+
+
 // ===== uart0_tx_pending @ 00080f3c (14 bytes)
 
 bool uart0_tx_pending(void)
@@ -1463,73 +1483,60 @@ void create_IpcTasks(void)
 }
 
 
-// ===== ipc_print_dsp_reply @ 00080fe8 (130 bytes)
+// ===== ipc_print_dsp_reply @ 00080fe8 (86 bytes)
 
-void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+void ipc_print_dsp_reply(int param_1)
 
 {
-  int strlen_ret;
-  char *pcVar1;
-  uint uStack_c;
-  uint uStack_8;
-  uint uStack_4;
+  char cVar1;
+  char *pcVar2;
   
-  uStack_8 = (uint)*(byte *)(param_1 + 8);
-  uStack_c = uStack_8;
-  if (uStack_8 == 1) {
-    param_4 = (uint)*(byte *)(param_1 + 0xc);
-    if (param_4 == 0) {
-      uStack_c = *(uint *)(param_1 + 0x14);
-      if (uStack_c == 0) {
-        param_4 = *(uint *)(param_1 + 0x18);
-        if (param_4 == 0) {
-          pcVar1 = "\r\nMute off\r\n>> ";
+  cVar1 = *(char *)(param_1 + 8);
+  if (cVar1 == '\x01') {
+    if (*(char *)(param_1 + 0xc) == '\0') {
+      if (*(int *)(param_1 + 0x14) == 0) {
+        if (*(int *)(param_1 + 0x18) == 0) {
+          pcVar2 = "\r\nMute off\r\n>> ";
         }
         else {
-          pcVar1 = "\r\nMute on\r\n>> ";
+          pcVar2 = "\r\nMute on\r\n>> ";
         }
+        goto LAB_00080ffa;
       }
-      else {
-        pcVar1 = "\r\nMute error (%d)\r\n>> ";
-      }
+      pcVar2 = "\r\nMute error (%d)\r\n>> ";
     }
     else {
-      pcVar1 = "\r\nIncoming unknown message category %d\r\n>> ";
-    }
-  }
-  else if (uStack_8 == 3) {
-    param_4 = (uint)*(byte *)(param_1 + 0xc);
-    if (param_4 == 0) {
-      if (*(uint *)(param_1 + 0x14) == 0) {
-        pcVar1 = "DSP Version %04X\r\n>> ";
-        uStack_c = *(uint *)(param_1 + 0x18);
-      }
-      else {
-        pcVar1 = "DSP Version error (%d)\r\n>> ";
-        uStack_c = *(uint *)(param_1 + 0x14);
-      }
-    }
-    else {
-      pcVar1 = "Incoming unknown message category %d\r\n>> ";
+      pcVar2 = "\r\nIncoming unknown message category %d\r\n>> ";
     }
   }
   else {
-    if (uStack_8 != 0) {
+    if (cVar1 != '\x03') {
+      if (cVar1 != '\0') {
+        return;
+      }
+      if (*(char *)(param_1 + 0xc) != '\0') {
+        uart0_printf("Incoming unknown message command %d from category %d\r\n");
+        return;
+      }
+      pcVar2 = "Component versions from DSP:\r\n";
+LAB_00080ffa:
+                    /* formats into 0x88C2C [doc] */
+      uart0_printf(pcVar2);
       return;
     }
-    uStack_c = (uint)*(byte *)(param_1 + 0xc);
-    if (uStack_c == 0) {
-      pcVar1 = "Component versions from DSP:\r\n";
+    if (*(char *)(param_1 + 0xc) == '\0') {
+      if (*(int *)(param_1 + 0x14) == 0) {
+        pcVar2 = "DSP Version %04X\r\n>> ";
+      }
+      else {
+        pcVar2 = "DSP Version error (%d)\r\n>> ";
+      }
     }
     else {
-      pcVar1 = "Incoming unknown message command %d from category %d\r\n";
+      pcVar2 = "Incoming unknown message category %d\r\n>> ";
     }
   }
-  uStack_4 = param_4;
-  sprintf(&DAT_00088c2c,pcVar1,&uStack_c,param_4,pcVar1,&uStack_c);
-  strlen_ret = strlen((uint *)&DAT_00088c2c);
-                    /* Copy bytes into the TX ring [doc] */
-  uart0_write(&DAT_00088c2c,strlen_ret);
+  uart0_printf(pcVar2);
   return;
 }
 
@@ -1543,9 +1550,13 @@ void * get_task_handles(void)
 }
 
 
-// ===== app_main @ 0008106c (218 bytes)
+// ===== main @ 0008106c (218 bytes)
 
-undefined4 app_main(void)
+/* the application main: __main 0x872AE tail-calls it after stdio_init [fact: 0x872B8]; recreated as
+   main() in src/ifdsp_m33/app/main.c, byte-identical [fact: T24 (src/ifdsp_m33/status.tsv,
+   aliases.tsv)]. Was app_main (T24 round 2) */
+
+undefined4 main(void)
 
 {
   uint uVar1;
@@ -1554,15 +1565,15 @@ undefined4 app_main(void)
   GPIO_PortInit(&GPIO_B0_0,0);
   GPIO_PortInit(&GPIO_B0_0,1);
   GPIO_PortInit(&GPIO_B0_0,2);
-  BOARD_InitPins();
-  BOARD_BootClockRUN();
-  app_init_nop();
+  BOARD_InitBootPins();
+  BOARD_InitBootClocks();
+  BOARD_InitBootPeripherals();
   regfile_clear();
                     /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);
-  RESET_ClearPeripheralReset(0x41d);
-  RESET_ClearPeripheralReset(0x41c);
+  RESET_PeripheralReset(0x41d);
+  RESET_PeripheralReset(0x41c);
                     /* Reset P1_0 low 20 ms, high 20 ms [doc] */
   aic3204_init();
   sct0_pwm_init();
@@ -1570,7 +1581,7 @@ undefined4 app_main(void)
                     /* DSP clocks, DSP_Init, image copy, DSPSTALL = 0 [doc] */
   BOARD_DSP_Init();
   SEMA42_Init();
-  SEMA42_ResetAllGates(&SEMA42_GATE3,0x40);
+  SEMA42_ResetGate(&SEMA42_GATE3,0x40);
   MU_SetFlags(0x40110000,1);
   do {
     uVar1 = MUA_SR;
@@ -1588,7 +1599,7 @@ undefined4 app_main(void)
                     /* word[reg] |= v in a critical section [doc] */
   regfile_set_bits(1,1);
   create_IpcTasks();
-  SCTIMER_StartTimer();
+  sct0_pwm_start();
   create_CommandTask();
   vTaskStartScheduler();
   return 0;
@@ -1663,9 +1674,13 @@ void sct0_pwm_init(void)
 }
 
 
-// ===== SCTIMER_StartTimer @ 00081264 (12 bytes)
+// ===== sct0_pwm_start @ 00081264 (12 bytes)
 
-void SCTIMER_StartTimer(void)
+/* 12 bytes, no arguments: SCT0->CTRL &= ~HALT_L [fact: 0x81264]; the SDK SCTIMER_StartTimer is a
+   static inline taking (base, counter), so this is an application wrapper [inference: fsl_sctimer.h
+   MCUX_2.11.0]. Was SCTIMER_StartTimer (T24 round 2) */
+
+void sct0_pwm_start(void)
 
 {
   uint sct0_ctrl;
@@ -1776,7 +1791,7 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
 
 /* vsprintf into 0x88DF0 then console_puts; tail-called by console_cmd_r */
 
-void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void console_printf(char *format,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined4 uStack_c;
@@ -1786,7 +1801,7 @@ void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
   uStack_c = param_2;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  sprintf(&DAT_00088df0,param_1,&uStack_c,param_4,param_1,&uStack_c);
+  vsprintf(&DAT_00088df0,format,&uStack_c);
   console_puts(0x88df0);
   return;
 }
@@ -1983,10 +1998,9 @@ LAB_0008172a:
                     /* r: read reply "r" + value + sum, no CR [fact: control-link.md] */
                           uVar4 = regfile_read(uVar12);
                           local_38[0] = 0x72;
-                          siprintf(local_38 + 1,"%04X",uVar4);
-                          siprintf(auStack_33,"%02X",
-                                   local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0])
-                          ;
+                          sprintf(local_38 + 1,"%04X",uVar4);
+                          sprintf(auStack_33,"%02X",
+                                  local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0]);
                           pcVar5 = local_38;
                           goto LAB_00081772;
                         }
@@ -2140,38 +2154,6 @@ LAB_00081676:
   pcVar5 = "\r\n>> ";
 LAB_0008145a:
   console_puts((uint)pcVar5);
-  return;
-}
-
-
-// ===== MU_A_IRQHandler @ 000818b8 (46 bytes)
-
-void MU_A_IRQHandler(void)
-
-{
-  int iVar1;
-  code *UNRECOVERED_JUMPTABLE;
-  
-                    /* Status [sfr] */
-  iVar1 = MUA_SR;
-  if (-1 < iVar1 << 5) {
-    return;
-  }
-  iVar1 = MUA_RR1;
-  iVar1 = (iVar1 << 0xf) >> 0x1f;
-  if (0x1f < (uint)-iVar1) {
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if ((*(int *)(&DAT_00088720 + iVar1 * -4) != 0) &&
-     (UNRECOVERED_JUMPTABLE = *(code **)(*(int *)(&DAT_00088720 + iVar1 * -4) + 0x30),
-     UNRECOVERED_JUMPTABLE != (code *)0x0)) {
-                    /* WARNING: Could not recover jumptable at 0x0008653e. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    (*UNRECOVERED_JUMPTABLE)();
-    return;
-  }
   return;
 }
 

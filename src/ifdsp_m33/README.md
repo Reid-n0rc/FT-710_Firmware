@@ -15,7 +15,8 @@ Per-function status against the original image: [status.tsv](status.tsv) (genera
 | `config/` | `FreeRTOSConfig.h`, `rpmsg_config.h`, recreated from the image |
 | `board/` | board, clock, pin-mux, peripherals, DSP start (`dsp_support.c`, `dsp_image.S`) and the rpmsg master (`dsp_ipc.c`) |
 | `app/` | the application: codec, register file, USART link and console, IPC tasks, PWM, `main` |
-| `libc/` | stand-ins for the parts of NXP's closed Redlib the application uses (ctype table, string functions, `strtoul`, `sprintf` family, `__main`) |
+| `libc/` | `__main`, the ctype table and `tolower`, the string functions (`string.c`), the private stream header |
+| `libc/redlib/` | the rest of NXP's closed Redlib as the image has it, one file per library member: heap, stdio streams, the `sprintf` family, `strtoul`, the `__sys_*` "no host" stubs; `__aeabi_uldivmod` and the `memcpy`/`memset` loops as hand-written assembly (`.S`). The printf core `vsnprintf_core.c` is a reduced stand-in (T24 open step) |
 | `ifdsp_m33.ld`, `Makefile` | build and link (flash at 0x08001000, SRAM copy-down to 0x80000) |
 | `aliases.tsv`, `data_symbols.tsv` | original addresses of functions and data the check cannot take from Ghidra's list or learn, with evidence |
 

@@ -6,7 +6,8 @@
 //        FRAME = MAIN frame without checksum (w000A0004, r0000), sent on UART B with sum8 + CR, GAP_BITS idle bits
 //        (default 30) after each; @CLOCK holds the next frame until that clock. Frames start at clock 60000.
 // Env:   ADC=tone:F_HZ:AMP[,F_HZ:AMP...]  14-bit sample per 125 MHz clock, sum of sines (AMP in LSB, full scale 8191),
-//            on both ADC channels (ADC2=off: channel 2 at 0; ADC2=same (default)). ADCFMT=offset for offset binary.
+//            on both ADC channels (ADC2=off: channel 2 at 0; ADC2=tone:...: its own tones; ADC2=same (default);
+//            ADC1=off: channel 1 at 0). ADCFMT=offset for offset binary.
 //            Bit map [inference, from the capture RAMs RAMB36_X0Y11/X0Y12]: pair k carries bits 2k (rising edge)
 //            and 2k+1 (falling edge); channel 1 pairs H1 H2 G4 J4 J3 K2 H6, channel 2 B1 B3 C2 E2 F1 D5 B7 (k = 0..6).
 //        HALF_FROM=CLOCK (default 0): print "H <clock> <V17> <M17 word> <V16 word>" for every half-frame after it, the
@@ -16,6 +17,11 @@
 //        at PROBE_FROM, or with PROBE_COUNT=1 only "T <index> <toggles>" per probe bit over that window at the end.
 //        DUMP=W0-W1:FROM:TO:EVERY prints "D <clock> <hex words W0..W1>" every EVERY clocks in [FROM, TO] (probe
 //        words, LSW first), for time series of internal buses.
+//        PROBE_HASH=1 prints "X <index> <toggles> <hash>" per probe bit at the end: a hash of every change in
+//            [PROBE_FROM, PROBE_TO], to compare runs (which probes depend on which ADC channel, #172).
+//        DUMPBITS=FROM:TO:EVERY:i0,i1,... prints "Q <clock> <bits>" with the chosen probe bits as 0/1 characters.
+//        Built with -DPROBE_PORTS (build_full.sh PROBE_PORTS=1) the probes are 32-bit ports probe_w<k> and
+//            probe_ports.h in the object directory defines probe_ptr[] and PROBE_WORD (for tens of thousands of probes).
 //        UART B replies are printed as "B <clock> <hex>".
 #include "Vft710_sdr.h"
 #include "verilated.h"
@@ -49,24 +55,38 @@ int main(int argc, char** argv) {
     double next = 60000; int level = 1;
     // ADC
     struct Tone { double f, a; };
-    std::vector<Tone> tones;
-    const char* adc = getenv("ADC");
-    if (adc && !strncmp(adc, "tone:", 5)) {
-        std::string s = adc + 5; size_t p = 0;
-        while (p < s.size()) {
-            size_t q = s.find(',', p); if (q == std::string::npos) q = s.size();
-            std::string t = s.substr(p, q - p); size_t c = t.find(':');
-            tones.push_back({atof(t.substr(0, c).c_str()), c == std::string::npos ? 4000.0 : atof(t.substr(c + 1).c_str())});
-            p = q + 1;
+    auto parse_tones = [](const char* adc) {
+        std::vector<Tone> tones;
+        if (adc && !strncmp(adc, "tone:", 5)) {
+            std::string s = adc + 5; size_t p = 0;
+            while (p < s.size()) {
+                size_t q = s.find(',', p); if (q == std::string::npos) q = s.size();
+                std::string t = s.substr(p, q - p); size_t c = t.find(':');
+                tones.push_back({atof(t.substr(0, c).c_str()), c == std::string::npos ? 4000.0 : atof(t.substr(c + 1).c_str())});
+                p = q + 1;
+            }
         }
-    }
+        return tones;
+    };
+    auto sample = [](const std::vector<Tone>& tones, uint64_t clk, bool offset) {
+        double x = 0; for (auto& t : tones) x += t.a * sin(2 * M_PI * t.f * (double)clk / 125e6);
+        int v = (int)lround(x); if (v > 8191) v = 8191; if (v < -8192) v = -8192;
+        unsigned u = (unsigned)v & 0x3FFF; if (offset) u ^= 0x2000;
+        return u;
+    };
+    std::vector<Tone> tones = parse_tones(getenv("ADC"));
     bool offset = getenv("ADCFMT") && !strcmp(getenv("ADCFMT"), "offset");
+    bool ch1off = getenv("ADC1") && !strcmp(getenv("ADC1"), "off");
     bool ch2off = getenv("ADC2") && !strcmp(getenv("ADC2"), "off");
+    bool ch2own = getenv("ADC2") && !strncmp(getenv("ADC2"), "tone:", 5);
+    std::vector<Tone> tones2 = parse_tones(getenv("ADC2"));
     CData* ch1[7] = {&top->io_H1_p, &top->io_H2_p, &top->io_G4_p, &top->io_J4_p, &top->io_J3_p, &top->io_K2_p, &top->io_H6_p};
     CData* ch2[7] = {&top->io_B1_p, &top->io_B3_p, &top->io_C2_p, &top->io_E2_p, &top->io_F1_p, &top->io_D5_p, &top->io_B7_p};
     uint64_t half_from = getenv("HALF_FROM") ? strtoull(getenv("HALF_FROM"), 0, 10) : 0;
 #ifdef PROBE_W
-#if PROBE_W > 2
+#if defined(PROBE_PORTS)
+#include "probe_ports.h"   // 32-bit ports probe_w<k> (wide probe sets; a single port of >~4k bits compiles for hours)
+#elif PROBE_W > 2
 #define PROBE_WORD(w) ((uint32_t)top->probe[w])
 #else
 #define PROBE_WORD(w) ((uint32_t)((uint64_t)top->probe >> (32 * (w))))
@@ -76,8 +96,17 @@ int main(int argc, char** argv) {
     static uint32_t prev[PROBE_W];
     bool pcount = getenv("PROBE_COUNT") != nullptr;
     static uint64_t tog[PROBE_W * 32];
+    bool phash = getenv("PROBE_HASH") != nullptr;
+    static uint64_t sig[PROBE_W * 32];
     int dw0 = -1, dw1 = -1; unsigned long long dfrom = 0, dto = 0, devery = 1;
     if (getenv("DUMP")) sscanf(getenv("DUMP"), "%d-%d:%llu:%llu:%llu", &dw0, &dw1, &dfrom, &dto, &devery);
+    // DUMPBITS=FROM:TO:EVERY:i0,i1,...  prints "Q <clock> <bits>" (probe bits i0, i1, ... as 0/1 characters)
+    std::vector<int> qbits; unsigned long long qfrom = 0, qto = 0, qevery = 1;
+    if (getenv("DUMPBITS")) {
+        const char* q = getenv("DUMPBITS"); int n = 0;
+        sscanf(q, "%llu:%llu:%llu:%n", &qfrom, &qto, &qevery, &n);
+        for (const char* c = q + n; *c;) { qbits.push_back(atoi(c)); while (*c && *c != ',') c++; if (*c) c++; }
+    }
 #endif
     int last_u16 = 0, last_v17 = 0; uint32_t wm = 0, wv = 0; int nb = 0;
     int brx_state = 0, brx_last = 1, brx_n = 0; unsigned brx_byte = 0; double brx_t0 = 0;
@@ -93,13 +122,12 @@ int main(int argc, char** argv) {
         if (!bits.empty() && clk >= next) { level = bits.front(); bits.pop_front(); next += CLK_PER_BIT; }
         top->uart_b_rx = level;
         // ADC sample for this clock
-        double x = 0; for (auto& t : tones) x += t.a * sin(2 * M_PI * t.f * (double)clk / 125e6);
-        int v = (int)lround(x); if (v > 8191) v = 8191; if (v < -8192) v = -8192;
-        unsigned u = (unsigned)v & 0x3FFF; if (offset) u ^= 0x2000;
+        unsigned u = ch1off ? 0 : sample(tones, clk, offset);
+        unsigned u2 = ch2off ? 0 : ch2own ? sample(tones2, clk, offset) : sample(tones, clk, offset);
         // falling half: odd bits; rising half: even bits
-        for (int k = 0; k < 7; k++) { *ch1[k] = (u >> (2 * k + 1)) & 1; *ch2[k] = ch2off ? 0 : (u >> (2 * k + 1)) & 1; }
+        for (int k = 0; k < 7; k++) { *ch1[k] = (u >> (2 * k + 1)) & 1; *ch2[k] = (u2 >> (2 * k + 1)) & 1; }
         top->adc_clk_p = 0; top->adc_clk_n = 1; top->adc_dco_p = 0; top->adc_dco_n = 1; top->eval();
-        for (int k = 0; k < 7; k++) { *ch1[k] = (u >> (2 * k)) & 1; *ch2[k] = ch2off ? 0 : (u >> (2 * k)) & 1; }
+        for (int k = 0; k < 7; k++) { *ch1[k] = (u >> (2 * k)) & 1; *ch2[k] = (u2 >> (2 * k)) & 1; }
         top->adc_clk_p = 1; top->adc_clk_n = 0; top->adc_dco_p = 1; top->adc_dco_n = 0; top->eval();
         // I2S-style port
         int u16 = top->io_U16 & 1, v17 = top->io_V17 & 1;
@@ -120,6 +148,11 @@ int main(int argc, char** argv) {
             brx_last = b;
         }
 #ifdef PROBE_W
+        if (!qbits.empty() && clk >= qfrom && clk <= qto && (clk - qfrom) % qevery == 0) {
+            printf("Q %llu ", (unsigned long long)clk);
+            for (int i : qbits) putchar('0' + ((PROBE_WORD(i / 32) >> (i % 32)) & 1));
+            putchar('\n');
+        }
         if (dw0 >= 0 && clk >= dfrom && clk <= dto && (clk - dfrom) % devery == 0) {
             printf("D %llu", (unsigned long long)clk);
             for (int w = dw0; w <= dw1 && w < PROBE_W; w++) printf(" %08x", PROBE_WORD(w));
@@ -135,8 +168,11 @@ int main(int argc, char** argv) {
             if (d && clk >= pfrom && clk <= pto)
                 for (int b = 0; b < 32; b++)
                     if ((d >> b) & 1) {
-                        if (pcount) tog[w * 32 + b]++;
-                        else printf("%llu P %d %d\n", (unsigned long long)clk, w * 32 + b, (pv >> b) & 1);
+                        if (pcount || phash) {
+                            tog[w * 32 + b]++;
+                            if (phash) sig[w * 32 + b] = sig[w * 32 + b] * 0x9E3779B97F4A7C15ull + clk * 2 + ((pv >> b) & 1);
+                        }
+                        else if (!phash) printf("%llu P %d %d\n", (unsigned long long)clk, w * 32 + b, (pv >> b) & 1);
                     }
             prev[w] = pv;
         }
@@ -144,6 +180,8 @@ int main(int argc, char** argv) {
     }
 #ifdef PROBE_W
     if (pcount) for (int i = 0; i < PROBE_W * 32; i++) if (tog[i]) printf("T %d %llu\n", i, (unsigned long long)tog[i]);
+    if (phash) for (int i = 0; i < PROBE_W * 32; i++)
+        printf("X %d %llu %016llx\n", i, (unsigned long long)tog[i], (unsigned long long)sig[i]);
 #endif
     delete top; return 0;
 }

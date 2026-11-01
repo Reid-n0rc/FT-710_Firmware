@@ -17,8 +17,16 @@ and every peripheral access is recorded.
 The two runs are equivalent for an input when they give the same: return registers r0/r1, final contents of all
 memory outside the stack, sequence of peripheral accesses, sequence of stubbed calls (pointer arguments into the
 stack are compared by the bytes they point to), and the same way of ending (return, fault at the same kind of
-access, or instruction budget). A function is "equivalent" when every trial agrees and at least a quarter of them
-returned normally; otherwise "differs" with the first difference, or "not yet" when no trial returned normally.
+access, or instruction budget). A function is "equivalent" when every trial agrees, at least one returned normally,
+and the trials together reached at least half of the original function's basic blocks (MIN_COVER; block coverage is
+recorded with a block hook on the original's range, and printed); otherwise "differs" with the first difference, or
+"not yet". (Until 2026-11-01 round 2 the rule was "a quarter of the trials return": it let a function whose stack
+arguments were never drawn pass with no coverage, the printf core.)
+
+Inputs beyond the random registers: the first four stack argument slots are drawn like r0..r3 (NARGS); some string
+buffers are printf-like format strings; PRESETS build a valid structure for functions that walk one (the C library's
+heap list, a stream, a DSP message); STUBS also cover the C library's "no host" __sys_* calls, with random returns, so
+the stream code is checked on the paths a host would take.
 
 Used by `tools/equiv_m33.py status --emu`; standalone: python3 -I tools/equiv_m33_emu.py FUNCTION [--trials N].
 """
@@ -28,6 +36,7 @@ import struct
 import sys
 
 from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_THUMB, UC_MODE_MCLASS, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, \
+    UC_HOOK_BLOCK, \
     UC_PROT_ALL
 from unicorn import arm_const as A
 
@@ -42,7 +51,9 @@ BUDGET = 400000             # instructions per run
 MMIO = [(0x40000000, 0x40200000), (0x50000000, 0x50200000), (0xE0000000, 0xE0100000)]
 RAM = [(0x00000000, 0x00500000), (0x20000000, 0x20500000)]
 # compared after each run: the image's SRAM with .bss and heap, the argument buffers, the shared SRAM (rpmsg, registers)
-SNAP = [(0x00080000, 0x000A3000), (0x00380000, 0x00384000), (0x20000000, 0x20080000)]
+SNAP = [(0x00080000, 0x000A3000), (0x00380000, 0x00388000), (0x20000000, 0x20080000)]
+NARGS = 8                   # argument words drawn per trial: r0..r3, then the first four stack slots
+MIN_COVER = 0.5             # share of the original's basic blocks the trials must reach together
 FLASH = (0x08000000, 0x09000000)
 
 # Callees that block, start tasks or take long: stubbed, with the number of arguments they take (only those are
@@ -55,6 +66,84 @@ STUBS = {
     'DSP_CopyImage': 1, 'DSP_Init': 0, 'BOARD_DSP_Init': 0, 'SDK_DelayAtLeastUs': 2, 'CLOCK_EnableFfroClk': 1,
     'CLOCK_EnableSfroClk': 0, 'CLOCK_InitSysPll': 1, 'CLOCK_InitAudioPll': 1, 'CLOCK_EnableSysOscClk': 3,
 }
+# Pointer arguments into the stack are compared by the bytes they point to: 16 by default, or the size of the
+# pointed-to object where the stub's prototype says it (the bytes after it are other locals of the caller)
+STACK_ARG_BYTES = {('xEventGroupSetBitsFromISR', 2): 4}   # BaseType_t *pxHigherPriorityTaskWoken
+# The C library's "no host" stubs always fail in the image, which leaves most of stdio unreachable there; stubbed
+# with random returns, the stream functions are checked on the paths a host (or a later firmware) would take.
+STUBS.update({'__sys_istty': 1, '__sys_flen': 1, '__sys_seek': 2, '__sys_write': 3, '__sys_close': 1,
+              '__sys_tmpnam': 3, '__sys_remove': 2})
+
+
+def heap_preset(rng, args, free_arg=False):
+    """A valid C-library heap (Redlib malloc's block list {tag, words, next}) in the argument area, with the list
+    head (0x88B70) and the heap end (0x88B6C) pointing into it. For free, r0 points at one block's payload."""
+    base = 0x386000
+    blocks, a = [], base
+    for _ in range(rng.randrange(0, 6)):
+        n = rng.choice([0, 1, 2, 3, 4, 5, 8, 12, 16, 20, 40])
+        blocks.append((a, rng.choice([0x10000000, 0x20000000]), n))
+        a += 12 + 4 * n
+    data = b''.join(struct.pack('<3I', t, n, blocks[i + 1][0] if i + 1 < len(blocks) else 0)
+                    for i, (_, t, n) in enumerate(blocks))
+    fill = [(base, data + bytes(rng.getrandbits(8) for _ in range(64))),
+            (0x88B70, struct.pack('<I', blocks[0][0] if blocks else 0)),
+            (0x88B6C, struct.pack('<I', rng.choice([0, a, 0xA1EF8, 0xA2EF0])))]
+    if free_arg:
+        args['regs'][0] = rng.choice([0] + [b[0] + 12 for b in blocks])
+    return fill
+
+
+def stream_preset(rng, args, reg=1):
+    """A plausible C-library stream (Redlib FILE, 0x3C bytes) at 0x385000 with a 256-byte buffer after it: flags
+    from the bits the stream code tests, pointers inside the buffer, small counts; argument register reg points at it."""
+    f, buf = 0x385000, 0x385100
+    bits = [1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80, 0x100, 0x200, 0x400, 0x800, 0x1000, 0x2000, 0x8000, 0x10000, 0x80000,
+            0x100000]
+    flags = 0
+    for b in bits:
+        if rng.random() < 0.3:
+            flags |= b
+    size = rng.choice([1, 16, 256])
+    base = rng.choice([buf, buf, f + 0x24, 0])
+    w = [0] * 15
+    w[0] = base + rng.randrange(0, size + 1) if base else 0
+    w[1] = rng.choice([0, 1, 5, 0xFFFFFFFF])
+    w[2] = rng.choice([0, 1, 5, 0x7FFFFFFF, 0xFFFFFFFF, 0xFFFFFFFE, 0xFFFFFFF0])
+    w[3] = flags
+    w[4] = base
+    w[5] = rng.randrange(0, 4)
+    w[6] = rng.choice([0, 10, 0x100])
+    w[7] = size
+    w[8] = rng.randrange(0, 4)
+    w[10] = rng.choice([0, 10, 0x100, 0x180])
+    w[11] = base + rng.randrange(0, size + 1) if base else 0
+    w[12] = size
+    args['regs'][reg] = f
+    return [(f, struct.pack('<15I', *w)), (buf, bytes(rng.getrandbits(8) for _ in range(256)))]
+
+
+def dsp_message_preset(rng, args):
+    """A DSP reply (src/ifdsp_m33/app/ipc.h dsp_message_t) at 0x384800: category (+8) 0..4, command (+0xC) 0..2,
+    parameters 0, 1 or random; r0 points at it."""
+    m = bytearray(rng.getrandbits(8) for _ in range(0x98))
+    m[8] = rng.randrange(0, 5)
+    m[0xC] = rng.choice([0, 0, 1, 2])
+    for k in range(0x10, 0x40, 4):
+        m[k:k + 4] = struct.pack('<I', rng.choice([0, 0, 1, rng.getrandbits(32)]))
+    args['regs'][0] = 0x384800
+    return [(0x384800, bytes(m))]
+
+
+def pwm_preset(rng, args):
+    """The SCT0 PWM state (src/ifdsp_m33/app/pwm.c): an event number SCTIMER_SetupPwm could have returned (0..15) at
+    0x886F0, the tick count near its reload (400) at 0x886F4. With random .bss the event index runs past SCT0's EV[]
+    and the SDK's SCTIMER_UpdatePwmDutycycle faults [fact: trials of round 1 ended reading unmapped memory]."""
+    return [(0x886F0, struct.pack('<I', rng.randrange(0, 16))),
+            (0x886F4, struct.pack('<I', rng.choice([0, 1, 398, 399, 399, 400, 401, rng.getrandbits(32)])))]
+
+
+PRESETS = {'sct0_pwm_callback': pwm_preset, 'ipc_print_dsp_reply': dsp_message_preset, 'malloc': heap_preset, 'free': lambda rng, args: heap_preset(rng, args, True), 'fputc': stream_preset}
 
 
 def returns_value(obj, fname):
@@ -169,7 +258,7 @@ def in_ranges(a, ranges):
 class Run:
     """One emulation run; returns its trace."""
 
-    def __init__(self, img, blobs, stub_addrs, seed, data_fill, args):
+    def __init__(self, img, blobs, stub_addrs, seed, data_fill, args, cover=None):
         self.uc = uc = Uc(UC_ARCH_ARM, UC_MODE_THUMB | UC_MODE_MCLASS)
         try:
             uc.ctl_set_cpu_model(A.UC_CPU_ARM_CORTEX_M33)
@@ -202,6 +291,11 @@ class Run:
         for a in list(stub_addrs) + [STOP]:
             uc.hook_add(UC_HOOK_CODE, self.on_code, begin=a, end=a)
         uc.hook_add(UC_HOOK_MEM_UNMAPPED, self.on_unmapped)
+        # basic blocks reached inside the original function (a block hook leaves IT blocks alone, unlike a code
+        # hook on every instruction)
+        self.blocks = set()
+        if cover:
+            uc.hook_add(UC_HOOK_BLOCK, lambda u, a, n, _: self.blocks.add(a), begin=cover[0], end=cover[1] - 1)
         self.regs = args['regs']
 
     def on_code(self, uc, addr, size, _):
@@ -217,9 +311,10 @@ class Run:
             sp = uc.reg_read(A.UC_ARM_REG_SP)
             r += [struct.unpack('<I', uc.mem_read(sp + 4 * k, 4))[0] for k in range(max(0, n - 4))]
             norm = []
-            for v in r:
+            for k, v in enumerate(r):
                 if STACK_TOP - STACK_SIZE <= v < STACK_TOP:
-                    norm.append(('stack', bytes(uc.mem_read(v, min(16, STACK_TOP - v)))))
+                    n = STACK_ARG_BYTES.get((name, k), 16)
+                    norm.append(('stack', bytes(uc.mem_read(v, min(n, STACK_TOP - v)))))
                 else:
                     norm.append(v)
             self.calls.append((name, tuple(norm)))
@@ -245,6 +340,8 @@ class Run:
         for reg, v in zip(regs, self.regs):
             uc.reg_write(reg, v)
         uc.reg_write(A.UC_ARM_REG_SP, STACK_TOP - 0x100)
+        # arguments 5..8 on the stack (AAPCS), so functions with more than four arguments get inputs too
+        uc.mem_write(STACK_TOP - 0x100, struct.pack('<4I', *[v & 0xFFFFFFFF for v in self.regs[4:8]]))
         uc.reg_write(A.UC_ARM_REG_LR, STOP | 1)
         try:
             uc.emu_start(entry | 1, 0, count=BUDGET)
@@ -262,9 +359,25 @@ class Run:
         return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap}
 
 
+def printf_like(rng):
+    """A random format string: literal characters and conversions with flags, width, precision and length."""
+    out = []
+    for _ in range(rng.randrange(1, 6)):
+        if rng.random() < 0.3:
+            out.append(rng.choice('ab Z\r\n:'))
+            continue
+        c = '%' + ''.join(rng.choice('-+ #0') for _ in range(rng.randrange(0, 3)))
+        c += rng.choice(['', '', str(rng.randrange(0, 20)), '*'])
+        c += rng.choice(['', '', '.' + str(rng.randrange(0, 12)), '.*', '.'])
+        c += rng.choice(['', '', '', 'l', 'll', 'h', 'hh', 'j', 'z', 't', 'L', 'q'])
+        c += rng.choice('diuxXoscpn%cdduxsk')
+        out.append(c)
+    return ''.join(out)
+
+
 def draw_args(rng):
     regs, bufs = [], []
-    for k in range(4):
+    for k in range(NARGS):
         kind = rng.random()
         if kind < 0.35:
             regs.append(rng.choice([0, 1, 2, 3, 4, 7, 10, 11, 0x40, 0xFF, 0x4005, 0x7FFF, 0x8000]))
@@ -272,7 +385,10 @@ def draw_args(rng):
             regs.append(rng.getrandbits(rng.choice([8, 16, 32])))
         else:
             a = SCRATCH_ARGS + 0x1000 * k
-            if rng.random() < 0.5:
+            if rng.random() < 0.15:
+                s = printf_like(rng)
+                data = s.encode() + b'\0' + bytes(rng.getrandbits(8) for _ in range(64))
+            elif rng.random() < 0.5:
                 s = ''.join(rng.choice('rwdiRWDI0123456789abcdefABCDEF \r\n') for _ in range(rng.randrange(0, 14)))
                 data = s.encode() + b'\0' + bytes(rng.getrandbits(8) for _ in range(64))
             else:
@@ -295,8 +411,45 @@ def compare(a, b):
     return None
 
 
-def check(res, obj, fname, shndx, off, oaddr, seed=1, trials=200):
-    """Differential emulation of one function. Returns (verdict, detail)."""
+def block_starts(img, addr, size):
+    """Basic-block leaders of the original function [addr, addr + size): the entry, every branch target inside it
+    and every instruction after a branch (static scan, literal pools after an unconditional end are skipped)."""
+    import capstone
+    key = (addr, size)
+    if key in _BLOCKS:
+        return _BLOCKS[key]
+    md = capstone.Cs(capstone.CS_ARCH_ARM, capstone.CS_MODE_THUMB | capstone.CS_MODE_MCLASS)
+    code = img.read(addr, size)
+    leaders, pc, end = {addr}, addr, addr + size
+    while pc < end:
+        ins = next(md.disasm(code[pc - addr:pc - addr + 4], pc), None)
+        if ins is None:
+            pc += 2
+            continue
+        m = ins.mnemonic.split('.')[0]
+        call = m in ('bl', 'blx')
+        # conditional: b<cc>, cbz/cbnz, and bx/pop pc inside an IT block (bxeq, popne)
+        cond = m in ('cbz', 'cbnz') or (len(m) == 3 and m[0] == 'b' and m not in ('bic', 'bfi', 'bfc', 'bkp', 'blx')) or \
+            (m.startswith('bx') and len(m) > 2) or (m.startswith('pop') and len(m) > 3 and 'pc' in ins.op_str)
+        if m in ('b', 'cbz', 'cbnz') or (cond and m[0] == 'b' and not m.startswith('bx')):
+            if '#0x' in ins.op_str:
+                t = int(ins.op_str.split('#')[-1], 16)
+                if addr <= t < end:
+                    leaders.add(t)
+        if cond and not call:
+            leaders.add(pc + ins.size)   # the fall-through of a conditional branch starts a block
+        pc += ins.size
+    reached_code = {a for a in leaders if a < end}
+    _BLOCKS[key] = reached_code
+    return reached_code
+
+
+_BLOCKS = {}
+
+
+def check(res, obj, fname, shndx, off, oaddr, seed=1, trials=200, osize=None):
+    """Differential emulation of one function. Returns (verdict, detail). osize: extent of the original (for the
+    block coverage); default up to the next original function."""
     img = res.img
     lk = Linker(res)
     try:
@@ -320,21 +473,38 @@ def check(res, obj, fname, shndx, off, oaddr, seed=1, trials=200):
             if a is not None and in_ranges(a, [(E.RAM_BASE + E.RAM_LEN, 0x00500000), (0x20000000, 0x20500000)]):
                 refs.add(a)
     rsize = returns_value(obj, fname)
+    if osize is None:
+        starts = sorted(a for a, _ in E.orig_functions().values())
+        nxt = [a for a in starts if a > oaddr]
+        osize = min(nxt[0] - oaddr, 0x2000) if nxt else 0x100
+        sizes = {a: n for a, n in E.orig_functions().values()}
+        if oaddr in sizes:
+            osize = min(osize, sizes[oaddr])
+    reached = set()
     rng = random.Random(seed)
     ok = 0
     for t in range(trials):
         args = draw_args(rng)
         fill = [(a, bytes(rng.getrandbits(8) for _ in range(64))) for a in sorted(refs)]
+        if fname in PRESETS:
+            fill += PRESETS[fname](rng, args)
         s = rng.getrandbits(32)
-        r1 = Run(img, [], stub_addrs, s, fill, args).go(oaddr, rsize)
+        run1 = Run(img, [], stub_addrs, s, fill, args, cover=(oaddr, oaddr + osize))
+        r1 = run1.go(oaddr, rsize)
+        reached |= run1.blocks
         r2 = Run(img, lk.blobs, stub_addrs, s, fill, args).go(new, rsize)
         d = compare(r1, r2)
         if d:
             return 'differs', f'emulation trial {t}: {d} differs (orig ended {r1["end"]}, new {r2["end"]})'
         ok += r1['end'] == 'return'
-    if ok * 4 < trials:
-        return 'not yet', f'emulation: only {ok} of {trials} trials returned normally'
-    return 'equivalent', f'differential emulation: {trials} trials agree ({ok} returned normally)'
+    nblocks = len(block_starts(img, oaddr, osize))
+    cov = len(reached & block_starts(img, oaddr, osize)) / max(1, nblocks)
+    covtxt = f'{cov:.0%} of {nblocks} blocks reached'
+    if ok == 0:
+        return 'not yet', f'emulation: no trial of {trials} returned normally ({covtxt})'
+    if cov < MIN_COVER:
+        return 'not yet', f'emulation: {trials} trials agree but reach only {covtxt} of the original'
+    return 'equivalent', f'differential emulation: {trials} trials agree ({ok} returned normally, {covtxt})'
 
 
 def run(res, rows, seed=1, trials=200):

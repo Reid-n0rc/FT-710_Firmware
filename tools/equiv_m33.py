@@ -573,8 +573,15 @@ def build_status(rows, emu=None):
     capped = []
     for c in sorted(best.values()):
         i = bisect.bisect_right(starts, c[0])
-        # (an identical function's extent is exact, even where Ghidra put a function start inside it)
-        end = min(c[1], starts[i]) if i < len(starts) and c[4] != 'identical' else c[1]
+        # (an identical function's extent is exact, even where Ghidra put a function start inside it; an equivalent
+        # one covers the original up to the next original function, whatever its own size: the emulation ran the
+        # whole original function, entry to return, against it)
+        if c[4] == 'identical' or i >= len(starts):
+            end = c[1]
+        elif c[4] == 'equivalent':
+            end = starts[i]
+        else:
+            end = min(c[1], starts[i])
         capped.append((c[0], end) + c[2:])
     checked = capped
     out = []

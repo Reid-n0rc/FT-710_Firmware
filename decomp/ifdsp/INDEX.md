@@ -31,18 +31,18 @@ table at 0x206290 is not recovered). Undefined non-0xFF bytes: M33 5,162 → 4,3
 
 | Metric | M33 | HiFi4 |
 |---|---:|---:|
-| Functions exported (non-thunk) | 427 | 1,081 |
+| Functions exported (non-thunk) | 449 | 1,081 |
 | Decompile failures | 0 | 0 |
-| Decompiler warnings (all kinds) | 179 | 256 |
-| Functions with a warning | 92 | 98 |
+| Decompiler warnings (all kinds) | 150 | 256 |
+| Functions with a warning | 87 | 98 |
 | "Unable to track spacebase" | 0 | 0 |
-| "Removing unreachable block" | 37 | 187 |
+| "Removing unreachable block" | 16 | 187 |
 | `halt_baddata()` calls | 0 | 0 |
 | Functions with `halt_baddata()` | 0 | 0 |
-| Functions with `in_*` variables | 9 | 161 |
+| Functions with `in_*` variables | 8 | 161 |
 | Functions with `unaff_*` variables | 3 | 13 |
-| Functions with `extraout_*` variables | 16 | 10 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 21 | 171 |
+| Functions with `extraout_*` variables | 13 | 10 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 17 | 171 |
 | Undefined non-0xFF bytes in executable blocks | 4,363 | 6,366 |
 | … in block `dsp_itcm` | 0 | 976 |
 | … in block `flexspi_xip` | 3,688 | 0 |
@@ -50,14 +50,14 @@ table at 0x206290 is not recovered). Undefined non-0xFF bytes: M33 5,162 → 4,3
 | … in block `sram_text_rodata` | 675 | 0 |
 | Error bookmarks | 0 | 0 |
 | "Bad Instruction" bookmarks | 0 | 0 |
-| warning: Could not recover jumptable at #. Too many branches | 28 | 4 |
+| warning: Could not recover jumptable at #. Too many branches | 24 | 4 |
 | warning: Do nothing block with infinite loop | 85 | 20 |
 | warning: Does not return | 0 | 3 |
 | warning: Globals starting with '_' overlap smaller symbols at the same address | 1 | 26 |
 | warning: Possible PIC construction at #: Changing call to branch | 0 | 4 |
-| warning: Removing unreachable block (#) | 37 | 187 |
+| warning: Removing unreachable block (#) | 16 | 187 |
 | warning: This function may have set the stack pointer | 0 | 1 |
-| warning: Treating indirect jump as call | 28 | 4 |
+| warning: Treating indirect jump as call | 24 | 4 |
 | warning: Type propagation algorithm not settling | 0 | 7 |
 <!-- quality:end -->
 

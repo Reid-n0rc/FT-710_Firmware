@@ -49,7 +49,10 @@ SECTIONS
     .data : ALIGN(4)
     {
         FILL(0xFF)
-        *(CodeQuickAccess)
+        /* kept although unreferenced and sorted by alignment, as in the image: IAP_FlexspiNorAutoConfig,
+           POWER_EnterDeepSleep and OTFAD_Init have no callers but are there; fsl_iap, fsl_power, board (4-byte
+           aligned) come before fsl_otfad (2) [fact: 0x8000C..0x80A51] */
+        KEEP(*(SORT_BY_ALIGNMENT(CodeQuickAccess)))
         *(SORT_BY_ALIGNMENT(.text*))
         . = ALIGN(4);
         *(SORT_BY_ALIGNMENT(.rodata*))
@@ -65,6 +68,11 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
     } > SRAM
+
+    /* C library heap (Redlib _sbrk): 4 KB from the end of .bss [fact: 0xA1EF8..0xA2EF8, literal pools 0x85D7C,
+       0x85F84] */
+    _pvHeapStart = ALIGN(ADDR(.bss) + SIZEOF(.bss), 4);
+    _pvHeapLimit = _pvHeapStart + 0x1000;
 
     /DISCARD/ : { *(.ARM.exidx*) *(.ARM.attributes) *(.comment) }
 
