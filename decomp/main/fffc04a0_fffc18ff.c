@@ -237,7 +237,7 @@ void ui_softkey_dispatch(ushort param_1)
 {
   bool bVar1;
   char cVar2;
-  byte bVar3;
+  byte vfo_mode_ret;
   
   if (PTR_g_ui_00025d54->dialog_shown == 1) {
     scan_stop();
@@ -277,8 +277,8 @@ void ui_softkey_dispatch(ushort param_1)
         bVar1 = true;
       }
       if (bVar1) {
-        bVar3 = vfo_mode(0);
-        if ((bVar3 == 2) || (bVar3 == 3)) {
+        vfo_mode_ret = vfo_mode(0);
+        if ((vfo_mode_ret == 2) || (vfo_mode_ret == 3)) {
           bVar1 = true;
         }
         else {
@@ -410,7 +410,7 @@ void mode_select_simple(byte mode)
 undefined1 vfo_edit_begin(void)
 
 {
-  byte bVar1;
+  byte memch_current_is_special_ret;
   undefined1 local_4;
   bool local_3;
   vfo_state local_2;
@@ -434,8 +434,8 @@ undefined1 vfo_edit_begin(void)
     }
     local_3 = g_opstate.active_vfo != VFO_A;
     if (local_2 == VFO_STATE_MEMORY) {
-      bVar1 = memch_current_is_special(local_3);
-      if (bVar1 == 1) {
+      memch_current_is_special_ret = memch_current_is_special(local_3);
+      if (memch_current_is_special_ret == 1) {
         return 0;
       }
       vfo_enter_memtune_state(local_3);
@@ -451,15 +451,15 @@ undefined1 vfo_edit_begin(void)
 /* (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode [fact]
     */
 
-void mode_popup_select(byte param_1)
+void mode_popup_select(byte mode)
 
 {
   PTR_g_ui_00025d54->msg_active = 0;
-  vfo_mode_set(param_1);
+  vfo_mode_set(mode);
   if (PTR_g_ui_00025d54->dl_req_popup_b == 1) {
     beep_request(1);
   }
-  PTR_g_ui_00025d54->popup_cursor = param_1;
+  PTR_g_ui_00025d54->popup_cursor = mode;
   return;
 }
 
@@ -598,17 +598,17 @@ void vfo_mode_set(byte mode)
 
 {
   byte bVar1;
-  vfo_rec *local_8;
+  vfo_rec *p_vfo_rec;
   
   if (g_opstate.active_vfo == VFO_A) {
-    local_8 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    local_8 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  bVar1 = local_8->mode;
-  local_8->mode = bVar1 & 0xf0 | mode;
-  FUN_fffc0f10(bVar1 & 0xf,mode,&local_8->mode);
+  bVar1 = p_vfo_rec->mode;
+  p_vfo_rec->mode = bVar1 & 0xf0 | mode;
+  FUN_fffc0f10(bVar1 & 0xf,mode,&p_vfo_rec->mode);
   PTR_g_ui_00025d54->vfo_refresh_req = 1;
   return;
 }
@@ -687,7 +687,7 @@ void FUN_fffc0fcc(int param_1,int param_2)
 
 {
   bool bVar1;
-  uint uVar2;
+  uint freq_clamp_ret;
   uint local_c;
   
   if (param_1 != 0) {
@@ -712,12 +712,12 @@ void FUN_fffc0fcc(int param_1,int param_2)
         local_c = 0;
       }
       DAT_0001b4e1 = 1;
-      uVar2 = freq_clamp(param_2 != 0x9d09,local_c);
+      freq_clamp_ret = freq_clamp(param_2 != 0x9d09,local_c);
       DAT_0001b4e1 = 0;
-      *(char *)(param_2 + 0x4a) = (char)(uVar2 >> 0x18);
-      *(char *)(param_2 + 0x4b) = (char)(uVar2 >> 0x10);
-      *(char *)(param_2 + 0x4c) = (char)(uVar2 >> 8);
-      local_c._0_1_ = (undefined1)uVar2;
+      *(char *)(param_2 + 0x4a) = (char)(freq_clamp_ret >> 0x18);
+      *(char *)(param_2 + 0x4b) = (char)(freq_clamp_ret >> 0x10);
+      *(char *)(param_2 + 0x4c) = (char)(freq_clamp_ret >> 8);
+      local_c._0_1_ = (undefined1)freq_clamp_ret;
       *(undefined1 *)(param_2 + 0x4d) = (undefined1)local_c;
       vfo_mark_tuned(param_2 != 0x9d09);
       return;
@@ -744,8 +744,8 @@ uint freq_clamp(char param_1,uint param_2)
 
 {
   bool bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte range_cmp3_ret;
+  uint uVar2;
   uint local_10 [2];
   uint local_8;
   char local_1;
@@ -765,8 +765,8 @@ uint freq_clamp(char param_1,uint param_2)
       if (bVar1) {
         pms_load_limits(0);
       }
-      uVar3 = freq_clamp_pms(local_10[0]);
-      return uVar3;
+      uVar2 = freq_clamp_pms(local_10[0]);
+      return uVar2;
     }
   }
   else if (g_opstate.vfo_state_b == VFO_STATE_PMS) {
@@ -779,14 +779,14 @@ uint freq_clamp(char param_1,uint param_2)
     if (bVar1) {
       pms_load_limits(param_1);
     }
-    uVar3 = freq_clamp_pms(local_10[0]);
-    return uVar3;
+    uVar2 = freq_clamp_pms(local_10[0]);
+    return uVar2;
   }
-  bVar2 = range_cmp3(local_10,(uint *)&tune_limits);
-  if (bVar2 == 0) {
+  range_cmp3_ret = range_cmp3(local_10,(uint *)&tune_limits);
+  if (range_cmp3_ret == 0) {
     freq_fix_below(local_10,&tune_limits);
   }
-  else if (bVar2 == 1) {
+  else if (range_cmp3_ret == 1) {
     freq_fix_above(local_10,&tune_limits);
   }
   return local_10[0];
@@ -1320,16 +1320,16 @@ void FUN_fffc18e1(void)
 void memtune_backup_a(void)
 
 {
-  vfo_rec *pvVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int i;
   
-  pvVar2 = &g_opstate.vfo_a;
-  pvVar1 = &g_opstate.memtune_a;
-  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-    pvVar1->mode = pvVar2->mode;
-    pvVar1 = (vfo_rec *)&pvVar1->flags1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+  p_vfo_rec_2 = &g_opstate.vfo_a;
+  p_vfo_rec = &g_opstate.memtune_a;
+  for (i = 0x5a; i != 0; i = i + -1) {
+    p_vfo_rec->mode = p_vfo_rec_2->mode;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
   }
   return;
 }

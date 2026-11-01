@@ -12,3 +12,7 @@
 0x00087e86	string	2
 0x00087e8f	string	3
 0x00087e92	string	3
+# vStartFirstTask (0x80A90, FreeRTOS portASM): svc 2 at 0x80AA6 starts the first task and never returns; the decode fell
+# through nop, nop, nop.w into the literal 0xE000ED08 (SCB VTOR, loaded by ldr r0,[pc,#28] at 0x80A90) [fact: bytes]
+0x00080aa6	noflow	12		svc 2 does not return: SVC_Handler -> vPortSVCHandler_C -> vRestoreContextOfFirstTask starts the first task (data_m33.tsv noflow; the loop only marks the end of the flow)
+0x00080ab0	pointer	1

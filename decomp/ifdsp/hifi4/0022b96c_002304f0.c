@@ -1,52 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== __truncdfsf2 @ 0022b8ac (188 bytes)
-
-/* double -> float (XCC soft double); used by the powf / sqrtf wrappers [inference] */
-
-uint __truncdfsf2(int param_1,uint param_2)
-
-{
-  ulonglong uVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
-  uint uVar5;
-  uint uVar6;
-  
-  uVar3 = param_2 + 0xc8000000;
-  if (((int)(param_2 ^ uVar3) < 0) || (uVar4 = uVar3 >> 0x14 & 0x7ff, uVar4 == 0)) {
-    uVar3 = 0x381 - (param_2 >> 0x14 & 0x7ff);
-    if (0x1f < uVar3) {
-      return param_2 & 0x80000000;
-    }
-    uVar1 = ((CONCAT44(param_2,param_1) | 0x70000000000000) & 0x1fffffffffffff) >> 0x1d;
-    uVar5 = uVar3 & 0x1f;
-    uVar6 = (uint)((uVar1 << 0x20 | (ulonglong)(uint)(param_1 << 3)) >> uVar5);
-    uVar4 = (uint)uVar1 >> uVar5;
-    if ((param_1 << 3) << 0x20 - uVar5 != 0) {
-      uVar6 = uVar6 | uVar3;
-    }
-  }
-  else {
-    if (0xfe < uVar4) {
-      iVar2 = 0x7ff00000;
-      if (((~param_2 & 0x7ff00000) == 0) && ((param_2 & 0xfffff) != 0 || param_1 != 0)) {
-        iVar2 = 0x3ff80000;
-      }
-      return (uint)(CONCAT44(param_2 >> 0x1f,iVar2 << 4) >> 1);
-    }
-    uVar6 = param_1 << 3;
-    uVar4 = (uint)(CONCAT44(uVar3,param_1) >> 0x1d);
-  }
-  uVar4 = param_2 & 0x80000000 | uVar4;
-  if (((int)uVar6 < 0) && (uVar4 = uVar4 + 1, (uVar6 & 0x7fffffff) == 0)) {
-    return uVar4 & 0xfffffffe;
-  }
-  return uVar4;
-}
-
-
 // ===== __extendsfdf2 @ 0022b96c (100 bytes)
 
 /* float -> double (XCC soft double); first conversion in the powf / sqrtf wrappers [inference] */
@@ -4837,5 +4790,61 @@ int __multadd(undefined4 param_1,int param_2,int param_3,uint param_4)
     return param_2;
   }
   return param_2;
+}
+
+
+// ===== __s2b @ 002304f0 (159 bytes)
+
+/* newlib mprec.c: __multadd [inference] */
+
+int __s2b(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+
+{
+  byte *pbVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  byte *pbVar5;
+  
+  iVar4 = (param_4 + 8) / 9;
+  if (iVar4 < 2) {
+    iVar3 = 0;
+  }
+  else {
+    iVar3 = 0;
+    iVar2 = 1;
+    do {
+      iVar2 = iVar2 << 1;
+      iVar3 = iVar3 + 1;
+    } while (iVar2 < iVar4);
+  }
+  iVar4 = _Balloc(param_1,iVar3);
+  *(undefined4 *)(iVar4 + 0x14) = param_5;
+  *(undefined4 *)(iVar4 + 0x10) = 1;
+  if (param_3 < 10) {
+    pbVar5 = (byte *)(param_2 + 10);
+    iVar3 = 9;
+  }
+  else {
+    iVar2 = param_3 + -9;
+    if (iVar2 < 1) {
+      iVar2 = 1;
+    }
+    iVar3 = param_2 + 0x12;
+    do {
+      iVar4 = __multadd(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < param_3 + param_2 + 9);
+    iVar3 = iVar2 + 9;
+    pbVar5 = (byte *)(param_2 + 9 + iVar2 + 1);
+  }
+  if (iVar3 < param_4) {
+    pbVar1 = pbVar5 + (param_4 - iVar3);
+    do {
+      iVar4 = __multadd(param_1,iVar4,10,*pbVar5 - 0x30);
+      pbVar5 = pbVar5 + 1;
+    } while (pbVar5 != pbVar1);
+  }
+  return iVar4;
 }
 

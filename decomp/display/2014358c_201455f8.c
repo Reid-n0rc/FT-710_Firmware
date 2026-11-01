@@ -347,20 +347,20 @@ uint fatcache_lookup(int param_1,uint param_2)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint *puVar3;
+  uint i;
+  uint *puVar2;
   
-  uVar2 = 0;
-  puVar3 = *(uint **)(param_1 + 0x44);
+  i = 0;
+  puVar2 = *(uint **)(param_1 + 0x44);
   if (*(ushort *)(param_1 + 0x48) != 0) {
     do {
-      uVar1 = *puVar3 & 0x7fffffff;
+      uVar1 = *puVar2 & 0x7fffffff;
       if (((uVar1 != 0) && (uVar1 <= param_2)) && (param_2 < *(ushort *)(param_1 + 0x4a) + uVar1)) {
-        return uVar2 * *(ushort *)(param_1 + 0x4a) + (param_2 - uVar1) + 1 & 0xffff;
+        return i * *(ushort *)(param_1 + 0x4a) + (param_2 - uVar1) + 1 & 0xffff;
       }
-      uVar2 = uVar2 + 1;
-      puVar3 = puVar3 + 1;
-    } while (uVar2 < *(ushort *)(param_1 + 0x48));
+      i = i + 1;
+      puVar2 = puVar2 + 1;
+    } while (i < *(ushort *)(param_1 + 0x48));
   }
   return 0;
 }
@@ -535,26 +535,26 @@ uint dircache_lookup(int param_1,uint param_2)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint *puVar3;
-  uint uVar4;
-  uint *puVar5;
+  uint i;
+  uint *puVar2;
+  uint uVar3;
+  uint *puVar4;
   
-  uVar4 = (uint)*(ushort *)(param_1 + 0x50);
-  puVar3 = *(uint **)(param_1 + 0x4c);
-  puVar5 = (uint *)((*(int *)(param_1 + 0x6c) * (uint)*(ushort *)(param_1 + 0x52) + 4) * uVar4 +
-                   (int)puVar3);
-  uVar2 = 0;
-  if (uVar4 != 0) {
+  uVar3 = (uint)*(ushort *)(param_1 + 0x50);
+  puVar2 = *(uint **)(param_1 + 0x4c);
+  puVar4 = (uint *)((*(int *)(param_1 + 0x6c) * (uint)*(ushort *)(param_1 + 0x52) + 4) * uVar3 +
+                   (int)puVar2);
+  i = 0;
+  if (uVar3 != 0) {
     do {
-      uVar1 = *puVar3;
-      if (((uVar1 != 0) && (uVar1 <= param_2)) && (param_2 < (ushort)*puVar5 + uVar1)) {
-        return uVar2 * *(ushort *)(param_1 + 0x52) + (param_2 - uVar1) + 1 & 0xffff;
+      uVar1 = *puVar2;
+      if (((uVar1 != 0) && (uVar1 <= param_2)) && (param_2 < (ushort)*puVar4 + uVar1)) {
+        return i * *(ushort *)(param_1 + 0x52) + (param_2 - uVar1) + 1 & 0xffff;
       }
-      uVar2 = uVar2 + 1;
-      puVar3 = puVar3 + 1;
-      puVar5 = (uint *)((int)puVar5 + 2);
-    } while (uVar2 < uVar4);
+      i = i + 1;
+      puVar2 = puVar2 + 1;
+      puVar4 = (uint *)((int)puVar4 + 2);
+    } while (i < uVar3);
   }
   return 0;
 }
@@ -1316,7 +1316,7 @@ undefined4 dir_sector_dirty(int param_1,undefined4 param_2,undefined4 param_3)
   int iVar1;
   undefined4 uVar2;
   uint uVar3;
-  ulonglong uVar4;
+  ulonglong __aeabi_idivmod_ret;
   
   if (*(int *)(param_1 + 0x4c) == 0) {
     uVar2 = fs_dev_op2(param_1,param_2,param_3,1);
@@ -1327,8 +1327,8 @@ undefined4 dir_sector_dirty(int param_1,undefined4 param_2,undefined4 param_3)
     uVar2 = 0xffffffbb;
   }
   else {
-    uVar4 = __aeabi_idivmod(iVar1 - 1,(uint)*(ushort *)(param_1 + 0x52));
-    uVar3 = (int)uVar4 + 1U & 0xffff;
+    __aeabi_idivmod_ret = __aeabi_idivmod(iVar1 - 1,(uint)*(ushort *)(param_1 + 0x52));
+    uVar3 = (int)__aeabi_idivmod_ret + 1U & 0xffff;
     dircache_touch(param_1,uVar3);
     iVar1 = (*(int *)(param_1 + 0x6c) * (uint)*(ushort *)(param_1 + 0x52) + 6) *
             (uint)*(ushort *)(param_1 + 0x50) + *(int *)(param_1 + 0x4c) + uVar3 * 2;
@@ -1371,7 +1371,7 @@ int dir_sector_get(int param_1,undefined4 param_2,int *param_3,uint param_4)
 
 {
   int iVar1;
-  ulonglong uVar2;
+  ulonglong __aeabi_idivmod_ret;
   uint local_18;
   
   local_18 = param_4;
@@ -1391,8 +1391,8 @@ int dir_sector_get(int param_1,undefined4 param_2,int *param_3,uint param_4)
   }
   *param_3 = ((local_18 & 0xffff) - 1) * *(int *)(param_1 + 0x6c) + *(int *)(param_1 + 0x4c) +
              (uint)*(ushort *)(param_1 + 0x50) * 4;
-  uVar2 = __aeabi_idivmod((local_18 & 0xffff) - 1,(uint)*(ushort *)(param_1 + 0x52));
-  local_18 = CONCAT22(local_18._2_2_,(short)uVar2 + 1);
+  __aeabi_idivmod_ret = __aeabi_idivmod((local_18 & 0xffff) - 1,(uint)*(ushort *)(param_1 + 0x52));
+  local_18 = CONCAT22(local_18._2_2_,(short)__aeabi_idivmod_ret + 1);
   dircache_touch(param_1);
   return 0;
 }
@@ -1494,18 +1494,18 @@ uint lfn_checksum(int param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
-  uint uVar3;
+  int i;
+  uint uVar2;
   
-  uVar3 = 0;
-  iVar2 = 0;
+  uVar2 = 0;
+  i = 0;
   do {
-    pbVar1 = (byte *)(param_1 + iVar2);
-    iVar2 = iVar2 + 1;
-    uVar3 = uVar3 + *pbVar1;
-    uVar3 = (uVar3 & 1) << 7 | (uVar3 & 0xff) >> 1;
-  } while (iVar2 < 10);
-  return *(byte *)(param_1 + iVar2) + uVar3 & 0xff;
+    pbVar1 = (byte *)(param_1 + i);
+    i = i + 1;
+    uVar2 = uVar2 + *pbVar1;
+    uVar2 = (uVar2 & 1) << 7 | (uVar2 & 0xff) >> 1;
+  } while (i < 10);
+  return *(byte *)(param_1 + i) + uVar2 & 0xff;
 }
 
 

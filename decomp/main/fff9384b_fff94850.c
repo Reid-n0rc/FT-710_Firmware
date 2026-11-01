@@ -22,9 +22,9 @@ void displink_rx_frame_len(void)
 {
   char cVar1;
   bool bVar2;
-  byte bVar3;
+  byte swtimer_expired_ret;
   
-  if ((DAT_0001b60c == 0) || (bVar3 = swtimer_expired(1), bVar3 != 1)) {
+  if ((DAT_0001b60c == 0) || (swtimer_expired_ret = swtimer_expired(1), swtimer_expired_ret != 1)) {
     bVar2 = false;
   }
   else {
@@ -120,32 +120,32 @@ void displink_rx_frame_len(void)
 void R_SCI2_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xdfffffff;
-  bVar2 = ICU_IPR062;
-  ICU_IPR062 = bVar2 & 0xf8 | 8;
-  bVar2 = ICU_IPR063;
-  ICU_IPR063 = bVar2 & 0xf8 | 8;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xdfffffff;
+  bVar1 = ICU_IPR062;
+  ICU_IPR062 = bVar1 & 0xf8 | 8;
+  bVar1 = ICU_IPR063;
+  ICU_IPR063 = bVar1 & 0xf8 | 8;
   SCI2_SCR = 0;
   SCI2_SCR = 0;
-  bVar2 = SCI2_SIMR1;
-  SCI2_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI2_SIMR1;
+  SCI2_SIMR1 = bVar1 & 0xfe;
   SCI2_SPMR = 0;
   SCI2_SMR = 1;
   SCI2_SCMR = 0x72;
   SCI2_SEMR = 0x10;
   SCI2_BRR = 0xc2;
   MPC_P12PFS = 10;
-  bVar2 = PORT1_PMR;
-  PORT1_PMR = bVar2 | 4;
+  bVar1 = PORT1_PMR;
+  PORT1_PMR = bVar1 | 4;
   MPC_P13PFS = 10;
-  bVar2 = PORT1_PODR;
-  PORT1_PODR = bVar2 | 8;
-  bVar2 = PORT1_PDR;
-  PORT1_PDR = bVar2 | 8;
+  bVar1 = PORT1_PODR;
+  PORT1_PODR = bVar1 | 8;
+  bVar1 = PORT1_PDR;
+  PORT1_PDR = bVar1 | 8;
   R_SCI2_Create_UserInit();
   return;
 }
@@ -239,25 +239,25 @@ ushort R_SCI2_Serial_Receive(uint param_1,short param_2)
 ushort R_SCI2_Serial_Send(uint param_1,short param_2)
 
 {
-  char cVar1;
-  byte bVar2;
+  byte bVar1;
   undefined2 local_a;
+  char icu_ier07;
   
   local_a = 0;
   if (param_2 == 0) {
     local_a = 0x81;
   }
   else {
-    cVar1 = ICU_IER07;
-    if (cVar1 < '\0') {
-      bVar2 = ICU_IER07;
-      ICU_IER07 = bVar2 & 0x7f;
-      bVar2 = SCI2_SCR;
-      SCI2_SCR = bVar2 | 0xa0;
-      bVar2 = PORT1_PMR;
-      PORT1_PMR = bVar2 | 8;
-      bVar2 = ICU_IER07;
-      ICU_IER07 = bVar2 | 0x80;
+    icu_ier07 = ICU_IER07;
+    if (icu_ier07 < '\0') {
+      bVar1 = ICU_IER07;
+      ICU_IER07 = bVar1 & 0x7f;
+      bVar1 = SCI2_SCR;
+      SCI2_SCR = bVar1 | 0xa0;
+      bVar1 = PORT1_PMR;
+      PORT1_PMR = bVar1 | 8;
+      bVar1 = ICU_IER07;
+      ICU_IER07 = bVar1 | 0x80;
       DAT_0001b610 = param_2;
       DAT_00020804 = param_1;
     }
@@ -340,11 +340,11 @@ void r_sci2_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci2_rdr;
   
   if (DAT_0001b612 < DAT_0001b614) {
-    uVar2 = SCI2_RDR;
-    *DAT_00020808 = uVar2;
+    sci2_rdr = SCI2_RDR;
+    *DAT_00020808 = sci2_rdr;
     sci2_rx_byte_hook();
     DAT_00020808 = DAT_00020808 + 1;
     DAT_0001b612 = DAT_0001b612 + 1;
@@ -368,11 +368,11 @@ void r_sci2_receive_interrupt(void)
 void r_sci2_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci2_ssr;
   
   r_sci2_callback_receiveerror();
-  bVar1 = SCI2_SSR;
-  SCI2_SSR = bVar1 & 199 | 0xc0;
+  sci2_ssr = SCI2_SSR;
+  SCI2_SSR = sci2_ssr & 199 | 0xc0;
   return;
 }
 
@@ -384,10 +384,10 @@ void r_sci2_receiveerror_interrupt(void)
 void r_sci2_callback_transmitend(void)
 
 {
-  byte bVar1;
+  byte tunlin_port_mode_ret;
   
-  bVar1 = tunlin_port_mode();
-  if (bVar1 != 2) {
+  tunlin_port_mode_ret = tunlin_port_mode();
+  if (tunlin_port_mode_ret != 2) {
     FUN_fffb1976();
     return;
   }
@@ -403,10 +403,10 @@ void r_sci2_callback_transmitend(void)
 void r_sci2_callback_receiveend(void)
 
 {
-  byte bVar1;
+  byte tunlin_port_mode_ret;
   
-  bVar1 = tunlin_port_mode();
-  if (bVar1 != 2) {
+  tunlin_port_mode_ret = tunlin_port_mode();
+  if (tunlin_port_mode_ret != 2) {
     FUN_fffb1944();
     return;
   }
@@ -505,32 +505,32 @@ void sci2_rx_byte_hook(void)
 void R_SCI3_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xefffffff;
-  bVar2 = ICU_IPR080;
-  ICU_IPR080 = bVar2 & 0xf8 | 8;
-  bVar2 = ICU_IPR081;
-  ICU_IPR081 = bVar2 & 0xf8 | 8;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xefffffff;
+  bVar1 = ICU_IPR080;
+  ICU_IPR080 = bVar1 & 0xf8 | 8;
+  bVar1 = ICU_IPR081;
+  ICU_IPR081 = bVar1 & 0xf8 | 8;
   SCI3_SCR = 0;
   SCI3_SCR = 0;
-  bVar2 = SCI3_SIMR1;
-  SCI3_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI3_SIMR1;
+  SCI3_SIMR1 = bVar1 & 0xfe;
   SCI3_SPMR = 0;
   SCI3_SMR = 0;
   SCI3_SCMR = 0x72;
   SCI3_SEMR = 0x50;
   SCI3_BRR = 0xc2;
   MPC_P25PFS = 10;
-  bVar2 = PORT2_PMR;
-  PORT2_PMR = bVar2 | 0x20;
+  bVar1 = PORT2_PMR;
+  PORT2_PMR = bVar1 | 0x20;
   MPC_P23PFS = 10;
-  bVar2 = PORT2_PODR;
-  PORT2_PODR = bVar2 | 8;
-  bVar2 = PORT2_PDR;
-  PORT2_PDR = bVar2 | 8;
+  bVar1 = PORT2_PODR;
+  PORT2_PODR = bVar1 | 8;
+  bVar1 = PORT2_PDR;
+  PORT2_PDR = bVar1 | 8;
   R_SCI3_Create_UserInit();
   return;
 }
@@ -724,11 +724,11 @@ void r_sci3_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci3_rdr;
   
   if (DAT_0001b618 < DAT_0001b61a) {
-    uVar2 = SCI3_RDR;
-    *DAT_00020810 = uVar2;
+    sci3_rdr = SCI3_RDR;
+    *DAT_00020810 = sci3_rdr;
     sci3_rx_byte_hook();
     DAT_00020810 = DAT_00020810 + 1;
     DAT_0001b618 = DAT_0001b618 + 1;
@@ -752,11 +752,11 @@ void r_sci3_receive_interrupt(void)
 void r_sci3_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci3_ssr;
   
   r_sci3_callback_receiveerror();
-  bVar1 = SCI3_SSR;
-  SCI3_SSR = bVar1 & 199 | 0xc0;
+  sci3_ssr = SCI3_SSR;
+  SCI3_SSR = sci3_ssr & 199 | 0xc0;
   return;
 }
 
@@ -814,32 +814,32 @@ void sci3_rx_byte_hook(void)
 void R_SCI4_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xf7ffffff;
-  bVar2 = ICU_IPR082;
-  ICU_IPR082 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR083;
-  ICU_IPR083 = bVar2 & 0xfa | 10;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xf7ffffff;
+  bVar1 = ICU_IPR082;
+  ICU_IPR082 = bVar1 & 0xfa | 10;
+  bVar1 = ICU_IPR083;
+  ICU_IPR083 = bVar1 & 0xfa | 10;
   SCI4_SCR = 0;
   SCI4_SCR = 0;
-  bVar2 = SCI4_SIMR1;
-  SCI4_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI4_SIMR1;
+  SCI4_SIMR1 = bVar1 & 0xfe;
   SCI4_SPMR = 0;
   SCI4_SMR = 0;
   SCI4_SCMR = 0x72;
   SCI4_SEMR = 0x50;
   SCI4_BRR = 0x40;
   MPC_PB0PFS = 10;
-  bVar2 = PORTB_PMR;
-  PORTB_PMR = bVar2 | 1;
+  bVar1 = PORTB_PMR;
+  PORTB_PMR = bVar1 | 1;
   MPC_PB1PFS = 10;
-  bVar2 = PORTB_PODR;
-  PORTB_PODR = bVar2 | 2;
-  bVar2 = PORTB_PDR;
-  PORTB_PDR = bVar2 | 2;
+  bVar1 = PORTB_PODR;
+  PORTB_PODR = bVar1 | 2;
+  bVar1 = PORTB_PDR;
+  PORTB_PDR = bVar1 | 2;
   R_SCI4_Create_UserInit();
   return;
 }
@@ -1037,11 +1037,11 @@ void r_sci4_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci4_rdr;
   
   if (DAT_0001b61e < DAT_0001b620) {
-    uVar2 = SCI4_RDR;
-    *DAT_00020818 = uVar2;
+    sci4_rdr = SCI4_RDR;
+    *DAT_00020818 = sci4_rdr;
     sci4_rx_frame_len();
     DAT_00020818 = DAT_00020818 + 1;
     DAT_0001b61e = DAT_0001b61e + 1;
@@ -1065,11 +1065,11 @@ void r_sci4_receive_interrupt(void)
 void r_sci4_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci4_ssr;
   
   r_sci4_callback_receiveerror();
-  bVar1 = SCI4_SSR;
-  SCI4_SSR = bVar1 & 199 | 0xc0;
+  sci4_ssr = SCI4_SSR;
+  SCI4_SSR = sci4_ssr & 199 | 0xc0;
   return;
 }
 
@@ -1166,32 +1166,32 @@ void sci4_rx_frame_len(void)
 void R_SCI5_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xfbffffff;
-  bVar2 = ICU_IPR084;
-  ICU_IPR084 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR085;
-  ICU_IPR085 = bVar2 & 0xfa | 10;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xfbffffff;
+  bVar1 = ICU_IPR084;
+  ICU_IPR084 = bVar1 & 0xfa | 10;
+  bVar1 = ICU_IPR085;
+  ICU_IPR085 = bVar1 & 0xfa | 10;
   SCI5_SCR = 0;
   SCI5_SCR = 0;
-  bVar2 = SCI5_SIMR1;
-  SCI5_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI5_SIMR1;
+  SCI5_SIMR1 = bVar1 & 0xfe;
   SCI5_SPMR = 0;
   SCI5_SMR = 0;
   SCI5_SCMR = 0x72;
   SCI5_SEMR = 0x50;
   SCI5_BRR = 0x40;
   MPC_PC2PFS = 10;
-  bVar2 = PORTC_PMR;
-  PORTC_PMR = bVar2 | 4;
+  bVar1 = PORTC_PMR;
+  PORTC_PMR = bVar1 | 4;
   MPC_PC3PFS = 10;
-  bVar2 = PORTC_PODR;
-  PORTC_PODR = bVar2 | 8;
-  bVar2 = PORTC_PDR;
-  PORTC_PDR = bVar2 | 8;
+  bVar1 = PORTC_PODR;
+  PORTC_PODR = bVar1 | 8;
+  bVar1 = PORTC_PDR;
+  PORTC_PDR = bVar1 | 8;
   R_SCI5_Create_UserInit();
   return;
 }

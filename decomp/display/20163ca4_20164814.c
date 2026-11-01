@@ -6,26 +6,26 @@ void FUN_20163ca4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
                  ushort *param_5)
 
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
+  int j;
+  int i;
+  uint uVar1;
   
-  iVar2 = 0;
+  i = 0;
   if (*param_5 != 0) {
     do {
-      uVar3 = (uint)param_5[1];
-      iVar1 = 0;
-      if (uVar3 != 0) {
+      uVar1 = (uint)param_5[1];
+      j = 0;
+      if (uVar1 != 0) {
         do {
-          if (*(short *)(*(int *)(param_5 + 2) + iVar2 * 2 + (uint)*param_5 * iVar1 * 2) != 0) {
-            FUN_20163b9c(param_1,iVar1,param_3,param_4,param_5,uVar3 - iVar1,iVar2);
+          if (*(short *)(*(int *)(param_5 + 2) + i * 2 + (uint)*param_5 * j * 2) != 0) {
+            FUN_20163b9c(param_1,j,param_3,param_4,param_5,uVar1 - j,i);
             break;
           }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < (int)uVar3);
+          j = j + 1;
+        } while (j < (int)uVar1);
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < (int)(uint)*param_5);
+      i = i + 1;
+    } while (i < (int)(uint)*param_5);
   }
   return;
 }
@@ -37,14 +37,14 @@ void FUN_20163d44(int param_1,undefined2 param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
+    iVar1 = i * 2;
+    i = i + 1;
     *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
-  } while (iVar2 < 0x40);
+  } while (i < 0x40);
   *(int *)(param_1 + 4) = param_1 + 8;
   *(int *)(param_1 + 0x88) = param_1;
   return;
@@ -114,26 +114,26 @@ void FUN_20163e74(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
                  ushort *param_5)
 
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
+  int j;
+  int i;
+  uint uVar1;
   
-  iVar2 = 0;
+  i = 0;
   if (*param_5 != 0) {
     do {
-      uVar3 = (uint)param_5[1];
-      iVar1 = 0;
-      if (uVar3 != 0) {
+      uVar1 = (uint)param_5[1];
+      j = 0;
+      if (uVar1 != 0) {
         do {
-          if (*(short *)(*(int *)(param_5 + 2) + iVar2 * 2 + (uint)*param_5 * iVar1 * 2) != 0) {
-            FUN_20163d6c(param_1,iVar1,param_3,param_4,param_5,uVar3 - iVar1,iVar2);
+          if (*(short *)(*(int *)(param_5 + 2) + i * 2 + (uint)*param_5 * j * 2) != 0) {
+            FUN_20163d6c(param_1,j,param_3,param_4,param_5,uVar1 - j,i);
             break;
           }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < (int)uVar3);
+          j = j + 1;
+        } while (j < (int)uVar1);
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < (int)(uint)*param_5);
+      i = i + 1;
+    } while (i < (int)(uint)*param_5);
   }
   return;
 }
@@ -145,14 +145,14 @@ void FUN_20163f14(int param_1,undefined2 param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
+    iVar1 = i * 2;
+    i = i + 1;
     *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
-  } while (iVar2 < 0x1c20);
+  } while (i < 0x1c20);
   *(int *)(param_1 + 4) = param_1 + 8;
   *(int *)(param_1 + 0x3848) = param_1;
   return;
@@ -323,17 +323,17 @@ void scope3d_widths_init(int param_1,undefined4 param_2)
 
 {
   int iVar1;
-  int iVar2;
-  short sVar3;
+  int i;
+  short sVar2;
   
-  sVar3 = 0x317;
-  iVar2 = 0;
+  sVar2 = 0x317;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
-    *(short *)(param_1 + iVar1) = sVar3;
-    sVar3 = sVar3 + -10;
-  } while (iVar2 < 0x1e);
+    iVar1 = i * 2;
+    i = i + 1;
+    *(short *)(param_1 + iVar1) = sVar2;
+    sVar2 = sVar2 + -10;
+  } while (i < 0x1e);
   *(undefined4 *)(param_1 + 0x3c) = param_2;
   return;
 }
@@ -461,14 +461,14 @@ void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
 void FUN_20164414(int param_1)
 
 {
-  uint uVar1;
+  uint itron_acre_mtx_ret;
   t_cmtx local_18;
   
   local_18.mtxatr = 2;
   local_18.ceilpri = 0;
   local_18.name = (char *)0x0;
-  uVar1 = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x44) = uVar1;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x44) = itron_acre_mtx_ret;
   return;
 }
 
@@ -491,14 +491,14 @@ void FUN_20164454(int param_1,int param_2,undefined4 param_3)
 void txpool_init_mutex(int param_1)
 
 {
-  uint uVar1;
+  uint itron_acre_mtx_ret;
   t_cmtx local_18;
   
   local_18.mtxatr = 2;
   local_18.ceilpri = 0;
   local_18.name = (char *)0x0;
-  uVar1 = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x84) = uVar1;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
   return;
 }
 
@@ -541,14 +541,14 @@ undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,un
 void FUN_201644e4(int param_1)
 
 {
-  uint uVar1;
+  uint itron_acre_mtx_ret;
   t_cmtx local_18;
   
   local_18.mtxatr = 2;
   local_18.ceilpri = 0;
   local_18.name = (char *)0x0;
-  uVar1 = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x84) = uVar1;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
   return;
 }
 
@@ -755,13 +755,13 @@ void FUN_201646bc(int param_1,int param_2,int param_3,int param_4)
 void FUN_20164714(int param_1,int param_2,int param_3,int param_4)
 
 {
-  int iVar1;
+  int i;
   
   FUN_20133e18(param_3 + 399,param_4 + 4,*(int *)(param_1 + 0x3c) + param_2 * 0x62e,0x317);
-  iVar1 = 0;
+  i = 0;
   do {
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 800);
+    i = i + 1;
+  } while (i < 800);
   return;
 }
 

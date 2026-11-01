@@ -7,44 +7,44 @@
 void menu_defaults_presets(void)
 
 {
-  preset *ppVar1;
-  char *pcVar2;
-  int iVar3;
+  preset *p_preset;
+  char *pcVar1;
+  int iVar2;
   
-  pcVar2 = "            \x03";
-  ppVar1 = g_opstate.presets;
-  for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    ppVar1->name[0] = *pcVar2;
-    ppVar1 = (preset *)(ppVar1->name + 1);
-    pcVar2 = pcVar2 + 1;
+  pcVar1 = "            \x03";
+  p_preset = g_opstate.presets;
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_preset->name[0] = *pcVar1;
+    p_preset = (preset *)(p_preset->name + 1);
+    pcVar1 = pcVar1 + 1;
   }
-  ppVar1 = g_opstate.presets + 1;
-  pcVar2 = "            \x03";
-  for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    ppVar1->name[0] = *pcVar2;
-    ppVar1 = (preset *)(ppVar1->name + 1);
-    pcVar2 = pcVar2 + 1;
+  p_preset = g_opstate.presets + 1;
+  pcVar1 = "            \x03";
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_preset->name[0] = *pcVar1;
+    p_preset = (preset *)(p_preset->name + 1);
+    pcVar1 = pcVar1 + 1;
   }
-  ppVar1 = g_opstate.presets + 2;
-  pcVar2 = "            \x03";
-  for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    ppVar1->name[0] = *pcVar2;
-    ppVar1 = (preset *)(ppVar1->name + 1);
-    pcVar2 = pcVar2 + 1;
+  p_preset = g_opstate.presets + 2;
+  pcVar1 = "            \x03";
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_preset->name[0] = *pcVar1;
+    p_preset = (preset *)(p_preset->name + 1);
+    pcVar1 = pcVar1 + 1;
   }
-  ppVar1 = g_opstate.presets + 3;
-  pcVar2 = "            \x03";
-  for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    ppVar1->name[0] = *pcVar2;
-    ppVar1 = (preset *)(ppVar1->name + 1);
-    pcVar2 = pcVar2 + 1;
+  p_preset = g_opstate.presets + 3;
+  pcVar1 = "            \x03";
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_preset->name[0] = *pcVar1;
+    p_preset = (preset *)(p_preset->name + 1);
+    pcVar1 = pcVar1 + 1;
   }
-  ppVar1 = g_opstate.presets + 4;
-  pcVar2 = "            \x03";
-  for (iVar3 = 0x1f; iVar3 != 0; iVar3 = iVar3 + -1) {
-    ppVar1->name[0] = *pcVar2;
-    ppVar1 = (preset *)(ppVar1->name + 1);
-    pcVar2 = pcVar2 + 1;
+  p_preset = g_opstate.presets + 4;
+  pcVar1 = "            \x03";
+  for (iVar2 = 0x1f; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_preset->name[0] = *pcVar1;
+    p_preset = (preset *)(p_preset->name + 1);
+    pcVar1 = pcVar1 + 1;
   }
   builtin_strncpy(g_opstate.presets[0].name,"FT-8",4);
   builtin_strncpy(g_opstate.presets[1].name,"PRESET2",7);
@@ -63,11 +63,11 @@ void FUN_fffb13e2(void)
 {
   byte *pbVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   
   pcVar2 = "2222222222222222222222222222";
   pbVar1 = g_opstate.scope_level_rx;
-  for (iVar3 = 0x4d; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x4d; i != 0; i = i + -1) {
     *pbVar1 = *pcVar2;
     pbVar1 = pbVar1 + 1;
     pcVar2 = pcVar2 + 1;
@@ -113,7 +113,7 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
 
 {
   byte bVar1;
-  ushort local_10;
+  ushort i;
   byte bStack_6;
   
   bVar1 = PORTE_PODR;
@@ -122,9 +122,9 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
   eeprom_spi_tx((byte)(addr >> 8));
   bStack_6 = (byte)addr;
   eeprom_spi_tx(bStack_6);
-  for (local_10 = 0; local_10 < n; local_10 = local_10 + 1) {
+  for (i = 0; i < n; i = i + 1) {
     bVar1 = eeprom_spi_rx();
-    buf[local_10] = bVar1;
+    buf[i] = bVar1;
   }
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 | 1;
@@ -141,9 +141,9 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
 {
   byte bVar1;
   bool bVar2;
-  byte bVar3;
+  byte eeprom_spi_rx_ret;
   byte local_c;
-  byte bStack_b;
+  byte i;
   ushort local_a;
   byte *local_8;
   ushort local_2;
@@ -162,10 +162,10 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
       bVar1 = PORTE_PODR;
       PORTE_PODR = bVar1 & 0xfe;
       eeprom_spi_tx(5);
-      bVar3 = eeprom_spi_rx();
+      eeprom_spi_rx_ret = eeprom_spi_rx();
       bVar1 = PORTE_PODR;
       PORTE_PODR = bVar1 | 1;
-      if ((bVar3 & 1) == 0) {
+      if ((eeprom_spi_rx_ret & 1) == 0) {
         bVar2 = false;
       }
     }
@@ -179,7 +179,7 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
     eeprom_spi_tx(2);
     eeprom_spi_tx((byte)(local_2 >> 8));
     eeprom_spi_tx((byte)local_2);
-    for (bStack_b = 0; bStack_b < local_c; bStack_b = bStack_b + 1) {
+    for (i = 0; i < local_c; i = i + 1) {
       eeprom_spi_tx(*local_8);
       local_8 = local_8 + 1;
     }
@@ -200,13 +200,13 @@ void eeprom_spi_tx(byte b)
 
 {
   byte bVar1;
-  undefined1 local_2;
+  undefined1 i;
   undefined1 local_1;
   
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 & 0xdf;
   local_1 = b;
-  for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
+  for (i = 0; i < 8; i = i + 1) {
     if ((local_1 & 0x80) == 0) {
       bVar1 = PORTE_PODR;
       PORTE_PODR = bVar1 & 0xbf;
@@ -234,17 +234,17 @@ byte eeprom_spi_rx(void)
 
 {
   byte bVar1;
-  char cVar2;
   undefined1 local_3;
-  undefined1 local_2;
+  undefined1 i;
+  char porte_pidr;
   
   local_3 = 0;
-  for (local_2 = 0; local_2 < 8; local_2 = local_2 + 1) {
+  for (i = 0; i < 8; i = i + 1) {
     local_3 = local_3 << 1;
     bVar1 = PORTE_PODR;
     PORTE_PODR = bVar1 | 0x20;
-    cVar2 = PORTE_PIDR;
-    if (cVar2 < '\0') {
+    porte_pidr = PORTE_PIDR;
+    if (porte_pidr < '\0') {
       local_3 = local_3 | 1;
     }
     bVar1 = PORTE_PODR;
@@ -387,10 +387,10 @@ void displink_uart_send(uint param_1,ushort param_2)
 byte sci1_tx_end(void)
 
 {
-  byte bVar1;
+  byte sci1_ssr;
   
-  bVar1 = SCI1_SSR;
-  return bVar1 >> 2 & 1;
+  sci1_ssr = SCI1_SSR;
+  return sci1_ssr >> 2 & 1;
 }
 
 
@@ -407,27 +407,27 @@ byte sci1_tx_end(void)
 void sci2_configure(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
   byte bStack_3;
   byte bStack_1;
+  uint system_mstpcrb;
   
-  bVar2 = tunlin_port_mode();
+  bVar1 = tunlin_port_mode();
   R_SCI2_Stop();
   do {
   } while (DAT_00011fe9 != '\0');
-  if (bVar2 != 1) {
+  if (bVar1 != 1) {
     gpo_a_set(0);
     gpo_b_set(0);
     gpo_c_set(0);
     gpo_d_set(0);
   }
-  if ((bVar2 == 3) || (bVar2 == 1)) {
-    uVar1 = SYSTEM_MSTPCRB;
-    SYSTEM_MSTPCRB = uVar1 | 0x20000000;
+  if ((bVar1 == 3) || (bVar1 == 1)) {
+    system_mstpcrb = SYSTEM_MSTPCRB;
+    SYSTEM_MSTPCRB = system_mstpcrb | 0x20000000;
     MPC_P12PFS = 0;
-    bVar2 = PORT1_PMR;
-    PORT1_PMR = bVar2 & 0xfb;
+    bVar1 = PORT1_PMR;
+    PORT1_PMR = bVar1 & 0xfb;
     MPC_P13PFS = 0;
     gpo_a_dir_out();
     gpo_b_dir_out();
@@ -436,23 +436,23 @@ void sci2_configure(void)
     rem_key_sel_set(1);
     return;
   }
-  if (bVar2 == 2) {
+  if (bVar1 == 2) {
     R_SCI2_Create();
     bStack_1 = g_opstate.ex030110_cat_3_rate;
     if (4 < g_opstate.ex030110_cat_3_rate) {
       bStack_1 = 3;
     }
-    bVar2 = SCI2_SMR;
-    bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar2 & 0xf4;
+    bVar1 = SCI2_SMR;
+    bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar1 & 0xf4;
     if (g_opstate.ex030107_cat_1_cat_3_stop_bit != 0) {
       bStack_3 = bStack_3 | 8;
     }
     SCI2_SMR = bStack_3;
     SCI2_BRR = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 2];
-    bVar2 = SCI2_SEMR;
-    SCI2_SEMR = bVar2 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
-    bVar2 = SCI2_SEMR;
-    SCI2_SEMR = bVar2 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
+    bVar1 = SCI2_SEMR;
+    SCI2_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
+    bVar1 = SCI2_SEMR;
+    SCI2_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
     R_SCI2_Start();
     R_SCI2_Serial_Receive(0xcc70,0x29bc);
     gpo_c_dir('\x01');
@@ -460,7 +460,7 @@ void sci2_configure(void)
     rem_key_sel_set(0);
     return;
   }
-  if (bVar2 == 0) {
+  if (bVar1 == 0) {
     R_SCI2_Create();
     R_SCI2_Start();
     gpo_c_dir('\0');
@@ -504,11 +504,11 @@ undefined1 FUN_fffb191e(void)
 ushort FUN_fffb192d(void)
 
 {
-  ushort uVar1;
+  ushort R_SCI2_Serial_Receive_ret;
   
   DAT_0000a0a9 = 0;
-  uVar1 = R_SCI2_Serial_Receive(0xa08b,0x1e);
-  return uVar1;
+  R_SCI2_Serial_Receive_ret = R_SCI2_Serial_Receive(0xa08b,0x1e);
+  return R_SCI2_Serial_Receive_ret;
 }
 
 
@@ -538,10 +538,10 @@ void FUN_fffb194e(void)
 void sci2_send(uint param_1,short param_2)
 
 {
-  ushort uVar1;
+  ushort R_SCI2_Serial_Send_ret;
   
-  uVar1 = R_SCI2_Serial_Send(param_1,param_2);
-  FUN_fffb192d(uVar1);
+  R_SCI2_Serial_Send_ret = R_SCI2_Serial_Send(param_1,param_2);
+  FUN_fffb192d(R_SCI2_Serial_Send_ret);
   DAT_0000a0aa = 1;
   return;
 }

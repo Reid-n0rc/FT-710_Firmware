@@ -10,7 +10,7 @@ void fat32_format_write_fsinfo(int *param_1)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
+  int sd_write_sectors_ret;
   
   iVar1 = *param_1;
   fs_memset(iVar1 + 1,0,0x200);
@@ -21,8 +21,9 @@ void fat32_format_write_fsinfo(int *param_1)
   *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
   *(undefined1 *)(*param_1 + 0x200) = 0xaa;
   iVar2 = *(int *)(iVar1 + 0x2d0);
-  iVar3 = sd_write_sectors(iVar2 + 1,*param_1 + 1,1,param_1);
-  if ((iVar3 == 0) && (iVar2 = sd_write_sectors(iVar2 + 7,*param_1 + 1,1,param_1), iVar2 == 0)) {
+  sd_write_sectors_ret = sd_write_sectors(iVar2 + 1,*param_1 + 1,1,param_1);
+  if ((sd_write_sectors_ret == 0) &&
+     (iVar2 = sd_write_sectors(iVar2 + 7,*param_1 + 1,1,param_1), iVar2 == 0)) {
     fs_memset(*param_1 + 1,0,0x200);
     *(undefined1 *)(*param_1 + 0x1ff) = 0x55;
     *(undefined1 *)(*param_1 + 0x200) = 0xaa;
@@ -649,51 +650,51 @@ int fat_clear_root_dir(int *param_1)
 
 {
   char cVar1;
+  int sd_write_sectors_ret;
   int iVar2;
-  int iVar3;
-  uint uVar4;
+  uint i;
   undefined4 unaff_r4;
-  uint uVar5;
+  uint uVar3;
   
   fs_memset(*param_1 + 0x2c8,0,0x2c);
-  iVar3 = fat_format_layout(param_1);
-  if ((((iVar3 == 0) && (iVar3 = fat_format_write_mbr(param_1), iVar3 == 0)) &&
+  iVar2 = fat_format_layout(param_1);
+  if ((((iVar2 == 0) && (iVar2 = fat_format_write_mbr(param_1), iVar2 == 0)) &&
       ((*(char *)(*param_1 + 0x2dc) == '@' ||
-       ((iVar3 = fat_format_write_boot(param_1), iVar3 == 0 &&
+       ((iVar2 = fat_format_write_boot(param_1), iVar2 == 0 &&
         ((*(char *)(*param_1 + 0x2dc) != ' ' ||
-         (iVar3 = fat32_format_write_fsinfo(param_1), iVar3 == 0)))))))) &&
-     (iVar3 = fat_format_write_fats(param_1), iVar3 == 0)) {
-    iVar3 = *param_1;
-    fs_memset(iVar3 + 1,0,0x200,0,unaff_r4);
-    cVar1 = *(char *)(iVar3 + 0x2dc);
+         (iVar2 = fat32_format_write_fsinfo(param_1), iVar2 == 0)))))))) &&
+     (iVar2 = fat_format_write_fats(param_1), iVar2 == 0)) {
+    iVar2 = *param_1;
+    fs_memset(iVar2 + 1,0,0x200,0,unaff_r4);
+    cVar1 = *(char *)(iVar2 + 0x2dc);
     if (cVar1 == '\f' || cVar1 == '\x10') {
-      uVar5 = 0x20;
-      iVar3 = *(int *)(iVar3 + 0x2d0) + (uint)*(ushort *)(iVar3 + 0x2e4) +
-              *(int *)(iVar3 + 0x2e0) * 2;
+      uVar3 = 0x20;
+      iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) +
+              *(int *)(iVar2 + 0x2e0) * 2;
     }
     else {
       if (cVar1 != ' ') {
         return -2;
       }
-      uVar5 = (uint)*(ushort *)(iVar3 + 0x2d8);
-      iVar3 = *(int *)(iVar3 + 0x2d0) + (uint)*(ushort *)(iVar3 + 0x2e4) +
-              *(int *)(iVar3 + 0x2e0) * 2;
+      uVar3 = (uint)*(ushort *)(iVar2 + 0x2d8);
+      iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) +
+              *(int *)(iVar2 + 0x2e0) * 2;
     }
-    uVar4 = 0;
-    if (uVar5 != 0) {
+    i = 0;
+    if (uVar3 != 0) {
       do {
-        iVar2 = sd_write_sectors(iVar3,*param_1 + 1,1,param_1);
-        if (iVar2 != 0) {
-          return iVar2;
+        sd_write_sectors_ret = sd_write_sectors(iVar2,*param_1 + 1,1,param_1);
+        if (sd_write_sectors_ret != 0) {
+          return sd_write_sectors_ret;
         }
         sd_format_progress_dec(*param_1);
-        uVar4 = uVar4 + 1;
-        iVar3 = iVar3 + 1;
-      } while (uVar4 < uVar5);
+        i = i + 1;
+        iVar2 = iVar2 + 1;
+      } while (i < uVar3);
     }
     return 0;
   }
-  return iVar3;
+  return iVar2;
 }
 
 
@@ -1075,18 +1076,18 @@ void FUN_2013fde4(void)
 undefined4 sdhi0_irq_enable(void)
 
 {
-  uint uVar1;
-  uint uVar2;
+  uint gic_def_inh_ret;
+  uint intc_icdipr75;
   
-  uVar1 = INTC_ICDIPR75;
+  intc_icdipr75 = INTC_ICDIPR75;
   if (DAT_20808b70 == -1) {
-    uVar2 = gic_def_inh(0x12f,0x204205cc);
-    if ((int)uVar2 < 0) {
+    gic_def_inh_ret = gic_def_inh(0x12f,0x204205cc);
+    if ((int)gic_def_inh_ret < 0) {
       return 0xffffffff;
     }
     DAT_20808b70 = 1;
   }
-  INTC_ICDIPR75 = uVar1 & 0xffffff | 0x38000000;
+  INTC_ICDIPR75 = intc_icdipr75 & 0xffffff | 0x38000000;
   knl_int_disable();
   INTC_ICDISER9 = 0x8000;
   knl_int_restore();
@@ -1101,10 +1102,10 @@ undefined4 sdhi0_irq_enable(void)
 void sdhi0_clock_on(void)
 
 {
-  byte bVar1;
+  byte cpg_stbcr12;
   
-  bVar1 = CPG_STBCR12;
-  CPG_STBCR12 = bVar1 & 0xf3;
+  cpg_stbcr12 = CPG_STBCR12;
+  CPG_STBCR12 = cpg_stbcr12 & 0xf3;
   return;
 }
 
@@ -1149,16 +1150,16 @@ void sdhi_dma_read_wait(void)
 
 {
   uint uVar1;
-  uint uVar2;
+  uint dmac_chstat_0;
   
-  uVar2 = 0;
+  uVar1 = 0;
   do {
-    uVar1 = DMAC_CHSTAT_0;
-    if ((uVar1 & 5) == 0) break;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x900000);
-  uVar2 = DMAC_CHCTRL_0;
-  DMAC_CHCTRL_0 = uVar2 | 8;
+    dmac_chstat_0 = DMAC_CHSTAT_0;
+    if ((dmac_chstat_0 & 5) == 0) break;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 0x900000);
+  uVar1 = DMAC_CHCTRL_0;
+  DMAC_CHCTRL_0 = uVar1 | 8;
   return;
 }
 
@@ -1194,16 +1195,16 @@ void sdhi_dma_write_wait(void)
 
 {
   uint uVar1;
-  uint uVar2;
+  uint dmac_chstat_1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   do {
-    uVar1 = DMAC_CHSTAT_1;
-    if ((uVar1 & 5) == 0) break;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x900000);
-  uVar2 = DMAC_CHCTRL_1;
-  DMAC_CHCTRL_1 = uVar2 | 8;
+    dmac_chstat_1 = DMAC_CHSTAT_1;
+    if ((dmac_chstat_1 & 5) == 0) break;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 0x900000);
+  uVar1 = DMAC_CHCTRL_1;
+  DMAC_CHCTRL_1 = uVar1 | 8;
   return;
 }
 
@@ -1245,12 +1246,12 @@ void sdhi_flag_set(undefined4 param_1)
 void * sdhi_flag_wait(uint param_1,int param_2)
 
 {
-  void *pvVar1;
+  void *itron_twai_flg_ret;
   uint uStack_14;
   
-  pvVar1 = itron_twai_flg(DAT_20808b74,param_1,0,&uStack_14,param_2 / 10);
+  itron_twai_flg_ret = itron_twai_flg(DAT_20808b74,param_1,0,&uStack_14,param_2 / 10);
   itron_clr_flg(DAT_20808b74,~param_1);
-  return pvVar1;
+  return itron_twai_flg_ret;
 }
 
 
@@ -1262,16 +1263,16 @@ bool sdhi_card_absent(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint sd_card_detect_ret;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   uVar1 = 0;
   do {
-    uVar2 = sd_card_detect();
-    uVar3 = uVar3 + 1;
-    uVar1 = uVar2 | uVar1 << 1;
-  } while (uVar3 < 0x20);
+    sd_card_detect_ret = sd_card_detect();
+    i = i + 1;
+    uVar1 = sd_card_detect_ret | uVar1 << 1;
+  } while (i < 0x20);
   return uVar1 != 0;
 }
 
@@ -1284,10 +1285,10 @@ bool sdhi_card_absent(void)
 bool sdhi_write_protected(void)
 
 {
-  ushort uVar1;
+  ushort sdhi_sd_info1_0;
   
-  uVar1 = SDHI_SD_INFO1_0;
-  return (uVar1 & 0x80) == 0;
+  sdhi_sd_info1_0 = SDHI_SD_INFO1_0;
+  return (sdhi_sd_info1_0 & 0x80) == 0;
 }
 
 
@@ -1411,44 +1412,45 @@ undefined4 sdhi_check_card(void)
 int sdhi_wait_idle(int param_1)
 
 {
-  ushort uVar1;
-  undefined2 uVar2;
-  int iVar3;
-  uint uVar4;
+  undefined2 uVar1;
+  int iVar2;
+  uint i;
+  ushort sdhi_sd_info2_0;
   
-  uVar4 = 0;
-  while ((uVar1 = SDHI_SD_INFO2_0, (uVar1 & 0x4000) != 0 || ((uVar1 & 0x2000) == 0))) {
-    if ((uVar1 & 0x807f) != 0) {
+  i = 0;
+  while ((sdhi_sd_info2_0 = SDHI_SD_INFO2_0, (sdhi_sd_info2_0 & 0x4000) != 0 ||
+         ((sdhi_sd_info2_0 & 0x2000) == 0))) {
+    if ((sdhi_sd_info2_0 & 0x807f) != 0) {
       return -9;
     }
-    iVar3 = sdhi_check_card();
-    if (iVar3 != 0) {
-      return iVar3;
+    iVar2 = sdhi_check_card();
+    if (iVar2 != 0) {
+      return iVar2;
     }
-    uVar4 = uVar4 + 1;
-    if (0x8fffff < uVar4) {
+    i = i + 1;
+    if (0x8fffff < i) {
       return -1;
     }
   }
-  if (0x8fffff < uVar4) {
+  if (0x8fffff < i) {
     return -1;
   }
   if (param_1 != -1) {
     if (param_1 == 0) {
-      uVar2 = 0x140;
+      uVar1 = 0x140;
       goto LAB_201403cc;
     }
     if (param_1 != 1) {
       if (param_1 != 2) {
         return -8;
       }
-      uVar2 = 0x100;
+      uVar1 = 0x100;
       goto LAB_201403cc;
     }
   }
-  uVar2 = 0x101;
+  uVar1 = 0x101;
 LAB_201403cc:
-  SDHI_SD_CLK_CTRL_0 = uVar2;
+  SDHI_SD_CLK_CTRL_0 = uVar1;
   return 0;
 }
 

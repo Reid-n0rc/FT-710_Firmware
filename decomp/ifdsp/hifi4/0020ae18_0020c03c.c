@@ -81,59 +81,59 @@ void DMA_IRQHandle(dword *param_1)
   undefined4 *puVar1;
   int *piVar2;
   uint uVar3;
+  int i;
   int iVar4;
-  int iVar5;
-  code *pcVar6;
+  code *pcVar5;
   
-  iVar4 = 0x21;
+  i = 0x21;
   if (param_1 != &DMA0_CTRL) {
-    iVar5 = 0;
+    iVar4 = 0;
     if (param_1 != &DMA0_CTRL) {
-      iVar5 = 0x21;
+      iVar4 = 0x21;
     }
   }
   else {
-    iVar5 = 0;
+    iVar4 = 0;
   }
-  piVar2 = &DAT_00238470 + iVar5;
+  piVar2 = &DAT_00238470 + iVar4;
   do {
     puVar1 = (undefined4 *)*piVar2;
     if (puVar1 != (undefined4 *)0x0) {
       uVar3 = (uint)*(byte *)(puVar1 + 3);
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,0);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,0);
         }
       }
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,1);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,1);
         }
-        iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+        iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       }
       memw();
-      if ((*(uint *)(iVar5 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],0,2);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],0,2);
         }
       }
     }
-    iVar4 = iVar4 + -1;
+    i = i + -1;
     piVar2 = piVar2 + 1;
-  } while (iVar4 != 0);
+  } while (i != 0);
   return;
 }
 

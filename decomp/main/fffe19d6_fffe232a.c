@@ -82,13 +82,13 @@ void freq_keypad_key(char param_1)
 {
   byte bVar1;
   bool bVar2;
-  char cVar3;
-  char cVar4;
-  char cVar5;
-  char cVar6;
-  int iVar7;
-  uint uVar8;
-  byte local_9;
+  char bcd_to_bin_ret;
+  char bcd_to_bin_ret_2;
+  char bcd_to_bin_ret_3;
+  char bcd_to_bin_ret_4;
+  int iVar3;
+  uint uVar4;
+  byte i;
   byte local_1;
   
   if (DAT_0001b54e == '\x01') {
@@ -154,27 +154,29 @@ void freq_keypad_key(char param_1)
       beep_request(1);
       return;
     }
-    for (local_9 = 1; local_9 < 5; local_9 = local_9 + 1) {
-      if (0x90 < (PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf0)) {
-        PTR_g_ui_00025d6c->keypad_bcd[local_9] = PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf;
+    for (i = 1; i < 5; i = i + 1) {
+      if (0x90 < (PTR_g_ui_00025d6c->keypad_bcd[i] & 0xf0)) {
+        PTR_g_ui_00025d6c->keypad_bcd[i] = PTR_g_ui_00025d6c->keypad_bcd[i] & 0xf;
       }
-      if (9 < (PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf)) {
-        PTR_g_ui_00025d6c->keypad_bcd[local_9] = PTR_g_ui_00025d6c->keypad_bcd[local_9] & 0xf0;
+      if (9 < (PTR_g_ui_00025d6c->keypad_bcd[i] & 0xf)) {
+        PTR_g_ui_00025d6c->keypad_bcd[i] = PTR_g_ui_00025d6c->keypad_bcd[i] & 0xf0;
       }
     }
-    cVar3 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[1]);
-    cVar4 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[2]);
-    cVar5 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[3]);
-    cVar6 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[4]);
-    iVar7 = FUN_fffe1dd7((int)cVar6 + cVar5 * 100 + cVar4 * 10000 + cVar3 * 1000000);
-    if (iVar7 != 0) {
-      uVar8 = PTR_g_ui_00025d6c->freq_clamp_result;
-      FUN_fffe1da4(uVar8);
+    bcd_to_bin_ret = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[1]);
+    bcd_to_bin_ret_2 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[2]);
+    bcd_to_bin_ret_3 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[3]);
+    bcd_to_bin_ret_4 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[4]);
+    iVar3 = FUN_fffe1dd7((int)bcd_to_bin_ret_4 +
+                         bcd_to_bin_ret_3 * 100 +
+                         bcd_to_bin_ret_2 * 10000 + bcd_to_bin_ret * 1000000);
+    if (iVar3 != 0) {
+      uVar4 = PTR_g_ui_00025d6c->freq_clamp_result;
+      FUN_fffe1da4(uVar4);
       if (PTR_g_ui_00025d6c->keypad_set_fix == 1) {
-        FUN_fffe1d96(uVar8);
+        FUN_fffe1d96(uVar4);
       }
       PTR_g_ui_00025d6c->freq_refresh_req = 1;
-      FUN_fffe1d88(uVar8);
+      FUN_fffe1d88(uVar4);
       popup8_close();
       vfo_mark_edited(g_opstate.active_vfo);
       vfo_store_back(g_opstate.active_vfo);
@@ -199,12 +201,12 @@ void freq_keypad_key(char param_1)
     bVar2 = false;
   }
   if (!bVar2) {
-    uVar8 = (uint)(PTR_g_ui_00025d6c->keypad_pos >> 1);
+    uVar4 = (uint)(PTR_g_ui_00025d6c->keypad_pos >> 1);
     if ((PTR_g_ui_00025d6c->keypad_pos & 1) == 0) {
-      PTR_g_ui_00025d6c->keypad_bcd[uVar8 - 1] = PTR_g_ui_00025d6c->keypad_bcd[uVar8 - 1] | 0xf;
+      PTR_g_ui_00025d6c->keypad_bcd[uVar4 - 1] = PTR_g_ui_00025d6c->keypad_bcd[uVar4 - 1] | 0xf;
     }
     else {
-      PTR_g_ui_00025d6c->keypad_bcd[uVar8] = 0xff;
+      PTR_g_ui_00025d6c->keypad_bcd[uVar4] = 0xff;
     }
     PTR_g_ui_00025d6c->keypad_pos = PTR_g_ui_00025d6c->keypad_pos - 1;
     FUN_fffe1e70();
@@ -220,20 +222,20 @@ void freq_keypad_key(char param_1)
 
 // ===== FUN_fffe1d88 @ fffe1d88 (14 bytes)
 
-void FUN_fffe1d88(uint param_1)
+void FUN_fffe1d88(uint freq)
 
 {
-  bandmem_set('\x01',param_1);
+  bandmem_set('\x01',freq);
   return;
 }
 
 
 // ===== FUN_fffe1d96 @ fffe1d96 (14 bytes)
 
-void FUN_fffe1d96(uint param_1)
+void FUN_fffe1d96(uint freq)
 
 {
-  bandmem_set('\x02',param_1);
+  bandmem_set('\x02',freq);
   return;
 }
 
@@ -243,12 +245,12 @@ void FUN_fffe1d96(uint param_1)
 void FUN_fffe1da4(uint param_1)
 
 {
-  byte *pbVar1;
-  byte bStack_9;
+  byte *vfo_rec_ptr_ret;
+  byte i;
   
-  pbVar1 = vfo_rec_ptr(0);
-  for (bStack_9 = 0; bStack_9 < 4; bStack_9 = bStack_9 + 1) {
-    pbVar1[bStack_9 + 0x4a] = (byte)(param_1 >> ((3 - bStack_9 & 3) << 3));
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  for (i = 0; i < 4; i = i + 1) {
+    vfo_rec_ptr_ret[i + 0x4a] = (byte)(param_1 >> ((3 - i & 3) << 3));
   }
   return;
 }
@@ -261,12 +263,12 @@ void FUN_fffe1da4(uint param_1)
 bool FUN_fffe1dd7(uint param_1)
 
 {
-  vfo_side vVar1;
-  ui_state *puVar2;
-  uint uVar3;
+  uint freq_clamp_ret;
+  vfo_side g_opstate_active_vfo_val;
+  ui_state *p_ui_state;
   
   PTR_g_ui_00025d6c->freq_clamp_result = param_1;
-  vVar1 = g_opstate.active_vfo;
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
   if (g_opstate.active_vfo == VFO_A) {
     if (g_opstate.vfo_state_a == VFO_STATE_MEMORY) {
       vfo_mem_to_memtune('\0');
@@ -276,9 +278,9 @@ bool FUN_fffe1dd7(uint param_1)
     vfo_mem_to_memtune(g_opstate.active_vfo);
   }
   PTR_g_ui_00025d6c->pms_inhibit = 1;
-  puVar2 = PTR_g_ui_00025d6c;
-  uVar3 = freq_clamp(vVar1,param_1);
-  puVar2->freq_clamp_result = uVar3;
+  p_ui_state = PTR_g_ui_00025d6c;
+  freq_clamp_ret = freq_clamp(g_opstate_active_vfo_val,param_1);
+  p_ui_state->freq_clamp_result = freq_clamp_ret;
   PTR_g_ui_00025d6c->pms_inhibit = 0;
   return PTR_g_ui_00025d6c->freq_rejected != 1;
 }
@@ -318,7 +320,7 @@ void FUN_fffe1ee4(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte swtimer_expired_ret;
   
   if (DAT_00018808 != '\0') {
     if ((PTR_g_ui_00025d6c->keypad_open == 1) || (PTR_g_ui_00025d6c->popup7_open == 1)) {
@@ -327,7 +329,7 @@ void FUN_fffe1ee4(void)
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (bVar2 = swtimer_expired(0x46), bVar2 == 1)) {
+    if ((bVar1) && (swtimer_expired_ret = swtimer_expired(0x46), swtimer_expired_ret == 1)) {
       DAT_00018808 = 0;
       popup8_close();
       FUN_fffe1f3d();
@@ -358,7 +360,7 @@ void FUN_fffe1f60(void)
 
 {
   bool bVar1;
-  ui_state *puVar2;
+  ui_state *p_ui_state;
   
   if (PTR_g_ui_00025d6c->popup7_open == 1) {
     popup8_close();
@@ -381,11 +383,11 @@ void FUN_fffe1f60(void)
   PTR_g_ui_00025d6c->dl_req_popup_a = 1;
   g_opstate.split_on = 1;
   PTR_g_ui_00025d6c->popup7_open = 1;
-  puVar2 = PTR_g_ui_00025d6c;
-  puVar2->keypad_bcd[0] = 0xff;
-  puVar2->keypad_bcd[1] = 0xff;
-  puVar2->keypad_bcd[2] = 0xff;
-  puVar2->keypad_bcd[3] = 0xff;
+  p_ui_state = PTR_g_ui_00025d6c;
+  p_ui_state->keypad_bcd[0] = 0xff;
+  p_ui_state->keypad_bcd[1] = 0xff;
+  p_ui_state->keypad_bcd[2] = 0xff;
+  p_ui_state->keypad_bcd[3] = 0xff;
   swtimer_start(0x46,10000);
   DAT_00018808 = 1;
   PTR_g_ui_00025d6c->keypad_pos = 0;

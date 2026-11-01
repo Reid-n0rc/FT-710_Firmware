@@ -38,19 +38,21 @@ void IpcSendTask(void)
 void create_IpcTasks(void)
 
 {
-  void *pvVar1;
-  uint uVar2;
+  void *get_task_handles_ret;
+  uint uVar1;
   
   DAT_000886e0 = xQueueGenericCreate(8,0x98,0);
-  pvVar1 = get_task_handles();
-  uVar2 = xTaskCreate(0x85fc7,0x87b5d,0x1800,(uint)pvVar1,2,(int *)((int)pvVar1 + 8));
-  if (uVar2 != 1) {
+  get_task_handles_ret = get_task_handles();
+  uVar1 = xTaskCreate(0x85fc7,0x87b5d,0x1800,(uint)get_task_handles_ret,2,
+                      (int *)((int)get_task_handles_ret + 8));
+  if (uVar1 != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  uVar2 = xTaskCreate(0x80f51,0x87b69,0x1800,(uint)pvVar1,2,(int *)((int)pvVar1 + 4));
-  if (uVar2 != 1) {
+  uVar1 = xTaskCreate(0x80f51,0x87b69,0x1800,(uint)get_task_handles_ret,2,
+                      (int *)((int)get_task_handles_ret + 4));
+  if (uVar1 != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -70,8 +72,8 @@ void create_IpcTasks(void)
 void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  int iVar1;
-  char *pcVar2;
+  int strlen_ret;
+  char *pcVar1;
   uint uStack_c;
   uint uStack_8;
   uint uStack_4;
@@ -85,34 +87,34 @@ void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint 
       if (uStack_c == 0) {
         param_4 = *(uint *)(param_1 + 0x18);
         if (param_4 == 0) {
-          pcVar2 = "\r\nMute off\r\n>> ";
+          pcVar1 = "\r\nMute off\r\n>> ";
         }
         else {
-          pcVar2 = "\r\nMute on\r\n>> ";
+          pcVar1 = "\r\nMute on\r\n>> ";
         }
       }
       else {
-        pcVar2 = "\r\nMute error (%d)\r\n>> ";
+        pcVar1 = "\r\nMute error (%d)\r\n>> ";
       }
     }
     else {
-      pcVar2 = "\r\nIncoming unknown message category %d\r\n>> ";
+      pcVar1 = "\r\nIncoming unknown message category %d\r\n>> ";
     }
   }
   else if (uStack_8 == 3) {
     param_4 = (uint)*(byte *)(param_1 + 0xc);
     if (param_4 == 0) {
       if (*(uint *)(param_1 + 0x14) == 0) {
-        pcVar2 = "DSP Version %04X\r\n>> ";
+        pcVar1 = "DSP Version %04X\r\n>> ";
         uStack_c = *(uint *)(param_1 + 0x18);
       }
       else {
-        pcVar2 = "DSP Version error (%d)\r\n>> ";
+        pcVar1 = "DSP Version error (%d)\r\n>> ";
         uStack_c = *(uint *)(param_1 + 0x14);
       }
     }
     else {
-      pcVar2 = "Incoming unknown message category %d\r\n>> ";
+      pcVar1 = "Incoming unknown message category %d\r\n>> ";
     }
   }
   else {
@@ -121,16 +123,16 @@ void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint 
     }
     uStack_c = (uint)*(byte *)(param_1 + 0xc);
     if (uStack_c == 0) {
-      pcVar2 = "Component versions from DSP:\r\n";
+      pcVar1 = "Component versions from DSP:\r\n";
     }
     else {
-      pcVar2 = "Incoming unknown message command %d from category %d\r\n";
+      pcVar1 = "Incoming unknown message command %d from category %d\r\n";
     }
   }
   uStack_4 = param_4;
-  sprintf(&DAT_00088c2c,pcVar2,&uStack_c,param_4,pcVar2,&uStack_c);
-  iVar1 = strlen((uint *)&DAT_00088c2c);
-  uart0_write(&DAT_00088c2c,iVar1);
+  sprintf(&DAT_00088c2c,pcVar1,&uStack_c,param_4,pcVar1,&uStack_c);
+  strlen_ret = strlen((uint *)&DAT_00088c2c);
+  uart0_write(&DAT_00088c2c,strlen_ret);
   return;
 }
 
@@ -255,7 +257,7 @@ void MU_A_IRQHandler(void)
 undefined4 platform_init_interrupt(uint param_1,uint param_2)
 
 {
-  uint uVar1;
+  uint mua_cr;
   
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_00088714);
@@ -265,8 +267,8 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
     } while( true );
   }
   if (DAT_00088710 == 0) {
-    uVar1 = MUA_CR;
-    MUA_CR = uVar1 & 0xfff0ffff | 0x4000000;
+    mua_cr = MUA_CR;
+    MUA_CR = mua_cr & 0xfff0ffff | 0x4000000;
   }
   DAT_00088710 = DAT_00088710 + 1;
   env_unlock_mutex(DAT_00088714);
@@ -371,13 +373,13 @@ void platform_interrupt_disable(void)
 int platform_init(void)
 
 {
-  int iVar1;
+  int env_create_mutex_ret;
   
   MU_Init();
   NVIC_IPR8._2_1_ = 0x60;
   NVIC_ISER1 = 4;
-  iVar1 = env_create_mutex(&DAT_00088714,1);
-  return -(uint)(iVar1 != 0);
+  env_create_mutex_ret = env_create_mutex(&DAT_00088714,1);
+  return -(uint)(env_create_mutex_ret != 0);
 }
 
 
@@ -456,13 +458,13 @@ void env_register_isr(uint param_1,uint param_2)
 // ===== rpmsg_queue_recv @ 00081a88 (104 bytes)
 
 undefined4
-rpmsg_queue_recv(void *param_1,uint param_2,undefined4 *param_3,void *param_4,uint param_5,
+rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *param_4,uint param_5,
                 uint *param_6,uint param_7)
 
 {
-  bool bVar1;
-  int iVar2;
-  undefined4 uVar3;
+  bool env_get_queue_ret;
+  int rpmsg_queue_nocopy_free_ret;
+  undefined4 uVar1;
   undefined4 local_24;
   void *local_20;
   uint local_1c;
@@ -470,9 +472,9 @@ rpmsg_queue_recv(void *param_1,uint param_2,undefined4 *param_3,void *param_4,ui
   local_24 = 0;
   local_20 = (void *)0x0;
   local_1c = 0;
-  if (((param_1 != (void *)0x0) && (param_2 != 0)) && (param_4 != (void *)0x0)) {
-    bVar1 = env_get_queue(param_2,(uint)&local_24,param_7);
-    if (!bVar1) {
+  if (((rpmsg_lite_dev != (void *)0x0) && (param_2 != 0)) && (param_4 != (void *)0x0)) {
+    env_get_queue_ret = env_get_queue(param_2,(uint)&local_24,param_7);
+    if (!env_get_queue_ret) {
       return 0xffffec72;
     }
     if (param_3 != (undefined4 *)0x0) {
@@ -482,15 +484,15 @@ rpmsg_queue_recv(void *param_1,uint param_2,undefined4 *param_3,void *param_4,ui
       *param_6 = local_1c;
     }
     if (param_5 < local_1c) {
-      uVar3 = 0xffffec76;
+      uVar1 = 0xffffec76;
     }
     else {
       memcpy(param_4,local_20,local_1c);
-      uVar3 = 0;
+      uVar1 = 0;
     }
-    iVar2 = rpmsg_queue_nocopy_free(param_1,local_20);
-    if (iVar2 == 0) {
-      return uVar3;
+    rpmsg_queue_nocopy_free_ret = rpmsg_queue_nocopy_free(rpmsg_lite_dev,local_20);
+    if (rpmsg_queue_nocopy_free_ret == 0) {
+      return uVar1;
     }
   }
   return 0xffffec75;
@@ -511,8 +513,8 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
 
 {
   undefined4 *puVar1;
-  uint uVar2;
-  undefined4 uVar3;
+  uint i;
+  undefined4 uVar2;
   undefined4 uStack_30;
   undefined4 *local_2c;
   undefined4 uStack_28;
@@ -521,7 +523,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
     if (0x1f0 < param_5) {
       return 0xffffec76;
     }
-    uVar3 = *param_2;
+    uVar2 = *param_2;
     if ((param_1 != 0) && (param_4 != (void *)0x0)) {
       if (*(int *)(param_1 + 0x10) != 1) {
         return 0xffffec71;
@@ -538,16 +540,16 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
         if (param_6 == 0) {
           return 0xffffec77;
         }
-        uVar2 = 0;
+        i = 0;
         do {
           vTaskDelay(1);
           env_lock_mutex(*(uint *)(param_1 + 0xc));
           puVar1 = (undefined4 *)
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
                              (*(undefined4 *)(param_1 + 4),&local_2c,(int)&uStack_30 + 2);
-          uVar2 = uVar2 + 1;
+          i = i + 1;
           env_unlock_mutex(*(uint *)(param_1 + 0xc));
-          if (param_6 <= uVar2) {
+          if (param_6 <= i) {
             if (puVar1 == (undefined4 *)0x0) {
               return 0xffffec77;
             }
@@ -556,7 +558,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
         } while (puVar1 == (undefined4 *)0x0);
       }
       puVar1[1] = param_3;
-      *puVar1 = uVar3;
+      *puVar1 = uVar2;
       *(short *)(puVar1 + 3) = (short)param_5;
       *(undefined1 *)((int)puVar1 + 0xe) = 0;
       *(undefined1 *)((int)puVar1 + 0xf) = 0;
@@ -584,23 +586,25 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
 int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
 
 {
-  uint uVar1;
-  int iVar2;
-  code *pcVar3;
+  uint virtqueue_get_buffer_length_ret;
+  int iVar1;
+  code *pcVar2;
   
   if ((rpmsg_lite_dev == (void *)0x0) || (data == (void *)0x0)) {
-    iVar2 = -0x138b;
+    iVar1 = -0x138b;
   }
   else {
     env_lock_mutex(*(uint *)((int)rpmsg_lite_dev + 0xc));
-    iVar2 = *(int *)rpmsg_lite_dev;
-    pcVar3 = *(code **)(*(int *)((int)rpmsg_lite_dev + 0x20) + 0xc);
-    uVar1 = virtqueue_get_buffer_length(iVar2,(uint)*(ushort *)((int)data + -6));
-    (*pcVar3)(iVar2,(int)data + -0x10,uVar1,*(undefined2 *)((int)data + -6));
+    iVar1 = *(int *)rpmsg_lite_dev;
+    pcVar2 = *(code **)(*(int *)((int)rpmsg_lite_dev + 0x20) + 0xc);
+    virtqueue_get_buffer_length_ret =
+         virtqueue_get_buffer_length(iVar1,(uint)*(ushort *)((int)data + -6));
+    (*pcVar2)(iVar1,(int)data + -0x10,virtqueue_get_buffer_length_ret,
+              *(undefined2 *)((int)data + -6));
     env_unlock_mutex(*(uint *)((int)rpmsg_lite_dev + 0xc));
-    iVar2 = 0;
+    iVar1 = 0;
   }
-  return iVar2;
+  return iVar1;
 }
 
 
@@ -615,113 +619,114 @@ int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
 int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
 
 {
-  int *piVar1;
-  uint uVar2;
-  int iVar3;
-  uint uVar4;
-  int iVar5;
+  int *pvPortMalloc_ret;
+  uint uVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  int *piVar5;
   int *piVar6;
-  int *piVar7;
   uint local_4c [2];
   char *local_44 [2];
   int local_3c [4];
   undefined2 local_2c;
   
-  uVar4 = param_2 - 0x800;
-  uVar2 = uVar4;
+  uVar3 = param_2 - 0x800;
+  uVar1 = uVar3;
   if ((param_2 & 3) != 0) {
-    uVar2 = uVar4 & 0xfffffffc;
+    uVar1 = uVar3 & 0xfffffffc;
   }
-  if ((((0x7ff < uVar2) && (param_3 == 0)) && (param_1 != 0)) &&
-     (piVar1 = (int *)pvPortMalloc(0x24), piVar1 != (int *)0x0)) {
-    memset(piVar1,0,0x24);
-    uVar2 = env_init();
-    if (uVar2 == 0) {
-      piVar1[6] = uVar4 >> 9;
-      piVar1[7] = uVar4 >> 9;
-      iVar5 = 0;
-      piVar6 = local_3c;
-      iVar3 = 0;
-      uVar2 = param_1 + 0x800;
+  if ((((0x7ff < uVar1) && (param_3 == 0)) && (param_1 != 0)) &&
+     (pvPortMalloc_ret = (int *)pvPortMalloc(0x24), pvPortMalloc_ret != (int *)0x0)) {
+    memset(pvPortMalloc_ret,0,0x24);
+    uVar1 = env_init();
+    if (uVar1 == 0) {
+      pvPortMalloc_ret[6] = uVar3 >> 9;
+      pvPortMalloc_ret[7] = uVar3 >> 9;
+      iVar4 = 0;
+      piVar5 = local_3c;
+      iVar2 = 0;
+      uVar1 = param_1 + 0x800;
       if ((param_1 & 3) != 0) {
-        uVar2 = (uVar2 & 0xfffffffc) + 4;
+        uVar1 = (uVar1 & 0xfffffffc) + 4;
       }
-      piVar1[5] = uVar2;
+      pvPortMalloc_ret[5] = uVar1;
       local_44[0] = "rx_vq";
       local_44[1] = "tx_vq";
       local_4c[0] = 0x86259;
       local_4c[1] = 0x8621f;
-      piVar1[8] = (int)&PTR_vq_tx_master_1_000879ac;
-      piVar7 = piVar6;
+      pvPortMalloc_ret[8] = (int)&PTR_vq_tx_master_1_000879ac;
+      piVar6 = piVar5;
       while( true ) {
-        local_3c[2] = iVar3 + param_1;
+        local_3c[2] = iVar2 + param_1;
         local_3c[3] = 0x10;
         local_2c = 2;
         memset(local_3c[2],0,0x4e);
-        uVar2 = virtqueue_create((ushort)iVar5,(uint)local_44[iVar5],local_3c + 2,local_4c[iVar5],
-                                 0x8622b,piVar7);
-        if (uVar2 != 0) break;
-        vq_ring_init(*piVar7);
-        virtqueue_disable_cb(*piVar7);
-        iVar3 = 0x400;
-        *(int **)(*piVar7 + 100) = piVar1;
-        if (iVar5 != 0) {
-          iVar3 = env_create_mutex(piVar1 + 3,iVar5);
-          if (iVar3 == 0) {
-            piVar1[1] = local_3c[1];
-            *piVar1 = local_3c[0];
-            iVar3 = 0;
+        uVar1 = virtqueue_create((ushort)iVar4,(uint)local_44[iVar4],local_3c + 2,local_4c[iVar4],
+                                 0x8622b,piVar6);
+        if (uVar1 != 0) break;
+        vq_ring_init(*piVar6);
+        virtqueue_disable_cb(*piVar6);
+        iVar2 = 0x400;
+        *(int **)(*piVar6 + 100) = pvPortMalloc_ret;
+        if (iVar4 != 0) {
+          iVar2 = env_create_mutex(pvPortMalloc_ret + 3,iVar4);
+          if (iVar2 == 0) {
+            pvPortMalloc_ret[1] = local_3c[1];
+            *pvPortMalloc_ret = local_3c[0];
+            iVar2 = 0;
             do {
-              for (uVar2 = 0; (uVar2 < *(ushort *)(*piVar6 + 0x52) && (uVar2 < (uint)piVar1[7]));
-                  uVar2 = uVar2 + 1) {
-                iVar5 = piVar1[6];
-                if (iVar5 == 0) {
+              for (uVar1 = 0;
+                  (uVar1 < *(ushort *)(*piVar5 + 0x52) && (uVar1 < (uint)pvPortMalloc_ret[7]));
+                  uVar1 = uVar1 + 1) {
+                iVar4 = pvPortMalloc_ret[6];
+                if (iVar4 == 0) {
 LAB_00081d36:
                   do {
                     /* WARNING: Do nothing block with infinite loop */
                   } while( true );
                 }
-                uVar4 = piVar1[5] + (piVar1[7] - iVar5) * 0x200;
-                piVar1[6] = iVar5 + -1;
-                if (uVar4 == 0) goto LAB_00081d36;
-                memset(uVar4,0,0x200);
-                iVar5 = *piVar6;
-                if (iVar5 == *piVar1) {
-                  uVar4 = virtqueue_fill_avail_buffers(iVar5,uVar4,0x200);
+                uVar3 = pvPortMalloc_ret[5] + (pvPortMalloc_ret[7] - iVar4) * 0x200;
+                pvPortMalloc_ret[6] = iVar4 + -1;
+                if (uVar3 == 0) goto LAB_00081d36;
+                memset(uVar3,0,0x200);
+                iVar4 = *piVar5;
+                if (iVar4 == *pvPortMalloc_ret) {
+                  uVar3 = virtqueue_fill_avail_buffers(iVar4,uVar3,0x200);
 LAB_00081d56:
-                  if (uVar4 != 0) {
-                    vQueueDelete(piVar1[3]);
+                  if (uVar3 != 0) {
+                    vQueueDelete(pvPortMalloc_ret[3]);
                     goto LAB_00081c74;
                   }
                 }
-                else if (iVar5 == piVar1[1]) {
-                  uVar4 = virtqueue_fill_used_buffers(iVar5,uVar4,0x200);
+                else if (iVar4 == pvPortMalloc_ret[1]) {
+                  uVar3 = virtqueue_fill_used_buffers(iVar4,uVar3,0x200);
                   goto LAB_00081d56;
                 }
               }
-              piVar6 = piVar6 + 1;
-              if (iVar3 != 0) {
-                platform_init_interrupt(*(undefined2 *)(*piVar1 + 0x50));
-                platform_init_interrupt(*(undefined2 *)(piVar1[1] + 0x50));
+              piVar5 = piVar5 + 1;
+              if (iVar2 != 0) {
+                platform_init_interrupt(*(undefined2 *)(*pvPortMalloc_ret + 0x50));
+                platform_init_interrupt(*(undefined2 *)(pvPortMalloc_ret[1] + 0x50));
                 platform_interrupt_disable();
                 platform_interrupt_disable();
-                piVar1[4] = iVar3;
+                pvPortMalloc_ret[4] = iVar2;
                 platform_interrupt_enable();
                 platform_interrupt_enable();
-                virtqueue_kick(*piVar1);
-                return piVar1;
+                virtqueue_kick(*pvPortMalloc_ret);
+                return pvPortMalloc_ret;
               }
-              iVar3 = 1;
+              iVar2 = 1;
             } while( true );
           }
           break;
         }
-        iVar5 = 1;
-        piVar7 = piVar7 + 1;
+        iVar4 = 1;
+        piVar6 = piVar6 + 1;
       }
     }
 LAB_00081c74:
-    env_free_memory((int)piVar1);
+    env_free_memory((int)pvPortMalloc_ret);
   }
   return (int *)0x0;
 }
@@ -740,37 +745,38 @@ uint virtqueue_create(ushort param_1,uint param_2,int *param_3,uint param_4,uint
 
 {
   ushort uVar1;
-  uint *puVar2;
+  uint *pvPortMalloc_ret;
+  uint uVar2;
   uint uVar3;
   uint uVar4;
-  uint uVar5;
   uint local_24;
   
   local_24 = 0;
-  puVar2 = (uint *)pvPortMalloc(0x68);
-  if (puVar2 == (uint *)0x0) {
+  pvPortMalloc_ret = (uint *)pvPortMalloc(0x68);
+  if (pvPortMalloc_ret == (uint *)0x0) {
     local_24 = 0xfffff444;
   }
   else {
-    memset(puVar2,0,0x68);
-    strncpy(puVar2,(uint *)param_2,0x20);
+    memset(pvPortMalloc_ret,0,0x68);
+    strncpy(pvPortMalloc_ret,(uint *)param_2,0x20);
     uVar1 = *(ushort *)(param_3 + 2);
-    uVar3 = (uint)uVar1;
-    uVar4 = param_3[1];
-    puVar2[0xd] = param_5;
-    uVar5 = *param_3;
-    *(ushort *)(puVar2 + 0x14) = param_1;
-    puVar2[0x10] = uVar3;
-    puVar2[0x11] = uVar5;
-    puVar2[0xb] = uVar5;
-    uVar5 = uVar5 + uVar3 * 0x10;
-    puVar2[0xc] = param_4;
-    puVar2[0x12] = uVar5;
-    puVar2[9] = uVar4;
-    puVar2[0x13] = uVar5 + (uVar3 + 4) * 2 + -4 + (uVar4 - 1) & -uVar4;
-    *(ushort *)((int)puVar2 + 0x52) = uVar1;
-    puVar2[10] = ((uVar4 - 1) + uVar3 * 0x10 + (uVar3 + 4) * 2 & -uVar4) + uVar3 * 8 + 0xe;
-    *param_6 = (int)puVar2;
+    uVar2 = (uint)uVar1;
+    uVar3 = param_3[1];
+    pvPortMalloc_ret[0xd] = param_5;
+    uVar4 = *param_3;
+    *(ushort *)(pvPortMalloc_ret + 0x14) = param_1;
+    pvPortMalloc_ret[0x10] = uVar2;
+    pvPortMalloc_ret[0x11] = uVar4;
+    pvPortMalloc_ret[0xb] = uVar4;
+    uVar4 = uVar4 + uVar2 * 0x10;
+    pvPortMalloc_ret[0xc] = param_4;
+    pvPortMalloc_ret[0x12] = uVar4;
+    pvPortMalloc_ret[9] = uVar3;
+    pvPortMalloc_ret[0x13] = uVar4 + (uVar2 + 4) * 2 + -4 + (uVar3 - 1) & -uVar3;
+    *(ushort *)((int)pvPortMalloc_ret + 0x52) = uVar1;
+    pvPortMalloc_ret[10] = ((uVar3 - 1) + uVar2 * 0x10 + (uVar2 + 4) * 2 & -uVar3) + uVar2 * 8 + 0xe
+    ;
+    *param_6 = (int)pvPortMalloc_ret;
   }
   return local_24;
 }
@@ -792,11 +798,11 @@ uint virtqueue_create(ushort param_1,uint param_2,int *param_3,uint param_4,uint
 void DSP_Init(void)
 
 {
-  int iVar1;
-  uint uVar2;
+  uint uVar1;
+  int rstctl0_prstctl0;
   
-  uVar2 = SYSCTL0_PDRUNCFG1;
-  if ((uVar2 & 0xf000000) != 0) {
+  uVar1 = SYSCTL0_PDRUNCFG1;
+  if ((uVar1 & 0xf000000) != 0) {
     SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
@@ -805,12 +811,12 @@ void DSP_Init(void)
     RESET_ClearPeripheralReset(1);
     return;
   }
-  iVar1 = RSTCTL0_PRSTCTL0;
-  if (iVar1 << 0x1e < 0) {
+  rstctl0_prstctl0 = RSTCTL0_PRSTCTL0;
+  if (rstctl0_prstctl0 << 0x1e < 0) {
     RSTCTL0_PRSTCTL0_CLR = 2;
     do {
-      uVar2 = RSTCTL0_PRSTCTL0;
-    } while ((~uVar2 & 2) == 0);
+      uVar1 = RSTCTL0_PRSTCTL0;
+    } while ((~uVar1 & 2) == 0);
     return;
   }
   return;
@@ -1071,18 +1077,18 @@ void env_wmb(void)
 int env_create_mutex(int *param_1,int param_2)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint xQueueCreateCountingSemaphore_ret;
+  int iVar1;
   
   if (param_2 < 0xb) {
-    uVar1 = xQueueCreateCountingSemaphore(10,param_2);
-    *param_1 = uVar1;
-    iVar2 = -(uint)(uVar1 == 0);
+    xQueueCreateCountingSemaphore_ret = xQueueCreateCountingSemaphore(10,param_2);
+    *param_1 = xQueueCreateCountingSemaphore_ret;
+    iVar1 = -(uint)(xQueueCreateCountingSemaphore_ret == 0);
   }
   else {
-    iVar2 = -1;
+    iVar1 = -1;
   }
-  return iVar2;
+  return iVar1;
 }
 
 
@@ -1098,10 +1104,10 @@ int env_create_mutex(int *param_1,int param_2)
 void env_lock_mutex(uint param_1)
 
 {
-  bool bVar1;
+  bool xPortIsInsideInterrupt_ret;
   
-  bVar1 = xPortIsInsideInterrupt();
-  if (!bVar1) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (!xPortIsInsideInterrupt_ret) {
     xQueueSemaphoreTake((int *)param_1,-1);
     return;
   }
@@ -1121,10 +1127,10 @@ void env_lock_mutex(uint param_1)
 void env_unlock_mutex(uint param_1)
 
 {
-  bool bVar1;
+  bool xPortIsInsideInterrupt_ret;
   
-  bVar1 = xPortIsInsideInterrupt();
-  if (!bVar1) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (!xPortIsInsideInterrupt_ret) {
     xQueueGenericSend(param_1,0,0,0);
     return;
   }
@@ -1145,11 +1151,11 @@ void env_unlock_mutex(uint param_1)
 int env_create_queue(int *param_1,uint param_2,uint param_3)
 
 {
-  int iVar1;
+  int xQueueGenericCreate_ret;
   
-  iVar1 = xQueueGenericCreate(param_2,param_3,0);
-  *param_1 = iVar1;
-  return -(uint)(iVar1 == 0);
+  xQueueGenericCreate_ret = xQueueGenericCreate(param_2,param_3,0);
+  *param_1 = xQueueGenericCreate_ret;
+  return -(uint)(xQueueGenericCreate_ret == 0);
 }
 
 
@@ -1166,25 +1172,25 @@ int env_create_queue(int *param_1,uint param_2,uint param_3)
 bool env_put_queue(uint param_1,uint param_2,uint param_3)
 
 {
-  bool bVar1;
-  uint uVar2;
-  bool bVar3;
+  bool xPortIsInsideInterrupt_ret;
+  uint uVar1;
+  bool bVar2;
   int local_14 [2];
   
-  bVar3 = false;
+  bVar2 = false;
   local_14[0] = 0;
-  bVar1 = xPortIsInsideInterrupt();
-  if (bVar1) {
-    uVar2 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
-    if ((uVar2 == 1) && (bVar3 = true, local_14[0] != 0)) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (xPortIsInsideInterrupt_ret) {
+    uVar1 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
+    if ((uVar1 == 1) && (bVar2 = true, local_14[0] != 0)) {
       SCB_ICSR = 0x10000000;
     }
   }
   else {
-    uVar2 = xQueueGenericSend(param_1,param_2,param_3,0);
-    bVar3 = uVar2 == 1;
+    uVar1 = xQueueGenericSend(param_1,param_2,param_3,0);
+    bVar2 = uVar1 == 1;
   }
-  return bVar3;
+  return bVar2;
 }
 
 
@@ -1201,26 +1207,26 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
 bool env_get_queue(uint param_1,uint param_2,uint param_3)
 
 {
-  bool bVar1;
-  uint uVar2;
-  int iVar3;
-  bool bVar4;
+  bool xPortIsInsideInterrupt_ret;
+  uint xQueueReceiveFromISR_ret;
+  int iVar1;
+  bool bVar2;
   int local_14 [2];
   
-  bVar4 = false;
+  bVar2 = false;
   local_14[0] = 0;
-  bVar1 = xPortIsInsideInterrupt();
-  if (bVar1) {
-    uVar2 = xQueueReceiveFromISR(param_1,param_2,local_14);
-    if ((uVar2 == 1) && (bVar4 = true, local_14[0] != 0)) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (xPortIsInsideInterrupt_ret) {
+    xQueueReceiveFromISR_ret = xQueueReceiveFromISR(param_1,param_2,local_14);
+    if ((xQueueReceiveFromISR_ret == 1) && (bVar2 = true, local_14[0] != 0)) {
       SCB_ICSR = 0x10000000;
     }
   }
   else {
-    iVar3 = xQueueReceive(param_1,param_2,param_3);
-    bVar4 = iVar3 == 1;
+    iVar1 = xQueueReceive(param_1,param_2,param_3);
+    bVar2 = iVar1 == 1;
   }
-  return bVar4;
+  return bVar2;
 }
 
 
@@ -1237,7 +1243,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
 bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  bool bVar1;
+  bool env_put_queue_ret;
   undefined4 local_14;
   undefined4 local_10;
   undefined4 uStack_c;
@@ -1250,8 +1256,8 @@ bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,
   local_14 = param_3;
   local_10 = param_1;
   uStack_c = param_2;
-  bVar1 = env_put_queue(param_4,(uint)&local_14,0);
-  return bVar1;
+  env_put_queue_ret = env_put_queue(param_4,(uint)&local_14,0);
+  return env_put_queue_ret;
 }
 
 
@@ -1266,14 +1272,15 @@ bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 int rpmsg_queue_create(int *param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  int iVar1;
+  int env_create_queue_ret;
   int local_c;
   undefined4 uStack_8;
   
   local_c = 0;
   if ((param_1 == (int *)0x0) ||
-     (uStack_8 = param_3, iVar1 = env_create_queue(&local_c,(uint)*(ushort *)(*param_1 + 0x52),0xc),
-     iVar1 != 0)) {
+     (uStack_8 = param_3,
+     env_create_queue_ret = env_create_queue(&local_c,(uint)*(ushort *)(*param_1 + 0x52),0xc),
+     env_create_queue_ret != 0)) {
     local_c = 0;
   }
   return local_c;
@@ -1363,10 +1370,10 @@ void virtqueue_notify(int param_1)
 void vq_tx_master(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  uint uVar1;
+  uint virtqueue_add_buffer_ret;
   
-  uVar1 = virtqueue_add_buffer(param_1,param_4);
-  if (uVar1 != 0) {
+  virtqueue_add_buffer_ret = virtqueue_add_buffer(param_1,param_4);
+  if (virtqueue_add_buffer_ret != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -1452,47 +1459,47 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
-  int *piVar2;
-  undefined4 *puVar3;
-  undefined4 uVar4;
+  int *pvPortMalloc_ret;
+  undefined4 *pvPortMalloc_ret_2;
+  undefined4 uVar2;
   undefined4 extraout_r2;
-  bool bVar5;
+  bool bVar3;
   
   if (param_1 == 0) {
     return (int *)0x0;
   }
   env_lock_mutex(*(uint *)(param_1 + 0xc));
   if (param_2 == -1) {
-    uVar4 = *(undefined4 *)(param_1 + 8);
+    uVar2 = *(undefined4 *)(param_1 + 8);
     param_2 = 1;
     do {
-      iVar1 = rpmsg_lite_get_endpoint_from_addr(uVar4,param_2);
+      iVar1 = rpmsg_lite_get_endpoint_from_addr(uVar2,param_2);
       if (iVar1 == 0) goto LAB_000862fa;
-      bVar5 = param_2 != -2;
-      uVar4 = extraout_r2;
+      bVar3 = param_2 != -2;
+      uVar2 = extraout_r2;
       param_2 = param_2 + 1;
-    } while (bVar5);
+    } while (bVar3);
   }
   else {
     iVar1 = rpmsg_lite_get_endpoint_from_addr(*(undefined4 *)(param_1 + 8),param_2);
     if (iVar1 == 0) {
 LAB_000862fa:
-      piVar2 = (int *)pvPortMalloc(0x10);
-      if (piVar2 != (int *)0x0) {
-        puVar3 = (undefined4 *)pvPortMalloc(0x10);
-        if (puVar3 == (undefined4 *)0x0) {
-          env_free_memory((int)piVar2);
+      pvPortMalloc_ret = (int *)pvPortMalloc(0x10);
+      if (pvPortMalloc_ret != (int *)0x0) {
+        pvPortMalloc_ret_2 = (undefined4 *)pvPortMalloc(0x10);
+        if (pvPortMalloc_ret_2 == (undefined4 *)0x0) {
+          env_free_memory((int)pvPortMalloc_ret);
           goto LAB_000862e0;
         }
-        memset(piVar2,0,0x10);
-        *piVar2 = param_2;
-        piVar2[1] = param_3;
-        piVar2[2] = param_4;
-        *puVar3 = piVar2;
-        add_to_list((int *)(param_1 + 8),(int)puVar3);
+        memset(pvPortMalloc_ret,0,0x10);
+        *pvPortMalloc_ret = param_2;
+        pvPortMalloc_ret[1] = param_3;
+        pvPortMalloc_ret[2] = param_4;
+        *pvPortMalloc_ret_2 = pvPortMalloc_ret;
+        add_to_list((int *)(param_1 + 8),(int)pvPortMalloc_ret_2);
       }
       env_unlock_mutex(*(uint *)(param_1 + 0xc));
-      return piVar2;
+      return pvPortMalloc_ret;
     }
   }
 LAB_000862e0:
@@ -1764,14 +1771,14 @@ void vq_ring_init(int param_1)
   ushort uVar1;
   int iVar2;
   int iVar3;
-  uint uVar4;
+  uint i;
   
-  uVar4 = 0;
+  i = 0;
   uVar1 = *(ushort *)(param_1 + 0x52);
   iVar2 = *(int *)(param_1 + 0x44);
-  while (iVar3 = iVar2 + uVar4 * 0x10, uVar4 < uVar1 - 1) {
-    uVar4 = uVar4 + 1;
-    *(short *)(iVar3 + 0xe) = (short)uVar4;
+  while (iVar3 = iVar2 + i * 0x10, i < uVar1 - 1) {
+    i = i + 1;
+    *(short *)(iVar3 + 0xe) = (short)i;
   }
   *(undefined2 *)(iVar3 + 0xe) = 0x8000;
   return;

@@ -94,38 +94,38 @@ void HASHCRYPT_DriverIRQHandler(void)
 
 {
   int iVar1;
-  int iVar2;
-  undefined4 uVar3;
+  undefined4 uVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
+  int hashcrypt_status;
   
-  iVar2 = DAT_00088ab0;
-  iVar1 = HASHCRYPT_STATUS;
-  if (iVar1 << 0x1d < 0) {
-    uVar3 = 1;
+  iVar1 = DAT_00088ab0;
+  hashcrypt_status = HASHCRYPT_STATUS;
+  if (hashcrypt_status << 0x1d < 0) {
+    uVar2 = 1;
   }
   else {
-    uVar5 = *(uint *)(DAT_00088ab0 + 0x4c);
-    if (uVar5 != 0) {
-      uVar4 = 0x7ff;
-      if (uVar5 < 0x800) {
-        uVar4 = uVar5;
+    uVar4 = *(uint *)(DAT_00088ab0 + 0x4c);
+    if (uVar4 != 0) {
+      uVar3 = 0x7ff;
+      if (uVar4 < 0x800) {
+        uVar3 = uVar4;
       }
-      *(uint *)(DAT_00088ab0 + 0x4c) = uVar5 - uVar4;
-      HASHCRYPT_MEMCTRL = uVar4 << 0x10 | 1;
+      *(uint *)(DAT_00088ab0 + 0x4c) = uVar4 - uVar3;
+      HASHCRYPT_MEMCTRL = uVar3 << 0x10 | 1;
       return;
     }
     HASHCRYPT_INTENCLR = 6;
     HASHCRYPT_MEMCTRL = 0;
     hashcrypt_save_running_hash(0x40158000,DAT_00088ab0);
-    uVar3 = 0;
+    uVar2 = 0;
   }
-  if (*(code **)(iVar2 + 0x50) == (code *)0x0) {
+  if (*(code **)(iVar1 + 0x50) == (code *)0x0) {
     return;
   }
                     /* WARNING: Could not recover jumptable at 0x00084272. Too many branches */
                     /* WARNING: Treating indirect jump as call */
-  (**(code **)(iVar2 + 0x50))(&HASHCRYPT_CTRL,iVar2,uVar3,*(undefined4 *)(iVar2 + 0x54));
+  (**(code **)(iVar1 + 0x50))(&HASHCRYPT_CTRL,iVar1,uVar2,*(undefined4 *)(iVar1 + 0x54));
   return;
 }
 
@@ -137,15 +137,15 @@ void HASHCRYPT_DriverIRQHandler(void)
 void I3C0_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint i3c_mconfig;
+  int i3c_sconfig;
   
-  uVar1 = I3C_MCONFIG;
-  if (((uVar1 & 3) == 1) && (DAT_00088ab8 != (code *)0x0)) {
+  i3c_mconfig = I3C_MCONFIG;
+  if (((i3c_mconfig & 3) == 1) && (DAT_00088ab8 != (code *)0x0)) {
     (*DAT_00088ab8)(&I3C_MCONFIG,DAT_00088ab4);
   }
-  iVar2 = I3C_SCONFIG;
-  if ((iVar2 << 0x1f < 0) && (DAT_00088ac0 != (code *)0x0)) {
+  i3c_sconfig = I3C_SCONFIG;
+  if ((i3c_sconfig << 0x1f < 0) && (DAT_00088ac0 != (code *)0x0)) {
                     /* WARNING: Could not recover jumptable at 0x000842b0. Too many branches */
                     /* WARNING: Treating indirect jump as call */
     (*DAT_00088ac0)(&I3C_MCONFIG,DAT_00088abc);
@@ -186,15 +186,15 @@ void OS_EVENT_DriverIRQHandler(void)
 void PIN_INT0_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00088acc != (code *)0x0) {
-    (*DAT_00088acc)(0,uVar2);
+    (*DAT_00088acc)(0,uVar1);
   }
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 1) == 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 1) == 0) {
     PINT_PinInterruptClrStatus();
     return;
   }
@@ -209,22 +209,22 @@ void PIN_INT0_DriverIRQHandler(void)
 void PIN_INT1_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ad0 != (code *)0x0) {
-    (*DAT_00088ad0)(1,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ad0)(1,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x1e) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,1,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x1e) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,1,uVar2,in_r3);
     return;
   }
   return;
@@ -238,22 +238,22 @@ void PIN_INT1_DriverIRQHandler(void)
 void PIN_INT2_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ad4 != (code *)0x0) {
-    (*DAT_00088ad4)(2,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ad4)(2,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x1d) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,2,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x1d) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,2,uVar2,in_r3);
     return;
   }
   return;
@@ -267,22 +267,22 @@ void PIN_INT2_DriverIRQHandler(void)
 void PIN_INT3_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ad8 != (code *)0x0) {
-    (*DAT_00088ad8)(3,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ad8)(3,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x1c) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,3,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x1c) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,3,uVar2,in_r3);
     return;
   }
   return;
@@ -296,22 +296,22 @@ void PIN_INT3_DriverIRQHandler(void)
 void PIN_INT4_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088adc != (code *)0x0) {
-    (*DAT_00088adc)(4,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088adc)(4,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x1b) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,4,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x1b) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,4,uVar2,in_r3);
     return;
   }
   return;
@@ -325,22 +325,22 @@ void PIN_INT4_DriverIRQHandler(void)
 void PIN_INT5_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ae0 != (code *)0x0) {
-    (*DAT_00088ae0)(5,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ae0)(5,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x1a) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,5,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x1a) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,5,uVar2,in_r3);
     return;
   }
   return;
@@ -354,22 +354,22 @@ void PIN_INT5_DriverIRQHandler(void)
 void PIN_INT6_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ae4 != (code *)0x0) {
-    (*DAT_00088ae4)(6,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ae4)(6,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x19) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,6,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x19) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,6,uVar2,in_r3);
     return;
   }
   return;
@@ -383,22 +383,22 @@ void PIN_INT6_DriverIRQHandler(void)
 void PIN_INT7_DriverIRQHandler(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
   undefined4 extraout_r2;
   undefined4 extraout_r2_00;
-  undefined4 uVar3;
+  undefined4 uVar2;
   undefined4 in_r3;
+  int pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
-  uVar3 = extraout_r2;
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar2 = extraout_r2;
   if (DAT_00088ae8 != (code *)0x0) {
-    (*DAT_00088ae8)(7,uVar2);
-    uVar3 = extraout_r2_00;
+    (*DAT_00088ae8)(7,uVar1);
+    uVar2 = extraout_r2_00;
   }
-  iVar1 = PINT_ISEL;
-  if (-1 < iVar1 << 0x18) {
-    PINT_PinInterruptClrStatus(&PINT_ISEL,7,uVar3,in_r3);
+  pint_isel = PINT_ISEL;
+  if (-1 < pint_isel << 0x18) {
+    PINT_PinInterruptClrStatus(&PINT_ISEL,7,uVar2,in_r3);
     return;
   }
   return;
@@ -413,13 +413,13 @@ void POWER_ApplyPD(void)
 
 {
   int iVar1;
-  uint uVar2;
+  uint pmc_ctrl;
   
   do {
     iVar1 = PMC_STATUS;
   } while (iVar1 << 0x1f < 0);
-  uVar2 = PMC_CTRL;
-  PMC_CTRL = uVar2 | 1;
+  pmc_ctrl = PMC_CTRL;
+  PMC_CTRL = pmc_ctrl | 1;
   do {
     iVar1 = PMC_STATUS;
   } while (iVar1 << 0x1f < 0);
@@ -498,7 +498,7 @@ undefined4 SCTIMER_Init(uint *param_1,byte *param_2)
 {
   byte bVar1;
   undefined4 *puVar2;
-  int iVar3;
+  int i;
   
   CLKCTL0_PSCCTL0_SET = 0x1000000;
   RESET_ClearPeripheralReset(0x18);
@@ -512,17 +512,17 @@ undefined4 SCTIMER_Init(uint *param_1,byte *param_2)
     param_1[1] = param_1[1] | 0x80000;
   }
   param_1[0x14] = (uint)param_2[7];
-  iVar3 = 0;
+  i = 0;
   DAT_00088aec = 0;
   DAT_00088af8 = 0;
   DAT_00088af0 = 0;
   DAT_00088af4 = 0;
   puVar2 = &DAT_00088afc;
   do {
-    iVar3 = iVar3 + 1;
+    i = i + 1;
     *puVar2 = 0;
     puVar2 = puVar2 + 1;
-  } while (iVar3 != 0x10);
+  } while (i != 0x10);
   DAT_00088b3c = &LAB_0008457c_1;
   return 0;
 }
@@ -610,13 +610,13 @@ byte SCTIMER_CreateAndScheduleEvent
 uint SCTIMER_SetupPwm(int param_1,byte *param_2,int param_3,uint param_4,uint param_5,uint *param_6)
 
 {
-  byte bVar1;
-  byte bVar2;
-  int iVar3;
+  byte SCTIMER_CreateAndScheduleEvent_ret;
+  byte SCTIMER_CreateAndScheduleEvent_ret_2;
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
-  uint uVar6;
-  ulonglong uVar7;
+  ulonglong __aeabi_uldivmod_ret;
   uint local_28;
   uint local_24 [2];
   
@@ -625,59 +625,61 @@ uint SCTIMER_SetupPwm(int param_1,byte *param_2,int param_3,uint param_4,uint pa
   if (0x10 < DAT_00088aec + 2U) {
     return 1;
   }
-  uVar4 = param_5 / (((*(uint *)(param_1 + 4) & 0x1fff) >> 5) + 1);
+  uVar2 = param_5 / (((*(uint *)(param_1 + 4) & 0x1fff) >> 5) + 1);
   if (param_3 == 1) {
     *(uint *)(param_1 + 4) = *(uint *)(param_1 + 4) | 0x10;
   }
   else if (param_3 == 0) {
-    uVar4 = uVar4 / param_4 - 1;
+    uVar2 = uVar2 / param_4 - 1;
     goto LAB_000847cc;
   }
-  uVar4 = uVar4 / (param_4 << 1);
+  uVar2 = uVar2 / (param_4 << 1);
 LAB_000847cc:
   if (param_2[2] < 100) {
-    uVar7 = __aeabi_uldivmod((ulonglong)(uint)param_2[2] * (ulonglong)uVar4,100);
-    iVar3 = (int)uVar7;
+    __aeabi_uldivmod_ret = __aeabi_uldivmod((ulonglong)(uint)param_2[2] * (ulonglong)uVar2,100);
+    iVar1 = (int)__aeabi_uldivmod_ret;
   }
   else if (param_3 == 0) {
-    iVar3 = uVar4 + 2;
+    iVar1 = uVar2 + 2;
   }
   else {
-    iVar3 = uVar4 - 1;
+    iVar1 = uVar2 - 1;
   }
-  bVar1 = SCTIMER_CreateAndScheduleEvent((int *)param_1,0x1000,uVar4,0,'\x04',&local_28);
-  bVar2 = SCTIMER_CreateAndScheduleEvent((int *)param_1,0x1000,iVar3,0,'\x04',local_24);
-  if (bVar2 != 0 || bVar1 != 0) {
+  SCTIMER_CreateAndScheduleEvent_ret =
+       SCTIMER_CreateAndScheduleEvent((int *)param_1,0x1000,uVar2,0,'\x04',&local_28);
+  SCTIMER_CreateAndScheduleEvent_ret_2 =
+       SCTIMER_CreateAndScheduleEvent((int *)param_1,0x1000,iVar1,0,'\x04',local_24);
+  if (SCTIMER_CreateAndScheduleEvent_ret_2 != 0 || SCTIMER_CreateAndScheduleEvent_ret != 0) {
     return 1;
   }
-  uVar6 = 1 << (local_28 & 0xff);
-  *(uint *)(param_1 + 8) = uVar6 & 0xffff | *(uint *)(param_1 + 8);
+  uVar4 = 1 << (local_28 & 0xff);
+  *(uint *)(param_1 + 8) = uVar4 & 0xffff | *(uint *)(param_1 + 8);
   *param_6 = local_28;
-  uVar4 = (uint)*param_2;
-  uVar5 = 1 << (local_24[0] & 0xff);
+  uVar2 = (uint)*param_2;
+  uVar3 = 1 << (local_24[0] & 0xff);
   if (param_2[1] == 1) {
-    iVar3 = uVar4 * 8 + param_1;
-    *(uint *)(param_1 + 0x50) = *(uint *)(param_1 + 0x50) & ~(1 << uVar4);
+    iVar1 = uVar2 * 8 + param_1;
+    *(uint *)(param_1 + 0x50) = *(uint *)(param_1 + 0x50) & ~(1 << uVar2);
     if (param_3 == 0) {
-      *(uint *)(iVar3 + 0x500) = uVar6 | *(uint *)(iVar3 + 0x500);
-      *(uint *)(iVar3 + 0x504) = uVar5 | *(uint *)(iVar3 + 0x504);
+      *(uint *)(iVar1 + 0x500) = uVar4 | *(uint *)(iVar1 + 0x500);
+      *(uint *)(iVar1 + 0x504) = uVar3 | *(uint *)(iVar1 + 0x504);
       return 0;
     }
-    *(uint *)(iVar3 + 0x504) = uVar5 | *(uint *)(iVar3 + 0x504);
-    uVar4 = 1 << (uVar4 << 1 & 0xff) | *(uint *)(param_1 + 0x54) & ~(3 << (uVar4 << 1 & 0xff));
+    *(uint *)(iVar1 + 0x504) = uVar3 | *(uint *)(iVar1 + 0x504);
+    uVar2 = 1 << (uVar2 << 1 & 0xff) | *(uint *)(param_1 + 0x54) & ~(3 << (uVar2 << 1 & 0xff));
   }
   else {
-    iVar3 = uVar4 * 8 + param_1;
-    *(uint *)(param_1 + 0x50) = *(uint *)(param_1 + 0x50) | 1 << uVar4;
+    iVar1 = uVar2 * 8 + param_1;
+    *(uint *)(param_1 + 0x50) = *(uint *)(param_1 + 0x50) | 1 << uVar2;
     if (param_3 == 0) {
-      *(uint *)(iVar3 + 0x504) = uVar6 | *(uint *)(iVar3 + 0x504);
-      *(uint *)(iVar3 + 0x500) = uVar5 | *(uint *)(iVar3 + 0x500);
+      *(uint *)(iVar1 + 0x504) = uVar4 | *(uint *)(iVar1 + 0x504);
+      *(uint *)(iVar1 + 0x500) = uVar3 | *(uint *)(iVar1 + 0x500);
       return 0;
     }
-    *(uint *)(iVar3 + 0x500) = uVar5 | *(uint *)(iVar3 + 0x500);
-    uVar4 = 1 << (uVar4 << 1 & 0xff) | *(uint *)(param_1 + 0x54) & ~(3 << (uVar4 << 1 & 0xff));
+    *(uint *)(iVar1 + 0x500) = uVar3 | *(uint *)(iVar1 + 0x500);
+    uVar2 = 1 << (uVar2 << 1 & 0xff) | *(uint *)(param_1 + 0x54) & ~(3 << (uVar2 << 1 & 0xff));
   }
-  *(uint *)(param_1 + 0x54) = uVar4;
+  *(uint *)(param_1 + 0x54) = uVar2;
   return 0;
 }
 
@@ -764,7 +766,7 @@ void UTICK0_DriverIRQHandler(void)
 void BOARD_BootClockRUN(void)
 
 {
-  uint uVar1;
+  uint clkctl1_audiopll0ctl0;
   
   SYSCTL0_PDRUNCFG0_CLR = 0x4000;
   SYSCTL0_PDRUNCFG0_CLR = 0x10000;
@@ -783,8 +785,8 @@ void BOARD_BootClockRUN(void)
   CLOCK_InitSysPfd(0,0xc);
   CLOCK_InitSysPfd(2,0x18);
   CLOCK_InitAudioPll(&DAT_000879f8);
-  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
-  CLKCTL1_AUDIOPLL0CTL0 = uVar1 | 1;
+  clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
+  CLKCTL1_AUDIOPLL0CTL0 = clkctl1_audiopll0ctl0 | 1;
   CLOCK_InitAudioPfd(0,0x1a);
   CLOCK_SetClkDiv(0x400,3);
   CLOCK_AttachClk(0x2434);
@@ -987,69 +989,69 @@ void BOARD_InitPins_debug_gpio(void)
 int * malloc(int param_1)
 
 {
-  void *pvVar1;
-  int *piVar2;
-  int iVar3;
-  uint uVar4;
-  int *piVar5;
-  uint uVar6;
-  int *piVar7;
-  uint uVar8;
+  void *_sbrk_ret;
+  int *piVar1;
+  int iVar2;
+  uint uVar3;
+  int *piVar4;
+  uint uVar5;
+  int *piVar6;
+  uint uVar7;
   
   if (param_1 != 0) {
-    uVar8 = param_1 + 3U >> 2;
-    piVar2 = DAT_00088b70;
-    piVar7 = (int *)0x0;
-    while (piVar5 = piVar2, piVar5 != (int *)0x0) {
-      if (*piVar5 == 0x10000000) {
+    uVar7 = param_1 + 3U >> 2;
+    piVar1 = DAT_00088b70;
+    piVar6 = (int *)0x0;
+    while (piVar4 = piVar1, piVar4 != (int *)0x0) {
+      if (*piVar4 == 0x10000000) {
         while( true ) {
-          uVar4 = piVar5[1];
-          piVar2 = (int *)piVar5[2];
-          if ((piVar2 == (int *)0x0) || (*piVar2 != 0x10000000)) break;
-          piVar5[1] = piVar2[1] + uVar4 + 3;
-          piVar5[2] = piVar2[2];
+          uVar3 = piVar4[1];
+          piVar1 = (int *)piVar4[2];
+          if ((piVar1 == (int *)0x0) || (*piVar1 != 0x10000000)) break;
+          piVar4[1] = piVar1[1] + uVar3 + 3;
+          piVar4[2] = piVar1[2];
         }
-        if (((int)uVar8 <= (int)uVar4) && ((int)uVar4 <= (int)(uVar8 + 3))) {
-          *piVar5 = 0x20000000;
-          return piVar5 + 3;
+        if (((int)uVar7 <= (int)uVar3) && ((int)uVar3 <= (int)(uVar7 + 3))) {
+          *piVar4 = 0x20000000;
+          return piVar4 + 3;
         }
-        if (uVar8 + 10 < uVar4) {
-          piVar5[1] = uVar8;
-          piVar7 = piVar5 + 3;
-          *piVar5 = 0x20000000;
-          uVar6 = param_1 + 3U & 0xfffffffc;
-          iVar3 = (int)piVar7 + uVar6;
-          piVar5[2] = iVar3;
-          *(undefined4 *)((int)piVar7 + uVar6) = 0x10000000;
-          *(uint *)(iVar3 + 4) = (uVar4 - uVar8) + -3;
-          *(int **)(iVar3 + 8) = piVar2;
-          return piVar7;
+        if (uVar7 + 10 < uVar3) {
+          piVar4[1] = uVar7;
+          piVar6 = piVar4 + 3;
+          *piVar4 = 0x20000000;
+          uVar5 = param_1 + 3U & 0xfffffffc;
+          iVar2 = (int)piVar6 + uVar5;
+          piVar4[2] = iVar2;
+          *(undefined4 *)((int)piVar6 + uVar5) = 0x10000000;
+          *(uint *)(iVar2 + 4) = (uVar3 - uVar7) + -3;
+          *(int **)(iVar2 + 8) = piVar1;
+          return piVar6;
         }
-        if (piVar2 == (int *)0x0) {
-          pvVar1 = _sbrk(param_1 + uVar4 * -4);
-          if (pvVar1 == (void *)0xffffffff) {
+        if (piVar1 == (int *)0x0) {
+          _sbrk_ret = _sbrk(param_1 + uVar3 * -4);
+          if (_sbrk_ret == (void *)0xffffffff) {
             return (int *)0x0;
           }
-          *piVar5 = 0x20000000;
-          piVar5[1] = uVar8;
-          return piVar5 + 3;
+          *piVar4 = 0x20000000;
+          piVar4[1] = uVar7;
+          return piVar4 + 3;
         }
       }
-      piVar7 = piVar5;
-      piVar2 = (int *)piVar5[2];
+      piVar6 = piVar4;
+      piVar1 = (int *)piVar4[2];
     }
-    piVar2 = _sbrk(param_1 + 0xc);
-    if (piVar2 != (int *)0xffffffff) {
-      piVar2[2] = 0;
-      *piVar2 = 0x20000000;
-      piVar2[1] = uVar8;
-      piVar5 = piVar2;
-      if (piVar7 != (int *)0x0) {
-        piVar7[2] = (int)piVar2;
-        piVar5 = DAT_00088b70;
+    piVar1 = _sbrk(param_1 + 0xc);
+    if (piVar1 != (int *)0xffffffff) {
+      piVar1[2] = 0;
+      *piVar1 = 0x20000000;
+      piVar1[1] = uVar7;
+      piVar4 = piVar1;
+      if (piVar6 != (int *)0x0) {
+        piVar6[2] = (int)piVar1;
+        piVar4 = DAT_00088b70;
       }
-      DAT_00088b70 = piVar5;
-      return piVar2 + 3;
+      DAT_00088b70 = piVar4;
+      return piVar1 + 3;
     }
   }
   return (int *)0x0;
@@ -1064,14 +1066,14 @@ int * malloc(int param_1)
 int _Csys_alloc(uint param_1)
 
 {
-  int *piVar1;
+  int *malloc_ret;
   
-  piVar1 = malloc(param_1);
-  if (piVar1 == (int *)0x0) {
+  malloc_ret = malloc(param_1);
+  if (malloc_ret == (int *)0x0) {
     __sys_write(0,"*** _Csys_alloc failed\n",0x17);
     __sys_appexit();
   }
-  return (int)piVar1;
+  return (int)malloc_ret;
 }
 
 
@@ -2187,27 +2189,27 @@ uint _strtoul_core(byte *param_1,undefined4 *param_2,uint param_3)
   bool bVar1;
   bool bVar2;
   uint uVar3;
-  int iVar4;
+  int _Cdigit_value_ret;
+  byte *pbVar4;
   byte *pbVar5;
-  byte *pbVar6;
+  uint uVar6;
   uint uVar7;
-  uint uVar8;
   
-  pbVar6 = param_1;
+  pbVar5 = param_1;
   do {
-    pbVar5 = pbVar6;
-    pbVar6 = pbVar5 + 1;
-    uVar3 = (uint)*pbVar5;
+    pbVar4 = pbVar5;
+    pbVar5 = pbVar4 + 1;
+    uVar3 = (uint)*pbVar4;
     if (uVar3 == 0) goto LAB_00085c30;
   } while ((int)((uint)ctype_table[uVar3] << 0x1f) < 0);
   if (uVar3 == 0x30) {
-    uVar3 = (uint)*pbVar6;
-    pbVar6 = pbVar5 + 2;
+    uVar3 = (uint)*pbVar5;
+    pbVar5 = pbVar4 + 2;
     if ((uVar3 & 0xdf) == 0x58) {
       if ((param_3 & 0xffffffef) == 0) {
         param_3 = 0x10;
-        uVar3 = (uint)pbVar5[2];
-        pbVar6 = pbVar5 + 3;
+        uVar3 = (uint)pbVar4[2];
+        pbVar5 = pbVar4 + 3;
         bVar2 = false;
       }
       else {
@@ -2231,32 +2233,32 @@ LAB_00085c30:
       bVar2 = false;
     }
   }
+  uVar6 = 0;
   uVar7 = 0;
-  uVar8 = 0;
   bVar1 = false;
-  while (iVar4 = _Cdigit_value(uVar3,param_3), -1 < iVar4) {
-    uVar7 = uVar7 * param_3 + iVar4;
-    uVar8 = uVar8 * param_3 + (uVar7 >> 0x10);
-    if (0xffff < uVar8) {
+  while (_Cdigit_value_ret = _Cdigit_value(uVar3,param_3), -1 < _Cdigit_value_ret) {
+    uVar6 = uVar6 * param_3 + _Cdigit_value_ret;
+    uVar7 = uVar7 * param_3 + (uVar6 >> 0x10);
+    if (0xffff < uVar7) {
       bVar1 = true;
     }
     bVar2 = true;
-    uVar3 = (uint)*pbVar6;
-    uVar7 = uVar7 & 0xffff;
-    pbVar6 = pbVar6 + 1;
+    uVar3 = (uint)*pbVar5;
+    uVar6 = uVar6 & 0xffff;
+    pbVar5 = pbVar5 + 1;
   }
   if (bVar2) {
-    param_1 = pbVar6 + -1;
+    param_1 = pbVar5 + -1;
   }
   *param_2 = param_1;
   if (bVar1) {
-    uVar7 = 0xffffffff;
+    uVar6 = 0xffffffff;
     DAT_00088b74 = 0x22;
   }
   else {
-    uVar7 = uVar7 | uVar8 << 0x10;
+    uVar6 = uVar6 | uVar7 << 0x10;
   }
-  return uVar7;
+  return uVar6;
 }
 
 
@@ -2327,23 +2329,23 @@ LAB_00085cfa:
 void * _sbrk(int param_1)
 
 {
-  bool bVar1;
+  bool __check_heap_overflow_ret;
+  undefined *puVar1;
   undefined *puVar2;
-  undefined *puVar3;
   
   if (DAT_00088b6c == (undefined *)0x0) {
     DAT_00088b6c = &DAT_000a1ef8;
   }
-  puVar3 = DAT_00088b6c;
-  puVar2 = DAT_00088b6c + (param_1 + 3U & 0xfffffffc);
-  bVar1 = __check_heap_overflow(puVar2);
-  if (bVar1) {
-    puVar3 = (undefined *)0xffffffff;
+  puVar2 = DAT_00088b6c;
+  puVar1 = DAT_00088b6c + (param_1 + 3U & 0xfffffffc);
+  __check_heap_overflow_ret = __check_heap_overflow(puVar1);
+  if (__check_heap_overflow_ret) {
+    puVar2 = (undefined *)0xffffffff;
     DAT_00088b74 = 0xc;
-    puVar2 = DAT_00088b6c;
+    puVar1 = DAT_00088b6c;
   }
-  DAT_00088b6c = puVar2;
-  return puVar3;
+  DAT_00088b6c = puVar1;
+  return puVar2;
 }
 
 
@@ -2388,25 +2390,25 @@ LAB_00085db4:
 uint fflush(int *param_1)
 
 {
+  uint _Cfflush1_ret;
+  int i;
   uint uVar1;
-  int iVar2;
-  uint uVar3;
-  int *piVar4;
+  int *piVar2;
   
   if (param_1 == (int *)0x0) {
-    piVar4 = (int *)&DAT_00088b78;
-    uVar3 = 0;
-    for (iVar2 = 0; iVar2 < 3; iVar2 = iVar2 + 1) {
-      uVar1 = _Cfflush1(piVar4);
-      if (uVar1 != 0) {
-        uVar3 = 0xffffffff;
+    piVar2 = (int *)&DAT_00088b78;
+    uVar1 = 0;
+    for (i = 0; i < 3; i = i + 1) {
+      _Cfflush1_ret = _Cfflush1(piVar2);
+      if (_Cfflush1_ret != 0) {
+        uVar1 = 0xffffffff;
       }
-      piVar4 = piVar4 + 0xf;
+      piVar2 = piVar2 + 0xf;
     }
-    return uVar3;
+    return uVar1;
   }
-  uVar3 = _Cfflush1(param_1);
-  return uVar3;
+  uVar1 = _Cfflush1(param_1);
+  return uVar1;
 }
 
 

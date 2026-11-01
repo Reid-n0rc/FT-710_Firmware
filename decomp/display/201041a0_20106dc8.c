@@ -9,16 +9,16 @@ undefined4 spibsc_wait_tend(undefined4 param_1)
 
 {
   uint uVar1;
-  undefined4 local_10;
+  undefined4 i;
   
-  local_10 = 100000;
+  i = 100000;
   do {
     uVar1 = spibsc_reg_read32(param_1,0x48);
     if ((uVar1 & 1) != 0) {
       return 0;
     }
-    local_10 = local_10 + -1;
-  } while (local_10 != 0);
+    i = i + -1;
+  } while (i != 0);
   return 0xffffffff;
 }
 
@@ -340,24 +340,24 @@ void sflash_cmd_write(int param_1,undefined1 *param_2,uint param_3)
   undefined1 *puVar1;
   int iVar2;
   undefined1 *unaff_r5;
-  uint uVar3;
+  uint i;
   undefined1 local_20 [16];
   
   *(undefined1 *)(param_1 + 0x28) = *param_2;
   if (*(int *)(param_1 + 4) != 0) {
-    uVar3 = 0;
+    i = 0;
     if (param_3 != 0) {
       unaff_r5 = local_20;
     }
     iVar2 = 0;
     if (param_3 != 0) {
       do {
-        unaff_r5[iVar2] = param_2[uVar3];
-        puVar1 = param_2 + uVar3;
-        uVar3 = uVar3 + 1;
+        unaff_r5[iVar2] = param_2[i];
+        puVar1 = param_2 + i;
+        i = i + 1;
         unaff_r5[iVar2 + 1] = *puVar1;
         iVar2 = iVar2 + 2;
-      } while (uVar3 < param_3);
+      } while (i < param_3);
     }
     param_3 = param_3 << 1;
     param_2 = local_20;
@@ -375,21 +375,21 @@ undefined4 sflash_wait_ready(undefined4 param_1)
 
 {
   undefined4 uVar1;
-  int iVar2;
+  int i;
   uint local_18;
   undefined1 local_14 [8];
   
-  iVar2 = 1000000;
+  i = 1000000;
   local_14[0] = 5;
   local_18 = 0;
   sflash_cmd_write(param_1,local_14,1);
   do {
     sflash_cmd_read(param_1,&local_18,1);
     if ((local_18 & 0x81) == 0) break;
-    iVar2 = iVar2 + -1;
-  } while (iVar2 != 0);
+    i = i + -1;
+  } while (i != 0);
   sflash_cmd_read(param_1,&local_18,1,0);
-  if (iVar2 == 0) {
+  if (i == 0) {
     uVar1 = 0xffffffff;
   }
   else {
@@ -407,21 +407,21 @@ undefined4 sflash_wait_wel(undefined4 param_1)
 
 {
   undefined4 uVar1;
-  int iVar2;
+  int i;
   uint local_18;
   undefined1 local_14 [8];
   
-  iVar2 = 1000000;
+  i = 1000000;
   local_14[0] = 5;
   local_18 = 0;
   sflash_cmd_write(param_1,local_14,1);
   do {
     sflash_cmd_read(param_1,&local_18,1);
     if (((local_18 & 2) != 0) && ((local_18 & 0x81) == 0)) break;
-    iVar2 = iVar2 + -1;
-  } while (iVar2 != 0);
+    i = i + -1;
+  } while (i != 0);
   sflash_cmd_read(param_1,&local_18,1,0);
-  if (iVar2 == 0) {
+  if (i == 0) {
     uVar1 = 0xffffffff;
   }
   else {
@@ -1217,15 +1217,15 @@ uint audio_state(void)
 void play_stop(void)
 
 {
-  uint uVar1;
+  uint audio_state_ret;
   
   DAT_208000d4 = 0;
   DAT_208000ec = 0;
   DAT_208000f0 = 0;
   do {
     itron_tslp_tsk(10);
-    uVar1 = audio_state();
-  } while (uVar1 != 0);
+    audio_state_ret = audio_state();
+  } while (audio_state_ret != 0);
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
 }
@@ -1314,7 +1314,7 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
 
 {
   int iVar1;
-  uint uVar2;
+  uint audio_state_ret;
   
   if ((param_1 != 0 && param_2 != (void *)0x0) && param_3 < 0x10) {
     DAT_2081104c = 0;
@@ -1344,9 +1344,9 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
     do {
       if (iVar1 != 0) break;
       itron_tslp_tsk(10);
-      uVar2 = audio_state();
+      audio_state_ret = audio_state();
       iVar1 = DAT_208000d8;
-    } while (uVar2 != 2);
+    } while (audio_state_ret != 2);
   }
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
@@ -1358,13 +1358,13 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
 void rec_stop(void)
 
 {
-  uint uVar1;
+  uint audio_state_ret;
   
   DAT_208000d0 = 0;
   do {
     itron_tslp_tsk(10);
-    uVar1 = audio_state();
-  } while (uVar1 != 0);
+    audio_state_ret = audio_state();
+  } while (audio_state_ret != 0);
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
 }
@@ -1671,8 +1671,8 @@ uint play_seek(int param_1)
 
 {
   int iVar1;
+  uint fs_fseek_ret;
   uint uVar2;
-  uint uVar3;
   
   DAT_208000c0 = param_1;
   if (DAT_208000e0 == 0) {
@@ -1681,14 +1681,14 @@ uint play_seek(int param_1)
   }
   iVar1 = sd_state_bit6();
   if (iVar1 != 0) {
-    uVar2 = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
-    uVar3 = 0;
-    if (uVar2 != 0) {
+    fs_fseek_ret = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
+    uVar2 = 0;
+    if (fs_fseek_ret != 0) {
       DAT_208000bc = fs_task_ctx_get();
       play_close();
-      uVar3 = 0xfffffffe;
+      uVar2 = 0xfffffffe;
     }
-    return uVar3;
+    return uVar2;
   }
   DAT_208000d8 = 0xffffffff;
   play_close();
@@ -1973,14 +1973,14 @@ void task_audio_codec(void)
   ushort uVar1;
   ushort *puVar2;
   byte bVar3;
-  void *pvVar4;
-  uint uVar5;
+  void *itron_twai_flg_ret;
+  uint uVar4;
+  int iVar5;
   int iVar6;
-  int iVar7;
-  ushort *puVar8;
+  ushort *puVar7;
   uint unaff_r4;
-  uint uVar9;
-  bool bVar10;
+  uint uVar8;
+  bool bVar9;
   uint local_1004;
   ushort local_1000 [2000];
   int local_60;
@@ -2010,8 +2010,8 @@ void task_audio_codec(void)
   local_50 = &DAT_2081105c;
   local_54 = 0x20811067;
   do {
-    pvVar4 = itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
-    if (pvVar4 != (void *)0x0) {
+    itron_twai_flg_ret = itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
+    if (itron_twai_flg_ret != (void *)0x0) {
       DAT_208000b8 = DAT_208000b8 + 1;
       return;
     }
@@ -2027,8 +2027,8 @@ void task_audio_codec(void)
       local_34 = 0;
       local_30 = 0;
       local_2c = 0;
-      uVar5 = sd_is_full('I');
-      if (uVar5 == 0) {
+      uVar4 = sd_is_full('I');
+      if (uVar4 == 0) {
         local_4c = &DAT_2081104c;
         local_3c = 2;
         local_48 = local_50;
@@ -2036,19 +2036,19 @@ void task_audio_codec(void)
         local_44 = local_54;
         local_38 = 16000;
         local_34 = 0x10;
-        uVar5 = rec_open_wav(&local_4c,(uint)DAT_208000b3);
-        if (uVar5 == 0) {
+        uVar4 = rec_open_wav(&local_4c,(uint)DAT_208000b3);
+        if (uVar4 == 0) {
           DAT_208000b2 = 1;
           if (DAT_208000d0 != 0) {
             do {
-              iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0x1e);
-              if (iVar6 == -0x32) {
-                iVar6 = sd_state_bit6();
-                if (iVar6 != 0) goto LAB_201068b8;
+              iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0x1e);
+              if (iVar5 == -0x32) {
+                iVar5 = sd_state_bit6();
+                if (iVar5 != 0) goto LAB_201068b8;
                 DAT_208000d8 = -1;
                 break;
               }
-              if (iVar6 < 0) {
+              if (iVar5 < 0) {
                 DAT_208000b8 = DAT_208000b8 + 1;
                 DAT_208000d8 = -9;
                 break;
@@ -2067,23 +2067,23 @@ void task_audio_codec(void)
                   DAT_208000f4 = DAT_208000f4 + 1;
                   if (DAT_208000f4 < 4) goto LAB_201068b8;
                 }
-                iVar7 = 0;
+                iVar6 = 0;
                 DAT_208000f4 = 0;
                 __aeabi_memclr4(local_1000,4000);
-                uVar9 = uVar1 + 2;
-                uVar5 = 2;
-                iVar6 = iVar7;
-                if (2 < uVar9) {
+                uVar8 = uVar1 + 2;
+                uVar4 = 2;
+                iVar5 = iVar6;
+                if (2 < uVar8) {
                   do {
-                    puVar8 = puVar2 + uVar5;
-                    uVar5 = uVar5 + 1;
-                    iVar7 = iVar6 + 2;
-                    local_1000[iVar6] = *puVar8;
-                    local_1000[iVar6 + 1] = *puVar8;
-                    iVar6 = iVar7;
-                  } while (uVar5 < uVar9);
+                    puVar7 = puVar2 + uVar4;
+                    uVar4 = uVar4 + 1;
+                    iVar6 = iVar5 + 2;
+                    local_1000[iVar5] = *puVar7;
+                    local_1000[iVar5 + 1] = *puVar7;
+                    iVar5 = iVar6;
+                  } while (uVar4 < uVar8);
                 }
-                unaff_r4 = rec_write(iVar7 * 2,(int)local_1000);
+                unaff_r4 = rec_write(iVar6 * 2,(int)local_1000);
                 if (unaff_r4 != 0) {
                   DAT_208000b8 = DAT_208000b8 + 1;
                   if (DAT_208000d8 != -1) {
@@ -2092,7 +2092,7 @@ void task_audio_codec(void)
                   break;
                 }
                 dcache_clean_invalidate_range(local_5c,4000);
-                DAT_208000e4 = DAT_208000e4 + iVar7 * 2;
+                DAT_208000e4 = DAT_208000e4 + iVar6 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
               }
               else {
@@ -2110,8 +2110,8 @@ LAB_201068b8:
             DAT_208000b8 = DAT_208000b8 + 1;
           }
           do {
-            iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
-          } while (-1 < iVar6);
+            iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
+          } while (-1 < iVar5);
           DAT_208000d0 = 0;
           goto LAB_20106918;
         }
@@ -2157,8 +2157,8 @@ LAB_201069b4:
               DAT_208000d4 = 1;
               DAT_208000cc = 4;
 LAB_20106a5c:
-              iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0x1e);
-              if (-1 < iVar6) {
+              iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0x1e);
+              if (-1 < iVar5) {
                 bVar3 = 0;
                 DAT_208000f0 = DAT_208000f0 + 0xc80;
                 if (local_60 == 2) {
@@ -2170,11 +2170,11 @@ LAB_20106a5c:
                       if (local_58 == 0) goto LAB_20106bd0;
                       if (DAT_2080858e < 0x29a) {
                         __aeabi_memset(&DAT_208f4de0,0x11f80,0xf0);
-                        uVar5 = (uint)DAT_208000b0;
-                        (&DAT_208f4de0)[uVar5 * 0x11f8] = 0;
-                        iVar6 = uVar5 * 0x11f8;
-                        *(undefined1 *)(iVar6 + 0x208f4de1) = 0;
-                        dcache_clean_range(&DAT_208f4de0 + iVar6,local_58);
+                        uVar4 = (uint)DAT_208000b0;
+                        (&DAT_208f4de0)[uVar4 * 0x11f8] = 0;
+                        iVar5 = uVar4 * 0x11f8;
+                        *(undefined1 *)(iVar5 + 0x208f4de1) = 0;
+                        dcache_clean_range(&DAT_208f4de0 + iVar5,local_58);
                         itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
                         DAT_208000b0 = DAT_208000b0 + 1;
                         if (0xf < DAT_208000b0) {
@@ -2188,9 +2188,9 @@ LAB_20106a5c:
                     goto LAB_20106c3c;
                   }
                   __aeabi_memset(&DAT_208f4de0,0x11f80,0xf0);
-                  uVar5 = (uint)DAT_208000b0;
-                  (&DAT_208f4de0)[uVar5 * 0x11f8] = 0;
-                  *(undefined1 *)(uVar5 * 0x11f8 + 0x208f4de1) = 0;
+                  uVar4 = (uint)DAT_208000b0;
+                  (&DAT_208f4de0)[uVar4 * 0x11f8] = 0;
+                  *(undefined1 *)(uVar4 * 0x11f8 + 0x208f4de1) = 0;
 LAB_20106cf4:
                   dcache_clean_range(&DAT_208f4de0 + (uint)DAT_208000b0 * 0x11f8,local_58);
                   itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
@@ -2206,13 +2206,13 @@ LAB_20106bd0:
                 DAT_208000d4 = 0;
                 goto LAB_20106d8c;
               }
-              iVar7 = sd_state_bit6();
-              if (iVar7 == 0) {
+              iVar6 = sd_state_bit6();
+              if (iVar6 == 0) {
                 DAT_208000d8 = -1;
                 DAT_208000d4 = 0;
                 goto LAB_20106d8c;
               }
-              if ((iVar6 != -0x32) || (bVar3 = bVar3 + 1, 8 < bVar3)) goto LAB_20106bd0;
+              if ((iVar5 != -0x32) || (bVar3 = bVar3 + 1, 8 < bVar3)) goto LAB_20106bd0;
               DAT_208000b8 = DAT_208000b8 + 1;
 LAB_20106d80:
               while( true ) {
@@ -2224,8 +2224,8 @@ LAB_20106d80:
               }
               if (DAT_208000cc == 8) {
                 do {
-                  iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
-                } while (-1 < iVar6);
+                  iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
+                } while (-1 < iVar5);
                 DAT_208000b5 = 0;
                 unaff_r4 = play_seek(DAT_208000f0);
               }
@@ -2234,8 +2234,8 @@ LAB_20106d80:
                 DAT_208000b1 = 0;
                 DAT_208000cc = 0x20;
                 do {
-                  iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
-                } while (-1 < iVar6);
+                  iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
+                } while (-1 < iVar5);
                 DAT_208000f0 = DAT_208000f0 + 320000;
                 if (DAT_208000e4 <= DAT_208000f0) {
                   DAT_208000f0 = DAT_208000e4 - 0xc80;
@@ -2253,8 +2253,8 @@ LAB_20106d8c:
           FUN_201050ac();
           DAT_208000d4 = 0;
           do {
-            iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
-          } while (-1 < iVar6);
+            iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
+          } while (-1 < iVar5);
         }
         else {
           DAT_208000d8 = -4;
@@ -2269,13 +2269,13 @@ LAB_20106b44:
   DAT_208000b1 = 0;
   DAT_208000cc = 0x10;
   do {
-    iVar6 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
-  } while (-1 < iVar6);
-  bVar10 = DAT_208000f0 < 320000;
+    iVar5 = itron_trcv_mbf(DAT_208000c4,&local_60,0);
+  } while (-1 < iVar5);
+  bVar9 = DAT_208000f0 < 320000;
   DAT_208000f0 = DAT_208000f0 - 320000;
-  iVar6 = -(uint)bVar10;
-  if ((int)-(iVar6 + (uint)(DAT_208000f0 != 0)) < 0 ==
-      (SBORROW4(0,iVar6) != SBORROW4((uint)bVar10,(uint)(DAT_208000f0 != 0)))) {
+  iVar5 = -(uint)bVar9;
+  if ((int)-(iVar5 + (uint)(DAT_208000f0 != 0)) < 0 ==
+      (SBORROW4(0,iVar5) != SBORROW4((uint)bVar9,(uint)(DAT_208000f0 != 0)))) {
     DAT_208000f0 = 0;
   }
   unaff_r4 = play_seek(DAT_208000f0);

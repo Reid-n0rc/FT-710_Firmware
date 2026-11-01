@@ -10,8 +10,8 @@ void dsp_knob_notch_toggle(void)
 {
   byte bVar1;
   uint uVar2;
-  mode_blk *local_8;
-  vfo_rec *local_4;
+  mode_blk *p_mode_blk;
+  vfo_rec *p_vfo_rec;
   
   if (PTR_g_ui_00025d54->dsp_knob_edit != 0) {
     PTR_g_ui_00025d54->dsp_knob_edit = 0;
@@ -23,40 +23,40 @@ void dsp_knob_notch_toggle(void)
   PTR_g_ui_00025d54->func_knob_item = 0x1f;
   if (PTR_g_ui_00025d54->dsp_knob_func == 2) {
     if (g_opstate.active_vfo == VFO_A) {
-      local_4 = &g_opstate.vfo_a;
+      p_vfo_rec = &g_opstate.vfo_a;
     }
     else {
-      local_4 = &g_opstate.vfo_b;
+      p_vfo_rec = &g_opstate.vfo_b;
     }
-    uVar2 = local_4->mode & 0xf;
+    uVar2 = p_vfo_rec->mode & 0xf;
     if (uVar2 == 0xe) {
 LAB_fffbdc16:
-      local_8 = local_4->blk + 3;
+      p_mode_blk = p_vfo_rec->blk + 3;
     }
     else if (uVar2 - 2 < 2) {
-      local_8 = local_4->blk + 1;
+      p_mode_blk = p_vfo_rec->blk + 1;
     }
     else if (uVar2 - 4 < 2) {
-      local_8 = local_4->blk + 4;
+      p_mode_blk = p_vfo_rec->blk + 4;
     }
     else {
       if (uVar2 - 8 < 2) goto LAB_fffbdc16;
       if (uVar2 - 0xc < 2) {
-        local_8 = local_4->blk + 2;
+        p_mode_blk = p_vfo_rec->blk + 2;
       }
       else {
-        if ((local_4->mode & 0xf) != 0 && uVar2 != 1) {
+        if ((p_vfo_rec->mode & 0xf) != 0 && uVar2 != 1) {
           return;
         }
-        local_8 = local_4->blk;
+        p_mode_blk = p_vfo_rec->blk;
       }
     }
-    bVar1 = local_8->flags;
+    bVar1 = p_mode_blk->flags;
     if ((bVar1 & 0x80) == 0) {
-      local_8->flags = bVar1 | 0x80;
+      p_mode_blk->flags = bVar1 | 0x80;
     }
     else {
-      local_8->flags = bVar1 & 0x7f;
+      p_mode_blk->flags = bVar1 & 0x7f;
     }
   }
   else {
@@ -98,8 +98,8 @@ void dsp_knob_contour_toggle(void)
   byte bVar1;
   bool bVar2;
   uint uVar3;
-  mode_blk *local_8;
-  vfo_rec *local_4;
+  mode_blk *p_mode_blk;
+  vfo_rec *p_vfo_rec;
   
   bVar2 = false;
   if (PTR_g_ui_00025d54->dsp_knob_edit != 0) {
@@ -112,58 +112,58 @@ void dsp_knob_contour_toggle(void)
   PTR_g_ui_00025d54->func_knob_item = 0x20;
   if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
     if (g_opstate.active_vfo == VFO_A) {
-      local_4 = &g_opstate.vfo_a;
+      p_vfo_rec = &g_opstate.vfo_a;
     }
     else {
-      local_4 = &g_opstate.vfo_b;
+      p_vfo_rec = &g_opstate.vfo_b;
     }
-    uVar3 = local_4->mode & 0xf;
+    uVar3 = p_vfo_rec->mode & 0xf;
     if (uVar3 == 0xe) {
 LAB_fffbdd86:
-      local_8 = local_4->blk + 3;
+      p_mode_blk = p_vfo_rec->blk + 3;
     }
     else if (uVar3 - 2 < 2) {
-      local_8 = local_4->blk + 1;
+      p_mode_blk = p_vfo_rec->blk + 1;
       bVar2 = true;
     }
     else if (uVar3 - 4 < 2) {
-      local_8 = local_4->blk + 4;
+      p_mode_blk = p_vfo_rec->blk + 4;
     }
     else {
       if (1 < uVar3 - 6) {
         if (uVar3 - 8 < 2) goto LAB_fffbdd86;
         if (1 < uVar3 - 10) {
           if (uVar3 - 0xc < 2) {
-            local_8 = local_4->blk + 2;
+            p_mode_blk = p_vfo_rec->blk + 2;
           }
           else {
-            if ((local_4->mode & 0xf) != 0 && uVar3 != 1) {
+            if ((p_vfo_rec->mode & 0xf) != 0 && uVar3 != 1) {
               return;
             }
-            local_8 = local_4->blk;
+            p_mode_blk = p_vfo_rec->blk;
           }
           goto LAB_fffbdd8f;
         }
       }
-      local_8 = local_4->blk + 5;
+      p_mode_blk = p_vfo_rec->blk + 5;
     }
 LAB_fffbdd8f:
-    bVar1 = local_8->flags;
+    bVar1 = p_mode_blk->flags;
     if (bVar2) {
       if ((bVar1 & 0x40) == 0) {
-        local_8->flags = bVar1 | 0x40;
+        p_mode_blk->flags = bVar1 | 0x40;
       }
       else {
-        local_8->flags = bVar1 & 0xbf;
+        p_mode_blk->flags = bVar1 & 0xbf;
         PTR_g_ui_00025d54->dsp_knob_apf = 1;
         PTR_g_ui_00025d54->func_knob_item = 0x21;
       }
     }
     else if ((bVar1 & 0x40) == 0) {
-      local_8->flags = bVar1 | 0x40;
+      p_mode_blk->flags = bVar1 | 0x40;
     }
     else {
-      local_8->flags = bVar1 & 0xbf;
+      p_mode_blk->flags = bVar1 & 0xbf;
     }
   }
   else {
@@ -203,19 +203,19 @@ void dsp_knob_apf_toggle(void)
 {
   bool bVar1;
   byte bVar2;
-  vfo_rec *local_4;
+  vfo_rec *p_vfo_rec;
   
   if (PTR_g_ui_00025d54->dsp_knob_edit == 0) {
     PTR_g_ui_00025d54->dsp_knob_edit = 1;
     PTR_g_ui_00025d54->func_knob_item = 0x21;
     if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
       if (g_opstate.active_vfo == VFO_A) {
-        local_4 = &g_opstate.vfo_a;
+        p_vfo_rec = &g_opstate.vfo_a;
       }
       else {
-        local_4 = &g_opstate.vfo_b;
+        p_vfo_rec = &g_opstate.vfo_b;
       }
-      bVar2 = local_4->mode & 0xf;
+      bVar2 = p_vfo_rec->mode & 0xf;
       if ((bVar2 == 3) || (bVar2 == 2)) {
         bVar1 = false;
       }
@@ -225,13 +225,13 @@ void dsp_knob_apf_toggle(void)
       if (bVar1) {
         return;
       }
-      bVar2 = local_4->blk[1].flags;
-      if ((local_4->blk[1].flags & 0x20) == 0) {
-        local_4->blk[1].flags = bVar2 | 0x20;
+      bVar2 = p_vfo_rec->blk[1].flags;
+      if ((p_vfo_rec->blk[1].flags & 0x20) == 0) {
+        p_vfo_rec->blk[1].flags = bVar2 | 0x20;
       }
       else {
-        local_4->blk[1].flags = bVar2 & 0xdf;
-        local_4->blk[1].flags = local_4->blk[1].flags | 0x40;
+        p_vfo_rec->blk[1].flags = bVar2 & 0xdf;
+        p_vfo_rec->blk[1].flags = p_vfo_rec->blk[1].flags | 0x40;
         PTR_g_ui_00025d54->dsp_knob_apf = 0;
         PTR_g_ui_00025d54->func_knob_item = 0x20;
       }
@@ -275,8 +275,8 @@ void FUN_fffbdf98(void)
   byte bVar1;
   bool bVar2;
   uint uVar3;
-  mode_blk *local_8;
-  vfo_rec *local_4;
+  mode_blk *p_mode_blk;
+  vfo_rec *p_vfo_rec;
   
   bVar2 = false;
   if (PTR_g_ui_00025d54->dsp_knob_edit != 0) {
@@ -287,79 +287,79 @@ void FUN_fffbdf98(void)
   }
   PTR_g_ui_00025d54->dsp_knob_edit = 1;
   if (g_opstate.active_vfo == VFO_A) {
-    local_4 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    local_4 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  uVar3 = local_4->mode & 0xf;
+  uVar3 = p_vfo_rec->mode & 0xf;
   if (uVar3 == 0xe) {
 LAB_fffbe052:
-    local_8 = local_4->blk + 3;
+    p_mode_blk = p_vfo_rec->blk + 3;
   }
   else if (uVar3 - 2 < 2) {
-    local_8 = local_4->blk + 1;
+    p_mode_blk = p_vfo_rec->blk + 1;
     bVar2 = true;
   }
   else if (uVar3 - 4 < 2) {
-    local_8 = local_4->blk + 4;
+    p_mode_blk = p_vfo_rec->blk + 4;
   }
   else {
     if (1 < uVar3 - 6) {
       if (uVar3 - 8 < 2) goto LAB_fffbe052;
       if (1 < uVar3 - 10) {
         if (uVar3 - 0xc < 2) {
-          local_8 = local_4->blk + 2;
+          p_mode_blk = p_vfo_rec->blk + 2;
         }
         else {
-          if ((local_4->mode & 0xf) != 0 && uVar3 != 1) {
+          if ((p_vfo_rec->mode & 0xf) != 0 && uVar3 != 1) {
             return;
           }
-          local_8 = local_4->blk;
+          p_mode_blk = p_vfo_rec->blk;
         }
         goto LAB_fffbe05b;
       }
     }
-    local_8 = local_4->blk + 5;
+    p_mode_blk = p_vfo_rec->blk + 5;
   }
 LAB_fffbe05b:
   if (PTR_g_ui_00025d54->dsp_knob_func == 2) {
-    bVar1 = local_8->flags;
+    bVar1 = p_mode_blk->flags;
     if ((bVar1 & 0x80) == 0) {
-      local_8->flags = bVar1 | 0x80;
+      p_mode_blk->flags = bVar1 | 0x80;
     }
     else {
-      local_8->flags = bVar1 & 0x7f;
+      p_mode_blk->flags = bVar1 & 0x7f;
     }
   }
   else if (PTR_g_ui_00025d54->dsp_knob_func == 3) {
     if (bVar2) {
       if (PTR_g_ui_00025d54->dsp_knob_apf == 0) {
-        bVar1 = local_8->flags;
+        bVar1 = p_mode_blk->flags;
         if ((bVar1 & 0x40) == 0) {
-          local_8->flags = bVar1 | 0x40;
+          p_mode_blk->flags = bVar1 | 0x40;
         }
         else {
-          local_8->flags = bVar1 & 0xbf;
+          p_mode_blk->flags = bVar1 & 0xbf;
         }
       }
       else if (PTR_g_ui_00025d54->dsp_knob_apf == 1) {
-        bVar1 = local_8->flags;
+        bVar1 = p_mode_blk->flags;
         if ((bVar1 & 0x20) == 0) {
-          local_8->flags = bVar1 | 0x20;
+          p_mode_blk->flags = bVar1 | 0x20;
         }
         else {
-          local_8->flags = bVar1 & 0xdf;
+          p_mode_blk->flags = bVar1 & 0xdf;
         }
       }
     }
     else {
-      bVar1 = local_8->flags;
+      bVar1 = p_mode_blk->flags;
       if ((bVar1 & 0x40) == 0) {
-        local_8->flags = bVar1 | 0x40;
+        p_mode_blk->flags = bVar1 | 0x40;
       }
       else {
-        local_8->flags = bVar1 & 0xbf;
+        p_mode_blk->flags = bVar1 & 0xbf;
       }
     }
   }

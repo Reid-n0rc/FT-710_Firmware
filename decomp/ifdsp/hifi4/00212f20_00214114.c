@@ -452,14 +452,14 @@ void PINT_PinInterruptClrStatusAll(uint *param_1)
 void PINT_EnableCallback(undefined4 *param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 0;
+  i = 0;
   if (param_1 == &PINT_ISEL) {
     do {
-      PINT_PinInterruptClrStatus(&PINT_ISEL,iVar1);
-      iVar1 = iVar1 + 1;
-    } while (iVar1 != 8);
+      PINT_PinInterruptClrStatus(&PINT_ISEL,i);
+      i = i + 1;
+    } while (i != 8);
   }
   return;
 }
@@ -484,14 +484,14 @@ void PINT_EnableCallbackByIndex(undefined4 param_1,undefined4 param_2)
 void PINT_DisableCallback(undefined4 *param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 0;
+  i = 0;
   if (param_1 == &PINT_ISEL) {
     do {
-      PINT_PinInterruptClrStatus(&PINT_ISEL,iVar1);
-      iVar1 = iVar1 + 1;
-    } while (iVar1 != 8);
+      PINT_PinInterruptClrStatus(&PINT_ISEL,i);
+      i = i + 1;
+    } while (i != 8);
   }
   return;
 }
@@ -544,16 +544,16 @@ void PINT_Deinit(undefined4 *param_1)
 void PIN_INT0_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f20 != (code *)0x0) {
-    (*DAT_00238f20)(0,uVar2);
+    (*DAT_00238f20)(0,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 1) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 1) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,0);
@@ -568,16 +568,16 @@ void PIN_INT0_DriverIRQHandler(void)
 void PIN_INT1_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f24 != (code *)0x0) {
-    (*DAT_00238f24)(1,uVar2);
+    (*DAT_00238f24)(1,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 2) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 2) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,1);
@@ -592,16 +592,16 @@ void PIN_INT1_DriverIRQHandler(void)
 void PIN_INT2_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f28 != (code *)0x0) {
-    (*DAT_00238f28)(2,uVar2);
+    (*DAT_00238f28)(2,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 4) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 4) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,2);
@@ -616,16 +616,16 @@ void PIN_INT2_DriverIRQHandler(void)
 void PIN_INT3_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f2c != (code *)0x0) {
-    (*DAT_00238f2c)(3,uVar2);
+    (*DAT_00238f2c)(3,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 8) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 8) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,3);
@@ -640,16 +640,16 @@ void PIN_INT3_DriverIRQHandler(void)
 void PIN_INT4_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f30 != (code *)0x0) {
-    (*DAT_00238f30)(4,uVar2);
+    (*DAT_00238f30)(4,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 0x10) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 0x10) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,4);
@@ -664,16 +664,16 @@ void PIN_INT4_DriverIRQHandler(void)
 void PIN_INT5_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f34 != (code *)0x0) {
-    (*DAT_00238f34)(5,uVar2);
+    (*DAT_00238f34)(5,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 0x20) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 0x20) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,5);
@@ -688,16 +688,16 @@ void PIN_INT5_DriverIRQHandler(void)
 void PIN_INT6_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f38 != (code *)0x0) {
-    (*DAT_00238f38)(6,uVar2);
+    (*DAT_00238f38)(6,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 0x40) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 0x40) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,6);
@@ -712,16 +712,16 @@ void PIN_INT6_DriverIRQHandler(void)
 void PIN_INT7_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint pint_isel;
   
-  uVar2 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
+  uVar1 = PINT_PatternMatchResetDetectLogic(&PINT_ISEL);
   if (DAT_00238f3c != (code *)0x0) {
-    (*DAT_00238f3c)(7,uVar2);
+    (*DAT_00238f3c)(7,uVar1);
   }
   memw();
-  uVar1 = PINT_ISEL;
-  if ((uVar1 & 0x80) != 0) {
+  pint_isel = PINT_ISEL;
+  if ((pint_isel & 0x80) != 0) {
     return;
   }
   PINT_PinInterruptClrStatus(&PINT_ISEL,7);

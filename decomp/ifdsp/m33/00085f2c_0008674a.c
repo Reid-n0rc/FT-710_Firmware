@@ -70,10 +70,10 @@ void aic3204_select_right_input(int param_1)
 void console_puts(uint param_1)
 
 {
-  int iVar1;
+  int strlen_ret;
   
-  iVar1 = strlen((uint *)param_1);
-  uart0_write(param_1,iVar1);
+  strlen_ret = strlen((uint *)param_1);
+  uart0_write(param_1,strlen_ret);
   return;
 }
 
@@ -148,17 +148,17 @@ uint is_hex_string(byte *param_1)
 bool frame_checksum_ok(char *param_1,int param_2)
 
 {
-  ushort uVar1;
-  byte *pbVar2;
-  char cVar3;
+  ushort strtoul_ret;
+  byte *pbVar1;
+  char cVar2;
   
-  cVar3 = '\0';
-  pbVar2 = (byte *)(param_1 + param_2);
-  for (; (byte *)param_1 != pbVar2; param_1 = param_1 + 1) {
-    cVar3 = cVar3 + *param_1;
+  cVar2 = '\0';
+  pbVar1 = (byte *)(param_1 + param_2);
+  for (; (byte *)param_1 != pbVar1; param_1 = param_1 + 1) {
+    cVar2 = cVar2 + *param_1;
   }
-  uVar1 = strtoul((byte *)param_1,(byte *)0x0,0x10);
-  return (char)uVar1 == cVar3;
+  strtoul_ret = strtoul((byte *)param_1,(byte *)0x0,0x10);
+  return (char)strtoul_ret == cVar2;
 }
 
 
@@ -227,18 +227,18 @@ void env_wmb(void)
 int env_create_mutex(int *param_1,int param_2)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint xQueueCreateCountingSemaphore_ret;
+  int iVar1;
   
   if (param_2 < 0xb) {
-    uVar1 = xQueueCreateCountingSemaphore(10,param_2);
-    *param_1 = uVar1;
-    iVar2 = -(uint)(uVar1 == 0);
+    xQueueCreateCountingSemaphore_ret = xQueueCreateCountingSemaphore(10,param_2);
+    *param_1 = xQueueCreateCountingSemaphore_ret;
+    iVar1 = -(uint)(xQueueCreateCountingSemaphore_ret == 0);
   }
   else {
-    iVar2 = -1;
+    iVar1 = -1;
   }
-  return iVar2;
+  return iVar1;
 }
 
 
@@ -247,10 +247,10 @@ int env_create_mutex(int *param_1,int param_2)
 void env_lock_mutex(uint param_1)
 
 {
-  bool bVar1;
+  bool xPortIsInsideInterrupt_ret;
   
-  bVar1 = xPortIsInsideInterrupt();
-  if (!bVar1) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (!xPortIsInsideInterrupt_ret) {
     xQueueSemaphoreTake((int *)param_1,-1);
     return;
   }
@@ -263,10 +263,10 @@ void env_lock_mutex(uint param_1)
 void env_unlock_mutex(uint param_1)
 
 {
-  bool bVar1;
+  bool xPortIsInsideInterrupt_ret;
   
-  bVar1 = xPortIsInsideInterrupt();
-  if (!bVar1) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (!xPortIsInsideInterrupt_ret) {
     xQueueGenericSend(param_1,0,0,0);
     return;
   }
@@ -281,11 +281,11 @@ void env_unlock_mutex(uint param_1)
 int env_create_queue(int *param_1,uint param_2,uint param_3)
 
 {
-  int iVar1;
+  int xQueueGenericCreate_ret;
   
-  iVar1 = xQueueGenericCreate(param_2,param_3,0);
-  *param_1 = iVar1;
-  return -(uint)(iVar1 == 0);
+  xQueueGenericCreate_ret = xQueueGenericCreate(param_2,param_3,0);
+  *param_1 = xQueueGenericCreate_ret;
+  return -(uint)(xQueueGenericCreate_ret == 0);
 }
 
 
@@ -296,25 +296,25 @@ int env_create_queue(int *param_1,uint param_2,uint param_3)
 bool env_put_queue(uint param_1,uint param_2,uint param_3)
 
 {
-  bool bVar1;
-  uint uVar2;
-  bool bVar3;
+  bool xPortIsInsideInterrupt_ret;
+  uint uVar1;
+  bool bVar2;
   int local_14 [2];
   
-  bVar3 = false;
+  bVar2 = false;
   local_14[0] = 0;
-  bVar1 = xPortIsInsideInterrupt();
-  if (bVar1) {
-    uVar2 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
-    if ((uVar2 == 1) && (bVar3 = true, local_14[0] != 0)) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (xPortIsInsideInterrupt_ret) {
+    uVar1 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
+    if ((uVar1 == 1) && (bVar2 = true, local_14[0] != 0)) {
       SCB_ICSR = 0x10000000;
     }
   }
   else {
-    uVar2 = xQueueGenericSend(param_1,param_2,param_3,0);
-    bVar3 = uVar2 == 1;
+    uVar1 = xQueueGenericSend(param_1,param_2,param_3,0);
+    bVar2 = uVar1 == 1;
   }
-  return bVar3;
+  return bVar2;
 }
 
 
@@ -325,26 +325,26 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
 bool env_get_queue(uint param_1,uint param_2,uint param_3)
 
 {
-  bool bVar1;
-  uint uVar2;
-  int iVar3;
-  bool bVar4;
+  bool xPortIsInsideInterrupt_ret;
+  uint xQueueReceiveFromISR_ret;
+  int iVar1;
+  bool bVar2;
   int local_14 [2];
   
-  bVar4 = false;
+  bVar2 = false;
   local_14[0] = 0;
-  bVar1 = xPortIsInsideInterrupt();
-  if (bVar1) {
-    uVar2 = xQueueReceiveFromISR(param_1,param_2,local_14);
-    if ((uVar2 == 1) && (bVar4 = true, local_14[0] != 0)) {
+  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  if (xPortIsInsideInterrupt_ret) {
+    xQueueReceiveFromISR_ret = xQueueReceiveFromISR(param_1,param_2,local_14);
+    if ((xQueueReceiveFromISR_ret == 1) && (bVar2 = true, local_14[0] != 0)) {
       SCB_ICSR = 0x10000000;
     }
   }
   else {
-    iVar3 = xQueueReceive(param_1,param_2,param_3);
-    bVar4 = iVar3 == 1;
+    iVar1 = xQueueReceive(param_1,param_2,param_3);
+    bVar2 = iVar1 == 1;
   }
-  return bVar4;
+  return bVar2;
 }
 
 
@@ -355,7 +355,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
 bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  bool bVar1;
+  bool env_put_queue_ret;
   undefined4 local_14;
   undefined4 local_10;
   undefined4 uStack_c;
@@ -368,8 +368,8 @@ bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,
   local_14 = param_3;
   local_10 = param_1;
   uStack_c = param_2;
-  bVar1 = env_put_queue(param_4,(uint)&local_14,0);
-  return bVar1;
+  env_put_queue_ret = env_put_queue(param_4,(uint)&local_14,0);
+  return env_put_queue_ret;
 }
 
 
@@ -378,14 +378,15 @@ bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 int rpmsg_queue_create(int *param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  int iVar1;
+  int env_create_queue_ret;
   int local_c;
   undefined4 uStack_8;
   
   local_c = 0;
   if ((param_1 == (int *)0x0) ||
-     (uStack_8 = param_3, iVar1 = env_create_queue(&local_c,(uint)*(ushort *)(*param_1 + 0x52),0xc),
-     iVar1 != 0)) {
+     (uStack_8 = param_3,
+     env_create_queue_ret = env_create_queue(&local_c,(uint)*(ushort *)(*param_1 + 0x52),0xc),
+     env_create_queue_ret != 0)) {
     local_c = 0;
   }
   return local_c;
@@ -451,10 +452,10 @@ void virtqueue_notify(int param_1)
 void vq_tx_master(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  uint uVar1;
+  uint virtqueue_add_buffer_ret;
   
-  uVar1 = virtqueue_add_buffer(param_1,param_4);
-  if (uVar1 != 0) {
+  virtqueue_add_buffer_ret = virtqueue_add_buffer(param_1,param_4);
+  if (virtqueue_add_buffer_ret != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -522,47 +523,47 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
-  int *piVar2;
-  undefined4 *puVar3;
-  undefined4 uVar4;
+  int *pvPortMalloc_ret;
+  undefined4 *pvPortMalloc_ret_2;
+  undefined4 uVar2;
   undefined4 extraout_r2;
-  bool bVar5;
+  bool bVar3;
   
   if (param_1 == 0) {
     return (int *)0x0;
   }
   env_lock_mutex(*(uint *)(param_1 + 0xc));
   if (param_2 == -1) {
-    uVar4 = *(undefined4 *)(param_1 + 8);
+    uVar2 = *(undefined4 *)(param_1 + 8);
     param_2 = 1;
     do {
-      iVar1 = rpmsg_lite_get_endpoint_from_addr(uVar4,param_2);
+      iVar1 = rpmsg_lite_get_endpoint_from_addr(uVar2,param_2);
       if (iVar1 == 0) goto LAB_000862fa;
-      bVar5 = param_2 != -2;
-      uVar4 = extraout_r2;
+      bVar3 = param_2 != -2;
+      uVar2 = extraout_r2;
       param_2 = param_2 + 1;
-    } while (bVar5);
+    } while (bVar3);
   }
   else {
     iVar1 = rpmsg_lite_get_endpoint_from_addr(*(undefined4 *)(param_1 + 8),param_2);
     if (iVar1 == 0) {
 LAB_000862fa:
-      piVar2 = (int *)pvPortMalloc(0x10);
-      if (piVar2 != (int *)0x0) {
-        puVar3 = (undefined4 *)pvPortMalloc(0x10);
-        if (puVar3 == (undefined4 *)0x0) {
-          env_free_memory((int)piVar2);
+      pvPortMalloc_ret = (int *)pvPortMalloc(0x10);
+      if (pvPortMalloc_ret != (int *)0x0) {
+        pvPortMalloc_ret_2 = (undefined4 *)pvPortMalloc(0x10);
+        if (pvPortMalloc_ret_2 == (undefined4 *)0x0) {
+          env_free_memory((int)pvPortMalloc_ret);
           goto LAB_000862e0;
         }
-        memset(piVar2,0,0x10);
-        *piVar2 = param_2;
-        piVar2[1] = param_3;
-        piVar2[2] = param_4;
-        *puVar3 = piVar2;
-        add_to_list((int *)(param_1 + 8),(int)puVar3);
+        memset(pvPortMalloc_ret,0,0x10);
+        *pvPortMalloc_ret = param_2;
+        pvPortMalloc_ret[1] = param_3;
+        pvPortMalloc_ret[2] = param_4;
+        *pvPortMalloc_ret_2 = pvPortMalloc_ret;
+        add_to_list((int *)(param_1 + 8),(int)pvPortMalloc_ret_2);
       }
       env_unlock_mutex(*(uint *)(param_1 + 0xc));
-      return piVar2;
+      return pvPortMalloc_ret;
     }
   }
 LAB_000862e0:
@@ -774,14 +775,14 @@ void vq_ring_init(int param_1)
   ushort uVar1;
   int iVar2;
   int iVar3;
-  uint uVar4;
+  uint i;
   
-  uVar4 = 0;
+  i = 0;
   uVar1 = *(ushort *)(param_1 + 0x52);
   iVar2 = *(int *)(param_1 + 0x44);
-  while (iVar3 = iVar2 + uVar4 * 0x10, uVar4 < uVar1 - 1) {
-    uVar4 = uVar4 + 1;
-    *(short *)(iVar3 + 0xe) = (short)uVar4;
+  while (iVar3 = iVar2 + i * 0x10, i < uVar1 - 1) {
+    i = i + 1;
+    *(short *)(iVar3 + 0xe) = (short)i;
   }
   *(undefined2 *)(iVar3 + 0xe) = 0x8000;
   return;
@@ -807,15 +808,15 @@ void vPortYield(void)
 void SysTick_Handler(void)
 
 {
-  uint uVar1;
-  uint uVar2;
+  uint ulSetInterruptMask_ret;
+  uint xTaskIncrementTick_ret;
   
-  uVar1 = ulSetInterruptMask();
-  uVar2 = xTaskIncrementTick();
-  if (uVar2 != 0) {
+  ulSetInterruptMask_ret = ulSetInterruptMask();
+  xTaskIncrementTick_ret = xTaskIncrementTick();
+  if (xTaskIncrementTick_ret != 0) {
     SCB_ICSR = 0x10000000;
   }
-  vClearInterruptMask(uVar1);
+  vClearInterruptMask(ulSetInterruptMask_ret);
   return;
 }
 
@@ -887,14 +888,14 @@ void vClearInterruptMask(uint param_1)
 void * xEventGroupCreate(void)
 
 {
-  undefined4 *puVar1;
+  undefined4 *pvPortMalloc_ret;
   
-  puVar1 = (undefined4 *)pvPortMalloc(0x1c);
-  if (puVar1 != (undefined4 *)0x0) {
-    *puVar1 = 0;
-    vListInitialise(puVar1 + 1);
+  pvPortMalloc_ret = (undefined4 *)pvPortMalloc(0x1c);
+  if (pvPortMalloc_ret != (undefined4 *)0x0) {
+    *pvPortMalloc_ret = 0;
+    vListInitialise(pvPortMalloc_ret + 1);
   }
-  return puVar1;
+  return pvPortMalloc_ret;
 }
 
 
@@ -904,7 +905,7 @@ uint xEventGroupWaitBits(uint *param_1,uint param_2,int param_3,int param_4,int 
 
 {
   uint uVar1;
-  uint uVar2;
+  uint xTaskResumeAll_ret;
   
   if (param_1 == (uint *)0x0) {
     ulSetInterruptMask();
@@ -958,11 +959,11 @@ LAB_00086652:
       *param_1 = uVar1 & ~param_2;
     }
   }
-  uVar2 = xTaskResumeAll();
+  xTaskResumeAll_ret = xTaskResumeAll();
   if (param_5 == 0) {
     return uVar1;
   }
-  if (uVar2 == 0) {
+  if (xTaskResumeAll_ret == 0) {
     vPortYield();
   }
   uVar1 = uxTaskResetEventItemValue();

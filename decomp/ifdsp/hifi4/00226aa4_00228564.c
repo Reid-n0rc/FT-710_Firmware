@@ -1,40 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== xos_msgq_create @ 00226a50 (82 bytes)
-
-/* called by Thread_Ipc and the other thread creators [inference] */
-
-undefined4 xos_msgq_create(int param_1,int param_2,uint param_3,uint param_4)
-
-{
-  undefined4 uVar1;
-  undefined2 uVar2;
-  
-  if (((param_1 == 0) || (param_2 == 0)) || ((param_3 & 3) != 0)) {
-    uVar1 = 0xffff0001;
-  }
-  else {
-    ae_s16i_n(param_4,param_1,0);
-    *(uint *)(param_1 + 4) = param_3;
-    *(short *)(param_1 + 2) = (short)param_2;
-    *(int *)(param_1 + 0x1c) = param_1 + 0x18;
-    *(int *)(param_1 + 0x10) = param_1 + 0xc;
-    uVar1 = 0;
-    *(undefined2 *)(param_1 + 8) = 0;
-    *(undefined2 *)(param_1 + 10) = 0;
-    *(undefined4 *)(param_1 + 0xc) = 0;
-    uVar2 = 1;
-    *(undefined4 *)(param_1 + 0x18) = 0;
-    if ((param_4 & 1) != 0) {
-      uVar2 = 2;
-    }
-    *(undefined2 *)(param_1 + 0x14) = uVar2;
-    *(undefined2 *)(param_1 + 0x20) = uVar2;
-  }
-  return uVar1;
-}
-
-
 // ===== xos_msgq_delete @ 00226aa4 (147 bytes)
 
 /* XOS: wakes the waiters with 0xFFFF000E [inference] */
@@ -2618,5 +2583,101 @@ LAB_00228523:
     FUN_00227f58();
   }
   return iVar2;
+}
+
+
+// ===== FUN_00228564 @ 00228564 (207 bytes)
+
+undefined8 FUN_00228564(int param_1,undefined4 param_2,uint param_3,int param_4)
+
+{
+  undefined6 uVar1;
+  uint uVar2;
+  uint uVar3;
+  int iVar4;
+  uint uVar5;
+  int iVar6;
+  undefined4 in_CCOUNT;
+  undefined1 in_st_PSINTLEVEL;
+  undefined1 uVar7;
+  undefined1 in_st_PSUM;
+  undefined1 uVar8;
+  undefined1 in_st_PSWOE;
+  undefined1 uVar9;
+  undefined1 in_st_PSEXCM;
+  undefined1 uVar10;
+  undefined1 in_st_PSCALLINC;
+  undefined1 uVar11;
+  undefined1 in_st_PSOWB;
+  undefined1 uVar12;
+  
+  if (param_1 != 0) {
+    if (*(char *)(param_1 + 0x20) != '\0') {
+      FUN_002284e8(param_1);
+    }
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    ;
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
+      in_st_PSWOE = (undefined1)uVar1;
+      in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
+      in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
+      in_st_PSUM = (undefined1)((uint6)uVar1 >> 0x18);
+      in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
+      in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
+      rsync();
+    }
+    uVar2 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    ;
+    uVar1 = wsr_ps(uVar3 & 0xf | uVar2 & 0xfffffff0);
+    rsync();
+    iVar6 = rsr_ccount(in_CCOUNT);
+    uVar3 = (iVar6 - DAT_002cb6a0) + DAT_002cb698;
+    iVar4 = DAT_002cb69c;
+    if (uVar3 < (uint)(iVar6 - DAT_002cb6a0)) {
+      iVar4 = DAT_002cb69c + 1;
+    }
+    iVar4 = param_4 + iVar4;
+    uVar3 = param_3 + uVar3;
+    uVar2 = uVar3;
+    if (*(int *)(param_1 + 0x14) != 0) {
+      uVar2 = 1;
+    }
+    if (uVar3 < param_3) {
+      iVar4 = iVar4 + 1;
+    }
+    *(uint *)(param_1 + 8) = uVar3;
+    uVar3 = uVar2;
+    if (*(int *)(param_1 + 0x10) != 0) {
+      uVar3 = 1;
+    }
+    *(int *)(param_1 + 0xc) = iVar4;
+    uVar5 = param_3;
+    iVar4 = param_4;
+    if (uVar3 == 0 && uVar2 == 0) {
+      uVar5 = 0;
+      iVar4 = 0;
+    }
+    *(int *)(param_1 + 0x14) = iVar4;
+    *(uint *)(param_1 + 0x10) = uVar5;
+    uVar3 = rsr_ps((char)uVar1,(char)((uint6)uVar1 >> 8),(char)((uint6)uVar1 >> 0x10),
+                   (char)((uint6)uVar1 >> 0x18),(char)((uint6)uVar1 >> 0x20),
+                   (char)((uint6)uVar1 >> 0x28));
+    uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
+    uVar9 = (undefined1)uVar1;
+    uVar11 = (undefined1)((uint6)uVar1 >> 8);
+    uVar12 = (undefined1)((uint6)uVar1 >> 0x10);
+    uVar8 = (undefined1)((uint6)uVar1 >> 0x18);
+    uVar10 = (undefined1)((uint6)uVar1 >> 0x20);
+    uVar7 = (undefined1)((uint6)uVar1 >> 0x28);
+    rsync();
+    FUN_00228748(param_1,2,param_3,param_4);
+    *(undefined1 *)(param_1 + 0x20) = 1;
+    uVar2 = rsr_ps(uVar9,uVar11,uVar12,uVar8,uVar10,uVar7);
+    wsr_ps(uVar2 & 0xfffffff0 | uVar3 & 0xf);
+    rsync();
+    return 0xfffffff000000000;
+  }
+  return CONCAT44(param_2,0xffff0001);
 }
 

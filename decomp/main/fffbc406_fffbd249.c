@@ -243,7 +243,7 @@ void scope_cursor_center(void)
 {
   byte bVar1;
   bool local_b;
-  byte bStack_a;
+  byte i;
   uint local_8;
   
   if (g_opstate.active_vfo == VFO_A) {
@@ -260,8 +260,8 @@ void scope_cursor_center(void)
   bVar1 = scope_span_index(local_b);
   local_8 = local_8 - (*(uint *)(scope_span_table + (uint)bVar1 * 4) >> 1);
   PTR_g_ui_00025d54->scope_cursor_start = local_8;
-  for (bStack_a = 0; bStack_a < 4; bStack_a = bStack_a + 1) {
-    g_opstate.scope_cursor_start_be[bStack_a] = (byte)(local_8 >> ((3 - bStack_a & 3) << 3));
+  for (i = 0; i < 4; i = i + 1) {
+    g_opstate.scope_cursor_start_be[i] = (byte)(local_8 >> ((3 - i & 3) << 3));
   }
   bandmem_set('\x01',local_8);
   return;
@@ -284,7 +284,7 @@ void FUN_fffbc782(void)
 
 {
   bool bVar1;
-  ui_state *puVar2;
+  ui_state *p_ui_state;
   
   if (PTR_g_ui_00025d54->ch_step_mode == 1) {
     beep_request(1);
@@ -302,12 +302,12 @@ void FUN_fffbc782(void)
     }
     else {
       ui_clear_415_423();
-      puVar2 = PTR_g_ui_00025d54;
+      p_ui_state = PTR_g_ui_00025d54;
       PTR_g_ui_00025d54->keypad_bcd[4] = 0xff;
-      puVar2->keypad_bcd[0] = 0xff;
-      puVar2->keypad_bcd[1] = 0xff;
-      puVar2->keypad_bcd[2] = 0xff;
-      puVar2->keypad_bcd[3] = 0xff;
+      p_ui_state->keypad_bcd[0] = 0xff;
+      p_ui_state->keypad_bcd[1] = 0xff;
+      p_ui_state->keypad_bcd[2] = 0xff;
+      p_ui_state->keypad_bcd[3] = 0xff;
       PTR_g_ui_00025d54->keypad_open = 1;
       FUN_fffe1e70();
       PTR_g_ui_00025d54->keypad_pos = 0;
@@ -513,8 +513,8 @@ void key_011_press(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte vfo_mode_ret_2;
+  uint vfo_mode_ret;
   
   bVar1 = false;
   menu_close_if_open();
@@ -525,9 +525,9 @@ void key_011_press(void)
     bVar1 = true;
   }
   else {
-    bVar2 = vfo_mode(0);
-    uVar3 = (uint)bVar2;
-    if ((uVar3 - 6 < 2) || (uVar3 == 10 || uVar3 == 0xb)) {
+    vfo_mode_ret_2 = vfo_mode(0);
+    vfo_mode_ret = (uint)vfo_mode_ret_2;
+    if ((vfo_mode_ret - 6 < 2) || (vfo_mode_ret == 10 || vfo_mode_ret == 0xb)) {
       bVar1 = true;
     }
   }
@@ -825,7 +825,7 @@ void FUN_fffbcf91(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte vfo_mode_ret;
   
   menu_close_if_open();
   func_panel_close();
@@ -837,20 +837,20 @@ void FUN_fffbcf91(void)
     PTR_g_ui_00025d54->key_consumed = 1;
     return;
   }
-  bVar2 = vfo_mode(0);
-  if ((bVar2 == 6) || (bVar2 == 7)) {
+  vfo_mode_ret = vfo_mode(0);
+  if ((vfo_mode_ret == 6) || (vfo_mode_ret == 7)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar2 == 10)) {
+  if ((bVar1) || (vfo_mode_ret == 10)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar2 == 0xb)) {
+  if ((bVar1) || (vfo_mode_ret == 0xb)) {
     bVar1 = true;
   }
   else {

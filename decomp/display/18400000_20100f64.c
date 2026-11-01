@@ -589,15 +589,15 @@ void spibsc0_pins_init(void)
 void spibsc0_init(void)
 
 {
-  uint uVar1;
+  uint spibsc_drdmcr_0;
   
   spibsc0_pins_init();
   SPIBSC_SPBCR_0 = 1;
   SPIBSC_DRCMR_0 = 0xeb0000;
   SPIBSC_DRENR_0 = 0x222c780;
   SPIBSC_DROPR_0 = 0xff000000;
-  uVar1 = SPIBSC_DRDMCR_0;
-  SPIBSC_DRDMCR_0 = uVar1 | 3;
+  spibsc_drdmcr_0 = SPIBSC_DRDMCR_0;
+  SPIBSC_DRDMCR_0 = spibsc_drdmcr_0 | 3;
   return;
 }
 
@@ -708,25 +708,25 @@ void crc16_a001_table_init(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint j;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   do {
-    uVar2 = 0;
-    uVar1 = uVar3;
+    j = 0;
+    uVar1 = i;
     do {
-      uVar2 = uVar2 + 1;
+      j = j + 1;
       if ((uVar1 & 1) == 0) {
         uVar1 = uVar1 >> 1;
       }
       else {
         uVar1 = uVar1 >> 1 ^ 0xa001;
       }
-    } while (uVar2 < 8);
-    (&DAT_208d9560)[uVar3] = uVar1 & 0xffff;
-    uVar3 = uVar3 + 1;
-  } while (uVar3 < 0x100);
+    } while (j < 8);
+    (&DAT_208d9560)[i] = uVar1 & 0xffff;
+    i = i + 1;
+  } while (i < 0x100);
   return;
 }
 
@@ -754,13 +754,13 @@ void crc32_make_table(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint j;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   do {
-    uVar2 = 0;
-    uVar1 = uVar3;
+    j = 0;
+    uVar1 = i;
     do {
       if ((uVar1 & 1) == 0) {
         uVar1 = uVar1 >> 1;
@@ -768,11 +768,11 @@ void crc32_make_table(void)
       else {
         uVar1 = uVar1 >> 1 ^ 0xedb88320;
       }
-      uVar2 = uVar2 + 1;
-    } while (uVar2 < 8);
-    (&DAT_208d9560)[uVar3] = uVar1;
-    uVar3 = uVar3 + 1;
-  } while (uVar3 < 0x100);
+      j = j + 1;
+    } while (j < 8);
+    (&DAT_208d9560)[i] = uVar1;
+    i = i + 1;
+  } while (i < 0x100);
   return;
 }
 
@@ -804,10 +804,10 @@ uint FUN_20100a88(uint param_1)
 void FUN_20100a98(int param_1,undefined1 param_2,uint param_3)
 
 {
-  uint uVar1;
+  uint i;
   
-  for (uVar1 = 0; uVar1 < param_3; uVar1 = uVar1 + 1) {
-    *(undefined1 *)(param_1 + uVar1) = param_2;
+  for (i = 0; i < param_3; i = i + 1) {
+    *(undefined1 *)(param_1 + i) = param_2;
   }
   return;
 }
@@ -822,13 +822,13 @@ void boot_select_bank(void)
 
 {
   bool bVar1;
-  int iVar2;
-  bool bVar3;
+  bool bVar2;
+  int spibsc_dropr_1;
   
-  bVar3 = false;
+  bVar2 = false;
   bVar1 = false;
-  iVar2 = SPIBSC_DROPR_1;
-  if (iVar2 == 0) {
+  spibsc_dropr_1 = SPIBSC_DROPR_1;
+  if (spibsc_dropr_1 == 0) {
     SPIBSC_DROPR_1 = 0x20000000;
     FUN_20100a98(0x20000000,0,0x60);
     _DAT_20000000 = 0xbbbb;
@@ -839,7 +839,7 @@ void boot_select_bank(void)
     uRam20000040 = 0x3f0000;
     uRam20000044 = 0xa00000;
     if (DAT_183e0000 == 0x11111111) {
-      bVar3 = DAT_183e0004 != 0;
+      bVar2 = DAT_183e0004 != 0;
     }
     else if (DAT_183f0000 == 0x11111111) {
       if (DAT_183f0004 == 0) {
@@ -849,7 +849,7 @@ void boot_select_bank(void)
         bVar1 = true;
       }
     }
-    if (bVar3) {
+    if (bVar2) {
       if (!bVar1) {
         _DAT_20000000 = 1;
         FUN_18400000();
@@ -1385,11 +1385,11 @@ void mmu_l1_table_init(void)
 {
   int iVar1;
   int *piVar2;
-  int iVar3;
+  int i;
   
   iVar1 = 0x10c02;
   piVar2 = &DAT_2044c000;
-  for (iVar3 = 0x1000; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x1000; i != 0; i = i + -1) {
     *piVar2 = iVar1;
     iVar1 = iVar1 + 0x100000;
     piVar2 = piVar2 + 1;

@@ -62,7 +62,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | DISPLAY |
 |---|---:|
-| Functions exported (non-thunk) | 2,212 |
+| Functions exported (non-thunk) | 2,213 |
 | Decompile failures | 0 |
 | Decompiler warnings (all kinds) | 212 |
 | Functions with a warning | 68 |
@@ -70,10 +70,10 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | "Removing unreachable block" | 147 |
 | `halt_baddata()` calls | 4 |
 | Functions with `halt_baddata()` | 4 |
-| Functions with `in_*` variables | 62 |
-| Functions with `unaff_*` variables | 44 |
-| Functions with `extraout_*` variables | 78 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 166 |
+| Functions with `in_*` variables | 60 |
+| Functions with `unaff_*` variables | 43 |
+| Functions with `extraout_*` variables | 67 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 158 |
 | Undefined non-0xFF bytes in executable blocks | 86 |
 | … in block `.text` | 86 |
 | Error bookmarks | 1 |
@@ -82,10 +82,10 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | warning: Control flow encountered bad instruction data | 4 |
 | warning: Could not recover jumptable at #. Too many branches | 17 |
 | warning: Do nothing block with infinite loop | 6 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 12 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 13 |
 | warning: Removing unreachable block (#) | 147 |
 | warning: Treating indirect jump as call | 17 |
-| warning: Type propagation algorithm not settling | 5 |
+| warning: Type propagation algorithm not settling | 4 |
 <!-- quality:end -->
 
 ## Notable functions
