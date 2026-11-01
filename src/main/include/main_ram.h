@@ -151,4 +151,25 @@ extern uint8_t pc_key_last;               /* 0x12051: last P14 level seen by trx
 extern uint32_t spk_route;                /* 0x20FCC: speaker route 0..4 (speaker_route); a 32-bit word: every access is MOV.L */
 extern uint8_t ptt_source;                /* 0x1204D: what keyed TX [fact: ptt_source_get 0xFFFB6EC7] */
 
+/* beeps and tones (app/beep.c, round 5) [fact: the addresses in beep_task / beep_request / tone_set] */
+extern uint8_t beep_state;                /* 0x12040: idle, start, playing, stop */
+extern uint8_t beep_pattern;              /* 0x12041: the requested pattern */
+extern uint8_t beep_step;                 /* 0x1B3E2: the pattern's next step */
+extern uint8_t beep_last_pattern;         /* 0x1B3E3: the pattern of the last pass (the RTTY tones hold) */
+extern float beep_cw_freq;                /* 0x25D40: the CW pitch tone playing, Hz */
+extern uint16_t tone_table[36];           /* 0x1FF1C: one cycle of DA0 samples (tone_play, tone_idle) */
+
+/* meters and squelch (app/meters.c, round 5) [fact: the addresses in meter_vdd .. signal_level_squelch] */
+extern float vdd_scale;                   /* 0x20FC0: supply meter scale (vdd_scale_calc) */
+extern float swr_value;                   /* 0x20FC4: the SWR of the last pass */
+extern uint8_t meter_vdd_val;             /* 0x12043 */
+extern uint8_t meter_swr_val;             /* 0x12046 */
+extern uint8_t meter_swr_pos;             /* 0x12047 */
+extern uint8_t meter_po_val;              /* 0x12048 */
+extern uint8_t meter_comp_val;            /* 0x12049 */
+extern uint8_t meter_s_val;               /* 0x1204A */
+extern uint8_t swr_good_count;            /* 0x1B4C6 */
+extern uint8_t swr_bad_count;             /* 0x1B4C7 */
+extern uint8_t fm_sql_last_mode;          /* 0x1B4CB */
+
 #endif

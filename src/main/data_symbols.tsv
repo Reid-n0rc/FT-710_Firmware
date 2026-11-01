@@ -153,3 +153,22 @@ scan_state	18877	scan_task 0xFFFE58B0 (the switch): the scan state 0..7
 scan_busy_wait	18873	scan_task: 1 with soft timer 0x33 = 500 when the scan stops on a busy channel (state 2 -> 3)
 scan_resume_wait	18874	scan_task: 1 with soft timer 0x34 = 1500 (states 4 -> 5, 6 -> 7)
 g_ui_ptr3	25d7c	scan_task 0xFFFE5884: a third pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d7c)
+beep_state	12040	beep_task 0xFFFB28E4..0xFFFB2902 compares it with 1, 2, 3; beep_request 0xFFFB2DE7 sets 1, beep_stop 0xFFFB2DF4 sets 3
+beep_pattern	12041	beep_request 0xFFFB2DE5 stores the pattern; beep_task 0xFFFB2920 switches on it
+beep_step	1b3e2	beep_task: cleared on start (0xFFFB28F9), compared and incremented in each pattern (0xFFFB2942..0xFFFB295E)
+beep_last_pattern	1b3e3	beep_task: = beep_pattern after each pass; the RTTY cases compare it with 9, 10, 11
+beep_cw_freq	25d40	beep_task 0xFFFB2A3D..0xFFFB2A50: FCMP with and store of the CW pitch tone (float)
+tone_table	1ff1c	tone_set 0xFFFB2E85 passes it to tone_play with 36; tone_idle 0xFFFB2E11 writes its first word to DA0
+vdd_scale	20fc0	meter_vdd 0xFFFB7493: FMUL by the float at 0x20FC0 after vdd_scale_calc
+meter_vdd_val	12043	meter_vdd 0xFFFB74B1: the smoothed supply meter byte
+swr_good_count	1b4c6	swr_meter_protect 0xFFFB7621..0xFFFB7637: passes inside [1, 5), cleared by a bad one
+swr_bad_count	1b4c7	swr_meter_protect 0xFFFB75DC..0xFFFB75F2: passes outside [1, 5), cleared by a good one
+swr_value	20fc4	swr_meter_protect 0xFFFB76B6: the SWR (float) after the pinning
+meter_swr_pos	12047	swr_meter_protect 0xFFFB7760: the SWR meter position before smoothing
+meter_swr_val	12046	swr_meter_protect 0xFFFB776E: FUN_fffb9422 of the position
+meter_po_val	12048	meter_po 0xFFFB7865: FUN_fffb94f9 of the PO position
+meter_comp_val	12049	meter_comp 0xFFFB7954: the COMP meter position
+meter_s_val	1204a	meter_s 0xFFFB7A26 / 0xFFFB7A3A: 0 in TX, else FUN_fffb959c of the S position
+fm_sql_last_mode	1b4cb	fm_noise_squelch 0xFFFB7D42 / 0xFFFB7D5A: the mode of the last pass, while FM
+po_meter_segs	fff88c74	meter_po 0xFFFB77FE..0xFFFB7827: 8 rows of {bound, slope, offset} floats
+s_meter_segs	fff88bfc	meter_s 0xFFFB7988..0xFFFB79D0: 10 rows of {slope, offset, bound} floats

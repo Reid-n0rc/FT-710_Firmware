@@ -51,6 +51,7 @@ import random
 import re
 import shutil
 import signal
+import struct
 import subprocess
 import sys
 import tempfile
@@ -85,7 +86,8 @@ STUBS = {'eeprom_read': 3, 'eeprom_write': 3}
 # Width in bytes of each recorded stub argument: only those bits reach the callee (eeprom_read/eeprom_write store
 # the 16-bit address and length with MOV.W and reload them with MOVU.W, 0xFFFB14A4/0xFFFB14ED), while CC-RX and GCC
 # leave different upper bits in the register (MOVU.W vs MOV.W)
-STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
+STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2),
+               'tone_set': (4, 2)}       # tone_set stores ms with MOV.W (0xFFFB2E23)
 # eeprom_write's buffer: its bytes are recorded and compared; the buffer address of both only when it is not on the
 # stack (a callee's stack buffer moves with the caller's frame, which differs between CC-RX -O0 and GCC; T24 MAIN
 # round 3: cat_ext_SP -> cat_SP_eeprom_byte reads and writes a stack byte)
@@ -103,7 +105,7 @@ STACK_PTR_SLOTS = (0x207FC,)
 # only callees whose effects the function does not read back are stubbed.
 # Trials per function as a multiple of --trials, where the cases to reach outnumber the default (round 4: cat_dispatch
 # has about 500 (index, length) pairs)
-FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2}
+FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2, 'beep_task': 2}
 FUNC_STUBS = {
     'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
     # scan_task: the predicates are functions of the receiver state; stubbed with 0 / 1
@@ -123,6 +125,9 @@ FUNC_STUBS = {
     'tuner_rearm': {'FUN_fffed6f5': (0, [0, 1, 1]), 'vfo_tuner_bit_get': (0, [0, 1])},
     # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
     'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
+    # beep_task: tone_set stubbed, so the tone's float bits are compared (through tone_set only the truncated TPU
+    # period is seen: a mutation 1046.502 -> 1046.5 passed)
+    'beep_task': {'swtimer_expired': (1, [0, 1, 1, 1]), 'tone_set': (2, [0])},
     'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
                    'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
 }
@@ -262,6 +267,7 @@ def forms(dis):
 
 
 _MAIN_FORMS = None
+FPU_MNEMONICS = {'fadd', 'fsub', 'fmul', 'fdiv', 'fcmp', 'fsqrt', 'ftoi', 'ftou', 'round', 'itof', 'utof'}
 
 
 def main_forms(img):
@@ -890,6 +896,24 @@ def g_ui_ptr_ok(pre=None):
     return f
 
 
+def beep_task_args(rng, regs):
+    """beep_task (round 5): the state 0..3 (mostly PLAYING), the pattern 0..12, the step 0..10, the last pattern,
+    the RTTY menus, and the CW pitch tone either the menu's pitch (only the timer restarts) or another float."""
+    pitch = rng.randrange(256)
+    cw = struct.pack('<f', pitch * 10.0 + 300.0) if rng.random() < 0.5 else rng.getrandbits(32).to_bytes(4, 'little')
+    loads, _ = ram_bytes({0x12040: (0, 1, 2, 2, 2, 2, 2, 3), 0x12041: range(13), 0x1B3E2: range(11),
+                          0x1B3E3: list(range(13)) * 2 + [9, 10, 11] * 4, 0x9A8C: (0, 1), 0x9A8D: range(5)})(rng, regs)
+    return loads + [(0x9C04, bytes([pitch])), (0x25D40, cw)], None
+
+
+def adc_words(*addrs):
+    """16-bit ADC readings that are 0, small or random (swr_meter_protect: both 0 is the NaN case, <= 10 pins)."""
+    def pre(rng, regs):
+        return [(a, rng.choice([0, 0, 3, 10, 11, 200, rng.randrange(0x1000), rng.randrange(0x10000)]).to_bytes(2, 'little'))
+                for a in addrs], None
+    return pre
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -922,7 +946,12 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
                                                       (G_UI + 0x489, b'\0\0\0')], None)),
            'io_task': ram_bytes({G_UI + 0x2C: (0, 0, 1, 2), G_UI + 0x82: (0, 1), G_UI + 0xBA: (0, 1),
                                  G_UI + 0x40: (0, 1), G_UI + 0x14: (8, 8, 1, 3)}),
-           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}),
+           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}), 'beep_task': beep_task_args,
+           'swr_meter_protect': both(adc_words(G_UI, G_UI + 2),
+                                     ram_bytes({G_UI + 0x67: (0, 1, 1, 1), G_UI + 0x3D: (0, 2), 0x1B4C6: range(11),
+                                                0x1B4C7: range(11)})),
+           'meter_po': both(adc_words(G_UI + 2), ram_bytes({G_UI + 0x1A: (0, 1, 8, 60, 255)})),
+           'beep_request': ram_bytes({0x12041: (0, 0, 4, 1, 9)}),
            'scan_task': both(ram_bytes({0x18877: range(9), G_UI + 0x418: (0, 1, 1, 1), G_UI + 0xBA: (0, 0, 0, 1)}),
                              lambda rng, regs: ([(0x25D7C, G_UI.to_bytes(4, 'little'))], None)),
            'displink_build_37': g_ui_ptr_ok(), 'displink_task': displink_task_args, 'displink_build_60': g_ui_ptr_ok(),
@@ -1003,8 +1032,11 @@ def compare(a, b, ret, isr, init_regs):
                 return f'R{i + 1}'
         if (a['psw'] ^ b['psw']) & 0x0F010000:
             return 'PSW'
-        if a.get("fpsw") != b.get("fpsw"):      # the FPU flags (RxFpu, round 5): MAIN reads FPSW only in its FPU
-            return "FPSW"                       # exception handler and FUN_fff916ac; compared all the same
+        # FPSW (RxFpu, round 5): its mode bits RM, DN and EV..EX; the cause and accumulated flags are not compared:
+        # MAIN reads them only in the FPU exception handler, which never runs (the exceptions stay masked), and GCC
+        # folds constant operations whose inexact flag the original sets at run time (meter_comp)
+        if (a.get("fpsw", 0x100) ^ b.get("fpsw", 0x100)) & 0x7D03:
+            return "FPSW"
     for k in ('mmio', 'calls', 'diff'):
         if a[k] != b[k]:
             return {'mmio': 'peripheral accesses', 'calls': 'stub calls', 'diff': 'RAM'}[k]
@@ -1064,8 +1096,10 @@ class Checker:
         lk = Linked(path, fname)
         if lk.rw:
             return oaddr, 'not yet', f'the recreated code has {lk.rw} bytes of .data/.bss (must use the image\'s RAM)'
-        # JMP, FTOI, ROUND and FTOU are executed by EquivMainEmu.java itself (rounds 1 and 4)
-        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r', 'ftoi r, r', 'round r, r', 'ftou r, r'})
+        # JMP and every FPU instruction are executed by EquivMainEmu.java itself (rounds 1, 4 and 5; the FPU forms
+        # checked by tools/rx_fpu_check.py)
+        unverified = sorted(f for f in new_forms(path) - main_forms(self.img)
+                            if f != 'jmp r' and f.split(' ')[0] not in FPU_MNEMONICS)
         note = f'; instruction forms the MAIN image does not use (semantics not checked by T22a): {", ".join(unverified)}' \
             if unverified else ''
         eng = self.engine()
