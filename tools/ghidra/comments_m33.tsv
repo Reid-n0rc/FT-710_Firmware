@@ -1,0 +1,18 @@
+# Curated inline comments for FT710_IFDSP, Cortex-M33 program (T23i), applied by tools/ghidra/CommentCode.java.
+# address<TAB>comment (one short line)<TAB>evidence: [fact: <address or doc>] or [inference] / [inference: <reason>]
+# Taken from docs/code/ifdsp/; find the address of a C line with tools/ghidra/DecompLines.java. No [guess] rows.
+# --- console_rx_char (control-link.md "Line editor", "Interactive mode", "Machine mode")
+000814bc	Echo the character (echo flag 0x88D2E)	[fact: control-link.md]
+00081518	CR/LF (mask 0x2401): end of line, tokenize and run	[fact: control-link.md]
+0008154e	Split at whitespace: up to 4 tokens of 15 chars	[fact: control-link.md]
+00081638	Interactive mode: lower-case every token	[fact: control-link.md]
+000816c0	Machine mode: the rest of argv[0] must be hex	[fact: control-link.md]
+000816d6	7-char frame: checksum of the first 5 chars	[fact: control-link.md]
+00081790	d: dump 64 words, 8 per line	[fact: control-link.md]
+000817c2	Pace the dump to the UART	[fact: control-link.md]
+0008172c	r: read reply "r" + value + sum, no CR	[fact: control-link.md]
+000817e2	i DB00 / DB01: machine or interactive mode	[fact: control-link.md]
+00081834	11-char w frame with a good checksum, else ?	[fact: control-link.md]
+00081882	w: write the register, reply ACK 0x06	[fact: control-link.md]
+000815e6	Interactive: look argv[0] up in table 0x8795C	[fact: control-link.md]
+00081674	Unknown command or too many tokens: ?	[fact: control-link.md]
