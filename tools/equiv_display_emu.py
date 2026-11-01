@@ -1404,13 +1404,65 @@ def clobbers(obj, shndx, off, size, md):
     return out
 
 
+def _reads_after(insns, k, names, clob, returned):
+    """The first instruction among the 12 after the call insns[k] (up to the first branch or return) that reads a
+    register of names that clob holds, returned does not, and nothing has written since: (address, registers) or
+    None. Pushes and stores to sp! do not count as reads."""
+    import capstone
+    written = set()
+    for j in insns[k + 1:k + 13]:
+        rd, wr = j.regs_access()
+        if j.mnemonic.startswith('push') or (j.mnemonic.startswith('stm') and j.op_str.startswith('sp!')):
+            rd = []
+        bad = [r for r in rd if r in names and r in clob and r not in written and r not in returned]
+        if bad:
+            return j.address, ', '.join(names[r] for r in bad)
+        written |= set(wr)
+        if (j.group(capstone.CS_GRP_JUMP) or j.group(capstone.CS_GRP_CALL) or j.group(capstone.CS_GRP_RET)
+                or capstone.arm.ARM_REG_PC in wr):
+            return None
+    return None
+
+
+def _indirect_call(insns, k):
+    """True when insns[k] calls through a register: blx rN, or the pre-v5 pair mov lr, pc + a write of pc
+    (bx rN, ldr pc, mov pc) with insns[k] the second."""
+    import capstone
+    i = insns[k]
+    if i.mnemonic == 'blx' and not i.op_str.startswith('#'):
+        return True
+    if k and insns[k - 1].mnemonic == 'mov' and insns[k - 1].op_str == 'lr, pc':
+        return capstone.arm.ARM_REG_PC in i.regs_access()[1]
+    return False
+
+
+def address_taken(res, entries):
+    """The entries (original addresses) that the image holds as a word anywhere in memory after __scatterload: in a
+    literal pool, a function table, initialised data (with the Thumb bit as stored): the possible targets of its
+    calls through a register. armcc's A32 code loads addresses from literal pools, not with movw/movt [fact: the
+    function pointers of the round-6 TCON table and line callback are pool words]."""
+    want = {}
+    for a, thumb in entries:
+        want[a | (1 if thumb else 0)] = a
+    out = set()
+    for lo, data in res.img.regions:
+        for o in range(0, len(data) - 3, 4):
+            w = struct.unpack_from('<I', data, o)[0]
+            if w in want:
+                out.add(want[w])
+    return out
+
+
 def abi_hazards():
-    """[(function, caller, address, registers)]: call sites in the image that read r1, r2, r3 or ip after calling a
-    recreated function that may change that register and does not return it (a linear scan of up to 12
-    instructions after the call, to the first branch or return; pushes do not count as reads). armcc keeps registers
-    across calls it knows do not touch them (sdhi_error_reset keeps r2, r3, ip across sdhi_soft_reset) and its
-    library returns more than the AAPCS says (_ll_udiv10: the remainder in r2): neither shows in the differential
-    check, which compares the registers of the C return type, but the image's own callers break in the hybrid."""
+    """[(function, caller, address, registers, call)]: call sites in the image that read r1, r2, r3 or ip after
+    calling a recreated function that may change that register and does not return it (_reads_after). armcc keeps
+    registers across calls it knows do not touch them (sdhi_error_reset keeps r2, r3, ip across sdhi_soft_reset) and
+    its library returns more than the AAPCS says (_ll_udiv10: the remainder in r2): neither shows in the
+    differential check, which compares the registers of the C return type, but the image's own callers break in the
+    hybrid. Direct calls (bl/blx #imm) name their callee; a call through a register (round 7) can reach every
+    recreated function whose entry the image holds as data (address_taken), so a read there counts against each
+    of them. Returns (rows, recreated functions checked, indirect call sites, of them reading a scratch register,
+    address-taken recreated functions)."""
     import capstone
     res = Resolver(Image())
     img = res.img.file
@@ -1423,46 +1475,50 @@ def abi_hazards():
     for obj, fname, shndx, off in recreated():
         o = res.func(fname)
         if o and fname not in ident:          # byte-identical code behaves as the original at every call site
-            targets[o[0]] = (fname, clobbers(obj, shndx, off, obj.extent(shndx, off), md[False]))
+            targets[o[0]] = (fname, clobbers(obj, shndx, off, obj.extent(shndx, off), md[False]), o[1])
+    taken = address_taken(res, [(a, t[2]) for a, t in targets.items()])
     rets = _ret_sizes()
     names = {capstone.arm.ARM_REG_R1: 'r1', capstone.arm.ARM_REG_R2: 'r2', capstone.arm.ARM_REG_R3: 'r3',
              capstone.arm.ARM_REG_R12: 'ip'}
-    out = []
+    scratch = set(names)
+
+    def returned(fname):
+        size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
+        r = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
+        if size_ret >= 16:
+            r |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
+        return r
+
+    out, n_ind, n_ind_read = [], 0, 0
     for g, (a, size, thumb) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
         if not BASE <= a < 0x20165178 or size <= 0:
             continue
         insns = list(md[thumb].disasm(img[a - BASE:a - BASE + size], a))
         for k, i in enumerate(insns):
-            if i.mnemonic not in ('bl', 'blx') or not i.op_str.startswith('#'):
+            if i.mnemonic in ('bl', 'blx') and i.op_str.startswith('#'):
+                t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
+                if t:
+                    hit = _reads_after(insns, k, names, t[1], returned(t[0]))
+                    if hit:
+                        out.append((t[0], g, hit[0], hit[1], i.address))
                 continue
-            t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
-            if not t:
+            if not _indirect_call(insns, k):
                 continue
-            fname, clob = t
-            size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
-            returned = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
-            if size_ret >= 16:
-                returned |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
-            written = set()
-            for j in insns[k + 1:k + 13]:
-                rd, wr = j.regs_access()
-                if j.mnemonic.startswith('push') or (j.mnemonic.startswith('stm') and j.op_str.startswith('sp!')):
-                    rd = []
-                bad = [r for r in rd if r in names and r in clob and r not in written and r not in returned]
-                if bad:
-                    out.append((fname, g, j.address, ', '.join(names[r] for r in bad), i.address))
-                    break
-                written |= set(wr)
-                if (j.group(capstone.CS_GRP_JUMP) or j.group(capstone.CS_GRP_CALL) or j.group(capstone.CS_GRP_RET)
-                        or capstone.arm.ARM_REG_PC in wr):
-                    break
-    return out, len(targets)
+            n_ind += 1
+            if _reads_after(insns, k, names, scratch, set()):
+                n_ind_read += 1
+                for ta in sorted(taken):
+                    fname, clob, _ = targets[ta]
+                    hit = _reads_after(insns, k, names, clob, returned(fname))
+                    if hit:
+                        out.append((fname, g, hit[0], hit[1], i.address))
+    return out, len(targets), n_ind, n_ind_read, len(taken)
 
 
 def cmd_abicheck(args):
     """abi_hazards() -> src/display/out/abi_hazards.tsv, which tools/display_link.py reads: it holds back (does not
     link) a recreated function that an original caller relies on in this way, until that caller is recreated too."""
-    rows, n = abi_hazards()
+    rows, n, n_ind, n_ind_read, n_taken = abi_hazards()
     os.makedirs(os.path.join(SRC, 'out'), exist_ok=True)
     with open(os.path.join(SRC, 'out', 'abi_hazards.tsv'), 'w') as f:
         f.write('function\tcaller\tcall\tread_at\tregisters\n')
@@ -1470,7 +1526,9 @@ def cmd_abicheck(args):
             f.write(f'{fname}\t{g}\t{call:08x}\t{at:08x}\t{regs}\n')
             print(f'equiv_display_emu: abicheck {fname}: {g} reads {regs} at {at:#x} after the call at {call:#x}')
     print(f'equiv_display_emu: abicheck: {len(rows)} call sites rely on a register a recreated callee may change '
-          f'({len({r[0] for r in rows})} functions, of {n} not byte-identical); wrote src/display/out/abi_hazards.tsv')
+          f'({len({r[0] for r in rows})} functions, of {n} not byte-identical); calls through a register: {n_ind} '
+          f'sites, {n_ind_read} of them read r1, r2, r3 or ip after the call, {n_taken} recreated functions are '
+          f'address-taken; wrote src/display/out/abi_hazards.tsv')
 
 
 def cmd_linkcheck(args):
