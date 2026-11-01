@@ -7,7 +7,8 @@
 //        (default 30) after each; @CLOCK holds the next frame until that clock. Frames start at clock 60000.
 // Env:   ADC=tone:F_HZ:AMP[,F_HZ:AMP...]  14-bit sample per 125 MHz clock, sum of sines (AMP in LSB, full scale 8191),
 //            on both ADC channels (ADC2=off: channel 2 at 0; ADC2=tone:...: its own tones; ADC2=same (default);
-//            ADC1=off: channel 1 at 0). ADCFMT=offset for offset binary.
+//            ADC1=off: channel 1 at 0). ADCFMT=offset for offset binary. ADC_FROM=CLOCK: both channels at 0 before
+//            that clock (the tone starts there; to see where a stage first departs from linearity, #232).
 //            Bit map [inference, from the capture RAMs RAMB36_X0Y11/X0Y12]: pair k carries bits 2k (rising edge)
 //            and 2k+1 (falling edge); channel 1 pairs H1 H2 G4 J4 J3 K2 H6, channel 2 B1 B3 C2 E2 F1 D5 B7 (k = 0..6).
 //        HALF_FROM=CLOCK (default 0): print "H <clock> <V17> <M17 word> <V16 word>" for every half-frame after it, the
@@ -83,6 +84,7 @@ int main(int argc, char** argv) {
     CData* ch1[7] = {&top->io_H1_p, &top->io_H2_p, &top->io_G4_p, &top->io_J4_p, &top->io_J3_p, &top->io_K2_p, &top->io_H6_p};
     CData* ch2[7] = {&top->io_B1_p, &top->io_B3_p, &top->io_C2_p, &top->io_E2_p, &top->io_F1_p, &top->io_D5_p, &top->io_B7_p};
     uint64_t half_from = getenv("HALF_FROM") ? strtoull(getenv("HALF_FROM"), 0, 10) : 0;
+    uint64_t adc_from = getenv("ADC_FROM") ? strtoull(getenv("ADC_FROM"), 0, 10) : 0;   // ADC pins at 0 before
 #ifdef PROBE_W
 #if defined(PROBE_PORTS)
 #include "probe_ports.h"   // 32-bit ports probe_w<k> (wide probe sets; a single port of >~4k bits compiles for hours)
@@ -122,8 +124,9 @@ int main(int argc, char** argv) {
         if (!bits.empty() && clk >= next) { level = bits.front(); bits.pop_front(); next += CLK_PER_BIT; }
         top->uart_b_rx = level;
         // ADC sample for this clock
-        unsigned u = ch1off ? 0 : sample(tones, clk, offset);
-        unsigned u2 = ch2off ? 0 : ch2own ? sample(tones2, clk, offset) : sample(tones, clk, offset);
+        bool quiet = clk < adc_from;
+        unsigned u = ch1off || quiet ? 0 : sample(tones, clk, offset);
+        unsigned u2 = ch2off || quiet ? 0 : ch2own ? sample(tones2, clk, offset) : sample(tones, clk, offset);
         // falling half: odd bits; rising half: even bits
         for (int k = 0; k < 7; k++) { *ch1[k] = (u >> (2 * k + 1)) & 1; *ch2[k] = (u2 >> (2 * k + 1)) & 1; }
         top->adc_clk_p = 0; top->adc_clk_n = 1; top->adc_dco_p = 0; top->adc_dco_n = 1; top->eval();

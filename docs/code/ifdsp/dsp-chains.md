@@ -374,7 +374,7 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
 - The SDR FPGA's per-mode IF placement: #193 found the RX LO (reg 0x18/0x19), the 72 kHz output (pin M17), that reg 0x0A
-  does not steer the RX path, and fixed the dual-SRL16 netlist error, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)).
+  does not steer the RX path, and fixed the dual-SRL16 netlist error, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)). #232 showed the RX words are still not interpretable in the model because the tone does not get through the second decimator stage (the output is the same at 400, 800 and 1,200 LSB, so it is not an FPGA AGC); the open model error is narrowed to that stage's loop ([sdr/netlist.md 3.9](../sdr/netlist.md#39-rx-decimator-where-the-signal-stops-being-linear-232)).
 - Settled in #193: which speaker gets the AESS branch (B → LOL → internal speaker, reversing #197), the AESS level (R2A20178
   CH8, #203), the reg 0x63 values (both EEPROM reads), and what the reg 0x56 delay does (B lags A by 2.67 ms). Open: Yaesu's
   reason for exactly 32 samples (precedence effect is the inference above).
