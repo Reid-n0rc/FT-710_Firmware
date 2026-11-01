@@ -10,62 +10,7 @@
 #include "main_ram.h"
 #include "ft710_state.h"
 #include "cat_cmds.h"
-
-/* the reply: P1.. from cat_reply[2], ';' after the last byte */
-static inline void reply_done(unsigned n)
-{
-    cat_reply[n] = ';';
-    cat_reply_len = (uint16_t)(n + 1u);
-}
-
-/* a key code the set form is filtered with (key_event_filter); 0 refuses the command */
-static inline int key_allowed(uint16_t key, uint8_t kind)
-{
-    if (key_event_filter(key, kind) == 0) {
-        cat_error = 1;
-        return 0;
-    }
-    return 1;
-}
-
-/* digits of v from the place value div down (100: three digits), as the image writes them: each digit is v / div
- * of what is left, through nib2hex [fact: the loops of cat_AG 0xFFFA6867, cat_KS, cat_RG] */
-static void put_dec(uint8_t *at, uint8_t v, uint8_t div)
-{
-    for (; div != 0; div = (uint8_t)(div / 10u)) {
-        uint8_t n = (uint8_t)(v / div);
-
-        v = (uint8_t)(v - n * div);
-        *at++ = (uint8_t)nib2hex(n);
-    }
-}
-
-/* n decimal digits at p, place value div for the first, summed in 8 bits; 0 with cat_error set at a non-digit */
-static int get_dec(const uint8_t *p, unsigned n, uint8_t div, uint8_t *out)
-{
-    uint8_t v = 0;
-    unsigned i;
-
-    for (i = 0; i < n; i++) {
-        if (p[i] < '0' || p[i] > '9') {
-            cat_error = 1;
-            return 0;
-        }
-        v = (uint8_t)((p[i] & 0x0Fu) * div + v);
-        div = (uint8_t)(div / 10u);
-    }
-    *out = v;
-    return 1;
-}
-
-/* a setting's pop-up (code), unless EX030126 turns them off */
-static void setting_popup(uint8_t code)
-{
-    if (g_opstate.ex030126_scu_lan10 == 0) {
-        g_ui.popup_code = code;
-        popup_open_timed(popup_duration_get(code));
-    }
-}
+#include "cat_util.h"
 
 static inline int is_cw(uint8_t m)
 {
@@ -348,6 +293,239 @@ void cat_SC(const uint8_t *text, uint8_t set)
     }
 }
 
+void func_display_open(void);
+/* the first byte == c in buf[0..n), else buf itself [fact: mem_find_byte 0xFFFB012C returns it in R1; the decompile
+ * shows void] */
+const uint8_t *mem_find_byte(const uint8_t *buf, uint8_t c, uint16_t n);
+
+/* cat_EM 0xFFFA9648: EM0 P2 P3 = text slot 1..5 (em_text_mem, 50 bytes ended by 0xFE; RAM only, no save). A read
+ * answers the bytes before the 0xFE (none when there is none in the 50 or it is the first); a set stores the
+ * characters up to the ';' (found in the first 50 bytes of the command, the length in 8 bits) and an 0xFE after
+ * them [fact: the mem_find_byte calls 0xFFFA9681..0xFFFA97D7 (read) and 0xFFFA984C (set)] */
+void cat_EM(const uint8_t *text, uint8_t set)
+{
+    uint8_t *slot;
+    uint8_t n;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] != '0' || text[3] < '1' || text[3] > '5') {
+            cat_error = 1;
+            return;
+        }
+        slot = em_text_mem[text[3] - '1'];
+        n = (uint8_t)(mem_find_byte(slot, 0xFE, 50) - slot);
+        if (n != 0 && n <= 50u)
+            for (i = 0; i < n; i++)
+                cat_reply[4 + i] = slot[i];
+        cat_reply[4 + n] = ';';
+        cat_reply_len = (uint16_t)(n + 5u);
+        return;
+    }
+    n = (uint8_t)((uint8_t)(uintptr_t)mem_find_byte(text, ';', 50) - (uint8_t)(uintptr_t)text - 4u);
+    if (text[2] != '0' || text[3] < '1' || text[3] > '5') {
+        cat_error = 1;
+        return;
+    }
+    slot = em_text_mem[text[3] - '1'];
+    for (i = 0; i < n; i++)
+        slot[i] = text[4 + i];
+    slot[n] = 0xFE;
+}
+
+/* cat_KM 0xFFFAA905: KM P1 P2 = keyer memory text 1..5 (keyer_text_mem, the texts keyer_task sends). A read answers
+ * the stored characters (a length of 0 answers "KM;", the ';' over P1); a set stores len - 4 characters (filled to
+ * 50 with spaces; the image does not limit the count) and ends the text with '}' unless the command has one in its
+ * first 50 characters after the first, then saves the slot. Refused while the keyboard edits the same slot. */
+void cat_KM(const uint8_t *text, uint8_t set, uint16_t len)
+{
+    struct keyer_text *t;
+    uint8_t slot = (uint8_t)hex2nib(text[2]);
+    uint8_t n;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] < '1' || text[2] > '5') {
+            cat_error = 1;
+            return;
+        }
+        t = &keyer_text_mem[text[2] - '1'];
+        n = t->len;
+        for (i = 0; i < n; i++)
+            cat_reply[3 + i] = t->text[i];
+        if (n == 0) {
+            cat_reply[2] = ';';
+            cat_reply_len = 3;
+            return;
+        }
+        cat_reply[3 + n] = ';';
+        cat_reply_len = (uint16_t)(n + 4u);
+        return;
+    }
+    if (g_ui.kbd_open == 1 && g_ui.kbd_target == 2 && slot == g_ui.msg_slot_idx + 1u) {
+        cat_error = 1;
+        return;
+    }
+    if (text[2] < '1' || text[2] > '5') {
+        cat_error = 1;
+        return;
+    }
+    n = (uint8_t)(len - 4u);
+    t = &keyer_text_mem[text[2] - '1'];
+    for (i = 0; i < sizeof t->text; i++)
+        t->text[i] = ' ';
+    for (i = 0; i < n; i++)
+        t->text[i] = text[3 + i];
+    if (mem_find_byte(&text[3], '}', 50) == &text[3])
+        t->text[n] = '}';
+    t->len = n;
+    eeprom_save_msg(1, text[2] - '0');
+}
+/* a packed BCD byte as two characters. The image's code uses all of R2: declared uint32_t so that GCC passes the
+ * byte zero-extended (with a uint8_t parameter GCC loads it with the sign-extending MOV.B, and a byte >= 0x80
+ * printed differently: the check of cat_DT, round 4) */
+void bcd_to_ascii2(uint8_t *out, uint32_t bcd);
+uint8_t ascii2_to_bcd(const uint8_t *in);           /* two characters as a packed BCD byte */
+
+/* cat_DT 0xFFFA9281: DT0 = date as yyyymmdd (the year must be 20yy; leap years by yy & 3, months of 30 and 31 days),
+ * DT1 = time as hhmmss (the seconds are checked as digits and read as "00"); the clock bytes are packed BCD in the
+ * UI block, copied to rtc_set and sent to the DISPLAY by the 0x65 request */
+void cat_DT(const uint8_t *text, uint8_t set)
+{
+    uint8_t yy, mm, dd, days, hh, mi;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] == '0') {
+            cat_reply[3] = '2';
+            cat_reply[4] = '0';
+            bcd_to_ascii2(&cat_reply[5], g_ui.rtc_yy);
+            bcd_to_ascii2(&cat_reply[7], g_ui.rtc_mm);
+            bcd_to_ascii2(&cat_reply[9], g_ui.rtc_dd);
+            reply_done(11);
+        } else if (text[2] == '1') {
+            bcd_to_ascii2(&cat_reply[3], g_ui.rtc_hh);
+            bcd_to_ascii2(&cat_reply[5], g_ui.rtc_min);
+            cat_reply[8] = '0';
+            cat_reply[7] = '0';
+            reply_done(9);
+        } else {
+            cat_error = 1;
+        }
+        return;
+    }
+    if (text[2] == '0') {
+        for (i = 3; i < 11; i++) {
+            if (text[i] < '0' || text[i] > '9') {
+                cat_error = 1;
+                return;
+            }
+        }
+        (void)get_dec(&text[3], 2, 10, &yy);
+        if (yy != 20u) {
+            cat_error = 1;
+            return;
+        }
+        (void)get_dec(&text[5], 2, 10, &yy);
+        (void)get_dec(&text[7], 2, 10, &mm);
+        if (mm == 0 || mm > 12u) {
+            cat_error = 1;
+            return;
+        }
+        (void)get_dec(&text[9], 2, 10, &dd);
+        if (mm == 2)
+            days = (yy & 3u) == 0 ? 29 : 28;
+        else if (mm == 4 || mm == 6 || mm == 9 || mm == 11)
+            days = 30;
+        else
+            days = 31;
+        if (dd == 0 || dd > days) {
+            cat_error = 1;
+            return;
+        }
+        g_ui.rtc_yy = ascii2_to_bcd(&text[5]);
+        g_ui.rtc_set[0] = g_ui.rtc_yy;
+        g_ui.rtc_mm = ascii2_to_bcd(&text[7]);
+        g_ui.rtc_set[1] = g_ui.rtc_mm;
+        g_ui.rtc_dd = ascii2_to_bcd(&text[9]);
+        g_ui.rtc_set[2] = g_ui.rtc_dd;
+        g_ui.dl_req_65_clock = 1;
+        return;
+    }
+    if (text[2] != '1') {
+        cat_error = 1;
+        return;
+    }
+    for (i = 3; i < 9; i++) {
+        if (text[i] < '0' || text[i] > '9') {
+            cat_error = 1;
+            return;
+        }
+    }
+    (void)get_dec(&text[3], 2, 10, &hh);
+    (void)get_dec(&text[5], 2, 10, &mi);
+    if (hh > 23u || mi > 59u) {
+        cat_error = 1;
+        return;
+    }
+    g_ui.rtc_hh = ascii2_to_bcd(&text[3]);
+    g_ui.rtc_set[3] = g_ui.rtc_hh;
+    g_ui.rtc_set[4] = ascii2_to_bcd(&text[5]);
+    g_ui.rtc_min = g_ui.rtc_set[4];
+    g_ui.dl_req_65_clock = 1;
+}
+
+/* SF0's characters and the FUNC knob function each stands for [fact: the two switches of cat_SF 0xFFFADEB6] */
+static const uint8_t sf_chars[] = "123456789ABCDEFGH";
+static const uint8_t sf_funcs[] = {0, 1, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 0x12, 0x13, 0x14};
+
+/* cat_SF 0xFFFADEB6: SF P1 P2. P1 = 0: the FUNC knob function (g_opstate.func_knob, also kept in func_knob_sf);
+ * P1 = 1: the DSP knob item 1..5 = UI knob item 0x1D..0x21 (a set opens the function display); a read of anything
+ * else answers '0'. Another P1 reads only the ';' and is ignored by a set. */
+void cat_SF(const uint8_t *text, uint8_t set)
+{
+    unsigned i;
+
+    if (!set) {
+        if (text[2] == '0') {
+            cat_reply[3] = '0';
+            for (i = 0; i < sizeof sf_funcs; i++) {
+                if (g_opstate.func_knob == sf_funcs[i]) {
+                    cat_reply[3] = sf_chars[i];
+                    break;
+                }
+            }
+        } else if (text[2] == '1') {
+            uint8_t item = g_ui.func_knob_item;
+
+            cat_reply[3] = item >= 0x1Du && item <= 0x21u ? (uint8_t)('1' + item - 0x1Du) : '0';
+        }
+        reply_done(4);
+        return;
+    }
+    if (text[2] == '0') {
+        for (i = 0; i < sizeof sf_funcs; i++) {
+            if (text[3] == sf_chars[i]) {
+                g_opstate.func_knob = sf_funcs[i];
+                g_opstate.func_knob_sf = sf_funcs[i];
+                return;
+            }
+        }
+        cat_error = 1;
+        return;
+    }
+    if (text[2] != '1')
+        return;
+    if (text[3] < '1' || text[3] > '5') {
+        cat_error = 1;
+        return;
+    }
+    /* '1'..'5' = items 0x1D..0x21 with the DSP knob functions 0, 1, 2, 3, 3 */
+    g_ui.func_knob_item = (uint8_t)(0x1Du + (text[3] - '1'));
+    g_ui.dsp_knob_func = text[3] == '5' ? 3u : (uint8_t)(text[3] - '1');
+    func_display_open();
+}
+
 /* cat_SM 0xFFFAE64B: SM0 = S-meter 0..255 as three decimal digits */
 void cat_SM(const uint8_t *text)
 {
@@ -358,6 +536,40 @@ void cat_SM(const uint8_t *text)
     put_dec(&cat_reply[3], meter_get_s(), 100);
     cat_reply[2] = '0';
     reply_done(6);
+}
+
+/* 0..255 <-> 0..100 in single precision, then + 0.5 and a conversion to unsigned that truncates: the image's
+ * FTOU (RXv2, rounds towards 0 whatever FPSW.RM says; software manual p. 106) after FADD #0.5 [fact: 0xFFFAE717,
+ * 0xFFFAE806]. Not a lrintf: GCC 13.3 for RX never inlines lrintf (it calls _lrintf at -O0 to -Os, also with
+ * -ffast-math), and CC-RX's FTOU is a plain (unsigned) cast. In range (0.5 .. 255.5) a cast to int (GCC's FTOI; the
+ * unsigned cast would call libgcc's __fixunssfsi) gives the same. */
+static uint8_t scale_round(uint8_t v, float mul, float div)
+{
+    return (uint8_t)(int)((float)v * mul / div + 0.5f);
+}
+
+/* cat_SQ 0xFFFAE6CC: SQ P1 P2..P4 = squelch 000..100 (P1 is not checked); kept as 0..255 in cat_sq_level, and also
+ * in the RF/SQL knob's byte g_ui.rf_gain when EX030102 RF/SQL VR is not 0 */
+void cat_SQ(const uint8_t *text, uint8_t set)
+{
+    uint8_t v;
+
+    if (!set) {
+        v = g_opstate.ex030102_rf_sql_vr != 0 ? g_ui.rf_gain : cat_sq_level;
+        put_dec(&cat_reply[3], scale_round(v, 100.0f, 255.0f), 100);
+        cat_reply[2] = '0';
+        reply_done(6);
+        return;
+    }
+    if (!get_dec(&text[3], 3, 100, &v))
+        return;
+    if (v > 100u) {
+        cat_error = 1;
+        return;
+    }
+    cat_sq_level = scale_round(v, 255.0f, 100.0f);
+    if (g_opstate.ex030102_rf_sql_vr != 0)
+        g_ui.rf_gain = cat_sq_level;
 }
 
 /* cat_ST 0xFFFAF3B5: ST P1 = split on/off (split_toggle; key 0x305), not while the TX lamp is on */

@@ -656,6 +656,26 @@ Two DISPLAY-driven maintenance modes take over the link. Each runs as a blocking
   **[fact]**.
 - **Baud.** MAIN uses ≈340.9 kbit/s 8N2. The DISPLAY SCIF5 SCSMR/SCBRR setting was not checked here (T11b).
 
+## Found by the source recreation (T24 MAIN round 4)
+
+The functions below were recreated in `src/main/app/display_link.c` and checked against the image by differential
+emulation (`src/main/status.tsv`). **[fact]** from the disassembly at the cited addresses:
+
+- `displink_build_status` 0xFFF96455 writes every byte at a fixed offset and always returns 152: the VFO-A section
+  starts at block byte 45 and the VFO-B section at 70, 25 bytes each {mode, state code, channel, flags, 5 frequency
+  bytes, 12-byte tag, clarifier flags, clarifier offset}; with VFO-B active the two sections are swapped in place
+  through the pointers 0x20878 / 0x2087C, and in SPLIT the two state codes become 9 and 10. While the keypad enters
+  a frequency, VFO-A's five frequency bytes are the entry (`ui_numentry_to_bcd`); VFO-B's never are.
+- `displink_rx_E1_encoder` 0xFFF9588B: for the RF/SQL encoder (id 4) it calls `FUN_fffc523a(0, 0)` with R3 still
+  holding the step byte (loaded at 0xFFF95A02 for both branches), and `FUN_fffc523a` stores its third argument at
+  0x1B4E3 when the first two are 0; so the step value lands in 0x1B4E3 although the call names two arguments. Encoder
+  6 counts as encoder 3 while the FUNC panel is open, with the step negated unless the DSP knob is being edited.
+- `displink_build_41` 0xFFF9BB50 keeps its write offset in RAM (0x1B632) and the current record in 0x20884; the
+  next channel of the list wraps inside the range `FUN_fff9c1a1` gives and skips the 60 m channels the destination
+  does not have.
+- `displink_build_70` 0xFFF9894F: 27 dialogs over 22-byte lines at ROM 0xFFF80000; three of them (1, 7, 9) are built
+  inline with button bytes, the others through `displink_70_msg`, `_msg2` and `_query`.
+
 ## Functions
 
 | Address | Ghidra name | Inferred name | Purpose |

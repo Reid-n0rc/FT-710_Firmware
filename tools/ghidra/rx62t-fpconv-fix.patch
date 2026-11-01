@@ -1,0 +1,50 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -1098,16 +1098,22 @@
+ 
+ # FTOI - float to signed integer p. 103
+ :FTOI ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b100101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x2; ] {
+-    # TODO: FPSW flags, rounding
+-    reg0_4 = round(ld_src);
++    # TODO: FPSW flags
++    # T24 fix: was "round(src)", a float result; p. 103 dest = (signed long) src, rounded towards 0 whatever FPSW.RM
++    # says (NaN / out of range, Table 1.5: 7FFFFFFFh / 80000000h, not modelled)
++    reg0_4 = trunc(ld_src);
+     setResultFlags(reg0_4);
+ }
+ 
+ 
+ # FTOU - float to unsigned integer p. 106
+ :FTOU ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b101001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x2; ] {
+-    # TODO: FPSW flags, rounding
+-    reg0_4 = round(ld_src);
++    # TODO: FPSW flags
++    # T24 fix: was "round(src)", a float result (FTOU of 50.7 gave 0x424C0000); p. 106 dest = (unsigned long) src,
++    # rounded towards 0 whatever FPSW.RM says; through 64 bits, so 2^31..2^32-1 convert too (NaN / out of range,
++    # Table 1.5: FFFFFFFFh / 0, not modelled)
++    local t:8 = trunc(ld_src);
++    reg0_4 = t:4;
+     setResultFlags(reg0_4);
+ }
+ 
+@@ -1853,7 +1859,19 @@
+ ### ROUND dsp[Rs].L, Rd (ld scale is 4 for all)
+ :ROUND ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b100110 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x2; ] {
+     # TODO: rounding mode bits, FPSW
+-    reg0_4 = round(ld_src);
++    # T24 fix: was "round(src)", a float result rounded half away from zero; p. 171 converts to an integer by FPSW.RM,
++    # here RM = 0 (round to nearest, ties to even: 2.5 -> 2, 3.5 -> 4), the mode the FT-710 MAIN sets (0xFFF8FBFF);
++    # d = src - trunc(src) is exact, and |src| >= 2^23 has no fraction (NaN / out of range not modelled)
++    local src:4 = ld_src;
++    local t:4 = trunc(src);
++    local tf:4 = int2float(t);
++    local d:4 = src f- tf;
++    local half:4 = 0x3F000000;
++    local mhalf:4 = 0xBF000000;
++    local odd:1 = (t & 1) == 1;
++    local up:1 = (d f> half) || ((d f== half) && odd);
++    local dn:1 = (d f< mhalf) || ((d f== mhalf) && odd);
++    reg0_4 = t + zext(up) - zext(dn);
+     setResultFlags(reg0_4);
+ }
+ 
