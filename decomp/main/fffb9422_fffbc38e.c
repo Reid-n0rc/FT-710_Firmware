@@ -196,7 +196,7 @@ void pc_keying(void)
   bVar2 = false;
   if (g_opstate.ex020115_pc_keying == 3) {
     bVar1 = PORT2_PIDR;
-    if (((bVar1 & 1) == 0) && (DAT_00012050 == '\x01')) {
+    if (((bVar1 & 1) == 0) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -208,7 +208,7 @@ void pc_keying(void)
     else {
       bVar3 = false;
     }
-    if ((bVar3) && (DAT_00012050 == '\x01')) {
+    if ((bVar3) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -223,7 +223,7 @@ void pc_keying(void)
     else {
       bVar3 = false;
     }
-    if ((bVar3) && (DAT_00012050 == '\x01')) {
+    if ((bVar3) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -237,7 +237,7 @@ void pc_keying(void)
     beep_stop();
     DAT_0001b4d3 = '\0';
   }
-  if ((DAT_00012050 == '\x01') && (g_ui.trx_state == 3)) {
+  if ((pc_keying_active == '\x01') && (g_ui.trx_state == 3)) {
     bVar3 = true;
   }
   else {

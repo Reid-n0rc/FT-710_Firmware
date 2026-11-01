@@ -91,3 +91,11 @@ menu_tuner_select	9ab8	tuner_task 0xFFFEC479: 21609[0x464F]
 atu_ac	1b3ad	atu_ac_get 0xFFFEC502
 atu_tc	1b3af	atu_tc_get 0xFFFEC511
 ptt_source	1204d	ptt_source_get 0xFFFB6EC7
+cat_mnemonics	fff805ec	cat_parse 0xFFFA3510: mov.l #0xfff805ec, r2 (104 x 2 bytes, scmpu)
+cat_ext_mnemonics	fff806bc	cat_parse 0xFFFA358B: mov.l #0xfff806bc, r2 (10 x 2 bytes, scmpu)
+pc_keying_active	12050	trx_sequencer 0xFFFB839D: mov.l #0x12050 (1 = PC keying of a CW mode; set by ptt_source_select, tx-protection.md)
+pc_key_last	12051	trx_sequencer 0xFFFB8308 / 0xFFFB83D1: the last P14 level seen in state 3 (tx-protection.md)
+spk_route	20fcc	speaker_route 0xFFFB8ABF: the speaker route 0..4, 4 = all off (peripherals.md "Speaker routing"); trx_sequencer 0xFFFB827A
+dnr_tables	fff87f1a	dsp_set_dnr_400b 0xFFF9FCD0 reads 0xFFF87F1A + level x 2; the six other DNR setters 0x20 apart (0xFFF87F3A 400D, 0xFFF87F5A 4022, 0xFFF87F7A 4023, 0xFFF87F9A 4025, 0xFFF87FBA reg 0x40, 0xFFF87FDA 4026)
+rf_gain_curve	fff805ac	dsp_set_rf_gain 0xFFF9FC2A reads 0xFFF805AC[g_ui.rf_gain >> 2]
+dsp_freq_ranges	fff88598	dsp_set_freq_range_param 0xFFF9FB8A: mov.l #0xfff88598, r14 (5 x u32 frequency limits)

@@ -710,8 +710,8 @@ void cat_IF_OI(char param_1)
   }
   else {
     local_1a = local_1a + 0x9d;
-    DAT_00001c92 = BYTE_ARRAY_fff805ac[(uint)local_1a * 3 + 0x13f];
-    _DAT_00001c90 = *(undefined2 *)(BYTE_ARRAY_fff805ac + (uint)local_1a * 3 + 0x13d);
+    DAT_00001c92 = rf_gain_curve[(uint)local_1a * 3 + 0x13f];
+    _DAT_00001c90 = *(undefined2 *)(rf_gain_curve + (uint)local_1a * 3 + 0x13d);
   }
   if ((local_25 == VFO_STATE_VFO) || (local_25 == VFO_STATE_MEMTUNE)) {
     bVar1 = true;
@@ -792,8 +792,8 @@ void cat_IF_OI(char param_1)
     DAT_00001ca1 = 0x31;
     DAT_00001ca2 = 0x31;
   }
-  DAT_00001ca3 = BYTE_ARRAY_fff805ac[(p_vfo_rec->mode & 0xf) + 0x124];
-  DAT_00001ca4 = BYTE_ARRAY_fff805ac[local_25 + 0x133];
+  DAT_00001ca3 = rf_gain_curve[(p_vfo_rec->mode & 0xf) + 0x124];
+  DAT_00001ca4 = rf_gain_curve[local_25 + 0x133];
   cVar2 = (char)((p_vfo_rec->flags3 & 0x38) >> 3);
   if (cVar2 == '\x01') {
     DAT_00001ca5 = 0x32;
@@ -1743,8 +1743,8 @@ void cat_MC(int param_1,byte param_2)
     }
     else {
       iVar3 = (uint)(byte)(local_e + 0x9d) * 3;
-      DAT_00001c92 = BYTE_ARRAY_fff805ac[iVar3 + 0x13f];
-      _DAT_00001c90 = *(undefined2 *)(BYTE_ARRAY_fff805ac + iVar3 + 0x13d);
+      DAT_00001c92 = rf_gain_curve[iVar3 + 0x13f];
+      _DAT_00001c90 = *(undefined2 *)(rf_gain_curve + iVar3 + 0x13d);
     }
     DAT_00001c93._0_1_ = 0x3b;
     DAT_0001b788 = 6;
@@ -1893,7 +1893,7 @@ void cat_MD(int param_1,char param_2)
     }
   }
   if (param_2 == '\0') {
-    DAT_00001c91 = BYTE_ARRAY_fff805ac[(p_vfo_rec->mode & 0xf) + 0x124];
+    DAT_00001c91 = rf_gain_curve[(p_vfo_rec->mode & 0xf) + 0x124];
     DAT_00001c92 = 0x3b;
     DAT_0001b788 = 5;
     return;
@@ -2002,7 +2002,7 @@ LAB_fffaba23:
       }
       return;
     }
-    if (*(byte *)(param_1 + 3) == BYTE_ARRAY_fff805ac[i + 0x124]) {
+    if (*(byte *)(param_1 + 3) == rf_gain_curve[i + 0x124]) {
       local_d = i;
       goto LAB_fffaba23;
     }
@@ -2396,8 +2396,8 @@ void cat_MR(int param_1,byte param_2)
   }
   else {
     iVar3 = (uint)(byte)(bStack_30 + 0x9d) * 3;
-    DAT_00001c92 = BYTE_ARRAY_fff805ac[iVar3 + 0x13f];
-    _DAT_00001c90 = *(undefined2 *)(BYTE_ARRAY_fff805ac + iVar3 + 0x13d);
+    DAT_00001c92 = rf_gain_curve[iVar3 + 0x13f];
+    _DAT_00001c90 = *(undefined2 *)(rf_gain_curve + iVar3 + 0x13d);
   }
   uStack_14 = 0;
   for (bStack_21 = 0; bStack_21 < 4; bStack_21 = bStack_21 + 1) {
@@ -2462,8 +2462,8 @@ void cat_MR(int param_1,byte param_2)
     else {
       DAT_00001ca2 = 0x31;
     }
-    DAT_00001ca3 = BYTE_ARRAY_fff805ac[(p_vfo_rec->mode & 0xf) + 0x124];
-    DAT_00001ca4 = BYTE_ARRAY_fff805ac[vStack_2e + 0x133];
+    DAT_00001ca3 = rf_gain_curve[(p_vfo_rec->mode & 0xf) + 0x124];
+    DAT_00001ca4 = rf_gain_curve[vStack_2e + 0x133];
     cVar2 = (char)((p_vfo_rec->flags3 & 0x38) >> 3);
     if (cVar2 == '\x01') {
       DAT_00001ca5 = 0x32;
@@ -2873,7 +2873,7 @@ LAB_fffac85b:
       cat_error = 1;
       return;
     }
-    if (*(byte *)(local_4 + 0x15) == BYTE_ARRAY_fff805ac[bStack_19 + 0x124]) {
+    if (*(byte *)(local_4 + 0x15) == rf_gain_curve[bStack_19 + 0x124]) {
       bStack_1b = bStack_19;
       goto LAB_fffac85b;
     }

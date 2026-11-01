@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 12.42 % re-implemented, round 6; MAIN 4.28 % re-implemented, round 2; the hybrid image links in place, into the gap and into RAM2, passes linkcheck and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 16.30 % re-implemented, round 7; MAIN 12.32 % re-implemented, round 3; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (585 of 585) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -1168,6 +1168,290 @@ flag and the stubs. Found on the way, all fixed before the run: two RAM addresse
   about 4 KB), `dsp_shadow_store`/`sdr_shadow_update`, the DISPLAY frame builders and receive handlers, `cat_parse`
   and the CAT handlers that change the radio state, `trx_sequencer`, `keyer_task`, the tuner tasks.
 
+## DISPLAY, round 7 (2026-11-01)
+
+### Plan (round 7)
+
+1. Code, biggest self-contained first: the register parts of read data control and its change (from the
+   disassembly), the RSPI driver core and DMAC, the large SDHI functions, then the file system, the MAIN link, the
+   update code and GUI building blocks as far as the round goes.
+2. `abicheck` for calls through function pointers (round 6 left it open).
+3. After linking: `linkcheck` and the emulated boot of the new hybrid; any new defect the boot finds is fixed.
+4. `status.tsv`, readability stats; Ghidra names and entries with evidence, proved on a copy.
+
+### DISPLAY: code (round 7)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `drivers/vdc5_reg.c` | 3 | `vdc5_reg_read_data_control` 0x2011AF34, `vdc5_reg_change_read_process` 0x2011B498 and its tail-called VIN set-up 0x2011B374 (`vdc5_change_graphics_vin`, no Ghidra entry), from the disassembly |
+| `drivers/rspi.c` | 26 | `rspi_hw_config`, the five opens and two interrupt-only opens, the five read bursts, `rspi_hw_config_master`, open/start/stop/base/SPE, the PIO read and write: bodies 0x2011F278 / 0x2011F4D4 behind the argument checks 0x2011F494 / 0x2011F718, FIFO and buffer reset, the generic ISRs, the TEND wait, the empty 0x2011DEA0 |
+| `drivers/dmac.c` (new) | 30 | DMA channels 3, 4, 5, 9, 10 (the SPI links) and 8 (memory copier): set-ups with the CHCFG fields in the image's order, ISRs, enable/disable/stop, callback setters; `dmac9_enable` 0x20137DEC (no Ghidra entry) |
+| `drivers/sdhi.c` | 12 | the command layer: response copy, CMD16, CMD12, `sdhi_error_reset`, sector read/write commands and ops, the PIO buffer read 0x20140998, `sdhi_open` and its DMA side 0x2013FE68 (`sdhi_dma_open`, no Ghidra entry), the buffer interrupt |
+| `drivers/sd_card.c` (new) | 10 | CMD0, CMD2, CMD9, CMD10, CMD13 through the operation table; the SD and MMC CSD checks; READ_BL_LEN, C_SIZE, C_SIZE_MULT |
+| `app/fat_format.c` (new) | 6 | the MBR CHS helpers (start/end head, sector and cylinder), the partition type, the format parameter block |
+| `include/sd.h` (new) | | the SD driver's card context (CSD +0x201, CID +0x211, RCA +0x2AA, response +0x2B0, addressing +0x2C0, card type +0x2C6), handle and operation table |
+
+Findings **[fact]**: `rspi_hw_config` rejects `ch > 5`, so channel 5 is accepted and indexes past the 5-entry
+register table (0x2011D9AC: `cmp r0, #5; bhi`); `rspi_read_pio` passes every read burst a second argument
+(0x2011F378: fewer bytes than the RX trigger), with which the burst polls SPBFDR instead of waiting for the receive
+interrupt (Ghidra's C passed it only for channel 4); `rspi_write_pio` reads and drops SPDR after each access when
+SPSR.SPRF is set (0x2011F63C..0x2011F67C, missing from Ghidra's C); the RX trigger table 0x20800434 is
+{1, 2, 4, 8, 16, 24, 32, 5} bytes, the TX one {1, 2, 4, 8}; `rspi3_open` also enables GIC 0x117 (SPEI3), which has
+no ISR; `dmac3_isr` is the only DMA ISR that sets the done flag, the others call the callbacks 0x20808AA4..B0, and
+the slot 0x20808AA0 (set by 0x20137D78, no caller) is never called; `sdhi_read_sectors_cmd` and the write side leave
+DMA mode (CC_EXT_MODE bit 1) on when the command fails three times (0x20140888); `sdhi_dma_open` reads each
+priority register before `gic_def_inh` and writes it afterwards; `sdhi_error_reset` keeps SD_CLK_CTRL and SD_OPTION
+in r3 and ip across `sdhi_soft_reset` (the round-6 hazard), which the C version keeps in callee-saved registers.
+
+### DISPLAY: checks (round 7)
+
+- **abicheck, calls through a register.** Each `blx rN` (and `mov lr, pc` + a write of pc) is scanned like a direct
+  call. Its possible targets are the recreated functions whose entry the image holds as a word: literal pool, table
+  or data (`address_taken`: 114). Result **[fact: the run]**: 339 indirect call sites, none reads r1, r2, r3 or ip
+  after the call, so no new hazard. The direct hazard stays (`sdhi_error_reset` → `sdhi_soft_reset`).
+  `display_link.py` now drops a hazard when its caller is linked too, because the original caller code no longer
+  runs (iterated to a fixed point). With `sdhi_error_reset` recreated, `sdhi_soft_reset` is linked.
+- **Harness defects found by mutations** (each mutation was reported as differing after the fix):
+  - The 64-byte random fill of a referenced data symbol ran into the next table the trials keep (`rspi_rx_done`
+    0x20800418 covered the trigger tables 0x20800424/34). Nearly every `rspi_read_pio` trial failed its trigger
+    check, and the mutation `n < trg` → `n <= trg` passed. Now the fill stops at the next kept table (`ref_span`).
+  - A stub's output-pointer argument compared the stack bytes it pointed at before the call. Those bytes are
+    uninitialised and differed between the armcc and GCC frames in `sdhi_flag_wait`. They are now left out.
+  - Presets may bias chosen MMIO registers (`args['mmio']`). With random SDHI status, CMD16 almost never passed and
+    the sector transfers reached 12 % of their blocks; with SD_INFO1/2 and RSP00/01 biased they reach 94 %.
+- **A stale alias** (introduced by the round-6 re-export): `aliases.tsv` still mapped
+  `vdc5_reg_write_data_control` to `vdc5_config`, the name the re-export replaced. So `status.tsv` lost it and
+  `r_vdc5_write_data_control` (1,064 bytes). The row is removed, and the resolver now falls back to the source name
+  when an alias target no longer exists. The other alias rows that point to addresses Ghidra has since named are
+  redundant and harmless (98 rows).
+
+### DISPLAY: hybrid image (round 7)
+
+`make link` **[fact: the run]**: 585 recreated functions linked, 117 of them in place (11,332 bytes) and 468 in the
+gap 0x2042BC10..0x2043AF4C (62,268 of 82,928 bytes). RAM2 stays empty. 468 original entries are patched (10,529 bytes
+of the image changed), 48 byte-identical functions are left as they are, and one function is held back
+(`gpio_cfg_reset`, reset path). `sdhi_soft_reset` is linked now (above).
+
+Emulated boot (`display_boot_emu.py --compare`, seed 1, 1.5·10⁹ instructions each) **[fact: the run]**: the hybrid
+**agrees with the original**:
+- no fault;
+- 33 kernel tasks; `task_root` and `gui_main_loop` reached;
+- 742 image functions reached (the original: 709), 176 recreated functions executed;
+- RAM2 intact, nothing in the watched range;
+- the `task_root` stack's untouched bottom: 5,648 bytes (the original: 5,672).
+
+The hybrid with RAM2 forced (`--gap-limit 15000`) also agrees with the original **[fact: the run]**: 134 functions in
+the gap, 334 in RAM2 (45,440 bytes, loaded intact by the recreated `reset_in_ram`), 179 recreated functions executed.
+The boot found no new defect. The round's defects were all in the tooling (the stale alias, the fill overrun and the
+output-pointer compare above). **linkcheck: 585 of 585 agree** for the default hybrid (100 trials per entry,
+in-place entries included) **[fact: the run]**.
+
+### DISPLAY: results (status.tsv, round 7)
+
+| Verdict | Ghidra functions | Bytes (of 396,256) |
+|---|---:|---:|
+| identical | 47 | 3,930 |
+| equivalent | 582 | 60,646 |
+| differs | 0 | 0 |
+| not yet | 1,587 | 331,680 |
+
+**Re-implemented: 16.30 %** (64,576 bytes; round 6: 12.42 %), with the pinned xPack GCC 10.2.1 and 200 trials per
+function. The count of identical functions falls from 54 to 47 with no loss of bytes:
+- The ten RSPI GIC stubs (`mov r0, #n; b rspi_tx_isr`) now branch to `rspi_tx_isr` / `rspi_rx_isr` in the same
+  object, so they verify as equivalent.
+- The new `rspi_spe_set`, `rspi_spe_clear` and the empty 0x2011DEA0 are identical.
+
+The functions Ghidra merges count with their Ghidra size. `rspi_write` counts 604 bytes, including the body
+0x2011F4D4. `sdhi_open` counts 424, including 0x2013FE68, and `vdc5_reg_change_read_process` 868, including
+0x2011B374. Their own rows (alias addresses) count no bytes until the re-export lists them.
+
+Not done this round: the large SD functions (`sd_select_bus_speed`, `sd_card_identify`, `sd_init_v1_or_mmc`,
+`sd_init_v2`, the ACMDs), the FAT file system, the MAIN link (`docs/code/display/mainlink.md`), the update code and
+the GUI building blocks. Each status run takes about 30 minutes on 3 cores, and so does linkcheck (the inconclusive
+read-burst trials run up to 8·10⁶ instructions). That limits how many check-and-link cycles fit in a round.
+
+### DISPLAY: Ghidra (round 7)
+
+`tools/ghidra/entries_display.T24r7.tsv` has 4 new entries: 0x2011B374, 0x2011F4D4, 0x20137DEC and 0x2013FE68
+(also appended to `entries_display.tsv`). `names_display.T24r7.tsv` has 8 names with evidence (also appended to
+`names_display.tsv`): the four entries, `rspi_read` → `rspi_read_pio` at 0x2011F278, `FUN_2011f494` → `rspi_read`,
+`FUN_20137d78` → `dmac3_set_callback` **[inference]** and `FUN_20140998` → `sdhi_read_buf_pio`. Proved on a copy
+(`/home/user/ghidra_tasks/t24r7/disp`, OWNER root) **[fact: apply.log, modes.tsv there]**:
+- FixFuncEntries: 4 created, 0 failed, 4 branches marked as tail calls.
+- ApplyNames: 1,925 applied, 0 failed.
+- ExportFuncModes, 2,260 functions: the four new functions (292, 540, 20 and 372 bytes, A32). The functions that had
+  them folded in shrink: `vdc5_reg_change_read_process` 868 → 576, `rspi_write` 604 → 64, `sdhi_open` 424 → 52, and
+  `pclink_tx_dma_start` 60 → 40 (its tail call into 0x20137DEC). No other entry, size or mode changes.
+
+Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24r7.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the four new functions count in their own rows. The alias rows of round 7 give addresses, not
+names, so they stay right when the Ghidra name `rspi_read` moves from 0x2011F278 to 0x2011F494. They only become
+redundant.
+
+## MAIN, round 3 (2026-11-01)
+
+### Plan (MAIN round 3)
+
+1. The typed state blocks of `tools/ghidra/structs_main.h` as a C header for the recreated source, so the code
+   uses `g_ui.trx_state`, `g_opstate.vfo_a.blk[1].flags2` instead of addresses.
+2. Code, biggest first from round 2's list: `cat_parse` and the dispatcher structured by the dispatch table, then
+   the CAT handlers that read or change the radio state; `trx_sequencer`; the DSP setters (`dsp_set_agc`, EQ,
+   tone, DNR, about 9 KB) and the SDR updaters (about 4 KB); the shadow stores. Keyer, tuner tasks and the DISPLAY
+   frame builders after that.
+3. The SMOVF overlap question of round 2 (`displink_copy_if_changed`), with single runs.
+4. Ghidra names for the new tables and flags; `status.tsv` and the README progress block.
+
+### MAIN: the state header (`tools/main_structs.py`)
+
+`structs_main.h` places every field at an explicit offset and leaves the bytes between fields undefined, so it is
+not C. `tools/main_structs.py` (build time, `src/main/Makefile`) writes `out/include/ft710_state.h`: one packed
+struct per structure with filler arrays over the undefined bytes, a `_Static_assert` per field offset and per size
+(876 asserts), enum fields as integers of the enum's `@size` with `enums_main.h` included for the values, and an
+`extern` per typed global. RX has unaligned loads and stores, and GCC for RX keeps the plain access widths on a
+packed struct [fact: a test compile, `movu.w [r4]` / `add [r14].l` for fields at odd offsets]. `equiv_main_emu.py`
+reads the globals' `@0x` addresses through the same module and defines them when it links, as it does for
+`src/main/data_symbols.tsv` (which wins on a clash). Where six menu groups repeat the same item order, a view
+struct is asserted against the field offsets (`struct af_menu` in `app/dsp_link.c`: items 01..10 of EX0101, 0102,
+0103, 0104, 0105 and 0201).
+
+### MAIN: harness changes (round 3)
+
+- **Stub buffers by content.** `EquivMainEmu.java` stubs can record the bytes behind a pointer argument
+  (`[name, nargs, ptr_arg, len_arg]`); `eeprom_write`'s buffer is compared by content, and a buffer address in the
+  stack (below 0x1004) is compared as `stack`. Found with `cat_ext_SP`: `cat_SP_eeprom_byte` passes a stack byte to
+  `eeprom_read` / `eeprom_write`, whose address moves with the caller's frame (0xEE3 under the original's
+  12-byte frame, 0xED7 under GCC's) [fact: the stub call of trial 22]. The round-1/2 functions that call
+  `eeprom_write` stay equivalent with the content compared (settings.o, 19 functions, rerun).
+- **Presets** (`PRESETS`): `cat_parse` (a ring slot at the tail with a mnemonic from either table, upper or lower
+  case, port 1..3, or the E9 slot with an empty ring), `cat_dispatch` / `cat_dispatch_ext` (every index with the
+  lengths its case tests and their neighbours, from `decomp/main/cat_dispatch.tsv`), `cat_ext_SP` (the
+  sub-command letters it compares and a good sum half of the time), a generic CAT handler preset (command text
+  with mostly digit parameters, read or set), `trx_sequencer` (state 0..8 and the flags it tests), the two shadow
+  stores (the register numbers they compare), `dsp_set_rf_gain` and `cat_GP` (the menu bytes they switch on),
+  `eeprom_read_raw` / `_write_raw` (a caller's buffer, not the stack).
+
+### MAIN: the SMOVF question (round 2) settled
+
+Single runs of `displink_copy_if_changed` (one Ghidra engine, a pattern at 0x30000) **[fact]**:
+
+| src, dst, n | original (SMOVF) | recreated (byte loop) |
+|---|---|---|
+| 0x30000, 0x30010, n = 0x08 / 0x10 / 0x20 (overlap, dst > src) | returns 1 | same RAM, returns 1 |
+| 0x30000, 0x30800, n = 0x900 / 0x1000 / 0xF800 | returns 1 | same RAM, returns 1 |
+| 0x30000, 0x30800, n = 0xFFFF | fault: store at 0x40000 | same fault, same RAM |
+| 0x30000, 0, n = 0xEE0 | returns 1 | returns 1 |
+| 0x30000, 0, n = 0xF00 | **returns 152** | returns 1 |
+
+So SMOVF and the forward byte loop agree on overlapping buffers; they differ only when the destination covers the
+original's own stack frame: it keeps the result flag at `1[r0]` = 0xEF1 and copies it to R1 at 0xFFF9C6A3, and the
+copy overwrote it with the pattern byte (0xEF1 x 7 + 1 mod 256 = 152). Every caller copies a staging buffer to the
+frame buffer 0x1456, so the preset stays and the open point is closed.
+
+### MAIN: recreated (src/main, round 3)
+
+- `app/cat_parse.c`: `cat_parse`, `cat_dispatch` (one `case CAT_xx` per index of `enum cat_cmd`: the echo of the
+  first bytes into the reply, the length test that tells the read from the set form, the handler; the ten
+  table entries without a case (BY, ED, EK, EU, RC, RD, RS, RT, RU, XT) answer "?;"), `cat_dispatch_ext`,
+  `cat_ext_SP`. The SCMPU lookup is a two-byte compare: no table entry holds a NUL [fact: ROM 0xFFF805EC..
+  0xFFF806CF]. `include/cat_cmds.h` holds the handler prototypes; the indexes are `enum cat_cmd` /
+  `enum cat_ext_cmd` of `enums_main.h`.
+- `app/cat_handlers.c`: 41 handlers (AG AI AO AV BA BC BI CS CT DN EX FN GP KP KR KS LK MA MB MS MX NB NL NR PA PL PR
+  PS RA RG RL SC SD SM ST TX UP VD VG VX ZI) over shared helpers: `put_dec` / `get_dec` (the image's digit loops: each
+  digit is v / place of what is left, through `nib2hex`, so an out-of-range value prints as the image prints it;
+  digits summed in 8 bits), the key filter, the setting pop-up (`popup_open_timed(popup_duration_get(code))`
+  unless EX030126 is set: the call passes the duration in R1 [fact: 0xFFFAB11B..0xFFFAB122; the decompile drops
+  the argument]), the mode-block selectors.
+- `app/trx_lines.c`: `trx_sequencer` (tx-protection.md "RX<->TX sequencer"), with named states.
+- `app/dsp_link.c`: 39 setters (TX gain, VOX gain, anti-VOX, parametric EQ freq/level/width, processor, TX BPF,
+  regs 0x31/0x32/0x3B, AMC, CTCSS enc/dec, FM flag, the seven DNR registers over one table at 0xFFF87F1A, DNF,
+  CONTOUR freq/level/width, APF, AM notch, oscilloscope, RF gain, AESS, HCUT, LCUT, AF tone freq/gain/Q, AGC,
+  IF-AGC) and `dsp_shadow_store` as a register -> slot table.
+- `app/sdr_link.c`: `sdr_upd_r18_rx_freq`, `sdr_upd_r1d_notch`, `sdr_upd_r1e_passband` (one passband-centre
+  helper; the notch adds DATA SHIFT x 10 to the PSK tone where the passband adds the IF SHIFT [fact: 0xFFFA20F7
+  vs 0xFFFA2478]) and `sdr_shadow_update`.
+
+Findings **[fact]** on the way:
+
+- `cat_PS` reads "1" always; a radio that is off answers nothing but "PS1;" (`cat_parse` returns before the
+  dispatch unless the index is PS and P1 is '1', 0xFFFA3539..0xFFFA356C).
+- `cat_RA` sets `g_ui.freq_refresh_req` also after a refused value (0xFFFAD718).
+- `cat_SP` (SPN): `W`/`w` and `S`/`s` both call `cat_SP_table` with write = 1; SPW/SPR (EEPROM byte) take the
+  upper-case letter only (0xFFFA3848); an unknown third letter gets no reply and no error (0xFFFA399B..0xFFFA39A1).
+- The AGC speed (mode block flags2 bits 4..5) 0 reads as SLOW in SSB and AM, as MID in RTTY and DATA/PSK and as
+  FAST in CW and FM (`dsp_set_agc` 0xFFF9F681); `dsp_set_agc` writes only reg 0x62 when that changed and reg 0x66
+  on the next call.
+- The DSP shadow slots of the AF tone triples are by kind, not by register: 0x48/0x4B/0x4E -> slots 50..52,
+  0x49/0x4C/0x4F -> 53..55, 0x4A/0x4D/0x50 -> 56..58 (`dsp_shadow_store` 0xFFFA037A).
+- RTTY: the passband constants are 1275 or 2125 Hz (MARK FREQUENCY) plus the receive offset of the same SHIFT
+  choice (85, 105, 215, 425 Hz) [inference: the differences of the constants in 0xFFFA2478 and 0xFFFA1C69].
+- Not recreated, with the reason: `cat_OS` uses an uninitialised record pointer when P1 is not 0 or 1 (the stack
+  decides where it writes; a recreation cannot match it), `cat_SQ` converts with the FPU's ROUND, which GCC's
+  float-to-int conversion does not emit (*Open: a `lrintf` that GCC for RX inlines as ROUND; would be settled by
+  a test compile*).
+
+### MAIN: Ghidra (round 3)
+
+`tools/ghidra/names_main.tsv` gains five labels with their evidence: `@dnr_tables` 0xFFF87F1A, `@rf_gain_curve`
+0xFFF805AC, `@pc_keying_active` 0x12050, `@pc_key_last` 0x12051, `@spk_route` 0x20FCC. Proved on a copy of `/home/user/ghidra_tasks/t24main/proj` [fact: the script log]: ApplyNames 2,810 applied, 0 failed (2,805 + 5). No entries, signatures or structs change, so FixFuncEntries and ApplySignatures are not needed this round; `structs_main.h` is read, not changed.
+Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+### MAIN: results (status.tsv, round 3)
+
+`equiv_main_emu.py status --trials 200 --jobs 3` (about 50 minutes):
+
+| Verdict | Ghidra functions | Bytes (of 387,059) |
+|---|---:|---:|
+| identical | 43 | 259 |
+| equivalent | 303 | 47,446 |
+| differs | 0 | 0 |
+| not yet | 3,448 | 339,354 |
+
+**Re-implemented: 12.32 %** (4.28 % after round 2). Round 3 added 90 functions (31,123 bytes counted): DSP setters
+and `dsp_shadow_store` 40 (10,647, now 64 functions / 12,170 bytes in `dsp_link.o`), CAT handlers 41 (9,478), the
+CAT parser and dispatch 4 (6,581), SDR updaters and `sdr_shadow_update` 4 (3,224), `trx_sequencer` (1,193). The
+256 functions of rounds 1 and 2 still pass with the new stub comparison. A first status run of this round found
+`sum8` and `displink_put_sum` "differs": a comment in the `PRESETS` literal had swallowed their `buffer_args`
+entries (the round-2 NULL-buffer case); fixed before the run above.
+
+### MAIN: blockers and next steps (round 3)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- Not done this round: `keyer_task` (2,120 bytes), the tuner tasks, the DISPLAY frame builders and receive
+  handlers, the larger CAT handlers (SS 2,917 bytes, CO, MW, SF, MR, CF, DT, SH, IF/OI, BP, KM, GT, VM, EM, MC,
+  FA/FB, ...), `cat_OS` and `cat_SQ` (above).
+- Coverage: `cat_dispatch` reaches 55 % of its 598 blocks and `trx_sequencer` 60 % of 173 with 200 trials; more
+  trials or presets that drive the handlers' own state would raise both.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -1176,10 +1460,10 @@ flag and the stubs. Found on the way, all fixed before the run: two RAM addresse
 3. Apply the round-3 Ghidra changes to the canonical projects with the commands above (M33: the `printf_float_none`
    entry; DISPLAY: the CP15 renames and the four new names), and DISPLAY rounds 4 and 5 with the round-5 command
    block (FixFuncEntries with `entries_display.T24r5.tsv`, ApplyNames), and re-export (T23 rules).
-4. DISPLAY, next by size and self-containment: the register parts of read data control and its change
-   (0x2011AF34, 0x2011B498; from the disassembly, Ghidra's C is broken), the RSPI driver core (`rspi_hw_config`,
-   open, read, write, read bursts; 7 KB), DMAC, the large SDHI functions, USB, the file system, the MAIN link and the
-   update code; then the application.
+4. DISPLAY, next by size and self-containment (round 7 did read data control, RSPI, DMAC and the SDHI command
+   layer): the large SD functions (identify, the init paths, bus speed, the ACMDs), USB, the file system, the MAIN
+   link and the update code; then the application. Apply the round-7 Ghidra rows (commands in "DISPLAY: Ghidra
+   (round 7)").
 5. DISPLAY build: the hybrid image links and passes linkcheck; before the next round's code goes in, the in-place
    placement and the second region RAM2 of "the gap and the second region" (round 5); a source-only image needs the
    rest of the tree, the NORTi stand-in's port (IRQ entry and exit, the OSTM tick) and a recreated `reset_in_ram`.
@@ -1188,11 +1472,10 @@ flag and the stubs. Found on the way, all fixed before the run: two RAM addresse
    MOVW/MOVT references to linked functions from data stores to their original entries.*
 6. HiFi4 (Ghidra p-code): `tools/ghidra/EquivMainEmu.java` is the model (a headless p-code emulator server).
 7. MAIN: apply the round-2 Ghidra entries and names (command block in "MAIN: Ghidra (round 2)"), install
-   `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), then the next functions ("MAIN: blockers and next steps
-   (round 2)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
+   `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), the round-3 names ("MAIN: Ghidra (round 3)"), then the
+   next functions ("MAIN: blockers and next steps (round 3)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
 
-5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation. Open:
-   calls through function pointers for `abicheck` (direct calls only so far); the functions the emulated boot does
-   not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the
+5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation;
+   `abicheck` covers calls through a register (round 7). Open: the functions the emulated boot does not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the
    OSTM tick).
 6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.

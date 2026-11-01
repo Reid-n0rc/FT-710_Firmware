@@ -993,7 +993,7 @@ void sdr_spi_master_write(uint param_1,uint param_2)
   }
   rspi_reset_buffers(2);
   rspi_start(2);
-                    /* PIO write by TX trigger level [doc] */
+                    /* the argument checks [doc] */
   rspi_write(2,param_1,param_2,0xff);
                     /* Spins on SPSR.TEND [doc] */
   rspi_wait_tx_end(2);

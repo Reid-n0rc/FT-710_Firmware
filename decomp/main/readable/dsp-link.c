@@ -3509,7 +3509,7 @@ void dsp_set_rf_gain(void)
   ushort local_2;
   uint vfo_mode_ret;
   
-  local_2 = (ushort)BYTE_ARRAY_fff805ac[g_ui.rf_gain >> 2];
+  local_2 = (ushort)rf_gain_curve[g_ui.rf_gain >> 2];
   if (g_opstate.ex030102_rf_sql_vr == 1) {
     local_2 = 0xff;
   }
@@ -3576,7 +3576,7 @@ void dsp_set_dnr_400b(byte which)
   vfo_mode_ret = vfo_mode(which);
   sStack_a = 0;
   if ((((bVar1 & 0x10) != 0) && (1 < vfo_mode_ret - 6)) && (1 < vfo_mode_ret - 10)) {
-    sStack_a = *(short *)(BYTE_ARRAY_fff87f1a + (uint)(bVar1 & 0xf) * 2);
+    sStack_a = *(short *)(dnr_tables + (uint)(bVar1 & 0xf) * 2);
   }
   if (DAT_0001b6d0 == sStack_a) {
     return;

@@ -229,3 +229,7 @@
 2011a20c		VDC5 SetInputCntrlColorMtx: push at 0x2011A20C after vdc5_set_color_matrix's return, ends in a tail call of it
 20164c88	arm	A32 entry veneer of __aeabi_d2iz (add ip, pc, #1; bx ip), called from 0x2011413C (lib/fplib.S)
 20164d4c	arm	A32 entry veneer of __aeabi_i2d (add ip, pc, #1; bx ip), called from 0x201128D4 (lib/fplib.S)
+2011b374		VDC5 ChangeGraphicsVIN: push at 0x2011B374 after vdc5_reg_read_data_control's literal pool; reached only by the tail call b 0x2011B374 at 0x2011B6CC (drivers/vdc5_reg.c)
+2011f4d4		rspi_write_pio: push at 0x2011F4D4 right after rspi_read's tail call b 0x2011F278 (0x2011F4D0); reached by b 0x2011F4D4 at 0x2011F754 (drivers/rspi.c)
+20137dec		dmac9_enable: ldr/mov/b reg_rmw32(CHCTRL_9, 1, 0, 1) at 0x20137DEC after dmac4_set_callback's bx lr (drivers/dmac.c)
+2013fe68		sdhi_dma_open: push at 0x2013FE68 after the one-instruction function 0x2013FE64; reached by the tail call b 0x2013FE68 at 0x20140B94 (drivers/sdhi.c)

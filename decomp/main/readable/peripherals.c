@@ -3011,18 +3011,18 @@ void speaker_switch_set(byte param_1)
 {
   byte bVar1;
   
-  if (DAT_00020fcc == 3) {
+  if (spk_route == 3) {
     bVar1 = PORTB_PODR;
     PORTB_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
     return;
   }
-  if (DAT_00020fcc == 1) {
+  if (spk_route == 1) {
     bVar1 = PORT8_PODR;
                     /* Port Output Data [sfr] */
     PORT8_PODR = bVar1 & 0xfe | param_1 & 1;
     return;
   }
-  if (DAT_00020fcc == 2) {
+  if (spk_route == 2) {
     bVar1 = PORT7_PODR;
     PORT7_PODR = bVar1 & 0xfe | param_1 & 1;
     bVar1 = PORTB_PODR;
@@ -3030,7 +3030,7 @@ void speaker_switch_set(byte param_1)
     PORTB_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
     return;
   }
-  if (DAT_00020fcc != 0) {
+  if (spk_route != 0) {
     return;
   }
   bVar1 = PORT7_PODR;
@@ -3125,22 +3125,22 @@ void speaker_route(void)
     if ((bVar3 >> 2 & 1) == 1) {
       bVar2 = ear_det();
       if (bVar2) {
-        DAT_00020fcc = 1;
+        spk_route = 1;
       }
       else {
-        DAT_00020fcc = 0;
+        spk_route = 0;
       }
     }
     else {
       bVar2 = ear_det();
       if (bVar2) {
-        DAT_00020fcc = 1;
+        spk_route = 1;
       }
       else if ((char)(cVar1 * '\x05') == '\0') {
-        DAT_00020fcc = 3;
+        spk_route = 3;
       }
       else {
-        DAT_00020fcc = 2;
+        spk_route = 2;
       }
     }
     if ((DAT_0001204e == '\x01') || (g_ui.spk_off_req == 1)) {
@@ -3156,23 +3156,23 @@ void speaker_route(void)
       bVar2 = false;
     }
     if (bVar2) {
-      DAT_00020fcc = 4;
+      spk_route = 4;
       DAT_0001204e = '\0';
     }
     bVar3 = swtimer_expired(0x2c);
     if (bVar3 == 0) {
-      DAT_00020fcc = 4;
+      spk_route = 4;
     }
-    if (DAT_00025d44 != DAT_00020fcc) {
+    if (DAT_00025d44 != spk_route) {
       if (DAT_00025d44 == 4) {
         swtimer_start(0x2d,5);
         R_TPU2_Start();
       }
-      DAT_00025d44 = DAT_00020fcc;
+      DAT_00025d44 = spk_route;
     }
     bVar3 = swtimer_expired(0x2d);
     if (bVar3 != 0) {
-      if (DAT_00020fcc == 0) {
+      if (spk_route == 0) {
         bVar3 = PORT7_PODR;
         PORT7_PODR = bVar3 | 1;
         bVar3 = PORTB_PODR;
@@ -3191,7 +3191,7 @@ void speaker_route(void)
         g_ui.dsp_route_word = 0x3233;
         return;
       }
-      if (DAT_00020fcc == 1) {
+      if (spk_route == 1) {
         bVar3 = PORT7_PODR;
         PORT7_PODR = bVar3 & 0xfe;
         bVar3 = PORTB_PODR;
@@ -3209,7 +3209,7 @@ void speaker_route(void)
         g_ui.dsp_route_word = 0x3233;
         return;
       }
-      if (DAT_00020fcc == 2) {
+      if (spk_route == 2) {
         bVar3 = PORT7_PODR;
         PORT7_PODR = bVar3 | 1;
         bVar3 = PORTB_PODR;
@@ -3227,7 +3227,7 @@ void speaker_route(void)
         g_ui.dsp_route_word = 0x3263;
         return;
       }
-      if (DAT_00020fcc == 3) {
+      if (spk_route == 3) {
         bVar3 = PORT7_PODR;
         PORT7_PODR = bVar3 & 0xfe;
         bVar3 = PORTB_PODR;

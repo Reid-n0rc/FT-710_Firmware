@@ -83,14 +83,31 @@ uint8_t sci4_rx_ready(void);
 uint32_t sci4_rx_buf(void);
 void sci4_send(uint32_t buf, uint16_t len);
 uint16_t dsp_route_param(uint16_t reg);
+uint8_t tx_mod_gain(void);                       /* MIC / USB / REAR gain of the TX audio source */
+uint16_t FUN_fffb34e4(uint8_t gain);              /* ROM curve 0xFFF88126[gain] (u16) */
+uint16_t FUN_fffb350e(uint8_t level);             /* ROM curve 0xFFF881F0[level] (u16) */
+uint8_t FUN_fffb3523(uint8_t af_gain);            /* ROM curve 0xFFF811E2[af_gain] */
+uint8_t FUN_fffb3538(uint8_t n);                  /* ROM curve 0xFFF812E2[n] */
+uint8_t FUN_fffb2dfe(void);                       /* RAM 0x12041 (a TX state, 4 and 9..11 tested by dsp_set_peq_freq) */
+uint32_t aess_level_ptr(void);                    /* address of the active mode's AESS level byte */
+uint32_t aess_mode_ptr(void);                     /* address of the active mode's AESS centre byte */
 uint8_t dsp_sum8(const uint8_t *p, uint8_t n);
 uint8_t dsp_reply_sum_ok(const uint8_t *p, uint8_t n);
 uint8_t dsp_check_reply(uint8_t kind, uint8_t **reply);
 void dsp_send_frame(uint8_t kind);
+void dsp_shadow_store(void);
+void dsp_status1_filter(void);
+void dsp_status2_filter(void);
+void dsp_status3_filter(void);
+void dsp_status4_filter(void);
+void sdr_shadow_update(void);
 
 /* --- SDR link (docs/code/main/sdr-link.md; app/sdr_link.c) --- */
 uint32_t vfo_freq(uint8_t which, uint8_t side);    /* Hz; side 0 = A, 1 = B, 2 = vfo_rec_ptr(which) */
 uint8_t *vfo_rec_ptr(uint8_t which);
+uint8_t vfo_is_memory(uint8_t side);
+uint32_t vfo_freq_clar(uint8_t which, uint8_t side);   /* vfo_freq + the clarifier offset when on */
+uint16_t vfo_filter_width_hz(uint8_t *width_be);      /* the selected filter width, also stored big-endian */              /* 1 when the side is in a memory state */
 void sdr_link_start(void);
 uint8_t sdr_rx_ready(void);
 uint32_t sdr_rx_buf(void);
@@ -113,6 +130,52 @@ uint8_t cat_tx_busy(int32_t port);
 void cat_reply_error(void);
 void qmb_store(void);
 void qmb_recall(void);
+void cat_parse(void);
+void cat_dispatch(const uint8_t *slot, uint8_t idx, uint16_t len);
+void cat_dispatch_ext(const uint8_t *slot, uint8_t idx, uint16_t len);
+void cat_ai_poll(void);                 /* AI broadcaster (cat-ai.md) */
+uint8_t sci_tx_end(int32_t port);       /* 1 when the port's last transmission has ended (sci.md) */
+void screensaver_timer_restart(void);
+void toupper_inplace(char *c);
+char hex2nib(uint8_t c);                /* '0'..'9', 'A'..'F', 'a'..'f' -> 0..15, else 0xFF */
+void key_dsp_press(void);
+/* used by the CAT handlers (app/cat_handlers.c) */
+char nib2hex(uint8_t n);                /* "0123456789ABCDEF"[n & 15] */
+uint8_t key_event_filter(uint16_t key, uint8_t kind);   /* 0 = the key (and its CAT command) is locked now */
+int32_t vfo_mode_is_cw(void);
+void vfo_mark_edited(uint8_t side);
+void vfo_store_back(uint8_t side);
+void key_mox_vox_press(void);
+void key_mox_vox_short(void);
+void key_mox_vox_long(void);
+void key_zin_spot_short(void);
+void power_on_request(void);
+int32_t FUN_fffe5d0e(void);             /* 0 while the scan runs upward (cat_SC) */
+uint8_t scan_allowed(void);
+void scan_start_up(void);
+void scan_start_down(void);
+void scan_stop(void);
+uint8_t meter_get_s(void);
+void split_toggle(void);
+uint8_t ptt_source_get(void);
+uint16_t popup_duration_get(uint8_t code);
+void popup_open_timed(uint16_t time);
+uint8_t ex_command(char *text, uint8_t set, uint16_t len, uint8_t *reply, uint16_t *reply_len);
+void cat_ai_holdoff(void);
+int32_t keyer_mode_class(uint8_t *rec);
+void beep_request(int32_t kind);
+uint8_t gpo_a_get(void);
+uint8_t gpo_b_get(void);
+uint8_t gpo_c_get(void);
+uint8_t gpo_d_get(void);
+void gpo_a_set(uint8_t on);
+void gpo_b_set(uint8_t on);
+void gpo_c_set(uint8_t on);
+void gpo_d_set(uint8_t on);
+void mic_up_key_press(void);
+void mic_down_key_press(void);
+uint8_t vfo_tune_locked(uint8_t side);
+void FUN_fffbe232(void);                /* ui_softkey_dispatch(0xFF), run by cat_parse while a pop-up is shown [fact: 0xFFFBE232] */
 
 /* --- DISPLAY link (docs/code/main/display-link.md; app/display_link.c) --- */
 void displink_uart_send(uint8_t *buf, uint16_t len);
@@ -132,6 +195,21 @@ void displink_build_50(void);
 void displink_build_60(void);
 void displink_build_62(void);
 void displink_build_70(void);
+
+/* --- TX/RX sequencer (docs/code/main/tx-protection.md; app/trx_lines.c) --- */
+void trx_sequencer(void);
+void ptt_arbiter(void);
+uint8_t qsk_delay_ticks(void);
+uint8_t tx_cw_keying_class(void);
+int32_t tx_breakin_on(void);
+uint8_t ckey_det(void);
+uint8_t tx_freq_allowed(uint32_t freq);
+uint8_t af_mute_get(void);
+void af_mute_set(uint8_t on);
+uint8_t ear_det(void);
+void pc_keying(void);
+void send_a_set(uint8_t on);
+void send_b_set(uint8_t on);
 
 /* --- keyer and tuner (app/keyer.c, app/tuner.c) --- */
 void beep_stop(void);

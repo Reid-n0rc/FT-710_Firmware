@@ -8,6 +8,7 @@
 #include "main.h"
 #include "main_ram.h"
 #include "r_cg_sci.h"
+#include "cat_cmds.h"
 
 #define CAT_RING_SLOTS 60u
 #define CAT_SLOT_SIZE  0x6Au
@@ -151,12 +152,12 @@ void cat_QS(void)
     cat_error = 1;
 }
 
-void cat_EN(uint32_t cmd)
+void cat_EN(const uint8_t *text)
 {
     cat_error = 1;
 }
 
-void cat_FS(uint32_t cmd, uint8_t len)
+void cat_FS(const uint8_t *text, uint8_t set)
 {
     cat_error = 1;
 }
