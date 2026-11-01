@@ -99,7 +99,7 @@ flowchart TD
 | 0xFFF91FAE | `vec106_GROUPBE0` |  | calls `R_BSP_InterruptControl`; 102 B, callers: 2 **[fact]** (code shape) |
 | 0xFFFEDD9A | `freopen` |  | freopen(name, mode, fp): fclose(fp) then _freopen_core; called by _INIT_IOLIB for stdin/stdout/stderr **[inference]** |
 | 0xFFFEDDC9 | `fclose` |  | fclose(fp): fflush, free the buffer, close(fd), release the FILE slot; called by freopen and _CLOSEALL **[inference]** |
-| 0xFFFEDE1D | `strncmp` |  | strncmp(a, b, n), byte compare up to n **[inference]** |
+| 0xFFFEDE1D | `strncmp` |  | strncmp(a, b, n), byte compare up to n **[inference]**; unlike ISO C it does not stop at a NUL both strings share: it compares until the first difference or n bytes (`"ab\0x"` vs `"ab\0y"`, n = 4, differ) **[fact: the loop 0xFFFEDE25..0xFFFEDE33 tests only the count and equality; T24 recreation, checked by emulation]** |
 | 0xFFFEDE41 | `__udiv64` |  | CC-RX runtime library function, matched by idiom (score 0.800, T23d): (u64 n in R1:R2, u64 d in R3:R4) -> quotient: 16-bit long-division fast paths, then normalise + 64-step shift/subtract; between strncmp and _INITSCT in the … **[inference]** |
 | 0xFFFEDF24 | `fflush` |  | fflush(fp) (fp=0: all 20 slots at 0x1FF74), writes the pending buffer with write() **[inference]** |
 | 0xFFFEDFA7 | `_freopen_core` |  | Parses the mode string ("r"/"w"/"a", "+", "b"), calls _fopen_open, sets up the FILE **[inference]** |
@@ -109,7 +109,7 @@ flowchart TD
 | 0xFFFEE18E | `_fopen_open` |  | Maps the parsed mode bits to open() flags (perm 0666, or 0600 for exclusive) and calls open **[inference]** |
 | 0xFFFEE1BE | `_heap_find` |  | First-fit search of the free list at 0x25E5C (from the rover 0x25E58); grows the heap via heap_getmem in >= 1 KB steps; the 244 bytes T05 saw as undefined data (#78) **[inference]** |
 | 0xFFFEE239 | `malloc` |  | malloc(n): size (n+15)&~7, minimum 8, splits the block from _heap_find; only caller _file_alloc (unreferenced), so dead code **[inference]** |
-| 0xFFFEE29C | `heap_getmem` |  | sbrk wrapper: returns 0 for size < 1 or when sbrk fails **[inference]** |
+| 0xFFFEE29C | `heap_getmem` |  | sbrk wrapper: returns 0 for size < 1 or when sbrk fails, else sbrk's pointer (`stz #0, r1` keeps R1 = sbrk's result, 0xFFFEE2B2) **[fact; T24 recreation]** |
 The boot-chain functions (`PowerON_Reset`, `_INITSCT`, `_INIT_IOLIB`, `bsp_callbacks_clear`, `bsp_interrupt_open`, `icu_select_init`,
 `hardware_setup`, `R_Systeminit`, `R_BSP_InterruptControl`, `main`) are in the step table of the [overview](README.md#steps-in-detail).
 

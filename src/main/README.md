@@ -1,0 +1,55 @@
+# MAIN (RX651): recreated source (T24)
+
+The source of the FT-710 control program (`FT-710_MAIN_V0112`, Renesas RX651), recreated function by function. The
+image was built with **Renesas CC-RX** at optimization level 0, with Renesas Code Generator (`r_cg_*`) drivers and no
+RTOS (identification and its evidence: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-recreation.md),
+"MAIN, round 1"). CC-RX is not available here, so the recreated C is built with **GCC 13.3.0 for RX**
+(`-mcpu=rx600`, docs/tooling.md "GCC for RX") and each function is checked against the original by differential
+emulation in Ghidra's p-code emulator (`tools/equiv_main_emu.py` with `tools/ghidra/EquivMainEmu.java`; Unicorn has no
+RX). A few trivial functions (empty `*_UserInit` hooks, the TPU start/stop pairs) come out byte-identical at their
+original addresses. What the code does: [docs/code/main/](../../docs/code/main/README.md). Per-function status:
+[status.tsv](status.tsv) (generated).
+
+| Path | What |
+|---|---|
+| `drivers/sci_cfg.h` | the six SCI channels as constant descriptions (registers, interrupt bits, pins, driver state); every value with the function it comes from |
+| `drivers/r_cg_sci.c` | `R_SCIn_Create`, `_Start`, `_Stop`, `_Serial_Receive`, `_Serial_Send`, `_Create_UserInit` for SCI0..SCI5 (one inline helper per operation, folded per channel) |
+| `drivers/r_cg_sci_user.c` | the TXI/RXI interrupt handlers, the TEI/ERI group-interrupt handlers, Yaesu's callbacks and receive hooks (`r_sci0_rx_byte_hook`, `sci3_rx_byte_hook`, `sci5_rx_byte_hook`, `sci4_rx_frame_done`, ...) |
+| `drivers/eeprom.c` | the BR25G256 SPI EEPROM, bit-banged on port E: `eeprom_spi_tx`, `eeprom_spi_rx`, `eeprom_read`, `eeprom_write` (64-byte pages, WIP poll) |
+| `drivers/r_cg_misc.c` | IWDT (`R_IWDT_Create`, `iwdt_refresh`), DA (`R_DA_Create`, `R_DA0_Start/Stop`, `dac0_write`), TPU0/TPU1 (`R_TPUn_Create/Start/Stop`, the TGIA handlers) |
+| `drivers/r_cg_s12ad.c` | S12AD unit 0 and 1: `R_S12ADn_Create/Start/Stop/Get_ValueResult` and the scan-end handlers |
+| `drivers/r_cg_init.c` | `icu_select_init` (selectable interrupt sources), `R_Pins_Create`, `mpc_pin_functions_init`, `FUN_fff92e25` (ICU IRQ disable) |
+| `lib/runtime.c` | the CC-RX library pieces: `strncmp` (no NUL stop), `__udiv64`, lowsrc `charput`/`charget`/`close`, `sbrk`, `heap_getmem` |
+| `bsp/r_bsp.c` | `R_BSP_InterruptRequestEnable/Disable` and the CC-RX intrinsic helpers `get_bpsw`, `get_bpc`, `get_extb`, `get_acc_hi`, `get_acc_mi` |
+| `include/main.h`, `include/main_ram.h`, `include/r_cg_sci.h` | the image's functions the recreated code calls, its RAM variables, the SCI prototypes |
+| `data_symbols.tsv` | RAM variables used by the recreated code → original address, with evidence |
+| `aliases.tsv` | recreated functions whose name is not the Ghidra name (none yet) |
+
+The register macros (`SCI0_SCR`, `ICU_GENBL0`, ...) are generated at build time into `out/include/iodefine.h` from
+`tools/ghidra/sfr_rx651.tsv` by `tools/main_iodefine.py`, so the source uses the names decomp/main uses.
+
+## Build and check
+
+```sh
+make -C src/main CROSS=$HOME/opt/rx-gcc-13.3.0/bin/rx-elf-          # objects in src/main/out/obj (ignored)
+python3 -I tools/equiv_main_emu.py check eeprom_write R_SCI0_Serial_Send   # one or more functions
+python3 -I tools/equiv_main_emu.py check --object drivers/eeprom.o         # all functions of an object
+python3 -I tools/equiv_main_emu.py status                                  # everything -> status.tsv
+python3 -I tools/readability_stats.py readme                               # the README progress block
+```
+
+The check needs the decoded image (`build/FT-710_MAIN_V0112.bin`, or `FT710_BUILD=<dir>`), a copy of the MAIN Ghidra
+project (`FT710_MAIN_PROJECT=<dir>`, default `/home/user/ghidra_tasks/t24main/proj`; each worker copies it again and
+opens it read-only), the rx62t module installed in Ghidra (docs/tooling.md) and `rx-elf-ld` (`RX_BINUTILS=<prefix>`).
+`status` with 200 trials and 3 workers takes about 15 minutes for the current 133 functions.
+
+## Writing a function
+
+1. Read the disassembly (`rx-elf-objdump -D -b binary -m rx --adjust-vma=0xFFF80000 --start-address=... build/...`)
+   and decomp/main; the access order and widths of peripheral registers are compared, so keep them (a 32-bit
+   read-modify-write stays one, `bset` on a byte stays a byte operation).
+2. Call the image's other functions by their Ghidra name (declare them in `include/main.h`); use its RAM through a
+   name in `data_symbols.tsv`. Recreated code must not have `.data` or `.bss` of its own.
+3. Build, run `check`; for a difference, `tools/equiv_main_emu.py`'s `run(..., trace=True)` gives the PC and
+   registers of the first 400 instructions of both runs. Where random inputs do not reach the interesting cases,
+   add a preset to `PRESETS` (a mutation test of the round showed which ones were needed).
