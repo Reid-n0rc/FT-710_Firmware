@@ -650,18 +650,18 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20119e60	vdc5_reg_display_output	660	vdc5_reg_display_output	drivers/vdc5_reg.o	equivalent	660	differential emulation: 200 trials agree (200 returned normally, 100% of 15 blocks reached)
 2011a110	vdc5_set_color_matrix	252	vdc5_set_color_matrix	drivers/vdc5_reg.o	equivalent	252	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011a20c	vdc5_set_input_cntrl_color_mtx	124	vdc5_set_input_cntrl_color_mtx	drivers/vdc5_reg.o	equivalent	124	differential emulation: 200 trials agree (151 returned normally, 83% of 6 blocks reached)
-2011a288	FUN_2011a288	8			not yet	0	
-2011a290	FUN_2011a290	260			not yet	0	
-2011a394	vdc5_config	820			not yet	0	
-2011a6c8	vdc5_reg_change_write_process	312			not yet	0	
+2011a288	FUN_2011a288	8	vdc5_ratio_one	drivers/vdc5_reg.o	identical	8	byte-identical at the original address (8 bytes)
+2011a290	FUN_2011a290	260	vdc5_set_scaling_down	drivers/vdc5_reg.o	equivalent	260	differential emulation: 200 trials agree (141 returned normally, 100% of 9 blocks reached)
+2011a394	vdc5_config	820	vdc5_reg_write_data_control	drivers/vdc5_reg.o	equivalent	820	differential emulation: 200 trials agree (18 returned normally, 100% of 13 blocks reached)
+2011a6c8	vdc5_reg_change_write_process	312	vdc5_reg_change_write_process	drivers/vdc5_reg.o	equivalent	312	differential emulation: 200 trials agree (19 returned normally, 100% of 4 blocks reached)
 2011a800	vdc5_set_img_qa_improver_color_mtx	72	vdc5_set_img_qa_improver_color_mtx	drivers/vdc5_reg.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011a848	FUN_2011a848	132			not yet	0	
-2011a8cc	FUN_2011a8cc	276			not yet	0	
-2011a9e0	FUN_2011a9e0	236			not yet	0	
-2011aad8	FUN_2011aad8	32			not yet	0	
-2011aaf8	FUN_2011aaf8	480			not yet	0	
-2011acd8	FUN_2011acd8	500			not yet	0	
-2011aecc	FUN_2011aecc	104			not yet	0	
+2011a848	FUN_2011a848	132	vdc5_set_scaler_background_color	drivers/vdc5_reg.o	equivalent	132	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2011a8cc	FUN_2011a8cc	276	vdc5_set_cascade	drivers/vdc5_reg.o	equivalent	276	differential emulation: 200 trials agree (200 returned normally, 78% of 9 blocks reached)
+2011a9e0	FUN_2011a9e0	236	vdc5_setup_graphics_vin	drivers/vdc5_reg.o	equivalent	236	differential emulation: 200 trials agree (200 returned normally, 88% of 8 blocks reached)
+2011aad8	FUN_2011aad8	32	vdc5_display_start_pixel	drivers/vdc5_reg.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011aaf8	FUN_2011aaf8	480	vdc5_set_scaling_up	drivers/vdc5_reg.o	equivalent	480	differential emulation: 200 trials agree (162 returned normally, 100% of 20 blocks reached)
+2011acd8	FUN_2011acd8	500	vdc5_set_scaler_graphics	drivers/vdc5_reg.o	equivalent	500	differential emulation: 200 trials agree (11 returned normally, 93% of 14 blocks reached)
+2011aecc	FUN_2011aecc	104	vdc5_confirm_graphics_enlargement	drivers/vdc5_reg.o	equivalent	104	differential emulation: 200 trials agree (11 returned normally, 100% of 9 blocks reached)
 2011af34	vdc5_reg_read_data_control	1052			not yet	0	
 2011b498	vdc5_reg_change_read_process	868			not yet	0	
 2011b6d8	vdc5_set_reg_update_rw_enable	440	vdc5_set_reg_update_rw_enable	drivers/vdc5_reg.o	equivalent	440	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
@@ -670,25 +670,25 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011ba48	vdc5_reg_release_data_control	316	vdc5_reg_release_data_control	drivers/vdc5_reg.o	equivalent	316	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 2011bb84	vdc5_reg_video_noise_reduction	264	vdc5_reg_video_noise_reduction	drivers/vdc5_reg.o	equivalent	264	differential emulation: 200 trials agree (57 returned normally, 100% of 3 blocks reached)
 2011bc8c	vdc5_reg_image_color_matrix	36	vdc5_reg_image_color_matrix	drivers/vdc5_reg.o	equivalent	36	differential emulation: 200 trials agree (29 returned normally, 100% of 1 blocks reached)
-2011bcb0	FUN_2011bcb0	220			not yet	0	
-2011bd8c	FUN_2011bd8c	372			not yet	0	
-2011bf00	vdc5_reg_image_enhancement	180			not yet	0	
+2011bcb0	FUN_2011bcb0	220	vdc5_set_enhancement_lti	drivers/vdc5_reg.o	equivalent	220	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011bd8c	FUN_2011bd8c	372	vdc5_set_enhancement_sharpness	drivers/vdc5_reg.o	equivalent	372	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011bf00	vdc5_reg_image_enhancement	180	vdc5_reg_image_enhancement	drivers/vdc5_reg.o	equivalent	180	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011bfc4	vdc5_reg_image_black_stretch	164	vdc5_reg_image_black_stretch	drivers/vdc5_reg.o	equivalent	164	differential emulation: 200 trials agree (24 returned normally, 100% of 3 blocks reached)
 2011c068	vdc5_reg_alpha_blending	176	vdc5_reg_alpha_blending	drivers/vdc5_reg.o	equivalent	176	differential emulation: 200 trials agree (25 returned normally, 100% of 5 blocks reached)
-2011c118	FUN_2011c118	92			not yet	0	
-2011c174	FUN_2011c174	184			not yet	0	
-2011c22c	vdc5_reg_alpha_blending_rect	308			not yet	0	
-2011c360	rgb5_to_8	28			not yet	0	
-2011c37c	rgb4_to_8	12			not yet	0	
-2011c388	rgb6_to_8	28			not yet	0	
-2011c3a4	FUN_2011c3a4	256			not yet	0	
-2011c4d4	vdc5_reg_chromakey	224			not yet	0	
-2011c5b4	FUN_2011c5b4	48			not yet	0	
-2011c5e4	vdc5_reg_clut	264			not yet	0	
+2011c118	FUN_2011c118	92	vdc5_set_alpha_rect_area	drivers/vdc5_reg.o	equivalent	92	differential emulation: 200 trials agree (134 returned normally, 100% of 3 blocks reached)
+2011c174	FUN_2011c174	184	vdc5_set_und_sel	drivers/vdc5_reg.o	equivalent	184	differential emulation: 200 trials agree (200 returned normally, 88% of 8 blocks reached)
+2011c22c	vdc5_reg_alpha_blending_rect	308	vdc5_reg_alpha_blending_rect	drivers/vdc5_reg.o	equivalent	308	differential emulation: 200 trials agree (28 returned normally, 91% of 11 blocks reached)
+2011c360	rgb5_to_8	28	rgb5_to_8	drivers/vdc5_reg.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011c37c	rgb4_to_8	12	rgb4_to_8	drivers/vdc5_reg.o	identical	12	byte-identical at the original address (12 bytes)
+2011c388	rgb6_to_8	28	rgb6_to_8	drivers/vdc5_reg.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011c3a4	FUN_2011c3a4	256	vdc5_color_conversion	drivers/vdc5_reg.o	equivalent	256	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011c4d4	vdc5_reg_chromakey	224	vdc5_reg_chromakey	drivers/vdc5_reg.o	equivalent	224	differential emulation: 200 trials agree (30 returned normally, 100% of 6 blocks reached)
+2011c5b4	FUN_2011c5b4	48	vdc5_set_clut	drivers/vdc5_reg.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011c5e4	vdc5_reg_clut	264	vdc5_reg_clut	drivers/vdc5_reg.o	equivalent	264	differential emulation: 200 trials agree (173 returned normally, 100% of 10 blocks reached)
 2011c6ec	vdc5_reg_display_calibration	368	vdc5_reg_display_calibration	drivers/vdc5_reg.o	equivalent	368	differential emulation: 200 trials agree (40 returned normally, 100% of 8 blocks reached)
-2011c85c	FUN_2011c85c	72			not yet	0	
-2011c8a4	FUN_2011c8a4	172			not yet	0	
-2011c950	vdc5_reg_gamma_correction	176			not yet	0	
+2011c85c	FUN_2011c85c	72	vdc5_set_gamma_gain	drivers/vdc5_reg.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2011c8a4	FUN_2011c8a4	172	vdc5_set_gamma_threshold	drivers/vdc5_reg.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2011c950	vdc5_reg_gamma_correction	176	vdc5_reg_gamma_correction	drivers/vdc5_reg.o	equivalent	176	differential emulation: 200 trials agree (57 returned normally, 100% of 3 blocks reached)
 2011ca00	vdc5_tcon_stva	68	vdc5_tcon_stva	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011ca44	vdc5_tcon_stvb	68	vdc5_tcon_stvb	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011ca88	vdc5_tcon_sth	112	vdc5_tcon_sth	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
@@ -755,56 +755,56 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011df9c	rspi2_open	124			not yet	0	
 2011e018	rspi3_open	132			not yet	0	
 2011e09c	rspi4_open	124			not yet	0	
-2011e118	rspi0_clear_rx_flag	16			not yet	0	
-2011e128	rspi1_clear_rx_flag	16			not yet	0	
-2011e138	rspi2_clear_rx_flag	16			not yet	0	
-2011e148	rspi3_clear_rx_flag	16			not yet	0	
-2011e158	rspi4_clear_rx_flag	16			not yet	0	
-2011e168	rspi0_clear_tx_flag	16			not yet	0	
-2011e178	rspi1_clear_tx_flag	16			not yet	0	
-2011e188	rspi2_clear_tx_flag	16			not yet	0	
-2011e198	rspi3_clear_tx_flag	16			not yet	0	
-2011e1e0	rspi4_clear_tx_flag	16			not yet	0	
-2011e1f0	rspi0_rx_isr	80			not yet	0	
-2011e240	rspi1_rx_isr	80			not yet	0	
-2011e290	rspi2_rx_isr	40			not yet	0	
-2011e2b8	rspi3_rx_isr	40			not yet	0	
-2011e2e0	rspi4_rx_isr	40			not yet	0	
-2011e308	rspi0_tx_isr	40			not yet	0	
-2011e330	rspi1_tx_isr	40			not yet	0	
-2011e358	rspi2_tx_isr	40			not yet	0	
-2011e380	rspi3_tx_isr	40			not yet	0	
-2011e3a8	rspi4_tx_isr	40			not yet	0	
-2011e3d0	rspi0_tx_wait	44			not yet	0	
+2011e118	rspi0_clear_rx_flag	16	rspi0_clear_rx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e128	rspi1_clear_rx_flag	16	rspi1_clear_rx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e138	rspi2_clear_rx_flag	16	rspi2_clear_rx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e148	rspi3_clear_rx_flag	16	rspi3_clear_rx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e158	rspi4_clear_rx_flag	16	rspi4_clear_rx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e168	rspi0_clear_tx_flag	16	rspi0_clear_tx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e178	rspi1_clear_tx_flag	16	rspi1_clear_tx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e188	rspi2_clear_tx_flag	16	rspi2_clear_tx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e198	rspi3_clear_tx_flag	16	rspi3_clear_tx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e1e0	rspi4_clear_tx_flag	16	rspi4_clear_tx_flag	drivers/rspi.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e1f0	rspi0_rx_isr	80	rspi0_rx_isr	drivers/rspi.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e240	rspi1_rx_isr	80	rspi1_rx_isr	drivers/rspi.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e290	rspi2_rx_isr	40	rspi2_rx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e2b8	rspi3_rx_isr	40	rspi3_rx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e2e0	rspi4_rx_isr	40	rspi4_rx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e308	rspi0_tx_isr	40	rspi0_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e330	rspi1_tx_isr	40	rspi1_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e358	rspi2_tx_isr	40	rspi2_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e380	rspi3_tx_isr	40	rspi3_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e3a8	rspi4_tx_isr	40	rspi4_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011e3d0	rspi0_tx_wait	44	rspi0_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (199 returned normally, 100% of 3 blocks reached, 1 trials inconclusive)
 2011e3fc	rspi0_read_burst	328			not yet	0	
-2011e544	rspi1_tx_wait	44			not yet	0	
+2011e544	rspi1_tx_wait	44	rspi1_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011e570	rspi1_read_burst	320			not yet	0	
-2011e6b0	rspi2_tx_wait	44			not yet	0	
+2011e6b0	rspi2_tx_wait	44	rspi2_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (198 returned normally, 100% of 3 blocks reached, 2 trials inconclusive)
 2011e6dc	rspi2_read_burst	328			not yet	0	
-2011e824	rspi3_tx_wait	44			not yet	0	
+2011e824	rspi3_tx_wait	44	rspi3_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011e850	rspi3_read_burst	320			not yet	0	
-2011e990	rspi4_tx_wait	44			not yet	0	
+2011e990	rspi4_tx_wait	44	rspi4_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (196 returned normally, 100% of 3 blocks reached, 4 trials inconclusive)
 2011e9bc	rspi4_read_burst	328			not yet	0	
-2011eb58	rspi0_wait_tend	36			not yet	0	
-2011eb7c	rspi1_wait_tend	36			not yet	0	
-2011eba0	rspi2_wait_tend	36			not yet	0	
-2011ebc4	rspi3_wait_tend	36			not yet	0	
-2011ebe8	rspi4_wait_tend	36			not yet	0	
-2011ec0c	rspi0_delay	40			not yet	0	
-2011ec34	rspi1_delay	40			not yet	0	
-2011ec5c	rspi2_delay	40			not yet	0	
-2011ec84	rspi3_delay	40			not yet	0	
-2011ecac	rspi4_delay	40			not yet	0	
-2011ecd4	rspi0_spti_isr	8			not yet	0	
-2011ecdc	rspi0_spri_isr	8			not yet	0	
-2011ece4	rspi1_spti_isr	8			not yet	0	
-2011ecec	rspi1_spri_isr	8			not yet	0	
-2011ecf4	rspi2_spti_isr	8			not yet	0	
-2011ecfc	rspi2_spri_isr	8			not yet	0	
-2011ed04	rspi3_spti_isr	8			not yet	0	
-2011ed0c	rspi3_spri_isr	8			not yet	0	
-2011ed14	rspi4_spti_isr	8			not yet	0	
-2011ed1c	rspi4_spri_isr	8			not yet	0	
+2011eb58	rspi0_wait_tend	36	rspi0_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011eb7c	rspi1_wait_tend	36	rspi1_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011eba0	rspi2_wait_tend	36	rspi2_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ebc4	rspi3_wait_tend	36	rspi3_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ebe8	rspi4_wait_tend	36	rspi4_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ec0c	rspi0_delay	40	rspi0_delay	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ec34	rspi1_delay	40	rspi1_delay	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ec5c	rspi2_delay	40	rspi2_delay	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ec84	rspi3_delay	40	rspi3_delay	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ecac	rspi4_delay	40	rspi4_delay	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ecd4	rspi0_spti_isr	8	rspi0_spti_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ecdc	rspi0_spri_isr	8	rspi0_spri_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ece4	rspi1_spti_isr	8	rspi1_spti_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ecec	rspi1_spri_isr	8	rspi1_spri_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ecf4	rspi2_spti_isr	8	rspi2_spti_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ecfc	rspi2_spri_isr	8	rspi2_spri_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ed04	rspi3_spti_isr	8	rspi3_spti_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ed0c	rspi3_spri_isr	8	rspi3_spri_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ed14	rspi4_spti_isr	8	rspi4_spti_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
+2011ed1c	rspi4_spri_isr	8	rspi4_spri_isr	drivers/rspi.o	identical	8	byte-identical at the original address (8 bytes)
 2011ed24	rspi_hw_config_master	676			not yet	0	
 2011efc8	rspi0_open_irq_only	120			not yet	0	
 2011f040	rspi1_open_irq_only	120			not yet	0	
@@ -898,7 +898,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20120918	riic_detect_stop	100	riic_detect_stop	drivers/riic.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 2012097c	riic_receive	248	riic_receive	drivers/riic.o	equivalent	248	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
 20120a88	riic_receive_dummy	20	riic_receive_dummy	drivers/riic.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20120a9c	R_RIIC_Read	272	R_RIIC_Read	drivers/riic.o	equivalent	272	differential emulation: 200 trials agree (71 returned normally, 100% of 11 blocks reached, 129 trials inconclusive)
+20120a9c	R_RIIC_Read	272	R_RIIC_Read	drivers/riic.o	equivalent	272	differential emulation: 200 trials agree (70 returned normally, 100% of 11 blocks reached, 130 trials inconclusive)
 20120bac	R_RIIC_ReadDummy	28	R_RIIC_ReadDummy	drivers/riic.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 20120bc8	R_RIIC_DetectStop	28	R_RIIC_DetectStop	drivers/riic.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 20120be4	R_RIIC_ClearNack	32	R_RIIC_ClearNack	drivers/riic.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
@@ -1070,11 +1070,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013249c	lvds_pll_cfg	104	lvds_pll_cfg	app/gui_vdc5.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 20132504	vdc5_sync_setup	228	vdc5_sync_setup	app/gui_vdc5.o	equivalent	228	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 201325e8	vdc5_output_setup	152	vdc5_output_setup	app/gui_vdc5.o	equivalent	152	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
-20132680	cursor_rect_calc	124			not yet	0	
-201326fc	fb_get_layer_addr	88			not yet	0	
-2013276c	vdc5_layers_setup	920			not yet	0	
-20132b58	vdc5_layers_stop	60			not yet	0	
-20132b94	vdc5_channel_shutdown	44			not yet	0	
+20132680	cursor_rect_calc	124	cursor_rect_calc	app/gui_vdc5.o	equivalent	124	differential emulation: 200 trials agree (90 returned normally, 100% of 4 blocks reached)
+201326fc	fb_get_layer_addr	88	fb_get_layer_addr	app/gui_vdc5.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+2013276c	vdc5_layers_setup	920	vdc5_layers_setup	app/gui_vdc5.o	equivalent	920	differential emulation: 200 trials agree (200 returned normally, 85% of 26 blocks reached)
+20132b58	vdc5_layers_stop	60	vdc5_layers_stop	app/gui_vdc5.o	equivalent	60	differential emulation: 200 trials agree (163 returned normally, 100% of 4 blocks reached, 37 trials inconclusive)
+20132b94	vdc5_channel_shutdown	44	vdc5_channel_shutdown	app/gui_vdc5.o	equivalent	44	differential emulation: 200 trials agree (163 returned normally, 100% of 3 blocks reached, 37 trials inconclusive)
 20132bc0	dvi_set_resolution	268			not yet	0	
 20132ccc	gui_start	428			not yet	0	
 20132e78	fb_get_front_addr	88			not yet	0	
@@ -1878,7 +1878,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201556d0	__rt_locale	4			not yet	0	
 201556d8	FUN_201556d8	4			not yet	0	
 201556e0	__aeabi_uldivmod	752	__aeabi_uldivmod	lib/aeabi_ldiv.o	identical	752	byte-identical at the original address (816 bytes)
-20155a10	_ll_udiv10	152	_ll_udiv10	lib/aeabi_div.o	equivalent	152	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+20155a10	_ll_udiv10	152	_ll_udiv10	lib/aeabi_ldiv.o	identical	152	byte-identical at the original address (152 bytes)
 20155b5c	_fp_digits	430			not yet	0	
 20155f68	FUN_20155f68	10			not yet	0	
 20155f72	_sprintf_body	32			not yet	0	

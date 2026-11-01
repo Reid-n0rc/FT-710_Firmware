@@ -615,7 +615,7 @@ def main():
           f'({ram2_end - RAM2} of {RAM2_END - RAM2} bytes); {nref} function addresses taken as data resolved to '
           f'original entries; {sum(1 for r in rows if r[3] != "in place")} original entries patched ({changed} '
           f'bytes of the image changed), {len(skipped)} not patched; {len(ident)} byte-identical functions left as '
-          f'they are; {len(other)} recreated functions not linked (not verified), {len(held)} held back (reset path: '
+          f'they are; {len(other)} recreated functions not linked (not verified), {len(held)} held back (reset path or abicheck: '
           f'{", ".join(sorted(held)) or "none"}). Wrote {os.path.relpath(binf, ROOT)} '
           f'({len(out)} bytes), display_hybrid.elf, .map, patches.tsv, placement.tsv')
 

@@ -74,3 +74,6 @@ vdc5_gr_format_bits	20165c70	[fact] bits per pixel of the 12 graphics formats (1
 gui_cursor_pos	20808574	[fact] the mouse cursor position {x, y} per channel (.data2 words, read as halfwords): cursor_rect_calc 0x20132680 (literals 0x20808574..0x20808580)
 gui_cursor_rect	20808584	[fact] the cursor window (vdc5_period_rect_t) vdc5_layers_setup 0x2013276C stores and points gui_layers[2].area at
 gui_layers	208f4d50	[fact] three 16-byte records {frame buffer, ?, area, ?} of graphics layers 1..3, written by vdc5_layers_setup (0x208F4D50, 0x208F4D60, 0x208F4D70..7C)
+rspi_rx_done	20800418	[fact] receive-done flags of RSPI0..4 (bytes), set by rspiN_rx_isr and cleared by rspiN_clear_rx_flag (literal 0x20800418, strb [r1, #n])
+rspi_tx_done	2080041d	[fact] transmit-done flags of RSPI0..4 (bytes), set by rspiN_tx_isr, polled by rspiN_tx_wait (literal 0x2080041D)
+rspi_rx_count	208dce28	[fact] receive interrupt counts of RSPI0 and RSPI1, incremented by rspi0_rx_isr / rspi1_rx_isr (literals 0x208DCE28, 0x208DCE2C)

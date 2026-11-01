@@ -1032,6 +1032,12 @@ def preset_for(fname):
             args['regs'][1] = rng.randrange(12)
             return []
         return sp
+    if fname.startswith('vdc5_shrd_get_'):   # (ch, scaler or graphics index): an index of the tables, not a pointer
+        def sh(rng, args):                    # (a pointer index reads anywhere, e.g. the hybrid's RAM2 code: round 6)
+            fill = vdc5_args(rng, args)
+            args['regs'][1] = rng.randrange(6)
+            return fill
+        return sh
     if fname in VDC5_TABLE_ARGS:
         return lambda rng, args: vdc5_table_args(rng, args, *VDC5_TABLE_ARGS[fname])
     if fname == 'vdc5_color_conversion':      # (graphics format, colour): every case of the switch and past it
@@ -1256,15 +1262,16 @@ def _link_one(job):
             runs = [Run(res.img, [], stub_addrs, sd, fill, args), Run(_HYB, [], stub_addrs, sd, fill, args)]
             for r in runs:
                 r.snap = SNAP_LINK
-            ram2_before = bytes(runs[1].uc.mem_read(RAM2, RAM2_END - RAM2))
+            before = [bytes(r.uc.mem_read(RAM2, RAM2_END - RAM2)) for r in runs]
             r1, r2 = (r.go(oaddr, thumb, size, budget) for r in runs)
             if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                 break
         if r1['end'] == r2['end'] == 'budget':
             inconclusive += 1
             continue
-        d = compare(r1, r2, SNAP_LINK) or ('RAM2 (the hybrid wrote into its own code)'
-                                           if r2['ram2'] != ram2_before else None)
+        # RAM2 holds code in the hybrid only: both runs must change it alike (an argument pointer may point there)
+        d = compare(r1, r2, SNAP_LINK) or ('RAM2' if bytes(x ^ y for x, y in zip(r1['ram2'], before[0])) !=
+                                           bytes(x ^ y for x, y in zip(r2['ram2'], before[1])) else None)
         if d:
             return fname, 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})'
         ok += r1['end'] == 'return'
