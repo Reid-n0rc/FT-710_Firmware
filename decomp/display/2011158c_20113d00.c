@@ -766,40 +766,30 @@ void renc_poll_mtu2(void)
 }
 
 
-// ===== adc_ring_average @ 20112894 (76 bytes)
+// ===== adc_ring_average @ 20112894 (68 bytes)
 
 /* average of the ad renc ring buffer (returns double) */
 
-undefined8 adc_ring_average(int param_1)
+void adc_ring_average(int param_1)
 
 {
   int iVar1;
-  uint uVar2;
-  uint uVar3;
+  uint n;
   int i;
-  uint uVar4;
   ulonglong __aeabi_idivmod_ret;
   
-  uVar2 = 0;
+  n = 0;
   i = 0;
   if (0 < (int)DAT_208001f4) {
     do {
       iVar1 = i * 2;
       i = i + 1;
-      uVar2 = uVar2 + *(ushort *)(param_1 + iVar1);
+      n = n + *(ushort *)(param_1 + iVar1);
     } while (i < (int)DAT_208001f4);
   }
-  __aeabi_idivmod_ret = __aeabi_idivmod(uVar2,DAT_208001f4);
-  uVar2 = (uint)__aeabi_idivmod_ret;
-  uVar4 = uVar2 & 0x80000000;
-  if ((int)uVar4 < 0) {
-    uVar2 = -uVar2;
-  }
-  uVar3 = uVar2 << LZCOUNT(uVar2);
-  if (uVar3 == 0) {
-    return 0;
-  }
-  return CONCAT44(uVar4 + (0x41d - LZCOUNT(uVar2)) * 0x100000 + (uVar3 >> 0xb),uVar3 << 0x15);
+  __aeabi_idivmod_ret = __aeabi_idivmod(n,DAT_208001f4);
+  __aeabi_i2d_a32((int)__aeabi_idivmod_ret,(int)(__aeabi_idivmod_ret >> 0x20));
+  return;
 }
 
 

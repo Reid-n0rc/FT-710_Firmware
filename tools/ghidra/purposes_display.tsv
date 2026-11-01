@@ -71,7 +71,6 @@
 201175b4	isr_desc_check	intno < 0x24B, prio < 0x20	inference	boot-rtos.md
 20117728	gic_irq_exit	pops nesting stack, EOIR + PMR restore	inference	peripherals.md
 201178f4	delay_us	busy-wait on ostm_time_us	inference	peripherals.md
-20117ad4	r_vdc5_terminate	driver shutdown of a channel	inference	gui.md
 20117c14	r_vdc5_callback_isr_checked	Checks channel states 0 and 2	fact	gui.md
 20117c64	vdc5_layer_to_wr	Layer id 0/1/2	fact	gui.md
 20117d2c	r_vdc5_change_write_process	needs a busy write resource	inference	gui.md
@@ -84,7 +83,7 @@
 2011830c	r_vdc5_gamma_correction	needs state 3	inference	gui.md
 2011834c	r_vdc5_get_isr	ISR pointer from table 0x20165A74, 23 per channel	fact	gui.md
 201193ec	vdc5_reg_initialize	Register part of r_vdc5_initialize	inference	gui.md
-201197c0	vdc5_reg_terminate	Register part of r_vdc5_terminate	inference	gui.md
+201197c0	vdc5_reg_video_input	Register part of r_vdc5_video_input	fact	gui.md
 20119990	vdc5_reg_sync_control	Register part of r_vdc5_sync_control	inference	gui.md
 20119e60	vdc5_reg_display_output	Register part of r_vdc5_display_output	inference	gui.md
 2011a6c8	vdc5_reg_change_write_process	Register part of r_vdc5_change_write_process	inference	gui.md
@@ -107,7 +106,7 @@
 2011c950	vdc5_reg_gamma_correction	Register part of r_vdc5_gamma_correction	inference	gui.md
 2011d080	vdc5_shrd_init	Shared-parameter update of r_vdc5_initialize	inference	gui.md
 2011d19c	vdc5_shrd_set_init_param	Shared-parameter update of r_vdc5_initialize	inference	gui.md
-2011d1f4	vdc5_shrd_terminate	Shared-parameter update of r_vdc5_terminate	inference	gui.md
+2011d1f4	vdc5_shrd_set_input_param	Shared-parameter part of r_vdc5_video_input	fact	gui.md
 2011d248	vdc5_shrd_set_sync_param	Shared-parameter update of r_vdc5_sync_control	inference	gui.md
 2011d2b4	vdc5_shrd_set_output_param	Shared-parameter update of r_vdc5_display_output	inference	gui.md
 2011d374	vdc5_shrd_set_write_param	Shared-parameter update of r_vdc5_write_data_control	inference	gui.md

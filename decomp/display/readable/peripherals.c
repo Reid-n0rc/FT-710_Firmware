@@ -3791,7 +3791,7 @@ void gic_irq_exit(void)
 }
 
 /* -----------------------------------------------------------------------------
- * gic_disable_irq @ 201177a0  (68 bytes, 14 callers, export file 2011775c_20118a48.c)
+ * gic_disable_irq @ 201177a0  (68 bytes, 14 callers, export file 2011775c_201189a8.c)
  * Purpose: GICD_ICENABLER bit [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -3819,7 +3819,7 @@ undefined4 gic_disable_irq(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ostm_time_us @ 20117860  (148 bytes, 2 callers, export file 2011775c_20118a48.c)
+ * ostm_time_us @ 20117860  (148 bytes, 2 callers, export file 2011775c_201189a8.c)
  * Purpose: system time (us) interpolated from the OSTM0 counter [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -3855,7 +3855,7 @@ uint ostm_time_us(void)
 
 
 /* -----------------------------------------------------------------------------
- * delay_us @ 201178f4  (56 bytes, 0 callers, export file 2011775c_20118a48.c)
+ * delay_us @ 201178f4  (56 bytes, 0 callers, export file 2011775c_201189a8.c)
  * Purpose: busy-wait on ostm_time_us [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -3883,7 +3883,7 @@ void delay_us(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_spti_isr @ 2011ecd4  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_spti_isr @ 2011ecd4  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 271 / 272
  * Source: RSPI0 SPRI / SPTI
  * Pri: 10
@@ -3906,7 +3906,7 @@ void rspi0_spti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_spri_isr @ 2011ecdc  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_spri_isr @ 2011ecdc  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 271 / 272
  * Source: RSPI0 SPRI / SPTI
  * Pri: 10
@@ -3929,7 +3929,7 @@ void rspi0_spri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_spti_isr @ 2011ece4  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_spti_isr @ 2011ece4  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 274 / 275
  * Source: RSPI1 SPRI / SPTI
  * Pri: 10
@@ -3950,7 +3950,7 @@ void rspi1_spti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_spri_isr @ 2011ecec  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_spri_isr @ 2011ecec  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 274 / 275
  * Source: RSPI1 SPRI / SPTI
  * Pri: 10
@@ -3971,7 +3971,7 @@ void rspi1_spri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_spti_isr @ 2011ecf4  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_spti_isr @ 2011ecf4  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 277 / 278
  * Source: RSPI2 SPRI / SPTI
  * Pri: 10
@@ -3992,7 +3992,7 @@ void rspi2_spti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_spri_isr @ 2011ecfc  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_spri_isr @ 2011ecfc  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 277 / 278
  * Source: RSPI2 SPRI / SPTI
  * Pri: 10
@@ -4013,7 +4013,7 @@ void rspi2_spri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_spti_isr @ 2011ed04  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_spti_isr @ 2011ed04  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 279 / 280 / 281
  * Source: RSPI3 SPEI / SPRI / SPTI
  * Pri: 10
@@ -4034,7 +4034,7 @@ void rspi3_spti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_spri_isr @ 2011ed0c  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_spri_isr @ 2011ed0c  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 279 / 280 / 281
  * Source: RSPI3 SPEI / SPRI / SPTI
  * Pri: 10
@@ -4055,7 +4055,7 @@ void rspi3_spri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_spti_isr @ 2011ed14  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_spti_isr @ 2011ed14  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 283 / 284
  * Source: RSPI4 SPRI / SPTI
  * Pri: 10
@@ -4076,7 +4076,7 @@ void rspi4_spti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_spri_isr @ 2011ed1c  (8 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_spri_isr @ 2011ed1c  (8 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * GIC ID: 283 / 284
  * Source: RSPI4 SPRI / SPTI
  * Pri: 10
@@ -4097,7 +4097,7 @@ void rspi4_spri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_rx_isr @ 2011f840  (72 bytes, 5 callers, export file 2011f128_201200dc.c)
+ * rspi_rx_isr @ 2011f840  (72 bytes, 5 callers, export file 2011efc8_201200a0.c)
  * GIC ID: 271 / 272
  * Source: RSPI0 SPRI / SPTI
  * Pri: 10
@@ -4140,7 +4140,7 @@ undefined4 rspi_rx_isr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_tx_isr @ 2011f89c  (72 bytes, 5 callers, export file 2011f128_201200dc.c)
+ * rspi_tx_isr @ 2011f89c  (72 bytes, 5 callers, export file 2011efc8_201200a0.c)
  * GIC ID: 271 / 272
  * Source: RSPI0 SPRI / SPTI
  * Pri: 10
@@ -4182,7 +4182,7 @@ undefined4 rspi_tx_isr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_regs_init @ 2011f970  (288 bytes, 4 callers, export file 2011f128_201200dc.c)
+ * riic_regs_init @ 2011f970  (288 bytes, 4 callers, export file 2011efc8_201200a0.c)
  * Purpose: (ch 0..3): RIIC register set-up from the per-channel pointer table 0x20166D18 (0x24 B each): ICCR1
  *     ICE/IICRST sequence, ICMR1 CKS, ICBRL/ICBRH, ICMR3, ICFER, ICIER TIE/RIE/TEIE [fact for the stores]
  * Tag: [fact]
@@ -4223,7 +4223,7 @@ void riic_regs_init(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_port_init @ 2011fa90  (508 bytes, 2 callers, export file 2011f128_201200dc.c)
+ * riic_port_init @ 2011fa90  (508 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: (ch 0/1 only): P1_0 and P1_1 to alternative function 1 with bidirectional mode
  *     (PIBC/PBDC/PM/PMC/PIPC/PFC/PFCE/PFCAE of port 1) [fact]; RZ/A1H RIIC0/1 SCL/SDA pins [inference]
  * Tag: [fact] [inference]
@@ -4268,7 +4268,7 @@ void riic_port_init(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_init @ 2011fc8c  (144 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_init @ 2011fc8c  (144 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: RIIC0 open: clears STBCR9 bit 7 (module clock on) and the P1 pin functions (riic_port_init),
  *     riic_regs_init(0), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids [fact] (Renesas
  *     sample name [inference])
@@ -4304,7 +4304,7 @@ void userdef_riic0_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_init @ 2011fd1c  (144 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_init @ 2011fd1c  (144 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: RIIC1 open: clears STBCR9 bit 6 (module clock on) and the P1 pin functions (riic_port_init),
  *     riic_regs_init(1), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids [fact] (Renesas
  *     sample name [inference])
@@ -4340,7 +4340,7 @@ void userdef_riic1_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_init @ 2011fdac  (136 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_init @ 2011fdac  (136 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: RIIC2 open: clears STBCR9 bit 5 (module clock on), riic_regs_init(2), creates the TEI/RI/TI ISRs with
  *     itron_acre_isr and enables their GIC ids [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4373,7 +4373,7 @@ void userdef_riic2_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_init @ 2011fe34  (136 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_init @ 2011fe34  (136 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: RIIC3 open: clears STBCR9 bit 4 (module clock on), riic_regs_init(3), creates the TEI/RI/TI ISRs with
  *     itron_acre_isr and enables their GIC ids [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4406,7 +4406,7 @@ void userdef_riic3_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_init_rx_full @ 2011febc  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_init_rx_full @ 2011febc  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch0 receive-full flag 0x20800454 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4425,7 +4425,7 @@ void userdef_riic0_init_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_init_rx_full @ 2011fecc  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_init_rx_full @ 2011fecc  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch1 receive-full flag 0x20800455 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4444,7 +4444,7 @@ void userdef_riic1_init_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_init_rx_full @ 2011fedc  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_init_rx_full @ 2011fedc  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch2 receive-full flag 0x20800456 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4463,7 +4463,7 @@ void userdef_riic2_init_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_init_rx_full @ 2011feec  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_init_rx_full @ 2011feec  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch3 receive-full flag 0x20800457 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4482,7 +4482,7 @@ void userdef_riic3_init_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_init_tx_empty @ 2011fefc  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_init_tx_empty @ 2011fefc  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch0 transmit-empty flag 0x20800458 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4501,7 +4501,7 @@ void userdef_riic0_init_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_init_tx_empty @ 2011ff0c  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_init_tx_empty @ 2011ff0c  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch1 transmit-empty flag 0x20800459 [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4520,7 +4520,7 @@ void userdef_riic1_init_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_init_tx_empty @ 2011ff1c  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_init_tx_empty @ 2011ff1c  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch2 transmit-empty flag 0x2080045A [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4539,7 +4539,7 @@ void userdef_riic2_init_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_init_tx_empty @ 2011ff2c  (16 bytes, 3 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_init_tx_empty @ 2011ff2c  (16 bytes, 3 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the ch3 transmit-empty flag 0x2080045B [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4558,7 +4558,7 @@ void userdef_riic3_init_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_init_tx_end @ 2011ff3c  (24 bytes, 4 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_init_tx_end @ 2011ff3c  (24 bytes, 4 callers, export file 2011efc8_201200a0.c)
  * Purpose: (mode): clears the ch0 transmit-end flag 0x2080045C (mode 0) or receive-full flag 0x20800454 (mode 1)
  *     [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4587,7 +4587,7 @@ void userdef_riic0_init_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_init_tx_end @ 2011ff54  (24 bytes, 4 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_init_tx_end @ 2011ff54  (24 bytes, 4 callers, export file 2011efc8_201200a0.c)
  * Purpose: (mode): clears the ch1 transmit-end flag 0x2080045D (mode 0) or receive-full flag 0x20800455 (mode 1)
  *     [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4616,7 +4616,7 @@ void userdef_riic1_init_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_init_tx_end @ 2011ff6c  (24 bytes, 4 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_init_tx_end @ 2011ff6c  (24 bytes, 4 callers, export file 2011efc8_201200a0.c)
  * Purpose: (mode): clears the ch2 transmit-end flag 0x2080045E (mode 0) or receive-full flag 0x20800456 (mode 1)
  *     [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4645,7 +4645,7 @@ void userdef_riic2_init_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_init_tx_end @ 2011ff84  (24 bytes, 4 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_init_tx_end @ 2011ff84  (24 bytes, 4 callers, export file 2011efc8_201200a0.c)
  * Purpose: (mode): clears the ch3 transmit-end flag 0x2080045F (mode 0) or receive-full flag 0x20800457 (mode 1)
  *     [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -4674,7 +4674,7 @@ void userdef_riic3_init_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_set_rx_full @ 2011ff9c  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_set_rx_full @ 2011ff9c  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch0 receive-full flag 0x20800454; called from the RI interrupt dispatcher R_RIIC_RiInterrupt
  *     [fact]
  * Tag: [fact]
@@ -4694,7 +4694,7 @@ void userdef_riic0_set_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_set_rx_full @ 2011ffac  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_set_rx_full @ 2011ffac  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch1 receive-full flag 0x20800455; called from the RI interrupt dispatcher R_RIIC_RiInterrupt
  *     [fact]
  * Tag: [fact]
@@ -4714,7 +4714,7 @@ void userdef_riic1_set_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_set_rx_full @ 2011ffbc  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_set_rx_full @ 2011ffbc  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch2 receive-full flag 0x20800456; called from the RI interrupt dispatcher R_RIIC_RiInterrupt
  *     [fact]
  * Tag: [fact]
@@ -4734,7 +4734,7 @@ void userdef_riic2_set_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_set_rx_full @ 2011ffcc  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_set_rx_full @ 2011ffcc  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch3 receive-full flag 0x20800457; called from the RI interrupt dispatcher R_RIIC_RiInterrupt
  *     [fact]
  * Tag: [fact]
@@ -4754,7 +4754,7 @@ void userdef_riic3_set_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_set_tx_empty @ 2011ffdc  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_set_tx_empty @ 2011ffdc  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch0 transmit-empty flag 0x20800458; called from R_RIIC_TiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4772,7 +4772,7 @@ void userdef_riic0_set_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_set_tx_empty @ 2011ffec  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_set_tx_empty @ 2011ffec  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch1 transmit-empty flag 0x20800459; called from R_RIIC_TiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4790,7 +4790,7 @@ void userdef_riic1_set_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_set_tx_empty @ 2011fffc  (32 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_set_tx_empty @ 2011fffc  (32 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch2 transmit-empty flag 0x2080045A and counts it in 0x20800462 (read by userdef_riic2_tx_count
  *     for task_tsc2007_irq); called from R_RIIC_TiInterrupt [fact]
  * Tag: [fact]
@@ -4811,7 +4811,7 @@ void userdef_riic2_set_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_tx_count @ 2012001c  (12 bytes, 2 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_tx_count @ 2012001c  (12 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: Returns the byte counter 0x20800462 that userdef_riic2_set_tx_empty increments (RIIC2 = touch controller
  *     bus, input.md) [fact]
  * Tag: [fact]
@@ -4830,7 +4830,7 @@ undefined1 userdef_riic2_tx_count(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_set_tx_empty @ 20120028  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_set_tx_empty @ 20120028  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch3 transmit-empty flag 0x2080045B; called from R_RIIC_TiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4848,7 +4848,7 @@ void userdef_riic3_set_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_set_tx_end @ 20120038  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_set_tx_end @ 20120038  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch0 transmit-end flag 0x2080045C; called from R_RIIC_TeiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4866,7 +4866,7 @@ void userdef_riic0_set_tx_end(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_set_tx_end @ 20120048  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_set_tx_end @ 20120048  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch1 transmit-end flag 0x2080045D; called from R_RIIC_TeiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4884,7 +4884,7 @@ void userdef_riic1_set_tx_end(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_set_tx_end @ 20120058  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_set_tx_end @ 20120058  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch2 transmit-end flag 0x2080045E; called from R_RIIC_TeiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4902,7 +4902,7 @@ void userdef_riic2_set_tx_end(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_set_tx_end @ 20120068  (16 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_set_tx_end @ 20120068  (16 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets the ch3 transmit-end flag 0x2080045F; called from R_RIIC_TeiInterrupt [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4920,7 +4920,7 @@ void userdef_riic3_set_tx_end(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_wait_rx_full @ 20120078  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_wait_rx_full @ 20120078  (20 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Spins until the ch0 receive-full flag 0x20800454 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4941,7 +4941,7 @@ void userdef_riic0_wait_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_wait_rx_full @ 2012008c  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_wait_rx_full @ 2012008c  (20 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Spins until the ch1 receive-full flag 0x20800455 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4962,7 +4962,7 @@ void userdef_riic1_wait_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_wait_rx_full @ 201200a0  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic2_wait_rx_full @ 201200a0  (20 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Spins until the ch2 receive-full flag 0x20800456 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -4981,9 +4981,8 @@ void userdef_riic2_wait_rx_full(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * userdef_riic3_wait_rx_full @ 201200b4  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic3_wait_rx_full @ 201200b4  (20 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until the ch3 receive-full flag 0x20800457 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5004,7 +5003,7 @@ void userdef_riic3_wait_rx_full(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_wait_tx_empty @ 201200c8  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic0_wait_tx_empty @ 201200c8  (20 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until the ch0 transmit-empty flag 0x20800458 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5025,7 +5024,7 @@ void userdef_riic0_wait_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_wait_tx_empty @ 201200dc  (20 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * userdef_riic1_wait_tx_empty @ 201200dc  (20 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until the ch1 transmit-empty flag 0x20800459 is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5044,8 +5043,9 @@ void userdef_riic1_wait_tx_empty(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * userdef_riic2_wait_tx_empty @ 201200f0  (20 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic2_wait_tx_empty @ 201200f0  (20 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until the ch2 transmit-empty flag 0x2080045A is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5066,7 +5066,7 @@ void userdef_riic2_wait_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_wait_tx_empty @ 20120104  (20 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic3_wait_tx_empty @ 20120104  (20 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until the ch3 transmit-empty flag 0x2080045B is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5087,7 +5087,7 @@ void userdef_riic3_wait_tx_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_wait_tx_end @ 20120118  (48 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic0_wait_tx_end @ 20120118  (48 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins until the ch0 transmit-end flag (mode 0) or receive-full flag (mode 1) is set [fact]
  *     (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -5114,7 +5114,7 @@ void userdef_riic0_wait_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_wait_tx_end @ 20120148  (48 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic1_wait_tx_end @ 20120148  (48 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins until the ch1 transmit-end flag (mode 0) or receive-full flag (mode 1) is set [fact]
  *     (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -5141,7 +5141,7 @@ void userdef_riic1_wait_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_wait_tx_end @ 201201c4  (48 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic2_wait_tx_end @ 201201c4  (48 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins until the ch2 transmit-end flag (mode 0) or receive-full flag (mode 1) is set [fact]
  *     (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -5168,7 +5168,7 @@ void userdef_riic2_wait_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_wait_tx_end @ 201201f4  (48 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic3_wait_tx_end @ 201201f4  (48 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins until the ch3 transmit-end flag (mode 0) or receive-full flag (mode 1) is set [fact]
  *     (Renesas sample name [inference])
  * Tag: [fact] [inference]
@@ -5195,7 +5195,7 @@ void userdef_riic3_wait_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_wait_bus_master @ 2012026c  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic1_wait_bus_master @ 2012026c  (72 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins on RIIC1CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) [fact] (Renesas sample name
  *     [inference])
  * Tag: [fact] [inference]
@@ -5226,7 +5226,7 @@ void userdef_riic1_wait_bus_master(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_wait_bus_master @ 201202b4  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic2_wait_bus_master @ 201202b4  (72 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins on RIIC2CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) [fact] (Renesas sample name
  *     [inference])
  * Tag: [fact] [inference]
@@ -5257,7 +5257,7 @@ void userdef_riic2_wait_bus_master(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_wait_bus_master @ 201202fc  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic3_wait_bus_master @ 201202fc  (72 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (mode): spins on RIIC3CR2 bit 7 (BBSY) until set (mode 1) or clear (mode 0) [fact] (Renesas sample name
  *     [inference])
  * Tag: [fact] [inference]
@@ -5288,7 +5288,7 @@ void userdef_riic3_wait_bus_master(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_wait_stop @ 20120344  (36 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic0_wait_stop @ 20120344  (36 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until RIIC0SR2 bit 3 (STOP) is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5311,7 +5311,7 @@ void userdef_riic0_wait_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic1_wait_stop @ 20120368  (36 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic1_wait_stop @ 20120368  (36 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until RIIC1SR2 bit 3 (STOP) is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5334,7 +5334,7 @@ void userdef_riic1_wait_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic2_wait_stop @ 2012038c  (36 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic2_wait_stop @ 2012038c  (36 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until RIIC2SR2 bit 3 (STOP) is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5357,7 +5357,7 @@ void userdef_riic2_wait_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic3_wait_stop @ 201203b0  (36 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * userdef_riic3_wait_stop @ 201203b0  (36 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: Spins until RIIC3SR2 bit 3 (STOP) is set [fact] (Renesas sample name [inference])
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5380,7 +5380,7 @@ void userdef_riic3_wait_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic0_ri_isr @ 201203d4  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic0_ri_isr @ 201203d4  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -5402,7 +5402,7 @@ void riic0_ri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic0_ti_isr @ 201203dc  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic0_ti_isr @ 201203dc  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -5424,7 +5424,7 @@ void riic0_ti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic0_tei_isr @ 201203e4  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic0_tei_isr @ 201203e4  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -5460,7 +5460,7 @@ undefined4 riic0_tei_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic1_ri_isr @ 201203ec  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic1_ri_isr @ 201203ec  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 197 / 198 / 199
  * Source: RIIC1 TEI / RI / TI
  * Pri: 9
@@ -5481,7 +5481,7 @@ void riic1_ri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic1_ti_isr @ 201203f4  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic1_ti_isr @ 201203f4  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 197 / 198 / 199
  * Source: RIIC1 TEI / RI / TI
  * Pri: 9
@@ -5502,7 +5502,7 @@ void riic1_ti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic1_tei_isr @ 201203fc  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic1_tei_isr @ 201203fc  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 197 / 198 / 199
  * Source: RIIC1 TEI / RI / TI
  * Pri: 9
@@ -5536,7 +5536,7 @@ undefined4 riic1_tei_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic2_ri_isr @ 20120404  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic2_ri_isr @ 20120404  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 205 / 206 / 207
  * Source: RIIC2 TEI / RI / TI
  * Pri: 9
@@ -5557,7 +5557,7 @@ void riic2_ri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic2_ti_isr @ 2012040c  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic2_ti_isr @ 2012040c  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 205 / 206 / 207
  * Source: RIIC2 TEI / RI / TI
  * Pri: 9
@@ -5578,7 +5578,7 @@ void riic2_ti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic2_tei_isr @ 20120414  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic2_tei_isr @ 20120414  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 205 / 206 / 207
  * Source: RIIC2 TEI / RI / TI
  * Pri: 9
@@ -5611,7 +5611,7 @@ undefined4 riic2_tei_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic3_ri_isr @ 2012041c  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic3_ri_isr @ 2012041c  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 213 / 214 / 215
  * Source: RIIC3 TEI / RI / TI
  * Pri: 9
@@ -5632,7 +5632,7 @@ void riic3_ri_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic3_ti_isr @ 20120424  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic3_ti_isr @ 20120424  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 213 / 214 / 215
  * Source: RIIC3 TEI / RI / TI
  * Pri: 9
@@ -5653,7 +5653,7 @@ void riic3_ti_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * riic3_tei_isr @ 2012042c  (8 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * riic3_tei_isr @ 2012042c  (8 bytes, 0 callers, export file 201200b4_20120d38.c)
  * GIC ID: 213 / 214 / 215
  * Source: RIIC3 TEI / RI / TI
  * Pri: 9
@@ -5684,7 +5684,7 @@ undefined4 riic3_tei_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_Init @ 20120454  (80 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_Init @ 20120454  (80 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch 0..3): calls userdef_riic{ch}_init, returns 0, or -1 for ch > 3; task_tsc2007 opens ch 2 (input.md)
  *     [fact]; Renesas sample R_RIIC_Init [inference]
  * Tag: [fact] [inference]
@@ -5723,7 +5723,7 @@ undefined4 R_RIIC_Init(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_base @ 201204a4  (48 bytes, 12 callers, export file 201200f0_20120d58.c)
+ * riic_base @ 201204a4  (48 bytes, 12 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch 0..3): RIIC register base 0xFCFEE000 + 0x400*ch (docs/memory-maps.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -5754,7 +5754,7 @@ void * riic_base(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_transmit_stop @ 201204d4  (56 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * riic_transmit_stop @ 201204d4  (56 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): clears ICSR2 STOP (bit 3), sets ICCR2 SP (bit 3) [fact]; Renesas sample riic_transmit_stop
  *     [inference]
  * Tag: [fact] [inference]
@@ -5779,7 +5779,7 @@ void riic_transmit_stop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_transmit_restart @ 2012050c  (180 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * riic_transmit_restart @ 2012050c  (180 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): waits for bus busy, clears the flags, sets ICCR2 RS (bit 2) [fact]; Renesas sample
  *     riic_transmit_restart [inference]
  * Tag: [fact] [inference]
@@ -5842,7 +5842,7 @@ void riic_transmit_restart(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_transmit_start @ 201205c0  (180 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * riic_transmit_start @ 201205c0  (180 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): waits for bus free, clears the flags, sets ICCR2 ST (bit 1) [fact]; Renesas sample
  *     riic_transmit_start [inference]
  * Tag: [fact] [inference]
@@ -5905,7 +5905,7 @@ void riic_transmit_start(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_SendCond @ 20120674  (76 bytes, 5 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_SendCond @ 20120674  (76 bytes, 5 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, cond): 0 start, 1 restart, 2 stop condition; -1 for a bad argument [fact]; Renesas sample
  *     R_RIIC_SendCond [inference]
  * Tag: [fact] [inference]
@@ -5936,7 +5936,7 @@ undefined4 R_RIIC_SendCond(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * riic_transmit @ 201206c0  (144 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * riic_transmit @ 201206c0  (144 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, byte): returns -2 on NACK (ICSR2 bit 4), else waits for transmit-empty and writes ICDRT (+0x3C)
  *     [fact]
  * Tag: [fact]
@@ -5989,7 +5989,7 @@ undefined4 riic_transmit(int param_1,undefined1 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_WriteSlaveAddr @ 20120750  (204 bytes, 3 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_WriteSlaveAddr @ 20120750  (204 bytes, 3 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, addr byte, mode): riic_transmit then waits for transmit end (mode 0) or receive full (mode 1); -2
  *     on NACK [fact]; tsc2007_write_cmd / tsc2007_read12 call it [fact]; Renesas sample name [inference]
  * Tag: [fact] [inference]
@@ -6050,7 +6050,7 @@ int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_Write @ 2012081c  (232 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_Write @ 2012081c  (232 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, buf, n): riic_transmit per byte, then waits for transmit end; -2 on NACK [fact]; Renesas sample
  *     name [inference]
  * Tag: [fact] [inference]
@@ -6122,7 +6122,7 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * riic_clear_nack @ 20120904  (20 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * riic_clear_nack @ 20120904  (20 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (base): clears ICSR2 NACKF (bit 4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6140,7 +6140,7 @@ void riic_clear_nack(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_detect_stop @ 20120918  (100 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * riic_detect_stop @ 20120918  (100 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): waits for the STOP flag, clears NACKF and STOP [fact]; Renesas sample riic_detect_stop [inference]
  * Tag: [fact] [inference]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6180,7 +6180,7 @@ void riic_detect_stop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * riic_receive @ 2012097c  (248 bytes, 4 callers, export file 201200f0_20120d58.c)
+ * riic_receive @ 2012097c  (248 bytes, 4 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, mode, *out): waits for receive full; mode 1/2/3 set ICMR3 ACKBT/WAIT bits, 4 issues the stop
  *     condition; reads ICDRR (+0x40) [fact]
  * Tag: [fact]
@@ -6244,7 +6244,7 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * riic_receive_dummy @ 20120a88  (20 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * riic_receive_dummy @ 20120a88  (20 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): only computes the channel base in this build (the dummy ICDRR read is gone in the decompile)
  *     [fact]
  * Tag: [fact]
@@ -6265,7 +6265,7 @@ void riic_receive_dummy(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_Read @ 20120a9c  (272 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_Read @ 20120a9c  (272 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch, buf, n): n-byte master receive with ICMR3 WAIT/ACKBT handling for the last two bytes, then stop and
  *     riic_detect_stop [fact]; Renesas sample name [inference]
  * Tag: [fact] [inference]
@@ -6318,7 +6318,7 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_ReadDummy @ 20120bac  (28 bytes, 1 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_ReadDummy @ 20120bac  (28 bytes, 1 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): riic_receive_dummy; -1 for ch > 3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6340,7 +6340,7 @@ undefined4 R_RIIC_ReadDummy(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_DetectStop @ 20120bc8  (28 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_DetectStop @ 20120bc8  (28 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): riic_detect_stop; -1 for ch > 3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6362,7 +6362,7 @@ undefined4 R_RIIC_DetectStop(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_ClearNack @ 20120be4  (32 bytes, 0 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_ClearNack @ 20120be4  (32 bytes, 0 callers, export file 201200b4_20120d38.c)
  * Purpose: (ch): riic_clear_nack; -1 for ch > 3 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6386,7 +6386,7 @@ undefined4 R_RIIC_ClearNack(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_RiInterrupt @ 20120c04  (80 bytes, 4 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_RiInterrupt @ 20120c04  (80 bytes, 4 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -6431,7 +6431,7 @@ undefined4 R_RIIC_RiInterrupt(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_TiInterrupt @ 20120c54  (80 bytes, 4 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_TiInterrupt @ 20120c54  (80 bytes, 4 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -6474,7 +6474,7 @@ undefined4 R_RIIC_TiInterrupt(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_RIIC_TeiInterrupt @ 20120cb0  (136 bytes, 4 callers, export file 201200f0_20120d58.c)
+ * R_RIIC_TeiInterrupt @ 20120cb0  (136 bytes, 4 callers, export file 201200b4_20120d38.c)
  * GIC ID: 189 / 190 / 191
  * Source: RIIC0 TEI / RI / TI
  * Pri: 9
@@ -6525,7 +6525,7 @@ R_RIIC_TeiInterrupt(uint param_1,undefined4 param_2,undefined4 param_3,undefined
 
 
 /* -----------------------------------------------------------------------------
- * dsp_rx_done_cb @ 201331dc  (532 bytes, 1 callers, export file 201322c8_201335f8.c)
+ * dsp_rx_done_cb @ 201331dc  (532 bytes, 1 callers, export file 201322ac_20133440.c)
  * Purpose: DSP SPI DMA frame-end handler: swaps RX buffers, feeds recorder/player (owned by T11d)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6617,7 +6617,7 @@ void dsp_rx_done_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_ss_isr @ 201333f0  (40 bytes, 0 callers, export file 201322c8_201335f8.c)
+ * sdr_ss_isr @ 201333f0  (40 bytes, 0 callers, export file 201322ac_20133440.c)
  * GIC ID: 535 (0x217)
  * Source: TINT119 = P8_4, the SDR link's SS pin (SSL20)
  * Pri: 5
@@ -6642,7 +6642,7 @@ void sdr_ss_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_ss_isr @ 20133418  (40 bytes, 0 callers, export file 201322c8_201335f8.c)
+ * dsp_ss_isr @ 20133418  (40 bytes, 0 callers, export file 201322ac_20133440.c)
  * GIC ID: 449 (0x1C1)
  * Source: TINT33 = P2_9, the DSP link's SS pin (SSL40)
  * Pri: 5
@@ -6667,7 +6667,7 @@ void dsp_ss_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac3_isr @ 20137490  (16 bytes, 0 callers, export file 201353f8_201378b0.c)
+ * dmac3_isr @ 20137490  (16 bytes, 0 callers, export file 201351ac_201374ac.c)
  * GIC ID: 44 / 45 / 46 (0x2C–0x2E)
  * Source: DMAC ch3 / ch4 / ch5 end
  * Pri: 5
@@ -6689,7 +6689,7 @@ void dmac3_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac5_isr @ 201374a0  (12 bytes, 0 callers, export file 201353f8_201378b0.c)
+ * dmac5_isr @ 201374a0  (12 bytes, 0 callers, export file 201351ac_201374ac.c)
  * GIC ID: 44 / 45 / 46 (0x2C–0x2E)
  * Source: DMAC ch3 / ch4 / ch5 end
  * Pri: 5
@@ -6713,7 +6713,7 @@ void dmac5_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac4_isr @ 201376c4  (12 bytes, 0 callers, export file 201353f8_201378b0.c)
+ * dmac4_isr @ 201376c4  (12 bytes, 0 callers, export file 201376c4_20139590.c)
  * GIC ID: 44 / 45 / 46 (0x2C–0x2E)
  * Source: DMAC ch3 / ch4 / ch5 end
  * Pri: 5
@@ -6737,7 +6737,7 @@ void dmac4_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac9_isr @ 20137aec  (12 bytes, 0 callers, export file 20137904_20139658.c)
+ * dmac9_isr @ 20137aec  (12 bytes, 0 callers, export file 201376c4_20139590.c)
  * GIC ID: 50 / 51 (0x32, 0x33)
  * Source: DMAC ch9 / ch10 end
  * Pri: 5
@@ -6761,7 +6761,7 @@ void dmac9_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_isr @ 20137d1c  (12 bytes, 0 callers, export file 20137904_20139658.c)
+ * dmac10_isr @ 20137d1c  (12 bytes, 0 callers, export file 201376c4_20139590.c)
  * GIC ID: 50 / 51 (0x32, 0x33)
  * Source: DMAC ch9 / ch10 end
  * Pri: 5
@@ -6785,7 +6785,7 @@ void dmac10_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * reg_wait_bits27 @ 20138740  (52 bytes, 13 callers, export file 20137904_20139658.c)
+ * reg_wait_bits27 @ 20138740  (52 bytes, 13 callers, export file 201376c4_20139590.c)
  * Purpose: (base, off, val): cpu_delay_cycles4, then waits until (*(base->regs + off) & 0x27) == (val & 0x27)
  *     [fact]
  * Tag: [fact]
@@ -6807,7 +6807,7 @@ void reg_wait_bits27(int param_1,int param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cpu_delay_cycles4 @ 2013b54c  (64 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
+ * cpu_delay_cycles4 @ 2013b54c  (64 bytes, 2 callers, export file 2013b538_2013e71c.c)
  * Purpose: Spins on the CP15 cycle counter until 4 counts have passed [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6834,7 +6834,7 @@ void cpu_delay_cycles4(void)
 
 
 /* -----------------------------------------------------------------------------
- * gic_default_handler @ 201568e0  (76 bytes, 4 callers, export file 20156860_20158744.c)
+ * gic_default_handler @ 201568e0  (76 bytes, 4 callers, export file 201567f4_2015863c.c)
  * Purpose: unregistered interrupt IDs [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/peripherals.md

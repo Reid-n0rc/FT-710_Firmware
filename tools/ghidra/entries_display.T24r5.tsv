@@ -1,0 +1,7 @@
+# FT-710 DISPLAY: the T24 round-5 entries alone (also in entries_display.tsv), for applying them to the canonical project
+# without re-running the older rows. Applied with FixFuncEntries.java before ApplyNames.java.
+20117a68		R_VDC5_Terminate: push at 0x20117A68 right after r_vdc5_initialize's return; no direct caller (drivers/vdc5_api.c)
+20117f3c		R_VDC5_ReleaseDataControl: push at 0x20117F3C after r_vdc5_stop_process's return; no direct caller
+2011a20c		VDC5 SetInputCntrlColorMtx: push at 0x2011A20C after vdc5_set_color_matrix's return, ends in a tail call of it
+20164c88	arm	A32 entry veneer of __aeabi_d2iz (add ip, pc, #1; bx ip), called from 0x2011413C (lib/fplib.S)
+20164d4c	arm	A32 entry veneer of __aeabi_i2d (add ip, pc, #1; bx ip), called from 0x201128D4 (lib/fplib.S)

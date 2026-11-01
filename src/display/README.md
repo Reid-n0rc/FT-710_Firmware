@@ -22,6 +22,12 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 | `drivers/scif.c` | the SCIF UART objects (the image's C++ class as C): rings, interrupts, open, read, write; the PMCCNTR cycle stamp |
 | `drivers/sflash.c` | the serial flash on SPIBSC0: SPI-mode transfers, flash commands, the device protocol the update code uses |
 | `drivers/sdhi.c` | the SDHI0 target layer under the SD driver: DMA block transfers, card detect, commands, the operation-table slots |
+| `drivers/vdc5_api.c` | the VDC5 driver API (the Renesas r_vdc5 sample driver, built without parameter checks): initialize, terminate, video input, sync, output, write/read layers, start/stop/release, image quality, alpha, chroma key, CLUT, calibration, gamma |
+| `drivers/vdc5_shrd.c` | the VDC5 driver's shared parameters: per-channel common, scaler and graphics blocks, resource and layer states, the field getters |
+| `drivers/vdc5_int.c` | the VDC5 interrupt part: `r_vdc5_callback_isr` and the 46 per-source handlers |
+| `drivers/vdc5_reg.c` | the VDC5 register layer (part): clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, layer start/stop/release, noise reduction, black stretch, alpha, calibration |
+| `app/gui_vdc5.c` | the GUI's VDC5 set-up helpers: module clock, TFT and DVI timing tables, LVDS PLL block, sync and output parameters, the graphics-3 line interrupt that paces the GUI |
+| `include/vdc5.h`, `include/vdc5_regs.h` | the VDC5 parameter structures with armcc's one-byte enums, the shared-parameter tables, the register-address tables |
 | `startup/vectors.S` | exception vectors, `Reset_Handler`, `reset_in_ram`, the SVC and IRQ entries (assembly, byte-identical) |
 | `startup/rt_entry.S` | `__main`, `__scatterload`, `__decompress`, `__scatterload_zeroinit`, `__rt_lib_init`, `__rt_entry` (assembly) |
 | `lib/aeabi_ldiv.S` | `__aeabi_uldivmod` and `__aeabi_ldivmod`: quotient in r0:r1, remainder in r2:r3 (assembly) |

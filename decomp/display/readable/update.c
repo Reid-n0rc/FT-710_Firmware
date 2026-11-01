@@ -5808,59 +5808,30 @@ void progress_range_init(void *param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * progress_scale @ 201140f4  (84 bytes, 24 callers, export file 20113d10_2011489c.c)
+ * progress_scale @ 201140f4  (76 bytes, 24 callers, export file 20113d10_2011489c.c)
  * Purpose: maps a fraction into the range [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
  */
-// ===== progress_scale @ 201140f4 (84 bytes)
+// ===== progress_scale @ 201140f4 (76 bytes)
 
 /* maps a fraction into the range */
 
-uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  uint uVar1;
-  uint uVar2;
-  undefined2 *unaff_r4;
-  int iVar3;
-  uint uVar4;
-  bool bVar5;
-  bool bVar6;
-  undefined8 uVar7;
-  undefined8 uVar8;
+  int iVar1;
+  undefined8 uVar2;
+  undefined8 uVar3;
   
-  iVar3 = *param_1;
-  uVar7 = __aeabi_i2d(param_1[1] - iVar3);
-  uVar7 = __aeabi_dmul((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),param_3,param_4);
-  uVar8 = __aeabi_i2d(iVar3);
-  uVar7 = __aeabi_dadd((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar7,
-                       (int)((ulonglong)uVar7 >> 0x20));
-  uVar1 = (uint)((ulonglong)uVar7 >> 0x20);
-  iVar3 = ((uVar1 & 0x7fffffff) >> 0x14) - 0x400;
-  bVar6 = SBORROW4(0x1e,iVar3);
-  uVar2 = -iVar3 + 0x1e;
-  bVar5 = uVar2 == 0;
-  uVar4 = uVar2;
-  if (!bVar5 && iVar3 < 0x1f) {
-    bVar6 = SBORROW4(0x21,uVar2);
-    uVar4 = 0x21 - uVar2;
-    bVar5 = uVar2 == 0x21;
-  }
-  if (!bVar5 && (int)uVar4 < 0 == bVar6) {
-    return ((uVar1 << 0xb | 0x80000000 | (uint)uVar7 >> 0x15) >> (uVar2 & 0xff) ^ (int)uVar1 >> 0x1f
-           ) - ((int)uVar1 >> 0x1f);
-  }
-  if (0x10 < (int)uVar2) {
-    return 0;
-  }
-  if (-iVar3 != -0x3ff) {
-    return (int)uVar1 >> 0x20 ^ 0x7fffffff;
-  }
-  fp_nan_handler((uint)uVar7);
-  do {
-    *unaff_r4 = (short)unaff_r4;
-  } while( true );
+  iVar1 = *param_1;
+  uVar2 = __aeabi_i2d(param_1[1] - iVar1);
+  uVar2 = __aeabi_dmul((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),param_3,param_4);
+  uVar3 = __aeabi_i2d(iVar1);
+  __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,(int)((ulonglong)uVar2 >> 0x20)
+              );
+  __aeabi_d2iz_a32();
+  return;
 }
 
 
@@ -6146,7 +6117,7 @@ uint sfl_read_header(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * gui_scope_draw_hold_set @ 20126160  (12 bytes, 15 callers, export file 20124a74_2012cb60.c)
+ * gui_scope_draw_hold_set @ 20126160  (12 bytes, 15 callers, export file 20124848_2012c6c4.c)
  * Purpose: (v): 0x20800480 = v; the SD-card, update and PlayList-list code sets 1 around file work and 0 after;
  *     scope_draw_frame, main_filter_graph and filter_graph_small draw only while it is 0 ; pauses the scope drawing
  *     [fact]
@@ -6168,7 +6139,7 @@ void gui_scope_draw_hold_set(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_insert_sd_screen_thunk @ 201322ac  (8 bytes, 3 callers, export file 2012cf30_201322bc.c)
+ * fwupdate_insert_sd_screen_thunk @ 201322ac  (8 bytes, 3 callers, export file 201322ac_20133440.c)
  * Purpose: r0 = update-UI object 0x208F4BF4; b fwupdate_insert_sd_screen [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6186,7 +6157,7 @@ void fwupdate_insert_sd_screen_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_screen_thunk @ 201322b4  (8 bytes, 1 callers, export file 2012cf30_201322bc.c)
+ * fwupdate_screen_thunk @ 201322b4  (8 bytes, 1 callers, export file 201322ac_20133440.c)
  * Purpose: r0 = update-UI object 0x208F4BF4; b fwupdate_screen (#81) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6204,7 +6175,7 @@ void fwupdate_screen_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * fw_installed_versions_set_thunk @ 201322bc  (12 bytes, 1 callers, export file 2012cf30_201322bc.c)
+ * fw_installed_versions_set_thunk @ 201322bc  (12 bytes, 1 callers, export file 201322ac_20133440.c)
  * Purpose: r1 = r0, r0 = update-UI object 0x208F4BF4; b fw_installed_versions_set (#81) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6221,8 +6192,9 @@ void fw_installed_versions_set_thunk(uint param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * bootloader_entry_screen_thunk @ 201322e4  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * bootloader_entry_screen_thunk @ 201322e4  (12 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: ldr r0, =0x208F4BF4; b bootloader_entry_screen (update.md update-UI thunks) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
@@ -6240,7 +6212,7 @@ void bootloader_entry_screen_thunk(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_title_screen_thunk @ 201322f0  (12 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * fwupdate_title_screen_thunk @ 201322f0  (12 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: fwupdate_ui_run(0x208F4BF4, "YAESU FT-710 FIRMWARE UPDATE") (update.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
@@ -6258,7 +6230,7 @@ void fwupdate_title_screen_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ui_e2 @ 20158ec0  (96 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * mainlink_send_ui_e2 @ 20158ec0  (96 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: 0xE2 UI frame to MAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6287,7 +6259,7 @@ void mainlink_send_ui_e2(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ui_c3 @ 20158f28  (120 bytes, 5 callers, export file 201587ac_2015c048.c)
+ * mainlink_send_ui_c3 @ 20158f28  (120 bytes, 5 callers, export file 2015869c_2015bb7c.c)
  * Purpose: 0xC3 UI state frame to MAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6315,7 +6287,7 @@ void mainlink_send_ui_c3(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_entry_screen @ 20159058  (232 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * bootloader_entry_screen @ 20159058  (232 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT ERROR"
  *     forever, else bootloader_screen (update.md) [fact]
  * Tag: [fact]
@@ -6357,7 +6329,7 @@ void bootloader_entry_screen(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * update_error_screen @ 20159158  (428 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * update_error_screen @ 20159158  (428 bytes, 2 callers, export file 2015869c_2015bb7c.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -6451,7 +6423,7 @@ void update_error_screen(void)
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_screen @ 2015938c  (552 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * bootloader_screen @ 2015938c  (552 bytes, 2 callers, export file 2015869c_2015bb7c.c)
  * Purpose: YAESU FT-710 BOOT LOADER V01-02 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6516,7 +6488,7 @@ void bootloader_screen(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fw_installed_versions_set @ 201595f0  (64 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * fw_installed_versions_set @ 201595f0  (64 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6543,7 +6515,7 @@ void fw_installed_versions_set(ushort *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * pointer_idle_loop @ 20159630  (220 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * pointer_idle_loop @ 20159630  (220 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor,
  *     gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it [fact]
  * Tag: [fact]
@@ -6593,7 +6565,7 @@ void pointer_idle_loop(void)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_screen @ 20159714  (1376 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * fwupdate_screen @ 20159714  (1376 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6772,7 +6744,7 @@ LAB_20159c44:
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_unlock_wait @ 20159cb0  (216 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * bootloader_unlock_wait @ 20159cb0  (216 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -6817,7 +6789,7 @@ uint bootloader_unlock_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_ui_run @ 20159d98  (956 bytes, 3 callers, export file 201587ac_2015c048.c)
+ * fwupdate_ui_run @ 20159d98  (956 bytes, 3 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE
  *     UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation (fwupdate_confirm_loop), then
  *     fwupdate_progress_screen; card-missing and error texts [fact]
@@ -6965,7 +6937,7 @@ LAB_2015a100:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_confirm_loop @ 2015a17c  (832 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * fwupdate_confirm_loop @ 2015a17c  (832 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with
  *     fwupdate_confirm_draw [fact]
  * Tag: [fact]
@@ -7144,7 +7116,7 @@ undefined4 fwupdate_confirm_loop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_menu_screen @ 2015a500  (964 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * fwupdate_menu_screen @ 2015a500  (964 bytes, 2 callers, export file 2015869c_2015bb7c.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -7295,7 +7267,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_screen @ 2015a8dc  (52 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * fwupdate_select_screen @ 2015a8dc  (52 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Update-UI method (thunk 0x201322D8), packet step 1: four target rows with tick boxes and the OK/CANCEL
  *     keys; 2: "UPDATE?"; 3: runs fwupdate_poll with per-row progress bars, then update_error_screen on failure and
  *     system_reboot [fact]
@@ -7466,7 +7438,7 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_loop @ 2015a910  (1628 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * fwupdate_select_loop @ 2015a910  (1628 bytes, 2 callers, export file 2015869c_2015bb7c.c)
  * Purpose: Touch/mouse loop of the target list (pointer_get_event, touch_cal_apply, mouse cursor): toggles the tick
  *     boxes of the four rows, OK / CANCEL keys, redraws with fwupdate_select_draw, mirrors the state to MAIN
  *     (mainlink_send_ui_c3, E6) [fact]
@@ -7819,7 +7791,7 @@ LAB_2015aec4:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_insert_sd_screen @ 2015afb0  (356 bytes, 1 callers, export file 201587ac_2015c048.c)
+ * fwupdate_insert_sd_screen @ 2015afb0  (356 bytes, 1 callers, export file 2015869c_2015bb7c.c)
  * Purpose: INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -7881,7 +7853,7 @@ void fwupdate_insert_sd_screen(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_progress_screen @ 2015b134  (764 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * fwupdate_progress_screen @ 2015b134  (764 bytes, 2 callers, export file 2015869c_2015bb7c.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -7974,7 +7946,7 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_draw @ 2015b450  (708 bytes, 6 callers, export file 201587ac_2015c048.c)
+ * fwupdate_select_draw @ 2015b450  (708 bytes, 6 callers, export file 2015869c_2015bb7c.c)
  * Purpose: (ui, state, title): title bar, four target rows (name, status text, tick sprite 0x203A5684/94, cursor
  *     frame) and the OK / CANCEL buttons [fact]
  * Tag: [fact]
@@ -8050,7 +8022,7 @@ void fwupdate_select_draw(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_confirm_draw @ 2015b748  (392 bytes, 4 callers, export file 201587ac_2015c048.c)
+ * fwupdate_confirm_draw @ 2015b748  (392 bytes, 4 callers, export file 2015869c_2015bb7c.c)
  * Purpose: (ui, state): "UPDATE?" box with the YES / NO buttons and the cursor frame [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
@@ -8087,7 +8059,7 @@ void fwupdate_confirm_draw(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_sdr_run @ 201602ac  (288 bytes, 0 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_sdr_run @ 201602ac  (288 bytes, 0 callers, export file 2015f0cc_20162c10.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8149,7 +8121,7 @@ undefined4 fwobj_sdr_run(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_sdr_ctor @ 201603d4  (28 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_sdr_ctor @ 201603d4  (28 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: SDR object, vtable 0x20428070, +0xAB flag [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8172,7 +8144,7 @@ uint fwobj_sdr_ctor(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_build_path @ 201603f4  (20 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_build_path @ 201603f4  (20 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: "%s%s" dir + file name [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8190,7 +8162,7 @@ void fwobj_build_path(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_match_name @ 20160418  (132 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_match_name @ 20160418  (132 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8229,7 +8201,7 @@ uint fwobj_match_name(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_set_status @ 2016049c  (44 bytes, 7 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_set_status @ 2016049c  (44 bytes, 7 callers, export file 2015f0cc_20162c10.c)
  * Purpose: status text (Ready, failed, ...) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8252,7 +8224,7 @@ void fwobj_set_status(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_version_from_name @ 201604c8  (20 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_version_from_name @ 201604c8  (20 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8270,7 +8242,7 @@ void fwobj_version_from_name(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_select @ 201604dc  (24 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_select @ 201604dc  (24 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: marks the object selected for update [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8290,7 +8262,7 @@ void fwobj_select(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_base_ctor @ 201604f4  (88 bytes, 4 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_base_ctor @ 201604f4  (88 bytes, 4 callers, export file 2015f0cc_20162c10.c)
  * Purpose: base update-object constructor, vtable 0x2042807C [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8319,7 +8291,7 @@ int fwobj_base_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwname_pattern_init @ 20160558  (80 bytes, 4 callers, export file 2015f1f0_20162c28.c)
+ * fwname_pattern_init @ 20160558  (80 bytes, 4 callers, export file 2015f0cc_20162c10.c)
  * Purpose: builds the name pattern (prefix, "NNNN", suffix) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8348,7 +8320,7 @@ void fwname_pattern_init(int *param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_main_run @ 201605ac  (244 bytes, 0 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_main_run @ 201605ac  (244 bytes, 0 callers, export file 2015f0cc_20162c10.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8409,7 +8381,7 @@ undefined4 fwobj_main_run(int param_1,uint param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_main_ctor @ 201606a4  (20 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_main_ctor @ 201606a4  (20 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: MAIN object, vtable 0x20428088 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8431,7 +8403,7 @@ uint fwobj_main_ctor(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_ifdsp_run @ 201606bc  (264 bytes, 0 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_ifdsp_run @ 201606bc  (264 bytes, 0 callers, export file 2015f0cc_20162c10.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8484,7 +8456,7 @@ undefined4 fwobj_ifdsp_run(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_ifdsp_ctor @ 201607c8  (28 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_ifdsp_ctor @ 201607c8  (28 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: IFDSP object, vtable 0x20428094, +0xAB flag [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8507,7 +8479,7 @@ uint fwobj_ifdsp_ctor(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_display_run @ 201607e8  (1032 bytes, 0 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_display_run @ 201607e8  (1032 bytes, 0 callers, export file 2015f0cc_20162c10.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8700,7 +8672,7 @@ LAB_20160ac8:
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_display_ctor @ 20160c10  (20 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwobj_display_ctor @ 20160c10  (20 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: DISPLAY object, vtable 0x204280A0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8722,7 +8694,7 @@ uint fwobj_display_ctor(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwname_pattern_match @ 20163600  (84 bytes, 1 callers, export file 20162d04_20163b9c.c)
+ * fwname_pattern_match @ 20163600  (84 bytes, 1 callers, export file 20162c18_20163b18.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
