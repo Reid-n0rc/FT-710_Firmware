@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 1.58 % re-implemented) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 5.90 % re-implemented, round 4, and links into a complete hybrid image) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -470,6 +470,103 @@ python3 -I tools/readability_stats.py readme
 After the re-export the alias rows of the three renamed functions in `src/display/aliases.tsv` are redundant (they
 name the same addresses) and can go.
 
+## DISPLAY, round 4 (2026-11-01)
+
+### Plan (round 4)
+
+1. Run-time helpers C cannot express, as assembly: `__aeabi_uldivmod` and `__aeabi_ldivmod` (quotient r0:r1,
+   remainder r2:r3) and the hand-written Thumb fplib routines; the harness learns to compare r2:r3 and to report a
+   function as **identical** when its bytes, linked at the original address, are the image's.
+2. Drivers in C from `decomp/display` and `docs/code/display`, biggest self-contained first: RIIC, SCIF, SPI flash /
+   SPIBSC, SDHI, VDC5, then the file system, the MAIN link and the update code, as far as the round goes; presets
+   where a function walks a structure.
+3. Linker script: a **hybrid link** that makes a complete image now: the original image (read from `build/` at link
+   time, never committed) at 0x20100000 with its Region$$Table and RW regions untouched, the recreated code in the
+   gap 0x2042BC10..0x2043FFFF that `reset_in_ram` already copies from flash, and each recreated function's original
+   entry patched with a branch to its recreation; the original addresses of everything else come from a generated
+   symbol file. Plus a minimal NORTi stand-in (`rtos/`) with the `itron_*` services the code uses, for a later
+   source-only build (the hybrid keeps the original kernel, whose internals the rest of the image touches).
+4. `status.tsv`, task file, READMEs, readability stats; Ghidra names with evidence, proved on a copy.
+
+### DISPLAY: run-time helpers as assembly (round 4)
+
+`lib/aeabi_ldiv.S` (`__aeabi_uldivmod`, `__aeabi_ldivmod`: quotient r0:r1, remainder r2:r3), `lib/fplib.S` (the armcc
+double routines 0x20164888..0x20165177), `startup/vectors.S` (vectors, `Reset_Handler`, `reset_in_ram`, SVC/IRQ
+entries) and `startup/rt_entry.S` (`__main` .. `__rt_entry`) are the image's own instructions with labels by
+original address, drafted from a capstone listing and checked byte for byte. The harness's new verdict **identical**
+links the section so that the function lands at its original address and compares the bytes; all 41 such functions
+are identical (and one C function, `xorshift32_step`, came out byte-identical from GCC). Found on the way **[fact]**:
+GNU as encodes `adds rd, rn, #imm3` and `subs rd, rn, #imm3` (rd = rn) as the 8-bit-immediate form, so 12 Thumb
+instructions are written as `.inst.n`; capstone prints 16-bit data instructions inside IT blocks with an `s` they do
+not have; two A32 entry veneers sit inside fplib (0x20164C88 for `__aeabi_d2iz`, called from 0x2011413C; 0x20164D4C
+for `__aeabi_i2d`, from 0x201128D4) and Ghidra's list lacks them (*Open: their Ghidra entries; would be settled by
+creating A32 functions there with TMode 0, which ApplyNames cannot do in a Thumb range*); every call of
+`fp_nan_handler` is followed by a data word it reads through lr; `reset_in_ram` copies the image up to 0x2043FFFF,
+past the end of the file.
+
+### DISPLAY: drivers (round 4)
+
+| File | Functions | Bytes | Notes |
+|---|---:|---:|---|
+| `drivers/riic.c` | 83 | 4,924 | Renesas sample driver; the STBCR9 dummy read Ghidra drops; GCC's `.part.0` clones are checked through their callers |
+| `drivers/scif.c` | 25 | 1,696 | the C++ uart class as C; `pmu_cycle_stamp` kept out of line (the static CP15 comparison caught the inlined `mrc`) |
+| `drivers/sflash.c` | 36 | 5,236 | SPIBSC transfers, flash commands, the device protocol; the state at +8 is 16 bits (strh) |
+| `drivers/sdhi.c` | 39 | 1,668 | SDHI0 target layer, DMA block transfers, the operation-table slots |
+
+Findings **[fact]**: `spibsc_ensure_idle` passes value and offset the other way round and writes 0x20 to CMNCR + 1 and
+CMNCR instead of SMCR = 1, 0 (0x20104230; update.md); the SCIF RXI handler drops a byte with a dummy SCFRDR read when
+the ring is full and `scif_open` reads SCLSR before clearing it (mainlink.md); `sdhi_drv_init` forwards its five
+arguments to `sd_driver_op` with the hook block as sixth; `itron_acre_*` take (id, descriptor), id 0 = choose
+(round 3's stubs had one argument, so the descriptor was not compared). Not done this round: VDC5, RSPI, DMAC, USB,
+the file system, the MAIN link and the update code, and the large SDHI functions (`sdhi_read_response`,
+`sdhi_read/write_sectors_cmd`, `sdhi_read_op`, `sdhi_open`, `sdhi0_buf_isr`).
+
+Harness changes: runs start in SYS mode with an SVC stack, and an svc enters the image's `SVC_Handler` (the kernel's
+interrupt masking `knl_int_disable` works only this way; Unicorn reports the SVC through an interrupt hook, and the
+banked SP/LR follow CPSR writes [fact: a one-off test]); Thumb branch relocations and A32 BLX; presets for 64-bit
+divisions, the RIIC flags, SCIF objects, the flash device object and small selectors; `check --object`; RAM
+compared from 0x20440000 (below it is the hybrid image's code).
+
+### DISPLAY: linker script, hybrid image and NORTi stand-in (round 4)
+
+`src/display/display.ld` describes the image's layout and `tools/display_link.py` links the tree into a **complete
+image**: the original (from `build/`, unchanged) at 0x20100000, the 257 functions with verdict equivalent in the gap
+0x2042BC10..0x20432040 (25,648 of 82,928 bytes), the 41 identical ones left in place, everything else resolved to
+the image's addresses, and 257 original entries patched with a branch (1,063 bytes changed; none too short to
+patch). `.data` and `.bss` of the recreated code are empty (asserted). `equiv_display_emu.py linkcheck` runs the
+hybrid image against the original at every patched entry, so the recreated functions call each other there:
+**257 of 257 agree** (50 trials each). Output stays in `src/display/out/` (ignored). *Open: whether the hybrid image
+boots; would be settled by packing it into an SFL (the payload is 25,648 bytes longer) and loading it on a radio with
+the owner's approval, or by a whole-system emulation of the reset path.* *Open: room once the recreated code
+outgrows the gap; would be settled by a second region in RAM 0x2091D570..0x2097FFFF (no reference, #119) loaded by
+a recreated `reset_in_ram`.*
+
+`src/display/rtos/` is a minimal uITRON 4.0 stand-in with the `itron_*` interface of `include/norti.h` (tasks,
+semaphores, event flags, mailboxes, message buffers, mutexes, cyclic handlers, ISRs; A32 context switch), for a later
+source-only build; the hybrid keeps the original kernel, whose internals other code of the image uses directly.
+`tools/test_norti_standin.py` runs a two-task test of every object type in Unicorn: **passes**.
+
+### DISPLAY: results (status.tsv, round 4)
+
+| Verdict | Ghidra functions | Bytes (of 396,272) |
+|---|---:|---:|
+| identical | 41 | 3,722 |
+| equivalent | 257 | 19,666 |
+| differs | 0 | 0 |
+| not yet | 1,915 | 372,884 |
+
+**Re-implemented: 5.90 %** (round 3: 1.58 %).
+
+### DISPLAY: Ghidra (round 4)
+
+`tools/ghidra/names_display.tsv` gains 16 names with evidence: `pmu_cycle_stamp` 0x20114850, `sflash_checksum`
+0x20103CC8, `spiflash_read` 0x20104078, `pmu_ccnt_read` 0x2010414C, `sflash_cycle_stamp` 0x20104154,
+`sdhi_stub_2013fde4`, `sdhi_stub_2013ffdc`, `sdhi_op4`..`sdhi_op7`, `sdhi_op12`..`sdhi_op16` (operation-table
+slots). Proved on a copy (`/home/user/ghidra_tasks/t24r4/disp`, OWNER root): ApplyNames 1,839 applied, 0 failed
+[fact: names.log there]. Apply to the canonical project with the round-3 command block above (ApplyNames, then
+ExportDecomp and ExportFuncModes, the quality comparison, the readability stats); afterwards the alias rows of these
+names in `src/display/aliases.tsv` are redundant.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -477,12 +574,8 @@ name the same addresses) and can go.
 2. M33: the floating-point path of the printf core, with a preset hook that fills the digit buffer (round 3 above).
 3. Apply the round-3 Ghidra changes to the canonical projects with the commands above (M33: the `printf_float_none`
    entry; DISPLAY: the CP15 renames and the four new names) and re-export (T23 rules).
-4. DISPLAY, next by size and self-containment: the RIIC driver (83 functions, 4.9 KB, the Renesas sample driver with
-   per-channel flag bytes 0x20800454..), SCIF (`scif_*`), the SPI flash and SPIBSC (`sflash_*`, `spibsc_*`), SDHI, VDC5
-   (the biggest, about 20 KB); the armcc run-time helpers that return in r2:r3 (`__aeabi_uldivmod`,
-   `__aeabi_ldivmod`) need assembly; the soft-float and printf internals; then the application.
-5. DISPLAY build: there is no linker script and no stand-in for NORTi yet, so the recreated files are checked one by
-   one but do not form an image. *Open: whether a NORTi shim or a µITRON-compatible kernel (TOPPERS/ASP is the
-   free one) is the way to a bootable build; would be settled by listing the service calls the recreated code uses and
-   their semantics in boot-rtos.md.*
+4. DISPLAY, next by size and self-containment: VDC5 (about 15 KB), RSPI (7.6 KB), DMAC, the rest of SDHI, USB, then
+   the file system, the MAIN link and the update code; then the application.
+5. DISPLAY build: the hybrid image links and passes linkcheck; a source-only image needs the rest of the tree, the
+   NORTi stand-in's port (IRQ entry and exit, the OSTM tick) and a recreated `reset_in_ram` that loads a larger image.
 6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.

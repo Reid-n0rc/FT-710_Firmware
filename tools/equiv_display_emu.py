@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """T24 (DISPLAY): differential emulation of recreated DISPLAY functions (RZ/A1H Cortex-A9) with Unicorn.
 
-The DISPLAY image was built with armcc (ARM Compiler 5) on the NORTi kernel; neither is available, so nothing can be
-byte-identical: each recreated function is compiled with GCC (src/display/Makefile, A32) and checked against the
-original by running both from the same start state on the same inputs (the method of tools/equiv_m33_emu.py, ported
-to A32 in T24 round 3).
+The DISPLAY image was built with armcc (ARM Compiler 5) on the NORTi kernel; neither is available, so the recreated C
+cannot be byte-identical: each recreated function is compiled with GCC (src/display/Makefile, A32) and checked against
+the original by running both from the same start state on the same inputs (the method of tools/equiv_m33_emu.py,
+ported to A32 in T24 round 3). A function whose section, linked so that it lands at its original address, gives the
+image's own bytes is "identical" (the assembly transcriptions of the hand-written run-time routines, T24 round 4).
 
 Start state (built once): the image at 0x20100000, the three LZ-compressed RW regions of its Region$$Table
 (0x204286A8) decompressed by the image's own __decompress (0x20100BFC, run in Unicorn), the two zero-init regions
-zero; that is the memory after __scatterload. The CPU is in SVC mode with IRQ and FIQ masked and the MMU off.
+zero; that is the memory after __scatterload. The CPU is in SYS mode (as main and the tasks) with IRQ and FIQ masked
+and the MMU off; SVC mode has its own stack, and an svc instruction enters the image's SVC_Handler (round 4).
 
 Per function: the recompiled section is placed at a scratch address and its relocations are resolved against the
 original addresses of the same symbols: functions by name from decomp/display/functions.tsv (or
@@ -35,8 +37,10 @@ trial where one run exhausts the instruction budget is run again with 8 times th
 exhaust the budget is inconclusive (not compared, and reported).
 
 Usage:
-  python3 -I tools/equiv_display_emu.py check FUNCTION... [--trials N] [--seed S]    one function (src/display/out/obj)
+  python3 -I tools/equiv_display_emu.py check FUNCTION... [--object OBJ] [--trials N] [--seed S]
+                                        the named functions, or all of an object (src/display/out/obj)
   python3 -I tools/equiv_display_emu.py status [--trials N]   every recreated function -> src/display/status.tsv
+  python3 -I tools/equiv_display_emu.py linkcheck      the hybrid image (tools/display_link.py) against the original
 The image is read from build/FT-710_DISPLAY_V0108.bin (or $FT710_BUILD/...); it is never written anywhere.
 """
 import argparse
@@ -47,7 +51,7 @@ import random
 import struct
 import sys
 
-from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_ARM, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, \
+from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_ARM, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_HOOK_INTR, \
     UC_PROT_ALL
 from unicorn import arm_const as A
 
@@ -76,14 +80,47 @@ BUDGET = 1000000
 NARGS = 8
 MIN_COVER = 0.5
 # compared after each run: the RW data of the image (.data .bss, .data2 .bss2, the boot-info block, the uncached
-# mirror with the frame buffers and .data_nc) and the argument buffers
-SNAP = [(0x20000000, 0x20000100), (0x2042C000, 0x20A00000), (0x60000000, 0x60A00000), (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
+# mirror with the frame buffers and .data_nc) and the argument buffers. RAM from 0x20440000: below it the hybrid
+# image (tools/display_link.py) has its recreated code (0x2042BC10..0x2043FFFF), which linkcheck must not compare.
+SNAP = [(0x20000000, 0x20000100), (0x20440000, 0x20A00000), (0x60000000, 0x60A00000), (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
 
 R_ARM_NONE, R_ARM_ABS32, R_ARM_REL32, R_ARM_CALL, R_ARM_JUMP24 = 0, 2, 3, 28, 29
 R_ARM_V4BX, R_ARM_PREL31, R_ARM_MOVW_ABS_NC, R_ARM_MOVT_ABS = 40, 42, 43, 44
+R_ARM_THM_CALL, R_ARM_THM_JUMP24, R_ARM_THM_JUMP19 = 10, 30, 51
+
+
+def thm_branch_get(hw1, hw2, cond):
+    """Offset of a 32-bit Thumb B/BL (T4) or conditional B (T3, cond=True)."""
+    s_ = (hw1 >> 10) & 1
+    j1, j2 = (hw2 >> 13) & 1, (hw2 >> 11) & 1
+    if cond:
+        v = (s_ << 20) | (j2 << 19) | (j1 << 18) | ((hw1 & 0x3F) << 12) | ((hw2 & 0x7FF) << 1)
+        return v - (1 << 21) if s_ else v
+    i1, i2 = 1 - (j1 ^ s_), 1 - (j2 ^ s_)
+    v = (s_ << 24) | (i1 << 23) | (i2 << 22) | ((hw1 & 0x3FF) << 12) | ((hw2 & 0x7FF) << 1)
+    return v - (1 << 25) if s_ else v
+
+
+def thm_branch_set(hw1, hw2, d, cond):
+    s_ = 1 if d < 0 else 0
+    if cond:
+        if not -(1 << 20) <= d < (1 << 20):
+            raise ValueError('Thumb conditional branch out of range')
+        hw1 = (hw1 & 0xFBC0) | (s_ << 10) | ((d >> 12) & 0x3F)
+        hw2 = (hw2 & 0xD000) | (((d >> 18) & 1) << 13) | (((d >> 19) & 1) << 11) | ((d >> 1) & 0x7FF)
+        return hw1, hw2
+    if not -(1 << 24) <= d < (1 << 24):
+        raise ValueError('Thumb branch out of range')
+    i1, i2 = (d >> 23) & 1, (d >> 22) & 1
+    j1, j2 = 1 - (i1 ^ s_), 1 - (i2 ^ s_)
+    hw1 = (hw1 & 0xF800) | (s_ << 10) | ((d >> 12) & 0x3FF)
+    hw2 = (hw2 & 0xD000) | (j1 << 13) | (j2 << 11) | ((d >> 1) & 0x7FF)
+    return hw1, hw2
 
 # NORTi service calls (uITRON 4.0, docs/code/display/boot-rtos.md section 4): number of arguments, and the index of an
-# output-pointer argument the stub writes a seeded word through (None: no output)
+# output-pointer argument the stub writes a seeded word through (None: no output). The acre_* calls take (id,
+# descriptor), id 0 = choose one [fact: itron_acre_isr 0x2014F1A8 tests r0 == 0; call sites pass r0 = 0, r1 = T_CISR]
+# (round 3 listed them with one argument, so the descriptor was not compared).
 STUBS = {
     'itron_dly_tsk': (1, None), 'itron_tslp_tsk': (1, None), 'itron_sig_sem': (1, None), 'itron_twai_sem': (2, None),
     'itron_set_flg': (2, None), 'itron_clr_flg': (2, None), 'itron_twai_flg': (5, 3), 'itron_tloc_mtx': (2, None),
@@ -93,9 +130,9 @@ STUBS = {
     'itron_get_tid': (1, 0), 'itron_loc_cpu': (0, None), 'itron_unl_cpu': (0, None), 'itron_dis_dsp': (0, None),
     'itron_ena_dsp': (0, None), 'itron_get_tim': (1, None), 'itron_rot_rdq': (1, None), 'itron_chg_pri': (2, None),
     'itron_get_pri': (2, 1), 'itron_sus_tsk': (1, None), 'itron_ext_tsk': (0, None), 'itron_sta_cyc': (1, None),
-    'itron_stp_cyc': (1, None), 'itron_acre_tsk': (1, None), 'itron_acre_sem': (1, None), 'itron_acre_flg': (1, None),
-    'itron_acre_mbx': (1, None), 'itron_acre_mbf': (1, None), 'itron_acre_mpf': (1, None), 'itron_acre_mpl': (1, None),
-    'itron_acre_mtx': (1, None), 'itron_acre_dtq': (1, None), 'itron_acre_cyc': (1, None), 'itron_acre_isr': (1, None),
+    'itron_stp_cyc': (1, None), 'itron_acre_tsk': (2, None), 'itron_acre_sem': (2, None), 'itron_acre_flg': (2, None),
+    'itron_acre_mbx': (2, None), 'itron_acre_mbf': (2, None), 'itron_acre_mpf': (2, None), 'itron_acre_mpl': (2, None),
+    'itron_acre_mtx': (2, None), 'itron_acre_dtq': (2, None), 'itron_acre_cyc': (2, None), 'itron_acre_isr': (2, None),
     'itron_del_sem': (1, None), 'itron_del_mpf': (1, None),
 }
 STACK_ARG_BYTES = {}
@@ -124,8 +161,8 @@ def orig_functions():
 class Image:
     """The DISPLAY memory after __scatterload: the file at 0x20100000 and the decompressed RW regions."""
 
-    def __init__(self):
-        self.file = open(image_path(), 'rb').read()
+    def __init__(self, path=None):
+        self.file = open(path or image_path(), 'rb').read()
         self.regions = [(BASE, self.file)]
         uc = Uc(UC_ARCH_ARM, UC_MODE_ARM)
         for lo, hi in RAM:
@@ -216,13 +253,14 @@ class Linker:
         self.blobs.append([a, bytearray(struct.pack('<II', 0xE51FF004, target))])
         return a
 
-    def place(self, obj, shndx):
+    def place(self, obj, shndx, at=None):
+        """Place a section (at a given address, or at the next free scratch address) and resolve its relocations."""
         key = (obj.path, shndx)
         if key in self.placed:
             return self.placed[key]
         sec = obj.secs[shndx]
         data = bytearray(obj.section_data(shndx))
-        addr = self.alloc(len(data), max(4, sec['sh_addralign']))
+        addr = at if at is not None else self.alloc(len(data), max(4, sec['sh_addralign']))
         self.placed[key] = addr
         blob = [addr, data]
         self.blobs.append(blob)
@@ -274,9 +312,12 @@ class Linker:
             addend = sext(ins & 0xFFFFFF, 24) << 2
             t, _ = self.target(obj, r, addend + 8 if styp == 'STT_SECTION' else 0)
             cond = ins >> 28
-            if t & 1 and typ == R_ARM_CALL and cond == 0xE:
+            if t & 1 and typ == R_ARM_CALL and cond in (0xE, 0xF):      # bl or blx to Thumb: blx
                 d = (t & ~1) - (pc + 8)
                 ins = 0xFA000000 | (((d >> 1) & 1) << 24) | ((d >> 2) & 0xFFFFFF)
+            elif cond == 0xF:                                           # blx to A32: bl
+                d = t - (pc + 8)
+                ins = 0xEB000000 | ((d >> 2) & 0xFFFFFF)
             else:
                 if t & 1:
                     t = self.veneer(t)
@@ -307,6 +348,23 @@ class Linker:
             v &= 0xFFFF
             ins = (ins & 0xFFF0F000) | ((v & 0xF000) << 4) | (v & 0xFFF)
             struct.pack_into('<I', data, o, ins)
+        elif typ in (R_ARM_THM_CALL, R_ARM_THM_JUMP24, R_ARM_THM_JUMP19):
+            hw1, hw2 = struct.unpack_from('<HH', data, o)
+            cond = typ == R_ARM_THM_JUMP19
+            addend = thm_branch_get(hw1, hw2, cond)
+            t, _ = self.target(obj, r, addend + 4 if styp == 'STT_SECTION' else 0)
+            if not t & 1 and typ == R_ARM_THM_CALL:           # to A32: BLX, offset from Align(PC, 4)
+                d = t - ((pc + 4) & ~3)
+                hw1, hw2 = thm_branch_set(hw1, hw2, d, False)
+                hw2 &= ~0x1000
+            elif not t & 1:
+                raise ValueError('Thumb tail branch to an A32 function (needs a veneer)')
+            else:
+                d = (t & ~1) - (pc + 4)
+                hw1, hw2 = thm_branch_set(hw1, hw2, d, cond)
+                if typ == R_ARM_THM_CALL:
+                    hw2 |= 0x1000
+            struct.pack_into('<HH', data, o, hw1, hw2)
         elif typ in (R_ARM_NONE, R_ARM_V4BX, R_ARM_PREL31):
             pass
         else:
@@ -347,6 +405,7 @@ class Run:
         for a in list(stub_addrs) + [STOP]:
             uc.hook_add(UC_HOOK_CODE, self.on_code, begin=a, end=a)
         uc.hook_add(UC_HOOK_MEM_UNMAPPED, self.on_unmapped)
+        uc.hook_add(UC_HOOK_INTR, self.on_intr)
         # coverage: one code hook per static block leader of the original, removed at its first hit (a block hook
         # would call back into Python on every loop iteration)
         self.blocks = set()
@@ -402,13 +461,31 @@ class Run:
     def on_mmio_write(self, uc, offset, size, value, base):
         self.mmio.append(('w', base + offset, size, value & ((1 << (8 * size)) - 1)))
 
+    def on_intr(self, uc, intno, _):
+        """An SVC enters the image's own SVC_Handler as the CPU would: SVC mode with IRQs masked, LR_svc = the return
+        address, SPSR_svc = the caller's CPSR, PC = vector 0x20100008. The kernel's interrupt masking
+        (knl_int_disable: svc #0 with r0 = knl_psr_set_i) works only this way. Any other exception ends the run."""
+        if intno != 2:
+            self.end = ('fault', f'exception {intno}')
+            uc.emu_stop()
+            return
+        cpsr = uc.reg_read(A.UC_ARM_REG_CPSR)
+        pc = uc.reg_read(A.UC_ARM_REG_PC)
+        uc.reg_write(A.UC_ARM_REG_CPSR, (cpsr & ~0x3F) | 0x93)
+        uc.reg_write(A.UC_ARM_REG_SPSR, cpsr)
+        uc.reg_write(A.UC_ARM_REG_LR, pc | (1 if cpsr & 0x20 else 0))
+        uc.reg_write(A.UC_ARM_REG_PC, BASE + 8)
+
     def on_unmapped(self, uc, access, addr, size, value, _):
         self.end = ('fault', access)
         return False
 
     def go(self, entry, thumb, ret_size=4, budget=BUDGET):
+        """Run from entry; ret_size 1/2/4 (r0), 8 (r0:r1), 16 (r0..r3, the 64-bit divisions) or None (void)."""
         uc = self.uc
-        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1D3)    # SVC mode, IRQ and FIQ masked, ARM state
+        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1D3)    # SVC mode: its own stack for the SVC entries
+        uc.reg_write(A.UC_ARM_REG_SP, STACK_TOP - 0x8000)
+        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1DF)    # SYS mode (as main and the tasks), IRQ and FIQ masked, ARM state
         for reg, v in zip((A.UC_ARM_REG_R0, A.UC_ARM_REG_R1, A.UC_ARM_REG_R2, A.UC_ARM_REG_R3), self.regs):
             uc.reg_write(reg, v & 0xFFFFFFFF)
         uc.reg_write(A.UC_ARM_REG_SP, STACK_TOP - 0x100)
@@ -423,7 +500,8 @@ class Run:
             self.end = ('budget',)
         ret = None
         if self.end[0] == 'return' and ret_size:
-            ret = (uc.reg_read(A.UC_ARM_REG_R0),) + ((uc.reg_read(A.UC_ARM_REG_R1),) if ret_size > 4 else ())
+            regs = (A.UC_ARM_REG_R0, A.UC_ARM_REG_R1, A.UC_ARM_REG_R2, A.UC_ARM_REG_R3)[:max(1, ret_size // 4)]
+            ret = tuple(uc.reg_read(x) for x in regs)
             if ret_size < 4:
                 ret = (ret[0] & ((1 << (8 * ret_size)) - 1),)
         try:
@@ -611,15 +689,196 @@ def gpio_args(rng, args, ptr=False):
     return []
 
 
-PRESETS = {'mmu_enable': flat_l1, '__aeabi_memcpy': lambda r, a: copy_fill(r, a, 'memcpy'), '__aeabi_memcpy4': lambda r, a: copy_fill(r, a, 'memcpy4'),
+def u64(rng):
+    """A 64-bit operand of random length (0..64 significant bits), sometimes a power of two or all ones."""
+    k = rng.random()
+    if k < 0.1:
+        return rng.choice([0, 1, 2, 3, 10, 0xFFFFFFFF, 1 << 32, (1 << 64) - 1, 1 << 63])
+    if k < 0.2:
+        return 1 << rng.randrange(64)
+    return rng.getrandbits(rng.randrange(1, 65))
+
+
+def div64_args(rng, args):
+    """(numerator r0:r1, denominator r2:r3) for __aeabi_uldivmod / __aeabi_ldivmod: lengths drawn independently, so
+    that every path (denominator 0, longer than the numerator, 32-bit, the reciprocal paths) is reached."""
+    n, d = u64(rng), u64(rng)
+    if rng.random() < 0.2:
+        d = rng.getrandbits(rng.randrange(1, 9)) or 1
+    regs = args['regs']
+    regs[0], regs[1], regs[2], regs[3] = n & 0xFFFFFFFF, n >> 32, d & 0xFFFFFFFF, d >> 32
+    return []
+
+
+def riic_args(rng, args, shape):
+    """The RIIC driver's arguments by shape: ch 0..3 (sometimes out of range), then 'bn' (64-byte buffer, count
+    0..6: R_RIIC_Read/Write), 'vm' (byte, mode 0..2), 'c' (condition 0..3), 'mb' (mode 0..5, out buffer), 'v' (byte).
+    The interrupt flags 0x20800454..0x2080045F are set non-zero (the transfer functions spin on them; the interrupts
+    are not emulated), with the transmit counter after them random."""
+    regs = args['regs']
+    regs[0] = rng.choice([0, 1, 2, 3] * 4 + [4, 0xFFFFFFFF])
+    buf = SCRATCH_ARGS + 0x2000
+    args['buffers'] = [b for b in args['buffers'] if b[0] != buf] + [(buf, bytes(rng.getrandbits(8) for _ in range(64)))]
+    if shape == 'bn':
+        regs[1], regs[2] = buf, rng.choice([0, 1, 2, 3, 4, 5, 6, rng.randrange(8)])
+    elif shape == 'vm':
+        regs[1], regs[2] = rng.getrandbits(8), rng.choice([0, 1, 1, 0, 2])
+    elif shape == 'c':
+        regs[1] = rng.choice([0, 1, 2, 3])
+    elif shape == 'mb':
+        regs[1], regs[2] = rng.choice([0, 1, 2, 3, 4, 5]), buf
+    elif shape == 'v':
+        regs[1] = rng.getrandbits(8)
+    return [(0x20800454, bytes(rng.randrange(1, 256) for _ in range(12)) + bytes(rng.getrandbits(8) for _ in range(16)))]
+
+
+SCIF_OBJS = {0x208DA1E0: (0xE8008800, 0x20165764), 0x208DAA30: (0xE8009000, 0x2016578C),
+             0x208DB280: (0xE8009800, 0x201657B4)}   # object: (registers, TXI descriptor; RXI = TXI + 0x14) [fact: scifN_get]
+
+
+def scif_obj(rng, regs_blk=None, txi=None):
+    """A valid SCIF UART object (src/display/include/scif.h): the vtable 0x2042803C, a register block (or, rarely,
+    none yet), ring indices that are equal, adjacent, wrapped or random (so the full and empty cases run), random
+    ring bytes and counters, the TXI/RXI descriptors, an event flag id or 0."""
+    if regs_blk is None:
+        regs_blk, txi = SCIF_OBJS[rng.choice(list(SCIF_OBJS))]
+    o = bytearray(rng.getrandbits(8) for _ in range(0x850))
+
+    def idx_pair():
+        a = rng.randrange(0x400)
+        k = rng.random()
+        b = a if k < 0.25 else (a + 1) & 0x3FF if k < 0.4 else (a - 1) & 0x3FF if k < 0.55 else \
+            (a + 0x3FE) & 0x3FF if k < 0.65 else rng.randrange(0x400)
+        return a, b
+    rd, wr = idx_pair()
+    trd, twr = idx_pair()
+    struct.pack_into('<IIHH', o, 0, 0x2042803C, 0 if rng.random() < 0.1 else regs_blk, rd, wr)
+    struct.pack_into('<HH', o, 0x40C, trd, twr)
+    struct.pack_into('<III', o, 0x810, txi + 0x14, txi, rng.choice([0, 0, 1, 3, 7]))
+    return bytes(o)
+
+
+def scif_args(rng, args, kind):
+    """kind 'obj': r0 = a SCIF object in the argument area (and a 64-byte buffer in r1, a count 0..40 in r2, a
+    retry count in r3, baud / bits / parity / stop for scif_open); 'glob': the three global objects valid."""
+    regs = args['regs']
+    fill = []
+    if kind == 'obj':
+        a = SCRATCH_ARGS
+        args['buffers'] = [b for b in args['buffers'] if not (SCRATCH_ARGS <= b[0] < SCRATCH_ARGS + 0x4000)]
+        args['buffers'] += [(a, scif_obj(rng)), (a + 0x2000, bytes(rng.getrandbits(8) for _ in range(64)))]
+        regs[0], regs[1], regs[2] = a, a + 0x2000, rng.choice([0, 1, 2, 5, 16, 40, rng.randrange(1100)])
+        regs[3] = rng.choice([0, 1, 2, 5])
+        if rng.random() < 0.5:     # scif_open / scif_start: (baud, bits, parity, stop)
+            regs[1] = rng.choice([9600, 38400, 115200, 345600, 460800, 1200])
+            regs[2], regs[3] = rng.choice([7, 8]), rng.choice([0, 1, 2, 3])
+            regs[4] = rng.choice([1, 2, 0x81, 0x80, 0])
+    for o, (rb, txi) in SCIF_OBJS.items():
+        fill.append((o, scif_obj(rng, rb, txi)))
+    return fill
+
+
+SFLASH_DEV = 0x20810D90
+
+
+def sflash_args(rng, args, kind):
+    """The serial-flash driver (src/display/drivers/sflash.c): the device object 0x20810D90 valid (SPIBSC0 base, one or
+    two chips, a state 0..3, mostly no error, a last command among RDSR/RDID/0x70/other), the partial-page count
+    0x208000A0 below a page; arguments by kind: 'obj' (object, 64-byte buffer, count 0..20, keep), 'dev' (a device
+    command 'r'/'e'/'p'/'d'/'b' or data, length 0..12), 'xip' (flash offset, buffer, count 0..40), 'bar' (no
+    progress bar, offset, size up to 3 blocks), 'id' (a block index)."""
+    regs = args['regs']
+    dual = rng.choice([0, 0, 1])
+    o = bytearray(rng.getrandbits(8) for _ in range(0x2C))
+    struct.pack_into('<IIIIIII', o, 0, 0x3FEFA000, dual, rng.choice([0, 0, 1, 2, 3, 4]), rng.getrandbits(20),
+                     rng.choice([0] * 6 + [1]), rng.choice([0, 1]), rng.choice([0, 1]))
+    o[0x28] = rng.choice([0x05, 0x9F, 0x70, 0x02, 0x0B])
+    fill = [(SFLASH_DEV, bytes(o)), (0x208000A0, struct.pack('<I', rng.choice([0, 0, 1, 100, 255]))),
+            (0x20810DBC, bytes(rng.getrandbits(8) for _ in range(512)))]
+    buf = SCRATCH_ARGS + 0x2000
+    args['buffers'] = [b for b in args['buffers'] if b[0] != buf] + [(buf, bytes(rng.getrandbits(8) for _ in range(64)))]
+    if kind == 'obj':
+        regs[0], regs[1], regs[2], regs[3] = SFLASH_DEV, buf, rng.choice([0, 1, 2, 3, 4, 5, 6, 8, 9, 13, 20]), rng.choice([0, 1])
+    elif kind == 'reg':           # (object, offset) or (object, value, offset)
+        regs[0], regs[1], regs[2] = SFLASH_DEV, rng.choice(range(0, 0x4C, 4)), rng.choice(range(0, 0x4C, 4))
+    elif kind == 'dev':
+        c = bytes([rng.choice(b'repdbx'), rng.choice(b'01pr')]) + bytes(rng.getrandbits(8) for _ in range(30))
+        args['buffers'] = [b for b in args['buffers'] if b[0] != buf] + [(buf, c)]
+        regs[0], regs[1] = buf, rng.choice([0, 1, 2, 5, 6, 7, 8, 12])
+    elif kind == 'xip':
+        regs[0], regs[1], regs[2] = rng.getrandbits(16), buf, rng.choice([0, 1, 2, 7, 40])
+    elif kind == 'bar':
+        regs[0], regs[1], regs[2] = 0, rng.getrandbits(20), rng.choice([0, 1, 0x10000, 0x10001, 0x30000])
+    elif kind == 'id':
+        regs[0] = rng.choice(list(range(8)) + [0x83, 0x84, 0x87, 0x88, 200])
+    return fill
+
+
+# return registers the DWARF cannot tell (assembly): the 64-bit divisions return quotient r0:r1 and remainder r2:r3
+RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16}
+
+PRESETS = {'mmu_enable': flat_l1, '__aeabi_uldivmod': div64_args, '__aeabi_ldivmod': div64_args, '__aeabi_memcpy': lambda r, a: copy_fill(r, a, 'memcpy'), '__aeabi_memcpy4': lambda r, a: copy_fill(r, a, 'memcpy4'),
            '__aeabi_memset': lambda r, a: copy_fill(r, a, 'memset'), '__aeabi_memclr': lambda r, a: copy_fill(r, a, 'memclr'),
            '__aeabi_memclr4': lambda r, a: copy_fill(r, a, 'memclr4')}
 PRESETS.update({n: gpio_args for n in ('gpio_cfg_reset', 'gpio_cfg_out_low', 'gpio_cfg_out_high', 'gpio_cfg_input',
                                      'gpio_set_alt_func', 'gpio_cfg_alt', 'gpio_read_bit', 'gpio_read_port_bit')})
 PRESETS['gpio_cfg_mask'] = lambda rng, args: gpio_args(rng, args, True)
+PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'obj')) for n in (
+    'scif_rxi_isr', 'scif_txi_isr', 'uart_obj_init', 'scif_irq_off', 'scif_read', 'scif_start', 'scif_open',
+    'scif_read_timeout', 'scif_flush', 'scif_write', 'uart_obj_ctor', 'scif_has_flag')})
+PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'glob')) for n in (
+    'scif3_rxi_isr', 'scif3_txi_isr', 'scif4_rxi_isr', 'scif4_txi_isr', 'scif5_rxi_isr', 'scif5_txi_isr',
+    'scif5_get', 'scif4_get', 'scif3_get', 'scif5_rxi_count_get', 'scif4_rxi_count_get', 'scif_uarts_ctor')})
+def small_args(rng, args):
+    """r0 a small selector (-1..63: command index, mode, wait kind), r1 0 or 1, r2 a random word (an argument)."""
+    regs = args['regs']
+    regs[0] = rng.choice([0xFFFFFFFF, 0, 1, 2, 3, 4, 5, 7, 7, 12, 17, 41, 55, 63])
+    regs[1] = rng.choice([0, 1])
+    regs[2] = rng.choice([0, rng.getrandbits(32)])
+    return []
+
+
+PRESETS.update({n: small_args for n in ('sdhi_send_cmd', 'sdhi_cmd', 'sdhi_wait_idle', 'sdhi_wait_info',
+                                        'sdhi_set_bus_width')})
+for _kind, _names in (
+        ('reg', ('spibsc_reg_read32', 'spibsc_reg_write32', 'spibsc_reg_write16', 'spibsc_reg_write8')),
+        ('obj', ('spibsc_ssl_negated',
+                 'spibsc_wait_tend', 'spibsc_ensure_idle', 'spibsc_xfer', 'sflash_cmd_read', 'sflash_cmd_write',
+                 'sflash_wait_ready', 'sflash_wait_wel', 'sflash_read_sr2', 'spibsc_cmncr_set', 'spibsc_enter_spi_mode',
+                 'spibsc_exit_spi_mode', 'sflash_fast_read', 'sflash_erase_block', 'sflash_page_program',
+                 'sflash_global_unlock', 'sflash_cmd_bp', 'sflash_dev_open', 'sflash_read_mfr_id')),
+        ('dev', ('sflash_dev_write', 'sflash_dev_read', 'sflash_checksum')), ('xip', ('spiflash_write', 'spiflash_read')),
+        ('bar', ('spiflash_erase', 'sflash_erase_chip_sst', 'sflash_erase_chip_uniform', 'sflash_erase_chip', 'sflash_cmd_erase')),
+        ('id', ('sflash_sst_block_size',))):
+    PRESETS.update({n: (lambda rng, args, k=_kind: sflash_args(rng, args, k)) for n in _names})
+for _shape, _names in (('bn', ('R_RIIC_Write', 'R_RIIC_Read')), ('vm', ('R_RIIC_WriteSlaveAddr',)),
+                       ('c', ('R_RIIC_SendCond',)), ('mb', ('riic_receive',)), ('v', ('riic_transmit',)),
+                       ('', ('R_RIIC_Init', 'R_RIIC_ReadDummy', 'R_RIIC_DetectStop', 'R_RIIC_ClearNack',
+                             'riic_transmit_start', 'riic_transmit_restart', 'riic_transmit_stop', 'riic_detect_stop',
+                             'riic_regs_init', 'riic_port_init'))):
+    PRESETS.update({n: (lambda rng, args, sh=_shape: riic_args(rng, args, sh)) for n in _names})
 PRESETS.update({n: two_strings for n in ('strcmp', 'strcasecmp', 'strstr', 'strcat', 'strcpy')})
 PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('strncmp', 'strncasecmp', 'memcmp',
                                                                              'strncpy')})
+
+
+def byte_check(res, obj, fname, shndx, off, oaddr):
+    """identical: the section linked so that the function lands at its original address gives the image's bytes over
+    the whole function symbol (code and its literals), which must cover at least the Ghidra function. In practice
+    only the assembly transcriptions of hand-written routines get there (armcc is not available for the C)."""
+    size = next((sz for n, i, o, sz in obj.functions() if n == fname and i == shndx), 0)
+    gsize = res.by_addr.get(oaddr, (None, 0, False))[1]
+    if not size or size < gsize:
+        return None
+    lk = Linker(res)
+    try:
+        base = lk.place(obj, shndx, at=oaddr - off)
+    except (KeyError, ValueError):
+        return None
+    data = next(d for a, d in lk.blobs if a == base)
+    if bytes(data[off:off + size]) == res.img.read(oaddr, size):
+        return f'byte-identical at the original address ({size} bytes)'
+    return None
 
 
 def check(res, obj, fname, shndx, off, seed=1, trials=200):
@@ -628,6 +887,9 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
     if f is None:
         return None, 'not yet', f'no original address for {fname} (decomp/display/functions.tsv or aliases.tsv)'
     oaddr, othumb = f
+    same = byte_check(res, obj, fname, shndx, off, oaddr)
+    if same:
+        return oaddr, 'identical', same
     lk = Linker(res)
     try:
         if off != 0:
@@ -650,7 +912,7 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
             a = res.data.get(key)
             if a is not None and not (BASE <= a < 0x2042C000) and a not in res.keep:
                 refs.add(a)
-    rsize = returns_value(obj, fname)
+    rsize = RET_SIZE.get(fname, returns_value(obj, fname))
     starts = sorted(a for a, _, _ in res.funcs.values())
     i = bisect.bisect_right(starts, oaddr)
     osize = min(starts[i] - oaddr, 0x4000) if i < len(starts) else 0x100
@@ -703,19 +965,24 @@ def recreated():
     for p in objects():
         obj = E.Obj(p)
         for fname, shndx, off, size in obj.functions():
+            if '.' in fname:
+                continue     # a compiler clone (riic_port_init.part.0): checked through the function that calls it
             out.append((obj, fname, shndx, off))
     return out
 
 
 def cmd_check(args):
-    res = Resolver(Image())
-    for obj, fname, shndx, off in recreated():
-        if fname in args.functions:
-            a, v, d = check(res, obj, fname, shndx, off, args.seed, args.trials)
+    """The named functions (or every function of the objects named with --object), in parallel."""
+    import multiprocessing
+    want = set(args.functions)
+    jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()
+            if fname in want or any(obj.path.endswith(o) for o in args.object or ())]
+    with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
+        for path, fname, a, v, d in pool.imap_unordered(_check_one, jobs):
             print(f'equiv_display_emu: {fname:28s} {v}: {d}', file=sys.stderr)
 
 
-RANK = {'equivalent': 0, 'differs': 1, 'not yet': 2}
+RANK = {'identical': -1, 'equivalent': 0, 'differs': 1, 'not yet': 2}
 
 
 _RES = None
@@ -733,6 +1000,70 @@ def _check_one(job):
             a, v, d = check(_RES, obj, fname, shndx, off, seed, trials)
             return path, fname, a, v, d
     return path, fname, None, 'not yet', 'not in the object'
+
+
+def _link_one(job):
+    """Worker of cmd_linkcheck: (function, address, thumb, seed, trials) -> (function, verdict, detail)."""
+    global _RES, _HYB
+    if _RES is None:
+        _RES = Resolver(Image())
+    if _HYB is None:
+        _HYB = Image(os.path.join(SRC, 'out', 'FT-710_DISPLAY_hybrid.bin'))
+    fname, oaddr, thumb, seed, trials = job
+    res = _RES
+    stub_addrs = {res.func(n)[0]: n for n in STUBS if res.func(n)}
+    rng = random.Random(seed)
+    ok = inconclusive = 0
+    for t in range(trials):
+        args = draw_args(rng)
+        fill = PRESETS[fname](rng, args) if fname in PRESETS else []
+        sd = rng.getrandbits(32)
+        size = RET_SIZE.get(fname, _ret_sizes().get(fname, 4))
+        for budget in (BUDGET, 8 * BUDGET):
+            r1 = Run(res.img, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
+            r2 = Run(_HYB, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
+            if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
+                break
+        if r1['end'] == r2['end'] == 'budget':
+            inconclusive += 1
+            continue
+        d = compare(r1, r2)
+        if d:
+            return fname, 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})'
+        ok += r1['end'] == 'return'
+    return fname, 'same', f'{trials} trials agree ({ok} returned normally, {inconclusive} inconclusive)'
+
+
+_HYB = None
+_RETS = None
+
+
+def _ret_sizes():
+    """Return size (DWARF) of every recreated function, so that linkcheck compares r0 only where there is a result."""
+    global _RETS
+    if _RETS is None:
+        _RETS = {}
+        for obj, fname, shndx, off in recreated():
+            _RETS[fname] = returns_value(obj, fname)
+    return _RETS
+
+
+def cmd_linkcheck(args):
+    """Every patched entry of the hybrid image (tools/display_link.py): the original image and the hybrid one, both
+    called at the original address, on the same inputs. This checks the link itself (relocations, patches) and the
+    recreated functions composed with each other, since in the hybrid image they call one another."""
+    import multiprocessing
+    rows = read_tsv(os.path.join(SRC, 'out', 'patches.tsv'))[1:]
+    modes = {int(r[0], 16): r[3] == 'thumb' for r in read_tsv(MODES_TSV)[1:]}
+    jobs = [(r[1], int(r[0], 16), modes.get(int(r[0], 16), False), args.seed, args.trials) for r in rows if r[0] != '-']
+    cnt = {}
+    with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
+        for fname, v, d in pool.imap_unordered(_link_one, jobs):
+            cnt[v] = cnt.get(v, 0) + 1
+            if v != 'same' or args.verbose:
+                print(f'equiv_display_emu: linkcheck {fname:28s} {v}: {d}', file=sys.stderr)
+    print('equiv_display_emu: linkcheck: ' + ', '.join(f'{k} {v}' for k, v in sorted(cnt.items())) +
+          f' (of {len(jobs)} patched entries)')
 
 
 def cmd_status(args):
@@ -755,7 +1086,7 @@ def cmd_status(args):
     for g, (a, n, _) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
         if a in results:
             fname, rel, v, d = results[a]
-            rows.append((a, g, n, fname, rel, v, n if v == 'equivalent' else 0, d[:300]))
+            rows.append((a, g, n, fname, rel, v, n if v in ('identical', 'equivalent') else 0, d[:300]))
         else:
             rows.append((a, g, n, '', '', 'not yet', 0, ''))
     for k, (fname, rel, v, d) in results.items():
@@ -763,8 +1094,9 @@ def cmd_status(args):
             rows.append((0, '-', 0, fname, rel, v, 0, d[:300]))
     with open(STATUS_TSV, 'w', encoding='utf-8') as f:
         f.write('# DISPLAY: recreated source vs the original image, per function (T24). Generated by\n')
-        f.write('# tools/equiv_display_emu.py status; do not edit. armcc is not available, so no function is byte-identical:\n')
-        f.write('# equivalent = passes the differential emulation (Unicorn, A32/Thumb). covered = bytes of the Ghidra function\n')
+        f.write('# tools/equiv_display_emu.py status; do not edit. identical = the bytes linked at the original address are the\n')
+        f.write("# image's (assembly transcriptions; armcc is not available for the C); equivalent = passes the differential\n")
+        f.write('# emulation (Unicorn, A32/Thumb). covered = bytes of the Ghidra function\n')
         f.write('# counted as re-implemented; tools/readability_stats.py sums it. Rows with ghidra_name "-" have no original.\n')
         f.write('address\tghidra_name\tsize\tsource\tfile\tverdict\tcovered\tdetail\n')
         for a, g, n, src, fl, v, cov, det in sorted(rows):
@@ -775,10 +1107,11 @@ def cmd_status(args):
     cnt = {}
     for r in listed:
         cnt[r[5]] = cnt.get(r[5], 0) + 1
+    id_b = sum(r[2] for r in listed if r[5] == 'identical')
     eq_b = sum(r[2] for r in listed if r[5] == 'equivalent')
     df_b = sum(r[2] for r in listed if r[5] == 'differs')
     print(f'equiv_display_emu: ' + ', '.join(f'{k} {v}' for k, v in sorted(cnt.items(), key=lambda kv: RANK[kv[0]])) +
-          f' (of {len(listed)} Ghidra functions); equivalent {eq_b} bytes, differs {df_b} bytes; re-implemented {cov} '
+          f' (of {len(listed)} Ghidra functions); identical {id_b} bytes, equivalent {eq_b} bytes, differs {df_b} bytes; re-implemented {cov} '
           f'of {tot} bytes ({100.0 * cov / tot:.2f} %); wrote {os.path.relpath(STATUS_TSV, ROOT)}')
 
 
@@ -786,14 +1119,21 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
     c = sub.add_parser('check')
-    c.add_argument('functions', nargs='+')
+    c.add_argument('functions', nargs='*')
+    c.add_argument('--object', action='append', help='check every function of this object (e.g. drivers/riic.o)')
+    c.add_argument('--jobs', type=int, default=0)
+    lc = sub.add_parser('linkcheck', help='the hybrid image against the original at every patched entry')
+    lc.add_argument('--jobs', type=int, default=0)
+    lc.add_argument('--verbose', action='store_true')
+    lc.add_argument('--trials', type=int, default=100)
+    lc.add_argument('--seed', type=int, default=3)
     st = sub.add_parser('status')
     st.add_argument('--jobs', type=int, default=0, help='worker processes (default: all cores)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)
     args = ap.parse_args()
-    {'check': cmd_check, 'status': cmd_status}[args.cmd](args)
+    {'check': cmd_check, 'status': cmd_status, 'linkcheck': cmd_linkcheck}[args.cmd](args)
 
 
 if __name__ == '__main__':

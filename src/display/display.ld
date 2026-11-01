@@ -1,0 +1,83 @@
+/*
+ * FT-710 DISPLAY (T24 round 4): memory layout of the image and the hybrid link of the recreated source.
+ *
+ * The layout is the image's (docs/memory-maps.md "DISPLAY", docs/code/display/boot-rtos.md section 1) [fact]:
+ *   0x20100000  vectors, .text (to 0x20165177), .rodata (to 0x204286A7)
+ *   0x204286A8  Region$$Table (5 entries) and the three LZ streams of the RW regions; the file ends at 0x2042BC0F
+ *   0x2042BC10  gap: reset_in_ram copies the image from flash up to 0x2043FFFF, beyond the end of the file
+ *               (0x20100244/0x20100248), and nothing in the image refers to it [fact: #119 scan]
+ *   0x2044C000  initial SP (SVC/FIQ/ABT/UND), IRQ = SP - 0x40, SYS = IRQ - 0x240 (main)
+ *   0x20450000  .data (0x290 B, region 1) and .bss (region 4, to 0x204FC5F3)
+ *   0x20800000  .data2 (to 0x20808BCF, region 3) and .bss2 (region 5, to 0x2091D56F)
+ *   0x20980000  NORTi kernel pool (to the end of RAM 0x209FFFFF)
+ *   0x60500000  .data_nc (0x48A0 B, region 2) in the uncached mirror
+ *
+ * Hybrid link (tools/display_link.py): the original image is input section .image (out/link/image.o, made from
+ * build/ at link time and never committed) at 0x20100000, unchanged, so its Region$$Table and RW regions stay as
+ * they are. The recreated functions that passed the check (status.tsv: equivalent) go into the gap; every
+ * other symbol is the image's own, from out/link/orig.o (weak absolute symbols at the original addresses, from
+ * decomp/display/functions.tsv, src/display/aliases.tsv and data_symbols.tsv). display_link.py then patches each
+ * linked function's original entry with a branch to its recreation. The recreated code keeps no RAM of its own
+ * (every global is the image's, declared extern): .data and .bss must be empty, because the image's __scatterload
+ * would not initialise them.
+ */
+ENTRY(Reset_Handler)
+
+MEMORY
+{
+    IMAGE (rx) : ORIGIN = 0x20100000, LENGTH = 0x0032BC10
+    GAP (rx)   : ORIGIN = 0x2042BC10, LENGTH = 0x000143F0
+}
+
+/* the image's regions, for the recreated code and the map file */
+__image_base = 0x20100000;
+__image_text_end = 0x20165178;
+__image_region_table = 0x204286A8;
+__image_file_end = 0x2042BC10;
+__image_copy_end = 0x20440000;
+__initial_sp = 0x2044C000;
+__data_start = 0x20450000;
+__bss_start = 0x20450290;
+__bss_end = 0x204FC5F4;
+__data2_start = 0x20800000;
+__bss2_start = 0x20808BD0;
+__bss2_end = 0x2091D570;
+__kernel_pool = 0x20980000;
+__ram_end = 0x20A00000;
+__data_nc_start = 0x60500000;
+__data_nc_end = 0x605048A0;
+
+SECTIONS
+{
+    .image 0x20100000 :
+    {
+        KEEP(*(.image))
+    } > IMAGE
+
+    .recreated 0x2042BC10 :
+    {
+        __recreated_start = .;
+        *(.text .text.*)
+        *(.rodata .rodata.*)
+        . = ALIGN(4);
+        __recreated_end = .;
+    } > GAP
+
+    .data :
+    {
+        *(.data .data.*)
+    } > GAP
+
+    .bss (NOLOAD) :
+    {
+        *(.bss .bss.* COMMON)
+    } > GAP
+
+    /DISCARD/ :
+    {
+        *(.ARM.exidx* .ARM.extab* .ARM.attributes .comment .note*)
+    }
+}
+
+ASSERT(SIZEOF(.image) == 0x32BC10, "the original image must be 3,324,944 bytes (FT-710_DISPLAY_V0108.bin)")
+ASSERT(SIZEOF(.data) == 0 && SIZEOF(.bss) == 0, "recreated code must keep its globals at the image's addresses (extern)")
