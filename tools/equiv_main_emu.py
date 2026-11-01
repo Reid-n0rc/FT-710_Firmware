@@ -43,11 +43,14 @@ project, and opens that read-only), GHIDRA_JAVA_HOME, RX_BINUTILS (prefix, defau
 The image is read from build/FT-710_MAIN_V0112.bin; it is never written anywhere.
 """
 import argparse
+import atexit
 import glob
 import json
 import os
 import random
 import re
+import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -87,6 +90,54 @@ STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
 STUB_DATA = {'eeprom_write': (1, 2)}
 STUB_BUF = {'eeprom_read': 1, 'eeprom_write': 1}     # the buffer argument, compared as 'stack' when on the stack
 STACK_TOP = 0x1004
+
+
+_SCRATCH = None
+
+
+def _pid_alive(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def scratch_root():
+    """The one temporary directory of this run (EQUIV_MAIN_SCRATCH, default the system's temporary directory):
+    the link scripts, the per-worker Ghidra project copies and the Ghidra logs all go below it, and the process that
+    made it removes it on exit, also on SIGTERM/SIGHUP/SIGINT (T24 MAIN round 4: killed workers used to leave
+    /tmp/equiv_main_* behind). A root left by a run that was killed with SIGKILL is removed by the next run (its
+    owner's pid, in the file `pid`, no longer exists)."""
+    global _SCRATCH
+    if _SCRATCH is None:
+        base = os.environ.get('EQUIV_MAIN_SCRATCH') or tempfile.gettempdir()
+        os.makedirs(base, exist_ok=True)
+        for d in glob.glob(os.path.join(base, 'equiv_main_run_*')):
+            try:
+                with open(os.path.join(d, 'pid')) as f:
+                    pid = int(f.read().strip() or 0)
+            except (OSError, ValueError):
+                pid = 0
+            if not pid or not _pid_alive(pid):
+                shutil.rmtree(d, ignore_errors=True)
+        _SCRATCH = tempfile.mkdtemp(prefix='equiv_main_run_', dir=base)
+        owner = os.getpid()
+        with open(os.path.join(_SCRATCH, 'pid'), 'w') as f:
+            f.write(str(owner))
+
+        def cleanup(root=_SCRATCH):
+            if os.getpid() == owner:          # forked pool workers inherit this; only the owner removes the root
+                shutil.rmtree(root, ignore_errors=True)
+        atexit.register(cleanup)
+
+        def on_signal(signum, frame):
+            sys.exit(128 + signum)            # SystemExit: run_jobs terminates the pool, atexit removes the root
+        for sg in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
+            signal.signal(sg, on_signal)
+    return _SCRATCH
 
 
 def read_tsv(path):
@@ -181,7 +232,7 @@ def main_forms(img):
     global _MAIN_FORMS
     if _MAIN_FORMS is None:
         od = tool('RX_BINUTILS', os.path.join(HOME, 'opt/rx-binutils-2.42/bin/rx-elf-'), 'objdump')
-        with tempfile.NamedTemporaryFile(suffix='.bin') as f:
+        with tempfile.NamedTemporaryFile(suffix='.bin', dir=scratch_root()) as f:
             f.write(img.rom)
             f.flush()
             dis = subprocess.run([od, '-D', '-b', 'binary', '-m', 'rx', f'--adjust-vma=0x{ROM:08X}',
@@ -321,8 +372,7 @@ class Engine:
     def __init__(self, img):
         # each engine opens its own copy: Ghidra locks a project while it is open, also read-only
         src = os.environ.get('FT710_MAIN_PROJECT', '/home/user/ghidra_tasks/t24main/proj')
-        import shutil
-        self.tmp = tempfile.mkdtemp(prefix='equiv_main_proj_')
+        self.tmp = tempfile.mkdtemp(prefix='proj_', dir=scratch_root())
         proj = os.path.join(self.tmp, 'proj')
         os.mkdir(proj)
         shutil.copy(os.path.join(src, 'FT710_MAIN.gpr'), proj)
@@ -331,11 +381,14 @@ class Engine:
         env = dict(os.environ)
         env.setdefault('GHIDRA_JAVA_HOME', '/usr/lib/jvm/java-21-openjdk-amd64')
         env.setdefault('MAXMEM', '1500M')
-        self.log = tempfile.NamedTemporaryFile('w+', prefix='equiv_main_emu_', suffix='.log', delete=False)
+        self.log = tempfile.NamedTemporaryFile('w+', prefix='ghidra_', suffix='.log', delete=False,
+                                               dir=os.environ.get('EQUIV_MAIN_KEEP_LOG') and tempfile.gettempdir()
+                                               or self.tmp)
         self.p = subprocess.Popen([os.path.join(ROOT, 'tools/ghidra-headless.sh'), proj, 'FT710_MAIN', '-process',
                                    'FT-710_MAIN_V0112.bin', '-noanalysis', '-readOnly',
                                    '-scriptPath', os.path.join(ROOT, 'tools/ghidra'), '-postScript', 'EquivMainEmu.java'],
-                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True, env=env)
+                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True, env=env,
+                                  start_new_session=True)     # its own process group: close() kills the JVM too
         self.recv()
         self.send({'op': 'base', 'name': 'image', 'segs': [[ROM, img.rom.hex()]]})
         self.send({'op': 'base', 'name': 'ram', 'segs': [[0, bytes(img.ram).hex()]]})
@@ -359,13 +412,16 @@ class Engine:
         try:
             self.p.stdin.write('{"op":"quit"}\n')
             self.p.stdin.flush()
-            self.p.wait(timeout=60)
+            self.p.wait(timeout=10)       # an idle engine quits at once; one still starting or running is killed
         except Exception:
-            self.p.kill()
+            try:
+                os.killpg(self.p.pid, signal.SIGKILL)     # the launcher scripts and the JVM below them
+            except OSError:
+                pass
+            self.p.wait()
         self.log.close()
         if os.path.exists(self.log.name) and not os.environ.get('EQUIV_MAIN_KEEP_LOG'):
             os.unlink(self.log.name)
-        import shutil
         shutil.rmtree(self.tmp, ignore_errors=True)
 
 
@@ -733,7 +789,7 @@ class Checker:
         self.img = _IMG = Image()
         self.orig = Originals()
         self.eng = None
-        self.work = tempfile.mkdtemp(prefix='equiv_main_')
+        self.work = tempfile.mkdtemp(prefix='work_', dir=scratch_root())
         self.meta = {}
 
     def engine(self):
@@ -830,7 +886,6 @@ class Checker:
         if self.eng:
             self.eng.close()
             self.eng = None
-        import shutil
         shutil.rmtree(self.work, ignore_errors=True)
 
 
@@ -840,7 +895,6 @@ _CHK = None
 def _init_worker():
     global _CHK
     _CHK = Checker()
-    import atexit
     import multiprocessing.util
     atexit.register(_CHK.close)
     # pool workers leave through os._exit, which skips atexit; multiprocessing runs its own finalizers first
@@ -866,6 +920,7 @@ def require_objects():
 
 def run_jobs(jobs, n):
     import multiprocessing
+    scratch_root()            # made before the pool forks, so the workers share it and the owner removes it
     if n <= 1:
         _init_worker()
         for j in jobs:
@@ -900,8 +955,23 @@ RANK = {'identical': -1, 'equivalent': 0, 'differs': 1, 'not yet': 2}
 def cmd_status(args):
     require_objects()
     orig = Originals()
-    jobs = [(p, f, args.seed, args.trials) for p, f in recreated()]
+    allf = recreated()
+    want = set(args.functions or ())
+    part = bool(want or args.object)
+    jobs = [(p, f, args.seed, args.trials) for p, f in allf
+            if not part or f in want or any(p.endswith(o) for o in args.object or ())]
     results = {}
+    if part:
+        # a partial run (T24 MAIN round 4: a full run takes about an hour): the other rows of status.tsv stay, as long
+        # as their function is still defined in the same object
+        rerun = {f for _, f, _, _ in jobs}
+        have = {(os.path.relpath(p, os.path.join(SRC, 'out', 'obj')), f) for p, f in allf}
+        for r in read_tsv(STATUS_TSV)[1:] if os.path.exists(STATUS_TSV) else ():
+            a, g, _, src, rel, v, _, d = (r + [''] * 8)[:8]
+            if not src or src in rerun or (rel, src) not in have:
+                continue
+            key = ('-', src) if g == '-' and int(a, 16) == 0 else int(a, 16)
+            results[key] = (src, rel, v, d)
     for path, fname, a, v, d in sorted(run_jobs(jobs, args.jobs or 2), key=lambda x: (x[0], x[1])):
         print(f'equiv_main_emu: {fname:32s} {v}: {d}', file=sys.stderr)
         rel = os.path.relpath(path, os.path.join(SRC, 'out', 'obj'))
@@ -950,7 +1020,10 @@ def main():
     c = sub.add_parser('check')
     c.add_argument('functions', nargs='*')
     c.add_argument('--object', action='append', help='every function of this object (e.g. drivers/eeprom.o)')
-    st = sub.add_parser('status')
+    st = sub.add_parser('status', help='every recreated function -> status.tsv; with FUNCTION... or --object only '
+                                       'those are rerun and the other rows are kept')
+    st.add_argument('functions', nargs='*')
+    st.add_argument('--object', action='append', help='rerun every function of this object (e.g. app/keyer.o)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)
