@@ -3,7 +3,7 @@
  * Pin table and nets: docs/code/ifdsp/m33-platform.md section 4. IOPCTL bits: FSEL[2:0], IBENA 0x40 (input buffer),
  * FULLDRIVE 0x100, IIENA 0x800 (input invert).
  * The original function names are not known: the five groups carry the descriptive names used in the Ghidra project,
- * and BOARD_InitPins is the function that calls them (0x87294). The file order matches the link order in the image.
+ * and BOARD_InitBootPins is the function that calls them (0x87294; main calls it right before BOARD_InitBootClocks and BOARD_InitBootPeripherals, the MCUXpresso Config Tools sequence [inference]). The file order matches the link order in the image.
  */
 #include "fsl_common.h"
 #include "fsl_gpio.h"
@@ -116,7 +116,7 @@ void BOARD_InitPins_debug_gpio(void)
     IOPCTL_PinMuxSet(IOPCTL, 2U, 6U, FUNC0);
 }
 
-void BOARD_InitPins(void)
+void BOARD_InitBootPins(void)
 {
     BOARD_InitPins_flexcomm();
     BOARD_InitPins_P0();

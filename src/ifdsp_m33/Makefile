@@ -17,7 +17,7 @@ RL := $(V)/rpmsg-lite/lib
 
 CPUFLAGS := -mcpu=cortex-m33 -mfpu=fpv5-sp-d16 -mfloat-abi=hard -mthumb
 # MCUXpresso IDE "Release" settings as far as the bytes show them: -Os, -fno-builtin, -ffunction-sections.
-CFLAGS := -std=gnu99 -Os -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin $(CPUFLAGS) \
+CFLAGS := -std=gnu99 -g -Os -fno-common -ffunction-sections -fdata-sections -ffreestanding -fno-builtin $(CPUFLAGS) \
           -DCPU_MIMXRT685SFVKB_cm33 -DCPU_MIMXRT685SFVKB -D__REDLIB__ -D__USE_CMSIS -DNDEBUG -DSDK_OS_FREE_RTOS \
           -Wall -Wno-unused-function
 INC := -Iconfig -Iboard -Iapp -Ilibc \
@@ -44,7 +44,7 @@ VENDOR_SRC := \
                      portable/GCC/ARM_CM33_NTZ/non_secure/port.c portable/GCC/ARM_CM33_NTZ/non_secure/portasm.c) \
   $(addprefix $(RL)/,rpmsg_lite/rpmsg_lite.c rpmsg_lite/rpmsg_queue.c virtio/virtqueue.c \
                      rpmsg_lite/porting/environment/rpmsg_env_freertos.c \
-                     rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.c)
+                     rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.c common/llist.c)
 
 # Recreated sources (this directory).
 OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c)
@@ -52,7 +52,36 @@ OWN_SRC := $(wildcard board/*.c app/*.c libc/*.c)
 SRC := $(VENDOR_SRC) $(OWN_SRC)
 OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRC))
 
-all: $(OBJ)
+# The HiFi4 images (Yaesu's DSP code, never committed), decoded by tools/bootstrap.sh into build/.
+BUILD ?= ../../build
+DSP_IMAGE0 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_0_tcm.bin
+DSP_IMAGE1 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_1_sram_text.bin
+DSP_IMAGE2 ?= $(BUILD)/FT-710_IFDSP_V0101_hifi4_2_sram_data.bin
+
+# Link order = the order of the objects in the image (functions.tsv addresses): FreeRTOS portasm, the application,
+# rpmsg-lite, the FreeRTOS kernel, the SDK drivers in file-name order, the board files, the C library.
+o = $(OUT)/obj/$(1).o
+LINK_OBJ := \
+  $(call o,$(FR)/portable/GCC/ARM_CM33_NTZ/non_secure/portasm) \
+  $(foreach f,codec regfile uart ipc main pwm console semihost_hardfault console_frame,$(call o,app/$(f))) \
+  $(foreach f,rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform rpmsg_lite/porting/environment/rpmsg_env_freertos \
+              rpmsg_lite/rpmsg_queue rpmsg_lite/rpmsg_lite virtio/virtqueue common/llist,$(call o,$(RL)/$(f))) \
+  $(foreach f,portable/MemMang/heap_4 portable/GCC/ARM_CM33_NTZ/non_secure/port event_groups list queue tasks timers,$(call o,$(FR)/$(f))) \
+  $(sort $(filter $(OUT)/obj/$(SDK)/%,$(OBJ))) \
+  $(foreach f,board clock_config dsp_ipc dsp_support peripherals pin_mux,$(call o,board/$(f))) \
+  $(foreach f,crt ctype stdio stdlib string,$(call o,libc/$(f))) \
+  $(OUT)/obj/board/dsp_image.o
+
+all: $(OBJ) $(OUT)/ifdsp_m33.elf
+
+$(OUT)/obj/board/dsp_image.o: board/dsp_image.S $(DSP_IMAGE0) $(DSP_IMAGE1) $(DSP_IMAGE2)
+	@mkdir -p $(dir $@)
+	$(CC) $(CPUFLAGS) -c -DDSP_IMAGE0='"$(DSP_IMAGE0)"' -DDSP_IMAGE1='"$(DSP_IMAGE1)"' -DDSP_IMAGE2='"$(DSP_IMAGE2)"' $< -o $@
+
+$(OUT)/ifdsp_m33.elf: $(LINK_OBJ) ifdsp_m33.ld
+	$(CC) $(CPUFLAGS) -nostdlib -Wl,--gc-sections -Wl,-Map,$(OUT)/ifdsp_m33.map -T ifdsp_m33.ld $(LINK_OBJ) -lgcc -o $@
+	$(CROSS)objcopy -O binary $@ $(OUT)/ifdsp_m33_0x08001000.bin
+	$(CROSS)size $@
 
 $(OUT)/obj/%.o: %.c
 	@mkdir -p $(dir $@)
@@ -62,7 +91,7 @@ vendor:
 	./vendor.sh
 
 check: all
-	python3 -I ../../tools/equiv_m33.py status --objs $(OUT)/obj
+	python3 -I ../../tools/equiv_m33.py status --emu --objs $(OUT)/obj
 
 clean:
 	rm -rf $(OUT)

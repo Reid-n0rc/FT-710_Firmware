@@ -28,3 +28,7 @@ USBPHY_DCD_IRQHandler	USB_PHYDCD_IRQHandler	[fact] same vector slot (SDK 2.9 sta
 DSPWAKE_IRQHandler	DSP_TIE_EXPSTATE1_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
 BOARD_InitBootClocks	0x8723c	[fact] b.w BOARD_BootClockRUN at 0x8723C, right after BOARD_FlexspiClockSafeConfig (Ghidra merged it into that function)
 BOARD_InitBootPeripherals	app_init_nop	[inference] the empty function between clock_config.c and pin_mux.c in link order, see board/peripherals.c
+BOARD_InitBootPins	BOARD_InitPins	[inference] 0x87294 calls the five pin groups; main calls it right before BOARD_InitBootClocks and BOARD_InitBootPeripherals, the MCUXpresso Config Tools sequence
+vsprintf	sprintf	[fact] 0x85B80 takes (buffer, format, va_list): console_printf and uart0_printf pass the address of their variadic arguments
+sprintf	siprintf	[fact] 0x85A9C is variadic (push {r1-r3}) with (buffer, format, ...) and no length
+sct0_pwm_start	SCTIMER_StartTimer	[fact] 12 bytes: SCT0->CTRL &= ~HALT_L, no arguments; an application wrapper of the SDK inline SCTIMER_StartTimer

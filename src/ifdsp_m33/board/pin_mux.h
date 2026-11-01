@@ -7,6 +7,6 @@ void BOARD_InitPins_P0(void);
 void BOARD_InitPins_codec_spi(void);
 void BOARD_InitPins_i2s(void);
 void BOARD_InitPins_debug_gpio(void);
-void BOARD_InitPins(void);
+void BOARD_InitBootPins(void);
 
 #endif /* PIN_MUX_H_ */
