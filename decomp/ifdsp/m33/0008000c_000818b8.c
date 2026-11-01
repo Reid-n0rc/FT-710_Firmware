@@ -884,9 +884,7 @@ void vRestoreContextOfFirstTask(void)
 }
 
 
-// ===== vStartFirstTask @ 00080a90 (32 bytes)
-
-/* WARNING: Control flow encountered bad instruction data */
+// ===== vStartFirstTask @ 00080a90 (24 bytes)
 
 void vStartFirstTask(void)
 
@@ -903,9 +901,12 @@ void vStartFirstTask(void)
   enableFIQinterrupts();
   DataSynchronizationBarrier(0xf);
   InstructionSynchronizationBarrier(0xf);
-  software_interrupt(2);
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
+  do {
+                    /* svc 2 does not return: SVC_Handler -> vPortSVCHandler_C ->
+                       vRestoreContextOfFirstTask starts the first task (data_m33.tsv noflow; the
+                       loop only marks the end of the flow) */
+    software_interrupt(2);
+  } while( true );
 }
 
 

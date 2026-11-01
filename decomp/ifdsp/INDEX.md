@@ -5,7 +5,7 @@ Ghidra 12.1.4 output for the IF DSP image (T07). There are two programs in the G
 | Dir | Program | Core / language | Functions exported | Decompile failures | Notes |
 |---|---|---|---|---|---|
 | `m33/` | `FT-710_IFDSP_V0101.bin` | Cortex-M33, `ARM:LE:32:v8-m` | 427 (319 in SRAM, 108 in flash, mostly IRQ stubs); 388 named (T17, T21j) | 0 | The rest of the 31.5 KB SRAM code range is literal pools and rodata. T12d: the "undecodable instruction" T07 saw at 0x80A24/0x80A90 is 0xFFFFFFFF padding after a literal pool; 0x80A24 was the inside of `OTFAD_Init` 0x80A18 (T17 removed that entry and the one at 0x800EE inside `POWER_CalculateSafetyCount` 0x800E8) |
-| `hifi4/` | `FT-710_IFDSP_V0101_hifi4.bin` | Cadence HiFi4, `Xtensa:LE:32:rt600hifi4` (generated, T21a) | 1083 (1069 in SRAM = the `flix.dis` reference list `entries_hifi4.tsv` incl. 4 extra entries, 14 in the TCM); 111 named (T17, `IfdspHifi4Names.java`) | 0 | Full bodies since T21g: 982 functions without any warning, 1 `halt_baddata()` (`FUN_00218480`, data). See "HiFi4 decompile quality" |
+| `hifi4/` | `FT-710_IFDSP_V0101_hifi4.bin` | Cadence HiFi4, `Xtensa:LE:32:rt600hifi4` (generated, T21a) | 1081 (1067 in SRAM = the `flix.dis` reference list `entries_hifi4.tsv` incl. 4 extra entries, 14 in the TCM); 111 named (T17, `IfdspHifi4Names.java`) | 0 | Full bodies since T21g: 983 functions without any warning, no `halt_baddata()`: the last one, `FUN_00218480`, was not a function but an `entry` byte (0x36) inside the 11-byte bundle 0x21847D–0x218487 of `ifft_cplxf_ie` (0x217D10, which runs on to `retw.n` at 0x2184CE) **[fact: continuous objdump decode from 0x218450]**; `FUN_00233818` was the same case inside `fft_realf_ie`'s bundle 0x233815 **[fact: decode from 0x2337DE]**; both removed from `entries_hifi4.tsv`. See "HiFi4 decompile quality" |
 
 Each `*.c` file holds 50 functions and is named `<first>_<last>.c` by entry address. `functions.tsv` lists entry, name, size, callers and file.
 
@@ -31,27 +31,25 @@ table at 0x206290 is not recovered). Undefined non-0xFF bytes: M33 5,162 → 4,3
 
 | Metric | M33 | HiFi4 |
 |---|---:|---:|
-| Functions exported (non-thunk) | 427 | 1,083 |
+| Functions exported (non-thunk) | 427 | 1,081 |
 | Decompile failures | 0 | 0 |
-| Decompiler warnings (all kinds) | 181 | 258 |
-| Functions with a warning | 93 | 99 |
+| Decompiler warnings (all kinds) | 179 | 256 |
+| Functions with a warning | 92 | 98 |
 | "Unable to track spacebase" | 0 | 0 |
 | "Removing unreachable block" | 37 | 187 |
-| `halt_baddata()` calls | 1 | 1 |
-| Functions with `halt_baddata()` | 1 | 1 |
-| Functions with `in_*` variables | 13 | 162 |
-| Functions with `unaff_*` variables | 3 | 14 |
+| `halt_baddata()` calls | 0 | 0 |
+| Functions with `halt_baddata()` | 0 | 0 |
+| Functions with `in_*` variables | 9 | 161 |
+| Functions with `unaff_*` variables | 3 | 13 |
 | Functions with `extraout_*` variables | 16 | 10 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 25 | 172 |
-| Undefined non-0xFF bytes in executable blocks | 4,363 | 6,377 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 21 | 171 |
+| Undefined non-0xFF bytes in executable blocks | 4,363 | 6,366 |
 | … in block `dsp_itcm` | 0 | 976 |
 | … in block `flexspi_xip` | 3,688 | 0 |
-| … in block `sram_dsp_text` | 0 | 5,401 |
+| … in block `sram_dsp_text` | 0 | 5,390 |
 | … in block `sram_text_rodata` | 675 | 0 |
-| Error bookmarks | 1 | 1 |
-| "Bad Instruction" bookmarks | 1 | 1 |
-| warning: Bad instruction - Truncating control flow here | 1 | 1 |
-| warning: Control flow encountered bad instruction data | 1 | 1 |
+| Error bookmarks | 0 | 0 |
+| "Bad Instruction" bookmarks | 0 | 0 |
 | warning: Could not recover jumptable at #. Too many branches | 28 | 4 |
 | warning: Do nothing block with infinite loop | 85 | 20 |
 | warning: Does not return | 0 | 3 |
@@ -158,8 +156,8 @@ the generated language `Xtensa:LE:32:rt600hifi4` (T21a, [ghidra-flix.md](../../d
 | `flix.dis` functions whose Ghidra body is ≥ 90 % of the listing's span | 133 of 1,065 | 860 of 1,065 |
 | bytes of `flix.dis` functions inside a Ghidra body | 27,519 of 191,248 (14 %) | 178,629 (93 %; the rest is padding, literals and unreachable bytes the listing sweeps) |
 | decompiler warnings (functions with one) | 2,038 (861) | 258 (99) |
-| `halt_baddata()` (functions) | 1,054 (819) | 1 (1): `FUN_00218480`, data that objdump cannot decode either |
-| "Bad Instruction" bookmarks | 1,098 | 1 |
+| `halt_baddata()` (functions) | 1,054 (819) | 1 (1): `FUN_00218480`, not data but a false entry 3 bytes into `ifft_cplxf_ie`'s bundle 0x21847D; 0 since it was removed (with `FUN_00233818`, the same case in `fft_realf_ie`) |
+| "Bad Instruction" bookmarks | 1,098 | 1 (0x218483, from the false entry); 0 since it was removed |
 | functions with `in_`/`unaff_`/`extraout_` | 317 | 171 |
 | undefined non-0xFF bytes in executable blocks | 186,167 | 29,161 |
 

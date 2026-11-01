@@ -4,7 +4,7 @@
 // 1 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * regfile_capture_append @ 0021c0e8  (77 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * regfile_capture_append @ 0021c0e8  (77 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: append u32 if ctrl bit 0, count at +2 (max 0x3FE), wrap if ctrl bit 1; no caller [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/control-link.md

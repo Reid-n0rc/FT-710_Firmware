@@ -1604,7 +1604,7 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
 }
 
 
-// ===== ifft_cplxf_ie @ 00217d10 (2329 bytes)
+// ===== ifft_cplxf_ie @ 00217d10 (2332 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
@@ -2239,18 +2239,6 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   auVar5._8_4_ = param_1;
   auVar5._12_4_ = 0;
   return auVar5 << 0x20;
-}
-
-
-// ===== FUN_00218480 @ 00218480 (3 bytes)
-
-/* WARNING: Control flow encountered bad instruction data */
-
-void FUN_00218480(void)
-
-{
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
 }
 
 
@@ -5050,5 +5038,16 @@ undefined4 env_strncmp(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   
   uVar1 = strncmp(param_1,param_2,param_3);
   return uVar1;
+}
+
+
+// ===== env_mb @ 0021ab50 (7 bytes)
+
+/* rpmsg_env_bm.c [inference] */
+
+void env_mb(void)
+
+{
+  return;
 }
 

@@ -1013,14 +1013,12 @@ void vRestoreContextOfFirstTask(void)
 
 
 /* -----------------------------------------------------------------------------
- * vStartFirstTask @ 00080a90  (32 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * vStartFirstTask @ 00080a90  (24 bytes, 1 callers, export file 0008000c_000818b8.c)
  * Purpose: FreeRTOS V10.3.0 library function, matched by lib_match (score 1.000, T23d) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
  */
-// ===== vStartFirstTask @ 00080a90 (32 bytes)
-
-/* WARNING: Control flow encountered bad instruction data */
+// ===== vStartFirstTask @ 00080a90 (24 bytes)
 
 void vStartFirstTask(void)
 
@@ -1037,9 +1035,12 @@ void vStartFirstTask(void)
   enableFIQinterrupts();
   DataSynchronizationBarrier(0xf);
   InstructionSynchronizationBarrier(0xf);
-  software_interrupt(2);
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
+  do {
+                    /* svc 2 does not return: SVC_Handler -> vPortSVCHandler_C ->
+                       vRestoreContextOfFirstTask starts the first task (data_m33.tsv noflow; the
+                       loop only marks the end of the flow) */
+    software_interrupt(2);
+  } while( true );
 }
 
 

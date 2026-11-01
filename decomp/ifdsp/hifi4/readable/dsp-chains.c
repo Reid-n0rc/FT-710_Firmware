@@ -4,7 +4,7 @@
 // 157 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * fft_cplxf_ie @ 002174b0  (2144 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * fft_cplxf_ie @ 002174b0  (2144 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: fft512_cplx
  * Purpose: no direct calls; 2144 B, callers: 2 (code shape)
  * Tag: [fact]
@@ -652,13 +652,13 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
 
 
 /* -----------------------------------------------------------------------------
- * ifft_cplxf_ie @ 00217d10  (2329 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * ifft_cplxf_ie @ 00217d10  (2332 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: ifft512_cplx
  * Purpose: no direct calls; 2329 B, callers: 1 (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
-// ===== ifft_cplxf_ie @ 00217d10 (2329 bytes)
+// ===== ifft_cplxf_ie @ 00217d10 (2332 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
@@ -1297,7 +1297,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
 
 
 /* -----------------------------------------------------------------------------
- * scl_antilog10f @ 00218b70  (375 bytes, 29 callers, export file 00216718_0021ab3c.c)
+ * scl_antilog10f @ 00218b70  (375 bytes, 29 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: pow10f_
  * Purpose: 10^x
  * Tag: [inference]
@@ -1424,7 +1424,7 @@ void scl_antilog10f(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_atan2f @ 00218e60  (346 bytes, 3 callers, export file 00216718_0021ab3c.c)
+ * scl_atan2f @ 00218e60  (346 bytes, 3 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: atan2f_
  * Purpose: atan2
  * Tag: [inference]
@@ -1535,7 +1535,7 @@ void scl_atan2f(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_cosinef @ 00218fc0  (299 bytes, 23 callers, export file 00216718_0021ab3c.c)
+ * scl_cosinef @ 00218fc0  (299 bytes, 23 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: cosf_
  * Purpose: cos
  * Tag: [inference]
@@ -1631,7 +1631,7 @@ void scl_cosinef(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_log10f @ 002190f0  (558 bytes, 10 callers, export file 00216718_0021ab3c.c)
+ * scl_log10f @ 002190f0  (558 bytes, 10 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: log10f_
  * Purpose: log10
  * Tag: [inference]
@@ -1795,7 +1795,7 @@ undefined4 scl_log10f(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scl_sinef @ 00219560  (291 bytes, 18 callers, export file 00216718_0021ab3c.c)
+ * scl_sinef @ 00219560  (291 bytes, 18 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: sinf_
  * Purpose: sin
  * Tag: [inference]
@@ -1891,7 +1891,7 @@ void scl_sinef(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_tanf @ 00219690  (363 bytes, 7 callers, export file 00216718_0021ab3c.c)
+ * scl_tanf @ 00219690  (363 bytes, 7 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: tanf_
  * Purpose: tan (polynomial table 0x200890)
  * Tag: [inference]
@@ -2000,7 +2000,7 @@ void scl_tanf(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_config @ 0021c610  (96 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_config @ 0021c610  (96 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2049,7 +2049,7 @@ void apf_config(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_design_iir @ 0021c670  (215 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_design_iir @ 0021c670  (215 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2111,7 +2111,7 @@ void apf_design_iir(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_design_fir @ 0021c748  (207 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_design_fir @ 0021c748  (207 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2181,8 +2181,9 @@ void apf_design_fir(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * apf_peak_filter @ 0021c818  (104 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * apf_peak_filter @ 0021c818  (104 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2223,9 +2224,8 @@ void apf_peak_filter(undefined *param_1,undefined *param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * nlms_auto_notch_init @ 0021c890  (26 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * nlms_auto_notch_init @ 0021c890  (26 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ×2 to 24 kHz (96 samples), LP 0x236850; NLMS predictor, 128 taps, delay ≈ 257 samples (10.7
  *     ms); w ← leak·w + μ·e·x / max(Σx², 0.001), μ = reg 0x400C·1e-6, leak = 1 − reg 0x400E·1e-6. Outputs the error
  *     (removes steady tones), back to 12 kHz
@@ -2250,7 +2250,7 @@ void nlms_auto_notch_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * nlms_auto_notch @ 0021c8bc  (909 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * nlms_auto_notch @ 0021c8bc  (909 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ×2 to 24 kHz (96 samples), LP 0x236850; NLMS predictor, 128 taps, delay ≈ 257 samples (10.7
  *     ms); w ← leak·w + μ·e·x / max(Σx², 0.001), μ = reg 0x400C·1e-6, leak = 1 − reg 0x400E·1e-6. Outputs the error
  *     (removes steady tones), back to 12 kHz
@@ -2422,7 +2422,7 @@ undefined8 nlms_auto_notch(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * contour_init @ 0021cc50  (23 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * contour_init @ 0021cc50  (23 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: One peaking biquad (Zölzer boost/cut), K = tan(π f / 12000), V = 10^(dB/20); on boost the
  *     output is rescaled so the peak stays near unity
  * Registers: 0x42: bit 12 on + frequency; 0x43: level −40 … +20 dB; 0x44: Q 1–10 (0 → 0.5)
@@ -2448,7 +2448,7 @@ void contour_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * contour_peaking @ 0021cc68  (916 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * contour_peaking @ 0021cc68  (916 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: One peaking biquad (Zölzer boost/cut), K = tan(π f / 12000), V = 10^(dB/20); on boost the
  *     output is rescaled so the peak stays near unity
  * Registers: 0x42: bit 12 on + frequency; 0x43: level −40 … +20 dB; 0x44: Q 1–10 (0 → 0.5)
@@ -2701,7 +2701,7 @@ LAB_0021ced3:
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_reset @ 0021d0a8  (38 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_reset @ 0021d0a8  (38 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2736,7 +2736,7 @@ void zeroin_goertzel_reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_tune @ 0021d0d0  (112 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_tune @ 0021d0d0  (112 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2797,7 +2797,7 @@ void zeroin_goertzel_tune(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_step @ 0021d140  (80 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_step @ 0021d140  (80 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2843,7 +2843,7 @@ void zeroin_goertzel_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_mag @ 0021d190  (78 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_mag @ 0021d190  (78 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2894,7 +2894,7 @@ void zeroin_goertzel_mag(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_tone_gate @ 0021d1e0  (84 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_tone_gate @ 0021d1e0  (84 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2942,7 +2942,7 @@ uint zeroin_tone_gate(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cw_zero_in_init @ 0021d234  (60 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * cw_zero_in_init @ 0021d234  (60 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Name on the doc page: status_reg4_update
  * What it computes: Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms)
  *     → frequency f (× 12000/2π, 0x203AC8). If f ≥ 10 Hz and the amplitude A = √2·RMS ≥ 1e-5, a 3-bin Goertzel tone
@@ -2980,7 +2980,7 @@ void cw_zero_in_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * cw_zero_in_estimator @ 0021d270  (823 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * cw_zero_in_estimator @ 0021d270  (823 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms)
  *     → frequency f (× 12000/2π, 0x203AC8). If f ≥ 10 Hz and the amplitude A = √2·RMS ≥ 1e-5, a 3-bin Goertzel tone
  *     gate checks that the 240 samples really hold one tone at f (below); while the gate is open: reg 4 =
@@ -3184,7 +3184,7 @@ LAB_0021d315:
 
 
 /* -----------------------------------------------------------------------------
- * am_demod_init @ 0021d5b0  (23 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * am_demod_init @ 0021d5b0  (23 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal (`hilbert_iq` 0x225370: 71-tap FIR 0x205840 for Q, I = input delayed 35
  *     samples), envelope √(I² + Q²), DC blocker y = x − x₋₁ + 0.999·y₋₁
  * Registers: —
@@ -3207,7 +3207,7 @@ void am_demod_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * am_demod @ 0021d5c8  (121 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * am_demod @ 0021d5c8  (121 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal (`hilbert_iq` 0x225370: 71-tap FIR 0x205840 for Q, I = input delayed 35
  *     samples), envelope √(I² + Q²), DC blocker y = x − x₋₁ + 0.999·y₋₁
  * Registers: —
@@ -3265,7 +3265,7 @@ void am_demod(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_demod_init @ 0021d650  (60 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * fm_demod_init @ 0021d650  (60 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal, mix by an NCO of −2π/3 per sample (−24 kHz, fs/3; 0xC0060A92), polar
  *     discriminator atan2(x·conj(x₋₁)) × 1.6225, hold on zero input. Noise squelch level: discriminator output
  *     through the 5-section BP 0x2368D0 (9–15 kHz at 72 kHz), Σ|n| over 1800 samples (25 ms), scaled into reg 1
@@ -3296,7 +3296,7 @@ void fm_demod_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_demod @ 0021d68c  (514 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * fm_demod @ 0021d68c  (514 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal, mix by an NCO of −2π/3 per sample (−24 kHz, fs/3; 0xC0060A92), polar
  *     discriminator atan2(x·conj(x₋₁)) × 1.6225, hold on zero input. Noise squelch level: discriminator output
  *     through the 5-section BP 0x2368D0 (9–15 kHz at 72 kHz), Σ|n| over 1800 samples (25 ms), scaled into reg 1
@@ -3444,7 +3444,7 @@ undefined * fm_demod(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ssb_weaver_init @ 0021d8a0  (159 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * ssb_weaver_init @ 0021d8a0  (159 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Weaver SSB/CW demodulator. NCO 1 at (±2000 + 18000) Hz, 2π/72000 (0x206EA8/0x206EAC), I/Q mix;
  *     ÷6 with 0x2373D0 (LP 4.9 kHz); 9-section LP 0x237440 (1.97 kHz at 12 kHz) on I and Q; NCO 2 at 2 kHz (π/3 per
  *     sample at 12 kHz) and I·cos + s·Q·sin; ×6 with gain 6 and 0x2373D0. Param 0 (CW-U, USB) sets s = −1 → NCO 1
@@ -3485,7 +3485,7 @@ void ssb_weaver_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ssb_weaver_demod @ 0021d940  (605 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * ssb_weaver_demod @ 0021d940  (605 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Weaver SSB/CW demodulator. NCO 1 at (±2000 + 18000) Hz, 2π/72000 (0x206EA8/0x206EAC), I/Q mix;
  *     ÷6 with 0x2373D0 (LP 4.9 kHz); 9-section LP 0x237440 (1.97 kHz at 12 kHz) on I and Q; NCO 2 at 2 kHz (π/3 per
  *     sample at 12 kHz) and I·cos + s·Q·sin; ×6 with gain 6 and 0x2373D0. Param 0 (CW-U, USB) sets s = −1 → NCO 1
@@ -3645,7 +3645,7 @@ undefined4 * ssb_weaver_demod(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * lms_ale_nr_init @ 0021dbb0  (32 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * lms_ale_nr_init @ 0021dbb0  (32 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LMS adaptive line enhancer (keeps the correlated part = signal). Input gain reg 0x4025, LP
  *     0x236850; 128 taps, reference delayed 33 samples; y = Σw·x, e = d − y (both clipped ±10); w ← w·(1 −
  *     1e-6·leak) + μ·e·x, μ = min(reg 0x400B / 1000, 1.8). Output y × reg 0x4026; 1 s cross-fade when switched on
@@ -3672,7 +3672,7 @@ void lms_ale_nr_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * lms_ale_nr @ 0021dbd0  (837 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * lms_ale_nr @ 0021dbd0  (837 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LMS adaptive line enhancer (keeps the correlated part = signal). Input gain reg 0x4025, LP
  *     0x236850; 128 taps, reference delayed 33 samples; y = Σw·x, e = d − y (both clipped ±10); w ← w·(1 −
  *     1e-6·leak) + μ·e·x, μ = min(reg 0x400B / 1000, 1.8). Output y × reg 0x4026; 1 s cross-fade when switched on
@@ -3857,7 +3857,7 @@ undefined8 lms_ale_nr(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_init @ 0021df20  (195 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_init @ 0021df20  (195 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -3918,7 +3918,7 @@ void spectral_nr_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_params @ 0021dfe4  (270 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_params @ 0021dfe4  (270 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4006,7 +4006,7 @@ void spectral_nr_params(void)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr @ 0021e0f4  (343 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr @ 0021e0f4  (343 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4112,7 +4112,7 @@ void spectral_nr(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_frame @ 0021e24c  (708 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_frame @ 0021e24c  (708 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4291,7 +4291,7 @@ void spectral_nr_frame(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * manual_notch_init @ 0021e520  (15 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * manual_notch_init @ 0021e520  (15 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 +
  *     α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz)
  * Registers: 0x52: type in bits 15–12, frequency bits 11–0
@@ -4312,7 +4312,7 @@ void manual_notch_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * manual_notch @ 0021e530  (364 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * manual_notch @ 0021e530  (364 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 +
  *     α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz)
  * Registers: 0x52: type in bits 15–12, frequency bits 11–0
@@ -4422,7 +4422,7 @@ LAB_0021e59c:
 
 
 /* -----------------------------------------------------------------------------
- * branch_b_delay_init @ 0021e6b0  (17 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * branch_b_delay_init @ 0021e6b0  (17 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
  * Registers: 0x56
  * Tag: [fact]
@@ -4442,7 +4442,7 @@ void branch_b_delay_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * branch_b_delay @ 0021e6c4  (124 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * branch_b_delay @ 0021e6c4  (124 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
  * Registers: 0x56
  * Tag: [fact]
@@ -4500,7 +4500,7 @@ undefined8 branch_b_delay(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * aess_lowpass_fir_init @ 0021e740  (17 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * aess_lowpass_fir_init @ 0021e740  (17 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Name on the doc page: cw_fir_lowpass
  * What it computes: AESS crossover low-pass on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle:
  *     0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four
@@ -4523,7 +4523,7 @@ void aess_lowpass_fir_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * aess_lowpass_fir @ 0021e754  (206 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * aess_lowpass_fir @ 0021e754  (206 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: AESS crossover low-pass on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle:
  *     0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four
  *     tables; steep: −12.2 dB at 1000 Hz (700) and −13.5 dB at 1500 Hz (1000), −40.7 / −31.4 dB at 3 kHz; gentle ≈
@@ -4599,7 +4599,7 @@ LAB_0021e780:
 
 
 /* -----------------------------------------------------------------------------
- * branch_a_align_delay @ 0021e82c  (91 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * branch_a_align_delay @ 0021e82c  (91 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: 128-sample delay, active only while the branch-B FIR is on: (257 − 1) / 2 = 128 = the FIR's
  *     group delay, so both branches stay time-aligned
  * Registers: (0x4020)
@@ -4646,7 +4646,7 @@ undefined8 branch_a_align_delay(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * af_locut_init @ 0021e890  (30 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * af_locut_init @ 0021e890  (30 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Same structure as high-pass
  * Registers: 0x47; 0x55
  * Tag: [fact]
@@ -4667,7 +4667,7 @@ void af_locut_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_locut @ 0021e8b0  (860 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * af_locut @ 0021e8b0  (860 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Same structure as high-pass
  * Registers: 0x47; 0x55
  * Tag: [fact]
@@ -4914,7 +4914,7 @@ LAB_0021ea5a:
 
 
 /* -----------------------------------------------------------------------------
- * af_hicut_init @ 0021ec20  (30 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * af_hicut_init @ 0021ec20  (30 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Type 1: 1st-order bilinear low-pass (6 dB/oct); type 2: 3rd-order (18 dB/oct)
  * Registers: instance 0: 0x46; instance 1: 0x54
  * Tag: [fact] [inference]
@@ -4935,7 +4935,7 @@ void af_hicut_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_hicut @ 0021ec40  (828 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * af_hicut @ 0021ec40  (828 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Type 1: 1st-order bilinear low-pass (6 dB/oct); type 2: 3rd-order (18 dB/oct)
  * Registers: instance 0: 0x46; instance 1: 0x54
  * Tag: [fact] [inference]
@@ -5183,7 +5183,7 @@ LAB_0021ede4:
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_init @ 0021ef90  (116 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_init @ 0021ef90  (116 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5235,7 +5235,7 @@ void if_agc_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_params @ 0021f004  (213 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_params @ 0021f004  (213 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5323,7 +5323,7 @@ bool if_agc_params(void)
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_process @ 0021f0dc  (494 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_process @ 0021f0dc  (494 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5489,7 +5489,7 @@ LAB_0021f1d9:
 
 
 /* -----------------------------------------------------------------------------
- * reg68_gain_apply @ 0021f2d0  (78 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * reg68_gain_apply @ 0021f2d0  (78 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Purpose: if_agc_process helper: when reg 0x68 changed, gain = scl_antilog10f(scl_int2float(reg, -1) * 0.05), then
  *     vec_scalef over 24 samples
  * Tag: [fact]
@@ -5528,7 +5528,7 @@ void reg68_gain_apply(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * if_meter_tick @ 0021f320  (35 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_meter_tick @ 0021f320  (35 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5560,7 +5560,7 @@ void if_meter_tick(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_to_reg4005 @ 0021f348  (62 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * meter_to_reg4005 @ 0021f348  (62 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5604,7 +5604,7 @@ void meter_to_reg4005(void)
 
 
 /* -----------------------------------------------------------------------------
- * status_reg3_update @ 0021f388  (122 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * status_reg3_update @ 0021f388  (122 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5649,7 +5649,7 @@ void status_reg3_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_chain @ 0021f484  (582 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * rx_audio_chain @ 0021f484  (582 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ÷6 (0x2373D0), the stages below in order, ×6 per branch. reg 6 = 9 runs `fm_audio_post`, reg 6
  *     = 10 runs neither it nor the zero-in, anything else runs `cw_zero_in_estimator`
  * Registers: 6
@@ -5760,7 +5760,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_init @ 0021f6d0  (278 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * ctcss_init @ 0021f6d0  (278 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -5852,8 +5852,9 @@ void ctcss_init(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ctcss_config @ 0021f7ec  (207 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_config @ 0021f7ec  (207 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -5923,9 +5924,8 @@ void ctcss_config(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ctcss_goertzel_retune @ 0021f8bc  (166 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_goertzel_retune @ 0021f8bc  (166 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2 cos of 2
  *     pi f / 1500 per bin (#184)
  * Tag: [inference]
@@ -5996,7 +5996,7 @@ void ctcss_goertzel_retune(void)
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_goertzel_init @ 0021f968  (221 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_goertzel_init @ 0021f968  (221 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (f): as ctcss_goertzel_retune, then clears the 3 Goertzel states and the 200-sample window (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -6079,7 +6079,7 @@ void ctcss_goertzel_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_detect @ 0021fa48  (715 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_detect @ 0021fa48  (715 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -6295,7 +6295,7 @@ LAB_0021fc50:
 
 
 /* -----------------------------------------------------------------------------
- * dcs_init @ 0021fd20  (152 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_init @ 0021fd20  (152 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6350,7 +6350,7 @@ void dcs_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * dcs_config @ 0021fdbc  (1121 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_config @ 0021fdbc  (1121 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6512,7 +6512,7 @@ LAB_0021fdee:
 
 
 /* -----------------------------------------------------------------------------
- * dcs_detect @ 00220224  (495 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_detect @ 00220224  (495 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6652,7 +6652,7 @@ void dcs_detect(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_init @ 00220420  (78 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_init @ 00220420  (78 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -6679,7 +6679,7 @@ void rx_eq_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_update @ 00220470  (792 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_update @ 00220470  (792 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -6905,7 +6905,7 @@ LAB_0022054b:
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_band_update @ 00220790  (783 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_band_update @ 00220790  (783 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -7142,7 +7142,7 @@ LAB_00220860:
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_3band @ 00220aa4  (126 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_3band @ 00220aa4  (126 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -7176,7 +7176,7 @@ void rx_eq_3band(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_audio_post_init @ 00220b30  (44 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_audio_post_init @ 00220b30  (44 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: FM only: CTCSS and DCS decoders, then 5-section HP 0x236AB0 (−70 dB below 200 Hz, flat above
  *     300 Hz: removes the subtone); if reg 0x3A bit 0, 8-section 0x236B20 (≈ −6 dB/octave above 400 Hz:
  *     de-emphasis)
@@ -7201,7 +7201,7 @@ void fm_audio_post_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_audio_post @ 00220b5c  (106 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_audio_post @ 00220b5c  (106 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: FM only: CTCSS and DCS decoders, then 5-section HP 0x236AB0 (−70 dB below 200 Hz, flat above
  *     300 Hz: removes the subtone); if reg 0x3A bit 0, 8-section 0x236B20 (≈ −6 dB/octave above 400 Hz:
  *     de-emphasis)
@@ -7234,7 +7234,7 @@ void fm_audio_post(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_demod_dispatch @ 00220ee0  (146 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_demod_dispatch @ 00220ee0  (146 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Copies the block, runs `if_agc_process`, then by reg 6: 0, 2, 4, 6 → `ssb_weaver_init`(0) +
  *     `ssb_weaver_demod`; 1, 3, 5, 7 → (1); 8 → AM; 9 → FM; anything else passes through
  * Registers: 6
@@ -7283,7 +7283,7 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_param_eq_init @ 002211d0  (78 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_param_eq_init @ 002211d0  (78 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: clears the TX EQ states 0x25AC00..; called by tx_core_init
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -7309,7 +7309,7 @@ void tx_param_eq_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_eq_band3_update @ 00221220  (792 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_eq_band3_update @ 00221220  (792 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7535,7 +7535,7 @@ LAB_002212fb:
 
 
 /* -----------------------------------------------------------------------------
- * tx_eq_band_update @ 00221540  (783 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * tx_eq_band_update @ 00221540  (783 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7769,7 +7769,7 @@ LAB_00221610:
 
 
 /* -----------------------------------------------------------------------------
- * tx_param_eq_3band @ 00221854  (126 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_param_eq_3band @ 00221854  (126 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7803,7 +7803,7 @@ void tx_param_eq_3band(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * am_modulator_init @ 002218e0  (37 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * am_modulator_init @ 002218e0  (37 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DC blocker (0.999, 0x3F7FBE77 at 0x22190E), 0.3·(1 + m)·sin φ with φ += 2π/3 (24 kHz carrier),
  *     then the 6-section BP 0x236BD0 (≈ 21–29 kHz)
  * Registers: 6 = 8
@@ -7827,7 +7827,7 @@ void am_modulator_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * am_modulator @ 00221908  (247 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * am_modulator @ 00221908  (247 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DC blocker (0.999, 0x3F7FBE77 at 0x22190E), 0.3·(1 + m)·sin φ with φ += 2π/3 (24 kHz carrier),
  *     then the 6-section BP 0x236BD0 (≈ 21–29 kHz)
  * Registers: 6 = 8
@@ -7910,7 +7910,7 @@ void am_modulator(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_modulator_init @ 00221a10  (30 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_modulator_init @ 00221a10  (30 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: φ += x·k + 2π/3, out = sin φ; k = (reg 0x4007 / 256)·7500·2π/72000 (7500.0 = 0x45EA6000 at
  *     0x221AED): 24 kHz centre
  * Registers: 0x4007 (default 0x3A)
@@ -7933,7 +7933,7 @@ void fm_modulator_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_modulator @ 00221a30  (206 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_modulator @ 00221a30  (206 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: φ += x·k + 2π/3, out = sin φ; k = (reg 0x4007 / 256)·7500·2π/72000 (7500.0 = 0x45EA6000 at
  *     0x221AED): 24 kHz centre
  * Registers: 0x4007 (default 0x3A)
@@ -8005,7 +8005,7 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * weaver_ssb_mod_init @ 00221b10  (165 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * weaver_ssb_mod_init @ 00221b10  (165 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Mirror of the demodulator: ÷6, 2 kHz NCO, 0x237440 LP pair, ×6, NCO at 18 ∓ 2 kHz (2π/72000,
  *     0x221D65)
  * Registers: 6
@@ -8041,7 +8041,7 @@ void weaver_ssb_mod_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * weaver_ssb_mod @ 00221bb8  (628 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * weaver_ssb_mod @ 00221bb8  (628 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Mirror of the demodulator: ÷6, 2 kHz NCO, 0x237440 LP pair, ×6, NCO at 18 ∓ 2 kHz (2π/72000,
  *     0x221D65)
  * Registers: 6
@@ -8205,7 +8205,7 @@ void weaver_ssb_mod(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_init @ 00221e40  (66 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_init @ 00221e40  (66 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8242,7 +8242,7 @@ void tx_alc_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_update @ 00221e84  (266 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_update @ 00221e84  (266 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8322,7 +8322,7 @@ void tx_alc_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc @ 00221f98  (156 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc @ 00221f98  (156 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8389,7 +8389,7 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_meter_to_reg2 @ 00222034  (101 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_meter_to_reg2 @ 00222034  (101 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: tx_alc helper: scl_log10f of the gain, scl_float2int, high byte of reg 2 (docs: TX meters)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8429,7 +8429,7 @@ void tx_alc_meter_to_reg2(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_core_init @ 002220a0  (72 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_core_init @ 002220a0  (72 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: ÷6 (0x2373D0) → EQ → processor → compressor → BPF → FM block → limiter → ×6 (gain 6, 0x2373D0)
  * Registers: 6
  * Tag: [fact]
@@ -8457,7 +8457,7 @@ void tx_core_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_core_12k @ 002220e8  (216 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_core_12k @ 002220e8  (216 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: ÷6 (0x2373D0) → EQ → processor → compressor → BPF → FM block → limiter → ×6 (gain 6, 0x2373D0)
  * Registers: 6
  * Tag: [fact]
@@ -8510,7 +8510,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_bpf_init @ 002221c0  (13 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_bpf_init @ 002221c0  (13 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: clears 0x25B810; placed before tx_bpf_select
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8528,7 +8528,7 @@ undefined8 tx_bpf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_bpf_select @ 002221d0  (91 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_bpf_select @ 002221d0  (91 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: reg 0x2F = 1–7 picks the cascade 0x236C50[v − 1] (section counts 0x204DA0: 9, 9, 10, 11, 12, 9,
  *     8): passbands 35–3199, 70–3035, 117–2930, 246–2824, 363–2766, 23–3352, 23–4137 Hz at 12 kHz, i.e. the SSB TX
  *     BPF menu
@@ -8565,7 +8565,7 @@ void tx_bpf_select(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_compressor_init @ 00222230  (17 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * soft_knee_compressor_init @ 00222230  (17 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: memset 0x25B9C0; placed before soft_knee_compressor
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8583,7 +8583,7 @@ void soft_knee_compressor_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_compressor @ 00222244  (653 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * soft_knee_compressor @ 00222244  (653 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: dB-domain gain computer with soft knee (T, W, R) and attack/release smoothing α = exp(−ln 9 /
  *     (t·12000))
  * Registers: 0x401A on (default off), 0x401B T, 0x401C attack 10 ms, 0x401D release 300 ms, 0x401E knee, 0x401F
@@ -8761,8 +8761,9 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ctcss_encoder_init @ 002224e0  (48 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * ctcss_encoder_init @ 002224e0  (48 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Adds A·sin φ, φ += tone·2π/72000 (table 0x204DD0), A from reg 0x11
  * Registers: 0x35 (bit 12 + index 1–50), 0x11
  * Tag: [fact]
@@ -8789,9 +8790,8 @@ void ctcss_encoder_init(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ctcss_encoder @ 00222510  (294 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * ctcss_encoder @ 00222510  (294 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Adds A·sin φ, φ += tone·2π/72000 (table 0x204DD0), A from reg 0x11
  * Registers: 0x35 (bit 12 + index 1–50), 0x11
  * Tag: [fact]
@@ -8885,7 +8885,7 @@ LAB_00222610:
 
 
 /* -----------------------------------------------------------------------------
- * dcs_encoder_init @ 00222640  (69 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * dcs_encoder_init @ 00222640  (69 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 23-bit Golay DCS word (normal / inverted), NRZ at 24 kHz (179 samples per bit ≈ 134 bit/s),
  *     shaped by the 109-tap FIR 0x205380, ×3 to 72 kHz
  * Registers: 0x38, 0x39, 0x11
@@ -8916,7 +8916,7 @@ void dcs_encoder_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * dcs_encoder @ 00222688  (1050 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * dcs_encoder @ 00222688  (1050 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 23-bit Golay DCS word (normal / inverted), NRZ at 24 kHz (179 samples per bit ≈ 134 bit/s),
  *     shaped by the 109-tap FIR 0x205380, ×3 to 72 kHz
  * Registers: 0x38, 0x39, 0x11
@@ -9094,7 +9094,7 @@ LAB_002227f5:
 
 
 /* -----------------------------------------------------------------------------
- * two_tone_test_init @ 00222ab0  (63 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * two_tone_test_init @ 00222ab0  (63 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Two sine generators, on when reg 0x36/0x37 top nibble = 1, f = bits 11–0
  * Registers: 0x36, 0x37 (MAIN writes 0)
  * Tag: [fact] [inference]
@@ -9128,7 +9128,7 @@ void two_tone_test_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * two_tone_test_gen @ 00222af0  (519 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * two_tone_test_gen @ 00222af0  (519 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Two sine generators, on when reg 0x36/0x37 top nibble = 1, f = bits 11–0
  * Registers: 0x36, 0x37 (MAIN writes 0)
  * Tag: [fact] [inference]
@@ -9279,7 +9279,7 @@ void two_tone_test_gen(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_audio_init @ 00222d00  (52 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_audio_init @ 00222d00  (52 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: HP 0x2371F0 (293 Hz) → gain (reg 0x30 & 0xFF)/255 → if reg 0x3A bit 0, 0x237240 (+6 dB/octave
  *     200 Hz – 3 kHz): pre-emphasis
  * Registers: 0x30, 0x3A
@@ -9306,7 +9306,7 @@ void fm_tx_audio_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_audio @ 00222d34  (157 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_audio @ 00222d34  (157 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: HP 0x2371F0 (293 Hz) → gain (reg 0x30 & 0xFF)/255 → if reg 0x3A bit 0, 0x237240 (+6 dB/octave
  *     200 Hz – 3 kHz): pre-emphasis
  * Registers: 0x30, 0x3A
@@ -9349,7 +9349,7 @@ void fm_tx_audio(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_hpf_process @ 00222df0  (23 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_hpf_process @ 00222df0  (23 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: iir_cascade_process on 0x25BFF0; called by fm_tx_audio (HPF 293 Hz)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -9367,7 +9367,7 @@ void fm_tx_hpf_process(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_limiter_init @ 00222e10  (31 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * soft_knee_limiter_init @ 00222e10  (31 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Same gain computer with R = ∞
  * Registers: 0x4015 on (off), 0x4016–0x4019
  * Tag: [fact]
@@ -9392,7 +9392,7 @@ void soft_knee_limiter_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_limiter @ 00222e30  (574 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * soft_knee_limiter @ 00222e30  (574 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Same gain computer with R = ∞
  * Registers: 0x4015 on (off), 0x4016–0x4019
  * Tag: [fact]
@@ -9552,7 +9552,7 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_post_lpf_init @ 00223080  (25 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_post_lpf_init @ 00223080  (25 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: LP 0x2372E0 (3.0 kHz at 72 kHz), bypassed by reg 0xC bit 8
  * Registers: 0xC
  * Tag: [fact]
@@ -9571,7 +9571,7 @@ void fm_post_lpf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_post_lpf @ 0022309c  (45 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_post_lpf @ 0022309c  (45 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: LP 0x2372E0 (3.0 kHz at 72 kHz), bypassed by reg 0xC bit 8
  * Registers: 0xC
  * Tag: [fact]
@@ -9594,7 +9594,7 @@ void fm_post_lpf(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_chain_init @ 00223110  (26 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * tx_chain_init @ 00223110  (26 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: tx_core_init, tx_alc_init, fm_post_lpf_init, ctcss/dcs encoder inits, two_tone_test_init; placed before
  *     tx_chain
  * Tag: [inference]
@@ -9620,7 +9620,7 @@ void tx_chain_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_chain @ 0022313c  (269 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * tx_chain @ 0022313c  (269 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: `tx_core_12k` → `tx_alc` → (FM: `fm_post_lpf`) → block 2 → `ctcss_encoder` →
  *     `two_tone_test_gen` → `dcs_encoder` → if reg 0x4006 ≠ 0: modulator by reg 6 (jump table 0x204EF0: 0/2/4/6
  *     Weaver(0), 1/3/5/7 Weaver(1), 8 AM, 9 FM, 10 none) → block 1
@@ -9697,7 +9697,7 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vox_detector_init @ 00223320  (108 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * vox_detector_init @ 00223320  (108 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9732,7 +9732,7 @@ void vox_detector_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * antivox_detector_init @ 0022338c  (109 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * antivox_detector_init @ 0022338c  (109 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9767,7 +9767,7 @@ void antivox_detector_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * vox_detector @ 002233fc  (820 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * vox_detector @ 002233fc  (820 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9940,7 +9940,7 @@ undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * antivox_detector @ 00223734  (823 bytes, 4 callers, export file 002224e0_00224a10.c)
+ * antivox_detector @ 00223734  (823 bytes, 4 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -10112,7 +10112,7 @@ undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vox_state @ 00223a74  (28 bytes, 3 callers, export file 002224e0_00224a10.c)
+ * vox_state @ 00223a74  (28 bytes, 3 callers, export file 00222510_00224aa4.c)
  * Purpose: mic and not speaker
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10132,7 +10132,7 @@ undefined4 vox_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * noise_gen_seed @ 00223a90  (34 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * noise_gen_seed @ 00223a90  (34 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: srand wrapper
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10165,7 +10165,7 @@ void noise_gen_seed(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * noise_gen_set_level @ 00223ab4  (38 bytes, 0 callers, export file 002224e0_00224a10.c)
+ * noise_gen_set_level @ 00223ab4  (38 bytes, 0 callers, export file 00222510_00224aa4.c)
  * Purpose: 10^(x / 20) with powf, then noise_gen_seed
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10192,7 +10192,7 @@ void noise_gen_set_level(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gaussian_noise_gen @ 00223adc  (263 bytes, 0 callers, export file 002224e0_00224a10.c)
+ * gaussian_noise_gen @ 00223adc  (263 bytes, 0 callers, export file 00222510_00224aa4.c)
  * Purpose: Box-Muller: rand, scl_lognf, sqrt, scl_cosinef / scl_sinef, 2*pi
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10280,7 +10280,7 @@ void gaussian_noise_gen(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * spectrum_init @ 00223bf0  (153 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * spectrum_init @ 00223bf0  (153 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: create_Thread_Spi: window with scl_cosinef, buffers 0x25D350 / 0x25DB60 / 0x25EB60
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10342,7 +10342,7 @@ void spectrum_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_init @ 002244e0  (67 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_init @ 002244e0  (67 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: resets both codec-out FIFOs and the mute ramp; placed before codec_out_sink
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10372,7 +10372,7 @@ void codec_out_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_fifo_reset_0 @ 00224524  (110 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_fifo_reset_0 @ 00224524  (110 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: clears count / read / write of the FIFO 0x2639F4 under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10427,7 +10427,7 @@ uint codec_out_fifo_reset_0(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_fifo_reset_1 @ 00224594  (110 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_fifo_reset_1 @ 00224594  (110 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: same for the FIFO 0x263B84
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10482,7 +10482,7 @@ uint codec_out_fifo_reset_1(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_sink @ 00224604  (186 bytes, 14 callers, export file 002224e0_00224a10.c)
+ * codec_out_sink @ 00224604  (186 bytes, 14 callers, export file 00222510_00224aa4.c)
  * Purpose: per-output gain, clip, into the codec-out object
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10550,7 +10550,7 @@ void codec_out_sink(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * codec_in_fifo_pop @ 00224798  (123 bytes, 3 callers, export file 002224e0_00224a10.c)
+ * codec_in_fifo_pop @ 00224798  (123 bytes, 3 callers, export file 00222510_00224aa4.c)
  * What it computes: Pops one block of codec-in channel *ch* (Q31 → float), zeros if empty; ch 0 = mic (block 2), ch
  *     1 = block 5
  * Registers: —
@@ -10604,7 +10604,7 @@ void codec_in_fifo_pop(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_out_gain_mute_update @ 00224814  (134 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * rx_out_gain_mute_update @ 00224814  (134 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Per-output gain from regs 0xE / 0xD (0.5 dB; MAIN's 0xF000 in FM = mute), applied with a ±1
  *     clip in the sink `codec_out_sink` (0x224604); reg 0x10 bit 0 or the GPIO select starts a soft mute through
  *     the 1 ms raised-cosine ramp (`mute_ramp_step`)
@@ -10666,7 +10666,7 @@ void rx_out_gain_mute_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * aux_in_lp_init @ 002248a0  (54 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * aux_in_lp_init @ 002248a0  (54 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Block 5: gain reg 0x23, LP 0x2373A0 (4.9 kHz); only when reg 6 = 10
  * Registers: 0x23
  * Tag: [fact]
@@ -10694,7 +10694,7 @@ void aux_in_lp_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * aux_in_gain_lp @ 002248d8  (133 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * aux_in_gain_lp @ 002248d8  (133 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Block 5: gain reg 0x23, LP 0x2373A0 (4.9 kHz); only when reg 6 = 10
  * Registers: 0x23
  * Tag: [fact]
@@ -10746,7 +10746,7 @@ LAB_002248f9:
 
 
 /* -----------------------------------------------------------------------------
- * rx_aux_in_gain @ 00224960  (66 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * rx_aux_in_gain @ 00224960  (66 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Gain from reg 0x60 (0.5 dB) on codec ADC channel 1 (`codec_in_fifo_pop`(1)), which then
  *     replaces the demodulator output as the Rx_Audio input; only when reg 6 = 10 and reg 10 n0 = 1
  *     (`Thread_Rx_Path_entry` 0x2262FC). MAIN never sends 10 (#184)
@@ -10783,7 +10783,7 @@ void rx_aux_in_gain(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * routing_regs_decode @ 002249d0  (61 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * routing_regs_decode @ 002249d0  (61 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Splits regs 8/9/10 into the selector nibbles 0x263D50–0x263D5C
  * Registers: 8, 9, 10
  * Tag: [fact]
@@ -10808,7 +10808,7 @@ void routing_regs_decode(void)
 
 
 /* -----------------------------------------------------------------------------
- * peak_limiter_init @ 00224e80  (85 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * peak_limiter_init @ 00224e80  (85 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: 7-sample look-ahead; envelope √2·RMS over 7 samples; above the threshold gain = thr / env at
  *     once, linear release over 2·T[L] samples (T from 0x237500, 600 … 6); pre-gain 10^(0.003 L)
  * Registers: RX: 0x57 (bit 12 on, L ≤ 100), 0x58 threshold. MAIN never writes 0x57, so it is off
@@ -10843,7 +10843,7 @@ void peak_limiter_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * peak_limiter @ 00224ed8  (873 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * peak_limiter @ 00224ed8  (873 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: 7-sample look-ahead; envelope √2·RMS over 7 samples; above the threshold gain = thr / env at
  *     once, linear release over 2·T[L] samples (T from 0x237500, 600 … 6); pre-gain 10^(0.003 L)
  * Registers: RX: 0x57 (bit 12 on, L ≤ 100), 0x58 threshold. MAIN never writes 0x57, so it is off
@@ -11092,7 +11092,7 @@ LAB_00225114:
 
 
 /* -----------------------------------------------------------------------------
- * test_tone_gen @ 00225264  (213 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * test_tone_gen @ 00225264  (213 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: Sine, phase += f·2π/72000 (0x38B702D4), amplitude 10^(L/40); defaults 1000 Hz, −12 dB
  * Registers: 0x4013 f, 0x4014 L
  * Tag: [fact]
@@ -11170,7 +11170,7 @@ void test_tone_gen(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * hilbert_iq_init @ 00225340  (46 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * hilbert_iq_init @ 00225340  (46 bytes, 3 callers, export file 00224d40_00226a50.c)
  * Purpose: bkfiraf_init with the 71-tap Hilbert FIR 0x205840; called by cw_zero_in_init, am_demod_init,
  *     fm_demod_init
  * Tag: [fact]
@@ -11195,7 +11195,7 @@ void hilbert_iq_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * hilbert_iq @ 00225370  (119 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * hilbert_iq @ 00225370  (119 bytes, 3 callers, export file 00224d40_00226a50.c)
  * Purpose: 71-tap Hilbert FIR 0x205840, I delayed 35
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11235,7 +11235,7 @@ void hilbert_iq(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * mute_ramp_init @ 002253f0  (23 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * mute_ramp_init @ 002253f0  (23 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11263,7 +11263,7 @@ void mute_ramp_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mute_ramp_step @ 00225408  (111 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * mute_ramp_step @ 00225408  (111 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11322,7 +11322,7 @@ void mute_ramp_step(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_00225478 @ 00225478  (17 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * FUN_00225478 @ 00225478  (17 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11346,7 +11346,7 @@ void FUN_00225478(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_0022548c @ 0022548c  (17 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * FUN_0022548c @ 0022548c  (17 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11370,7 +11370,7 @@ void FUN_0022548c(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rec_ring_reset_0 @ 002254ec  (98 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_ring_reset_0 @ 002254ec  (98 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: clears the ring 0x268D1C indices under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11420,7 +11420,7 @@ void rec_ring_reset_0(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_ring_reset_1 @ 00225550  (98 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_ring_reset_1 @ 00225550  (98 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: same for 0x2C6928
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11470,7 +11470,7 @@ void rec_ring_reset_1(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_resample_sink @ 002255b4  (465 bytes, 5 callers, export file 00224aa4_0022689c.c)
+ * rec_resample_sink @ 002255b4  (465 bytes, 5 callers, export file 00224d40_00226a50.c)
  * Purpose: x2/9 to 16 kHz, int16 ring 0x266ED8 (#59, #154)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11631,7 +11631,7 @@ void rec_resample_sink(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * playback_ring_fill @ 00225834  (426 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * playback_ring_fill @ 00225834  (426 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: calls `FUN_00234890`, `iir_cascade_process`, `memcpy`, `memset`; 426 B, callers: 1 (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11751,7 +11751,7 @@ void playback_ring_fill(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * playback_ring_read @ 002259e4  (159 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * playback_ring_read @ 002259e4  (159 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: Next block from the 4000-block ring 0x268E20 (filled by `playback_ring_fill` 0x225834 from the
  *     DISPLAY PLAY stream, ÷2 + IIR), gain from reg 0x13, clip ±1
  * Registers: 0x13
@@ -11812,7 +11812,7 @@ void playback_ring_read(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rec_gain_update @ 00225a84  (46 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_gain_update @ 00225a84  (46 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: Recorder gain from reg 0x12 (MAIN 8 = +4 dB) for `rec_resample_sink` (`FUN_002255B4`)
  * Registers: 0x12
  * Tag: [fact]
@@ -11841,7 +11841,7 @@ void rec_gain_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * play_gain_update @ 00225ab4  (46 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * play_gain_update @ 00225ab4  (46 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: reg 0x13 → 10^(x/40), the gain of the playback reader `playback_ring_read`
  * Registers: 0x13
  * Tag: [fact]
@@ -11870,7 +11870,7 @@ void play_gain_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_out_init @ 00225af0  (62 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_out_init @ 00225af0  (62 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: resets both TXAF FIFOs and the mute ramp; placed before txaf_out_push
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11898,7 +11898,7 @@ void txaf_out_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_fifo_reset_0 @ 00225b30  (92 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_fifo_reset_0 @ 00225b30  (92 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: clears the FIFO 0x2C7570 indices under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11947,7 +11947,7 @@ uint txaf_fifo_reset_0(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_fifo_reset_1 @ 00225b8c  (92 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_fifo_reset_1 @ 00225b8c  (92 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: same for 0x2C768C
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11996,7 +11996,7 @@ uint txaf_fifo_reset_1(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_out_push @ 00225be8  (178 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * txaf_out_push @ 00225be8  (178 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: If the FC2 FIFO has room: clip(x·g, ±1), g from reg 0xF, × mute ramp, float → Q31; source block
  *     1 (reg 9 n0 = 2) or 5 (= 1)
  * Registers: 0xF, 9
@@ -12063,7 +12063,7 @@ void txaf_out_push(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tx_mute_ctrl @ 00225dc4  (112 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * tx_mute_ctrl @ 00225dc4  (112 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: mute = reg 0x10 bit 1 or GPIO P0_4 (reg 0xC top nibble = 1); writes the VOX state to GPIO byte
  *     0x40100044
  * Registers: 0xF, 0x10, 0xC
@@ -12113,7 +12113,7 @@ void tx_mute_ctrl(void)
 
 
 /* -----------------------------------------------------------------------------
- * cosf @ 002293e0  (100 bytes, 1 callers, export file 00228564_0022b880.c)
+ * cosf @ 002293e0  (100 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib cosf: |x| <= pi/4 -> kernel 0x22A610, else rem_pio2 switch (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12161,7 +12161,7 @@ void cosf(void)
 
 
 /* -----------------------------------------------------------------------------
- * sinf @ 00229460  (105 bytes, 1 callers, export file 00228564_0022b880.c)
+ * sinf @ 00229460  (105 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib sinf: |x| <= pi/4 -> kernel 0x22B420, else rem_pio2 0x22A320 switch (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12209,7 +12209,7 @@ void sinf(void)
 
 
 /* -----------------------------------------------------------------------------
- * powf @ 002294e0  (1240 bytes, 2 callers, export file 00228564_0022b880.c)
+ * powf @ 002294e0  (1240 bytes, 2 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib w_powf wrapper (matherr name string powf at 0x206414): powf(aed0, aed1); tx_alc_update powf(0.5,
  *     reg 0x33), FUN_00223AB4 10^(x/20) (#184)
  * Tag: [inference]
@@ -12531,7 +12531,7 @@ LAB_00229631:
 
 
 /* -----------------------------------------------------------------------------
- * xthal_get_cacheattr @ 00233580  (32 bytes, 1 callers, export file 002304f0_00233984.c)
+ * xthal_get_cacheattr @ 00233580  (32 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: rdtlb1 of the 8 x 512 MB regions -> 8 attribute nibbles (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12560,7 +12560,7 @@ uint xthal_get_cacheattr(void)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_set_cacheattr @ 002335a0  (83 bytes, 2 callers, export file 002304f0_00233984.c)
+ * xthal_set_cacheattr @ 002335a0  (83 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: witlb (skipping its own region) and wdtlb for each 512 MB region, 4 bits each (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12603,7 +12603,7 @@ void xthal_set_cacheattr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * bkfiraf_init @ 00233984  (126 bytes, 7 callers, export file 002304f0_00233984.c)
+ * bkfiraf_init @ 00233984  (126 bytes, 7 callers, export file 002305a0_00233cf0.c)
  * Name on the doc page: fir_init
  * Purpose: no direct calls; 126 B, callers: 7 (code shape)
  * Tag: [fact]
@@ -12666,8 +12666,9 @@ LAB_002339f5:
   return CONCAT44(param_2,puVar4);
 }
 
+
 /* -----------------------------------------------------------------------------
- * bkfiraf_process @ 00233a10  (731 bytes, 7 callers, export file 00233a10_00236080.c)
+ * bkfiraf_process @ 00233a10  (731 bytes, 7 callers, export file 002305a0_00233cf0.c)
  * Name on the doc page: fir_process
  * Purpose: no direct calls; 731 B, callers: 7 (code shape)
  * Tag: [fact]
@@ -12962,7 +12963,7 @@ void bkfiraf_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint p
 
 
 /* -----------------------------------------------------------------------------
- * scl_float2int @ 00234710  (31 bytes, 9 callers, export file 00233a10_00236080.c)
+ * scl_float2int @ 00234710  (31 bytes, 9 callers, export file 00233d08_00236170.c)
  * Name on the doc page: f2i_scaled
  * Purpose: trunc(x * 2^-s)
  * Tag: [inference]
@@ -12984,7 +12985,7 @@ undefined4 scl_float2int(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scl_int2float @ 00234730  (25 bytes, 77 callers, export file 00233a10_00236080.c)
+ * scl_int2float @ 00234730  (25 bytes, 77 callers, export file 00233d08_00236170.c)
  * Name on the doc page: i2f_scaled
  * Purpose: float(i) * 2^s; s = -1 turns half-dB registers into dB
  * Tag: [inference]
@@ -13003,7 +13004,7 @@ void scl_int2float(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vec_powerf @ 00234be0  (533 bytes, 3 callers, export file 00233a10_00236080.c)
+ * vec_powerf @ 00234be0  (533 bytes, 3 callers, export file 00233d08_00236170.c)
  * Name on the doc page: vec_sum_sq
  * Purpose: sum of squares (madd.s loop)
  * Tag: [inference]
@@ -13181,7 +13182,7 @@ void vec_powerf(undefined8 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vec_scalef @ 00234f40  (568 bytes, 11 callers, export file 00233a10_00236080.c)
+ * vec_scalef @ 00234f40  (568 bytes, 11 callers, export file 00233d08_00236170.c)
  * Name on the doc page: vec_scale_f32
  * Purpose: y[i] = x[i] * scalar
  * Tag: [inference]
@@ -13445,7 +13446,7 @@ void vec_scalef(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __divsf3 @ 00235ba8  (164 bytes, 86 callers, export file 00233a10_00236080.c)
+ * __divsf3 @ 00235ba8  (164 bytes, 86 callers, export file 00233d08_00236170.c)
  * Name on the doc page: divf_
  * Purpose: float divide
  * Tag: [inference]
@@ -13498,7 +13499,7 @@ void __divsf3(void)
 
 
 /* -----------------------------------------------------------------------------
- * __ieee754_sqrtf @ 00235c8c  (160 bytes, 12 callers, export file 00233a10_00236080.c)
+ * __ieee754_sqrtf @ 00235c8c  (160 bytes, 12 callers, export file 00233d08_00236170.c)
  * Name on the doc page: sqrtf_
  * Purpose: sqrt
  * Tag: [inference]
