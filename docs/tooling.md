@@ -278,6 +278,25 @@ read bytes they have already overwritten (p. 163/164). The patch (eighth `--only
 manual's operand order, p. 296; `SCCnd.L`, `ROTL`, `ROTR`, `BRA.A`, `ABS`, `NEG`/`NOT Rs,Rd`, `REVL`/`REVW` with two
 registers, `XOR`, `EMUL`/`EMULU`, post-increment loads) needed no change.
 
+### Float to integer (T24 MAIN round 4, 2026-11-01): `tools/ghidra/rx62t-fpconv-fix.patch`
+
+T22a modelled none of the FPU instructions but `ITOF`. The module's p-code for `FTOI`, `FTOU` and `ROUND` was
+`Rd = round(src)` for all three, a float result: in the emulator FTOU of 50.7 gave 0x424C0000 (the float 51.0), 0.5 gave
+0x3F800000 [fact: `tools/rx_fpconv_check.py module` on the T24-patched module]; the decompile showed `ROUND(x)`. The
+manual (R01US0071EJ0100): FTOI (p. 103) and FTOU (p. 106) convert to a signed / unsigned integer rounding towards 0
+whatever FPSW.RM says; ROUND (p. 171) rounds by RM. MAIN has 12 FTOU sites and no FTOI or ROUND [fact: `rx-elf-objdump`
+of 0xFFF8FBDB..0xFFFEE2B7], and sets FPSW = 0x100 (RM = 0, DN = 1) at 0xFFF8FBFF. The patch (ninth `--only rx` stage,
+`RX_SINC_GCCFORMS` `8451ead0…8ed7` → `RX_SINC_FIXED` `f4688bc6…f403`) makes FTOI `trunc(src)`, FTOU `trunc` through 64 bits,
+and ROUND round-to-nearest-even from `trunc`; with it every in-range value of the check agrees with the manual (NaN,
+out of range and FTOU of values <= -1 are not modelled), and the decompile of `cat_SQ` reads
+`(byte)(longlong)(x * 100.0 / 255.0 + 0.5)` [fact: DecompLines.java on a project copy with the patch]. Checked on a private
+Ghidra copy (hard links, the RX module copied): patch and `sleigh` compile (6 NOP-constructor warnings, as before).
+**Not installed into the container's shared Ghidra** (other branches' bootstraps check the old hash). The MAIN equivalence
+engine executes the three after the manual itself, NaN and range included (`EquivMainEmu.java` `fpConv`;
+`tools/rx_fpconv_check.py`: 84 / 84 agree), so the check results do not depend on the patch. No recreated function and
+no function checked before round 4 uses one of the three (the GCC objects have no FPU instruction before `cat_SQ`; libgcc's
+`__fixunssfsi` has FTOI).
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9

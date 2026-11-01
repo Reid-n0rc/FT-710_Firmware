@@ -10,62 +10,7 @@
 #include "main_ram.h"
 #include "ft710_state.h"
 #include "cat_cmds.h"
-
-/* the reply: P1.. from cat_reply[2], ';' after the last byte */
-static inline void reply_done(unsigned n)
-{
-    cat_reply[n] = ';';
-    cat_reply_len = (uint16_t)(n + 1u);
-}
-
-/* a key code the set form is filtered with (key_event_filter); 0 refuses the command */
-static inline int key_allowed(uint16_t key, uint8_t kind)
-{
-    if (key_event_filter(key, kind) == 0) {
-        cat_error = 1;
-        return 0;
-    }
-    return 1;
-}
-
-/* digits of v from the place value div down (100: three digits), as the image writes them: each digit is v / div
- * of what is left, through nib2hex [fact: the loops of cat_AG 0xFFFA6867, cat_KS, cat_RG] */
-static void put_dec(uint8_t *at, uint8_t v, uint8_t div)
-{
-    for (; div != 0; div = (uint8_t)(div / 10u)) {
-        uint8_t n = (uint8_t)(v / div);
-
-        v = (uint8_t)(v - n * div);
-        *at++ = (uint8_t)nib2hex(n);
-    }
-}
-
-/* n decimal digits at p, place value div for the first, summed in 8 bits; 0 with cat_error set at a non-digit */
-static int get_dec(const uint8_t *p, unsigned n, uint8_t div, uint8_t *out)
-{
-    uint8_t v = 0;
-    unsigned i;
-
-    for (i = 0; i < n; i++) {
-        if (p[i] < '0' || p[i] > '9') {
-            cat_error = 1;
-            return 0;
-        }
-        v = (uint8_t)((p[i] & 0x0Fu) * div + v);
-        div = (uint8_t)(div / 10u);
-    }
-    *out = v;
-    return 1;
-}
-
-/* a setting's pop-up (code), unless EX030126 turns them off */
-static void setting_popup(uint8_t code)
-{
-    if (g_opstate.ex030126_scu_lan10 == 0) {
-        g_ui.popup_code = code;
-        popup_open_timed(popup_duration_get(code));
-    }
-}
+#include "cat_util.h"
 
 static inline int is_cw(uint8_t m)
 {
@@ -358,6 +303,40 @@ void cat_SM(const uint8_t *text)
     put_dec(&cat_reply[3], meter_get_s(), 100);
     cat_reply[2] = '0';
     reply_done(6);
+}
+
+/* 0..255 <-> 0..100 in single precision, then + 0.5 and a conversion to unsigned that truncates: the image's
+ * FTOU (RXv2, rounds towards 0 whatever FPSW.RM says; software manual p. 106) after FADD #0.5 [fact: 0xFFFAE717,
+ * 0xFFFAE806]. Not a lrintf: GCC 13.3 for RX never inlines lrintf (it calls _lrintf at -O0 to -Os, also with
+ * -ffast-math), and CC-RX's FTOU is a plain (unsigned) cast. In range (0.5 .. 255.5) a cast to int (GCC's FTOI; the
+ * unsigned cast would call libgcc's __fixunssfsi) gives the same. */
+static uint8_t scale_round(uint8_t v, float mul, float div)
+{
+    return (uint8_t)(int)((float)v * mul / div + 0.5f);
+}
+
+/* cat_SQ 0xFFFAE6CC: SQ P1 P2..P4 = squelch 000..100 (P1 is not checked); kept as 0..255 in cat_sq_level, and also
+ * in the RF/SQL knob's byte g_ui.rf_gain when EX030102 RF/SQL VR is not 0 */
+void cat_SQ(const uint8_t *text, uint8_t set)
+{
+    uint8_t v;
+
+    if (!set) {
+        v = g_opstate.ex030102_rf_sql_vr != 0 ? g_ui.rf_gain : cat_sq_level;
+        put_dec(&cat_reply[3], scale_round(v, 100.0f, 255.0f), 100);
+        cat_reply[2] = '0';
+        reply_done(6);
+        return;
+    }
+    if (!get_dec(&text[3], 3, 100, &v))
+        return;
+    if (v > 100u) {
+        cat_error = 1;
+        return;
+    }
+    cat_sq_level = scale_round(v, 255.0f, 100.0f);
+    if (g_opstate.ex030102_rf_sql_vr != 0)
+        g_ui.rf_gain = cat_sq_level;
 }
 
 /* cat_ST 0xFFFAF3B5: ST P1 = split on/off (split_toggle; key 0x305), not while the TX lamp is on */

@@ -705,6 +705,31 @@ def cat_handler_args(rng, regs):
     return [(ARGBUF, cat_text(rng, b'XX'))], None
 
 
+def cat_ss_args(rng, regs):
+    """cat_SS (text, set): "SS0", the item 0..8 (and a bad one), a value digit, P4..P6 mostly '0'; item 4 with a
+    sign, two digits, '.', '0'/'5'; item 7 with the four digits 0..2 / 0..5 (T24 MAIN round 4: random digits reach a
+    third of the blocks)."""
+    item = rng.choice(b'0123456789A')
+    t = bytearray(cat_text(rng, b'SS'))
+    t[2] = ord('0') if rng.random() < 0.9 else ord('1')
+    t[3] = item
+    t[4] = rng.choice(b'0123456789AB')
+    for k in (5, 6, 7, 8):
+        t[k] = ord('0') if rng.random() < 0.85 else rng.choice(b'123.5')
+    if item == ord('4'):
+        t[4] = rng.choice(b'+-+-0')
+        t[5], t[6] = rng.choice(b'0123'), rng.choice(b'0123456789')
+        t[7] = ord('.') if rng.random() < 0.9 else ord('0')
+        t[8] = rng.choice(b'0505X')
+    elif item == ord('7'):
+        t[4:8] = bytes(rng.choice(b'0122223') for _ in range(4))
+        t[6] = rng.choice(b'0123456')
+        t[8] = ord('0') if rng.random() < 0.9 else ord('1')
+    regs[0] = ARGBUF
+    regs[1] = rng.choice([0, 1, 1])
+    return [(ARGBUF, bytes(t))], None
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -721,6 +746,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
+           'cat_SS': cat_ss_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
@@ -829,7 +855,8 @@ class Checker:
         lk = Linked(path, fname)
         if lk.rw:
             return oaddr, 'not yet', f'the recreated code has {lk.rw} bytes of .data/.bss (must use the image\'s RAM)'
-        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r'})
+        # JMP, FTOI, ROUND and FTOU are executed by EquivMainEmu.java itself (rounds 1 and 4)
+        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r', 'ftoi r, r', 'round r, r', 'ftou r, r'})
         note = f'; instruction forms the MAIN image does not use (semantics not checked by T22a): {", ".join(unverified)}' \
             if unverified else ''
         eng = self.engine()

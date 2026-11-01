@@ -72,6 +72,7 @@ extern uint8_t cat_tx_busy_sci3;
 extern uint8_t cat_reply[];               /* the reply being built */
 extern uint16_t cat_reply_len;
 extern uint8_t cat_error;                 /* 1 = answer "?;" */
+extern uint8_t cat_sq_level;              /* SQ 0..255 while RF/SQL VR is 0 (cat_SQ) */
 extern uint8_t cat_ai_held;               /* AI hold-off after a set (timer 0x32) */
 
 /* DISPLAY link (docs/code/main/display-link.md) [fact: the functions of app/display_link.c] */

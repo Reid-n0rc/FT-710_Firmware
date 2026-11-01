@@ -99,3 +99,4 @@ spk_route	20fcc	speaker_route 0xFFFB8ABF: the speaker route 0..4, 4 = all off (p
 dnr_tables	fff87f1a	dsp_set_dnr_400b 0xFFF9FCD0 reads 0xFFF87F1A + level x 2; the six other DNR setters 0x20 apart (0xFFF87F3A 400D, 0xFFF87F5A 4022, 0xFFF87F7A 4023, 0xFFF87F9A 4025, 0xFFF87FBA reg 0x40, 0xFFF87FDA 4026)
 rf_gain_curve	fff805ac	dsp_set_rf_gain 0xFFF9FC2A reads 0xFFF805AC[g_ui.rf_gain >> 2]
 dsp_freq_ranges	fff88598	dsp_set_freq_range_param 0xFFF9FB8A: mov.l #0xfff88598, r14 (5 x u32 frequency limits)
+cat_sq_level	464e	cat_SQ 0xFFFAE6F8 (read) and 0xFFFAE839 (set): the squelch byte 0..255 when RF/SQL VR (EX030102) is 0; no other reference in decomp/main
