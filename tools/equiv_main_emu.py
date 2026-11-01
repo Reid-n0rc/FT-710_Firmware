@@ -105,29 +105,51 @@ STACK_PTR_SLOTS = (0x207FC,)
 # only callees whose effects the function does not read back are stubbed.
 # Trials per function as a multiple of --trials, where the cases to reach outnumber the default (round 4: cat_dispatch
 # has about 500 (index, length) pairs)
-FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2, 'beep_task': 2}
+# Endless loops checked for one pass (round 5): the run ends at the n-th call of a stubbed callee, and everything up to
+# there is compared (the calls in order, RAM, peripherals). main_loop: its 16 tasks are stubbed (each is checked on its
+# own) and the run stops at the second call of the first one.
+MAIN_LOOP_TASKS = ('wdt_kick', 'io_task', 'sdr_task', 'dsp_link_poll', 'rf_ctrl_task', 'beep_task', 'cat_parse',
+                   'ladder_key_task', 'scan_task', 'dispreq_e8_task', 'dispreq_e7_task', 'keyer_task', 'sd_menu_task',
+                   'displink_task', 'key_task', 'tuner_task')
+FUNC_STOP = {'main_loop': {'wdt_kick': 2}}
+FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2, 'beep_task': 2, 'cat_GT': 3}
 FUNC_STUBS = {
     'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
     # scan_task: the predicates are functions of the receiver state; stubbed with 0 / 1
     'scan_task': {n: (0, [0, 1]) for n in ('FUN_fffe5ee3', 'FUN_fffe5ab2', 'FUN_fffe5acf', 'FUN_fffe5fdd',
                                            'FUN_fffe600f', 'FUN_fffe5ae7', 'FUN_fffe5f18', 'FUN_fffe5f4d')},
     # io_task: the power-off path ends in sw_reset, which does not return
-    'io_task': {'swtimer_expired': (1, [0, 1, 1]), 'sw_reset': (0, [0]), 'supply_undervolt_check': (0, [0, 0, 1])},
+    'io_task': {'swtimer_expired': (1, [0, 1, 1]), 'sw_reset': (0, [0]), 'supply_undervolt_check': (0, [0, 0, 1]),
+                # round 5: the meters, the GPIO poll and the lamps ran out of budget in 137 of 200 trials (both
+                # runs); io_task reads nothing back from them but RAM that the preset draws anyway
+                'meter_task': (0, [0]), 'io_poll': (0, [0]), 'lamp_map_update': (0, [0]), 'FUN_fffb9605': (0, [0]),
+                'sci1_tx_end': (0, [0, 1, 1]), 'screensaver_timer_expired': (0, [0, 1]), 'menu_cursors_save': (0, [0]),
+                'eeprom_save_opstate': (0, [0])},
     # sdr_task: the first updater that writes ends the pass, and sdr_bridge_mode relays until the DISPLAY ends it;
     # the bridge and the first group of updaters are stubbed so that the pass reaches the rest (their calls and the
     # TX argument are compared)
-    'sdr_task': {'sdr_bridge_mode': (0, [0]), 'sdr_poll_reply': (1, [0, 1, 1]), 'sdr_upd_r0a_demod': (1, [0]),
-                 'sdr_upd_r0b_band': (1, [0]), 'sdr_upd_r0c_rtty_shift': (0, [0]), 'sdr_upd_r0d': (0, [0]),
-                 'sdr_upd_r0f_band': (1, [0]), 'sdr_upd_r20_scope_freq': (1, [0]), 'sdr_upd_r22_scope_span': (1, [0]),
-                 'sdr_upd_r23': (0, [0]), 'sdr_upd_r25_tx_drive': (1, [0]), 'sdr_upd_r26': (1, [0]),
-                 'sdr_upd_r27_scope_level': (1, [0])},
+    # (round 5: every updater is stubbed, and each one sets sdr_busy_write 0x1C8B to 1 one time in eight as a
+    # write would, so that each step's return is reached; was 52 % of the blocks)
+    'sdr_task': {'sdr_bridge_mode': (0, [0]), 'sdr_poll_reply': (1, [0, 1, 1]), 'sdr_shadow_update': (0, [0]),
+                 **{n: (k, [0], (0x1C8B, [0, 0, 0, 0, 0, 0, 0, 1])) for n, k in (
+                     ('sdr_upd_r0a_demod', 1), ('sdr_upd_r0b_band', 1), ('sdr_upd_r0c_rtty_shift', 0), ('sdr_upd_r0d', 0),
+                     ('sdr_upd_r0f_band', 1), ('sdr_upd_r20_scope_freq', 1), ('sdr_upd_r22_scope_span', 1),
+                     ('sdr_upd_r23', 0), ('sdr_upd_r25_tx_drive', 1), ('sdr_upd_r26', 1), ('sdr_upd_r27_scope_level', 1),
+                     ('sdr_upd_r03', 0), ('sdr_upd_r08_tx_freq', 0), ('sdr_upd_r0e', 0), ('sdr_upd_r14_mode', 0),
+                     ('sdr_upd_r04', 0), ('sdr_upd_r12', 0), ('sdr_upd_r13', 0), ('sdr_upd_r16_filter', 0),
+                     ('sdr_upd_r18_rx_freq', 0), ('sdr_upd_r1a_nb_level', 0), ('sdr_upd_r1b', 0), ('sdr_upd_r1c', 0),
+                     ('sdr_upd_r1d_notch', 0), ('sdr_upd_r1e_passband', 0), ('sdr_upd_r1f_width', 0),
+                     ('sdr_init_r15', 0), ('sdr_init_r24', 0))}},
     'displink_task': {'swtimer_expired': (1, [0, 1, 1]), 'FUN_fffc911e': (0, [0, 1])},
     'tuner_rearm': {'FUN_fffed6f5': (0, [0, 1, 1]), 'vfo_tuner_bit_get': (0, [0, 1])},
     # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
     'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
+    'main_loop': {n: (0, [0]) for n in MAIN_LOOP_TASKS},
     # beep_task: tone_set stubbed, so the tone's float bits are compared (through tone_set only the truncated TPU
     # period is seen: a mutation 1046.502 -> 1046.5 passed)
     'beep_task': {'swtimer_expired': (1, [0, 1, 1, 1]), 'tone_set': (2, [0])},
+    # cat_GT: the mode of VFO 0 drawn over all 16 codes (round 5; was 68 % of the blocks with the RAM's mode)
+    'cat_GT': {'vfo_mode': (1, list(range(16)))},
     'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
                    'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
 }
@@ -906,6 +928,23 @@ def beep_task_args(rng, regs):
     return loads + [(0x9C04, bytes([pitch])), (0x25D40, cw)], None
 
 
+def cat_em_args(rng, regs):
+    """cat_EM (round 5; was 66 % of the blocks): "EM0" and slot '1'..'5' (sometimes another), a ';' within the
+    first 50 bytes, and the five 50-byte text slots at 0x979E each with an 0xFE end mark at a random place (or none)."""
+    regs[0] = ARGBUF
+    regs[1] = rng.choice([0, 1])
+    t = bytearray(cat_text(rng, b'EM', 0x60))
+    t[2] = ord('0') if rng.random() < 0.85 else ord('1')
+    t[3] = ord(rng.choice('1234512345' + '06'))
+    t[4:0x40] = bytes(rng.choice(b'ABC 123') for _ in range(0x3C))
+    t[rng.choice([4, 5, rng.randrange(4, 54), rng.randrange(4, 60)])] = ord(';')
+    slots = bytearray(rng.choice(b'ABC 123') for _ in range(250))
+    for k in range(5):
+        if rng.random() < 0.85:
+            slots[50 * k + rng.choice([0, 1, rng.randrange(50)])] = 0xFE
+    return [(ARGBUF, bytes(t)), (0x979E, bytes(slots))], None
+
+
 def adc_words(*addrs):
     """16-bit ADC readings that are 0, small or random (swr_meter_protect: both 0 is the NaN case, <= 10 pins)."""
     def pre(rng, regs):
@@ -938,6 +977,10 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'displink_build_30': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C2: list(range(15)) + [0xFF], G_OP + 0x393: (0, 1)})),
            'displink_build_41': g_ui_ptr_ok(ram_bytes({G_UI + 0x439: [0, 1, 50, 98, 99, 110, 116, 117, 125, 131, 132],
                                                      G_UI + 0x1DB: range(5), G_OP + 0x98: (0, 1)})),
+           # sdr_upd_r25_tx_drive: the TX frequency inside the radio's range (30 kHz .. 75 MHz); above 75 MHz
+           # tx_band_of_freq gives 0xFF and both read through a ROM word past @tx_row_ptrs, faulting at their first
+           # (differently ordered) load
+           'sdr_upd_r25_tx_drive': lambda rng, regs: ([(G_UI + 0x44C, rng.randrange(30000, 75000000).to_bytes(4, 'little'))], None),
            'sdr_task': ram_bytes({0x1C8B: (0, 0, 0, 1), 0x1C8D: (0, 0, 0, 0, 0, 1), 0x1B3DD: (0, 1), 0x1B3DC: (0, 1),
                                   G_UI + 0x67: (0, 1), G_UI + 0x14: range(9)}),
            'dispreq_e7_task': both(ram_bytes({G_UI + 0x488: range(7), G_UI + 0x3F9: range(5), G_UI + 0x3FC: (0, 1, 2),
@@ -946,7 +989,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
                                                       (G_UI + 0x489, b'\0\0\0')], None)),
            'io_task': ram_bytes({G_UI + 0x2C: (0, 0, 1, 2), G_UI + 0x82: (0, 1), G_UI + 0xBA: (0, 1),
                                  G_UI + 0x40: (0, 1), G_UI + 0x14: (8, 8, 1, 3)}),
-           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}), 'beep_task': beep_task_args,
+           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}), 'beep_task': beep_task_args, 'cat_EM': cat_em_args,
            'swr_meter_protect': both(adc_words(G_UI, G_UI + 2),
                                      ram_bytes({G_UI + 0x67: (0, 1, 1, 1), G_UI + 0x3D: (0, 2), 0x1B4C6: range(11),
                                                 0x1B4C7: range(11)})),
@@ -988,15 +1031,21 @@ def norm_stack_ptrs(a, h):
     return [a, b.hex()]
 
 
-def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False, rets=None):
+def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False, rets=None,
+        stop=None):
     q = {'op': 'run', 'bases': bases, 'entry': entry, 'sp': STACK, 'seed': seed, 'budget': budget,
          'regs': {f'R{k + 1}': v for k, v in enumerate(regs[:NREG])},
          'stack': ([0x00030000] if isr else []) + list(regs[NREG:]),
          'loads': [[a, d.hex()] for a, d in loads], 'snap': SNAP, 'track': TRACK,
          'stubs': {str(a): [n, STUBS[n] if n in STUBS else rets[a][0], *STUB_DATA.get(n, ())] for a, n in stubs.items()},
          'cover': sorted(cover)}
+    if stop:
+        q['stop_after'] = {str(a): n for a, n in stop.items()}
     if rets:
         q['stub_rets'] = {str(a): v[1] for a, v in rets.items()}
+        sets = {str(a): [v[2][0], *v[2][1]] for a, v in rets.items() if len(v) > 2}
+        if sets:
+            q['stub_sets'] = sets
     if trace:
         q['trace'] = True
     if mmio_fixed:
@@ -1108,6 +1157,7 @@ class Checker:
         lead, isr = set(meta['blocks']), meta['isr']
         stubs = {self.orig.addr(n): n for n in STUBS if self.orig.addr(n) and n != fname}
         rets = {self.orig.addr(n): v for n, v in FUNC_STUBS.get(fname, {}).items() if self.orig.addr(n)}
+        stop = {self.orig.addr(n): k for n, k in FUNC_STOP.get(fname, {}).items() if self.orig.addr(n)}
         stubs.update({a: n for n, a in ((n, self.orig.addr(n)) for n in FUNC_STUBS.get(fname, {})) if a})
         rng = random.Random(seed)
         seen_reads = set()
@@ -1125,8 +1175,10 @@ class Checker:
             loads = fill + loads
             s = rng.getrandbits(31)
             for budget in (BUDGET, 8 * BUDGET):
-                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix, rets=rets)
-                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix, rets=rets)
+                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix, rets=rets,
+                         stop=stop)
+                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix, rets=rets,
+                         stop=stop)
                 if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                     break
             seen_reads |= set(r1['reads']) | set(r2['reads'])
@@ -1147,7 +1199,7 @@ class Checker:
                     extra = ''
                 return oaddr, 'differs', (f'emulation trial {t}: {d} differs{extra} '
                                           f'(orig ended {r1["end"]}, new {r2["end"]})')[:600]
-            ok += r1['end'] == 'return'
+            ok += r1['end'] in ('return', 'stop')
         trials *= FUNC_TRIALS.get(fname, 1)
         cov = len(reached & lead) / max(1, len(lead))
         covtxt = f'{cov:.0%} of {len(lead)} blocks reached' + (f', {inconclusive} trials inconclusive' if inconclusive else '')

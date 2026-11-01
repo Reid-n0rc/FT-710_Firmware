@@ -26,6 +26,15 @@ uint8_t FUN_fffb959c(uint32_t pos);
 #define TMR_S_METER 0x2A          /* meter_s updates when it has expired [fact: 0xFFFB796E] */
 #define TUNE_CYCLE_TUNING 2       /* g_ui.tune_cycle_3d during a tuner cycle: the SWR meter is pinned at 255 */
 
+/* vdd_scale_calc 0xFFFB742B: the supply meter scale from alignment items 001 (GN VDD MTR) and 015 (MT VDD MTR POS):
+ * (a001 / 192) x (0.07176471 / (13.8 / a015)) [fact: 0xFFFB742E (0x3D92F960), 0xFFFB7444 (13.8 = 0x415CCCCD)] */
+void vdd_scale_calc(void)
+{
+    const float k = 0.07176471f, volts = 13.8f;
+    float pos = (float)g_cfg105.a015_mt_vdd_mtr_pos;
+    vdd_scale = (float)g_cfg105.a001_gn_vdd_mtr / 192.0f * (k / (volts / pos));
+}
+
 /* meter_vdd 0xFFFB747C: the supply meter, AN003 / 16 (a byte) times the scale vdd_scale_calc leaves in 0x20FC0 */
 void meter_vdd(void)
 {

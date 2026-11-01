@@ -20,8 +20,10 @@
 //    "stubs":{addr:[name,nargs(,ptr_arg,len_arg)]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
 //    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions),
 //    "module_fp":true (the FPU instructions by the module's p-code instead of RxFpu), "fpsw":v (FPSW at entry, default 0x100),
-//    "stub_rets":{addr:[v,...]} (the return values of a stub, drawn from the seeded sequence)}
-//     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
+//    "stub_rets":{addr:[v,...]} (the return values of a stub, drawn from the seeded sequence),
+//    "stub_sets":{addr:[ram,v,...]} (a RAM byte the stub writes, its value drawn from the seeded sequence),
+//    "stop_after":{addr:n} (end "stop" at the n-th call of that stub: one pass of an endless loop)}
+//     -> {"end":"return"|"stop"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
 //         "diff":[[addr,"hex"],...] (snap ranges that differ from the start state), "hits":[addr,...] (cover
 //         addresses executed), "reads":[addr,...] (bytes in the track ranges read before any write)}
@@ -330,6 +332,22 @@ public class EquivMainEmu extends GhidraScript {
                 for (int k = 0; k < v.length; k++) v[k] = lv(a.get(k));
                 stubRets.put(Long.decode(e.getKey()), v);
             }
+        // "stub_sets":{addr:[ram, v,...]}: the stub also writes one RAM byte, drawn from the values (T24 MAIN round 5:
+        // sdr_task's updaters end the pass through the sdr_busy_write flag that a write sets)
+        Map<Long, long[]> stubSets = new HashMap<>();
+        if (q.has("stub_sets"))
+            for (Map.Entry<String, JsonElement> e : q.getAsJsonObject("stub_sets").entrySet()) {
+                JsonArray a = e.getValue().getAsJsonArray();
+                long[] v = new long[a.size()];
+                for (int k = 0; k < v.length; k++) v[k] = lv(a.get(k));
+                stubSets.put(Long.decode(e.getKey()), v);
+            }
+        // "stop_after":{addr:n}: the run ends ("stop") at the n-th call of that stub, e.g. main_loop at the second
+        // call of its first task: one pass of an endless loop (T24 MAIN round 5)
+        Map<Long, Integer> stopAfter = new HashMap<>(), stopCount = new HashMap<>();
+        if (q.has("stop_after"))
+            for (Map.Entry<String, JsonElement> e : q.getAsJsonObject("stop_after").entrySet())
+                stopAfter.put(Long.decode(e.getKey()), e.getValue().getAsInt());
         Set<Long> cover = new HashSet<>();
         if (q.has("cover")) for (JsonElement e : q.getAsJsonArray("cover")) cover.add(lv(e));
         Set<Long> hits = new TreeSet<>();
@@ -386,10 +404,24 @@ public class EquivMainEmu extends GhidraScript {
                             c.add(hex(shared.inspectConcrete(ram.getAddress(ptr), (int) len), 0, (int) len));
                     }
                     calls.add(c);
+                    Integer stopN = stopAfter.get(pc);
+                    if (stopN != null) {
+                        int k = stopCount.merge(pc, 1, Integer::sum);
+                        if (k >= stopN) {
+                            end = "stop";
+                            why = String.format("call %d of 0x%x", k, pc);
+                            break;
+                        }
+                    }
                     long[] rv = stubRets.get(pc);
                     long ret = rv != null ? rv[r.rng.nextInt(rv.length)]
                             : new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];
                     r.setReg("R1", ret);
+                    long[] sv = stubSets.get(pc);
+                    if (sv != null) {           // a byte the stubbed callee writes: sv[0] the address, then values
+                        long v = sv[1 + r.rng.nextInt(sv.length - 1)];
+                        shared.setConcrete(ram.getAddress(sv[0]), new byte[]{(byte) v});
+                    }
                     long ra = readLE(shared, csp);
                     r.setReg("SP", csp + 4);
                     t.overrideCounter(ram.getAddress(ra));
