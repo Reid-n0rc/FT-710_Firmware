@@ -94,7 +94,12 @@ STACK_TOP = 0x1004
 # functions of the whole radio state (T24 MAIN round 4: keyer_task runs only when tx_cw_keying_class() is not 0 and
 # soft timer 19 has expired); the calls are compared like the other stubs. A stubbed callee has no side effects, so
 # only callees whose effects the function does not read back are stubbed.
+# Trials per function as a multiple of --trials, where the cases to reach outnumber the default (round 4: cat_dispatch
+# has about 500 (index, length) pairs)
+FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2}
 FUNC_STUBS = {
+    # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
+    'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
     'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
                    'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
 }
@@ -610,14 +615,22 @@ def cat_mnemonic(rng, img, ext=False):
     return mn
 
 
+_TRIAL = 0          # the number of the running trial (Checker.check), for presets that enumerate cases
+
+
 def cat_dispatch_args(rng, regs):
     """cat_dispatch (slot, index, len): every index of the table with the lengths its case tests (T24 MAIN round 3;
-    random indexes and lengths reach only the error path)."""
+    random indexes and lengths reach only the error path). Round 4: the first trials go through every (index,
+    length) pair in turn (random draws gave each index about two trials: 55 % of the blocks), the rest are random."""
     lens = cat_lens()
-    idx = rng.randrange(104) if rng.random() < 0.95 else rng.randrange(104, 256)
+    pairs = [(i, n) for i in range(104) for n in lens.get(i, [3])]
     regs[0] = ARGBUF
+    if _TRIAL < len(pairs):
+        idx, regs[2] = pairs[_TRIAL]
+    else:
+        idx = rng.randrange(104) if rng.random() < 0.95 else rng.randrange(104, 256)
+        regs[2] = rng.choice(lens.get(idx, [3])) if rng.random() < 0.9 else rng.randrange(0, 0x40)
     regs[1] = idx
-    regs[2] = rng.choice(lens.get(idx, [3])) if rng.random() < 0.9 else rng.randrange(0, 0x40)
     slot = bytes([rng.randrange(1, 4), 0]) + regs[2].to_bytes(2, 'little') + cat_text(rng, b'XX')
     return [(ARGBUF, slot)], None
 
@@ -973,7 +986,9 @@ class Checker:
         rng = random.Random(seed)
         seen_reads = set()
         reached, ok, inconclusive = set(), 0, 0
-        for t in range(trials):
+        global _TRIAL
+        for t in range(trials * FUNC_TRIALS.get(fname, 1)):
+            _TRIAL = t
             regs, loads = draw_args(rng, lk.params)
             fill = fill_globals(rng, seen_reads)
             pre = PRESETS.get(fname) or (cat_handler_args if CAT_HANDLER.match(fname) else None)
@@ -1007,6 +1022,7 @@ class Checker:
                 return oaddr, 'differs', (f'emulation trial {t}: {d} differs{extra} '
                                           f'(orig ended {r1["end"]}, new {r2["end"]})')[:600]
             ok += r1['end'] == 'return'
+        trials *= FUNC_TRIALS.get(fname, 1)
         cov = len(reached & lead) / max(1, len(lead))
         covtxt = f'{cov:.0%} of {len(lead)} blocks reached' + (f', {inconclusive} trials inconclusive' if inconclusive else '')
         if ok == 0:

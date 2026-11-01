@@ -492,6 +492,71 @@ void cat_MW(const uint8_t *ctext, uint8_t set)
     vfo_store_back(side);
 }
 
+void vm_toggle(void);                         /* the V/M key: VFO <-> memory */
+
+/* the busy states in which VM is refused (scan, MIC key, tune cycle, dialog, TX lamp, DVS / message, KY sending,
+ * keypad) [fact: the compare chain of cat_VM 0xFFFAFADB] */
+static int vm_busy(void)
+{
+    return g_ui.scan_running == 1 || g_ui.mic_key_hold == 1 || g_ui.tune_cycle != 0 || g_ui.dialog_shown == 1 ||
+           g_ui.tx_lamp != 0 || g_ui.dvs_armed == 1 || g_ui.dvs_busy == 1 || g_ui.msg_rec_active == 1 ||
+           g_ui.dvs_state != 0 || g_ui.ky_send_0 == 1 || g_ui.ky_send_1 == 1 || g_ui.keypad_open == 1;
+}
+
+/* cat_VM 0xFFFAFADB: "VM;" = the V/M key; VM0 reads the active VFO's kind as two hex digits (00 VFO, 10 memory tune,
+ * 11 memory 001..099, 20 PMS, 21 P1L..P9U, 51 60 m channels, 91 EMG); "VM000;" returns to the VFO (one V/M press,
+ * and a second when the first did not reach the VFO). Gated by the V/M key's filter (0x309) and vm_busy. */
+void cat_VM(const uint8_t *text, uint16_t len)
+{
+    uint8_t state, ch, code;
+
+    if (len != 3 && text[2] != '0') {
+        cat_error = 1;
+        return;
+    }
+    if (g_opstate.active_vfo == VFO_A) {
+        state = g_opstate.vfo_state_a;
+        ch = g_mem_hdr.chan_a;
+    } else {
+        state = g_opstate.vfo_state_b;
+        ch = g_mem_hdr.chan_b;
+    }
+    if (len == 4) {
+        cat_reply[2] = '0';
+        if (state == VFO_STATE_MEMORY)
+            code = ch >= 0x84u ? 0x91 : ch >= 0x75u ? 0x51 : ch >= 99u ? 0x21 : 0x11;
+        else if (state == VFO_STATE_MEMTUNE)
+            code = 0x10;
+        else if (state == VFO_STATE_PMS)
+            code = 0x20;
+        else
+            code = 0;
+        byte2hex((char *)&cat_reply[3], code);
+        reply_done(5);
+        return;
+    }
+    if (!key_allowed(0x309, 0))
+        return;
+    if (vm_busy()) {
+        cat_error = 1;
+        return;
+    }
+    if (len == 3) {
+        vm_toggle();
+        return;
+    }
+    if (text[3] != '0' || text[4] != '0') {
+        cat_error = 1;
+        return;
+    }
+    if (state != VFO_STATE_VFO) {
+        vm_toggle();
+        state = g_opstate.active_vfo == VFO_A ? g_opstate.vfo_state_a : g_opstate.vfo_state_b;
+        if (state != VFO_STATE_VFO)
+            vm_toggle();
+    }
+}
+
 uint8_t dest_has_5mhz_channels(void);        /* 1 = the destination has the 60 m channels */
 uint8_t memch_dest_blocked(uint8_t ch);       /* 1 = the destination does not allow channel ch */
 
