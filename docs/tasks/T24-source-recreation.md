@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 16.30 % re-implemented, round 7; MAIN 12.32 % re-implemented, round 3; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (585 of 585) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 12.32 % re-implemented, round 3; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -1452,6 +1452,154 @@ entries (the round-2 NULL-buffer case); fixed before the run above.
 - Coverage: `cat_dispatch` reaches 55 % of its 598 blocks and `trx_sequencer` 60 % of 173 with 200 trials; more
   trials or presets that drive the handlers' own state would raise both.
 
+## DISPLAY, round 8 (2026-11-01)
+
+### Plan (round 8)
+
+1. Harness speed: model the RSPI interrupt flags in `tools/equiv_display_emu.py` so the read-burst trials stop
+   spinning to the budget; an honest result in less time, never a weaker comparison.
+2. Code, biggest self-contained first: the large SD functions (identify, init paths, bus speed, ACMDs), then the
+   FAT file system, the MAIN link, the update code and GUI building blocks as far as the round goes.
+3. After linking: `linkcheck` and the emulated boot; any new defect the boot finds is fixed.
+4. `status.tsv`, readability stats; Ghidra entries and names with evidence, proved on a copy.
+
+### DISPLAY: harness speed (round 8)
+
+Measured first **[fact: per-function times of a status run of round 7's tree, 2 worker processes, in the shared
+container]**: 634 functions, 2,243 s wall. Most of the time was not in the read bursts: every function took about
+7 s for 200 trials whatever its code (`bcd_to_bin`, one block: 7.1 s), 80 % of it memory handling: each run mapped
+36 MB of RAM, wrote the image's regions into it and read 16 MB of compared ranges back through `mem_read` and a
+`join` (cProfile). The functions with inconclusive trials (43) took 680 s, the RSPI read path (bursts, `rspi_read`,
+`rspi_read_pio`, the transmit waits) 277 s.
+
+Changes, each keeping the start state and what is compared:
+
+- **Copy-on-write start memory.** Each worker writes the start contents of each RAM range once per image into a
+  memfd; each run maps it `MAP_PRIVATE` and hands the pages to Unicorn (`mem_map_ptr`). Only written pages are
+  copied; the snapshots are slices of the mapping, one bytes object per range (the compare reports the same first
+  differing address). `bcd_to_bin`: 7.1 s → 3.9 s, the same detail line.
+- **RSPI interrupts** (`Run.rspi_irq`): SPCR written with SPTIE raises the transmit interrupt at once (the transmit
+  buffer is always empty) and the harness sets the transmit ISR's flag `rspi_tx_done[ch]`; an SPDR write while SPRIE
+  was last written set raises the receive interrupt (`rspi_rx_done[ch]`). Only the flags are modelled; the ISRs' own
+  register writes and `rspi_rx_count` are left out for both runs. *Open: the receive trigger level (the ISR fires
+  after RXTRG bytes, not after the first frame); would be settled by counting the clocked bytes against the trigger
+  table 0x20800434.*
+- **SPDCR pinned per trial** in the RSPI presets: nothing these functions call writes it, and a fresh random SPLW at
+  every read gave a burst another access size than `rspi_read_pio` had chosen, so `left -= 4` passed zero and ran to
+  the budget. A burst gets an access size that divides its byte count, its callers' contract.
+- **Length presets** for the four cache-range functions and the three CRCs: a random 32-bit length left half of their
+  trials inconclusive (never compared); the lengths now run from 0 over line and word boundaries to 64 KB (cache) or
+  within and just past a 1 KB buffer (CRC).
+
+Effect per function **[fact: the runs]**: `rspi0_read_burst` 32.2 s with 122 of 200 trials inconclusive → 5.3 s
+with 8; `rspi_read_pio` 23.7 s (81) → 4.0 s (2); `rspi0_tx_wait` 12.5 s (32) → 3.6 s (0); `icache_invalidate_range`
+27.4 s (103) → 3.5 s (0); `crc16_xmodem` 18.0 s (57) → 4.0 s (0). Mutations still reported as differing:
+`n < trg` → `n <= trg` in `rspi_read_pio`, the 16-bit dummy word 0xFFFF → 0xFFFE in a burst. The whole status run **[fact: per-function times, same
+container, other sessions running]**: round 7's tree 2,243 s wall with 2 workers for 634 functions; this round's tree
+1,120 s with 2 workers for 689 functions (before the length presets) and 908 s with 3 workers; over the 634 functions
+both trees have, the time inside the checks fell from 4,484 s to 2,046 s (2 workers). linkcheck (634 entries, 100
+trials, 2 workers, beside the emulated boot): 2,411 s; *open: why linkcheck gains less than status; would be
+settled by per-entry times of a linkcheck run (it logs none yet).*
+
+Also: an extent now ends at the next entry `aliases.tsv` gives too (0x2013DA6C's extent ran over 0x2013DB74, so
+its coverage counted both functions' blocks); `mmio_seq` plays a fixed MMIO read sequence (a CMD6 status block
+through SD_BUF0); a preset may substitute a copy of the SDHI operation table with slots 6 and 7 answering 0 (the
+card layer takes the table from the handle, so it is an input), which reaches the switch functions' accepting paths.
+
+### DISPLAY: code (round 8)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `drivers/sd_setup.c` (new) | 25 | clock, init v2 / v1 or MMC, CMD11, CMD3, CID check, CMD7, the transfer-state selection, ACMD51/6/13, CMD6, high speed, UHS, driver strength, bus speed, identify, CSD/CID, selected op, SCR bus width, sector and partition read/write, the card check |
+| `drivers/sd_drive.c` (new) | 17 | volume mount, `sd_driver_op` and its operations (attach, mount, unmount), task start, remount, poll, unmount, write protect, cluster-map state and prepare, mutex, CPU lock pair, `sd_delay_ms` |
+| `app/fat_format.c` | 15 | progress counters, layout, MBR, boot sector, FSInfo, FATs, root directory, volume id, geometry, volume format, `sd_fat_format`, `sd_format` |
+| `include/sd.h` | | the 26 operation slots by name, card context (sector buffer, SCR, SD status, CMD6 block, flags, speed, clock, format parameters, progress), drive record |
+
+Findings are in docs/code/display/filesystem.md "SD card layer, recreated (T24 round 8)". In short **[fact]**:
+twelve functions had no Ghidra entry (tail-call targets folded into their callers; `sd_select_bus_speed` is 104
+bytes, not 1,084); the UHS path is dead on this host (slots 4..7 answer -9, -10, 4, 5); the format code refuses
+cards of 32 GB and more (-5); the volume id ORs year, minute and hour where a DOS date would add them;
+`sd_card_unmount` 0x2013FD50 is a tail call of `fs_drive_unmount` (Ghidra's C showed that function's body).
+Not done: `sd_ins_check_task` (an endless task loop), `sd_mount_volume` and `sd_drive_mount` (equivalent in all
+trials but below the coverage floor: random sector data never holds a valid MBR); the FAT file system, the MAIN
+link, the update code and the GUI building blocks.
+
+Mutations: reported as differing: `+0x41000000` → `+0x40000000` in `sd_init_v2`, the volume id's 1900 → 1901, the
+FAT12/16 root directory 0x20 → 0x10 sectors and a reserved-sector step in `fat_format_layout`. Not caught (trials
+do not reach them): the clock mode of the SDR104 case in `sd_switch_uhs_speed`, the "cannot switch" test of
+`sd_set_driver_strength`, the `rsv < 9` boundary of the layout.
+
+### DISPLAY: checks and hybrid image (round 8)
+
+- `make link` **[fact: the run]**: 634 recreated functions linked, 145 in place (16,400 bytes), 489 in the gap
+  0x2042BC10..0x2043C910 (68,864 of 82,928 bytes), RAM2 empty; 489 entries patched (14,587 bytes of the image
+  changed); 51 byte-identical left as they are; 3 not linked (not verified); 1 held back (`gpio_cfg_reset`, reset
+  path). abicheck: the one known direct hazard (`sdhi_error_reset` / `sdhi_soft_reset`, dropped because its caller
+  is linked); 339 calls through a register, none reads r1, r2, r3 or ip after the call; 124 address-taken.
+- **linkcheck: 634 of 634 agree** (100 trials per entry) **[fact: the run]**.
+- **Emulated boot** (`display_boot_emu.py --compare`, seed 1, 1.5·10⁹ instructions each) **[fact: the run]**: the
+  hybrid **agrees with the original**: no fault, 33 tasks, `task_root` and `gui_main_loop` reached, 744 image functions
+  reached (original 712), 179 recreated functions executed, RAM2 empty and intact, nothing in the watched range,
+  5,648 untouched bytes at the bottom of `task_root`'s stack (original 5,672). No new defect found: the SD code is not
+  reached in the boot (no card data), so the boot says nothing about it beyond the link.
+- The gap has 14,064 bytes left (about 12 KB of armcc code at round 5's ratio); the next round's code goes into RAM2
+  (round 6's mechanism, tested with `--gap-limit`).
+
+### DISPLAY: results (status.tsv, round 8)
+
+| Verdict | Ghidra functions | Bytes (of 396,256) |
+|---|---:|---:|
+| identical | 48 | 3,942 |
+| equivalent | 626 | 71,714 |
+| differs | 0 | 0 |
+| not yet | 1,546 | 320,600 |
+
+**Re-implemented: 19.09 %** (75,656 bytes; round 7: 16.30 %), pinned xPack GCC 10.2.1, 200 trials per function.
+Bytes count with the Ghidra sizes of the round-7 export, in which `sd_select_bus_speed`, `sd_card_identify`,
+`sd_driver_op` & co. still include the twelve functions without an entry; after the round-8 re-export they count in
+their own rows.
+
+### DISPLAY: Ghidra (round 8)
+
+`tools/ghidra/entries_display.T24r8.tsv` has 12 new entries (also appended to `entries_display.tsv`),
+`names_display.T24r8.tsv` 16 names with evidence (also in `names_display.tsv`; the superseded rows of 0x2013DE60 and
+0x2013F79C removed): the twelve entries, `FUN_2013c928` → `sd_card_clock`, `FUN_2013cde8` →
+`sd_cmd11_voltage_switch`, `sd_switch_status_check` → `sd_set_driver_strength`, `fat_clear_root_dir` →
+`fat_format_volume`. Proved on a copy (`/home/user/ghidra_tasks/t24r8/disp`, OWNER root) **[fact: apply.log,
+modes.tsv there]**: FixFuncEntries 12 created, 0 failed, 10 branches marked as tail calls; ApplyNames 1,939 applied,
+0 failed; ExportFuncModes 2,270 functions (was 2,260), all A32; the callers shrink to their own code
+(`sd_select_bus_speed` 1,084 → 104, `sd_card_identify` 624 → 308, `sd_read_csd_cid` 304 → 108, `sd_driver_op`
+700 → 164, `fat_format_volume` 356 → 160, `sd_drive_flag5` 40 → 8); 0x2013F9F4 / 0x2013F9F8 were listed as
+`itron_loc_cpu` / `itron_unl_cpu` (Ghidra named the one-branch thunks after their targets) and become `sd_lock` /
+`sd_unlock`. No other entry, size or mode changes. Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24r8.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the alias rows of round 8 give addresses (or the old Ghidra names `sd_switch_status_check`,
+`fat_clear_root_dir`, which the resolver falls back from, round 7) and become redundant.
+
+### DISPLAY: blockers and next steps (round 8)
+
+- Not reached this round: the FAT file system, the MAIN link (`docs/code/display/mainlink.md`), the update code and
+  the GUI building blocks. The time went into the harness (measurement first: the per-run memory cost, not the
+  bursts, dominated) and the SD layer's presets (its paths need card answers in a consistent order).
+- `sd_mount_volume` and `sd_drive_mount` agree in all trials but stay below the coverage floor: a preset that serves
+  an MBR and a boot sector through SD_BUF0 (`mmio_seq`) would settle them.
+- Faster still: compare only the pages a run wrote (the anonymous pages of the private mapping, `/proc/self/pagemap`),
+  and per-entry times for linkcheck.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -1462,8 +1610,8 @@ entries (the round-2 NULL-buffer case); fixed before the run above.
    block (FixFuncEntries with `entries_display.T24r5.tsv`, ApplyNames), and re-export (T23 rules).
 4. DISPLAY, next by size and self-containment (round 7 did read data control, RSPI, DMAC and the SDHI command
    layer): the large SD functions (identify, the init paths, bus speed, the ACMDs), USB, the file system, the MAIN
-   link and the update code; then the application. Apply the round-7 Ghidra rows (commands in "DISPLAY: Ghidra
-   (round 7)").
+   link and the update code; then the application (round 8 did the SD card layer, the SD drive and the format code).
+   Apply the round-8 Ghidra rows (commands in "DISPLAY: Ghidra (round 8)").
 5. DISPLAY build: the hybrid image links and passes linkcheck; before the next round's code goes in, the in-place
    placement and the second region RAM2 of "the gap and the second region" (round 5); a source-only image needs the
    rest of the tree, the NORTi stand-in's port (IRQ entry and exit, the OSTM tick) and a recreated `reset_in_ram`.
