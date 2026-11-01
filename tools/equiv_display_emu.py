@@ -53,6 +53,7 @@ import os
 import random
 import struct
 import sys
+import time
 
 from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_ARM, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_HOOK_INTR, \
     UC_PROT_ALL
@@ -80,6 +81,7 @@ SCRATCH_ARGS = 0x21200000          # argument buffers
 STOP = 0x3F000000                  # return address
 STACK_TOP, STACK_SIZE = 0x3E000000, 0x10000
 BUDGET = 1000000
+FULL_COMPARE = os.environ.get('EQUIV_FULL_COMPARE') == '1'
 NARGS = 8
 MIN_COVER = 0.5
 # compared after each run: the RW data of the image (.data .bss, .data2 .bss2, the boot-info block, the uncached
@@ -418,8 +420,85 @@ def ram_template(img):
     return _TEMPLATES[key][1]
 
 
+PAGE = 0x1000
+_PAGEMAP = None
+
+
+def dirty_pages(ptr, mlo, lo, hi):
+    """Page addresses in lo..hi (inside the mapping of mlo at host address ptr) that the run wrote: present and
+    anonymous, or swapped out, in /proc/self/pagemap (bit 63 present, 62 swapped, 61 file page or shared). A page of
+    a MAP_PRIVATE memfd mapping is a file page until its first write copies it (copy-on-write), so every written page
+    is listed. A page that was only read can be listed too (the shared zero page reads as not a file page): it is
+    then compared like a written one, so a false entry costs time, never a missed difference."""
+    global _PAGEMAP
+    if _PAGEMAP is None:
+        _PAGEMAP = open('/proc/self/pagemap', 'rb', buffering=0)
+    first = (ptr + lo - mlo) // PAGE
+    n = (hi - lo + PAGE - 1) // PAGE
+    ent = os.pread(_PAGEMAP.fileno(), 8 * n, 8 * first)
+    out = []
+    for k, e in enumerate(struct.unpack(f'<{n}Q', ent)):
+        if e >> 62 & 1 or (e >> 63 & 1 and not e >> 61 & 1):
+            out.append(lo + k * PAGE)
+    return out
+
+
+class WrittenPages:
+    """A compared range after a run (round 9): the pages written in it ({page address: bytes}) and the template it
+    started from (memfd, at address mlo), which holds every other page."""
+    __slots__ = ('lo', 'hi', 'pages', 'fd', 'mlo')
+
+    def __init__(self, lo, hi, pages, fd, mlo):
+        self.lo, self.hi, self.pages, self.fd, self.mlo = lo, hi, pages, fd, mlo
+
+    def page(self, p):
+        got = self.pages.get(p)
+        if got is None:
+            got = os.pread(self.fd, PAGE, p - self.mlo)
+        return got[:min(PAGE, self.hi - p)]
+
+    def full(self):
+        return b''.join(self.page(p) for p in range(self.lo, self.hi, PAGE))
+
+
+_TDIFF = {}
+
+
+def template_differences(x, y):
+    """Pages of x's range where the two runs' start templates differ (none for two runs of one image; for
+    linkcheck the hybrid's own bytes, e.g. RAM2 when it is compared), computed once per worker."""
+    if x.fd == y.fd:
+        return set()
+    key = (x.fd, y.fd, x.lo, x.hi)
+    if key not in _TDIFF:
+        a = os.pread(x.fd, x.hi - x.lo, x.lo - x.mlo)
+        b = os.pread(y.fd, y.hi - y.lo, y.lo - y.mlo)
+        _TDIFF[key] = {x.lo + k for k in range(0, len(a), PAGE) if a[k:k + PAGE] != b[k:k + PAGE]}
+    return _TDIFF[key]
+
+
+def first_difference(x, y):
+    """Address of the first byte in which two compared ranges differ, or None. Bytes or WrittenPages: a page that
+    neither run wrote holds its template on both sides (for linkcheck the two images' templates, which are equal
+    outside the hybrid's code), so it is compared only when the templates differ there; pages written by either
+    run are compared byte for byte."""
+    if not isinstance(x, WrittenPages) or not isinstance(y, WrittenPages):
+        x = x.full() if isinstance(x, WrittenPages) else x
+        y = y.full() if isinstance(y, WrittenPages) else y
+        if x == y:
+            return None
+        return next(k for k in range(len(x)) if x[k] != y[k])
+    pages = sorted(set(x.pages) | set(y.pages) | template_differences(x, y))
+    for p in pages:
+        a, b = x.page(p), y.page(p)
+        if a != b:
+            return p - x.lo + next(k for k in range(len(a)) if a[k] != b[k])
+    return None
+
+
 class Run:
     def __init__(self, img, blobs, stub_addrs, seed, fill, args, cover=None):
+        self.img = img
         self.maps = []
         for lo, hi, fd in ram_template(img):
             mm = mmap.mmap(fd, hi - lo, flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ | mmap.PROT_WRITE)
@@ -587,9 +666,21 @@ class Run:
             sctlr = uc.reg_read(A.UC_ARM_REG_CP_REG, SCTLR)
         except Exception:
             sctlr = None
-        snap = tuple(self.read(lo, hi - lo) for lo, hi in self.snap)
+        snap = tuple(self.written(lo, hi) for lo, hi in self.snap)
         return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap,
-                'sctlr': sctlr, 'ram2': self.read(RAM2, RAM2_END - RAM2) if self.snap is SNAP_LINK else None}
+                'sctlr': sctlr, 'ram2': self.written(RAM2, RAM2_END) if self.snap is SNAP_LINK else None}
+
+    def written(self, lo, hi):
+        """The contents of lo..hi after the run (round 9): inside a copy-on-write RAM mapping a WrittenPages, the
+        pages the run wrote (the anonymous pages of the private mapping, /proc/self/pagemap) with the start
+        template for the rest; elsewhere (argument buffers) the bytes themselves. Round 8 copied every compared range
+        whole (16 MB per run); the comparison is the same, see compare()."""
+        for mlo, mhi, mm, ptr in self.maps:
+            if mlo <= lo and hi <= mhi:
+                fd = next(f for a, b, f in ram_template(self.img) if a == mlo)
+                return WrittenPages(lo, hi, {p: mm[p - mlo:p - mlo + PAGE] for p in dirty_pages(ptr, mlo, lo, hi)},
+                                    fd, mlo)
+        return self.read(lo, hi - lo)
 
     def read(self, a, n):
         """n bytes at a: a slice of the copy-on-write mapping, or through Unicorn outside it."""
@@ -654,10 +745,15 @@ def compare(a, b, snap=SNAP):
     for k in ('end', 'ret', 'mmio', 'calls', 'sctlr'):
         if a[k] != b[k]:
             return k
-    for (lo, hi), x, y in zip(snap, a['writes'], b['writes']):    # one bytes object per range (round 8)
-        if x != y:
-            i = next(k for k in range(len(x)) if x[k] != y[k])
+    for (lo, hi), x, y in zip(snap, a['writes'], b['writes']):    # written pages per range (round 9)
+        i = first_difference(x, y)
+        if i is not None:
             return f'memory at {lo + i:#x}'
+    if FULL_COMPARE:      # EQUIV_FULL_COMPARE=1: the round-8 comparison of the whole ranges as well, which must agree
+        for (lo, hi), x, y in zip(snap, a['writes'], b['writes']):
+            fx = x.full() if isinstance(x, WrittenPages) else x
+            fy = y.full() if isinstance(y, WrittenPages) else y
+            assert fx == fy, f'written-page comparison missed a difference in {lo:#x}..{hi:#x}'
     return None
 
 
@@ -712,9 +808,33 @@ def cp15_ops(code, addr, thumb):
     return ops
 
 
+_RETURNS = {}
+
+
 def returns_value(obj, fname):
-    import equiv_m33_emu as M
-    return M.returns_value(obj, fname)
+    """Return size of fname from its object's DWARF (equiv_m33_emu.returns_value's rule: None for void, else the
+    size in bytes, 4 without DWARF or a size). Round 9: one walk of the DIEs per object, cached; the per-function
+    walk made linkcheck's start-up take 80 s in every worker (_ret_sizes over 640 functions)."""
+    if obj.path not in _RETURNS:
+        out = {}
+        if obj.elf.has_dwarf_info():
+            for cu in obj.elf.get_dwarf_info().iter_CUs():
+                for die in cu.iter_DIEs():
+                    if die.tag != 'DW_TAG_subprogram' or 'DW_AT_name' not in die.attributes or \
+                            'DW_AT_declaration' in die.attributes:
+                        continue
+                    name = die.attributes['DW_AT_name'].value.decode()
+                    if name in out:
+                        continue
+                    if 'DW_AT_type' not in die.attributes:
+                        out[name] = None
+                        continue
+                    t = die.get_DIE_from_attribute('DW_AT_type')
+                    while 'DW_AT_byte_size' not in t.attributes and 'DW_AT_type' in t.attributes:
+                        t = t.get_DIE_from_attribute('DW_AT_type')
+                    out[name] = t.attributes['DW_AT_byte_size'].value if 'DW_AT_byte_size' in t.attributes else 4
+        _RETURNS[obj.path] = out
+    return _RETURNS[obj.path].get(fname, 4)
 
 
 def two_strings(rng, args, sized=False):
@@ -1693,6 +1813,12 @@ def _link_one(job):
     if _HYB is None:
         _HYB = Image(os.path.join(SRC, 'out', 'FT-710_DISPLAY_hybrid.bin'))
     fname, oaddr, thumb, seed, trials = job
+    t0 = time.monotonic()
+    v, d, ok, inconclusive = _link_trials(fname, oaddr, thumb, seed, trials)
+    return fname, v, d, time.monotonic() - t0, inconclusive
+
+
+def _link_trials(fname, oaddr, thumb, seed, trials):
     res = _RES
     stub_addrs = {res.func(n)[0]: n for n in STUBS if res.func(n)}
     rng = random.Random(seed)
@@ -1707,7 +1833,7 @@ def _link_one(job):
             runs = [Run(res.img, [], stub_addrs, sd, fill, args), Run(_HYB, [], stub_addrs, sd, fill, args)]
             for r in runs:
                 r.snap = SNAP_LINK
-            before = [r.read(RAM2, RAM2_END - RAM2) for r in runs]
+            before = [r.written(RAM2, RAM2_END) for r in runs]
             r1, r2 = (r.go(oaddr, thumb, size, budget) for r in runs)
             if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                 break
@@ -1715,16 +1841,27 @@ def _link_one(job):
             inconclusive += 1
             continue
         # RAM2 holds code in the hybrid only: both runs must change it alike (an argument pointer may point there)
-        d = compare(r1, r2, SNAP_LINK) or ('RAM2' if bytes(x ^ y for x, y in zip(r1['ram2'], before[0])) !=
-                                           bytes(x ^ y for x, y in zip(r2['ram2'], before[1])) else None)
+        d = compare(r1, r2, SNAP_LINK) or ('RAM2' if ram2_changes(r1['ram2'], before[0]) !=
+                                           ram2_changes(r2['ram2'], before[1]) else None)
         if d:
-            return fname, 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})'
+            return 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})', ok, inconclusive
         ok += r1['end'] == 'return'
-    return fname, 'same', f'{trials} trials agree ({ok} returned normally, {inconclusive} inconclusive)'
+    return 'same', f'{trials} trials agree ({ok} returned normally, {inconclusive} inconclusive)', ok, inconclusive
 
 
 _HYB = None
 _RETS = None
+
+
+def ram2_changes(after, before):
+    """{page: after XOR before} of the RAM2 pages a run changed (round 9: from the written pages; round 8 XORed the
+    whole 384 KB twice per trial in Python, most of a linkcheck entry's time)."""
+    out = {}
+    for p in sorted(set(after.pages) | set(before.pages)):
+        a, b = after.page(p), before.page(p)
+        if a != b:
+            out[p] = bytes(u ^ v for u, v in zip(a, b))
+    return out
 
 
 def _ret_sizes():
@@ -1884,15 +2021,27 @@ def cmd_linkcheck(args):
     import multiprocessing
     rows = read_tsv(os.path.join(SRC, 'out', 'patches.tsv'))[1:]
     modes = {int(r[0], 16): r[3] == 'thumb' for r in read_tsv(MODES_TSV)[1:]}
-    jobs = [(r[1], int(r[0], 16), modes.get(int(r[0], 16), False), args.seed, args.trials) for r in rows if r[0] != '-']
+    jobs = [(r[1], int(r[0], 16), modes.get(int(r[0], 16), False), args.seed, args.trials) for r in rows
+            if r[0] != '-' and (not args.functions or r[1] in args.functions)]
     cnt = {}
+    times = []
+    t0 = time.monotonic()
     with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
-        for fname, v, d in pool.imap_unordered(_link_one, jobs):
+        for fname, v, d, sec, inc in pool.imap_unordered(_link_one, jobs):
             cnt[v] = cnt.get(v, 0) + 1
+            times.append((sec, fname, v, inc))
             if v != 'same' or args.verbose:
-                print(f'equiv_display_emu: linkcheck {fname:28s} {v}: {d}', file=sys.stderr)
+                print(f'equiv_display_emu: linkcheck {fname:28s} {v}: {d} ({sec:.1f} s)', file=sys.stderr)
+    # per-entry times (round 9; round 8 had none, so the slow entries were unknown): out/linkcheck_times.tsv
+    with open(os.path.join(SRC, 'out', 'linkcheck_times.tsv'), 'w') as f:
+        f.write('seconds\tfunction\tverdict\tinconclusive\n')
+        for sec, fname, v, inc in sorted(times, reverse=True):
+            f.write(f'{sec:.2f}\t{fname}\t{v}\t{inc}\n')
+    total = sum(t[0] for t in times)
+    slow = ', '.join(f'{n} {sec:.1f} s' for sec, n, _, _ in sorted(times, reverse=True)[:5])
     print('equiv_display_emu: linkcheck: ' + ', '.join(f'{k} {v}' for k, v in sorted(cnt.items())) +
-          f' (of {len(jobs)} patched or in-place entries)')
+          f' (of {len(jobs)} patched or in-place entries); {time.monotonic() - t0:.0f} s wall, {total:.0f} s in the '
+          f'entries (slowest: {slow}); wrote src/display/out/linkcheck_times.tsv')
 
 
 def require_objects():
@@ -1965,6 +2114,7 @@ def main():
     c.add_argument('--object', action='append', help='check every function of this object (e.g. drivers/riic.o)')
     c.add_argument('--jobs', type=int, default=0)
     lc = sub.add_parser('linkcheck', help='the hybrid image against the original at every patched entry')
+    lc.add_argument('functions', nargs='*', help='only these entries (default: all)')
     lc.add_argument('--jobs', type=int, default=0)
     lc.add_argument('--verbose', action='store_true')
     lc.add_argument('--trials', type=int, default=100)
