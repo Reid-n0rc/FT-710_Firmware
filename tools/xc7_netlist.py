@@ -595,6 +595,11 @@ def slice_handler(nl, site, sty, f, fw, pk, dirs, tile, tfs):
                 pins = {"A[%d]" % i: (P("%s%d" % (L, i + 2)), "I") for i in range(5)}
                 # SMALL mode: the 6LUT (O6) half takes its data from DI2 = the X bypass pin and the 5LUT
                 # (O5) half from DI1 (UG474 Figures 7 and 18) (#92)
+                if small:
+                    # dual SRL16: pin A6 (A[4]) is the mode select, tied high; each half is a 16-deep shift
+                    # register addressed by A[3:0] only (UG474 Fig. 18). Keeping A[4] = 1 made the O6 half 16
+                    # clocks too long, which skewed half the ADC bits and turned the RX IF into noise (#193)
+                    pins["A[4]"] = (GND, "I")
                 pins.update({"D": (P(L + "X") if small else d, "I"), "CE": (we, "I"), "CLK": (clk, "I"),
                              "Q": (o6[L], "O"), "Q31": (mc31[L], "O")})
                 nl.cell(S + L + "LUT", "SRLC32E", site, {"INIT": (init >> 32) if small else init & 0xFFFFFFFF,
