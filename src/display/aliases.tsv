@@ -9,3 +9,4 @@ icache_invalidate_range	0x20100f84	[inference] ICIMVAU per line or ICIALLU, then
 dcache_clean_invalidate_range	0x20100fd8	[fact] its loop issues DCCIMVAC (mcr c7,c14,1 at 0x20101004); Ghidra calls it dcache_invalidate_range
 dcache_clean_invalidate_all	0x2010101c	[fact] dcache_setway_all(2) = DCCISW; Ghidra calls it dcache_invalidate_all
 dcache_invalidate_range	0x20101088	[fact] its loop issues DCIMVAC (mcr c7,c6,1 at 0x201010B4); Ghidra calls it dcache_clean_invalidate_range
+vec_reset	0x20100000	[fact] the exception vector table (8 branches and the initial-SP word) at the image base; Ghidra has vec_reset there but the export lists no function (startup/vectors.S)

@@ -17,13 +17,19 @@ CFLAGS := -std=gnu99 -g -O2 -marm -mcpu=cortex-a9 -mfloat-abi=soft -ffreestandin
           -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-tree-loop-distribute-patterns -fno-ipa-ra -Wall -Wextra -Wno-unused-parameter -Iinclude
 
 SRCS := $(wildcard app/*.c lib/*.c drivers/*.c)
-OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRCS))
+ASRCS := $(wildcard lib/*.S startup/*.S)
+OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRCS)) $(patsubst %.S,$(OUT)/obj/%.o,$(ASRCS))
 
 all: $(OBJ)
 
 $(OUT)/obj/%.o: %.c $(wildcard include/*.h)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# hand-written run-time routines, transcribed from the image (byte-identical at their original addresses)
+$(OUT)/obj/%.o: %.S
+	@mkdir -p $(dir $@)
+	$(CC) -mcpu=cortex-a9 -mfloat-abi=soft -c $< -o $@
 
 check: all
 	python3 -I ../../tools/equiv_display_emu.py status

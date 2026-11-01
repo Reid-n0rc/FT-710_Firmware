@@ -470,6 +470,24 @@ python3 -I tools/readability_stats.py readme
 After the re-export the alias rows of the three renamed functions in `src/display/aliases.tsv` are redundant (they
 name the same addresses) and can go.
 
+## DISPLAY, round 4 (2026-11-01)
+
+### Plan (round 4)
+
+1. Run-time helpers C cannot express, as assembly: `__aeabi_uldivmod` and `__aeabi_ldivmod` (quotient r0:r1,
+   remainder r2:r3) and the hand-written Thumb fplib routines; the harness learns to compare r2:r3 and to report a
+   function as **identical** when its bytes, linked at the original address, are the image's.
+2. Drivers in C from `decomp/display` and `docs/code/display`, biggest self-contained first: RIIC, SCIF, SPI flash /
+   SPIBSC, SDHI, VDC5, then the file system, the MAIN link and the update code, as far as the round goes; presets
+   where a function walks a structure.
+3. Linker script: a **hybrid link** that makes a complete image now: the original image (read from `build/` at link
+   time, never committed) at 0x20100000 with its Region$$Table and RW regions untouched, the recreated code in the
+   gap 0x2042BC10..0x2043FFFF that `reset_in_ram` already copies from flash, and each recreated function's original
+   entry patched with a branch to its recreation; the original addresses of everything else come from a generated
+   symbol file. Plus a minimal NORTi stand-in (`rtos/`) with the `itron_*` services the code uses, for a later
+   source-only build (the hybrid keeps the original kernel, whose internals the rest of the image touches).
+4. `status.tsv`, task file, READMEs, readability stats; Ghidra names with evidence, proved on a copy.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
