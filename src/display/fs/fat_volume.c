@@ -278,11 +278,11 @@ int fs_drive_attach(fs_drive_t *d, int letter, int (*op)(fs_drive_t *, int, uint
         p->next = d;
     }
     d->next = 0;
-    d->fat_cache_hdr = 0;
     d->fat_cache_slots = 0;
+    d->fat_cache_secs = 0;
     d->fat_cache = 0;
-    d->dir_cache_hdr = 0;
     d->dir_cache_slots = 0;
+    d->dir_cache_secs = 0;
     d->dir_cache = 0;
     if ((r = d->op(d, 5, 0, 0, 1)) != 0)
     {

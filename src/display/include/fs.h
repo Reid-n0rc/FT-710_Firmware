@@ -43,11 +43,11 @@ typedef struct fs_drive
     uint32_t free_count;      /* +0x3C: FSInfo free clusters, -1 unknown */
     uint32_t next_free;       /* +0x40: FSInfo next free cluster, -1 unknown */
     uint8_t *fat_cache;       /* +0x44 */
-    uint16_t fat_cache_hdr;   /* +0x48: slot header words before the sectors */
-    uint16_t fat_cache_slots; /* +0x4A */
+    uint16_t fat_cache_slots; /* +0x48: slots (a header word, fat_cache_secs sectors and an age each) */
+    uint16_t fat_cache_secs;  /* +0x4A: sectors per slot */
     uint8_t *dir_cache;       /* +0x4C */
-    uint16_t dir_cache_hdr;   /* +0x50 */
-    uint16_t dir_cache_slots; /* +0x52 */
+    uint16_t dir_cache_slots; /* +0x50 */
+    uint16_t dir_cache_secs;  /* +0x52 */
     uint8_t _r54[4];
     uint8_t *clmap;           /* +0x58: cluster-use bitmap */
     uint8_t _r5c[4];

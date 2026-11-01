@@ -1854,6 +1854,7 @@ PRESETS.update({n: (lambda rng, args: fs_vol_args(rng, args, 'drv')) for n in ('
 
 
 FS_OUT = SCRATCH_ARGS + 0xB000       # an output word
+FS_CACHE = SCRATCH_ARGS + 0x1A000    # the FAT cache, +0x2000 the directory cache, +0x4000 a buffer for set-ups
 FS_CLMAP = SCRATCH_ARGS + 0x14000    # a cluster-use bitmap
 
 
@@ -1895,6 +1896,33 @@ def fs_spec_args(rng, args, spec):
         d[0x54] = rng.choice([1, 1, 0])
         struct.pack_into('<II', d, 0x60, cover, rng.choice([cover, 0, n]))
         args['buffers'] += [(FS_CLMAP, bytes(bits))]
+    cache = {}
+    for kind, off, hdr_mask in (('fat', 0x44, 0x7FFFFFFF), ('dir', 0x4C, 0xFFFFFFFF)):
+        if rng.random() < 0.45:
+            # a FAT or directory cache (fat_cache.c's layout): 1..4 slots of 1..2 sectors, headers of FAT sectors
+            # (or data sectors for the directory cache) or 0, dirty bits, distinct ages 1..n or 0, the sectors'
+            # contents from the card
+            slots, secs = rng.choice([1, 2, 3, 4]), rng.choice([1, 1, 2])
+            at = FS_CACHE + (0 if kind == 'fat' else 0x2000)
+            hdr, data, ages = [], b'', list(range(1, slots + 1))
+            rng.shuffle(ages)
+            for k in range(slots):
+                if kind == 'fat':
+                    first = vol.rsv + secs * rng.randrange(max(1, vol.fatsz // secs)) if rng.random() < 0.85 else 0
+                    word = first | (0x80000000 if first and rng.random() < 0.3 else 0)
+                else:
+                    first = rng.choice([0, vol.data_start + rng.randrange(64), rng.randrange(vol.sectors)])
+                    word = first
+                hdr.append(word)
+                o = (vol.start + first) * 512
+                data += bytes(args['disk'][o:o + secs * 512]).ljust(secs * 512, b'\0')
+                if rng.random() < 0.2:
+                    ages[k] = 0
+            tail = b''.join(struct.pack('<H', a if kind == 'fat' else rng.choice([secs, secs, 1])) for a in ages)
+            args['buffers'] += [(at, struct.pack(f'<{slots}I', *hdr) + data + tail)]
+            struct.pack_into('<IHH', d, off, at, slots, secs)
+            cache[kind] = (at, slots, secs, hdr)
+    args['fs_cache'] = cache
     args['buffers'] = [b if b[0] != FS_DRIVE else (FS_DRIVE, bytes(d)) for b in args['buffers']]
     args['buffers'] += [(FS_OUT, bytes(16))]
     vals = []
@@ -1922,6 +1950,15 @@ def fs_spec_args(rng, args, spec):
             'n': lambda: rng.choice([0, 1, 2]),
             'Z': lambda: rng.getrandbits(32),
             'Q': lambda: rng.choice([FS_DRIVE + 0x200, FS_DRIVE + 0x200, FS_DRIVE2]),
+            # caches: a buffer (any alignment), its size, sectors per slot, a FAT sector, a slot
+            'G': lambda: FS_CACHE + 0x4000 + rng.choice([0, 0, 1, 2, 3]),
+            'z': lambda: rng.choice([0, 0x205, 0x206, 0x208, 0x40C, 0x1000, 0x2000, rng.randrange(0x4000)]),
+            'k': lambda: rng.choice([0, 1, 1, 2, 3]),
+            'E': lambda: rng.choice([vol.rsv + rng.randrange(vol.fatsz), vol.rsv, rng.choice(
+                [h & 0x7FFFFFFF for h in args['fs_cache'].get('fat', (0, 0, 0, [0]))[3]]), rng.getrandbits(16)]),
+            'e': lambda: rng.choice([vol.data_start + rng.randrange(64), rng.choice(
+                [h + rng.randrange(2) for h in args['fs_cache'].get('dir', (0, 0, 0, [0]))[3]]), rng.getrandbits(16)]),
+            's': lambda: rng.randrange(1, args['fs_cache'].get('fat', (0, 1))[1] + 1),
         }[k]())
     for i, v in enumerate(vals):
         regs[i] = v
@@ -1961,6 +1998,9 @@ FS_SPECS = {
     'fs_check_ready': 'D', 'fs_init': 'TnUn', 'fs_drive_attach': 'QLFZRY', 'fs_drive_attach_512': 'QLFZR',
     'fs_exit': 'D', 'fs_vol_clear_geometry': 'D', 'fs_drive_mount': 'D', 'fs_drive_unmount': 'D',
     'fs_drive_detach': 'D',
+    'fs_fatcache_setup': 'DGzk', 'fs_fatcache_setup_a': 'DGzk', 'fs_fatcache_setup_b': 'DGzk',
+    'fs_dircache_setup': 'DGzk', 'fatcache_lookup': 'DE', 'fatcache_load': 'DEO', 'fatcache_touch': 'Ds',
+    'dircache_lookup': 'De',
 }
 PRESETS.update({n: (lambda rng, args, sp=spec: fs_spec_args(rng, args, sp)) for n, spec in FS_SPECS.items()})
 

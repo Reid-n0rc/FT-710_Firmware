@@ -226,8 +226,8 @@ int fat_table_sector_get(fs_drive_t *d, uint32_t n, uint8_t **p, uint8_t *work)
             return r;
         }
     }
-    *p = d->fat_cache + (slot - 1) * d->bps + d->fat_cache_hdr * 4;
-    slot = (uint16_t)((int)(slot - 1) / (int)d->fat_cache_slots + 1);
+    *p = d->fat_cache + (slot - 1) * d->bps + d->fat_cache_slots * 4;
+    slot = (uint16_t)((int)(slot - 1) / (int)d->fat_cache_secs + 1);
     fatcache_touch(d, slot);
     return 0;
 }
@@ -262,7 +262,7 @@ int fat_table_sector_dirty(fs_drive_t *d, uint32_t n, const uint8_t *buf)
     {
         return -69;
     }
-    uint32_t slot = (uint16_t)((s - 1) / (int)d->fat_cache_slots + 1);
+    uint32_t slot = (uint16_t)((s - 1) / (int)d->fat_cache_secs + 1);
     fatcache_touch(d, slot);
     ((uint32_t *)cache)[slot - 1] |= 0x80000000u;
     return 0;
