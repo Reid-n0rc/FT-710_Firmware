@@ -21,7 +21,7 @@ docs/code/ function table (found the way tools/readable_view.py assigns them) ha
 CommentCode.java comments the first call of each such function in every caller.
 
 comments_<image>.tsv (curated, by hand): address<TAB>comment<TAB>evidence, '#' lines are comments. The address is an
-instruction inside a function (not its entry); the comment is one short line; evidence is "[fact: <address or doc>]" or
+instruction inside a function (not its entry); comment + space + evidence at most 74 characters (longer ones wrap in the C); evidence is "[fact: <address or doc>]" or
 "[inference: <reason>]" / "[inference]". `check` tests the form; CommentCode.java tests the address against the program.
 """
 import os

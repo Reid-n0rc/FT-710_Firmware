@@ -910,7 +910,8 @@ canonical projects and re-export (open steps below).
 - **Shape guard:** a comment that would print right above the condition of an `else if` makes the decompiler write
   `else { /* ... */ if (...)` instead. The rules skip such places (`elseIfHeader`: the comment's block has no statement
   before its CBRANCH and is the only successor of another conditional branch). The first run without the guard changed 32
-  lines of the DISPLAY export this way; with it the code lines of all four exports are unchanged.
+  lines of the DISPLAY export this way; with them the code lines of all four exports are unchanged (a second guard keeps a `[doc]` comment out of a
+  `do { } while (...)` condition).
 - **Not done, with the reason:** frequency constants (Hz → kHz/MHz): Ghidra already prints them in decimal (44 constants in
   MAIN, e.g. `param_1 < 28000000`), so a comment would repeat the line. CAT command codes: the code works with table indexes,
   not the mnemonic characters (no two-letter ASCII constant in MAIN is a CAT mnemonic); `cat_dispatch` prints `case CAT_xx`
@@ -921,7 +922,40 @@ canonical projects and re-export (open steps below).
   curated row.
 
 ### Findings (per-task copies `/home/user/ghidra_tasks/comments/`, 2026-10-30)
-@@FINDINGS@@
+Copies of `ghidra/FT710_{MAIN,DISPLAY,IFDSP}` as of 2026-10-30 15:42 (before the T23e round 3 names; the comments are by
+address, so they do not depend on that). Each program: export (base), `CommentCode.java`, export (after), `CommentCode.java`
+again.
+
+| Image | Curated | `[sfr]` | `[doc]` (of them `[doc, inference]`) | `[enum]` | Comments | Functions with one | Second run |
+|---|---:|---:|---:|---:|---:|---:|---|
+| MAIN | 126 | 955 | 1,076 (64) | 0 | 2,157 | 1,055 / 3,793 (27.8 %) | 0 set, 0 removed |
+| DISPLAY | 43 | 401 | 1,119 (297) | 0 | 1,563 | 703 / 2,213 (31.8 %) | 0 set, 0 removed |
+| IFDSP M33 | 14 | 273 | 49 (18) | 0 | 336 | 114 / 427 (26.7 %) | 0 set, 0 removed |
+| IFDSP HiFi4 | 48 | 292 | 184 (163) | 0 | 524 | 194 / 1,083 (17.9 %) | 0 set, 0 removed |
+| **All** | **231** | **1,921** | **2,428** | **0** | **4,580** | 2,066 / 7,516 (27.5 %) | |
+
+- **Every comment prints** in the export, each on one line: curated rows are limited to 74 characters with their tag
+  (Ghidra wraps a PRE comment longer than that at line width 100, indent 20; `code_comments.py check` enforces it), and a
+  generated one that long is left out (none was).
+- **The code is unchanged:** diffing base against after, every added line is a comment and no line was removed, in all four
+  exports; `decomp_quality.py compare` reports no metric worse for any image. Two guards were needed: the first run turned
+  `else if` chains into `else { /* ... */ if` (32 lines in DISPLAY), and put a `[doc]` comment inside a `do { } while (...)`
+  condition (`strcasecmp(..., ".dat")` in a DISPLAY file search loop). The generated rules now skip both places, and one
+  curated row (0x23 in `task_mainlink_dispatch`) was dropped. The else-if guard also matches a plain nested `if`, so for
+  curated rows it only prints a note (11 rows noted; none of them changed the C).
+- `tools/readable_view.py` builds from the commented export (main 2,786 functions assigned, display 1,823, m33 427, hifi4 956).
+- `purposes_<image>.tsv` after the merge of the T23e round 3 names: main 344, display 513, m33 46, hifi4 118 functions.
+- Examples: `/* Protect [sfr] */` above `SYSTEM_PRCR = 0xa50b`; `/* FFRO control 0 [sfr] */` above `uVar11 =
+  CLKCTL0_FFROCTL0;`; `/* Page-split write with WIP poll and WREN [doc] */` above `eeprom_write(...)`; in `trx_sequencer`
+  `/* RX->TX timers 0x0C..0x11 (1,1,5,1,3 ms, TX delay) [fact: tx-protection.md] */`; in `rx_audio_chain` `/* Other modes:
+  CW zero-in estimate into reg 4 [fact: dsp-chains.md] */`.
+- Curated tables (231 rows, 224 [fact] with a doc page or an address, 7 [inference]): MAIN `app_main`, `main_loop`,
+  `cat_parse`, `io_task`, `trx_sequencer`, `ptt_arbiter`, `tx_freq_allowed`, `ptt_source_select`, `sdr_task`, `dsp_link_poll`,
+  `displink_task`, `displink_rx_dispatch`, `displink_rx_F0_hello`, `displink_tx_schedule`, `power_down_save`, `eeprom_load_all`,
+  `key_task`; DISPLAY boot (`boot_select_bank`, `main`, `task_root`), the MAIN link (`mainlink_queue_frame`, `mainlink_submit`,
+  `mainlink_send_enc`, `mainlink_on_ack`, `mainlink_on_nak`, `task_mainlink_rx`, `mainlink_rx_parse`, `mainlink_rx_deliver`,
+  `task_mainlink_dispatch`, `system_reboot`), `gui_main_loop`; M33 `console_rx_char`; HiFi4 `Thread_Rx_Path_entry`,
+  `rx_demod_dispatch`, `if_agc_process`, `rx_audio_chain`, `Thread_Tx_Path_entry`, `tx_chain`, `tx_core_12k`, `tx_alc`.
 
 ### Open steps (parent)
 1. Apply to the canonical projects (Ghidra closed), from the repo root:

@@ -61,7 +61,7 @@ public class CommentCode extends GhidraScript {
     final TreeMap<Address, TreeMap<String, String>> want = new TreeMap<>();
     final int[] perRule = new int[4];
     final List<String[]> outRows = new ArrayList<>();
-    int failed = 0, tooLong = 0;
+    int failed = 0, tooLong = 0, noted = 0;
 
     void add(Address a, int rule, String text, Function f) {
         text = text.replace("*/", "* /").replace("/*", "/ *").replaceAll("\\s+", " ").trim();
@@ -307,14 +307,14 @@ public class CommentCode extends GhidraScript {
             }
             Address entry = f.getEntryPoint();
             Set<Address> inCond = new HashSet<>();
-            // curated rows obey the same shape guard (fail them: move the row to a statement line)
+            // curated rows: the guard is conservative (it also matches a plain nested if), so only note them; check the
+            // re-export's diff for "else if" lines that turned into "else {" (T23i redo steps)
             for (Address a : new ArrayList<>(want.subMap(f.getBody().getMinAddress(), true, f.getBody().getMaxAddress(), true).keySet())) {
                 if (!f.getBody().contains(a)) continue;
                 TreeMap<String, String> m = want.get(a);
                 if (m.keySet().stream().anyMatch(k -> k.startsWith(CURATED + ":")) && elseIfHeader(hf, a)) {
-                    printerr("CommentCode: curated row at " + a + " would print above an else-if condition and turn it into "
-                            + "else { if }: move it to a statement line");
-                    failed++;
+                    println("CommentCode: note: curated row at " + a + " sits above a condition that may be an else-if");
+                    noted++;
                 }
             }
             // collect per rule, ordered by address, then keep the first per register / callee / call
@@ -424,6 +424,6 @@ public class CommentCode extends GhidraScript {
         println("CommentCode: " + want.size() + " addresses: " + perRule[CURATED] + " curated (of " + curatedRows + " rows), "
                 + perRule[SFR] + " sfr, " + perRule[DOC] + " doc, " + perRule[ENUM] + " enum; " + changed + " set, " + removed
                 + " removed, " + kept + " with hand-written lines kept; " + decompFailed + " functions not decompiled, "
-                + tooLong + " generated left out as too long, " + failed + " failed");
+                + tooLong + " generated left out as too long, " + noted + " curated noted at a condition, " + failed + " failed");
     }
 }
