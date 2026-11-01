@@ -217,6 +217,7 @@
 00087242	BOARD_InitPins_flexcomm	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008726c	BOARD_InitPins_i2s	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 00087294	BOARD_InitBootPins	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void (T24 round 2: was BOARD_InitPins)
+000872f4	printf_float_none	int32	void	doc	returns 0 and reads no argument [fact: 0x872F4 movs r0, #0; bx lr] (T24 round 3)
 000872c4	free	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 00087336	strcmp	int32	uint32 *, uint32 *	asm	asm: live-in r0:L,r1:L (= decompiler 2), 3/3 call sites read r0, writes r0 1, return value
 0008737a	strlen	int32	uint32 *	asm	asm: live-in r0:L (= decompiler 1), 10/10 call sites read r0, writes r0 1, return value
