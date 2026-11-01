@@ -57,6 +57,9 @@ int r_vdc5_sync_control(unsigned ch, const vdc5_sync_ctrl_t *param);
 int r_vdc5_display_output(unsigned ch, const vdc5_output_t *param);
 int r_vdc5_callback_isr_checked(unsigned ch, const vdc5_int_t *param);
 ER itron_acre_isr(ID id, const T_CISR *pk_cisr);
+/* the callback word the image stores is the entry 0x20133014 of vdc5_vline_cb; the hybrid image patches that entry
+ * to branch to the recreation, so storing the entry keeps the RAM word the image's (aliases.tsv) */
+void vdc5_vline_cb_entry(int type);
 
 /* 0x20132320: (ch): the VDC5 module clock on: channel 1 clears both STBCR9 bits 1..0 and the standby request bit 4,
  * channel 0 bit 1 and request bit 5; then waits for the acknowledge to clear [fact] */
@@ -254,7 +257,7 @@ int vdc5_vline_int_setup(unsigned ch)
 /* 0x20133068 / 0x2013307C: (ch): the callback on / off [fact] */
 int vdc5_vline_cb_enable(unsigned ch)
 {
-    gui_vline_int.callback = vdc5_vline_cb;
+    gui_vline_int.callback = vdc5_vline_cb_entry;
     return r_vdc5_callback_isr_checked(ch, &gui_vline_int);
 }
 

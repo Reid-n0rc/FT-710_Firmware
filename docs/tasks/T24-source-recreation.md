@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 5.90 % re-implemented, round 4, and links into a complete hybrid image) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.23 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -567,15 +567,168 @@ slots). Proved on a copy (`/home/user/ghidra_tasks/t24r4/disp`, OWNER root): App
 ExportDecomp and ExportFuncModes, the quality comparison, the readability stats); afterwards the alias rows of these
 names in `src/display/aliases.tsv` are redundant.
 
+## DISPLAY, round 5 (2026-11-01)
+
+### Plan (round 5)
+
+1. Biggest self-contained parts first: VDC5 (driver 0x201179C0..0x2011D9A7, about 19 KB with the GUI helpers), then
+   RSPI, DMAC, the large SDHI functions, the file system, the MAIN link, the update code, the GUI building blocks,
+   as far as the round goes.
+2. Ghidra: the two fplib A32 veneers as functions with TMode 0 (a FixFuncEntries mode), the functions the VDC5 work
+   finds missing, the names with evidence; proved on a copy, commands for the canonical project.
+3. The gap: measure it after the link; write down the second region before it overflows.
+4. `status.tsv`, task file, READMEs, readability stats.
+
+### DISPLAY: the VDC5 driver (round 5)
+
+The image links the Renesas r_vdc5 sample driver, without its parameter checks, in four layers
+(docs/code/display/gui.md "VDC5 driver structure, recreated"): the API (`drivers/vdc5_api.c`), the shared
+parameters (`drivers/vdc5_shrd.c`), the interrupt part (`drivers/vdc5_int.c`) and the register layer
+(`drivers/vdc5_reg.c`, part); `app/gui_vdc5.c` has the GUI's set-up helpers. The public driver (GR-PEACH_video
+drivers/vdc5, 2014, read from github.com/d-kato/mbed-gr-libs into a scratch directory; Renesas licence, not
+committed and not fetched by any script) was a reference for the structure and the field names; the C is written from the
+image's disassembly, and where the two differ the image wins (it is an older version: `vdc5_sync_delay_t` starts
+with a byte) **[fact: the ldrb at 0x20119824]**. armcc stores the driver's enums in one byte, so the parameter
+structures keep the public field order with uint8_t enum fields **[fact: the ldrb/strb offsets]**; the function
+arguments stay words (armcc does not narrow them).
+
+| File | Functions | Bytes (Ghidra) | Notes |
+|---|---:|---:|---|
+| `drivers/vdc5_api.c` | 25 | 2,236 | 23 API calls and the two layer-id maps (2 of them not in Ghidra's list, 0 bytes counted yet) |
+| `drivers/vdc5_shrd.c` | 41 | 2,124 | every shared-parameter function |
+| `drivers/vdc5_int.c` | 49 | 4,188 | callbacks, `r_vdc5_get_isr`, the 46 handlers (one inline pattern) |
+| `drivers/vdc5_reg.c` | 40 | 7,544 | (1 unlisted) initialize, terminate, video input, sync, output and TCON, colour matrices, start/stop/release, noise reduction, black stretch, alpha, calibration |
+| `app/gui_vdc5.c` | 13 | 1,056 | module clock, TCON tables, LVDS PLL block, sync/output set-up, the line interrupt |
+
+Findings **[fact]**:
+
+- **0x20117AD4 is R_VDC5_VideoInput** (Ghidra: `r_vdc5_terminate`): it records the input (0x2011D1F4, Ghidra
+  `vdc5_shrd_terminate`), programs it (0x201197C0, Ghidra `vdc5_reg_terminate`) and sets resource 1, "video in".
+  R_VDC5_Terminate is the unlisted function **0x20117A68** (its register part 0x201195E8);
+  R_VDC5_ReleaseDataControl **0x20117F3C** and SetInputCntrlColorMtx **0x2011A20C** are unlisted too.
+- `vdc5_reg_initialize` sets LPHYACC (&= ~3, |= 1) between the two LVDS PLL waits (0x20119464); the first draft
+  lacked it and the check reported the MMIO sequence as differing.
+- `vdc5_isr_create` returns the kernel's error code when `itron_acre_isr` fails (its `ble` jumps past `mov r0, #0`).
+- The 46 VDC5 handlers are one pattern (type t: SYSCNT_INT(1 + t / 8), enable INT(4 + t / 8), bit 1 << 4 (t % 8),
+  callback 0x208DCC0C[23 ch + t]); in C they are one inline function and a macro, checked one by one.
+
+Harness (`tools/equiv_display_emu.py`): a VDC5 preset for every `vdc5_*` / `r_vdc5_*` function: channel 0 or 1;
+r1..r3 and two stack words small values (layer ids -1..9, interrupt types) or parameter blocks whose words are NULL
+or valid pointers and whose bytes are 0..3; resource and layer states 0/1; callbacks NULL or an empty function
+(0x2013FDE4). Out-of-range enum bytes and channel 2 were dropped after two "differs" verdicts that were not
+differences of the code: the driver indexes tables (`dither_format`, `output_pin_regaddr`, the register tables) with
+them, and an index past the end reads whatever lies next to the table, which is the stack in the image and
+.rodata in the GCC build. Presets for the helpers that take a register-address table (`vdc5_tcon_*`,
+`vdc5_set_video_external_input`, `vdc5_set_color_matrix`). `status` keeps rows for recreated functions whose
+address Ghidra's list lacks (ghidra_name "-", the address, 0 bytes counted), so that they are linked too.
+
+Not done this round: the rest of the VDC5 register layer (write/read data control and their changes: scaling,
+cascade, VIN; image enhancement, alpha rectangle, chroma key, CLUT, gamma; about 6.5 KB), `vdc5_layers_setup`,
+`vdc5_layers_stop`, `vdc5_channel_shutdown`, and RSPI, DMAC, the large SDHI functions, the file system, the MAIN
+link, the update code and the GUI building blocks. Blocker for the pace: the container is shared with other
+sessions' SDR simulations (load 8..10 on 4 cores), so checks ran slowly; the final 200-trial status run of all 466 recreated functions took 27 minutes.
+
+### DISPLAY: Ghidra (round 5)
+
+`tools/ghidra/FixFuncEntries.java` learns column 2 **`arm`**: it clears the 8 bytes at the entry, sets TMode 0 there,
+disassembles them as A32 and re-creates the function around them at its own entry. `entries_display.T24r5.tsv`
+has this round's five entries alone (also appended to `entries_display.tsv`): 0x20117A68, 0x20117F3C, 0x2011A20C
+and the veneers 0x20164C88 / 0x20164D4C (`arm`). `names_display.tsv` gains 61 names with evidence, among them the
+three renames above and `__aeabi_d2iz_a32` / `__aeabi_i2d_a32`. Proved on a copy
+(`/home/user/ghidra_tasks/t24r5/disp`, OWNER root) [fact: apply.log, modes.tsv there]: FixFuncEntries 5 created,
+0 failed, 5 branches marked as tail calls; ApplyNames 1,899 applied, 0 failed; ExportFuncModes: the veneers are
+8-byte **arm** functions, `__aeabi_d2iz` and `__aeabi_i2d` keep their sizes (thumb); the other changes are the
+consequences: the two veneer callers 0x20112894 / 0x201140F4 lose the 8 bytes Ghidra had folded in, and
+`vdc5_layers_stop` / `vdc5_channel_shutdown` end in tail calls of the new terminate and release functions. (Running
+the whole `entries_display.tsv` again instead also swaps the known one-instruction entries 0x20139654 /
+0x2013FE64, T22; hence the separate file.) Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24r5.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the alias rows of the renamed and newly listed functions in `src/display/aliases.tsv` are
+redundant, and the three unlisted VDC5 functions start to count in "Re-implemented".
+
+### DISPLAY: the gap and the second region (round 5)
+
+Measured on the hybrid link **[fact: display_link.py, nm of display_hybrid.elf]**: 425 functions in the gap
+0x2042BC10..0x204368AB, **44,188 of 82,928 bytes** (round 4: 25,648). Over the 422 equivalent functions GCC's code
+is 1.17 times armcc's (42,956 against 36,814 bytes). The gap has 38,740 bytes left, about 33 KB of original code at
+that ratio, while 355,736 bytes are not recreated yet (about 416 KB of GCC code): **the gap overflows in the next
+round**, so the plan is written down here.
+
+1. **In place first.** A recreated function whose code fits into its original extent is linked at its original
+   address (no patch, no gap): 111 of the 422 fit today (10,492 bytes) **[fact: same measurement]**. The extent
+   is the Ghidra function up to the next original function, the rule `covered` already uses; display.ld gets one
+   output section per such function at its address, and display_link.py checks that it stays inside.
+2. **Second region RAM2 = 0x20920000..0x2097FFFF (384 KiB)**, in `ram_hi` above `.bss2` (ends 0x2091D56F) and
+   below the NORTi pool base 0x20980000, which no literal or MOVW/MOVT pair of the image points into
+   **[fact: docs/memory-maps.md `ram_hi`, #119]**. Gap + RAM2 = 432 KB for the remaining about 416 KB, before step 1
+   and before trying `-Os` (not measured yet).
+3. **Loading.** `reset_in_ram` copies the bank image to RAM up to 0x2043FFFF **[fact: 0x20100244/0x20100248]**;
+   the hybrid image appends RAM2's bytes at file offset 0x340000 (= 0x20440000 - 0x20100000), and a second copy
+   loop (the recreated `reset_in_ram`, which then is no longer byte-identical) copies them from the bank to
+   0x20920000, then cleans the D-cache and invalidates the I-cache over the range before anything jumps there.
+   A bank holds 6 MiB **[fact: docs/code/display/update.md section 6]**, the image 3.3 MB, so the file still fits.
+   display.ld gets `RAM2 (rx) : ORIGIN = 0x20920000, LENGTH = 0x60000` and a `.recreated2` section that takes
+   what does not fit into the gap.
+4. Open: whether anything writes into 0x2091D570..0x2097FFFF at run time through a computed pointer (the scan of #119
+   finds only literal and MOVW/MOVT references); would be settled by an emulated boot of the original image with a
+   write watch on that range, or a store-target scan of the decompiled code. Open: the MMU attributes of RAM2 (the
+   flat L1 table makes it executable, XN = 0 in 0x10C02 **[fact: mmu_l1_table_init]**; whether `mmu_set_cacheable`
+   covers it decides only the speed); would be settled by reading the `mmu_set_cacheable` calls of `Reset_Handler`.
+
+### DISPLAY: hybrid image (round 5)
+
+`tools/display_link.py`: 425 recreated functions in the gap (the 422 equivalent ones and the three VDC5 functions
+Ghidra's list lacks), 425 original entries patched (1,732 bytes changed), none too short to patch.
+`equiv_display_emu.py linkcheck` (100 trials per entry): **425 of 425 agree**. The first run had three "differs",
+none a difference of the code: `tolower` with c outside EOF..255 (the table read lands in the hybrid's recreated
+code), `vdc5_output_setup` with a display mode other than 0/1 (past the two-entry timing tables), and
+`vdc5_vline_cb_enable`, which stored the recreation's address of `vdc5_vline_cb` where the image stores its own entry
+0x20133014. The first two got presets for their domain; the third now stores the image's entry
+(`vdc5_vline_cb_entry` in aliases.tsv), which the hybrid's patch forwards to the recreation.
+
+### DISPLAY: results (status.tsv, round 5)
+
+| Verdict | Ghidra functions | Bytes (of 396,272) |
+|---|---:|---:|
+| identical | 41 | 3,722 |
+| equivalent | 422 | 36,814 |
+| differs | 0 | 0 |
+| not yet | 1,750 | 355,736 |
+
+Plus three equivalent functions at addresses Ghidra's list lacks (0x20117A68, 0x20117F3C, 0x2011A20C; rows with
+ghidra_name "-", 0 bytes counted until the re-export). **Re-implemented: 10.23 %** (round 4: 5.90 %); the VDC5 work
+is 165 of the new functions and 17,148 bytes.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
    original addresses (`equiv_m33.py layout -v` lists where the spacing breaks; the first is `aic3204_spi_write`).
 2. M33: the floating-point path of the printf core, with a preset hook that fills the digit buffer (round 3 above).
 3. Apply the round-3 Ghidra changes to the canonical projects with the commands above (M33: the `printf_float_none`
-   entry; DISPLAY: the CP15 renames and the four new names) and re-export (T23 rules).
-4. DISPLAY, next by size and self-containment: VDC5 (about 15 KB), RSPI (7.6 KB), DMAC, the rest of SDHI, USB, then
-   the file system, the MAIN link and the update code; then the application.
-5. DISPLAY build: the hybrid image links and passes linkcheck; a source-only image needs the rest of the tree, the
-   NORTi stand-in's port (IRQ entry and exit, the OSTM tick) and a recreated `reset_in_ram` that loads a larger image.
+   entry; DISPLAY: the CP15 renames and the four new names), and DISPLAY rounds 4 and 5 with the round-5 command
+   block (FixFuncEntries with `entries_display.T24r5.tsv`, ApplyNames), and re-export (T23 rules).
+4. DISPLAY, next by size and self-containment: the rest of the VDC5 register layer (write/read data control,
+   scaling, cascade, VIN, enhancement, alpha rectangle, chroma key, CLUT, gamma; about 6.5 KB) and
+   `vdc5_layers_setup`, then RSPI (7.6 KB), DMAC, the rest of SDHI, USB, the file system, the MAIN link and the
+   update code; then the application.
+5. DISPLAY build: the hybrid image links and passes linkcheck; before the next round's code goes in, the in-place
+   placement and the second region RAM2 of "the gap and the second region" (round 5); a source-only image needs the
+   rest of the tree, the NORTi stand-in's port (IRQ entry and exit, the OSTM tick) and a recreated `reset_in_ram`.
+   Function addresses that the recreated code stores as data must be the image's entries (round 5: one alias,
+   `vdc5_vline_cb_entry`); *Open: a general rule in display_link.py; would be settled by resolving the ABS32 and
+   MOVW/MOVT references to linked functions from data stores to their original entries.*
 6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.

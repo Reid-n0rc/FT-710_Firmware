@@ -85,3 +85,4 @@ vdc5_rw_read_3	0x2011cfa8	[fact] entry 6 of 0x20165BD8 (graphics 3); Ghidra FUN_
 vdc5_rw_read_oir	0x2011d014	[fact] entry 8 of 0x20165BD8 (OIR read, background when stopped); Ghidra FUN_2011d014
 vdc5_shrd_get_oir_rw_proc_enabled	0x2011d958	[fact] 1 if layer 2 or 8 has its resource and runs (0x208DCE04/0x208DCE16 + 2, + 8); Ghidra FUN_2011d958
 vdc5_set_reg_update_rw_enable	0x2011b6d8	[fact] the SCL1_UPDATE / GRx_UPDATE bits by layer id; called by start and stop with their layer; Ghidra FUN_2011b6d8
+vdc5_vline_cb_entry	0x20133014	[fact] the image entry of vdc5_vline_cb; vdc5_vline_cb_enable stores this word into gui_vline_int.callback (literal at 0x20133558), so the recreation stores the entry, which the hybrid image patches to the recreated function
