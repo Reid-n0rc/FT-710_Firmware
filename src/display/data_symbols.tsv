@@ -77,3 +77,18 @@ gui_layers	208f4d50	[fact] three 16-byte records {frame buffer, ?, area, ?} of g
 rspi_rx_done	20800418	[fact] receive-done flags of RSPI0..4 (bytes), set by rspiN_rx_isr and cleared by rspiN_clear_rx_flag (literal 0x20800418, strb [r1, #n])
 rspi_tx_done	2080041d	[fact] transmit-done flags of RSPI0..4 (bytes), set by rspiN_tx_isr, polled by rspiN_tx_wait (literal 0x2080041D)
 rspi_rx_count	208dce28	[fact] receive interrupt counts of RSPI0 and RSPI1, incremented by rspi0_rx_isr / rspi1_rx_isr (literals 0x208DCE28, 0x208DCE2C)
+rspi_regaddr	20166b4c	[fact] 5 x 11 register pointers (SPCR, SPPCR, SPBR, SPDCR, SPCKD, SSLND, SPND, SPSCR, SPCMD0, SPBFCR, SSLP); rspi_hw_config indexes it with ch * 0x2C (literal 0x2011E1A8)
+rspi_cisr	20166a84	[fact] T_CISR of SPTI and SPRI per channel (0x28 per channel); rspiN_open passes them to itron_acre_isr
+rspi_tx_trigger_bytes	20800424	[fact] SPBFCR.TXTRG -> bytes {1, 2, 4, 8} (.data); rspi_write_pio indexes it (literal 0x2011F96C)	keep
+rspi_rx_trigger_bytes	20800434	[fact] SPBFCR.RXTRG -> bytes {1, 2, 4, 8, 16, 24, 32, 5} (.data, the manual's RXTRG table); rspi_read_pio indexes it (literal 0x2011F968)	keep
+dmac_done	20808a8c	[fact] done flags of DMA channels 3, 4, 5, 9, 10 (words): each set-up clears its own (str at +0, +4, +8, +0xC, +0x10 of literal 0x20808A8C), dmac3_isr sets the first
+dmac_callback	20808aa0	[fact] end callbacks of DMA channels 3, 4, 5, 9, 10: dmacN_set_callback stores at +0..+0x10, dmac4/5/9/10_isr branch through +4..+0x10
+dmac_cisr	204200b0	[fact] T_CISR of DMA channels 3, 4, 5, 9, 10 (0x14 apart): the itron_acre_isr arguments 0x204200B0, C4, D8, EC, 0x20420100
+sd_r1_err_cmd12	20420234	[fact] R1 error mask per card type that sd_cmd12_stop tests (literal 0x20140B44, index +0x2C6)
+sd_r1_err_cmd16	2042023c	[fact] the same for sd_cmd16_set_blocklen (literal 0x20140B40)
+sd_r1_err_read	20420244	[fact] the same for sdhi_read_sectors_cmd (literal 0x20140B48)
+sd_r1_err_write	2042024c	[fact] the same for sdhi_write_sectors_cmd (literal 0x20140B4C)
+sdhi_dma_irq	20808b78	[fact] two {handler definition, GIC id, registered (-1 until gic_def_inh), state} of 0xC bytes for the SDHI DMA end interrupts; sdhi_dma_open 0x2013FE68 (literal 0x20140124)
+sd_r1_err_cmd13	2042022c	[fact] R1 error mask per card type that sd_cmd13_send_status tests (literal 0x2013DE40, index +0x2C6)
+fat_fmt_geom_small	20420300	[fact] 0x2C-byte format parameter block that fat_format_geometry_small copies below 0x7E0000 sectors (literal 0x2013F9E4)
+fat_fmt_geom_large	2042032c	[fact] the block for 0x7E0000 sectors and more (literal 0x2013F9E8)

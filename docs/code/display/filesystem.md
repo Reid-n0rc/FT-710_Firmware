@@ -509,7 +509,9 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2014091C | `sdhi_read_op` | (addr, buf, n, ctx): read op of the SDHI op table: two blocks are read one at a time (block or byte address by card type +0x2C0), else sdhi_read_sectors_cmd; on error sdhi_error_reset **[fact]** |
 | 0x20140B50 | `sdhi_write_op` | sdhi_write_sectors_cmd, on error sdhi_error_reset **[fact]** |
 | 0x201407BC | `sdhi_error_reset` | Soft reset of SDHI0 that keeps SD_CLK_CTRL and the option register (sdhi_soft_reset(2)) **[fact]** |
-| 0x20140B68 | `sdhi_open` | SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, registers the two extra handlers 0x20808B78 / 0x20808B84 with gic_def_inh **[fact]** |
+| 0x20140B68 | `sdhi_open` | SDHI0 open: clock on, soft reset, sdhi0_irq_enable, sdhi_init, then tail-calls `sdhi_dma_open` **[fact]** |
+| 0x2013FE68 | `sdhi_dma_open` | (no Ghidra entry before T24 round 7; Ghidra counted it into `sdhi_open`) DMARS0 request selects 0xC2 / 0xC1 for DMA channels 0 and 1, the two DMA end interrupts of 0x20808B78 / 0x20808B84 (gic_def_inh once, priority 0x38, ICDISER), CHCTRL0/1 SWRST **[fact]** (src/display/drivers/sdhi.c) |
+| 0x20140998 | `sdhi_read_buf_pio` | (buf, len): slot 23: len / 4 reads of SD_BUF0, stored low byte first; returns 0 **[fact]** (was FUN_20140998) |
 | 0x20140BE8 | `file_buf_sync` | (file): writes the file's dirty sector buffer back (fs_dev_op2) and reads the sector of the new position (fs_dev_op1), following the cluster chain (fat_next_sector, fat_clust2sect / fat_sect2clust); used by fs_fopen_work, file_write_core, file_write_locked and fs_fseek_work **[fact for the calls]** |
 
 ### FAT helpers (2) (T23e round 3)
@@ -526,7 +528,7 @@ SD driver calls the SDHI layer through the 26-slot table 0x20420564 that `sdhi_d
 **[fact: the table's words]**: 0 `sdhi_wait_idle`, 1 `sdhi_clock_set_0x200`, 2 `sdhi_check_card`, 3 `sdhi_check_wp`,
 4..7 constants (-9, -10, 4, 5), 8 `sdhi_soft_reset`, 9 `sdhi_power_on`, 10 0x20140470, 11 `sdhi_set_bus_width`,
 12..15 empty, 16 -9, 17 `sdhi_wait_info`, 18 `sdhi_cmd`, 19 `sdhi_read_response`, 20 `sd_cmd16_set_blocklen`,
-21 `sd_cmd12_stop`, 22 `sdhi_read_op`, 23 0x20140998, 24 `sdhi_write_op`, 25 `sdhi_open`. *Open: what the driver asks
+21 `sd_cmd12_stop`, 22 `sdhi_read_op`, 23 `sdhi_read_buf_pio` 0x20140998, 24 `sdhi_write_op`, 25 `sdhi_open`. *Open: what the driver asks
 through slots 4..7 and 12..16; would be settled by the call sites of those slots in `sd_driver_op` and the `sd_*`
 functions.* `sdhi_send_cmd` takes (command index, application command?, argument) and writes the command code from
 0x204205FC (or 0x2042067C for application commands); CMD7 is 0x307 to select and 0x507 to deselect (argument 0)

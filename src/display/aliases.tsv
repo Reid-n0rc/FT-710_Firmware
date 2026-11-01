@@ -93,7 +93,6 @@ vdc5_color_conversion	0x2011c3a4	[fact] switch on the graphics format calling rg
 vdc5_set_clut	0x2011c5b4	[fact] copies color_num words to the CLUT RAM pointer of 0x201666E0; called by vdc5_reg_clut; Ghidra FUN_2011c5b4
 vdc5_set_gamma_gain	0x2011c85c	[fact] 16 registers of two halfwords, called with the GAM_x_LUT pointers of 0x201667D8 + 0x4C ch; Ghidra FUN_2011c85c
 vdc5_set_gamma_threshold	0x2011c8a4	[fact] 3 + 7 x 4 bytes into GAM_x_AREA1..8 (0x20166818 + 0x4C ch); Ghidra FUN_2011c8a4
-vdc5_reg_write_data_control	vdc5_config	[fact] the register part of R_VDC5_WriteDataControl: called by r_vdc5_write_data_control after the shared-parameter calls, programs SCL0_DS2/3 and SCL1_WR1..10 of the scaler table 0x20165CE0 (0x2011A394)
 vdc5_ratio_one	0x2011a288	[fact] mov r0, #0x1000; bx lr; no caller; Ghidra FUN_2011a288
 vdc5_set_scaling_down	0x2011a290	[fact] SCL0_DS1/DS4/DS5/DS6 and US1/US6 from the scaling block; called by 0x2011A394 and 0x2011A6C8 (0x2011A574, 0x2011A78C); Ghidra FUN_2011a290
 vdc5_set_scaler_background_color	0x2011a848	[fact] SCL0_OVR1 and GRx_BASE from vdc5_shrd_get_bg_color, for scaler 0 or 1; called from 0x2011B2CC; Ghidra FUN_2011a848
@@ -104,3 +103,12 @@ vdc5_set_scaling_up	0x2011aaf8	[fact] SCL0_US1/US5/US6 and DS1/DS5/DS6 by buffer
 vdc5_set_scaler_graphics	0x2011acd8	[fact] the scaler (0, 1 or OIR by graphics id) read side: SCL0_US2..4 and US8, the up-scaling (0x2011AAF8), GRx_FLM4 from SCL1_WR4; called from 0x2011AF94 and 0x2011B514; Ghidra FUN_2011acd8
 vdc5_confirm_graphics_enlargement	0x2011aecc	[fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4; Ghidra FUN_2011aecc
 __aeabi_uidiv	0x20156260	[inference] GCC calls __aeabi_uidiv for an unsigned division; the image's divisions call __aeabi_uidivmod 0x20156260 (e.g. 0x2011AAD8), whose quotient in r0 is __aeabi_uidiv's result (RTABI)
+vdc5_change_graphics_vin	0x2011b374	[fact] the tail call of vdc5_reg_change_read_process (b 0x2011B374 at 0x2011B6CC): the cascade and the VIN layer of the change path (drivers/vdc5_reg.c); Ghidra counts its body into vdc5_reg_change_read_process
+rspi_read_pio	0x2011f278	[fact] the body of rspi_read behind its checks (b 0x2011F278 at 0x2011F4D0); Ghidra calls it rspi_read (drivers/rspi.c)
+rspi_read	0x2011f494	[fact] the argument checks (ch < 5, RX trigger 0..7 or 0xFF, count != 0), then b 0x2011F278; Ghidra FUN_2011f494, no caller
+rspi_write_pio	0x2011f4d4	[fact] the body of rspi_write behind its checks (b 0x2011F4D4 at 0x2011F754); no Ghidra entry (counted into rspi_write)
+rspi_nop_2011dea0	0x2011dea0	[fact] bx lr between rspi_hw_config and rspi0_open, no caller; Ghidra FUN_2011dea0
+dmac9_enable	0x20137dec	[fact] reg_rmw32(CHCTRL_9 0xE8200468, 1, 0, 1) between dmac4_set_callback and dmac9_stop; no Ghidra entry (drivers/dmac.c)
+dmac3_set_callback	0x20137d78	[inference] stores r0 at 0x20808AA0, the first of the five callback slots (4: +4, 5: +8, 9: +0xC, 10: +0x10, set by the named setters), right after dmac3_disable; no caller; Ghidra FUN_20137d78
+sdhi_read_buf_pio	0x20140998	[fact] len / 4 reads of SD_BUF0 (0xE804E030) stored low byte first, returns 0; slot 23 of the SDHI operation table 0x20420564; Ghidra FUN_20140998 (drivers/sdhi.c)
+sdhi_dma_open	0x2013fe68	[fact] the tail call of sdhi_open (b 0x2013FE68 at 0x20140B94): DMARS0 0xC2/0xC1, the two DMA end interrupts (gic_def_inh, priority, ICDISER), CHCTRL0/1 SWRST; Ghidra counts it into sdhi_open

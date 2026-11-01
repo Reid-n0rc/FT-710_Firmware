@@ -21,19 +21,22 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 | `drivers/riic.c` | the RIIC (I2C) driver, the Renesas sample driver with its per-channel `riic_userdef` functions (83 functions) |
 | `drivers/scif.c` | the SCIF UART objects (the image's C++ class as C): rings, interrupts, open, read, write; the PMCCNTR cycle stamp |
 | `drivers/sflash.c` | the serial flash on SPIBSC0: SPI-mode transfers, flash commands, the device protocol the update code uses |
-| `drivers/rspi.c` | the per-channel RSPI helpers of the five channels: done flags, receive and transmit ISRs, transmit and TEND waits, delay, the GIC stubs of the generic ISRs (the driver core is not recreated yet) |
-| `drivers/sdhi.c` | the SDHI0 target layer under the SD driver: DMA block transfers, card detect, commands, the operation-table slots |
+| `drivers/rspi.c` | the RSPI driver of the five channels: the per-channel helpers (done flags, receive and transmit ISRs, transmit and TEND waits, delay, the GIC stubs of the generic ISRs) and the core (round 7): `rspi_hw_config` (master/slave), the opens, the read bursts, `rspi_hw_config_master`, start/stop/base, the PIO read and write with their argument checks, FIFO and buffer reset, the generic ISRs and the TEND wait |
+| `drivers/dmac.c` | the DMAC channel set-ups of the SPI links (round 7): channels 3, 4, 5, 9, 10 (RSPI4, RSPI2, RSPI0/1), the memory copier on channel 8, their ISRs, enable, disable, stop and callback setters |
+| `drivers/sdhi.c` | the SDHI0 target layer under the SD driver: DMA block transfers, card detect, commands, the operation-table slots; round 7 the command layer above it: response copy, CMD16, CMD12, the error reset, the sector read and write commands and ops, the PIO buffer read, the DMA side of the open, `sdhi_open`, the buffer interrupt |
+| `drivers/sd_card.c` | the SD card layer's single commands through the operation table (CMD0, CMD2, CMD9, CMD10, CMD13) and the CSD checks and fields (round 7) |
+| `app/fat_format.c` | the format code's MBR helpers: CHS head, sector and cylinder of the start and end, the partition type, the format parameter block (round 7) |
 | `drivers/vdc5_api.c` | the VDC5 driver API (the Renesas r_vdc5 sample driver, built without parameter checks): initialize, terminate, video input, sync, output, write/read layers, start/stop/release, image quality, alpha, chroma key, CLUT, calibration, gamma |
 | `drivers/vdc5_shrd.c` | the VDC5 driver's shared parameters: per-channel common, scaler and graphics blocks, resource and layer states, the field getters |
 | `drivers/vdc5_int.c` | the VDC5 interrupt part: `r_vdc5_callback_isr` and the 46 per-source handlers |
-| `drivers/vdc5_reg.c` | the VDC5 register layer: clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, write data control (scaling down) and its change, the read side's helpers (cascade, VIN layer, scaling up, start pixel, enlargement), layer start/stop/release, noise reduction, image enhancement (sharpness, LTI), black stretch, alpha and alpha rectangle, chroma key, CLUT, calibration, gamma. Not yet: the register parts of read data control and of its change (0x2011AF34, 0x2011B498) |
+| `drivers/vdc5_reg.c` | the VDC5 register layer: clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, write data control (scaling down) and its change, the read side's helpers (cascade, VIN layer, scaling up, start pixel, enlargement), layer start/stop/release, noise reduction, image enhancement (sharpness, LTI), black stretch, alpha and alpha rectangle, chroma key, CLUT, calibration, gamma; round 7 the register parts of read data control and of its change (0x2011AF34, 0x2011B498, from the disassembly) and the change path's VIN set-up 0x2011B374 |
 | `app/gui_vdc5.c` | the GUI's VDC5 set-up: module clock, TFT and DVI timing tables, LVDS PLL block, sync and output parameters, the graphics-3 line interrupt that paces the GUI, the frame-buffer addresses, the four graphics layers (`vdc5_layers_setup`, the cursor window), layers stop and channel shutdown |
 | `include/vdc5.h`, `include/vdc5_regs.h` | the VDC5 parameter structures with armcc's one-byte enums, the shared-parameter tables, the register-address tables |
 | `startup/vectors.S` | exception vectors, `Reset_Handler`, `reset_in_ram`, the SVC and IRQ entries (assembly, byte-identical); with `-DRAM2_LOAD` (hybrid link only) `reset_in_ram` also copies RAM2 from flash |
 | `startup/rt_entry.S` | `__main`, `__scatterload`, `__decompress`, `__scatterload_zeroinit`, `__rt_lib_init`, `__rt_entry` (assembly) |
 | `lib/aeabi_ldiv.S` | `__aeabi_uldivmod` and `__aeabi_ldivmod`: quotient in r0:r1, remainder in r2:r3; `_ll_udiv10`: quotient in r0:r1 and remainder in r2, which the C library's `_fp_digits` uses (assembly) |
 | `lib/fplib.S` | the armcc double-precision library: `__aeabi_dadd`, `dsub`, `dmul`, `ddiv`, `d2iz`, `d2uiz`, `i2d`, `ui2d` and their NaN handler (Thumb-2 assembly) |
-| `include/` | `display.h` (register helpers), `norti.h` (the service calls with the image's argument shapes), `scif.h` |
+| `include/` | `display.h` (register helpers), `norti.h` (the service calls with the image's argument shapes), `scif.h`, `sd.h` (the SD driver's card context, handle and operation table, round 7) |
 | `rtos/` | a minimal NORTi (uITRON 4.0) stand-in for a future source-only build, with its context switch and a Unicorn test |
 | `display.ld` | the image's memory layout and the hybrid link (below) |
 | `aliases.tsv`, `data_symbols.tsv` | original addresses of functions whose Ghidra name differs and of the data the recreated code refers to, with evidence |
@@ -87,7 +90,8 @@ image stores and compares its own entries (round 5 needed one alias for this; no
 **held back** (left original) in the hybrid: those the reset path runs before `reset_in_ram` has copied the gap
 (they must be in place within the first copy 0x20100000..0x20100BBF), and those whose original callers rely on a
 register the GCC code changes (`equiv_display_emu.py abicheck`: armcc keeps r2, r3, ip across a call of a function it
-knows, e.g. `sdhi_error_reset` around `sdhi_soft_reset`). Byte-identical functions need no patch. The recreated code
+knows, e.g. `sdhi_error_reset` around `sdhi_soft_reset`), until that caller is linked as well (round 7: its original
+code then no longer runs). Byte-identical functions need no patch. The recreated code
 keeps no RAM of its own (every global is the image's, declared `extern`): `display.ld` asserts that `.data` and `.bss`
 are empty. The result is a complete image of the same layout, never committed and never run on a radio; in
 emulation (`make bootcheck`) it boots as far as the original does: the kernel's 33 tasks, the GUI loop, RAM2 intact.
@@ -100,8 +104,9 @@ because the callees run as the image's own code) and `-fno-tree-loop-distribute-
 What the check cannot see: cache and TLB maintenance have no effect in Unicorn (the harness compares the set of CP15
 operations statically instead), NORTi service calls are stubs (their arguments and order are compared, not what the
 kernel would do), a function is only exercised as far as its inputs reach (the block coverage in `status.tsv`), and
-registers beyond the C return type (`abicheck` covers the direct calls of the image; *Open: calls through function
-pointers; would be settled by the same scan at every `blx rN` whose target can be a recreated function*).
+registers beyond the C return type (`abicheck` covers the direct calls of the image and, since round 7, its calls
+through a register: every `blx rN` counts against each recreated function whose entry the image holds as a word;
+none of the 339 such sites reads r1, r2, r3 or ip after the call).
 **Never commit `out/`.** Nothing built here has been run on a radio.
 
 ## Licences

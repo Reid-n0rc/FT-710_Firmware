@@ -233,6 +233,8 @@ class Resolver:
         if n.startswith('0x'):
             a = int(n, 16)
             return a, self.by_addr.get(a, (None, 0, False))[2]
+        if n not in self.funcs and n != name:
+            n = name         # an alias to a Ghidra name a re-export renamed (round 7: vdc5_config): the name itself
         if n in self.funcs:
             a, _, t = self.funcs[n]
             return a, t
@@ -423,6 +425,8 @@ class Run:
         for a in cover or ():
             self.cover_hooks[a] = uc.hook_add(UC_HOOK_CODE, self.on_leader, begin=a, end=a)
         self.regs = args['regs']
+        # a preset may bias chosen registers (round 7): address -> values a read returns, drawn from the run's rng
+        self.mmio_pick = args.get('mmio', {})
         self.snap = SNAP
 
     def on_code(self, uc, addr, size, _):
@@ -439,7 +443,9 @@ class Run:
         r += [struct.unpack('<I', uc.mem_read(sp + 4 * k, 4))[0] for k in range(max(0, n - 4))]
         norm = []
         for k, v in enumerate(r):
-            if STACK_TOP - STACK_SIZE <= v < STACK_TOP:
+            if STACK_TOP - STACK_SIZE <= v < STACK_TOP and k == out:
+                norm.append(('stack', 'out'))   # what the kernel writes there: its prior contents are not an input
+            elif STACK_TOP - STACK_SIZE <= v < STACK_TOP:      # (round 7: stack garbage differed in sdhi_flag_wait)
                 norm.append(('stack', bytes(uc.mem_read(v, min(STACK_ARG_BYTES.get((name, k), 4), STACK_TOP - v)))))
             else:
                 norm.append(v)
@@ -465,7 +471,8 @@ class Run:
             uc.hook_del(h)
 
     def on_mmio_read(self, uc, offset, size, base):
-        v = self.rng.getrandbits(8 * size)
+        pick = self.mmio_pick.get(base + offset)
+        v = self.rng.choice(pick) if pick else self.rng.getrandbits(8 * size)
         self.mmio.append(('r', base + offset, size, v))
         return v
 
@@ -931,6 +938,160 @@ VDC5_TABLE_ARGS = {
 }
 
 
+def vdc5_shrd_blocks(rng):
+    """The shared parameters (include/vdc5.h) with their enum fields in range: common 0x208DCCC4 (2 x 0x10: clock
+    selects, colour space, input and sync selects, cascade, und_sel 0/1), scaling 0x208DCCE4 (6 x 0xC: writing mode
+    0..5, interlace and colour space 0/1, buffer size), graphics 0x208DCD2C (12 x 0x12: line direction 0/1, frame
+    select 0..3, format 0..11, colour space and adj_sel 0/1, area and buffer size random halfwords)."""
+    small = lambda n: rng.randrange(n)
+    com = bytearray(rng.getrandbits(8) for _ in range(0x20))
+    for c in range(2):
+        for o in range(7):
+            com[0x10 * c + o] = small(2)
+    sca = bytearray(rng.getrandbits(8) for _ in range(6 * 0xC))
+    for k in range(6):
+        sca[0xC * k], sca[0xC * k + 1], sca[0xC * k + 2] = small(6), small(2), small(2)
+    gra = bytearray(rng.getrandbits(8) for _ in range(12 * 0x12))
+    for k in range(12):
+        o = 0x12 * k
+        gra[o:o + 5] = bytes([small(2), small(4), rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]), small(2), small(2)])
+    return [(0x208DCCC4, bytes(com)), (0x208DCCE4, bytes(sca)), (0x208DCD2C, bytes(gra))]
+
+
+def vdc5_read_args(rng, args, kind):
+    """(ch, graphics 0..5, parameter) of the read side (round 7): vdc5_read_t (line direction, IMR inversion, burst
+    0/1, frame select 0..3, address and line offset random, format 0..11 with 8 = YCbCr422 often, swaps 0..7, area
+    random halfwords) for vdc5_reg_read_data_control; vdc5_read_chg_t (each pointer NULL or a block; display select int8
+    -1..3 and a few other negatives) for the change; (ch, graphics 0/1, frame select 0..3, enlargement 0/1) for vdc5_change_graphics_vin; the
+    shared parameters in range."""
+    fill = vdc5_args(rng, args) + vdc5_shrd_blocks(rng)
+    regs = args['regs']
+    regs[1] = rng.randrange(6)
+    a = SCRATCH_ARGS + 0x4000
+    r = bytearray(rng.getrandbits(8) for _ in range(0x40))
+    r[0:4] = bytes([rng.randrange(2), rng.randrange(4), rng.randrange(2), rng.randrange(2)])
+    r[0x10:0x14] = bytes([rng.randrange(2), rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11]), rng.randrange(8),
+                          rng.randrange(8)])
+    for k in range(4):              # the change block: four pointers, NULL or into the block's upper half
+        if rng.random() < 0.3:
+            struct.pack_into('<I', r, 0x20 + 4 * k, 0)
+        else:
+            struct.pack_into('<I', r, 0x20 + 4 * k, rng.getrandbits(32) if k == 0 else a + 0x30)
+    r[0x30] = rng.choice([0xFF, 0, 1, 2, 3, 0xFE, 0x85])     # -1 = keep; other negative values sign-extend
+    args['buffers'] = [b for b in args['buffers'] if not a <= b[0] < a + 0x2000] + [(a, bytes(r))]
+    regs[2] = a + 0x20 if kind == 'chg' else a
+    if kind == 'vin':
+        regs[1], regs[2], regs[3] = rng.randrange(2), rng.randrange(4), rng.randrange(2)
+    return fill
+
+
+RSPI_FLAGS = 0x20800418     # rspi_rx_done[5], rspi_tx_done[5] (src/display/data_symbols.tsv)
+
+
+def rspi_args(rng, args, kind):
+    """The RSPI driver core (round 7). Nothing raises the transmit and receive interrupts in a trial, so every wait
+    for the ISR flags would spin for ever after the first access (each access clears its flag): the flags are set
+    (1, sometimes 0: then both builds spin and the trial is inconclusive) and the transfers kept to one burst: ch
+    0..4 (5 now and then: the checks), a buffer, an access count 0..2, a trigger 0..7 or 0xFF (keep); the bursts
+    (bytes 0, 1, 2, 4, fewer-than-trigger 0/1); rspi_hw_config's mode 0..2, rspi_hw_config_master's SPBR, BRDV 0..3
+    and loopback 0/1; rspi_fifo_reset a channel base."""
+    regs = args['regs']
+    regs[0] = rng.choice([0, 1, 2, 3, 4, 0, 1, 2, 3, 4, 5, 7])
+    flags = bytes(rng.choice([1, 1, 1, 1, 0]) for _ in range(10))
+    if kind == 'xfer':
+        regs[2] = rng.choice([0, 1, 1, 1, 2])
+        regs[3] = rng.choice([0, 1, 2, 3, 4, 7, 8, 0xFF, 0xFF, 0x100, 0xFFFFFFFF])
+    elif kind == 'burst':
+        regs[0], regs[1] = rng.choice([0, 1, 1, 2, 4, 4]), rng.choice([0, 1, 1, 2])
+    elif kind == 'config':
+        regs[1] = rng.choice([0, 0, 1, 1, 2])
+        regs[0] = rng.choice([0, 1, 2, 3, 4, 4, 5, 6])
+    elif kind == 'master':
+        regs[0], regs[2], regs[3] = rng.randrange(5), rng.randrange(4), rng.randrange(2)
+    elif kind == 'base':
+        regs[0] = 0xE800C800 + 0x800 * rng.randrange(5)
+    return [(RSPI_FLAGS, flags)]
+
+
+def dmac_args(rng, args):
+    """The DMAC set-ups (round 7): the five end callbacks (0x20808AA0) an empty function, so that the ISRs that call
+    them return; the arguments as drawn (addresses and counts only go to registers)."""
+    return [(0x20808AA0, struct.pack('<5I', *[VDC5_STUB_FN] * 5))]
+
+
+def sd_card_args(rng, args, kind):
+    """The SDHI command layer (round 7): the card context (0x300 bytes: card type +0x2C6 0 or 1, addressing +0x2C0 2
+    or 0) last, after (card address, buffer, blocks 0..3) for the sector transfers and ops, (length, blocks) for
+    CMD16, (response type 0..8) for the response copy, (buffer, length) for the PIO read; the DMA interrupt states
+    of sdhi_dma_open (0x20808B78: registered -1 or 1, a GIC id 0..0x25F)."""
+    regs = args['regs']
+    ctx = SCRATCH_ARGS + 0xC000
+    c = bytearray(rng.getrandbits(8) for _ in range(0x300))
+    struct.pack_into('<HH', c, 0x2C0, rng.choice([0, 2, 2]), 0)
+    struct.pack_into('<H', c, 0x2C6, rng.choice([0, 0, 1]))
+    buf = SCRATCH_ARGS + 0xE000
+    args['buffers'] = [b for b in args['buffers'] if not ctx <= b[0] < ctx + 0x4000]
+    args['buffers'] += [(ctx, bytes(c)), (buf, bytes(rng.getrandbits(8) for _ in range(0x800)))]
+    n = rng.choice([0, 1, 1, 2, 2, 3])
+    if kind == 'xfer':
+        regs[0], regs[1], regs[2], regs[3] = rng.getrandbits(32), buf, n, ctx
+    elif kind == 'cmd16':
+        regs[0], regs[1], regs[2] = rng.choice([0x200, 8, 64]), n, ctx
+    elif kind == 'rsp':
+        regs[0], regs[1] = rng.randrange(9), ctx
+    elif kind == 'ctx':
+        regs[0] = ctx
+    elif kind == 'pio':
+        regs[0], regs[1] = buf, rng.choice([0, 3, 4, 16, 512])
+    # SD_INFO1 with the response and access end bits, SD_INFO2 without error bits now and then, so that commands
+    # complete and the transfers run on (with random status they almost never got past CMD16); R1 (RSP01:RSP00)
+    # mostly without error bits
+    args["mmio"] = {0xE804E01C: [0xFFFF, 0x0005, rng.getrandbits(16)], 0xE804E01E: [0x0000, 0x0300, 0x2000, 0x0040],
+                    0xE804E00C: [0x0900, 0, rng.getrandbits(16)], 0xE804E00E: [0, 0, rng.getrandbits(16)]}
+    irq = b''.join(struct.pack('<IIbxH', VDC5_STUB_FN, rng.randrange(0x260), rng.choice([-1, 1]), rng.getrandbits(16))
+                   for _ in range(2))
+    return [(0x20808B78, irq)]
+
+
+SDHI_OPS = 0x20420564       # the SDHI operation table (src/display/drivers/sdhi.c)
+
+
+def sd_handle_args(rng, args, kind):
+    """The SD card layer (round 7): a handle {card context, the image's SDHI operation table} with the context's RCA,
+    addressing and card type (0 or 1) set, the SDHI status registers biased as for sd_card_args; (status out,
+    handle) for CMD13; a 16-byte CSD for the checks; an MBR geometry block (sectors per track 0/32/63, heads
+    0/16/255, start and count small or past the CHS limit, FAT type 12/16/32/other) for the partition helpers."""
+    fill = sd_card_args(rng, args, 'none')
+    regs = args['regs']
+    ctx, h = SCRATCH_ARGS + 0xC000, SCRATCH_ARGS + 0xB000
+    out = SCRATCH_ARGS + 0xB100
+    args['buffers'] += [(h, struct.pack('<II', ctx, SDHI_OPS)), (out, bytes(16))]
+    if kind == 'handle':
+        regs[0] = h
+    elif kind == 'status':
+        regs[0], regs[1] = out, h
+    elif kind == 'csd':
+        csd = bytearray(rng.getrandbits(8) for _ in range(16))
+        if rng.random() < 0.5:      # often a plausible CSD, so that the later tests are reached
+            csd[0] &= 0x4F
+            csd[1] &= 0x7F
+            csd[3] &= 0x7F
+            csd[5] = (csd[5] & 0xF0) | rng.choice([9, 10, 11, 12])
+            csd[12] &= 0xE3 | (rng.randrange(8) << 2)
+        args['buffers'] += [(out, bytes(csd))]
+        regs[0] = out
+    elif kind == 'geom':
+        g = bytearray(0x18)
+        lim = 0xFB0400
+        struct.pack_into('<HHIIIIB', g, 0, rng.choice([0, 32, 63, 63]), rng.choice([0, 16, 255, 255]), 0,
+                         rng.choice([0, 63, rng.getrandbits(20), lim - 1, lim, rng.getrandbits(32)]),
+                         rng.choice([1, 0x7FA7, 0x7FA8, 0xFFFF, 0x10000, rng.getrandbits(24), lim, rng.getrandbits(32)]),
+                         0, rng.choice([12, 16, 32, 32, 0, 33]))
+        args['buffers'] += [(out, bytes(g))]
+        regs[0], regs[1] = out, out + 0x80
+    return fill
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -1038,6 +1199,26 @@ def preset_for(fname):
             args['regs'][1] = rng.randrange(6)
             return fill
         return sh
+    if fname in ('vdc5_reg_read_data_control', 'vdc5_reg_change_read_process', 'vdc5_change_graphics_vin'):
+        kind = {'vdc5_reg_change_read_process': 'chg', 'vdc5_change_graphics_vin': 'vin'}.get(fname, 'read')
+        return lambda rng, args: vdc5_read_args(rng, args, kind)
+    if fname.startswith('dmac'):
+        return dmac_args
+    sd = {'sdhi_read_sectors_cmd': 'xfer', 'sdhi_write_sectors_cmd': 'xfer', 'sdhi_read_op': 'xfer',
+          'sdhi_write_op': 'xfer', 'sd_cmd16_set_blocklen': 'cmd16', 'sdhi_read_response': 'rsp', 'sd_cmd12_stop': 'ctx',
+          'sdhi_read_buf_pio': 'pio', 'sdhi_dma_open': 'irq', 'sdhi_open': 'irq'}.get(fname)
+    if sd:
+        return lambda rng, args: sd_card_args(rng, args, sd)
+    sd = {'sd_cmd0_go_idle': 'handle', 'sd_cmd2_all_send_cid': 'handle', 'sd_cmd9_send_csd': 'handle',
+          'sd_cmd10_send_cid': 'handle', 'sd_cmd13_send_status': 'status', 'sd_csd_check': 'csd', 'mmc_csd_check': 'csd',
+          'csd_read_bl_len': 'csd', 'csd_c_size': 'csd', 'csd_c_size_mult': 'csd'}.get(fname)
+    if sd or fname.startswith('mbr_'):
+        return lambda rng, args: sd_handle_args(rng, args, sd or 'geom')
+    if fname.startswith('rspi'):
+        kind = ('xfer' if fname in ('rspi_read', 'rspi_read_pio', 'rspi_write', 'rspi_write_pio') else
+                'burst' if fname.endswith('_read_burst') else 'config' if fname == 'rspi_hw_config' else
+                'master' if fname == 'rspi_hw_config_master' else 'base' if fname == 'rspi_fifo_reset' else 'ch')
+        return lambda rng, args: rspi_args(rng, args, kind)
     if fname in VDC5_TABLE_ARGS:
         return lambda rng, args: vdc5_table_args(rng, args, *VDC5_TABLE_ARGS[fname])
     if fname == 'vdc5_color_conversion':      # (graphics format, colour): every case of the switch and past it
@@ -1117,6 +1298,14 @@ def byte_check(res, obj, fname, shndx, off, oaddr):
     return None
 
 
+def ref_span(res, a):
+    """Bytes of random fill at a data symbol the recreated code refers to: 64, but not into the next table that the
+    trials keep (round 7: the fill of rspi_rx_done 0x20800418 ran over the RSPI trigger tables 0x20800424/34, so
+    nearly every rspi_read trial failed its trigger check and a mutation passed)."""
+    nxt = [k for k in res.keep if a < k < a + 64]
+    return min(nxt) - a if nxt else 64
+
+
 def check(res, obj, fname, shndx, off, seed=1, trials=200):
     img = res.img
     f = res.func(fname)
@@ -1164,7 +1353,7 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
     rng = random.Random(seed)
     for t in range(trials):
         args = draw_args(rng)
-        fill = [(a, bytes(rng.getrandbits(8) for _ in range(64))) for a in sorted(refs)]
+        fill = [(a, bytes(rng.getrandbits(8) for _ in range(ref_span(res, a)))) for a in sorted(refs)]
         pre = preset_for(fname)
         if pre:
             fill += pre(rng, args)
@@ -1305,13 +1494,65 @@ def clobbers(obj, shndx, off, size, md):
     return out
 
 
+def _reads_after(insns, k, names, clob, returned):
+    """The first instruction among the 12 after the call insns[k] (up to the first branch or return) that reads a
+    register of names that clob holds, returned does not, and nothing has written since: (address, registers) or
+    None. Pushes and stores to sp! do not count as reads."""
+    import capstone
+    written = set()
+    for j in insns[k + 1:k + 13]:
+        rd, wr = j.regs_access()
+        if j.mnemonic.startswith('push') or (j.mnemonic.startswith('stm') and j.op_str.startswith('sp!')):
+            rd = []
+        bad = [r for r in rd if r in names and r in clob and r not in written and r not in returned]
+        if bad:
+            return j.address, ', '.join(names[r] for r in bad)
+        written |= set(wr)
+        if (j.group(capstone.CS_GRP_JUMP) or j.group(capstone.CS_GRP_CALL) or j.group(capstone.CS_GRP_RET)
+                or capstone.arm.ARM_REG_PC in wr):
+            return None
+    return None
+
+
+def _indirect_call(insns, k):
+    """True when insns[k] calls through a register: blx rN, or the pre-v5 pair mov lr, pc + a write of pc
+    (bx rN, ldr pc, mov pc) with insns[k] the second."""
+    import capstone
+    i = insns[k]
+    if i.mnemonic == 'blx' and not i.op_str.startswith('#'):
+        return True
+    if k and insns[k - 1].mnemonic == 'mov' and insns[k - 1].op_str == 'lr, pc':
+        return capstone.arm.ARM_REG_PC in i.regs_access()[1]
+    return False
+
+
+def address_taken(res, entries):
+    """The entries (original addresses) that the image holds as a word anywhere in memory after __scatterload: in a
+    literal pool, a function table, initialised data (with the Thumb bit as stored): the possible targets of its
+    calls through a register. armcc's A32 code loads addresses from literal pools, not with movw/movt [fact: the
+    function pointers of the round-6 TCON table and line callback are pool words]."""
+    want = {}
+    for a, thumb in entries:
+        want[a | (1 if thumb else 0)] = a
+    out = set()
+    for lo, data in res.img.regions:
+        for o in range(0, len(data) - 3, 4):
+            w = struct.unpack_from('<I', data, o)[0]
+            if w in want:
+                out.add(want[w])
+    return out
+
+
 def abi_hazards():
-    """[(function, caller, address, registers)]: call sites in the image that read r1, r2, r3 or ip after calling a
-    recreated function that may change that register and does not return it (a linear scan of up to 12
-    instructions after the call, to the first branch or return; pushes do not count as reads). armcc keeps registers
-    across calls it knows do not touch them (sdhi_error_reset keeps r2, r3, ip across sdhi_soft_reset) and its
-    library returns more than the AAPCS says (_ll_udiv10: the remainder in r2): neither shows in the differential
-    check, which compares the registers of the C return type, but the image's own callers break in the hybrid."""
+    """[(function, caller, address, registers, call)]: call sites in the image that read r1, r2, r3 or ip after
+    calling a recreated function that may change that register and does not return it (_reads_after). armcc keeps
+    registers across calls it knows do not touch them (sdhi_error_reset keeps r2, r3, ip across sdhi_soft_reset) and
+    its library returns more than the AAPCS says (_ll_udiv10: the remainder in r2): neither shows in the
+    differential check, which compares the registers of the C return type, but the image's own callers break in the
+    hybrid. Direct calls (bl/blx #imm) name their callee; a call through a register (round 7) can reach every
+    recreated function whose entry the image holds as data (address_taken), so a read there counts against each
+    of them. Returns (rows, recreated functions checked, indirect call sites, of them reading a scratch register,
+    address-taken recreated functions)."""
     import capstone
     res = Resolver(Image())
     img = res.img.file
@@ -1324,46 +1565,50 @@ def abi_hazards():
     for obj, fname, shndx, off in recreated():
         o = res.func(fname)
         if o and fname not in ident:          # byte-identical code behaves as the original at every call site
-            targets[o[0]] = (fname, clobbers(obj, shndx, off, obj.extent(shndx, off), md[False]))
+            targets[o[0]] = (fname, clobbers(obj, shndx, off, obj.extent(shndx, off), md[False]), o[1])
+    taken = address_taken(res, [(a, t[2]) for a, t in targets.items()])
     rets = _ret_sizes()
     names = {capstone.arm.ARM_REG_R1: 'r1', capstone.arm.ARM_REG_R2: 'r2', capstone.arm.ARM_REG_R3: 'r3',
              capstone.arm.ARM_REG_R12: 'ip'}
-    out = []
+    scratch = set(names)
+
+    def returned(fname):
+        size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
+        r = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
+        if size_ret >= 16:
+            r |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
+        return r
+
+    out, n_ind, n_ind_read = [], 0, 0
     for g, (a, size, thumb) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
         if not BASE <= a < 0x20165178 or size <= 0:
             continue
         insns = list(md[thumb].disasm(img[a - BASE:a - BASE + size], a))
         for k, i in enumerate(insns):
-            if i.mnemonic not in ('bl', 'blx') or not i.op_str.startswith('#'):
+            if i.mnemonic in ('bl', 'blx') and i.op_str.startswith('#'):
+                t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
+                if t:
+                    hit = _reads_after(insns, k, names, t[1], returned(t[0]))
+                    if hit:
+                        out.append((t[0], g, hit[0], hit[1], i.address))
                 continue
-            t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
-            if not t:
+            if not _indirect_call(insns, k):
                 continue
-            fname, clob = t
-            size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
-            returned = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
-            if size_ret >= 16:
-                returned |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
-            written = set()
-            for j in insns[k + 1:k + 13]:
-                rd, wr = j.regs_access()
-                if j.mnemonic.startswith('push') or (j.mnemonic.startswith('stm') and j.op_str.startswith('sp!')):
-                    rd = []
-                bad = [r for r in rd if r in names and r in clob and r not in written and r not in returned]
-                if bad:
-                    out.append((fname, g, j.address, ', '.join(names[r] for r in bad), i.address))
-                    break
-                written |= set(wr)
-                if (j.group(capstone.CS_GRP_JUMP) or j.group(capstone.CS_GRP_CALL) or j.group(capstone.CS_GRP_RET)
-                        or capstone.arm.ARM_REG_PC in wr):
-                    break
-    return out, len(targets)
+            n_ind += 1
+            if _reads_after(insns, k, names, scratch, set()):
+                n_ind_read += 1
+                for ta in sorted(taken):
+                    fname, clob, _ = targets[ta]
+                    hit = _reads_after(insns, k, names, clob, returned(fname))
+                    if hit:
+                        out.append((fname, g, hit[0], hit[1], i.address))
+    return out, len(targets), n_ind, n_ind_read, len(taken)
 
 
 def cmd_abicheck(args):
     """abi_hazards() -> src/display/out/abi_hazards.tsv, which tools/display_link.py reads: it holds back (does not
     link) a recreated function that an original caller relies on in this way, until that caller is recreated too."""
-    rows, n = abi_hazards()
+    rows, n, n_ind, n_ind_read, n_taken = abi_hazards()
     os.makedirs(os.path.join(SRC, 'out'), exist_ok=True)
     with open(os.path.join(SRC, 'out', 'abi_hazards.tsv'), 'w') as f:
         f.write('function\tcaller\tcall\tread_at\tregisters\n')
@@ -1371,7 +1616,9 @@ def cmd_abicheck(args):
             f.write(f'{fname}\t{g}\t{call:08x}\t{at:08x}\t{regs}\n')
             print(f'equiv_display_emu: abicheck {fname}: {g} reads {regs} at {at:#x} after the call at {call:#x}')
     print(f'equiv_display_emu: abicheck: {len(rows)} call sites rely on a register a recreated callee may change '
-          f'({len({r[0] for r in rows})} functions, of {n} not byte-identical); wrote src/display/out/abi_hazards.tsv')
+          f'({len({r[0] for r in rows})} functions, of {n} not byte-identical); calls through a register: {n_ind} '
+          f'sites, {n_ind_read} of them read r1, r2, r3 or ip after the call, {n_taken} recreated functions are '
+          f'address-taken; wrote src/display/out/abi_hazards.tsv')
 
 
 def cmd_linkcheck(args):
