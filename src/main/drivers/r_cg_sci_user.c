@@ -3,9 +3,7 @@
  * TXIn and RXIn are vectors (interrupt functions, RTE); TEIn and ERIn are group BL0 sources whose handlers
  * R_BSP_InterruptControl calls as ordinary functions (docs/code/main/sci.md "Interrupt wiring"). The callbacks and
  * the receive hooks are Yaesu's code: they hand finished frames to the CAT parser, the DISPLAY, DSP and SDR links.
- * Written from the disassembly: Ghidra's C of r_sci2_callback_transmitend, r_sci2_callback_receiveend and
- * sci5_rx_byte_hook leaves out their early returns (0xFFF93D91, 0xFFF93DAD, 0xFFF9498F/0xFFF94999/0xFFF949B3)
- * [fact: the rts instructions there]. */
+ * Written from the disassembly and checked against decomp/main (the two agree). */
 #include "sci_cfg.h"
 
 #define ISR __attribute__((interrupt))
