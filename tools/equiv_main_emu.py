@@ -1032,6 +1032,12 @@ UI_PRESETS = {
 }
 for _n in ('key_call_press', 'key_call_short', 'key_call_long', 'key_call_repeat', 'key_call_release'):
     UI_PRESETS[_n] = lambda rng, regs: ([(0x1FA40, rng.choice([0x300, 0x30F, 0x312, rng.randrange(0x35F)]).to_bytes(2, 'little'))], None)
+# the frame-0x50 keyboard builders (src/main/app/ui_kbd.c) read g_ui through 0x25D38
+for _n in ('dl50_mycall', 'dl50_memory_name', 'dl50_cw_text', 'dl50_rtty_text', 'dl50_psk_text', 'dl50_file_name',
+           'dl50_preset_name', 'kbd_fmt_char_pos', 'dl50_slot_label', 'dl50_msg_text'):
+    UI_PRESETS[_n] = g_ui_ptr_ok(ram_bytes({G_UI + 0xC0: (0, 1, 2, 3), G_UI + 0xC1: range(50), G_UI + 0xBF: range(5),
+                                            G_UI + 0x1BC: (0, 0, 1)}))
+UI_PRESETS['kbd_copy_text'] = g_ui_ptr_ok(both(real_buffer(0), real_buffer(1)))
 UI_PRESETS['key_class_of'] = both(UI_PRESETS['key_assign_slot'],
                                   ram_bytes({G_OP + 0x9E + k: list(range(21)) for k in range(6)}))
 PRESETS.update(UI_PRESETS)
