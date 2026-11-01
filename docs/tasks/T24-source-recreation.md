@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.23 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.31 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -712,6 +712,22 @@ code), `vdc5_output_setup` with a display mode other than 0/1 (past the two-entr
 Plus three equivalent functions at addresses Ghidra's list lacks (0x20117A68, 0x20117F3C, 0x2011A20C; rows with
 ghidra_name "-", 0 bytes counted until the re-export). **Re-implemented: 10.23 %** (round 4: 5.90 %); the VDC5 work
 is 165 of the new functions and 17,148 bytes.
+
+### DISPLAY: follow-up after the re-export (round 5)
+
+After the round-5 Ghidra changes were applied to the canonical project and `decomp/display` re-exported, a status
+run in the main checkout gave `vdc5_reg_display_output` "differs" (MMIO, at trials 4/8/7 with seeds 1/2/3). Cause
+**[fact]**: that build used the default `arm-none-eabi-gcc` (GCC 13.2.1), and the generic VDC5 preset puts a
+pointer into the word at +0x24 of `vdc5_output_t`, so `out_format` (+0x27) is 0x21; the driver indexes its 4-entry
+dither table with it, and past the table the image reads its stack (the table is a local array there) while the
+GCC build reads whatever follows the table in its .rodata. GCC 13 lays .rodata out differently from GCC 10.2.1, so
+the GCC 10 runs happened to read equal words. Not a code difference: the input is outside the driver's domain.
+Fix: a preset for the display-output calls that builds a valid `vdc5_output_t` (TCON timings with pin -1..6, the
+enum bytes in range). With it the function is equivalent at seeds 1, 2 and 3 with 100 % block coverage (60 % to 80 %
+before), and the mutation dither 0x10000 → 0x10001 is reported as differing. `equiv_display_emu.py status` and
+`check` now stop with a message and exit 1 when `src/display/out/obj` has no objects (they used to write an
+all-"not yet" table). The recreated code passes with either compiler; the Makefile's default `CROSS` is whatever
+`arm-none-eabi-gcc` is on the path, and the status run after this fix (GCC 13.2.1, 200 trials) gives identical 41, equivalent 425, differs 0, **10.31 %** (40,844 of 396,256 bytes; the three formerly unlisted VDC5 functions count now). The display-output functions also pass with xPack GCC 10.2.1.
 
 ## Open steps
 

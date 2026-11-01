@@ -879,9 +879,36 @@ def ctype_arg(rng, args):
     return []
 
 
+def vdc5_output_args(rng, args):
+    """(ch, vdc5_output_t) for the display-output calls: TCON half/offset, outctrl[8] each NULL or a 10-byte timing
+    (start, width, mode 0..3, reference 0/1, polarity 0/1, pin -1..6, edge 0/1), and the enum bytes at +0x24..+0x2A
+    in range (edge, endian, swap 0/1; format 0..3; clock 0..2; scan 0/1; phase 0..3), a random background colour.
+    The generic block (vdc5_param) puts pointers into the word at +0x24, i.e. out_format 0x21, and the driver then
+    indexes its 4-entry dither table with it: past the table the image reads its stack and the GCC build whatever
+    follows its .rodata (T24 round 5 follow-up, seen with GCC 13)."""
+    fill = vdc5_args(rng, args)
+    a, t = SCRATCH_ARGS + 0x2000, SCRATCH_ARGS + 0x3000
+    o = bytearray(0x34)
+    struct.pack_into('<HH', o, 0, rng.getrandbits(11), rng.getrandbits(11))
+    timings = bytearray()
+    for k in range(8):
+        tim = struct.pack('<HHBBBbB', rng.getrandbits(11), rng.getrandbits(11), rng.randrange(4), rng.randrange(2),
+                          rng.randrange(2), rng.choice([-1, 0, 1, 2, 3, 4, 5, 6]), rng.randrange(2)) + b'\0'
+        timings += tim + bytes(6)
+        struct.pack_into('<I', o, 4 + 4 * k, 0 if rng.random() < 0.3 else t + 0x10 * k)
+    o[0x24:0x2B] = bytes([rng.randrange(2), rng.randrange(2), rng.randrange(2), rng.randrange(4), rng.randrange(3),
+                          rng.randrange(2), rng.randrange(4)])
+    struct.pack_into('<I', o, 0x2C, rng.getrandbits(32))
+    args['buffers'] = [b for b in args['buffers'] if not a <= b[0] < a + 0x2000] + [(a, bytes(o)), (t, bytes(timings))]
+    args['regs'][1] = a
+    return fill
+
+
 def preset_for(fname):
     if fname in PRESETS:
         return PRESETS[fname]
+    if fname in ('vdc5_reg_display_output', 'r_vdc5_display_output'):
+        return vdc5_output_args
     if fname == 'tolower':
         return ctype_arg
     if fname in ('vdc5_sync_setup', 'vdc5_output_setup', 'lvds_pll_cfg'):
@@ -1068,6 +1095,7 @@ def recreated():
 def cmd_check(args):
     """The named functions (or every function of the objects named with --object), in parallel."""
     import multiprocessing
+    require_objects()
     want = set(args.functions)
     jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()
             if fname in want or any(obj.path.endswith(o) for o in args.object or ())]
@@ -1161,8 +1189,17 @@ def cmd_linkcheck(args):
           f' (of {len(jobs)} patched entries)')
 
 
+def require_objects():
+    """Stop with a clear message when the recreated objects are missing: without them status would write a table
+    with every function "not yet" (seen in the T24 round-5 follow-up)."""
+    if not objects():
+        sys.exit(f'equiv_display_emu: no objects in {os.path.relpath(os.path.join(SRC, "out", "obj"), ROOT)}; '
+                 f'build them first (make -C src/display CROSS=...); status.tsv not written')
+
+
 def cmd_status(args):
     import multiprocessing
+    require_objects()
     res = Resolver(Image())
     results = {}
     jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()]

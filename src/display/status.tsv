@@ -379,7 +379,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20112774	task_renc	96			not yet	0	
 201127d4	renc_poll_mtu1	92			not yet	0	
 20112830	renc_poll_mtu2	100			not yet	0	
-20112894	adc_ring_average	76			not yet	0	
+20112894	adc_ring_average	68			not yet	0	
 201128d8	adc_hysteresis	28			not yet	0	
 201128f4	task_ad_renc	120			not yet	0	
 2011296c	pot_detect	360			not yet	0	
@@ -426,7 +426,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201140d0	progress_set	12			not yet	0	
 201140dc	progress_get	12			not yet	0	
 201140e8	progress_range_init	12			not yet	0	
-201140f4	progress_scale	84			not yet	0	
+201140f4	progress_scale	76			not yet	0	
 20114144	rtc_delay	36			not yet	0	
 20114168	rtc_send_byte	88			not yet	0	
 201141c0	rtc_send_bytes	36			not yet	0	
@@ -564,10 +564,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201178f4	delay_us	56			not yet	0	
 201179bc	FUN_201179bc	4			not yet	0	
 201179c0	r_vdc5_initialize	168	r_vdc5_initialize	drivers/vdc5_api.o	equivalent	168	differential emulation: 200 trials agree (18 returned normally, 86% of 7 blocks reached)
-20117a68	-	0	r_vdc5_terminate	drivers/vdc5_api.o	equivalent	0	differential emulation: 200 trials agree (11 returned normally, 100% of 5 blocks reached, 9 trials inconclusive)
-20117ad4	r_vdc5_terminate	56	r_vdc5_video_input	drivers/vdc5_api.o	equivalent	56	differential emulation: 200 trials agree (31 returned normally, 100% of 1 blocks reached)
+20117a68	r_vdc5_terminate	108	r_vdc5_terminate	drivers/vdc5_api.o	equivalent	108	differential emulation: 200 trials agree (11 returned normally, 100% of 5 blocks reached, 9 trials inconclusive)
+20117ad4	r_vdc5_video_input	56	r_vdc5_video_input	drivers/vdc5_api.o	equivalent	56	differential emulation: 200 trials agree (31 returned normally, 100% of 1 blocks reached)
 20117b0c	r_vdc5_sync_control	156	r_vdc5_sync_control	drivers/vdc5_api.o	equivalent	156	differential emulation: 200 trials agree (82 returned normally, 100% of 9 blocks reached)
-20117ba8	r_vdc5_display_output	108	r_vdc5_display_output	drivers/vdc5_api.o	equivalent	108	differential emulation: 200 trials agree (112 returned normally, 100% of 4 blocks reached)
+20117ba8	r_vdc5_display_output	108	r_vdc5_display_output	drivers/vdc5_api.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 20117c14	r_vdc5_callback_isr_checked	80	r_vdc5_callback_isr_checked	drivers/vdc5_api.o	equivalent	80	differential emulation: 200 trials agree (112 returned normally, 100% of 4 blocks reached)
 20117c64	vdc5_layer_to_wr	24	vdc5_layer_to_wr	drivers/vdc5_api.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
 20117c7c	r_vdc5_write_data_control	176	r_vdc5_write_data_control	drivers/vdc5_api.o	equivalent	176	differential emulation: 200 trials agree (93 returned normally, 100% of 9 blocks reached)
@@ -577,7 +577,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20117e5c	r_vdc5_change_read_process	96	r_vdc5_change_read_process	drivers/vdc5_api.o	equivalent	96	differential emulation: 200 trials agree (120 returned normally, 100% of 3 blocks reached)
 20117ebc	r_vdc5_start_process	68	r_vdc5_start_process	drivers/vdc5_api.o	equivalent	68	differential emulation: 200 trials agree (114 returned normally, 100% of 4 blocks reached)
 20117f00	r_vdc5_stop_process	60	r_vdc5_stop_process	drivers/vdc5_api.o	equivalent	60	differential emulation: 200 trials agree (142 returned normally, 100% of 4 blocks reached, 7 trials inconclusive)
-20117f3c	-	0	r_vdc5_release_data_control	drivers/vdc5_api.o	equivalent	0	differential emulation: 200 trials agree (151 returned normally, 100% of 4 blocks reached)
+20117f3c	r_vdc5_release_data_control	76	r_vdc5_release_data_control	drivers/vdc5_api.o	equivalent	76	differential emulation: 200 trials agree (151 returned normally, 100% of 4 blocks reached)
 20117f88	r_vdc5_video_noise_reduction	64	r_vdc5_video_noise_reduction	drivers/vdc5_api.o	equivalent	64	differential emulation: 200 trials agree (96 returned normally, 100% of 3 blocks reached)
 20117fc8	r_vdc5_image_color_matrix	140	r_vdc5_image_color_matrix	drivers/vdc5_api.o	equivalent	140	differential emulation: 200 trials agree (31 returned normally, 91% of 11 blocks reached)
 20118054	r_vdc5_image_enhancement	140	r_vdc5_image_enhancement	drivers/vdc5_api.o	equivalent	140	differential emulation: 200 trials agree (200 returned normally, 75% of 4 blocks reached)
@@ -637,24 +637,24 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201192d0	vdc5_ch1_isr_oir_vfield	80	vdc5_ch1_isr_oir_vfield	drivers/vdc5_int.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 20119320	vdc5_ch1_isr_iv7_vbuferr	80	vdc5_ch1_isr_iv7_vbuferr	drivers/vdc5_int.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 20119370	vdc5_ch1_isr_iv8_vbuferr	80	vdc5_ch1_isr_iv8_vbuferr	drivers/vdc5_int.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
-201193c0	FUN_201193c0	44	vdc5_wait_200us	drivers/vdc5_reg.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+201193c0	vdc5_wait_200us	44	vdc5_wait_200us	drivers/vdc5_reg.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 201193ec	vdc5_reg_initialize	508	vdc5_reg_initialize	drivers/vdc5_reg.o	equivalent	508	differential emulation: 200 trials agree (40 returned normally, 100% of 9 blocks reached)
-201195e8	FUN_201195e8	128	vdc5_reg_terminate	drivers/vdc5_reg.o	equivalent	128	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-20119668	FUN_20119668	344	vdc5_set_video_external_input	drivers/vdc5_reg.o	equivalent	344	differential emulation: 200 trials agree (200 returned normally, 100% of 19 blocks reached)
-201197c0	vdc5_reg_terminate	284	vdc5_reg_video_input	drivers/vdc5_reg.o	equivalent	284	differential emulation: 200 trials agree (40 returned normally, 100% of 6 blocks reached)
-201198dc	FUN_201198dc	180	vdc5_set_initial_connection	drivers/vdc5_reg.o	equivalent	180	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201195e8	vdc5_reg_terminate	128	vdc5_reg_terminate	drivers/vdc5_reg.o	equivalent	128	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+20119668	vdc5_set_video_external_input	344	vdc5_set_video_external_input	drivers/vdc5_reg.o	equivalent	344	differential emulation: 200 trials agree (200 returned normally, 100% of 19 blocks reached)
+201197c0	vdc5_reg_video_input	284	vdc5_reg_video_input	drivers/vdc5_reg.o	equivalent	284	differential emulation: 200 trials agree (40 returned normally, 100% of 6 blocks reached)
+201198dc	vdc5_set_initial_connection	180	vdc5_set_initial_connection	drivers/vdc5_reg.o	equivalent	180	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20119990	vdc5_reg_sync_control	784	vdc5_reg_sync_control	drivers/vdc5_reg.o	equivalent	784	differential emulation: 200 trials agree (40 returned normally, 100% of 7 blocks reached)
-20119cd0	FUN_20119cd0	232	vdc5_set_graphics_display_mode	drivers/vdc5_reg.o	equivalent	232	differential emulation: 200 trials agree (161 returned normally, 60% of 10 blocks reached)
-20119db8	FUN_20119db8	28	vdc5_color_to_agbr	drivers/vdc5_reg.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20119dd4	FUN_20119dd4	140	vdc5_set_graphics_background_color	drivers/vdc5_reg.o	equivalent	140	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-20119e60	vdc5_reg_display_output	660	vdc5_reg_display_output	drivers/vdc5_reg.o	equivalent	660	differential emulation: 200 trials agree (40 returned normally, 80% of 15 blocks reached)
-2011a110	FUN_2011a110	252	vdc5_set_color_matrix	drivers/vdc5_reg.o	equivalent	252	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011a20c	-	0	vdc5_set_input_cntrl_color_mtx	drivers/vdc5_reg.o	equivalent	0	differential emulation: 200 trials agree (151 returned normally, 83% of 6 blocks reached)
+20119cd0	vdc5_set_graphics_display_mode	232	vdc5_set_graphics_display_mode	drivers/vdc5_reg.o	equivalent	232	differential emulation: 200 trials agree (161 returned normally, 60% of 10 blocks reached)
+20119db8	vdc5_color_to_agbr	28	vdc5_color_to_agbr	drivers/vdc5_reg.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20119dd4	vdc5_set_graphics_background_color	140	vdc5_set_graphics_background_color	drivers/vdc5_reg.o	equivalent	140	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+20119e60	vdc5_reg_display_output	660	vdc5_reg_display_output	drivers/vdc5_reg.o	equivalent	660	differential emulation: 200 trials agree (200 returned normally, 100% of 15 blocks reached)
+2011a110	vdc5_set_color_matrix	252	vdc5_set_color_matrix	drivers/vdc5_reg.o	equivalent	252	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011a20c	vdc5_set_input_cntrl_color_mtx	124	vdc5_set_input_cntrl_color_mtx	drivers/vdc5_reg.o	equivalent	124	differential emulation: 200 trials agree (151 returned normally, 83% of 6 blocks reached)
 2011a288	FUN_2011a288	8			not yet	0	
 2011a290	FUN_2011a290	260			not yet	0	
-2011a394	vdc5_config	944			not yet	0	
+2011a394	vdc5_config	820			not yet	0	
 2011a6c8	vdc5_reg_change_write_process	312			not yet	0	
-2011a800	FUN_2011a800	72	vdc5_set_img_qa_improver_color_mtx	drivers/vdc5_reg.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011a800	vdc5_set_img_qa_improver_color_mtx	72	vdc5_set_img_qa_improver_color_mtx	drivers/vdc5_reg.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011a848	FUN_2011a848	132			not yet	0	
 2011a8cc	FUN_2011a8cc	276			not yet	0	
 2011a9e0	FUN_2011a9e0	236			not yet	0	
@@ -664,10 +664,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011aecc	FUN_2011aecc	104			not yet	0	
 2011af34	vdc5_reg_read_data_control	1052			not yet	0	
 2011b498	vdc5_reg_change_read_process	868			not yet	0	
-2011b6d8	FUN_2011b6d8	440	vdc5_set_reg_update_rw_enable	drivers/vdc5_reg.o	equivalent	440	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+2011b6d8	vdc5_set_reg_update_rw_enable	440	vdc5_set_reg_update_rw_enable	drivers/vdc5_reg.o	equivalent	440	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 2011b8b8	vdc5_reg_start_process	208	vdc5_reg_start_process	drivers/vdc5_reg.o	equivalent	208	differential emulation: 200 trials agree (15 returned normally, 56% of 9 blocks reached, 1 trials inconclusive)
 2011b988	vdc5_reg_stop_process	192	vdc5_reg_stop_process	drivers/vdc5_reg.o	equivalent	192	differential emulation: 200 trials agree (61 returned normally, 100% of 9 blocks reached, 13 trials inconclusive)
-2011ba48	FUN_2011ba48	316	vdc5_reg_release_data_control	drivers/vdc5_reg.o	equivalent	316	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2011ba48	vdc5_reg_release_data_control	316	vdc5_reg_release_data_control	drivers/vdc5_reg.o	equivalent	316	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 2011bb84	vdc5_reg_video_noise_reduction	264	vdc5_reg_video_noise_reduction	drivers/vdc5_reg.o	equivalent	264	differential emulation: 200 trials agree (57 returned normally, 100% of 3 blocks reached)
 2011bc8c	vdc5_reg_image_color_matrix	36	vdc5_reg_image_color_matrix	drivers/vdc5_reg.o	equivalent	36	differential emulation: 200 trials agree (29 returned normally, 100% of 1 blocks reached)
 2011bcb0	FUN_2011bcb0	220			not yet	0	
@@ -689,55 +689,55 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011c85c	FUN_2011c85c	72			not yet	0	
 2011c8a4	FUN_2011c8a4	172			not yet	0	
 2011c950	vdc5_reg_gamma_correction	176			not yet	0	
-2011ca00	FUN_2011ca00	68	vdc5_tcon_stva	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011ca44	FUN_2011ca44	68	vdc5_tcon_stvb	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011ca88	FUN_2011ca88	112	vdc5_tcon_sth	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011caf8	FUN_2011caf8	112	vdc5_tcon_stb	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011cb68	FUN_2011cb68	112	vdc5_tcon_cpv	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011cbd8	FUN_2011cbd8	136	vdc5_tcon_pola	drivers/vdc5_reg.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011cc60	FUN_2011cc60	136	vdc5_tcon_polb	drivers/vdc5_reg.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011ccf8	FUN_2011ccf8	24	vdc5_tcon_de	drivers/vdc5_reg.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011cd10	FUN_2011cd10	140	vdc5_rw_write_0	drivers/vdc5_reg.o	equivalent	140	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011cd9c	FUN_2011cd9c	144	vdc5_rw_write_1	drivers/vdc5_reg.o	equivalent	144	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011ce2c	FUN_2011ce2c	64	vdc5_rw_write_oir	drivers/vdc5_reg.o	equivalent	64	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011ce6c	FUN_2011ce6c	100	vdc5_rw_read_0	drivers/vdc5_reg.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011ced0	FUN_2011ced0	108	vdc5_rw_read_1	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011cf3c	FUN_2011cf3c	108	vdc5_rw_read_2	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011cfa8	FUN_2011cfa8	108	vdc5_rw_read_3	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
-2011d014	FUN_2011d014	104	vdc5_rw_read_oir	drivers/vdc5_reg.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ca00	vdc5_tcon_stva	68	vdc5_tcon_stva	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011ca44	vdc5_tcon_stvb	68	vdc5_tcon_stvb	drivers/vdc5_reg.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011ca88	vdc5_tcon_sth	112	vdc5_tcon_sth	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011caf8	vdc5_tcon_stb	112	vdc5_tcon_stb	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011cb68	vdc5_tcon_cpv	112	vdc5_tcon_cpv	drivers/vdc5_reg.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011cbd8	vdc5_tcon_pola	136	vdc5_tcon_pola	drivers/vdc5_reg.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011cc60	vdc5_tcon_polb	136	vdc5_tcon_polb	drivers/vdc5_reg.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011ccf8	vdc5_tcon_de	24	vdc5_tcon_de	drivers/vdc5_reg.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011cd10	vdc5_rw_write_0	140	vdc5_rw_write_0	drivers/vdc5_reg.o	equivalent	140	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011cd9c	vdc5_rw_write_1	144	vdc5_rw_write_1	drivers/vdc5_reg.o	equivalent	144	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ce2c	vdc5_rw_write_oir	64	vdc5_rw_write_oir	drivers/vdc5_reg.o	equivalent	64	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ce6c	vdc5_rw_read_0	100	vdc5_rw_read_0	drivers/vdc5_reg.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011ced0	vdc5_rw_read_1	108	vdc5_rw_read_1	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011cf3c	vdc5_rw_read_2	108	vdc5_rw_read_2	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011cfa8	vdc5_rw_read_3	108	vdc5_rw_read_3	drivers/vdc5_reg.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011d014	vdc5_rw_read_oir	104	vdc5_rw_read_oir	drivers/vdc5_reg.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011d080	vdc5_shrd_init	284	vdc5_shrd_init	drivers/vdc5_shrd.o	equivalent	284	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 2011d19c	vdc5_shrd_set_init_param	68	vdc5_shrd_set_init_param	drivers/vdc5_shrd.o	equivalent	68	differential emulation: 200 trials agree (45 returned normally, 80% of 5 blocks reached)
-2011d1e0	FUN_2011d1e0	20	vdc5_shrd_set_terminate	drivers/vdc5_shrd.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d1f4	vdc5_shrd_terminate	84	vdc5_shrd_set_input_param	drivers/vdc5_shrd.o	equivalent	84	differential emulation: 200 trials agree (37 returned normally, 100% of 5 blocks reached)
+2011d1e0	vdc5_shrd_set_terminate	20	vdc5_shrd_set_terminate	drivers/vdc5_shrd.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d1f4	vdc5_shrd_set_input_param	84	vdc5_shrd_set_input_param	drivers/vdc5_shrd.o	equivalent	84	differential emulation: 200 trials agree (37 returned normally, 100% of 5 blocks reached)
 2011d248	vdc5_shrd_set_sync_param	20	vdc5_shrd_set_sync_param	drivers/vdc5_shrd.o	equivalent	20	differential emulation: 200 trials agree (50 returned normally, 100% of 1 blocks reached)
-2011d25c	FUN_2011d25c	88			not yet	0	
+2011d25c	vdc5_sum_product	88			not yet	0	
 2011d2b4	vdc5_shrd_set_output_param	192	vdc5_shrd_set_output_param	drivers/vdc5_shrd.o	equivalent	192	differential emulation: 200 trials agree (50 returned normally, 100% of 1 blocks reached)
 2011d374	vdc5_shrd_set_write_param	124	vdc5_shrd_set_write_param	drivers/vdc5_shrd.o	equivalent	124	differential emulation: 200 trials agree (44 returned normally, 100% of 4 blocks reached)
 2011d3f0	vdc5_shrd_set_chg_write_param	72	vdc5_shrd_set_chg_write_param	drivers/vdc5_shrd.o	equivalent	72	differential emulation: 200 trials agree (44 returned normally, 100% of 4 blocks reached)
 2011d438	vdc5_shrd_set_read_param	220	vdc5_shrd_set_read_param	drivers/vdc5_shrd.o	equivalent	220	differential emulation: 200 trials agree (29 returned normally, 83% of 6 blocks reached)
 2011d514	vdc5_shrd_set_chg_read_param	104	vdc5_shrd_set_chg_read_param	drivers/vdc5_shrd.o	equivalent	104	differential emulation: 200 trials agree (46 returned normally, 100% of 5 blocks reached)
-2011d57c	FUN_2011d57c	16	vdc5_shrd_set_cascade	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d58c	FUN_2011d58c	16	vdc5_shrd_set_und_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d59c	FUN_2011d59c	12	vdc5_shrd_get_panel_clksel	drivers/vdc5_shrd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d5a8	FUN_2011d5a8	36	vdc5_shrd_get_lvds_clk_ref	drivers/vdc5_shrd.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 75% of 4 blocks reached)
-2011d5cc	FUN_2011d5cc	16	vdc5_shrd_get_color_space	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d5dc	FUN_2011d5dc	16	vdc5_shrd_get_input_select	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d5ec	FUN_2011d5ec	16	vdc5_shrd_get_vs_in_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d5fc	FUN_2011d5fc	16	vdc5_shrd_get_cascade	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d60c	FUN_2011d60c	16	vdc5_shrd_get_und_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d61c	FUN_2011d61c	24	vdc5_shrd_get_bg_color	drivers/vdc5_shrd.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d634	FUN_2011d634	24	vdc5_shrd_get_writing_mode	drivers/vdc5_shrd.o	equivalent	24	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d64c	FUN_2011d64c	28	vdc5_shrd_get_interlace	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d668	FUN_2011d668	28	vdc5_shrd_get_color_space_fb_wr	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d684	FUN_2011d684	28	vdc5_shrd_get_fr_buff_btm	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d6a0	FUN_2011d6a0	28	vdc5_shrd_get_ln_off_dir	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d6bc	FUN_2011d6bc	32	vdc5_shrd_get_sel_fb_addr_sig	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d6dc	FUN_2011d6dc	32	vdc5_shrd_get_graphics_format	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d6fc	FUN_2011d6fc	32	vdc5_shrd_get_color_space_fb_rd	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d71c	FUN_2011d71c	32	vdc5_shrd_get_measure_folding	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
-2011d73c	FUN_2011d73c	32	vdc5_shrd_get_display_area	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d75c	FUN_2011d75c	32	vdc5_shrd_get_fr_buff_width_rd	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011d77c	FUN_2011d77c	12	vdc5_shrd_get_lvds_ch	drivers/vdc5_shrd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d57c	vdc5_shrd_set_cascade	16	vdc5_shrd_set_cascade	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d58c	vdc5_shrd_set_und_sel	16	vdc5_shrd_set_und_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d59c	vdc5_shrd_get_panel_clksel	12	vdc5_shrd_get_panel_clksel	drivers/vdc5_shrd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d5a8	vdc5_shrd_get_lvds_clk_ref	36	vdc5_shrd_get_lvds_clk_ref	drivers/vdc5_shrd.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 75% of 4 blocks reached)
+2011d5cc	vdc5_shrd_get_color_space	16	vdc5_shrd_get_color_space	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d5dc	vdc5_shrd_get_input_select	16	vdc5_shrd_get_input_select	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d5ec	vdc5_shrd_get_vs_in_sel	16	vdc5_shrd_get_vs_in_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d5fc	vdc5_shrd_get_cascade	16	vdc5_shrd_get_cascade	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d60c	vdc5_shrd_get_und_sel	16	vdc5_shrd_get_und_sel	drivers/vdc5_shrd.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d61c	vdc5_shrd_get_bg_color	24	vdc5_shrd_get_bg_color	drivers/vdc5_shrd.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d634	vdc5_shrd_get_writing_mode	24	vdc5_shrd_get_writing_mode	drivers/vdc5_shrd.o	equivalent	24	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d64c	vdc5_shrd_get_interlace	28	vdc5_shrd_get_interlace	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d668	vdc5_shrd_get_color_space_fb_wr	28	vdc5_shrd_get_color_space_fb_wr	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d684	vdc5_shrd_get_fr_buff_btm	28	vdc5_shrd_get_fr_buff_btm	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d6a0	vdc5_shrd_get_ln_off_dir	28	vdc5_shrd_get_ln_off_dir	drivers/vdc5_shrd.o	equivalent	28	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d6bc	vdc5_shrd_get_sel_fb_addr_sig	32	vdc5_shrd_get_sel_fb_addr_sig	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d6dc	vdc5_shrd_get_graphics_format	32	vdc5_shrd_get_graphics_format	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d6fc	vdc5_shrd_get_color_space_fb_rd	32	vdc5_shrd_get_color_space_fb_rd	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d71c	vdc5_shrd_get_measure_folding	32	vdc5_shrd_get_measure_folding	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (142 returned normally, 100% of 1 blocks reached)
+2011d73c	vdc5_shrd_get_display_area	32	vdc5_shrd_get_display_area	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d75c	vdc5_shrd_get_fr_buff_width_rd	32	vdc5_shrd_get_fr_buff_width_rd	drivers/vdc5_shrd.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011d77c	vdc5_shrd_get_lvds_ch	12	vdc5_shrd_get_lvds_ch	drivers/vdc5_shrd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011d788	vdc5_shrd_state_ptr	60	vdc5_shrd_state_ptr	drivers/vdc5_shrd.o	equivalent	60	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011d7d8	vdc5_shrd_set_state	24	vdc5_shrd_set_state	drivers/vdc5_shrd.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011d7f0	vdc5_shrd_set_resource	64	vdc5_shrd_set_resource	drivers/vdc5_shrd.o	equivalent	64	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
@@ -747,7 +747,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011d8b4	r_vdc5_shrd_rw_disable	52	r_vdc5_shrd_rw_disable	drivers/vdc5_shrd.o	equivalent	52	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
 2011d8e8	vdc5_shrd_res_idle	56	vdc5_shrd_res_idle	drivers/vdc5_shrd.o	equivalent	56	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
 2011d920	vdc5_shrd_res_busy	56	vdc5_shrd_res_busy	drivers/vdc5_shrd.o	equivalent	56	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
-2011d958	FUN_2011d958	80	vdc5_shrd_get_oir_rw_proc_enabled	drivers/vdc5_reg.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2011d958	vdc5_shrd_get_oir_rw_proc_enabled	80	vdc5_shrd_get_oir_rw_proc_enabled	drivers/vdc5_reg.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 2011d9a8	rspi_hw_config	1272			not yet	0	
 2011dea0	FUN_2011dea0	4			not yet	0	
 2011dea4	rspi0_open	124			not yet	0	
@@ -898,7 +898,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20120918	riic_detect_stop	100	riic_detect_stop	drivers/riic.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 2012097c	riic_receive	248	riic_receive	drivers/riic.o	equivalent	248	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
 20120a88	riic_receive_dummy	20	riic_receive_dummy	drivers/riic.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20120a9c	R_RIIC_Read	272	R_RIIC_Read	drivers/riic.o	equivalent	272	differential emulation: 200 trials agree (70 returned normally, 100% of 11 blocks reached, 130 trials inconclusive)
+20120a9c	R_RIIC_Read	272	R_RIIC_Read	drivers/riic.o	equivalent	272	differential emulation: 200 trials agree (71 returned normally, 100% of 11 blocks reached, 129 trials inconclusive)
 20120bac	R_RIIC_ReadDummy	28	R_RIIC_ReadDummy	drivers/riic.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 20120bc8	R_RIIC_DetectStop	28	R_RIIC_DetectStop	drivers/riic.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 20120be4	R_RIIC_ClearNack	32	R_RIIC_ClearNack	drivers/riic.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
@@ -1073,8 +1073,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20132680	cursor_rect_calc	124			not yet	0	
 201326fc	fb_get_layer_addr	88			not yet	0	
 2013276c	vdc5_layers_setup	920			not yet	0	
-20132b58	vdc5_layers_stop	136			not yet	0	
-20132b94	vdc5_channel_shutdown	152			not yet	0	
+20132b58	vdc5_layers_stop	60			not yet	0	
+20132b94	vdc5_channel_shutdown	44			not yet	0	
 20132bc0	dvi_set_resolution	268			not yet	0	
 20132ccc	gui_start	428			not yet	0	
 20132e78	fb_get_front_addr	88			not yet	0	
