@@ -55,7 +55,7 @@ flowchart LR
 | 0x000813B4 | `console_cmd_r` | `console_cmd_r` | `r AAAA` → `\r\nr AAAA VVVV\r\n>> ` **[fact]** |
 | 0x0008138C | (none) | `console_printf` | `vsprintf` into 0x88DF0, then `console_puts`; tail-called by `console_cmd_r` **[fact]** |
 | 0x00085FAE | `console_puts` | `console_puts` | `uart0_write(s, strlen(s))` **[fact]** |
-| 0x00086014 | `is_hex_string` | `is_hex_string` | All chars in `0-9A-Fa-f` (empty string counts as hex) **[fact]** |
+| 0x00086014 | `is_hex_string` | `is_hex_string` | Meant to test that all chars are in `0-9A-Fa-f`, but checks only the first half (bug, see below; empty string counts as hex) **[fact: 0x86014]** |
 | 0x00086044 | `frame_checksum_ok` | `frame_checksum_ok` | 8-bit sum of the first n chars == `strtoul(rest, 16)` **[fact]** |
 | 0x00080C20 | `regfile_clear` | `regfile_clear` | `memset(0x20070000, 0, 0x10000)` at boot **[fact]** |
 | 0x00080C30 | `regfile_read` | `regfile_read` | `reg < 0x8000 ? word[reg] : 0` **[fact]** |
@@ -108,6 +108,16 @@ word while TX bytes are pending, so a dump paces itself to the UART **[fact]**.
 Entered with `i DB00\r` (interactive syntax, lower-cased to `i db00`) or with a machine frame `iDB00CC`. Echo and prompts
 are off. The line is still tokenized, and only argv[0] is used. Its first char is the command; the rest must be hex
 (`is_hex_string`), otherwise the line is dropped without a reply **[fact]**.
+
+**`is_hex_string` bug [fact: 0x86014..0x86042].** The loop advances both its index and its pointer: it keeps `s` (r4) and a
+cursor (r5), and goes on while `strlen(cursor) > cursor - s`, i.e. while the characters *left* outnumber the characters
+already checked. For a string of n characters it therefore checks only indices 0 .. ceil(n/2) − 1: `DB00` is checked as
+`DB`, `DBzz` passes. The recreated source keeps the bug (`for (i = 0; i < strlen(s); i++) { c = *s++; ... }`,
+`src/ifdsp_m33/app/console_frame.c`), which compiles to the same bytes [fact: `src/ifdsp_m33/status.tsv`, identical].
+Effect: a machine frame with a non-hex character in the second half of its argument is not dropped by this check
+**[inference: the check above]**; what the later steps (`frame_checksum_ok`, `strtoul`, which stops at the first
+non-hex character) then do with it is decided per command. *Open: which frames MAIN can actually send with such a
+character; would be settled by the MAIN-side frame builder (`FUN_fff9d957` family, T12b).*
 
 | Frame (chars) | Check | Effect | Reply |
 |---|---|---|---|
@@ -176,7 +186,7 @@ stateDiagram-v2
 
 - Location: SRAM `0x20070000..0x2007FFFF`, 32768 × 16-bit words; register *n* is at `0x20070000 + 2n` **[fact]**.
 - M33: cleared at boot (`regfile_clear`, before the DSP is released), then `reg0 = 0x0101`, `reg 0x4000 = 1`, `reg1 |= 1` after the
-  MU handshake (`app_main` 0x0008106C) **[fact]**.
+  MU handshake (`main` 0x0008106C) **[fact]**.
 - HiFi4: `0x0021C498` (DSP main init) calls `regfile_set_defaults` 0x0021BE80, which first calls `xthal_set_region_attribute`
   (0x20070000, 0x10000, 2, 0), and then `regfile_capture_init` 0x0021C090 **[fact]**. cattr 2 = bypass on the whole 512 MB region
   0x20000000–0x3FFFFFFF, which the main's own call for the DMA buffers has already set **[fact: HAL code, #184; encoding inference]**. The defaults function writes every register in the map below except 0, 1 and 0x4000 (the M33's) **[fact]**.
@@ -200,7 +210,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 
 | Reg | DSP default | MAIN | M33 | HiFi4 access | Meaning |
 |---|---|---|---|---|---|
-| 0x0000 |  | r `FUN_fff9d957` | W 0x0101 (`app_main`) |  | IFDSP version, 0x0101 = V01-01; MAIN reads it once at init and prints it as `V01-01` [fact] |
+| 0x0000 |  | r `FUN_fff9d957` | W 0x0101 (`main`) |  | IFDSP version, 0x0101 = V01-01; MAIN reads it once at init and prints it as `V01-01` [fact] |
 | 0x0001 |  | r `FUN_fff9d967` | set bit 0 (`regfile_set_bits`) | R 0x0021F7EC, 0x0021FA48, 0x0021FD20, 0x00220370, 0x002235D2, 0x00223734; R(byte) 0x0021D68C; W 0x0021D68C, 0x0021F7EC, 0x0021FA48, 0x0021FD20, 0x00220370, 0x002235D2, 0x00223734 | status flags. bit 0 = DSP up (M33, after the MU handshake; MAIN waits for it at init) [fact]. bit 4 = DSP flag from 0x002235D2/0x00223734 (MAIN `FUN_fff9d7f0` users test it) [fact]. It is the VOX trigger **[inference]**: `vox_detector`/`antivox_detector` write it as mic level above the VOX threshold (reg 0x21, MAIN `dsp_set_vox_gain`) and not masked by the anti-VOX side (reg 0x22, MAIN `dsp_set_antivox`) (0x22354D/0x223559/0x223584, [dsp-chains.md](dsp-chains.md)), and MAIN's `ptt_inputs_read` uses bit 4 as the VOX key when VOX is on ([main/dsp-link.md](../main/dsp-link.md) reg 1). bit 6 = DSP flag (0x0021F7EC/0x0021FA48); MAIN debounces 5 polls → 0x1C61, used in FM modes [fact] → squelch open [inference]. bit 7 = DSP flag (0x0021FD20/0x00220370) [fact]. Bits 15..8 = level byte from 0x0021D68C; MAIN averages 2 polls → 0x1C60, compares with a threshold → squelch [inference] |
 | 0x0002 | 0x0000 | r `FUN_fff9d977` |  | R 0x00224ED8; R(byte) 0x00222034; W 0x00222034, 0x00224ED8 | two level bytes: low = speech-processor gain reduction (`peak_limiter` 0x00224ED8, instance 0), high = ALC gain reduction (`tx_alc` 0x00222034), both 0.5 dB steps [fact, #86]; MAIN averages 32 polls per byte → 0x1B6E2 and converts with a piecewise-linear table [fact] → COMP and ALC meters [inference; it is not the S-meter, see [dsp-chains.md](dsp-chains.md)] |
 | 0x0003 | 0x0000 | r `FUN_fff9d987` |  | W 0x0021F388 | high byte = level min(255, v>>6), low byte = 255 − x (0x0021F388) [fact]; MAIN averages the low byte over 16 polls → 0x1C62 [fact]; same source value as reg 0x4005 [fact] |
@@ -279,7 +289,7 @@ MAIN RAM bytes (menu/VFO settings) whose names T10d may supply. `FUN_fffb3196(1)
 | 0x0067 | 0x00FF | w `FUN_fff9fc2a` |  | R 0x0021F004 | from 0x9AB6/0x20BA7 [fact] |
 | 0x0068 | 0x0000 | w `FUN_fff9fca0` |  | R 0x0021F2D0 | constant 0x94 written once [fact] |
 | 0x2000–0x200F | 0x0000 |  |  | only zeroed by defaults |  |
-| 0x4000 |  |  | W 1 (`app_main`) |  | M33 writes 1 after the DSP is up [fact]; no reader found [fact] |
+| 0x4000 |  |  | W 1 (`main`) |  | M33 writes 1 after the DSP is up [fact]; no reader found [fact] |
 | 0x4001 | 0x0001 |  |  |  | DSP default 1; no other access found [fact] |
 | 0x4004 |  |  |  | W 0x0021C060 | DSP writes `(f()<<2) OR (GPIO P0_21<<1) OR GPIO P0_22` from Thread_Main (0x0021C060) [fact]; board input status [inference] |
 | 0x4005 | 0x0000 |  | R every 20 ms (`sct0_pwm_callback`) | W 0x0021F348 | DSP writes a 0..99 level (0x0021F348: `min(255, v>>8)×100>>8`, v = float×65535) [fact]; M33 sets SCT0 PWM duty = clamp(reg, 1, 99) % → RC filter → TP2005 (p19) [fact]; analog test output [inference] |
@@ -407,7 +417,7 @@ can. Reg **0x4001** is only set to 1 by the defaults **[fact]**.
 |---|---|---|
 | 10 (0x0A) | Every write (from MAIN or the console) rewrites codec page 1 R55 (right MICPGA positive input): low nibble 1 → 0x40 = IN1R via 10 kΩ (the init value), anything else → 0x10 = IN2R via 10 kΩ, then page 0 is selected again | `regfile_write` 0x00080C4C, 0x00085F88 **[fact]**; datasheet bit meaning **[inference]** |
 | 0x4005 | PWM duty of SCT0 output 0 (PIO2_2 func 2, 20 kHz), updated every 20 ms, clamped 1–99 %, into R2041/C2003 → TP2005 | `sct0_pwm_callback` 0x00081164, p19 (T12d) **[fact]** |
-| 0 / 1 / 0x4000 | written once by `app_main` after the DSP handshake | **[fact]** |
+| 0 / 1 / 0x4000 | written once by `main` after the DSP handshake | **[fact]** |
 
 The codec SPI write for reg 10 runs in the Command Task, so it can interleave only with `aic3204_init`, which has finished before
 the scheduler starts **[fact: call order]**.

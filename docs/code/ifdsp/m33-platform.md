@@ -4,7 +4,7 @@ Part of the IFDSP image docs ([README](README.md)). Sub-task T12d. Covers everyt
 ([control-link.md](control-link.md)) and the rpmsg/MU link ([ipc.md](ipc.md)).
 Function names are the names applied in Ghidra (`tools/ghidra/IfdspM33Names.java` / `IfdspHifi4Names.java`, merged by T17) and match `decomp/ifdsp/`; a name still in *italics* is a description that was not applied as a Ghidra name.
 Tags: **[fact]** seen in code/data (address given), **[inference]** (evidence and reasoning stated); anything not settled is written as *Open: …; would be settled by …*.
-Nine M33 names were changed when the former guesses were checked (2026-10): `IAP_FlexspiNorAutoConfig` 0x8000C, `POWER_SetBiasConfig` 0x80030, `countPartitionSwitches` 0x8009C, `hashcrypt_save_running_hash` 0x86EC4, `app_init_nop` 0x87240, `file_clear_flag20` 0x87470, `file_flush_write_buffer` 0x87658, `udiv64by32_helper` 0x87850, `__sys_remove` 0x87946. `decomp/ifdsp/m33` shows the old names until it is re-exported after `IfdspM33Names.java` is re-run.
+Nine M33 names were changed when the former guesses were checked (2026-10): `IAP_FlexspiNorAutoConfig` 0x8000C, `POWER_SetBiasConfig` 0x80030, `countPartitionSwitches` 0x8009C, `hashcrypt_save_running_hash` 0x86EC4, `BOARD_InitBootPeripherals` 0x87240, `file_clear_flag20` 0x87470, `file_flush_write_buffer` 0x87658, `udiv64by32_helper` 0x87850, `__sys_remove` 0x87946. `decomp/ifdsp/m33` shows the old names until it is re-exported after `IfdspM33Names.java` is re-run.
 
 The M33 program is a stock **MCUXpresso SDK** project: MCUXpresso startup (`ResetISR`, copy tables), SDK board files
 (`board.c`, `clock_config.c`, `pin_mux.c`), SDK drivers (clock, power, reset, flexcomm/USART, SCTimer, MU, SEMA42, PINT, DMA,
@@ -50,8 +50,8 @@ sequenceDiagram
   F->>F: SystemInit 0x08001540: FPU on, DSPSTALL=1, CACHE64 on for XIP
   F->>S: data_init: copy 0x0805D428 -> 0x80000 (0x7EC4 B)
   F->>S: bss_init: zero 0x87EC4..0xA1EF8
-  F->>S: call_main -> main 0x872AE
-  S->>S: stdio_init (Redlib FILEs), app_main 0x8106C
+  F->>S: call_main -> __main 0x872AE
+  S->>S: stdio_init (Redlib FILEs), main 0x8106C
 ```
 
 - `SystemInit` (flash 0x08001540) **[fact]**: SCB CPACR/NSACR enable CP10/CP11; SYSCTL0 DSPSTALL (0x4000200C) = 1; if executing
@@ -94,9 +94,9 @@ PFD = PLL × 18 / n) **[inference]**. Later clock users:
 
 ## 4. Pin mux (IOPCTL 0x40004000) and GPIO
 
-`BOARD_InitPins` 0x87294 calls `BOARD_InitPins_flexcomm` 0x87242, `BOARD_InitPins_P0` 0x84B78, `BOARD_InitPins_codec_spi`
+`BOARD_InitBootPins` 0x87294 calls `BOARD_InitPins_flexcomm` 0x87242, `BOARD_InitPins_P0` 0x84B78, `BOARD_InitPins_codec_spi`
 0x84BEC, `BOARD_InitPins_i2s` 0x8726C and tail-jumps to `BOARD_InitPins_debug_gpio` 0x84C90 (Ghidra merged that last body
-into `BOARD_InitPins`). IOPCTL bits: FSEL[2:0], IBENA 0x40 (input buffer), FULLDRIVE 0x100, IIENA 0x800 (input invert).
+into `BOARD_InitBootPins`). IOPCTL bits: FSEL[2:0], IBENA 0x40 (input buffer), FULLDRIVE 0x100, IIENA 0x800 (input invert).
 Net names come from service manual p19 (renders checked in T12d). Where p19 routes nets through a crossed resistor network,
 the pin chosen is the one the firmware configures **[inference]**.
 
@@ -134,13 +134,13 @@ so the call writes 21 to `DSP_INT_SEL[1]` (INPUTMUX + 0x140 + 1·4): the messagi
 input 1, which the DSP sees as **IRQ 6**, where `env_register_isr` installs `MU_B_IRQHandler`
 (`xos_register_interrupt_handler(6, MU_B_IRQHandler, 0)`, `xos_interrupt_enable(6)`). This is the rpmsg-lite doorbell from the M33
 (MU-A) to the DSP ([ipc.md](ipc.md)) **[fact, #88]**. Resets released
-in `app_main`: RSTCTL1 bits 28/29 (MU-A, SEMA42) **[inference]**.
+in `main`: RSTCTL1 bits 28/29 (MU-A, SEMA42) **[inference]**.
 
 ## 5. DSP image loader (`BOARD_DSP_Init` 0x00084AD8)
 
 ```mermaid
 sequenceDiagram
-  participant M as M33 app_main
+  participant M as M33 main
   participant C as CLKCTL0/1, SYSCTL0, PMC
   participant D as HiFi4
   M->>C: SysPfd PFD1 /12 (DSP PLL 594 MHz), DSPCPUCLKSELB = DSP PLL, DSP /1, DSP RAM /2
@@ -211,7 +211,7 @@ linker kept **[inference: no NVIC enable for them on the M33]**.
 
 ## 8. Power management
 
-`fsl_power.c` is linked (`POWER_EnterDeepSleep` 0x8059C, `POWER_EnterSleep_mode1..3`, `POWER_CalculateSafetyCount` 0x800E8,
+`fsl_power.c` is linked (`POWER_EnterDeepSleep` 0x8059C, `POWER_EnterRbb..3`, `POWER_CalculateSafetyCount` 0x800E8,
 `deinitXip`/`initXip`/`initFlexSPI`, `POWER_UpdateOscSettlingTime`) but nothing calls the sleep functions **[fact]**. The only power
 changes at run time are the PDRUNCFG0_CLR writes in `BOARD_BootClockRUN`, the DSP SRAM power-up in `DSP_Init` and
 `POWER_ApplyPD` **[fact]**. The PMC/PMIC pins (`PMIC_MODE0/1`, `PMIC_IRQ_N`) are strapped by resistors on p19.
@@ -233,13 +233,13 @@ Already-named functions (T07/T12a) are listed only where this page changes or ex
 |---|---|---|---|
 | 0x080011A8 | `ResetISR` | | VTOR/MSP/MSPLIM, `SystemInit`, copy tables, `call_main` |
 | 0x08001540 | `SystemInit` | | FPU, DSPSTALL=1, CACHE64 |
-| 0x000872AE | `main` | | `stdio_init`, tail-jump `app_main` |
-| 0x0008106C | `app_main` | | board init, DSP start, MU handshake, tasks, scheduler |
+| 0x000872AE | `__main` | | Redlib C entry: `stdio_init`, tail-jump `main` (was `main` until T24 round 2) **[fact]** |
+| 0x0008106C | `main` | | board init, DSP start, MU handshake, tasks, scheduler |
 | 0x0008494C | `BOARD_BootClockRUN` | | clock tree, section 3 |
 | 0x000809A0 | `BOARD_SetFlexspiClock` | `BOARD_SetFlexspiClock` | FlexSPI clock source/divider with XIP-safe deinit/init |
 | 0x00080914 / 0x0008092E | `FUN_` | `BOARD_DeinitXip` / `BOARD_InitXip` | FlexSPI disable / enable + DLL lock |
 | 0x00087234 | `BOARD_FlexspiClockSafeConfig` | `BOARD_FlexspiClockSafeConfig` | FlexSPI on FFRO /1 |
-| 0x00087294 | `BOARD_InitPins` | | pin mux, section 4 |
+| 0x00087294 | `BOARD_InitBootPins` | | pin mux, section 4 |
 | 0x00087242 / 0x0008726C / 0x00084C90 | `FUN_` / — | `BOARD_InitPins_flexcomm` / *`_i2s`* / *`_debug_gpio`* | IOPCTL groups |
 | 0x00084AD8 | `BOARD_DSP_Init` | | DSP clocks, power, copy, unstall |
 | 0x00083E48 | `DSP_Init` | `DSP_Init` | DSP SRAM power and reset |
@@ -277,15 +277,15 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | Address | Ghidra name | Inferred name | Purpose |
 |---|---|---|---|
 | 0x0008000C | `IAP_FlexspiNorAutoConfig` |  | r6 = ROM API tree 0x1303F000 (FSL_ROM_API_BASE_ADDR); calls tree->flexspiNorDriver (+0x1C) ->get_config (+0x1C) with r0..r2 unchanged, and if it returns 0 tail-calls ->init (+4) with r0,r1 **[fact: 0x8000C-0x8002A]**. Same calls in the same order as IAP_FlexspiNorAutoConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_iap.c (that version adds a 10000-count delay loop first) **[inference]**. No BL/B.W/literal reference anywhere in the image **[fact: branch+literal scan]** |
-| 0x00080030 | `POWER_SetBiasConfig` |  | if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 **[fact: 0x80030]**. Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) **[inference]**. Called from 0x80354, 0x8041C (POWER_EnterSleep_mode1/2) and 0x805AA (POWER_EnterDeepSleep) **[fact]** |
+| 0x00080030 | `POWER_SetBiasConfig` |  | if PMC+0x20 != 0x04040808 write it; if PMC SLEEPCTRL (+0x14) != 10 write 10 **[fact: 0x80030]**. Identical to static POWER_SetBiasConfig in mcux-sdk@8a289764 devices/MIMXRT685S/drivers/fsl_power.c (CORELVL 0xA = 0.7 V deep sleep) **[inference]**. Called from 0x80354, 0x8041C (POWER_EnterRbb/2) and 0x805AA (POWER_EnterDeepSleep) **[fact]** |
 | 0x00080050 | `delay` |  | fsl_power.c busy loop (count iterations) **[inference]** |
 | 0x0008005E | `deinitXip` |  | fsl_power.c: if running XIP (PC in 0x08xxxxxx) wait FlexSPI idle, MDIS, PSCCTL0_CLR FlexSPI clock **[inference]** |
 | 0x0008009C | `countPartitionSwitches` |  | returns 1 if any memory powered in PDRUNCFG1..3 is powered down in PDSLEEPCFG1..3 (masks 0x1F000FFF, 0x3FFFFFFF, 0x3FFFFFFF), else 0 **[fact: 0x8009C]**. Same expression and masks as static countPartitionSwitches in mcux-sdk@8a289764 fsl_power.c; only caller 0x8018E is POWER_CalculateSafetyCount, as in the SDK **[inference]** |
-| 0x000802AA | `initFlexSPI` |  | fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2) **[inference]** |
+| 0x000802A8 | `initFlexSPI` |  | fsl_power.c: FlexSPI enable, SWRESET, wait DLL lock (STS2); entry is the `ldr` at 0x802A8 before the `push` (GCC clone `initFlexSPI.constprop.0`, byte-identical) **[fact: T24]** |
 | 0x0008032C | `initXip` |  | fsl_power.c: re-enable FlexSPI clock and initFlexSPI after deep sleep (body merged by Ghidra) **[inference]** |
-| 0x0008034C | `POWER_EnterSleep_mode1` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
-| 0x00080414 | `POWER_EnterSleep_mode2` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
-| 0x000804DC | `POWER_EnterSleep_mode3` |  | names-file group "NXP SDK drivers"; no direct calls; 174 B, callers: 0 **[fact]** (code shape) |
+| 0x0008034C | `POWER_EnterRbb` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
+| 0x00080414 | `POWER_EnterFbb` |  | names-file group "NXP SDK drivers"; calls `POWER_SetBiasConfig`; 182 B, callers: 0 **[fact]** (code shape) |
+| 0x000804DC | `POWER_EnterNbb` |  | names-file group "NXP SDK drivers"; no direct calls; 174 B, callers: 0 **[fact]** (code shape) |
 | 0x0008059C | `POWER_EnterDeepSleep` |  | names-file group "NXP SDK drivers"; calls `POWER_CalculateSafetyCount`, `deinitXip`, `delay`, `initXip` and 1 more; 852 B, callers: 0 **[fact]** (code shape) |
 | 0x00080A18 | `OTFAD_Init` |  | true entry of FUN_00080A24: CR bits from config bytes +1 (<<3 FLDM), +2 (<<7 RRAE), +3 (<<31 GE); waits until FLEXSPI(config+4)->STS0 & 3 == 3, then base->CR (+0xC00) \|= bits **[fact: 0x80A18]**. Same as OTFAD_Init in mcux-sdk@8a289764 drivers/otfad/fsl_otfad.c (RT685 config: forceSVM, forceLDM, restrictedRegAccess, enableOTFAD, flexspiBaseAddr) **[inference]**. No reference in the image **[fact: branch+literal scan]** |
 | 0x00080A44 | `OTFAD_Deinit` |  | base->CR (+0xC00) &= ~0x80000000 (GE) **[fact: 0x80A44]**; same as OTFAD_Deinit in mcux-sdk@8a289764 fsl_otfad.c **[inference]**. No reference in the image **[fact: branch+literal scan]** |
@@ -293,8 +293,8 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00080A90 | `vStartFirstTask` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 1.000, T23d) **[inference]** |
 | 0x00080AC0 | `PendSV_Handler` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.963, T23d) **[inference]** |
 | 0x00080B20 | `SVC_Handler` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.863, T23d) **[inference]** |
-| 0x00081264 | `SCTIMER_StartTimer` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
-| 0x00081944 | `xPortIsInsideInterrupt` |  | names-file group "IPC (rpmsg-lite over MU-A)"; no direct calls; 16 B, callers: 4 **[fact]** (code shape) |
+| 0x00081264 | `sct0_pwm_start` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x00081944 | `platform_in_isr` |  | names-file group "IPC (rpmsg-lite over MU-A)"; no direct calls; 16 B, callers: 4 **[fact]** (code shape) |
 | 0x00081E80 | `prvInsertBlockIntoFreeList` |  | names-file group "FreeRTOS kernel + ARM_CM33 port + heap_4"; no direct calls; 62 B, callers: 2 **[fact]** (code shape) |
 | 0x00081EC8 | `pvPortMalloc` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.832, T23d) **[inference]** |
 | 0x00081FD4 | `vPortFree` |  | FreeRTOS V10.3.0 library function, matched by lib_match (score 0.941, T23d) **[inference]** |
@@ -360,7 +360,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x000840D8 | `FLEXCOMM14_DriverIRQHandler` |  | IRQ20 **[fact]** |
 | 0x00084108 | `FLEXCOMM15_DriverIRQHandler` |  | IRQ21 **[fact]** |
 | 0x00084138 | `FLEXSPI_DriverIRQHandler` |  | IRQ42 **[fact]** |
-| 0x000841B4 | `GPIO_PortInit` |  | names-file group "NXP SDK drivers"; calls `CLOCK_EnableClock`, `RESET_ClearPeripheralReset`; 26 B, callers: 3 **[fact]** (code shape) |
+| 0x000841B4 | `GPIO_PortInit` |  | names-file group "NXP SDK drivers"; calls `CLOCK_EnableClock`, `RESET_PeripheralReset`; 26 B, callers: 3 **[fact]** (code shape) |
 | 0x000841D8 | `GPIO_PinInit` |  | names-file group "NXP SDK drivers"; calls `CLOCK_EnableClock`; 74 B, callers: 15 **[fact]** (code shape) |
 | 0x00084228 | `HASHCRYPT_DriverIRQHandler` |  | IRQ59, base 0x40158000 **[fact]** |
 | 0x00084280 | `I3C0_DriverIRQHandler` |  | IRQ49, base 0x40036000 **[fact]** |
@@ -373,7 +373,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x000843E0 | `PIN_INT5_DriverIRQHandler` |  | IRQ36 **[fact]** |
 | 0x00084410 | `PIN_INT6_DriverIRQHandler` |  | IRQ37 **[fact]** |
 | 0x00084440 | `PIN_INT7_DriverIRQHandler` |  | IRQ38 **[fact]** |
-| 0x000845B4 | `SCTIMER_Init` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `RESET_ClearPeripheralReset`; 154 B, callers: 1 **[fact]** (code shape) |
+| 0x000845B4 | `SCTIMER_Init` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `RESET_PeripheralReset`; 154 B, callers: 1 **[fact]** (code shape) |
 | 0x0008477C | `SCTIMER_SetupPwm` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `SCTIMER_CreateAndScheduleEvent`, `__aeabi_uldivmod`; 344 B, callers: 1 **[fact]** (code shape) |
 | 0x000848D8 | `SCTIMER_SetCallback` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; no direct calls; 8 B, callers: 1 **[fact]** (code shape) |
 | 0x00084904 | `USDHC0_DriverIRQHandler` |  | IRQ45 **[fact]** |
@@ -384,9 +384,9 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00084E24 | `tolower` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
 | 0x00084E38 | `stdio_init` |  | names-file group "application"; calls `_Cfdopen`, `setvbuf`; 94 B, callers: 1 **[fact]** (code shape) |
 | 0x00084EB0 | `vsnprintf_core` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `strlen`; string "0123456789ABCDEF"; 2778 B, callers: 3 **[fact]** (code shape) |
-| 0x00085A9C | `siprintf` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `memset`, `vsnprintf_core`; 102 B, callers: 2 **[fact]** (code shape) |
+| 0x00085A9C | `sprintf` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `memset`, `vsnprintf_core`; 102 B, callers: 2 **[fact]** (code shape) |
 | 0x00085B08 | `snprintf` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `memset`, `vsnprintf_core`; 114 B, callers: 4 **[fact]** (code shape) |
-| 0x00085B80 | `sprintf` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `memset`, `vsnprintf_core`; 88 B, callers: 2 **[fact]** (code shape) |
+| 0x00085B80 | `vsprintf` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `fputc`, `memset`, `vsnprintf_core`; 88 B, callers: 2 **[fact]** (code shape) |
 | 0x00085BDC | `_Cdigit_value` |  | ctype-table digit value for strtoul **[inference]** |
 | 0x00085C0C | `_strtoul_core` |  | Base detection (0x / 0), overflow -> errno 34 (0x88B74) **[inference]** |
 | 0x00085CC0 | `strtoul` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; calls `_strtoul_core`; 128 B, callers: 8 **[fact]** (code shape) |
@@ -428,12 +428,12 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00086EF0 | `INPUTMUX_AttachSignal` |  | names-file group "NXP SDK drivers"; no direct calls; 14 B, callers: 1 **[fact]** (code shape) |
 | 0x00086F2E | `PINT_PatternMatchResetDetectLogic` |  | PMCTRL PMAT != 0 -> PMSRC = PMSRC **[inference]** |
 | 0x00086F3C | `PINT_PinInterruptClrStatus` |  | no direct calls; 22 B, callers: 8 **[fact]** (code shape) |
-| 0x00086F52 | `RESET_ClearPeripheralReset` |  | names-file group "NXP SDK drivers"; calls `RESET_SetPeripheralReset`; 18 B, callers: 6 **[fact]** (code shape) |
+| 0x00086F52 | `RESET_PeripheralReset` |  | names-file group "NXP SDK drivers"; calls `RESET_SetPeripheralReset`; 18 B, callers: 6 **[fact]** (code shape) |
 | 0x00086F64 | `SCTIMER_GetDefaultConfig` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `memset`; 38 B, callers: 1 **[fact]** (code shape) |
 | 0x00086F8A | `SCTIMER_UpdatePwmDutycycle` |  | names-file group "SCT0 PWM (duty from register 0x4005)"; calls `__aeabi_uldivmod`; 98 B, callers: 1 **[fact]** (code shape) |
 | 0x0008702C | `USART_GetDefaultConfig` |  | names-file group "NXP SDK drivers"; calls `memset`; 34 B, callers: 1 **[fact]** (code shape) |
 | 0x00087100 | `USART_Init` |  | names-file group "NXP SDK drivers"; calls `FLEXCOMM_Init`, `USART_SetBaudRate`; 306 B, callers: 1 **[fact]** (code shape) |
-| 0x00087240 | `app_init_nop` |  | body is only bx lr **[fact: 0x87240]**; one caller, app_main 0x81098, between BOARD_BootClockRUN and regfile_clear **[fact]**. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232 **[fact: literal 0x80A10]**. Open: which source function this was; would be settled by the vendor's source or link map |
+| 0x00087240 | `BOARD_InitBootPeripherals` |  | body is only bx lr **[fact: 0x87240]**; one caller, main 0x81098, between BOARD_BootClockRUN and regfile_clear **[fact]**. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232 **[fact: literal 0x80A10]**. Open: which source function this was; would be settled by the vendor's source or link map |
 | 0x000872C4 | `free` |  | Marks block 0x10000000 and merges free successors **[inference]** |
 | 0x000872F8 | `setvbuf` |  | _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 **[inference]** |
 | 0x00087336 | `strcmp` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 68 B, callers: 3 **[fact]** (code shape) |
@@ -448,8 +448,8 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x00087702 | `remove` |  | strlen(name), then tail-calls __sys_remove(name, len) which returns -1 **[fact: 0x87702]**. Only caller _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by __sys_tmpnam: the C rule that closing a tmpfile() deletes it **[inference]** |
 | 0x00087716 | `_Cfflush1` |  | calls `file_clear_flag20`, `file_flush_write_buffer`, `fseek`; 64 B, callers: 2 **[fact]** (code shape) |
 | 0x00087850 | `udiv64by32_helper` |  | shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit steps) **[fact: 0x87850]**; the 3 call sites are all in __aeabi_uldivmod **[fact]**. Library's own name unknown |
-| 0x000878CC | `memcpy` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 52 B, callers: 2 **[fact]** (code shape) |
-| 0x00087900 | `memset` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 50 B, callers: 2 **[fact]** (code shape) |
+| 0x000878CC | `memcpy_body` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 52 B, callers: 2 **[fact]** (code shape) |
+| 0x00087900 | `memset_body` |  | names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 50 B, callers: 2 **[fact]** (code shape) |
 | 0x00087932 | `__sys_appexit` |  | b . (hang) **[fact]** |
 | 0x00087934 | `__sys_close` |  | returns -1 (no host) **[fact]** |
 | 0x0008793A | `__sys_flen` |  | returns -1 **[fact]** |
@@ -464,19 +464,19 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x08001214 | `UsageFault_Handler` |  | no direct calls; 2 B, callers: 1 **[fact]** (code shape) |
 | 0x08001216 | `SecureFault_Handler` |  | no direct calls; 2 B, callers: 1 **[fact]** (code shape) |
 | 0x0800121A | `DebugMon_Handler` |  | no direct calls; 2 B, callers: 1 **[fact]** (code shape) |
-| 0x08001220 | `DefaultHandler` |  | MCUXpresso startup - library function, matched by idiom (score 0.900, T23d): b . loop right after the per-exception b . handlers 0x0800120C..0x0800121E; the 25 weak IRQ handlers without a driver call it **[inference]** |
+| 0x08001220 | `IntDefaultHandler` |  | MCUXpresso startup - library function, matched by idiom (score 0.900, T23d): b . loop right after the per-exception b . handlers 0x0800120C..0x0800121E; the 25 weak IRQ handlers without a driver call it **[inference]** |
 | 0x08001222 | `data_init` |  | names-file group "reset / startup (flash)"; no direct calls; 18 B, callers: 1 **[fact]** (code shape) |
 | 0x08001234 | `bss_init` |  | names-file group "reset / startup (flash)"; no direct calls; 16 B, callers: 1 **[fact]** (code shape) |
-| 0x08001244 | `WDT0_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001244 | `WDT0_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800124C | `DMA0_IRQHandler` |  | calls `__DMA0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x08001254 | `GPIO_INTA_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800125C | `GPIO_INTB_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001254 | `GPIO_INTA_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800125C | `GPIO_INTB_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001264 | `PIN_INT0_IRQHandler` |  | calls `__PIN_INT0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800126C | `PIN_INT1_IRQHandler` |  | calls `__PIN_INT1_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001274 | `PIN_INT2_IRQHandler` |  | calls `__PIN_INT2_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800127C | `PIN_INT3_IRQHandler` |  | calls `__PIN_INT3_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001284 | `UTICK0_IRQHandler` |  | calls `__UTICK0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800128C | `MRT0_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800128C | `MRT0_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001294 | `CTIMER0_IRQHandler` |  | calls `__CTIMER0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800129C | `CTIMER1_IRQHandler` |  | calls `__CTIMER1_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080012A4 | `SCT0_IRQHandler` |  | calls `__SCT0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
@@ -488,18 +488,18 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x080012D4 | `FLEXCOMM5_IRQHandler` |  | calls `__FLEXCOMM5_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080012DC | `FLEXCOMM14_IRQHandler` |  | calls `__FLEXCOMM14_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080012E4 | `FLEXCOMM15_IRQHandler` |  | calls `__FLEXCOMM15_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080012EC | `ADC0_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080012F4 | `Reserved39_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080012FC | `ACMP_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080012EC | `ADC0_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080012F4 | `Reserved39_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080012FC | `ACMP_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001304 | `DMIC0_IRQHandler` |  | calls `__DMIC0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800130C | `Reserved42_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x08001314 | `HYPERVISOR_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800131C | `SECURE_VIOLATION_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800130C | `Reserved42_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001314 | `HYPERVISOR_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800131C | `SECUREVIOLATION_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001324 | `HWVAD0_IRQHandler` |  | calls `__HWVAD0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800132C | `Reserved46_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x08001334 | `RNG_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x0800133C | `RTC_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x08001344 | `DSP_TIE_EXPSTATE1_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800132C | `Reserved46_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001334 | `RNG_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x0800133C | `RTC_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001344 | `DSPWAKE_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800134C | `PIN_INT4_IRQHandler` |  | calls `__PIN_INT4_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x08001354 | `PIN_INT5_IRQHandler` |  | calls `__PIN_INT5_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800135C | `PIN_INT6_IRQHandler` |  | calls `__PIN_INT6_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
@@ -512,18 +512,18 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x08001394 | `FLEXCOMM7_IRQHandler` |  | calls `__FLEXCOMM7_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800139C | `USDHC0_IRQHandler` |  | calls `__USDHC0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080013A4 | `USDHC1_IRQHandler` |  | calls `__USDHC1_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013AC | `SGPIO_INTA_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013B4 | `SGPIO_INTB_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013AC | `SGPIO_INTA_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013B4 | `SGPIO_INTB_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080013BC | `I3C0_IRQHandler` |  | calls `__I3C0_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013C4 | `USB0_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013CC | `USB0_NEEDCLK_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013D4 | `WDT1_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013DC | `USB_PHYDCD_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013C4 | `USB_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013CC | `USB_WAKEUP_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013D4 | `WDT1_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013DC | `USBPHY_DCD_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x080013E4 | `DMA1_IRQHandler` |  | calls `__DMA1_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013EC | `PUF_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013F4 | `POWERQUAD_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x080013FC | `CASPER_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
-| 0x08001404 | `PMC_PMIC_IRQHandler` |  | calls `DefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013EC | `PUF_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013F4 | `POWERQUAD_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x080013FC | `CASPER_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
+| 0x08001404 | `PMC_PMIC_IRQHandler` |  | calls `IntDefaultHandler`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800140C | `HASHCRYPT_IRQHandler` |  | calls `__HASHCRYPT_DriverIRQHandler_veneer`; 8 B, callers: 0 **[fact]** (code shape) |
 | 0x0800143C | `SystemCoreClockUpdate` |  | flash copy; entry fixed by entries_m33.tsv (T21j), docs/code/ifdsp/m33-platform.md **[inference]** |
 | 0x08001414 | `getFFroFreq` |  | FFROCTL0 trim range 0 -> 48 MHz, 3 -> 60 MHz, else 0 **[fact: 0x08001414]**; its 3 callers are the 3 FFRO cases of SystemCoreClockUpdate; same as static getFFroFreq in mcux-sdk@8a289764 devices/MIMXRT685S/system_MIMXRT685S_cm33.c **[inference]** |
@@ -565,3 +565,80 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x080017E8 | `__FLEXCOMM3_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x00083fe9; mov ip,r0; pop {r0}; bx ip **[inference]** |
 | 0x080017F8 | `__SCT0_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x000848e5; mov ip,r0; pop {r0}; bx ip **[inference]** |
 | 0x08001808 | `__FLEXCOMM4_DriverIRQHandler_veneer` |  | GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr r0,=0x00084019; mov ip,r0; pop {r0}; bx ip **[inference]** |
+
+## 11. Corrections from the recreated source (T24 round 2, 2026-11-01)
+
+T24 compiled the vendor sources (SDK MCUX_2.11.0, startup MCUX_2.9.0, FreeRTOS MCUX_2.9.0, rpmsg-lite v3.1.0) and the
+recreated application with the image's compiler (GCC 10.2.1 -Os) and compared every function byte for byte with the
+image (`tools/equiv_m33.py`, `src/ifdsp_m33/status.tsv`). Where a function is byte-identical to a known source function,
+its name is a **[fact]**; where only the call sequence supports the name, it is marked **[inference]**. The names are
+in `tools/ghidra/IfdspM33Names.java` and `names_ifdsp.T12d.tsv`; the signatures in `signatures_m33.tsv`.
+`decomp/ifdsp/m33` shows the old names until the project is updated and re-exported (commands in
+`docs/tasks/T24-source-recreation.md`).
+
+| Address | Old Ghidra name | New name | Evidence |
+|---|---|---|---|
+| 0x000872AE | `main` | `__main` | Redlib C entry: `stdio_init`, then tail-jump to 0x8106C; the MCUXpresso startup's `ResetISR` calls `__main` (startup byte-identical) **[fact]** |
+| 0x0008106C | `app_main` | `main` | the application main, byte-identical to `main()` of `src/ifdsp_m33/app/main.c` **[fact]** |
+| 0x0008034C / 0x00080414 / 0x000804DC | `POWER_EnterSleep_mode1/2/3` | `POWER_EnterRbb` / `POWER_EnterFbb` / `POWER_EnterNbb` | byte-identical to fsl_power.c **[fact]** |
+| 0x00081944 | `xPortIsInsideInterrupt` | `platform_in_isr` | byte-identical to rpmsg-lite's `platform_in_isr` (SCB->ICSR VECTACTIVE); FreeRTOS's version (`mrs ipsr`) is not in the image **[fact]** |
+| 0x0008606A | `env_map_vatopa` | `platform_vatopa` | `bx lr`, the target of `env_map_vatopa` 0x86098 (`b.w`) **[fact]**. The other `env_*` names Ghidra had were right; the missing ones are in the next table |
+| 0x00085B80 | `sprintf` | `vsprintf` | takes a `va_list`: `console_printf` and `uart0_printf` pass the address of their variadic arguments **[fact]** |
+| 0x00085A9C | `siprintf` | `sprintf` | variadic (`push {r1-r3}`), (buffer, format, ...) **[fact]** |
+| 0x00086F52 | `RESET_ClearPeripheralReset` | `RESET_PeripheralReset` | byte-identical to fsl_reset.c; `RESET_ClearPeripheralReset` is 0x84504 **[fact]** |
+| 0x00087008 | `SEMA42_ResetAllGates` | `SEMA42_ResetGate` | byte-identical to fsl_sema42.c (`SEMA42_ResetAllGates` is the header inline that calls it) **[fact]** |
+| 0x00081BE8 | `rpmsg_queue_nocopy_free` | `rpmsg_lite_release_rx_buffer` | byte-identical to rpmsg_lite.c **[fact]** |
+| 0x00081264 | `SCTIMER_StartTimer` | `sct0_pwm_start` | application wrapper without arguments; the SDK function is a static inline with (base, counter) **[fact: fsl_sctimer.h]** |
+| 0x00087240 | `app_init_nop` | `BOARD_InitBootPeripherals` | empty, between clock_config.c and pin_mux.c in link order, called right after `BOARD_InitBootClocks` **[inference]** |
+| 0x00087294 | `BOARD_InitPins` | `BOARD_InitBootPins` | calls the five pin groups; the Config Tools boot sequence **[inference]** |
+| 0x000878CC / 0x00087900 | `memcpy` / `memset` | `memcpy_body` / `memset_body` | the loops that `memcpy` 0x872BC and `memset` 0x872C0 (`b.w`) branch to; every call reaches 0x872BC/0x872C0 **[fact]**. *Open: Redlib's own names for the loops; would be settled by the symbol table of the Redlib archive of an MCUXpresso IDE install* |
+| 0x08001220 | `DefaultHandler` | `IntDefaultHandler` | byte-identical to the MCUX_2.9.0 MCUXpresso startup **[fact]** |
+| 0x0800131C, 0x08001344, 0x080013C4, 0x080013CC, 0x080013DC | `SECURE_VIOLATION_`, `DSP_TIE_EXPSTATE1_`, `USB0_`, `USB0_NEEDCLK_`, `USB_PHYDCD_IRQHandler` | `SECUREVIOLATION_`, `DSPWAKE_`, `USB_`, `USB_WAKEUP_`, `USBPHY_DCD_IRQHandler` | the weak handler names of the MCUX_2.9.0 startup the image was built from **[fact]** (IfdspM33Setup.java keeps the later SDK slot names for the vector table labels) |
+
+Functions Ghidra did not have (40): created by `tools/ghidra/entries_m33.tsv` (FixFuncEntries.java) and named by
+`IfdspM33Names.java`. Each is where the recreated function of that name matches the image byte for byte; two
+(`CLOCK_GetFlexspiClkFreq`, `CLOCK_GetSctClkFreq`) had been merged into `CLOCK_GetFlexCommClkFreq`, and `initFlexSPI`
+started 2 bytes late.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0x000802A8 | `initFlexSPI` |  | FlexSPI enable, software reset, wait for DLL lock **[fact: T24, byte-identical]** |
+| 0x00080F0C | `uart0_printf` |  | formats into 0x88C2C, then writes it to USART0 **[fact: T24, byte-identical]** |
+| 0x00081A74 | `env_isr` |  | virtqueue interrupt dispatch for one vector **[fact: T24, byte-identical]** |
+| 0x00082138 | `xPortStartScheduler` |  | sets PendSV/SysTick priority, starts the first task **[fact: T24, byte-identical]** |
+| 0x00082F48 | `xTimerPendFunctionCallFromISR` |  | queues a deferred call to the timer task **[fact: T24, byte-identical]** |
+| 0x000832A8 | `CLOCK_GetAdcClkFreq` |  | clock frequency of the Adc function clock **[fact: T24, byte-identical]** |
+| 0x00083318 | `CLOCK_GetClockOutClkFreq` |  | clock frequency of the ClockOut function clock **[fact: T24, byte-identical]** |
+| 0x000833C0 | `CLOCK_GetFRGClock` |  | fractional rate generator output clock **[fact: T24, byte-identical]** |
+| 0x000834D0 | `CLOCK_GetFlexspiClkFreq` |  | clock frequency of the Flexspi function clock **[fact: T24, byte-identical]** |
+| 0x0008351C | `CLOCK_GetSctClkFreq` |  | clock frequency of the Sct function clock **[fact: T24, byte-identical]** |
+| 0x00083570 | `CLOCK_GetMclkClkFreq` |  | clock frequency of the Mclk function clock **[fact: T24, byte-identical]** |
+| 0x000835A4 | `CLOCK_GetWdtClkFreq` |  | clock frequency of the Wdt function clock **[fact: T24, byte-identical]** |
+| 0x000835CC | `CLOCK_GetSystickClkFreq` |  | clock frequency of the Systick function clock **[fact: T24, byte-identical]** |
+| 0x00083614 | `CLOCK_GetSdioClkFreq` |  | clock frequency of the Sdio function clock **[fact: T24, byte-identical]** |
+| 0x00083678 | `CLOCK_GetI3cClkFreq` |  | clock frequency of the I3c function clock **[fact: T24, byte-identical]** |
+| 0x000836AC | `CLOCK_GetUsbClkFreq` |  | clock frequency of the Usb function clock **[fact: T24, byte-identical]** |
+| 0x000836E0 | `CLOCK_GetDmicClkFreq` |  | clock frequency of the Dmic function clock **[fact: T24, byte-identical]** |
+| 0x00083758 | `CLOCK_GetAcmpClkFreq` |  | clock frequency of the Acmp function clock **[fact: T24, byte-identical]** |
+| 0x00083CE4 | `CTIMER_GenericIRQHandler` |  | dispatches CTIMER callbacks for one instance **[fact: T24, byte-identical]** |
+| 0x00084504 | `RESET_ClearPeripheralReset` |  | releases one peripheral from reset and waits **[fact: T24, byte-identical]** |
+| 0x0008457C | `SCTIMER_EventHandleIRQ` |  | calls the SCTimer event callbacks, clears flags **[fact: T24, byte-identical]** |
+| 0x0008606C | `platform_patova` |  | physical to virtual address, identity map **[fact: T24, byte-identical]** |
+| 0x0008606E | `env_allocate_memory` |  | heap allocation for rpmsg-lite **[fact: T24, byte-identical]** |
+| 0x0008607A | `env_memset` |  | memset wrapper for rpmsg-lite **[fact: T24, byte-identical]** |
+| 0x0008607E | `env_memcpy` |  | memcpy wrapper for rpmsg-lite **[fact: T24, byte-identical]** |
+| 0x00086082 | `env_strncpy` |  | strncpy wrapper for rpmsg-lite **[fact: T24, byte-identical]** |
+| 0x00086098 | `env_map_vatopa` |  | virtual to physical address through the platform **[fact: T24, byte-identical]** |
+| 0x0008609C | `env_map_patova` |  | physical to virtual address through the platform **[fact: T24, byte-identical]** |
+| 0x000860C0 | `env_delete_mutex` |  | deletes the rpmsg-lite lock queue **[fact: T24, byte-identical]** |
+| 0x000860FA | `env_sleep_msec` |  | task delay in milliseconds for rpmsg-lite **[fact: T24, byte-identical]** |
+| 0x000860FE | `env_enable_interrupt` |  | enables one rpmsg vector through the platform **[fact: T24, byte-identical]** |
+| 0x00086102 | `env_disable_interrupt` |  | disables one rpmsg vector through the platform **[fact: T24, byte-identical]** |
+| 0x00086240 | `vq_rx_free_master` |  | master side returns a receive buffer **[fact: T24, byte-identical]** |
+| 0x00086244 | `vq_tx_alloc_master` |  | master side takes a transmit buffer **[fact: T24, byte-identical]** |
+| 0x000862AE | `vq_rx_master` |  | master side takes a received buffer **[fact: T24, byte-identical]** |
+| 0x00086538 | `virtqueue_notification` |  | calls the virtqueue callback if one is set **[fact: T24, byte-identical]** |
+| 0x00086712 | `vEventGroupSetBitsCallback` |  | deferred event group set from the timer task **[fact: T24, byte-identical]** |
+| 0x0008723C | `BOARD_InitBootClocks` |  | tail-calls BOARD_BootClockRUN **[fact: T24, byte-identical]** |
+| 0x000872BC | `memcpy` |  | linked memcpy symbol, branches to the copy loop **[fact: 0x872BC]** |
+| 0x000872C0 | `memset` |  | linked memset symbol, branches to the fill loop **[fact: 0x872C0]** |

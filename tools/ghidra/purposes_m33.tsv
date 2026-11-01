@@ -4,7 +4,6 @@
 # address	name	purpose	tag (fact / inference, from the doc row)	doc page
 0008000c	IAP_FlexspiNorAutoConfig	r6 = ROM API tree 0x1303F000	inference	m33-platform.md
 00080050	delay	fsl_power.c busy loop	inference	m33-platform.md
-000802aa	initFlexSPI	FlexSPI enable, SWRESET, wait DLL lock	inference	m33-platform.md
 0008032c	initXip	re-enable FlexSPI clock and initFlexSPI after deep sleep	inference	m33-platform.md
 00080a18	OTFAD_Init	true entry of FUN_00080A24	inference	m33-platform.md
 00080a60	vRestoreContextOfFirstTask	PSPLIM/CONTROL=2/PSP from pxCurrentTCB	inference	m33-platform.md
@@ -40,8 +39,8 @@
 00085d84	_Cwrite_buffer	Flush FILE buffer through __sys_write	inference	m33-platform.md
 00085f70	__check_heap_overflow	new_end >= 0xA2EF8	fact	m33-platform.md
 00085f88	aic3204_select_right_input	Page 1, R55 = 0x10	fact	control-link.md
-00086014	is_hex_string	All chars in 0-9A-Fa-f	fact	control-link.md
 00086ec4	hashcrypt_save_running_hash	n = 5 if ctx byte +0x44 == 1	inference	m33-platform.md
+000872ae	main	Redlib C entry	fact	m33-platform.md
 000872c4	free	Marks block 0x10000000 and merges free successors	inference	m33-platform.md
 000874b0	fputc	FILE output slow path, 19 callers	inference	m33-platform.md
 000875f0	_Cfdopen	Opens fd with mode "r"/"w"/"a"[+][b] into a FILE	inference	m33-platform.md
