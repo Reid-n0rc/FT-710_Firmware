@@ -33,7 +33,8 @@
 // pcodeops of the module (scmpu, suntil, swhile) are implemented here after the RXv2 software manual R01US0071EJ0100
 // (SCMPU p. 184, SUNTIL p. 196, SWHILE p. 198), because the module leaves them as named operations (T21c), and
 // JMP Rs is executed here, because the module's "PC = Rs" does not branch in the emulator (T22a listed it as not
-// fixed: MAIN has no JMP Rs; GCC's switch tables use it).
+// fixed: MAIN has no JMP Rs; GCC's switch tables use it). tools/ghidra/rx62t-gccforms-fix.patch (T24 round 2) fixes the
+// module ("goto [Rs]"); the override stays, so a module without that patch gives the same results.
 // @category FT710
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

@@ -1,0 +1,46 @@
+--- a/data/languages/rx62t.sinc
++++ b/data/languages/rx62t.sinc
+@@ -656,7 +656,7 @@
+ 
+ ## BNOT reg, reg
+ :BNOT reg0_4, reg4_4    is op0_8 = 0xFC; op2_6 = 0b11011 & ld0_2 = 0b11; reg4_4 & reg0_4 {
+-	reg4_4 = reg4_4 ^ (reg0_4 & 31);
++	reg4_4 = reg4_4 ^ (1 << (reg0_4 & 31));   # T24 fix: was "^ (Rs & 31)", p. 68 dest ^= 1 << (src & 31)
+ }
+ 
+ 
+@@ -1150,7 +1150,7 @@
+ 
+ # JMP
+ :JMP reg0_4    is op0_8 = 0x7F; op4_4 = 0x0 & reg0_4 {
+-	PC = reg0_4;
++	goto [reg0_4];   # T24 fix: was "PC = reg0_4" (no branch; the emulator fell through), p. 112 PC = src
+ }
+ 
+ 
+@@ -1326,14 +1326,22 @@
+ 
+ ## (14.1) MOV.B/W/L Rs, [Rd+] (post-increment)
+ ## (14.2) MOV.B/W/L Rs, [-Rd] (pre-decrement)
++## T24 fix: the source is read before rd_post updates Rd (p. 121 note 3: with Rs = Rd the value before the update is
++## stored); rd_post's p-code used to run first, so MOV.B R1,[R1+] stored R1 + 1
+ :MOV^szdsc szrs2, rd_post    is (szdsc & op0_8 = 0xFD); (op4_4 = 0x2 & ad2_2 <= 0x1 & ad2_2 & sz0_2 = 0x0 & sz0_2; szrs2) & rd_post [ mode_sz = sz0_2; ] {
+-    *:1 rd_post = szrs2:1;
++    local v:1 = szrs2:1;
++    build rd_post;
++    *:1 rd_post = v;
+ }
+ :MOV^szdsc szrs2, rd_post    is (szdsc & op0_8 = 0xFD); (op4_4 = 0x2 & ad2_2 <= 0x1 & ad2_2 & sz0_2 = 0x1 & sz0_2; szrs2) & rd_post [ mode_sz = sz0_2; ] {
+-    *:2 rd_post = szrs2:2;
++    local v:2 = szrs2:2;
++    build rd_post;
++    *:2 rd_post = v;
+ }
+ :MOV^szdsc szrs2, rd_post    is (szdsc & op0_8 = 0xFD); (op4_4 = 0x2 & ad2_2 <= 0x1 & ad2_2 & sz0_2 = 0x2 & sz0_2; szrs2) & rd_post [ mode_sz = sz0_2; ] {
+-    *:4 rd_post = szrs2;
++    local v:4 = szrs2;
++    build rd_post;
++    *:4 rd_post = v;
+ }
+ 
+ ## (15.1) MOV.B/W/L as L [Rs+], Rd

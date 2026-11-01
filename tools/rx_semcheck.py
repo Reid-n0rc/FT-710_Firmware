@@ -35,10 +35,13 @@ CONDS = {"EQ": lambda f: f["Z"], "NE": lambda f: not f["Z"], "GEU": lambda f: f[
          "PZ": lambda f: not f["S"], "N": lambda f: f["S"], "GE": lambda f: not (f["S"] ^ f["O"]),
          "LT": lambda f: f["S"] ^ f["O"], "GT": lambda f: not ((f["S"] ^ f["O"]) or f["Z"]),
          "LE": lambda f: (f["S"] ^ f["O"]) or f["Z"], "O": lambda f: f["O"], "NO": lambda f: not f["O"]}
-ALU2 = ("ADD", "SUB", "CMP", "AND", "OR", "MUL", "DIVU", "DIV", "TST")
+CONDS.update(C=CONDS["GEU"], NC=CONDS["LTU"], Z=CONDS["EQ"], NZ=CONDS["NE"])   # aliases, SCCnd table p. 182
+ALU2 = ("ADD", "SUB", "CMP", "AND", "OR", "MUL", "DIVU", "DIV", "TST", "XOR")
 MODELLED = set(ALU2) | {"MOV.B", "MOV.W", "MOV.L", "MOVU.B", "MOVU.W", "SHLL", "SHLR", "SHAR", "BSET", "BCLR", "BTST",
                         "BNOT", "NOT", "NEG", "RTS", "RTSD", "JSR", "BRA.L", "PUSH.L", "PUSHM", "POPM", "XCHG", "SMOVF",
-                        "SSTR.B", "SCMPU", "SUNTIL.B", "NOP", "ADC", "SBB", "ROLC", "RORC", "STZ", "STNZ", "ITOF"}
+                        "SSTR.B", "SCMPU", "SUNTIL.B", "NOP", "ADC", "SBB", "ROLC", "RORC", "STZ", "STNZ", "ITOF",
+                        # T24 MAIN round 2: forms only the GCC-built code uses (rx_semcheck.py forms)
+                        "ROTL", "ROTR", "ABS", "REVL", "EMUL", "EMULU", "JMP"}
 
 
 class Unmodelled(Exception):
@@ -214,6 +217,9 @@ def model(st, addr, ln, mn, ops_txt):
         elif base == "OR":
             res = a | b
             set_zs(st, res)
+        elif base == "XOR":                 # p. 206
+            res = a ^ b
+            set_zs(st, res)
         elif base == "MUL":
             res = (a * b) & M32
         elif base == "DIVU":
@@ -274,17 +280,54 @@ def model(st, addr, ln, mn, ops_txt):
         else:
             st.wr(a, 1, v)
         return
-    if base == "NOT" and len(ops) == 1:
-        st.r[ops[0][1]] = res = ~st.r[ops[0][1]] & M32
+    if base == "NOT" and len(ops) in (1, 2):    # p. 146: (2) dest = ~src
+        st.r[ops[-1][1]] = res = ~st.r[ops[0][1]] & M32
         set_zs(st, res)
         return
-    if base == "NEG" and len(ops) == 1:
+    if base == "NEG" and len(ops) in (1, 2):    # p. 144: (2) dest = -src, O from src
         v = st.r[ops[0][1]]
         res = -v & M32
         st.f["C"] = int(res == 0)
         st.f["O"] = int(v == 0x80000000)
         set_zs(st, res)
-        st.r[ops[0][1]] = res
+        st.r[ops[-1][1]] = res
+        return
+    if base == "ABS" and len(ops) in (1, 2):    # p. 58: O from the operand before the operation
+        v = st.r[ops[0][1]]
+        res = -v & M32 if v >> 31 else v
+        st.f["O"] = int(v == 0x80000000)
+        set_zs(st, res)
+        st.r[ops[-1][1]] = res
+        return
+    if base in ("ROTL", "ROTR"):                 # p. 169, p. 170: C = new LSB (ROTL) / MSB (ROTR), O unchanged
+        n = get_src(st, ops[0], 4) & 31
+        v = st.r[ops[1][1]]
+        if base == "ROTL":
+            res = ((v << n) | (v >> (32 - n))) & M32
+            st.f["C"] = res & 1
+        else:
+            res = ((v >> n) | (v << (32 - n))) & M32
+            st.f["C"] = res >> 31
+        set_zs(st, res)
+        st.r[ops[1][1]] = res
+        return
+    if base == "REVL":                           # p. 163, no flags
+        v = st.r[ops[0][1]]
+        st.r[ops[1][1]] = int.from_bytes(v.to_bytes(4, "little"), "big")
+        return
+    if base in ("EMUL", "EMULU") and ops[0][0] in ("reg", "imm"):   # p. 82, p. 85: R(n+1):Rn = Rn * src, no flags
+        b = get_src(st, ops[0], 4)
+        d = ops[1][1]
+        a = st.r[d]
+        if base == "EMUL":
+            a, b = sext(a, 32), sext(b, 32)
+        res = (a * b) & ((1 << 64) - 1)
+        nd = int(d[1:])
+        st.r[d] = res & M32
+        st.r["R%d" % (nd + 1)] = res >> 32
+        return
+    if base == "JMP":                            # p. 112: PC = src
+        st.r["PC"] = st.r[ops[0][1]]
         return
     if base == "NOP":
         return
@@ -464,6 +507,10 @@ def gen(a):
     sites = collections.defaultdict(list)
     for line in open(a.listing, encoding="utf-8"):
         p = line.rstrip("\n").split("\t")
+        if len(p) == 5 and not line.startswith("#"):   # ExportListing.java "decode" rows: addr len mnem ops bytes
+            if p[1] in ("0", "len"):
+                continue
+            p = [p[0], p[1], p[4], p[2], p[3], "-"]
         if len(p) < 6 or p[3] == "?UNDEF":
             continue
         mn = p[3].strip()
@@ -632,9 +679,45 @@ def check(a):
     return 0 if not fails else 1
 
 
+# Instruction forms the GCC 13.3.0 build of src/main uses and the MAIN image does not (tools/equiv_main_emu.py lists
+# them per function), plus the two forms T22a named as unchecked (JMP Rs, BNOT Rs,Rd). "{a}".."{c}" are distinct
+# random registers R1..R14, "{n}" a random 5-bit count, "{same}" one register used twice.
+GCC_FORMS = [
+    "sub {a}, {b}, {c}", "sub {a}, {a}, {b}", "mul {a}, {b}, {c}", "mul {a}, {a}, {b}", "or {a}, {b}, {c}",
+    "scgtu.l {a}", "scnc.l {a}", "sceq.l {a}", "scltu.l {a}",
+    "mov.b {a}, [{b}+]", "mov.b {a}, [{a}+]", "mov.l {a}, [{b}+]", "mov.w {a}, [{b}+]",
+    "mov.w {a}, [{a}+]", "mov.l {a}, [{a}+]", "mov.b {a}, [-{b}]", "mov.l {a}, [-{a}]", "mov.b {a}, [-{a}]",
+    "mov.b [{a}+], {b}", "mov.w [{a}+], {b}", "movu.w [{a}+], {b}", "mov.l [-{a}], {b}", "mov.l [{a}+], {a}",
+    "rotl {a}, {b}", "rotl {a}, {a}", "rotl #{n}, {a}", "rotr {a}, {b}", "rotr #{n}, {a}",
+    "bra.a {fwd}", "bra.a {back}", "jmp {a}",
+    "abs {a}, {b}", "abs {a}", "neg {a}, {b}", "not {a}, {b}", "revl {a}, {b}", "xor {a}, {b}",
+    "emul {a}, {b}", "emulu {a}, {b}", "bnot {a}, {b}",
+]
+
+
+def forms_asm(a):
+    """Write an RX assembly file with a.per_form random instances of every GCC_FORMS entry (assembled with rx-elf-as
+    and imported raw at 0xFFF00000 by tools/rx_semcheck_forms.sh)."""
+    rng = random.Random(a.seed)
+    out = ["\t.text", "\t.global _start", "_start:"]
+    for i, f in enumerate(GCC_FORMS):
+        for k in range(a.per_form):
+            r = rng.sample(range(1, 15), 3)
+            out.append("\t" + f.format(a="r%d" % r[0], b="r%d" % r[1], c="r%d" % r[2], n=rng.randrange(0, 32),
+                                         fwd="far_fwd", back="_start"))
+    out += ["\t.space 0x9000", "far_fwd:", "\tnop"]
+    with open(a.out, "w", encoding="utf-8") as f:
+        f.write("\n".join(out) + "\n")
+    print("%d instructions -> %s" % (len(GCC_FORMS) * a.per_form, a.out))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     sp = ap.add_subparsers(dest="cmd", required=True)
+    fo = sp.add_parser("forms")
+    fo.add_argument("out")
+    fo.add_argument("--per-form", type=int, default=12)
+    fo.add_argument("--seed", type=int, default=24)
     g = sp.add_parser("gen")
     g.add_argument("listing")
     g.add_argument("cases")
@@ -646,6 +729,8 @@ def main():
     c.add_argument("emu")
     c.add_argument("--fails")
     a = ap.parse_args()
+    if a.cmd == "forms":
+        return forms_asm(a) or 0
     return gen(a) or 0 if a.cmd == "gen" else check(a)
 
 
