@@ -4,7 +4,7 @@
 // 60 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * IpcSendTask @ 00080f50  (42 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * IpcSendTask @ 00080f50  (42 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: queue → `ipc_send` → `ulTaskNotifyTake` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -28,7 +28,7 @@ void IpcSendTask(void)
 
 
 /* -----------------------------------------------------------------------------
- * create_IpcTasks @ 00080f80  (82 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * create_IpcTasks @ 00080f80  (82 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: queue 0x886E0 (8 × 0x98), tasks prio 2, stack 0x1800 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -62,84 +62,71 @@ void create_IpcTasks(void)
 
 
 /* -----------------------------------------------------------------------------
- * ipc_print_dsp_reply @ 00080fe8  (130 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * ipc_print_dsp_reply @ 00080fe8  (86 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: category/command text on the console [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
-// ===== ipc_print_dsp_reply @ 00080fe8 (130 bytes)
+// ===== ipc_print_dsp_reply @ 00080fe8 (86 bytes)
 
-void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+void ipc_print_dsp_reply(int param_1)
 
 {
-  int strlen_ret;
-  char *pcVar1;
-  uint uStack_c;
-  uint uStack_8;
-  uint uStack_4;
+  char cVar1;
+  char *pcVar2;
   
-  uStack_8 = (uint)*(byte *)(param_1 + 8);
-  uStack_c = uStack_8;
-  if (uStack_8 == 1) {
-    param_4 = (uint)*(byte *)(param_1 + 0xc);
-    if (param_4 == 0) {
-      uStack_c = *(uint *)(param_1 + 0x14);
-      if (uStack_c == 0) {
-        param_4 = *(uint *)(param_1 + 0x18);
-        if (param_4 == 0) {
-          pcVar1 = "\r\nMute off\r\n>> ";
+  cVar1 = *(char *)(param_1 + 8);
+  if (cVar1 == '\x01') {
+    if (*(char *)(param_1 + 0xc) == '\0') {
+      if (*(int *)(param_1 + 0x14) == 0) {
+        if (*(int *)(param_1 + 0x18) == 0) {
+          pcVar2 = "\r\nMute off\r\n>> ";
         }
         else {
-          pcVar1 = "\r\nMute on\r\n>> ";
+          pcVar2 = "\r\nMute on\r\n>> ";
         }
+        goto LAB_00080ffa;
       }
-      else {
-        pcVar1 = "\r\nMute error (%d)\r\n>> ";
-      }
+      pcVar2 = "\r\nMute error (%d)\r\n>> ";
     }
     else {
-      pcVar1 = "\r\nIncoming unknown message category %d\r\n>> ";
-    }
-  }
-  else if (uStack_8 == 3) {
-    param_4 = (uint)*(byte *)(param_1 + 0xc);
-    if (param_4 == 0) {
-      if (*(uint *)(param_1 + 0x14) == 0) {
-        pcVar1 = "DSP Version %04X\r\n>> ";
-        uStack_c = *(uint *)(param_1 + 0x18);
-      }
-      else {
-        pcVar1 = "DSP Version error (%d)\r\n>> ";
-        uStack_c = *(uint *)(param_1 + 0x14);
-      }
-    }
-    else {
-      pcVar1 = "Incoming unknown message category %d\r\n>> ";
+      pcVar2 = "\r\nIncoming unknown message category %d\r\n>> ";
     }
   }
   else {
-    if (uStack_8 != 0) {
+    if (cVar1 != '\x03') {
+      if (cVar1 != '\0') {
+        return;
+      }
+      if (*(char *)(param_1 + 0xc) != '\0') {
+        uart0_printf("Incoming unknown message command %d from category %d\r\n");
+        return;
+      }
+      pcVar2 = "Component versions from DSP:\r\n";
+LAB_00080ffa:
+                    /* formats into 0x88C2C [doc] */
+      uart0_printf(pcVar2);
       return;
     }
-    uStack_c = (uint)*(byte *)(param_1 + 0xc);
-    if (uStack_c == 0) {
-      pcVar1 = "Component versions from DSP:\r\n";
+    if (*(char *)(param_1 + 0xc) == '\0') {
+      if (*(int *)(param_1 + 0x14) == 0) {
+        pcVar2 = "DSP Version %04X\r\n>> ";
+      }
+      else {
+        pcVar2 = "DSP Version error (%d)\r\n>> ";
+      }
     }
     else {
-      pcVar1 = "Incoming unknown message command %d from category %d\r\n";
+      pcVar2 = "Incoming unknown message category %d\r\n>> ";
     }
   }
-  uStack_4 = param_4;
-  sprintf(&DAT_00088c2c,pcVar1,&uStack_c,param_4,pcVar1,&uStack_c);
-  strlen_ret = strlen((uint *)&DAT_00088c2c);
-                    /* Copy bytes into the TX ring [doc] */
-  uart0_write(&DAT_00088c2c,strlen_ret);
+  uart0_printf(pcVar2);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * get_task_handles @ 00081064  (4 bytes, 2 callers, export file 0008000c_000818b8.c)
+ * get_task_handles @ 00081064  (4 bytes, 2 callers, export file 0008000c_00081430.c)
  * Purpose: returns 0x886E4 {+0 CommandTask, +4 IpcSendTask, +8 IpcRecvTask} [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -154,16 +141,20 @@ void * get_task_handles(void)
 
 
 /* -----------------------------------------------------------------------------
- * app_main @ 0008106c  (218 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * main @ 0008106c  (218 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: Handshake: SEMA42 init/reset, flags 1 → wait 1 → lock gate 0, flags 2, unlock → wait 3; then regs
  *     0/0x4000/1 and task creation [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  * Also on: m33-platform.md
  */
-// ===== app_main @ 0008106c (218 bytes)
+// ===== main @ 0008106c (218 bytes)
 
-undefined4 app_main(void)
+/* the application main: __main 0x872AE tail-calls it after stdio_init [fact: 0x872B8]; recreated as
+   main() in src/ifdsp_m33/app/main.c, byte-identical [fact: T24 (src/ifdsp_m33/status.tsv,
+   aliases.tsv)]. Was app_main (T24 round 2) */
+
+undefined4 main(void)
 
 {
   uint uVar1;
@@ -172,15 +163,15 @@ undefined4 app_main(void)
   GPIO_PortInit(&GPIO_B0_0,0);
   GPIO_PortInit(&GPIO_B0_0,1);
   GPIO_PortInit(&GPIO_B0_0,2);
-  BOARD_InitPins();
-  BOARD_BootClockRUN();
-  app_init_nop();
+  BOARD_InitBootPins();
+  BOARD_InitBootClocks();
+  BOARD_InitBootPeripherals();
   regfile_clear();
                     /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);
-  RESET_ClearPeripheralReset(0x41d);
-  RESET_ClearPeripheralReset(0x41c);
+  RESET_PeripheralReset(0x41d);
+  RESET_PeripheralReset(0x41c);
                     /* Reset P1_0 low 20 ms, high 20 ms [doc] */
   aic3204_init();
   sct0_pwm_init();
@@ -188,7 +179,7 @@ undefined4 app_main(void)
                     /* DSP clocks, DSP_Init, image copy, DSPSTALL = 0 [doc] */
   BOARD_DSP_Init();
   SEMA42_Init();
-  SEMA42_ResetAllGates(&SEMA42_GATE3,0x40);
+  SEMA42_ResetGate(&SEMA42_GATE3,0x40);
   MU_SetFlags(0x40110000,1);
   do {
     uVar1 = MUA_SR;
@@ -206,7 +197,7 @@ undefined4 app_main(void)
                     /* word[reg] |= v in a critical section [doc] */
   regfile_set_bits(1,1);
   create_IpcTasks();
-  SCTIMER_StartTimer();
+  sct0_pwm_start();
   create_CommandTask();
   vTaskStartScheduler();
   return 0;
@@ -214,44 +205,34 @@ undefined4 app_main(void)
 
 
 /* -----------------------------------------------------------------------------
- * MU_A_IRQHandler @ 000818b8  (46 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * MU_A_IRQHandler @ 000818b8  (20 bytes, 0 callers, export file 000818b8_00082a24.c)
  * Purpose: RF1 → RR1 >> 16 → isr_table → vq callback (+0x30) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
-// ===== MU_A_IRQHandler @ 000818b8 (46 bytes)
+// ===== MU_A_IRQHandler @ 000818b8 (20 bytes)
 
 void MU_A_IRQHandler(void)
 
 {
-  int iVar1;
-  code *UNRECOVERED_JUMPTABLE;
+  uint mua_rr1;
+  int mua_sr;
   
                     /* Status [sfr] */
-  iVar1 = MUA_SR;
-  if (-1 < iVar1 << 5) {
-    return;
-  }
-  iVar1 = MUA_RR1;
-  iVar1 = (iVar1 << 0xf) >> 0x1f;
-  if (0x1f < (uint)-iVar1) {
-    do {
-                    /* WARNING: Do nothing block with infinite loop */
-    } while( true );
-  }
-  if ((*(int *)(&DAT_00088720 + iVar1 * -4) != 0) &&
-     (UNRECOVERED_JUMPTABLE = *(code **)(*(int *)(&DAT_00088720 + iVar1 * -4) + 0x30),
-     UNRECOVERED_JUMPTABLE != (code *)0x0)) {
-                    /* WARNING: Could not recover jumptable at 0x0008653e. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    (*UNRECOVERED_JUMPTABLE)();
+  mua_sr = MUA_SR;
+  if (mua_sr << 5 < 0) {
+                    /* Receive [sfr] */
+    mua_rr1 = MUA_RR1;
+                    /* virtqueue interrupt dispatch for one vector [doc] */
+    env_isr((mua_rr1 & 0x1ffff) >> 0x10);
     return;
   }
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * platform_init_interrupt @ 000818d0  (54 bytes, 2 callers, export file 000818d0_00082ae0.c)
+ * platform_init_interrupt @ 000818d0  (54 bytes, 2 callers, export file 000818b8_00082a24.c)
  * Name on the doc page: platform_interrupt_enable
  * Purpose: register ISR, CR RIE1 on first use [fact]
  * Tag: [fact]
@@ -287,7 +268,7 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * platform_notify @ 00081914  (38 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * platform_notify @ 00081914  (38 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: MU-A TR1 = vector << 16 under platform_lock [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -310,17 +291,17 @@ void platform_notify(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * platform_interrupt_enable @ 00081958  (30 bytes, 2 callers, export file 000818d0_00082ae0.c)
+ * platform_interrupt_enable @ 00081958  (30 bytes, 2 callers, export file 000818b8_00082a24.c)
  * Purpose: nested NVIC mask of IRQ 34 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
 // ===== platform_interrupt_enable @ 00081958 (30 bytes)
 
-/* rename (was env_enable_interrupt; env wrapper inlined): disable_counter 0x8870C--, at 0 NVIC
-   ISER1=4 (MU_A) */
+/* rename (was env_enable_interrupt; env_enable_interrupt is the b.w to it at 0x860FE, T24 round 2):
+   disable_counter 0x8870C--, at 0 NVIC ISER1=4 (MU_A) */
 
-void platform_interrupt_enable(void)
+void platform_interrupt_enable(uint vector_id)
 
 {
   if (DAT_0008870c < 1) {
@@ -340,16 +321,17 @@ void platform_interrupt_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_interrupt_disable @ 00081980  (42 bytes, 2 callers, export file 000818d0_00082ae0.c)
+ * platform_interrupt_disable @ 00081980  (42 bytes, 2 callers, export file 000818b8_00082a24.c)
  * Purpose: nested NVIC mask of IRQ 34 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
 // ===== platform_interrupt_disable @ 00081980 (42 bytes)
 
-/* rename (was env_disable_interrupt; env wrapper inlined): at 0 NVIC ICER1=4, disable_counter++ */
+/* rename (was env_disable_interrupt; env_disable_interrupt is the b.w to it at 0x86102, T24 round
+   2): at 0 NVIC ICER1=4, disable_counter++ */
 
-void platform_interrupt_disable(void)
+void platform_interrupt_disable(uint vector_id)
 
 {
   if (DAT_0008870c < 0) {
@@ -371,7 +353,7 @@ void platform_interrupt_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_init @ 000819b4  (38 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * platform_init @ 000819b4  (38 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Name on the doc page: platform_init_interrupt
  * Purpose: MU_Init, NVIC IRQ 34 prio 0x60 + enable, platform_lock [fact]
  * Tag: [fact]
@@ -397,7 +379,7 @@ int platform_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_init @ 000819e8  (106 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * env_init @ 000819e8  (106 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Name on the doc page: platform_init
  * Purpose: env counter, semaphore, isr_table clear, `platform_init` [fact]
  * Tag: [fact]
@@ -441,7 +423,7 @@ uint env_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_register_isr @ 00081a60  (14 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * env_register_isr @ 00081a60  (14 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: isr_table[32] at 0x88720 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -464,7 +446,7 @@ void env_register_isr(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_queue_recv @ 00081a88  (104 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * rpmsg_queue_recv @ 00081a88  (104 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -501,11 +483,10 @@ rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *par
       uVar1 = 0xffffec76;
     }
     else {
-      memcpy(param_4,local_20,local_1c);
+      env_memcpy(param_4,local_20,local_1c);
       uVar1 = 0;
     }
-                    /* return rx buffer [doc] */
-    rpmsg_queue_nocopy_free_ret = rpmsg_queue_nocopy_free(rpmsg_lite_dev,local_20);
+    rpmsg_queue_nocopy_free_ret = rpmsg_lite_release_rx_buffer(rpmsg_lite_dev,local_20);
     if (rpmsg_queue_nocopy_free_ret == 0) {
       return uVar1;
     }
@@ -515,7 +496,7 @@ rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *par
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_send @ 00081afc  (218 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * rpmsg_lite_send @ 00081afc  (218 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: blocking send with 1-tick retry [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -557,7 +538,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
         }
         i = 0;
         do {
-          vTaskDelay(1);
+          env_sleep_msec(1);
           env_lock_mutex(*(uint *)(param_1 + 0xc));
           puVar1 = (undefined4 *)
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
@@ -577,7 +558,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
       *(short *)(puVar1 + 3) = (short)param_5;
       *(undefined1 *)((int)puVar1 + 0xe) = 0;
       *(undefined1 *)((int)puVar1 + 0xf) = 0;
-      memcpy(puVar1 + 4,param_4,param_5);
+      env_memcpy(puVar1 + 4,param_4,param_5);
       env_lock_mutex(*(uint *)(param_1 + 0xc));
       (*(code *)**(undefined4 **)(param_1 + 0x20))
                 (*(undefined4 *)(param_1 + 4),puVar1,local_2c,uStack_30._2_2_);
@@ -591,21 +572,26 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_queue_nocopy_free @ 00081be8  (60 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * rpmsg_lite_release_rx_buffer @ 00081be8  (60 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: return rx buffer [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
+ * Also on: m33-platform.md
  */
-// ===== rpmsg_queue_nocopy_free @ 00081be8 (60 bytes)
+// ===== rpmsg_lite_release_rx_buffer @ 00081be8 (60 bytes)
 
-int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
+/* byte-identical to rpmsg_lite_release_rx_buffer of rpmsg-lite v3.1.0 rpmsg_lite.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]; rpmsg_queue_nocopy_free is not in the image. Was
+   rpmsg_queue_nocopy_free (T24 round 2) */
+
+int rpmsg_lite_release_rx_buffer(void *rpmsg_lite_dev,void *rxbuf)
 
 {
   uint virtqueue_get_buffer_length_ret;
   int iVar1;
   code *pcVar2;
   
-  if ((rpmsg_lite_dev == (void *)0x0) || (data == (void *)0x0)) {
+  if ((rpmsg_lite_dev == (void *)0x0) || (rxbuf == (void *)0x0)) {
     iVar1 = -0x138b;
   }
   else {
@@ -613,9 +599,9 @@ int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
     iVar1 = *(int *)rpmsg_lite_dev;
     pcVar2 = *(code **)(*(int *)((int)rpmsg_lite_dev + 0x20) + 0xc);
     virtqueue_get_buffer_length_ret =
-         virtqueue_get_buffer_length(iVar1,(uint)*(ushort *)((int)data + -6));
-    (*pcVar2)(iVar1,(int)data + -0x10,virtqueue_get_buffer_length_ret,
-              *(undefined2 *)((int)data + -6));
+         virtqueue_get_buffer_length(iVar1,(uint)*(ushort *)((int)rxbuf + -6));
+    (*pcVar2)(iVar1,(int)rxbuf + -0x10,virtqueue_get_buffer_length_ret,
+              *(undefined2 *)((int)rxbuf + -6));
     env_unlock_mutex(*(uint *)((int)rpmsg_lite_dev + 0xc));
     iVar1 = 0;
   }
@@ -624,7 +610,7 @@ int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_master_init @ 00081c28  (428 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * rpmsg_lite_master_init @ 00081c28  (428 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: see configuration table [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -639,11 +625,14 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
   int iVar2;
   uint uVar3;
   int iVar4;
+  void *ptr;
   int *piVar5;
   int *piVar6;
   uint local_4c [2];
   char *local_44 [2];
-  int local_3c [4];
+  int local_3c [2];
+  void *local_34;
+  undefined4 local_30;
   undefined2 local_2c;
   
   uVar3 = param_2 - 0x800;
@@ -652,8 +641,8 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
     uVar1 = uVar3 & 0xfffffffc;
   }
   if ((((0x7ff < uVar1) && (param_3 == 0)) && (param_1 != 0)) &&
-     (pvPortMalloc_ret = (int *)pvPortMalloc(0x24), pvPortMalloc_ret != (int *)0x0)) {
-    memset(pvPortMalloc_ret,0,0x24);
+     (pvPortMalloc_ret = env_allocate_memory(0x24), pvPortMalloc_ret != (int *)0x0)) {
+    env_memset(pvPortMalloc_ret,0,0x24);
                     /* env counter, semaphore, isr_table clear, platform_init [doc] */
     uVar1 = env_init();
     if (uVar1 == 0) {
@@ -674,12 +663,12 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
       pvPortMalloc_ret[8] = (int)&PTR_vq_tx_master_1_000879ac;
       piVar6 = piVar5;
       while( true ) {
-        local_3c[2] = iVar2 + param_1;
-        local_3c[3] = 0x10;
+        local_34 = (void *)(iVar2 + param_1);
+        local_30 = 0x10;
         local_2c = 2;
-        memset(local_3c[2],0,0x4e);
-        uVar1 = virtqueue_create((ushort)iVar4,(uint)local_44[iVar4],local_3c + 2,local_4c[iVar4],
-                                 0x8622b,piVar6);
+        env_memset(local_34,0,0x4e);
+        uVar1 = virtqueue_create((ushort)iVar4,(uint)local_44[iVar4],(int *)&local_34,
+                                 local_4c[iVar4],0x8622b,piVar6);
         if (uVar1 != 0) break;
         vq_ring_init(*piVar6);
         virtqueue_disable_cb(*piVar6);
@@ -702,21 +691,21 @@ LAB_00081d36:
                     /* WARNING: Do nothing block with infinite loop */
                   } while( true );
                 }
-                uVar3 = pvPortMalloc_ret[5] + (pvPortMalloc_ret[7] - iVar4) * 0x200;
+                ptr = (void *)(pvPortMalloc_ret[5] + (pvPortMalloc_ret[7] - iVar4) * 0x200);
                 pvPortMalloc_ret[6] = iVar4 + -1;
-                if (uVar3 == 0) goto LAB_00081d36;
-                memset(uVar3,0,0x200);
+                if (ptr == (void *)0x0) goto LAB_00081d36;
+                env_memset(ptr,0,0x200);
                 iVar4 = *piVar5;
                 if (iVar4 == *pvPortMalloc_ret) {
-                  uVar3 = virtqueue_fill_avail_buffers(iVar4,uVar3,0x200);
+                  uVar3 = virtqueue_fill_avail_buffers(iVar4,(uint)ptr,0x200);
 LAB_00081d56:
                   if (uVar3 != 0) {
-                    vQueueDelete(pvPortMalloc_ret[3]);
+                    env_delete_mutex(pvPortMalloc_ret[3]);
                     goto LAB_00081c74;
                   }
                 }
                 else if (iVar4 == pvPortMalloc_ret[1]) {
-                  uVar3 = virtqueue_fill_used_buffers(iVar4,uVar3,0x200);
+                  uVar3 = virtqueue_fill_used_buffers(iVar4,ptr,0x200);
                   goto LAB_00081d56;
                 }
               }
@@ -725,11 +714,11 @@ LAB_00081d56:
                     /* register ISR, CR RIE1 on first use [doc] */
                 platform_init_interrupt(*(undefined2 *)(*pvPortMalloc_ret + 0x50));
                 platform_init_interrupt(*(undefined2 *)(pvPortMalloc_ret[1] + 0x50));
-                platform_interrupt_disable();
-                platform_interrupt_disable();
+                env_disable_interrupt((uint)*(ushort *)(*pvPortMalloc_ret + 0x50));
+                env_disable_interrupt((uint)*(ushort *)(pvPortMalloc_ret[1] + 0x50));
                 pvPortMalloc_ret[4] = iVar2;
-                platform_interrupt_enable();
-                platform_interrupt_enable();
+                env_enable_interrupt((uint)*(ushort *)(*pvPortMalloc_ret + 0x50));
+                env_enable_interrupt((uint)*(ushort *)(pvPortMalloc_ret[1] + 0x50));
                 virtqueue_kick(*pvPortMalloc_ret);
                 return pvPortMalloc_ret;
               }
@@ -750,7 +739,7 @@ LAB_00081c74:
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_create @ 00081dec  (142 bytes, 1 callers, export file 000818d0_00082ae0.c)
+ * virtqueue_create @ 00081dec  (142 bytes, 1 callers, export file 000818b8_00082a24.c)
  * Purpose: 0x68-byte vq struct [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -769,13 +758,13 @@ uint virtqueue_create(ushort param_1,uint param_2,int *param_3,uint param_4,uint
   uint local_24;
   
   local_24 = 0;
-  pvPortMalloc_ret = (uint *)pvPortMalloc(0x68);
+  pvPortMalloc_ret = env_allocate_memory(0x68);
   if (pvPortMalloc_ret == (uint *)0x0) {
     local_24 = 0xfffff444;
   }
   else {
-    memset(pvPortMalloc_ret,0,0x68);
-    strncpy(pvPortMalloc_ret,(uint *)param_2,0x20);
+    env_memset(pvPortMalloc_ret,0,0x68);
+    env_strncpy(pvPortMalloc_ret,(uint *)param_2,0x20);
     uVar1 = *(ushort *)(param_3 + 2);
     uVar2 = (uint)uVar1;
     uVar3 = param_3[1];
@@ -800,43 +789,38 @@ uint virtqueue_create(ushort param_1,uint param_2,int *param_3,uint param_4,uint
 
 
 /* -----------------------------------------------------------------------------
- * DSP_Init @ 00083e48  (190 bytes, 1 callers, export file 00082b34_00084138.c)
+ * DSP_Init @ 00083e48  (82 bytes, 1 callers, export file 00083d5c_00084a8c.c)
  * Purpose: DSP memory power-up and reset release [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  * Also on: m33-platform.md
  */
-// ===== DSP_Init @ 00083e48 (190 bytes)
+// ===== DSP_Init @ 00083e48 (82 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x00084574) */
 /* fsl_dsp.c: if PDRUNCFG1 DSP cache/TCM bits set, clear them (PDRUNCFG1_CLR), POWER_ApplyPD,
    release DSP reset [inference] */
 
 void DSP_Init(void)
 
 {
-  uint uVar1;
   int rstctl0_prstctl0;
+  uint sysctl0_pdruncfg1;
   
                     /* Run configuration 1 [sfr] */
-  uVar1 = SYSCTL0_PDRUNCFG1;
-  if ((uVar1 & 0xf000000) != 0) {
+  sysctl0_pdruncfg1 = SYSCTL0_PDRUNCFG1;
+  if ((sysctl0_pdruncfg1 & 0xf000000) != 0) {
                     /* Run configuration 1 clear [sfr] */
     SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x2000000;
     POWER_ApplyPD();
-    RESET_ClearPeripheralReset(1);
+    RESET_PeripheralReset(1);
     return;
   }
   rstctl0_prstctl0 = RSTCTL0_PRSTCTL0;
   if (rstctl0_prstctl0 << 0x1e < 0) {
-                    /* peripheral reset clear 0 [sfr] */
-    RSTCTL0_PRSTCTL0_CLR = 2;
-    do {
-      uVar1 = RSTCTL0_PRSTCTL0;
-    } while ((~uVar1 & 2) == 0);
+    RESET_ClearPeripheralReset(1);
     return;
   }
   return;
@@ -844,7 +828,7 @@ void DSP_Init(void)
 
 
 /* -----------------------------------------------------------------------------
- * MU_Init @ 000842c8  (10 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * MU_Init @ 000842c8  (10 bytes, 1 callers, export file 00083d5c_00084a8c.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -861,7 +845,7 @@ void MU_Init(void)
 
 
 /* -----------------------------------------------------------------------------
- * SEMA42_Init @ 000848f4  (10 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * SEMA42_Init @ 000848f4  (10 bytes, 1 callers, export file 00083d5c_00084a8c.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -879,7 +863,7 @@ void SEMA42_Init(void)
 
 
 /* -----------------------------------------------------------------------------
- * ipc_init @ 00084a50  (46 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * ipc_init @ 00084a50  (46 bytes, 1 callers, export file 00083d5c_00084a8c.c)
  * Purpose: master init (0x20020000, 0x20000, link 0), queue, endpoint 0x28, remote = 0x1E [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -898,7 +882,7 @@ void ipc_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * ipc_send @ 00084a8c  (30 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * ipc_send @ 00084a8c  (30 bytes, 1 callers, export file 00083d5c_00084a8c.c)
  * Purpose: `rpmsg_lite_send(rl, ept, 0x1E, msg, 0x98, forever)` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -913,9 +897,8 @@ void ipc_send(uint param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ipc_recv @ 00084ab0  (34 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * ipc_recv @ 00084ab0  (34 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: `rpmsg_queue_recv(rl, q, &src, buf, 0x98, NULL, forever)` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -931,7 +914,7 @@ void ipc_recv(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_DSP_Init @ 00084ad8  (114 bytes, 1 callers, export file 00084150_00085e2c.c)
+ * BOARD_DSP_Init @ 00084ad8  (114 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: DSP clocks, `DSP_Init`, image copy, DSPSTALL = 0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -977,7 +960,7 @@ void BOARD_DSP_Init(void)
 
 
 /* -----------------------------------------------------------------------------
- * IpcRecvTask @ 00085fc6  (36 bytes, 0 callers, export file 00085f2c_0008674a.c)
+ * IpcRecvTask @ 00085fc6  (36 bytes, 0 callers, export file 00084ab0_00086342.c)
  * Purpose: `ipc_recv` → `ipc_print_dsp_reply` → notify `IpcSendTask` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1001,24 +984,27 @@ void IpcRecvTask(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_map_vatopa @ 0008606a  (2 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * platform_vatopa @ 0008606a  (2 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
+ * Also on: m33-platform.md
  */
-// ===== env_map_vatopa @ 0008606a (2 bytes)
+// ===== platform_vatopa @ 0008606a (2 bytes)
 
-/* Identity (also used as env_map_patova through a thunk) [inference] */
+/* bx lr; env_map_vatopa 0x86098 is b.w here [fact]; byte-identical to platform_vatopa of rpmsg-lite
+   v3.1.0 imxrt600_m33/rpmsg_platform.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]. Was
+   env_map_vatopa (T24 round 2) */
 
-void env_map_vatopa(void)
+uint platform_vatopa(void *address)
 
 {
-  return;
+  return (uint)address;
 }
 
 
 /* -----------------------------------------------------------------------------
- * env_free_memory @ 00086072  (8 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * env_free_memory @ 00086072  (8 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1038,7 +1024,7 @@ void env_free_memory(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_mb @ 00086086  (6 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * env_mb @ 00086086  (6 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1056,7 +1042,7 @@ void env_mb(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_rmb @ 0008608c  (6 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * env_rmb @ 0008608c  (6 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1074,7 +1060,7 @@ void env_rmb(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_wmb @ 00086092  (6 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * env_wmb @ 00086092  (6 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1092,7 +1078,7 @@ void env_wmb(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_create_mutex @ 000860a0  (32 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * env_create_mutex @ 000860a0  (32 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1119,7 +1105,7 @@ int env_create_mutex(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * env_lock_mutex @ 000860c4  (26 bytes, 7 callers, export file 00085f2c_0008674a.c)
+ * env_lock_mutex @ 000860c4  (26 bytes, 7 callers, export file 00084ab0_00086342.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1132,7 +1118,7 @@ void env_lock_mutex(uint param_1)
 {
   bool xPortIsInsideInterrupt_ret;
   
-  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  xPortIsInsideInterrupt_ret = platform_in_isr();
   if (!xPortIsInsideInterrupt_ret) {
     xQueueSemaphoreTake((int *)param_1,-1);
     return;
@@ -1142,7 +1128,7 @@ void env_lock_mutex(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_unlock_mutex @ 000860de  (28 bytes, 8 callers, export file 00085f2c_0008674a.c)
+ * env_unlock_mutex @ 000860de  (28 bytes, 8 callers, export file 00084ab0_00086342.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1155,7 +1141,7 @@ void env_unlock_mutex(uint param_1)
 {
   bool xPortIsInsideInterrupt_ret;
   
-  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  xPortIsInsideInterrupt_ret = platform_in_isr();
   if (!xPortIsInsideInterrupt_ret) {
     xQueueGenericSend(param_1,0,0,0);
     return;
@@ -1165,7 +1151,7 @@ void env_unlock_mutex(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * env_create_queue @ 00086106  (26 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * env_create_queue @ 00086106  (26 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: FreeRTOS queue wrappers (ISR-aware) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1186,7 +1172,7 @@ int env_create_queue(int *param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * env_put_queue @ 00086120  (78 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * env_put_queue @ 00086120  (78 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: FreeRTOS queue wrappers (ISR-aware) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1205,7 +1191,7 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
   
   bVar2 = false;
   local_14[0] = 0;
-  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  xPortIsInsideInterrupt_ret = platform_in_isr();
   if (xPortIsInsideInterrupt_ret) {
     uVar1 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
     if ((uVar1 == 1) && (bVar2 = true, local_14[0] != 0)) {
@@ -1222,7 +1208,7 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * env_get_queue @ 0008616e  (74 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * env_get_queue @ 0008616e  (74 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: FreeRTOS queue wrappers (ISR-aware) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1242,7 +1228,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
   
   bVar2 = false;
   local_14[0] = 0;
-  xPortIsInsideInterrupt_ret = xPortIsInsideInterrupt();
+  xPortIsInsideInterrupt_ret = platform_in_isr();
   if (xPortIsInsideInterrupt_ret) {
     xQueueReceiveFromISR_ret = xQueueReceiveFromISR(param_1,param_2,local_14);
     if ((xQueueReceiveFromISR_ret == 1) && (bVar2 = true, local_14[0] != 0)) {
@@ -1259,7 +1245,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_queue_rx_cb @ 000861b8  (34 bytes, 0 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_queue_rx_cb @ 000861b8  (34 bytes, 0 callers, export file 00084ab0_00086342.c)
  * Purpose: endpoint callback → queue, returns RL_HOLD [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1290,7 +1276,7 @@ bool rpmsg_queue_rx_cb(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_queue_create @ 000861da  (38 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_queue_create @ 000861da  (38 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: queue of `vq_nentries` × 12 B [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1316,7 +1302,7 @@ int rpmsg_queue_create(int *param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * add_to_list @ 00086200  (30 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * add_to_list @ 00086200  (30 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: endpoint list [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1345,7 +1331,7 @@ void add_to_list(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_tx_callback @ 0008621e  (12 bytes, 0 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_lite_tx_callback @ 0008621e  (12 bytes, 0 callers, export file 00084ab0_00086342.c)
  * Purpose: link_state = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1368,7 +1354,7 @@ void rpmsg_lite_tx_callback(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_notify @ 0008622a  (8 bytes, 0 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_notify @ 0008622a  (8 bytes, 0 callers, export file 00084ab0_00086342.c)
  * Purpose: → `platform_notify` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1387,7 +1373,7 @@ void virtqueue_notify(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vq_tx_master @ 00086232  (14 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * vq_tx_master @ 00086232  (14 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Purpose: ops table 0x879AC [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1396,12 +1382,12 @@ void virtqueue_notify(int param_1)
 
 /* create: master_vq_ops[0] (table 0x879AC): virtqueue_add_buffer, assert on error */
 
-void vq_tx_master(uint param_1,undefined4 param_2,undefined4 param_3,uint param_4)
+void vq_tx_master(void *rvq,void *buffer,uint len,ushort idx)
 
 {
   uint virtqueue_add_buffer_ret;
   
-  virtqueue_add_buffer_ret = virtqueue_add_buffer(param_1,param_4);
+  virtqueue_add_buffer_ret = virtqueue_add_buffer((uint)rvq,(uint)idx);
   if (virtqueue_add_buffer_ret != 0) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
@@ -1412,7 +1398,7 @@ void vq_tx_master(uint param_1,undefined4 param_2,undefined4 param_3,uint param_
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_get_endpoint_from_addr @ 00086248  (16 bytes, 4 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_lite_get_endpoint_from_addr @ 00086248  (16 bytes, 4 callers, export file 00084ab0_00086342.c)
  * Purpose: endpoint list [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1432,7 +1418,7 @@ void rpmsg_lite_get_endpoint_from_addr(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_rx_callback @ 00086258  (86 bytes, 0 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_lite_rx_callback @ 00086258  (86 bytes, 0 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1477,7 +1463,7 @@ void rpmsg_lite_rx_callback(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_create_ept @ 000862b2  (144 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * rpmsg_lite_create_ept @ 000862b2  (144 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1513,14 +1499,14 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4)
     iVar1 = rpmsg_lite_get_endpoint_from_addr(*(undefined4 *)(param_1 + 8),param_2);
     if (iVar1 == 0) {
 LAB_000862fa:
-      pvPortMalloc_ret = (int *)pvPortMalloc(0x10);
+      pvPortMalloc_ret = env_allocate_memory(0x10);
       if (pvPortMalloc_ret != (int *)0x0) {
-        pvPortMalloc_ret_2 = (undefined4 *)pvPortMalloc(0x10);
+        pvPortMalloc_ret_2 = env_allocate_memory(0x10);
         if (pvPortMalloc_ret_2 == (undefined4 *)0x0) {
           env_free_memory((int)pvPortMalloc_ret);
           goto LAB_000862e0;
         }
-        memset(pvPortMalloc_ret,0,0x10);
+        env_memset(pvPortMalloc_ret,0,0x10);
         *pvPortMalloc_ret = param_2;
         pvPortMalloc_ret[1] = param_3;
         pvPortMalloc_ret[2] = param_4;
@@ -1538,7 +1524,7 @@ LAB_000862e0:
 
 
 /* -----------------------------------------------------------------------------
- * vq_ring_update_avail @ 00086342  (46 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * vq_ring_update_avail @ 00086342  (46 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1560,9 +1546,8 @@ void vq_ring_update_avail(int param_1,ushort param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * vq_ring_update_used @ 00086370  (38 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * vq_ring_update_used @ 00086370  (38 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1587,7 +1572,7 @@ void vq_ring_update_used(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_add_buffer @ 00086396  (22 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_add_buffer @ 00086396  (22 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1605,7 +1590,7 @@ uint virtqueue_add_buffer(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_fill_avail_buffers @ 000863ac  (82 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_fill_avail_buffers @ 000863ac  (82 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1614,24 +1599,24 @@ uint virtqueue_add_buffer(uint param_1,uint param_2)
 
 /* [inference] */
 
-uint virtqueue_fill_avail_buffers(int param_1,uint param_2,uint param_3)
+uint virtqueue_fill_avail_buffers(int param_1,uint address,uint param_3)
 
 {
   ushort uVar1;
   short sVar2;
-  undefined4 uVar3;
+  uint platform_vatopa_ret;
+  int iVar3;
   int iVar4;
-  int iVar5;
   
   uVar1 = *(ushort *)(param_1 + 0x58);
-  iVar5 = *(int *)(param_1 + 0x44);
-  uVar3 = env_map_vatopa(param_2);
-  iVar4 = iVar5 + (uint)uVar1 * 0x10;
-  *(undefined4 *)(iVar5 + (uint)uVar1 * 0x10) = uVar3;
-  *(undefined2 *)(iVar4 + 0xc) = 2;
+  iVar4 = *(int *)(param_1 + 0x44);
+  platform_vatopa_ret = env_map_vatopa((void *)address);
+  iVar3 = iVar4 + (uint)uVar1 * 0x10;
+  *(uint *)(iVar4 + (uint)uVar1 * 0x10) = platform_vatopa_ret;
+  *(undefined2 *)(iVar3 + 0xc) = 2;
   sVar2 = *(short *)(param_1 + 0x58);
-  *(undefined4 *)(iVar4 + 4) = 0;
-  *(uint *)(iVar4 + 8) = param_3;
+  *(undefined4 *)(iVar3 + 4) = 0;
+  *(uint *)(iVar3 + 8) = param_3;
   *(short *)(param_1 + 0x58) = sVar2 + 1;
   vq_ring_update_avail(param_1,uVar1);
   return 0;
@@ -1639,43 +1624,46 @@ uint virtqueue_fill_avail_buffers(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_buffer @ 000863fe  (94 bytes, 4 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_get_buffer @ 000863fe  (88 bytes, 4 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
  */
-// ===== virtqueue_get_buffer @ 000863fe (94 bytes)
+// ===== virtqueue_get_buffer @ 000863fe (88 bytes)
 
 /* [inference] */
 
-undefined4 virtqueue_get_buffer(int param_1,undefined4 *param_2,undefined2 *param_3)
+void * virtqueue_get_buffer(void *rvq,uint *len,ushort *idx)
 
 {
+  void *platform_patova_ret;
   uint uVar1;
   int iVar2;
   
-  if (param_1 != 0) {
-    if ((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) != (uint)*(ushort *)(param_1 + 0x5a)) {
-      iVar2 = *(int *)(param_1 + 0x4c) +
-              ((uint)*(ushort *)(param_1 + 0x5a) & *(ushort *)(param_1 + 0x52) - 1) * 8;
+  if (rvq != (void *)0x0) {
+    if ((uint)*(ushort *)(*(int *)((int)rvq + 0x4c) + 2) != (uint)*(ushort *)((int)rvq + 0x5a)) {
+      iVar2 = *(int *)((int)rvq + 0x4c) +
+              ((uint)*(ushort *)((int)rvq + 0x5a) & *(ushort *)((int)rvq + 0x52) - 1) * 8;
       env_rmb();
       uVar1 = *(uint *)(iVar2 + 4);
-      if (param_2 != (undefined4 *)0x0) {
-        *param_2 = *(undefined4 *)(iVar2 + 8);
+      if (len != (uint *)0x0) {
+        *len = *(uint *)(iVar2 + 8);
       }
-      if (param_3 != (undefined2 *)0x0) {
-        *param_3 = (short)uVar1;
+      if (idx != (ushort *)0x0) {
+        *idx = (ushort)uVar1;
       }
-      *(short *)(param_1 + 0x5a) = *(short *)(param_1 + 0x5a) + 1;
-      return *(undefined4 *)(*(int *)(param_1 + 0x44) + (uVar1 & 0xffff) * 0x10);
+      *(short *)((int)rvq + 0x5a) = *(short *)((int)rvq + 0x5a) + 1;
+      platform_patova_ret =
+           env_map_patova(*(uint *)(*(int *)((int)rvq + 0x44) + (uVar1 & 0xffff) * 0x10));
+      return platform_patova_ret;
     }
   }
-  return 0;
+  return (void *)0x0;
 }
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_get_buffer_length @ 00086456  (10 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_get_buffer_length @ 00086456  (10 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1692,7 +1680,7 @@ uint virtqueue_get_buffer_length(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_fill_used_buffers @ 00086460  (74 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_fill_used_buffers @ 00086460  (74 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1701,35 +1689,35 @@ uint virtqueue_get_buffer_length(int param_1,int param_2)
 
 /* [inference] */
 
-undefined4 virtqueue_fill_used_buffers(int param_1,int param_2,uint param_3)
+undefined4 virtqueue_fill_used_buffers(int param_1,void *address,uint param_3)
 
 {
-  undefined4 uVar1;
-  ushort uVar2;
-  uint uVar3;
+  uint platform_vatopa_ret;
+  ushort uVar1;
+  uint uVar2;
+  int iVar3;
   int iVar4;
-  int iVar5;
   
-  uVar2 = *(ushort *)(param_1 + 0x58);
-  uVar3 = (uint)uVar2;
-  if (param_2 != 0) {
-    iVar5 = *(int *)(param_1 + 0x44);
-    uVar1 = env_map_vatopa(param_2);
-    iVar4 = iVar5 + uVar3 * 0x10;
-    *(undefined4 *)(iVar5 + uVar3 * 0x10) = uVar1;
-    *(undefined4 *)(iVar4 + 4) = 0;
-    *(uint *)(iVar4 + 8) = param_3;
-    *(undefined2 *)(iVar4 + 0xc) = 2;
-    uVar2 = uVar2 + 1;
+  uVar1 = *(ushort *)(param_1 + 0x58);
+  uVar2 = (uint)uVar1;
+  if (address != (void *)0x0) {
+    iVar4 = *(int *)(param_1 + 0x44);
+    platform_vatopa_ret = env_map_vatopa(address);
+    iVar3 = iVar4 + uVar2 * 0x10;
+    *(uint *)(iVar4 + uVar2 * 0x10) = platform_vatopa_ret;
+    *(undefined4 *)(iVar3 + 4) = 0;
+    *(uint *)(iVar3 + 8) = param_3;
+    *(undefined2 *)(iVar3 + 0xc) = 2;
+    uVar1 = uVar1 + 1;
   }
-  *(ushort *)(param_1 + 0x58) = uVar2;
-  vq_ring_update_used(param_1,uVar3,param_3);
+  *(ushort *)(param_1 + 0x58) = uVar1;
+  vq_ring_update_used(param_1,uVar2,param_3);
   return 0;
 }
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_disable_cb @ 000864aa  (40 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_disable_cb @ 000864aa  (40 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1755,7 +1743,7 @@ void virtqueue_disable_cb(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * virtqueue_kick @ 000864d2  (70 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * virtqueue_kick @ 000864d2  (70 bytes, 2 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1785,7 +1773,7 @@ LAB_000864fe:
 
 
 /* -----------------------------------------------------------------------------
- * vq_ring_init @ 00086518  (32 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * vq_ring_init @ 00086518  (32 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1815,7 +1803,7 @@ void vq_ring_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * MU_SendMsg @ 00086efe  (22 bytes, 1 callers, export file 00086778_00087418.c)
+ * MU_SendMsg @ 00086efe  (22 bytes, 1 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1835,7 +1823,7 @@ void MU_SendMsg(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * MU_SetFlags @ 00086f14  (26 bytes, 3 callers, export file 00086778_00087418.c)
+ * MU_SetFlags @ 00086f14  (26 bytes, 3 callers, export file 00086370_00086f2e.c)
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1853,7 +1841,7 @@ void MU_SetFlags(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * SEMA42_Lock @ 00086fec  (28 bytes, 1 callers, export file 00086778_00087418.c)
+ * SEMA42_Lock @ 00086fec  (28 bytes, 1 callers, export file 00086f3c_08001222.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1877,15 +1865,20 @@ void SEMA42_Lock(int param_1,uint param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * SEMA42_ResetAllGates @ 00087008  (36 bytes, 1 callers, export file 00086778_00087418.c)
+ * SEMA42_ResetGate @ 00087008  (36 bytes, 1 callers, export file 00086f3c_08001222.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
+ * Also on: m33-platform.md
  */
-// ===== SEMA42_ResetAllGates @ 00087008 (36 bytes)
+// ===== SEMA42_ResetGate @ 00087008 (36 bytes)
 
-ushort SEMA42_ResetAllGates(int param_1,ushort param_2)
+/* byte-identical to SEMA42_ResetGate of mcux-sdk MCUX_2.11.0 fsl_sema42.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]; SEMA42_ResetAllGates is the header inline that calls it
+   with the reset-all gate number. Was SEMA42_ResetAllGates (T24 round 2) */
+
+ushort SEMA42_ResetGate(int param_1,ushort param_2)
 
 {
   ushort uVar1;

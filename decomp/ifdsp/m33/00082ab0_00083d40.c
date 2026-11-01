@@ -1,5 +1,66 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== uxTaskResetEventItemValue @ 00082ab0 (20 bytes)
+
+/* [inference] */
+
+uint uxTaskResetEventItemValue(void)
+
+{
+  uint uVar1;
+  
+  uVar1 = *(uint *)(DAT_00088800 + 0x18);
+  *(int *)(DAT_00088800 + 0x18) = 5 - *(int *)(DAT_00088800 + 0x2c);
+  return uVar1;
+}
+
+
+// ===== pvTaskIncrementMutexHeldCount @ 00082ac8 (18 bytes)
+
+/* [inference] */
+
+int pvTaskIncrementMutexHeldCount(void)
+
+{
+  if (DAT_00088800 != 0) {
+    *(int *)(DAT_00088800 + 0x50) = *(int *)(DAT_00088800 + 0x50) + 1;
+  }
+  return DAT_00088800;
+}
+
+
+// ===== ulTaskNotifyTake @ 00082ae0 (80 bytes)
+
+int ulTaskNotifyTake(int param_1,uint param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  vPortEnterCritical();
+  if ((*(int *)(DAT_00088800 + 0x68) == 0) &&
+     (*(undefined1 *)(DAT_00088800 + 0x6c) = 1, param_2 != 0)) {
+    prvAddCurrentTaskToDelayedList(param_2,1);
+    vPortYield();
+  }
+  vPortExitCritical();
+  vPortEnterCritical();
+  iVar2 = *(int *)(DAT_00088800 + 0x68);
+  if (iVar2 != 0) {
+    if (param_1 == 0) {
+      iVar1 = iVar2 + -1;
+    }
+    else {
+      iVar1 = 0;
+    }
+    *(int *)(DAT_00088800 + 0x68) = iVar1;
+  }
+  *(undefined1 *)(DAT_00088800 + 0x6c) = 0;
+  vPortExitCritical();
+  return iVar2;
+}
+
+
 // ===== xTaskGenericNotify @ 00082b34 (164 bytes)
 
 undefined4 xTaskGenericNotify(int param_1,uint param_2,undefined4 param_3,undefined4 *param_4)
@@ -356,6 +417,32 @@ switchD_00082e62_default:
       *(byte *)(iVar4 + 0x28) = bVar2 & 0xfe;
     }
   } while( true );
+}
+
+
+// ===== xTimerPendFunctionCallFromISR @ 00082f48 (34 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to xTimerPendFunctionCallFromISR of FreeRTOS-Kernel
+   MCUX_2.9.0 timers.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24 round 2) */
+
+int xTimerPendFunctionCallFromISR
+              (void *xFunctionToPend,void *pvParameter1,uint ulParameter2,
+              int *pxHigherPriorityTaskWoken)
+
+{
+  uint xQueueGenericSendFromISR_ret;
+  undefined4 local_18;
+  void *pvStack_14;
+  void *local_10;
+  uint uStack_c;
+  
+  local_18 = 0xfffffffe;
+  pvStack_14 = xFunctionToPend;
+  local_10 = pvParameter1;
+  uStack_c = ulParameter2;
+  xQueueGenericSendFromISR_ret =
+       xQueueGenericSendFromISR(DAT_00088920,(int)&local_18,pxHigherPriorityTaskWoken,0);
+  return xQueueGenericSendFromISR_ret;
 }
 
 
@@ -778,57 +865,151 @@ undefined * CLOCK_GetDspMainClkFreq(void)
 }
 
 
-// ===== CLOCK_GetFlexCommClkFreq @ 00083470 (238 bytes)
+// ===== CLOCK_GetAdcClkFreq @ 000832a8 (90 bytes)
 
-uint CLOCK_GetFlexCommClkFreq(uint param_1)
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetAdcClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetAdcClkFreq(void)
+
+{
+  uint uVar1;
+  undefined *puVar2;
+  
+                    /* ADC0 fclk selection 1 [sfr] */
+  uVar1 = CLKCTL0_ADC0FCLKSEL1;
+  puVar2 = (undefined *)(uVar1 & 7);
+  switch(puVar2) {
+  case (undefined *)0x0:
+                    /* ADC0 fclk selection 0 [sfr] */
+    uVar1 = CLKCTL0_ADC0FCLKSEL0;
+    switch(uVar1 & 7) {
+    case 0:
+      puVar2 = (undefined *)0xf42400;
+      break;
+    case 1:
+      puVar2 = (undefined *)CLOCK_GetXtalInClkFreq();
+      break;
+    case 2:
+      puVar2 = &DAT_000f4240;
+      break;
+    case 3:
+      puVar2 = (undefined *)CLOCK_GetFFroFreq();
+    }
+    break;
+  case (undefined *)0x1:
+    puVar2 = (undefined *)CLOCK_GetMainPllClkFreq();
+    break;
+  default:
+    puVar2 = (undefined *)0x0;
+    break;
+  case (undefined *)0x3:
+    puVar2 = (undefined *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case (undefined *)0x5:
+    puVar2 = (undefined *)CLOCK_GetAux1PllClkFreq();
+  }
+                    /* ADC0 fclk divider [sfr] */
+  uVar1 = CLKCTL0_ADC0FCLKDIV;
+  return (uint)puVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetClockOutClkFreq @ 00083318 (136 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetClockOutClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetClockOutClkFreq(void)
+
+{
+  uint uVar1;
+  undefined *puVar2;
+  uint CLOCK_GetSysPfdFreq_ret;
+  
+                    /* clock out selection 1 [sfr] */
+  uVar1 = CLKCTL1_CLKOUTSEL1;
+  puVar2 = (undefined *)(uVar1 & 7);
+  switch(puVar2) {
+  case (undefined *)0x0:
+                    /* clock out selection 0 [sfr] */
+    uVar1 = CLKCTL1_CLKOUTSEL0;
+    switch(uVar1 & 7) {
+    case 0:
+      puVar2 = (undefined *)0xf42400;
+      break;
+    case 1:
+      puVar2 = (undefined *)CLOCK_GetXtalInClkFreq();
+      break;
+    case 2:
+      puVar2 = &DAT_000f4240;
+      break;
+    case 3:
+      puVar2 = (undefined *)CLOCK_GetFFroFreq();
+      break;
+    case 4:
+      puVar2 = CLOCK_GetMainClkFreq();
+      break;
+    case 6:
+      puVar2 = (undefined *)CLOCK_GetDspMainClkFreq();
+    }
+    break;
+  case (undefined *)0x1:
+    puVar2 = (undefined *)CLOCK_GetMainPllClkFreq();
+    break;
+  case (undefined *)0x2:
+    puVar2 = (undefined *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case (undefined *)0x3:
+    CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(1);
+                    /* dsp pll clk divider [sfr] */
+    uVar1 = CLKCTL0_DSPPLLCLKDIV;
+    puVar2 = (undefined *)(CLOCK_GetSysPfdFreq_ret / ((uVar1 & 0xff) + 1));
+    break;
+  case (undefined *)0x4:
+    puVar2 = (undefined *)CLOCK_GetAux1PllClkFreq();
+    break;
+  case (undefined *)0x5:
+    puVar2 = (undefined *)CLOCK_GetAudioPllClkFreq();
+    break;
+  case (undefined *)0x6:
+    puVar2 = (undefined *)CLOCK_GetOsc32KFreq();
+    break;
+  default:
+    puVar2 = (undefined *)0x0;
+  }
+                    /* clock_out divider [sfr] */
+  uVar1 = CLKCTL1_CLKOUTDIV;
+  return (uint)puVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetFRGClock @ 000833c0 (162 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetFRGClock of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetFRGClock(uint id)
 
 {
   undefined4 uVar1;
   void *pvVar2;
   uint CLOCK_GetMainPllClkFreq_ret;
   uint uVar3;
-  dword dVar4;
-  byte bVar5;
+  byte bVar4;
+  uint uVar5;
   uint uVar6;
-  uint uVar7;
   ulonglong __aeabi_uldivmod_ret;
   
-  if (param_1 < 8) {
-    dVar4 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[param_1 * 8];
-  }
-  else if (param_1 == 0xe) {
-                    /* flexcomm14 clock selection [sfr] */
-    dVar4 = CLKCTL1_FC14FCLKSEL;
-  }
-  else {
-    if (param_1 != 0xf) {
-      return 16000000;
-    }
-                    /* flexcomm15 clock selection [sfr] */
-    dVar4 = CLKCTL1_FC15FCLKSEL;
-  }
-  switch(dVar4) {
-  case 0:
-    return 16000000;
-  case 1:
-    uVar3 = CLOCK_GetFFroFreq();
-    return uVar3;
-  case 2:
-    uVar3 = CLOCK_GetAudioPllClkFreq();
-    return uVar3;
-  case 3:
-    return DAT_0008892c;
-  case 4:
-    break;
-  default:
-    return 0;
-  }
-  if (param_1 < 8) {
-    bVar5 = (byte)(&CLKCTL1_FLEXCOMM0_FRGCTL)[param_1 * 8];
-    uVar3 = (&CLKCTL1_FLEXCOMM0_FRGCLKSEL)[param_1 * 8] & 7;
-    uVar7 = ((&CLKCTL1_FLEXCOMM0_FRGCTL)[param_1 * 8] & 0xffff) >> 8;
+  if (id < 8) {
+    bVar4 = (byte)(&CLKCTL1_FLEXCOMM0_FRGCTL)[id * 8];
+    uVar3 = (&CLKCTL1_FLEXCOMM0_FRGCLKSEL)[id * 8] & 7;
+    uVar6 = ((&CLKCTL1_FLEXCOMM0_FRGCTL)[id * 8] & 0xffff) >> 8;
 LAB_000833e4:
-    uVar6 = (uint)bVar5;
+    uVar5 = (uint)bVar4;
     switch(uVar3) {
     case 0:
       goto switchD_000833ea_caseD_0;
@@ -849,406 +1030,565 @@ LAB_000833e4:
     }
   }
   else {
-    if (param_1 == 0xe) {
+    if (id == 0xe) {
                     /* FRG clock selection 14 [sfr] */
       uVar3 = CLKCTL1_FRG14CLKSEL;
                     /* FRG clock controller 14 [sfr] */
-      uVar7 = CLKCTL1_FRG14CTL;
+      uVar6 = CLKCTL1_FRG14CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG14CTL;
-      bVar5 = (byte)uVar1;
-      uVar7 = (uVar7 & 0xffff) >> 8;
+      bVar4 = (byte)uVar1;
+      uVar6 = (uVar6 & 0xffff) >> 8;
       goto LAB_000833e4;
     }
-    if (param_1 == 0xf) {
+    if (id == 0xf) {
                     /* FRG clock selection 15 [sfr] */
       uVar3 = CLKCTL1_FRG15CLKSEL;
                     /* FRG clock controller 15 [sfr] */
-      uVar7 = CLKCTL1_FRG15CTL;
+      uVar6 = CLKCTL1_FRG15CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG15CTL;
-      bVar5 = (byte)uVar1;
-      uVar7 = (uVar7 & 0xffff) >> 8;
+      bVar4 = (byte)uVar1;
+      uVar6 = (uVar6 & 0xffff) >> 8;
       goto LAB_000833e4;
     }
-    uVar7 = 0;
     uVar6 = 0;
+    uVar5 = 0;
 switchD_000833ea_caseD_0:
     pvVar2 = CLOCK_GetMainClkFreq();
   }
   __aeabi_uldivmod_ret =
-       __aeabi_uldivmod((ulonglong)(uVar6 + 1) * ZEXT48(pvVar2),(ulonglong)(uVar6 + uVar7 + 1));
+       __aeabi_uldivmod((ulonglong)(uVar5 + 1) * ZEXT48(pvVar2),(ulonglong)(uVar5 + uVar6 + 1));
   return (uint)__aeabi_uldivmod_ret;
+}
+
+
+// ===== CLOCK_GetFlexCommClkFreq @ 00083470 (76 bytes)
+
+uint CLOCK_GetFlexCommClkFreq(uint id)
+
+{
+  uint uVar1;
+  dword dVar2;
+  
+  if (id < 8) {
+    dVar2 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[id * 8];
+  }
+  else if (id == 0xe) {
+                    /* flexcomm14 clock selection [sfr] */
+    dVar2 = CLKCTL1_FC14FCLKSEL;
+  }
+  else {
+    if (id != 0xf) {
+switchD_00083486_caseD_0:
+      return 16000000;
+    }
+                    /* flexcomm15 clock selection [sfr] */
+    dVar2 = CLKCTL1_FC15FCLKSEL;
+  }
+  switch(dVar2) {
+  case 0:
+    goto switchD_00083486_caseD_0;
+  case 1:
+    uVar1 = CLOCK_GetFFroFreq();
+    return uVar1;
+  case 2:
+    uVar1 = CLOCK_GetAudioPllClkFreq();
+    return uVar1;
+  case 3:
+    return DAT_0008892c;
+  case 4:
+                    /* fractional rate generator output clock [doc] */
+    uVar1 = CLOCK_GetFRGClock(id);
+    return uVar1;
+  default:
+    return 0;
+  }
+}
+
+
+// ===== CLOCK_GetFlexspiClkFreq @ 000834d0 (66 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetFlexspiClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
+   Ghidra had merged it into CLOCK_GetFlexCommClkFreq [fact: 0x834D0] (T24 round 2) */
+
+uint CLOCK_GetFlexspiClkFreq(void)
+
+{
+  uint uVar1;
+  void *pvVar2;
+  
+                    /* FlexSPI FCLK selection [sfr] */
+  uVar1 = CLKCTL0_FLEXSPIFCLKSEL;
+  switch(uVar1 & 7) {
+  case 0:
+    pvVar2 = CLOCK_GetMainClkFreq();
+    break;
+  case 1:
+    pvVar2 = (void *)CLOCK_GetMainPllClkFreq();
+    break;
+  case 2:
+    pvVar2 = (void *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case 3:
+    pvVar2 = (void *)CLOCK_GetFFroFreq();
+    break;
+  case 4:
+    pvVar2 = (void *)CLOCK_GetAux1PllClkFreq();
+    break;
+  default:
+    pvVar2 = (void *)0x0;
+  }
+                    /* FlexSPI FCLK divider [sfr] */
+  uVar1 = CLKCTL0_FLEXSPIFCLKDIV;
+  return (uint)pvVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetSctClkFreq @ 0008351c (72 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetSctClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
+   Ghidra had merged it into CLOCK_GetFlexCommClkFreq [fact: 0x8351C] (T24 round 2) */
+
+uint CLOCK_GetSctClkFreq(void)
+
+{
+  uint uVar1;
+  void *pvVar2;
+  
+                    /* SCT FCLK selection [sfr] */
+  uVar1 = CLKCTL0_SCTFCLKSEL;
+  switch(uVar1 & 7) {
+  case 0:
+    pvVar2 = CLOCK_GetMainClkFreq();
+    break;
+  case 1:
+    pvVar2 = (void *)CLOCK_GetMainPllClkFreq();
+    break;
+  case 2:
+    pvVar2 = (void *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case 3:
+    pvVar2 = (void *)CLOCK_GetFFroFreq();
+    break;
+  case 4:
+    pvVar2 = (void *)CLOCK_GetAux1PllClkFreq();
+    break;
+  case 5:
+    pvVar2 = (void *)CLOCK_GetAudioPllClkFreq();
+    break;
+  default:
+    pvVar2 = (void *)0x0;
+  }
+                    /* SCT fclk divider [sfr] */
+  uVar1 = CLKCTL0_SCTFCLKDIV;
+  return (uint)pvVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetMclkClkFreq @ 00083570 (46 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetMclkClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetMclkClkFreq(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint clkctl1_audiomclkdiv;
+  
+                    /* audio mclock selection [sfr] */
+  iVar1 = CLKCTL1_AUDIOMCLKSEL;
+  if (iVar1 == 0) {
+    uVar2 = CLOCK_GetFFroFreq();
+  }
+  else {
+    iVar1 = CLKCTL1_AUDIOMCLKSEL;
+    if (iVar1 == 1) {
+      uVar2 = CLOCK_GetAudioPllClkFreq();
+    }
+    else {
+      uVar2 = 0;
+    }
+  }
+                    /* audio mclock divider [sfr] */
+  clkctl1_audiomclkdiv = CLKCTL1_AUDIOMCLKDIV;
+  return uVar2 / ((clkctl1_audiomclkdiv & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetWdtClkFreq @ 000835a4 (28 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetWdtClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetWdtClkFreq(uint id)
+
+{
+  void *CLOCK_GetMainClkFreq_ret;
+  uint uVar1;
+  
+  if (id == 0) {
+                    /* wdt clock selection [sfr] */
+    uVar1 = CLKCTL0_WDT0FCLKSEL;
+  }
+  else {
+                    /* WDT1 clock selection [sfr] */
+    uVar1 = CLKCTL1_WDT1FCLKSEL;
+  }
+  if ((uVar1 & 7) != 0) {
+    CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+    return (uint)CLOCK_GetMainClkFreq_ret;
+  }
+  return 1000000;
+}
+
+
+// ===== CLOCK_GetSystickClkFreq @ 000835cc (54 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetSystickClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetSystickClkFreq(void)
+
+{
+  void *CLOCK_GetMainClkFreq_ret;
+  uint uVar1;
+  undefined *puVar2;
+  undefined4 clkctl0_systickfclksel;
+  
+                    /* system tick fclk selection [sfr] */
+  clkctl0_systickfclksel = CLKCTL0_SYSTICKFCLKSEL;
+  switch(clkctl0_systickfclksel) {
+  case 0:
+    CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+                    /* system tick fclk divider [sfr] */
+    uVar1 = CLKCTL0_SYSTICKFCLKDIV;
+    puVar2 = (undefined *)((uint)CLOCK_GetMainClkFreq_ret / ((uVar1 & 0xff) + 1));
+    break;
+  case 1:
+    puVar2 = &DAT_000f4240;
+    break;
+  case 2:
+    uVar1 = CLOCK_GetOsc32KFreq();
+    return uVar1;
+  case 3:
+    puVar2 = (undefined *)0xf42400;
+    break;
+  default:
+    puVar2 = (undefined *)0x0;
+  }
+  return (uint)puVar2;
+}
+
+
+// ===== CLOCK_GetSdioClkFreq @ 00083614 (80 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetSdioClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetSdioClkFreq(uint id)
+
+{
+  void *pvVar1;
+  uint *puVar2;
+  dword *pdVar3;
+  
+  pdVar3 = &CLKCTL0_SDIO0FCLKDIV;
+  if (id != 0) {
+    pdVar3 = &CLKCTL0_SDIO1FCLKDIV;
+  }
+  puVar2 = &CLKCTL0_SDIO0FCLKSEL;
+  if (id != 0) {
+    puVar2 = &CLKCTL0_SDIO1FCLKSEL;
+  }
+  switch(*puVar2 & 7) {
+  case 0:
+    pvVar1 = CLOCK_GetMainClkFreq();
+    break;
+  case 1:
+    pvVar1 = (void *)CLOCK_GetMainPllClkFreq();
+    break;
+  case 2:
+    pvVar1 = (void *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case 3:
+    pvVar1 = (void *)CLOCK_GetFFroFreq();
+    break;
+  case 4:
+    pvVar1 = (void *)CLOCK_GetAux1PllClkFreq();
+    break;
+  default:
+    pvVar1 = (void *)0x0;
+  }
+  return (uint)pvVar1 / ((*pdVar3 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetI3cClkFreq @ 00083678 (46 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetI3cClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetI3cClkFreq(void)
+
+{
+  uint uVar1;
+  void *pvVar2;
+  
+                    /* I3C0 fclk selection [sfr] */
+  uVar1 = CLKCTL1_I3C0FCLKSEL;
+  if ((uVar1 & 7) == 0) {
+    pvVar2 = CLOCK_GetMainClkFreq();
+  }
+  else if ((uVar1 & 7) == 1) {
+    pvVar2 = (void *)CLOCK_GetFFroFreq();
+  }
+  else {
+    pvVar2 = (void *)0x0;
+  }
+                    /* I3C0 fclk divider [sfr] */
+  uVar1 = CLKCTL1_I3C0FCLKDIV;
+  return (uint)pvVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetUsbClkFreq @ 000836ac (46 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetUsbClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetUsbClkFreq(void)
+
+{
+  int iVar1;
+  void *pvVar2;
+  uint clkctl0_usbhsfclkdiv;
+  
+                    /* USBHS Fclk selection [sfr] */
+  iVar1 = CLKCTL0_USBHSFCLKSEL;
+  if (iVar1 == 0) {
+    pvVar2 = (void *)CLOCK_GetXtalInClkFreq();
+  }
+  else {
+    iVar1 = CLKCTL0_USBHSFCLKSEL;
+    if (iVar1 == 1) {
+      pvVar2 = CLOCK_GetMainClkFreq();
+    }
+    else {
+      pvVar2 = (void *)0x0;
+    }
+  }
+                    /* USBHS Fclk divider [sfr] */
+  clkctl0_usbhsfclkdiv = CLKCTL0_USBHSFCLKDIV;
+  return (uint)pvVar2 / ((clkctl0_usbhsfclkdiv & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetDmicClkFreq @ 000836e0 (94 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetDmicClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetDmicClkFreq(void)
+
+{
+  uint uVar1;
+  undefined *puVar2;
+  
+                    /* DMIC0 clk selection [sfr] */
+  uVar1 = CLKCTL1_DMIC0FCLKSEL;
+  switch(uVar1 & 7) {
+  case 0:
+    puVar2 = (undefined *)0xf42400;
+    break;
+  case 1:
+    puVar2 = (undefined *)CLOCK_GetFFroFreq();
+    break;
+  case 2:
+    puVar2 = (undefined *)CLOCK_GetAudioPllClkFreq();
+    break;
+  case 3:
+    puVar2 = DAT_0008892c;
+    break;
+  case 4:
+    puVar2 = &DAT_000f4240;
+    break;
+  case 5:
+                    /* 32k wake clock selection [sfr] */
+    uVar1 = CLKCTL0_WAKECLK32KHZSEL;
+    if ((uVar1 & 7) == 0) {
+      puVar2 = (undefined *)CLOCK_GetOsc32KFreq();
+    }
+    else {
+                    /* 32k wake clock divider [sfr] */
+      uVar1 = CLKCTL0_WAKECLK32KHZDIV;
+      puVar2 = (undefined *)(1000000 / ((uVar1 & 0xff) + 1));
+    }
+    break;
+  default:
+    puVar2 = (undefined *)0x0;
+  }
+                    /* DMIC clock clock divider [sfr] */
+  uVar1 = CLKCTL1_DMIC0FCLKDIV;
+  return (uint)puVar2 / ((uVar1 & 0xff) + 1);
+}
+
+
+// ===== CLOCK_GetAcmpClkFreq @ 00083758 (64 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CLOCK_GetAcmpClkFreq of mcux-sdk MCUX_2.11.0
+   devices/MIMXRT685S/drivers/fsl_clock.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24
+   round 2) */
+
+uint CLOCK_GetAcmpClkFreq(void)
+
+{
+  uint uVar1;
+  void *pvVar2;
+  
+                    /* acomparator 0 clock selection [sfr] */
+  uVar1 = CLKCTL1_ACMP0FCLKSEL;
+  switch(uVar1 & 7) {
+  case 0:
+    pvVar2 = CLOCK_GetMainClkFreq();
+    break;
+  case 1:
+    pvVar2 = (void *)0xf42400;
+    break;
+  case 2:
+    pvVar2 = (void *)CLOCK_GetFFroFreq();
+    break;
+  case 3:
+    pvVar2 = (void *)CLOCK_GetAux0PllClkFreq();
+    break;
+  case 4:
+    pvVar2 = (void *)CLOCK_GetAux1PllClkFreq();
+    break;
+  default:
+    pvVar2 = (void *)0x0;
+  }
+                    /* acomparator 0 fclk divider [sfr] */
+  uVar1 = CLKCTL1_ACMP0FCLKDIV;
+  return (uint)pvVar2 / ((uVar1 & 0xff) + 1);
 }
 
 
 // ===== CLOCK_GetFreq @ 000837a8 (214 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x000835a6) */
-
 undefined * CLOCK_GetFreq(undefined4 param_1)
 
 {
-  int iVar1;
-  bool bVar2;
+  void *pvVar1;
+  undefined *puVar2;
   uint uVar3;
-  void *pvVar4;
-  undefined *puVar5;
-  uint uVar6;
-  uint *puVar7;
-  dword *pdVar8;
-  undefined4 clkctl0_systickfclksel;
+  dword *pdVar4;
   
   switch(param_1) {
   case 0:
   case 1:
-    pvVar4 = CLOCK_GetMainClkFreq();
-    pdVar8 = &CLKCTL0_BASE;
+    pvVar1 = CLOCK_GetMainClkFreq();
+    pdVar4 = &CLKCTL0_BASE;
     goto LAB_000837d4;
   case 2:
-    iVar1 = CLKCTL1_AUDIOMCLKSEL;
-    if (iVar1 == 0) {
-      uVar6 = CLOCK_GetFFroFreq();
-    }
-    else {
-      iVar1 = CLKCTL1_AUDIOMCLKSEL;
-      if (iVar1 == 1) {
-        uVar6 = CLOCK_GetAudioPllClkFreq();
-      }
-      else {
-        uVar6 = 0;
-      }
-    }
-    uVar3 = CLKCTL1_AUDIOMCLKDIV;
-    return (undefined *)(uVar6 / ((uVar3 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetMclkClkFreq();
+    return puVar2;
   case 3:
-    uVar6 = CLKCTL1_CLKOUTSEL1;
-    puVar5 = (undefined *)(uVar6 & 7);
-    switch(puVar5) {
-    case (undefined *)0x0:
-      uVar6 = CLKCTL1_CLKOUTSEL0;
-      switch(uVar6 & 7) {
-      case 0:
-        puVar5 = (undefined *)0xf42400;
-        break;
-      case 1:
-        puVar5 = (undefined *)CLOCK_GetXtalInClkFreq();
-        break;
-      case 2:
-        puVar5 = &DAT_000f4240;
-        break;
-      case 3:
-        puVar5 = (undefined *)CLOCK_GetFFroFreq();
-        break;
-      case 4:
-        puVar5 = CLOCK_GetMainClkFreq();
-        break;
-      case 6:
-        puVar5 = (undefined *)CLOCK_GetDspMainClkFreq();
-      }
-      break;
-    case (undefined *)0x1:
-      puVar5 = (undefined *)CLOCK_GetMainPllClkFreq();
-      break;
-    case (undefined *)0x2:
-      puVar5 = (undefined *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case (undefined *)0x3:
-      uVar3 = CLOCK_GetSysPfdFreq(1);
-      uVar6 = CLKCTL0_DSPPLLCLKDIV;
-      puVar5 = (undefined *)(uVar3 / ((uVar6 & 0xff) + 1));
-      break;
-    case (undefined *)0x4:
-      puVar5 = (undefined *)CLOCK_GetAux1PllClkFreq();
-      break;
-    case (undefined *)0x5:
-      puVar5 = (undefined *)CLOCK_GetAudioPllClkFreq();
-      break;
-    case (undefined *)0x6:
-      puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
-      break;
-    default:
-      puVar5 = (undefined *)0x0;
-    }
-    uVar6 = CLKCTL1_CLKOUTDIV;
-    return (undefined *)((uint)puVar5 / ((uVar6 & 0xff) + 1));
+                    /* clock frequency of the ClockOut function clock [doc] */
+    puVar2 = (undefined *)CLOCK_GetClockOutClkFreq();
+    return puVar2;
   case 4:
-    uVar6 = CLKCTL0_ADC0FCLKSEL1;
-    puVar5 = (undefined *)(uVar6 & 7);
-    switch(puVar5) {
-    case (undefined *)0x0:
-      uVar6 = CLKCTL0_ADC0FCLKSEL0;
-      switch(uVar6 & 7) {
-      case 0:
-        puVar5 = (undefined *)0xf42400;
-        break;
-      case 1:
-        puVar5 = (undefined *)CLOCK_GetXtalInClkFreq();
-        break;
-      case 2:
-        puVar5 = &DAT_000f4240;
-        break;
-      case 3:
-        puVar5 = (undefined *)CLOCK_GetFFroFreq();
-      }
-      break;
-    case (undefined *)0x1:
-      puVar5 = (undefined *)CLOCK_GetMainPllClkFreq();
-      break;
-    default:
-      puVar5 = (undefined *)0x0;
-      break;
-    case (undefined *)0x3:
-      puVar5 = (undefined *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case (undefined *)0x5:
-      puVar5 = (undefined *)CLOCK_GetAux1PllClkFreq();
-    }
-    uVar6 = CLKCTL0_ADC0FCLKDIV;
-    return (undefined *)((uint)puVar5 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetAdcClkFreq();
+    return puVar2;
   case 5:
-    uVar6 = CLKCTL0_FLEXSPIFCLKSEL;
-    switch(uVar6 & 7) {
-    case 0:
-      pvVar4 = CLOCK_GetMainClkFreq();
-      break;
-    case 1:
-      pvVar4 = (void *)CLOCK_GetMainPllClkFreq();
-      break;
-    case 2:
-      pvVar4 = (void *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case 3:
-      pvVar4 = (void *)CLOCK_GetFFroFreq();
-      break;
-    case 4:
-      pvVar4 = (void *)CLOCK_GetAux1PllClkFreq();
-      break;
-    default:
-      pvVar4 = (void *)0x0;
-    }
-    uVar6 = CLKCTL0_FLEXSPIFCLKDIV;
-    return (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetFlexspiClkFreq();
+    return puVar2;
   case 6:
-    uVar6 = CLKCTL0_SCTFCLKSEL;
-    switch(uVar6 & 7) {
-    case 0:
-      pvVar4 = CLOCK_GetMainClkFreq();
-      break;
-    case 1:
-      pvVar4 = (void *)CLOCK_GetMainPllClkFreq();
-      break;
-    case 2:
-      pvVar4 = (void *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case 3:
-      pvVar4 = (void *)CLOCK_GetFFroFreq();
-      break;
-    case 4:
-      pvVar4 = (void *)CLOCK_GetAux1PllClkFreq();
-      break;
-    case 5:
-      pvVar4 = (void *)CLOCK_GetAudioPllClkFreq();
-      break;
-    default:
-      pvVar4 = (void *)0x0;
-    }
-    uVar6 = CLKCTL0_SCTFCLKDIV;
-    return (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetSctClkFreq();
+    return puVar2;
   case 7:
-    uVar6 = CLKCTL0_WDT0FCLKSEL;
-    if ((uVar6 & 7) == 0) {
+    uVar3 = CLKCTL0_WDT0FCLKSEL;
+    if ((uVar3 & 7) == 0) {
       return &DAT_000f4240;
     }
-    puVar5 = CLOCK_GetMainClkFreq();
-    return puVar5;
+    puVar2 = CLOCK_GetMainClkFreq();
+    return puVar2;
   case 8:
-    uVar6 = CLKCTL1_WDT1FCLKSEL;
-    if ((uVar6 & 7) != 0) {
-      puVar5 = CLOCK_GetMainClkFreq();
-      return puVar5;
-    }
-    return &DAT_000f4240;
+    puVar2 = (undefined *)CLOCK_GetWdtClkFreq(1);
+    return puVar2;
   case 9:
-    clkctl0_systickfclksel = CLKCTL0_SYSTICKFCLKSEL;
-    switch(clkctl0_systickfclksel) {
-    case 0:
-      pvVar4 = CLOCK_GetMainClkFreq();
-      uVar6 = CLKCTL0_SYSTICKFCLKDIV;
-      puVar5 = (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
-      break;
-    case 1:
-      puVar5 = &DAT_000f4240;
-      break;
-    case 2:
-      puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
-      return puVar5;
-    case 3:
-      puVar5 = (undefined *)0xf42400;
-      break;
-    default:
-      puVar5 = (undefined *)0x0;
-    }
-    return puVar5;
+    puVar2 = (undefined *)CLOCK_GetSystickClkFreq();
+    return puVar2;
   case 10:
-    bVar2 = false;
+    uVar3 = 0;
     goto LAB_00083830;
   case 0xb:
-    bVar2 = true;
+    uVar3 = 1;
 LAB_00083830:
-    pdVar8 = &CLKCTL0_SDIO0FCLKDIV;
-    if (bVar2) {
-      pdVar8 = &CLKCTL0_SDIO1FCLKDIV;
-    }
-    puVar7 = &CLKCTL0_SDIO0FCLKSEL;
-    if (bVar2) {
-      puVar7 = &CLKCTL0_SDIO1FCLKSEL;
-    }
-    switch(*puVar7 & 7) {
-    case 0:
-      pvVar4 = CLOCK_GetMainClkFreq();
-      break;
-    case 1:
-      pvVar4 = (void *)CLOCK_GetMainPllClkFreq();
-      break;
-    case 2:
-      pvVar4 = (void *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case 3:
-      pvVar4 = (void *)CLOCK_GetFFroFreq();
-      break;
-    case 4:
-      pvVar4 = (void *)CLOCK_GetAux1PllClkFreq();
-      break;
-    default:
-      pvVar4 = (void *)0x0;
-    }
-    return (undefined *)((uint)pvVar4 / ((*pdVar8 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetSdioClkFreq(uVar3);
+    return puVar2;
   case 0xc:
-    uVar6 = CLKCTL1_I3C0FCLKSEL;
-    if ((uVar6 & 7) == 0) {
-      pvVar4 = CLOCK_GetMainClkFreq();
-    }
-    else if ((uVar6 & 7) == 1) {
-      pvVar4 = (void *)CLOCK_GetFFroFreq();
-    }
-    else {
-      pvVar4 = (void *)0x0;
-    }
-    uVar6 = CLKCTL1_I3C0FCLKDIV;
-    return (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetI3cClkFreq();
+    return puVar2;
   case 0xd:
-    iVar1 = CLKCTL0_USBHSFCLKSEL;
-    if (iVar1 == 0) {
-      pvVar4 = (void *)CLOCK_GetXtalInClkFreq();
-    }
-    else {
-      iVar1 = CLKCTL0_USBHSFCLKSEL;
-      if (iVar1 == 1) {
-        pvVar4 = CLOCK_GetMainClkFreq();
-      }
-      else {
-        pvVar4 = (void *)0x0;
-      }
-    }
-    uVar6 = CLKCTL0_USBHSFCLKDIV;
-    return (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetUsbClkFreq();
+    return puVar2;
   case 0xe:
-    uVar6 = CLKCTL1_DMIC0FCLKSEL;
-    switch(uVar6 & 7) {
-    case 0:
-      puVar5 = (undefined *)0xf42400;
-      break;
-    case 1:
-      puVar5 = (undefined *)CLOCK_GetFFroFreq();
-      break;
-    case 2:
-      puVar5 = (undefined *)CLOCK_GetAudioPllClkFreq();
-      break;
-    case 3:
-      puVar5 = DAT_0008892c;
-      break;
-    case 4:
-      puVar5 = &DAT_000f4240;
-      break;
-    case 5:
-      uVar6 = CLKCTL0_WAKECLK32KHZSEL;
-      if ((uVar6 & 7) == 0) {
-        puVar5 = (undefined *)CLOCK_GetOsc32KFreq();
-      }
-      else {
-        uVar6 = CLKCTL0_WAKECLK32KHZDIV;
-        puVar5 = (undefined *)(1000000 / ((uVar6 & 0xff) + 1));
-      }
-      break;
-    default:
-      puVar5 = (undefined *)0x0;
-    }
-    uVar6 = CLKCTL1_DMIC0FCLKDIV;
-    return (undefined *)((uint)puVar5 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetDmicClkFreq();
+    return puVar2;
   case 0xf:
-    pvVar4 = (void *)CLOCK_GetDspMainClkFreq();
-    pdVar8 = &CLKCTL1_BASE;
+    pvVar1 = (void *)CLOCK_GetDspMainClkFreq();
+    pdVar4 = &CLKCTL1_BASE;
 LAB_000837d4:
-    return (undefined *)((uint)pvVar4 / ((pdVar8[0x100] & 0xff) + 1));
+    return (undefined *)((uint)pvVar1 / ((pdVar4[0x100] & 0xff) + 1));
   case 0x10:
-    uVar6 = CLKCTL1_ACMP0FCLKSEL;
-    switch(uVar6 & 7) {
-    case 0:
-      pvVar4 = CLOCK_GetMainClkFreq();
-      break;
-    case 1:
-      pvVar4 = (void *)0xf42400;
-      break;
-    case 2:
-      pvVar4 = (void *)CLOCK_GetFFroFreq();
-      break;
-    case 3:
-      pvVar4 = (void *)CLOCK_GetAux0PllClkFreq();
-      break;
-    case 4:
-      pvVar4 = (void *)CLOCK_GetAux1PllClkFreq();
-      break;
-    default:
-      pvVar4 = (void *)0x0;
-    }
-    uVar6 = CLKCTL1_ACMP0FCLKDIV;
-    return (undefined *)((uint)pvVar4 / ((uVar6 & 0xff) + 1));
+    puVar2 = (undefined *)CLOCK_GetAcmpClkFreq();
+    return puVar2;
   case 0x11:
-    uVar6 = 0;
+    uVar3 = 0;
     break;
   case 0x12:
-    uVar6 = 1;
+    uVar3 = 1;
     break;
   case 0x13:
-    uVar6 = 2;
+    uVar3 = 2;
     break;
   case 0x14:
-    uVar6 = 3;
+    uVar3 = 3;
     break;
   case 0x15:
-    uVar6 = 4;
+    uVar3 = 4;
     break;
   case 0x16:
-    uVar6 = 5;
+    uVar3 = 5;
     break;
   case 0x17:
-    uVar6 = 6;
+    uVar3 = 6;
     break;
   case 0x18:
-    uVar6 = 7;
+    uVar3 = 7;
     break;
   case 0x19:
-    uVar6 = 0xe;
+    uVar3 = 0xe;
     break;
   case 0x1a:
-    uVar6 = 0xf;
+    uVar3 = 0xf;
     break;
   default:
     return (undefined *)0x0;
   }
-  puVar5 = (undefined *)CLOCK_GetFlexCommClkFreq(uVar6);
-  return puVar5;
+  puVar2 = (undefined *)CLOCK_GetFlexCommClkFreq(uVar3);
+  return puVar2;
 }
 
 
@@ -1598,6 +1938,42 @@ void SDK_DelayAtLeastUs(uint param_1,uint param_2)
 }
 
 
+// ===== CTIMER_GenericIRQHandler @ 00083ce4 (80 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to CTIMER_GenericIRQHandler of mcux-sdk MCUX_2.11.0
+   drivers/ctimer/fsl_ctimer.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)] (T24 round 2) */
+
+void CTIMER_GenericIRQHandler(uint index)
+
+{
+  code *pcVar1;
+  uint i;
+  uint uVar2;
+  
+  uVar2 = *(uint *)(&PTR_CTIMER0_IR_000879bc)[index];
+  *(uint *)(&PTR_CTIMER0_IR_000879bc)[index] = uVar2;
+  if ((&DAT_000a1ef0)[index] == '\0') {
+    if (*(code **)(&DAT_00088934)[index] != (code *)0x0) {
+                    /* WARNING: Could not recover jumptable at 0x00083d0a. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      (**(code **)(&DAT_00088934)[index])(uVar2);
+      return;
+    }
+  }
+  else {
+    i = 0;
+    do {
+      if (((1 << (i & 0xff) & uVar2) != 0) &&
+         (pcVar1 = *(code **)((&DAT_00088934)[index] + i * 4), pcVar1 != (code *)0x0)) {
+        (*pcVar1)(uVar2);
+      }
+      i = i + 1;
+    } while (i != 7);
+  }
+  return;
+}
+
+
 // ===== DMA_GetInstance @ 00083d40 (24 bytes)
 
 /* 0x40104000 -> 0, 0x40105000 -> 1 [fact] */
@@ -1617,434 +1993,5 @@ uint DMA_GetInstance(void *param_1)
     uVar1 = 2;
   }
   return uVar1;
-}
-
-
-// ===== DMA_IRQHandle @ 00083d5c (176 bytes)
-
-/* NEW. fsl_dma.c channel interrupt dispatcher (33 channels); unused (DMA IRQs never enabled by the
-   M33) [inference] */
-
-void DMA_IRQHandle(void *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  uint uVar1;
-  undefined4 *puVar2;
-  uint uVar3;
-  int *piVar4;
-  int i;
-  code *pcVar5;
-  
-  uVar1 = DMA_GetInstance(param_1);
-  i = 0;
-  piVar4 = (int *)(&DAT_00088948 + uVar1 * 0x84);
-  do {
-    puVar2 = (undefined4 *)*piVar4;
-    if (puVar2 != (undefined4 *)0x0) {
-      uVar1 = (uint)(*(byte *)(puVar2 + 3) >> 5);
-      uVar3 = *(byte *)(puVar2 + 3) & 0x1f;
-      if ((int)((*(uint *)(puVar2[2] + 0x58 + uVar1 * 4) >> uVar3) << 0x1f) < 0) {
-        pcVar5 = (code *)*puVar2;
-        *(int *)(puVar2[2] + 0x58 + uVar1 * 4) = 1 << uVar3;
-        if (pcVar5 != (code *)0x0) {
-          (*pcVar5)(puVar2,puVar2[1],1,0,param_4);
-        }
-      }
-      if ((int)((*(uint *)(puVar2[2] + 0x60 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) >> uVar3) <<
-               0x1f) < 0) {
-        pcVar5 = (code *)*puVar2;
-        *(int *)(puVar2[2] + 0x60 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) = 1 << uVar3;
-        if (pcVar5 != (code *)0x0) {
-          (*pcVar5)(puVar2,puVar2[1],1);
-        }
-      }
-      if ((int)((*(uint *)(puVar2[2] + 0x40 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) >> uVar3) <<
-               0x1f) < 0) {
-        *(int *)(puVar2[2] + 0x40 + (uint)(*(byte *)(puVar2 + 3) >> 5) * 4) = 1 << uVar3;
-        if ((code *)*puVar2 != (code *)0x0) {
-          (*(code *)*puVar2)(puVar2,puVar2[1],0,2);
-        }
-      }
-    }
-    i = i + 1;
-    piVar4 = piVar4 + 1;
-  } while (i != 0x21);
-  return;
-}
-
-
-// ===== DMA0_DriverIRQHandler @ 00083e10 (6 bytes)
-
-/* IRQ1 -> DMA_IRQHandle(DMA0) [fact: vector] */
-
-void DMA0_DriverIRQHandler(void)
-
-{
-                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
-  DMA_IRQHandle(&DMA0_CTRL);
-  return;
-}
-
-
-// ===== DMA1_DriverIRQHandler @ 00083e1c (6 bytes)
-
-/* IRQ54 [fact: vector] */
-
-void DMA1_DriverIRQHandler(void)
-
-{
-                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
-  DMA_IRQHandle(&DMA1_CTRL);
-  return;
-}
-
-
-// ===== DMIC0_DriverIRQHandler @ 00083e28 (10 bytes)
-
-/* IRQ25 [fact: vector] */
-
-void DMIC0_DriverIRQHandler(void)
-
-{
-  if (DAT_00088a50 != (code *)0x0) {
-                    /* WARNING: Could not recover jumptable at 0x00083e2e. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    (*DAT_00088a50)();
-    return;
-  }
-  return;
-}
-
-
-// ===== HWVAD0_DriverIRQHandler @ 00083e38 (10 bytes)
-
-/* IRQ29 [fact: vector] */
-
-void HWVAD0_DriverIRQHandler(void)
-
-{
-  if (DAT_00088a54 != (code *)0x0) {
-                    /* WARNING: Could not recover jumptable at 0x00083e3e. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    (*DAT_00088a54)();
-    return;
-  }
-  return;
-}
-
-
-// ===== DSP_Init @ 00083e48 (190 bytes)
-
-/* WARNING: Removing unreachable block (ram,0x00084574) */
-/* fsl_dsp.c: if PDRUNCFG1 DSP cache/TCM bits set, clear them (PDRUNCFG1_CLR), POWER_ApplyPD,
-   release DSP reset [inference] */
-
-void DSP_Init(void)
-
-{
-  uint uVar1;
-  int rstctl0_prstctl0;
-  
-                    /* Run configuration 1 [sfr] */
-  uVar1 = SYSCTL0_PDRUNCFG1;
-  if ((uVar1 & 0xf000000) != 0) {
-                    /* Run configuration 1 clear [sfr] */
-    SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
-    SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
-    SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
-    SYSCTL0_PDRUNCFG1_CLR = 0x2000000;
-    POWER_ApplyPD();
-    RESET_ClearPeripheralReset(1);
-    return;
-  }
-  rstctl0_prstctl0 = RSTCTL0_PRSTCTL0;
-  if (rstctl0_prstctl0 << 0x1e < 0) {
-                    /* peripheral reset clear 0 [sfr] */
-    RSTCTL0_PRSTCTL0_CLR = 2;
-    do {
-      uVar1 = RSTCTL0_PRSTCTL0;
-    } while ((~uVar1 & 2) == 0);
-    return;
-  }
-  return;
-}
-
-
-// ===== FLEXCOMM_GetInstance @ 00083ea0 (22 bytes)
-
-/* Search of 10 FLEXCOMM bases at 0x879D0 [fact] */
-
-uint FLEXCOMM_GetInstance(int param_1)
-
-{
-  uint i;
-  int *piVar1;
-  
-  i = 0;
-  piVar1 = &DAT_000879d0;
-  do {
-    if (*piVar1 == param_1) {
-      return i;
-    }
-    i = i + 1;
-    piVar1 = piVar1 + 1;
-  } while (i != 10);
-  return 10;
-}
-
-
-// ===== FLEXCOMM_Init @ 00083ebc (180 bytes)
-
-/* Clock enable + reset release from table 0x87B28, PSELID (base+0xFF8) [inference] */
-
-uint FLEXCOMM_Init(int param_1,uint param_2)
-
-{
-  ushort uVar1;
-  uint FLEXCOMM_GetInstance_ret;
-  dword *pdVar2;
-  uint uVar3;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(param_1);
-  uVar1 = *(ushort *)(&DAT_00087b28 + FLEXCOMM_GetInstance_ret * 2);
-  uVar3 = (uint)uVar1;
-  switch(uVar1 >> 8) {
-  case 0:
-    pdVar2 = &CLKCTL0_BASE;
-    break;
-  case 1:
-    uVar3 = (uint)(byte)uVar1;
-    pdVar2 = &CLKCTL0_BASE;
-    goto LAB_00083f2a;
-  case 2:
-    pdVar2 = &CLKCTL0_BASE;
-    goto LAB_00083f38;
-  case 3:
-    pdVar2 = &CLKCTL1_BASE;
-    break;
-  case 4:
-    uVar3 = uVar3 & 0xff;
-    pdVar2 = &CLKCTL1_BASE;
-LAB_00083f2a:
-    pdVar2[0x11] = 1 << uVar3;
-    goto switchD_00083ed2_default;
-  case 5:
-    pdVar2 = &CLKCTL1_BASE;
-LAB_00083f38:
-    pdVar2[0x12] = 1 << (uVar3 & 0xff);
-  default:
-    goto switchD_00083ed2_default;
-  }
-  pdVar2[0x10] = 1 << (uVar3 & 0xff);
-switchD_00083ed2_default:
-  RESET_ClearPeripheralReset((uint)*(ushort *)(&DAT_00087b28 + FLEXCOMM_GetInstance_ret * 2));
-  if (param_2 == 0) {
-LAB_00083f04:
-    if ((*(int *)(param_1 + 0xff8) << 0x1c < 0) && ((*(uint *)(param_1 + 0xff8) & 7) != param_2)) {
-      uVar3 = 1;
-    }
-    else {
-      uVar3 = 0;
-      *(uint *)(param_1 + 0xff8) = param_2;
-    }
-  }
-  else {
-    if (param_2 < 5) {
-      uVar3 = *(uint *)(param_1 + 0xff8) >> (param_2 + 3 & 0xff) & 1;
-LAB_00083f02:
-      if (uVar3 != 0) goto LAB_00083f04;
-    }
-    else if (param_2 == 5) {
-      uVar3 = *(uint *)(param_1 + 0xff8) & 0x80;
-      goto LAB_00083f02;
-    }
-    uVar3 = 3;
-  }
-  return uVar3;
-}
-
-
-// ===== FLEXCOMM1_DriverIRQHandler @ 00083f88 (32 bytes)
-
-/* IRQ15, generic fsl_flexcomm handler [fact: vector] */
-
-void FLEXCOMM1_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40107000);
-                    /* WARNING: Could not recover jumptable at 0x00083fa6. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM2_DriverIRQHandler @ 00083fb8 (32 bytes)
-
-/* IRQ16 [fact: vector] */
-
-void FLEXCOMM2_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40108000);
-                    /* WARNING: Could not recover jumptable at 0x00083fd6. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM3_DriverIRQHandler @ 00083fe8 (32 bytes)
-
-/* IRQ17 [fact: vector] */
-
-void FLEXCOMM3_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40109000);
-                    /* WARNING: Could not recover jumptable at 0x00084006. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM4_DriverIRQHandler @ 00084018 (32 bytes)
-
-/* IRQ18 [fact: vector] */
-
-void FLEXCOMM4_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40122000);
-                    /* WARNING: Could not recover jumptable at 0x00084036. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM5_DriverIRQHandler @ 00084048 (32 bytes)
-
-/* IRQ19 [fact: vector] */
-
-void FLEXCOMM5_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40123000);
-                    /* WARNING: Could not recover jumptable at 0x00084066. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM6_DriverIRQHandler @ 00084078 (32 bytes)
-
-/* IRQ43 [fact: vector] */
-
-void FLEXCOMM6_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40124000);
-                    /* WARNING: Could not recover jumptable at 0x00084096. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM7_DriverIRQHandler @ 000840a8 (32 bytes)
-
-/* IRQ44 [fact: vector] */
-
-void FLEXCOMM7_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40125000);
-                    /* WARNING: Could not recover jumptable at 0x000840c6. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM14_DriverIRQHandler @ 000840d8 (32 bytes)
-
-/* IRQ20 [fact: vector] */
-
-void FLEXCOMM14_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40126000);
-                    /* WARNING: Could not recover jumptable at 0x000840f6. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXCOMM15_DriverIRQHandler @ 00084108 (32 bytes)
-
-/* IRQ21 [fact: vector] */
-
-void FLEXCOMM15_DriverIRQHandler(void)
-
-{
-  uint FLEXCOMM_GetInstance_ret;
-  
-  FLEXCOMM_GetInstance_ret = FLEXCOMM_GetInstance(0x40127000);
-                    /* WARNING: Could not recover jumptable at 0x00084126. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (**(code **)(&DAT_00088a80 + FLEXCOMM_GetInstance_ret * 4))
-            ((&DAT_000879d0)[FLEXCOMM_GetInstance_ret],
-             *(undefined4 *)(&DAT_00088a58 + FLEXCOMM_GetInstance_ret * 4));
-  return;
-}
-
-
-// ===== FLEXSPI_DriverIRQHandler @ 00084138 (12 bytes)
-
-/* IRQ42 [fact: vector] */
-
-void FLEXSPI_DriverIRQHandler(void)
-
-{
-                    /* WARNING: Could not recover jumptable at 0x00084142. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-  (*DAT_00088aac)(&FLEXSPI_MCR0,DAT_00088aa8);
-  return;
 }
 

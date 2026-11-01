@@ -1,5 +1,26 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== MU_A_IRQHandler @ 000818b8 (20 bytes)
+
+void MU_A_IRQHandler(void)
+
+{
+  uint mua_rr1;
+  int mua_sr;
+  
+                    /* Status [sfr] */
+  mua_sr = MUA_SR;
+  if (mua_sr << 5 < 0) {
+                    /* Receive [sfr] */
+    mua_rr1 = MUA_RR1;
+                    /* virtqueue interrupt dispatch for one vector [doc] */
+    env_isr((mua_rr1 & 0x1ffff) >> 0x10);
+    return;
+  }
+  return;
+}
+
+
 // ===== platform_init_interrupt @ 000818d0 (54 bytes)
 
 /* rename (was platform_interrupt_enable): env_register_isr, then on first use MU-A CR |= RIE1 (bit
@@ -46,9 +67,14 @@ void platform_notify(uint param_1)
 }
 
 
-// ===== xPortIsInsideInterrupt @ 00081944 (16 bytes)
+// ===== platform_in_isr @ 00081944 (16 bytes)
 
-bool xPortIsInsideInterrupt(void)
+/* SCB->ICSR VECTACTIVE != 0 [fact: 0x81944]; byte-identical to platform_in_isr of rpmsg-lite v3.1.0
+   imxrt600_m33/rpmsg_platform.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]; FreeRTOS
+   xPortIsInsideInterrupt (mrs ipsr) is not in the image. Was xPortIsInsideInterrupt (T24 round 2)
+    */
+
+bool platform_in_isr(void)
 
 {
   uint scb_icsr;
@@ -61,10 +87,10 @@ bool xPortIsInsideInterrupt(void)
 
 // ===== platform_interrupt_enable @ 00081958 (30 bytes)
 
-/* rename (was env_enable_interrupt; env wrapper inlined): disable_counter 0x8870C--, at 0 NVIC
-   ISER1=4 (MU_A) */
+/* rename (was env_enable_interrupt; env_enable_interrupt is the b.w to it at 0x860FE, T24 round 2):
+   disable_counter 0x8870C--, at 0 NVIC ISER1=4 (MU_A) */
 
-void platform_interrupt_enable(void)
+void platform_interrupt_enable(uint vector_id)
 
 {
   if (DAT_0008870c < 1) {
@@ -85,9 +111,10 @@ void platform_interrupt_enable(void)
 
 // ===== platform_interrupt_disable @ 00081980 (42 bytes)
 
-/* rename (was env_disable_interrupt; env wrapper inlined): at 0 NVIC ICER1=4, disable_counter++ */
+/* rename (was env_disable_interrupt; env_disable_interrupt is the b.w to it at 0x86102, T24 round
+   2): at 0 NVIC ICER1=4, disable_counter++ */
 
-void platform_interrupt_disable(void)
+void platform_interrupt_disable(uint vector_id)
 
 {
   if (DAT_0008870c < 0) {
@@ -181,6 +208,25 @@ void env_register_isr(uint param_1,uint param_2)
 }
 
 
+// ===== env_isr @ 00081a74 (16 bytes)
+
+/* NEW (entries_m33.tsv): byte-identical to env_isr of rpmsg-lite v3.1.0
+   rpmsg_lite/porting/environment/rpmsg_env_freertos.c [fact: T24 (src/ifdsp_m33/status.tsv,
+   aliases.tsv)] (T24 round 2) */
+
+void env_isr(uint vector)
+
+{
+  if (0x1f < vector) {
+    do {
+                    /* WARNING: Do nothing block with infinite loop */
+    } while( true );
+  }
+  virtqueue_notification(*(void **)(&DAT_00088720 + vector * 4));
+  return;
+}
+
+
 // ===== rpmsg_queue_recv @ 00081a88 (104 bytes)
 
 undefined4
@@ -213,11 +259,10 @@ rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *par
       uVar1 = 0xffffec76;
     }
     else {
-      memcpy(param_4,local_20,local_1c);
+      env_memcpy(param_4,local_20,local_1c);
       uVar1 = 0;
     }
-                    /* return rx buffer [doc] */
-    rpmsg_queue_nocopy_free_ret = rpmsg_queue_nocopy_free(rpmsg_lite_dev,local_20);
+    rpmsg_queue_nocopy_free_ret = rpmsg_lite_release_rx_buffer(rpmsg_lite_dev,local_20);
     if (rpmsg_queue_nocopy_free_ret == 0) {
       return uVar1;
     }
@@ -263,7 +308,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
         }
         i = 0;
         do {
-          vTaskDelay(1);
+          env_sleep_msec(1);
           env_lock_mutex(*(uint *)(param_1 + 0xc));
           puVar1 = (undefined4 *)
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
@@ -283,7 +328,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
       *(short *)(puVar1 + 3) = (short)param_5;
       *(undefined1 *)((int)puVar1 + 0xe) = 0;
       *(undefined1 *)((int)puVar1 + 0xf) = 0;
-      memcpy(puVar1 + 4,param_4,param_5);
+      env_memcpy(puVar1 + 4,param_4,param_5);
       env_lock_mutex(*(uint *)(param_1 + 0xc));
       (*(code *)**(undefined4 **)(param_1 + 0x20))
                 (*(undefined4 *)(param_1 + 4),puVar1,local_2c,uStack_30._2_2_);
@@ -296,16 +341,20 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,void *param_4
 }
 
 
-// ===== rpmsg_queue_nocopy_free @ 00081be8 (60 bytes)
+// ===== rpmsg_lite_release_rx_buffer @ 00081be8 (60 bytes)
 
-int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
+/* byte-identical to rpmsg_lite_release_rx_buffer of rpmsg-lite v3.1.0 rpmsg_lite.c [fact: T24
+   (src/ifdsp_m33/status.tsv, aliases.tsv)]; rpmsg_queue_nocopy_free is not in the image. Was
+   rpmsg_queue_nocopy_free (T24 round 2) */
+
+int rpmsg_lite_release_rx_buffer(void *rpmsg_lite_dev,void *rxbuf)
 
 {
   uint virtqueue_get_buffer_length_ret;
   int iVar1;
   code *pcVar2;
   
-  if ((rpmsg_lite_dev == (void *)0x0) || (data == (void *)0x0)) {
+  if ((rpmsg_lite_dev == (void *)0x0) || (rxbuf == (void *)0x0)) {
     iVar1 = -0x138b;
   }
   else {
@@ -313,9 +362,9 @@ int rpmsg_queue_nocopy_free(void *rpmsg_lite_dev,void *data)
     iVar1 = *(int *)rpmsg_lite_dev;
     pcVar2 = *(code **)(*(int *)((int)rpmsg_lite_dev + 0x20) + 0xc);
     virtqueue_get_buffer_length_ret =
-         virtqueue_get_buffer_length(iVar1,(uint)*(ushort *)((int)data + -6));
-    (*pcVar2)(iVar1,(int)data + -0x10,virtqueue_get_buffer_length_ret,
-              *(undefined2 *)((int)data + -6));
+         virtqueue_get_buffer_length(iVar1,(uint)*(ushort *)((int)rxbuf + -6));
+    (*pcVar2)(iVar1,(int)rxbuf + -0x10,virtqueue_get_buffer_length_ret,
+              *(undefined2 *)((int)rxbuf + -6));
     env_unlock_mutex(*(uint *)((int)rpmsg_lite_dev + 0xc));
     iVar1 = 0;
   }
@@ -333,11 +382,14 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
   int iVar2;
   uint uVar3;
   int iVar4;
+  void *ptr;
   int *piVar5;
   int *piVar6;
   uint local_4c [2];
   char *local_44 [2];
-  int local_3c [4];
+  int local_3c [2];
+  void *local_34;
+  undefined4 local_30;
   undefined2 local_2c;
   
   uVar3 = param_2 - 0x800;
@@ -346,8 +398,8 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
     uVar1 = uVar3 & 0xfffffffc;
   }
   if ((((0x7ff < uVar1) && (param_3 == 0)) && (param_1 != 0)) &&
-     (pvPortMalloc_ret = (int *)pvPortMalloc(0x24), pvPortMalloc_ret != (int *)0x0)) {
-    memset(pvPortMalloc_ret,0,0x24);
+     (pvPortMalloc_ret = env_allocate_memory(0x24), pvPortMalloc_ret != (int *)0x0)) {
+    env_memset(pvPortMalloc_ret,0,0x24);
                     /* env counter, semaphore, isr_table clear, platform_init [doc] */
     uVar1 = env_init();
     if (uVar1 == 0) {
@@ -368,12 +420,12 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
       pvPortMalloc_ret[8] = (int)&PTR_vq_tx_master_1_000879ac;
       piVar6 = piVar5;
       while( true ) {
-        local_3c[2] = iVar2 + param_1;
-        local_3c[3] = 0x10;
+        local_34 = (void *)(iVar2 + param_1);
+        local_30 = 0x10;
         local_2c = 2;
-        memset(local_3c[2],0,0x4e);
-        uVar1 = virtqueue_create((ushort)iVar4,(uint)local_44[iVar4],local_3c + 2,local_4c[iVar4],
-                                 0x8622b,piVar6);
+        env_memset(local_34,0,0x4e);
+        uVar1 = virtqueue_create((ushort)iVar4,(uint)local_44[iVar4],(int *)&local_34,
+                                 local_4c[iVar4],0x8622b,piVar6);
         if (uVar1 != 0) break;
         vq_ring_init(*piVar6);
         virtqueue_disable_cb(*piVar6);
@@ -396,21 +448,21 @@ LAB_00081d36:
                     /* WARNING: Do nothing block with infinite loop */
                   } while( true );
                 }
-                uVar3 = pvPortMalloc_ret[5] + (pvPortMalloc_ret[7] - iVar4) * 0x200;
+                ptr = (void *)(pvPortMalloc_ret[5] + (pvPortMalloc_ret[7] - iVar4) * 0x200);
                 pvPortMalloc_ret[6] = iVar4 + -1;
-                if (uVar3 == 0) goto LAB_00081d36;
-                memset(uVar3,0,0x200);
+                if (ptr == (void *)0x0) goto LAB_00081d36;
+                env_memset(ptr,0,0x200);
                 iVar4 = *piVar5;
                 if (iVar4 == *pvPortMalloc_ret) {
-                  uVar3 = virtqueue_fill_avail_buffers(iVar4,uVar3,0x200);
+                  uVar3 = virtqueue_fill_avail_buffers(iVar4,(uint)ptr,0x200);
 LAB_00081d56:
                   if (uVar3 != 0) {
-                    vQueueDelete(pvPortMalloc_ret[3]);
+                    env_delete_mutex(pvPortMalloc_ret[3]);
                     goto LAB_00081c74;
                   }
                 }
                 else if (iVar4 == pvPortMalloc_ret[1]) {
-                  uVar3 = virtqueue_fill_used_buffers(iVar4,uVar3,0x200);
+                  uVar3 = virtqueue_fill_used_buffers(iVar4,ptr,0x200);
                   goto LAB_00081d56;
                 }
               }
@@ -419,11 +471,11 @@ LAB_00081d56:
                     /* register ISR, CR RIE1 on first use [doc] */
                 platform_init_interrupt(*(undefined2 *)(*pvPortMalloc_ret + 0x50));
                 platform_init_interrupt(*(undefined2 *)(pvPortMalloc_ret[1] + 0x50));
-                platform_interrupt_disable();
-                platform_interrupt_disable();
+                env_disable_interrupt((uint)*(ushort *)(*pvPortMalloc_ret + 0x50));
+                env_disable_interrupt((uint)*(ushort *)(pvPortMalloc_ret[1] + 0x50));
                 pvPortMalloc_ret[4] = iVar2;
-                platform_interrupt_enable();
-                platform_interrupt_enable();
+                env_enable_interrupt((uint)*(ushort *)(*pvPortMalloc_ret + 0x50));
+                env_enable_interrupt((uint)*(ushort *)(pvPortMalloc_ret[1] + 0x50));
                 virtqueue_kick(*pvPortMalloc_ret);
                 return pvPortMalloc_ret;
               }
@@ -457,13 +509,13 @@ uint virtqueue_create(ushort param_1,uint param_2,int *param_3,uint param_4,uint
   uint local_24;
   
   local_24 = 0;
-  pvPortMalloc_ret = (uint *)pvPortMalloc(0x68);
+  pvPortMalloc_ret = env_allocate_memory(0x68);
   if (pvPortMalloc_ret == (uint *)0x0) {
     local_24 = 0xfffff444;
   }
   else {
-    memset(pvPortMalloc_ret,0,0x68);
-    strncpy(pvPortMalloc_ret,(uint *)param_2,0x20);
+    env_memset(pvPortMalloc_ret,0,0x68);
+    env_strncpy(pvPortMalloc_ret,(uint *)param_2,0x20);
     uVar1 = *(ushort *)(param_3 + 2);
     uVar2 = (uint)uVar1;
     uVar3 = param_3[1];
@@ -524,7 +576,7 @@ void prvInsertBlockIntoFreeList(void *param_1)
 /* WARNING: Removing unreachable block (ram,0x00081ee4) */
 /* WARNING: Removing unreachable block (ram,0x00081ee6) */
 
-uint pvPortMalloc(uint param_1)
+void * pvPortMalloc(uint size)
 
 {
   uint uVar1;
@@ -535,8 +587,9 @@ uint pvPortMalloc(uint param_1)
   uint uVar6;
   int *piVar7;
   undefined *puVar8;
-  int *piVar9;
-  int iVar10;
+  void *pvVar9;
+  int *piVar10;
+  int iVar11;
   
   vTaskSuspendAll();
   if (DAT_000887a0 == (int *)0x0) {
@@ -553,29 +606,29 @@ uint pvPortMalloc(uint param_1)
   }
   puVar2 = DAT_000887a8;
   uVar1 = DAT_000887a4;
-  if ((DAT_000887a4 & param_1) == 0) {
-    uVar6 = 0;
-    if (param_1 == 0) goto LAB_00081f9a;
-    puVar8 = (undefined *)(param_1 + 8);
-    if ((param_1 & 7) != 0) {
+  if ((DAT_000887a4 & size) == 0) {
+    pvVar9 = (void *)0x0;
+    if (size == 0) goto LAB_00081f9a;
+    puVar8 = (undefined *)(size + 8);
+    if ((size & 7) != 0) {
       puVar8 = (undefined *)(((uint)puVar8 & 0xfffffff8) + 8);
     }
     if ((puVar8 != (undefined *)0x0) && (puVar8 <= DAT_000887a8)) {
       piVar3 = (int *)&DAT_000887b8;
       piVar4 = DAT_000887b8;
       do {
-        piVar9 = piVar4;
+        piVar10 = piVar4;
         piVar7 = piVar3;
-        if (puVar8 <= (undefined *)piVar9[1]) break;
-        piVar3 = piVar9;
-        piVar4 = (int *)*piVar9;
-      } while ((int *)*piVar9 != (int *)0x0);
-      if (DAT_000887a0 != piVar9) {
-        uVar6 = piVar9[1] - (int)puVar8;
-        iVar10 = *piVar7;
-        *piVar7 = *piVar9;
+        if (puVar8 <= (undefined *)piVar10[1]) break;
+        piVar3 = piVar10;
+        piVar4 = (int *)*piVar10;
+      } while ((int *)*piVar10 != (int *)0x0);
+      if (DAT_000887a0 != piVar10) {
+        uVar6 = piVar10[1] - (int)puVar8;
+        iVar11 = *piVar7;
+        *piVar7 = *piVar10;
         if (0x10 < uVar6) {
-          puVar5 = (undefined *)((int)piVar9 + (int)puVar8);
+          puVar5 = (undefined *)((int)piVar10 + (int)puVar8);
           if (((uint)puVar5 & 7) != 0) {
             ulSetInterruptMask();
             do {
@@ -583,32 +636,32 @@ uint pvPortMalloc(uint param_1)
             } while( true );
           }
           *(uint *)(puVar5 + 4) = uVar6;
-          piVar9[1] = (int)puVar8;
+          piVar10[1] = (int)puVar8;
           prvInsertBlockIntoFreeList(puVar5);
         }
         puVar8 = DAT_000887ac;
-        DAT_000887a8 = puVar2 + -piVar9[1];
-        *piVar9 = 0;
+        DAT_000887a8 = puVar2 + -piVar10[1];
+        *piVar10 = 0;
         DAT_000887b0 = DAT_000887b0 + 1;
         if (DAT_000887a8 < puVar8) {
           DAT_000887ac = DAT_000887a8;
         }
-        uVar6 = iVar10 + 8;
-        piVar9[1] = uVar1 | piVar9[1];
+        pvVar9 = (void *)(iVar11 + 8);
+        piVar10[1] = uVar1 | piVar10[1];
         goto LAB_00081f9a;
       }
     }
   }
-  uVar6 = 0;
+  pvVar9 = (void *)0x0;
 LAB_00081f9a:
   xTaskResumeAll();
-  if ((uVar6 & 7) != 0) {
+  if (((uint)pvVar9 & 7) != 0) {
     ulSetInterruptMask();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  return uVar6;
+  return pvVar9;
 }
 
 
@@ -737,24 +790,44 @@ void * pxPortInitialiseStack(int param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== xEventGroupSetBitsFromISR @ 00082174 (46 bytes)
+// ===== xPortStartScheduler @ 00082138 (56 bytes)
 
-uint xEventGroupSetBitsFromISR(uint param_1,uint param_2,uint param_3)
+/* NEW (entries_m33.tsv): byte-identical to xPortStartScheduler of FreeRTOS-Kernel MCUX_2.9.0
+   portable/GCC/ARM_CM33_NTZ/non_secure/port.c [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]
+   (T24 round 2) */
+
+int xPortStartScheduler(void)
 
 {
-  uint xQueueGenericSendFromISR_ret;
-  undefined4 local_18;
-  undefined1 *puStack_14;
-  uint local_10;
-  uint uStack_c;
+  uint uVar1;
   
-  local_18 = 0xfffffffe;
-  puStack_14 = &LAB_00086712_1;
-  local_10 = param_1;
-  uStack_c = param_2;
-  xQueueGenericSendFromISR_ret =
-       xQueueGenericSendFromISR(DAT_00088920,(int)&local_18,(void *)param_3,0);
-  return xQueueGenericSendFromISR_ret;
+                    /* System Handler Priority 3 [sfr] */
+  uVar1 = SCB_SHPR3;
+  SCB_SHPR3 = uVar1 | 0xff0000;
+  uVar1 = SCB_SHPR3;
+  SCB_SHPR3 = uVar1 | 0xff000000;
+  vPortSetupTimerInterrupt();
+  DAT_00087ebc = 0;
+  vStartFirstTask();
+  vTaskSwitchContext();
+  prvTaskExitError();
+  return 0;
+}
+
+
+// ===== xEventGroupSetBitsFromISR @ 00082174 (12 bytes)
+
+uint xEventGroupSetBitsFromISR(uint pvParameter1,uint ulParameter2,uint pxHigherPriorityTaskWoken)
+
+{
+  uint xTimerPendFunctionCallFromISR_ret;
+  
+                    /* queues a deferred call to the timer task [doc] */
+  xTimerPendFunctionCallFromISR_ret =
+       xTimerPendFunctionCallFromISR
+                 ((void *)0x86713,(void *)pvParameter1,ulParameter2,(int *)pxHigherPriorityTaskWoken
+                 );
+  return xTimerPendFunctionCallFromISR_ret;
 }
 
 
@@ -864,37 +937,36 @@ uint xTaskCreate(uint param_1,int param_2,int param_3,uint param_4,uint param_5,
 
 {
   char cVar1;
-  uint uVar2;
   undefined4 *pvPortMalloc_ret;
   void *pxPortInitialiseStack_ret;
+  char *pcVar2;
   char *pcVar3;
-  char *pcVar4;
   int i;
-  uint uVar5;
-  undefined4 *puVar6;
+  uint uVar4;
+  undefined4 *puVar5;
   
-  uVar5 = param_3 * 4;
-  uVar2 = pvPortMalloc(uVar5);
-  if (uVar2 != 0) {
-    pvPortMalloc_ret = (undefined4 *)pvPortMalloc(0x70);
+  uVar4 = param_3 * 4;
+  pxPortInitialiseStack_ret = pvPortMalloc(uVar4);
+  if (pxPortInitialiseStack_ret != (void *)0x0) {
+    pvPortMalloc_ret = pvPortMalloc(0x70);
     if (pvPortMalloc_ret != (undefined4 *)0x0) {
-      pvPortMalloc_ret[0xc] = uVar2;
-      memset(uVar2,0xa5,uVar5);
-      uVar2 = (uVar5 - 4) + pvPortMalloc_ret[0xc] & 0xfffffff8;
-      pvPortMalloc_ret[0x10] = uVar2;
+      pvPortMalloc_ret[0xc] = pxPortInitialiseStack_ret;
+      memset(pxPortInitialiseStack_ret,0xa5,uVar4);
+      uVar4 = (uVar4 - 4) + pvPortMalloc_ret[0xc] & 0xfffffff8;
+      pvPortMalloc_ret[0x10] = uVar4;
       if (param_2 == 0) {
         *(undefined1 *)(pvPortMalloc_ret + 0xd) = 0;
       }
       else {
-        pcVar4 = (char *)(param_2 + -1);
-        pcVar3 = (char *)(pvPortMalloc_ret + 0xd);
+        pcVar3 = (char *)(param_2 + -1);
+        pcVar2 = (char *)(pvPortMalloc_ret + 0xd);
         do {
-          pcVar4 = pcVar4 + 1;
-          cVar1 = *pcVar4;
-          *pcVar3 = cVar1;
-          if (cVar1 == '\0') break;
           pcVar3 = pcVar3 + 1;
-        } while (pcVar4 != (char *)(param_2 + 9));
+          cVar1 = *pcVar3;
+          *pcVar2 = cVar1;
+          if (cVar1 == '\0') break;
+          pcVar2 = pcVar2 + 1;
+        } while (pcVar3 != (char *)(param_2 + 9));
         *(undefined1 *)((int)pvPortMalloc_ret + 0x3d) = 0;
       }
       if (3 < param_5) {
@@ -915,7 +987,7 @@ uint xTaskCreate(uint param_1,int param_2,int param_3,uint param_4,uint param_5,
       pvPortMalloc_ret[9] = pvPortMalloc_ret;
       pvPortMalloc_ret[0x19] = 0;
       *(undefined1 *)(pvPortMalloc_ret + 0x1b) = 0;
-      pxPortInitialiseStack_ret = pxPortInitialiseStack(uVar2,pvPortMalloc_ret[0xc],param_1,param_4)
+      pxPortInitialiseStack_ret = pxPortInitialiseStack(uVar4,pvPortMalloc_ret[0xc],param_1,param_4)
       ;
       *pvPortMalloc_ret = pxPortInitialiseStack_ret;
       if (param_6 != (int *)0x0) {
@@ -926,12 +998,12 @@ uint xTaskCreate(uint param_1,int param_2,int param_3,uint param_4,uint param_5,
       if (DAT_00088800 == (undefined4 *)0x0) {
         DAT_00088800 = pvPortMalloc_ret;
         if (DAT_00088870 == 1) {
-          puVar6 = &DAT_0008880c;
+          puVar5 = &DAT_0008880c;
           i = 0;
           do {
             i = i + 1;
-            vListInitialise(puVar6);
-            puVar6 = puVar6 + 5;
+            vListInitialise(puVar5);
+            puVar5 = puVar5 + 5;
           } while (i != 5);
           vListInitialise(&DAT_00088880);
           vListInitialise(&DAT_00088894);
@@ -946,56 +1018,47 @@ uint xTaskCreate(uint param_1,int param_2,int param_3,uint param_4,uint param_5,
       }
       DAT_00088878 = DAT_00088878 + 1;
       pvPortMalloc_ret[0x11] = DAT_00088878;
-      uVar2 = pvPortMalloc_ret[0xb];
-      if (DAT_0008887c < uVar2) {
-        DAT_0008887c = uVar2;
+      uVar4 = pvPortMalloc_ret[0xb];
+      if (DAT_0008887c < uVar4) {
+        DAT_0008887c = uVar4;
       }
-      vListInsertEnd(&DAT_0008880c + uVar2 * 5,(int)(pvPortMalloc_ret + 1));
+      vListInsertEnd(&DAT_0008880c + uVar4 * 5,(int)(pvPortMalloc_ret + 1));
       vPortExitCritical();
       if ((DAT_000888cc != 0) && ((uint)DAT_00088800[0xb] < (uint)pvPortMalloc_ret[0xb])) {
         vPortYield();
       }
       return 1;
     }
-    vPortFree(uVar2);
+    vPortFree((int)pxPortInitialiseStack_ret);
   }
   return 0xffffffff;
 }
 
 
-// ===== vTaskStartScheduler @ 00082418 (138 bytes)
+// ===== vTaskStartScheduler @ 00082418 (82 bytes)
 
-uint vTaskStartScheduler(void)
+void vTaskStartScheduler(void)
 
 {
   uint uVar1;
-  uint uVar2;
   
-  uVar2 = xTaskCreate(0x821d1,0x8001834,0x80,0,0,(int *)&DAT_000888a8);
-  if ((uVar2 == 1) && (uVar2 = xTimerCreateTimerTask(), uVar2 == 1)) {
+  uVar1 = xTaskCreate(0x821d1,0x8001834,0x80,0,0,(int *)&DAT_000888a8);
+  if ((uVar1 == 1) && (uVar1 = xTimerCreateTimerTask(), uVar1 == 1)) {
     ulSetInterruptMask();
     DAT_000888ac = 0xffffffff;
     DAT_000888e4 = 0;
-                    /* System Handler Priority 3 [sfr] */
-    uVar1 = SCB_SHPR3;
-    SCB_SHPR3 = uVar1 | 0xff0000;
-    uVar1 = SCB_SHPR3;
-    SCB_SHPR3 = uVar1 | 0xff000000;
-    DAT_000888cc = uVar2;
-    vPortSetupTimerInterrupt();
-    DAT_00087ebc = 0;
-    vStartFirstTask();
-    vTaskSwitchContext();
-    prvTaskExitError();
-    return 0;
+    DAT_000888cc = uVar1;
+                    /* sets PendSV/SysTick priority, starts the first task [doc] */
+    xPortStartScheduler();
+    return;
   }
-  if (uVar2 == 0xffffffff) {
+  if (uVar1 == 0xffffffff) {
     ulSetInterruptMask();
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  return uVar2;
+  return;
 }
 
 
@@ -1145,13 +1208,13 @@ LAB_000825b6:
 
 // ===== vTaskDelay @ 00082664 (42 bytes)
 
-void vTaskDelay(int param_1)
+void vTaskDelay(uint num_msec)
 
 {
   uint xTaskResumeAll_ret;
   undefined8 uVar1;
   
-  if (param_1 != 0) {
+  if (num_msec != 0) {
     if (DAT_00088874 != 0) {
       ulSetInterruptMask();
       do {
@@ -1582,66 +1645,5 @@ void vTaskPriorityDisinheritAfterTimeout(int param_1,uint param_2)
     }
   }
   return;
-}
-
-
-// ===== uxTaskResetEventItemValue @ 00082ab0 (20 bytes)
-
-/* [inference] */
-
-uint uxTaskResetEventItemValue(void)
-
-{
-  uint uVar1;
-  
-  uVar1 = *(uint *)(DAT_00088800 + 0x18);
-  *(int *)(DAT_00088800 + 0x18) = 5 - *(int *)(DAT_00088800 + 0x2c);
-  return uVar1;
-}
-
-
-// ===== pvTaskIncrementMutexHeldCount @ 00082ac8 (18 bytes)
-
-/* [inference] */
-
-int pvTaskIncrementMutexHeldCount(void)
-
-{
-  if (DAT_00088800 != 0) {
-    *(int *)(DAT_00088800 + 0x50) = *(int *)(DAT_00088800 + 0x50) + 1;
-  }
-  return DAT_00088800;
-}
-
-
-// ===== ulTaskNotifyTake @ 00082ae0 (80 bytes)
-
-int ulTaskNotifyTake(int param_1,uint param_2)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  vPortEnterCritical();
-  if ((*(int *)(DAT_00088800 + 0x68) == 0) &&
-     (*(undefined1 *)(DAT_00088800 + 0x6c) = 1, param_2 != 0)) {
-    prvAddCurrentTaskToDelayedList(param_2,1);
-    vPortYield();
-  }
-  vPortExitCritical();
-  vPortEnterCritical();
-  iVar2 = *(int *)(DAT_00088800 + 0x68);
-  if (iVar2 != 0) {
-    if (param_1 == 0) {
-      iVar1 = iVar2 + -1;
-    }
-    else {
-      iVar1 = 0;
-    }
-    *(int *)(DAT_00088800 + 0x68) = iVar1;
-  }
-  *(undefined1 *)(DAT_00088800 + 0x6c) = 0;
-  vPortExitCritical();
-  return iVar2;
 }
 

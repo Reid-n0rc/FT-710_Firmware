@@ -4,7 +4,7 @@
 // 26 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * delay_us @ 00080b44  (32 bytes, 8 callers, export file 0008000c_000818b8.c)
+ * delay_us @ 00080b44  (32 bytes, 8 callers, export file 0008000c_00081430.c)
  * Purpose: Busy loop of `n × core_clock / 1e6` iterations [fact] (so the real delay is several times longer
  *     [inference])
  * Tag: [fact] [inference]
@@ -26,7 +26,7 @@ void delay_us(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * aic3204_spi_write @ 00080b68  (100 bytes, 4 callers, export file 0008000c_000818b8.c)
+ * aic3204_spi_write @ 00080b68  (100 bytes, 4 callers, export file 0008000c_00081430.c)
  * Purpose: 16-bit word `reg<<9 | val` (R/W bit 0 = write), MSB first, CS P1_7, SCLK P2_29, MOSI P1_1, 1 µs
  *     half-period, 10 µs after CS high [fact]
  * Tag: [fact]
@@ -70,7 +70,7 @@ void aic3204_spi_write(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * aic3204_init @ 00080bd0  (72 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * aic3204_init @ 00080bd0  (72 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: Reset P1_0 low 20 ms, high 20 ms, then 67 table entries {reg, val, delay µs} from 0x87A1C [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -109,7 +109,7 @@ void aic3204_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_clear @ 00080c20  (12 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * regfile_clear @ 00080c20  (12 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: `memset(0x20070000, 0, 0x10000)` at boot [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -125,7 +125,7 @@ void regfile_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_read @ 00080c30  (22 bytes, 5 callers, export file 0008000c_000818b8.c)
+ * regfile_read @ 00080c30  (22 bytes, 5 callers, export file 0008000c_00081430.c)
  * Purpose: `reg < 0x8000 ? word[reg] : 0` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -148,7 +148,7 @@ ushort regfile_read(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_write @ 00080c4c  (40 bytes, 4 callers, export file 0008000c_000818b8.c)
+ * regfile_write @ 00080c4c  (40 bytes, 4 callers, export file 0008000c_00081430.c)
  * Purpose: Store if `reg < 0x8000`; for reg 10 also call the codec input select [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -169,7 +169,7 @@ void regfile_write(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_set_bits @ 00080c78  (40 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * regfile_set_bits @ 00080c78  (40 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: `word[reg] |= v` in a critical section (used once: reg 1 bit 0) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -193,7 +193,7 @@ void regfile_set_bits(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * uart0_write @ 00080ca4  (94 bytes, 4 callers, export file 0008000c_000818b8.c)
+ * uart0_write @ 00080ca4  (94 bytes, 4 callers, export file 0008000c_00081430.c)
  * Purpose: Copy bytes into the TX ring (stops when full, returns count) inside a critical section, then enable the
  *     TX interrupt (FIFOINTENSET = 0xF) [fact]
  * Tag: [fact]
@@ -234,7 +234,7 @@ int uart0_write(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * uart0_init @ 00080d0c  (86 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * uart0_init @ 00080d0c  (86 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: FC0 clock (`CLOCK_AttachClk(0x80004508)`), `USART_Init(0x40106000, 115200, TX+RX on)`, event group
  *     0x87EC4, FIFOINTENSET = RXERR+RXLVL (10), NVIC ISER0 bit 14 [fact]
  * Tag: [fact]
@@ -272,7 +272,7 @@ void uart0_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * CommandTask @ 00080d78  (152 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * CommandTask @ 00080d78  (152 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: `console_init`, reset both rings, `uart0_init`, set GPIO P2_5 = 1 (0x40100045), then loop: wait event
  *     bit 0, feed each RX byte to `console_rx_char` while the TX ring is not full [fact]. P2_5 (PIO2_5) is wired
  *     only to test point TP2008, one of TP2007–2009 marked "for DEBUG" on the schematic (service manual p19,
@@ -321,7 +321,7 @@ void CommandTask(void)
 
 
 /* -----------------------------------------------------------------------------
- * create_CommandTask @ 00080e20  (38 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * create_CommandTask @ 00080e20  (38 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: `xTaskCreate(CommandTask, "Command Task", 0x1800, …, prio 1)` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -347,7 +347,7 @@ void create_CommandTask(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM0_IRQHandler @ 00080e50  (172 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * FLEXCOMM0_IRQHandler @ 00080e50  (172 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: One byte per interrupt. RX: FIFORD → ring 0x87EC8 (head 0x882CC, tail 0x882D0, count 0x882C8), drop when
  *     full, set event bit 0. RX error: read and discard, clear FIFOSTAT.RXERR. TX: ring 0x882D4 (count 0x886D4,
  *     tail 0x886DC) → FIFOWR; when empty, FIFOINTENCLR = 5 [fact]
@@ -408,7 +408,7 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
 
 
 /* -----------------------------------------------------------------------------
- * uart0_tx_pending @ 00080f3c  (14 bytes, 2 callers, export file 0008000c_000818b8.c)
+ * uart0_tx_pending @ 00080f3c  (14 bytes, 2 callers, export file 0008000c_00081430.c)
  * Purpose: TX count ≠ 0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -423,7 +423,7 @@ bool uart0_tx_pending(void)
 
 
 /* -----------------------------------------------------------------------------
- * sct0_pwm_callback @ 00081164  (108 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * sct0_pwm_callback @ 00081164  (108 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: Every 400 periods (20 ms): duty = clamp(reg 0x4005, 1, 99) % [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -467,7 +467,7 @@ void sct0_pwm_callback(void)
 
 
 /* -----------------------------------------------------------------------------
- * sct0_pwm_init @ 000811e0  (110 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * sct0_pwm_init @ 000811e0  (110 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: SCT0 PWM output 0, 20 kHz, duty 1 %, period callback [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -503,7 +503,7 @@ void sct0_pwm_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * console_cmd_i @ 00081274  (60 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * console_cmd_i @ 00081274  (60 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: `i db00` → machine mode (no reply); `i db01` → interactive mode, prints `\r\n>> ` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -536,7 +536,7 @@ void console_cmd_i(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * console_cmd_w @ 000812c4  (50 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * console_cmd_w @ 000812c4  (50 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: `w AAAA DDDD` → `regfile_write`, prints `\r\n>> ` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -562,7 +562,7 @@ void console_cmd_w(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * console_cmd_d @ 000812fc  (128 bytes, 0 callers, export file 0008000c_000818b8.c)
+ * console_cmd_d @ 000812fc  (128 bytes, 0 callers, export file 0008000c_00081430.c)
  * Purpose: `d AAAA` → 8 lines of `\r\n AAAA :` + 8 × ` %04X` (64 words) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -616,7 +616,7 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
 
 
 /* -----------------------------------------------------------------------------
- * console_printf @ 0008138c  (36 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * console_printf @ 0008138c  (36 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: `vsprintf` into 0x88DF0, then `console_puts`; tail-called by `console_cmd_r` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -625,7 +625,7 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
 
 /* vsprintf into 0x88DF0 then console_puts; tail-called by console_cmd_r */
 
-void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void console_printf(char *format,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined4 uStack_c;
@@ -635,14 +635,14 @@ void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
   uStack_c = param_2;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  sprintf(&DAT_00088df0,param_1,&uStack_c,param_4,param_1,&uStack_c);
+  vsprintf(&DAT_00088df0,format,&uStack_c);
   console_puts(0x88df0);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * console_cmd_r @ 000813b4  (48 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * console_cmd_r @ 000813b4  (48 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: `r AAAA` → `\r\nr AAAA VVVV\r\n>> ` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -669,7 +669,7 @@ void console_cmd_r(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * console_init @ 000813ec  (44 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * console_init @ 000813ec  (44 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: argv[0..3] = 0x88D2F/3F/4F/5F (16 bytes each), line state 0, length 0, interactive mode (flags 0x88D2D =
  *     0x88D2E = 1) [fact]
  * Tag: [fact]
@@ -693,7 +693,7 @@ void console_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * console_rx_char @ 00081430  (1058 bytes, 1 callers, export file 0008000c_000818b8.c)
+ * console_rx_char @ 00081430  (1058 bytes, 1 callers, export file 0008000c_00081430.c)
  * Purpose: Line editor, tokenizer and both command interpreters (below) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -851,10 +851,9 @@ LAB_0008172a:
                     /* r: read reply "r" + value + sum, no CR [fact: control-link.md] */
                           uVar4 = regfile_read(uVar12);
                           local_38[0] = 0x72;
-                          siprintf(local_38 + 1,"%04X",uVar4);
-                          siprintf(auStack_33,"%02X",
-                                   local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0])
-                          ;
+                          sprintf(local_38 + 1,"%04X",uVar4);
+                          sprintf(auStack_33,"%02X",
+                                  local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0]);
                           pcVar5 = local_38;
                           goto LAB_00081772;
                         }
@@ -1011,9 +1010,8 @@ LAB_0008145a:
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * aic3204_select_right_input @ 00085f88  (38 bytes, 1 callers, export file 00085f2c_0008674a.c)
+ * aic3204_select_right_input @ 00085f88  (38 bytes, 1 callers, export file 00084ab0_00086342.c)
  * Purpose: Page 1, R55 = 0x10 (arg 1: IN2R) or 0x40 (arg 0: IN1R), back to page 0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -1042,7 +1040,7 @@ void aic3204_select_right_input(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * console_puts @ 00085fae  (20 bytes, 14 callers, export file 00085f2c_0008674a.c)
+ * console_puts @ 00085fae  (20 bytes, 14 callers, export file 00084ab0_00086342.c)
  * Purpose: `uart0_write(s, strlen(s))` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
@@ -1062,8 +1060,9 @@ void console_puts(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * is_hex_string @ 00086014  (48 bytes, 1 callers, export file 00085f2c_0008674a.c)
- * Purpose: All chars in `0-9A-Fa-f` (empty string counts as hex) [fact]
+ * is_hex_string @ 00086014  (48 bytes, 1 callers, export file 00084ab0_00086342.c)
+ * Purpose: Meant to test that all chars are in `0-9A-Fa-f`, but checks only the first half (bug, see below; empty
+ *     string counts as hex) [fact: 0x86014]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md
  */
@@ -1091,7 +1090,7 @@ uint is_hex_string(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * frame_checksum_ok @ 00086044  (38 bytes, 2 callers, export file 00085f2c_0008674a.c)
+ * frame_checksum_ok @ 00086044  (38 bytes, 2 callers, export file 00084ab0_00086342.c)
  * Purpose: 8-bit sum of the first n chars == `strtoul(rest, 16)` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/control-link.md

@@ -1,291 +1,14 @@
-// FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
+// FT-710_IFDSP_V0101.bin — Ghidra decompile, 49 functions
 
-// ===== ADC0_IRQHandler @ 080012ec (8 bytes)
+// ===== USB_WAKEUP_IRQHandler @ 080013cc (8 bytes)
 
-void ADC0_IRQHandler(void)
+/* MCUX_2.9.0 startup name of this vector slot [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
+   IfdspM33Setup names it USB0_NEEDCLK (T24 round 2) */
 
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== Reserved39_IRQHandler @ 080012f4 (8 bytes)
-
-void Reserved39_IRQHandler(void)
+void USB_WAKEUP_IRQHandler(void)
 
 {
-  DefaultHandler();
-  return;
-}
-
-
-// ===== ACMP_IRQHandler @ 080012fc (8 bytes)
-
-void ACMP_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== DMIC0_IRQHandler @ 08001304 (8 bytes)
-
-void DMIC0_IRQHandler(void)
-
-{
-  __DMIC0_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== Reserved42_IRQHandler @ 0800130c (8 bytes)
-
-void Reserved42_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== HYPERVISOR_IRQHandler @ 08001314 (8 bytes)
-
-void HYPERVISOR_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== SECURE_VIOLATION_IRQHandler @ 0800131c (8 bytes)
-
-void SECURE_VIOLATION_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== HWVAD0_IRQHandler @ 08001324 (8 bytes)
-
-void HWVAD0_IRQHandler(void)
-
-{
-  __HWVAD0_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== Reserved46_IRQHandler @ 0800132c (8 bytes)
-
-void Reserved46_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== RNG_IRQHandler @ 08001334 (8 bytes)
-
-void RNG_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== RTC_IRQHandler @ 0800133c (8 bytes)
-
-void RTC_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== DSP_TIE_EXPSTATE1_IRQHandler @ 08001344 (8 bytes)
-
-void DSP_TIE_EXPSTATE1_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== PIN_INT4_IRQHandler @ 0800134c (8 bytes)
-
-void PIN_INT4_IRQHandler(void)
-
-{
-  __PIN_INT4_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== PIN_INT5_IRQHandler @ 08001354 (8 bytes)
-
-void PIN_INT5_IRQHandler(void)
-
-{
-  __PIN_INT5_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== PIN_INT6_IRQHandler @ 0800135c (8 bytes)
-
-void PIN_INT6_IRQHandler(void)
-
-{
-  __PIN_INT6_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== PIN_INT7_IRQHandler @ 08001364 (8 bytes)
-
-void PIN_INT7_IRQHandler(void)
-
-{
-  __PIN_INT7_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== CTIMER2_IRQHandler @ 0800136c (8 bytes)
-
-void CTIMER2_IRQHandler(void)
-
-{
-  __CTIMER2_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== CTIMER4_IRQHandler @ 08001374 (8 bytes)
-
-void CTIMER4_IRQHandler(void)
-
-{
-  __CTIMER4_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== OS_EVENT_IRQHandler @ 0800137c (8 bytes)
-
-void OS_EVENT_IRQHandler(void)
-
-{
-  __OS_EVENT_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== FLEXSPI_IRQHandler @ 08001384 (8 bytes)
-
-void FLEXSPI_IRQHandler(void)
-
-{
-  __FLEXSPI_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== FLEXCOMM6_IRQHandler @ 0800138c (8 bytes)
-
-void FLEXCOMM6_IRQHandler(void)
-
-{
-  __FLEXCOMM6_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== FLEXCOMM7_IRQHandler @ 08001394 (8 bytes)
-
-void FLEXCOMM7_IRQHandler(void)
-
-{
-  __FLEXCOMM7_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== USDHC0_IRQHandler @ 0800139c (8 bytes)
-
-void USDHC0_IRQHandler(void)
-
-{
-  __USDHC0_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== USDHC1_IRQHandler @ 080013a4 (8 bytes)
-
-void USDHC1_IRQHandler(void)
-
-{
-  __USDHC1_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== SGPIO_INTA_IRQHandler @ 080013ac (8 bytes)
-
-void SGPIO_INTA_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== SGPIO_INTB_IRQHandler @ 080013b4 (8 bytes)
-
-void SGPIO_INTB_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== I3C0_IRQHandler @ 080013bc (8 bytes)
-
-void I3C0_IRQHandler(void)
-
-{
-  __I3C0_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== USB0_IRQHandler @ 080013c4 (8 bytes)
-
-void USB0_IRQHandler(void)
-
-{
-  DefaultHandler();
-  return;
-}
-
-
-// ===== USB0_NEEDCLK_IRQHandler @ 080013cc (8 bytes)
-
-void USB0_NEEDCLK_IRQHandler(void)
-
-{
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -295,17 +18,20 @@ void USB0_NEEDCLK_IRQHandler(void)
 void WDT1_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
 
-// ===== USB_PHYDCD_IRQHandler @ 080013dc (8 bytes)
+// ===== USBPHY_DCD_IRQHandler @ 080013dc (8 bytes)
 
-void USB_PHYDCD_IRQHandler(void)
+/* MCUX_2.9.0 startup name of this vector slot [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
+   IfdspM33Setup names it USB_PHYDCD (T24 round 2) */
+
+void USBPHY_DCD_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -325,7 +51,7 @@ void DMA1_IRQHandler(void)
 void PUF_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -335,7 +61,7 @@ void PUF_IRQHandler(void)
 void POWERQUAD_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -345,7 +71,7 @@ void POWERQUAD_IRQHandler(void)
 void CASPER_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -355,7 +81,7 @@ void CASPER_IRQHandler(void)
 void PMC_PMIC_IRQHandler(void)
 
 {
-  DefaultHandler();
+  IntDefaultHandler();
   return;
 }
 
@@ -671,6 +397,357 @@ void __CTIMER0_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
   CTIMER0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __UTICK0_DriverIRQHandler_veneer @ 08001668 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084935; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __UTICK0_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  UTICK0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT0_DriverIRQHandler_veneer @ 08001678 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000842f1; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT0_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __CTIMER4_DriverIRQHandler_veneer @ 08001688 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00086ea5; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __CTIMER4_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  CTIMER4_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __DMA0_DriverIRQHandler_veneer @ 08001698 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083e11; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __DMA0_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  DMA0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM15_DriverIRQHandler_veneer @ 080016a8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084109; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM15_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM15_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT5_DriverIRQHandler_veneer @ 080016b8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000843e1; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT5_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT5_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __HWVAD0_DriverIRQHandler_veneer @ 080016c8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083e39; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __HWVAD0_DriverIRQHandler_veneer(void)
+
+{
+  HWVAD0_DriverIRQHandler();
+  return;
+}
+
+
+// ===== __FLEXCOMM1_DriverIRQHandler_veneer @ 080016d8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083f89; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM1_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+                    /* IRQ15, generic fsl_flexcomm handler [doc] */
+  FLEXCOMM1_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM5_DriverIRQHandler_veneer @ 080016e8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084049; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM5_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM5_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __CTIMER3_DriverIRQHandler_veneer @ 080016f8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00086e9f; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __CTIMER3_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  CTIMER3_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM6_DriverIRQHandler_veneer @ 08001708 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084079; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM6_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM6_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT4_DriverIRQHandler_veneer @ 08001718 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000843b1; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT4_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT4_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT3_DriverIRQHandler_veneer @ 08001728 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084381; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT3_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT3_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __CTIMER2_DriverIRQHandler_veneer @ 08001738 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00086e99; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __CTIMER2_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  CTIMER2_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXSPI_DriverIRQHandler_veneer @ 08001748 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084139; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXSPI_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXSPI_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __DMA1_DriverIRQHandler_veneer @ 08001758 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083e1d; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __DMA1_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  DMA1_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM14_DriverIRQHandler_veneer @ 08001768 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000840d9; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM14_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM14_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM7_DriverIRQHandler_veneer @ 08001778 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000840a9; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM7_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM7_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT6_DriverIRQHandler_veneer @ 08001788 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084411; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT6_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT6_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT1_DriverIRQHandler_veneer @ 08001798 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084321; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT1_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT1_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== call_main @ 080017a8 (10 bytes)
+
+void call_main(undefined4 param_1)
+
+{
+                    /* Redlib C entry [doc] */
+  __main(param_1);
+  return;
+}
+
+
+// ===== __DMIC0_DriverIRQHandler_veneer @ 080017b8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083e29; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __DMIC0_DriverIRQHandler_veneer(void)
+
+{
+  DMIC0_DriverIRQHandler();
+  return;
+}
+
+
+// ===== __I3C0_DriverIRQHandler_veneer @ 080017c8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084281; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __I3C0_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+                    /* IRQ49, base 0x40036000 [doc] */
+  I3C0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __PIN_INT7_DriverIRQHandler_veneer @ 080017d8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084441; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __PIN_INT7_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  PIN_INT7_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM3_DriverIRQHandler_veneer @ 080017e8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00083fe9; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM3_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM3_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __SCT0_DriverIRQHandler_veneer @ 080017f8 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x000848e5; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __SCT0_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  SCT0_DriverIRQHandler(param_1);
+  return;
+}
+
+
+// ===== __FLEXCOMM4_DriverIRQHandler_veneer @ 08001808 (10 bytes)
+
+/* T23d GNU ld (veneer_pattern 1.000): push {r0}; ldr r0,=0x00084019; mov ip,r0; pop {r0}; bx ip
+   [fact] */
+
+void __FLEXCOMM4_DriverIRQHandler_veneer(undefined4 param_1)
+
+{
+  FLEXCOMM4_DriverIRQHandler(param_1);
   return;
 }
 
