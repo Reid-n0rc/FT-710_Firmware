@@ -204,7 +204,16 @@ The points left open by #86, answered from the firmware where possible. What nee
   phase-table lane) **[fact]**. Reg 0x1E (passband centre) and reg 0x16 (filter class) do change the RX words, reg 0x08
   does not **[fact, simulation]**. So the per-mode shift is not keyed by reg 0x0A; 0x1E / 0x16 are where it would come from
   **[inference]**. The decimated words are not yet interpretable in simulation, so the
-  carrier positions themselves remain unconfirmed (#193).
+  carrier positions themselves remain unconfirmed (#193). Part of the reason was a netlist error: the O6 halves of the 220 dual
+  SRL16 cells were 16 clocks too deep, which scrambled half of the ADC bits; with that fixed the ADC words, mixers and the first
+  multiply-accumulate stages are clean and linear, but the M17 words are still noise, also with MAIN's full USB and FM register
+  sets ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact, simulation]**.
+  Open: the carrier position per mode; would be settled by a simulation whose M17 words carry the test tone (next step: why
+  DSP48_X0Y7 and X1Y3 do not scale with the input), or by capturing `RX_DATA` on a radio.
+- **TX AF stream.** The FPGA takes it as baseband audio **[inference]**: on the HiFi4 the modulators are gated off (reg 0x4006 = 0,
+  no writer, [fact] above), and in the netlist T11's word goes straight to the gain multiplier DSP48_X1Y18 with no NCO or mixer in
+  front ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)) **[fact for the wiring]**.
+  A TX simulation was not run.
 
 ### DNR: MAIN drives both noise reductions, split by level
 
@@ -364,10 +373,11 @@ file and put it in the main; the clear is the M33's `regfile_clear` 0x00080C20. 
 ### Still open
 
 - The exact arithmetic of the `ae_*` operations is still taken from the FLIX listing; the Ghidra C shows them as named calls.
-- The SDR FPGA's per-mode IF placement: #193 found the RX LO (reg 0x18/0x19), the 72 kHz output (pin M17) and that reg 0x0A
-  does not steer the RX path, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)).
-  The AESS speaker, the AESS level (#203) and the reg 0x63 values are settled; the SDR side carries no AESS branch (#193). Why
-  branch B gets the extra reg 0x56 delay is a HiFi4-side question.
+- The SDR FPGA's per-mode IF placement: #193 found the RX LO (reg 0x18/0x19), the 72 kHz output (pin M17), that reg 0x0A
+  does not steer the RX path, and fixed the dual-SRL16 netlist error, but not where the carrier lands ([sdr/netlist.md 3.8](../sdr/netlist.md#38-rx-if-stream-to-the-dsp-reg-0x0a-the-tx-af-input-193)).
+- Settled in #193: which speaker gets the AESS branch (B → LOL → internal speaker, reversing #197), the AESS level (R2A20178
+  CH8, #203), the reg 0x63 values (both EEPROM reads), and what the reg 0x56 delay does (B lags A by 2.67 ms). Open: Yaesu's
+  reason for exactly 32 samples (precedence effect is the inference above).
 
 ## Further functions (T23g)
 
