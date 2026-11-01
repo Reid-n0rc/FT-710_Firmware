@@ -41,6 +41,7 @@ Usage:
                                         the named functions, or all of an object (src/display/out/obj)
   python3 -I tools/equiv_display_emu.py status [--trials N]   every recreated function -> src/display/status.tsv
   python3 -I tools/equiv_display_emu.py linkcheck      the hybrid image (tools/display_link.py) against the original
+  python3 -I tools/equiv_display_emu.py abicheck       call sites that rely on registers a recreated callee does not return
 The image is read from build/FT-710_DISPLAY_V0108.bin (or $FT710_BUILD/...); it is never written anywhere.
 """
 import argparse
@@ -83,6 +84,11 @@ MIN_COVER = 0.5
 # mirror with the frame buffers and .data_nc) and the argument buffers. RAM from 0x20440000: below it the hybrid
 # image (tools/display_link.py) has its recreated code (0x2042BC10..0x2043FFFF), which linkcheck must not compare.
 SNAP = [(0x20000000, 0x20000100), (0x20440000, 0x20A00000), (0x60000000, 0x60A00000), (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
+# linkcheck (round 6): the hybrid image may have code in RAM2 0x20920000..0x2097FFFF (tools/display_link.py), where
+# the original has nothing; RAM2 is left out of the comparison and checked to be unchanged in the hybrid run instead
+RAM2, RAM2_END, RAM2_FILE_OFF = 0x20920000, 0x20980000, 0x340000
+SNAP_LINK = [(0x20000000, 0x20000100), (0x20440000, RAM2), (RAM2_END, 0x20A00000), (0x60000000, 0x60A00000),
+             (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
 
 R_ARM_NONE, R_ARM_ABS32, R_ARM_REL32, R_ARM_CALL, R_ARM_JUMP24 = 0, 2, 3, 28, 29
 R_ARM_V4BX, R_ARM_PREL31, R_ARM_MOVW_ABS_NC, R_ARM_MOVT_ABS = 40, 42, 43, 44
@@ -163,7 +169,11 @@ class Image:
 
     def __init__(self, path=None):
         self.file = open(path or image_path(), 'rb').read()
-        self.regions = [(BASE, self.file)]
+        # a hybrid image with RAM2 (display_link.py): its bytes from file offset 0x340000 are what the hybrid's
+        # reset_in_ram copies to 0x20920000 (startup/vectors.S, RAM2_LOAD)
+        self.regions = [(BASE, self.file[:RAM2_FILE_OFF])]
+        if len(self.file) > RAM2_FILE_OFF:
+            self.regions.append((RAM2, self.file[RAM2_FILE_OFF:]))
         uc = Uc(UC_ARCH_ARM, UC_MODE_ARM)
         for lo, hi in RAM:
             uc.mem_map(lo, hi - lo, UC_PROT_ALL)
@@ -413,6 +423,7 @@ class Run:
         for a in cover or ():
             self.cover_hooks[a] = uc.hook_add(UC_HOOK_CODE, self.on_leader, begin=a, end=a)
         self.regs = args['regs']
+        self.snap = SNAP
 
     def on_code(self, uc, addr, size, _):
         if addr == STOP:
@@ -508,9 +519,9 @@ class Run:
             sctlr = uc.reg_read(A.UC_ARM_REG_CP_REG, SCTLR)
         except Exception:
             sctlr = None
-        snap = b''.join(bytes(uc.mem_read(lo, hi - lo)) for lo, hi in SNAP)
+        snap = b''.join(bytes(uc.mem_read(lo, hi - lo)) for lo, hi in self.snap)
         return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap,
-                'sctlr': sctlr}
+                'sctlr': sctlr, 'ram2': bytes(uc.mem_read(RAM2, RAM2_END - RAM2)) if self.snap is SNAP_LINK else None}
 
 
 def printf_like(rng):
@@ -551,13 +562,13 @@ def draw_args(rng):
     return {'regs': regs, 'buffers': bufs}
 
 
-def compare(a, b):
+def compare(a, b, snap=SNAP):
     for k in ('end', 'ret', 'mmio', 'calls', 'sctlr'):
         if a[k] != b[k]:
             return k
     if a['writes'] != b['writes']:
         i = next(k for k in range(len(a['writes'])) if a['writes'][k] != b['writes'][k])
-        for lo, hi in SNAP:
+        for lo, hi in snap:
             if i < hi - lo:
                 return f'memory at {lo + i:#x}'
             i -= hi - lo
@@ -865,6 +876,61 @@ def vdc5_regs_args(rng, args, table, stride):
     return fill
 
 
+def vdc5_table_args(rng, args, k, tables, on_arg=None):
+    """VDC5 helpers that take one entry of a register-address table (round 6): argument k is one of the given
+    addresses (an entry of the image's table, as the callers pass), the other pointer arguments parameter blocks;
+    argument on_arg, if any, 0 or 1."""
+    fill = vdc5_args(rng, args)
+    for j in range(k):
+        if j != on_arg:
+            at = SCRATCH_ARGS + 0x2000 * (j + 1)
+            args['buffers'] = [b for b in args['buffers'] if not at <= b[0] < at + 0x2000]
+            args['buffers'] += vdc5_param(rng, at, at + 0x1000)
+            args['regs'][j] = at
+    if on_arg is not None:
+        args['regs'][on_arg] = rng.choice([0, 1])
+    args['regs'][k] = rng.choice(tables)
+    return fill
+
+
+def vdc5_formats(rng):
+    """The graphics format of every layer in the shared parameters (vdc5_shrd_graphics 0x208DCD2C, 12 x 0x12 bytes,
+    gr_format at +2), drawn from the formats the driver knows, so that the format switches are reached."""
+    blk = bytearray(rng.getrandbits(8) for _ in range(12 * 0x12))
+    for k in range(12):
+        blk[0x12 * k + 2] = rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 10, 11])
+    return [(0x208DCD2C, bytes(blk))]
+
+
+def vdc5_clut_args(rng, args, k):
+    """(..., vdc5_clut_t at argument k): color_num 1..16 and a table of random colours (the generic block would put
+    a pointer into color_num and copy for ever), the layer formats drawn."""
+    fill = vdc5_args(rng, args) + vdc5_formats(rng)
+    at = SCRATCH_ARGS + 0x2000 * (k + 1)
+    args['buffers'] = [b for b in args['buffers'] if not at <= b[0] < at + 0x2000]
+    args['buffers'] += [(at, struct.pack('<II', rng.choice([1, 1, 2, 2, 3, 16]), at + 0x100)),
+                        (at + 0x100, bytes(rng.getrandbits(8) for _ in range(64)))]
+    args['regs'][k] = at
+    if k == 2:
+        args['regs'][1] = rng.randrange(6)
+    return fill
+
+
+# helper -> (argument index of the register table, the addresses it is called with, on/off argument)
+_QLTY = [0x20166130 + 0x34 * i for i in range(4)]
+_SYNTH = [0x201662C0 + 0x58 * i for i in range(12)]
+_GAMMA = [0x201667D0 + 0x130 * c + o for c in range(2) for o in (0x8, 0x48, 0x6C, 0xAC, 0xD0, 0x110)]
+VDC5_TABLE_ARGS = {
+    'vdc5_set_enhancement_sharpness': (2, _QLTY, 0), 'vdc5_set_enhancement_lti': (2, _QLTY, 0),
+    'vdc5_set_alpha_rect_area': (1, _SYNTH, None),
+    'vdc5_set_clut': (1, [0xFCFF6000, 0xFCFF6400, 0xFCFF6800, 0xFCFF6C00, 0xFCFF7000, 0xFCFF8000, 0xFCFF8400,
+                          0xFCFF8800, 0xFCFF8C00, 0xFCFF9000], None),
+    'vdc5_set_gamma_gain': (1, _GAMMA, None), 'vdc5_set_gamma_threshold': (1, _GAMMA, None),
+    'vdc5_set_scaling_down': (2, [0x20165CE0 + 0xB8 * i for i in range(6)], 1),
+    'vdc5_set_scaling_up': (6, [0x20165CE0 + 0xB8 * i for i in range(6)], None),
+}
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -929,13 +995,63 @@ def preset_for(fname):
         return f
     if fname == 'vdc5_set_video_external_input':
         return lambda rng, args: vdc5_regs_args(rng, args, 0x20165CA0, 0x20)
+    if fname == 'vdc5_set_clut':
+        def c(rng, args):
+            fill = vdc5_clut_args(rng, args, 0)
+            args['regs'][1] = rng.choice(VDC5_TABLE_ARGS['vdc5_set_clut'][1])
+            return fill
+        return c
+    if fname == 'vdc5_reg_image_enhancement':   # (ch, block 0/1, on, sharp, on, lti, area): blocks or NULL
+        def e(rng, args):
+            fill = vdc5_args(rng, args)
+            regs = args['regs']
+            regs[1], regs[2], regs[4] = rng.randrange(2), rng.randrange(2), rng.randrange(2)
+            for k in (3, 5, 6):
+                at = SCRATCH_ARGS + 0x2000 * k
+                args['buffers'] = [b for b in args['buffers'] if not at <= b[0] < at + 0x2000]
+                if rng.random() < 0.25:
+                    regs[k] = 0
+                else:
+                    args['buffers'] += vdc5_param(rng, at, at + 0x1000)
+                    regs[k] = at
+            return fill
+        return e
+    if fname == 'vdc5_reg_clut':
+        return lambda rng, args: vdc5_clut_args(rng, args, 2)
+    if fname in ('vdc5_reg_chromakey', 'vdc5_reg_alpha_blending_rect'):
+        return lambda rng, args: vdc5_args(rng, args) + vdc5_formats(rng)
+    if fname == 'vdc5_set_scaling_up':     # (fb, area, folding, interlace, writing mode 0..5, direction, scaler)
+        def u(rng, args):
+            fill = vdc5_table_args(rng, args, 6, VDC5_TABLE_ARGS[fname][1])
+            regs = args['regs']
+            regs[2], regs[3], regs[4], regs[5] = rng.randrange(2), rng.randrange(2), rng.randrange(6), rng.randrange(2)
+            return fill
+        return u
+    if fname == 'vdc5_display_start_pixel':     # (address, graphics format 0..11)
+        def sp(rng, args):
+            args['regs'][1] = rng.randrange(12)
+            return []
+        return sp
+    if fname.startswith('vdc5_shrd_get_'):   # (ch, scaler or graphics index): an index of the tables, not a pointer
+        def sh(rng, args):                    # (a pointer index reads anywhere, e.g. the hybrid's RAM2 code: round 6)
+            fill = vdc5_args(rng, args)
+            args['regs'][1] = rng.randrange(6)
+            return fill
+        return sh
+    if fname in VDC5_TABLE_ARGS:
+        return lambda rng, args: vdc5_table_args(rng, args, *VDC5_TABLE_ARGS[fname])
+    if fname == 'vdc5_color_conversion':      # (graphics format, colour): every case of the switch and past it
+        def g(rng, args):
+            args['regs'][0] = rng.randrange(13)
+            return []
+        return g
     if fname.startswith(('vdc5_', 'r_vdc5_')):
         return vdc5_args
     return None
 
 
 # return registers the DWARF cannot tell (assembly): the 64-bit divisions return quotient r0:r1 and remainder r2:r3
-RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16}
+RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16, '_ll_udiv10': 16, '__rt_udiv10': 8}
 
 PRESETS = {'mmu_enable': flat_l1, '__aeabi_uldivmod': div64_args, '__aeabi_ldivmod': div64_args, '__aeabi_memcpy': lambda r, a: copy_fill(r, a, 'memcpy'), '__aeabi_memcpy4': lambda r, a: copy_fill(r, a, 'memcpy4'),
            '__aeabi_memset': lambda r, a: copy_fill(r, a, 'memset'), '__aeabi_memclr': lambda r, a: copy_fill(r, a, 'memclr'),
@@ -1143,14 +1259,19 @@ def _link_one(job):
         sd = rng.getrandbits(32)
         size = RET_SIZE.get(fname, _ret_sizes().get(fname, 4))
         for budget in (BUDGET, 8 * BUDGET):
-            r1 = Run(res.img, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
-            r2 = Run(_HYB, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
+            runs = [Run(res.img, [], stub_addrs, sd, fill, args), Run(_HYB, [], stub_addrs, sd, fill, args)]
+            for r in runs:
+                r.snap = SNAP_LINK
+            before = [bytes(r.uc.mem_read(RAM2, RAM2_END - RAM2)) for r in runs]
+            r1, r2 = (r.go(oaddr, thumb, size, budget) for r in runs)
             if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                 break
         if r1['end'] == r2['end'] == 'budget':
             inconclusive += 1
             continue
-        d = compare(r1, r2)
+        # RAM2 holds code in the hybrid only: both runs must change it alike (an argument pointer may point there)
+        d = compare(r1, r2, SNAP_LINK) or ('RAM2' if bytes(x ^ y for x, y in zip(r1['ram2'], before[0])) !=
+                                           bytes(x ^ y for x, y in zip(r2['ram2'], before[1])) else None)
         if d:
             return fname, 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})'
         ok += r1['end'] == 'return'
@@ -1171,9 +1292,91 @@ def _ret_sizes():
     return _RETS
 
 
+def clobbers(obj, shndx, off, size, md):
+    """Registers among r1, r2, r3, ip that the recreated code may change: every register an instruction of it writes,
+    and all four when it calls anything."""
+    import capstone
+    out = set()
+    code = obj.section_data(shndx)[off:off + size]
+    for i in md.disasm(code, off):
+        if i.mnemonic in ('bl', 'blx', 'b', 'bx') and i.op_str not in ('lr',):
+            out |= {capstone.arm.ARM_REG_R1, capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3, capstone.arm.ARM_REG_R12}
+        out |= set(i.regs_access()[1])
+    return out
+
+
+def abi_hazards():
+    """[(function, caller, address, registers)]: call sites in the image that read r1, r2, r3 or ip after calling a
+    recreated function that may change that register and does not return it (a linear scan of up to 12
+    instructions after the call, to the first branch or return; pushes do not count as reads). armcc keeps registers
+    across calls it knows do not touch them (sdhi_error_reset keeps r2, r3, ip across sdhi_soft_reset) and its
+    library returns more than the AAPCS says (_ll_udiv10: the remainder in r2): neither shows in the differential
+    check, which compares the registers of the C return type, but the image's own callers break in the hybrid."""
+    import capstone
+    res = Resolver(Image())
+    img = res.img.file
+    md = {False: capstone.Cs(capstone.CS_ARCH_ARM, capstone.CS_MODE_ARM),
+          True: capstone.Cs(capstone.CS_ARCH_ARM, capstone.CS_MODE_THUMB)}
+    for m in md.values():
+        m.detail = True
+    ident = {r[3] for r in read_tsv(STATUS_TSV)[1:] if len(r) > 5 and r[5] == 'identical'}
+    targets = {}
+    for obj, fname, shndx, off in recreated():
+        o = res.func(fname)
+        if o and fname not in ident:          # byte-identical code behaves as the original at every call site
+            targets[o[0]] = (fname, clobbers(obj, shndx, off, obj.extent(shndx, off), md[False]))
+    rets = _ret_sizes()
+    names = {capstone.arm.ARM_REG_R1: 'r1', capstone.arm.ARM_REG_R2: 'r2', capstone.arm.ARM_REG_R3: 'r3',
+             capstone.arm.ARM_REG_R12: 'ip'}
+    out = []
+    for g, (a, size, thumb) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
+        if not BASE <= a < 0x20165178 or size <= 0:
+            continue
+        insns = list(md[thumb].disasm(img[a - BASE:a - BASE + size], a))
+        for k, i in enumerate(insns):
+            if i.mnemonic not in ('bl', 'blx') or not i.op_str.startswith('#'):
+                continue
+            t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
+            if not t:
+                continue
+            fname, clob = t
+            size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
+            returned = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
+            if size_ret >= 16:
+                returned |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
+            written = set()
+            for j in insns[k + 1:k + 13]:
+                rd, wr = j.regs_access()
+                if j.mnemonic.startswith('push') or (j.mnemonic.startswith('stm') and j.op_str.startswith('sp!')):
+                    rd = []
+                bad = [r for r in rd if r in names and r in clob and r not in written and r not in returned]
+                if bad:
+                    out.append((fname, g, j.address, ', '.join(names[r] for r in bad), i.address))
+                    break
+                written |= set(wr)
+                if (j.group(capstone.CS_GRP_JUMP) or j.group(capstone.CS_GRP_CALL) or j.group(capstone.CS_GRP_RET)
+                        or capstone.arm.ARM_REG_PC in wr):
+                    break
+    return out, len(targets)
+
+
+def cmd_abicheck(args):
+    """abi_hazards() -> src/display/out/abi_hazards.tsv, which tools/display_link.py reads: it holds back (does not
+    link) a recreated function that an original caller relies on in this way, until that caller is recreated too."""
+    rows, n = abi_hazards()
+    os.makedirs(os.path.join(SRC, 'out'), exist_ok=True)
+    with open(os.path.join(SRC, 'out', 'abi_hazards.tsv'), 'w') as f:
+        f.write('function\tcaller\tcall\tread_at\tregisters\n')
+        for fname, g, at, regs, call in rows:
+            f.write(f'{fname}\t{g}\t{call:08x}\t{at:08x}\t{regs}\n')
+            print(f'equiv_display_emu: abicheck {fname}: {g} reads {regs} at {at:#x} after the call at {call:#x}')
+    print(f'equiv_display_emu: abicheck: {len(rows)} call sites rely on a register a recreated callee may change '
+          f'({len({r[0] for r in rows})} functions, of {n} not byte-identical); wrote src/display/out/abi_hazards.tsv')
+
+
 def cmd_linkcheck(args):
-    """Every patched entry of the hybrid image (tools/display_link.py): the original image and the hybrid one, both
-    called at the original address, on the same inputs. This checks the link itself (relocations, patches) and the
+    """Every patched or in-place entry of the hybrid image (tools/display_link.py): the original image and the hybrid
+    one, both called at the original address, on the same inputs. This checks the link itself (relocations, patches) and the
     recreated functions composed with each other, since in the hybrid image they call one another."""
     import multiprocessing
     rows = read_tsv(os.path.join(SRC, 'out', 'patches.tsv'))[1:]
@@ -1186,7 +1389,7 @@ def cmd_linkcheck(args):
             if v != 'same' or args.verbose:
                 print(f'equiv_display_emu: linkcheck {fname:28s} {v}: {d}', file=sys.stderr)
     print('equiv_display_emu: linkcheck: ' + ', '.join(f'{k} {v}' for k, v in sorted(cnt.items())) +
-          f' (of {len(jobs)} patched entries)')
+          f' (of {len(jobs)} patched or in-place entries)')
 
 
 def require_objects():
@@ -1268,8 +1471,9 @@ def main():
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)
+    sub.add_parser('abicheck', help='call sites that read registers a recreated callee does not return')
     args = ap.parse_args()
-    {'check': cmd_check, 'status': cmd_status, 'linkcheck': cmd_linkcheck}[args.cmd](args)
+    {'check': cmd_check, 'status': cmd_status, 'linkcheck': cmd_linkcheck, 'abicheck': cmd_abicheck}[args.cmd](args)
 
 
 if __name__ == '__main__':

@@ -84,19 +84,4 @@ uint64_t __rt_udiv10(uint32_t n)
     return q | (uint64_t)(uint32_t)r << 32;
 }
 
-/* 0x20155A10 (A32): 64-bit n / 10 in r0:r1, by the same shift-and-add estimate and one correction [fact] */
-uint64_t _ll_udiv10(uint64_t n)
-{
-    uint64_t q = n - (n >> 2);
-
-    q += q >> 4;
-    q += q >> 8;
-    q += q >> 16;
-    q += q >> 32;
-    q >>= 3;
-    if ((int64_t)(n - 10 - q * 10) >= 0)
-    {
-        q++;
-    }
-    return q;
-}
+/* _ll_udiv10 (0x20155A10) is in lib/aeabi_ldiv.S: it also returns the remainder in r2 (T24 round 6) */

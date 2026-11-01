@@ -13,7 +13,7 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 |---|---|
 | `lib/string.c` | the armcc C library string functions: `strcmp` (with the word path's `rrx` result), `strncmp`, `strcpy`, `strlen`, `strcat`, `strstr`, `strncpy`, `strcasecmp`, `strncasecmp`, `strtok_r`, `memcmp`, `tolower` |
 | `lib/memory.c` | the run-time ABI copy and fill entries `__aeabi_memcpy` (Ghidra: `memcpy`), `__aeabi_memcpy4`, `__aeabi_memset`, `__aeabi_memclr`, `__aeabi_memclr4` |
-| `lib/aeabi_div.c` | `__aeabi_uidivmod`, `__aeabi_idivmod`, `__rt_udiv10`, `_ll_udiv10` (no C division: GCC would call these very functions) |
+| `lib/aeabi_div.c` | `__aeabi_uidivmod`, `__aeabi_idivmod`, `__rt_udiv10` (no C division here: GCC would call these very functions) |
 | `lib/misc.c` | small helpers: `clamp_add_u8`, `xorshift32_step`, `bcd_to_bin`, `be16_load`/`be16_store`, `u32_decimal_digits`, `str_rtrim`, `copy5`/`copy10`/`copy32`/`copy48`, `fill8`, `copy_inverted_words`(`_b`), `is_decimal_digit` |
 | `app/crc.c` | `crc16_xmodem`, `crc16_a001` and its table builder, `crc32_make_table`, `crc32_update` (the two tables share 0x208D9560) |
 | `drivers/cp15.c` | MMU and caches, 0x20100D0C..0x20101183: L1 table, MMU on/off, section attributes, SCTLR cache bits, cache maintenance by line and by set/way |
@@ -21,16 +21,17 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 | `drivers/riic.c` | the RIIC (I2C) driver, the Renesas sample driver with its per-channel `riic_userdef` functions (83 functions) |
 | `drivers/scif.c` | the SCIF UART objects (the image's C++ class as C): rings, interrupts, open, read, write; the PMCCNTR cycle stamp |
 | `drivers/sflash.c` | the serial flash on SPIBSC0: SPI-mode transfers, flash commands, the device protocol the update code uses |
+| `drivers/rspi.c` | the per-channel RSPI helpers of the five channels: done flags, receive and transmit ISRs, transmit and TEND waits, delay, the GIC stubs of the generic ISRs (the driver core is not recreated yet) |
 | `drivers/sdhi.c` | the SDHI0 target layer under the SD driver: DMA block transfers, card detect, commands, the operation-table slots |
 | `drivers/vdc5_api.c` | the VDC5 driver API (the Renesas r_vdc5 sample driver, built without parameter checks): initialize, terminate, video input, sync, output, write/read layers, start/stop/release, image quality, alpha, chroma key, CLUT, calibration, gamma |
 | `drivers/vdc5_shrd.c` | the VDC5 driver's shared parameters: per-channel common, scaler and graphics blocks, resource and layer states, the field getters |
 | `drivers/vdc5_int.c` | the VDC5 interrupt part: `r_vdc5_callback_isr` and the 46 per-source handlers |
-| `drivers/vdc5_reg.c` | the VDC5 register layer (part): clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, layer start/stop/release, noise reduction, black stretch, alpha, calibration |
-| `app/gui_vdc5.c` | the GUI's VDC5 set-up helpers: module clock, TFT and DVI timing tables, LVDS PLL block, sync and output parameters, the graphics-3 line interrupt that paces the GUI |
+| `drivers/vdc5_reg.c` | the VDC5 register layer: clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, write data control (scaling down) and its change, the read side's helpers (cascade, VIN layer, scaling up, start pixel, enlargement), layer start/stop/release, noise reduction, image enhancement (sharpness, LTI), black stretch, alpha and alpha rectangle, chroma key, CLUT, calibration, gamma. Not yet: the register parts of read data control and of its change (0x2011AF34, 0x2011B498) |
+| `app/gui_vdc5.c` | the GUI's VDC5 set-up: module clock, TFT and DVI timing tables, LVDS PLL block, sync and output parameters, the graphics-3 line interrupt that paces the GUI, the frame-buffer addresses, the four graphics layers (`vdc5_layers_setup`, the cursor window), layers stop and channel shutdown |
 | `include/vdc5.h`, `include/vdc5_regs.h` | the VDC5 parameter structures with armcc's one-byte enums, the shared-parameter tables, the register-address tables |
-| `startup/vectors.S` | exception vectors, `Reset_Handler`, `reset_in_ram`, the SVC and IRQ entries (assembly, byte-identical) |
+| `startup/vectors.S` | exception vectors, `Reset_Handler`, `reset_in_ram`, the SVC and IRQ entries (assembly, byte-identical); with `-DRAM2_LOAD` (hybrid link only) `reset_in_ram` also copies RAM2 from flash |
 | `startup/rt_entry.S` | `__main`, `__scatterload`, `__decompress`, `__scatterload_zeroinit`, `__rt_lib_init`, `__rt_entry` (assembly) |
-| `lib/aeabi_ldiv.S` | `__aeabi_uldivmod` and `__aeabi_ldivmod`: quotient in r0:r1, remainder in r2:r3 (assembly) |
+| `lib/aeabi_ldiv.S` | `__aeabi_uldivmod` and `__aeabi_ldivmod`: quotient in r0:r1, remainder in r2:r3; `_ll_udiv10`: quotient in r0:r1 and remainder in r2, which the C library's `_fp_digits` uses (assembly) |
 | `lib/fplib.S` | the armcc double-precision library: `__aeabi_dadd`, `dsub`, `dmul`, `ddiv`, `d2iz`, `d2uiz`, `i2d`, `ui2d` and their NaN handler (Thumb-2 assembly) |
 | `include/` | `display.h` (register helpers), `norti.h` (the service calls with the image's argument shapes), `scif.h` |
 | `rtos/` | a minimal NORTi (uITRON 4.0) stand-in for a future source-only build, with its context switch and a Unicorn test |
@@ -40,28 +41,56 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 
 ## Build and check
 
+**Compiler (pinned, round 6): xPack GNU Arm Embedded GCC 10.2.1-1.1** (`10.2.1 20201103`, Arm 10-2020-q4-major). The
+Makefile selects it (`XPACK=` its directory, default `/home/user/t24/tc/10.2.1-1.1`, or `CROSS=` its prefix) and stops
+when `$(CC) -dumpversion` is another version (`ANY_GCC=1` builds anyway, without the recorded results). Why one
+compiler: the check verifies the code GCC emits, and where a trial reads past a table the verdict even depends on how
+the compiler lays out `.rodata` (round 5: GCC 13.2.1 and 10.2.1 disagreed on `vdc5_reg_display_output` before its
+preset was fixed), so `status.tsv` must come from one known compiler. Why this one: xPack publishes exactly this
+version for Linux, macOS and Windows (the `arm-none-eabi-gcc` on a path is whatever the system ships: 13.2.1 in the
+T24 container), it is the M33 image's own compiler and that of `src/ifdsp_m33`, and DISPLAY rounds 3 to 5 used it.
+Install: docs/tooling.md "Source recreation".
+
 ```sh
-make CROSS=/path/to/arm-none-eabi-        # any arm-none-eabi GCC; T24 used xPack 10.2.1-1.1
-make check CROSS=...                      # = python3 -I ../../tools/equiv_display_emu.py status -> status.tsv
+make                                      # the pinned compiler; XPACK=<dir> or CROSS=<prefix> elsewhere
+make check                                # = python3 -I ../../tools/equiv_display_emu.py status -> status.tsv
 python3 -I ../../tools/equiv_display_emu.py check strcmp gpio_cfg_alt   # one or more functions
 ```
 
 ```sh
-make link CROSS=...                       # hybrid image -> out/FT-710_DISPLAY_hybrid.bin, .elf, .map, patches.tsv
-make linkcheck CROSS=...                  # the hybrid image against the original at every patched entry
-make rtos-test CROSS=...                  # the NORTi stand-in in Unicorn
+make link        # abicheck, then the hybrid image -> out/FT-710_DISPLAY_hybrid.bin, .elf, .map, patches.tsv, placement.tsv
+make linkcheck   # the hybrid image against the original at every patched or in-place entry
+make bootcheck   # emulated boot of the original and of the hybrid image (tools/display_boot_emu.py)
+make rtos-test   # the NORTi stand-in in Unicorn
 ```
 
 **Hybrid link.** The recreated tree covers only part of the image, so `tools/display_link.py` links it *into* the
-original: `display.ld` places the original image (read from `build/` at link time) unchanged at 0x20100000 and the
-recreated functions that passed the check (verdict `equivalent`) in the gap 0x2042BC10..0x2043FFFF, which
-`reset_in_ram` already copies from flash (it copies up to 0x2043FFFF, past the end of the file); everything else the
-recreated code calls or uses resolves to the image's own addresses (weak absolute symbols from `functions.tsv`,
-`aliases.tsv`, `data_symbols.tsv`). Each linked function's original entry is then patched with a branch to its
-recreation, so the image's callers, function pointers and vector tables reach the recreated code. Recreated functions
-that did not pass are left out, and byte-identical ones need no patch. The recreated code keeps no RAM of its own
-(every global is the image's, declared `extern`): `display.ld` asserts that `.data` and `.bss` are empty. The result
-is a complete image of the same layout, never committed and never run on a radio.
+original: `display.ld` places the original image (read from `build/` at link time) unchanged at 0x20100000, and each
+recreated function that passed the check (verdict `equivalent`) goes to one of three places (round 6):
+
+1. **in place**, at its original address, when the GCC code fits into the original extent (up to the next original
+   function), the original is A32, and nothing outside the extent refers into it past the entry: no branch, no
+   literal word and no PC-relative load or ADR (armcc's literal pools are shared by neighbouring functions; the
+   emulated boot found one, 0x2013FE68 loading 0x20140118);
+2. otherwise into the **gap** 0x2042BC10..0x2043FFFF, which `reset_in_ram` already copies from flash;
+3. what does not fit there into **RAM2** 0x20920000..0x2097FFFF (`.recreated2`): its bytes follow the gap in the file
+   at offset 0x340000, and the hybrid then uses `startup/vectors.S` built with `-DRAM2_LOAD`, whose `reset_in_ram`
+   copies them to 0x20920000 with a loop in the nine words the original branches over (0x20100104..0x20100127) and its literals in the padding words at 0x201000CC. `--gap-limit N` forces RAM2 (used to test
+   it: the gap still has room).
+
+A linked function that is not in place gets its original entry patched with a branch to its recreation, so the
+image's callers, function pointers and vector tables reach the recreated code. Everything else the recreated code
+calls or uses resolves to the image's own addresses (weak absolute symbols from `functions.tsv`, `aliases.tsv`,
+`data_symbols.tsv`). Where the recreated code takes the address of a linked recreated function (`R_ARM_ABS32`,
+`MOVW`/`MOVT`: a function pointer, not a call), the relocation is retargeted to the function's original entry, as the
+image stores and compares its own entries (round 5 needed one alias for this; now it is a rule). Some functions are
+**held back** (left original) in the hybrid: those the reset path runs before `reset_in_ram` has copied the gap
+(they must be in place within the first copy 0x20100000..0x20100BBF), and those whose original callers rely on a
+register the GCC code changes (`equiv_display_emu.py abicheck`: armcc keeps r2, r3, ip across a call of a function it
+knows, e.g. `sdhi_error_reset` around `sdhi_soft_reset`). Byte-identical functions need no patch. The recreated code
+keeps no RAM of its own (every global is the image's, declared `extern`): `display.ld` asserts that `.data` and `.bss`
+are empty. The result is a complete image of the same layout, never committed and never run on a radio; in
+emulation (`make bootcheck`) it boots as far as the original does: the kernel's 33 tasks, the GUI loop, RAM2 intact.
 
 The image is read from `build/FT-710_DISPLAY_V0108.bin` (or `$FT710_BUILD`). Python packages: `pyelftools`, `unicorn`,
 `capstone` (docs/tooling.md). The build flags that matter for the check: `-fno-ipa-ra` (every call follows the AAPCS,
@@ -70,7 +99,9 @@ because the callees run as the image's own code) and `-fno-tree-loop-distribute-
 
 What the check cannot see: cache and TLB maintenance have no effect in Unicorn (the harness compares the set of CP15
 operations statically instead), NORTi service calls are stubs (their arguments and order are compared, not what the
-kernel would do), and a function is only exercised as far as its inputs reach (the block coverage in `status.tsv`).
+kernel would do), a function is only exercised as far as its inputs reach (the block coverage in `status.tsv`), and
+registers beyond the C return type (`abicheck` covers the direct calls of the image; *Open: calls through function
+pointers; would be settled by the same scan at every `blx rN` whose target can be a recreated function*).
 **Never commit `out/`.** Nothing built here has been run on a radio.
 
 ## Licences

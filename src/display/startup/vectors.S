@@ -18,6 +18,9 @@
  *  - IRQ_Handler: returns at once if the interrupted code had IRQs masked; otherwise knl_irq_enter (task or nested),
  *    gic_dispatch (returns the handler), calls it, and leaves through svc #0 into knl_irq_exit + 8.
  *  - FIQ, undefined instruction, prefetch and data abort: endless loops.
+ *
+ * Assembled with -DRAM2_LOAD (out/obj_ram2/, only for the hybrid link with code in RAM2, T24 round 6),
+ * reset_in_ram also copies RAM2 from flash; that build is no longer byte-identical and is not part of status.tsv.
  */
         .syntax unified
         .cpu cortex-a9
@@ -92,12 +95,30 @@ L_201000b8:
         stm r2!, {r4, r5, r6, r7, r8, sb, sl, fp}    @ 201000bc
         cmp r2, r3    @ 201000c0
         blt L_201000b8    @ 201000c4
+#ifndef RAM2_LOAD
         b L_201000e0    @ 201000c8
         andeq r0, r0, r0    @ 201000cc
         andeq r0, r0, r0    @ 201000d0
         andeq r0, r0, r0    @ 201000d4
         andeq r0, r0, r0    @ 201000d8
         andeq r0, r0, r0    @ 201000dc
+#else
+        /* the hybrid image with RAM2 (tools/display_link.py, T24 round 6): copy RAM2's bytes, which follow the
+           gap in the file (link address 0x20440000, run address 0x20440000 - r0), to 0x20920000..__ram2_end, then
+           go on as the original. The copy runs as the image's own loops do, with the MMU and the caches still off
+           (Reset_Handler's mmu_disable), so no cache maintenance is needed before the code runs [inference: the
+           image runs the code it copied the same way]. The loop is in the nine words the original branches over
+           at 0x20100104; its literals take the five padding words here. */
+        b L_ram2_copy    @ 201000c8
+L_ram2_src:
+        .word 0x20440000    @ 201000cc: link address of RAM2's bytes in the file (offset 0x340000)
+L_ram2_dst:
+        .word 0x20920000    @ 201000d0: RAM2
+L_ram2_end:
+        .word __ram2_end    @ 201000d4: end of RAM2's bytes, 32-byte aligned (display.ld)
+        andeq r0, r0, r0    @ 201000d8
+        andeq r0, r0, r0    @ 201000dc
+#endif
 L_201000e0:
         nop    @ 201000e0
 L_201000e4:
@@ -109,6 +130,7 @@ L_201000e4:
         mov r1, #0x200000    @ 201000f8
         bl mmu_set_cacheable    @ 201000fc
         b L_20100128    @ 20100100
+#ifndef RAM2_LOAD
         mov r0, #0x60000000    @ 20100104
         mov r1, #0x300000    @ 20100108
         bl mmu_set_cacheable    @ 2010010c
@@ -118,6 +140,19 @@ L_201000e4:
         ldr r0, L_20100254    @ 2010011c
         mov r1, #0x100000    @ 20100120
         bl mmu_set_cacheable    @ 20100124
+#else
+L_ram2_copy:
+        ldr r1, L_ram2_src    @ 20100104
+        sub r1, r1, r0    @ 20100108: r0 = link - run address (Reset_Handler), as for the copies above
+        ldr r2, L_ram2_dst    @ 2010010c
+        ldr r3, L_ram2_end    @ 20100110
+L_ram2_loop:
+        ldm r1!, {r4, r5, r6, r7, r8, sb, sl, fp}    @ 20100114
+        stm r2!, {r4, r5, r6, r7, r8, sb, sl, fp}    @ 20100118
+        cmp r2, r3    @ 2010011c
+        blt L_ram2_loop    @ 20100120
+        b L_201000e0    @ 20100124
+#endif
 L_20100128:
         bl mmu_enable    @ 20100128
         ldr r0, L_20100258    @ 2010012c
