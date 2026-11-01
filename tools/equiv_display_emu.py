@@ -1959,6 +1959,7 @@ def fs_spec_args(rng, args, spec):
             'e': lambda: rng.choice([vol.data_start + rng.randrange(64), rng.choice(
                 [h + rng.randrange(2) for h in args['fs_cache'].get('dir', (0, 0, 0, [0]))[3]]), rng.getrandbits(16)]),
             's': lambda: rng.randrange(1, args['fs_cache'].get('fat', (0, 1))[1] + 1),
+            'o': lambda: FS_OUT + 8,
         }[k]())
     for i, v in enumerate(vals):
         regs[i] = v
@@ -2001,6 +2002,10 @@ FS_SPECS = {
     'fs_fatcache_setup': 'DGzk', 'fs_fatcache_setup_a': 'DGzk', 'fs_fatcache_setup_b': 'DGzk',
     'fs_dircache_setup': 'DGzk', 'fatcache_lookup': 'DE', 'fatcache_load': 'DEO', 'fatcache_touch': 'Ds',
     'dircache_lookup': 'De',
+    'fs_file_size_copy': 'WO', 'fs_fsize': 'WO', 'fs_split_sectors': 'ZOoY', 'fs_disk_total_calc': 'LOo',
+    'fs_disk_size': 'LOo', 'fat32_count_free': 'DOoWR', 'fat32_count_free_locked': 'DOoWR', 'fat16_count_free': 'DOoW',
+    'fat16_count_free_locked': 'DOoW', 'fat12_count_free': 'DOoW', 'fat12_count_free_locked': 'DOoW',
+    'fs_count_free': 'LOoW', 'fs_disk_free_work': 'LOoW', 'fs_disk_free': 'LOo',
 }
 PRESETS.update({n: (lambda rng, args, sp=spec: fs_spec_args(rng, args, sp)) for n, spec in FS_SPECS.items()})
 
