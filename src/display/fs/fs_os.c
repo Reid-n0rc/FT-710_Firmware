@@ -135,9 +135,13 @@ static inline int fs_unlock(fs_lock_t *t, const fs_drive_t *d, int err)
 }
 
 /* fs_sem_a_create / fs_sem_b_create: clear the table, create five semaphores and signal each once; stops at the
- * first failure [fact] */
-static inline void fs_lock_create(fs_lock_t *t, const void *pk, const char *name)
+ * first failure. The image's functions return nothing in C terms, but fs_init tests r0 after each (0 = success)
+ * [fact: cmp r0, #0 after the calls at 0x2014A560..0x2014A5B4], and r0 is then the last itron_sig_sem result or the
+ * failed creation's id; these return that value, so that the hybrid's fs_init sees the same */
+static inline int fs_lock_create(fs_lock_t *t, const void *pk, const char *name)
 {
+    ER r = 0;
+
     fs_memset(t, 0, sizeof(fs_lock_t) * 5, 0x200);
     for (int i = 0; i < 5; i++)
     {
@@ -145,11 +149,12 @@ static inline void fs_lock_create(fs_lock_t *t, const void *pk, const char *name
 
         if (id <= 0)
         {
-            return;
+            return id;
         }
         t[i].sem = id;
-        itron_sig_sem(id);
+        r = itron_sig_sem(id);
     }
+    return r;
 }
 
 /* fs_sem_a_delete / fs_sem_b_delete: delete the five; returns the last itron_del_sem result [fact] */
@@ -178,9 +183,9 @@ int fs_unlock_a(const fs_drive_t *d)        /* 0x2014DA64: -38 */
     return fs_unlock(fs_lock_dir, d, -38);
 }
 
-void fs_sem_a_create(void)                  /* 0x2014DAD0: "dir_sem" */
+int fs_sem_a_create(void)                   /* 0x2014DAD0: "dir_sem" */
 {
-    fs_lock_create(fs_lock_dir, fs_csem_dir, fs_name_dir_sem);
+    return fs_lock_create(fs_lock_dir, fs_csem_dir, fs_name_dir_sem);
 }
 
 ER fs_sem_a_delete(void)                    /* 0x2014DB2C */
@@ -198,9 +203,9 @@ int fs_unlock_b(const fs_drive_t *d)        /* 0x2014DC10: -35 */
     return fs_unlock(fs_lock_fat, d, -35);
 }
 
-void fs_sem_b_create(void)                  /* 0x2014DC7C: "fat_sem" */
+int fs_sem_b_create(void)                   /* 0x2014DC7C: "fat_sem" */
 {
-    fs_lock_create(fs_lock_fat, fs_csem_fat, fs_name_fat_sem);
+    return fs_lock_create(fs_lock_fat, fs_csem_fat, fs_name_fat_sem);
 }
 
 ER fs_sem_b_delete(void)                    /* 0x2014DCD8 */
@@ -287,15 +292,16 @@ ER fs_sem1_signal(void)                     /* 0x2014DE5C */
     return fs_sem_filestr > 0 ? itron_sig_sem(fs_sem_filestr) : 0;
 }
 
-void fs_sem1_create(void)                   /* 0x2014DE84 */
+int fs_sem1_create(void)  /* 0x2014DE84 */
 {
     fs_sem_filestr = 0;
     ID id = os_create_sem_named(fs_csem_filestr, fs_name_filestr_sem);
-    if (id > 0)
+    if (id <= 0)
     {
-        fs_sem_filestr = id;
-        itron_sig_sem(id);
+        return id;
     }
+    fs_sem_filestr = id;
+    return itron_sig_sem(id);
 }
 
 ER fs_sem1_delete(void)                     /* 0x2014DECC */
@@ -313,15 +319,16 @@ ER fs_sem2_signal(void)                     /* 0x2014DF20 */
     return fs_sem_dirstr > 0 ? itron_sig_sem(fs_sem_dirstr) : 0;
 }
 
-void fs_sem2_create(void)                   /* 0x2014DF48 */
+int fs_sem2_create(void)  /* 0x2014DF48 */
 {
     fs_sem_dirstr = 0;
     ID id = os_create_sem_named(fs_csem_dirstr, fs_name_dirstr_sem);
-    if (id > 0)
+    if (id <= 0)
     {
-        fs_sem_dirstr = id;
-        itron_sig_sem(id);
+        return id;
     }
+    fs_sem_dirstr = id;
+    return itron_sig_sem(id);
 }
 
 ER fs_sem2_delete(void)                     /* 0x2014DF8C */
@@ -349,15 +356,16 @@ ER fsys_sem_signal(void)
     return fs_sem_fsys_result;
 }
 
-void fsys_init_sem(void)                    /* 0x2014E000 */
+int fsys_init_sem(void)  /* 0x2014E000 */
 {
     fs_sem_fsys = 0;
     ID id = os_create_sem_named(fs_csem_fsys, fs_name_fsys_sem);
-    if (id > 0)
+    if (id <= 0)
     {
-        fs_sem_fsys = id;
-        itron_sig_sem(id);
+        return id;
     }
+    fs_sem_fsys = id;
+    return itron_sig_sem(id);
 }
 
 ER fsys_sem_delete(void)                    /* 0x2014E044 */
@@ -381,27 +389,24 @@ void *fs_mpf_alloc(uint32_t size)
     return blk;
 }
 
-void fs_mpf_free(void *blk)                 /* 0x2014E0AC */
+/* the pool's release, creation and deletion leave the kernel result (or the pool id) in r0 like the functions
+ * above; returned here for the same reason [fact: the tail branches at 0x2014E0C0, 0x2014E110] */
+int fs_mpf_free(void *blk)                  /* 0x2014E0AC */
 {
-    if (fs_mpf > 0)
-    {
-        itron_rel_mpf(fs_mpf, blk);
-    }
+    return fs_mpf > 0 ? itron_rel_mpf(fs_mpf, blk) : fs_mpf;
 }
 
-void fs_mpf_create(void)                    /* 0x2014E0C8 */
+int fs_mpf_create(void)                     /* 0x2014E0C8 */
 {
     ID id = os_create_mpf_named(fs_cmpf_fsys, fs_name_fsys_mpf);
 
     fs_mpf = id > 0 ? id : 0;
+    return fs_mpf;
 }
 
-void fs_mpf_delete(void)                    /* 0x2014E100 */
+int fs_mpf_delete(void)                     /* 0x2014E100 */
 {
-    if (fs_mpf > 0)
-    {
-        itron_del_mpf(fs_mpf);
-    }
+    return fs_mpf > 0 ? itron_del_mpf(fs_mpf) : fs_mpf;
 }
 
 /* 0x2014E118 / 0x2014E14C: a work buffer of "FSYS Work" for one file-system call, and its release [fact] */

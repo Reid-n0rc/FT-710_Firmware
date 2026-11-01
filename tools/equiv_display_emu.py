@@ -2134,14 +2134,15 @@ def _ret_sizes():
 
 
 def clobbers(obj, shndx, off, size, md):
-    """Registers among r1, r2, r3, ip that the recreated code may change: every register an instruction of it writes,
-    and all four when it calls anything."""
+    """Registers among r0, r1, r2, r3, ip that the recreated code may change: every register an instruction of it
+    writes, and all five when it calls anything."""
     import capstone
     out = set()
     code = obj.section_data(shndx)[off:off + size]
     for i in md.disasm(code, off):
         if i.mnemonic in ('bl', 'blx', 'b', 'bx') and i.op_str not in ('lr',):
-            out |= {capstone.arm.ARM_REG_R1, capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3, capstone.arm.ARM_REG_R12}
+            out |= {capstone.arm.ARM_REG_R0, capstone.arm.ARM_REG_R1, capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3,
+                    capstone.arm.ARM_REG_R12}
         out |= set(i.regs_access()[1])
     return out
 
@@ -2223,10 +2224,17 @@ def abi_hazards():
     names = {capstone.arm.ARM_REG_R1: 'r1', capstone.arm.ARM_REG_R2: 'r2', capstone.arm.ARM_REG_R3: 'r3',
              capstone.arm.ARM_REG_R12: 'ip'}
     scratch = set(names)
+    # direct calls also check r0 after a void callee (round 9): armcc callers may test what a "void" function left
+    # in r0 (fs_init tests r0 after fs_sem_a_create & co., 0x2014A560); calls through a register read r0 as the
+    # result of whatever they call, so they keep the four scratch registers above
+    names_direct = dict(names)
+    names_direct[capstone.arm.ARM_REG_R0] = 'r0'
 
     def returned(fname):
         size_ret = RET_SIZE.get(fname, rets.get(fname, 4)) or 0
         r = {capstone.arm.ARM_REG_R1} if size_ret >= 8 else set()
+        if size_ret:
+            r.add(capstone.arm.ARM_REG_R0)
         if size_ret >= 16:
             r |= {capstone.arm.ARM_REG_R2, capstone.arm.ARM_REG_R3}
         return r
@@ -2240,7 +2248,7 @@ def abi_hazards():
             if i.mnemonic in ('bl', 'blx') and i.op_str.startswith('#'):
                 t = targets.get(int(i.op_str.lstrip('#'), 16) & ~1)
                 if t:
-                    hit = _reads_after(insns, k, names, t[1], returned(t[0]))
+                    hit = _reads_after(insns, k, names_direct, t[1], returned(t[0]))
                     if hit:
                         out.append((t[0], g, hit[0], hit[1], i.address))
                 continue
