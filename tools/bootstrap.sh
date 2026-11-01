@@ -405,7 +405,7 @@ build_main() {
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/entries_display.T24r5.tsv" "$G/entries_display.T24r7.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/entries_display.T24r5.tsv" "$G/entries_display.T24r7.tsv" "$G/entries_display.T24r8.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
     "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h" "$G/NameVariables.java")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
   info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs, NameVariables"
@@ -420,6 +420,7 @@ build_display() {
   # whole entries_display.tsv swaps the one-instruction entries 0x20139654 / 0x2013FE64 (T22)
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r5.tsv"
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r7.tsv"
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r8.tsv"
   # T21e (#97 B6, B8): repair the ARM jump tables the decompiler does not turn into switches; then define the undefined
   # fragments that are not code as data (reports next to the project)
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript DisplayJumpTables.java apply "$PROJ/display_jumptables.tsv"
