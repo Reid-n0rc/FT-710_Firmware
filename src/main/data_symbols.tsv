@@ -33,3 +33,61 @@ g_sci5_rx_count	1b624	R_SCI5_Serial_Receive 0xFFF947AD clears it
 g_sci5_rx_length	1b626	R_SCI5_Serial_Receive 0xFFF947AD stores the length
 gp_sci5_rx_address	20820	R_SCI5_Serial_Receive 0xFFF947AD stores the buffer
 heap_break	25d34	sbrk 0xFFF912C7 (docs/code/main/bsp.md)
+ee_mirror	464f	eeprom_load_all 0xFFFB022D reads the header to 0x464F; every save uses 0x464F + the EEPROM address (eeprom.md)
+ui_defaults_loaded	20b45	eeprom_load_all 0xFFFB0292: mov.b #1, 65[0x20B04]
+cfg105_defaults	fff8074f	settings_defaults 0xFFFB056E: smovf 0x105 bytes to 0x4659
+dest_defaults	fff80854	settings_defaults 0xFFFB057C: 3 bytes to 0x475E
+bandmem_defaults	fff80d82	settings_defaults 0xFFFB05BB: smovf 0xA0 bytes to 0x9C69
+scope_defaults	fff80e22	settings_defaults 0xFFFB05D0: smovf 0x28 bytes to 0x9C35
+vfo_state_defaults	fff80fc6	settings_defaults 0xFFFB0617: smovf 0x10 bytes to 0x9DBE
+zero_9c17_defaults	fff80fd6	settings_defaults 0xFFFB062C: smovf 30 bytes to 0x9C17
+dsp_shadow	1b634	dsp_set_demod 0xFFF9D9DF: movu.w 10[0x1B634] (reg 6); every setter compares a slot of it
+dsp_tx_reg	1b6de	dsp_send_frame 0xFFFA0B66 reads the register; the setters store it
+dsp_tx_data	1b6e0	dsp_send_frame 0xFFFA0B88 reads the value
+dsp_tx_frame	1a5e	dsp_send_frame 0xFFFA0B53 builds the frame there
+dsp_busy_write	1c5e	dsp_send_frame 0xFFFA0BA3 sets it for a write; dsp_check_reply clears it
+dsp_busy_read	1c5f	dsp_send_frame 0xFFFA0BAD sets it for a read
+menu_affft_att	9c39	dsp_set_affft_att 0xFFF9F583: 21994[0x464F] (21994 = 0x55EA)
+menu_cw_pitch	9c04	dsp_set_cw_pitch 0xFFF9F640: 21941[0x464F] (21941 = 0x55B5)
+sdr_shadow	1b736	sdr_upd_r03 0xFFFA15C9: movu.w 4[0x1B736]; every updater compares a slot of it
+sdr_tx_reg	1b784	sdr_send_frame 0xFFFA3113 reads the register
+sdr_tx_data	1b786	sdr_send_frame 0xFFFA3135 reads the value
+sdr_tx_frame	1c7f	sdr_send_frame 0xFFFA3100 builds the frame there
+sdr_busy_write	1c8b	sdr_send_frame 0xFFFA3150 sets it for a write
+sdr_busy_read	1c8c	sdr_send_frame 0xFFFA315A sets it for a read
+sdr_rx_frame	a2ac	sdr_send_cmd 0xFFFB1B44: R_SCI5_Serial_Receive(0xA2AC, 7)
+sdr_rx_done	a2b3	sdr_rx_done_cb 0xFFFB1B15 sets it
+menu_cw_wave_shape	9aa1	sdr_upd_r0d 0xFFFA18B6: 21586[0x464F]
+menu_nb_rejection	9ad2	sdr_upd_r1c 0xFFFA20B7: 21635[0x464F]
+menu_scope_rbw	9b14	sdr_upd_r23 0xFFFA299A: 21701[0x464F]
+cat_ring_in	11fec	cat_ring_head 0xFFFB1C93
+cat_ring_out	11feb	cat_ring_tail 0xFFFB1CA2, cat_ring_pop 0xFFFB1CD4
+cat_ring	1e14c	cat_ring_pop 0xFFFB1CDF: 0x1E14C + tail * 0x6A
+cat_e_slot	1b78c	cat_e9_slot 0xFFFB1D08
+cat_tx_busy_sci0	11fe8	cat_send_reply 0xFFFB1D41 (port 2), cat_tx_done_sci0 0xFFFB1D5B
+cat_tx_busy_sci2	11fe9	cat_send_reply 0xFFFB1D50 (other ports), cat_tx_done_sci2 0xFFFB1D65
+cat_tx_busy_sci3	11fea	cat_send_reply 0xFFFB1D28 (port 1), cat_tx_done_sci3 0xFFFB1D6F
+cat_reply	1c8e	cat_reply_error 0xFFFB0166
+cat_reply_len	1b788	cat_reply_error 0xFFFB0178
+cat_error	464a	cat_QS 0xFFFAD70E
+cat_ai_held	187c2	cat_ai_holdoff 0xFFFDDB74
+displink_rx_flag	a08a	displink_rx_done 0xFFFB1745 sets it, displink_rx_ready 0xFFFB171E reads it
+displink_rx_frame	9e86	displink_uart_start 0xFFFB1713: R_SCI1_Serial_Receive(0x9E86, 0x204)
+displink_tx_frame	1456	displink_tx_resend 0xFFF96211 sends it
+displink_tx_len	1b628	displink_tx_resend 0xFFF96209 reads the length
+displink_tx_sent	1b3d2	displink_send_ack 0xFFF95F34
+displink_tx_pending	1b3ce	displink_tx_start 0xFFF9C5CA
+displink_tx_acked	1b3cf	displink_tx_start 0xFFF9C5C1
+displink_hello_sent	1b3d1	displink_tx_60_hello 0xFFF96225
+displink_stage	1741	displink_tx_70 0xFFF98931: displink_copy_if_changed(0x1741, 0x1456, 0xE2)
+displink_stage_status	16a0	displink_build_20 0xFFF9C454
+g_ui_ptr	25d38	displink_tx_23 0xFFF98E39: mov.l [0x25D38], then 137[r14]
+g_ui_keyer_state	20b2f	keyer_init 0xFFFB98C8: mov.b #0, 43[0x20B04]
+keyer_msg_active	1215f	keyer_init 0xFFFB98D2
+keyer_state	120bc	keyer_init 0xFFFB98E0: sstr 0xA0 bytes
+keyer_flags	12160	keyer_state_clear 0xFFFBAFF6..0xFFFBB020
+keyer_sidetone_on	1215e	keyer_sidetone_off 0xFFFBB1C2
+menu_tuner_select	9ab8	tuner_task 0xFFFEC479: 21609[0x464F]
+atu_ac	1b3ad	atu_ac_get 0xFFFEC502
+atu_tc	1b3af	atu_tc_get 0xFFFEC511
+ptt_source	1204d	ptt_source_get 0xFFFB6EC7

@@ -10,13 +10,17 @@
 #   -fno-ipa-ra           calls to functions of the same file may go to the image's own code in the check, which
 #                         keeps only the ABI's registers (as in src/display/Makefile)
 #   -fno-tree-loop-distribute-patterns   no memset/memcpy calls for plain loops
+#   -fno-optimize-sibling-calls          a call stays BSR + RTS as CC-RX -O0 writes it: a tail call (BRA) would
+#                         run the callee 4 bytes higher on the stack, and callees that hand the address of a stack
+#                         local to a driver (R_SCIn_Serial_Send keeps it) make the stack depth observable
+#                         (T24 MAIN round 2: tuner_task)
 #   -ffreestanding -fno-builtin          the image's C library is the one that counts
 CROSS ?= rx-elf-
 CC := $(CROSS)gcc
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../..)
 OUT := out
 CFLAGS := -mcpu=rx600 -mlittle-endian-data -Os -g -ffunction-sections -fdata-sections -fno-ipa-ra \
-          -fno-tree-loop-distribute-patterns -ffreestanding -fno-builtin -fno-common -std=gnu11 \
+          -fno-tree-loop-distribute-patterns -fno-optimize-sibling-calls -ffreestanding -fno-builtin -fno-common -std=gnu11 \
           -Wall -Wextra -Wno-unused-parameter -Iinclude -I$(OUT)/include
 
 SRCS := $(wildcard lib/*.c bsp/*.c drivers/*.c app/*.c)

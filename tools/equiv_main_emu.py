@@ -72,8 +72,15 @@ BUDGET = 300000
 MIN_COVER = 0.5
 NREG = 4
 
-# Functions called with a stub instead of the image's code: name -> number of arguments to record
-STUBS = {}
+# Functions called with a stub instead of the image's code: name -> number of arguments to record. The EEPROM
+# transfers (T24 MAIN round 2): the settings store moves up to 0x5837 bytes through the bit-banged SPI, millions of
+# emulated instructions per call; its callers are compared on the calls (address, buffer, length) instead, and
+# eeprom_read/eeprom_write themselves are checked on their own (a function is never stubbed in its own check).
+STUBS = {'eeprom_read': 3, 'eeprom_write': 3}
+# Width in bytes of each recorded stub argument: only those bits reach the callee (eeprom_read/eeprom_write store
+# the 16-bit address and length with MOV.W and reload them with MOVU.W, 0xFFFB14A4/0xFFFB14ED), while CC-RX and GCC
+# leave different upper bits in the register (MOVU.W vs MOV.W)
+STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
 
 
 def read_tsv(path):
@@ -462,7 +469,39 @@ def adc_channel_args(rng, regs):
     return [], None
 
 
-PRESETS = {'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
+def buffer_args(nptr):
+    """(buffer, ..., n) functions whose callers always pass a real buffer: no NULL pointer. A NULL buffer with a
+    large n reads RAM 0.. across the stack (0xF00 down), where the original keeps its locals and the recreated
+    code does not, so the two would differ on a call that never happens (T24 MAIN round 2: sum8 with n = 0x15AB)."""
+    def pre(rng, regs):
+        for k in range(nptr):
+            if regs[k] == 0:
+                regs[k] = ARGBUF + 0x800 * k
+        return [], None
+    return pre
+
+
+def save_msg_args(rng, regs):
+    """eeprom_save_msg (type, n): the three types, n 1..5, and the rejected values next to them."""
+    regs[0] = rng.choice([0, 1, 2, 2, 3, 0xFFFFFFFF])
+    regs[1] = rng.choice([0, 1, 2, 3, 4, 5, 6, 0xFFFFFFFF])
+    return [], None
+
+
+def copy_if_changed_args(rng, regs):
+    """displink_copy_if_changed (src, dst, n): every caller passes a staging buffer (0x1741 or 0x16A0) and the frame
+    buffer 0x1456 with n <= 0x23F (displink_tx_37), so the two never overlap; random draws with n above 0x800 made
+    them overlap (trial 45 of round 2 differed there). Open: why the original's SMOVF and the byte loop disagree
+    on overlapping buffers; would be settled by a trace of such a trial."""
+    regs[0], regs[1] = ARGBUF, ARGBUF + 0x800
+    regs[2] = rng.choice([0, 1, 0x36, 0x98, 0xE2, 0x23F, rng.randrange(0, 0x800)])
+    return [], None
+
+
+PRESETS = {'eeprom_save_msg': save_msg_args, 'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
+           'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
+           'dsp_reply_sum_ok': buffer_args(1), 'sdr_check_hex_sum': buffer_args(1),
+           'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
            '__udiv64': udiv64_args, 'eeprom_read': eeprom_args, 'eeprom_write': eeprom_args,
            'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
 
@@ -477,7 +516,12 @@ def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fi
         q['trace'] = True
     if mmio_fixed:
         q['mmio_fixed'] = {str(a): v for a, v in mmio_fixed.items()}
-    return eng.send(q)
+    r = eng.send(q)
+    for c in r.get('calls', []):
+        for i, w in enumerate(STUB_WIDTHS.get(c[0], ())):
+            if 1 + i < len(c) and isinstance(c[1 + i], int):
+                c[1 + i] &= (1 << (8 * w)) - 1
+    return r
 
 
 def compare(a, b, ret, isr, init_regs):
