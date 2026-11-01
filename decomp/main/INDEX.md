@@ -79,8 +79,8 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 |---|---:|
 | Functions exported (non-thunk) | 3,793 |
 | Decompile failures | 0 |
-| Decompiler warnings (all kinds) | 1,249 |
-| Functions with a warning | 371 |
+| Decompiler warnings (all kinds) | 1,246 |
+| Functions with a warning | 368 |
 | "Unable to track spacebase" | 0 |
 | "Removing unreachable block" | 1,202 |
 | `halt_baddata()` calls | 0 |
@@ -94,7 +94,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | Error bookmarks | 1 |
 | "Bad Instruction" bookmarks | 1 |
 | warning: Do nothing block with infinite loop | 2 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 29 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 26 |
 | warning: Ignoring partial resolution of indirect | 16 |
 | warning: Removing unreachable block (#) | 1,202 |
 <!-- quality:end -->
