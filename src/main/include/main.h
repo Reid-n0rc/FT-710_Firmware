@@ -172,6 +172,9 @@ void gpo_a_set(uint8_t on);
 void gpo_b_set(uint8_t on);
 void gpo_c_set(uint8_t on);
 void gpo_d_set(uint8_t on);
+void mic_up_key_press(void);
+void mic_down_key_press(void);
+uint8_t vfo_tune_locked(uint8_t side);
 void FUN_fffbe232(void);                /* ui_softkey_dispatch(0xFF), run by cat_parse while a pop-up is shown [fact: 0xFFFBE232] */
 
 /* --- DISPLAY link (docs/code/main/display-link.md; app/display_link.c) --- */

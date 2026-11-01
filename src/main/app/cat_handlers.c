@@ -922,3 +922,58 @@ void cat_GP(const uint8_t *text, uint8_t set)
     gpo_c_set((uint8_t)hex2nib(text[4]));
     gpo_d_set((uint8_t)hex2nib(text[5]));
 }
+
+/* the radio is busy for the dial-type commands: a tune cycle, a pop-up, the TX lamp, the voice recorder (armed,
+ * busy, recording, state), a CW message being sent, the keypad [fact: the same chain in cat_UP 0xFFFA9155,
+ * cat_DN 0xFFFA9029, cat_BA 0xFFFA7018] */
+static int dial_busy(void)
+{
+    return g_ui.tune_cycle != 0 || g_ui.dialog_shown == 1 || g_ui.tx_lamp != 0 || g_ui.dvs_armed == 1 ||
+           g_ui.dvs_busy == 1 || g_ui.msg_rec_active == 1 || g_ui.dvs_state != 0 || g_ui.ky_send_0 == 1 ||
+           g_ui.ky_send_1 == 1 || g_ui.keypad_open == 1;
+}
+
+/* cat_UP 0xFFFA9155, cat_DN 0xFFFA9029: one step as the microphone UP / DOWN key (keys 0x348 / 0x34E), which also
+ * ends the channel-step mode */
+void cat_UP(void)
+{
+    if (!key_allowed(0x348, 0))
+        return;
+    if (dial_busy()) {
+        cat_error = 1;
+        return;
+    }
+    mic_up_key_press();
+    g_ui.ch_step_mode = 0;
+}
+
+void cat_DN(void)
+{
+    if (!key_allowed(0x34E, 0))
+        return;
+    if (dial_busy()) {
+        cat_error = 1;
+        return;
+    }
+    mic_down_key_press();
+    g_ui.ch_step_mode = 0;
+}
+
+/* cat_BA 0xFFFA7018: VFO-B -> VFO-A, not while busy (also with the message-memory screen open) or VFO-A's tuning
+ * is locked */
+void cat_BA(void)
+{
+    if (dial_busy() || g_ui.msgmem_open == 1) {
+        cat_error = 1;
+        return;
+    }
+    if (vfo_tune_locked(0) == 1) {
+        cat_error = 1;
+        return;
+    }
+    g_opstate.vfo_state_a = VFO_STATE_VFO;
+    vfo_rec_copy(&g_opstate.vfo_a, &g_opstate.vfo_b);
+    vfo_mark_edited(0);
+    vfo_store_back(0);
+    g_ui.freq_refresh_req = 1;
+}
