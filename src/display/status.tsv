@@ -5,7 +5,6 @@
 # counted as re-implemented; tools/readability_stats.py sums it. Rows with ghidra_name "-" have no original
 # function in decomp/display/functions.tsv (address 0: none at all; otherwise one Ghidra's list lacks).
 address	ghidra_name	size	source	file	verdict	covered	detail
-00000000	-	0	vdc5_reg_write_data_control	drivers/vdc5_reg.o	not yet	0	no original address for vdc5_reg_write_data_control (decomp/display/functions.tsv or aliases.tsv)
 18400000	FUN_18400000	1			not yet	0	
 18a00000	FUN_18a00000	1			not yet	0	
 20100000	-	0	vec_reset	startup/vectors.o	identical	0	byte-identical at the original address (44 bytes)
@@ -571,7 +570,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20117ba8	r_vdc5_display_output	108	r_vdc5_display_output	drivers/vdc5_api.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 20117c14	r_vdc5_callback_isr_checked	80	r_vdc5_callback_isr_checked	drivers/vdc5_api.o	equivalent	80	differential emulation: 200 trials agree (112 returned normally, 100% of 4 blocks reached)
 20117c64	vdc5_layer_to_wr	24	vdc5_layer_to_wr	drivers/vdc5_api.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
-20117c7c	r_vdc5_write_data_control	176	r_vdc5_write_data_control	drivers/vdc5_api.o	not yet	0	emulation: 'no address for vdc5_reg_write_data_control (add it to src/display/aliases.tsv or data_symbols.tsv)'
+20117c7c	r_vdc5_write_data_control	176	r_vdc5_write_data_control	drivers/vdc5_api.o	equivalent	176	differential emulation: 200 trials agree (93 returned normally, 100% of 9 blocks reached)
 20117d2c	r_vdc5_change_write_process	96	r_vdc5_change_write_process	drivers/vdc5_api.o	equivalent	96	differential emulation: 200 trials agree (123 returned normally, 100% of 3 blocks reached)
 20117d8c	vdc5_layer_to_gr	72	vdc5_layer_to_gr	drivers/vdc5_api.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20117dec	r_vdc5_read_data_control	112	r_vdc5_read_data_control	drivers/vdc5_api.o	equivalent	112	differential emulation: 200 trials agree (83 returned normally, 100% of 3 blocks reached)
@@ -653,7 +652,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011a20c	vdc5_set_input_cntrl_color_mtx	124	vdc5_set_input_cntrl_color_mtx	drivers/vdc5_reg.o	equivalent	124	differential emulation: 200 trials agree (151 returned normally, 83% of 6 blocks reached)
 2011a288	vdc5_ratio_one	8	vdc5_ratio_one	drivers/vdc5_reg.o	identical	8	byte-identical at the original address (8 bytes)
 2011a290	vdc5_set_scaling_down	260	vdc5_set_scaling_down	drivers/vdc5_reg.o	equivalent	260	differential emulation: 200 trials agree (141 returned normally, 100% of 9 blocks reached)
-2011a394	vdc5_reg_write_data_control	820			not yet	0	
+2011a394	vdc5_reg_write_data_control	820	vdc5_reg_write_data_control	drivers/vdc5_reg.o	equivalent	820	differential emulation: 200 trials agree (18 returned normally, 100% of 13 blocks reached)
 2011a6c8	vdc5_reg_change_write_process	312	vdc5_reg_change_write_process	drivers/vdc5_reg.o	equivalent	312	differential emulation: 200 trials agree (19 returned normally, 100% of 4 blocks reached)
 2011a800	vdc5_set_img_qa_improver_color_mtx	72	vdc5_set_img_qa_improver_color_mtx	drivers/vdc5_reg.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011a848	vdc5_set_scaler_background_color	132	vdc5_set_scaler_background_color	drivers/vdc5_reg.o	equivalent	132	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
@@ -1382,16 +1381,16 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013c7c4	usbhid_find_int_in	156			not yet	0	
 2013c860	usbhid_class_attach	336			not yet	0	
 2013c928	FUN_2013c928	56			not yet	0	
-2013c960	sd_cmd0_go_idle	112			not yet	0	
+2013c960	sd_cmd0_go_idle	112	sd_cmd0_go_idle	drivers/sd_card.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013c9d0	sd_init_v1_or_mmc	488			not yet	0	
 2013cbb8	sd_init_v2	560			not yet	0	
 2013cde8	FUN_2013cde8	256			not yet	0	
-2013cee8	sd_cmd2_all_send_cid	152			not yet	0	
-2013d0bc	sd_cmd9_send_csd	156			not yet	0	
-2013d158	sd_csd_check	104			not yet	0	
-2013d1c8	mmc_csd_check	112			not yet	0	
-2013d238	sd_cmd10_send_cid	156			not yet	0	
-2013d398	sd_cmd13_send_status	156			not yet	0	
+2013cee8	sd_cmd2_all_send_cid	152	sd_cmd2_all_send_cid	drivers/sd_card.o	equivalent	152	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013d0bc	sd_cmd9_send_csd	156	sd_cmd9_send_csd	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013d158	sd_csd_check	104	sd_csd_check	drivers/sd_card.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2013d1c8	mmc_csd_check	112	mmc_csd_check	drivers/sd_card.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013d238	sd_cmd10_send_cid	156	sd_cmd10_send_cid	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013d398	sd_cmd13_send_status	156	sd_cmd13_send_status	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013d434	sd_cmd7_select	200			not yet	0	
 2013d4fc	sd_select_card	248			not yet	0	
 2013d5f4	sd_acmd51_read_scr	336			not yet	0	
@@ -1416,16 +1415,16 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013ea74	fat32_format_write_fsinfo	332			not yet	0	
 2013ebc0	fat_format_volume_id	112			not yet	0	
 2013ec30	fat_format_write_boot	564			not yet	0	
-2013ee64	mbr_chs_head	88			not yet	0	
-2013eebc	mbr_chs_sector_cyl	128			not yet	0	
-2013ef3c	mbr_partition_type	96			not yet	0	
-2013ef9c	mbr_chs_end_head	100			not yet	0	
-2013f000	mbr_chs_end_sector_cyl	136			not yet	0	
+2013ee64	mbr_chs_head	88	mbr_chs_head	app/fat_format.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+2013eebc	mbr_chs_sector_cyl	128	mbr_chs_sector_cyl	app/fat_format.o	equivalent	128	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+2013ef3c	mbr_partition_type	96	mbr_partition_type	app/fat_format.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+2013ef9c	mbr_chs_end_head	100	mbr_chs_end_head	app/fat_format.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+2013f000	mbr_chs_end_sector_cyl	136	mbr_chs_end_sector_cyl	app/fat_format.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013f088	fat_format_write_mbr	184			not yet	0	
-2013f15c	csd_read_bl_len	36			not yet	0	
-2013f180	csd_c_size	36			not yet	0	
-2013f1a4	csd_c_size_mult	108			not yet	0	
-2013f210	fat_format_geometry_small	40			not yet	0	
+2013f15c	csd_read_bl_len	36	csd_read_bl_len	drivers/sd_card.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2013f180	csd_c_size	36	csd_c_size	drivers/sd_card.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013f1a4	csd_c_size_mult	108	csd_c_size_mult	drivers/sd_card.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2013f210	fat_format_geometry_small	40	fat_format_geometry_small	app/fat_format.o	equivalent	40	differential emulation: 200 trials agree (91 returned normally, 100% of 3 blocks reached)
 2013f238	fat_format_geometry	264			not yet	0	
 2013f340	fat_format_layout	1116			not yet	0	
 2013f79c	fat_clear_root_dir	356			not yet	0	
