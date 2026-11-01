@@ -139,6 +139,39 @@ void screensaver_timer_restart(void);
 void toupper_inplace(char *c);
 char hex2nib(uint8_t c);                /* '0'..'9', 'A'..'F', 'a'..'f' -> 0..15, else 0xFF */
 void key_dsp_press(void);
+/* used by the CAT handlers (app/cat_handlers.c) */
+char nib2hex(uint8_t n);                /* "0123456789ABCDEF"[n & 15] */
+uint8_t key_event_filter(uint16_t key, uint8_t kind);   /* 0 = the key (and its CAT command) is locked now */
+int32_t vfo_mode_is_cw(void);
+void vfo_mark_edited(uint8_t side);
+void vfo_store_back(uint8_t side);
+void key_mox_vox_press(void);
+void key_mox_vox_short(void);
+void key_mox_vox_long(void);
+void key_zin_spot_short(void);
+void power_on_request(void);
+int32_t FUN_fffe5d0e(void);             /* 0 while the scan runs upward (cat_SC) */
+uint8_t scan_allowed(void);
+void scan_start_up(void);
+void scan_start_down(void);
+void scan_stop(void);
+uint8_t meter_get_s(void);
+void split_toggle(void);
+uint8_t ptt_source_get(void);
+uint16_t popup_duration_get(uint8_t code);
+void popup_open_timed(uint16_t time);
+uint8_t ex_command(char *text, uint8_t set, uint16_t len, uint8_t *reply, uint16_t *reply_len);
+void cat_ai_holdoff(void);
+int32_t keyer_mode_class(uint8_t *rec);
+void beep_request(int32_t kind);
+uint8_t gpo_a_get(void);
+uint8_t gpo_b_get(void);
+uint8_t gpo_c_get(void);
+uint8_t gpo_d_get(void);
+void gpo_a_set(uint8_t on);
+void gpo_b_set(uint8_t on);
+void gpo_c_set(uint8_t on);
+void gpo_d_set(uint8_t on);
 void FUN_fffbe232(void);                /* ui_softkey_dispatch(0xFF), run by cat_parse while a pop-up is shown [fact: 0xFFFBE232] */
 
 /* --- DISPLAY link (docs/code/main/display-link.md; app/display_link.c) --- */

@@ -504,8 +504,11 @@ def save_msg_args(rng, regs):
 def copy_if_changed_args(rng, regs):
     """displink_copy_if_changed (src, dst, n): every caller passes a staging buffer (0x1741 or 0x16A0) and the frame
     buffer 0x1456 with n <= 0x23F (displink_tx_37), so the two never overlap; random draws with n above 0x800 made
-    them overlap (trial 45 of round 2 differed there). Open: why the original's SMOVF and the byte loop disagree
-    on overlapping buffers; would be settled by a trace of such a trial."""
+    them overlap (trial 45 of round 2 differed there). Settled in round 3 by single runs: SMOVF and the byte loop
+    give the same RAM on overlapping buffers (dst - src = 0x10 and 0x800, n up to 0xFFFF, and the same fault at
+    0x40000); the two differ only when dst..dst+n covers the original's stack frame, where it keeps its result flag
+    (1[r0] = 0xEF1, copied to R1 at 0xFFF9C6A3): dst = 0, n = 0xF00 returns 152 = the copied byte, n = 0xEE0
+    returns 1 like the recreated code. No caller passes a stack buffer."""
     regs[0], regs[1] = ARGBUF, ARGBUF + 0x800
     regs[2] = rng.choice([0, 1, 0x36, 0x98, 0xE2, 0x23F, rng.randrange(0, 0x800)])
     return [], None
@@ -632,13 +635,37 @@ DSP_SHADOW_REGS = [0, 1, 2, 3, 4, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 0
 SDR_SHADOW_REGS = [0xFFFF, 0, 1, 3, 4, 8, 9, 10, 11, 12, 13, 14, 15] + list(range(0x12, 0x17)) + list(range(0x18, 0x28)) + \
     [0x30, 0x31, 0x32, 0x33, 0x37, 2, 0x17, 0x34, 0x1234]
 
+CAT_HANDLER = re.compile(r'cat_[A-Z][A-Z0-9]$|cat_[A-Z]{2}_[A-Z]{2}$')
+
+
+def cat_handler_args(rng, regs):
+    """A CAT handler (text, set[, len]): a command text whose parameters are mostly digits, read or set form."""
+    if regs:
+        regs[0] = ARGBUF
+    if len(regs) > 1:
+        regs[1] = rng.choice([0, 1, 1])
+    if len(regs) > 2 and rng.random() < 0.8:
+        regs[2] = rng.randrange(3, 0x40)
+    return [(ARGBUF, cat_text(rng, b'XX'))], None
+
+
+def both(a, b):
+    """Two presets in turn (their loads together)."""
+    def pre(rng, regs):
+        la, _ = a(rng, regs)
+        lb, _ = b(rng, regs)
+        return la + lb, None
+    return pre
+
+
 _IMG = None      # the Image of the running Checker (cat_parse_args reads the mnemonic tables from it)
 
 PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 'cat_dispatch_ext': cat_dispatch_ext_args,
            'cat_ext_SP': cat_ext_sp_args, 'cat_parse': cat_parse_args,
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
-           'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1), 'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
+           'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
+           'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO 'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
            'dsp_reply_sum_ok': buffer_args(1), 'sdr_check_hex_sum': buffer_args(1),
            'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
@@ -759,7 +786,7 @@ class Checker:
         for t in range(trials):
             regs, loads = draw_args(rng, lk.params)
             fill = fill_globals(rng, seen_reads)
-            pre = PRESETS.get(fname)
+            pre = PRESETS.get(fname) or (cat_handler_args if CAT_HANDLER.match(fname) else None)
             mfix = None
             if pre:
                 extra, mfix = pre(rng, regs)
