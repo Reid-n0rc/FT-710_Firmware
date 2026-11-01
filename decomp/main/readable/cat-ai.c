@@ -4586,7 +4586,7 @@ void ai_ex040101(void)
 
 {
   int iVar1;
-  byte bStack_1;
+  byte i;
   
   iVar1 = strncmp(&DAT_0001b355,0x9b01,0xc);
   if (iVar1 == 0) {
@@ -4604,8 +4604,8 @@ void ai_ex040101(void)
   DAT_0001b355._1_1_ = g_opstate.ex040101_my_call[1];
   DAT_0001b355._2_1_ = g_opstate.ex040101_my_call[2];
   DAT_0001b355._3_1_ = g_opstate.ex040101_my_call[3];
-  for (bStack_1 = 0; bStack_1 < 0xc; bStack_1 = bStack_1 + 1) {
-    (&DAT_0001b23d)[bStack_1] = g_opstate.ex040101_my_call[bStack_1];
+  for (i = 0; i < 0xc; i = i + 1) {
+    (&DAT_0001b23d)[i] = g_opstate.ex040101_my_call[i];
   }
   DAT_0001b249 = 0x3b;
   DAT_0001ff12 = 0x15;
@@ -7875,31 +7875,31 @@ short ai_ex_fmt_u8(byte param_1,char param_2,int param_3)
 short ai_ex_fmt_u16_4(ushort param_1)
 
 {
-  char cVar1;
-  uint uVar2;
-  ushort uVar3;
+  char nib2hex_ret;
+  uint uVar1;
+  ushort uVar2;
   ushort local_c;
-  byte local_a;
+  byte i;
   ushort local_6;
   
   local_c = 1000;
   local_6 = param_1;
-  for (local_a = 0; local_a < 4; local_a = local_a + 1) {
-    uVar2 = (uint)local_6;
+  for (i = 0; i < 4; i = i + 1) {
+    uVar1 = (uint)local_6;
     if (local_c != 0) {
-      uVar2 = uVar2 / local_c;
+      uVar1 = uVar1 / local_c;
     }
-    uVar3 = local_6;
+    uVar2 = local_6;
     if (local_c != 0) {
-      uVar3 = local_6 / local_c;
+      uVar2 = local_6 / local_c;
     }
-    local_6 = local_6 - uVar3 * local_c;
+    local_6 = local_6 - uVar2 * local_c;
     local_c = local_c / 10;
-    cVar1 = nib2hex((byte)uVar2);
-    (&DAT_0001b23d)[local_a] = cVar1;
+    nib2hex_ret = nib2hex((byte)uVar1);
+    (&DAT_0001b23d)[i] = nib2hex_ret;
   }
-  (&DAT_0001b23d)[local_a] = 0x3b;
-  return (byte)(local_a + 1) + 8;
+  (&DAT_0001b23d)[i] = 0x3b;
+  return (byte)(i + 1) + 8;
 }
 
 

@@ -726,10 +726,10 @@ void sd_power(int param_1)
 uint sd_card_detect(void)
 
 {
-  ushort uVar1;
+  ushort port_ppr11;
   
-  uVar1 = PORT_PPR11;
-  return (uVar1 & 0x1f) >> 4;
+  port_ppr11 = PORT_PPR11;
+  return (port_ppr11 & 0x1f) >> 4;
 }
 
 
@@ -1004,8 +1004,8 @@ void backlight_pwm_init(void)
 void backlight_set_pct(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint div10_round_ret;
+  int iVar1;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -1013,12 +1013,12 @@ void backlight_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  uVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
-  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
-  if (iVar2 == 0x140) {
-    iVar2 = 0x13f;
+  div10_round_ret = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
+  iVar1 = div10_round(div10_round_ret,(int)div10_round_ret >> 0x1f);
+  if (iVar1 == 0x140) {
+    iVar1 = 0x13f;
   }
-  MTU2_TGRD_4 = (short)iVar2 + -1;
+  MTU2_TGRD_4 = (short)iVar1 + -1;
   return;
 }
 
@@ -1432,15 +1432,15 @@ uint audio_state(void)
 void play_stop(void)
 
 {
-  uint uVar1;
+  uint audio_state_ret;
   
   DAT_208000d4 = 0;
   DAT_208000ec = 0;
   DAT_208000f0 = 0;
   do {
     itron_tslp_tsk(10);
-    uVar1 = audio_state();
-  } while (uVar1 != 0);
+    audio_state_ret = audio_state();
+  } while (audio_state_ret != 0);
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
 }
@@ -1553,7 +1553,7 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
 
 {
   int iVar1;
-  uint uVar2;
+  uint audio_state_ret;
   
   if ((param_1 != 0 && param_2 != (void *)0x0) && param_3 < 0x10) {
     DAT_2081104c = 0;
@@ -1583,9 +1583,9 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
     do {
       if (iVar1 != 0) break;
       itron_tslp_tsk(10);
-      uVar2 = audio_state();
+      audio_state_ret = audio_state();
       iVar1 = DAT_208000d8;
-    } while (uVar2 != 2);
+    } while (audio_state_ret != 2);
   }
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
@@ -1603,13 +1603,13 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
 void rec_stop(void)
 
 {
-  uint uVar1;
+  uint audio_state_ret;
   
   DAT_208000d0 = 0;
   do {
     itron_tslp_tsk(10);
-    uVar1 = audio_state();
-  } while (uVar1 != 0);
+    audio_state_ret = audio_state();
+  } while (audio_state_ret != 0);
   DAT_208000b8 = DAT_208000b8 + 1;
   return;
 }
@@ -1959,8 +1959,8 @@ uint play_seek(int param_1)
 
 {
   int iVar1;
+  uint fs_fseek_ret;
   uint uVar2;
-  uint uVar3;
   
   DAT_208000c0 = param_1;
   if (DAT_208000e0 == 0) {
@@ -1969,14 +1969,14 @@ uint play_seek(int param_1)
   }
   iVar1 = sd_state_bit6();
   if (iVar1 != 0) {
-    uVar2 = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
-    uVar3 = 0;
-    if (uVar2 != 0) {
+    fs_fseek_ret = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
+    uVar2 = 0;
+    if (fs_fseek_ret != 0) {
       DAT_208000bc = fs_task_ctx_get();
       play_close();
-      uVar3 = 0xfffffffe;
+      uVar2 = 0xfffffffe;
     }
-    return uVar3;
+    return uVar2;
   }
   DAT_208000d8 = 0xffffffff;
   play_close();
@@ -2327,8 +2327,8 @@ void sdmenu_default_name(undefined4 param_1,int param_2,int param_3,int param_4)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
-  byte *pbVar4;
+  int i;
+  byte *pbVar3;
   char *local_40;
   byte abStack_3c [16];
   undefined1 local_2c [4];
@@ -2339,18 +2339,18 @@ void sdmenu_default_name(undefined4 param_1,int param_2,int param_3,int param_4)
   local_40 = (char *)(uint)local_24[0];
   sprintf(abStack_3c,"20%02X_%02X_%02X_NN",local_2c[0],local_28[0]);
   iVar2 = 0;
-  iVar3 = 0;
+  i = 0;
   if (0 < param_3) {
     do {
-      pbVar4 = (byte *)(param_2 + iVar3 * 0x10);
-      iVar1 = strlen(pbVar4);
-      if (((iVar1 == 0xd) && (iVar1 = strncmp(abStack_3c,pbVar4,0xb), iVar1 == 0)) &&
-         (iVar1 = FUN_20111374(pbVar4 + 0xb,2,&local_40), *local_40 == '\0')) {
+      pbVar3 = (byte *)(param_2 + i * 0x10);
+      iVar1 = strlen(pbVar3);
+      if (((iVar1 == 0xd) && (iVar1 = strncmp(abStack_3c,pbVar3,0xb), iVar1 == 0)) &&
+         (iVar1 = FUN_20111374(pbVar3 + 0xb,2,&local_40), *local_40 == '\0')) {
         if (iVar1 != iVar2) break;
         iVar2 = iVar2 + 1;
       }
-      iVar3 = iVar3 + 1;
-    } while (iVar3 < param_3);
+      i = i + 1;
+    } while (i < param_3);
     if (99 < iVar2) {
       iVar2 = 99;
     }
@@ -2657,37 +2657,37 @@ void adc_read_all(uint *param_1)
 
 {
   ushort uVar1;
-  ushort uVar2;
-  ushort uVar3;
-  ushort uVar4;
-  ushort uVar5;
-  ushort uVar6;
-  ushort uVar7;
+  ushort adc_addra;
+  ushort adc_addrb;
+  ushort adc_addrc;
+  ushort adc_addrf;
+  ushort adc_addrg;
+  ushort adc_addrh;
   
-  uVar1 = ADC_ADDRA;
-  uVar2 = ADC_ADDRB;
-  uVar3 = ADC_ADDRC;
-  uVar4 = ADC_ADDRD;
-  DAT_20819530 = (uint)(uVar4 >> 4);
-  uVar4 = ADC_ADDRE;
-  uVar5 = ADC_ADDRF;
-  uVar6 = ADC_ADDRG;
-  uVar7 = ADC_ADDRH;
-  DAT_20819524 = (uint)(uVar1 >> 4);
-  DAT_20819528 = (uint)(uVar2 >> 4);
-  DAT_2081952c = (uint)(uVar3 >> 4);
-  DAT_20819534 = (uint)(uVar4 >> 4);
-  DAT_20819538 = (uint)(uVar5 >> 4);
-  DAT_2081953c = (uint)(uVar6 >> 4);
-  DAT_20819540 = (uint)(uVar7 >> 4);
+  adc_addra = ADC_ADDRA;
+  adc_addrb = ADC_ADDRB;
+  adc_addrc = ADC_ADDRC;
+  uVar1 = ADC_ADDRD;
+  DAT_20819530 = (uint)(uVar1 >> 4);
+  uVar1 = ADC_ADDRE;
+  adc_addrf = ADC_ADDRF;
+  adc_addrg = ADC_ADDRG;
+  adc_addrh = ADC_ADDRH;
+  DAT_20819524 = (uint)(adc_addra >> 4);
+  DAT_20819528 = (uint)(adc_addrb >> 4);
+  DAT_2081952c = (uint)(adc_addrc >> 4);
+  DAT_20819534 = (uint)(uVar1 >> 4);
+  DAT_20819538 = (uint)(adc_addrf >> 4);
+  DAT_2081953c = (uint)(adc_addrg >> 4);
+  DAT_20819540 = (uint)(adc_addrh >> 4);
   param_1[3] = DAT_20819530;
-  param_1[4] = (uint)(uVar4 >> 4);
-  param_1[6] = (uint)(uVar6 >> 4);
-  param_1[7] = (uint)(uVar7 >> 4);
-  param_1[5] = (uint)(uVar5 >> 4);
-  param_1[2] = (uint)(uVar3 >> 4);
-  *param_1 = (uint)(uVar1 >> 4);
-  param_1[1] = (uint)(uVar2 >> 4);
+  param_1[4] = (uint)(uVar1 >> 4);
+  param_1[6] = (uint)(adc_addrg >> 4);
+  param_1[7] = (uint)(adc_addrh >> 4);
+  param_1[5] = (uint)(adc_addrf >> 4);
+  param_1[2] = (uint)(adc_addrc >> 4);
+  *param_1 = (uint)(adc_addra >> 4);
+  param_1[1] = (uint)(adc_addrb >> 4);
   return;
 }
 
@@ -2723,7 +2723,7 @@ void adc_start_scan(void)
 void dimmer_pwm_init(void)
 
 {
-  byte bVar1;
+  byte mtu2_tstr;
   
   MTU2_TCR_0 = 0x22;
   MTU2_TCNT_0 = 0;
@@ -2733,8 +2733,8 @@ void dimmer_pwm_init(void)
   MTU2_TGRD_0 = 0;
   MTU2_TIORH_0 = 0x12;
   MTU2_TMDR_0 = 2;
-  bVar1 = MTU2_TSTR;
-  MTU2_TSTR = bVar1 | 1;
+  mtu2_tstr = MTU2_TSTR;
+  MTU2_TSTR = mtu2_tstr | 1;
   return;
 }
 
@@ -2752,8 +2752,8 @@ void dimmer_pwm_init(void)
 void dimmer_set_pct(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint div10_round_ret;
+  int iVar1;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -2761,12 +2761,12 @@ void dimmer_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  uVar1 = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
-  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
-  if (iVar2 == 20000) {
-    iVar2 = 19999;
+  div10_round_ret = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
+  iVar1 = div10_round(div10_round_ret,(int)div10_round_ret >> 0x1f);
+  if (iVar1 == 20000) {
+    iVar1 = 19999;
   }
-  MTU2_TGRB_0 = (short)iVar2 + -1;
+  MTU2_TGRB_0 = (short)iVar1 + -1;
   return;
 }
 
@@ -2821,14 +2821,14 @@ void dimmer_init(void)
 void rtc_delay(void)
 
 {
-  int iVar1;
-  bool bVar2;
+  int i;
+  bool bVar1;
   
-  iVar1 = 0x14;
+  i = 0x14;
   do {
-    bVar2 = iVar1 != 0;
-    iVar1 = iVar1 + -1;
-  } while (bVar2);
+    bVar1 = i != 0;
+    i = i + -1;
+  } while (bVar1);
   return;
 }
 
@@ -2844,9 +2844,9 @@ void rtc_delay(void)
 void rtc_send_byte(uint param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 0;
+  i = 0;
   do {
     PORT_PSR1 = 0x20000;
     if ((param_1 & 1) == 0) {
@@ -2859,8 +2859,8 @@ void rtc_send_byte(uint param_1)
     PORT_PSR1 = 0x20002;
     param_1 = param_1 >> 1;
     rtc_delay();
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 8);
+    i = i + 1;
+  } while (i < 8);
   return;
 }
 
@@ -2895,27 +2895,27 @@ void rtc_send_bytes(void *param_1,int param_2)
 byte rtc_recv_byte(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  int iVar3;
+  uint uVar1;
+  int i;
+  ushort port_ppr1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   rtc_dt_input();
-  iVar3 = 0;
+  i = 0;
   do {
-    uVar2 = uVar2 >> 1;
+    uVar1 = uVar1 >> 1;
     PORT_PSR1 = 0x20000;
     rtc_delay();
-    uVar1 = PORT_PPR1;
+    port_ppr1 = PORT_PPR1;
     PORT_PSR1 = 0x20002;
-    if ((uVar1 & 1) != 0) {
-      uVar2 = uVar2 | 0x80;
+    if ((port_ppr1 & 1) != 0) {
+      uVar1 = uVar1 | 0x80;
     }
     rtc_delay();
-    iVar3 = iVar3 + 1;
-  } while (iVar3 < 8);
+    i = i + 1;
+  } while (i < 8);
   rtc_dt_output();
-  return (byte)uVar2;
+  return (byte)uVar1;
 }
 
 
@@ -2930,11 +2930,11 @@ byte rtc_recv_byte(void)
 void rtc_recv_bytes(void *param_1,int param_2)
 
 {
-  byte bVar1;
+  byte rtc_recv_byte_ret;
   
   for (; param_2 != 0; param_2 = param_2 + -1) {
-    bVar1 = rtc_recv_byte();
-    *(byte *)param_1 = bVar1;
+    rtc_recv_byte_ret = rtc_recv_byte();
+    *(byte *)param_1 = rtc_recv_byte_ret;
     param_1 = (byte *)((int)param_1 + 1);
   }
   return;
@@ -2954,18 +2954,18 @@ void rtc_recv_bytes(void *param_1,int param_2)
 byte rtc_read_reg(uint param_1)
 
 {
-  byte bVar1;
+  byte rtc_recv_byte_ret;
   
   itron_tloc_mtx(DAT_20800368,0xffffffff);
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(param_1 | 0x86);
-  bVar1 = rtc_recv_byte();
+  rtc_recv_byte_ret = rtc_recv_byte();
   rtc_delay();
   PORT_PSR1 = 0x40000;
   itron_unl_mtx(DAT_20800368);
   rtc_delay();
-  return bVar1;
+  return rtc_recv_byte_ret;
 }
 
 
@@ -3452,10 +3452,10 @@ void cpg_early_init(void)
 bool gpio_p8_12_high(void)
 
 {
-  uint uVar1;
+  uint gpio_read_bit_ret;
   
-  uVar1 = gpio_read_bit(8,0xc);
-  return uVar1 != 0;
+  gpio_read_bit_ret = gpio_read_bit(8,0xc);
+  return gpio_read_bit_ret != 0;
 }
 
 
@@ -3686,20 +3686,20 @@ uint ostm_time_us(void)
 
 {
   uint uVar1;
-  byte bVar2;
-  int iVar3;
+  int iVar2;
+  byte ostm_ostm0te;
   
   uVar1 = DAT_20800408;
-  iVar3 = OSTM_OSTM0CNT;
-  bVar2 = OSTM_OSTM0TE;
-  iVar3 = 320000 - iVar3;
-  if ((bVar2 & 1) != 0) {
+  iVar2 = OSTM_OSTM0CNT;
+  ostm_ostm0te = OSTM_OSTM0TE;
+  iVar2 = 320000 - iVar2;
+  if ((ostm_ostm0te & 1) != 0) {
     uVar1 = DAT_e8205580;
     if ((uVar1 & 0x40) != 0) {
-      iVar3 = OSTM_OSTM0CNT;
-      iVar3 = 640000 - iVar3;
+      iVar2 = OSTM_OSTM0CNT;
+      iVar2 = 640000 - iVar2;
     }
-    return DAT_20800408 + ((uint)(iVar3 * 1000) / 320000) * 10;
+    return DAT_20800408 + ((uint)(iVar2 * 1000) / 320000) * 10;
   }
   DAT_20800408 = DAT_20800408 + 1;
   return uVar1 / 3;
@@ -3719,17 +3719,17 @@ uint ostm_time_us(void)
 void delay_us(uint param_1)
 
 {
-  uint uVar1;
-  uint uVar2;
+  uint ostm_time_us_ret;
+  uint ostm_time_us_ret_2;
   
   if ((int)param_1 < 0) {
     DAT_20800408 = 0;
     return;
   }
-  uVar1 = ostm_time_us();
+  ostm_time_us_ret = ostm_time_us();
   do {
-    uVar2 = ostm_time_us();
-  } while (uVar2 - uVar1 < param_1);
+    ostm_time_us_ret_2 = ostm_time_us();
+  } while (ostm_time_us_ret_2 - ostm_time_us_ret < param_1);
   return;
 }
 
@@ -5150,11 +5150,11 @@ void userdef_riic3_wait_bus_master(int param_1)
 void userdef_riic0_wait_stop(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8((byte *)&RIIC_RIIC0SR2,3,8);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8((byte *)&RIIC_RIIC0SR2,3,8);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -5173,11 +5173,11 @@ void userdef_riic0_wait_stop(void)
 void userdef_riic1_wait_stop(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8((byte *)&RIIC_RIIC1SR2,3,8);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8((byte *)&RIIC_RIIC1SR2,3,8);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -5196,11 +5196,11 @@ void userdef_riic1_wait_stop(void)
 void userdef_riic2_wait_stop(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8((byte *)&RIIC_RIIC2SR2,3,8);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8((byte *)&RIIC_RIIC2SR2,3,8);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -5219,11 +5219,11 @@ void userdef_riic2_wait_stop(void)
 void userdef_riic3_wait_stop(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8((byte *)&RIIC_RIIC3SR2,3,8);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8((byte *)&RIIC_RIIC3SR2,3,8);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -5297,13 +5297,13 @@ void riic0_ti_isr(void)
 undefined4 riic0_tei_isr(void)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   undefined4 in_r3;
   
   userdef_riic0_set_tx_end(0);
-  pvVar1 = riic_base(0);
-  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
-  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
+  riic_base_ret = riic_base(0);
+  reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
   return 0;
 }
 
@@ -5373,13 +5373,13 @@ void riic1_ti_isr(void)
 undefined4 riic1_tei_isr(void)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   undefined4 in_r3;
   
   userdef_riic1_set_tx_end();
-  pvVar1 = riic_base(1);
-  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
-  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
+  riic_base_ret = riic_base(1);
+  reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
   return 0;
 }
 
@@ -5448,13 +5448,13 @@ void riic2_ti_isr(void)
 undefined4 riic2_tei_isr(void)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   undefined4 in_r3;
   
   userdef_riic2_set_tx_end();
-  pvVar1 = riic_base(2);
-  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
-  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
+  riic_base_ret = riic_base(2);
+  reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
   return 0;
 }
 
@@ -5521,13 +5521,13 @@ void riic3_ti_isr(void)
 undefined4 riic3_tei_isr(void)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   undefined4 in_r3;
   
   userdef_riic3_set_tx_end();
-  pvVar1 = riic_base(3);
-  reg_rmw8((int)pvVar1 + 0x24,0,6,0x40,in_r3);
-  reg_read8((byte *)((int)pvVar1 + 0x24),6,0x40);
+  riic_base_ret = riic_base(3);
+  reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,in_r3);
+  reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
   return 0;
 }
 
@@ -5617,11 +5617,11 @@ void * riic_base(int param_1)
 void riic_transmit_stop(int param_1)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
-  pvVar1 = riic_base(param_1);
-  reg_rmw8((int)pvVar1 + 0x24,0,3,8);
-  reg_rmw8((int)pvVar1 + 4,1,3,8);
+  riic_base_ret = riic_base(param_1);
+  reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
+  reg_rmw8((int)riic_base_ret + 4,1,3,8);
   return;
 }
 
@@ -5641,7 +5641,7 @@ void riic_transmit_stop(int param_1)
 void riic_transmit_restart(int param_1)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(1);
@@ -5667,8 +5667,8 @@ void riic_transmit_restart(int param_1)
     userdef_riic3_init_tx_empty();
     userdef_riic3_init_tx_end(0);
   }
-  pvVar1 = riic_base(param_1);
-  reg_rmw8((int)pvVar1 + 4,1,2,4);
+  riic_base_ret = riic_base(param_1);
+  reg_rmw8((int)riic_base_ret + 4,1,2,4);
   return;
 }
 
@@ -5688,7 +5688,7 @@ void riic_transmit_restart(int param_1)
 void riic_transmit_start(int param_1)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(0);
@@ -5714,8 +5714,8 @@ void riic_transmit_start(int param_1)
     userdef_riic3_init_tx_empty();
     userdef_riic3_init_tx_end(0);
   }
-  pvVar1 = riic_base(param_1);
-  reg_rmw8((int)pvVar1 + 4,1,1,2);
+  riic_base_ret = riic_base(param_1);
+  reg_rmw8((int)riic_base_ret + 4,1,1,2);
   return;
 }
 
@@ -5766,14 +5766,14 @@ undefined4 R_RIIC_SendCond(uint param_1,uint param_2)
 undefined4 riic_transmit(int param_1,undefined1 param_2)
 
 {
-  byte bVar1;
-  void *pvVar2;
-  undefined4 uVar3;
+  byte reg_read8_ret;
+  void *riic_base_ret;
+  undefined4 uVar1;
   
-  pvVar2 = riic_base(param_1);
-  bVar1 = reg_read8((byte *)((int)pvVar2 + 0x24),4,0x10);
-  if (bVar1 == 0) {
-    uVar3 = 0;
+  riic_base_ret = riic_base(param_1);
+  reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
+  if (reg_read8_ret == 0) {
+    uVar1 = 0;
     if (param_1 == 0) {
       userdef_riic0_wait_tx_empty();
       userdef_riic0_init_tx_empty();
@@ -5790,12 +5790,12 @@ undefined4 riic_transmit(int param_1,undefined1 param_2)
       userdef_riic3_wait_tx_empty();
       userdef_riic3_init_tx_empty();
     }
-    *(undefined1 *)((int)pvVar2 + 0x3c) = param_2;
+    *(undefined1 *)((int)riic_base_ret + 0x3c) = param_2;
   }
   else {
-    uVar3 = 0xfffffffe;
+    uVar1 = 0xfffffffe;
   }
-  return uVar3;
+  return uVar1;
 }
 
 
@@ -5815,13 +5815,13 @@ undefined4 riic_transmit(int param_1,undefined1 param_2)
 int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
 
 {
-  byte bVar1;
-  int iVar2;
-  void *pvVar3;
+  byte reg_read8_ret;
+  int iVar1;
+  void *riic_base_ret;
   
   if ((param_1 < 4) && (param_3 < 2)) {
-    iVar2 = riic_transmit(param_1,param_2);
-    if (iVar2 == 0) {
+    iVar1 = riic_transmit(param_1,param_2);
+    if (iVar1 == 0) {
       if (param_1 == 0) {
         userdef_riic0_wait_tx_end(param_3);
         userdef_riic0_init_tx_end(param_3);
@@ -5838,13 +5838,13 @@ int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
         userdef_riic3_wait_tx_end(param_3);
         userdef_riic3_init_tx_end(param_3);
       }
-      pvVar3 = riic_base(param_1);
-      bVar1 = reg_read8((byte *)((int)pvVar3 + 0x24),4,0x10);
-      if (bVar1 != 0) {
-        iVar2 = -2;
+      riic_base_ret = riic_base(param_1);
+      reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
+      if (reg_read8_ret != 0) {
+        iVar1 = -2;
       }
     }
-    return iVar2;
+    return iVar1;
   }
   return -1;
 }
@@ -5865,26 +5865,26 @@ int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
 int R_RIIC_Write(uint param_1,int param_2,uint param_3)
 
 {
-  byte bVar1;
-  int iVar2;
-  void *pvVar3;
-  uint uVar4;
+  byte reg_read8_ret;
+  int iVar1;
+  void *riic_base_ret;
+  uint i;
   
   if (3 < param_1) {
     return -1;
   }
   if (param_3 == 0) {
-    iVar2 = 0;
+    iVar1 = 0;
   }
   else {
-    uVar4 = 0;
+    i = 0;
     do {
-      iVar2 = riic_transmit(param_1,*(undefined1 *)(param_2 + uVar4));
-      if (iVar2 != 0) {
-        return iVar2;
+      iVar1 = riic_transmit(param_1,*(undefined1 *)(param_2 + i));
+      if (iVar1 != 0) {
+        return iVar1;
       }
-      uVar4 = uVar4 + 1;
-    } while (uVar4 < param_3);
+      i = i + 1;
+    } while (i < param_3);
     if (param_1 == 0) {
       userdef_riic0_wait_tx_end(0);
       userdef_riic0_init_tx_end(0);
@@ -5901,14 +5901,14 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
       userdef_riic3_wait_tx_end(0);
       userdef_riic3_init_tx_end(0);
     }
-    pvVar3 = riic_base(param_1);
-    bVar1 = reg_read8((byte *)((int)pvVar3 + 0x24),4,0x10);
-    iVar2 = 0;
-    if (bVar1 != 0) {
-      iVar2 = -2;
+    riic_base_ret = riic_base(param_1);
+    reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
+    iVar1 = 0;
+    if (reg_read8_ret != 0) {
+      iVar1 = -2;
     }
   }
-  return iVar2;
+  return iVar1;
 }
 
 
@@ -5944,7 +5944,7 @@ void riic_clear_nack(int param_1)
 void riic_detect_stop(int param_1)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
   if (param_1 == 0) {
     userdef_riic0_wait_stop();
@@ -5958,9 +5958,9 @@ void riic_detect_stop(int param_1)
   else if (param_1 == 3) {
     userdef_riic3_wait_stop();
   }
-  pvVar1 = riic_base(param_1);
+  riic_base_ret = riic_base(param_1);
   riic_clear_nack();
-  reg_rmw8((int)pvVar1 + 0x24,0,3,8);
+  reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
   return;
 }
 
@@ -5980,7 +5980,7 @@ void riic_detect_stop(int param_1)
 void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
   if (param_1 == 0) {
     userdef_riic0_wait_rx_full();
@@ -5998,23 +5998,23 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
     userdef_riic3_wait_rx_full();
     userdef_riic3_init_rx_full();
   }
-  pvVar1 = riic_base(param_1);
+  riic_base_ret = riic_base(param_1);
   switch(param_2) {
   case 1:
-    reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
-    reg_rmw8((int)pvVar1 + 0x10,0,3,8);
+    reg_rmw8((int)riic_base_ret + 0x10,1,4,0x10);
+    reg_rmw8((int)riic_base_ret + 0x10,0,3,8);
     break;
   case 2:
-    reg_rmw8((int)pvVar1 + 0x10,1,6,0x40);
+    reg_rmw8((int)riic_base_ret + 0x10,1,6,0x40);
     break;
   case 3:
-    reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
-    reg_rmw8((int)pvVar1 + 0x10,1,3,8);
+    reg_rmw8((int)riic_base_ret + 0x10,1,4,0x10);
+    reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     break;
   case 4:
     riic_transmit_stop(param_1);
   }
-  *param_3 = *(undefined1 *)((int)pvVar1 + 0x40);
+  *param_3 = *(undefined1 *)((int)riic_base_ret + 0x40);
   return;
 }
 
@@ -6054,17 +6054,17 @@ void riic_receive_dummy(uint param_1)
 undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
 
 {
-  void *pvVar1;
+  void *riic_base_ret;
   
   if (3 < param_1) {
     return 0xffffffff;
   }
   if (param_3 != 0) {
-    pvVar1 = riic_base(param_1);
+    riic_base_ret = riic_base(param_1);
     if (param_3 == 1) {
-      reg_rmw8((int)pvVar1 + 0x10,1,6,0x40);
-      reg_rmw8((int)pvVar1 + 0x10,1,4,0x10);
-      reg_rmw8((int)pvVar1 + 0x10,1,3,8);
+      reg_rmw8((int)riic_base_ret + 0x10,1,6,0x40);
+      reg_rmw8((int)riic_base_ret + 0x10,1,4,0x10);
+      reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     }
     riic_receive_dummy(param_1);
     if (param_3 != 1) {
@@ -6080,7 +6080,7 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
       param_2 = param_2 + 1;
     }
     riic_receive(param_1,4,param_2);
-    reg_rmw8((int)pvVar1 + 0x10,0,6,0x40);
+    reg_rmw8((int)riic_base_ret + 0x10,0,6,0x40);
     riic_detect_stop(param_1);
     return 0;
   }
@@ -6255,7 +6255,7 @@ R_RIIC_TeiInterrupt(uint param_1,undefined4 param_2,undefined4 param_3,undefined
 
 {
   undefined4 uVar1;
-  void *pvVar2;
+  void *riic_base_ret;
   
   if (param_1 < 4) {
     if (param_1 == 0) {
@@ -6270,9 +6270,9 @@ R_RIIC_TeiInterrupt(uint param_1,undefined4 param_2,undefined4 param_3,undefined
     else if (param_1 == 3) {
       userdef_riic3_set_tx_end();
     }
-    pvVar2 = riic_base(param_1);
-    reg_rmw8((int)pvVar2 + 0x24,0,6,0x40,param_4);
-    reg_read8((byte *)((int)pvVar2 + 0x24),6,0x40);
+    riic_base_ret = riic_base(param_1);
+    reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,param_4);
+    reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
     uVar1 = 0;
   }
   else {
@@ -6297,31 +6297,31 @@ void dsp_rx_done_cb(void)
 
 {
   byte bVar1;
+  undefined1 *dsp_hdr_buf_ret;
   undefined1 *puVar2;
-  undefined1 *puVar3;
   
   cycle_delta_2(&DAT_208f4dc8);
   DAT_208f4da4 = DAT_208f4da4 + 1;
   DAT_208085a0 = DAT_208085a0 + 1;
-  puVar3 = &DAT_60502000;
+  puVar2 = &DAT_60502000;
   if (DAT_2080858c == '\0') {
     afscope_store_frame(&DAT_60502000);
-    puVar2 = dsp_hdr_buf();
-    *puVar2 = DAT_60502000;
-    puVar2[1] = DAT_60502001;
-    puVar2[2] = DAT_60502002;
-    puVar2[3] = DAT_60502003;
+    dsp_hdr_buf_ret = dsp_hdr_buf();
+    *dsp_hdr_buf_ret = DAT_60502000;
+    dsp_hdr_buf_ret[1] = DAT_60502001;
+    dsp_hdr_buf_ret[2] = DAT_60502002;
+    dsp_hdr_buf_ret[3] = DAT_60502003;
   }
   else {
     afscope_store_frame(&DAT_60503450);
-    puVar3 = dsp_hdr_buf();
-    *puVar3 = DAT_60503450;
-    puVar3[1] = DAT_60503451;
-    puVar3[2] = DAT_60503452;
-    puVar3[3] = DAT_60503453;
-    puVar3 = &DAT_60503450;
+    puVar2 = dsp_hdr_buf();
+    *puVar2 = DAT_60503450;
+    puVar2[1] = DAT_60503451;
+    puVar2[2] = DAT_60503452;
+    puVar2[3] = DAT_60503453;
+    puVar2 = &DAT_60503450;
   }
-  dsp_set_audio_ptr((int)(puVar3 + 600));
+  dsp_set_audio_ptr((int)(puVar2 + 600));
   dmac4_disable();
   rspi_stop(4);
   bVar1 = RSPI_SPSR_4;

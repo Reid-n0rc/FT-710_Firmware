@@ -1329,9 +1329,9 @@ undefined4 rx_audio_fifo_pop(int param_1)
 {
   undefined6 uVar1;
   byte bVar2;
-  int iVar3;
+  int i;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1340,10 +1340,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
   undefined1 in_st_PSOWB;
   
   if (0xb < DAT_00257320) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1352,10 +1352,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar3 = 0;
+    i = 0;
     do {
       memcpy(param_1,&DAT_00256a20 + (uint)DAT_00257322 * 0x60,0x60);
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       param_1 = param_1 + 0x60;
       DAT_00257320 = DAT_00257320 - 1;
       bVar2 = 0;
@@ -1363,10 +1363,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
         bVar2 = DAT_00257322 + 1;
       }
       DAT_00257322 = bVar2;
-    } while (iVar3 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1384,10 +1384,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
 
 {
   undefined6 uVar1;
-  int iVar2;
-  char cVar3;
+  int i;
+  char cVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1397,10 +1397,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
   
   param_1 = param_1 * (int)&DAT_00000908;
   if ((byte)(&DAT_002580f0)[param_1] < 0xd) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1409,21 +1409,21 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar2 = 0;
+    i = 0;
     do {
       memcpy(&DAT_002577f0 + (uint)(byte)(&DAT_002580f1)[param_1] * 0x60 + param_1,param_2,0x60);
-      iVar2 = iVar2 + 1;
+      i = i + 1;
       param_2 = param_2 + 0x60;
-      cVar3 = '\0';
+      cVar2 = '\0';
       if ((byte)(&DAT_002580f1)[param_1] < 0x17) {
-        cVar3 = (&DAT_002580f1)[param_1] + 1;
+        cVar2 = (&DAT_002580f1)[param_1] + 1;
       }
-      (&DAT_002580f1)[param_1] = cVar3;
+      (&DAT_002580f1)[param_1] = cVar2;
       (&DAT_002580f0)[param_1] = (&DAT_002580f0)[param_1] + '\x01';
-    } while (iVar2 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -2346,24 +2346,24 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar5;
   undefined8 uVar6;
   undefined8 uVar7;
-  int iVar8;
+  int i;
+  undefined8 uVar8;
   undefined8 uVar9;
-  undefined8 uVar10;
   
   if (DAT_0025af40 != DAT_2007800e) {
     DAT_0025af40 = DAT_2007800e;
     scl_int2float(DAT_2007800e,0xfffffff8);
     DAT_0025af44 = ae_s32_l_i((ulonglong)(uint)(in_aed0 * 7500.0 * 8.726647e-05));
   }
-  uVar10 = const_s(0);
-  iVar8 = 0;
+  uVar9 = const_s(0);
+  i = 0;
   uVar4 = 0x40c90fdb;
   do {
     uVar7 = ae_l32_i(DAT_0025af44);
-    uVar9 = ae_l32_i(*param_1);
+    uVar8 = ae_l32_i(*param_1);
     uVar6 = ae_l32_i(&DAT_40060a92);
     uVar5 = ae_l32_i(DAT_0025af48);
-    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar9 * (float)uVar7 + (float)uVar6);
+    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar8 * (float)uVar7 + (float)uVar6);
     uVar2 = olt_s(uVar4,uVar3);
     DAT_0025af48 = ae_s32_l_i(uVar3);
     if (SUB21(uVar2,0)) {
@@ -2374,11 +2374,11 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
-    uVar2 = olt_s(uVar3,uVar10);
+    uVar2 = olt_s(uVar3,uVar9);
     if (SUB21(uVar2,0)) {
       do {
         uVar3 = (ulonglong)(uint)((float)uVar3 + (float)uVar4);
-        uVar2 = olt_s(uVar3,uVar10);
+        uVar2 = olt_s(uVar3,uVar9);
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
@@ -2388,9 +2388,9 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
     param_2 = param_2 + 1;
     param_1 = param_1 + 1;
     uVar4 = ae_l32_i(0x40c90fdb);
-    iVar8 = iVar8 + 1;
-    uVar10 = ae_l32_i(0);
-  } while (iVar8 != 0x18);
+    i = i + 1;
+    uVar9 = ae_l32_i(0);
+  } while (i != 0x18);
   return;
 }
 
@@ -2687,11 +2687,11 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar4;
   undefined8 uVar5;
   undefined8 uVar6;
-  int iVar7;
-  undefined8 uVar8;
+  int i;
+  undefined8 uVar7;
   
   tx_alc_update();
-  iVar7 = 0;
+  i = 0;
   if (DAT_0025b5c8 == 0) {
     if (param_1 != param_2) {
       memcpy(param_2,param_1,0x60);
@@ -2704,11 +2704,11 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar6 = ae_l32_i(DAT_0025b5e8);
       uVar2 = ole_s(uVar6,(ulonglong)(uint)ABS((float)uVar4));
       uVar5 = ae_l32_i(DAT_0025b5e4);
-      uVar8 = ae_l32_i(DAT_0025b5e0);
-      uVar5 = movt_s(uVar8,uVar5,(char)uVar2);
-      uVar8 = ae_l32_i(0x3f800000);
+      uVar7 = ae_l32_i(DAT_0025b5e0);
+      uVar5 = movt_s(uVar7,uVar5,(char)uVar2);
+      uVar7 = ae_l32_i(0x3f800000);
       uVar3 = (ulonglong)
-              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar8 - (float)uVar5)
+              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar7 - (float)uVar5)
                     );
       uVar4 = ae_l32_i(DAT_0025b5dc);
       uVar2 = ole_s(uVar4,uVar3);
@@ -2722,8 +2722,8 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * (float)uVar4));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar7 = iVar7 + 1;
-    } while (iVar7 != 0x18);
+      i = i + 1;
+    } while (i != 0x18);
     tx_alc_meter_to_reg2();
   }
   return;
@@ -2900,9 +2900,9 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
   float fVar7;
   uint uVar8;
   undefined8 uVar9;
-  int iVar10;
-  undefined8 uVar11;
-  ulonglong uVar12;
+  int i;
+  undefined8 uVar10;
+  ulonglong uVar11;
   
   DAT_0025b9ca = DAT_20078034;
   uVar8 = (uint)DAT_20078036;
@@ -2981,7 +2981,7 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
     }
     DAT_0025b9e8 = ae_s32_l_i(uVar5);
   }
-  iVar10 = 4;
+  i = 4;
   if (DAT_0025b9ca == 0) {
     if (param_1 != param_2) {
       memcpy(param_2,param_1,0x10);
@@ -2997,25 +2997,25 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       fVar6 = (float)uVar5;
       scl_log10f();
       uVar9 = ae_l32_i(DAT_0025b9d4);
-      uVar11 = ae_l32_i(DAT_0025b9cc);
+      uVar10 = ae_l32_i(DAT_0025b9cc);
       uVar5 = ae_l32_i(0x41a00000);
-      fVar7 = (float)uVar11;
+      fVar7 = (float)uVar10;
       fVar6 = fVar6 * (float)uVar5;
-      uVar12 = (ulonglong)(uint)fVar6;
-      uVar4 = olt_s(uVar12,(ulonglong)(uint)(fVar7 - (float)uVar9));
+      uVar11 = (ulonglong)(uint)fVar6;
+      uVar4 = olt_s(uVar11,(ulonglong)(uint)(fVar7 - (float)uVar9));
       uVar5 = ae_l32_i(DAT_0025b9e8);
       if (SUB21(uVar4,0)) {
-        uVar5 = ae_mov(uVar12);
+        uVar5 = ae_mov(uVar11);
         fVar7 = (float)uVar5;
       }
       else {
-        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar12);
+        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar11);
         if (SUB21(uVar4,0)) {
           fVar7 = fVar7 + (float)uVar5 * (fVar6 - fVar7);
         }
         else {
           uVar2 = ae_s32_l_i(uVar5);
-          uVar1 = ae_s32_l_i(uVar12);
+          uVar1 = ae_s32_l_i(uVar11);
           uVar9 = __extendsfdf2();
           uVar3 = (undefined4)((ulonglong)uVar9 >> 0x20);
           uVar5 = ae_l32_i(uVar2);
@@ -3034,10 +3034,10 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar9 = ae_l32_i(DAT_0025b9f0);
       uVar4 = ole_s((ulonglong)(uint)(fVar7 - fVar6),uVar9);
       uVar5 = ae_l32_i(DAT_0025b9e0);
-      uVar11 = ae_l32_i(DAT_0025b9dc);
-      uVar5 = movt_s(uVar5,uVar11,(char)uVar4);
-      uVar11 = ae_l32_i(0x3f800000);
-      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar11 - (float)uVar5);
+      uVar10 = ae_l32_i(DAT_0025b9dc);
+      uVar5 = movt_s(uVar5,uVar10,(char)uVar4);
+      uVar10 = ae_l32_i(0x3f800000);
+      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar10 - (float)uVar5);
       uVar5 = ae_l32_i(0x3d4ccccd);
       DAT_0025b9f0 = ae_s32_l_i((ulonglong)(uint)fVar6);
       fVar6 = fVar6 * (float)uVar5;
@@ -3047,8 +3047,8 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * fVar6));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar10 = iVar10 + -1;
-    } while (iVar10 != 0);
+      i = i + -1;
+    } while (i != 0);
   }
   return;
 }

@@ -75,7 +75,7 @@ void bu2505_write(int param_1,byte param_2,short param_3)
 {
   byte bVar1;
   bool bVar2;
-  byte local_9;
+  byte i;
   ushort local_8;
   
   if ((param_1 == 0) || (param_1 == 4)) {
@@ -90,7 +90,7 @@ void bu2505_write(int param_1,byte param_2,short param_3)
   local_8 = param_2 & 0xf | param_3 << 4;
   bVar1 = PORTA_PODR;
   PORTA_PODR = bVar1 & 0xdf;
-  for (local_9 = 0; local_9 < 0xe; local_9 = local_9 + 1) {
+  for (i = 0; i < 0xe; i = i + 1) {
     if ((local_8 & 1) == 0) {
       bVar1 = PORTA_PODR;
       PORTA_PODR = bVar1 & 0xef;
@@ -129,7 +129,7 @@ void sst2_write12(char param_1,byte param_2)
 
 {
   byte bVar1;
-  byte local_5;
+  byte i;
   ushort local_4;
   undefined1 local_1;
   
@@ -165,7 +165,7 @@ void sst2_write12(char param_1,byte param_2)
   local_4 = CONCAT11(local_1,param_2);
   bVar1 = PORTA_PODR;
   PORTA_PODR = bVar1 & 0xdf;
-  for (local_5 = 0; local_5 < 0xc; local_5 = local_5 + 1) {
+  for (i = 0; i < 0xc; i = i + 1) {
     if ((local_4 & 0x800) == 0) {
       bVar1 = PORTA_PODR;
       PORTA_PODR = bVar1 & 0xef;
@@ -197,7 +197,7 @@ void shreg_write24(int param_1,uint param_2)
 {
   byte bVar1;
   bool bVar2;
-  byte local_9;
+  byte i;
   uint local_8;
   
   if ((param_1 == 2) || (param_1 == 3)) {
@@ -216,7 +216,7 @@ void shreg_write24(int param_1,uint param_2)
     bVar1 = PORTA_PODR;
     PORTA_PODR = bVar1 & 0xdf;
     local_8 = param_2;
-    for (local_9 = 0; local_9 < 0x18; local_9 = local_9 + 1) {
+    for (i = 0; i < 0x18; i = i + 1) {
       if ((local_8 & 0x800000) == 0) {
         bVar1 = PORTA_PODR;
         PORTA_PODR = bVar1 & 0xef;
@@ -268,9 +268,9 @@ void shreg_write24(int param_1,uint param_2)
 void FUN_fffb2210(uint param_1)
 
 {
-  undefined4 local_8;
+  undefined4 i;
   
-  for (local_8 = 0; local_8 < param_1; local_8 = local_8 + 1) {
+  for (i = 0; i < param_1; i = i + 1) {
   }
   return;
 }
@@ -465,10 +465,10 @@ void spk_softstart_isr(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte swtimer_expired_ret;
   
-  bVar2 = swtimer_expired(0x2d);
-  if (bVar2 != 0) {
+  swtimer_expired_ret = swtimer_expired(0x2d);
+  if (swtimer_expired_ret != 0) {
     speaker_switch_set(1);
     R_TPU2_Stop();
     DAT_0001b3df = 9;
@@ -508,15 +508,13 @@ void spk_softstart_isr(void)
 void slowtimer_tick(void)
 
 {
-  byte local_1;
+  byte i;
   
-  for (local_1 = 0; local_1 < 4; local_1 = local_1 + 1) {
-    if ((((&DAT_0001203a)[local_1] == '\0') && (*(short *)(&DAT_0001fa2c + (uint)local_1 * 2) != 0))
-       && (*(short *)(&DAT_0001fa24 + (uint)local_1 * 2) =
-                *(short *)(&DAT_0001fa24 + (uint)local_1 * 2) + 1,
-          *(ushort *)(&DAT_0001fa2c + (uint)local_1 * 2) <=
-          *(ushort *)(&DAT_0001fa24 + (uint)local_1 * 2))) {
-      (&DAT_0001203a)[local_1] = 1;
+  for (i = 0; i < 4; i = i + 1) {
+    if ((((&DAT_0001203a)[i] == '\0') && (*(short *)(&DAT_0001fa2c + (uint)i * 2) != 0)) &&
+       (*(short *)(&DAT_0001fa24 + (uint)i * 2) = *(short *)(&DAT_0001fa24 + (uint)i * 2) + 1,
+       *(ushort *)(&DAT_0001fa2c + (uint)i * 2) <= *(ushort *)(&DAT_0001fa24 + (uint)i * 2))) {
+      (&DAT_0001203a)[i] = 1;
     }
   }
   return;
@@ -646,10 +644,10 @@ char tot_prewarn(void)
 char cat_rand8(void)
 
 {
-  ushort uVar1;
+  ushort tpu0_tcnt;
   
-  uVar1 = TPU0_TCNT;
-  return (char)uVar1 + (char)(uVar1 / 0xff);
+  tpu0_tcnt = TPU0_TCNT;
+  return (char)tpu0_tcnt + (char)(tpu0_tcnt / 0xff);
 }
 
 
@@ -660,21 +658,21 @@ char cat_rand8(void)
 void R_TPU3_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xf7;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+  TPUA_TSTR = bVar1 & 0xf7;
   ICU_SLIBXR142 = 0x1c;
-  bVar2 = ICU_IPR142;
-  ICU_IPR142 = bVar2 & 0xf2 | 2;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xf7;
+  bVar1 = ICU_IPR142;
+  ICU_IPR142 = bVar1 & 0xf2 | 2;
+  bVar1 = TPUA_TSYR;
+  TPUA_TSYR = bVar1 & 0xf7;
   TPU3_TCR = 0x2e;
-  bVar2 = TPU3_TIER;
-  TPU3_TIER = bVar2 | 0x41;
+  bVar1 = TPU3_TIER;
+  TPU3_TIER = bVar1 | 0x41;
   TPU3_TIORH = 0;
   TPU3_TIORL = 0;
   TPU3_TGRA = 0x5b8d;
@@ -862,8 +860,8 @@ void dac_init_idle(void)
 void beep_task(void)
 
 {
-  byte bVar1;
-  float fVar2;
+  byte swtimer_expired_ret;
+  float fVar1;
   float fStack_4;
   
   if (DAT_00012040 == '\x01') {
@@ -873,8 +871,8 @@ void beep_task(void)
     return;
   }
   if (DAT_00012040 == '\x02') {
-    bVar1 = swtimer_expired(0x16);
-    if (bVar1 == 1) {
+    swtimer_expired_ret = swtimer_expired(0x16);
+    if (swtimer_expired_ret == 1) {
       switch(DAT_00012041) {
       case 1:
         if (DAT_0001b3e2 == '\0') {
@@ -922,13 +920,13 @@ void beep_task(void)
         DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
         break;
       case 4:
-        fVar2 = (float)g_opstate.cw_pitch * 10.0 + 300.0;
-        if (DAT_00025d40 == fVar2) {
+        fVar1 = (float)g_opstate.cw_pitch * 10.0 + 300.0;
+        if (DAT_00025d40 == fVar1) {
           swtimer_start(0x16,100);
         }
         else {
-          DAT_00025d40 = fVar2;
-          tone_set(fVar2,100);
+          DAT_00025d40 = fVar1;
+          tone_set(fVar1,100);
         }
         break;
       case 5:
@@ -1276,12 +1274,12 @@ char hex2nib(byte param_1)
 byte hex2byte(char *s)
 
 {
-  char cVar1;
-  byte bVar2;
+  char hex2nib_ret;
+  byte hex2nib_ret_2;
   
-  cVar1 = hex2nib(*s);
-  bVar2 = hex2nib(s[1]);
-  return bVar2 | cVar1 << 4;
+  hex2nib_ret = hex2nib(*s);
+  hex2nib_ret_2 = hex2nib(s[1]);
+  return hex2nib_ret_2 | hex2nib_ret << 4;
 }
 
 
@@ -1293,11 +1291,11 @@ byte hex2byte(char *s)
 ushort hex2word(char *s)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte hex2byte_ret;
+  byte hex2byte_ret_2;
   
-  bVar1 = hex2byte(s);
-  bVar2 = hex2byte(s + 2);
-  return CONCAT11(bVar1,bVar2);
+  hex2byte_ret = hex2byte(s);
+  hex2byte_ret_2 = hex2byte(s + 2);
+  return CONCAT11(hex2byte_ret,hex2byte_ret_2);
 }
 

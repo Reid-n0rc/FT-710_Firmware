@@ -39,12 +39,12 @@ void displink_tx_start(ushort param_1)
 void displink_put_sum(int param_1,short param_2)
 
 {
-  undefined2 local_a;
+  undefined2 i;
   undefined1 local_7;
   
   local_7 = '\0';
-  for (local_a = 0; local_a < (ushort)(param_2 - 1U); local_a = local_a + 1) {
-    local_7 = *(char *)((uint)local_a + param_1) + local_7;
+  for (i = 0; i < (ushort)(param_2 - 1U); i = i + 1) {
+    local_7 = *(char *)((uint)i + param_1) + local_7;
   }
   *(char *)((uint)(ushort)(param_2 - 1U) + param_1) = local_7;
   return;
@@ -58,12 +58,12 @@ void displink_put_sum(int param_1,short param_2)
 bool displink_check_sum(int param_1,short param_2)
 
 {
-  ushort local_a;
+  ushort i;
   char local_8;
   
   local_8 = '\0';
-  for (local_a = 0; local_a < (ushort)(param_2 - 1U); local_a = local_a + 1) {
-    local_8 = *(char *)((uint)local_a + param_1) + local_8;
+  for (i = 0; i < (ushort)(param_2 - 1U); i = i + 1) {
+    local_8 = *(char *)((uint)i + param_1) + local_8;
   }
   return *(char *)((uint)(ushort)(param_2 - 1U) + param_1) == local_8;
 }
@@ -94,15 +94,15 @@ byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
 
 {
   uint uVar1;
-  ushort local_e;
+  ushort i;
   
-  local_e = 0;
+  i = 0;
   while( true ) {
-    if (param_3 <= local_e) {
+    if (param_3 <= i) {
       return 0;
     }
-    if (*(char *)((uint)local_e + param_2) != *(char *)((uint)local_e + param_1)) break;
-    local_e = local_e + 1;
+    if (*(char *)((uint)i + param_2) != *(char *)((uint)i + param_1)) break;
+    i = i + 1;
   }
   for (uVar1 = (uint)param_3; uVar1 != 0; uVar1 = uVar1 - 1) {
     *(undefined1 *)param_2 = *(undefined1 *)param_1;
@@ -121,19 +121,19 @@ byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
 uint scope_level_cur_ptr(void)
 
 {
-  byte bVar1;
+  byte freq_range_index_ret;
   uint freq;
   undefined4 uStack_10;
   
   freq = vfo_freq(0,2);
-  bVar1 = freq_range_index(freq);
+  freq_range_index_ret = freq_range_index(freq);
   if (g_ui.transmitting == 0) {
     uStack_10 = 0x9bca;
   }
   else {
     uStack_10 = 0x9bd8;
   }
-  return uStack_10 + (uint)bVar1;
+  return uStack_10 + (uint)freq_range_index_ret;
 }
 
 
@@ -403,11 +403,11 @@ uint FUN_fff9cba4(uint param_1,byte param_2)
 
 {
   bool bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   uint local_4;
   
-  uVar2 = dest_code_get();
-  if (uVar2 == 0xd950) {
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0xd950) {
 LAB_fff9cc15:
     if ((param_2 < 0x75) || (0x7b < param_2)) {
       bVar1 = false;
@@ -420,9 +420,9 @@ LAB_fff9cc15:
     }
     return param_1 + 0x5dc;
   }
-  if (uVar2 != 0x50e2) {
-    if (uVar2 == 0xa4c5) goto LAB_fff9cc15;
-    if (uVar2 != 0x315b) {
+  if (dest_code_get_ret != 0x50e2) {
+    if (dest_code_get_ret == 0xa4c5) goto LAB_fff9cc15;
+    if (dest_code_get_ret != 0x315b) {
       return param_1;
     }
   }
@@ -492,16 +492,16 @@ void FUN_fff9cc4c(byte param_1)
 void FUN_fff9cc77(char param_1,uint *param_2)
 
 {
-  vfo_rec *pvVar1;
   byte *local_c;
+  vfo_rec *p_vfo_rec;
   
   if (param_1 == '\0') {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_c = pvVar1->freq_be;
+  local_c = p_vfo_rec->freq_be;
   *param_2 = (uint)local_c[3] |
              (uint)local_c[2] << 8 | (uint)local_c[1] << 0x10 | (uint)*local_c << 0x18;
   return;
@@ -518,7 +518,7 @@ undefined1 FUN_fff9ccd3(void)
   bool bVar1;
   undefined1 uVar2;
   uint *puVar3;
-  byte bStack_3;
+  byte i;
   
   uVar2 = 0;
   if (g_opstate.split_on != 0) {
@@ -545,8 +545,8 @@ LAB_fff9cd2a:
   else {
     FUN_fff9cc77('\x01',puVar3);
   }
-  for (bStack_3 = 1; bStack_3 < 0x14; bStack_3 = bStack_3 + 1) {
-    if (DAT_00020824 != (&DAT_00020824)[bStack_3]) {
+  for (i = 1; i < 0x14; i = i + 1) {
+    if (DAT_00020824 != (&DAT_00020824)[i]) {
       uVar2 = 1;
     }
   }
@@ -564,7 +564,7 @@ void FUN_fff9cdb0(char param_1)
 
 {
   bool local_a;
-  byte bStack_9;
+  byte i;
   uint uStack_8;
   char local_1;
   
@@ -576,8 +576,8 @@ void FUN_fff9cdb0(char param_1)
   else {
     FUN_fff9cc77(g_opstate.active_vfo == VFO_A,&uStack_8);
   }
-  for (bStack_9 = 0; bStack_9 < 0x14; bStack_9 = bStack_9 + 1) {
-    (&DAT_00020824)[bStack_9] = uStack_8;
+  for (i = 0; i < 0x14; i = i + 1) {
+    (&DAT_00020824)[i] = uStack_8;
   }
   return;
 }
@@ -592,23 +592,23 @@ void FUN_fff9ce05(int param_1,byte param_2)
 
 {
   undefined1 local_a;
-  undefined1 local_9;
+  undefined1 i;
   undefined2 local_8;
   
   local_a = false;
-  for (local_9 = 0; local_9 < 4; local_9 = local_9 + 1) {
-    local_8 = (*(byte *)((3 - (uint)local_9) + param_1) & 0xf) +
-              (*(byte *)((uint)local_9 + (uint)param_2 * 4 + -0x7fa94) & 0xf) + (ushort)local_a;
+  for (i = 0; i < 4; i = i + 1) {
+    local_8 = (*(byte *)((3 - (uint)i) + param_1) & 0xf) +
+              (*(byte *)((uint)i + (uint)param_2 * 4 + -0x7fa94) & 0xf) + (ushort)local_a;
     if (9 < local_8) {
       local_8 = local_8 + 6;
     }
-    local_8 = (*(byte *)((3 - (uint)local_9) + param_1) & 0xf0) +
-              (*(byte *)((uint)local_9 + (uint)param_2 * 4 + -0x7fa94) & 0xf0) + local_8;
+    local_8 = (*(byte *)((3 - (uint)i) + param_1) & 0xf0) +
+              (*(byte *)((uint)i + (uint)param_2 * 4 + -0x7fa94) & 0xf0) + local_8;
     local_a = 0x9f < local_8;
     if (local_a) {
       local_8 = local_8 + 0x60;
     }
-    *(undefined1 *)((3 - (uint)local_9) + param_1) = (undefined1)local_8;
+    *(undefined1 *)((3 - (uint)i) + param_1) = (undefined1)local_8;
   }
   return;
 }
@@ -646,11 +646,11 @@ void freq_cache_update(void)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
-  uint uVar4;
+  ushort vfo_display_offset_ret;
+  uint uVar3;
   uint uStack_c;
   uint uStack_8;
-  vfo_rec *local_4;
+  vfo_rec *p_vfo_rec;
   
   if ((PTR_g_ui_00025d38->vfo_refresh_req == 0) && (PTR_g_ui_00025d38->freq_refresh_req == 0)) {
     bVar1 = true;
@@ -661,12 +661,12 @@ void freq_cache_update(void)
   if (!bVar1) {
     if (PTR_g_ui_00025d38->func_knob_item == 0x21) {
       if (g_opstate.active_vfo == VFO_A) {
-        local_4 = &g_opstate.vfo_a;
+        p_vfo_rec = &g_opstate.vfo_a;
       }
       else {
-        local_4 = &g_opstate.vfo_b;
+        p_vfo_rec = &g_opstate.vfo_b;
       }
-      bVar2 = local_4->mode & 0xf;
+      bVar2 = p_vfo_rec->mode & 0xf;
       if ((bVar2 == 3) || (bVar2 == 2)) {
         bVar1 = false;
       }
@@ -678,13 +678,13 @@ void freq_cache_update(void)
         PTR_g_ui_00025d38->dsp_knob_apf = 0;
       }
     }
-    uVar4 = vfo_freq_clar(1,2);
-    uVar4 = tx_freq_repeater_shift(uVar4);
-    PTR_g_ui_00025d38->freq_tx = uVar4;
-    uVar4 = vfo_freq_clar(0,0);
-    PTR_g_ui_00025d38->freq_a = uVar4;
-    uVar4 = vfo_freq_clar(0,1);
-    PTR_g_ui_00025d38->freq_b = uVar4;
+    uVar3 = vfo_freq_clar(1,2);
+    uVar3 = tx_freq_repeater_shift(uVar3);
+    PTR_g_ui_00025d38->freq_tx = uVar3;
+    uVar3 = vfo_freq_clar(0,0);
+    PTR_g_ui_00025d38->freq_a = uVar3;
+    uVar3 = vfo_freq_clar(0,1);
+    PTR_g_ui_00025d38->freq_b = uVar3;
     if (PTR_g_ui_00025d38->transmitting == 0) {
       if (g_opstate.active_vfo == VFO_A) {
         uStack_8 = PTR_g_ui_00025d38->freq_a;
@@ -692,10 +692,10 @@ void freq_cache_update(void)
       else {
         uStack_8 = PTR_g_ui_00025d38->freq_b;
       }
-      uVar3 = vfo_display_offset();
-      uStack_c = (uint)uVar3;
-      if ((uVar3 & 0x8000) != 0) {
-        uStack_c = -(uint)(ushort)(~uVar3 + 1);
+      vfo_display_offset_ret = vfo_display_offset();
+      uStack_c = (uint)vfo_display_offset_ret;
+      if ((vfo_display_offset_ret & 0x8000) != 0) {
+        uStack_c = -(uint)(ushort)(~vfo_display_offset_ret + 1);
       }
       PTR_g_ui_00025d38->freq_dial = uStack_8 + uStack_c;
     }
@@ -718,7 +718,7 @@ void dsp_link_init(void)
   bool bVar1;
   byte bVar2;
   undefined2 *puVar3;
-  int iVar4;
+  int i;
   int iStack_10;
   undefined1 uStack_b;
   undefined1 uStack_a;
@@ -751,7 +751,7 @@ void dsp_link_init(void)
     bVar2 = swtimer_expired(0x2e);
   } while (bVar2 != 1);
   puVar3 = &DAT_0001b634;
-  for (iVar4 = 0xaa; iVar4 != 0; iVar4 = iVar4 + -1) {
+  for (i = 0xaa; i != 0; i = i + -1) {
     *(undefined1 *)puVar3 = 0xff;
     puVar3 = (undefined2 *)((int)puVar3 + 1);
   }
@@ -1011,15 +1011,15 @@ ushort dsp_status1_raw(void)
 byte dsp_fm_noise(void)
 
 {
+  byte vfo_mode_ret;
   byte bVar1;
-  byte bVar2;
   
-  bVar1 = vfo_mode(0);
-  if (((bVar1 == 7) || (bVar2 = DAT_00001c60, bVar1 == 0xb)) &&
-     (bVar2 = DAT_00001c60 << 1, 0xff < (uint)DAT_00001c60 * 2)) {
-    bVar2 = 0xff;
+  vfo_mode_ret = vfo_mode(0);
+  if (((vfo_mode_ret == 7) || (bVar1 = DAT_00001c60, vfo_mode_ret == 0xb)) &&
+     (bVar1 = DAT_00001c60 << 1, 0xff < (uint)DAT_00001c60 * 2)) {
+    bVar1 = 0xff;
   }
-  return bVar2;
+  return bVar1;
 }
 
 
@@ -1104,8 +1104,8 @@ byte dsp_reg_access(ushort param_1,void *param_2,char param_3)
 {
   bool bVar1;
   ushort *puVar2;
-  byte bVar3;
-  ushort uVar4;
+  byte dsp_check_reply_ret;
+  ushort hex2word_ret;
   byte local_15;
   int iStack_14;
   char local_d;
@@ -1132,11 +1132,11 @@ byte dsp_reg_access(ushort param_1,void *param_2,char param_3)
       if (DAT_00001c5f != '\x01') {
         return 0;
       }
-      bVar3 = dsp_check_reply('r',&iStack_14);
+      dsp_check_reply_ret = dsp_check_reply('r',&iStack_14);
       puVar2 = local_c;
-    } while (bVar3 != 1);
-    uVar4 = hex2word((char *)(iStack_14 + 1));
-    *puVar2 = uVar4;
+    } while (dsp_check_reply_ret != 1);
+    hex2word_ret = hex2word((char *)(iStack_14 + 1));
+    *puVar2 = hex2word_ret;
     local_15 = 1;
   }
   else {
@@ -1234,11 +1234,11 @@ void dsp_read_status4(void)
 void dsp_set_demod(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret;
   dsp_demod dStack_2;
   
-  bVar1 = vfo_mode(0);
-  switch(bVar1) {
+  vfo_mode_ret = vfo_mode(0);
+  switch(vfo_mode_ret) {
   case 0:
   case 8:
   case 0xc:
@@ -1283,14 +1283,14 @@ void dsp_set_demod(void)
 void dsp_set_r08(byte param_1)
 
 {
-  ushort uVar1;
+  ushort dsp_route_param_ret;
   
-  uVar1 = dsp_route_param(8);
-  if (DAT_0001b640 == uVar1) {
+  dsp_route_param_ret = dsp_route_param(8);
+  if (DAT_0001b640 == dsp_route_param_ret) {
     return;
   }
   DAT_0001b6de = 8;
-  DAT_0001b6e0 = uVar1;
+  DAT_0001b6e0 = dsp_route_param_ret;
   dsp_send_frame('w');
   return;
 }
@@ -1303,14 +1303,14 @@ void dsp_set_r08(byte param_1)
 void dsp_set_r09(byte param_1)
 
 {
-  ushort uVar1;
+  ushort dsp_route_param_ret;
   
-  uVar1 = dsp_route_param(9);
-  if (DAT_0001b642 == uVar1) {
+  dsp_route_param_ret = dsp_route_param(9);
+  if (DAT_0001b642 == dsp_route_param_ret) {
     return;
   }
   DAT_0001b6de = 9;
-  DAT_0001b6e0 = uVar1;
+  DAT_0001b6e0 = dsp_route_param_ret;
   dsp_send_frame('w');
   return;
 }
@@ -1323,14 +1323,14 @@ void dsp_set_r09(byte param_1)
 void dsp_set_r0a(byte param_1)
 
 {
-  ushort uVar1;
+  ushort dsp_route_param_ret;
   
-  uVar1 = dsp_route_param(10);
-  if (DAT_0001b644 == uVar1) {
+  dsp_route_param_ret = dsp_route_param(10);
+  if (DAT_0001b644 == dsp_route_param_ret) {
     return;
   }
   DAT_0001b6de = 10;
-  DAT_0001b6e0 = uVar1;
+  DAT_0001b6e0 = dsp_route_param_ret;
   dsp_send_frame('w');
   return;
 }
@@ -1360,14 +1360,14 @@ void dsp_set_r0c(void)
 void dsp_set_r0d(byte param_1)
 
 {
-  ushort uVar1;
+  ushort dsp_route_param_ret;
   
-  uVar1 = dsp_route_param(0xd);
-  if (DAT_0001b648 == uVar1) {
+  dsp_route_param_ret = dsp_route_param(0xd);
+  if (DAT_0001b648 == dsp_route_param_ret) {
     return;
   }
   DAT_0001b6de = 0xd;
-  DAT_0001b6e0 = uVar1;
+  DAT_0001b6e0 = dsp_route_param_ret;
   dsp_send_frame('w');
   return;
 }
@@ -1380,14 +1380,14 @@ void dsp_set_r0d(byte param_1)
 void dsp_set_r0e(byte param_1)
 
 {
-  ushort uVar1;
+  ushort dsp_route_param_ret;
   
-  uVar1 = dsp_route_param(0xe);
-  if (DAT_0001b64a == uVar1) {
+  dsp_route_param_ret = dsp_route_param(0xe);
+  if (DAT_0001b64a == dsp_route_param_ret) {
     return;
   }
   DAT_0001b6de = 0xe;
-  DAT_0001b6e0 = uVar1;
+  DAT_0001b6e0 = dsp_route_param_ret;
   dsp_send_frame('w');
   return;
 }

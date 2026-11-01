@@ -521,22 +521,22 @@ undefined4 __ratio(int param_1,int param_2)
 undefined8 _mprec_log10(int param_1)
 
 {
-  int iVar1;
-  undefined8 uVar2;
+  int i;
+  undefined8 uVar1;
   
-  uVar2 = 0x3ff0000000000000;
+  uVar1 = 0x3ff0000000000000;
   if (param_1 < 0x18) {
     return *(undefined8 *)(&DAT_00206010 + param_1 * 8);
   }
-  iVar1 = 0;
+  i = 0;
   if (param_1 < 1) {
     return 0;
   }
   do {
-    uVar2 = __muldf3((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),0,0x40240000);
-    iVar1 = iVar1 + 1;
-  } while (iVar1 != param_1);
-  return uVar2;
+    uVar1 = __muldf3((int)uVar1,(int)((ulonglong)uVar1 >> 0x20),0,0x40240000);
+    i = i + 1;
+  } while (i != param_1);
+  return uVar1;
 }
 
 
@@ -2805,10 +2805,10 @@ void _write_r(undefined4 param_1,undefined4 param_2,char *param_3,int param_4)
 
 {
   char cVar1;
-  int iVar2;
+  int i;
   
   if (0 < param_4) {
-    iVar2 = 0;
+    i = 0;
     do {
       cVar1 = *param_3;
       param_3 = param_3 + 1;
@@ -2816,8 +2816,8 @@ void _write_r(undefined4 param_1,undefined4 param_2,char *param_3,int param_4)
         FUN_00233280(0xd);
       }
       FUN_00233280(cVar1);
-      iVar2 = iVar2 + 1;
-    } while (param_4 != iVar2);
+      i = i + 1;
+    } while (param_4 != i);
   }
   return;
 }

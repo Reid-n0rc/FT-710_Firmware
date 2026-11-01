@@ -582,7 +582,7 @@ uint fat_alloc_cluster_locked
 {
   int iVar1;
   undefined4 uVar2;
-  uint uVar3;
+  uint fs_task_ctx_get_ret;
   
   fs_set_error(0);
   iVar1 = fs_lock_b(param_1);
@@ -590,8 +590,8 @@ uint fat_alloc_cluster_locked
     uVar2 = fat_alloc_cluster(param_1,param_2,param_4);
     *param_3 = uVar2;
     fs_unlock_b(param_1);
-    uVar3 = fs_task_ctx_get();
-    return uVar3;
+    fs_task_ctx_get_ret = fs_task_ctx_get();
+    return fs_task_ctx_get_ret;
   }
   return 0xffffffde;
 }
@@ -1653,13 +1653,13 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
   int iVar2;
   uint uVar3;
   int iVar4;
+  uint i;
   uint uVar5;
-  uint uVar6;
-  int iVar7;
+  int iVar6;
+  uint uVar7;
   uint uVar8;
-  uint uVar9;
-  bool bVar10;
-  undefined8 uVar11;
+  bool bVar9;
+  undefined8 uVar10;
   uint local_48;
   int local_44;
   int local_40;
@@ -1669,11 +1669,11 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
   undefined4 local_2c;
   undefined4 local_28;
   
-  iVar7 = 0;
+  iVar6 = 0;
   uVar3 = 0;
-  uVar9 = 0;
+  uVar8 = 0;
   local_48 = 0;
-  uVar6 = 0;
+  uVar5 = 0;
   local_44 = 0;
   uVar1 = *(ushort *)(param_1 + 4);
   iStack_34 = param_1;
@@ -1686,21 +1686,21 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
     return 0;
   }
   iVar4 = *(int *)(param_1 + 0xc);
-  uVar8 = (*(uint *)(param_1 + 0x6c) >> 2) * iVar4;
+  uVar7 = (*(uint *)(param_1 + 0x6c) >> 2) * iVar4;
   iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
   iVar2 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar2 + iVar4 * (uint)*(ushort *)(param_1 + 8) +
                                     (uint)*(ushort *)(param_1 + 6)),(uint)uVar1);
-  uVar5 = 2;
-  if (iVar2 + 2U < uVar8) {
-    uVar8 = iVar2 + 2U;
+  i = 2;
+  if (iVar2 + 2U < uVar7) {
+    uVar7 = iVar2 + 2U;
   }
   local_40 = -1;
-  if (2 < uVar8) {
+  if (2 < uVar7) {
     do {
-      uVar11 = __aeabi_uidivmod(uVar5,*(uint *)(param_1 + 0x6c) >> 2);
-      iVar2 = (int)uVar11;
-      local_3c = (int)((ulonglong)uVar11 >> 0x20) << 2;
+      uVar10 = __aeabi_uidivmod(i,*(uint *)(param_1 + 0x6c) >> 2);
+      iVar2 = (int)uVar10;
+      local_3c = (int)((ulonglong)uVar10 >> 0x20) << 2;
       if ((local_40 != iVar2) &&
          (iVar4 = fat_table_sector_get(param_1,iVar2,&local_44,local_28), local_40 = iVar2,
          iVar4 != 0)) {
@@ -1711,33 +1711,33 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
       }
       iVar2 = fat_ld_dword(local_44 + local_3c);
       if (iVar2 == 0) {
-        bVar10 = uVar3 == 0;
+        bVar9 = uVar3 == 0;
         uVar3 = uVar3 + 1;
-        if (bVar10) {
-          uVar6 = uVar5;
+        if (bVar9) {
+          uVar5 = i;
         }
-        iVar7 = iVar7 + 1;
+        iVar6 = iVar6 + 1;
       }
       else {
-        if (uVar9 < uVar3) {
-          uVar9 = uVar3;
-          local_48 = uVar6;
+        if (uVar8 < uVar3) {
+          uVar8 = uVar3;
+          local_48 = uVar5;
         }
         uVar3 = 0;
       }
-      uVar5 = uVar5 + 1;
-    } while (uVar5 < uVar8);
-    if (uVar3 < uVar9) {
+      i = i + 1;
+    } while (i < uVar7);
+    if (uVar3 < uVar8) {
       *(uint *)(param_1 + 0x40) = local_48;
       *(uint *)(param_1 + 0x28) = local_48;
       goto LAB_2014b36c;
     }
   }
-  *(uint *)(param_1 + 0x40) = uVar6;
-  *(uint *)(param_1 + 0x28) = uVar6;
+  *(uint *)(param_1 + 0x40) = uVar5;
+  *(uint *)(param_1 + 0x28) = uVar5;
 LAB_2014b36c:
-  *(int *)(param_1 + 0x3c) = iVar7;
-  fs_split_sectors((uint)*(ushort *)(param_1 + 4) * iVar7,local_30,local_2c,
+  *(int *)(param_1 + 0x3c) = iVar6;
+  fs_split_sectors((uint)*(ushort *)(param_1 + 4) * iVar6,local_30,local_2c,
                    *(undefined4 *)(param_1 + 0x6c));
   return 0;
 }
@@ -1778,20 +1778,20 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
   int iVar1;
   int iVar2;
   int iVar3;
+  uint i;
   uint uVar4;
-  uint uVar5;
-  int iVar6;
-  undefined8 uVar7;
+  int iVar5;
+  undefined8 uVar6;
   int local_38;
   int iStack_34;
   undefined4 *local_30;
   int *local_2c;
   undefined4 local_28;
   
-  iVar6 = 0;
+  iVar5 = 0;
   local_38 = 0;
   iVar3 = *(int *)(param_1 + 0xc);
-  uVar5 = (*(uint *)(param_1 + 0x6c) >> 1) * iVar3;
+  uVar4 = (*(uint *)(param_1 + 0x6c) >> 1) * iVar3;
   iStack_34 = param_1;
   local_30 = param_2;
   local_2c = param_3;
@@ -1800,15 +1800,15 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
   iVar3 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar1 + iVar3 * (uint)*(ushort *)(param_1 + 8) +
                                     (uint)*(ushort *)(param_1 + 6)),*(undefined2 *)(param_1 + 4));
-  uVar4 = 2;
+  i = 2;
   iVar1 = -1;
-  if (iVar3 + 2U < uVar5) {
-    uVar5 = iVar3 + 2U;
+  if (iVar3 + 2U < uVar4) {
+    uVar4 = iVar3 + 2U;
   }
-  if (2 < uVar5) {
+  if (2 < uVar4) {
     do {
-      uVar7 = __aeabi_uidivmod(uVar4,*(uint *)(param_1 + 0x6c) >> 1);
-      iVar3 = (int)uVar7;
+      uVar6 = __aeabi_uidivmod(i,*(uint *)(param_1 + 0x6c) >> 1);
+      iVar3 = (int)uVar6;
       if ((iVar1 != iVar3) &&
          (iVar2 = fat_table_sector_get(param_1,iVar3,&local_38,local_28), iVar1 = iVar3, iVar2 != 0)
          ) {
@@ -1817,15 +1817,15 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
       if (local_38 == 0) {
         return -0xd;
       }
-      iVar3 = fat_ld_word(local_38 + (int)((ulonglong)uVar7 >> 0x20) * 2);
-      uVar4 = uVar4 + 1;
+      iVar3 = fat_ld_word(local_38 + (int)((ulonglong)uVar6 >> 0x20) * 2);
+      i = i + 1;
       if (iVar3 == 0) {
-        iVar6 = iVar6 + 1;
+        iVar5 = iVar5 + 1;
       }
-    } while (uVar4 < uVar5);
+    } while (i < uVar4);
   }
   *local_30 = 0;
-  *local_2c = (uint)*(ushort *)(param_1 + 4) * *(int *)(param_1 + 0x6c) * iVar6;
+  *local_2c = (uint)*(ushort *)(param_1 + 4) * *(int *)(param_1 + 0x6c) * iVar5;
   return 0;
 }
 

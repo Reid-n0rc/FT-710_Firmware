@@ -28,9 +28,11 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365), MAIN round 3 (427, 19.1 % of MAIN code bytes), DISPLAY round 3 (501 rows); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
+| T23h | Variable and parameter names by rule (`tools/ghidra/NameVariables.java`, checker `tools/rename_check.py`, "Variables named" metric) | apply + re-export | done (2026-11-01): applied to the canonical projects, 2,452 renames, 0 structural changes; Variables named 0.8 % → 6.8 %. Rerun after new signatures/structs/SFR labels |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
-field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last.
+field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last. T23h (variable
+names by rule) runs after all of them on every rebuild, since its rules read their names.
 
 Rules for every sub-task:
 - The source of truth is a committed TSV (or header) plus a script that applies it; the Ghidra project only holds the
@@ -58,6 +60,9 @@ Rules for every sub-task:
 
 **New information about a register** (for example a register that Table 5.1 omits): add a sourced row to `EXTRA` in
 `tools/sfr_table.py`, rebuild, re-apply.
+
+**Variable names** (T23h): `NameVariables.java` runs last in every `build_*` of `tools/bootstrap.sh`; after new names,
+signatures, structs or SFR labels rerun it on the canonical projects ([T23h redo](#redo-new-firmware-or-after-new-names-signatures-structs-or-sfr-labels)).
 
 **Progress figures**: `python3 -I tools/readability_stats.py readme` after any change to `decomp/` or `docs/code/`;
 `check` exits 1 when the README is stale. `tools/bootstrap.sh --only export` runs `readme` itself.
@@ -866,6 +871,120 @@ sections to `hifi4-libraries.md`.
 |---|---:|---:|---:|
 | display | 976 | 1,341 | 365 |
 | ifdsp/hifi4 | 247 | 956 | 709 |
+
+## T23h — Variable and parameter names by rule
+- Replace the decompiler's default variable names (`param_2`, `uVar3`, `puVar9`, `local_1c`, `auStack_20`, about 162,000 uses
+  in the export) with names that the code itself shows, by fixed rules only (owner rule: never guess). Script:
+  `tools/ghidra/NameVariables.java`, the last apply script of every program in `tools/bootstrap.sh`.
+
+**Status:** script, bootstrap steps, metric and checker done, proven on copies of all four programs (2026-11-01, worktree
+agent). Open: apply to the canonical projects and re-export (the lead's step, [Open steps](#open-steps-lead)).
+
+### Plan
+1. A Ghidra script that decompiles each function, applies rules (a)–(g) below in priority order and commits the names
+   (`HighFunctionDBUtil.updateDBVariable`; for parameters the decompiler's own rename path, `commitParamsToDatabase` with
+   undefined types and the function's current signature source). Deterministic, idempotent, TSV log under `logs/`.
+2. Wire it into `build_main`, `build_display` and `build_ifdsp` (both programs) after the other apply scripts, with the
+   script in each stamp.
+3. Metric "Variables named" in `tools/readability_stats.py` and the README block.
+4. Prove it on copies (`/home/user/ghidra_tasks/varnames/`): export before and after, `decomp_quality.py compare`, and a new
+   structural check `tools/rename_check.py` (the export may change only in variable names).
+
+### Rules
+A name is a Ghidra *default* when it matches `param_N`, `<t>VarN`, `local_<x>` / `local_res<x>`, `<t>Stack_<x>` /
+`<t>StackX_<x>` or `stack0x<x>` (optionally with Ghidra's `_NN` disambiguation suffix). `in_*`, `unaff_*` and
+`extraout_*` are never renamed: they are decompile-quality signals (`ExportDecomp.java` counts them, T21f).
+
+| Rule | Applies to | Condition (all from the decompiler's p-code of the function) | New name | Tag |
+|---|---|---|---|---|
+| a | any | the name is not a default (from `signatures_*.tsv`, `ApplyStructs`, `ApplyEnums`, earlier runs) | kept | [fact] |
+| b | parameter | never written in the function (its only definition is the input) and passed, as is or through a cast, as argument *k* of a call to a function with a **locked** prototype (signature source not DEFAULT, same argument count) whose parameter *k* has a non-default name; every such call agrees on the name. Iterated over the call graph until stable (a callee parameter that gets its name in this run counts once it is decided; parameters on a recursion cycle keep their default) | the callee's parameter name | [inference]: the value is the same, so the name is the callee's role for it; the caller may use it for more |
+| c | local | only definition is a read of a whole peripheral register: a COPY of, a LOAD through a constant pointer to, or the decompiler's `read_volatile` (built-in user op 0x10000001) of an address whose primary label is in the image's `sfr_<chip>.tsv` | the label in lower case (`system_mstpcra`) | [fact] |
+| d | local | only definition is a read of a whole named global: a non-default label on undefined bytes or on non-composite data of the read's size; or a whole named field of a labelled structure (printed `g.a.b`) | `<global>_val`, `<g>_<a>_<b>_val` (the bare name would shadow the global) | [fact] |
+| e | local | only definition is the return value of a named function (not `FUN_`) whose prototype is locked with a non-void return type, directly or through a cast or zero/sign extension of a value used nowhere else | `<callee>_ret` | [fact] |
+| f | local, parameter | typed as a pointer to a named structure or union (not an auto `astruct`) | `p_<struct>` | [inference]: the type itself comes from the struct work (T23c) |
+| g | local | a simple loop counter: exactly two definitions, a constant and itself ±1, joined in a loop (MULTIEQUAL), and compared (`<`, `<=`, `==`, `!=`) in a condition that ends a block (CBRANCH); integer type | `i`, `j`, `k` in the order of their initial assignment (a fourth counter keeps its default) | [fact] |
+
+Why rule (e) needs a locked return: the M33 code is built with `-fipa-ra` (T23f), so the decompiler sometimes reads r0 after
+a call to a function that never writes it (`POWER_SetBiasConfig`); without the lock, `uVar5 = POWER_SetBiasConfig()` would
+have been named as a return value that does not exist. Rule (b) needs a locked callee for the same reason: only then is
+argument *k* known to be parameter *k*.
+
+Collisions: a name already used in the function (decompiler symbols and database variables), or the name of any label,
+function, namespace or data type, or a C/Ghidra keyword (`int`, `uint`, `byte`, `undefined4`, ...) gets `_2`, `_3`, ...
+Names are committed with `SourceType.ANALYSIS`, so script names can be told apart from the TSVs' USER_DEFINED/IMPORTED
+names. A local is committed with an undefined type of its size (a name lock, no type lock), the decompiler's own rename
+behaviour. A parameter whose function has no matching database parameter list gets that list committed with undefined
+types and the function's current signature source (a DEFAULT signature stays unlocked), as the decompiler's rename action
+does (`params=all`, the default; `params=locked` renames only parameters already in the database, `params=none` skips
+them). Other arguments: `log=<tsv>` (columns function, entry, old, new, rule), `sfr=<tsv>`, `dry`, `debug=<function>`.
+
+### Findings (copies of the projects at `b8d4a64`, 2026-11-01)
+Renames per rule (`NameVariables:` summary lines):
+
+| Image | b | c | d | e | f | g | Total |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| MAIN | 42 | 88 | 110 | 580 | 154 | 552 | 1,526 |
+| DISPLAY | 40 | 130 | 8 | 260 | 41 | 221 | 700 |
+| IFDSP M33 | 1 | 54 | 0 | 86 | 0 | 22 | 163 |
+| IFDSP HiFi4 | 0 | 31 | 0 | 0 | 0 | 32 | 63 |
+
+Uses of default names in the export (the "Variables named" definition in `readability_stats.py`), before → after:
+
+| Image | Variable uses | Default before | Default after | Named before | Named after |
+|---|---:|---:|---:|---:|---:|
+| MAIN | 47,049 | 46,662 | 40,615 | 0.8 % | 13.7 % |
+| DISPLAY | 56,701 | 55,870 | 52,866 | 1.5 % | 6.8 % |
+| IFDSP M33 | 6,987 | 6,967 | 6,420 | 0.3 % | 8.1 % |
+| IFDSP HiFi4 | 52,142 | 52,136 | 51,925 | 0.0 % | 0.4 % |
+| All | 162,879 | 161,635 | 151,826 | 0.8 % | 6.8 % |
+
+- **Structure unchanged** [fact: `tools/rename_check.py`]: every function of all four exports is the old text with default
+  variable names replaced one to one (MAIN 1,135 functions renamed only, DISPLAY 517, M33 122, HiFi4 56, 0 structural
+  changes). **Quality**: `decomp_quality.py compare` → no metric worse in any image (warnings 1,246 / 212 / 181 / 258
+  unchanged). **Idempotent**: a second run (`dry`) renames 0 in every program.
+- The rules are limited by what is already named: (b) needs callee parameter names (the signature TSVs mostly have
+  unnamed asm rows), (e) needs locked return types (HiFi4 has no signature table yet, hence its 0.4 %). Each new
+  signature row with names or return type, struct type or SFR label raises the count on the next run.
+- Example (`dsp_set_apf`, MAIN): `bVar4 = vfo_mode(param_1)` → `vfo_mode_ret = vfo_mode(which)` (e, b),
+  `bVar2 = g_opstate.cw_pitch` → `g_opstate_cw_pitch_val` (d), `pbVar5 = vfo_rec_ptr(param_1)` → `vfo_rec_ptr_ret`
+  (e). `R_DA_Create`: `uVar1 = SYSTEM_MSTPCRA` → `system_mstpcra` (c). `delay_us` (M33):
+  `for (uVar2 = 0; ...; uVar2 = uVar2 + 1)` → `for (i = 0; ...; i = i + 1)` (g), while `iVar1 = CLOCK_GetFreq(0)` stays (no
+  locked return).
+- `tools/rename_check.py OLD NEW`: token-by-token comparison per function; only default variable names may differ, the map
+  must be one to one (Ghidra renumbers the default names left over, `uVar2` → `uVar1`), and the declaration lines are
+  compared as a set (Ghidra sorts them by name).
+
+### Open steps (lead)
+Apply to the canonical projects (Ghidra closed; `tools/bootstrap.sh` does this itself on a rebuild):
+```sh
+cp -r decomp /tmp/decomp_before
+H=tools/ghidra-headless.sh; G=tools/ghidra
+$H "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath $G \
+  -postScript NameVariables.java log=logs/namevars_main.tsv sfr=$G/sfr_rx651.tsv &
+$H "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath $G \
+  -postScript NameVariables.java log=logs/namevars_display.tsv sfr=$G/sfr_rza1h.tsv &
+( $H "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -scriptPath $G \
+    -postScript NameVariables.java log=logs/namevars_ifdsp_m33.tsv sfr=$G/sfr_rt685.tsv
+  $H "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -scriptPath $G \
+    -postScript NameVariables.java log=logs/namevars_ifdsp_hifi4.tsv sfr=$G/sfr_rt685_hifi4.tsv ) &
+wait
+tools/bootstrap.sh --only export
+for d in main display ifdsp/m33 ifdsp/hifi4; do
+  python3 -I tools/rename_check.py /tmp/decomp_before/$d decomp/$d
+  python3 -I tools/decomp_quality.py compare /tmp/decomp_before/$d/quality.tsv decomp/$d/quality.tsv $d
+done
+```
+Then commit the projects, `decomp/` (with `readable/`) and README together. Expected: the counts above (they grow if
+names were added since `b8d4a64`), 0 structural changes, nothing worse.
+
+### Redo (new firmware, or after new names, signatures, structs or SFR labels)
+1. Run every other apply script first (bootstrap order); NameVariables reads what they set.
+2. Run the commands above (or `tools/bootstrap.sh --only ghidra,export` on a rebuild: the script is in every stamp).
+3. `rename_check.py` must report 0 structural changes and `decomp_quality.py compare` nothing worse. If a function changes
+   structure, find its rows in `logs/namevars_<image>.tsv`, and if a parameter commit caused it, rerun with
+   `params=locked` and record why here.
+4. `python3 -I tools/readability_stats.py readme`, commit. Names from an earlier run are kept (rule a), so a rerun only adds.
 
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.

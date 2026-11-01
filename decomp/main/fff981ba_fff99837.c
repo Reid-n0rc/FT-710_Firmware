@@ -10,7 +10,7 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,uint param_4)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte vfo_tune_locked_ret;
   byte bStack_19;
   uint uStack_14;
   
@@ -28,8 +28,8 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,uint param_4)
     uStack_14 = uStack_14 +
                 (int)CONCAT11(*(undefined1 *)(param_2 + 0x48),*(undefined1 *)(param_2 + 0x49));
   }
-  bVar2 = vfo_tune_locked(param_1);
-  if (bVar2 == 1) {
+  vfo_tune_locked_ret = vfo_tune_locked(param_1);
+  if (vfo_tune_locked_ret == 1) {
     if (param_1 == '\0') {
       bStack_19 = g_mem_hdr.chan_a;
     }
@@ -48,13 +48,13 @@ void FUN_fff981ba(char param_1,int param_2,char param_3,uint param_4)
 void FUN_fff98258(char param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  byte bVar1;
+  byte vfo_tune_locked_ret;
   byte bStack_15;
   uint local_14;
   
   local_14 = PTR_g_ui_00025d38->freq_tx;
-  bVar1 = vfo_tune_locked(param_1);
-  if (bVar1 == 1) {
+  vfo_tune_locked_ret = vfo_tune_locked(param_1);
+  if (vfo_tune_locked_ret == 1) {
     if (param_1 == '\0') {
       bStack_15 = g_mem_hdr.chan_a;
     }
@@ -365,7 +365,7 @@ byte FUN_fff98669(void)
 void disp_put_scope_start(int param_1)
 
 {
-  byte local_a;
+  byte i;
   uint local_8;
   
   if (g_opstate.scope_mode == 2) {
@@ -374,8 +374,8 @@ void disp_put_scope_start(int param_1)
   else {
     local_8 = g_ui.scope_cursor_start;
   }
-  for (local_a = 0; local_a < 4; local_a = local_a + 1) {
-    *(char *)((uint)local_a + param_1) = (char)(local_8 >> ((3 - local_a & 3) << 3));
+  for (i = 0; i < 4; i = i + 1) {
+    *(char *)((uint)i + param_1) = (char)(local_8 >> ((3 - i & 3) << 3));
   }
   return;
 }
@@ -453,7 +453,7 @@ void ui_lamp_set(char param_1,char param_2)
 void power_down_save(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   DAT_00001456 = 0x7f;
   DAT_00001457 = PTR_g_ui_00025d38->power_cmd & 0x7f;
@@ -470,8 +470,8 @@ void power_down_save(void)
   if (PTR_g_ui_00025d38->power_cmd == 0x90) {
     swtimer_start(0x14,2000);
     do {
-      bVar1 = swtimer_expired(0x14);
-    } while (bVar1 == 0);
+      swtimer_expired_ret = swtimer_expired(0x14);
+    } while (swtimer_expired_ret == 0);
   }
   else if (PTR_g_ui_00025d38->power_cmd == 0x11) {
     g_opstate.auto_power_on = 1;
@@ -553,11 +553,11 @@ void displink_tx_7A(void)
 void displink_tx_70(void)
 
 {
-  byte bVar1;
+  byte displink_copy_if_changed_ret;
   
   displink_build_70();
-  bVar1 = displink_copy_if_changed(0x1741,0x1456,0xe2);
-  if (bVar1 != 1) {
+  displink_copy_if_changed_ret = displink_copy_if_changed(0x1741,0x1456,0xe2);
+  if (displink_copy_if_changed_ret != 1) {
     return;
   }
   DAT_0001b628 = 0xe3;
@@ -716,12 +716,13 @@ void displink_build_70(void)
 void displink_tx_req(void)
 
 {
-  byte bVar1;
+  byte displink_copy_if_changed_ret;
   
   PTR_g_ui_00025d38->dl_req_sd = 0;
   displink_build_req();
-  bVar1 = displink_copy_if_changed(0x1741,0x1456,PTR_g_ui_00025d38->sdreq_len - 1);
-  if (bVar1 != 1) {
+  displink_copy_if_changed_ret =
+       displink_copy_if_changed(0x1741,0x1456,PTR_g_ui_00025d38->sdreq_len - 1);
+  if (displink_copy_if_changed_ret != 1) {
     return;
   }
   DAT_0001b628 = PTR_g_ui_00025d38->sdreq_len;
@@ -785,12 +786,12 @@ void displink_copy_status(void)
 {
   undefined1 *puVar1;
   undefined1 *puVar2;
-  int iVar3;
+  int i;
   
   displink_build_status();
   puVar2 = &DAT_000016a1;
   puVar1 = &DAT_00001742;
-  for (iVar3 = 0x97; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x97; i != 0; i = i + -1) {
     *puVar1 = *puVar2;
     puVar1 = puVar1 + 1;
     puVar2 = puVar2 + 1;
@@ -807,7 +808,7 @@ void displink_70_msg(undefined1 *param_1)
 
 {
   undefined1 *puVar1;
-  int iVar2;
+  int i;
   
   DAT_000017d9 = 3;
   DAT_000017da = 0;
@@ -818,7 +819,7 @@ void displink_70_msg(undefined1 *param_1)
   DAT_000017df = 0;
   DAT_000017e0 = 0xb7;
   puVar1 = &DAT_000017e1;
-  for (iVar2 = 0x16; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x16; i != 0; i = i + -1) {
     *puVar1 = *param_1;
     puVar1 = puVar1 + 1;
     param_1 = param_1 + 1;
@@ -835,7 +836,7 @@ void displink_70_msg2(undefined1 *param_1)
 
 {
   undefined1 *puVar1;
-  int iVar2;
+  int i;
   
   DAT_000017d9 = 1;
   DAT_000017da = 4;
@@ -846,7 +847,7 @@ void displink_70_msg2(undefined1 *param_1)
   DAT_000017df = 0;
   DAT_000017e0 = 0xb7;
   puVar1 = &DAT_000017e1;
-  for (iVar2 = 0x2c; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x2c; i != 0; i = i + -1) {
     *puVar1 = *param_1;
     puVar1 = puVar1 + 1;
     param_1 = param_1 + 1;
@@ -863,7 +864,7 @@ void displink_70_query(undefined1 *param_1)
 
 {
   undefined1 *puVar1;
-  int iVar2;
+  int i;
   
   DAT_000017d9 = 3;
   DAT_000017da = 4;
@@ -874,7 +875,7 @@ void displink_70_query(undefined1 *param_1)
   DAT_000017df = 0;
   DAT_000017e0 = 0xb7;
   puVar1 = &DAT_000017e1;
-  for (iVar2 = 0x16; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x16; i != 0; i = i + -1) {
     *puVar1 = *param_1;
     puVar1 = puVar1 + 1;
     param_1 = param_1 + 1;
@@ -1022,7 +1023,7 @@ void displink_build_30(void)
   byte bVar1;
   int iVar2;
   bool bStack_9;
-  vfo_rec *pvStack_8;
+  vfo_rec *p_vfo_rec;
   char cStack_1;
   
   mem_zero(0x98,0x16a0);
@@ -1032,10 +1033,10 @@ void displink_build_30(void)
   DAT_000017d9 = PTR_g_ui_00025d38->popup_code;
   if (PTR_g_ui_00025d38->popup_code != 0xff) {
     if (g_opstate.active_vfo == VFO_A) {
-      pvStack_8 = &g_opstate.vfo_a;
+      p_vfo_rec = &g_opstate.vfo_a;
     }
     else {
-      pvStack_8 = &g_opstate.vfo_b;
+      p_vfo_rec = &g_opstate.vfo_b;
     }
     bStack_9 = g_opstate.active_vfo != VFO_A;
     switch(PTR_g_ui_00025d38->popup_code) {
@@ -1043,11 +1044,11 @@ void displink_build_30(void)
       DAT_000017da = g_opstate.meter_sel;
       return;
     case 1:
-      DAT_000017da = pvStack_8->flags3 & 3;
+      DAT_000017da = p_vfo_rec->flags3 & 3;
       DAT_000017db = PTR_g_ui_00025d38->popup_sel;
       return;
     case 2:
-      bVar1 = pvStack_8->flags5 & 3;
+      bVar1 = p_vfo_rec->flags5 & 3;
       if (bVar1 == 0) {
         cStack_1 = '\0';
       }
@@ -1058,12 +1059,12 @@ void displink_build_30(void)
       DAT_000017db = PTR_g_ui_00025d38->popup_sel;
       return;
     case 3:
-      bVar1 = mode_block_byte1(pvStack_8);
+      bVar1 = mode_block_byte1(p_vfo_rec);
       DAT_000017da = bVar1 >> 7;
       DAT_000017db = PTR_g_ui_00025d38->popup_sel;
       return;
     case 4:
-      bVar1 = mode_block_byte1(pvStack_8);
+      bVar1 = mode_block_byte1(p_vfo_rec);
       if ((bVar1 & 0x40) == 0) {
         cStack_1 = '\0';
       }
@@ -1074,7 +1075,7 @@ void displink_build_30(void)
       DAT_000017db = PTR_g_ui_00025d38->popup_sel;
       return;
     case 5:
-      DAT_000017da = pvStack_8->mode & 0xf;
+      DAT_000017da = p_vfo_rec->mode & 0xf;
       DAT_000017db = 0;
       DAT_000017dc = PTR_g_ui_00025d38->popup_cursor;
       return;
@@ -1306,14 +1307,14 @@ void popup_fmt_scope_level(ushort param_1)
 
 {
   byte bVar1;
-  byte *pbVar2;
+  byte *scope_level_cur_ptr_ret;
   ushort uStack_6;
   undefined1 uStack_4;
   
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x4264302e;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  pbVar2 = (byte *)scope_level_cur_ptr();
-  bVar1 = *pbVar2;
+  scope_level_cur_ptr_ret = (byte *)scope_level_cur_ptr();
+  bVar1 = *scope_level_cur_ptr_ret;
   if (bVar1 == 0x3c) {
     (&DAT_00001744)[param_1] = 0x30;
     return;
@@ -1413,28 +1414,28 @@ void popup_fmt_moni_level(ushort param_1)
 
 {
   byte bVar1;
-  char *pcVar2;
-  undefined *puVar3;
-  undefined1 *puVar4;
-  uint uVar5;
+  char *moni_level_ptr_ret;
+  undefined *puVar2;
+  undefined1 *puVar3;
+  uint uVar4;
   char cStack_3;
   
-  pcVar2 = (char *)moni_level_ptr();
-  if (pcVar2 == (char *)0x0) {
+  moni_level_ptr_ret = (char *)moni_level_ptr();
+  if (moni_level_ptr_ret == (char *)0x0) {
     cStack_3 = '\0';
   }
   else {
-    cStack_3 = *pcVar2;
+    cStack_3 = *moni_level_ptr_ret;
   }
   if (cStack_3 != '\0') {
     bVar1 = dec_to_str_n(cStack_3,3,&DAT_000019d2);
-    uVar5 = (uint)bVar1;
-    puVar3 = &DAT_00001749 + (param_1 - uVar5);
-    puVar4 = &DAT_000019d2;
-    for (; uVar5 != 0; uVar5 = uVar5 - 1) {
-      *puVar3 = *puVar4;
+    uVar4 = (uint)bVar1;
+    puVar2 = &DAT_00001749 + (param_1 - uVar4);
+    puVar3 = &DAT_000019d2;
+    for (; uVar4 != 0; uVar4 = uVar4 - 1) {
+      *puVar2 = *puVar3;
+      puVar2 = puVar2 + 1;
       puVar3 = puVar3 + 1;
-      puVar4 = puVar4 + 1;
     }
     return;
   }
@@ -1453,23 +1454,23 @@ void popup_fmt_moni_level(ushort param_1)
 uint moni_level_ptr(void)
 
 {
-  byte bVar1;
-  uint uVar2;
+  byte vfo_mode_ret_2;
+  uint vfo_mode_ret;
   
-  bVar1 = vfo_mode(1);
-  uVar2 = (uint)bVar1;
-  if (uVar2 != 0xe) {
-    if (uVar2 - 2 < 2) {
+  vfo_mode_ret_2 = vfo_mode(1);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret != 0xe) {
+    if (vfo_mode_ret - 2 < 2) {
       return 0x9bfd;
     }
-    if (uVar2 - 4 < 2) {
+    if (vfo_mode_ret - 4 < 2) {
       return 0x9c00;
     }
-    if (1 < uVar2 - 8) {
-      if (uVar2 - 0xc < 2) {
+    if (1 < vfo_mode_ret - 8) {
+      if (vfo_mode_ret - 0xc < 2) {
         return 0x9bfe;
       }
-      if (1 < uVar2) {
+      if (1 < vfo_mode_ret) {
         return 0;
       }
       return 0x9bfc;

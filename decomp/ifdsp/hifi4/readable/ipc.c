@@ -389,16 +389,16 @@ void MU_B_IRQHandler(void)
 undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 
 {
-  uint uVar1;
+  uint mub_cr;
   
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_002390d0);
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfff0fff7 | 0x4000000;
+      MUB_CR = mub_cr & 0xfff0fff7 | 0x4000000;
       xos_register_interrupt_handler(6,MU_B_IRQHandler,0);
     }
     DAT_002390d4 = DAT_002390d4 + 1;
@@ -424,18 +424,18 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 undefined4 platform_deinit_interrupt(undefined4 param_1)
 
 {
-  uint uVar1;
-  bool bVar2;
+  bool bVar1;
+  uint mub_cr;
   
   env_lock_mutex(DAT_002390d0);
-  bVar2 = 0 < DAT_002390d4;
+  bVar1 = 0 < DAT_002390d4;
   DAT_002390d4 = DAT_002390d4 + -1;
-  if (bVar2) {
+  if (bVar1) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfbf0fff7;
+      MUB_CR = mub_cr & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
     env_unregister_isr(param_1);
@@ -523,7 +523,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
 
 {
   undefined1 *puVar1;
-  uint uVar2;
+  uint i;
   undefined4 uStack_30;
   undefined2 auStack_2c [2];
   undefined4 uStack_28;
@@ -551,7 +551,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
     if (param_6 == 0) {
       return 0xffffec77;
     }
-    uVar2 = 0;
+    i = 0;
     do {
       env_sleep_msec(1);
       env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
@@ -559,9 +559,9 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
                              (*(undefined4 *)(param_1 + 4),&uStack_30,auStack_2c);
       env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
-      uVar2 = uVar2 + 1;
+      i = i + 1;
       puVar1 = puStack_24;
-      if (param_6 <= uVar2) {
+      if (param_6 <= i) {
         if (puStack_24 == (undefined1 *)0x0) {
           return 0xffffec77;
         }

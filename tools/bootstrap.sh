@@ -24,7 +24,8 @@
 #           module and compile it; the stock Xtensa:LE:32:default is not changed. HIFI4_REGEN=1 first downloads
 #           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
-#           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
+#           code-discovery and names scripts, then tools/ghidra/NameVariables.java (T23h: variable and parameter names by
+#           rule; log of the renames in logs/namevars_<image>.tsv). A program is rebuilt only when its inputs changed (stamp files).
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv; into the
 #           repo's decomp/ it also refreshes the README progress block and decomp/*/readable/ (tools/readable_view.py).
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
@@ -184,7 +185,7 @@ headless() {  # headless <project> <analyzeHeadless args...>
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
-  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
+  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|NameVariables|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|NameVariables|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
     "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
@@ -376,9 +377,9 @@ build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
   local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
     "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc" \
-    "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv")
+    "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv" "$G/NameVariables.java")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
-  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyEnums, ApplyStructs (struct fields use the enums), ApplySfr"
+  info "FT710_MAIN: import rx62t:LE:32:default @ 0xFFF80000, SetupRX651, analysis, FixFuncEntries, ApplyNames, DefineRomData, ApplySignatures, ApplyEnums, ApplyStructs (struct fields use the enums), ApplySfr, NameVariables"
   rm -f "$PROJ/.stamp_main"
   headless FT710_MAIN -import "$bin" -overwrite \
     -processor rx62t:LE:32:default -loader BinaryLoader -loader-baseAddr 0xFFF80000 -analysisTimeoutPerFile "$GHIDRA_TIMEOUT" \
@@ -390,15 +391,16 @@ build_main() {
     -postScript ApplySignatures.java "$G/signatures_main.tsv" \
     -postScript ApplyEnums.java "$G/enums_main.h" "$G/enum_uses_main.tsv" \
     -postScript ApplyStructs.java "$G/structs_main.h" \
-    -postScript ApplySfr.java "$G/sfr_rx651.tsv"
+    -postScript ApplySfr.java "$G/sfr_rx651.tsv" \
+    -postScript NameVariables.java log="$OUT/logs/namevars_main.tsv" sfr="$G/sfr_rx651.tsv"
   echo "$st" > "$PROJ/.stamp_main"
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
   local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
-    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h")
+    "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h" "$G/NameVariables.java")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
-  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs"
+  info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs, NameVariables"
   rm -f "$PROJ/.stamp_display"
   headless FT710_DISPLAY -import "$bin" -overwrite \
     -processor ARM:LE:32:v7 -loader BinaryLoader -loader-baseAddr 0x20100000 \
@@ -413,35 +415,38 @@ build_display() {
     -postScript DisplayGaps.java "$PROJ/display_gaps_starts.tsv" "$PROJ/display_gaps_fragments.tsv" .text define
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript ApplyNames.java "$G/names_display.tsv" \
     -postScript ApplyData.java "$G/data_display.tsv" -postScript ApplySignatures.java "$G/signatures_display.tsv" -postScript ApplySfr.java "$G/sfr_rza1h.tsv" \
-    -postScript ApplyStructs.java "$G/structs_display.h"
+    -postScript ApplyStructs.java "$G/structs_display.h" \
+    -postScript NameVariables.java log="$OUT/logs/namevars_display.tsv" sfr="$G/sfr_rza1h.tsv"
   echo "$st" > "$PROJ/.stamp_display"
 }
 build_ifdsp() {
   local m33=$BUILD/FT-710_IFDSP_V0101.bin hifi=$BUILD/FT-710_IFDSP_V0101_hifi4.bin st
   st=$(stamp_of "$m33" "$G/IfdspM33Setup.java" "$G/IfdspFindFuncs.java" "$G/IfdspM33Names.java" "$G/FixFuncEntries.java" \
-    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv" "$G/ApplySignatures.java" "$G/signatures_m33.tsv" "$G/ApplySfr.java" "$G/sfr_rt685.tsv")
+    "$G/entries_m33.tsv" "$G/ApplyData.java" "$G/data_m33.tsv" "$G/ApplySignatures.java" "$G/signatures_m33.tsv" "$G/ApplySfr.java" "$G/sfr_rt685.tsv" "$G/NameVariables.java")
   if stamp_ok FT710_IFDSP ifdsp_m33 "$st"; then info "FT710_IFDSP/M33 up to date"
   else
-    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData, ApplySignatures, ApplySfr"
+    info "FT710_IFDSP/M33: import ARM:LE:32:v8-m @ 0x08000000, IfdspM33Setup, analysis, IfdspFindFuncs, FixFuncEntries, IfdspM33Names, ApplyData, ApplySignatures, ApplySfr, NameVariables"
     rm -f "$PROJ/.stamp_ifdsp_m33"
     headless FT710_IFDSP -import "$m33" -overwrite \
       -processor ARM:LE:32:v8-m -loader BinaryLoader -loader-baseAddr 0x08000000 \
       -preScript IfdspM33Setup.java -postScript IfdspFindFuncs.java -postScript FixFuncEntries.java "$G/entries_m33.tsv" \
       -postScript IfdspM33Names.java -postScript ApplyData.java "$G/data_m33.tsv" -postScript ApplySignatures.java "$G/signatures_m33.tsv" -postScript ApplySfr.java "$G/sfr_rt685.tsv" \
+      -postScript NameVariables.java log="$OUT/logs/namevars_ifdsp_m33.tsv" sfr="$G/sfr_rt685.tsv" \
       -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_m33"
   fi
   st=$(stamp_of "$hifi" "$G/IfdspHifi4Setup.java" "$G/IfdspHifi4FindFuncs.java" "$G/entries_hifi4.tsv" "$G/IfdspHifi4Names.java" "$G/ApplyData.java" "$G/data_hifi4.tsv" \
-    "$G/ApplySfr.java" "$G/sfr_rt685_hifi4.tsv" \
+    "$G/ApplySfr.java" "$G/sfr_rt685_hifi4.tsv" "$G/NameVariables.java" \
     "$GHIDRA_INSTALL_DIR"/Ghidra/Processors/Xtensa/data/languages/xtensa_rt600hifi4*.{slaspec,sinc,pspec,ldefs})
   if stamp_ok FT710_IFDSP ifdsp_hifi4 "$st"; then info "FT710_IFDSP/HiFi4 up to date"
   else
-    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData, ApplySfr"
+    info "FT710_IFDSP/HiFi4: import Xtensa:LE:32:rt600hifi4 @ 0, IfdspHifi4Setup, analysis, IfdspHifi4FindFuncs, IfdspHifi4Names, ApplyData, ApplySfr, NameVariables"
     rm -f "$PROJ/.stamp_ifdsp_hifi4"
     headless FT710_IFDSP -import "$hifi" -overwrite \
       -processor Xtensa:LE:32:rt600hifi4 -loader BinaryLoader -loader-baseAddr 0x0 \
       -preScript IfdspHifi4Setup.java -postScript IfdspHifi4FindFuncs.java -postScript IfdspHifi4Names.java \
       -postScript ApplyData.java "$G/data_hifi4.tsv" -postScript ApplySfr.java "$G/sfr_rt685_hifi4.tsv" \
+      -postScript NameVariables.java log="$OUT/logs/namevars_ifdsp_hifi4.tsv" sfr="$G/sfr_rt685_hifi4.tsv" \
       -analysisTimeoutPerFile "$GHIDRA_TIMEOUT"
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
@@ -590,7 +595,7 @@ step_sdr() {
 }
 
 # ---------------------------------------------------------------- main
-usage() { sed -n '2,47p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
+usage() { sed -n '2,48p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; }
 steps=""; skip=" "
 while [ $# -gt 0 ]; do
   case "$1" in

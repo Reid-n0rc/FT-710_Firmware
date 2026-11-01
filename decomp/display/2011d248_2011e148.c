@@ -491,17 +491,17 @@ void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_
 void vdc5_shrd_set_resource(int param_1,int param_2,undefined1 param_3)
 
 {
-  uint uVar1;
+  uint i;
   
   param_1 = param_1 * 9;
   if (param_2 == -1) {
-    uVar1 = 0;
+    i = 0;
     do {
-      if ((&DAT_208dce16)[uVar1 + param_1] == '\0') {
-        (&DAT_208dce04)[uVar1 + param_1] = param_3;
+      if ((&DAT_208dce16)[i + param_1] == '\0') {
+        (&DAT_208dce04)[i + param_1] = param_3;
       }
-      uVar1 = uVar1 + 1;
-    } while (uVar1 < 9);
+      i = i + 1;
+    } while (i < 9);
   }
   else {
     (&DAT_208dce04)[param_2 + param_1] = param_3;
