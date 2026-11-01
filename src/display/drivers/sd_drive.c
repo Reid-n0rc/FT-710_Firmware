@@ -228,7 +228,7 @@ int sd_card_remount(uint32_t idx)
     {
         return -1;
     }
-    if (d->sd->ops->check_card() == 0 && (sd_ins_drive[idx]->flags & 0x40))
+    if (((const sd_handle_t *)d->sd)->ops->check_card() == 0 && (sd_ins_drive[idx]->flags & 0x40))
     {
         if (sd_ins_drive[idx]->flags & 0x80)
         {
@@ -305,7 +305,7 @@ int sd_card_poll(uint32_t idx, int state)
     {
         return -1;
     }
-    if (d->sd->ops->check_card() == 0 && ((f = sd_ins_drive[idx]->flags) & 0x40))
+    if (((const sd_handle_t *)d->sd)->ops->check_card() == 0 && ((f = sd_ins_drive[idx]->flags) & 0x40))
     {
         if (state & 0x40)
         {

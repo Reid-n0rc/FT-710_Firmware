@@ -81,6 +81,9 @@ SCRATCH_ARGS = 0x21200000          # argument buffers
 STOP = 0x3F000000                  # return address
 STACK_TOP, STACK_SIZE = 0x3E000000, 0x10000
 BUDGET = 1000000
+# the file-system presets' RAM disk (round 9): DISK_SECTORS sectors of a synthetic card (tools/fat_image.py) at DISK,
+# in the scratch code mapping above the linked code; the driver routines (RAMDISK_CODE) copy sectors in and out
+DISK, DISK_SECTORS = 0x21300000, 0x800
 FULL_COMPARE = os.environ.get('EQUIV_FULL_COMPARE') == '1'
 NARGS = 8
 MIN_COVER = 0.5
@@ -521,6 +524,11 @@ class Run:
             uc.mem_write(a, data)
         for a, data in args.get('buffers', []):
             uc.mem_write(a, data)
+        # a RAM disk behind the file-system presets (round 9): its sectors are compared after the run as well
+        self.extra = []
+        if 'disk' in args:
+            uc.mem_write(DISK, args['disk'])
+            self.extra = [(DISK, DISK + len(args['disk']))]
         self.rng = random.Random(seed)
         self.stub_addrs = stub_addrs
         self.mmio, self.calls, self.end = [], [], None
@@ -666,8 +674,9 @@ class Run:
             sctlr = uc.reg_read(A.UC_ARM_REG_CP_REG, SCTLR)
         except Exception:
             sctlr = None
-        snap = tuple(self.written(lo, hi) for lo, hi in self.snap)
-        return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap,
+        ranges = list(self.snap) + self.extra
+        snap = tuple(self.written(lo, hi) for lo, hi in ranges)
+        return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap, 'ranges': ranges,
                 'sctlr': sctlr, 'ram2': self.written(RAM2, RAM2_END) if self.snap is SNAP_LINK else None}
 
     def written(self, lo, hi):
@@ -745,6 +754,9 @@ def compare(a, b, snap=SNAP):
     for k in ('end', 'ret', 'mmio', 'calls', 'sctlr'):
         if a[k] != b[k]:
             return k
+    snap = a.get('ranges', snap)
+    if snap != b.get('ranges', snap):
+        return 'compared ranges'
     for (lo, hi), x, y in zip(snap, a['writes'], b['writes']):    # written pages per range (round 9)
         i = first_difference(x, y)
         if i is not None:
@@ -1703,6 +1715,108 @@ def fs_move_args(rng, args):
 
 PRESETS['fs_memmove'] = fs_move_args
 PRESETS['fs_memset'] = lambda rng, args: fs_len_args(rng, args, 2, 3)
+
+
+# The RAM disk's two routines, A32, assembled from this source with the pinned GNU as (round 9):
+#   drv:    (drive, command, sector, buffer, [sp] count): command 1 reads, 2 writes count sectors at drive->first
+#           (+0x30) + sector of the disk; -1 past its end; any other command returns 0. The file system's driver
+#           entry (drive +0x18), as sd_driver_op is for the SD card.
+#   sdread: (sector, buffer, count, card): the SD operation table's read slot (+0x58), sector addressing.
+#   drv:    ldr ip,[sp]; cmp r1,#1; cmpne r1,#2; movne r0,#0; bxne lr; push {r4-r6,lr}; ldr r4,[r0,#0x30];
+#           add r2,r2,r4; ldr r4,disk; ldr r5,nsect; add r0,r2,ip; cmp r0,r5; mvnhi r0,#0; pophi {r4-r6,pc};
+#           add r4,r4,r2,lsl #9; lsls ip,ip,#9; beq 2f; cmp r1,#1; moveq r5,r4; moveq r6,r3; movne r5,r3;
+#           movne r6,r4; 1: ldrb r0,[r5],#1; strb r0,[r6],#1; subs ip,ip,#1; bne 1b; 2: mov r0,#0; pop {r4-r6,pc}
+#   sdread: push {r4-r6,lr}; ldr r4,disk; ldr r5,nsect; add ip,r0,r2; cmp ip,r5; mvnhi r0,#0; pophi {r4-r6,pc};
+#           add r4,r4,r0,lsl #9; lsls ip,r2,#9; beq 2f; 1: ldrb r0,[r4],#1; strb r0,[r1],#1; subs ip,ip,#1;
+#           bne 1b; 2: mov r0,#0; pop {r4-r6,pc}
+#   disk: .word DISK; nsect: .word DISK_SECTORS
+RAMDISK_CODE = SCRATCH_ARGS + 0x1F000
+RAMDISK_DRV, RAMDISK_SDREAD = RAMDISK_CODE, RAMDISK_CODE + 0x70
+RAMDISK_WORDS = [
+    0xe59dc000, 0xe3510001, 0x13510002, 0x13a00000, 0x112fff1e, 0xe92d4070, 0xe5904030, 0xe0822004, 0xe59f4088,
+    0xe59f5088, 0xe082000c, 0xe1500005, 0x83e00000, 0x88bd8070, 0xe0844482, 0xe1b0c48c, 0x0a000008, 0xe3510001,
+    0x01a05004, 0x01a06003, 0x11a05003, 0x11a06004, 0xe4d50001, 0xe4c60001, 0xe25cc001, 0x1afffffb, 0xe3a00000,
+    0xe8bd8070, 0xe92d4070, 0xe59f4034, 0xe59f5034, 0xe080c002, 0xe15c0005, 0x83e00000, 0x88bd8070, 0xe0844480,
+    0xe1b0c482, 0x0a000003, 0xe4d40001, 0xe4c10001, 0xe25cc001, 0x1afffffb, 0xe3a00000, 0xe8bd8070, DISK,
+    DISK_SECTORS]
+_CARDS = None
+
+
+def fat_cards():
+    """Synthetic cards for the file-system presets (tools/fat_image.py), built once per worker: FAT12, FAT16 and
+    FAT32 with one partition from sector 63 and 1..8 sectors per cluster, a FAT16 superfloppy (no MBR), each with
+    the default directories (FT-710/Capture, MemList, Menu, PlayList) and files (short and long names)."""
+    global _CARDS
+    if _CARDS is None:
+        import fat_image as F
+        _CARDS = []
+        for fat, spc, sf in ((12, 1, False), (12, 4, False), (16, 1, False), (16, 2, True), (32, 1, False),
+                             (32, 8, False)):
+            img, vol = F.card(fat, DISK_SECTORS, spc=spc, files=F.DEFAULT_FILES, dirs=F.DEFAULT_DIRS,
+                              superfloppy=sf)
+            _CARDS.append((img, vol))
+    return _CARDS
+
+
+FS_DRIVE = SCRATCH_ARGS + 0xA000      # the drive record
+FS_DRIVE2 = SCRATCH_ARGS + 0xA100     # a second one in the list (another driver)
+FS_WORK = SCRATCH_ARGS + 0x10000      # a work buffer (fs_work_alloc), the sector buffer at +0xC0C
+
+
+def fs_drive_record(rng, vol, op=RAMDISK_DRV):
+    """A drive record (include/fs.h) for vol as fs_drive_attach and fat_mount leave it, with the RAM disk driver;
+    flags, allocation hints and the FSInfo counts drawn."""
+    d = bytearray(0x74)
+    typ = {12: 0x0C, 16: 0x10, 32: 0x20}[vol.fat]
+    struct.pack_into('<IHHHHIBbxxI', d, 0, 0, vol.spc, vol.rsv, vol.nfats, vol.root_entries, vol.fatsz, typ,
+                     ord('I'), vol.sectors)
+    struct.pack_into('<II', d, 0x18, op, rng.getrandbits(32))
+    struct.pack_into('<IIIII', d, 0x28, rng.choice([2, 2, vol.next_free, rng.randrange(2, vol.nclusters + 2)]),
+                     rng.choice([0, 0, rng.randrange(2, vol.nclusters + 2)]), vol.start, vol.root_cluster, 0)
+    struct.pack_into('<H', d, 0x3A, 1 if vol.fat == 32 else 0)
+    struct.pack_into('<II', d, 0x3C, rng.choice([0xFFFFFFFF, vol.nclusters + 2 - vol.next_free, rng.getrandbits(16)]),
+                     rng.choice([0xFFFFFFFF, vol.next_free, rng.randrange(2, vol.nclusters + 2)]))
+    d[0x68] = rng.choice([0xC1, 0xC1, 0xC0, 0x41, 0xE1, 0x81, rng.getrandbits(8)])
+    struct.pack_into('<II', d, 0x6C, 512, rng.choice([1, 1, 1, 0, 2]))
+    return d
+
+
+def fs_vol_args(rng, args, kind):
+    """The FAT layer (round 9): a drive record of a synthetic card in the RAM disk, alone or followed by a second
+    drive in the list fs_drive_list (0x20808BA0), the layer initialised (0x20808B90), a work buffer; then per kind
+    the arguments (r0 the drive unless noted)."""
+    img, vol = rng.choice(fat_cards())
+    regs = args['regs']
+    d = fs_drive_record(rng, vol)
+    if rng.random() < 0.3:
+        struct.pack_into('<I', d, 0, FS_DRIVE2)
+    d2 = fs_drive_record(rng, vol, op=rng.choice([RAMDISK_DRV, 0x20138660]))
+    d2[0x11] = ord(rng.choice('JKI'))
+    code = struct.pack(f'<{len(RAMDISK_WORDS)}I', *RAMDISK_WORDS)
+    args['buffers'] = [b for b in args['buffers'] if not FS_DRIVE <= b[0] < FS_DRIVE + 0x2000] + \
+        [(FS_DRIVE, bytes(d)), (FS_DRIVE2, bytes(d2)), (RAMDISK_CODE, code),
+         (FS_WORK, bytes(rng.getrandbits(8) for _ in range(0x1000)))]
+    args['disk'] = img
+    regs[0] = FS_DRIVE
+    if kind == 'clu':          # (drive, cluster)
+        regs[1] = rng.choice([0, 1, 2, 3, vol.root_cluster or 2, rng.randrange(2, vol.nclusters + 2),
+                              vol.nclusters + 1, vol.nclusters + 2, rng.getrandbits(32)])
+    elif kind == 'sect':       # (drive, sector)
+        regs[1] = rng.choice([0, vol.data_start, vol.data_start + 1, rng.randrange(vol.sectors), rng.getrandbits(32)])
+    elif kind == 'buf':        # (drive, sector buffer): the boot sector, the MBR or the FSInfo sector of the card
+        at = SCRATCH_ARGS + 0xC000
+        sec = rng.choice([vol.start, 0, vol.start + 1, vol.start + 6])
+        data = bytearray(img[sec * 512:(sec + 1) * 512])
+        if rng.random() < 0.2:
+            data[rng.randrange(512)] ^= 1 << rng.randrange(8)
+        args['buffers'] += [(at, bytes(data))]
+        regs[1] = at
+    fill = [(0x20808BA0, struct.pack('<I', FS_DRIVE)), (0x20808B90, struct.pack('<I', rng.choice([1, 1, 1, 0])))]
+    return fill
+
+
+PRESETS.update({n: (lambda rng, args: fs_vol_args(rng, args, 'drv')) for n in ('fs_drive_sem_create',
+                                                                             'fs_drive_sem_delete')})
 
 
 def byte_check(res, obj, fname, shndx, off, oaddr):

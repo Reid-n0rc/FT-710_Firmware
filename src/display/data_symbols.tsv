@@ -113,3 +113,28 @@ sd_ins_name	2013fa50	[fact] "SDInsCheck" in sd_card_task_start's literal pool (a
 sd_mtx_cmtx	20420558	[fact] the 12-byte mutex packet sd_mutex_create copies to the stack (0x2042053C + 0x1C..0x24)
 sjis_ucs2_81	20420756	[fact] sjis_to_ucs2_char indexes it with (lead << 8 | trail) - 0x8140 (literal 0x20420756 at 0x2014CAFC); ucs2_to_ascii_char searches its 0x1EBD entries
 sjis_ucs2_e0	204244d0	[fact] the same for lead bytes 0xE0..0xFC, index - 0xE040 (literal at 0x2014CB64); 0x1CBD entries searched by ucs2_to_ascii_char
+fs_task_err	2091d0bc	[fact] fs_task_ctx_get / fs_task_err_set index 0x2091D0C0 + 4 * (task id - 1) (literal 0x2091D0C0 at 0x2014D97C, ldr/str [r0, #-4])
+fs_lock_dir	2091d4c0	[fact] fs_lock_a / fs_unlock_a: five {semaphore, letter} of 8 bytes (literal at 0x2014D9D0); created as "dir_sem" by fs_sem_a_create
+fs_lock_fat	2091d4e8	[fact] fs_lock_b / fs_unlock_b: the same table for "fat_sem" (fs_sem_b_create)
+fs_sem_filestr	20808bb4	[fact] fs_sem1_wait / _signal / _create / _delete (literal 0x20808BB4); "filestr_sem"
+fs_sem_dirstr	20808bb8	[fact] fs_sem2_*; "dirstr_sem" (fs_sem2_create)
+fs_sem_fsys	20808bbc	[fact] fsys_sem_wait / _signal: [0x20808BB4 + 8] (0x2014DFE4); "fsys_sem" (fsys_init_sem)
+fs_sem_fsys_result	20808bc0	[fact] fsys_sem_wait / _signal store and return the kernel result at 0x20808BB4 + 0xC
+fs_mpf	20808bc4	[fact] fs_mpf_create stores the "fsys_mpf" pool id (literal 0x20808BC4); fs_mpf_alloc / _free use it
+fs_work_mpf	20808bc8	[fact] fs_work_pool_create stores the "FSYS Work" pool id at 0x20808BC4 + 4 (0x2014E194); fs_work_alloc / _free use it
+fs_csem_dir	20427e4c	[fact] the packet fs_sem_a_create passes to os_create_sem_named (literal at 0x2014DAF0)
+fs_csem_fat	20427e5c	[fact] fs_sem_b_create's packet
+fs_csem_disk	20427e6c	[fact] fs_drive_sem_create's packet (literal at 0x2014DD9C)
+fs_csem_filestr	20427e7c	[fact] fs_sem1_create's packet
+fs_csem_dirstr	20427e8c	[fact] fs_sem2_create's packet
+fs_csem_fsys	20427e9c	[fact] fsys_init_sem's packet
+fs_cmpf_fsys	20427eac	[fact] fs_mpf_create's packet for os_create_mpf_named
+fs_cmpf_work	20427ec0	[fact] fs_work_pool_create's packet
+fs_name_dir_sem	2014db20	[fact] "dir_sem" after fs_sem_a_create (add r1, pc, #0x24 at 0x2014DAF4)
+fs_name_fat_sem	2014dccc	[fact] "fat_sem" after fs_sem_b_create
+fs_name_disk_sem	2014ddc0	[fact] "disk_sem" after fs_drive_sem_create (add r1, pc, #0x18 at 0x2014DDA0)
+fs_name_filestr_sem	2014debc	[fact] "filestr_sem" after fs_sem1_create (add r1, pc, #0x24 at 0x2014DE90)
+fs_name_dirstr_sem	2014df7c	[fact] "dirstr_sem" after fs_sem2_create
+fs_name_fsys_sem	2014e034	[fact] "fsys_sem" after fsys_init_sem
+fs_name_fsys_mpf	2014e0f0	[fact] "fsys_mpf" after fs_mpf_create (add r1, pc, #0x1c at 0x2014E0CC)
+fs_name_fsys_work	2014e1a4	[fact] "FSYS Work" after fs_work_pool_create (add r1, pc, #0x20 at 0x2014E17C)

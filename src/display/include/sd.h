@@ -7,6 +7,7 @@
 #define SD_H
 
 #include <stdint.h>
+#include "fs.h"
 
 /* the format parameters (card context +0x2C8): first a 0x2C-byte record from the capacity tables 0x20420300..
  * (fat_format_geometry*), then fat_format_layout's results [fact: the offsets app/fat_format.c loads] */
@@ -101,25 +102,7 @@ typedef struct
     const sd_ops_t *ops;
 } sd_handle_t;
 
-/* the file system's drive record (0x74 bytes per drive from 0x20809984, filesystem.md), the fields the SD drive
- * code uses [fact: the offsets of sd_vol_read 0x2013E35C, sd_mount_volume 0x2013E43C, sd_driver_op 0x2013E71C,
- * sd_card_poll 0x2013FC68] */
-typedef struct
-{
-    uint8_t _r0[0x10];
-    uint8_t fat_type;         /* +0x10: 0x20 = FAT32 (fat_mount) */
-    uint8_t _r1[3];
-    uint32_t sectors;         /* +0x14: size of the partition */
-    int (*op)(void *drive, int op, uint32_t a);   /* +0x18: the driver entry (sd_driver_op through the hook) */
-    uint8_t _r2[0x24 - 0x1C];
-    const sd_handle_t *sd;    /* +0x24: the SD handle once attached (op 5) */
-    uint8_t _r3[0x30 - 0x28];
-    uint32_t first;           /* +0x30: its first sector on the card */
-    uint8_t _r4[0x3A - 0x34];
-    uint16_t fsinfo;          /* +0x3A: the FSInfo sector (BPB, FAT32) */
-    uint8_t _r5[0x68 - 0x3C];
-    int8_t flags;             /* +0x68: bit 5 write protected, 6 card in, 7 mounted (signed: sd_card_poll) */
-} fs_drive_t;
+/* the file system's drive record: include/fs.h (round 9; round 8 had the fields the SD drive code uses here) */
 
 /* three tries of one command; 0 when one of them answered, else -9 [fact: the shape of every caller in
  * drivers/sd_card.c and drivers/sd_setup.c] */
