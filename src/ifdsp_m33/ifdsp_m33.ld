@@ -49,7 +49,10 @@ SECTIONS
     .data : ALIGN(4)
     {
         FILL(0xFF)
-        *(CodeQuickAccess)
+        /* kept although unreferenced and sorted by alignment, as in the image: IAP_FlexspiNorAutoConfig,
+           POWER_EnterDeepSleep and OTFAD_Init have no callers but are there; fsl_iap, fsl_power, board (4-byte
+           aligned) come before fsl_otfad (2) [fact: 0x8000C..0x80A51] */
+        KEEP(*(SORT_BY_ALIGNMENT(CodeQuickAccess)))
         *(SORT_BY_ALIGNMENT(.text*))
         . = ALIGN(4);
         *(SORT_BY_ALIGNMENT(.rodata*))

@@ -49,11 +49,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00081264	SCTIMER_StartTimer	12	sct0_pwm_start	app/pwm.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
 00081274	console_cmd_i	60	console_cmd_i	app/console.o	equivalent	60	differential emulation: 200 trials agree (199 returned normally, 67% of 6 blocks reached); bytes: 14 bytes differ, first at +0x28; +0x3c literal 0x87c5f: bytes differ from .rodata.console_cmd_i.str1.1+0x0; +0x48 literal 0x87c64: bytes differ from .rodata.console_cmd_i.str1.1+0x5
 000812c4	console_cmd_w	50	console_cmd_w	app/console.o	identical	50	bytes and relocations match (size 56, Ghidra size 50)
-000812fc	console_cmd_d	128	console_cmd_d	app/console.o	equivalent	128	differential emulation: 200 trials agree (197 returned normally, 100% of 9 blocks reached); bytes: 26 bytes differ, first at +0x2; +0x16 not a branch in the original; +0x1e not a branch in the original; +0x28 literal 0xfbf0f004: bytes differ from .rodata.console_cmd_d.str1.1+0x0
+000812fc	console_cmd_d	128	console_cmd_d	app/console.o	equivalent	128	differential emulation: 200 trials agree (197 returned normally, 100% of 9 blocks reached); bytes: 74 bytes differ, first at +0x6; +0x1a not a branch in the original; +0x34 not a branch in the original; +0x3a not a branch in the original
 0008138c	console_printf	36	console_printf	app/console.o	identical	36	bytes and relocations match (size 40, Ghidra size 36)
 000813b4	console_cmd_r	48	console_cmd_r	app/console.o	equivalent	48	differential emulation: 200 trials agree (197 returned normally, 100% of 3 blocks reached); bytes: 36 bytes differ, first at +0x2; +0x18 not a branch in the original; +0x22 calls 0x8138c, regfile_read is at 0x80c30; +0x38 literal 0x4a0b4b0a: bytes differ from .rodata.console_cmd_d.str1.1+0x0
 000813ec	console_init	44	console_init	app/console.o	identical	44	bytes and relocations match (size 68, Ghidra size 44)
-00081430	console_rx_char	1058	console_rx_char	app/console.o	differs	0	0 of 1058 bytes covered; emulation trial 0: end differs (orig ended return, new fault); bytes: 744 bytes differ, first at +0x8; +0x2c not a branch in the original; +0x78 not a branch in the original; +0x8c calls 0x85fc2, console_puts is at 0x85fae
+00081430	console_rx_char	1058	console_rx_char	app/console.o	differs	0	0 of 1058 bytes covered; emulation trial 0: end differs (orig ended return, new fault); bytes: 793 bytes differ, first at +0x10; +0x2c not a branch in the original; +0x78 not a branch in the original; +0x8c calls 0x85fc2, console_puts is at 0x85fae
 000818b8	MU_A_IRQHandler	46	MU_A_IRQHandler,platform_init_interrupt	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	46	bytes and relocations match (size 24, Ghidra size 46); bytes and relocations match (size 68, Ghidra size 54)
 000818d0	platform_init_interrupt	54	platform_init_interrupt	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	54	bytes and relocations match (size 68, Ghidra size 54)
 00081914	platform_notify	38	platform_notify	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	38	bytes and relocations match (size 48, Ghidra size 38)
@@ -333,10 +333,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 0008726c	BOARD_InitPins_i2s	40	BOARD_InitPins_i2s	board/pin_mux.o	identical	40	bytes and relocations match
 00087294	BOARD_InitPins	26	BOARD_InitBootPins	board/pin_mux.o	identical	26	bytes and relocations match
 000872ae	main	14	__main	libc/crt.o	identical	14	bytes and relocations match
-000872bc	-	4	memcpy	libc/string.o	identical	0	bytes and relocations match
-000872c0	-	4	memset	libc/string.o	identical	0	bytes and relocations match
+000872bc	-	4	memcpy	libc/redlib/memcpy.o	identical	0	bytes and relocations match
+000872c0	-	4	memset	libc/redlib/memset.o	identical	0	bytes and relocations match
 000872c4	free	48	free	libc/redlib/heap.o	identical	48	bytes and relocations match
-000872f4	-	4	printf_float_none	libc/redlib/printf_hook.o	identical	0	bytes and relocations match
+000872f4	-	4	printf_float_none	libc/redlib/printf.o	identical	0	bytes and relocations match
 000872f8	setvbuf	62	setvbuf	libc/redlib/setvbuf.o	equivalent	62	differential emulation: 200 trials agree (193 returned normally, 60% of 10 blocks reached); bytes: 43 bytes differ, first at +0x6
 00087336	strcmp	68	strcmp	libc/string.o	equivalent	68	differential emulation: 200 trials agree (178 returned normally, 89% of 9 blocks reached); bytes: 19 bytes differ, first at +0x0
 0008737a	strlen	72	strlen	libc/string.o	equivalent	72	differential emulation: 200 trials agree (193 returned normally, 90% of 10 blocks reached); bytes: 16 bytes differ, first at +0x0

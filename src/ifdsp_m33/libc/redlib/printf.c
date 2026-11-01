@@ -13,7 +13,14 @@
 extern void *memset(void *d, int c, size_t n);
 extern int fputc(int c, redlib_file_t *f);
 extern int vsnprintf_core(redlib_file_t *f, long long max, const char *fmt, va_list ap, int (*hook)(void));
-extern int printf_float_none(void);
+
+/* The hook passed to the core as its last argument (0x872F5, Thumb) [fact: literal pools 0x85B04, 0x85B7C, 0x85BD8];
+ * it returns 0 [fact: 0x872F4 movs r0, #0; bx lr]. Open: what the core calls it for (the floating-point conversions are
+ * the likely case, Redlib's "no float" printf); would be settled by the hook's call sites in the core 0x84EB0. */
+int printf_float_none(void)
+{
+    return 0;
+}
 
 int sprintf(char *buf, const char *fmt, ...)
 {
