@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 """T24 (DISPLAY): differential emulation of recreated DISPLAY functions (RZ/A1H Cortex-A9) with Unicorn.
 
-The DISPLAY image was built with armcc (ARM Compiler 5) on the NORTi kernel; neither is available, so nothing can be
-byte-identical: each recreated function is compiled with GCC (src/display/Makefile, A32) and checked against the
-original by running both from the same start state on the same inputs (the method of tools/equiv_m33_emu.py, ported
-to A32 in T24 round 3).
+The DISPLAY image was built with armcc (ARM Compiler 5) on the NORTi kernel; neither is available, so the recreated C
+cannot be byte-identical: each recreated function is compiled with GCC (src/display/Makefile, A32) and checked against
+the original by running both from the same start state on the same inputs (the method of tools/equiv_m33_emu.py,
+ported to A32 in T24 round 3). A function whose section, linked so that it lands at its original address, gives the
+image's own bytes is "identical" (the assembly transcriptions of the hand-written run-time routines, T24 round 4).
 
 Start state (built once): the image at 0x20100000, the three LZ-compressed RW regions of its Region$$Table
 (0x204286A8) decompressed by the image's own __decompress (0x20100BFC, run in Unicorn), the two zero-init regions
-zero; that is the memory after __scatterload. The CPU is in SVC mode with IRQ and FIQ masked and the MMU off.
+zero; that is the memory after __scatterload. The CPU is in SYS mode (as main and the tasks) with IRQ and FIQ masked
+and the MMU off; SVC mode has its own stack, and an svc instruction enters the image's SVC_Handler (round 4).
 
 Per function: the recompiled section is placed at a scratch address and its relocations are resolved against the
 original addresses of the same symbols: functions by name from decomp/display/functions.tsv (or
@@ -827,6 +829,17 @@ PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'obj')) for n in (
 PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'glob')) for n in (
     'scif3_rxi_isr', 'scif3_txi_isr', 'scif4_rxi_isr', 'scif4_txi_isr', 'scif5_rxi_isr', 'scif5_txi_isr',
     'scif5_get', 'scif4_get', 'scif3_get', 'scif5_rxi_count_get', 'scif4_rxi_count_get', 'scif_uarts_ctor')})
+def small_args(rng, args):
+    """r0 a small selector (-1..63: command index, mode, wait kind), r1 0 or 1, r2 a random word (an argument)."""
+    regs = args['regs']
+    regs[0] = rng.choice([0xFFFFFFFF, 0, 1, 2, 3, 4, 5, 7, 7, 12, 17, 41, 55, 63])
+    regs[1] = rng.choice([0, 1])
+    regs[2] = rng.choice([0, rng.getrandbits(32)])
+    return []
+
+
+PRESETS.update({n: small_args for n in ('sdhi_send_cmd', 'sdhi_cmd', 'sdhi_wait_idle', 'sdhi_wait_info',
+                                        'sdhi_set_bus_width')})
 for _kind, _names in (
         ('reg', ('spibsc_reg_read32', 'spibsc_reg_write32', 'spibsc_reg_write16', 'spibsc_reg_write8')),
         ('obj', ('spibsc_ssl_negated',

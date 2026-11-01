@@ -16,3 +16,14 @@ sflash_checksum	0x20103cc8	[fact] sum of (byte + 1) & 0xFF; spiflash_write compa
 spiflash_read	0x20104078	[fact] device command "rd" + address, then sflash_dev_read(buf, n); no caller; Ghidra FUN_20104078
 pmu_ccnt_read	0x2010414c	[fact] mrc p15, 0, r0, c9, c13, 0 and return; Ghidra FUN_2010414c
 sflash_cycle_stamp	0x20104154	[fact] the {delta, last} PMCCNTR stamp (a copy of pmu_cycle_stamp 0x20114850); sflash_erase_block calls it through the thunk 0x20104184 (b 0x20104154); Ghidra FUN_20104154
+sdhi_stub_2013fde4	0x2013fde4	[fact] bx lr; Ghidra FUN_2013fde4 (drivers/sdhi.c)
+sdhi_stub_2013ffdc	0x2013ffdc	[fact] bx lr; Ghidra FUN_2013ffdc
+sdhi_op4	0x20140420	[fact] slot 4 of the SDHI operation table 0x20420564: returns -9; Ghidra FUN_20140420
+sdhi_op5	0x20140428	[fact] slot 5: returns -10; Ghidra FUN_20140428
+sdhi_op6	0x20140430	[fact] slot 6: returns 4; Ghidra FUN_20140430
+sdhi_op7	0x20140438	[fact] slot 7: returns 5; Ghidra FUN_20140438
+sdhi_op12	0x2014048c	[fact] slot 12: empty; Ghidra FUN_2014048c
+sdhi_op13	0x20140490	[fact] slot 13: empty; Ghidra FUN_20140490
+sdhi_op14	0x20140494	[fact] slot 14: empty; Ghidra FUN_20140494
+sdhi_op15	0x20140498	[fact] slot 15: empty; Ghidra FUN_20140498
+sdhi_op16	0x2014049c	[fact] slot 16: returns -9; Ghidra FUN_2014049c

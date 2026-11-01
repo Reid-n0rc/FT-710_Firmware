@@ -26,3 +26,14 @@ sflash_erase_stamp	208000a8	[fact] sflash_erase_block passes it to the cycle sta
 spibsc_spide_single	2016525c	[fact] spibsc_xfer and sflash_cmd_read index it by the unit size (literal 0x2016525C): bytes 00 08 0C 00 0F
 spibsc_spide_dual	20165269	[fact] the same for two chips (literal 0x20165269): index 2 -> 08, 4 -> 0C, 8 -> 0F
 sflash_sst_blocks	201651fc	[fact] sflash_sst_block_size reads {int16 index, uint32 size} pairs at 8-byte stride, entries 1..10
+sdhi_work	2091cba8	[fact] sdhi_drv_init clears it and stores its address in 0x20808B44
+sd_drv_work	20808b44	[fact] sdhi_drv_init: = &0x2091CBA8
+sd_drv_ops	20808b48	[fact] sdhi_drv_init: = the operation table 0x20420564
+sdhi_ops	20420564	[fact] 26 function pointers, slot 0 sdhi_wait_idle .. 25 sdhi_open (drivers/sdhi.c)
+sdhi_irq_registered	20808b70	[fact] sdhi0_irq_enable compares it with -1 and sets 1 after gic_def_inh succeeded
+sdhi_flg	20808b74	[fact] sdhi_init stores the id of the "SDINT_INI" flag; sdhi_flag_set / _wait use it
+sdhi_cflg	204205d8	[fact] the flag descriptor sdhi_init passes to os_create_flg_named
+sdhi_irq_def	204205cc	[fact] the handler descriptor sdhi0_irq_enable passes to gic_def_inh(0x12F, ...)
+sdhi_bounce	2091cec0	[fact] the 512-byte bounce buffer of sdhi_read_block / sdhi_write_block (32-byte aligned)
+sdhi_cmd_codes	204205fc	[fact] sdhi_send_cmd: SD_CMD = halfword[cmd] for normal commands
+sdhi_acmd_codes	2042067c	[fact] sdhi_send_cmd: SD_CMD = halfword[cmd] for application commands (app != 0)

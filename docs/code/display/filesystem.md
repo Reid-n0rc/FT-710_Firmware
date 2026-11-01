@@ -518,3 +518,23 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 |---|---|---|
 | 0x20147850 | `fs_strnicmp_sjis_b` | (a, b, n): case-insensitive compare of n bytes, Shift-JIS aware (two-byte characters folded with sjis_fold_case, single bytes with fs_toupper); no caller in the image; a second copy next to fs_strnicmp_sjis 0x2014D770 **[fact]** |
 | 0x20148A88 | `wpath_dir_len` | (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the last, with separators) plus 6 **[fact for the loop]** |
+
+### SDHI operation table and helpers named in T24 round 4
+
+Recreated in `src/display/drivers/sdhi.c` and checked by differential emulation (`tools/equiv_display_emu.py`). The
+SD driver calls the SDHI layer through the 26-slot table 0x20420564 that `sdhi_drv_init` hooks into 0x20808B48
+**[fact: the table's words]**: 0 `sdhi_wait_idle`, 1 `sdhi_clock_set_0x200`, 2 `sdhi_check_card`, 3 `sdhi_check_wp`,
+4..7 constants (-9, -10, 4, 5), 8 `sdhi_soft_reset`, 9 `sdhi_power_on`, 10 0x20140470, 11 `sdhi_set_bus_width`,
+12..15 empty, 16 -9, 17 `sdhi_wait_info`, 18 `sdhi_cmd`, 19 `sdhi_read_response`, 20 `sd_cmd16_set_blocklen`,
+21 `sd_cmd12_stop`, 22 `sdhi_read_op`, 23 0x20140998, 24 `sdhi_write_op`, 25 `sdhi_open`. *Open: what the driver asks
+through slots 4..7 and 12..16; would be settled by the call sites of those slots in `sd_driver_op` and the `sd_*`
+functions.* `sdhi_send_cmd` takes (command index, application command?, argument) and writes the command code from
+0x204205FC (or 0x2042067C for application commands); CMD7 is 0x307 to select and 0x507 to deselect (argument 0)
+**[fact: 0x20140538]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x2013FDE4, 0x2013FFDC | `sdhi_stub_2013fde4`, `sdhi_stub_2013ffdc` (were FUN_*) | empty (bx lr) **[fact]** |
+| 0x20140420..0x20140438 | `sdhi_op4` .. `sdhi_op7` (were FUN_*) | operation-table slots 4..7: return -9, -10, 4, 5 **[fact]** |
+| 0x2014048C..0x2014049C | `sdhi_op12` .. `sdhi_op16` (were FUN_*) | slots 12..15 empty, slot 16 returns -9 **[fact]** |
+
