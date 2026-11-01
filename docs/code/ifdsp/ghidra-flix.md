@@ -14,7 +14,7 @@ description, and are reproducible with the commands at the end.
 
 | Measure | Value |
 |---|---|
-| HiFi4 functions (FLIX listing) | 1,065, with 49,389 instructions in 188,006 bytes (plus 461 single padding bytes the listing shows as `.byte`) **[fact]** |
+| HiFi4 functions (FLIX listing) | 1,065, with 49,389 instructions in 188,006 bytes (plus 461 single padding bytes the listing shows as `.byte`) **[fact]**; 1,063 with 49,374 instructions in 188,019 bytes (454 `.byte`) since the false entries 0x218480 and 0x233818 were dropped **[fact]** |
 | Functions that contain at least one FLIX bundle | **891 (84 %)** **[fact]** |
 | FLIX bundles | **12,676**: 26 % of the instructions, **46 % of the code bytes** **[fact]** |
 | Bundle sizes | 10,438 × 6 bytes (48-bit), 2,238 × 11 bytes (88-bit) **[fact]** |
@@ -103,7 +103,7 @@ Option A is built: `tools/xtensa_sleigh_gen.py` generates the language from `xte
 | Ghidra analysed listing (oracle, listing mode) | 47,312 / 49,389 = 95.8 %; every mismatch is "missing": bytes `flix.dis` decodes by linear sweep that no code flow reaches (padding, data), no wrong decodes **[fact]** |
 | Function list (with `tools/ghidra/entries_hifi4.tsv`) | 1,067 = reference (B10) **[fact]** |
 | `FUN_0020bb74` (B9) | decompiles, and the C is correct for the parallel bundles in it (e.g. `{ l32r a3, …; and a14, a14, a3 }` ANDs with the old `a3`) **[fact: oracle b9.txt]** |
-| Full HiFi4 decompile (`ExportDecomp.java`, scratch project) vs the committed stock-language one | decompile failures 1 → **0**; `halt_baddata` 1,054 → **1** (`FUN_00218480`, which objdump cannot decode either: it is data); bad-instruction bookmarks 1,098 → 1; warnings 2,038 → 258; undefined non-0xFF bytes 186,167 → 29,161 **[fact]** |
+| Full HiFi4 decompile (`ExportDecomp.java`, scratch project) vs the committed stock-language one | decompile failures 1 → **0**; `halt_baddata` 1,054 → **1** (`FUN_00218480`; not data, as first written: the continuous decode puts its 0x36 byte 3 bytes into the bundle 0x21847D–0x218487 of `ifft_cplxf_ie`, so it was a false entry, removed with `FUN_00233818`, the same case in `fft_realf_ie`; now 0); bad-instruction bookmarks 1,098 → 1; warnings 2,038 → 258; undefined non-0xFF bytes 186,167 → 29,161 **[fact]** |
 
 ### How it is made
 

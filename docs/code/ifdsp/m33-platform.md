@@ -185,7 +185,11 @@ Stack depths are in 32-bit words, so each application task has 24 KB of stack; t
 Port: `SVC_Handler` 0x80B20 → `vPortSVCHandler_C` 0x8657C → `vRestoreContextOfFirstTask` 0x80A60 (svc 2 from `vStartFirstTask`);
 `PendSV_Handler` 0x80AC0 does the context switch; `SysTick_Handler` 0x86558 calls `xTaskIncrementTick`. The two "undecodable
 instruction" stubs from T07 are just literal words (0xFFFFFFFF padding) after `vRestoreContextOfFirstTask` and `vStartFirstTask`
-**[fact]**.
+**[fact]**. `vStartFirstTask` ends at `svc 2` (0x80AA6), which never returns: `vPortSVCHandler_C` either calls
+`vRestoreContextOfFirstTask` (exception return into the first task) or loops forever **[fact: 0x8657C]**. Ghidra fell through
+the padding `nop; nop; nop.w` into the literal 0xE000ED08 (SCB VTOR) at 0x80AB0 and decompiled `halt_baddata()`; the `noflow`
+row in `tools/ghidra/data_m33.tsv` (`ApplyData.java`) gives the `svc` a fall-through to itself, so the C shows
+`do { software_interrupt(2); } while (true);` with a comment, and 0x80AB0 is a pointer.
 
 ## 7. Interrupts, faults and watchdog
 
