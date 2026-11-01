@@ -3,3 +3,9 @@
 symbol	address	evidence	fill (keep: not randomised by the check)
 crc_table	208d9560	[fact] crc16_a001_table_init and crc32_make_table store their 256 words there (literal 0x20100A90); crc16_a001 and crc32_update read it
 gpio_port_regs	20800000	[fact] pointers to Pn (0xFCFE3000 + 4n), .data2 start; gpio_cfg_reset & co. index it (literal 0x20800000), gpio_early_init stores 0xFCFE301C into entry 7	keep
+riic_rx_full	20800454	[fact] userdef_riicN_init_rx_full / set_rx_full / wait_rx_full use byte 0x20800454 + N (drivers/riic.c)
+riic_tx_empty	20800458	[fact] the transmit-empty flags 0x20800458 + N (userdef_riicN_*_tx_empty)
+riic_tx_end	2080045c	[fact] the transmit-end flags 0x2080045C + N (userdef_riicN_*_tx_end)
+riic2_tx_count	20800462	[fact] userdef_riic2_set_tx_empty increments it, userdef_riic2_tx_count returns it
+riic_reg_table	20166d18	[fact] riic_regs_init indexes 9 register pointers per channel (literal 0x20166D18); values ICCR1, ICMR1, ICBRL, ICBRH, ICMR3, ICFER, ICIER, ICCR2, ICSR2 of RIICn
+riic_cisr	20166c28	[fact] userdef_riicN_init passes 0x20166C28 + 0x3C N (+0x14, +0x28) to itron_acre_isr: T_CISR {0, 0, intno, isr, 9}
