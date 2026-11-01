@@ -192,7 +192,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x20143A58 | `fs_remove_work` |  | Validates and normalises the path, file_remove_core, fs_flush **[fact]** |
 | 0x20143B20 | `fs_remove` |  | (path): deletes a file; wav_delete, rec_close_abort and rec_open_wav call it on WAV files **[fact]** |
 | 0x20143B70 | `fs_fatcache_setup` |  | (drive, buffer, size, sectors per slot): FAT cache in a caller buffer (0x206 bytes per sector slot, 4-byte aligned), -24 when too small **[fact]** |
-| 0x20143C1C | `fs_fatcache_setup_a` |  | fs_fatcache_setup and fs_set_error **[fact]** |
+| 0x20143C1C | `fs_fatcache_setup_a` |  | fs_fatcache_setup with one sector per slot (mov r3, #1), then fs_set_error **[fact, T24 round 9]** |
 | 0x20143C34 | `fs_fatcache_setup_b` |  | Second identical wrapper **[fact]** |
 | 0x20143EAC | `fs_dircache_setup` |  | (drive, buffer, size, sectors per slot): directory cache (0x208 bytes per sector, at least 3 slots), -28 otherwise **[fact]** |
 | 0x2014440C | `dircache_flush` |  | Writes every dirty directory cache slot back (fs_dev_op2) and clears the dirty bit **[fact]** |
@@ -295,7 +295,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2014A360 | `fs_clmap_size` |  | Bytes a drive's cluster bitmap needs: (clusters + 7) / 8, clusters = min(FAT entries, data clusters + 2) **[fact]** |
 | 0x2014A4D0 | `fs_init` |  | (drive table, n, file table, m): clears the 0x450-byte drive and 0x24C-byte file tables (0x20808B90..9C), creates the pools and semaphores; errors -30/-36/-33/-39/-42 **[fact]** |
 | 0x2014A5DC | `fs_drive_attach` |  | (drv, letter, driver fn, ctx, no_mount, sector size): links a drive into the list 0x20808BA0, calls the driver (op 5 init, op 7 mount), sets up the caches **[fact]** |
-| 0x2014A818 | `fs_drive_attach_thunk` |  | Tail call to fs_drive_attach **[fact]** |
+| 0x2014A818 | `fs_drive_attach_512` (was `fs_drive_attach_thunk`) |  | fs_drive_attach with 512-byte sectors **[fact, T24 round 9]** |
 | 0x2014A83C | `fs_exit` |  | Reverse of fs_init: clears the tables, deletes the drive semaphores, pools and semaphores (errors -53..-48) **[fact]** |
 | 0x2014A99C | `fs_vol_clear_geometry` |  | Zeroes the BPB fields of a drive (type, sectors/cluster, reserved, FATs, root entries, sizes, root cluster, FSInfo) **[fact]** |
 | 0x2014A9D4 | `fs_drive_mount` |  | Driver op 7 (mount) on a drive, re-reads the geometry, FAT32 free count via 0x2014B730 when unknown, sets mounted bit 0x80 of +0x68; -16 for clusters > 128 KB **[fact]** |
@@ -307,7 +307,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2014AF14 | `fs_get_attr` |  | Attribute byte (entry byte 11) of a path from fs_stat; sdmenu_file_exists **[fact]** |
 | 0x2014AF44 | `fs_file_size_copy` |  | Copies the 4-byte size at file +0x2C **[fact]** |
 | 0x2014AF64 | `fs_fsize` |  | (fd, *size): file size; the firmware loaders compare it with image sizes (0x43075A in fwobj_sdr_run, < 0x242 in fwobj_display_run) **[fact]** |
-| 0x2014AFCC | `fs_split_sectors` |  | Splits a sector count into whole 8 MB units and a byte remainder for a sector size **[fact]** |
+| 0x2014AFCC | `fs_split_sectors` |  | (sectors, *hi, *lo, bps): whole units of 0x800000 / (bps / 512) sectors (4 GiB of 512-byte sectors) and the rest in bytes **[fact, T24 round 9]** |
 | 0x2014B020 | `fs_disk_total_calc` |  | Total data size of a drive: (clusters - 2) * sectors per cluster, split by fs_split_sectors; -17 for an unknown drive **[fact]** |
 | 0x2014B140 | `fs_disk_size` |  | (letter, *hi, *lo): checked wrapper of fs_disk_total_calc; sd_info_screen **[fact]** |
 | 0x2014B1E0 | `fat32_count_free` |  | Counts the zero FAT32 entries (free clusters) **[inference]** |
@@ -329,7 +329,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 |---|---|---|---|
 | 0x2014CFF4 | `fs_wstrcpy_len` |  | Copies a 0-terminated UTF-16 string, returns its length in characters, sets *flag = 1 **[fact]** |
 | 0x2014D050 | `fs_ucs2_to_ascii_upper` |  | UTF-16 name to 8-bit upper case: 0x00A5 -> '\\', 0x203E -> '~', U+FF61..FF9F -> half-width kana 0xA1..0xDF, 0 for any other character outside 0x20..0x7E **[fact]** |
-| 0x2014D1C4 | `fs_memmove` |  | Byte copy that copies backwards when the areas overlap **[fact]** |
+| 0x2014D1C4 | `fs_memmove` |  | Byte move; backwards for an overlap, but from src[n] down to src[1] (one byte too high) **[fact, T24 round 9]** |
 | 0x2014D248 | `fs_wstrlen_bytes` |  | Length of a UTF-16 string in bytes **[fact]** |
 | 0x2014D270 | `fs_strcpy` |  | Byte string copy including the terminator **[fact]** |
 | 0x2014D288 | `fs_strncpy` |  | Copies up to n bytes, pads with 0 after the terminator **[fact]** |
@@ -470,6 +470,67 @@ disassembly and pass the differential check (docs/tasks/T24-source-recreation.md
   **[fact]**.
 - **Drive flags +0x68:** bit 5 write protected, bit 6 card in, bit 7 mounted; `sd_card_poll` reads them signed
   and returns them sign-extended without bits 6 and 7 after a removal **[fact: ldrsb at 0x2013FD0C]**.
+
+### FAT layer, recreated (T24 round 9)
+
+`src/display/fs/` recreates the bottom of the FAT layer from the disassembly and passes the differential check
+(docs/tasks/T24-source-recreation.md, round 9): `fs_string.c` (byte, string and Shift-JIS / UTF-16 helpers),
+`fs_os.c` (per-task error, drive locks, semaphores, pools), `fat_table.c` (errors, drive checks, cluster and
+sector arithmetic, FAT sectors and entries, chains, the cluster bitmap, allocation), `fat_volume.c` (boot
+sector, MBR, FSInfo, `fs_init` / `fs_exit`, attach, mount, unmount, detach), `fat_cache.c` (the FAT and directory
+caches' set-up, lookup, load, ageing) and `fat_space.c` (sizes and free-space counts). Not yet: the directory and
+long-name code, the file calls (`fs_fopen` & co.), the directory cache's load and flush.
+
+```mermaid
+flowchart TD
+  SDV["sd_mount_volume (SD drive)"] --> FV["fat_find_volume<br/>MBR 0x1BE, type by id"]
+  FV -->|"no partition"| SF["fat_detect_superfloppy<br/>0x20148E80"]
+  SDV --> FM["fat_mount<br/>BPB into the drive record"]
+  SDV --> FI["fat32_fsinfo_read"]
+  ATT["fs_drive_attach / fs_drive_mount"] -->|"op 5, op 7"| DRV["driver entry +0x18<br/>(sd_driver_op)"]
+  ATT --> CNT["fs_count_free<br/>fat12/16/32_count_free"]
+  CNT --> TS["fat_table_sector_get"]
+  ALLOC["fat_alloc_cluster<br/>fat32_alloc_cluster"] --> CM["clmap_find_free<br/>bitmap +0x58"]
+  ALLOC --> FF["fat32_find_free"]
+  ALLOC --> ER["fat_entry_rw<br/>FAT12/16/32"]
+  ER --> TS
+  TS -->|"cache +0x44"| FC["fatcache_lookup / _load / _touch"]
+  TS -->|"no cache"| RD["fs_dev_op1: read<br/>work buffer +0xC0C"]
+  FC --> RD
+  RD --> DRV
+```
+
+Found on the way **[fact unless tagged]**:
+
+- **Signed characters.** The layer loads its bytes with `ldrsb` and narrows with `sxtb` (`fs_toupper` 0x2014D36C,
+  `fs_stricmp` 0x2014D39C): it was built with signed chars, unlike the rest of the image; `include/fs.h` has
+  `fs_char_t`. Its compare functions return the signed byte difference of the upper-cased characters.
+- **The drive record** (0x74 bytes, `fs_drive_t` in `include/fs.h`): +0 next, +4 sectors per cluster, +6 reserved
+  sectors, +8 FATs, +0xA root entries, +0xC FAT size, +0x10 type (0x0C, 0x10, 0x20, 0x40 exFAT), +0x11 letter,
+  +0x14 sectors, +0x18 the driver entry, +0x1C its argument, +0x24 the SD handle, +0x28 the allocation hint,
+  +0x2C the first freed cluster, +0x30 the first sector, +0x34 the FAT32 root cluster, +0x3A the FSInfo sector,
+  +0x3C/+0x40 the FSInfo counts, +0x44/+0x48/+0x4A the FAT cache (buffer, slots, sectors per slot), +0x4C/+0x50/
+  +0x52 the directory cache, +0x54 bitmap enabled, +0x58 the cluster bitmap, +0x60 the clusters it covers, +0x68
+  flags, +0x6C bytes per sector, +0x70 the device semaphore (shared by the drives of one driver entry).
+- **Driver commands** at +0x18: (drive, command, a, b, [sp] c): 1 read and 2 write (`fs_dev_op1` / `fs_dev_op2`,
+  under the device semaphore, 1 s), 5 attach, 7 mount, 8 unmount (`fs_drive_attach`, `fs_drive_mount`,
+  `fs_drive_unmount`) **[fact: the blx ip sites]**.
+- **Type detection.** `fat_find_volume` takes the first partition entry's start and maps its type (7 exFAT, 1
+  FAT12, 4/6/0x0E FAT16, 0x0B/0x0C FAT32); without a start, or for any other type, it tail-calls the unlisted
+  `fat_detect_superfloppy` 0x20148E80, which, like `fat_mount`, decides by the names "EXFAT" (+3), "FAT32" (+0x52),
+  "FAT12"/"FAT16" (+0x36), not by the cluster count of the FAT specification. exFAT is recognised and refused.
+- **Caches.** A cache is one caller buffer: a header word per slot (the first sector, bit 31 dirty), the slots'
+  sectors, then a 16-bit age per slot (1 the newest). `fatcache_load` replaces the oldest slot, writing a dirty one
+  back first, to the second FAT only when a slot is one sector **[fact: 0x20143D98..0x20143DCC]**.
+- **Bugs kept as they are.** `fs_memmove`'s backward copy starts one byte above the area (src[n] down to src[1],
+  0x2014D1EC), so an overlapping move to a higher address shifts the wrong bytes. `fs_split_sectors` (Ghidra's
+  comment said 8 MB) splits into units of 0x800000 sectors, 4 GiB with 512-byte sectors. `fs_fatcache_setup`
+  with zero sectors per slot divides by zero; the image's `__aeabi_uidivmod` answers 0 and the call fails with
+  -24 **[fact: the emulation]**.
+- **"Void" functions whose r0 is used.** `fs_init` tests r0 after `fs_sem_a_create`, `fs_sem_b_create`,
+  `fs_sem1_create` and `fs_sem2_create`, which return nothing in C; r0 is then the last `itron_sig_sem` result or
+  the failed creation's id **[fact: the cmp r0, #0 after each call, 0x2014A560..0x2014A5B4]**. The recreations
+  return that value, and `equiv_display_emu.py abicheck` now flags a read of r0 after a call of a void function.
 
 ### SD format (sd_fat_format / fat_format_volume), card task and SDHI DMA (T23e round 3)
 

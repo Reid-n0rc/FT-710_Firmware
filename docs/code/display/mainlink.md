@@ -508,3 +508,13 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 |---|---|---|
 | 0x20163360 | `uart_obj_ctor` | (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) **[fact]** |
 | 0x20114938 | `scif_uarts_ctor` | Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller (run from the init table) **[fact for the calls]** |
+
+### Recreated (T24 round 9)
+
+`src/display/app/mainlink.c` recreates the state accessors (0x20115000..0x201150EB), `minmax4`, `mainlink_on_ack`,
+`mainlink_on_nak`, `mainlink_tx_reset`, `mainlink_send_f1`, the two RX counters and the ACK timeout's cyclic handler
+from the disassembly (docs/tasks/T24-source-recreation.md, round 9), on the state block `struct ml_state` at
+0x20450024 (`tools/ghidra/structs_display.h`). Two helpers got names: `ml_settings24_copy` 0x201636F8 (the 0x24
+frame's settings out of 0x2045006D) and `ml_enc_entry_clear` 0x20163668 (one 5-byte entry of the encoder queue
+0x2045F0C5, 7 x 10) **[fact: their callers]**. Not yet: the senders (`mainlink_submit`, `mainlink_queue_frame`), the
+knob filters, the RX and TX tasks.
