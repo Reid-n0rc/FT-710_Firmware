@@ -92,3 +92,22 @@ sdhi_dma_irq	20808b78	[fact] two {handler definition, GIC id, registered (-1 unt
 sd_r1_err_cmd13	2042022c	[fact] R1 error mask per card type that sd_cmd13_send_status tests (literal 0x2013DE40, index +0x2C6)
 fat_fmt_geom_small	20420300	[fact] 0x2C-byte format parameter block that fat_format_geometry_small copies below 0x7E0000 sectors (literal 0x2013F9E4)
 fat_fmt_geom_large	2042032c	[fact] the block for 0x7E0000 sectors and more (literal 0x2013F9E8)
+sd_r1_err_cmd7	20420224	[fact] R1 error mask per card type that sd_cmd7_select tests (literal 0x2013DE44 loaded at 0x2013D4DC, index +0x2C6)
+fat_fmt_geom_table	20420358	[fact] eleven 0x2C-byte format parameter records by card size that fat_format_geometry copies (literals 0x20420358 + 0x2C k, 0x2013F238..0x2013F33F)
+fat_media_fat12	20420254	[fact] F8 FF FF, the first FAT entries fat_format_write_fats copies for FAT12 (literal at 0x2013F144)
+fat_media_fat16	20420257	[fact] F8 FF FF FF for FAT16 (fat_format_write_fats)
+fat_media_fat32	204202f3	[fact] the 12 bytes for FAT32 (fat_format_write_fats, literal 0x2013F140)
+fat_boot_fat16	2042025b	[fact] the 0x3E-byte FAT12/16 boot sector template of fat_format_write_boot
+fat_boot_fat32	20420299	[fact] the 0x5A-byte FAT32 boot sector template of fat_format_write_boot
+fsinfo_lead_sig	20808b4c	[fact] pointer to the FSInfo lead signature fat32_format_write_fsinfo copies (ldr [0x20808B4C] at 0x2013EA98)	keep
+fsinfo_struct_sig	20808b50	[fact] pointer to the FSInfo structure signature (fat32_format_write_fsinfo)	keep
+fs_drive_list	20808ba0	[fact] the first drive record, sd_format's start for fs_find_drive (literal 0x2013F9F0)
+sd_ins_tsk	20808b58	[fact] the SDInsCheck task id sd_card_task_start creates once (literal 0x2013FA4C, 0x20808B60 - 8)
+sd_ins_state	20808b5c	[fact] per-drive card state of sd_ins_check_task (1 = card seen; 0x20808B60 - 4)
+sd_ins_drive	20808b60	[fact] per-drive record pointers of the card monitor (literal 0x2013FA4C; sd_card_poll, sd_card_remount)
+sd_clmap_mounted	20808b64	[fact] sd_clmap_state_set stores its argument at 0x20808B58 + 0xC
+sd_clmap_ready	20808b68	[fact] 0x20808B58 + 0x10, set by sd_clmap_prepare after the scan
+sd_mtx	20808b6c	[fact] the SD mutex id, 0x20808B58 + 0x14 (sd_mutex_create, sd_mutex_lock, sd_card_poll)
+sd_ins_ctsk	2042053c	[fact] the SDInsCheck creation packet sd_card_task_start passes to os_create_tsk_named (literal 0x2013FA5C)
+sd_ins_name	2013fa50	[fact] "SDInsCheck" in sd_card_task_start's literal pool (add r1, pc, #0x20 at 0x2013FA28)
+sd_mtx_cmtx	20420558	[fact] the 12-byte mutex packet sd_mutex_create copies to the stack (0x2042053C + 0x1C..0x24)

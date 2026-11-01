@@ -32,9 +32,9 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2010087c	gpio_cfg_input	48	gpio_cfg_input	drivers/gpio.o	equivalent	48	differential emulation: 200 trials agree (185 returned normally, 100% of 1 blocks reached)
 201008ac	gpio_read_bit	180	gpio_read_bit	drivers/gpio.o	equivalent	180	differential emulation: 200 trials agree (200 returned normally, 100% of 15 blocks reached)
 20100990	crc16_a001_table_init	76	crc16_a001_table_init	app/crc.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-201009dc	crc16_a001	56	crc16_a001	app/crc.o	equivalent	56	differential emulation: 200 trials agree (56 returned normally, 100% of 3 blocks reached, 49 trials inconclusive)
+201009dc	crc16_a001	56	crc16_a001	app/crc.o	equivalent	56	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 20100a14	crc32_make_table	72	crc32_make_table	app/crc.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-20100a5c	crc32_update	44	crc32_update	app/crc.o	equivalent	44	differential emulation: 200 trials agree (56 returned normally, 100% of 3 blocks reached, 49 trials inconclusive)
+20100a5c	crc32_update	44	crc32_update	app/crc.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 20100a88	FUN_20100a88	8			not yet	0	
 20100a98	FUN_20100a98	36			not yet	0	
 20100abc	boot_select_bank	236			not yet	0	
@@ -56,11 +56,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20100f20	dcache_disable	36	dcache_disable	drivers/cp15.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20100f44	icache_enable	32	icache_enable	drivers/cp15.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20100f64	dcache_enable	32	dcache_enable	drivers/cp15.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20100f84	icache_invalidate_range	84	icache_invalidate_range	drivers/cp15.o	equivalent	84	differential emulation: 200 trials agree (97 returned normally, 100% of 7 blocks reached, 103 trials inconclusive)
-20100fd8	dcache_clean_invalidate_range	68	dcache_clean_invalidate_range	drivers/cp15.o	equivalent	68	differential emulation: 200 trials agree (97 returned normally, 100% of 5 blocks reached, 103 trials inconclusive)
+20100f84	icache_invalidate_range	84	icache_invalidate_range	drivers/cp15.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+20100fd8	dcache_clean_invalidate_range	68	dcache_clean_invalidate_range	drivers/cp15.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 2010101c	dcache_clean_invalidate_all	20	dcache_clean_invalidate_all	drivers/cp15.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20101030	dcache_clean_range	88	dcache_clean_range	drivers/cp15.o	equivalent	88	differential emulation: 200 trials agree (97 returned normally, 100% of 6 blocks reached, 103 trials inconclusive)
-20101088	dcache_invalidate_range	88	dcache_invalidate_range	drivers/cp15.o	equivalent	88	differential emulation: 200 trials agree (97 returned normally, 100% of 6 blocks reached, 103 trials inconclusive)
+20101030	dcache_clean_range	88	dcache_clean_range	drivers/cp15.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+20101088	dcache_invalidate_range	88	dcache_invalidate_range	drivers/cp15.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 201010e0	dcache_setway_all	164	dcache_setway_all	drivers/cp15.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
 20101190	pinmux_init	2512			not yet	0	
 20101b60	backlight_enable	68			not yet	0	
@@ -251,7 +251,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2010a918	be_bytes_to_u32	40			not yet	0	
 2010a940	sum8_neg_append	52			not yet	0	
 2010a974	isp_relay_mode_cmd	188			not yet	0	
-2010aa30	crc16_xmodem	76	crc16_xmodem	app/crc.o	equivalent	76	differential emulation: 200 trials agree (39 returned normally, 100% of 4 blocks reached, 57 trials inconclusive)
+2010aa30	crc16_xmodem	76	crc16_xmodem	app/crc.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 2010aa7c	dsp_isp_ping	248			not yet	0	
 2010ab74	dsp_isp_write_image	1408			not yet	0	
 2010b0f4	dsp_isp_erase_region	620			not yet	0	
@@ -749,7 +749,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011d8e8	vdc5_shrd_res_idle	56	vdc5_shrd_res_idle	drivers/vdc5_shrd.o	equivalent	56	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
 2011d920	vdc5_shrd_res_busy	56	vdc5_shrd_res_busy	drivers/vdc5_shrd.o	equivalent	56	differential emulation: 200 trials agree (146 returned normally, 100% of 4 blocks reached)
 2011d958	vdc5_shrd_get_oir_rw_proc_enabled	80	vdc5_shrd_get_oir_rw_proc_enabled	drivers/vdc5_reg.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2011d9a8	rspi_hw_config	1272	rspi_hw_config	drivers/rspi.o	equivalent	1272	differential emulation: 200 trials agree (183 returned normally, 100% of 7 blocks reached)
+2011d9a8	rspi_hw_config	1272	rspi_hw_config	drivers/rspi.o	equivalent	1272	differential emulation: 200 trials agree (181 returned normally, 100% of 7 blocks reached)
 2011dea0	FUN_2011dea0	4	rspi_nop_2011dea0	drivers/rspi.o	identical	4	byte-identical at the original address (4 bytes)
 2011dea4	rspi0_open	124	rspi0_open	drivers/rspi.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 2011df20	rspi1_open	124	rspi1_open	drivers/rspi.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
@@ -776,16 +776,16 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011e358	rspi2_tx_isr	40	rspi2_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011e380	rspi3_tx_isr	40	rspi3_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011e3a8	rspi4_tx_isr	40	rspi4_tx_isr	drivers/rspi.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011e3d0	rspi0_tx_wait	44	rspi0_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (168 returned normally, 100% of 3 blocks reached, 32 trials inconclusive)
-2011e3fc	rspi0_read_burst	328	rspi0_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (78 returned normally, 100% of 16 blocks reached, 122 trials inconclusive)
-2011e544	rspi1_tx_wait	44	rspi1_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (155 returned normally, 100% of 3 blocks reached, 45 trials inconclusive)
-2011e570	rspi1_read_burst	320	rspi1_read_burst	drivers/rspi.o	equivalent	320	differential emulation: 200 trials agree (88 returned normally, 100% of 16 blocks reached, 112 trials inconclusive)
-2011e6b0	rspi2_tx_wait	44	rspi2_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (158 returned normally, 100% of 3 blocks reached, 42 trials inconclusive)
-2011e6dc	rspi2_read_burst	328	rspi2_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (83 returned normally, 100% of 16 blocks reached, 117 trials inconclusive)
-2011e824	rspi3_tx_wait	44	rspi3_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (164 returned normally, 100% of 3 blocks reached, 36 trials inconclusive)
-2011e850	rspi3_read_burst	320	rspi3_read_burst	drivers/rspi.o	equivalent	320	differential emulation: 200 trials agree (76 returned normally, 100% of 16 blocks reached, 124 trials inconclusive)
-2011e990	rspi4_tx_wait	44	rspi4_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (163 returned normally, 100% of 3 blocks reached, 37 trials inconclusive)
-2011e9bc	rspi4_read_burst	328	rspi4_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (82 returned normally, 100% of 16 blocks reached, 118 trials inconclusive)
+2011e3d0	rspi0_tx_wait	44	rspi0_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011e3fc	rspi0_read_burst	328	rspi0_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (192 returned normally, 100% of 16 blocks reached, 8 trials inconclusive)
+2011e544	rspi1_tx_wait	44	rspi1_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011e570	rspi1_read_burst	320	rspi1_read_burst	drivers/rspi.o	equivalent	320	differential emulation: 200 trials agree (193 returned normally, 100% of 16 blocks reached, 7 trials inconclusive)
+2011e6b0	rspi2_tx_wait	44	rspi2_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011e6dc	rspi2_read_burst	328	rspi2_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (186 returned normally, 100% of 16 blocks reached, 14 trials inconclusive)
+2011e824	rspi3_tx_wait	44	rspi3_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011e850	rspi3_read_burst	320	rspi3_read_burst	drivers/rspi.o	equivalent	320	differential emulation: 200 trials agree (189 returned normally, 100% of 16 blocks reached, 11 trials inconclusive)
+2011e990	rspi4_tx_wait	44	rspi4_tx_wait	drivers/rspi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2011e9bc	rspi4_read_burst	328	rspi4_read_burst	drivers/rspi.o	equivalent	328	differential emulation: 200 trials agree (190 returned normally, 100% of 16 blocks reached, 10 trials inconclusive)
 2011eb58	rspi0_wait_tend	36	rspi0_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011eb7c	rspi1_wait_tend	36	rspi1_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011eba0	rspi2_wait_tend	36	rspi2_wait_tend	drivers/rspi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
@@ -815,10 +815,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011f19c	rspi_spe_clear	16	rspi_spe_clear	drivers/rspi.o	identical	16	byte-identical at the original address (16 bytes)
 2011f1ac	rspi_stop	112	rspi_stop	drivers/rspi.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 2011f230	rspi_base	52	rspi_base	drivers/rspi.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011f278	rspi_read_pio	500	rspi_read_pio	drivers/rspi.o	equivalent	500	differential emulation: 200 trials agree (94 returned normally, 100% of 18 blocks reached, 81 trials inconclusive)
-2011f494	rspi_read	64	rspi_read	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (105 returned normally, 100% of 6 blocks reached, 82 trials inconclusive)
-2011f4d4	rspi_write_pio	540	rspi_write_pio	drivers/rspi.o	equivalent	540	differential emulation: 200 trials agree (119 returned normally, 100% of 23 blocks reached, 12 trials inconclusive)
-2011f718	rspi_write	64	rspi_write	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (154 returned normally, 100% of 6 blocks reached, 16 trials inconclusive)
+2011f278	rspi_read_pio	500	rspi_read_pio	drivers/rspi.o	equivalent	500	differential emulation: 200 trials agree (131 returned normally, 100% of 18 blocks reached, 2 trials inconclusive)
+2011f494	rspi_read	64	rspi_read	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (151 returned normally, 100% of 6 blocks reached, 2 trials inconclusive)
+2011f4d4	rspi_write_pio	540	rspi_write_pio	drivers/rspi.o	equivalent	540	differential emulation: 200 trials agree (115 returned normally, 100% of 23 blocks reached)
+2011f718	rspi_write	64	rspi_write	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (163 returned normally, 100% of 6 blocks reached)
 2011f758	rspi_fifo_reset	92	rspi_fifo_reset	drivers/rspi.o	equivalent	92	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011f7b4	rspi_reset_buffers	120	rspi_reset_buffers	drivers/rspi.o	equivalent	120	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011f840	rspi_rx_isr	72	rspi_rx_isr	drivers/rspi.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
@@ -1380,67 +1380,79 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013c798	usbh_pipe_cancel	316			not yet	0	
 2013c7c4	usbhid_find_int_in	156			not yet	0	
 2013c860	usbhid_class_attach	336			not yet	0	
-2013c928	FUN_2013c928	56			not yet	0	
+2013c928	FUN_2013c928	56	sd_card_clock	drivers/sd_setup.o	equivalent	56	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2013c960	sd_cmd0_go_idle	112	sd_cmd0_go_idle	drivers/sd_card.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
-2013c9d0	sd_init_v1_or_mmc	488			not yet	0	
-2013cbb8	sd_init_v2	560			not yet	0	
-2013cde8	FUN_2013cde8	256			not yet	0	
+2013c9d0	sd_init_v1_or_mmc	488	sd_init_v1_or_mmc	drivers/sd_setup.o	equivalent	488	differential emulation: 200 trials agree (200 returned normally, 95% of 21 blocks reached)
+2013cbb8	sd_init_v2	560	sd_init_v2	drivers/sd_setup.o	equivalent	560	differential emulation: 200 trials agree (200 returned normally, 50% of 24 blocks reached)
+2013cde8	FUN_2013cde8	256	sd_cmd11_voltage_switch	drivers/sd_setup.o	equivalent	256	differential emulation: 200 trials agree (200 returned normally, 77% of 13 blocks reached)
 2013cee8	sd_cmd2_all_send_cid	152	sd_cmd2_all_send_cid	drivers/sd_card.o	equivalent	152	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013cf80	-	0	sd_cmd3_relative_addr	drivers/sd_setup.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 83% of 18 blocks reached)
 2013d0bc	sd_cmd9_send_csd	156	sd_cmd9_send_csd	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 2013d158	sd_csd_check	104	sd_csd_check	drivers/sd_card.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 2013d1c8	mmc_csd_check	112	mmc_csd_check	drivers/sd_card.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 2013d238	sd_cmd10_send_cid	156	sd_cmd10_send_cid	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013d2d4	-	0	sd_cid_check	drivers/sd_setup.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 17 blocks reached)
 2013d398	sd_cmd13_send_status	156	sd_cmd13_send_status	drivers/sd_card.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
-2013d434	sd_cmd7_select	200			not yet	0	
-2013d4fc	sd_select_card	248			not yet	0	
-2013d5f4	sd_acmd51_read_scr	336			not yet	0	
-2013d744	sd_acmd6_set_bus_width	212			not yet	0	
-2013d818	sd_acmd13_read_status	336			not yet	0	
-2013d968	sd_cmd6_switch_func	260			not yet	0	
-2013de60	sd_switch_status_check	296			not yet	0	
-2013df88	sd_select_bus_speed	1084			not yet	0	
-2013dff0	sd_card_identify	624			not yet	0	
-2013e124	sd_read_csd_cid	304			not yet	0	
-2013e190	sd_selected_op	84			not yet	0	
-2013e1e4	sd_scr_bus_width	76			not yet	0	
-2013e230	sd_read_sectors	132			not yet	0	
-2013e2b4	sd_write_sectors	156			not yet	0	
-2013e35c	sd_vol_read	112			not yet	0	
-2013e3cc	sd_vol_write	112			not yet	0	
-2013e43c	sd_mount_volume	208			not yet	0	
-2013e71c	sd_driver_op	700			not yet	0	
-2013e7e8	sd_format_progress_dec	24			not yet	0	
-2013e800	sd_format_progress_set	12			not yet	0	
-2013e8d0	fat_format_write_fats	420			not yet	0	
-2013ea74	fat32_format_write_fsinfo	332			not yet	0	
-2013ebc0	fat_format_volume_id	112			not yet	0	
-2013ec30	fat_format_write_boot	564			not yet	0	
+2013d434	sd_cmd7_select	200	sd_cmd7_select	drivers/sd_setup.o	equivalent	200	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+2013d4fc	sd_select_card	248	sd_select_card	drivers/sd_setup.o	equivalent	248	differential emulation: 200 trials agree (200 returned normally, 94% of 16 blocks reached)
+2013d5f4	sd_acmd51_read_scr	336	sd_acmd51_read_scr	drivers/sd_setup.o	equivalent	336	differential emulation: 200 trials agree (200 returned normally, 100% of 16 blocks reached)
+2013d744	sd_acmd6_set_bus_width	212	sd_acmd6_set_bus_width	drivers/sd_setup.o	equivalent	212	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2013d818	sd_acmd13_read_status	336	sd_acmd13_read_status	drivers/sd_setup.o	equivalent	336	differential emulation: 200 trials agree (200 returned normally, 100% of 16 blocks reached)
+2013d968	sd_cmd6_switch_func	260	sd_cmd6_switch_func	drivers/sd_setup.o	equivalent	260	differential emulation: 200 trials agree (200 returned normally, 100% of 12 blocks reached)
+2013da6c	-	0	sd_switch_high_speed	drivers/sd_setup.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 94% of 16 blocks reached)
+2013db74	-	0	sd_switch_uhs_speed	drivers/sd_setup.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 86% of 44 blocks reached)
+2013de60	sd_switch_status_check	296	sd_set_driver_strength	drivers/sd_setup.o	equivalent	296	differential emulation: 200 trials agree (200 returned normally, 94% of 17 blocks reached)
+2013df88	sd_select_bus_speed	1084	sd_select_bus_speed	drivers/sd_setup.o	equivalent	1084	differential emulation: 200 trials agree (200 returned normally, 71% of 7 blocks reached)
+2013dff0	sd_card_identify	624	sd_card_identify	drivers/sd_setup.o	equivalent	624	differential emulation: 200 trials agree (200 returned normally, 77% of 13 blocks reached)
+2013e124	sd_read_csd_cid	304	sd_read_csd_cid	drivers/sd_setup.o	equivalent	304	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2013e190	sd_selected_op	84	sd_selected_op	drivers/sd_setup.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2013e1e4	sd_scr_bus_width	76	sd_scr_bus_width	drivers/sd_setup.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2013e230	sd_read_sectors	132	sd_read_sectors	drivers/sd_setup.o	equivalent	132	differential emulation: 200 trials agree (200 returned normally, 80% of 5 blocks reached)
+2013e2b4	sd_write_sectors	156	sd_write_sectors	drivers/sd_setup.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 83% of 6 blocks reached)
+2013e350	-	0	sd_check_card	drivers/sd_setup.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013e35c	sd_vol_read	112	sd_vol_read	drivers/sd_setup.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2013e3cc	sd_vol_write	112	sd_vol_write	drivers/sd_setup.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2013e43c	sd_mount_volume	208	sd_mount_volume	drivers/sd_drive.o	not yet	0	emulation: 200 trials agree but reach only 40% of 10 blocks reached of the original
+2013e50c	-	0	sd_drive_mount	drivers/sd_drive.o	not yet	0	emulation: 200 trials agree but reach only 37% of 19 blocks reached of the original
+2013e6a0	-	0	sd_drive_unmount	drivers/sd_drive.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013e6d0	-	0	sd_drive_attach	drivers/sd_drive.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2013e71c	sd_driver_op	700	sd_driver_op	drivers/sd_drive.o	equivalent	700	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+2013e7e8	sd_format_progress_dec	24	sd_format_progress_dec	app/fat_format.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2013e800	sd_format_progress_set	12	sd_format_progress_set	app/fat_format.o	identical	12	byte-identical at the original address (12 bytes)
+2013e80c	-	0	fat_format_clear_root	app/fat_format.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2013e8d0	fat_format_write_fats	420	fat_format_write_fats	app/fat_format.o	equivalent	420	differential emulation: 200 trials agree (200 returned normally, 88% of 16 blocks reached)
+2013ea74	fat32_format_write_fsinfo	332	fat32_format_write_fsinfo	app/fat_format.o	equivalent	332	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2013ebc0	fat_format_volume_id	112	fat_format_volume_id	app/fat_format.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013ec30	fat_format_write_boot	564	fat_format_write_boot	app/fat_format.o	equivalent	564	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
 2013ee64	mbr_chs_head	88	mbr_chs_head	app/fat_format.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 2013eebc	mbr_chs_sector_cyl	128	mbr_chs_sector_cyl	app/fat_format.o	equivalent	128	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013ef3c	mbr_partition_type	96	mbr_partition_type	app/fat_format.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013ef9c	mbr_chs_end_head	100	mbr_chs_end_head	app/fat_format.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 2013f000	mbr_chs_end_sector_cyl	136	mbr_chs_end_sector_cyl	app/fat_format.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
-2013f088	fat_format_write_mbr	184			not yet	0	
+2013f088	fat_format_write_mbr	184	fat_format_write_mbr	app/fat_format.o	equivalent	184	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013f15c	csd_read_bl_len	36	csd_read_bl_len	drivers/sd_card.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2013f180	csd_c_size	36	csd_c_size	drivers/sd_card.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013f1a4	csd_c_size_mult	108	csd_c_size_mult	drivers/sd_card.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 2013f210	fat_format_geometry_small	40	fat_format_geometry_small	app/fat_format.o	equivalent	40	differential emulation: 200 trials agree (91 returned normally, 100% of 3 blocks reached)
-2013f238	fat_format_geometry	264			not yet	0	
-2013f340	fat_format_layout	1116			not yet	0	
-2013f79c	fat_clear_root_dir	356			not yet	0	
-2013f83c	sd_fat_format	328			not yet	0	
-2013f984	sd_format	96			not yet	0	
-2013f9fc	sd_card_task_start	80			not yet	0	
+2013f238	fat_format_geometry	264	fat_format_geometry	app/fat_format.o	equivalent	264	differential emulation: 200 trials agree (91 returned normally, 81% of 21 blocks reached)
+2013f340	fat_format_layout	1116	fat_format_layout	app/fat_format.o	equivalent	1116	differential emulation: 200 trials agree (195 returned normally, 91% of 35 blocks reached, 5 trials inconclusive)
+2013f79c	fat_clear_root_dir	356	fat_format_volume	app/fat_format.o	equivalent	356	differential emulation: 200 trials agree (195 returned normally, 78% of 9 blocks reached, 5 trials inconclusive)
+2013f83c	sd_fat_format	328	sd_fat_format	app/fat_format.o	equivalent	328	differential emulation: 200 trials agree (200 returned normally, 53% of 19 blocks reached)
+2013f984	sd_format	96	sd_format	app/fat_format.o	not yet	0	emulation: 200 trials agree but reach only 33% of 6 blocks reached of the original
+2013f9f4	-	0	sd_lock	drivers/sd_drive.o	identical	0	byte-identical at the original address (4 bytes)
+2013f9f8	-	0	sd_unlock	drivers/sd_drive.o	identical	0	byte-identical at the original address (4 bytes)
+2013f9fc	sd_card_task_start	80	sd_card_task_start	drivers/sd_drive.o	equivalent	80	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 2013fa60	sd_ins_check_task	148			not yet	0	
-2013faf4	sd_card_remount	152			not yet	0	
-2013fb8c	sd_clmap_state_set	20			not yet	0	
-2013fba0	sd_clmap_prepare	112			not yet	0	
-2013fc10	sd_mutex_create	60			not yet	0	
-2013fc4c	sd_mutex_lock	28			not yet	0	
-2013fc68	sd_card_poll	212			not yet	0	
-2013fd3c	sd_delay_ms	20			not yet	0	
-2013fd50	sd_card_unmount	32			not yet	0	
-2013fd98	sdhi_drv_init	60	sdhi_drv_init	drivers/sdhi.o	equivalent	60	differential emulation: 200 trials agree (193 returned normally, 100% of 1 blocks reached)
+2013faf4	sd_card_remount	152	sd_card_remount	drivers/sd_drive.o	equivalent	152	differential emulation: 200 trials agree (200 returned normally, 91% of 11 blocks reached)
+2013fb8c	sd_clmap_state_set	20	sd_clmap_state_set	drivers/sd_drive.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013fba0	sd_clmap_prepare	112	sd_clmap_prepare	drivers/sd_drive.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 83% of 6 blocks reached)
+2013fc10	sd_mutex_create	60	sd_mutex_create	drivers/sd_drive.o	equivalent	60	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013fc4c	sd_mutex_lock	28	sd_mutex_lock	drivers/sd_drive.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2013fc68	sd_card_poll	212	sd_card_poll	drivers/sd_drive.o	equivalent	212	differential emulation: 200 trials agree (169 returned normally, 92% of 12 blocks reached)
+2013fd3c	sd_delay_ms	20	sd_delay_ms	drivers/sd_drive.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013fd50	sd_card_unmount	32	sd_card_unmount	drivers/sd_drive.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2013fd70	-	0	sd_card_write_protected	drivers/sd_drive.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013fd98	sdhi_drv_init	60	sdhi_drv_init	drivers/sdhi.o	equivalent	60	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
 2013fde4	sdhi_stub_2013fde4	4	sdhi_stub_2013fde4	drivers/sdhi.o	identical	4	byte-identical at the original address (4 bytes)
 2013fde8	sdhi0_irq_enable	104	sdhi0_irq_enable	drivers/sdhi.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 50% of 4 blocks reached)
 2013fe50	sdhi0_clock_on	20	sdhi0_clock_on	drivers/sdhi.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
