@@ -18,7 +18,8 @@
 #           tools/ghidra/rx62t-rtsd-fix.patch (T21d), tools/ghidra/rx62t-mvfac-fix.patch (T21h),
 #           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch and
 #           tools/ghidra/rx62t-mvtac-fix.patch (T21i), tools/ghidra/rx62t-gccforms-fix.patch (T24),
-#           tools/ghidra/rx62t-fpconv-fix.patch (T24 MAIN round 4: FTOI/FTOU/ROUND) and compile it.
+#           tools/ghidra/rx62t-fpconv-fix.patch (T24 MAIN round 4: FTOI/FTOU/ROUND), tools/ghidra/rx62t-fpu-fix.patch
+#           (T24 MAIN round 5: FCMP O flag, S of float results, UTOF) and compile it.
 #           Skipped when already installed and patched.
 #   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
 #           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
@@ -127,7 +128,8 @@ RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3
 RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
 RX_SINC_MVTAC=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
 RX_SINC_GCCFORMS=8451ead043aaa1e400539775cc986c0e0a8b4388247736046bbe6a3dff9c8ed7
-RX_SINC_FIXED=f4688bc6b5588ccf018a82cc40b333bbe1c21d326ebca96487fbe55ba049f403
+RX_SINC_FPCONV=f4688bc6b5588ccf018a82cc40b333bbe1c21d326ebca96487fbe55ba049f403
+RX_SINC_FIXED=ff99d4e8e0a1f5b3c83dca2a14a11451a484f60d2f34cc8e9e2e1edc86facd25
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -347,6 +349,10 @@ step_rx() {
   if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_GCCFORMS" ]; then
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-fpconv-fix.patch")
     info "applied tools/ghidra/rx62t-fpconv-fix.patch (T24: FTOI/FTOU truncate to an integer, ROUND to nearest even)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FPCONV" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-fpu-fix.patch")
+    info "applied tools/ghidra/rx62t-fpu-fix.patch (T24: FCMP sets O and compares #imm directly, S is bit 31 of a float result, UTOF decodes and converts unsigned)"
   fi
   [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i/T24-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"

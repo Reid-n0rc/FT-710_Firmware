@@ -297,6 +297,40 @@ engine executes the three after the manual itself, NaN and range included (`Equi
 no function checked before round 4 uses one of the three (the GCC objects have no FPU instruction before `cat_SQ`; libgcc's
 `__fixunssfsi` has FTOI).
 
+### The other FPU instructions (T24 MAIN round 5, 2026-11-01): `tools/ghidra/rx62t-fpu-fix.patch`, `tools/rx_fpu_check.py`
+
+MAIN uses FADD 31, FSUB 18, FMUL 28, FDIV 25, FCMP 40, ITOF 42 and FTOU 12 times, in 23 functions, and no FSQRT, FTOI,
+ROUND or UTOF and no 3-operand FPU form [fact: `rx-elf-objdump` of 0xFFF8FBDB..0xFFFEE2B7]. FPSW is written at
+0xFFF8FBFF (0x100: RM = 0, DN = 1, every exception masked), in the FPU exception handler 0xFFF905F2 (clears the cause
+flags) and in `FUN_fff916ac` (vector 3: EV..EX on or off); `R_BSP_InterruptControl(…, 1, …)` is called once, for vector
+0xB (bus error, fff8f658_fff9086c.c line 462), so the FPU exceptions stay masked **[inference from these call sites]**.
+The module's p-code for the arithmetic uses the host's IEEE single precision with round to nearest, which is right for
+normal operands and results, and differs from the RXv2 manual R01US0071EJ0100 in these ways **[fact:
+`tools/rx_fpu_check.py module`, 11,553 cases]**:
+
+| Module | Manual | Matters for MAIN |
+|---|---|---|
+| FCMP leaves O unchanged; FCMP #imm sets Z/S from `Rs f- imm` (Z clear for equal infinities) | O = 1 for an unordered pair, else 0; Z = (src2 == src), S = (src2 < src) (p. 90) | **yes**: 17 BLT and 1 BGE (S ^ O) follow an FCMP; a stale O from an earlier ADD/SUB inverted the branch. The decompile of `swr_meter_protect` showed `10.0 < (float)uVar6 == bVar1` with `bVar1 = SCARRY4(...)` |
+| S = (result f< 0): clear for -0 and a negative NaN | S = bit 31 of the result (p. 87 ...) | no branch reads S/Z after an FPU arithmetic instruction in MAIN [fact: the instructions after each one] |
+| UTOF: FC 54..57 (Rs and .UB) do not decode; 2^31..2^32-1 convert as negative; memex B/W zero-extended | unsigned conversion (p. 201), memex B and W sign-extended (p. 55) | no (no UTOF) |
+| DN ignored: denormal operands are values, results can be denormal | DN = 1: a denormal operand is a zero of its sign (p. 21), an underflow returns 0 (Table 1.2) | random RAM words read as floats (1 in 256 has exponent 0) |
+| host NaNs (7FC00000h) | Table 1.6: the QNaN operand, an SNaN made quiet, 7FFFFFFFh for an invalid operation without a NaN operand | the same, 1 in 256 |
+| RM ignored (always nearest), no FPSW | RM rounding, FPSW cause / accumulated flags (p. 20/21) | no (RM = 0; FPSW is not read outside the handler) |
+
+`rx62t-fpu-fix.patch` (tenth `bootstrap.sh --only rx` stage, `RX_SINC_FPCONV` `f4688bc6…f403` → `RX_SINC_FIXED`
+`ff99d4e8…cd25`) fixes the first three rows for the decompiler; with it the module agrees on every case that has no NaN,
+no denormal, no invalid operation and RM = 0 (`by case: DN 599, NaN operand 953, RM 381, invalid 426`; without it also
+`plain 1233, infinity 133`), and `swr_meter_protect` decompiles as `if ((local_18 < 1.0) || (5.0 <= local_18))`. Checked
+on a private Ghidra copy (patch, `sleigh` with the 6 NOP warnings, `bootstrap.sh --only rx` with `RX_MODULE_DIR` on a copy
+of the round-4 module, and the idempotent second run). **Not installed into the container's shared Ghidra.** The rest is
+host arithmetic, which SLEIGH cannot change; the MAIN equivalence engine executes every FPU instruction itself
+(`EquivMainEmu.java` `RxFpu`: exact arithmetic on BigInteger, one rounding by RM, DN, Table 1.6, the O flag, FPSW, and the
+exception start as a fault), and `tools/rx_fpu_check.py` checks it against a separate model written from the manual
+(Python fractions): **11,950 / 11,950 agree**, FPSW 0x100 and RM 1..3, DN 0 and the enable bits. Two readings of the
+manual are the model's and stay open: underflow is decided on the exact result (before rounding), and "the S and Z
+flags do not change when an exception is generated" also covers a masked exception (*Open: both; would be settled by
+FADD of a result just below 2^-126 and of 0.1f + 0.2f on an RX651, reading the destination and PSW*).
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9

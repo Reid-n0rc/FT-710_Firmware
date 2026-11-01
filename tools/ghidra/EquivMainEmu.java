@@ -19,7 +19,7 @@
 //    "stack":[w,...] (words at SP+4.., [SP] = the return address), "seed":s, "budget":n,
 //    "stubs":{addr:[name,nargs(,ptr_arg,len_arg)]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
 //    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions),
-//    "module_fp":true (FTOI/ROUND/FTOU by the module's p-code instead of fpConv),
+//    "module_fp":true (the FPU instructions by the module's p-code instead of RxFpu), "fpsw":v (FPSW at entry, default 0x100),
 //    "stub_rets":{addr:[v,...]} (the return values of a stub, drawn from the seeded sequence)}
 //     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
@@ -40,7 +40,8 @@
 // fixed: MAIN has no JMP Rs; GCC's switch tables use it). tools/ghidra/rx62t-gccforms-fix.patch (T24 round 2) fixes the
 // module ("goto [Rs]"); the override stays, so a module without that patch gives the same results. FTOI, ROUND and
 // FTOU are executed here after the manual too (T24 MAIN round 4: the module computed a float for all three;
-// tools/ghidra/rx62t-fpconv-fix.patch fixes it for the decompiler).
+// tools/ghidra/rx62t-fpconv-fix.patch fixes it for the decompiler), and since round 5 every FPU instruction (RxFpu:
+// the DN flush, NaN rules, FCMP's O flag, RM and FPSW, which the module does not model; tools/rx_fpu_check.py).
 // @category FT710
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -69,6 +70,7 @@ import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.Varnode;
 
 import java.io.BufferedReader;
+import java.math.BigInteger;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.io.FileOutputStream;
@@ -193,6 +195,27 @@ public class EquivMainEmu extends GhidraScript {
             if (space != ram) return;
             long a = val(offset);
             check(a, size, true);
+        }
+
+        /** A data load as the module's p-code does it (beforeLoad): checked, an I/O load drawn from the sequence and
+         *  recorded, a tracked RAM byte noted; size 1, 2 or 4, sign-extended when signed. */
+        long load(long a, int size, boolean signed) {
+            check(a, size, false);
+            long v;
+            if (isIo(a)) {
+                Long f = fixed.get(a);
+                v = f != null ? f : rng.nextLong() & ((1L << (8 * size)) - 1);
+                mmio.add(new Object[]{"r", a, size, v});
+            } else {
+                if (a < RAM_HI)
+                    for (long b = a; b < a + size && b < RAM_HI; b++)
+                        if (!written.get((int) b) && inTrack(b)) reads.add(b);
+                byte[] b = thread.getState().inspectConcrete(ram.getAddress(a), size);
+                v = 0;
+                for (int i = size - 1; i >= 0; i--) v = v << 8 | (b[i] & 0xffL);
+            }
+            if (signed && size < 4 && (v & (1L << (8 * size - 1))) != 0) v -= 1L << (8 * size);
+            return v & 0xFFFFFFFFL;
         }
 
         byte rd(long a) {
@@ -320,7 +343,7 @@ public class EquivMainEmu extends GhidraScript {
                 r.setReg(e.getKey(), lv(e.getValue()));
         r.setReg("SP", sp);
         r.setReg("PSW", q.has("psw") ? lv(q.get("psw")) : 0x00030000L);
-        r.setReg("FPSW", 0x100);
+        r.setReg("FPSW", q.has("fpsw") ? lv(q.get("fpsw")) : 0x100);   // MAIN: 0x100 at 0xFFF8FBFF
         r.setReg("INTB", 0xFFF8E6DCL);
         r.setReg("EXTB", 0xFFFFFF80L);
         writeLE(shared, sp, STOP);
@@ -331,7 +354,7 @@ public class EquivMainEmu extends GhidraScript {
         long entry = lv(q.get("entry"));
         t.overrideCounter(ram.getAddress(entry));
         long budget = q.has("budget") ? q.get("budget").getAsLong() : 2000000;
-        // "module_fp": true runs FTOI/ROUND/FTOU on the module's own p-code (to test a SLEIGH change)
+        // "module_fp": true runs the FPU instructions on the module's own p-code (to test a SLEIGH change)
         boolean moduleFp = q.has("module_fp") && q.get("module_fp").getAsBoolean();
         List<JsonArray> calls = new ArrayList<>();
         JsonArray trace = q.has("trace") && q.get("trace").getAsBoolean() ? new JsonArray() : null;
@@ -389,27 +412,58 @@ public class EquivMainEmu extends GhidraScript {
                     steps++;
                     continue;
                 }
-                // FTOI (FC 94..97), ROUND (FC 98..9B), FTOU (FC A4..A7): the module's p-code for all three is
-                // "Rd = round(src)", the float bits of src rounded half away from zero (T24 MAIN round 4: FTOU of 50.7
-                // gave 0x424C0000). The instruction is stepped (so its memory load is seen as usual), then Rd and the
-                // Z/S flags are set after the manual: fpConv.
-                if (!moduleFp && (op2[0] & 0xff) == 0xFC && ((op2[1] & 0xff) >= 0x94 && (op2[1] & 0xff) <= 0x9B
-                        || (op2[1] & 0xff) >= 0xA4 && (op2[1] & 0xff) <= 0xA7)) {
-                    byte[] ins = shared.inspectConcrete(ram.getAddress(pc), 5);
-                    int b1 = ins[1] & 0xff, ld = b1 & 3, rs = (ins[2] >> 4) & 15, rd = ins[2] & 15;
-                    long src;
-                    if (ld == 3) src = r.reg(rs == 0 ? "SP" : "R" + rs);
-                    else {
-                        long dsp = ld == 0 ? 0 : ld == 1 ? (ins[3] & 0xffL) * 4 : ((ins[3] & 0xffL) | (ins[4] & 0xffL) << 8) * 4;
-                        long a = (r.reg(rs == 0 ? "SP" : "R" + rs) + dsp) & 0xFFFFFFFFL;
-                        src = (a < RAM_HI || a >= SCRATCH_LO) ? readLE(shared, a) : 0;   // the step below faults on others
-                    }
+                // Every FPU instruction (T24 MAIN round 5; FTOI / ROUND / FTOU since round 4) is executed by RxFpu after
+                // the RXv2 manual: the module computes them with the host's IEEE arithmetic (no DN flush, host NaNs, no
+                // O flag on FCMP, no FPSW; FTOI / ROUND / FTOU returned a float before rx62t-fpconv-fix.patch;
+                // tools/rx_fpu_check.py). Rd, PSW.Z/S/O and FPSW are set from the model.
+                FpIns fi = moduleFp ? null : fpuDecode(shared, pc);
+                if (fi != null) {
+                    long addr = fi.mode == 2 ? (r.reg(regName(fi.rs)) + fi.dsp) & 0xFFFFFFFFL : 0;
+                    int dest0 = (int) r.reg(regName(fi.rd));
+                    int src2 = fi.rs2 >= 0 ? (int) r.reg(regName(fi.rs2)) : dest0;
+                    long srcReg = fi.mode == 1 ? r.reg(regName(fi.rs)) : 0;
                     long psw0 = r.reg("PSW");
-                    t.stepInstruction();
+                    int fpsw0 = (int) r.reg("FPSW");
+                    // not stepped: the module does not decode UTOF (FC 54..57); the load goes through Run.load
+                    long src = fi.mode == 0 ? fi.imm : fi.mode == 1 ? srcReg : r.load(addr, fi.size, fi.signed);
+                    t.overrideCounter(ram.getAddress(pc + fi.len));
                     steps++;
-                    long[] v = fpConv(b1 >= 0xA4 ? 2 : b1 >= 0x98 ? 1 : 0, (int) src);
-                    r.setReg(rd == 0 ? "SP" : "R" + rd, v[0]);
-                    r.setReg("PSW", v[1] == 0 ? psw0 : (psw0 & ~6L) | (v[0] == 0 ? 2 : 0) | ((v[0] >>> 31) & 1) << 2);
+                    RxFpu u = new RxFpu(fpsw0);
+                    int res = 0;
+                    int[] zso = null;
+                    switch (fi.op) {
+                        case 0: res = u.add(src2, (int) src, true); break;
+                        case 2: res = u.add(src2, (int) src, false); break;
+                        case 3: res = u.mul(src2, (int) src); break;
+                        case 4: res = u.div(src2, (int) src); break;
+                        case 1: zso = u.cmp(src2, (int) src); break;
+                        case 5: res = u.toInt(0, (int) src); break;
+                        case 6: res = u.toInt(1, (int) src); break;
+                        case 9: res = u.toInt(2, (int) src); break;
+                        case 8: res = u.sqrt((int) src); break;
+                        case 16: res = u.itof((int) src); break;          // signed 32-bit after the memex extension
+                        default: res = u.itof(src & 0xFFFFFFFFL); break;   // 17 UTOF
+                    }
+                    r.setReg("FPSW", u.fpswAfter() & 0xFFFFFFFFL);
+                    if (u.trap()) {                // the destination and the flags stay; the exception starts here
+                        r.setReg(regName(fi.rd), dest0 & 0xFFFFFFFFL);
+                        r.setReg("PSW", psw0);
+                        throw new Fault(String.format("floating-point exception at 0x%x (FPSW 0x%08x)", pc,
+                                u.fpswAfter()));
+                    }
+                    long psw = psw0;
+                    if (fi.op == 1) {
+                        r.setReg(regName(fi.rd), dest0 & 0xFFFFFFFFL);    // FCMP has no destination
+                        if (u.flagsChange())
+                            psw = (psw0 & ~0xEL) | (zso[0] << 1) | (zso[1] << 2) | (zso[2] << 3);
+                    } else {
+                        r.setReg(regName(fi.rd), res & 0xFFFFFFFFL);
+                        // Z: a zero of either sign for the arithmetic (p. 87), the integer 0 for the conversions
+                        boolean z = fi.op < 5 || fi.op == 8 ? (res & 0x7FFFFFFF) == 0 : res == 0;
+                        if (u.flagsChange())
+                            psw = (psw0 & ~6L) | (z ? 2 : 0) | ((res >>> 31) & 1L) << 2;
+                    }
+                    r.setReg("PSW", psw);
                     continue;
                 }
                 t.stepInstruction();
@@ -432,6 +486,7 @@ public class EquivMainEmu extends GhidraScript {
         res.addProperty("r2", r.reg("R2"));
         res.addProperty("sp", r.reg("SP"));
         res.addProperty("psw", r.reg("PSW"));
+        res.addProperty("fpsw", r.reg("FPSW"));
         JsonArray regs = new JsonArray();
         for (int k = 1; k <= 15; k++) regs.add(r.reg("R" + k));
         res.add("regs", regs);
@@ -487,23 +542,361 @@ public class EquivMainEmu extends GhidraScript {
     }
 
     /**
-     * Float to integer after the RXv2 software manual R01US0071EJ0100: kind 0 FTOI (p. 103) and 2 FTOU (p. 106) round
-     * towards 0 whatever FPSW.RM says; kind 1 ROUND (p. 171) rounds by FPSW.RM, taken as 0 (round to nearest, ties to
-     * even: MAIN sets FPSW = 0x100 at 0xFFF8FBFF and never another RM). NaN or out of range is the invalid operation
-     * exception; with it disabled (FPSW.EV = 0) the result is 7FFFFFFFh / 80000000h by the sign for FTOI and ROUND,
-     * FFFFFFFFh / 0 for FTOU (Table 1.5, p. 26), and the S and Z flags do not change (p. 106 note). Returns {result, flags
-     * changed}. FPSW's own flags are not modelled (nor are they by the module).
+     * The RX FPU after the RXv2 software manual R01US0071EJ0100 (T24 MAIN round 5): FADD (p. 87), FCMP (p. 90), FDIV
+     * (p. 93), FMUL (p. 95), FSQRT (p. 98), FSUB (p. 100), FTOI (p. 103), FTOU (p. 106), ITOF (p. 110), ROUND (p. 171),
+     * UTOF (p. 201) and the FPSW (p. 20/21) with the exception rules of section 1.3 (p. 24..27). Exact arithmetic on
+     * (sign, BigInteger mantissa, exponent), one rounding by FPSW.RM. The module computes these with the host's IEEE
+     * arithmetic: no DN flush, NaN results of the host, no O flag on FCMP, no FPSW (tools/rx_fpu_check.py).
+     *
+     * Decisions taken from the manual's text, each checked by tools/rx_fpu_check.py against an independent model:
+     * DN = 1 reads a denormal operand as a zero of its sign (p. 21 note 2) and returns a zero for an underflow
+     * (Table 1.2); underflow is a nonzero exact result below 2^-126 before rounding (*Open: before or after rounding,
+     * p. 24 does not say; would be settled by a result just below 2^-126 that rounds to it, run on an RX651*), and
+     * the zero keeps the result's sign (*Open: the sign; same test*). NaN results follow Table 1.6; an invalid
+     * operation without a NaN operand gives 7FFFFFFFh. The S and Z flags (and FCMP's O) do not change when an exception
+     * is generated (the note under each flag table); "generated" is read as the manual uses it for the cause flags, so
+     * also for a masked exception (CX of a rounded result) (*Open: whether the hardware keeps S/Z on a masked
+     * exception; would be settled by FADD 0.1f, 0.2f on an RX651 and reading PSW*). An enabled exception or
+     * unimplemented processing (DN = 0 and a denormal operand or underflow, p. 27) leaves the destination unchanged and
+     * starts the floating-point exception: the run ends there as a fault.
      */
-    static long[] fpConv(int kind, int bits) {
-        float f = Float.intBitsToFloat(bits);
-        boolean neg = bits < 0;
-        if (kind == 2) {
-            if (Float.isNaN(f) || f >= 4294967296f || f <= -1f) return new long[]{neg ? 0 : 0xFFFFFFFFL, 0};
-            return new long[]{((long) f) & 0xFFFFFFFFL, 1};      // (long) truncates towards 0: -0.5 gives 0
+    static final class RxFpu {
+        static final int CV = 1 << 2, CO = 1 << 3, CZ = 1 << 4, CU = 1 << 5, CX = 1 << 6, CE = 1 << 7, DN = 1 << 8;
+        static final int QNAN_DEFAULT = 0x7FFFFFFF;
+        static final BigInteger ONE = BigInteger.ONE;
+        final int fpsw;
+        int cause;            // CV..CE of this instruction
+        boolean zsFromResult = true;
+
+        RxFpu(int fpsw) {
+            this.fpsw = fpsw;
         }
-        double v = kind == 1 ? Math.rint(f) : (f >= 0 ? Math.floor(f) : Math.ceil(f));
-        if (Float.isNaN(f) || v >= 2147483648.0 || v < -2147483648.0) return new long[]{neg ? 0x80000000L : 0x7FFFFFFFL, 0};
-        return new long[]{((long) v) & 0xFFFFFFFFL, 1};
+
+        int rm() { return fpsw & 3; }
+
+        boolean dn() { return (fpsw & DN) != 0; }
+
+        static boolean isNaN(int b) { return (b & 0x7F800000) == 0x7F800000 && (b & 0x7FFFFF) != 0; }
+
+        static boolean isSNaN(int b) { return isNaN(b) && (b & 0x400000) == 0; }
+
+        static boolean isInf(int b) { return (b & 0x7FFFFFFF) == 0x7F800000; }
+
+        static boolean isZero(int b) { return (b & 0x7FFFFFFF) == 0; }
+
+        static boolean isDenormal(int b) { return (b & 0x7F800000) == 0 && (b & 0x7FFFFF) != 0; }
+
+        /** A source operand: a denormal is a signed zero with DN = 1 and unimplemented processing with DN = 0. */
+        int in(int b) {
+            if (!isDenormal(b)) return b;
+            if (dn()) return b & 0x80000000;
+            cause |= CE;
+            return b;
+        }
+
+        /** Table 1.6 for two operands; d is the operand in dest's place (src2 of the 3-operand forms). */
+        int nan2(int d, int s) {
+            boolean sd = isSNaN(d), ss = isSNaN(s);
+            if (sd || ss) cause |= CV;
+            if (sd) return d | 0x400000;          // two SNaNs: dest; an SNaN and a QNaN or a real value: the SNaN
+            if (ss) return s | 0x400000;
+            return isNaN(d) ? d : s;               // two QNaNs: dest; a QNaN and a real value: the QNaN
+        }
+
+        int invalid() {
+            cause |= CV;
+            return QNAN_DEFAULT;
+        }
+
+        static BigInteger mant(int b) {
+            int e = (b >>> 23) & 0xFF;
+            return BigInteger.valueOf(e == 0 ? (b & 0x7FFFFF) : (b & 0x7FFFFF) | 0x800000);
+        }
+
+        static int expo(int b) {
+            int e = (b >>> 23) & 0xFF;
+            return (e == 0 ? 1 : e) - 150;
+        }
+
+        int signedZero(boolean neg) { return neg ? 0x80000000 : 0; }
+
+        /** Round sign * m * 2^e (sticky: the exact value is a little above m * 2^e) to single by FPSW.RM. */
+        int round(boolean neg, BigInteger m, int e, boolean sticky) {
+            int len = m.bitLength();
+            int ex = e + len - 1;
+            if (ex < -126) {                      // underflow (Table 1.2): 0 with DN = 1, unimplemented with DN = 0
+                cause |= CU;
+                if (!dn()) cause |= CE;
+                return signedZero(neg);
+            }
+            int shift = len - 24;
+            BigInteger r;
+            boolean inexact;
+            if (shift <= 0) {
+                r = m.shiftLeft(-shift);
+                inexact = sticky;
+            } else {
+                r = m.shiftRight(shift);
+                BigInteger rem = m.subtract(r.shiftLeft(shift)), half = ONE.shiftLeft(shift - 1);
+                inexact = rem.signum() != 0 || sticky;
+                int c = rem.compareTo(half);
+                boolean up;
+                switch (rm()) {
+                    case 0: up = c > 0 || c == 0 && (sticky || r.testBit(0)); break;
+                    case 1: up = false; break;
+                    case 2: up = inexact && !neg; break;
+                    default: up = inexact && neg; break;
+                }
+                if (up) {
+                    r = r.add(ONE);
+                    if (r.bitLength() > 24) {
+                        r = r.shiftRight(1);
+                        ex++;
+                    }
+                }
+            }
+            if (ex > 127) {                       // overflow, Table 1.1 (EO = 0), with inexact (its note)
+                cause |= CO | CX;
+                int rmv = rm();
+                boolean inf = rmv == 0 || rmv == 2 && !neg || rmv == 3 && neg;
+                return (neg ? 0x80000000 : 0) | (inf ? 0x7F800000 : 0x7F7FFFFF);
+            }
+            if (inexact) cause |= CX;
+            return (neg ? 0x80000000 : 0) | (ex + 127) << 23 | (r.intValue() & 0x7FFFFF);
+        }
+
+        /** FADD / FSUB: d + s or d - s (d: dest or src2). */
+        int add(int d, int s, boolean sub) {
+            d = in(d);
+            s = in(s);
+            if ((cause & CE) != 0) return d;
+            if (isNaN(d) || isNaN(s)) return nan2(d, s);
+            if (sub) s ^= 0x80000000;
+            boolean nd = d < 0, ns = s < 0;
+            if (isInf(d) || isInf(s)) {
+                if (isInf(d) && isInf(s) && nd != ns) return invalid();
+                return isInf(d) ? d : s;
+            }
+            if (isZero(d) && isZero(s)) return nd == ns ? d : signedZero(rm() == 3);
+            if (isZero(d)) return s;
+            if (isZero(s)) return d;
+            int ed = expo(d), es = expo(s), e = Math.min(ed, es);
+            BigInteger a = mant(d).shiftLeft(ed - e), b = mant(s).shiftLeft(es - e);
+            BigInteger sum = (nd ? a.negate() : a).add(ns ? b.negate() : b);
+            if (sum.signum() == 0) return signedZero(rm() == 3);
+            return round(sum.signum() < 0, sum.abs(), e, false);
+        }
+
+        int mul(int d, int s) {
+            d = in(d);
+            s = in(s);
+            if ((cause & CE) != 0) return d;
+            if (isNaN(d) || isNaN(s)) return nan2(d, s);
+            boolean neg = (d ^ s) < 0;
+            if (isInf(d) || isInf(s)) {
+                if (isZero(d) || isZero(s)) return invalid();
+                return signedZero(neg) | 0x7F800000;
+            }
+            if (isZero(d) || isZero(s)) return signedZero(neg);
+            return round(neg, mant(d).multiply(mant(s)), expo(d) + expo(s), false);
+        }
+
+        /** FDIV: d / s. */
+        int div(int d, int s) {
+            d = in(d);
+            s = in(s);
+            if ((cause & CE) != 0) return d;
+            if (isNaN(d) || isNaN(s)) return nan2(d, s);
+            boolean neg = (d ^ s) < 0;
+            if (isInf(d)) return isInf(s) ? invalid() : signedZero(neg) | 0x7F800000;
+            if (isInf(s)) return signedZero(neg);
+            if (isZero(s)) {
+                if (isZero(d)) return invalid();
+                cause |= CZ;                       // Table 1.4
+                return signedZero(neg) | 0x7F800000;
+            }
+            if (isZero(d)) return signedZero(neg);
+            BigInteger[] qr = mant(d).shiftLeft(50).divideAndRemainder(mant(s));
+            return round(neg, qr[0], expo(d) - expo(s) - 50, qr[1].signum() != 0);
+        }
+
+        int sqrt(int s) {
+            s = in(s);
+            if ((cause & CE) != 0) return s;
+            if (isNaN(s)) {
+                if (isSNaN(s)) {
+                    cause |= CV;
+                    return s | 0x400000;
+                }
+                return s;
+            }
+            if (isZero(s)) return s;
+            if (s < 0) return invalid();
+            if (isInf(s)) return s;
+            BigInteger m = mant(s);
+            int e = expo(s);
+            if ((e & 1) != 0) {
+                m = m.shiftLeft(1);
+                e--;
+            }
+            m = m.shiftLeft(60);
+            e -= 60;
+            BigInteger r = m.sqrt();
+            return round(false, r, e / 2, r.multiply(r).compareTo(m) != 0);
+        }
+
+        /** FCMP src, src2: {Z, S, O} of src2 compared with src (p. 90). */
+        int[] cmp(int s2, int s) {
+            s2 = in(s2);
+            s = in(s);
+            if ((cause & CE) != 0) return null;
+            if (isNaN(s2) || isNaN(s)) {
+                if (isSNaN(s2) || isSNaN(s)) cause |= CV;
+                return new int[]{0, 0, 1};
+            }
+            if (isZero(s2) && isZero(s)) return new int[]{1, 0, 0};
+            float a = Float.intBitsToFloat(s2), b = Float.intBitsToFloat(s);   // ordered, no denormal: exact
+            return new int[]{a == b ? 1 : 0, a < b ? 1 : 0, 0};
+        }
+
+        /** ITOF / UTOF (p. 110 / p. 201): 0 is +0 whatever RM says. */
+        int itof(long v) {
+            if (v == 0) return 0;
+            return round(v < 0, BigInteger.valueOf(Math.abs(v)), 0, false);
+        }
+
+        /** FTOI (kind 0), ROUND (1, by FPSW.RM), FTOU (2); Table 1.5 for NaN and out of range. */
+        int toInt(int kind, int s) {
+            s = in(s);
+            if ((cause & CE) != 0) return s;
+            boolean neg = s < 0;
+            int over = kind == 2 ? (neg ? 0 : 0xFFFFFFFF) : (neg ? 0x80000000 : 0x7FFFFFFF);
+            if (isNaN(s) || isInf(s)) {
+                cause |= CV;
+                return over;
+            }
+            if (isZero(s)) return 0;
+            BigInteger m = mant(s);
+            int e = expo(s);
+            BigInteger q;
+            boolean inexact;
+            if (e >= 0) {
+                q = m.shiftLeft(e);
+                inexact = false;
+            } else {
+                if (e < -40) {                    // |src| < 2^-16: the same as any value below one half
+                    m = ONE;
+                    e = -40;
+                }
+                q = m.shiftRight(-e);
+                BigInteger rem = m.subtract(q.shiftLeft(-e)), half = ONE.shiftLeft(-e - 1);
+                inexact = rem.signum() != 0;
+                if (kind == 1 && inexact) {
+                    int c = rem.compareTo(half);
+                    boolean up;
+                    switch (rm()) {
+                        case 0: up = c > 0 || c == 0 && q.testBit(0); break;
+                        case 1: up = false; break;
+                        case 2: up = !neg; break;
+                        default: up = neg; break;
+                    }
+                    if (up) q = q.add(ONE);
+                }
+            }
+            BigInteger v = neg ? q.negate() : q;
+            BigInteger lo = BigInteger.valueOf(kind == 2 ? 0 : Integer.MIN_VALUE);
+            BigInteger hi = BigInteger.valueOf(kind == 2 ? 0xFFFFFFFFL : Integer.MAX_VALUE);
+            if (v.compareTo(lo) < 0 || v.compareTo(hi) > 0) {
+                cause |= CV;
+                return over;
+            }
+            if (inexact) cause |= CX;
+            return v.intValue();
+        }
+
+        /** True when the instruction starts the floating-point exception: unimplemented processing, or a cause whose
+         *  enable bit EV..EX (FPSW bits 10..14) is set (p. 21). */
+        boolean trap() {
+            return (cause & CE) != 0 || (cause & (fpsw >>> 8) & 0x7C) != 0;
+        }
+
+        /** FPSW after the instruction: the cause flags are those of this instruction; each Fj (bits 26..30) is set
+         *  with its cause unless Ej is 1 (notes 3..7, p. 21); FS (bit 31) is FU | FZ | FO | FV. */
+        int fpswAfter() {
+            int f = (fpsw & ~0xFC) | cause;
+            int sticky = (cause & 0x7C) & ~((fpsw >>> 8) & 0x7C);
+            f |= sticky << 24;
+            f = (f & 0x7FFFFFFF) | (((f >>> 26) & 0xF) != 0 ? 0x80000000 : 0);
+            return f;
+        }
+
+        /** Whether S and Z (and FCMP's O) take the result: not when an exception is generated (masked or not). */
+        boolean flagsChange() {
+            return cause == 0;
+        }
+    }
+
+    static String regName(int n) {
+        return n == 0 ? "SP" : "R" + n;
+    }
+
+    /** An FPU instruction: op 0 FSUB, 1 FCMP, 2 FADD, 3 FMUL, 4 FDIV, 5 FTOI, 6 ROUND, 8 FSQRT, 9 FTOU, 16 ITOF,
+     *  17 UTOF; the source is an immediate (mode 0), the register rs (1) or memory at rs + dsp (2) of size bytes;
+     *  rs2 is src2 of the 3-operand forms (-1: the destination is src2). */
+    static final class FpIns {
+        int op, rd, rs, rs2 = -1, mode, size = 4, len = 3;
+        long imm, dsp;
+        boolean signed;
+    }
+
+    /** Decodes the FPU forms of the manual's instruction code pages (p. 240..247, 271, 299): FD 72 imm32, FC with
+     *  ld, 06 with memex (ITOF / UTOF) and FF 3-operand (FSUB / FADD / FMUL); null for anything else. */
+    static FpIns fpuDecode(PcodeExecutorState<byte[]> st, long pc) {
+        byte[] c = st.inspectConcrete(st.getLanguage().getDefaultSpace().getAddress(pc), 8);
+        int b0 = c[0] & 0xff, b1 = c[1] & 0xff, b2 = c[2] & 0xff;
+        FpIns f = new FpIns();
+        if (b0 == 0xFD && b1 == 0x72 && (b2 >> 4) <= 4) {
+            f.op = b2 >> 4;
+            f.rd = b2 & 15;
+            f.mode = 0;
+            f.imm = (c[3] & 0xffL) | (c[4] & 0xffL) << 8 | (c[5] & 0xffL) << 16 | (c[6] & 0xffL) << 24;
+            f.len = 7;
+            return f;
+        }
+        if (b0 == 0xFF && ((b1 >> 4) == 8 || (b1 >> 4) == 0xA || (b1 >> 4) == 0xB)) {
+            f.op = (b1 >> 4) == 8 ? 0 : (b1 >> 4) == 0xA ? 2 : 3;
+            f.rd = b1 & 15;
+            f.mode = 1;
+            f.rs = b2 >> 4;
+            f.rs2 = b2 & 15;
+            return f;
+        }
+        int ld, regs;
+        if (b0 == 0xFC) {
+            int k = b1 >> 2;
+            ld = b1 & 3;
+            regs = b2;
+            if (k >= 0x20 && k <= 0x26 || k == 0x28 || k == 0x29) f.op = k - 0x20;
+            else if (k == 0x11 || k == 0x15) {          // ITOF / UTOF, memex UB (register: the whole register)
+                f.op = k == 0x11 ? 16 : 17;
+                f.size = 1;
+            } else return null;
+            f.dsp = ld == 1 ? (c[3] & 0xffL) : ld == 2 ? ((c[3] & 0xffL) | (c[4] & 0xffL) << 8) : 0;
+        } else if (b0 == 0x06 && (b1 & 0x3C) == 0x20 && (b1 & 3) != 3 && (b2 == 0x11 || b2 == 0x15)) {
+            int mi = b1 >> 6;                             // memex B, W, L, UW (p. 55: B and W are sign-extended)
+            ld = b1 & 3;
+            regs = c[3] & 0xff;
+            f.op = b2 == 0x11 ? 16 : 17;
+            f.size = mi == 0 ? 1 : mi == 2 ? 4 : 2;
+            f.signed = mi == 0 || mi == 1;
+            f.dsp = ld == 1 ? (c[4] & 0xffL) : ld == 2 ? ((c[4] & 0xffL) | (c[5] & 0xffL) << 8) : 0;
+        } else return null;
+        f.len = (b0 == 0x06 ? 4 : 3) + (ld == 1 ? 1 : ld == 2 ? 2 : 0);
+        f.dsp *= f.size;
+        f.rs = regs >> 4;
+        f.rd = regs & 15;
+        f.mode = ld == 3 ? 1 : 2;
+        return f;
     }
 
     static long readLE(PcodeExecutorState<byte[]> st, long a) {

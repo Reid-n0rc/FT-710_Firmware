@@ -1003,6 +1003,8 @@ def compare(a, b, ret, isr, init_regs):
                 return f'R{i + 1}'
         if (a['psw'] ^ b['psw']) & 0x0F010000:
             return 'PSW'
+        if a.get("fpsw") != b.get("fpsw"):      # the FPU flags (RxFpu, round 5): MAIN reads FPSW only in its FPU
+            return "FPSW"                       # exception handler and FUN_fff916ac; compared all the same
     for k in ('mmio', 'calls', 'diff'):
         if a[k] != b[k]:
             return {'mmio': 'peripheral accesses', 'calls': 'stub calls', 'diff': 'RAM'}[k]
