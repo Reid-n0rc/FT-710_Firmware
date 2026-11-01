@@ -62,4 +62,64 @@ static inline void setting_popup(uint8_t code)
     }
 }
 
+/* put_dec with a 16-bit value (cat_CO, cat_BP, cat_SH: the same loop over u16 locals) */
+static inline void put_dec16(uint8_t *at, uint16_t v, uint16_t div)
+{
+    for (; div != 0; div = (uint16_t)(div / 10u)) {
+        uint16_t n = (uint16_t)(v / div);
+
+        v = (uint16_t)(v - n * div);
+        *at++ = (uint8_t)nib2hex((uint8_t)n);
+    }
+}
+
+/* get_dec with a 16-bit sum */
+static inline int get_dec16(const uint8_t *p, unsigned n, uint16_t div, uint16_t *out)
+{
+    uint16_t v = 0;
+    unsigned i;
+
+    for (i = 0; i < n; i++) {
+        if (p[i] < '0' || p[i] > '9') {
+            cat_error = 1;
+            return 0;
+        }
+        v = (uint16_t)((p[i] & 0x0Fu) * div + v);
+        div = (uint16_t)(div / 10u);
+    }
+    *out = v;
+    return 1;
+}
+
+/* the per-mode block of a record for a mode: CW blk 1, AM 4, FM and DATA-FM 5, DATA and PSK 3, RTTY 2, else
+ * (LSB/USB and codes above PSK) 0 [fact: the compare chains of cat_CO 0xFFFA8698, cat_BP 0xFFFA7A71] */
+static inline uint8_t mode_blk_index(uint8_t m)
+{
+    switch (m) {
+    case MODE_CW_L: case MODE_CW_U:
+        return 1;
+    case MODE_AM: case MODE_AM_N:
+        return 4;
+    case MODE_FM: case MODE_FM_N: case MODE_DATA_FM: case MODE_DATA_FM_N:
+        return 5;
+    case MODE_DATA_L: case MODE_DATA_U: case MODE_PSK:
+        return 3;
+    case MODE_RTTY_L: case MODE_RTTY_U:
+        return 2;
+    default:
+        return 0;
+    }
+}
+
+static inline uint16_t be16(const uint8_t *p)
+{
+    return (uint16_t)(p[0] << 8 | p[1]);
+}
+
+static inline void put_be16(uint8_t *p, uint16_t v)
+{
+    p[0] = (uint8_t)(v >> 8);
+    p[1] = (uint8_t)v;
+}
+
 #endif

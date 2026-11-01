@@ -710,7 +710,11 @@ def cat_handler_args(rng, regs):
         regs[1] = rng.choice([0, 1, 1])
     if len(regs) > 2 and rng.random() < 0.8:
         regs[2] = rng.randrange(3, 0x40)
-    return [(ARGBUF, cat_text(rng, b'XX'))], None
+    t = bytearray(cat_text(rng, b'XX'))
+    for k in (2, 3):                 # P1 / P2 = '0' half the time: most handlers refuse anything else there (round 4)
+        if rng.random() < 0.5:
+            t[k] = ord('0')
+    return [(ARGBUF, bytes(t))], None
 
 
 def cat_ss_args(rng, regs):
