@@ -415,8 +415,8 @@ flowchart LR
   simulation with the fixed DSP model, see 4.4). B[15:0] is a 16-bit unsigned gain (B[17:16] = 0) from the register bank
   (`SLICE_X29Y66/AFF`... for A, `SLICE_X15Y55`... for B, one pipeline FF). Writing `w00121234` set g_A = 0x1234 and
   `w00135678` set g_B = 0x5678 in simulation; both read 0x8000 after reset. MAIN writes **0x8000 to both in RX**
-  ([main/sdr-link.md](../main/sdr-link.md) `sdr_upd_r12/r13`): equal weights, the setting a sum of the two channels needs
-  **[inference]**. The 42 P bits go through a rounding incrementer and saturation (`SLICE_X40Y60..X40Y65` for A,
+  ([main/sdr-link.md](../main/sdr-link.md) `sdr_upd_r12/r13`): equal weights for the sum that reg 0x04 = 0xE519 selects (below)
+  **[fact, simulation]**. The 42 P bits go through a rounding incrementer and saturation (`SLICE_X40Y60..X40Y65` for A,
   `SLICE_X10Y45..X10Y51` for B) into the mixers.
 - **No dither subtraction [fact for this segment].** Between the pins and the gain DSPs the only arithmetic is the DC
   tracker; no pseudo-random sequence or second operand is subtracted, so the dither from the module's D/A is removed
@@ -428,18 +428,115 @@ flowchart LR
   `SLICE_X39Y117..122` (from DSP48_X1Y48.P). So both channels are multiplied by the same two local-oscillator words
   (I and Q, or two receivers) **[inference for what the LOs are]**.
 
-**What is still open.** (1) **Where (and whether) the two channels are added.** There is no adder between the two
-channels anywhere up to and including the mixers: the first carry chains after the four mixer pairs take only their own
-channel (e.g. `SLICE_X51Y83..89` after X1Y35, `SLICE_X13Y66..72` after X0Y35), and a search for cells that both channels
-reach within 6 registers finds only counters, the capture RAMs RAMB18_X0Y22..25 and register-bank muxes. Mixing A and B
-with identical LOs and identical gains makes a sum after the mixers (I_A + I_B, Q_A + Q_B, probably after decimation)
-the likely place **[inference]**, but it is not traced. Settling it needs an RX configuration (MAIN's register writes,
-#193/#146) and a probe on the decimated I/Q, with A and B driven separately. (2) **IDDR edge mode**: prjxray has no
-bits for `DDR_CLK_EDGE`, so whether Q2 is the falling-edge sample of the same ADC clock (SAME_EDGE[_PIPELINED]) or is
-retimed half a cycle earlier (OPPOSITE_EDGE) is unknown; the bit pairing above does not depend on it, only the
-half-cycle alignment of odd and even bits. The simulation uses a SAME_EDGE_PIPELINED-style stand-in (`-DIDDR_DDR`).
-(3) The SRL depth: the address reads `A[0] = 1` on all 28 (2 clocks), but an unrouted LUT input also reads 1, so 1 or 2
-clocks.
+**The two channels are added after mixing and decimation, at 5 MSPS, under MAIN register 0x04 (#172).** Static
+tracing and four channel-separated whole-netlist runs settle it:
+
+```mermaid
+flowchart LR
+  MA["channel A mixers<br/>DSP48_X1Y34/35, X1Y38/39"] --> FA["A decimation chain<br/>fabric FDCE stages<br/>(about 19 registers)"]
+  MB["channel B mixers<br/>DSP48_X0Y34..37"] --> FB["B decimation chain<br/>fabric FDCE stages<br/>(about 15 registers)"]
+  FA --> ADD["two 32-bit adders A + B<br/>SLICE_X46Y88..95, SLICE_X55Y107..114"]
+  FB --> ADD
+  ADD --> MUX{"output mux per bit<br/>select s, t, u"}
+  FB --> MUX
+  FA -->|"A x 8"| MUX
+  R04["reg 0x04 bit 10 -> t (SLICE_X40Y79/A5FF)<br/>reg 0x04 bit 11 -> s (SLICE_X41Y74/AFF)"] --> MUX
+  OVL["level flag u = SLICE_X52Y88/AFF<br/>two comparators X48Y85/86, X50Y85/86<br/>on DSP48_X1Y28/29 (B level)"] --> MUX
+  MUX --> FIR["RAMB18_X2Y17, DSP48_X1Y11..15<br/>X1Y7..10, X0Y8/9, X0Y12"] --> FIFO["RX FIFO RAMB18_X2Y15<br/>72 kHz, pin M17 (3.8)"]
+```
+
+- **Method [fact].** `hdl/sdr/sim/ddc_main.cpp` (now with `ADC1=off`, `ADC2=off|tone:...` and `PROBE_HASH=1`) was run on
+  a netlist with every flip-flop, SRL, LUT-RAM, DSP P, BRAM DO and carry output probed (54,414 probes, `PROBE_PORTS=1`
+  build, see the reproduce block below), 1.3 M clocks, frames `w000A0004 w00180098 w00199680`, a 10.002 MHz tone of
+  1000 LSB on channel A only, on channel B only, on both, and on neither. A probe "depends on A" when its change
+  history (a hash of every change after clock 560,000) differs between the A-only and the silent run; the same for B.
+- **Every stage up to the adder belongs to one channel [fact, simulation].** 7 IDDRs, the gain DSP48_X1Y26, the mixers
+  DSP48_X1Y34/35/38/39, 16 SRLs and 3,043 flip-flops depend on A only; 7 IDDRs, 52 DSPs, 19 BRAMs, the LUT-RAMs and
+  13,338 flip-flops on B only. No register depends on both. The only cells that see both channels are **16 CARRY4**:
+  the two 32-bit chains `SLICE_X46Y88..X46Y95` and `SLICE_X55Y107..X55Y114`.
+- **They are adders [fact, equations].** In each chain bit j has `DI = B_j` and `S = B_j XOR A_j` with CYINIT = 0, so
+  `O = A + B`. The A operands (e.g. `SLICE_X45Y96/AFF`, `X41Y95/BFF`, ... `X41Y98/DFF`) lead back, through A-only cells,
+  to DSP48_X1Y34/35/38/39 (19 to 21 registers), DSP48_X1Y26 (22) and the A IDDRs (27); the B operands (e.g.
+  `SLICE_X46Y92/CFF`, `X46Y90/BFF`) lead back to DSP48_X0Y34..37 (15 to 18) and DSP48_X0Y17. Both chains take A from
+  both A mixer pairs, so they are the two outputs of the complex mixer (I and Q) **[inference]**.
+- **An output mux per bit picks the result [fact, equations].** With `s = SLICE_X41Y74/AFF`, `t = SLICE_X40Y79/A5FF`
+  and `u = SLICE_X52Y88/AFF` (bit map in `SLICE_X44Y90`, `X45Y89..95`, `X49Y90`, `X56Y89` for the first chain,
+  `SLICE_X56Y98`, `X56Y107` ... for the second):
+
+  | s | t | u | output word |
+  |---|---|---|---|
+  | 0 | 1 | x | **A + B** |
+  | 1 | 0 | 1 | **A × 8** (bit j = A bit j−3, bits 0..2 = 0) |
+  | 1 | 0 | 0 | B |
+  | 0 | 0 | x | B |
+  | 1 | 1 | x | B |
+
+- **s and t are MAIN register 0x04 bits 11 and 10 [fact, simulation].** Writing reg 0x04 one bit at a time
+  (0x0001 ... 0x8000, plus 0x0000, 0xE519, 0xFFFF; regs 0x03, 0x0B..0x0F, 0x12..0x16, 0x1A..0x27, 0x02, 0x05 with 0xFFFF)
+  changed `t` only for 0x0400 and `s` only for 0x0800; the other registers left both alone. Reset state: s = 1, t = 0.
+  `s` comes from `SLICE_X40Y70/A5FF` and `t` from `SLICE_X40Y70/AFF` (one register-bank word, write enable
+  `SLICE_X49Y60/ALUT.O5`), each through one more flip-flop.
+- **MAIN selects the sum in RX [fact].** MAIN writes **reg 0x04 = 0xE519** in RX ([main/sdr-link.md](../main/sdr-link.md)
+  `sdr_upd_r04`): bit 10 = 1, bit 11 = 0, so `t = 1, s = 0`, the A + B row. With 0xE519 written the simulation gives,
+  over 20,000 clocks (with a 10.002 MHz tone of 1000 LSB on A and a 10.003 MHz tone of 700 LSB on B):
+  out(t) = A(t−25) + B(t−25) on every clock; the A and B operands in the two-channel run equal those of the
+  single-channel runs bit for bit; out(A and B) = out(A only) + out(B only) exactly; the operands and the sum change
+  every **25 clocks**, i.e. **5 MSPS** (125 MHz / 25) **[fact, simulation]**. With reg 0x04 = 0x0800 (s = 1) the output
+  is B(t−25) on every clock **[fact, simulation]**. Since reg 0x12 = reg 0x13 = 0x8000 (equal gains) the sum adds the
+  two converters' copies of the same RF with equal weight, the scheme of Yaesu's diagram (two A/Ds, FPGA sums)
+  **[inference: the RF divider is on the board, not in the FPGA]**.
+- **The sum feeds the RX chain [fact, routing].** The mux flip-flops lead, through B-class cells (the sum depends on
+  B in every run), to RAMB18_X2Y17 and DSP48_X1Y11..15 (10 to 14 registers), DSP48_X1Y7..10, DSP48_X0Y8/9, DSP48_X0Y12
+  (20) and the RX FIFO RAMB18_X2Y15 (24): the decimating FIRs and the 72 kHz output of 3.8. In the reset state
+  (s = 1, t = 0, u = 0) the RX words on M17 depend on channel B only: the A-only run gives the same words as the
+  silent run, and the A+B run the same words as the B-only run **[fact, simulation]**.
+- **u is a hysteresis flag on a B level [fact, equations; inference for the use].** `u` is set by the carry out of
+  comparator `SLICE_X50Y85..86` and cleared by comparator `SLICE_X48Y85..86`; both compare a word from
+  `SLICE_X51Y102..104` (B-only, from DSP48_X1Y28/29, which channel B reaches through DSP48_X0Y40/41) with register
+  bits (`SLICE_X38Y76`, `X28Y79`, `X14Y80`). So mode s = 1 is an **overload switch**: channel B normally, A × 8 while
+  B's level is above a threshold. Which channel is the less sensitive one on the board is not in the netlist. With a
+  tone near full scale (8000 LSB) on both channels and reg 0x04 = 0x0800, `u` stayed 0 in simulation (thresholds at
+  their reset values) **[fact, simulation]**. MAIN never selects this mode in RX (above).
+- **IDDR edge mode: SAME_EDGE_PIPELINED [inference, strong].** prjxray's `segbits_rioi3*.db` has
+  `IFF.DDR_CLK_EDGE.OPPOSITE_EDGE = !26_99 27_98` and `SAME_EDGE = 26_99 !27_98` for ILOGIC_Y0; its fuzzer
+  (`035-iob-ilogic/generate.py`) tags three values, so the third, SAME_EDGE_PIPELINED, is the pattern with both bits 0.
+  Both bits read 0 in the bitstream for all 14 IDDR sites (`RIOI3_X43Y51..Y95`, the `TBYTESRC`/`TBYTETERM` tiles
+  included), while their other ILOGIC bits (`IDDR.IN_USE`, `ZINV_C`, `ZINIT_Q1`) read as set **[fact for the bits]**.
+  So Q1 (rising-edge sample) and Q2 (the following falling-edge sample) appear together on the next rising edge of the
+  BUFIO clock. The simulation's `-DIDDR_DDR` stand-in also presents both on one rising edge; it pairs the falling-edge
+  bit before the rising edge instead of after it, which only shifts where the harness puts the odd bits, not the bit
+  map above.
+- **SRL depth.** The dual-SRL16 address bug in `tools/xc7_netlist.py` (fixed for #193: the O6 half had A6 = 1, 16
+  clocks too deep, UG474 Fig. 18) made ADC bits 0..3 and 8..11 arrive 16 clocks late; with the fixed netlist all 14 bits
+  arrive at the same delay. Every simulation in this subsection used the fixed netlist.
+
+**Re-verified with the fixed netlist (#193 SRL fix):** the channel split (every cell one channel), the mixers per
+channel, the adders, the mux and the reg 0x04 bits. The constant and decaying-input results earlier in 3.7 (1000 /
+−2000 read back, the DC tracker, the gain registers 0x12/0x13) were simulated before the fix; constant and slow inputs
+are not affected by an SRL delay, so they stand, but they were not re-run.
+
+**Open.** (1) What triggers `u` in practice: the thresholds' register (the bits at `SLICE_X38Y76`, `X28Y79`, `X14Y80`)
+and the meaning of the level from DSP48_X1Y28/29; would be settled by a register sweep with a large tone on B, as for
+reg 0x04. (2) Why the M17 words still look like noise with a tone on the ADC (3.8): the stages up to and including the
+adder are clean and linear; the first stages that do not scale are DSP48_X0Y7 / DSP48_X1Y3 (#193). (3) Whether the
+board feeds both converters the same RF (Yaesu's diagram says a divider) and at what levels; would be settled by the
+SDR module's schematic or by measuring J3003.
+
+Reproduce (derived files, never commit):
+
+```sh
+python3 -I tools/xc7_probe_netlist.py --declared --ports build/sdr/vl/OBJ/probe_ports.h \
+  NETLIST.json NET.v PORTS.v PORTS.names @PROBES          # PROBES: every FF/SRL/LUT-RAM Q, DSP P, BRAM DO, CARRY4 O
+NET=PORTS.v PROBE_W=1701 PROBE_PORTS=1 MAIN=ddc_main.cpp OBJ=OBJ VDEFS="+define+MMCM_FRAC +define+IDDR_DDR" hdl/sdr/sim/build_full.sh
+PROBE_HASH=1 PROBE_FROM=560000 ADC=tone:10002000:1000 ADC2=off Vft710_sdr 1300000 w000A0004 w00180098 w00199680   # A only
+PROBE_HASH=1 PROBE_FROM=560000 ADC=tone:10002000:1000 ADC1=off Vft710_sdr 1300000 w000A0004 w00180098 w00199680   # B only
+DUMPBITS=740000:760000:1:<probe indices> ADC=tone:10002000:1000 ADC2=tone:10003000:700 Vft710_sdr 760000 \
+  w000A0004 w00180098 w00199680 w0004E519                                              # sum mode, operand and output bits
+```
+
+A single probe port of 54k bits makes Verilator build one concatenation chain that did not compile in 3 hours, so
+`--ports` writes 32-bit ports `probe_w<k>` and a `probe_ports.h` (`IData* probe_ptr[]`, `PROBE_WORD(w)`) that
+`PROBE_PORTS=1` builds include; `--declared` drops probes on nets the Verilog does not declare (unused CARRY4 outputs).
 
 ### 3.8 RX IF stream to the DSP, reg 0x0A, the TX AF input (#193)
 
@@ -532,7 +629,7 @@ scale (spectral peak < 10 % of the power), from 40 LSB (−46 dBFS) to 4,000 LSB
 are clean sinusoids (above). So something between the mixers and the FIFO does not work in this simulation as it does on
 the radio: a register MAIN writes and these runs did not (the full RX set is reg 0x03, 0x04, 0x0B..0x16, 0x1A..0x1F,
 0x20..0x27, [main/sdr-link.md](../main/sdr-link.md)), or a model gap (the LUT-RAM/SRL "SMALL mode" approximation of
-section 4, the IDDR edge mode, BRAM corner cases) **[open]**. Therefore the IF placement itself (where the carrier lands
+section 4, BRAM corner cases; the IDDR edge mode is decoded in 3.7 and the dual-SRL16 address was fixed for #193) **[open]**. Therefore the IF placement itself (where the carrier lands
 in the 72 kHz stream per mode) is **not confirmed by simulation**. What the evidence says **[inference]**:
 
 - The FPGA mixes the passband centre that MAIN puts in reg 0x18/0x19 to 0 Hz, then decimates to 72 kHz. To give the
@@ -606,7 +703,7 @@ affected. UART B and the console give identical answers with the old and the new
 should be re-simulated.
 
 **Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits; see 3.5, #91),
-RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not decoded, OLOGIC T inversion not decoded (tri-state
+RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not emitted (prjxray has no feature for SAME_EDGE_PIPELINED; both enum bits read 0, 3.7), OLOGIC T inversion not decoded (tri-state
 enables as routed), MMCM `CLKIN1_PERIOD` assumed 8 ns, BUFR/BUFIO inputs from undecodable PERF/CCIO PIPs.
 
 ### 4.1 Smoke test

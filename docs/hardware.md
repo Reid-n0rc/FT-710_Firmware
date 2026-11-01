@@ -153,7 +153,7 @@ registers: p56–57, p74).
   comes late, with dither fed into both inputs **[fact: third-party report]**. The netlist confirms two 14-bit channels at one word
   per 125 MHz clock each, **7 DDR pairs per channel** with two adjacent bits per pair (Q1 = bit 2k, Q2 = bit 2k+1), not
   channel A on one edge and B on the other ([code/sdr/netlist.md 3.7](code/sdr/netlist.md), #172) **[fact, routing and simulation]** (see also the candidates subsection below),
-  which removes the last argument for 250 MSPS. The ADC part number is still unknown (read its marking).
+  which removes the last argument for 250 MSPS. The FPGA sums the two channels (below). The ADC part number is still unknown (read its marking).
 - **ADC part number: no public source names it (#66, searched 2026-10-29).** Checked: this service manual (the SDR module is one
   unitemised box; its text layer has no ADC part number anywhere, no `LTC2…`/`AD9…`/`ADS…` string); the FT-DX10 Technical Supplement (the ManualsLib copy's
   text has no ADC part either, its SDR module appears only as a "MODULE" part number, and the radiomanual.info copy could not be fetched);
@@ -165,7 +165,7 @@ registers: p56–57, p74).
   `adc_clk` at 125 MHz ([code/sdr/netlist.md](code/sdr/netlist.md)) **[fact for the FPGA side]**. Several dual 14-bit 125 MSPS
   converters with DDR LVDS outputs would fit; none is stated as the part, and the candidates are listed as **[guess]**es in
   [Candidates (not confirmed)](#candidates-not-confirmed-171-191) below. The marking is the only way to settle it (#171); the two-channel front end in
-  the netlist is traced in #172 (where the channels are summed is still open).
+  the netlist is traced in #172: the FPGA adds the two channels after mixing and decimation, at 5 MSPS, when reg 0x04 bit 10 is set, which MAIN does in RX (0xE519) ([code/sdr/netlist.md 3.7](code/sdr/netlist.md)) **[fact, simulation]**, as Yaesu's diagram says.
 - **Yaesu's receiver diagram** (reproduced as Figure 1 of the DC4KU report in `Manuals/`): RX unit ATT → BPF → RF AMP → **divider**
   → **two A/D converters** → FPGA, which **sums** the two channels; a **D/A** in the SDR block makes the dithering signal fed into both
   ADC inputs **[fact: Yaesu diagram]**. The FT-DX10's diagram (Figure 2) has the same "SDR Block" of two A/Ds + FPGA, but there one ADC
