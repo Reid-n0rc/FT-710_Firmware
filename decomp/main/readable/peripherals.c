@@ -78,7 +78,7 @@ void R_Systeminit(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_IWDT_Create @ fff927a9  (37 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_IWDT_Create @ fff927a9  (37 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: watchdog → NMI
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -108,7 +108,7 @@ void R_IWDT_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * iwdt_refresh @ fff927ce  (17 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * iwdt_refresh @ fff927ce  (17 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: watchdog → NMI
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -129,7 +129,7 @@ void iwdt_refresh(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_IWDT_Create_UserInit @ fff927df  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_IWDT_Create_UserInit @ fff927df  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_IWDT_Create
  *     [inference]
  * Tag: [inference]
@@ -148,7 +148,7 @@ void R_IWDT_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_DA_Create @ fff927e5  (65 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_DA_Create @ fff927e5  (65 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: DA0
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -186,7 +186,7 @@ void R_DA_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_DA0_Start @ fff92826  (15 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_DA0_Start @ fff92826  (15 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: DA0
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -210,7 +210,7 @@ void R_DA0_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_DA0_Stop @ fff92835  (8 bytes, 0 callers, export file fff927a9_fff93846.c)
+ * R_DA0_Stop @ fff92835  (8 bytes, 0 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): DA.DACR (0x88044) DAOE0 (bit 6) off; after
  *     R_DA0_Start [inference]
  * Tag: [inference]
@@ -234,7 +234,7 @@ void R_DA0_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * dac0_write @ fff9283d  (19 bytes, 3 callers, export file fff927a9_fff93846.c)
+ * dac0_write @ fff9283d  (19 bytes, 3 callers, export file fff927a9_fff93845.c)
  * Purpose: DA0
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -254,7 +254,7 @@ void dac0_write(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * R_DA_Create_UserInit @ fff92850  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_DA_Create_UserInit @ fff92850  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_DA_Create
  *     [inference]
  * Tag: [inference]
@@ -273,7 +273,7 @@ void R_DA_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD0_Create @ fff92851  (422 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD0_Create @ fff92851  (422 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD0_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 0
  * Tag: none in the table row
@@ -382,7 +382,7 @@ void R_S12AD0_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD0_Start @ fff929f7  (28 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD0_Start @ fff929f7  (28 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD0_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 0
  * Tag: none in the table row
@@ -412,7 +412,7 @@ void R_S12AD0_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD0_Stop @ fff92a13  (30 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD0_Stop @ fff92a13  (30 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD0_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 0
  * Tag: none in the table row
@@ -440,7 +440,7 @@ void R_S12AD0_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD0_Get_ValueResult @ fff92a31  (207 bytes, 6 callers, export file fff927a9_fff93846.c)
+ * R_S12AD0_Get_ValueResult @ fff92a31  (207 bytes, 6 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD0_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 0
  * Tag: none in the table row
@@ -532,7 +532,7 @@ void R_S12AD0_Get_ValueResult(int param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD0_Create_UserInit @ fff92b00  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD0_Create_UserInit @ fff92b00  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_S12AD0_Create
  *     [inference]
  * Tag: [inference]
@@ -551,7 +551,7 @@ void R_S12AD0_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_s12ad0_scan_end_isr @ fff92b01  (22 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_s12ad0_scan_end_isr @ fff92b01  (22 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Inferred name: *r_s12ad0/1_scan_end_isr*
  * Purpose: store results, set done flags
  * Tag: none in the table row
@@ -576,7 +576,7 @@ void r_s12ad0_scan_end_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD1_Create @ fff92b17  (349 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD1_Create @ fff92b17  (349 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD1_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 1
  * Tag: none in the table row
@@ -671,7 +671,7 @@ void R_S12AD1_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD1_Start @ fff92c74  (28 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD1_Start @ fff92c74  (28 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD1_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 1
  * Tag: none in the table row
@@ -699,7 +699,7 @@ void R_S12AD1_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD1_Stop @ fff92c90  (30 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD1_Stop @ fff92c90  (30 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD1_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 1
  * Tag: none in the table row
@@ -727,7 +727,7 @@ void R_S12AD1_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD1_Get_ValueResult @ fff92cae  (352 bytes, 4 callers, export file fff927a9_fff93846.c)
+ * R_S12AD1_Get_ValueResult @ fff92cae  (352 bytes, 4 callers, export file fff927a9_fff93845.c)
  * Inferred name: *R_S12AD1_Create/Start/Stop/Get_ValueResult*
  * Purpose: ADC unit 1
  * Tag: none in the table row
@@ -885,7 +885,7 @@ void R_S12AD1_Get_ValueResult(uint param_1,void *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * R_S12AD1_Create_UserInit @ fff92e0e  (1 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_S12AD1_Create_UserInit @ fff92e0e  (1 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_S12AD1_Create
  *     [inference]
  * Tag: [inference]
@@ -904,7 +904,7 @@ void R_S12AD1_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_s12ad1_scan_end_isr @ fff92e0f  (22 bytes, 2 callers, export file fff927a9_fff93846.c)
+ * r_s12ad1_scan_end_isr @ fff92e0f  (22 bytes, 2 callers, export file fff927a9_fff93845.c)
  * Inferred name: *r_s12ad0/1_scan_end_isr*
  * Purpose: store results, set done flags
  * Tag: none in the table row
@@ -929,7 +929,7 @@ void r_s12ad1_scan_end_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_Pins_Create @ fff92e49  (981 bytes, 1 callers, export file fff927a9_fff93846.c)
+ * R_Pins_Create @ fff92e49  (981 bytes, 1 callers, export file fff927a9_fff93845.c)
  * Purpose: PDR/PODR/PCR/DSCR/ODR for every port
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1166,7 +1166,7 @@ void R_Pins_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU0_Create @ fff949b4  (132 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU0_Create @ fff949b4  (132 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU0_Create/Start*, `r_tpu0_tgia_isr`
  * Purpose: 10 kHz tick
  * Tag: none in the table row
@@ -1220,7 +1220,7 @@ void R_TPU0_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU0_Start @ fff94a38  (15 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU0_Start @ fff94a38  (15 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU0_Create/Start*, `r_tpu0_tgia_isr`
  * Purpose: 10 kHz tick
  * Tag: none in the table row
@@ -1247,7 +1247,7 @@ void R_TPU0_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU0_Stop @ fff94a47  (15 bytes, 0 callers, export file fff94851_fff95bf4.c)
+ * R_TPU0_Stop @ fff94a47  (15 bytes, 0 callers, export file fff94850_fff95ace.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): IEN of TGI0A (0x87210 bit 2) off, TPU TSTR
  *     (0x88100) CST0 off; after R_TPU0_Start [inference]
  * Tag: [inference]
@@ -1274,7 +1274,7 @@ void R_TPU0_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU0_Create_UserInit @ fff94a56  (1 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU0_Create_UserInit @ fff94a56  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU0_Create
  *     [inference]
  * Tag: [inference]
@@ -1293,7 +1293,7 @@ void R_TPU0_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_tpu0_tgia_isr @ fff94a57  (14 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * r_tpu0_tgia_isr @ fff94a57  (14 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU0_Create/Start*, `r_tpu0_tgia_isr`
  * Purpose: 10 kHz tick
  * Tag: none in the table row
@@ -1316,7 +1316,7 @@ void r_tpu0_tgia_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU1_Create @ fff94a65  (104 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU1_Create @ fff94a65  (104 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr`
  * Purpose: tone clock
  * Tag: none in the table row
@@ -1364,7 +1364,7 @@ void R_TPU1_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU1_Start @ fff94acd  (15 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU1_Start @ fff94acd  (15 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr`
  * Purpose: tone clock
  * Tag: none in the table row
@@ -1391,7 +1391,7 @@ void R_TPU1_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU1_Stop @ fff94adc  (15 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU1_Stop @ fff94adc  (15 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr`
  * Purpose: tone clock
  * Tag: none in the table row
@@ -1418,7 +1418,7 @@ void R_TPU1_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU1_Create_UserInit @ fff94aeb  (1 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * R_TPU1_Create_UserInit @ fff94aeb  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU1_Create
  *     [inference]
  * Tag: [inference]
@@ -1437,7 +1437,7 @@ void R_TPU1_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_tpu1_tgia_isr @ fff94aec  (14 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * r_tpu1_tgia_isr @ fff94aec  (14 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Inferred name: *R_TPU1_Create/Start/Stop*, `r_tpu1_tgia_isr`
  * Purpose: tone clock
  * Tag: none in the table row
@@ -1460,7 +1460,7 @@ void r_tpu1_tgia_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * sci2_configure @ fffb177e  (386 bytes, 4 callers, export file fffb1325_fffb1dad.c)
+ * sci2_configure @ fffb177e  (386 bytes, 4 callers, export file fffb1303_fffb1d79.c)
  * Purpose: TUN/LIN port mode switch
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1553,7 +1553,7 @@ void sci2_configure(void)
 
 
 /* -----------------------------------------------------------------------------
- * tunlin_port_mode @ fffb1900  (30 bytes, 7 callers, export file fffb1325_fffb1dad.c)
+ * tunlin_port_mode @ fffb1900  (30 bytes, 7 callers, export file fffb1303_fffb1d79.c)
  * Purpose: 0x9AB7 clamped to 0..3
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1577,7 +1577,7 @@ byte tunlin_port_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * timers_init @ fffb2228  (96 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * timers_init @ fffb2228  (96 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: marks all timers expired, sets blinkers, starts TPU0/TPU3
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1607,7 +1607,7 @@ void timers_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * blink_phase @ fffb2406  (19 bytes, 7 callers, export file fffb1f42_fffb2f9e.c)
+ * blink_phase @ fffb2406  (19 bytes, 7 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: blink timers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1624,7 +1624,7 @@ byte blink_phase(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * blink_set @ fffb2419  (80 bytes, 2 callers, export file fffb1f42_fffb2f9e.c)
+ * blink_set @ fffb2419  (80 bytes, 2 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: blink timers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1649,7 +1649,7 @@ void blink_set(int param_1,ushort param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * tone_sample_isr @ fffb2469  (58 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tone_sample_isr @ fffb2469  (58 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: DAC tone
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1672,7 +1672,7 @@ void tone_sample_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * tone_play @ fffb24a3  (39 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tone_play @ fffb24a3  (39 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: DAC tone
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1693,7 +1693,7 @@ void tone_play(uint param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tone_stop @ fffb24ca  (14 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * tone_stop @ fffb24ca  (14 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: calls `R_TPU1_Stop`; 14 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1712,7 +1712,7 @@ void tone_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * spk_softstart_isr @ fffb24d8  (196 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * spk_softstart_isr @ fffb24d8  (196 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: TPU2 body
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1764,7 +1764,7 @@ void spk_softstart_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * slowtimer_tick @ fffb259c  (104 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * slowtimer_tick @ fffb259c  (104 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: 100 ms timers
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1791,7 +1791,7 @@ void slowtimer_tick(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU3_Create @ fffb2734  (126 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * R_TPU3_Create @ fffb2734  (126 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name: *R_TPU3_Create/Start*, `r_tpu3_tgia_isr`
  * Purpose: 100 ms tick
  * Tag: none in the table row
@@ -1845,7 +1845,7 @@ void R_TPU3_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU3_Start @ fffb27b2  (15 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * R_TPU3_Start @ fffb27b2  (15 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name: *R_TPU3_Create/Start*, `r_tpu3_tgia_isr`
  * Purpose: 100 ms tick
  * Tag: none in the table row
@@ -1872,7 +1872,7 @@ void R_TPU3_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU3_Stop @ fffb27c1  (15 bytes, 0 callers, export file fffb1f42_fffb2f9e.c)
+ * R_TPU3_Stop @ fffb27c1  (15 bytes, 0 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): IEN of TGI3A off, TSTR CST3 (bit 3) off;
  *     after R_TPU3_Start [inference]
  * Tag: [inference]
@@ -1899,7 +1899,7 @@ void R_TPU3_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU3_Create_UserInit @ fffb27d0  (1 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * R_TPU3_Create_UserInit @ fffb27d0  (1 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU3_Create
  *     [inference]
  * Tag: [inference]
@@ -1918,7 +1918,7 @@ void R_TPU3_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_tpu3_tgia_isr @ fffb27d1  (14 bytes, 2 callers, export file fffb1f42_fffb2f9e.c)
+ * r_tpu3_tgia_isr @ fffb27d1  (14 bytes, 2 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name: *R_TPU3_Create/Start*, `r_tpu3_tgia_isr`
  * Purpose: 100 ms tick
  * Tag: none in the table row
@@ -1941,7 +1941,7 @@ void r_tpu3_tgia_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc_scan_start @ fffb27e0  (27 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc_scan_start @ fffb27e0  (27 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: software-triggered scan of both units
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1962,7 +1962,7 @@ void adc_scan_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc0_store @ fffb27fb  (83 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc0_store @ fffb27fb  (83 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: results → 0x20B04..0x20B16
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -1986,7 +1986,7 @@ void adc0_store(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc0_done @ fffb284e  (10 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc0_done @ fffb284e  (10 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: no direct calls; 10 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2002,7 +2002,7 @@ void adc0_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc1_store @ fffb2858  (60 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc1_store @ fffb2858  (60 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: results → 0x20B04..0x20B16
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2024,7 +2024,7 @@ void adc1_store(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc1_done @ fffb2894  (10 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc1_done @ fffb2894  (10 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: no direct calls; 10 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2040,7 +2040,7 @@ void adc1_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc_scan_done @ fffb289e  (51 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * adc_scan_done @ fffb289e  (51 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: software-triggered scan of both units
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2063,7 +2063,7 @@ byte adc_scan_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * beep_task @ fffb28e2  (1220 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * beep_task @ fffb28e2  (1220 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: beeps
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2320,7 +2320,7 @@ void beep_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * beep_stop @ fffb2df4  (10 bytes, 18 callers, export file fffb1f42_fffb2f9e.c)
+ * beep_stop @ fffb2df4  (10 bytes, 18 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: beeps
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2336,7 +2336,7 @@ void beep_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * tone_idle @ fffb2e0d  (17 bytes, 3 callers, export file fffb1f42_fffb2f9e.c)
+ * tone_idle @ fffb2e0d  (17 bytes, 3 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: calls `dac0_write`, `tone_stop`; 17 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2353,7 +2353,7 @@ void tone_idle(void)
 
 
 /* -----------------------------------------------------------------------------
- * tone_set @ fffb2e1e  (126 bytes, 35 callers, export file fffb1f42_fffb2f9e.c)
+ * tone_set @ fffb2e1e  (126 bytes, 35 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: DAC tone
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -2388,7 +2388,7 @@ void tone_set(float param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * aess_level_ptr @ fffb54a0  (140 bytes, 7 callers, export file fffb4e18_fffb70b0.c)
+ * aess_level_ptr @ fffb54a0  (140 bytes, 7 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Pointer to the active mode's AESS level byte (0x9C06 / 09 / 0A / 0B / 0C / 0E / 0F) (#157, CAT AS)
  *     [fact]
  * Tag: [fact]
@@ -2437,7 +2437,7 @@ uint aess_level_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * ckey_det @ fffb6ed4  (31 bytes, 4 callers, export file fffb4e18_fffb70b0.c)
+ * ckey_det @ fffb6ed4  (31 bytes, 4 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2460,7 +2460,7 @@ bool ckey_det(void)
 
 
 /* -----------------------------------------------------------------------------
- * ckey_dot @ fffb6ef3  (24 bytes, 3 callers, export file fffb4e18_fffb70b0.c)
+ * ckey_dot @ fffb6ef3  (24 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2483,7 +2483,7 @@ bool ckey_dot(void)
 
 
 /* -----------------------------------------------------------------------------
- * ckey_dash @ fffb6f0b  (31 bytes, 2 callers, export file fffb4e18_fffb70b0.c)
+ * ckey_dash @ fffb6f0b  (31 bytes, 2 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2506,7 +2506,7 @@ bool ckey_dash(void)
 
 
 /* -----------------------------------------------------------------------------
- * jp_p51_get @ fffb6f2a  (19 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * jp_p51_get @ fffb6f2a  (19 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
  * Tag: none in the table row
@@ -2528,7 +2528,7 @@ byte jp_p51_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6f3d @ fffb6f3d  (19 bytes, 0 callers, export file fffb4e18_fffb70b0.c)
+ * FUN_fffb6f3d @ fffb6f3d  (19 bytes, 0 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2549,7 +2549,7 @@ byte FUN_fffb6f3d(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6f50 @ fffb6f50  (19 bytes, 0 callers, export file fffb4e18_fffb70b0.c)
+ * FUN_fffb6f50 @ fffb6f50  (19 bytes, 0 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2570,7 +2570,7 @@ byte FUN_fffb6f50(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6f63 @ fffb6f63  (19 bytes, 0 callers, export file fffb4e18_fffb70b0.c)
+ * FUN_fffb6f63 @ fffb6f63  (19 bytes, 0 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *ckey_det/dot/dash*, `jp_p51_get`, `atas_det`, `ear_det`
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
@@ -2591,7 +2591,7 @@ byte FUN_fffb6f63(void)
 
 
 /* -----------------------------------------------------------------------------
- * atas_det @ fffb6f76  (30 bytes, 1 callers, export file fffb4e18_fffb70b0.c)
+ * atas_det @ fffb6f76  (30 bytes, 1 callers, export file fffb4c45_fffb7098.c)
  * (The page describes the range 0xFFFB6ED4..0xFFFB6F76 in one row.)
  * Purpose: single-bit inputs
  * Tag: none in the table row
@@ -2613,7 +2613,7 @@ bool atas_det(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_reset_set @ fffb7051  (22 bytes, 5 callers, export file fffb4e18_fffb70b0.c)
+ * sdr_reset_set @ fffb7051  (22 bytes, 5 callers, export file fffb4c45_fffb7098.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2637,7 +2637,7 @@ void sdr_reset_set(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_update_set @ fffb7067  (25 bytes, 3 callers, export file fffb4e18_fffb70b0.c)
+ * sdr_update_set @ fffb7067  (25 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2662,7 +2662,7 @@ void sdr_update_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * af_reset_set @ fffb70b0  (25 bytes, 2 callers, export file fffb4e18_fffb70b0.c)
+ * af_reset_set @ fffb70b0  (25 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2685,8 +2685,9 @@ void af_reset_set(byte param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * pa_pon_set @ fffb70c9  (22 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * pa_pon_set @ fffb70c9  (22 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2710,7 +2711,7 @@ void pa_pon_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tun_lin_sel_set @ fffb70df  (24 bytes, 4 callers, export file fffb70c9_fffb9422.c)
+ * tun_lin_sel_set @ fffb70df  (24 bytes, 4 callers, export file fffb70b0_fffb93b9.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2735,7 +2736,7 @@ void tun_lin_sel_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rem_key_sel_set @ fffb70f7  (25 bytes, 3 callers, export file fffb70c9_fffb9422.c)
+ * rem_key_sel_set @ fffb70f7  (25 bytes, 3 callers, export file fffb70b0_fffb93b9.c)
  * (The page describes the range 0xFFFB7051..0xFFFB70F7 in one row.)
  * Purpose: single-bit outputs
  * Tag: none in the table row
@@ -2760,7 +2761,7 @@ void rem_key_sel_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_a_set @ fffb714d  (24 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * gpo_a_set @ fffb714d  (24 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2786,7 +2787,7 @@ void gpo_a_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_b_set @ fffb7165  (24 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * gpo_b_set @ fffb7165  (24 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2811,7 +2812,7 @@ void gpo_b_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_c_set @ fffb717d  (22 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * gpo_c_set @ fffb717d  (22 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2836,7 +2837,7 @@ void gpo_c_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_d_set @ fffb7193  (24 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * gpo_d_set @ fffb7193  (24 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2862,7 +2863,7 @@ void gpo_d_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_a_get @ fffb71ab  (19 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_a_get @ fffb71ab  (19 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2884,7 +2885,7 @@ byte gpo_a_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_b_get @ fffb71be  (19 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_b_get @ fffb71be  (19 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2905,7 +2906,7 @@ byte gpo_b_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_c_get @ fffb71d1  (17 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_c_get @ fffb71d1  (17 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2926,7 +2927,7 @@ byte gpo_c_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * gpo_d_get @ fffb71e2  (19 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * gpo_d_get @ fffb71e2  (19 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2947,7 +2948,7 @@ byte gpo_d_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb71f5 @ fffb71f5  (10 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * FUN_fffb71f5 @ fffb71f5  (10 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2965,7 +2966,7 @@ void FUN_fffb71f5(void)
 
 
 /* -----------------------------------------------------------------------------
- * etun_reset_set @ fffb71ff  (27 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * etun_reset_set @ fffb71ff  (27 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Inferred name: *gpo_a..d_set/get*, `etun_reset_set`
  * (The page describes the range 0xFFFB714D..0xFFFB71FF in one row.)
  * Purpose: GP OUT pins
@@ -2994,7 +2995,7 @@ void etun_reset_set(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * speaker_switch_set @ fffb7322  (132 bytes, 3 callers, export file fffb70c9_fffb9422.c)
+ * speaker_switch_set @ fffb7322  (132 bytes, 3 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: speaker routing (below)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3040,7 +3041,7 @@ void speaker_switch_set(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * power_off_io @ fffb73a6  (55 bytes, 2 callers, export file fffb70c9_fffb9422.c)
+ * power_off_io @ fffb73a6  (55 bytes, 2 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: see power section
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3078,7 +3079,7 @@ void power_off_io(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc_scan_blocking @ fffb741e  (13 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * adc_scan_blocking @ fffb741e  (13 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: software-triggered scan of both units
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3099,7 +3100,7 @@ void adc_scan_blocking(void)
 
 
 /* -----------------------------------------------------------------------------
- * speaker_route @ fffb8a8c  (747 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * speaker_route @ fffb8a8c  (747 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: speaker routing (below)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3268,7 +3269,7 @@ void speaker_route(void)
 
 
 /* -----------------------------------------------------------------------------
- * linear_band_data @ fffb8f7d  (481 bytes, 1 callers, export file fffb70c9_fffb9422.c)
+ * linear_band_data @ fffb8f7d  (481 bytes, 1 callers, export file fffb70b0_fffb93b9.c)
  * Purpose: band code on the 4 GP lines in LINEAR mode
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3432,7 +3433,7 @@ void linear_band_data(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_MTU2_Create @ fffc913b  (103 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_MTU2_Create @ fffc913b  (103 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: unused PWM
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3479,7 +3480,7 @@ void R_MTU2_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_MTU2_Start @ fffc91a2  (8 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_MTU2_Start @ fffc91a2  (8 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): MTU.TSTRA (0xC1280) CST2 (bit 2) on; after
  *     R_MTU2_Create [inference]
  * Tag: [inference]
@@ -3503,7 +3504,7 @@ void R_MTU2_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_MTU2_Stop @ fffc91aa  (8 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_MTU2_Stop @ fffc91aa  (8 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): MTU.TSTRA CST2 off [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3526,7 +3527,7 @@ void R_MTU2_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_MTU2_Create_UserInit @ fffc91b2  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_MTU2_Create_UserInit @ fffc91b2  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_MTU2_Create
  *     [inference]
  * Tag: [inference]
@@ -3545,7 +3546,7 @@ void R_MTU2_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_Create_IIC @ fffc91b3  (213 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_Create_IIC @ fffc91b3  (213 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: unused simple-I2C
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3616,7 +3617,7 @@ void R_SCI6_Create_IIC(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_Start @ fffc9288  (64 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_Start @ fffc9288  (64 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): clears IR, sets IEN of SCI6 TXI/RXI (0x8720A
  *     bits 7/6) and ICU.GENBL0 bits 12/13; after R_SCI6_Create_IIC [inference]
  * Tag: [inference]
@@ -3655,7 +3656,7 @@ void R_SCI6_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_Stop @ fffc92c8  (64 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_Stop @ fffc92c8  (64 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): reverse of R_SCI6_Start [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3692,7 +3693,7 @@ void R_SCI6_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_IIC_StartCondition @ fffc9308  (9 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_IIC_StartCondition @ fffc9308  (9 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): SCI6.SIMR3 (0x8A0CB) = 0x51: IICSTAREQ with
  *     SDA/SCL as condition outputs [inference]
  * Tag: [inference]
@@ -3713,7 +3714,7 @@ void R_SCI6_IIC_StartCondition(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_IIC_StopCondition @ fffc9311  (9 bytes, 3 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_IIC_StopCondition @ fffc9311  (9 bytes, 3 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: unused simple-I2C
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3733,7 +3734,7 @@ void R_SCI6_IIC_StopCondition(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_IIC_Master_Send @ fffc931a  (64 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_IIC_Master_Send @ fffc931a  (64 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): (adr, tx_buf, tx_num): mode 0x80 (send) in
  *     0x12235, address byte, count, buffer, then R_SCI6_IIC_StartCondition [inference]
  * Tag: [inference]
@@ -3762,7 +3763,7 @@ void R_SCI6_IIC_Master_Send(undefined1 param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_IIC_Master_Receive @ fffc935a  (73 bytes, 0 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_IIC_Master_Receive @ fffc935a  (73 bytes, 0 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): (adr, rx_buf, rx_num): mode 0 (receive) in
  *     0x12235, then R_SCI6_IIC_StartCondition [inference]
  * Tag: [inference]
@@ -3791,7 +3792,7 @@ void R_SCI6_IIC_Master_Receive(undefined1 param_1,undefined4 param_2,int param_3
 
 
 /* -----------------------------------------------------------------------------
- * R_SCI6_Create_UserInit @ fffc93a3  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * R_SCI6_Create_UserInit @ fffc93a3  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: empty [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3808,7 +3809,7 @@ void R_SCI6_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci6_iic_txi @ fffc93a4  (75 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci6_iic_txi @ fffc93a4  (75 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: unused simple-I2C
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3842,7 +3843,7 @@ void r_sci6_iic_txi(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci6_iic_tei @ fffc93ef  (120 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci6_iic_tei @ fffc93ef  (120 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: TEI6 (cb 0x20), simple-I2C condition handling [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3886,7 +3887,7 @@ void r_sci6_iic_tei(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci6_iic_rxi @ fffc9467  (328 bytes, 2 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci6_iic_rxi @ fffc9467  (328 bytes, 2 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: unused simple-I2C
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/peripherals.md
@@ -3971,7 +3972,7 @@ void r_sci6_iic_rxi(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci6_callback_transmitend @ fffc95af  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci6_callback_transmitend @ fffc95af  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty; called by r_sci6_iic_tei after the
  *     stop condition when the mode is send (0x80) [inference]
  * Tag: [inference]
@@ -3990,7 +3991,7 @@ void r_sci6_callback_transmitend(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_sci6_callback_receiveend @ fffc95b0  (1 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * r_sci6_callback_receiveend @ fffc95b0  (1 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty; called by r_sci6_iic_tei after the
  *     stop condition when the mode is receive (0) [inference]
  * Tag: [inference]
@@ -4009,7 +4010,7 @@ void r_sci6_callback_receiveend(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU2_Create @ fffedd07  (102 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * R_TPU2_Create @ fffedd07  (102 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Inferred name: *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr`
  * Purpose: speaker soft-start
  * Tag: none in the table row
@@ -4057,7 +4058,7 @@ void R_TPU2_Create(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU2_Start @ fffedd6d  (15 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * R_TPU2_Start @ fffedd6d  (15 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Inferred name: *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr`
  * Purpose: speaker soft-start
  * Tag: none in the table row
@@ -4081,7 +4082,7 @@ void R_TPU2_Start(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU2_Stop @ fffedd7c  (15 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * R_TPU2_Stop @ fffedd7c  (15 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Inferred name: *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr`
  * Purpose: speaker soft-start
  * Tag: none in the table row
@@ -4108,7 +4109,7 @@ void R_TPU2_Stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * R_TPU2_Create_UserInit @ fffedd8b  (1 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * R_TPU2_Create_UserInit @ fffedd8b  (1 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: Renesas Code Generator r_cg_* / Smart Configurator (RX651): empty rts, called last by R_TPU2_Create
  *     [inference]
  * Tag: [inference]
@@ -4127,7 +4128,7 @@ void R_TPU2_Create_UserInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * r_tpu2_tgia_isr @ fffedd8c  (14 bytes, 2 callers, export file fffed704_fffee29c.c)
+ * r_tpu2_tgia_isr @ fffedd8c  (14 bytes, 2 callers, export file fffed6f5_fffee29c.c)
  * Inferred name: *R_TPU2_Create/Start/Stop*, `r_tpu2_tgia_isr`
  * Purpose: speaker soft-start
  * Tag: none in the table row

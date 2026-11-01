@@ -4,7 +4,7 @@
 // 239 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * qmb_side_revalidate @ fff94fd5  (294 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * qmb_side_revalidate @ fff94fd5  (294 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Purpose: (side): boot check of a VFO left in QMB state: clamps g_qmb_hdr.count to 10, repairs the side's QMB
  *     pointer/depth pair for EX030112 QMB CH (5 or 10 slots), then FUN_fffc31a7(side, 1) and FUN_fffc334c(side);
  *     returns 1 [fact: fff94fd5]; only caller qmb_boot_init
@@ -77,7 +77,7 @@ undefined1 qmb_side_revalidate(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E0_key @ fff95829  (98 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_E0_key @ fff95829  (98 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: E0 → filter → mailbox
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -111,7 +111,7 @@ void displink_rx_E0_key(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E1_encoder @ fff9588b  (473 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_E1_encoder @ fff9588b  (473 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: E1 → encoder dispatch
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -229,7 +229,7 @@ void displink_rx_E1_encoder(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * moni_level_ptr @ fff99669  (121 bytes, 3 callers, export file fff981ba_fff99837.c)
+ * moni_level_ptr @ fff99669  (121 bytes, 3 callers, export file fff9810e_fff997df.c)
  * Purpose: Returns the address of the MONI LEVEL byte for the TX mode: 0x9BFC SSB, 0x9BFD CW, 0x9BFE RTTY, 0x9BFF
  *     DATA/PSK, 0x9C00 AM, 0 for FM [fact: fff99669]; callers popup_fmt_moni_level, funcknob_moni_level_step,
  *     displink frame code
@@ -272,7 +272,7 @@ uint moni_level_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * mic_gain_ptr @ fff99877  (107 bytes, 4 callers, export file fff99877_fff9ad39.c)
+ * mic_gain_ptr @ fff99877  (107 bytes, 4 callers, export file fff99837_fff9acf4.c)
  * Purpose: Returns the address of the MIC GAIN byte for the TX mode: 0x9BEC (LSB/USB), 0x9BED (DATA-L/U, PSK),
  *     0x9BEE (AM), 0x9BEF (FM, DATA-FM), 0 for CW and RTTY [fact: fff99877]; callers popup_fmt_mic_gain,
  *     funcknob_mic_gain_step
@@ -318,7 +318,7 @@ LAB_fff998d0:
 
 
 /* -----------------------------------------------------------------------------
- * bk_in_bit_get @ fff99dbf  (28 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * bk_in_bit_get @ fff99dbf  (28 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Returns bit 1 of mode_block_byte0() (the BI / break-in bit of the TX mode block) [fact: fff99dbf];
  *     callers popup_fmt_bk_in, dl37_slot_bk_in
  * Tag: [fact]
@@ -340,7 +340,7 @@ bool bk_in_bit_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_level_cur_ptr @ fff9c6ab  (69 bytes, 2 callers, export file fff9c555_fff9db66.c)
+ * scope_level_cur_ptr @ fff9c6ab  (69 bytes, 2 callers, export file fff9c49a_fff9db37.c)
  * Purpose: Returns the scope level byte for the RX dial frequency: 0x9BCA (RX) or 0x9BD8 (while transmitting) +
  *     freq_range_index [fact: fff9c6ab]; the same tables as scope_level_ptr
  * Tag: [fact]
@@ -371,7 +371,7 @@ uint scope_level_cur_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * align_store_nop @ fffbbd52  (1 bytes, 191 callers, export file fffb948b_fffbc3bd.c)
+ * align_store_nop @ fffbbd52  (1 bytes, 191 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Empty store handler (191 of the 261 items) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -388,7 +388,7 @@ void align_store_nop(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_task_init @ fffbbd53  (5 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_task_init @ fffbbd53  (5 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: called in `app_main` (→ `FUN_fffc4d93`) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -407,7 +407,7 @@ void key_task_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_task @ fffbbd58  (939 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_task @ fffbbd58  (939 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: key state machine (`main_loop`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -576,7 +576,7 @@ void key_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_cancel_check @ fffbc103  (205 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_cancel_check @ fffbc103  (205 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: 0x340 (MIC PTT) release handling
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -631,7 +631,7 @@ byte key_cancel_check(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_class_of @ fffbc1d0  (85 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_class_of @ fffbc1d0  (85 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: class from 0xFFF83164, or by assigned slot
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -666,7 +666,7 @@ byte key_class_of(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_assign_slot @ fffbc225  (122 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_assign_slot @ fffbc225  (122 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: assignable code → slot (0xFF if none)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -704,7 +704,7 @@ byte key_assign_slot(short param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_call_press @ fffbc35f  (47 bytes, 2 callers, export file fffb948b_fffbc3bd.c)
+ * key_call_press @ fffbc35f  (47 bytes, 2 callers, export file fffb9422_fffbc38e.c)
  * Purpose: JSR through the five tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -729,7 +729,7 @@ void key_call_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_call_short @ fffbc38e  (47 bytes, 2 callers, export file fffb948b_fffbc3bd.c)
+ * key_call_short @ fffbc38e  (47 bytes, 2 callers, export file fffb9422_fffbc38e.c)
  * Purpose: JSR through the five tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -751,9 +751,8 @@ void key_call_short(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * key_call_long @ fffbc3bd  (73 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * key_call_long @ fffbc3bd  (73 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: JSR through the five tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -782,8 +781,9 @@ void key_call_long(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * key_call_repeat @ fffbc406  (47 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * key_call_repeat @ fffbc406  (47 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: JSR through the five tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -807,7 +807,7 @@ void key_call_repeat(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_call_release @ fffbc435  (47 bytes, 4 callers, export file fffbc406_fffbd249.c)
+ * key_call_release @ fffbc435  (47 bytes, 4 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: JSR through the five tables
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -831,7 +831,7 @@ void key_call_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_touch_scope_tune @ fffbc464  (405 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * key_touch_scope_tune @ fffbc464  (405 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Purpose: touch → frequency
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -925,7 +925,7 @@ void key_touch_scope_tune(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_shift_toggle @ fffbda47  (107 bytes, 2 callers, export file fffbd617_fffbdb40.c)
+ * dsp_knob_shift_toggle @ fffbda47  (107 bytes, 2 callers, export file fffbd600_fffbdad5.c)
  * Purpose: DSP key short press with knob function 0 (SHIFT): toggles g_ui.dsp_knob_edit, FUNC item 0x1D [fact:
  *     fffbda47]; caller key_dsp_release (structs_main.h dsp_knob_func 0 SHIFT)
  * Tag: [fact]
@@ -958,7 +958,7 @@ void dsp_knob_shift_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * shift_reset_beep @ fffbdab2  (35 bytes, 1 callers, export file fffbd617_fffbdb40.c)
+ * shift_reset_beep @ fffbdab2  (35 bytes, 1 callers, export file fffbd600_fffbdad5.c)
  * Purpose: vfo_shift_reset(active VFO), beep 2 [fact: fffbdab2]; no direct caller (reached through a table)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -978,7 +978,7 @@ void shift_reset_beep(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_width_toggle @ fffbdad5  (107 bytes, 2 callers, export file fffbd617_fffbdb40.c)
+ * dsp_knob_width_toggle @ fffbdad5  (107 bytes, 2 callers, export file fffbd600_fffbdad5.c)
  * Purpose: DSP key short press with knob function 1 (WIDTH): toggles dsp_knob_edit, FUNC item 0x1E [fact:
  *     fffbdad5]; caller key_dsp_release
  * Tag: [fact]
@@ -1009,9 +1009,8 @@ void dsp_knob_width_toggle(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * width_reset_beep @ fffbdb40  (35 bytes, 1 callers, export file fffbd617_fffbdb40.c)
+ * width_reset_beep @ fffbdb40  (35 bytes, 1 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: vfo_width_reset(active VFO), beep 2 [fact: fffbdb40]; no direct caller (reached through a table)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1029,8 +1028,9 @@ void width_reset_beep(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * dsp_knob_notch_toggle @ fffbdb63  (298 bytes, 2 callers, export file fffbdb63_fffbe251.c)
+ * dsp_knob_notch_toggle @ fffbdb63  (298 bytes, 2 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: DSP key short press with knob function 2 (NOTCH): toggles dsp_knob_edit, FUNC item 0x1F, and in edit
  *     mode bit 0x80 of the active VFO mode-block flags [fact: fffbdb63]; caller key_dsp_release
  * Tag: [fact]
@@ -1109,7 +1109,7 @@ LAB_fffbdc83:
 
 
 /* -----------------------------------------------------------------------------
- * notch_reset_beep @ fffbdc8d  (35 bytes, 1 callers, export file fffbdb63_fffbe251.c)
+ * notch_reset_beep @ fffbdc8d  (35 bytes, 1 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: vfo_notch_reset(active VFO), beep 2 [fact: fffbdc8d]; no direct caller (reached through a table)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1130,7 +1130,7 @@ void notch_reset_beep(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_contour_toggle @ fffbdcb0  (389 bytes, 2 callers, export file fffbdb63_fffbe251.c)
+ * dsp_knob_contour_toggle @ fffbdcb0  (389 bytes, 2 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: DSP key short press with knob function 3 and APF off: toggles dsp_knob_edit, FUNC item 0x20 (CONTOUR),
  *     changes bit 0x40 of the active VFO mode-block flags [fact: fffbdcb0]; caller key_dsp_release
  * Tag: [fact]
@@ -1230,7 +1230,7 @@ LAB_fffbde2b:
 
 
 /* -----------------------------------------------------------------------------
- * contour_reset_beep @ fffbde35  (35 bytes, 1 callers, export file fffbdb63_fffbe251.c)
+ * contour_reset_beep @ fffbde35  (35 bytes, 1 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: vfo_contour_reset(active VFO), beep 2 [fact: fffbde35]; no direct caller (reached through a table)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1250,7 +1250,7 @@ void contour_reset_beep(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_apf_toggle @ fffbde58  (285 bytes, 2 callers, export file fffbdb63_fffbe251.c)
+ * dsp_knob_apf_toggle @ fffbde58  (285 bytes, 2 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: DSP key short press with knob function 3 and dsp_knob_apf set: toggles dsp_knob_edit, FUNC item 0x21
  *     (APF) [fact: fffbde58]; caller key_dsp_release
  * Tag: [fact]
@@ -1318,7 +1318,7 @@ void dsp_knob_apf_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_reset_beep @ fffbdf75  (35 bytes, 1 callers, export file fffbdb63_fffbe251.c)
+ * apf_reset_beep @ fffbdf75  (35 bytes, 1 callers, export file fffbdb40_fffbe24b.c)
  * Purpose: vfo_apf_reset(active VFO), beep 2 [fact: fffbdf75]; no direct caller (reached through a table)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1338,7 +1338,7 @@ void apf_reset_beep(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_lock_pwr_press @ fffbe582  (17 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_lock_pwr_press @ fffbe582  (17 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x300 LOCK/PWR, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1359,7 +1359,7 @@ void key_lock_pwr_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_lock_pwr_short @ fffbe593  (170 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_lock_pwr_short @ fffbe593  (170 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x300 LOCK/PWR, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1404,7 +1404,7 @@ void key_lock_pwr_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_lock_pwr_long @ fffbe63d  (67 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_lock_pwr_long @ fffbe63d  (67 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x300 LOCK/PWR, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1429,7 +1429,7 @@ void key_lock_pwr_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_tune_press @ fffbe680  (60 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_tune_press @ fffbe680  (60 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x301 TUNE, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1459,7 +1459,7 @@ void key_tune_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_tune_short @ fffbe6bc  (216 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_tune_short @ fffbe6bc  (216 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x301 TUNE, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1527,7 +1527,7 @@ void key_tune_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_tune_long @ fffbe794  (83 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_tune_long @ fffbe794  (83 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x301 TUNE, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1558,7 +1558,7 @@ void key_tune_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mox_vox_press @ fffbe7e7  (88 bytes, 2 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mox_vox_press @ fffbe7e7  (88 bytes, 2 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x302 MOX/VOX, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1589,7 +1589,7 @@ void key_mox_vox_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mox_vox_short @ fffbe83f  (147 bytes, 2 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mox_vox_short @ fffbe83f  (147 bytes, 2 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x302 MOX/VOX, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1632,7 +1632,7 @@ void key_mox_vox_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mox_vox_long @ fffbe8d2  (93 bytes, 2 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mox_vox_long @ fffbe8d2  (93 bytes, 2 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x302 MOX/VOX, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1663,7 +1663,7 @@ void key_mox_vox_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_nb_press @ fffbe92f  (60 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_nb_press @ fffbe92f  (60 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x303 NB, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1693,7 +1693,7 @@ void key_nb_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_nb_short @ fffbe96b  (107 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_nb_short @ fffbe96b  (107 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x303 NB, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1735,7 +1735,7 @@ void key_nb_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_nb_long @ fffbe9d6  (198 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_nb_long @ fffbe9d6  (198 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x303 NB, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1789,7 +1789,7 @@ void key_nb_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dnr_press @ fffbea9c  (144 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_dnr_press @ fffbea9c  (144 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x304 DNR, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1845,7 +1845,7 @@ void key_dnr_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dnr_short @ fffbeb2c  (119 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_dnr_short @ fffbeb2c  (119 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x304 DNR, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1891,7 +1891,7 @@ void key_dnr_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dnr_long @ fffbeba3  (201 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_dnr_long @ fffbeba3  (201 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x304 DNR, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1946,7 +1946,7 @@ void key_dnr_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_split_press @ fffbec6c  (57 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_split_press @ fffbec6c  (57 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x305 SPLIT, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -1974,7 +1974,7 @@ void key_split_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_split_long @ fffbee05  (77 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_split_long @ fffbee05  (77 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x305 SPLIT, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2006,7 +2006,7 @@ void key_split_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_clar_press @ fffbee52  (87 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_clar_press @ fffbee52  (87 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x306 CLAR, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2042,7 +2042,7 @@ void key_clar_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_clar_short @ fffbeea9  (247 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_clar_short @ fffbeea9  (247 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x306 CLAR, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2111,7 +2111,7 @@ void key_clar_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_clar_long @ fffbefa0  (109 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_clar_long @ fffbefa0  (109 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x306 CLAR, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2145,7 +2145,7 @@ void key_clar_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_zin_spot_press @ fffbf00d  (169 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_zin_spot_press @ fffbf00d  (169 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x307 ZIN/SPOT, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2196,7 +2196,7 @@ void key_zin_spot_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_zin_spot_short @ fffbf0b6  (286 bytes, 2 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_zin_spot_short @ fffbf0b6  (286 bytes, 2 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x307 ZIN/SPOT, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2267,7 +2267,7 @@ void key_zin_spot_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_zin_spot_long @ fffbf1d4  (55 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_zin_spot_long @ fffbf1d4  (55 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x307 ZIN/SPOT, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2295,7 +2295,7 @@ void key_zin_spot_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_m_to_v_press @ fffbf20b  (41 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_m_to_v_press @ fffbf20b  (41 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x308 M>V, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2318,7 +2318,7 @@ void key_m_to_v_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_m_to_v_short @ fffbf234  (26 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_m_to_v_short @ fffbf234  (26 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x308 M>V, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2343,7 +2343,7 @@ void key_m_to_v_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_m_to_v_long @ fffbf24e  (424 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_m_to_v_long @ fffbf24e  (424 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x308 M>V, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2452,7 +2452,7 @@ void key_m_to_v_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_vm_mw_press @ fffbf3f6  (41 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_vm_mw_press @ fffbf3f6  (41 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x309 V/M W, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2475,7 +2475,7 @@ void key_vm_mw_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_vm_mw_long @ fffbf43b  (71 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_vm_mw_long @ fffbf43b  (71 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x309 V/M W, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2506,7 +2506,7 @@ void key_vm_mw_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_a_b_press @ fffbf482  (57 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_a_b_press @ fffbf482  (57 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30A A/B, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2534,7 +2534,7 @@ void key_a_b_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_a_b_long @ fffbf5d6  (42 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_a_b_long @ fffbf5d6  (42 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30A A/B, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2561,7 +2561,7 @@ void key_a_b_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_band_press @ fffbf600  (47 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_band_press @ fffbf600  (47 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30B BAND, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2587,7 +2587,7 @@ void key_band_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_band_short @ fffbf62f  (146 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_band_short @ fffbf62f  (146 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30B BAND, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2634,7 +2634,7 @@ void key_band_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mode_press @ fffbf6c1  (7 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mode_press @ fffbf6c1  (7 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30C MODE, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2652,7 +2652,7 @@ void key_mode_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mode_short @ fffbf6c8  (223 bytes, 2 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mode_short @ fffbf6c8  (223 bytes, 2 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30C MODE, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2709,7 +2709,7 @@ void key_mode_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_mode_long @ fffbf7a7  (48 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_mode_long @ fffbf7a7  (48 bytes, 1 callers, export file fffbe4a0_fffbf7a7.c)
  * Purpose: Front-panel key 0x30C MODE, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2731,9 +2731,8 @@ void key_mode_long(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * key_nar_press @ fffbf7d7  (48 bytes, 1 callers, export file fffbe4a8_fffbf7d7.c)
+ * key_nar_press @ fffbf7d7  (48 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30D NAR, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2757,8 +2756,9 @@ void key_nar_press(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * key_nar_short @ fffbf807  (231 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_nar_short @ fffbf807  (231 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30D NAR, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2848,7 +2848,7 @@ void key_nar_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_qmb_press @ fffbf8ee  (54 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_qmb_press @ fffbf8ee  (54 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30E QMB, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2875,7 +2875,7 @@ void key_qmb_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_func_press @ fffbfc37  (224 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_func_press @ fffbfc37  (224 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30F FUNC, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2935,7 +2935,7 @@ void key_func_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_func_short @ fffbfd17  (10 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_func_short @ fffbfd17  (10 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30F FUNC, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2953,7 +2953,7 @@ void key_func_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_func_long @ fffbfd21  (93 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_func_long @ fffbfd21  (93 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30F FUNC, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -2989,7 +2989,7 @@ void key_func_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_func_release @ fffbfd7e  (150 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_func_release @ fffbfd7e  (150 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x30F FUNC, release handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3037,7 +3037,7 @@ void key_func_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_step_mch_press @ fffbfe14  (74 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_step_mch_press @ fffbfe14  (74 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x310 STEP/MCH, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3069,7 +3069,7 @@ void key_step_mch_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_step_mch_short @ fffbfe5e  (48 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_step_mch_short @ fffbfe5e  (48 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x310 STEP/MCH, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3092,7 +3092,7 @@ void key_step_mch_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_step_mch_long @ fffbfe8e  (91 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_step_mch_long @ fffbfe8e  (91 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x310 STEP/MCH, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3124,7 +3124,7 @@ void key_step_mch_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_fine_fast_press @ fffbfee9  (57 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_fine_fast_press @ fffbfee9  (57 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x311 FINE/FAST, press handler (key tables, display/input.md key codes) (#70)
  *     [inference]
  * Tag: [inference]
@@ -3153,7 +3153,7 @@ void key_fine_fast_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_fine_fast_short @ fffbff22  (53 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_fine_fast_short @ fffbff22  (53 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x311 FINE/FAST, short handler (key tables, display/input.md key codes) (#70)
  *     [inference]
  * Tag: [inference]
@@ -3179,7 +3179,7 @@ void key_fine_fast_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_fine_fast_long @ fffbff57  (60 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_fine_fast_long @ fffbff57  (60 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x311 FINE/FAST, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3206,7 +3206,7 @@ void key_fine_fast_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dsp_press @ fffbff93  (112 bytes, 2 callers, export file fffbf807_fffc0492.c)
+ * key_dsp_press @ fffbff93  (112 bytes, 2 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x312 DSP, press handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3248,7 +3248,7 @@ void key_dsp_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dsp_short @ fffc0003  (68 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_dsp_short @ fffc0003  (68 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x312 DSP, short handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3279,7 +3279,7 @@ void key_dsp_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dsp_long @ fffc0047  (72 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_dsp_long @ fffc0047  (72 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x312 DSP, long handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3310,7 +3310,7 @@ void key_dsp_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dsp_release @ fffc008f  (385 bytes, 1 callers, export file fffbf807_fffc0492.c)
+ * key_dsp_release @ fffc008f  (385 bytes, 1 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: Front-panel key 0x312 DSP, release handler (key tables, display/input.md key codes) (#70) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3404,7 +3404,7 @@ void key_dsp_release(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_key_select @ fffc0c8f  (164 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * mode_key_select @ fffc0c8f  (164 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: (code 0x77..0x86): mode buttons: popup_open_timed(1000) then the same per-mode selection as
  *     vfo_mode_select [fact: fffc0c8f]; caller FUN_fffc396d
  * Tag: [fact]
@@ -3484,7 +3484,7 @@ void mode_key_select(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_simple @ fffc0d33  (54 bytes, 18 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_simple @ fffc0d33  (54 bytes, 18 callers, export file fffc0492_fffc18e1.c)
  * Purpose: (mode): if vfo_edit_begin succeeds, vfo_mode_set(mode), beep while a pop-up is shown, popup_cursor =
  *     mode [fact: fffc0d33]
  * Tag: [fact]
@@ -3515,7 +3515,7 @@ void mode_select_simple(byte mode)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_am @ fffc0e31  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_am @ fffc0e31  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(4 = AM) [fact: fffc0e31]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3539,7 +3539,7 @@ void mode_select_am(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_am_n @ fffc0e3e  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_am_n @ fffc0e3e  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(5 = AM-N) [fact: fffc0e3e]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3563,7 +3563,7 @@ void mode_select_am_n(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_fm @ fffc0e4b  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_fm @ fffc0e4b  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(6 = FM) [fact: fffc0e4b]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3587,7 +3587,7 @@ void mode_select_fm(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_fm_n @ fffc0e58  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_fm_n @ fffc0e58  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(7 = FM-N) [fact: fffc0e58]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3611,7 +3611,7 @@ void mode_select_fm_n(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_data_fm @ fffc0e65  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_data_fm @ fffc0e65  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(10 = DATA-FM) [fact: fffc0e65]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3635,7 +3635,7 @@ void mode_select_data_fm(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_select_data_fm_n @ fffc0e72  (13 bytes, 3 callers, export file fffc04a0_fffc18ff.c)
+ * mode_select_data_fm_n @ fffc0e72  (13 bytes, 3 callers, export file fffc0492_fffc18e1.c)
  * Purpose: vfo_edit_begin, then mode_popup_select(11 = DATA-FM-N) [fact: fffc0e72]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3659,7 +3659,7 @@ void mode_select_data_fm_n(void)
 
 
 /* -----------------------------------------------------------------------------
- * preset_toggle @ fffc0e7f  (57 bytes, 2 callers, export file fffc04a0_fffc18ff.c)
+ * preset_toggle @ fffc0e7f  (57 bytes, 2 callers, export file fffc0492_fffc18e1.c)
  * Purpose: popup_open_timed(3000), toggles g_opstate.preset_on, sci3_set_baud, beep [fact: fffc0e7f]; the baud
  *     reset follows the PRESET's own CAT-1 RATE (presets[].cat1_rate) [inference]; reached as mode 15 from
  *     vfo_mode_select and mode_key_select
@@ -3684,7 +3684,7 @@ void preset_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_knob_assign_key @ fffc1ede  (76 bytes, 34 callers, export file fffc1913_fffc2991.c)
+ * func_knob_assign_key @ fffc1ede  (76 bytes, 34 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (key 0xD0..0xF3): 0x9C08 (FUNC knob function) = ROM table[key - 0xD0] unless -1, then the FUNC item
  *     action FUN_fffc3b22 [fact]
  * Tag: [fact]
@@ -3717,7 +3717,7 @@ void func_knob_assign_key(short param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_menu_group_open @ fffc1f2a  (106 bytes, 7 callers, export file fffc1913_fffc2991.c)
+ * func_menu_group_open @ fffc1f2a  (106 bytes, 7 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (group 0..4): opens the setting menu at P1 = group (RADIO / CW / OPERATION / DISPLAY / EXTENSION
  *     SETTING, FUNC slots 28..32), closes the FUNC panel [fact: fffc1f2a]; callers func_menu_select, FUN_fffbd8c9,
  *     FUN_fffc4c8b
@@ -3751,7 +3751,7 @@ void func_menu_group_open(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_slot_empty @ fffc1f94  (34 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * func_slot_empty @ fffc1f94  (34 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: FUNC menu slots 0x21/0x22 (empty): closes the FUNC panel, beep unless 0x1B4DA is set [fact: fffc1f94]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -3774,7 +3774,7 @@ void func_slot_empty(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_key @ fffc1fb6  (295 bytes, 10 callers, export file fffc1913_fffc2991.c)
+ * memlist_key @ fffc1fb6  (295 bytes, 10 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (key 4..9): MEMORY CH LIST (+0x97) keys: cursor and select (+0x1D9..+0x1DB, +0x43A..+0x43C), stores with
  *     eeprom_save_memch, 9 closes [fact]
  * Tag: [fact]
@@ -3847,7 +3847,7 @@ void memlist_key(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_press @ fffc20dd  (90 bytes, 3 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_press @ fffc20dd  (90 bytes, 3 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button by g_ui.memlist_group: 0 NAME (FUN_fffc2137), 1 MODE, 2 SCAN, 3 TYPE, 4
  *     memlist_btn_valid_toggle, 5 close (memlist_flag = 0) [fact: fffc20dd]; callers memlist_key, FUN_fffc38fa
  *     (display gui.md button order)
@@ -3902,7 +3902,7 @@ void memlist_btn_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_name @ fffc2137  (144 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_name @ fffc2137  (144 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button 0 NAME: for a valid channel opens the text keyboard (kbd_open, kbd_target 1)
  *     preloaded with the channel's 12-char tag [fact: fffc2137]
  * Tag: [fact]
@@ -3946,7 +3946,7 @@ void memlist_btn_name(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_mode @ fffc21e8  (102 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_mode @ fffc21e8  (102 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button 1: for a valid channel < 0x75 opens the MODE pop-up 0x55 (memlist_popup55 = 1), else
  *     ui_key_reject [fact: fffc21e8]
  * Tag: [fact]
@@ -3985,7 +3985,7 @@ void memlist_btn_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_scan @ fffc224e  (72 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_scan @ fffc224e  (72 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button 2: opens the memory SCAN pop-up 0x44 [fact: display gui.md popup table, slot 38]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -4017,7 +4017,7 @@ void memlist_btn_scan(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_type @ fffc2296  (72 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_type @ fffc2296  (72 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button 3: opens the memory TYPE (FREQ/NAME) pop-up 0x45 [fact: display gui.md popup table,
  *     slot 39]
  * Tag: [fact]
@@ -4050,7 +4050,7 @@ void memlist_btn_type(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_btn_valid_toggle @ fffc22de  (120 bytes, 2 callers, export file fffc1913_fffc2991.c)
+ * memlist_btn_valid_toggle @ fffc22de  (120 bytes, 2 callers, export file fffc18ff_fffc296f.c)
  * Purpose: Memory-list button 4: for channels 1..0x74 flips the channel's valid byte (memch_valid), beep; else
  *     ui_key_reject [fact: fffc22de]
  * Tag: [fact]
@@ -4091,7 +4091,7 @@ void memlist_btn_valid_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * m_to_v_exec @ fffc2426  (486 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * m_to_v_exec @ fffc2426  (486 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: M>V: from the open memory list copies its channel (memch_current_set), else leaves split / QMB state
  *     first; refuses channels 0x75..0x83 for region 0x315B; then memch_to_vfo_copy [fact: fffc2426]; only caller
  *     key_m_to_v_short
@@ -4177,7 +4177,7 @@ undefined1 m_to_v_exec(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_to_vfo_copy @ fffc260c  (117 bytes, 1 callers, export file fffc1913_fffc2991.c)
+ * memch_to_vfo_copy @ fffc260c  (117 bytes, 1 callers, export file fffc18ff_fffc296f.c)
  * Purpose: (side): if memch_current_valid, leaves QMB, qmb_set_depth, memch_load_to_vfo, vfo_clear_tag,
  *     vfo_enter_vfo_state, memlist_close, VFO refresh; returns 1, else 0 [fact: fffc260c]
  * Tag: [fact]
@@ -4219,7 +4219,7 @@ undefined1 memch_to_vfo_copy(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_popup_open @ fffc33ef  (25 bytes, 2 callers, export file fffc29f3_fffc3c23.c)
+ * qmb_popup_open @ fffc33ef  (25 bytes, 2 callers, export file fffc2991_fffc3b22.c)
  * Purpose: Opens the QMB pop-up: popup_duration_get(0x43), popup_open_timed, popup_code = 0x43 [fact: fffc33ef];
  *     callers qmb_store, qmb_enter
  * Tag: [fact]
@@ -4242,7 +4242,7 @@ void qmb_popup_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_shift_reset @ fffc3503  (127 bytes, 3 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_shift_reset @ fffc3503  (127 bytes, 3 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): IF SHIFT (shift_be) of the VFO's mode block = 0 [fact: fffc3503]; callers dsp_knob_reset,
  *     key_step_mch_long, FUN_fffbdab2
  * Tag: [fact]
@@ -4293,7 +4293,7 @@ void vfo_shift_reset(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_width_reset @ fffc3582  (215 bytes, 3 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_width_reset @ fffc3582  (215 bytes, 3 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): WIDTH of the VFO's mode block = the table entry for 3000 Hz (SSB), 500 Hz (CW, RTTY), 3200 Hz
  *     (DATA/PSK) via width_hz_snap [fact: fffc3582]; callers dsp_knob_reset, key_step_mch_long, width_reset_beep
  * Tag: [fact]
@@ -4369,7 +4369,7 @@ void vfo_width_reset(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_notch_reset @ fffc3659  (282 bytes, 3 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_notch_reset @ fffc3659  (282 bytes, 3 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): manual NOTCH of the VFO's mode block = 0x0096 (150, i.e. 1500 Hz at /10) and the notch flag 0x80
  *     cleared [fact: fffc3659]; callers dsp_knob_reset, key_step_mch_long, notch_reset_beep
  * Tag: [fact]
@@ -4439,7 +4439,7 @@ LAB_fffc3717:
 
 
 /* -----------------------------------------------------------------------------
- * vfo_contour_reset @ fffc3773  (282 bytes, 3 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_contour_reset @ fffc3773  (282 bytes, 3 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): CONTOUR of the VFO's mode block = 0x0096 and flag 0x40 cleared [fact: fffc3773]; callers
  *     dsp_knob_reset, key_step_mch_long, contour_reset_beep
  * Tag: [fact]
@@ -4508,7 +4508,7 @@ LAB_fffc3831:
 
 
 /* -----------------------------------------------------------------------------
- * vfo_apf_reset @ fffc388d  (62 bytes, 3 callers, export file fffc29f3_fffc3c23.c)
+ * vfo_apf_reset @ fffc388d  (62 bytes, 3 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (side): g_opstate.apf_freq = 0 and bit 5 (APF on) of the VFO record's CW block (+0x14) cleared [fact:
  *     fffc388d]; callers dsp_knob_reset, key_step_mch_long, FUN_fffbdf75
  * Tag: [fact]
@@ -4537,7 +4537,7 @@ void vfo_apf_reset(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * width_hz_snap @ fffc38cb  (47 bytes, 4 callers, export file fffc29f3_fffc3c23.c)
+ * width_hz_snap @ fffc38cb  (47 bytes, 4 callers, export file fffc2991_fffc3b22.c)
  * Purpose: (hz, mode): width_hz_of_index(width_index_of_hz(hz)), 0 when hz is not in the mode's table [fact:
  *     fffc38cb]; only caller vfo_width_reset
  * Tag: [fact]
@@ -4566,7 +4566,7 @@ undefined2 width_hz_snap(undefined2 param_1,undefined1 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * func_menu_select @ fffc3b22  (257 bytes, 2 callers, export file fffc29f3_fffc3c23.c)
+ * func_menu_select @ fffc3b22  (257 bytes, 2 callers, export file fffc2991_fffc3b22.c)
  * Purpose: FUNC menu: runs the item at cursor 0x9C08 (func_knob_assign(n) for adjustable items, one-shot actions
  *     otherwise) [inference]
  * Tag: [inference]
@@ -4694,9 +4694,8 @@ void func_menu_select(undefined1 param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * func_knob_assign @ fffc3c23  (98 bytes, 18 callers, export file fffc29f3_fffc3c23.c)
+ * func_knob_assign @ fffc3c23  (98 bytes, 18 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: (n): 0x9DC9 = n (FUNC-knob function), UI +0x490 = 1, +0x1C5 = 1, beep [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -4720,8 +4719,9 @@ void func_knob_assign(byte param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * func_marker_toggle @ fffc3c9f  (58 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_marker_toggle @ fffc3c9f  (58 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu slot 2 (MARKER): toggles g_opstate.ss02_marker, beep [fact: fffc3c9f]; case 2 of
  *     func_menu_select (slot order of frame 0x37)
  * Tag: [fact]
@@ -4743,7 +4743,7 @@ void func_marker_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_color_select @ fffc3cd9  (77 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_color_select @ fffc3cd9  (77 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu slot 3 (COLOR): assigns the FUNC knob to function 3, opens pop-up 0xB with cursor
  *     g_opstate.ss03_value, closes the FUNC panel [fact: fffc3cd9]
  * Tag: [fact]
@@ -4771,7 +4771,7 @@ void func_color_select(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_mic_eq_toggle @ fffc3d26  (79 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_mic_eq_toggle @ fffc3d26  (79 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu item 8 (MIC EQ): if mic_eq_mode_ok, toggles 0x9BF0 (struct field proc_on; the parametric-EQ
  *     flag per display gui.md), VFO refresh, beep [fact: fffc3d26]; case 8 of func_menu_select
  * Tag: [fact]
@@ -4801,7 +4801,7 @@ void func_mic_eq_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * mic_eq_mode_ok @ fffc3d75  (115 bytes, 2 callers, export file fffc3c85_fffc4a47.c)
+ * mic_eq_mode_ok @ fffc3d75  (115 bytes, 2 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Returns 1 when the RX mode is LSB, USB, AM, AM-N, FM or FM-N [fact: fffc3d75]; callers dl37_slot_mic_eq
  *     (grey flag), func_mic_eq_toggle
  * Tag: [fact]
@@ -4855,7 +4855,7 @@ undefined1 mic_eq_mode_ok(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_keyer_toggle @ fffc3de8  (84 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_keyer_toggle @ fffc3de8  (84 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu slot 16 (KEYER): in a keyer TX mode toggles g_opstate.keyer_on, keyer_init, beep [fact:
  *     fffc3de8]
  * Tag: [fact]
@@ -4887,7 +4887,7 @@ void func_keyer_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_bk_in_toggle @ fffc3eaa  (113 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_bk_in_toggle @ fffc3eaa  (113 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu item 0x11 (BK-IN): for a voice or keyer TX mode and not transmitting, toggles the BI bit
  *     (FUN_fffc3f40), keyer_init, beep [fact: fffc3eaa]; case 0x11 of func_menu_select
  * Tag: [fact]
@@ -4931,7 +4931,7 @@ void func_bk_in_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_mode_is_voice @ fffc3f1b  (37 bytes, 2 callers, export file fffc3c85_fffc4a47.c)
+ * rec_mode_is_voice @ fffc3f1b  (37 bytes, 2 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: (*rec): 1 when the record's mode nibble is LSB/USB or AM..FM-N (0, 1, 4..7) [fact: fffc3f1b]; callers
  *     dl37_slot_bk_in, func_bk_in_toggle
  * Tag: [fact]
@@ -4958,7 +4958,7 @@ undefined1 rec_mode_is_voice(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_bk_in_bit_toggle @ fffc3f40  (92 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * vfo_bk_in_bit_toggle @ fffc3f40  (92 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: (*rec): toggles bit 1 (BI) of the record's mode block for its mode (SSB +10, CW +0x14, AM +0x32, FM
  *     +0x3C) [fact: fffc3f40]; only caller func_bk_in_toggle
  * Tag: [fact]
@@ -5003,7 +5003,7 @@ void vfo_bk_in_bit_toggle(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_txw_toggle @ fffc3f9c  (83 bytes, 1 callers, export file fffc3c85_fffc4a47.c)
+ * func_txw_toggle @ fffc3f9c  (83 bytes, 1 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: FUNC menu slot 24 (TXW): in split toggles g_ui.txw_on (on: func_assigned = 1, FUN_fffc8e0e(500)), beep
  *     [fact: fffc3f9c]
  * Tag: [fact]
@@ -5035,7 +5035,7 @@ void func_txw_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_slot_press @ fffc40d7  (51 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * key_slot_press @ fffc40d7  (51 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Mic/slot key, press role: slots 0..0xC via the code list 0xFFF88534 into key_press_table, 0xD..0x14 via
  *     0xFFF8E0CC (ui-keys.md) [fact]
  * Tag: [fact]
@@ -5063,7 +5063,7 @@ void key_slot_press(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_slot_short @ fffc410a  (51 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * key_slot_short @ fffc410a  (51 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Same for the short role (key_short_table, 0xFFF8E0EC) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5089,7 +5089,7 @@ void key_slot_short(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_slot_long @ fffc413d  (51 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * key_slot_long @ fffc413d  (51 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Same for the long role (key_long_table, 0xFFF8E10C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5115,7 +5115,7 @@ void key_slot_long(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_slot_repeat @ fffc4170  (51 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * key_slot_repeat @ fffc4170  (51 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Same for the repeat role (key_repeat_table, 0xFFF8E12C) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5141,7 +5141,7 @@ void key_slot_repeat(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_slot_release @ fffc41a3  (51 bytes, 6 callers, export file fffc3c85_fffc4a47.c)
+ * key_slot_release @ fffc41a3  (51 bytes, 6 callers, export file fffc3c23_fffc49c1.c)
  * Purpose: Same for the release role (key_release_table) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5167,7 +5167,7 @@ void key_slot_release(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_nop @ fffc4a8d  (1 bytes, 3789 callers, export file fffc4a8d_fffc6073.c)
+ * key_nop @ fffc4a8d  (1 bytes, 3789 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: empty handler
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5184,7 +5184,7 @@ void key_nop(void)
 
 
 /* -----------------------------------------------------------------------------
- * ui_clear_415_423 @ fffc4caa  (27 bytes, 49 callers, export file fffc4a8d_fffc6073.c)
+ * ui_clear_415_423 @ fffc4caa  (27 bytes, 49 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: UI +0x415 = 0 (dial x4, ui-keys.md) and +0x423 = 0; purpose of +0x423 [unknown] [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5203,7 +5203,7 @@ void ui_clear_415_423(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_reset @ fffc4dec  (99 bytes, 1 callers, export file fffc4a8d_fffc6073.c)
+ * dsp_knob_reset @ fffc4dec  (99 bytes, 1 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: DSP key long press in the FUNC panel: resets the value of the current DSP-knob function: 0 shift, 1
  *     width, 2 notch, 3 contour (or APF when dsp_knob_apf) of the active VFO [fact: fffc4dec]; only caller
  *     key_dsp_release
@@ -5251,7 +5251,7 @@ void dsp_knob_reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_dest_allowed @ fffc519d  (157 bytes, 6 callers, export file fffc4a8d_fffc6073.c)
+ * key_dest_allowed @ fffc519d  (157 bytes, 6 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (code, flag): on destinations 0x315B/0x50E2 with UI +0x9A set, refuses every key when flag != 0, else
  *     the front-panel keys 0x300..0x30E and 0x310..0x312; true elsewhere; the gate before each key handler call
  *     (ui-keys.md) [fact]
@@ -5313,7 +5313,7 @@ LAB_fffc521d:
 
 
 /* -----------------------------------------------------------------------------
- * enc_main_dial @ fffc52d7  (180 bytes, 1 callers, export file fffc4a8d_fffc6073.c)
+ * enc_main_dial @ fffc52d7  (180 bytes, 1 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: main dial steps
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5365,7 +5365,7 @@ void enc_main_dial(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dial_steps_scale @ fffc5a84  (309 bytes, 1 callers, export file fffc4a8d_fffc6073.c)
+ * dial_steps_scale @ fffc5a84  (309 bytes, 1 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (dir, counts): divides the main-dial encoder counts by 4 / 2 / 1 for EX030506 MAIN STEPS PER REV 0 / 1 /
  *     2 (digit-step mode: by 4), keeps the remainder in 0x1FF6A, then calls vfo_dial_tune with the step count
  *     [fact: fffc5a84]; only caller enc_main_dial
@@ -5432,7 +5432,7 @@ LAB_fffc5bb0:
 
 
 /* -----------------------------------------------------------------------------
- * vfo_dial_tune @ fffc5bb9  (214 bytes, 2 callers, export file fffc4a8d_fffc6073.c)
+ * vfo_dial_tune @ fffc5bb9  (214 bytes, 2 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (steps): tunes the operating VFO (the other one with TXW swap): during a scan hands the steps to the
  *     scan, refuses while transmitting without split; a memory channel first becomes memory tune
  *     (vfo_mem_to_memtune), then FUN_fffc5e0a(side, steps) [fact: fffc5bb9]; callers dial_steps_scale, FUN_fffc7eeb
@@ -5501,7 +5501,7 @@ void vfo_dial_tune(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dial_step_hz @ fffc616e  (320 bytes, 3 callers, export file fffc6103_fffc774c.c)
+ * dial_step_hz @ fffc616e  (320 bytes, 3 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (side): tuning step of the VFO in Hz: 1 MHz / 1 kHz in digit-step mode, 100 kHz / .. with the fast-step
  *     request, else the mode's step (dial_step_mode_hz) or the AM/FM channel step (ch_step_hz) [fact: fffc616e]
  * Tag: [fact]
@@ -5605,7 +5605,7 @@ uint dial_step_hz(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dial_step_mode_hz @ fffc62ae  (312 bytes, 3 callers, export file fffc6103_fffc774c.c)
+ * dial_step_mode_hz @ fffc62ae  (312 bytes, 3 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (mode): dial step in Hz by g_opstate.fn_select (1 = fine, 2 = x10): SSB/CW 1 or EX030501 SSB/CW DIAL
  *     STEP 5/10/20 Hz; RTTY/PSK/DATA 1 or EX030502 5/10/20 Hz; AM 10/100/1000; FM 10/100/1000 [fact: fffc62ae];
  *     only caller dial_step_hz
@@ -5694,7 +5694,7 @@ LAB_fffc6393:
 
 
 /* -----------------------------------------------------------------------------
- * ch_step_hz @ fffc63e6  (166 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * ch_step_hz @ fffc63e6  (166 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (mode): AM / FM channel step from EX030504 AM CH STEP / EX030505 FM CH STEP via table 0xFFF88514 [fact:
  *     fffc63e6]; only caller dial_step_hz
  * Tag: [fact]
@@ -5747,7 +5747,7 @@ LAB_fffc6462:
 
 
 /* -----------------------------------------------------------------------------
- * enc2_step @ fffc64c0  (213 bytes, 3 callers, export file fffc6103_fffc774c.c)
+ * enc2_step @ fffc64c0  (213 bytes, 3 callers, export file fffc6073_fffc76e9.c)
  * Purpose: knob steps by screen
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -5808,7 +5808,7 @@ void enc2_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * playback_knob_turn @ fffc6595  (376 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * playback_knob_turn @ fffc6595  (376 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): knob turn on the PlayList / message-memory screens: while playing steps g_opstate.play_volume
  *     0..100, in the PlayList otherwise moves the file cursor (playlist_cursor_up / _down) [fact: fffc6595]; only
  *     caller enc2_step
@@ -5881,7 +5881,7 @@ void playback_knob_turn(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_knob_turn @ fffc6800  (111 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * memlist_knob_turn @ fffc6800  (111 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): knob turn in the memory list: moves the row (memlist_row_step) or the button
  *     (memlist_group_step), or with a pop-up open steps MODE / SCAN / TYPE of the channel [fact: fffc6800]; caller
  *     FUN_fffc7eeb (enc3_step)
@@ -5927,7 +5927,7 @@ void memlist_knob_turn(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_row_step @ fffc686f  (83 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_row_step @ fffc686f  (83 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (dir): moves the memory-list cursor row 0..3, scrolling the page at the ends, then
  *     memlist_cursor_channel [fact: fffc686f]
  * Tag: [fact]
@@ -5963,7 +5963,7 @@ void memlist_row_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_page_down @ fffc68c2  (328 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_page_down @ fffc68c2  (328 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: Scrolls the memory list down one channel (memlist_first + 1) up to 0x74 or the region's special channels
  *     (dest 0x4380 / 0x020B) [fact: fffc68c2]; caller memlist_row_step
  * Tag: [fact]
@@ -6053,7 +6053,7 @@ void memlist_page_down(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_page_up @ fffc6a0a  (186 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_page_up @ fffc6a0a  (186 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: Scrolls the memory list up one channel (memlist_first - 1), wrapping by region (dest 0x315B / 0x50E2 to
  *     0x83) [fact: fffc6a0a]; caller memlist_row_step
  * Tag: [fact]
@@ -6116,7 +6116,7 @@ void memlist_page_up(void)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_mode_step @ fffc6ac4  (112 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_mode_step @ fffc6ac4  (112 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (dir): pop-up 0x55: steps the memory channel's mode (low nibble, 0..14), eeprom_save_memch [fact:
  *     fffc6ac4]
  * Tag: [fact]
@@ -6153,7 +6153,7 @@ void memlist_mode_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_scan_bit_step @ fffc6b34  (82 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_scan_bit_step @ fffc6b34  (82 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (dir): pop-up 0x56: sets (dir > 0) or clears bit 7 of memch[memlist_ch].flags1 (SCAN/SKIP),
  *     eeprom_save_memch [fact: fffc6b34]
  * Tag: [fact]
@@ -6185,7 +6185,7 @@ void memlist_scan_bit_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_type_bit_step @ fffc6b86  (82 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_type_bit_step @ fffc6b86  (82 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (dir): pop-up 0x57: steps the memory TYPE bit (FREQ/NAME), eeprom_save_memch [fact: fffc6b86 and display
  *     gui.md]
  * Tag: [fact]
@@ -6217,7 +6217,7 @@ void memlist_type_bit_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memlist_group_step @ fffc6bd8  (72 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * memlist_group_step @ fffc6bd8  (72 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (dir): moves the selected memory-list button g_ui.memlist_group 0..5 [fact: fffc6bd8]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -6244,7 +6244,7 @@ void memlist_group_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_knob_turn @ fffc6c20  (132 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * func_knob_turn @ fffc6c20  (132 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (step): FUNC knob rotation -> FUN_fffc6f11(0x9DC9, step) unless a +0x1C1 pop-up owns the knob
  *     [inference]
  * Tag: [inference]
@@ -6279,7 +6279,7 @@ void func_knob_turn(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_list_popup_step @ fffc6ca4  (51 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_list_popup_step @ fffc6ca4  (51 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): knob turn while a list pop-up (code < 0x1E) is open: code 0xC, 0xB or 5 -> its own step
  *     function [fact: fffc6ca4]; caller func_knob_turn
  * Tag: [fact]
@@ -6313,7 +6313,7 @@ void funcknob_list_popup_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_popup_step @ fffc6ddd  (308 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_popup_step @ fffc6ddd  (308 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (popup id, steps): while a value pop-up owns the knob, steps the setting of popup id 0x1F..0x58
  *     (funcknob_*_step) [fact: fffc6ddd]; caller func_knob_turn
  * Tag: [fact]
@@ -6425,7 +6425,7 @@ void funcknob_popup_step(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_step @ fffc6f11  (237 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_step @ fffc6f11  (237 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (func, steps): FUNC-knob turn by the assigned function g_opstate.func_knob: 1 PEAK, 3 opens popup 0xB, 4
  *     CONTRAST, 5 DIMMER, 6 M-GROUP, 7 MIC GAIN, 9 PROC LEVEL, 10 AMC, 11 VOX GAIN, 12 VOX DELAY, 13 ANTI VOX, 14
  *     RF POWER, 15 MONI, 0x12 CW SPEED, 0x13 PITCH, 0x14 BK-DELAY, 0x15 AESS, 0x3A AESS-CF, else SCOPE LEVEL [fact:
@@ -6531,7 +6531,7 @@ void funcknob_step(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_scope_level @ fffc6ffe  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_scope_level @ fffc6ffe  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for SCOPE LEVEL: sets popup_code = 0x1E and calls funcknob_scope_level_step [fact:
  *     fffc6ffe]; called from funcknob_step
  * Tag: [fact]
@@ -6552,7 +6552,7 @@ void funcknob_scope_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_scope_level_step @ fffc7016  (61 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_scope_level_step @ fffc7016  (61 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): SCOPE LEVEL pop-up (id 0x1E): popup_duration_get(0x1E) + popup_open_timed, then steps and
  *     clamps the setting [fact: fffc7016]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6589,7 +6589,7 @@ void funcknob_scope_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_peak @ fffc7053  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_peak @ fffc7053  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for PEAK: sets popup_code = 0x1F and calls funcknob_peak_step [fact: fffc7053];
  *     called from funcknob_step
  * Tag: [fact]
@@ -6610,7 +6610,7 @@ void funcknob_peak(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_peak_step @ fffc706b  (68 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_peak_step @ fffc706b  (68 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): PEAK pop-up (id 0x1F): popup_duration_get(0x1F) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc706b]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6644,7 +6644,7 @@ void funcknob_peak_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_color_popup @ fffc70af  (44 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_color_popup @ fffc70af  (44 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function 3 (COLOR, function id 3 in display-link.md "0x37"): opens pop-up 0xB
  *     (popup_duration_get(0xB), popup_open_timed), popup_code = 0xB, cursor = g_opstate.ss03_value [fact: fffc70af]
  * Tag: [fact]
@@ -6669,7 +6669,7 @@ void funcknob_color_popup(void)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_contrast @ fffc70db  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_contrast @ fffc70db  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for CONTRAST: sets popup_code = 0x22 and calls funcknob_contrast_step [fact:
  *     fffc70db]; called from funcknob_step
  * Tag: [fact]
@@ -6690,7 +6690,7 @@ void funcknob_contrast(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_contrast_step @ fffc70f3  (82 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_contrast_step @ fffc70f3  (82 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): CONTRAST pop-up (id 0x22): popup_duration_get(0x22) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc70f3]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6725,7 +6725,7 @@ void funcknob_contrast_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_dimmer @ fffc7145  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_dimmer @ fffc7145  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for DIMMER: sets popup_code = 0x23 and calls funcknob_dimmer_step [fact: fffc7145];
  *     called from funcknob_step
  * Tag: [fact]
@@ -6746,7 +6746,7 @@ void funcknob_dimmer(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_dimmer_step @ fffc715d  (82 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_dimmer_step @ fffc715d  (82 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): DIMMER pop-up (id 0x23): popup_duration_get(0x23) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc715d]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6781,7 +6781,7 @@ void funcknob_dimmer_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_mgroup @ fffc71af  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_mgroup @ fffc71af  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for M GROUP: sets popup_code = 0x24 and calls funcknob_mgroup_step [fact: fffc71af];
  *     called from funcknob_step
  * Tag: [fact]
@@ -6803,7 +6803,7 @@ void funcknob_mgroup(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_mgroup_step @ fffc71c7  (213 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_mgroup_step @ fffc71c7  (213 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): M GROUP pop-up (id 0x24): popup_duration_get(0x24) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc71c7]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6869,7 +6869,7 @@ void funcknob_mgroup_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_mic_gain @ fffc74ee  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_mic_gain @ fffc74ee  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for MIC GAIN: sets popup_code = 0x25 and calls funcknob_mic_gain_step [fact:
  *     fffc74ee]; called from funcknob_step
  * Tag: [fact]
@@ -6890,7 +6890,7 @@ void funcknob_mic_gain(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_mic_gain_step @ fffc7506  (69 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_mic_gain_step @ fffc7506  (69 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): MIC GAIN pop-up (id 0x25): popup_duration_get(0x25) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7506]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6929,7 +6929,7 @@ void funcknob_mic_gain_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_mic_eq_step @ fffc754b  (113 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_mic_eq_step @ fffc754b  (113 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): MIC EQ pop-up (id 0x26): popup_duration_get(0x26) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc754b]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -6968,7 +6968,7 @@ void funcknob_mic_eq_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_proc_level @ fffc75bc  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_proc_level @ fffc75bc  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for PROC LEVEL: sets popup_code = 0x27 and calls funcknob_proc_level_step [fact:
  *     fffc75bc]; called from funcknob_step
  * Tag: [fact]
@@ -6989,7 +6989,7 @@ void funcknob_proc_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_proc_level_step @ fffc75d4  (69 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_proc_level_step @ fffc75d4  (69 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): PROC LEVEL pop-up (id 0x27): popup_duration_get(0x27) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc75d4]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7023,7 +7023,7 @@ void funcknob_proc_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_amc_level @ fffc7619  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_amc_level @ fffc7619  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for AMC LEVEL: sets popup_code = 0x28 and calls funcknob_amc_level_step [fact:
  *     fffc7619]; called from funcknob_step
  * Tag: [fact]
@@ -7044,7 +7044,7 @@ void funcknob_amc_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_amc_level_step @ fffc7631  (67 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_amc_level_step @ fffc7631  (67 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): AMC LEVEL pop-up (id 0x28): popup_duration_get(0x28) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7631]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7078,7 +7078,7 @@ void funcknob_amc_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_vox_gain @ fffc7674  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_vox_gain @ fffc7674  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for VOX GAIN: sets popup_code = 0x29 and calls funcknob_vox_gain_step [fact:
  *     fffc7674]; called from funcknob_step
  * Tag: [fact]
@@ -7099,7 +7099,7 @@ void funcknob_vox_gain(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_vox_gain_step @ fffc768c  (69 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_vox_gain_step @ fffc768c  (69 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): VOX GAIN pop-up (id 0x29): popup_duration_get(0x29) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc768c]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7133,7 +7133,7 @@ void funcknob_vox_gain_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_vox_delay @ fffc76d1  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_vox_delay @ fffc76d1  (24 bytes, 1 callers, export file fffc6073_fffc76e9.c)
  * Purpose: FUNC-knob function for VOX DELAY: sets popup_code = 0x2A and calls funcknob_vox_delay_step [fact:
  *     fffc76d1]; called from funcknob_step
  * Tag: [fact]
@@ -7154,7 +7154,7 @@ void funcknob_vox_delay(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_vox_delay_step @ fffc76e9  (99 bytes, 2 callers, export file fffc6103_fffc774c.c)
+ * funcknob_vox_delay_step @ fffc76e9  (99 bytes, 2 callers, export file fffc6073_fffc76e9.c)
  * Purpose: (steps): VOX DELAY pop-up (id 0x2A): popup_duration_get(0x2A) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc76e9]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7193,9 +7193,8 @@ void funcknob_vox_delay_step(char param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * funcknob_anti_vox @ fffc774c  (24 bytes, 1 callers, export file fffc6103_fffc774c.c)
+ * funcknob_anti_vox @ fffc774c  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for ANTI VOX: sets popup_code = 0x2B and calls funcknob_anti_vox_step [fact:
  *     fffc774c]; called from funcknob_step
  * Tag: [fact]
@@ -7214,8 +7213,9 @@ void funcknob_anti_vox(char param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * funcknob_anti_vox_step @ fffc7764  (99 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_anti_vox_step @ fffc7764  (99 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): ANTI VOX pop-up (id 0x2B): popup_duration_get(0x2B) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7764]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7256,7 +7256,7 @@ void funcknob_anti_vox_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_rf_power @ fffc77c7  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_rf_power @ fffc77c7  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for RF POWER: sets popup_code = 0x2C and calls funcknob_rf_power_step [fact:
  *     fffc77c7]; called from funcknob_step
  * Tag: [fact]
@@ -7277,7 +7277,7 @@ void funcknob_rf_power(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_rf_power_step @ fffc77df  (72 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_rf_power_step @ fffc77df  (72 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): RF POWER pop-up (id 0x2C): popup_duration_get(0x2C) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc77df]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7316,7 +7316,7 @@ void funcknob_rf_power_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rf_power_ptr @ fffc7827  (228 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * rf_power_ptr @ fffc7827  (228 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (*min, *max): returns &g_opstate.rf_power[i] for the TX band (0 HF, 1 50 MHz, 2 70 MHz, 3 AM) with the
  *     band's MAX POWER (EX030401..030404, AM capped by max_power_limit) in *max and the minimum from FUN_fffb3f0b
  *     [fact: fffc7827]; callers align_load_preset, funcknob_rf_power_step
@@ -7381,7 +7381,7 @@ void * rf_power_ptr(void *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_moni_level @ fffc790b  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_moni_level @ fffc790b  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for MONI LEVEL: sets popup_code = 0x2D and calls funcknob_moni_level_step [fact:
  *     fffc790b]; called from funcknob_step
  * Tag: [fact]
@@ -7402,7 +7402,7 @@ void funcknob_moni_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_moni_level_step @ fffc7923  (82 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_moni_level_step @ fffc7923  (82 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): MONI LEVEL pop-up (id 0x2D): popup_duration_get(0x2D) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7923]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7442,7 +7442,7 @@ void funcknob_moni_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_keyer_step @ fffc7975  (67 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_keyer_step @ fffc7975  (67 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): KEYER pop-up (id 0x46): popup_duration_get(0x46) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc7975]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7474,7 +7474,7 @@ void funcknob_keyer_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_bk_in_step @ fffc79b8  (215 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_bk_in_step @ fffc79b8  (215 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): BK IN pop-up (id 0x2F): popup_duration_get(0x2F) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc79b8]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7542,7 +7542,7 @@ LAB_fffc7a7e:
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_cw_speed @ fffc7a8f  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_cw_speed @ fffc7a8f  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for CW SPEED: sets popup_code = 0x30 and calls funcknob_cw_speed_step [fact:
  *     fffc7a8f]; called from funcknob_step
  * Tag: [fact]
@@ -7563,7 +7563,7 @@ void funcknob_cw_speed(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_cw_speed_step @ fffc7aa7  (67 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_cw_speed_step @ fffc7aa7  (67 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): CW SPEED pop-up (id 0x30): popup_duration_get(0x30) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7aa7]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7597,7 +7597,7 @@ void funcknob_cw_speed_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_cw_pitch @ fffc7aea  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_cw_pitch @ fffc7aea  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for CW PITCH: sets popup_code = 0x31 and calls funcknob_cw_pitch_step [fact:
  *     fffc7aea]; called from funcknob_step
  * Tag: [fact]
@@ -7618,7 +7618,7 @@ void funcknob_cw_pitch(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_cw_pitch_step @ fffc7b02  (69 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_cw_pitch_step @ fffc7b02  (69 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): CW PITCH pop-up (id 0x31): popup_duration_get(0x31) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7b02]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7652,7 +7652,7 @@ void funcknob_cw_pitch_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_bk_delay @ fffc7b47  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_bk_delay @ fffc7b47  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for BK DELAY: sets popup_code = 0x32 and calls funcknob_bk_delay_step [fact:
  *     fffc7b47]; called from funcknob_step
  * Tag: [fact]
@@ -7673,7 +7673,7 @@ void funcknob_bk_delay(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_bk_delay_step @ fffc7b5f  (69 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_bk_delay_step @ fffc7b5f  (69 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): BK DELAY pop-up (id 0x32): popup_duration_get(0x32) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7b5f]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7707,7 +7707,7 @@ void funcknob_bk_delay_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_aess_level @ fffc7ba4  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_aess_level @ fffc7ba4  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for AESS: sets popup_code = 0x33 and calls funcknob_aess_level_step [fact: fffc7ba4];
  *     called from funcknob_step
  * Tag: [fact]
@@ -7728,7 +7728,7 @@ void funcknob_aess_level(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_aess_level_step @ fffc7bbc  (65 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_aess_level_step @ fffc7bbc  (65 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): AESS pop-up (id 0x33): popup_duration_get(0x33) + popup_open_timed, then steps and clamps the
  *     setting [fact: fffc7bbc]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7765,7 +7765,7 @@ void funcknob_aess_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_aess_cf @ fffc7bfd  (24 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_aess_cf @ fffc7bfd  (24 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: FUNC-knob function for AESS CF: sets popup_code = 0x58 and calls funcknob_aess_cf_step [fact: fffc7bfd];
  *     called from funcknob_step
  * Tag: [fact]
@@ -7786,7 +7786,7 @@ void funcknob_aess_cf(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_aess_cf_step @ fffc7c15  (64 bytes, 2 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_aess_cf_step @ fffc7c15  (64 bytes, 2 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): AESS CF pop-up (id 0x58): popup_duration_get(0x58) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7c15]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7823,7 +7823,7 @@ void funcknob_aess_cf_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_menu_cursor_step @ fffc7c55  (168 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * func_menu_cursor_step @ fffc7c55  (168 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (step): FUNC-menu cursor 0x9C08 over 0..0x21, skipping 0x19, while UI +0x490 != 1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -7869,7 +7869,7 @@ void func_menu_cursor_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_nb_level_step @ fffc7cfd  (68 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_nb_level_step @ fffc7cfd  (68 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): NB LEVEL pop-up (id 0x38): popup_duration_get(0x38) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7cfd]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7903,7 +7903,7 @@ void funcknob_nb_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * funcknob_dnr_level_step @ fffc7d41  (110 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * funcknob_dnr_level_step @ fffc7d41  (110 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): DNR LEVEL pop-up (id 0x39): popup_duration_get(0x39) + popup_open_timed, then steps and clamps
  *     the setting [fact: fffc7d41]; setting per display gui.md popup-slot table (#178) [fact]
  * Tag: [fact]
@@ -7947,7 +7947,7 @@ void funcknob_dnr_level_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * enc3_step @ fffc7daf  (316 bytes, 3 callers, export file fffc7764_fffc8f30.c)
+ * enc3_step @ fffc7daf  (316 bytes, 3 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: knob steps by screen
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -8024,7 +8024,7 @@ void enc3_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_turn @ fffc836a  (199 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_turn @ fffc836a  (199 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): FUNC-panel knob turn for the DSP items: FUNC item 0x1D -> dsp_knob_shift_step (dsp_knob_func
  *     0), 0x1E width, 0x1F notch, 0x20 contour, 0x21 APF (func 3), then func_display_open [fact: fffc836a]; only
  *     caller enc3_step
@@ -8068,7 +8068,7 @@ void dsp_knob_turn(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_shift_step @ fffc8431  (200 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_shift_step @ fffc8431  (200 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): steps the IF SHIFT (shift_be) of the active VFO's mode block [fact: fffc8431]; called by
  *     dsp_knob_turn for FUNC item 0x1D
  * Tag: [fact]
@@ -8132,7 +8132,7 @@ LAB_fffc84a2:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_width_step @ fffc84f9  (396 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_width_step @ fffc84f9  (396 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): steps the filter WIDTH (width_be) of the active VFO's mode block, first restoring the width
  *     from vfo_filter_width_hz when NAR is on [fact: fffc84f9]; dsp_knob_turn item 0x1E
  * Tag: [fact]
@@ -8233,7 +8233,7 @@ LAB_fffc8602:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_notch_step @ fffc8685  (294 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_notch_step @ fffc8685  (294 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): steps the manual NOTCH frequency (notch_be) of the active VFO's mode block [fact: fffc8685];
  *     dsp_knob_turn item 0x1F
  * Tag: [fact]
@@ -8322,7 +8322,7 @@ LAB_fffc8753:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_contour_step @ fffc87ab  (389 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_contour_step @ fffc87ab  (389 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): steps the CONTOUR frequency (contour_be) of the active VFO's mode block [fact: fffc87ab];
  *     dsp_knob_turn item 0x20
  * Tag: [fact]
@@ -8450,7 +8450,7 @@ LAB_fffc88a4:
 
 
 /* -----------------------------------------------------------------------------
- * dsp_knob_apf_step @ fffc8930  (128 bytes, 1 callers, export file fffc7764_fffc8f30.c)
+ * dsp_knob_apf_step @ fffc8930  (128 bytes, 1 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (steps): steps g_opstate.apf_freq [fact: fffc8930]; dsp_knob_turn item 0x21
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -8489,7 +8489,7 @@ void dsp_knob_apf_step(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_display_open @ fffc89b0  (63 bytes, 12 callers, export file fffc7764_fffc8f30.c)
+ * func_display_open @ fffc89b0  (63 bytes, 12 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: Opens the FUNC-knob function display: closes pop-up, menu and FUNC panel, UI +0x70 = 1, +0x74 = 0, 5 s
  *     timer 0x44 (cat-commands-primary.md SF) [fact]
  * Tag: [fact]
@@ -8516,7 +8516,7 @@ void func_display_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * freq_keypad_key @ fffe1a00  (904 bytes, 15 callers, export file fffe19d6_fffe232a.c)
+ * freq_keypad_key @ fffe1a00  (904 bytes, 15 callers, export file fffe19d0_fffe2323.c)
  * Purpose: (key): direct frequency entry: digits 0..9 into BCD UI +0x40F..+0x413 (count +0x468), 0x0A..0x0E edit /
  *     enter / cancel; enter converts with bcd_to_bin and stores the VFO (vfo_store_back) [fact]
  * Tag: [fact]
@@ -8674,7 +8674,7 @@ void freq_keypad_key(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * keypad_2digit_key @ fffe207f  (538 bytes, 15 callers, export file fffe19d6_fffe232a.c)
+ * keypad_2digit_key @ fffe207f  (538 bytes, 15 callers, export file fffe19d0_fffe2323.c)
  * Purpose: (key): two-digit BCD entry in UI +0x411/+0x412 (count +0x468); enter accepts 0..20 (bcd_to_bin), else
  *     FUN_fffe2299; what the value selects [unknown] [fact]
  * Tag: [fact]
@@ -8776,7 +8776,7 @@ void keypad_2digit_key(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_key_dispatch @ fffe2622  (94 bytes, 112 callers, export file fffe248f_fffe2811.c)
+ * kbd_key_dispatch @ fffe2622  (94 bytes, 112 callers, export file fffe2488_fffe273a.c)
  * Purpose: (key): on-screen keyboard key, dispatched on the keyboard target UI +0xBE (0 MY CALL.. 6 PRESET NAME,
  *     display-link.md frame 0x50) to seven editors [fact]
  * Tag: [fact]
@@ -8833,7 +8833,7 @@ void kbd_key_dispatch(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_mycall @ fffe2680  (186 bytes, 2 callers, export file fffe248f_fffe2811.c)
+ * kbd_edit_mycall @ fffe2680  (186 bytes, 2 callers, export file fffe2488_fffe273a.c)
  * Purpose: Keyboard target 0 (MY CALL) editor: keeps a copy of EX040101 MY CALL, kbd_edit_key on the text, key 0x84
  *     restores the copy, 0x85 stores the edited text [fact: fffe2680]; callers kbd_key_dispatch (target 0),
  *     FUN_fffe47c8
@@ -8894,7 +8894,7 @@ void kbd_edit_mycall(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_memory_name @ fffe273a  (215 bytes, 2 callers, export file fffe248f_fffe2811.c)
+ * kbd_edit_memory_name @ fffe273a  (215 bytes, 2 callers, export file fffe2488_fffe273a.c)
  * Purpose: Keyboard target 1 (MEMORY NAME) editor [fact: kbd_key_dispatch target 1; title per display-link.md frame
  *     0x50]
  * Tag: [fact]
@@ -8946,9 +8946,8 @@ void kbd_edit_memory_name(char param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * kbd_edit_cw_text @ fffe2811  (257 bytes, 2 callers, export file fffe248f_fffe2811.c)
+ * kbd_edit_cw_text @ fffe2811  (257 bytes, 2 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Keyboard target 2 (CW TEXT) editor; calls kbd_edit_key and keyer_text_endmark [fact: kbd_key_dispatch
  *     target 2]
  * Tag: [fact]
@@ -9015,8 +9014,9 @@ void kbd_edit_cw_text(char param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * kbd_edit_rtty_text @ fffe2912  (6 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * kbd_edit_rtty_text @ fffe2912  (6 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Keyboard target 3 (RTTY TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 [fact:
  *     fffe2912]
  * Tag: [fact]
@@ -9035,7 +9035,7 @@ void kbd_edit_rtty_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_psk_text @ fffe2918  (6 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * kbd_edit_psk_text @ fffe2918  (6 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Keyboard target 4 (PSK TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 [fact:
  *     fffe2918]
  * Tag: [fact]
@@ -9054,7 +9054,7 @@ void kbd_edit_psk_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_file_name @ fffe291e  (153 bytes, 3 callers, export file fffe2912_fffe3b54.c)
+ * kbd_edit_file_name @ fffe291e  (153 bytes, 3 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Keyboard target 5 (FILE NAME) editor [fact: kbd_key_dispatch target 5]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9101,7 +9101,7 @@ void kbd_edit_file_name(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_key @ fffe29b7  (294 bytes, 5 callers, export file fffe2912_fffe3b54.c)
+ * kbd_edit_key @ fffe29b7  (294 bytes, 5 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: (text, key): the on-screen keyboard key handler: 0x08 backspace, 0x81 toggles layout 0/1, 0x82 layout 0,
  *     0x83 layout 2, 0x84/0x85 close (cancel / ENT), 0x86/0x87 cursor left/right, else stores the character at the
  *     cursor [fact: fffe29b7; display-link.md frame 0x50]
@@ -9208,7 +9208,7 @@ int kbd_edit_key(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_backspace @ fffe2add  (157 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * kbd_backspace @ fffe2add  (157 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: (text): deletes the character before the cursor (shifts the rest left, pads with a space; at the last
  *     position clears it), beep 3 at position 0 [fact: fffe2add]
  * Tag: [fact]
@@ -9255,7 +9255,7 @@ void kbd_backspace(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_max_cursor @ fffe2b7a  (83 bytes, 3 callers, export file fffe2912_fffe3b54.c)
+ * kbd_max_cursor @ fffe2b7a  (83 bytes, 3 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Last cursor position for the keyboard target: 0xB (12 chars) for targets 0, 1, 6, 0x31 (50) for CW TEXT,
  *     0xE (15) for the others [fact: fffe2b7a]
  * Tag: [fact]
@@ -9299,7 +9299,7 @@ undefined1 kbd_max_cursor(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_cursor_left @ fffe2bcd  (48 bytes, 2 callers, export file fffe2912_fffe3b54.c)
+ * kbd_cursor_left @ fffe2bcd  (48 bytes, 2 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Moves g_ui.kbd_cursor left while above 0; returns whether it moved [fact: fffe2bcd]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9322,7 +9322,7 @@ bool kbd_cursor_left(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_cursor_right @ fffe2bfd  (54 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * kbd_cursor_right @ fffe2bfd  (54 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Moves g_ui.kbd_cursor right while below kbd_max_cursor; returns whether it moved [fact: fffe2bfd]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9352,7 +9352,7 @@ bool kbd_cursor_right(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_edit_preset_name @ fffe2c33  (157 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * kbd_edit_preset_name @ fffe2c33  (157 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Keyboard target 6 (PRESET NAME) editor; uses menu_preset_name_ptr [fact: kbd_key_dispatch target 6]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9398,7 +9398,7 @@ void kbd_edit_preset_name(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * func_record_toggle @ fffe2ee4  (196 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * func_record_toggle @ fffe2ee4  (196 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: FUNC menu slot 22 (RECORD/STOP): stops a scan; unless DVS is busy toggles g_ui.dvs_lm1_flag (which
  *     dl37_slot_record shows as id 0x35 STOP) [fact: fffe2ee4]
  * Tag: [fact]
@@ -9453,7 +9453,7 @@ void func_record_toggle(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_play_open @ fffe2fa8  (283 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * func_play_open @ fffe2fa8  (283 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: FUNC menu slot 23 (PLAY): stops a scan; unless recording / DVS / keyer send runs, opens the PlayList
  *     (playlist_open = playlist_req = 1, sub-state and row 0) and closes the FUNC panel [fact: fffe2fa8]
  * Tag: [fact]
@@ -9520,7 +9520,7 @@ void func_play_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * playlist_cursor_up @ fffe3121  (202 bytes, 2 callers, export file fffe2912_fffe3b54.c)
+ * playlist_cursor_up @ fffe3121  (202 bytes, 2 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Moves the PlayList cursor up one file (playlist_row, scrolling playlist_first when the list holds more
  *     than 4 WAV files), requests a redraw (playlist_req, sub-state 1) [fact: fffe3121]
  * Tag: [fact]
@@ -9565,7 +9565,7 @@ void playlist_cursor_up(void)
 
 
 /* -----------------------------------------------------------------------------
- * playlist_cursor_down @ fffe32fd  (211 bytes, 2 callers, export file fffe2912_fffe3b54.c)
+ * playlist_cursor_down @ fffe32fd  (211 bytes, 2 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: Moves the PlayList cursor down one file, scrolling while wav_count > 4, requests a redraw [fact:
  *     fffe32fd]
  * Tag: [fact]
@@ -9615,7 +9615,7 @@ void playlist_cursor_down(void)
 
 
 /* -----------------------------------------------------------------------------
- * func_message_open @ fffe3979  (412 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * func_message_open @ fffe3979  (412 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Purpose: FUNC menu item 0x15 (case 0x15 of func_menu_select): stops a scan, refuses while DVS / keyer send /
  *     recording / PlayList run; otherwise opens the message-memory screen (g_ui.msgmem_open = 1, msgmem_type 0
  *     voice by msg_voice_mode_ok or 1 CW with the contest number) and closes the FUNC panel; beep 3 when neither
@@ -9726,7 +9726,7 @@ int func_message_open(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key_1 @ fffe41f3  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key_1 @ fffe41f3  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_slot_key(1) (6-byte wrapper) [fact: fffe41f3]; only caller ladder_key_task (remote-keypad key code)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9745,7 +9745,7 @@ void msg_slot_key_1(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key_2 @ fffe41f9  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key_2 @ fffe41f9  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_slot_key(2) (6-byte wrapper) [fact: fffe41f9]; only caller ladder_key_task (remote-keypad key code)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9764,7 +9764,7 @@ void msg_slot_key_2(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key_3 @ fffe41ff  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key_3 @ fffe41ff  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_slot_key(3) (6-byte wrapper) [fact: fffe41ff]; only caller ladder_key_task (remote-keypad key code)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9783,7 +9783,7 @@ void msg_slot_key_3(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key_4 @ fffe4205  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key_4 @ fffe4205  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_slot_key(4) (6-byte wrapper) [fact: fffe4205]; only caller ladder_key_task (remote-keypad key code)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9802,7 +9802,7 @@ void msg_slot_key_4(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key_5 @ fffe420b  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key_5 @ fffe420b  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_slot_key(5) (6-byte wrapper) [fact: fffe420b]; only caller ladder_key_task (remote-keypad key code)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -9821,7 +9821,7 @@ void msg_slot_key_5(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_key @ fffe4211  (329 bytes, 10 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_slot_key @ fffe4211  (329 bytes, 10 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: (ch 1..5): message-memory key: in voice modes plays or stops voice message ch (+0x78 = 1, +0x79 = ch -
  *     1, PTT source 0x20B2E), during a recording FUN_fffe4e6e; in CW +0x1C7 = 1 [fact]
  * Tag: [fact]
@@ -9894,7 +9894,7 @@ void msg_slot_key(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_1 @ fffe435a  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_1 @ fffe435a  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key(1) (6-byte wrapper) [fact: fffe435a]; only caller ladder_key_task (remote-keypad key
  *     code)
  * Tag: [fact]
@@ -9915,7 +9915,7 @@ void msg_cw_slot_key_1(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_2 @ fffe4360  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_2 @ fffe4360  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key(2) (6-byte wrapper) [fact: fffe4360]; only caller ladder_key_task (remote-keypad key
  *     code)
  * Tag: [fact]
@@ -9936,7 +9936,7 @@ void msg_cw_slot_key_2(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_3 @ fffe4366  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_3 @ fffe4366  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key(3) (6-byte wrapper) [fact: fffe4366]; only caller ladder_key_task (remote-keypad key
  *     code)
  * Tag: [fact]
@@ -9957,7 +9957,7 @@ void msg_cw_slot_key_3(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_4 @ fffe436c  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_4 @ fffe436c  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key(4) (6-byte wrapper) [fact: fffe436c]; only caller ladder_key_task (remote-keypad key
  *     code)
  * Tag: [fact]
@@ -9978,7 +9978,7 @@ void msg_cw_slot_key_4(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_5 @ fffe4372  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_5 @ fffe4372  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key(5) (6-byte wrapper) [fact: fffe4372]; only caller ladder_key_task (remote-keypad key
  *     code)
  * Tag: [fact]
@@ -9999,7 +9999,7 @@ void msg_cw_slot_key_5(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key @ fffe4378  (143 bytes, 10 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key @ fffe4378  (143 bytes, 10 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: (ch): stops a latched send (+0x1D1) or msg_cw_send_start(ch) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md
@@ -10032,7 +10032,7 @@ void msg_cw_slot_key(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched_1 @ fffe46f3  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched_1 @ fffe46f3  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key_latched(1) (6-byte wrapper) [fact: fffe46f3]; only caller ladder_key_task (remote-keypad
  *     key code)
  * Tag: [fact]
@@ -10052,7 +10052,7 @@ void msg_cw_slot_key_latched_1(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched_2 @ fffe46f9  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched_2 @ fffe46f9  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key_latched(2) (6-byte wrapper) [fact: fffe46f9]; only caller ladder_key_task (remote-keypad
  *     key code)
  * Tag: [fact]
@@ -10072,7 +10072,7 @@ void msg_cw_slot_key_latched_2(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched_3 @ fffe46ff  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched_3 @ fffe46ff  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key_latched(3) (6-byte wrapper) [fact: fffe46ff]; only caller ladder_key_task (remote-keypad
  *     key code)
  * Tag: [fact]
@@ -10092,7 +10092,7 @@ void msg_cw_slot_key_latched_3(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched_4 @ fffe4705  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched_4 @ fffe4705  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key_latched(4) (6-byte wrapper) [fact: fffe4705]; only caller ladder_key_task (remote-keypad
  *     key code)
  * Tag: [fact]
@@ -10112,7 +10112,7 @@ void msg_cw_slot_key_latched_4(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched_5 @ fffe470b  (6 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched_5 @ fffe470b  (6 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: msg_cw_slot_key_latched(5) (6-byte wrapper) [fact: fffe470b]; only caller ladder_key_task (remote-keypad
  *     key code)
  * Tag: [fact]
@@ -10132,7 +10132,7 @@ void msg_cw_slot_key_latched_5(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_cw_slot_key_latched @ fffe4711  (173 bytes, 10 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_cw_slot_key_latched @ fffe4711  (173 bytes, 10 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: (ch): like msg_cw_slot_key but sets +0x1D1 = 1 after a start; a repeating send [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/ui-keys.md

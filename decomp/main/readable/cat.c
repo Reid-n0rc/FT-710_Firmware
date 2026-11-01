@@ -4,7 +4,7 @@
 // 220 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * ver_main @ fff94bcd  (12 bytes, 3 callers, export file fff94851_fff95bf4.c)
+ * ver_main @ fff94bcd  (12 bytes, 3 callers, export file fff94850_fff95ace.c)
  * Purpose: Returns pointer to MAIN version string 0xFFFFFF00 (VE0) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -21,7 +21,7 @@ uint ver_main(void)
 
 
 /* -----------------------------------------------------------------------------
- * ver_display @ fff94bf1  (12 bytes, 3 callers, export file fff94851_fff95bf4.c)
+ * ver_display @ fff94bf1  (12 bytes, 3 callers, export file fff94850_fff95ace.c)
  * Purpose: Returns pointer to DISPLAY version 0x1436 (VE1) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -38,7 +38,7 @@ uint ver_display(void)
 
 
 /* -----------------------------------------------------------------------------
- * dest_has_5mhz_channels @ fff9c2cd  (44 bytes, 5 callers, export file fff9ad7e_fff9c49a.c)
+ * dest_has_5mhz_channels @ fff9c2cd  (44 bytes, 5 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: 1 for destination codes 0x315B / 0x50E2 / 0xA4C5 / 0xD950, which have the 60 m (5 MHz) channels 501..515
  *     (cat_MC, displink_build_41) [fact]
  * Tag: [fact]
@@ -66,7 +66,7 @@ undefined1 dest_has_5mhz_channels(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_reg_access @ fff9d8a4  (169 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_reg_access @ fff9d8a4  (169 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Inferred name / role: IF-DSP register r/w
  * Purpose: The same protocol over SCI4 to the RT685 IF-DSP [fact] (T10d/T12b, dsp-link.md). A write does not update
  *     the shadow [fact]
@@ -131,7 +131,7 @@ byte dsp_reg_access(ushort param_1,void *param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_reg_access @ fffa1485  (135 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_reg_access @ fffa1485  (135 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Inferred name / role: SDR register r/w
  * Purpose: Waits until idle, then sends an `r`/`w` + hex address [+ value] + 2-hex sum + CR frame over SCI5
  *     (`sdr_send_cmd`) and waits for the reply (7 bytes for a read, 1 byte 0x06 for a write) [fact]
@@ -180,7 +180,7 @@ byte sdr_reg_access(ushort param_1,void *param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_bridge_mode @ fffa3226  (598 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * sdr_bridge_mode @ fffa3226  (598 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SDR maintenance bridge
  * Purpose: Not CAT. Started by a DISPLAY-link message (`displink_rx_F1_sys` sub 1 → 0x1C8D=1). Relays binary SDR
  *     register requests from the DISPLAY CPU (ACK 0x06 / NAK 0x15) [fact] for the structure
@@ -330,7 +330,7 @@ void sdr_bridge_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_parse @ fffa347c  (630 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_parse @ fffa347c  (630 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: parser
  * Purpose: See the flow above
  * Tag: none in the table row
@@ -486,7 +486,7 @@ void cat_parse(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_SP @ fffa36f2  (824 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_SP @ fffa36f2  (824 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: service command decoder
  * Purpose: Dispatches on sub-letter text[2] (S D I W R M N A)
  * Tag: none in the table row
@@ -717,7 +717,7 @@ LAB_fffa3a12:
 
 
 /* -----------------------------------------------------------------------------
- * cat_dispatch_ext @ fffa3a2a  (324 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_dispatch_ext @ fffa3a2a  (324 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: extended dispatch
  * Purpose: Compare chain for EO/JP/FD/PE/ZZ/VE/E8
  * Tag: none in the table row
@@ -808,7 +808,7 @@ void cat_dispatch_ext(int param_1,char param_2,short param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_dispatch @ fffa3b6e  (4803 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_dispatch @ fffa3b6e  (4803 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: primary switch
  * Purpose: Index → case via `cat_switch_table` 0xFFF8F014
  * Tag: none in the table row
@@ -1886,7 +1886,7 @@ void cat_dispatch(int param_1,char param_2,ushort len)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_sdr_reg @ fffa4e31  (94 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_sdr_reg @ fffa4e31  (94 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPS
  * Purpose: Parses 4-hex address and 4-hex value, then `sdr_reg_access` [fact]
  * Tag: [fact]
@@ -1927,7 +1927,7 @@ void cat_SP_sdr_reg(uint param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_dev4_reg @ fffa4e8f  (94 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_dev4_reg @ fffa4e8f  (94 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPD
  * Purpose: The same, through `dsp_reg_access` to the IF-DSP register file [fact] (dsp-link.md,
  *     ../ifdsp/control-link.md)
@@ -1967,7 +1967,7 @@ void cat_SP_dev4_reg(uint param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_adc_dump @ fffa4eed  (524 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_adc_dump @ fffa4eed  (524 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPIR
  * Purpose: 12 × 3 hex digits of ADC results, in the order AN000..AN007 (AN000, AN004 and AN006 reported as 0),
  *     AN115, AN117, AN108, AN109 [fact] (peripherals.md)
@@ -2042,7 +2042,7 @@ void cat_SP_adc_dump(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_table @ fffa50f9  (274 bytes, 3 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_table @ fffa50f9  (274 bytes, 3 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPN
  * Purpose: Table 0x4659[idx-1] (idx 1..0x105). `W` sets an entry, `S` schedules `key_dsp_press` after 500 ms (in
  *     alignment mode: `align_store`), `R` reads the entry and loads preset idx-1 (`align_load_preset`) [fact].
@@ -2122,7 +2122,7 @@ void cat_SP_table(int param_1,char param_2,short param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_eeprom_byte @ fffa520b  (121 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_eeprom_byte @ fffa520b  (121 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPR/SPW
  * Purpose: Byte read/write at a 16-bit EEPROM address. The write also updates the RAM mirror at 0x464F[addr] [fact]
  * Tag: [fact]
@@ -2163,7 +2163,7 @@ void cat_SP_eeprom_byte(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SP_meters @ fffa5284  (288 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_SP_meters @ fffa5284  (288 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Inferred name / role: SPM
  * Purpose: 8 binary bytes: meter values 0x1204A, 0x12048/0x1204B, … [fact] for the sources, [inference] that they
  *     are meters
@@ -2199,7 +2199,7 @@ void cat_SP_meters(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_E8 @ fffa53a4  (271 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_E8 @ fffa53a4  (271 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `cat_rand8`; 271 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -2244,7 +2244,7 @@ void cat_ext_E8(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_VE @ fffa54b3  (184 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_VE @ fffa54b3  (184 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `ver_display`, `ver_dsp`,
  *     `ver_main`, `ver_sdr`; 184 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -2288,7 +2288,7 @@ void cat_ext_VE(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_JP @ fffa556b  (822 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_JP @ fffa556b  (822 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `byte2hex`, `dest_code_get`,
  *     `dest_code_set`, `hex2byte` and 1 more; 822 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -2399,7 +2399,7 @@ void cat_ext_JP(uint param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_ZZ @ fffa58a1  (228 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_ZZ @ fffa58a1  (228 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `eeprom_save_cfg105`,
  *     `eeprom_save_dest`, `hex2byte`, `hex2word` and 2 more; 228 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -2462,7 +2462,7 @@ void cat_ext_ZZ(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_E9 @ fffa5985  (204 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_E9 @ fffa5985  (204 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Extended E9, reached only from the second input path in cat_parse [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -2513,7 +2513,7 @@ void cat_ext_E9(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_FD @ fffa5a51  (575 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_FD @ fffa5a51  (575 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `band_of_freq`, `bandmem_get`,
  *     `bandmem_set`, `freq_in_range` and 2 more; 575 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -2663,7 +2663,7 @@ void cat_ext_FD(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_EO @ fffa5c90  (847 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_EO @ fffa5c90  (847 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `enc2_step`, `enc3_step`,
  *     `hex2nib`, `vfo_freq` and 1 more; 847 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -2835,7 +2835,7 @@ void cat_ext_EO(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ext_PE @ fffa5fdf  (1166 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_ext_PE @ fffa5fdf  (1166 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `cat_ai_holdoff`, `hex2nib`,
  *     `nib2hex`; 1166 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -3059,7 +3059,7 @@ void cat_ext_PE(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AB @ fffa646d  (359 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_AB @ fffa646d  (359 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AB`: entry of the command dispatch table (CatDispatch.java); 359 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3160,7 +3160,7 @@ void cat_AB(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AC @ fffa65d4  (659 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AC @ fffa65d4  (659 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AC`: entry of the command dispatch table (CatDispatch.java); 659 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3305,7 +3305,7 @@ void cat_AC(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AG @ fffa6867  (223 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AG @ fffa6867  (223 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AG`: entry of the command dispatch table (CatDispatch.java); 223 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3371,7 +3371,7 @@ void cat_AG(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AI @ fffa6946  (224 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AI @ fffa6946  (224 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AI`: entry of the command dispatch table (CatDispatch.java); 224 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3419,7 +3419,7 @@ void cat_AI(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AM @ fffa6a26  (329 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_AM @ fffa6a26  (329 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AM`: entry of the command dispatch table (CatDispatch.java); 329 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3511,7 +3511,7 @@ void cat_AM(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AO @ fffa6b6f  (302 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AO @ fffa6b6f  (302 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AO`: entry of the command dispatch table (CatDispatch.java); 302 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3593,7 +3593,7 @@ void cat_AO(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AS @ fffa6c9d  (575 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AS @ fffa6c9d  (575 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AS`: entry of the command dispatch table (CatDispatch.java); 575 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3734,7 +3734,7 @@ void cat_AS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_AV @ fffa6edc  (316 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_AV @ fffa6edc  (316 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `AV`: entry of the command dispatch table (CatDispatch.java); 316 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3820,7 +3820,7 @@ void cat_AV(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_BA @ fffa7018  (359 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_BA @ fffa7018  (359 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BA`: entry of the command dispatch table (CatDispatch.java); 359 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -3921,7 +3921,7 @@ void cat_BA(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_BC @ fffa717f  (346 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_BC @ fffa717f  (346 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BC`: entry of the command dispatch table (CatDispatch.java); 346 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4028,7 +4028,7 @@ LAB_fffa72ae:
 
 
 /* -----------------------------------------------------------------------------
- * cat_BD @ fffa72d9  (659 bytes, 4 callers, export file fffa30f9_fffa9928.c)
+ * cat_BD @ fffa72d9  (659 bytes, 4 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BD`: entry of the command dispatch table (CatDispatch.java); 659 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4195,7 +4195,7 @@ void cat_BD(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_BU @ fffa756c  (640 bytes, 4 callers, export file fffa30f9_fffa9928.c)
+ * cat_BU @ fffa756c  (640 bytes, 4 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BU`: entry of the command dispatch table (CatDispatch.java); 640 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4356,7 +4356,7 @@ void cat_BU(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_BI @ fffa77ec  (316 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_BI @ fffa77ec  (316 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BI`: entry of the command dispatch table (CatDispatch.java); 316 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4458,7 +4458,7 @@ LAB_fffa78fd:
 
 
 /* -----------------------------------------------------------------------------
- * cat_BM @ fffa7928  (329 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_BM @ fffa7928  (329 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BM`: entry of the command dispatch table (CatDispatch.java); 329 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4550,7 +4550,7 @@ void cat_BM(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_BP @ fffa7a71  (836 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_BP @ fffa7a71  (836 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BP`: entry of the command dispatch table (CatDispatch.java); 836 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4763,7 +4763,7 @@ LAB_fffa7c97:
 
 
 /* -----------------------------------------------------------------------------
- * cat_BS @ fffa7db5  (492 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_BS @ fffa7db5  (492 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `BS`: entry of the command dispatch table (CatDispatch.java); 492 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -4887,7 +4887,7 @@ void cat_BS(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_CF @ fffa7fa1  (980 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_CF @ fffa7fa1  (980 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CF`: entry of the command dispatch table (CatDispatch.java); 980 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5103,7 +5103,7 @@ void cat_CF(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_CH @ fffa8375  (414 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_CH @ fffa8375  (414 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CH`: entry of the command dispatch table (CatDispatch.java); 414 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5207,7 +5207,7 @@ void cat_CH(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_CN @ fffa8513  (389 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_CN @ fffa8513  (389 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CN`: entry of the command dispatch table (CatDispatch.java); 389 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5308,7 +5308,7 @@ void cat_CN(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_CO @ fffa8698  (1280 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_CO @ fffa8698  (1280 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CO`: entry of the command dispatch table (CatDispatch.java); 1280 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5617,7 +5617,7 @@ LAB_fffa8761:
 
 
 /* -----------------------------------------------------------------------------
- * cat_CS @ fffa8b98  (225 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_CS @ fffa8b98  (225 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CS`: entry of the command dispatch table (CatDispatch.java); 225 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5677,7 +5677,7 @@ void cat_CS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_CT @ fffa8c79  (273 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_CT @ fffa8c79  (273 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `CT`: entry of the command dispatch table (CatDispatch.java); 273 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5740,7 +5740,7 @@ void cat_CT(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_DA @ fffa8d8a  (671 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_DA @ fffa8d8a  (671 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `DA`: entry of the command dispatch table (CatDispatch.java); 671 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5891,7 +5891,7 @@ void cat_DA(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_DN @ fffa9029  (300 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_DN @ fffa9029  (300 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `DN`: entry of the command dispatch table (CatDispatch.java); 300 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -5975,7 +5975,7 @@ void cat_DN(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_UP @ fffa9155  (300 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_UP @ fffa9155  (300 bytes, 1 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `UP`: entry of the command dispatch table (CatDispatch.java); 300 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6059,7 +6059,7 @@ void cat_UP(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_DT @ fffa9281  (967 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_DT @ fffa9281  (967 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `DT`: entry of the command dispatch table (CatDispatch.java); 967 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6242,7 +6242,7 @@ void cat_DT(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_EM @ fffa9648  (736 bytes, 2 callers, export file fffa30f9_fffa9928.c)
+ * cat_EM @ fffa9648  (736 bytes, 2 callers, export file fffa3083_fffa9648.c)
  * Purpose: Handler of CAT command `EM`: entry of the command dispatch table (CatDispatch.java); 736 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6433,9 +6433,8 @@ void cat_EM(int param_1,byte param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * cat_EN @ fffa9928  (15 bytes, 1 callers, export file fffa30f9_fffa9928.c)
+ * cat_EN @ fffa9928  (15 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `EN`: entry of the command dispatch table (CatDispatch.java); 15 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6449,8 +6448,9 @@ void cat_EN(uint param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * cat_FA_FB @ fffa99bd  (729 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_FA_FB @ fffa99bd  (729 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `freq_clamp`, `freq_in_range`,
  *     `nib2hex`, `vfo_mark_edited` and 3 more; 729 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
@@ -6598,7 +6598,7 @@ void cat_FA_FB(int param_1,char param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_FN @ fffa9c96  (167 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_FN @ fffa9c96  (167 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `FN`: entry of the command dispatch table (CatDispatch.java); 167 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6640,7 +6640,7 @@ void cat_FN(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_FS @ fffa9d3d  (17 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_FS @ fffa9d3d  (17 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `FS`: entry of the command dispatch table (CatDispatch.java); 17 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6656,7 +6656,7 @@ void cat_FS(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_FT @ fffa9d4e  (469 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_FT @ fffa9d4e  (469 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `FT`: entry of the command dispatch table (CatDispatch.java); 469 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6776,7 +6776,7 @@ void cat_FT(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_GT @ fffa9f23  (764 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_GT @ fffa9f23  (764 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `GT`: entry of the command dispatch table (CatDispatch.java); 764 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -6986,7 +6986,7 @@ LAB_fffaa1b3:
 
 
 /* -----------------------------------------------------------------------------
- * cat_GP @ fffaa21f  (326 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_GP @ fffaa21f  (326 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `GP`: entry of the command dispatch table (CatDispatch.java); 326 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7069,7 +7069,7 @@ void cat_GP(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ID @ fffaa365  (55 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_ID @ fffaa365  (55 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `ID`: entry of the command dispatch table (CatDispatch.java); 55 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7090,7 +7090,7 @@ void cat_ID(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_IF_OI @ fffaa39c  (839 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_IF_OI @ fffaa39c  (839 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: names-file group "CAT command handlers (from CatDispatch.java)"; calls `nib2hex`, `vfo_freq`; 839 B,
  *     callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -7269,7 +7269,7 @@ void cat_IF_OI(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_IS @ fffaa6e3  (546 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_IS @ fffaa6e3  (546 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `IS`: entry of the command dispatch table (CatDispatch.java); 546 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7403,7 +7403,7 @@ LAB_fffaa75f:
 
 
 /* -----------------------------------------------------------------------------
- * cat_KM @ fffaa905  (817 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_KM @ fffaa905  (817 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `KM`: entry of the command dispatch table (CatDispatch.java); 817 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7615,7 +7615,7 @@ void cat_KM(int param_1,char param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_KP @ fffaac36  (284 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_KP @ fffaac36  (284 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `KP`: entry of the command dispatch table (CatDispatch.java); 284 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7691,7 +7691,7 @@ void cat_KP(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_KR @ fffaad52  (152 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_KR @ fffaad52  (152 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `KR`: entry of the command dispatch table (CatDispatch.java); 152 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7735,7 +7735,7 @@ void cat_KR(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_KS @ fffaadea  (303 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_KS @ fffaadea  (303 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `KS`: entry of the command dispatch table (CatDispatch.java); 303 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7817,7 +7817,7 @@ void cat_KS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_KY @ fffaaf19  (390 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_KY @ fffaaf19  (390 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `KY`: entry of the command dispatch table (CatDispatch.java); 390 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7913,7 +7913,7 @@ void cat_KY(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_LK @ fffab09f  (208 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_LK @ fffab09f  (208 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `LK`: entry of the command dispatch table (CatDispatch.java); 208 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -7965,7 +7965,7 @@ void cat_LK(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_LM @ fffab16f  (654 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_LM @ fffab16f  (654 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `LM`: entry of the command dispatch table (CatDispatch.java); 654 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8101,7 +8101,7 @@ void cat_LM(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MA @ fffab3fd  (123 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_MA @ fffab3fd  (123 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MA`: entry of the command dispatch table (CatDispatch.java); 123 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8141,7 +8141,7 @@ void cat_MA(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MB @ fffab478  (123 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_MB @ fffab478  (123 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MB`: entry of the command dispatch table (CatDispatch.java); 123 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8181,7 +8181,7 @@ void cat_MB(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MC @ fffab4f3  (734 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MC @ fffab4f3  (734 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MC`: entry of the command dispatch table (CatDispatch.java); 734 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8374,7 +8374,7 @@ void cat_MC(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MD @ fffab7d1  (659 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MD @ fffab7d1  (659 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MD`: entry of the command dispatch table (CatDispatch.java); 659 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8530,7 +8530,7 @@ LAB_fffaba23:
 
 
 /* -----------------------------------------------------------------------------
- * cat_MG @ fffaba64  (406 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MG @ fffaba64  (406 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MG`: entry of the command dispatch table (CatDispatch.java); 406 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8640,7 +8640,7 @@ LAB_fffabaef:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ML @ fffabbfa  (683 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_ML @ fffabbfa  (683 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `ML`: entry of the command dispatch table (CatDispatch.java); 683 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -8814,7 +8814,7 @@ LAB_fffabcc3:
 
 
 /* -----------------------------------------------------------------------------
- * cat_MR @ fffabea5  (992 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_MR @ fffabea5  (992 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MR`: entry of the command dispatch table (CatDispatch.java); 992 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9032,7 +9032,7 @@ void cat_MR(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MT @ fffac285  (561 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MT @ fffac285  (561 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MT`: entry of the command dispatch table (CatDispatch.java); 561 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9169,7 +9169,7 @@ void cat_MT(int param_1,char param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MS @ fffac4b6  (126 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MS @ fffac4b6  (126 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MS`: entry of the command dispatch table (CatDispatch.java); 126 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9204,7 +9204,7 @@ void cat_MS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_MW @ fffac534  (1145 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_MW @ fffac534  (1145 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MW`: entry of the command dispatch table (CatDispatch.java); 1145 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9437,7 +9437,7 @@ LAB_fffac85b:
 
 
 /* -----------------------------------------------------------------------------
- * cat_MX @ fffac9ad  (154 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_MX @ fffac9ad  (154 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `MX`: entry of the command dispatch table (CatDispatch.java); 154 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9491,7 +9491,7 @@ void cat_MX(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_NA @ fffaca47  (542 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_NA @ fffaca47  (542 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `NA`: entry of the command dispatch table (CatDispatch.java); 542 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9637,7 +9637,7 @@ void cat_NA(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_NB @ fffacc65  (131 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_NB @ fffacc65  (131 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `NB`: entry of the command dispatch table (CatDispatch.java); 131 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9677,7 +9677,7 @@ void cat_NB(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_NL @ fffacce8  (313 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_NL @ fffacce8  (313 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `NL`: entry of the command dispatch table (CatDispatch.java); 313 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9760,7 +9760,7 @@ void cat_NL(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_NR @ ffface21  (157 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_NR @ ffface21  (157 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `NR`: entry of the command dispatch table (CatDispatch.java); 157 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9809,7 +9809,7 @@ void cat_NR(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_OS @ fffacebe  (323 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_OS @ fffacebe  (323 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `OS`: entry of the command dispatch table (CatDispatch.java); 323 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9887,7 +9887,7 @@ void cat_OS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PA @ fffad001  (161 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PA @ fffad001  (161 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PA`: entry of the command dispatch table (CatDispatch.java); 161 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -9939,7 +9939,7 @@ void cat_PA(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PB @ fffad0a2  (415 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PB @ fffad0a2  (415 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PB`: entry of the command dispatch table (CatDispatch.java); 415 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10025,7 +10025,7 @@ void cat_PB(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PC @ fffad241  (550 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PC @ fffad241  (550 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PC`: entry of the command dispatch table (CatDispatch.java); 550 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10167,7 +10167,7 @@ void cat_PC(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PL @ fffad467  (302 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PL @ fffad467  (302 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PL`: entry of the command dispatch table (CatDispatch.java); 302 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10249,7 +10249,7 @@ void cat_PL(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PR @ fffad595  (257 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PR @ fffad595  (257 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PR`: entry of the command dispatch table (CatDispatch.java); 257 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10312,7 +10312,7 @@ void cat_PR(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_PS @ fffad696  (110 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_PS @ fffad696  (110 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `PS`: entry of the command dispatch table (CatDispatch.java); 110 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10344,7 +10344,7 @@ void cat_PS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_QI @ fffad704  (5 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_QI @ fffad704  (5 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `QI`: entry of the command dispatch table (CatDispatch.java); 5 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10360,7 +10360,7 @@ void cat_QI(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_QR @ fffad709  (5 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_QR @ fffad709  (5 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `QR`: entry of the command dispatch table (CatDispatch.java); 5 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10376,7 +10376,7 @@ void cat_QR(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_QS @ fffad70e  (10 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_QS @ fffad70e  (10 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `QS`: entry of the command dispatch table (CatDispatch.java); 10 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10392,7 +10392,7 @@ void cat_QS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_RA @ fffad718  (150 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_RA @ fffad718  (150 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `RA`: entry of the command dispatch table (CatDispatch.java); 150 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10432,7 +10432,7 @@ void cat_RA(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_RG @ fffad7ae  (309 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_RG @ fffad7ae  (309 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `RG`: entry of the command dispatch table (CatDispatch.java); 309 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10514,7 +10514,7 @@ void cat_RG(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_RI @ fffad8e3  (355 bytes, 1 callers, export file fffa9937_fffadeb6.c)
+ * cat_RI @ fffad8e3  (355 bytes, 1 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `RI`: entry of the command dispatch table (CatDispatch.java); 355 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10599,7 +10599,7 @@ void cat_RI(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_RL @ fffada46  (311 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_RL @ fffada46  (311 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `RL`: entry of the command dispatch table (CatDispatch.java); 311 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10673,7 +10673,7 @@ void cat_RL(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SC @ fffadcd6  (196 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_SC @ fffadcd6  (196 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `SC`: entry of the command dispatch table (CatDispatch.java); 196 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10736,7 +10736,7 @@ void cat_SC(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SD @ fffadd9a  (284 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_SD @ fffadd9a  (284 bytes, 2 callers, export file fffa9928_fffadd9a.c)
  * Purpose: Handler of CAT command `SD`: entry of the command dispatch table (CatDispatch.java); 284 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -10811,9 +10811,8 @@ void cat_SD(int param_1,char param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * cat_SF @ fffadeb6  (1044 bytes, 2 callers, export file fffa9937_fffadeb6.c)
+ * cat_SF @ fffadeb6  (1044 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `SF`: entry of the command dispatch table (CatDispatch.java); 1044 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -11018,8 +11017,9 @@ void cat_SF(int param_1,char param_2)
   }
 }
 
+
 /* -----------------------------------------------------------------------------
- * cat_SH @ fffae2ca  (897 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_SH @ fffae2ca  (897 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `SH`: entry of the command dispatch table (CatDispatch.java); 897 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -11228,7 +11228,7 @@ LAB_fffae5cf:
 
 
 /* -----------------------------------------------------------------------------
- * cat_SQ @ fffae6cc  (388 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_SQ @ fffae6cc  (388 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `SQ`: entry of the command dispatch table (CatDispatch.java); 388 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -11308,7 +11308,7 @@ void cat_SQ(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SS @ fffae850  (2917 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_SS @ fffae850  (2917 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `SS`: entry of the command dispatch table (CatDispatch.java); 2917 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -11923,7 +11923,7 @@ LAB_fffaef2a:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ST @ fffaf3b5  (185 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_ST @ fffaf3b5  (185 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `ST`: entry of the command dispatch table (CatDispatch.java); 185 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -11977,7 +11977,7 @@ void cat_ST(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_SV @ fffaf46e  (345 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * cat_SV @ fffaf46e  (345 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `SV`: entry of the command dispatch table (CatDispatch.java); 345 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12072,7 +12072,7 @@ void cat_SV(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_TS @ fffaf5c7  (497 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_TS @ fffaf5c7  (497 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `TS`: entry of the command dispatch table (CatDispatch.java); 497 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12210,7 +12210,7 @@ void cat_TS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_VD @ fffaf874  (332 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_VD @ fffaf874  (332 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `VD`: entry of the command dispatch table (CatDispatch.java); 332 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12296,7 +12296,7 @@ void cat_VD(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_VG @ fffaf9c0  (283 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_VG @ fffaf9c0  (283 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `VG`: entry of the command dispatch table (CatDispatch.java); 283 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12372,7 +12372,7 @@ void cat_VG(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_VM @ fffafadb  (738 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * cat_VM @ fffafadb  (738 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `VM`: entry of the command dispatch table (CatDispatch.java); 738 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12546,7 +12546,7 @@ void cat_VM(int param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_VS @ fffafdbd  (483 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_VS @ fffafdbd  (483 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `VS`: entry of the command dispatch table (CatDispatch.java); 483 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12662,7 +12662,7 @@ void cat_VS(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_VX @ fffaffa0  (206 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_VX @ fffaffa0  (206 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `VX`: entry of the command dispatch table (CatDispatch.java); 206 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12715,7 +12715,7 @@ void cat_VX(int param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ZI @ fffb006e  (190 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * cat_ZI @ fffb006e  (190 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: Handler of CAT command `ZI`: entry of the command dispatch table (CatDispatch.java); 190 B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -12773,7 +12773,7 @@ void cat_ZI(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mem_find_byte @ fffb012c  (58 bytes, 11 callers, export file fffae2ca_fffb1303.c)
+ * mem_find_byte @ fffb012c  (58 bytes, 11 callers, export file fffadeb6_fffb12e6.c)
  * Purpose: (buf, c, n): pointer to the first byte == c in buf[0..n), else buf itself; returned in R1 (EM, KM)
  *     [fact]
  * Tag: [fact]
@@ -12796,7 +12796,7 @@ void mem_find_byte(int param_1,char param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_reply_error @ fffb0166  (28 bytes, 2 callers, export file fffae2ca_fffb1303.c)
+ * cat_reply_error @ fffb0166  (28 bytes, 2 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: error reply
  * Purpose: Builds `?;` with length 2 [fact]
  * Tag: [fact]
@@ -12817,7 +12817,7 @@ void cat_reply_error(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_checksum_ok @ fffb0182  (45 bytes, 4 callers, export file fffae2ca_fffb1303.c)
+ * cat_checksum_ok @ fffb0182  (45 bytes, 4 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: checksum test
  * Purpose: `sum8(buf,n) == buf[n]` [fact]
  * Tag: [fact]
@@ -12840,7 +12840,7 @@ bool cat_checksum_ok(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sum8 @ fffb01af  (48 bytes, 4 callers, export file fffae2ca_fffb1303.c)
+ * sum8 @ fffb01af  (48 bytes, 4 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: additive checksum
  * Purpose: 8-bit sum of n bytes [fact]
  * Tag: [fact]
@@ -12865,7 +12865,7 @@ char sum8(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * eeprom_save_image @ fffb0356  (32 bytes, 1 callers, export file fffae2ca_fffb1303.c)
+ * eeprom_save_image @ fffb0356  (32 bytes, 1 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: eeprom.md
  * Purpose: `eeprom_write(0x1A7A, 0x60C9, 0x2F49)`, bracketed by header updates (`eeprom_hdr_update` 0xFFFB142B)
  *     [fact]
@@ -12890,7 +12890,7 @@ void eeprom_save_image(void)
 
 
 /* -----------------------------------------------------------------------------
- * eeprom_save_memch @ fffb0376  (75 bytes, 18 callers, export file fffae2ca_fffb1303.c)
+ * eeprom_save_memch @ fffb0376  (75 bytes, 18 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: eeprom.md
  * Purpose: Writes the 0x87-byte block plus one 0x5A-byte memory channel [fact]
  * Tag: [fact]
@@ -12921,7 +12921,7 @@ void eeprom_save_memch(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * eeprom_save_cfg105 @ fffb0532  (18 bytes, 4 callers, export file fffae2ca_fffb1303.c)
+ * eeprom_save_cfg105 @ fffb0532  (18 bytes, 4 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: eeprom.md
  * Purpose: `eeprom_write(0x000A, 0x4659, 0x105)` [fact]
  * Tag: [fact]
@@ -12942,7 +12942,7 @@ void eeprom_save_cfg105(void)
 
 
 /* -----------------------------------------------------------------------------
- * eeprom_save_dest @ fffb0544  (20 bytes, 3 callers, export file fffae2ca_fffb1303.c)
+ * eeprom_save_dest @ fffb0544  (20 bytes, 3 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: eeprom.md
  * Purpose: `eeprom_write(0x010F, 0x475E, 3)`; holds the destination code [fact]
  * Tag: [fact]
@@ -12963,7 +12963,7 @@ void eeprom_save_dest(void)
 
 
 /* -----------------------------------------------------------------------------
- * settings_defaults @ fffb0558  (222 bytes, 7 callers, export file fffae2ca_fffb1303.c)
+ * settings_defaults @ fffb0558  (222 bytes, 7 callers, export file fffadeb6_fffb12e6.c)
  * Inferred name / role: factory defaults (eeprom.md)
  * Purpose: arg 1: also reloads the 0x105 block from ROM 0xFFF8074F and the destination 0x8043. Then reinitializes
  *     VFO, memory and menu RAM from ROM defaults [fact]
@@ -13061,7 +13061,7 @@ void settings_defaults(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_rx_complete @ fffb1b50  (321 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * cat_rx_complete @ fffb1b50  (321 bytes, 3 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: receive-end callback
  * Purpose: Called by the SCI0/2/3 receive path with the port id and length. Queues the frame (ring or E9 slot) and
  *     re-arms reception [fact]
@@ -13151,7 +13151,7 @@ LAB_fffb1bbd:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ring_head @ fffb1c91  (15 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_ring_head @ fffb1c91  (15 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: ring indices
  * Purpose: Return 0x11FEC / 0x11FEB [fact]
  * Tag: [fact]
@@ -13169,7 +13169,7 @@ byte cat_ring_head(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ring_tail @ fffb1ca0  (15 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_ring_tail @ fffb1ca0  (15 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: ring indices
  * Purpose: Return 0x11FEC / 0x11FEB [fact]
  * Tag: [fact]
@@ -13187,7 +13187,7 @@ byte cat_ring_tail(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ring_unpop @ fffb1caf  (35 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_ring_unpop @ fffb1caf  (35 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: ring un-take
  * Purpose: Steps the tail back when the TX side of the port is busy (`sci_tx_end`==0), so the command is retried
  *     [fact]
@@ -13211,7 +13211,7 @@ void cat_ring_unpop(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ring_pop @ fffb1cd2  (52 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_ring_pop @ fffb1cd2  (52 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: ring take
  * Purpose: Increments the tail mod 60 and returns the slot [fact]; the decompile lost the return value
  * Tag: [fact]
@@ -13234,7 +13234,7 @@ uint cat_ring_pop(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_e9_slot @ fffb1d06  (12 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * cat_e9_slot @ fffb1d06  (12 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: E9 slot pointer
  * Purpose: Returns 0x1B78C [fact] (disassembly)
  * Tag: [fact]
@@ -13252,7 +13252,7 @@ uint cat_e9_slot(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_send_reply @ fffb1d12  (73 bytes, 5 callers, export file fffb1325_fffb1dad.c)
+ * cat_send_reply @ fffb1d12  (73 bytes, 5 callers, export file fffb1303_fffb1d79.c)
  * Inferred name / role: send by port
  * Purpose: Port 1 → `R_SCI3_Serial_Send`, 2 → SCI0, else SCI2. Sets per-port busy flags 0x11FEA/0x11FE8/0x11FE9
  *     [fact]
@@ -13283,7 +13283,7 @@ void cat_send_reply(int param_1,uint param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cat_tx_busy @ fffb1d79  (52 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * cat_tx_busy @ fffb1d79  (52 bytes, 3 callers, export file fffb1303_fffb1d79.c)
  * Purpose: Returns the CAT TX busy flag of a port: 1 -> 0x11FEA (SCI3), 2 -> 0x11FE8 (SCI0), else 0x11FE9 (SCI2)
  *     [fact: fffb1d79]; cat_ai_poll sends only when all three are 0
  * Tag: [fact]
@@ -13311,9 +13311,8 @@ undefined1 cat_tx_busy(int param_1)
   return local_6;
 }
 
-
 /* -----------------------------------------------------------------------------
- * sci_tx_end @ fffb1f42  (65 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * sci_tx_end @ fffb1f42  (65 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: TX idle test
  * Purpose: Port id → SCI3/SCI0/SCI2 transmit-end state [fact] (T05)
  * Tag: [fact]
@@ -13349,7 +13348,7 @@ byte sci_tx_end(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * screensaver_timer_restart @ fffb263d  (66 bytes, 7 callers, export file fffb1f42_fffb2f9e.c)
+ * screensaver_timer_restart @ fffb263d  (66 bytes, 7 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: screen-saver restart
  * Purpose: Restarts slow timer 0 from menu 040104 SCREEN SAVER (0x9B0F) [fact]
  * Tag: [fact]
@@ -13387,7 +13386,7 @@ void screensaver_timer_restart(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_rand8 @ fffb2718  (28 bytes, 1 callers, export file fffb1f42_fffb2f9e.c)
+ * cat_rand8 @ fffb2718  (28 bytes, 1 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: Pseudo-random byte from timer counter 0x88116; this is the E8 key [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -13409,7 +13408,7 @@ char cat_rand8(void)
 
 
 /* -----------------------------------------------------------------------------
- * nib2hex @ fffb2e9c  (27 bytes, 283 callers, export file fffb1f42_fffb2f9e.c)
+ * nib2hex @ fffb2e9c  (27 bytes, 283 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: nibble → ASCII
  * Purpose: `"0123456789ABCDEF"[n&15]` [fact]
  * Tag: [fact]
@@ -13427,7 +13426,7 @@ char nib2hex(byte n)
 
 
 /* -----------------------------------------------------------------------------
- * byte2hex @ fffb2eb7  (48 bytes, 24 callers, export file fffb1f42_fffb2f9e.c)
+ * byte2hex @ fffb2eb7  (48 bytes, 24 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: formatters
  * Purpose: 2 / 4 hex characters [fact]
  * Tag: [fact]
@@ -13447,7 +13446,7 @@ void byte2hex(char *param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * word2hex @ fffb2ee7  (32 bytes, 22 callers, export file fffb1f42_fffb2f9e.c)
+ * word2hex @ fffb2ee7  (32 bytes, 22 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: formatters
  * Purpose: 2 / 4 hex characters [fact]
  * Tag: [fact]
@@ -13467,7 +13466,7 @@ void word2hex(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * hex2nib @ fffb2f07  (114 bytes, 79 callers, export file fffb1f42_fffb2f9e.c)
+ * hex2nib @ fffb2f07  (114 bytes, 79 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: ASCII → nibble
  * Purpose: Accepts 0-9/A-F/a-f, else returns 0xFF [fact]
  * Tag: [fact]
@@ -13520,7 +13519,7 @@ char hex2nib(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * hex2byte @ fffb2f79  (37 bytes, 7 callers, export file fffb1f42_fffb2f9e.c)
+ * hex2byte @ fffb2f79  (37 bytes, 7 callers, export file fffb1dad_fffb2f79.c)
  * Inferred name / role: parsers
  * Purpose: 2 / 4 hex characters [fact]
  * Tag: [fact]
@@ -13543,9 +13542,8 @@ byte hex2byte(char *s)
   return hex2nib_ret_2 | hex2nib_ret << 4;
 }
 
-
 /* -----------------------------------------------------------------------------
- * hex2word @ fffb2f9e  (34 bytes, 14 callers, export file fffb1f42_fffb2f9e.c)
+ * hex2word @ fffb2f9e  (34 bytes, 14 callers, export file fffb2f9e_fffb4bba.c)
  * Inferred name / role: parsers
  * Purpose: 2 / 4 hex characters [fact]
  * Tag: [fact]
@@ -13567,8 +13565,9 @@ ushort hex2word(char *s)
   return CONCAT11(hex2byte_ret,hex2byte_ret_2);
 }
 
+
 /* -----------------------------------------------------------------------------
- * bcd_to_bin @ fffb2fc0  (44 bytes, 5 callers, export file fffb2fc0_fffb4c45.c)
+ * bcd_to_bin @ fffb2fc0  (44 bytes, 5 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: Packed BCD byte -> binary: ROM table 0xFFF880C2 (0, 10,.., 90 at stride 2)[high nibble] + low nibble
  *     [fact]
  * Tag: [fact]
@@ -13588,7 +13587,7 @@ char bcd_to_bin(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ascii2_to_bcd @ fffb30b5  (104 bytes, 5 callers, export file fffb2fc0_fffb4c45.c)
+ * ascii2_to_bcd @ fffb30b5  (104 bytes, 5 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: Two ASCII digits -> packed BCD byte (each digit only if '0'..'9', checked on the first char) [fact:
  *     fffb30b5]; only caller cat_DT
  * Tag: [fact]
@@ -13635,7 +13634,7 @@ byte ascii2_to_bcd(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * bcd_to_ascii2 @ fffb311d  (75 bytes, 5 callers, export file fffb2fc0_fffb4c45.c)
+ * bcd_to_ascii2 @ fffb311d  (75 bytes, 5 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: Packed BCD byte -> two ASCII digits from "0123456789ABCDEF", a space for a nibble above 9 [fact:
  *     fffb311d]; only caller cat_DT
  * Tag: [fact]
@@ -13668,7 +13667,7 @@ void bcd_to_ascii2(char *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * toupper_inplace @ fffb3168  (46 bytes, 19 callers, export file fffb2fc0_fffb4c45.c)
+ * toupper_inplace @ fffb3168  (46 bytes, 19 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: a-z → A-Z [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -13697,7 +13696,7 @@ void toupper_inplace(char *c)
 
 
 /* -----------------------------------------------------------------------------
- * width_index_of_hz @ fffb36ff  (118 bytes, 10 callers, export file fffb2fc0_fffb4c45.c)
+ * width_index_of_hz @ fffb36ff  (118 bytes, 10 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: (mode, hz): index of a filter width in Hz in table 0xFFF88270 (+0x78: 21 entries for CW/DATA/RTTY/PSK,
  *     +0x4A: 23 entries for LSB/USB), 0xFF if none [fact: fffb36ff]; callers cat_SH, cat_ai_SH, dsp_knob_width_step
  * Tag: [fact]
@@ -13735,7 +13734,7 @@ byte width_index_of_hz(byte param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * width_hz_of_index @ fffb3775  (88 bytes, 7 callers, export file fffb2fc0_fffb4c45.c)
+ * width_hz_of_index @ fffb3775  (88 bytes, 7 callers, export file fffb2f9e_fffb4bba.c)
  * Purpose: (mode, index): filter width in Hz from the same tables at 0xFFF88270, 0xFFFF if out of range [fact:
  *     fffb3775]; callers cat_SH, vfo_filter_width_hz, dsp_knob_width_step
  * Tag: [fact]
@@ -13767,7 +13766,7 @@ undefined2 width_hz_of_index(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dest_code_get @ fffb3b33  (42 bytes, 42 callers, export file fffb2fc0_fffb4c45.c)
+ * dest_code_get @ fffb3b33  (42 bytes, 42 callers, export file fffb2f9e_fffb4bba.c)
  * Inferred name / role: destination code
  * Purpose: 0x475E/0x475F. Set writes EEPROM, reloads defaults (`settings_defaults(0)`) and requests a restart
  *     (0x20F4B=1, 0x20B39=0x11) [fact]; that 0x20B39=0x11 means a reboot is [inference]
@@ -13788,7 +13787,7 @@ ushort dest_code_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * dest_code_set @ fffb3b5d  (73 bytes, 13 callers, export file fffb2fc0_fffb4c45.c)
+ * dest_code_set @ fffb3b5d  (73 bytes, 13 callers, export file fffb2f9e_fffb4bba.c)
  * Inferred name / role: destination code
  * Purpose: 0x475E/0x475F. Set writes EEPROM, reloads defaults (`settings_defaults(0)`) and requests a restart
  *     (0x20F4B=1, 0x20B39=0x11) [fact]; that 0x20B39=0x11 means a reboot is [inference]
@@ -13819,7 +13818,7 @@ void dest_code_set(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_event_filter @ fffb44f7  (1585 bytes, 29 callers, export file fffb2fc0_fffb4c45.c)
+ * key_event_filter @ fffb44f7  (1585 bytes, 29 callers, export file fffb2f9e_fffb4bba.c)
  * Inferred name / role: front-panel key gate
  * Purpose: Checks a key code against about 20 mode locks (TX, tuning, menus, etc.) and returns 1 if the key may
  *     run. Many CAT handlers emulate a key press through it [fact] for the structure; it is used by AC CS SV VS VM
@@ -14144,7 +14143,7 @@ LAB_fffb48f7:
 
 
 /* -----------------------------------------------------------------------------
- * tx_breakin_on @ fffb521a  (98 bytes, 9 callers, export file fffb4e18_fffb70b0.c)
+ * tx_breakin_on @ fffb521a  (98 bytes, 9 callers, export file fffb4c45_fffb7098.c)
  * Purpose: Bit 1 (BI break-in flag) of the TX VFO per-mode byte (vfo_rec_ptr(1)/vfo_mode(1)) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -14190,7 +14189,7 @@ LAB_fffb526d:
 
 
 /* -----------------------------------------------------------------------------
- * align_load_preset @ fffbb567  (1020 bytes, 3 callers, export file fffb948b_fffbc3bd.c)
+ * align_load_preset @ fffbb567  (1020 bytes, 3 callers, export file fffb9422_fffbc38e.c)
  * Purpose: Sets up the radio for the current alignment item from preset 0xFFF88CD4[item] (VFO A/B, band memory,
  *     mode bits, optional frequency, TX power for items 0x45..0xDA) [inference]
  * Tag: [inference]
@@ -14355,7 +14354,7 @@ void align_load_preset(void)
 
 
 /* -----------------------------------------------------------------------------
- * align_store @ fffbba0f  (31 bytes, 1 callers, export file fffb948b_fffbc3bd.c)
+ * align_store @ fffbba0f  (31 bytes, 1 callers, export file fffb9422_fffbc38e.c)
  * Purpose: DSP key in alignment mode: runs the store handler 0xFFF89910[item] for the current item (+0x1DE)
  *     [inference]
  * Tag: [inference]
@@ -14375,7 +14374,7 @@ undefined1 align_store(void)
 
 
 /* -----------------------------------------------------------------------------
- * mic_up_key_press @ fffc0335  (14 bytes, 2 callers, export file fffbf807_fffc0492.c)
+ * mic_up_key_press @ fffc0335  (14 bytes, 2 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: key_slot_press(EX030124 MIC UP assignment) [fact: fffc0335]; only caller cat_UP
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -14393,7 +14392,7 @@ void mic_up_key_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * mic_down_key_press @ fffc037b  (14 bytes, 2 callers, export file fffbf807_fffc0492.c)
+ * mic_down_key_press @ fffc037b  (14 bytes, 2 callers, export file fffbf7d7_fffc0484.c)
  * Purpose: key_slot_press(EX030125 MIC DOWN assignment) [fact: fffc037b]; only caller cat_DN
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -14411,7 +14410,7 @@ void mic_down_key_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * vfo_mode_select @ fffc4bd5  (121 bytes, 7 callers, export file fffc4a8d_fffc6073.c)
+ * vfo_mode_select @ fffc4bd5  (121 bytes, 7 callers, export file fffc4a47_fffc5f9d.c)
  * Purpose: (mode): per-mode switch used by cat_MD and cat_NA: LSB/USB/CW/DATA/RTTY/PSK -> mode_select_simple(mode);
  *     AM, AM-N, FM, FM-N, DATA-FM, DATA-FM-N -> their mode_popup_select wrappers; 15 -> preset_toggle [fact:
  *     fffc4bd5]
@@ -14483,7 +14482,7 @@ void vfo_mode_select(byte mode)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_poll @ fffdd797  (979 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_poll @ fffdd797  (979 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Inferred name / role: AI broadcaster
  * Purpose: Runs about 70 change detectors (0xFFFDDCB5..0xFFFE1774, 0xFFFDDB7E) and sends to every AI-on port [fact]
  * Tag: [fact]
@@ -14770,7 +14769,7 @@ void cat_ai_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_holdoff @ fffddb6a  (20 bytes, 3 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_holdoff @ fffddb6a  (20 bytes, 3 callers, export file fffdcad1_fffdee96.c)
  * Inferred name / role: AI holdoff
  * Purpose: Timer 0x32 for 200 ms, flag 0x187C2 [fact]
  * Tag: [fact]
@@ -14790,7 +14789,7 @@ void cat_ai_holdoff(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_FD @ fffddb7e  (311 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_FD @ fffddb7e  (311 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Inferred name / role: AI detector for FD
  * Purpose: Sends `FD00n<9 digits>;` when the FD value changes; part of the AI chain for an undocumented command
  *     [fact]
@@ -14890,7 +14889,7 @@ ushort cat_ai_FD(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_AC @ fffddcb5  (452 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_AC @ fffddcb5  (452 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for AC (called from cat_ai_poll): compares with its shadow, on a change builds the AC
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: tuner type, tune cycle and result (frame
  *     built from 'A','C' chars) [fact: fffddcb5]
@@ -15037,7 +15036,7 @@ undefined2 cat_ai_AC(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_AG @ fffdde79  (330 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_AG @ fffdde79  (330 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for AG (called from cat_ai_poll): compares with its shadow, on a change builds the AG
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.af_gain; ignores jitter: keeps the
  *     last 4 values and needs a spread of 3 (max4_u8/min4_u8) between 3 and 252 [fact: fffdde79]
@@ -15129,7 +15128,7 @@ undefined2 cat_ai_AG(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_AO @ fffddfc3  (161 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_AO @ fffddfc3  (161 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for AO (called from cat_ai_poll): compares with its shadow, on a change builds the AO
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.amc_level (constant "AO00")
  *     [fact: fffddfc3]
@@ -15187,7 +15186,7 @@ undefined2 cat_ai_AO(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_AS @ fffde064  (284 bytes, 2 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_AS @ fffde064  (284 bytes, 2 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for AS (called from cat_ai_poll): compares with its shadow, on a change builds the AS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 1 = AESS level (aess_level_ptr, x5),
  *     arg 2 = AESS mode (aess_mode_ptr) [fact: fffde064]
@@ -15277,7 +15276,7 @@ ushort cat_ai_AS(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_AV @ fffde180  (227 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_AV @ fffde180  (227 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for AV (called from cat_ai_poll): compares with its shadow, on a change builds the AV
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: ANTI VOX of the VOX source selected by
  *     EX030405 [fact: fffde180]
@@ -15352,7 +15351,7 @@ undefined2 cat_ai_AV(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_BC @ fffde263  (207 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_BC @ fffde263  (207 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for BC (called from cat_ai_poll): compares with its shadow, on a change builds the BC
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: bit 0x80 of the RX VFO record's per-mode
  *     flags2 (auto notch) [fact: fffde263]
@@ -15426,7 +15425,7 @@ LAB_fffde2eb:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_BI @ fffde332  (191 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_BI @ fffde332  (191 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for BI (called from cat_ai_poll): compares with its shadow, on a change builds the BI
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: bit 1 of the RX VFO record's per-mode
  *     flags (break-in) [fact: fffde332]
@@ -15499,7 +15498,7 @@ LAB_fffde3b1:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_BP @ fffde3f1  (409 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_BP @ fffde3f1  (409 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for BP (called from cat_ai_poll): compares with its shadow, on a change builds the BP
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "BP00000;" manual notch [fact: fffde3f1]
  * Tag: [fact]
@@ -15629,7 +15628,7 @@ LAB_fffde4d3:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_CF @ fffde58a  (765 bytes, 2 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_CF @ fffde58a  (765 bytes, 2 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for CF (called from cat_ai_poll): compares with its shadow, on a change builds the CF
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1 = VFO side; clarifier frame from
  *     the template "CF00000000;" [fact: fffde58a]
@@ -15826,7 +15825,7 @@ short cat_ai_CF(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_CN @ fffde887  (289 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_CN @ fffde887  (289 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for CN (called from cat_ai_poll): compares with its shadow, on a change builds the CN
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "CN00000;" CTCSS number of VFO A/B
  *     [fact: fffde887]
@@ -15913,7 +15912,7 @@ ushort cat_ai_CN(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_CO @ fffde9a8  (553 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_CO @ fffde9a8  (553 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for CO (called from cat_ai_poll): compares with its shadow, on a change builds the CO
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: contour / APF (g_opstate.apf_freq;
  *     constant "CO") [fact: fffde9a8]
@@ -16078,7 +16077,7 @@ LAB_fffdea79:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_CS @ fffdebd1  (97 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_CS @ fffdebd1  (97 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for CS (called from cat_ai_poll): compares with its shadow, on a change builds the CS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.cw_spot_on [fact: fffdebd1]
  * Tag: [fact]
@@ -16120,7 +16119,7 @@ ushort cat_ai_CS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_CT @ fffdec32  (186 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_CT @ fffdec32  (186 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for CT (called from cat_ai_poll): compares with its shadow, on a change builds the CT
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "CT00;" CTCSS mode of VFO A/B [fact:
  *     fffdec32]
@@ -16181,7 +16180,7 @@ undefined2 cat_ai_CT(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_ex @ fffdecec  (45 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_ex @ fffdecec  (45 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for the EX menu (one of cat_ai_poll's detectors): cat_ai_ex_scan, copies the frame to
  *     cat_ai_buf 0x15E06 [inference]
  * Tag: [inference]
@@ -16217,7 +16216,7 @@ ushort cat_ai_ex(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_FA_FB @ fffded19  (275 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_FA_FB @ fffded19  (275 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for FA/FB (called from cat_ai_poll): compares with its shadow, on a change builds the
  *     FA/FB answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: FA (constant 0x4146) when VFO A's
  *     frequency (or the TX frequency while transmitting) changed, else FB; shadows 0x25CF4/0x25CF8 [fact: fffded19]
@@ -16311,7 +16310,7 @@ ushort cat_ai_FA_FB(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_FN @ fffdee2c  (106 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_FN @ fffdee2c  (106 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for FN (called from cat_ai_poll): compares with its shadow, on a change builds the FN
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.fn_select [fact: fffdee2c]
  * Tag: [fact]
@@ -16354,7 +16353,7 @@ ushort cat_ai_FN(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_FT @ fffdee96  (125 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_FT @ fffdee96  (125 bytes, 1 callers, export file fffdcad1_fffdee96.c)
  * Purpose: AI change detector for FT (called from cat_ai_poll): compares with its shadow, on a change builds the FT
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.split_on [fact: fffdee96]
  * Tag: [fact]
@@ -16407,9 +16406,8 @@ undefined2 cat_ai_FT(void)
   return local_c;
 }
 
-
 /* -----------------------------------------------------------------------------
- * cat_ai_GT @ fffdef13  (551 bytes, 1 callers, export file fffdcb3e_fffdef13.c)
+ * cat_ai_GT @ fffdef13  (551 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for GT (called from cat_ai_poll): compares with its shadow, on a change builds the GT
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "GT00;" AGC of the RX VFO [fact:
  *     fffdef13]
@@ -16567,8 +16565,9 @@ LAB_fffdf0fe:
   return uStack_12;
 }
 
+
 /* -----------------------------------------------------------------------------
- * cat_ai_IF_OI @ fffdf13a  (1333 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_IF_OI @ fffdf13a  (1333 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for IF/OI (called from cat_ai_poll): compares with its shadow, on a change builds the
  *     IF/OI answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0 builds 'I','F' (IF), arg 1
  *     'O','I' (OI) from the template "IF0000000000000000000000000;" [fact: fffdf13a]
@@ -16891,7 +16890,7 @@ ushort cat_ai_IF_OI(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_IS @ fffdf66f  (324 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_IS @ fffdf66f  (324 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for IS (called from cat_ai_poll): compares with its shadow, on a change builds the IS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: constant "IS" (IF shift) [fact:
  *     fffdf66f]
@@ -17002,7 +17001,7 @@ LAB_fffdf6fd:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_KP @ fffdf7b3  (169 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_KP @ fffdf7b3  (169 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for KP (called from cat_ai_poll): compares with its shadow, on a change builds the KP
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.cw_pitch [fact: fffdf7b3]
  * Tag: [fact]
@@ -17063,7 +17062,7 @@ undefined2 cat_ai_KP(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_KR @ fffdf85c  (120 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_KR @ fffdf85c  (120 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for KR (called from cat_ai_poll): compares with its shadow, on a change builds the KR
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.keyer_on [fact: fffdf85c]
  * Tag: [fact]
@@ -17106,7 +17105,7 @@ ushort cat_ai_KR(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_KS @ fffdf8d4  (173 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_KS @ fffdf8d4  (173 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for KS (called from cat_ai_poll): compares with its shadow, on a change builds the KS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.key_speed [fact: fffdf8d4]
  * Tag: [fact]
@@ -17167,7 +17166,7 @@ undefined2 cat_ai_KS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_LK @ fffdf981  (107 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_LK @ fffdf981  (107 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for LK (called from cat_ai_poll): compares with its shadow, on a change builds the LK
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.lock_on [fact: fffdf981]
  * Tag: [fact]
@@ -17209,7 +17208,7 @@ ushort cat_ai_LK(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_MD @ fffdf9ec  (248 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_MD @ fffdf9ec  (248 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for MD (called from cat_ai_poll): compares with its shadow, on a change builds the MD
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1 = VFO side ('M','D') [fact:
  *     fffdf9ec]
@@ -17287,7 +17286,7 @@ ushort cat_ai_MD(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_MG @ fffdfae4  (256 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_MG @ fffdfae4  (256 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for MG (called from cat_ai_poll): compares with its shadow, on a change builds the MG
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.mic_gain [fact: fffdfae4]
  * Tag: [fact]
@@ -17373,7 +17372,7 @@ LAB_fffdfb64:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_ML @ fffdfbe4  (338 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_ML @ fffdfbe4  (338 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for ML (called from cat_ai_poll): compares with its shadow, on a change builds the ML
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'M','L' (monitor level) [fact: fffdfbe4]
  * Tag: [fact]
@@ -17479,7 +17478,7 @@ LAB_fffdfc82:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_MS @ fffdfd36  (110 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_MS @ fffdfd36  (110 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for MS (called from cat_ai_poll): compares with its shadow, on a change builds the MS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.meter_sel [fact: fffdfd36]
  * Tag: [fact]
@@ -17523,7 +17522,7 @@ ushort cat_ai_MS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_MX @ fffdfda4  (102 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_MX @ fffdfda4  (102 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for MX (called from cat_ai_poll): compares with its shadow, on a change builds the MX
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.ptt_mox [fact: fffdfda4]
  * Tag: [fact]
@@ -17568,7 +17567,7 @@ ushort cat_ai_MX(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_NA @ fffdfe0a  (112 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_NA @ fffdfe0a  (112 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for NA (called from cat_ai_poll): compares with its shadow, on a change builds the NA
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.na_ai_value [fact: fffdfe0a]
  * Tag: [fact]
@@ -17610,7 +17609,7 @@ ushort cat_ai_NA(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_NB @ fffdfe7a  (108 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_NB @ fffdfe7a  (108 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for NB (called from cat_ai_poll): compares with its shadow, on a change builds the NB
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "NB00;" [fact: fffdfe7a]
  * Tag: [fact]
@@ -17655,7 +17654,7 @@ ushort cat_ai_NB(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_NL @ fffdfee6  (182 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_NL @ fffdfee6  (182 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for NL (called from cat_ai_poll): compares with its shadow, on a change builds the NL
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.nb_level [fact: fffdfee6]
  * Tag: [fact]
@@ -17717,7 +17716,7 @@ undefined2 cat_ai_NL(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_NR @ fffdff9c  (122 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_NR @ fffdff9c  (122 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for NR (called from cat_ai_poll): compares with its shadow, on a change builds the NR
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "NR00;" [fact: fffdff9c]
  * Tag: [fact]
@@ -17763,7 +17762,7 @@ ushort cat_ai_NR(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_OS @ fffe0016  (168 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_OS @ fffe0016  (168 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for OS (called from cat_ai_poll): compares with its shadow, on a change builds the OS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'O','S' repeater shift of VFO A/B [fact:
  *     fffe0016]
@@ -17826,7 +17825,7 @@ undefined2 cat_ai_OS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_PA @ fffe00be  (133 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_PA @ fffe00be  (133 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for PA (called from cat_ai_poll): compares with its shadow, on a change builds the PA
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'P','A' pre-amp [fact: fffe00be]
  * Tag: [fact]
@@ -17883,7 +17882,7 @@ undefined2 cat_ai_PA(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_PC @ fffe0143  (264 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_PC @ fffe0143  (264 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for PC (called from cat_ai_poll): compares with its shadow, on a change builds the PC
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "PC000;" power by tx_band_of_freq [fact:
  *     fffe0143]
@@ -17973,7 +17972,7 @@ undefined2 cat_ai_PC(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_PL @ fffe024b  (169 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_PL @ fffe024b  (169 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for PL (called from cat_ai_poll): compares with its shadow, on a change builds the PL
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.proc_level [fact: fffe024b]
  * Tag: [fact]
@@ -18034,7 +18033,7 @@ ushort cat_ai_PL(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_PR @ fffe02f4  (160 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_PR @ fffe02f4  (160 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for PR (called from cat_ai_poll): compares with its shadow, on a change builds the PR
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.proc_on / proc_level [fact:
  *     fffe02f4]
@@ -18089,7 +18088,7 @@ ushort cat_ai_PR(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_RA @ fffe0394  (119 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_RA @ fffe0394  (119 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for RA (called from cat_ai_poll): compares with its shadow, on a change builds the RA
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RA00;" attenuator [fact: fffe0394]
  * Tag: [fact]
@@ -18135,7 +18134,7 @@ ushort cat_ai_RA(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_RG @ fffe040b  (368 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_RG @ fffe040b  (368 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for RG (called from cat_ai_poll): compares with its shadow, on a change builds the RG
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.rf_gain and EX030102 (RF/SQL VR),
  *     with the same jitter filter as AG [fact: fffe040b]
@@ -18238,7 +18237,7 @@ undefined2 cat_ai_RG(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_RI @ fffe057b  (474 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_RI @ fffe057b  (474 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for RI (called from cat_ai_poll): compares with its shadow, on a change builds the RI
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RI00000000;": hi_swr,
  *     msg_rec_play_state, tx_lamp, scan, tuner digits [fact: fffe057b]
@@ -18371,7 +18370,7 @@ ushort cat_ai_RI(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_rec_play_state @ fffe0755  (228 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * msg_rec_play_state @ fffe0755  (228 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: Returns 1 while a message/DVS recording runs (msg_rec_active, dvs_state 2, dvs_lm1_flag), 2 while
  *     keyer/PlayList/DVS playback runs (ky_send_0/1, playlist_cmd 1..3, dvs_state 1), else 0 [fact: fffe0755];
  *     callers cat_RI and cat_ai_RI use it as an RI digit
@@ -18448,7 +18447,7 @@ undefined1 msg_rec_play_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_RL @ fffe0839  (142 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_RL @ fffe0839  (142 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for RL (called from cat_ai_poll): compares with its shadow, on a change builds the RL
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RL000;" [fact: fffe0839]
  * Tag: [fact]
@@ -18497,7 +18496,7 @@ ushort cat_ai_RL(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_RM @ fffe08c7  (409 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_RM @ fffe08c7  (409 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for RM (called from cat_ai_poll): compares with its shadow, on a change builds the RM
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'R','M' meter reading of the selected
  *     meter (meter_get_*) [fact: fffe08c7]
@@ -18622,7 +18621,7 @@ ushort cat_ai_RM(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SC @ fffe0a60  (159 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SC @ fffe0a60  (159 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SC (called from cat_ai_poll): compares with its shadow, on a change builds the SC
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.scan_running [fact: fffe0a60]
  * Tag: [fact]
@@ -18687,7 +18686,7 @@ ushort cat_ai_SC(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SD @ fffe0aff  (162 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SD @ fffe0aff  (162 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SD (called from cat_ai_poll): compares with its shadow, on a change builds the SD
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.cw_bkin_delay [fact: fffe0aff]
  * Tag: [fact]
@@ -18747,7 +18746,7 @@ ushort cat_ai_SD(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SF @ fffe0ba1  (357 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SF @ fffe0ba1  (357 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SF (called from cat_ai_poll): compares with its shadow, on a change builds the SF
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1; g_opstate.func_knob /
  *     g_ui.func_knob_item [fact: fffe0ba1]
@@ -18874,7 +18873,7 @@ ushort cat_ai_SF(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SH @ fffe0d06  (403 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SH @ fffe0d06  (403 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SH (called from cat_ai_poll): compares with its shadow, on a change builds the SH
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "SH0000;" width [fact: fffe0d06]
  * Tag: [fact]
@@ -18990,7 +18989,7 @@ ushort cat_ai_SH(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SQ @ fffe0e99  (333 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SQ @ fffe0e99  (333 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SQ (called from cat_ai_poll): compares with its shadow, on a change builds the SQ
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: constant "SQ"; reads g_ui.rf_gain and
  *     EX030102 (RF/SQL VR) [fact: fffe0e99]
@@ -19077,7 +19076,7 @@ undefined2 cat_ai_SQ(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_SS @ fffe0fe6  (1121 bytes, 9 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_SS @ fffe0fe6  (1121 bytes, 9 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for SS (called from cat_ai_poll): compares with its shadow, on a change builds the SS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0..8 = the SS item (scope settings:
  *     span, level, 3DSS, mode, marker, OSC levels/time) [fact: fffe0fe6]
@@ -19334,7 +19333,7 @@ ushort cat_ai_SS(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_ST @ fffe1447  (109 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_ST @ fffe1447  (109 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for ST (called from cat_ai_poll): compares with its shadow, on a change builds the ST
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'S','T' split (g_opstate.split_on)
  *     [fact: fffe1447]
@@ -19389,7 +19388,7 @@ undefined2 cat_ai_ST(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_TS @ fffe14b4  (111 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_TS @ fffe14b4  (111 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for TS (called from cat_ai_poll): compares with its shadow, on a change builds the TS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.txw_swap [fact: fffe14b4]
  * Tag: [fact]
@@ -19436,7 +19435,7 @@ ushort cat_ai_TS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_TX @ fffe1523  (115 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_TX @ fffe1523  (115 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for TX (called from cat_ai_poll): compares with its shadow, on a change builds the TX
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'T','X' [fact: fffe1523]
  * Tag: [fact]
@@ -19490,7 +19489,7 @@ undefined2 cat_ai_TX(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_VD @ fffe1596  (199 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_VD @ fffe1596  (199 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for VD (called from cat_ai_poll): compares with its shadow, on a change builds the VD
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_delay of the VOX source
  *     selected by EX030405 [fact: fffe1596]
@@ -19560,7 +19559,7 @@ undefined2 cat_ai_VD(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_VG @ fffe165d  (173 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_VG @ fffe165d  (173 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for VG (called from cat_ai_poll): compares with its shadow, on a change builds the VG
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_gain [fact: fffe165d]
  * Tag: [fact]
@@ -19622,7 +19621,7 @@ undefined2 cat_ai_VG(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_VS @ fffe170a  (106 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_VS @ fffe170a  (106 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for VS (called from cat_ai_poll): compares with its shadow, on a change builds the VS
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.active_vfo [fact: fffe170a]
  * Tag: [fact]
@@ -19666,7 +19665,7 @@ ushort cat_ai_VS(void)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_VX @ fffe1774  (145 bytes, 1 callers, export file fffdf13a_fffe19d0.c)
+ * cat_ai_VX @ fffe1774  (145 bytes, 1 callers, export file fffdef13_fffe19ca.c)
  * Purpose: AI change detector for VX (called from cat_ai_poll): compares with its shadow, on a change builds the VX
  *     answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_on [fact: fffe1774]
  * Tag: [fact]
@@ -19720,7 +19719,7 @@ ushort cat_ai_VX(void)
 
 
 /* -----------------------------------------------------------------------------
- * max4_u8 @ fffe1805  (52 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * max4_u8 @ fffe1805  (52 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: Largest of 4 bytes at *p [fact: fffe1805]; used by cat_ai_AG / cat_ai_RG on the last-4 history
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -19746,7 +19745,7 @@ byte max4_u8(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * min4_u8 @ fffe1839  (52 bytes, 2 callers, export file fffdf13a_fffe19d0.c)
+ * min4_u8 @ fffe1839  (52 bytes, 2 callers, export file fffdef13_fffe19ca.c)
  * Purpose: Smallest of 4 bytes at *p [fact: fffe1839]; used by cat_ai_AG / cat_ai_RG
  * Tag: [fact]
  * Doc: ../../../docs/code/main/cat.md
@@ -19772,7 +19771,7 @@ byte min4_u8(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * msg_type_select @ fffe4407  (681 bytes, 2 callers, export file fffe3b5b_fffe4c04.c)
+ * msg_type_select @ fffe4407  (681 bytes, 2 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: Sets UI +0x1C7 (message type) from vfo_mode(1): CW 1, RTTY 2, PSK 3, voice modes 0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -19908,7 +19907,7 @@ void msg_type_select(void)
 
 
 /* -----------------------------------------------------------------------------
- * keyer_text_endmark @ fffe481d  (478 bytes, 1 callers, export file fffe3b5b_fffe4c04.c)
+ * keyer_text_endmark @ fffe481d  (478 bytes, 1 callers, export file fffe3b54_fffe4bb3.c)
  * Purpose: Front-panel keyer text editor: length up to the first } (0x7D) or appends } after the last non-space
  *     char [inference]
  * Tag: [inference]
@@ -20017,7 +20016,7 @@ void keyer_text_endmark(void)
 
 
 /* -----------------------------------------------------------------------------
- * msg_slot_select @ fffe538f  (49 bytes, 4 callers, export file fffe4c55_fffe5caf.c)
+ * msg_slot_select @ fffe538f  (49 bytes, 4 callers, export file fffe4c04_fffe5c7e.c)
  * Purpose: (n): UI +0x1C8 = n, +0xBF = +0x1CE = n-1 (KY) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md
@@ -20037,7 +20036,7 @@ void msg_slot_select(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_ex_scan @ fffe6d7a  (172 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * cat_ai_ex_scan @ fffe6d7a  (172 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: Calls the 296 detectors in 0xFFF8E1A0 until one sets the length 0x1FF12; builds "EXnnnnnn" + value at
  *     0x1B235; held off while 0x1B299 = 1 and timer 0x32 runs [inference]
  * Tag: [inference]
@@ -20090,7 +20089,7 @@ LAB_fffe6df2:
 
 
 /* -----------------------------------------------------------------------------
- * cat_ai_ex_holdoff @ fffe6e26  (20 bytes, 1 callers, export file fffe5ce0_fffe7155.c)
+ * cat_ai_ex_holdoff @ fffe6e26  (20 bytes, 1 callers, export file fffe5caf_fffe7118.c)
  * Purpose: After an EX set: timer 0x32 = 200, 0x1B299 = 1 (like cat_ai_holdoff, own flag) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/cat.md

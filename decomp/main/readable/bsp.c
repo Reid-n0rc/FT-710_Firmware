@@ -2807,7 +2807,7 @@ void mpc_pin_functions_init(void)
 }
 
 /* -----------------------------------------------------------------------------
- * freopen @ fffedd9a  (47 bytes, 3 callers, export file fffed704_fffee29c.c)
+ * freopen @ fffedd9a  (47 bytes, 3 callers, export file fffed6f5_fffee29c.c)
  * Purpose: freopen(name, mode, fp): fclose(fp) then _freopen_core; called by _INIT_IOLIB for stdin/stdout/stderr
  *     [inference]
  * Tag: [inference]
@@ -2837,7 +2837,7 @@ uint freopen(uint param_1,uint param_2,ushort *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fclose @ fffeddc9  (84 bytes, 4 callers, export file fffed704_fffee29c.c)
+ * fclose @ fffeddc9  (84 bytes, 4 callers, export file fffed6f5_fffee29c.c)
  * Purpose: fclose(fp): fflush, free the buffer, close(fd), release the FILE slot; called by freopen and _CLOSEALL
  *     [inference]
  * Tag: [inference]
@@ -2880,7 +2880,7 @@ uint fclose(ushort *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * strncmp @ fffede1d  (36 bytes, 18 callers, export file fffed704_fffee29c.c)
+ * strncmp @ fffede1d  (36 bytes, 18 callers, export file fffed6f5_fffee29c.c)
  * Purpose: strncmp(a, b, n), byte compare up to n [inference]; unlike ISO C it does not stop at a NUL both strings
  *     share: it compares until the first difference or n bytes (`"ab\0x"` vs `"ab\0y"`, n = 4, differ) [fact: the
  *     loop 0xFFFEDE25..0xFFFEDE33 tests only the count and equality; T24 recreation, checked by emulation]
@@ -2915,7 +2915,7 @@ int strncmp(char *param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __udiv64 @ fffede41  (153 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * __udiv64 @ fffede41  (153 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: CC-RX runtime library function, matched by idiom (score 0.800, T23d): (u64 n in R1:R2, u64 d in R3:R4)
  *     -> quotient: 16-bit long-division fast paths, then normalise + 64-step shift/subtract; between strncmp and
  *     _INITSCT in the … [inference]
@@ -3017,7 +3017,7 @@ ulonglong __udiv64(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fflush @ fffedf24  (131 bytes, 2 callers, export file fffed704_fffee29c.c)
+ * fflush @ fffedf24  (131 bytes, 2 callers, export file fffed6f5_fffee29c.c)
  * Purpose: fflush(fp) (fp=0: all 20 slots at 0x1FF74), writes the pending buffer with write() [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/bsp.md
@@ -3084,7 +3084,7 @@ uint fflush(ushort *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _freopen_core @ fffedfa7  (214 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * _freopen_core @ fffedfa7  (214 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: Parses the mode string ("r"/"w"/"a", "+", "b"), calls _fopen_open, sets up the FILE [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/bsp.md
@@ -3188,7 +3188,7 @@ ushort * _freopen_core(int param_1,char *param_2,ushort *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * _file_alloc @ fffee07d  (69 bytes, 0 callers, export file fffed704_fffee29c.c)
+ * _file_alloc @ fffee07d  (69 bytes, 0 callers, export file fffed6f5_fffee29c.c)
  * Purpose: Takes a free FILE from the 20 slots at 0x1FF74 or mallocs a new 0x48-byte one; no callers (fopen not
  *     linked) [inference]
  * Tag: [inference]
@@ -3235,7 +3235,7 @@ short * _file_alloc(void)
 
 
 /* -----------------------------------------------------------------------------
- * _file_release @ fffee0c2  (73 bytes, 2 callers, export file fffed704_fffee29c.c)
+ * _file_release @ fffee0c2  (73 bytes, 2 callers, export file fffed6f5_fffee29c.c)
  * Purpose: Resets a static FILE (std streams) or drops a malloc'ed one from the slot table and frees it [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/bsp.md
@@ -3285,7 +3285,7 @@ LAB_fffee106:
 
 
 /* -----------------------------------------------------------------------------
- * free @ fffee10b  (131 bytes, 3 callers, export file fffed704_fffee29c.c)
+ * free @ fffee10b  (131 bytes, 3 callers, export file fffed6f5_fffee29c.c)
  * Purpose: free(p): 8-byte header (size, next), inserts into the address-ordered free list at 0x25E5C and merges
  *     neighbours [inference]
  * Tag: [inference]
@@ -3353,7 +3353,7 @@ int * free(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _fopen_open @ fffee18e  (48 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * _fopen_open @ fffee18e  (48 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: Maps the parsed mode bits to open() flags (perm 0666, or 0600 for exclusive) and calls open [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/bsp.md
@@ -3390,7 +3390,7 @@ int _fopen_open(undefined4 param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * _heap_find @ fffee1be  (123 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * _heap_find @ fffee1be  (123 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: First-fit search of the free list at 0x25E5C (from the rover 0x25E58); grows the heap via heap_getmem in
  *     >= 1 KB steps; the 244 bytes T05 saw as undefined data (#78) [inference]
  * Tag: [inference]
@@ -3458,7 +3458,7 @@ uint * _heap_find(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * malloc @ fffee239  (99 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * malloc @ fffee239  (99 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: malloc(n): size (n+15)&~7, minimum 8, splits the block from _heap_find; only caller _file_alloc
  *     (unreferenced), so dead code [inference]
  * Tag: [inference]
@@ -3507,7 +3507,7 @@ uint * malloc(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * heap_getmem @ fffee29c  (27 bytes, 1 callers, export file fffed704_fffee29c.c)
+ * heap_getmem @ fffee29c  (27 bytes, 1 callers, export file fffed6f5_fffee29c.c)
  * Purpose: sbrk wrapper: returns 0 for size < 1 or when sbrk fails, else sbrk's pointer (`stz #0, r1` keeps R1 =
  *     sbrk's result, 0xFFFEE2B2) [fact; T24 recreation]
  * Tag: [fact]

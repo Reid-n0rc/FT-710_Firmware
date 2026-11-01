@@ -4,7 +4,7 @@
 // 216 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * ver_sdr @ fff94c4b  (12 bytes, 3 callers, export file fff94851_fff95bf4.c)
+ * ver_sdr @ fff94c4b  (12 bytes, 3 callers, export file fff94850_fff95ace.c)
  * Purpose: Returns pointer to SDR version 0x144A (VE2) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -21,7 +21,7 @@ uint ver_sdr(void)
 
 
 /* -----------------------------------------------------------------------------
- * qmb_boot_init @ fff94cab  (196 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * qmb_boot_init @ fff94cab  (196 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: UI/link state init in `app_main` before the power-off loop (+0xB8/+0xB9 = 0xFF, …)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -76,7 +76,7 @@ void qmb_boot_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_task @ fff94d6f  (614 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * displink_task @ fff94d6f  (614 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Purpose: RX → validate → dispatch; ACK/NAK; gap/ACK-wait timers; scheduler; also a 100-unit periodic job (timer
  *     0x4A) at the end
  * Tag: none in the table row
@@ -227,7 +227,7 @@ void displink_task(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_poll @ fff951ff  (120 bytes, 2 callers, export file fff94851_fff95bf4.c)
+ * displink_tx_poll @ fff951ff  (120 bytes, 2 callers, export file fff94850_fff95ace.c)
  * Purpose: next frame or retry, link-down on hello timeout
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -263,7 +263,7 @@ void displink_tx_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_len_of @ fff95277  (186 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_len_of @ fff95277  (186 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: task-level length table
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -333,7 +333,7 @@ ushort displink_rx_len_of(char param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_dispatch @ fff95331  (237 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_dispatch @ fff95331  (237 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: switch on byte 0
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -423,7 +423,7 @@ void displink_rx_dispatch(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_ack @ fff9541e  (75 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_ack @ fff9541e  (75 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: ACK: clear outstanding; after the hello reply sets +0x400 (send 0x24) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -450,7 +450,7 @@ void displink_rx_ack(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_nak @ fff95469  (1 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_nak @ fff95469  (1 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: NAK: no action [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -467,7 +467,7 @@ void displink_rx_nak(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_F1_sys @ fff957e6  (67 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_F1_sys @ fff957e6  (67 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: F1 sub: 01 SDR bridge, 02 DSP ISP tunnel, 03 CAT disable (0x20B46), 83 nop [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -503,7 +503,7 @@ void displink_rx_F1_sys(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ui_numentry_step @ fff95a64  (106 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * ui_numentry_step @ fff95a64  (106 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: ±step on 0x25D3C (0..99,999,999) and BCD copy to +0x7C..+0x7F
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -533,7 +533,7 @@ void ui_numentry_step(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ui_numentry_to_bcd @ fff95ace  (294 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * ui_numentry_to_bcd @ fff95ace  (294 bytes, 1 callers, export file fff94850_fff95ace.c)
  * Purpose: ±step on 0x25D3C (0..99,999,999) and BCD copy to +0x7C..+0x7F
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -586,9 +586,8 @@ void ui_numentry_to_bcd(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * displink_rx_E2 @ fff95bf4  (118 bytes, 1 callers, export file fff94851_fff95bf4.c)
+ * displink_rx_E2 @ fff95bf4  (118 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E2: +0xA5..+0xA7 on/off state [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -621,8 +620,9 @@ void displink_rx_E2(int param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * displink_rx_E4 @ fff95c6a  (10 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E4 @ fff95c6a  (10 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E4: answer to 0x7B (clears +0x82, set by caller) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -640,7 +640,7 @@ void displink_rx_E4(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E5 @ fff95c74  (22 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E5 @ fff95c74  (22 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E5: clears +0x80 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -659,7 +659,7 @@ void displink_rx_E5(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E6_beep @ fff95c8a  (50 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E6_beep @ fff95c8a  (50 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E6: beep_request(b1+1) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -689,7 +689,7 @@ void displink_rx_E6_beep(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E7 @ fff95cbc  (241 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E7 @ fff95cbc  (241 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E7: result code in +0x488 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -741,7 +741,7 @@ void displink_rx_E7(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E8 @ fff95dad  (184 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E8 @ fff95dad  (184 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E8: result code in +0x48C [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -783,7 +783,7 @@ void displink_rx_E8(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_C3 @ fff95e65  (50 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_C3 @ fff95e65  (50 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: C3 reply (to 0x43): payload -> +0x2ED, +0x3F6=1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -810,7 +810,7 @@ void displink_rx_C3(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_C4_C5 @ fff95e97  (50 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_C4_C5 @ fff95e97  (50 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: C4/C5 replies (to 0x45/0x44): payload -> +0x2ED, +0x3F6=1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -837,7 +837,7 @@ void displink_rx_C4_C5(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_E3_clock @ fff95ed3  (83 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_rx_E3_clock @ fff95ed3  (83 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: E3: 5 bytes -> +0xAD..+0xB1 (DISPLAY RTC date/time) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -860,7 +860,7 @@ void displink_rx_E3_clock(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_send_ack @ fff95f26  (25 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * displink_send_ack @ fff95f26  (25 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -881,7 +881,7 @@ void displink_send_ack(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_send_nak @ fff95f3f  (25 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * displink_send_nak @ fff95f3f  (25 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -902,7 +902,7 @@ void displink_send_nak(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_schedule @ fff95f58  (689 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_tx_schedule @ fff95f58  (689 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: priority list above
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -1088,7 +1088,7 @@ LAB_fff96124:
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_resend @ fff96209  (28 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * displink_tx_resend @ fff96209  (28 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: send 0x1456 again
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -1107,7 +1107,7 @@ void displink_tx_resend(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_60_hello @ fff96225  (28 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_tx_60_hello @ fff96225  (28 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: 0x60 hello reply (0xB6 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -1128,7 +1128,7 @@ void displink_tx_60_hello(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_60 @ fff96241  (532 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * displink_build_60 @ fff96241  (532 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: versions (MAIN/DISPLAY/DSP/SDR) + status block [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -1234,7 +1234,7 @@ void displink_build_60(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_status @ fff96455  (2367 bytes, 3 callers, export file fff95c6a_fff9810e.c)
+ * displink_build_status @ fff96455  (2367 bytes, 3 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: fills the 0x97-byte status block at 0x16A1
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -1539,7 +1539,7 @@ ushort displink_build_status(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_scope_mode @ fff96dde  (352 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_scope_mode @ fff96dde  (352 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 2 of displink_build_status (0xFFF96455): scope mode 0..0xB (the SS sel-6 coding)
  *     [fact: display-link.md "0x97-byte radio status block" table, row 2]
  * Tag: [fact]
@@ -1639,7 +1639,7 @@ undefined1 dlstat_scope_mode(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_vfo_side_flags @ fff96f3e  (121 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_vfo_side_flags @ fff96f3e  (121 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 3 of displink_build_status (0xFFF96455): bit 7 active VFO is B, bit 5 split, bits 4/6
  *     side flags [fact: display-link.md "0x97-byte radio status block" table, row 3]
  * Tag: [fact]
@@ -1688,7 +1688,7 @@ byte dlstat_vfo_side_flags(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_screen_flags @ fff96fb7  (84 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_screen_flags @ fff96fb7  (84 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 4 of displink_build_status (0xFFF96455): bit 5 when UI +0x95/+0x96/+0x97 is set [fact:
  *     display-link.md "0x97-byte radio status block" table, row 4]
  * Tag: [fact]
@@ -1726,7 +1726,7 @@ undefined1 dlstat_screen_flags(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_split_expand @ fff9700b  (62 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_split_expand @ fff9700b  (62 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 5 of displink_build_status (0xFFF96455): split / waterfall EXPAND << 5 / 0x9DC6 << 6
  *     [fact: display-link.md "0x97-byte radio status block" table, row 5]
  * Tag: [fact]
@@ -1747,7 +1747,7 @@ byte dlstat_split_expand(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_disp_sensitivity @ fff97049  (44 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_disp_sensitivity @ fff97049  (44 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 6 of displink_build_status (0xFFF96455): 3DSS and 2D DISP SENSITIVITY bits [fact:
  *     display-link.md "0x97-byte radio status block" table, row 6]
  * Tag: [fact]
@@ -1769,7 +1769,7 @@ byte dlstat_disp_sensitivity(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_swr_tx_flags @ fff97075  (67 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_swr_tx_flags @ fff97075  (67 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 7 of displink_build_status (0xFFF96455): HI-SWR warning bits and TX [fact:
  *     display-link.md "0x97-byte radio status block" table, row 7]
  * Tag: [fact]
@@ -1792,7 +1792,7 @@ byte dlstat_swr_tx_flags(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_led_mask @ fff970b8  (77 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_led_mask @ fff970b8  (77 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 8 of displink_build_status (0xFFF96455): the front-panel lamp map UI +0x34, high
  *     nibble masked by LED DIMMER [fact: display-link.md "0x97-byte radio status block" table, row 8]
  * Tag: [fact]
@@ -1825,7 +1825,7 @@ byte dlstat_led_mask(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_affft_overlay @ fff97105  (106 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_affft_overlay @ fff97105  (106 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 9 of displink_build_status (0xFFF96455): 0x9C5C << 3 (filter-graph AF-FFT overlay
  *     toggle) [fact: display-link.md "0x97-byte radio status block" table, row 9]
  * Tag: [fact]
@@ -1852,7 +1852,7 @@ byte dlstat_affft_overlay(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_tx_bpf @ fff9716f  (141 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_tx_bpf @ fff9716f  (141 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 10 of displink_build_status (0xFFF96455): TX BPF SEL of the mode / 0x80 [fact:
  *     display-link.md "0x97-byte radio status block" table, row 10]
  * Tag: [fact]
@@ -1895,7 +1895,7 @@ LAB_fff971e9:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_att_ipo_dnf @ fff971fc  (144 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_att_ipo_dnf @ fff971fc  (144 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 12 of displink_build_status (0xFFF96455): ATT, IPO/AMP and DNF/FM bits [fact:
  *     display-link.md "0x97-byte radio status block" table, row 12]
  * Tag: [fact]
@@ -1957,7 +1957,7 @@ byte dlstat_att_ipo_dnf(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_dsp_flags_agc @ fff9728c  (304 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_dsp_flags_agc @ fff9728c  (304 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 13 of displink_build_status (0xFFF96455): CW indicator, APF, CONTOUR, NOTCH flags and
  *     AGC [fact: display-link.md "0x97-byte radio status block" table, row 13]
  * Tag: [fact]
@@ -2066,7 +2066,7 @@ LAB_fff972c7:
 
 
 /* -----------------------------------------------------------------------------
- * mode_block_byte0 @ fff973bc  (116 bytes, 3 callers, export file fff95c6a_fff9810e.c)
+ * mode_block_byte0 @ fff973bc  (116 bytes, 3 callers, export file fff95bf4_fff97ebf.c)
  * Name on the doc page: FUN_fff973bc
  * Purpose: the active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) and +1 (BC, AGC) [fact]
  * Tag: [fact]
@@ -2113,7 +2113,7 @@ LAB_fff97422:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_tx_vfo_flags @ fff97430  (251 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_tx_vfo_flags @ fff97430  (251 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 14 of displink_build_status (0xFFF96455): TX-VFO flags: keyer, monitor, BK-IN/VOX
  *     [fact: display-link.md "0x97-byte radio status block" table, row 14]
  * Tag: [fact]
@@ -2190,7 +2190,7 @@ byte dlstat_tx_vfo_flags(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_tone_tuner @ fff97567  (363 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_tone_tuner @ fff97567  (363 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 15 of displink_build_status (0xFFF96455): FM tone mode and tuner indicator [fact:
  *     display-link.md "0x97-byte radio status block" table, row 15]
  * Tag: [fact]
@@ -2278,7 +2278,7 @@ byte dlstat_tone_tuner(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_peak @ fff976d2  (57 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_peak @ fff976d2  (57 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 16 of displink_build_status (0xFFF96455): PEAK & 7 and the +0x6F / timer 0x2A bits
  *     [fact: display-link.md "0x97-byte radio status block" table, row 16]
  * Tag: [fact]
@@ -2308,7 +2308,7 @@ byte dlstat_peak(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_span_center @ fff9770b  (36 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_span_center @ fff9770b  (36 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 17 of displink_build_status (0xFFF96455): span index and CENTER/CURSOR/FIX << 6 [fact:
  *     display-link.md "0x97-byte radio status block" table, row 17]
  * Tag: [fact]
@@ -2333,7 +2333,7 @@ byte dlstat_span_center(byte side)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_default_width @ fff977b3  (120 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_default_width @ fff977b3  (120 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 19 of displink_build_status (0xFFF96455): default WIDTH of the mode (bytes 19-20)
  *     [fact: display-link.md "0x97-byte radio status block" table, row 19]
  * Tag: [fact]
@@ -2387,7 +2387,7 @@ LAB_fff9781b:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_zero_in @ fff9782b  (192 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_zero_in @ fff9782b  (192 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 21 of displink_build_status (0xFFF96455): CW zero-in indicator from dsp_tune_offset
  *     (bytes 21-24) [fact: display-link.md "0x97-byte radio status block" table, row 21]
  * Tag: [fact]
@@ -2435,7 +2435,7 @@ void dlstat_zero_in(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_contour @ fff978eb  (116 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_contour @ fff978eb  (116 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 25 of displink_build_status (0xFFF96455): CONTOUR frequency / 10 and CONTOUR LEVEL
  *     sign (bytes 25-26) [fact: display-link.md "0x97-byte radio status block" table, row 25]
  * Tag: [fact]
@@ -2485,7 +2485,7 @@ LAB_fff97954:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_notch @ fff9795f  (116 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_notch @ fff9795f  (116 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 27 of displink_build_status (0xFFF96455): NOTCH frequency / 10 (bytes 27-28) [fact:
  *     display-link.md "0x97-byte radio status block" table, row 27]
  * Tag: [fact]
@@ -2535,7 +2535,7 @@ LAB_fff979c8:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_width @ fff979d3  (113 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_width @ fff979d3  (113 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 29 of displink_build_status (0xFFF96455): WIDTH (bytes 29-30) [fact: display-link.md
  *     "0x97-byte radio status block" table, row 29]
  * Tag: [fact]
@@ -2593,7 +2593,7 @@ LAB_fff97a36:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_shift @ fff97a44  (120 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_shift @ fff97a44  (120 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 31 of displink_build_status (0xFFF96455): IF SHIFT (bytes 31-32) [fact:
  *     display-link.md "0x97-byte radio status block" table, row 31]
  * Tag: [fact]
@@ -2643,7 +2643,7 @@ LAB_fff97ab1:
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_dsp_knob_flags @ fff97abc  (191 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_dsp_knob_flags @ fff97abc  (191 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 35 of displink_build_status (0xFFF96455): FUNC panel open, shift/width changed, APF,
  *     DSP-knob function bits [fact: display-link.md "0x97-byte radio status block" table, row 35]
  * Tag: [fact]
@@ -2696,7 +2696,7 @@ byte dlstat_dsp_knob_flags(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_voice_mem @ fff97b7b  (43 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_voice_mem @ fff97b7b  (43 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 36 of displink_build_status (0xFFF96455): voice-memory channel and DVS state [fact:
  *     display-link.md "0x97-byte radio status block" table, row 36]
  * Tag: [fact]
@@ -2716,7 +2716,7 @@ byte dlstat_voice_mem(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_scope_settings @ fff97ba6  (206 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_scope_settings @ fff97ba6  (206 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 37 of displink_build_status (0xFFF96455): scope CENTER/CURSOR/FIX, 3DSS, EXPAND and
  *     the bytes 37-42 [fact: display-link.md "0x97-byte radio status block" table, row 37]
  * Tag: [fact]
@@ -2772,7 +2772,7 @@ void dlstat_scope_settings(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_func_knob @ fff97c74  (131 bytes, 1 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_func_knob @ fff97c74  (131 bytes, 1 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 44 of displink_build_status (0xFFF96455): FUNC-knob function, or the code of the open
  *     setting pop-up [fact: display-link.md "0x97-byte radio status block" table, row 44]
  * Tag: [fact]
@@ -2824,7 +2824,7 @@ byte dlstat_func_knob(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_vfo_state_code @ fff97cf7  (294 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_vfo_state_code @ fff97cf7  (294 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 46 of displink_build_status (0xFFF96455): VFO state code (1 VFO, 2 memory, 3 memory
  *     tune, 4 PMS, 5 QMB, 7 60 m, 8 EMG, 9/10 split) [fact: display-link.md "0x97-byte radio status block" table,
  *     row 46]
@@ -2907,7 +2907,7 @@ byte dlstat_vfo_state_code(char param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_vfo_flags48 @ fff97e1d  (162 bytes, 2 callers, export file fff95c6a_fff9810e.c)
+ * dlstat_vfo_flags48 @ fff97e1d  (162 bytes, 2 callers, export file fff95bf4_fff97ebf.c)
  * Purpose: Status-block byte 48 of displink_build_status (0xFFF96455): VFO-block flags byte 48 [fact:
  *     display-link.md "0x97-byte radio status block" table, row 48]
  * Tag: [fact]
@@ -2958,7 +2958,7 @@ byte dlstat_vfo_flags48(vfo_side param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_meter @ fff9849e  (136 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * dlstat_meter @ fff9849e  (136 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: Status-block byte 95 of displink_build_status (0xFFF96455): meter value: S-meter in RX, else the
  *     selected TX meter [fact: display-link.md "0x97-byte radio status block" table, row 95]
  * Tag: [fact]
@@ -3008,7 +3008,7 @@ byte dlstat_meter(void)
 
 
 /* -----------------------------------------------------------------------------
- * dlstat_tuning_flags @ fff98526  (64 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * dlstat_tuning_flags @ fff98526  (64 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: Status-block byte 96 of displink_build_status (0xFFF96455): FINE/FAST, dial LOCK, DNR and rec+2 bit 1
  *     [fact: display-link.md "0x97-byte radio status block" table, row 96]
  * Tag: [fact]
@@ -3039,7 +3039,7 @@ byte dlstat_tuning_flags(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_64 @ fff986e0  (71 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_64 @ fff986e0  (71 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x64 (3 bytes): +0xB8 when changed [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3064,7 +3064,7 @@ void displink_tx_64(void)
 
 
 /* -----------------------------------------------------------------------------
- * ui_lamp_set @ fff98727  (112 bytes, 3 callers, export file fff981ba_fff99837.c)
+ * ui_lamp_set @ fff98727  (112 bytes, 3 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff98727
  * Purpose: set or clear one bit of UI +0x34 (status byte 8), the front-panel LED mask the DISPLAY passes to
  *     `led_set_mask` [fact] (#179)
@@ -3117,7 +3117,7 @@ void ui_lamp_set(char param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_7C @ fff98869  (51 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_7C @ fff98869  (51 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x7C (5 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3140,7 +3140,7 @@ void displink_tx_7C(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_7B @ fff9889c  (86 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_7B @ fff9889c  (86 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x7B (5 bytes), toggles +0x82 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3172,7 +3172,7 @@ void displink_tx_7B(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_7A @ fff988f2  (51 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_7A @ fff988f2  (51 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x7A (5 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3195,7 +3195,7 @@ void displink_tx_7A(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_70 @ fff98925  (42 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_70 @ fff98925  (42 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x70 (0xE3 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3221,7 +3221,7 @@ void displink_tx_70(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_70 @ fff9894f  (638 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_build_70 @ fff9894f  (638 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: calls `displink_70_msg`, `displink_70_msg2`, `displink_70_query`, `displink_copy_status` and 1 more; 638
  *     B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -3371,7 +3371,7 @@ void displink_build_70(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_req @ fff98bcd  (82 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_req @ fff98bcd  (82 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x43/0x44/0x45 request, type +0x1E0, length +0x1E2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3399,7 +3399,7 @@ void displink_tx_req(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_req @ fff98c1f  (86 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_build_req @ fff98c1f  (86 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: calls `FUN_fff98c75`, `mem_zero`; 86 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3422,7 +3422,7 @@ void displink_build_req(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_copy_status @ fff98cd3  (25 bytes, 12 callers, export file fff981ba_fff99837.c)
+ * displink_copy_status @ fff98cd3  (25 bytes, 12 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff98cd3
  * Purpose: builds the status block and copies it to the staging frame 0x1742 (every "status + …" builder) [fact]
  *     (#179)
@@ -3453,7 +3453,7 @@ void displink_copy_status(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_70_msg @ fff98cec  (111 bytes, 3 callers, export file fff981ba_fff99837.c)
+ * displink_70_msg @ fff98cec  (111 bytes, 3 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff98cec
  * Purpose: `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text [fact]
  * Tag: [fact]
@@ -3488,7 +3488,7 @@ void displink_70_msg(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_70_msg2 @ fff98d5b  (111 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * displink_70_msg2 @ fff98d5b  (111 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff98d5b
  * Purpose: `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text [fact]
  * Tag: [fact]
@@ -3523,7 +3523,7 @@ void displink_70_msg2(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_70_query @ fff98dca  (111 bytes, 19 callers, export file fff981ba_fff99837.c)
+ * displink_70_query @ fff98dca  (111 bytes, 19 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff98dca
  * Purpose: `0x70` dialog header (style 3/1/3, buttons 0/4/4) and 22 or 44 bytes of ROM text [fact]
  * Tag: [fact]
@@ -3558,7 +3558,7 @@ void displink_70_query(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_23 @ fff98e39  (31 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_23 @ fff98e39  (31 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x23 (0x37 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3579,7 +3579,7 @@ void displink_tx_23(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_23 @ fff98e96  (51 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_build_23 @ fff98e96  (51 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: no direct calls; 51 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3598,7 +3598,7 @@ void displink_build_23(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_30_31 @ fff98ecb  (177 bytes, 3 callers, export file fff981ba_fff99837.c)
+ * displink_tx_30_31 @ fff98ecb  (177 bytes, 3 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x30 (0xA0) or 0x31 (0xA3) by +0x1C2 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3644,7 +3644,7 @@ void displink_tx_30_31(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_34 @ fff98f7c  (53 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_tx_34 @ fff98f7c  (53 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: 0x34 (0xA3 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -3666,7 +3666,7 @@ void displink_tx_34(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_30 @ fff98fb1  (622 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_build_30 @ fff98fb1  (622 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: calls `FUN_fffc4f8f`, `displink_copy_status`, `mem_zero`, `mode_block_byte1` and 1 more; 622 B, callers:
  *     1 [fact] (code shape)
  * Tag: [fact]
@@ -3777,7 +3777,7 @@ void displink_build_30(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_block_byte1 @ fff9921f  (120 bytes, 5 callers, export file fff981ba_fff99837.c)
+ * mode_block_byte1 @ fff9921f  (120 bytes, 5 callers, export file fff9810e_fff997df.c)
  * Name on the doc page: FUN_fff9921f
  * Purpose: the active mode's per-mode block byte +0 (NOTCH/CONTOUR/APF/BI flags) and +1 (BC, AGC) [fact]
  * Tag: [fact]
@@ -3824,7 +3824,7 @@ LAB_fff99289:
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_31 @ fff99297  (478 bytes, 1 callers, export file fff981ba_fff99837.c)
+ * displink_build_31 @ fff99297  (478 bytes, 1 callers, export file fff9810e_fff997df.c)
  * Purpose: calls `FUN_fff99475`, `FUN_fff9959f`, `FUN_fff995cc`, `FUN_fff9960e` and 27 more; 478 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -3997,7 +3997,7 @@ void displink_build_31(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_scope_level @ fff99475  (298 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_scope_level @ fff99475  (298 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the SCOPE LEVEL pop-up (id 0x1E) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4066,7 +4066,7 @@ void popup_fmt_scope_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_peak @ fff9959f  (45 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_peak @ fff9959f  (45 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the PEAK pop-up (id 0x1F) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4093,7 +4093,7 @@ void popup_fmt_peak(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_rf_power @ fff995cc  (66 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_rf_power @ fff995cc  (66 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the RF POWER pop-up (id 0x2C) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4130,7 +4130,7 @@ void popup_fmt_rf_power(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_moni_level @ fff9960e  (91 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_moni_level @ fff9960e  (91 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the MONI LEVEL pop-up (id 0x2D) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4178,7 +4178,7 @@ void popup_fmt_moni_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_vox_gain @ fff996e2  (53 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_vox_gain @ fff996e2  (53 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the VOX GAIN pop-up (id 0x29) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4212,7 +4212,7 @@ void popup_fmt_vox_gain(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_vox_delay @ fff99717  (117 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_vox_delay @ fff99717  (117 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the VOX DELAY pop-up (id 0x2A) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4258,7 +4258,7 @@ void popup_fmt_vox_delay(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_anti_vox @ fff9978c  (83 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_anti_vox @ fff9978c  (83 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the ANTI VOX pop-up (id 0x2B) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4299,7 +4299,7 @@ void popup_fmt_anti_vox(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_proc_level @ fff997df  (88 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_proc_level @ fff997df  (88 bytes, 2 callers, export file fff9810e_fff997df.c)
  * Purpose: Value text of the PROC LEVEL pop-up (id 0x27) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4336,9 +4336,8 @@ void popup_fmt_proc_level(ushort param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * popup_fmt_mic_gain @ fff99837  (64 bytes, 2 callers, export file fff981ba_fff99837.c)
+ * popup_fmt_mic_gain @ fff99837  (64 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the MIC GAIN pop-up (id 0x25) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4378,8 +4377,9 @@ void popup_fmt_mic_gain(ushort param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * popup_fmt_cw_speed @ fff998e2  (72 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_cw_speed @ fff998e2  (72 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the CW SPEED pop-up (id 0x30) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4415,7 +4415,7 @@ void popup_fmt_cw_speed(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_cw_pitch @ fff9992a  (95 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_cw_pitch @ fff9992a  (95 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the CW PITCH pop-up (id 0x31) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4451,7 +4451,7 @@ void popup_fmt_cw_pitch(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_bk_delay @ fff99989  (90 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_bk_delay @ fff99989  (90 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the BK DELAY pop-up (id 0x32) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4492,7 +4492,7 @@ void popup_fmt_bk_delay(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_aess_level @ fff999e3  (70 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_aess_level @ fff999e3  (70 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the AESS pop-up (id 0x33) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4530,7 +4530,7 @@ void popup_fmt_aess_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_aess_cf @ fff99a29  (97 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_aess_cf @ fff99a29  (97 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the AESS CF pop-up (id 0x58) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4576,7 +4576,7 @@ void popup_fmt_aess_cf(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_amc_level @ fff99a8a  (53 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_amc_level @ fff99a8a  (53 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the AMC LEVEL pop-up (id 0x28) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4610,7 +4610,7 @@ void popup_fmt_amc_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_mgroup @ fff99abf  (177 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_mgroup @ fff99abf  (177 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the M GROUP pop-up (id 0x24) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4647,7 +4647,7 @@ void popup_fmt_mgroup(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_nb_level @ fff99b70  (53 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_nb_level @ fff99b70  (53 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the NB LEVEL pop-up (id 0x38) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4681,7 +4681,7 @@ void popup_fmt_nb_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_dnr_level @ fff99ba5  (89 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_dnr_level @ fff99ba5  (89 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the DNR LEVEL pop-up (id 0x39) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4721,7 +4721,7 @@ void popup_fmt_dnr_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_qmb @ fff99bfe  (90 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_qmb @ fff99bfe  (90 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the QMB pop-up (id 0x43) for displink_build_31 frame 0x31 [fact: display gui.md popup-slot
  *     table (#178)]
  * Tag: [fact]
@@ -4764,7 +4764,7 @@ void popup_fmt_qmb(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_mem_mode @ fff99c58  (74 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_mem_mode @ fff99c58  (74 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the MODE pop-up (id 0x55) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4794,7 +4794,7 @@ void popup_fmt_mem_mode(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_mem_scan @ fff99ca2  (80 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_mem_scan @ fff99ca2  (80 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the SCAN pop-up (id 0x44) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4820,7 +4820,7 @@ void popup_fmt_mem_scan(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_mem_type @ fff99cf2  (80 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_mem_type @ fff99cf2  (80 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the TYPE pop-up (id 0x45) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4846,7 +4846,7 @@ void popup_fmt_mem_type(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_dec_level @ fff99d42  (6 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_dec_level @ fff99d42  (6 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the DEC LVL pop-up (id 0x3A) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4865,7 +4865,7 @@ void popup_fmt_dec_level(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_keyer @ fff99d48  (58 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_keyer @ fff99d48  (58 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the KEYER pop-up (id 0x46) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4890,7 +4890,7 @@ void popup_fmt_keyer(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_bk_in @ fff99d82  (61 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_bk_in @ fff99d82  (61 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the BK IN pop-up (id 0x2F) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4918,7 +4918,7 @@ void popup_fmt_bk_in(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_mic_eq @ fff99ddb  (58 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_mic_eq @ fff99ddb  (58 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the MIC EQ pop-up (id 0x26) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4943,7 +4943,7 @@ void popup_fmt_mic_eq(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_contrast @ fff99e15  (53 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_contrast @ fff99e15  (53 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the CONTRAST pop-up (id 0x22) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -4977,7 +4977,7 @@ void popup_fmt_contrast(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dec_to_str_n @ fff99e4a  (453 bytes, 18 callers, export file fff99877_fff9ad39.c)
+ * dec_to_str_n @ fff99e4a  (453 bytes, 18 callers, export file fff99837_fff9acf4.c)
  * Purpose: (v, maxdigits 2..4, buf): decimal without leading zeros, returns the length; used by the DISPLAY-link
  *     frame builders [fact]
  * Tag: [fact]
@@ -5073,7 +5073,7 @@ char dec_to_str_n(ushort param_1,char param_2,char *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_dimmer @ fff9a00f  (53 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_dimmer @ fff9a00f  (53 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the DIMMER pop-up (id 0x23) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -5107,7 +5107,7 @@ void popup_fmt_dimmer(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_fmt_free_text @ fff9a044  (42 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * popup_fmt_free_text @ fff9a044  (42 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Value text of the free text pop-up (id 0x5E) for displink_build_31 frame 0x31 [fact: display gui.md
  *     popup-slot table (#178)]
  * Tag: [fact]
@@ -5132,7 +5132,7 @@ void popup_fmt_free_text(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_34 @ fff9a06e  (94 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_34 @ fff9a06e  (94 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `displink_copy_status`, `mem_zero`; 94 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5169,7 +5169,7 @@ void displink_build_34(byte param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_65_clock @ fff9a0cc  (52 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_65_clock @ fff9a0cc  (52 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x65 (9 bytes): +0xB2..+0xB6 (clock set) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5196,7 +5196,7 @@ void displink_tx_65_clock(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_65 @ fff9a100  (125 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_65 @ fff9a100  (125 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `mem_zero`; 125 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5219,7 +5219,7 @@ void displink_build_65(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_24 @ fff9a17d  (42 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_24 @ fff9a17d  (42 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x24 (0x9F bytes) settings [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5245,7 +5245,7 @@ void displink_tx_24(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_24 @ fff9a1a7  (298 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_24 @ fff9a1a7  (298 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `displink_copy_status`, `mem_zero`; 298 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5283,7 +5283,7 @@ void displink_build_24(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_50 @ fff9a2d1  (42 bytes, 2 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_50 @ fff9a2d1  (42 bytes, 2 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x50 (0xF5 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5309,7 +5309,7 @@ void displink_tx_50(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_50 @ fff9a2fb  (105 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_50 @ fff9a2fb  (105 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `FUN_fff9a364`, `FUN_fff9a42f`, `FUN_fff9a4f4`, `FUN_fff9a55e` and 5 more; 105 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -5360,7 +5360,7 @@ void displink_build_50(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_mycall @ fff9a364  (203 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_mycall @ fff9a364  (203 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 0: layout byte, cursor, title "MY CALL", char position, the 12-char text
  *     [fact: fff9a364; display-link.md frame 0x50]
  * Tag: [fact]
@@ -5400,7 +5400,7 @@ void dl50_mycall(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_memory_name @ fff9a42f  (197 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_memory_name @ fff9a42f  (197 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 1: channel label (memch_label_fmt), title "MEMORY NAME", the 12-char tag
  *     [fact: fff9a42f]
  * Tag: [fact]
@@ -5447,7 +5447,7 @@ void dl50_memory_name(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_cw_text @ fff9a4f4  (106 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_cw_text @ fff9a4f4  (106 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 2: layout + 0x10, title "CW TEXT", dl50_slot_label, dl50_msg_text [fact:
  *     fff9a4f4]
  * Tag: [fact]
@@ -5487,7 +5487,7 @@ void dl50_cw_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_rtty_text @ fff9a55e  (106 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_rtty_text @ fff9a55e  (106 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 3: title "RTTY TEXT", slot label and 50-char text [fact: fff9a55e]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5526,7 +5526,7 @@ void dl50_rtty_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_psk_text @ fff9a5c8  (135 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_psk_text @ fff9a5c8  (135 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 4: title "PSK TEXT", slot label and 50-char text [fact: fff9a5c8]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5568,7 +5568,7 @@ void dl50_psk_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_file_name @ fff9a64f  (170 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_file_name @ fff9a64f  (170 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 5: layout + 0x40, title "FILE NAME", 20-char text [fact: fff9a64f]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5612,7 +5612,7 @@ void dl50_file_name(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_preset_name @ fff9a6f9  (169 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl50_preset_name @ fff9a6f9  (169 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 payload for target 6: title "PRESET NAME", 12-char text [fact: fff9a6f9]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5655,7 +5655,7 @@ void dl50_preset_name(void)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_fmt_char_pos @ fff9a7a2  (98 bytes, 5 callers, export file fff99877_fff9ad39.c)
+ * kbd_fmt_char_pos @ fff9a7a2  (98 bytes, 5 callers, export file fff99837_fff9acf4.c)
  * Purpose: Keyboard frame 0x50: "Char #nn", nn = cursor UI +0xC1 + 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5687,7 +5687,7 @@ void kbd_fmt_char_pos(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbd_copy_text @ fff9a804  (55 bytes, 5 callers, export file fff99877_fff9ad39.c)
+ * kbd_copy_text @ fff9a804  (55 bytes, 5 callers, export file fff99837_fff9acf4.c)
  * Purpose: (src, dst, n): copies the keyboard text and marks the cursor character (+0xC1) with 0xFF unless UI
  *     +0x1BC [fact]
  * Tag: [fact]
@@ -5719,7 +5719,7 @@ void kbd_copy_text(undefined1 *param_1,undefined1 *param_2,byte param_3)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_slot_label @ fff9a83b  (46 bytes, 3 callers, export file fff99877_fff9ad39.c)
+ * dl50_slot_label @ fff9a83b  (46 bytes, 3 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50 bytes 0x9A..0x9C = 'c', 'h', '1' + g_ui.msg_slot_idx [fact: fff9a83b]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5739,7 +5739,7 @@ void dl50_slot_label(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl50_msg_text @ fff9a869  (50 bytes, 3 callers, export file fff99877_fff9ad39.c)
+ * dl50_msg_text @ fff9a869  (50 bytes, 3 callers, export file fff99837_fff9acf4.c)
  * Purpose: Frame 0x50: kbd_fmt_char_pos and the 50-char text of slot msg_slot_idx (UI msg_text) at byte 0xC2 [fact:
  *     fff9a869]
  * Tag: [fact]
@@ -5762,7 +5762,7 @@ void dl50_msg_text(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_3F @ fff9a89b  (72 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_3F @ fff9a89b  (72 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x3F (5 bytes): +0x92 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5786,7 +5786,7 @@ void displink_tx_3F(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_3A @ fff9a8e3  (66 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_3A @ fff9a8e3  (66 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x3A (0xA2 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5821,7 +5821,7 @@ void displink_tx_3A(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_3A @ fff9a925  (392 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_3A @ fff9a925  (392 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `displink_copy_status`, `mem_zero`; 392 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5875,7 +5875,7 @@ void displink_build_3A(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_40 @ fff9aaad  (74 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_40 @ fff9aaad  (74 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x40 (0x1FB bytes), rate-limited 100 units (timer 0x29) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5904,7 +5904,7 @@ void displink_tx_40(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_40 @ fff9aaf7  (51 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_40 @ fff9aaf7  (51 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `displink_copy_status`, `mem_zero`, `menu_page_serialize`; 51 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5924,7 +5924,7 @@ void displink_build_40(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_37 @ fff9ab2a  (45 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_tx_37 @ fff9ab2a  (45 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: 0x37 (0x240 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -5950,7 +5950,7 @@ void displink_tx_37(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_37 @ fff9ab57  (413 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * displink_build_37 @ fff9ab57  (413 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: calls `FUN_fff9acf4`, `FUN_fff9ad39`, `FUN_fff9ad7e`, `FUN_fff9adde` and 31 more; 413 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -6023,7 +6023,7 @@ void displink_build_37(void)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_scope_level @ fff9acf4  (69 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl37_slot_scope_level @ fff9acf4  (69 bytes, 1 callers, export file fff99837_fff9acf4.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0 (SCOPE LEVEL),
  *     value text by popup_fmt_scope_level [fact: fff9acf4]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6049,9 +6049,8 @@ void dl37_slot_scope_level(ushort param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * dl37_slot_peak @ fff9ad39  (69 bytes, 1 callers, export file fff99877_fff9ad39.c)
+ * dl37_slot_peak @ fff9ad39  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 1 (PEAK), value
  *     text by popup_fmt_peak [fact: fff9ad39]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
  *     panel"
@@ -6077,8 +6076,9 @@ void dl37_slot_peak(ushort param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * dl37_slot_marker @ fff9ad7e  (96 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_marker @ fff9ad7e  (96 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 2 (MARKER) [fact:
  *     fff9ad7e]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6106,7 +6106,7 @@ void dl37_slot_marker(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_color @ fff9adde  (83 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_color @ fff9adde  (83 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 3 (COLOR) [fact:
  *     fff9adde]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6135,7 +6135,7 @@ void dl37_slot_color(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_contrast @ fff9ae31  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_contrast @ fff9ae31  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 4 (CONTRAST),
  *     value text by popup_fmt_contrast [fact: fff9ae31]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6163,7 +6163,7 @@ void dl37_slot_contrast(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_dimmer @ fff9ae76  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_dimmer @ fff9ae76  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 5 (DIMMER), value
  *     text by popup_fmt_dimmer [fact: fff9ae76]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
  *     panel"
@@ -6191,7 +6191,7 @@ void dl37_slot_dimmer(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_mgroup @ fff9aebb  (64 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_mgroup @ fff9aebb  (64 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 6 (M GROUP)
  *     [fact: fff9aebb]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6215,7 +6215,7 @@ void dl37_slot_mgroup(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_mic_gain @ fff9aefb  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_mic_gain @ fff9aefb  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 7 (MIC GAIN),
  *     value text by popup_fmt_mic_gain [fact: fff9aefb]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6243,7 +6243,7 @@ void dl37_slot_mic_gain(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_mic_eq @ fff9af40  (114 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_mic_eq @ fff9af40  (114 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 8 (MIC EQ) [fact:
  *     fff9af40]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6286,7 +6286,7 @@ void dl37_slot_mic_eq(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_proc_level @ fff9afb2  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_proc_level @ fff9afb2  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 9 (PROC LEVEL),
  *     value text by popup_fmt_proc_level [fact: fff9afb2]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6314,7 +6314,7 @@ void dl37_slot_proc_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_amc_level @ fff9aff7  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_amc_level @ fff9aff7  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0A (AMC LEVEL),
  *     value text by popup_fmt_amc_level [fact: fff9aff7]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6342,7 +6342,7 @@ void dl37_slot_amc_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_vox_gain @ fff9b03c  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_vox_gain @ fff9b03c  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0B (VOX GAIN),
  *     value text by popup_fmt_vox_gain [fact: fff9b03c]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6370,7 +6370,7 @@ void dl37_slot_vox_gain(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_vox_delay @ fff9b081  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_vox_delay @ fff9b081  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0C (VOX DELAY),
  *     value text by popup_fmt_vox_delay [fact: fff9b081]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6398,7 +6398,7 @@ void dl37_slot_vox_delay(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_anti_vox @ fff9b0c6  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_anti_vox @ fff9b0c6  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0D (ANTI VOX),
  *     value text by popup_fmt_anti_vox [fact: fff9b0c6]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6426,7 +6426,7 @@ void dl37_slot_anti_vox(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_rf_power @ fff9b10b  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_rf_power @ fff9b10b  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0E (RF POWER),
  *     value text by popup_fmt_rf_power [fact: fff9b10b]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6454,7 +6454,7 @@ void dl37_slot_rf_power(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_moni_level @ fff9b150  (69 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_moni_level @ fff9b150  (69 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0F (MONI
  *     LEVEL), value text by popup_fmt_moni_level [fact: fff9b150]; only caller displink_build_37; ids per
  *     display-link.md "0x37 FUNC panel"
@@ -6482,7 +6482,7 @@ void dl37_slot_moni_level(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_keyer @ fff9b195  (125 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_keyer @ fff9b195  (125 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x10 (KEYER)
  *     [fact: fff9b195]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6528,7 +6528,7 @@ void dl37_slot_keyer(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_bk_in @ fff9b212  (143 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_bk_in @ fff9b212  (143 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x11 (BK IN)
  *     [fact: fff9b212]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6581,7 +6581,7 @@ void dl37_slot_bk_in(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_cw_speed @ fff9b2a1  (70 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_cw_speed @ fff9b2a1  (70 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x12 (CW SPEED),
  *     value text by popup_fmt_cw_speed [fact: fff9b2a1]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6609,7 +6609,7 @@ void dl37_slot_cw_speed(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_cw_pitch @ fff9b2e7  (70 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_cw_pitch @ fff9b2e7  (70 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x13 (CW PITCH),
  *     value text by popup_fmt_cw_pitch [fact: fff9b2e7]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6637,7 +6637,7 @@ void dl37_slot_cw_pitch(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_bk_delay @ fff9b32d  (70 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_bk_delay @ fff9b32d  (70 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x14 (BK DELAY),
  *     value text by popup_fmt_bk_delay [fact: fff9b32d]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6665,7 +6665,7 @@ void dl37_slot_bk_delay(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_message @ fff9b373  (91 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_message @ fff9b373  (91 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x16 (MESSAGE)
  *     [fact: fff9b373]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6697,7 +6697,7 @@ void dl37_slot_message(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_record @ fff9b3ce  (80 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_record @ fff9b3ce  (80 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x17/0x35
  *     (RECORD/STOP) [fact: fff9b3ce]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6723,7 +6723,7 @@ void dl37_slot_record(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_play @ fff9b41e  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_play @ fff9b41e  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x18 (PLAY)
  *     [fact: fff9b41e]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6747,7 +6747,7 @@ void dl37_slot_play(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_txw @ fff9b45f  (45 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_txw @ fff9b45f  (45 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x2D (TXW) [fact:
  *     fff9b45f]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6768,7 +6768,7 @@ void dl37_slot_txw(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_aess @ fff9b48c  (70 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_aess @ fff9b48c  (70 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x15 (AESS),
  *     value text by popup_fmt_aess_level [fact: fff9b48c]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6796,7 +6796,7 @@ void dl37_slot_aess(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_aess_cf @ fff9b4d2  (70 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_aess_cf @ fff9b4d2  (70 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x3A (AESS CF),
  *     value text by popup_fmt_aess_cf [fact: fff9b4d2]; only caller displink_build_37; ids per display-link.md
  *     "0x37 FUNC panel"
@@ -6824,7 +6824,7 @@ void dl37_slot_aess_cf(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_radio_setting @ fff9b518  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_radio_setting @ fff9b518  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x30 (RADIO
  *     SETTING) [fact: fff9b518]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6848,7 +6848,7 @@ void dl37_slot_radio_setting(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_cw_setting @ fff9b559  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_cw_setting @ fff9b559  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x31 (CW SETTING)
  *     [fact: fff9b559]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6872,7 +6872,7 @@ void dl37_slot_cw_setting(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_operation_setting @ fff9b59a  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_operation_setting @ fff9b59a  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x32 (OPERATION
  *     SETTING) [fact: fff9b59a]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6896,7 +6896,7 @@ void dl37_slot_operation_setting(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_display_setting @ fff9b5db  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_display_setting @ fff9b5db  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x33 (DISPLAY
  *     SETTING) [fact: fff9b5db]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6920,7 +6920,7 @@ void dl37_slot_display_setting(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_extension_setting @ fff9b61c  (65 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_extension_setting @ fff9b61c  (65 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x34 (EXTENSION
  *     SETTING) [fact: fff9b61c]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
  * Tag: [fact]
@@ -6944,7 +6944,7 @@ void dl37_slot_extension_setting(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dl37_slot_empty @ fff9b65d  (65 bytes, 10 callers, export file fff9ad7e_fff9c49a.c)
+ * dl37_slot_empty @ fff9b65d  (65 bytes, 10 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (offset): writes an empty FUNC-panel slot of frame 0x37: flag 0, function id 0xFF, 8 spaces [fact:
  *     fff9b65d]; displink_build_37 uses it for slot 25 and slots 33..40
  * Tag: [fact]
@@ -6967,7 +6967,7 @@ void dl37_slot_empty(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_39 @ fff9b69e  (42 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_tx_39 @ fff9b69e  (42 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: 0x39 (0xE9 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -6993,7 +6993,7 @@ void displink_tx_39(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_39 @ fff9b6c8  (848 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_build_39 @ fff9b6c8  (848 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: calls `FUN_fffe5783`, `displink_39_keyer_texts`, `displink_39_rtty_labels`, `displink_copy_status` and 1
  *     more; 848 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -7138,7 +7138,7 @@ void displink_build_39(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_39_keyer_texts @ fff9ba18  (136 bytes, 2 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_39_keyer_texts @ fff9ba18  (136 bytes, 2 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: Frame 0x39, message type 1 (CW): copies the five KM keyer texts 0x96A0+n*0x33 into UI +0xC2.. (5 x 0x32)
  *     [inference]
  * Tag: [inference]
@@ -7196,7 +7196,7 @@ void displink_39_keyer_texts(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_39_rtty_labels @ fff9baa0  (131 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_39_rtty_labels @ fff9baa0  (131 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: Frame 0x39, message type 2 (RTTY): first 8 bytes of the five EM text slots 0x979E.. into frame bytes
  *     0xC0..0xE7 (0x1801..) [inference]
  * Tag: [inference]
@@ -7226,7 +7226,7 @@ void displink_39_rtty_labels(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_41 @ fff9bb23  (45 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_tx_41 @ fff9bb23  (45 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: 0x41 (0x146 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7252,7 +7252,7 @@ void displink_tx_41(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_41 @ fff9bb50  (1128 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_build_41 @ fff9bb50  (1128 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: calls `FUN_fff9bfe1`, `FUN_fff9c04a`, `FUN_fff9c089`, `FUN_fff9c1a1` and 7 more; 1128 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -7422,7 +7422,7 @@ void displink_build_41(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_group_of @ fff9bfe1  (105 bytes, 4 callers, export file fff9ad7e_fff9c49a.c)
+ * memch_group_of @ fff9bfe1  (105 bytes, 4 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (ch): memory group 1..5 from the group sizes at ROM 0xFFF804D3, 6 PMS (99..0x74), 7 60 m (0x75..0x83), 8
  *     EMG [fact: fff9bfe1]
  * Tag: [fact]
@@ -7470,7 +7470,7 @@ char memch_group_of(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * memch_special_limit @ fff9c04a  (63 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * memch_special_limit @ fff9c04a  (63 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: Upper channel limit of the region's 60 m / EMG channels: 0x75 for dest 0x020B / 0x1CB9 / 0x4380 /
  *     0x60E6, 0x84 for 0x315B / 0x50E2, 0 otherwise [fact: fff9c04a]
  * Tag: [fact]
@@ -7505,7 +7505,7 @@ undefined1 memch_special_limit(void)
 
 
 /* -----------------------------------------------------------------------------
- * memch_label_fmt @ fff9c089  (217 bytes, 3 callers, export file fff9ad7e_fff9c49a.c)
+ * memch_label_fmt @ fff9c089  (217 bytes, 3 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: (buf, ch): channel label text: 'M-nn' for 1..99, 'M-PL'/'M-PU' n for the PMS pairs 0x63..0x74, '5-nn'
  *     for 60 m 0x75..0x83, 'EMG' above [fact: fff9c089; display-link.md frame 0x41]
  * Tag: [fact]
@@ -7581,7 +7581,7 @@ undefined4 * memch_label_fmt(undefined4 *param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_20_status @ fff9c42a  (42 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_tx_20_status @ fff9c42a  (42 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: 0x20 (0x99 bytes) status, default frame, sent only when changed [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7607,7 +7607,7 @@ void displink_tx_20_status(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_build_20 @ fff9c454  (25 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_build_20 @ fff9c454  (25 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: calls `displink_build_status`, `mem_zero`; 25 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7625,7 +7625,7 @@ void displink_build_20(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_62 @ fff9c46d  (45 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_tx_62 @ fff9c46d  (45 bytes, 1 callers, export file fff9ad39_fff9c46d.c)
  * Purpose: 0x62 (0x197 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7649,9 +7649,8 @@ void displink_tx_62(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * displink_build_62 @ fff9c49a  (187 bytes, 1 callers, export file fff9ad7e_fff9c49a.c)
+ * displink_build_62 @ fff9c49a  (187 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: calls `displink_62_value`, `displink_copy_status`, `mem_zero`; 187 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7695,8 +7694,9 @@ void displink_build_62(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * displink_62_value @ fff9c555  (93 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * displink_62_value @ fff9c555  (93 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Name on the doc page: FUN_fff9c555
  * Purpose: 3-character value of an alignment item for `0x62` [fact]
  * Tag: [fact]
@@ -7720,7 +7720,7 @@ void displink_62_value(ushort param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_tx_start @ fff9c5b2  (38 bytes, 25 callers, export file fff9c555_fff9db66.c)
+ * displink_tx_start @ fff9c5b2  (38 bytes, 25 callers, export file fff9c49a_fff9db37.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -7740,7 +7740,7 @@ void displink_tx_start(ushort param_1)
 
 
 /* -----------------------------------------------------------------------------
- * displink_put_sum @ fff9c5d8  (55 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * displink_put_sum @ fff9c5d8  (55 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -7764,7 +7764,7 @@ void displink_put_sum(int param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_check_sum @ fff9c60f  (70 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * displink_check_sum @ fff9c60f  (70 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -7787,7 +7787,7 @@ bool displink_check_sum(int param_1,short param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mem_zero @ fff9c655  (18 bytes, 29 callers, export file fff9c555_fff9db66.c)
+ * mem_zero @ fff9c655  (18 bytes, 29 callers, export file fff9c49a_fff9db37.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -7809,7 +7809,7 @@ void mem_zero(ushort param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * displink_copy_if_changed @ fff9c667  (68 bytes, 13 callers, export file fff9c555_fff9db66.c)
+ * displink_copy_if_changed @ fff9c667  (68 bytes, 13 callers, export file fff9c49a_fff9db37.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
  */
@@ -7841,7 +7841,7 @@ byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * dec_to_str_u8 @ fff9c6f0  (151 bytes, 20 callers, export file fff9c555_fff9db66.c)
+ * dec_to_str_u8 @ fff9c6f0  (151 bytes, 20 callers, export file fff9c49a_fff9db37.c)
  * Purpose: (v, buf): u8 as 1..3 ASCII digits without leading zeros; returns the length [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7882,7 +7882,7 @@ char dec_to_str_u8(byte param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dec_to_str_u16 @ fff9c843  (281 bytes, 11 callers, export file fff9c555_fff9db66.c)
+ * dec_to_str_u16 @ fff9c843  (281 bytes, 11 callers, export file fff9c49a_fff9db37.c)
  * Purpose: (v, buf): u16 as 1..5 ASCII digits without leading zeros; returns the length [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -7951,7 +7951,7 @@ char dec_to_str_u16(ushort param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_isp_request @ fff9d94d  (10 bytes, 1 callers, export file fff9c555_fff9db66.c)
+ * dsp_isp_request @ fff9d94d  (10 bytes, 1 callers, export file fff9c49a_fff9db37.c)
  * Purpose: set 0x1C63 / 0x1C8D
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -7970,7 +7970,7 @@ void dsp_isp_request(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_isp_bridge @ fffa0c79  (449 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * dsp_isp_bridge @ fffa0c79  (449 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: see above
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8097,7 +8097,7 @@ void dsp_isp_bridge(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_bridge_request @ fffa1576  (10 bytes, 1 callers, export file fffa0032_fffa3083.c)
+ * sdr_bridge_request @ fffa1576  (10 bytes, 1 callers, export file fff9ffb1_fffa2ff7.c)
  * Purpose: set 0x1C63 / 0x1C8D
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8116,7 +8116,7 @@ void sdr_bridge_request(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_uart_start @ fffb1702  (28 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * displink_uart_start @ fffb1702  (28 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: R_SCI1_Start + arm receive (0x9E86, 0x204)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8136,7 +8136,7 @@ void displink_uart_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_ready @ fffb171e  (15 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * displink_rx_ready @ fffb171e  (15 bytes, 3 callers, export file fffb1303_fffb1d79.c)
  * Purpose: flag 0xA08A; `rx_buf` returns 0x9E86 (the decompiler shows `void`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8153,7 +8153,7 @@ byte displink_rx_ready(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_rearm @ fffb172d  (24 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * displink_rx_rearm @ fffb172d  (24 bytes, 3 callers, export file fffb1303_fffb1d79.c)
  * Purpose: flag 0xA08A; `rx_buf` returns 0x9E86 (the decompiler shows `void`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8172,7 +8172,7 @@ void displink_rx_rearm(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_done @ fffb1745  (10 bytes, 1 callers, export file fffb1325_fffb1dad.c)
+ * displink_rx_done @ fffb1745  (10 bytes, 1 callers, export file fffb1303_fffb1d79.c)
  * Purpose: flag 0xA08A; `rx_buf` returns 0x9E86 (the decompiler shows `void`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8190,7 +8190,7 @@ void displink_rx_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_rx_buf @ fffb174f  (12 bytes, 3 callers, export file fffb1325_fffb1dad.c)
+ * displink_rx_buf @ fffb174f  (12 bytes, 3 callers, export file fffb1303_fffb1d79.c)
  * Purpose: flag 0xA08A; `rx_buf` returns 0x9E86 (the decompiler shows `void`)
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8207,7 +8207,7 @@ uint displink_rx_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * displink_uart_send @ fffb175b  (16 bytes, 18 callers, export file fffb1325_fffb1dad.c)
+ * displink_uart_send @ fffb175b  (16 bytes, 18 callers, export file fffb1303_fffb1d79.c)
  * Purpose: `R_SCI1_Serial_Send(buf, len)`
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8225,7 +8225,7 @@ void displink_uart_send(uint param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sci1_tx_end @ fffb176b  (19 bytes, 6 callers, export file fffb1325_fffb1dad.c)
+ * sci1_tx_end @ fffb176b  (19 bytes, 6 callers, export file fffb1303_fffb1d79.c)
  * Purpose: SSR.TEND
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/display-link.md
@@ -8244,7 +8244,7 @@ byte sci1_tx_end(void)
 
 
 /* -----------------------------------------------------------------------------
- * beep_request @ fffb2da6  (78 bytes, 346 callers, export file fffb1f42_fffb2f9e.c)
+ * beep_request @ fffb2da6  (78 bytes, 346 callers, export file fffb1dad_fffb2f79.c)
  * Purpose: 0x12041 = code, 0x12040 = pending [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8274,7 +8274,7 @@ void beep_request(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * key_011_press @ fffbcb19  (94 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * key_011_press @ fffbcb19  (94 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Name on the doc page: FUN_fffbcb19
  * Purpose: soft key 0x011 (touch on the filter graph, #212): press check, short = toggle UI +0x70, long = toggle
  *     0x9C5C (status byte 9 bit 3, AF-FFT overlay) [fact; overlay meaning inference] (#179; in `names_main.tsv`,
@@ -8320,7 +8320,7 @@ void key_011_press(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_011_short @ fffbcb77  (70 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * key_011_short @ fffbcb77  (70 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Name on the doc page: FUN_fffbcb77
  * Purpose: soft key 0x011 (touch on the filter graph, #212): press check, short = toggle UI +0x70, long = toggle
  *     0x9C5C (status byte 9 bit 3, AF-FFT overlay) [fact; overlay meaning inference] (#179; in `names_main.tsv`,
@@ -8354,7 +8354,7 @@ void key_011_short(void)
 
 
 /* -----------------------------------------------------------------------------
- * key_011_long @ fffbcbbd  (45 bytes, 1 callers, export file fffbc406_fffbd249.c)
+ * key_011_long @ fffbcbbd  (45 bytes, 1 callers, export file fffbc3bd_fffbd232.c)
  * Name on the doc page: FUN_fffbcbbd
  * Purpose: soft key 0x011 (touch on the filter graph, #212): press check, short = toggle UI +0x70, long = toggle
  *     0x9C5C (status byte 9 bit 3, AF-FFT overlay) [fact; overlay meaning inference] (#179; in `names_main.tsv`,
@@ -8377,7 +8377,7 @@ void key_011_long(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup0_refresh @ fffbd326  (20 bytes, 6 callers, export file fffbd25d_fffbd600.c)
+ * popup0_refresh @ fffbd326  (20 bytes, 6 callers, export file fffbd249_fffbd5e9.c)
  * Purpose: popup_open_2000 when the pop-up code UI +0x1C2 is 0 (METER) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8398,7 +8398,7 @@ void popup0_refresh(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_open_2000 @ fffc078d  (13 bytes, 5 callers, export file fffc04a0_fffc18ff.c)
+ * popup_open_2000 @ fffc078d  (13 bytes, 5 callers, export file fffc0492_fffc18e1.c)
  * Purpose: popup_mark_start, then popup_open_timed(2000) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8417,7 +8417,7 @@ void popup_open_2000(void)
 
 
 /* -----------------------------------------------------------------------------
- * mode_popup_select @ fffc0df7  (58 bytes, 6 callers, export file fffc04a0_fffc18ff.c)
+ * mode_popup_select @ fffc0df7  (58 bytes, 6 callers, export file fffc0492_fffc18e1.c)
  * Purpose: (mode): +0x1D1 = 0, vfo_mode_set, beep while a pop-up is shown, mode cursor +0x424 = mode [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8441,7 +8441,7 @@ void mode_popup_select(byte mode)
 
 
 /* -----------------------------------------------------------------------------
- * ui_key_reject @ fffc21c7  (33 bytes, 5 callers, export file fffc1913_fffc2991.c)
+ * ui_key_reject @ fffc21c7  (33 bytes, 5 callers, export file fffc18ff_fffc296f.c)
  * Purpose: UI +0x43C = 0, +0x409 = 1 (key consumed), beep_request(3) (error beep) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8461,7 +8461,7 @@ void ui_key_reject(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_close @ fffc8beb  (189 bytes, 64 callers, export file fffc7764_fffc8f30.c)
+ * popup_close @ fffc8beb  (189 bytes, 64 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: UI +0x1C2 = 0xFF, +0x1C1 = 0, +0x1C0 = 1, 0x1B4EF = 0, clears +0x8F / +0x41C (+0x43B / +0x43C for codes
  *     'U'/'D'/'E') [fact]
  * Tag: [fact]
@@ -8507,7 +8507,7 @@ void popup_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_duration_get @ fffc8cbb  (209 bytes, 76 callers, export file fffc7764_fffc8f30.c)
+ * popup_duration_get @ fffc8cbb  (209 bytes, 76 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (id): display time of pop-up id for POP-UP TIME 0x9B0E: index tables 0xFFF834BE (ids 0..0xD) /
  *     0xFFF834D6 (0x1E..0x58) select a 3 x u16 row in 0xFFF8854E / 0xFFF88566; id 0x5E uses 0xFFF88578 (#157,
  *     listing check) [fact]
@@ -8571,7 +8571,7 @@ undefined2 popup_duration_get(byte param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_open_timed @ fffc8d8c  (76 bytes, 86 callers, export file fffc7764_fffc8f30.c)
+ * popup_open_timed @ fffc8d8c  (76 bytes, 86 callers, export file fffc774c_fffc8ee2.c)
  * Purpose: (time): 0x1B4EF = 1 and soft timer 0x39 = time (0: no timer), UI +0x1C1 = 1 (shown), +0x1C0 = 1, +0x70 =
  *     0; callers pass popup_duration_get(code) [fact]
  * Tag: [fact]
@@ -8600,7 +8600,7 @@ void popup_open_timed(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * popup_mark_start @ fffc909f  (21 bytes, 1 callers, export file fffc8f48_fffc9be2.c)
+ * popup_mark_start @ fffc909f  (21 bytes, 1 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: 0x1B4F2 = 1, soft timer 0x48 = 750; what the mark shows [unknown] [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8619,7 +8619,7 @@ void popup_mark_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * popup_mark_clear @ fffc90b4  (23 bytes, 7 callers, export file fffc8f48_fffc9be2.c)
+ * popup_mark_clear @ fffc90b4  (23 bytes, 7 callers, export file fffc8f30_fffc9b83.c)
  * Purpose: 0x1B4F2 = 0, UI +0x1C3 = 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8638,7 +8638,7 @@ void popup_mark_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * dialog_insert_fw_sd @ fffcf4d5  (29 bytes, 1 callers, export file fffcf01c_fffcf6ac.c)
+ * dialog_insert_fw_sd @ fffcf4d5  (29 bytes, 1 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Dialog n = 2 (UI +0xBB; ROM text "INSERT FIRMWARE / SD CARD"), +0x448 = 0, dialog_open [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8658,7 +8658,7 @@ void dialog_insert_fw_sd(void)
 
 
 /* -----------------------------------------------------------------------------
- * dialog_no_sd_card @ fffcf4f2  (29 bytes, 9 callers, export file fffcf01c_fffcf6ac.c)
+ * dialog_no_sd_card @ fffcf4f2  (29 bytes, 9 callers, export file fffceff1_fffcf68f.c)
  * Purpose: Dialog n = 3 (ROM text "NO SD CARD"), +0x448 = 0, dialog_open [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8678,7 +8678,7 @@ void dialog_no_sd_card(void)
 
 
 /* -----------------------------------------------------------------------------
- * dialog_open @ fffcf6ac  (49 bytes, 13 callers, export file fffcf01c_fffcf6ac.c)
+ * dialog_open @ fffcf6ac  (49 bytes, 13 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: UI +0x86 = 1 (frame 0x70 due), selected button +0xBD = 0, clears +0x70 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8699,8 +8699,9 @@ void dialog_open(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * dialog_close_to_menu_ok @ fffcfe77  (12 bytes, 5 callers, export file fffcf6dd_fffd016f.c)
+ * dialog_close_to_menu_ok @ fffcfe77  (12 bytes, 5 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: dialog_close_to_menu, returns 1; the SD-card dialog key handlers call it at step +0x3F7 = 2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/display-link.md
@@ -8720,7 +8721,7 @@ undefined1 dialog_close_to_menu_ok(void)
 
 
 /* -----------------------------------------------------------------------------
- * dialog_close_to_menu @ fffd0149  (38 bytes, 4 callers, export file fffcf6dd_fffd016f.c)
+ * dialog_close_to_menu @ fffd0149  (38 bytes, 4 callers, export file fffcf6ac_fffd0149.c)
  * Purpose: Clears UI +0x88 (keyboard) and +0x86 (dialog), +0x3FF = 2 (the value menu_select_group also sets); back
  *     to the menu page [fact]
  * Tag: [fact]
@@ -8740,9 +8741,8 @@ void dialog_close_to_menu(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * sd_load_block_answer @ fffd077e  (388 bytes, 1 callers, export file fffd0194_fffd1252.c)
+ * sd_load_block_answer @ fffd077e  (388 bytes, 1 callers, export file fffd016f_fffd1130.c)
  * Purpose: SD load step: when the DISPLAY's answer (g_ui.sd_answer) matches the expected offset/length (0x1FF02 /
  *     0x1FF04), stores the block, advances; after the last block checks the region code and copies the loaded image
  *     into the memory / QMB headers, else requests the next block (sd_step = 6) [fact: fffd077e]; only caller
@@ -8838,7 +8838,7 @@ uint sd_load_block_answer(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dispreq_e8_result @ fffe376a  (527 bytes, 1 callers, export file fffe2912_fffe3b54.c)
+ * dispreq_e8_result @ fffe376a  (527 bytes, 1 callers, export file fffe2811_fffe3b4d.c)
  * Name on the doc page: FUN_fffe376a
  * Purpose: E8 code actions (called by `dispreq_e8_task`) [fact]
  * Tag: [fact]

@@ -669,9 +669,13 @@ undefined4 vec026_ICU_SWINT2(undefined4 param_1)
 }
 
 
-// ===== FUN_fff91228 @ fff91228 (32 bytes)
+// ===== chg_pmusr @ fff91228 (32 bytes)
 
-undefined4 FUN_fff91228(undefined4 param_1)
+/* CC-RX intrinsic: switch to user mode: if PSW.PM (bit 20) is clear, set it and return through RTE
+   with the caller's PC (XCHG builds the frame); no callers [inference for the name: CC-RX's
+   chg_pmusr does this; the code at 0xFFF91228..0xFFF91247 is a fact] */
+
+undefined4 chg_pmusr(undefined4 param_1)
 
 {
   uint in_PSW;
@@ -683,9 +687,11 @@ undefined4 FUN_fff91228(undefined4 param_1)
 }
 
 
-// ===== FUN_fff91248 @ fff91248 (4 bytes)
+// ===== set_bpsw @ fff91248 (4 bytes)
 
-void FUN_fff91248(void)
+/* CC-RX intrinsic: BPSW = R1 (MVTC R1,BPSW; RTS); no callers [inference for the name] */
+
+void set_bpsw(uint value)
 
 {
   return;
@@ -706,9 +712,11 @@ uint get_bpsw(void)
 }
 
 
-// ===== FUN_fff9125f @ fff9125f (4 bytes)
+// ===== set_bpc @ fff9125f (4 bytes)
 
-void FUN_fff9125f(void)
+/* CC-RX intrinsic: BPC = R1 (MVTC R1,BPC; RTS); no callers [inference for the name] */
+
+void set_bpc(uint value)
 
 {
   return;
@@ -729,9 +737,11 @@ uint get_bpc(void)
 }
 
 
-// ===== FUN_fff91276 @ fff91276 (4 bytes)
+// ===== set_extb @ fff91276 (4 bytes)
 
-void FUN_fff91276(void)
+/* CC-RX intrinsic: EXTB = R1 (MVTC R1,EXTB; RTS); no callers [inference for the name] */
+
+void set_extb(uint value)
 
 {
   return;
@@ -752,18 +762,22 @@ uint get_extb(void)
 }
 
 
-// ===== FUN_fff9128d @ fff9128d (4 bytes)
+// ===== set_acc_hi @ fff9128d (4 bytes)
 
-void FUN_fff9128d(void)
+/* ACC bits 63..32 = R1 (MVTACHI R1,A0; RTS); no callers [inference for the name] */
+
+void set_acc_hi(uint value)
 
 {
   return;
 }
 
 
-// ===== FUN_fff91291 @ fff91291 (4 bytes)
+// ===== set_acc_lo @ fff91291 (4 bytes)
 
-void FUN_fff91291(void)
+/* ACC bits 31..0 = R1 (MVTACLO R1,A0; RTS); no callers [inference for the name] */
+
+void set_acc_lo(uint value)
 
 {
   return;
@@ -798,32 +812,38 @@ uint get_acc_mi(void)
 }
 
 
-// ===== FUN_fff912bb @ fff912bb (4 bytes)
+// ===== byte_bset @ fff912bb (4 bytes)
 
-void FUN_fff912bb(byte *param_1,byte param_2)
+/* *p |= 1 << (bit & 7) (BSET R2,[R1].B; RTS); no callers [fact for the code] */
+
+void byte_bset(byte *p,uint bit)
 
 {
-  *param_1 = *param_1 | '\x01' << (param_2 & 7);
+  *p = *p | '\x01' << ((byte)bit & 7);
   return;
 }
 
 
-// ===== FUN_fff912bf @ fff912bf (4 bytes)
+// ===== byte_bclr @ fff912bf (4 bytes)
 
-void FUN_fff912bf(byte *param_1,byte param_2)
+/* *p &= ~(1 << (bit & 7)) (BCLR R2,[R1].B; RTS); no callers [fact for the code] */
+
+void byte_bclr(byte *p,uint bit)
 
 {
-  *param_1 = *param_1 & ~('\x01' << (param_2 & 7));
+  *p = *p & ~('\x01' << ((byte)bit & 7));
   return;
 }
 
 
-// ===== FUN_fff912c3 @ fff912c3 (4 bytes)
+// ===== byte_bnot @ fff912c3 (4 bytes)
 
-void FUN_fff912c3(byte *param_1,byte param_2)
+/* *p ^= 1 << (bit & 7) (BNOT R2,[R1].B; RTS); no callers [fact for the code] */
+
+void byte_bnot(byte *p,uint bit)
 
 {
-  *param_1 = *param_1 ^ '\x01' << (param_2 & 7);
+  *p = *p ^ '\x01' << ((byte)bit & 7);
   return;
 }
 
