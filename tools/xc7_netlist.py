@@ -391,8 +391,11 @@ def build(fasm_lines, db, progress=False):
     return finish(nl, db)
 
 
-PRUNE = {"CARRY4": ("O[0]", "O[1]", "O[2]", "O[3]", "CO[3]"), "MUXF7": ("O",), "MUXF8": ("O",),
-         "BUFIO": ("O",), "BUFR": ("O",)}
+# A cell is dropped only when none of these outputs has a sink. CO[0..2] count too: a slice can take the
+# carry out of one bit through its xOUTMUX.CY / xFFMUX.CY (e.g. the sign bit above a 32-bit adder). Leaving
+# them out dropped 30 CARRY4s and tied their AMUX/BMUX/CMUX loads to the default VCC (#232).
+PRUNE = {"CARRY4": ("O[0]", "O[1]", "O[2]", "O[3]", "CO[0]", "CO[1]", "CO[2]", "CO[3]"), "MUXF7": ("O",),
+         "MUXF8": ("O",), "BUFIO": ("O",), "BUFR": ("O",)}
 
 
 def finish(nl, db):
@@ -856,6 +859,30 @@ def selftest(db):
     assert q["drivers"] == [sname + "/AFF.Q"] and sname + "/ALUT.I0" in q["sinks"], q
     print("selftest: toggle flop %s (LUT6 !A1 -> FDRE -> INT %s -> %s -> %s -> A1): ok" % (
         sname, aq_int, mid, a1_int))
+    # a CARRY4 whose only load is CO[0] through AOUTMUX.CY must be kept (#232)
+    amux_int = int_wire(pinw["AMUX"])
+    prev = {amux_int: None}
+    q = [amux_int]
+    while q and a1_int not in prev:
+        nq = []
+        for w in q:
+            for o in sorted(dsts.get(w, ())):
+                if o not in prev:
+                    prev[o] = w
+                    nq.append(o)
+        q = nq
+    assert a1_int in prev, (amux_int, a1_int)
+    path = [a1_int]
+    while prev[path[-1]] is not None:
+        path.append(prev[path[-1]])
+    path.reverse()
+    lines = [pre + "ALUT.INIT[63:0] = 64'h5555555555555555", pre + "AOUTMUX.CY", pre + "PRECYINIT.C1"] + \
+        ["%s.%s.%s" % (it, path[i + 1], path[i]) for i in range(len(path) - 1)]
+    nl = build(lines, d)
+    cells = {c["name"]: c for c in nl["cells"]}
+    cy = cells.get(sname + "/CARRY4")
+    assert cy and cy["pins"]["CO[0]"][0] == cells[sname + "/ALUT"]["pins"]["I0"][0], cy
+    print("selftest: CARRY4 kept for a CO[0]-only load (AOUTMUX.CY -> A1): ok")
     # read_fasm merge
     f = read_fasm(["T_X1Y1.A.B[3:0] = 4'b1010", "T_X1Y1.A.B[5]", "T_X1Y1.C"])
     assert f["T_X1Y1"]["A.B"] == 0b101010 and f["T_X1Y1"]["C"] == 1, f
