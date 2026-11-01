@@ -3975,7 +3975,7 @@ void trx_sequencer(void)
         bVar3 = false;
       }
       if (bVar3) {
-        if (DAT_00020fcc != 4) {
+        if (spk_route != 4) {
           bVar3 = ear_det();
           if (!bVar3) {
             bVar2 = PORT7_PODR;
@@ -4015,14 +4015,14 @@ void trx_sequencer(void)
   else if (g_ui.trx_state == 2) {
     bVar2 = swtimer_expired(0x11);
     if (bVar2 == 1) {
-      DAT_00012051 = 1;
+      pc_key_last = 1;
                     /* TX delay over: state 3, SEND_A/SEND_B may key [fact: tx-protection.md] */
       g_ui.trx_state = 3;
     }
   }
   else if (g_ui.trx_state == 3) {
     bVar2 = PORT1_PIDR;
-    if (DAT_00012051 != (bVar2 >> 4 & 1)) {
+    if (pc_key_last != (bVar2 >> 4 & 1)) {
       bVar2 = PORT1_PIDR;
       if ((bVar2 >> 4 & 1) == 1) {
         send_a_set(0);
@@ -4049,7 +4049,7 @@ void trx_sequencer(void)
           }
         }
         else {
-          if ((DAT_00012050 == '\0') || (iVar4 = tx_breakin_on(), iVar4 == 1)) {
+          if ((pc_keying_active == '\0') || (iVar4 = tx_breakin_on(), iVar4 == 1)) {
             bVar3 = true;
           }
           else {
@@ -4063,7 +4063,7 @@ void trx_sequencer(void)
       }
                     /* Port Input [sfr] */
       bVar2 = PORT1_PIDR;
-      DAT_00012051 = bVar2 >> 4 & 1;
+      pc_key_last = bVar2 >> 4 & 1;
     }
   }
   else if (g_ui.trx_state == 4) {
@@ -4140,7 +4140,7 @@ void trx_sequencer(void)
       PORT2_PODR = bVar2 & 0xef;
     }
     bVar2 = swtimer_expired(0xe);
-    if ((bVar2 == 1) && (DAT_00020fcc != 4)) {
+    if ((bVar2 == 1) && (spk_route != 4)) {
       bVar3 = ear_det();
       if (!bVar3) {
         bVar2 = PORT7_PODR;
@@ -4233,7 +4233,7 @@ byte ptt_source_select(void)
                     /* Any PTT source restarts the screen-saver timer [fact: tx-protection.md] */
       screensaver_timer_restart();
     }
-    DAT_00012050 = 0;
+    pc_keying_active = 0;
     uVar1 = (uint)bStack_3;
     if (((uVar1 == 1) || (uVar1 - 3 < 2)) || (uVar1 == 8 || uVar1 == 9)) {
       if ((tx_cw_keying_class_ret == 1) || (tx_cw_keying_class_ret == 3)) {
@@ -4244,7 +4244,7 @@ byte ptt_source_select(void)
       }
       if (bVar2) {
                     /* DAKY/RTS/DTR, 8/9 in CW: the line keys CW [fact: tx-protection.md] */
-        DAT_00012050 = 1;
+        pc_keying_active = 1;
       }
     }
     if ((bStack_3 != 0) && (bStack_3 != 6)) {
@@ -4790,7 +4790,7 @@ void pc_keying(void)
   bVar2 = false;
   if (g_opstate.ex020115_pc_keying == 3) {
     bVar1 = PORT2_PIDR;
-    if (((bVar1 & 1) == 0) && (DAT_00012050 == '\x01')) {
+    if (((bVar1 & 1) == 0) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -4802,7 +4802,7 @@ void pc_keying(void)
     else {
       bVar3 = false;
     }
-    if ((bVar3) && (DAT_00012050 == '\x01')) {
+    if ((bVar3) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -4817,7 +4817,7 @@ void pc_keying(void)
     else {
       bVar3 = false;
     }
-    if ((bVar3) && (DAT_00012050 == '\x01')) {
+    if ((bVar3) && (pc_keying_active == '\x01')) {
       bVar2 = true;
     }
   }
@@ -4831,7 +4831,7 @@ void pc_keying(void)
     beep_stop();
     DAT_0001b4d3 = '\0';
   }
-  if ((DAT_00012050 == '\x01') && (g_ui.trx_state == 3)) {
+  if ((pc_keying_active == '\x01') && (g_ui.trx_state == 3)) {
     bVar3 = true;
   }
   else {
