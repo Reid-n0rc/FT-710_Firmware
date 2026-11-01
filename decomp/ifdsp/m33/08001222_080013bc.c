@@ -1,5 +1,19 @@
 // FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
 
+// ===== data_init @ 08001222 (18 bytes)
+
+void data_init(int param_1,int param_2,uint param_3)
+
+{
+  uint uVar1;
+  
+  for (uVar1 = 0; uVar1 < param_3; uVar1 = uVar1 + 4) {
+    *(undefined4 *)(uVar1 + param_2) = *(undefined4 *)(uVar1 + param_1);
+  }
+  return;
+}
+
+
 // ===== bss_init @ 08001234 (16 bytes)
 
 void bss_init(int param_1,uint param_2)
@@ -497,19 +511,6 @@ void I3C0_IRQHandler(void)
 
 {
   __I3C0_DriverIRQHandler_veneer();
-  return;
-}
-
-
-// ===== USB_IRQHandler @ 080013c4 (8 bytes)
-
-/* MCUX_2.9.0 startup name of this vector slot [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
-   IfdspM33Setup names it USB0 (T24 round 2) */
-
-void USB_IRQHandler(void)
-
-{
-  IntDefaultHandler();
   return;
 }
 

@@ -43,14 +43,13 @@ void Reset_Handler(void)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
-                    /* DCCIMVAC per cache line over the range [doc] */
-  dcache_clean_invalidate_range(0);
-  FUN_20100d0c();
+  dcache_invalidate_range(0);
+  mmu_disable();
   cpg_early_init();
   mmu_l1_table_init();
   mmu_set_cacheable(vec_reset,0x400000);
   mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
-  FUN_20100d6c();
+  mmu_enable();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
   coproc_moveto_Control(uVar1 & 0xffffdfff);
@@ -129,7 +128,7 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
                     /* sets the section attributes of the range to 0xC0C [doc] */
   mmu_set_cacheable(vec_reset,0x400000);
   mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
-  FUN_20100d6c();
+  mmu_enable();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
   coproc_moveto_Control(uVar1 & 0xffffdfff);
@@ -1393,9 +1392,12 @@ uint __rt_entry(void)
 }
 
 
-// ===== FUN_20100d0c @ 20100d0c (60 bytes)
+// ===== mmu_disable @ 20100d0c (60 bytes)
 
-uint FUN_20100d0c(void)
+/* TLBIALL, ICIALLU, BPIALL, ACTLR bit 1 off, SCTLR I, C and M off [fact for the CP15 operations;
+   name: inference] (T24 round 3, src/display/drivers/cp15.c) */
+
+uint mmu_disable(void)
 
 {
   uint uVar1;
@@ -1436,9 +1438,12 @@ void mmu_l1_table_init(void)
 }
 
 
-// ===== FUN_20100d6c @ 20100d6c (84 bytes)
+// ===== mmu_enable @ 20100d6c (84 bytes)
 
-ulonglong FUN_20100d6c(void)
+/* TTBR0 = 0x2044C000 | 1, TTBCR = 0, DACR = 0x55555555 (all client), SCTLR M, Z, I, C on, ACTLR bit
+   1 on [fact for the CP15 operations; name: inference] (T24 round 3) */
+
+ulonglong mmu_enable(void)
 
 {
   uint uVar1;
@@ -1454,9 +1459,13 @@ ulonglong FUN_20100d6c(void)
 }
 
 
-// ===== FUN_20100dc0 @ 20100dc0 (100 bytes)
+// ===== mmu_set_cacheable_ro @ 20100dc0 (100 bytes)
 
-void FUN_20100dc0(uint param_1,int param_2)
+/* (addr, size): like mmu_set_cacheable, with AP[2] = 1 (orr 0x8C00): cacheable read-only sections,
+   then TLBIALL and BPIALL [fact for the stores; read-only: inference from the AP encoding] (T24
+   round 3) */
+
+void mmu_set_cacheable_ro(uint param_1,int param_2)
 
 {
   uint uVar1;

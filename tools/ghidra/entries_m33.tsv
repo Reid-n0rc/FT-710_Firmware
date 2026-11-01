@@ -45,3 +45,4 @@
 0008723c	thumb	BOARD_InitBootClocks: byte-identical to BOARD_InitBootClocks of src/ifdsp_m33/board/clock_config.c (recreated) [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]; b.w BOARD_BootClockRUN [fact: 0x8723C]
 000872bc	thumb	memcpy: b.w memcpy_body 0x878CC; every compiler-generated memcpy call (prvCopyDataToQueue, env_memcpy) reaches this address, so it carries the linked symbol memcpy [fact: 0x872BC, src/ifdsp_m33/aliases.tsv]
 000872c0	thumb	memset: b.w memset_body 0x87900; every memset call (xTaskCreate, USART_GetDefaultConfig) reaches this address [fact: 0x872C0, src/ifdsp_m33/aliases.tsv]
+000872f4	thumb	printf_float_none: the hook sprintf/snprintf/vsprintf pass to the printf core (literal 0x872F5 at 0x85B04, 0x85B7C, 0x85BD8) [fact]; movs r0, #0; bx lr [fact: 0x872F4]; byte-identical to printf_float_none of src/ifdsp_m33/libc/redlib/printf.c (recreated) [fact: T24 round 3 (src/ifdsp_m33/status.tsv)]

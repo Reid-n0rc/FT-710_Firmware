@@ -1841,7 +1841,7 @@ void MU_SetFlags(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * SEMA42_Lock @ 00086fec  (28 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * SEMA42_Lock @ 00086fec  (28 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]
@@ -1865,7 +1865,7 @@ void SEMA42_Lock(int param_1,uint param_2,char param_3)
 
 
 /* -----------------------------------------------------------------------------
- * SEMA42_ResetGate @ 00087008  (36 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * SEMA42_ResetGate @ 00087008  (36 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Inferred name: same
  * Purpose: [fact]
  * Tag: [fact]

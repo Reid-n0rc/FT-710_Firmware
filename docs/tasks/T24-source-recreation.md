@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 86.5 % re-implemented, round 2; DISPLAY started) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 1.58 % re-implemented) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -298,16 +298,191 @@ relocation/stub machinery of `equiv_m33_emu.py` (callees at original addresses, 
 `status.tsv` for DISPLAY yet (the README column stays "not started" until one exists). Also seen: Ghidra types
 `crc16_xmodem`'s return as `byte`, but the code returns 16 bits (`uxth r0`) [fact: 0x2010AA4C].
 
+## IFDSP M33 and DISPLAY, round 3 (2026-11-01)
+
+### Plan (round 3)
+
+1. M33: translate the printf core `vsnprintf_core` in full; give `console_rx_char` a console-state preset and fix its
+   differences; add 0x872F4 `printf_float_none` to the Ghidra entries; make `status.tsv` cover the re-exported
+   449-function list, so that the README figure and the status table agree; push the link layout further
+   (`console_cmd_d`/`_w` order, `-fno-toplevel-reorder` or the source order).
+2. DISPLAY: port the relocation and stub machinery of `equiv_m33_emu.py` to `equiv_display_emu.py` (NORTi service
+   calls as stubs); recreate the library functions and the drivers, biggest self-contained ones first; track them in
+   `src/display/status.tsv`, wired into the "Re-implemented" column like the M33.
+
+### M33: status after the re-export
+
+The re-export after round 2 carries the corrected Ghidra names (`main`, `__main`, `vsprintf`, `sprintf`, the SDK 2.9
+vector names, ...). `aliases.tsv` still mapped the source names to the *old* Ghidra names, which no longer existed:
+that alone made 29 functions "not yet" and 6 "differs" in the first run of round 3 (84.5 %) [fact: the run before the
+alias fix]. Only the rows for addresses Ghidra's list still lacks are left.
+
+### M33: the printf core (`libc/redlib/vsnprintf_core.c`)
+
+Translated from 0x84EB0..0x85989: flags `- + space # 0`; width and precision as digits or `*` (a negative `*` width
+toggles `-`, a negative precision means none); length `l ll L q h hh j z t`; conversions `d i o u x X p c s n`; every
+other character after `%` (and `%`, and `F`) printed as itself, padded; `a A e E f g G` through the hook
+hook(conv, &arg, buf, flags, &prefix, &zeros, &lead, &trail). Integer digits come from an open-coded 64-bit division by
+10 (the shift-and-add `divu10`), so the core never calls `__aeabi_uldivmod` [fact: 0x85770..0x857FA]. Two traps found
+on the way: GCC drops a `width < 0` test after `width = -width` (signed overflow), so the negation is unsigned; and a
+macro argument with a side effect (`*prefix++`) must not sit inside the conditional store.
+
+Check: a printf-core preset (string stream, 64-bit limit including LLONG_MAX, 0, negative and 2^32, a format with
+every conversion, and a va_list built to match it: random words as `*` widths made both versions run out of the
+budget in the padding loops). **Equivalent**: 200 trials (94 % of 218 blocks) and 2,000 trials with seed 7. Mutations
+of the divu10 constant, of "(null)" and of the `ll` flag are reported as differing; a mutation of the hook's `lead`
+zeros is not, because the image's hook never sets lead or trail. *Open: the floating-point path with a hook that
+fills buf; would be settled by a preset hook (a small Thumb routine in the scratch area) that writes digits, '<', '>'
+and the prefix.* `printf_float_none` leaves the prefix NULL, so on the radio a `%f` would print the string at address
+0 as its prefix [inference: the core sets prefix 0 for these conversions, 0x851A0..0x851B2, and reads it unchecked];
+no format string of the application has a floating-point conversion [fact].
+
+### M33: the console (`app/console.c`)
+
+`console_rx_char` (1,058 bytes): the line state 0x88DEF is compared with 0 and 1, and any other value ignores the
+character (0x814BA..0x814C2); in machine mode with four tokens the image goes on to the "?" reply, which it prints if
+the frame was "iDB01" (0x81716). Console preset: token pointers as `console_init` sets them, a line of machine frames
+(checksum right or wrong) or interactive commands, length, state 0/1/other, echo and mode. **Equivalent**: 200 trials
+(95 % of 102 blocks), 2,000 trials with seed 7 (98 %).
+
+`console_cmd_d` is now **byte-identical**: the dump helper prints its trailer itself, so the dump buffer is still in
+scope at that call and GCC does not turn it into a tail call, as in the image [fact: 0x81364 bl console_puts, then the
+epilogue]. The `d`/`w` order: GCC 10.2.1 emits `console_cmd_i, _d, _w`, the image has `i, w, d`; neither the
+declaration order, the table position, global handlers nor the dump as a macro changes that [fact: compiled variants],
+and `-fno-toplevel-reorder` does not fit the image (it stops GCC from inlining the line executor into
+`console_rx_char`, which the image has inlined) [fact]. `__attribute__((noinline))` on `console_cmd_i` and `_w` (no
+code effect: they are reached only through the command table) gives the image's order. *Open: which form of Yaesu's
+source gives that order without an attribute; would be settled by GCC's -fdump-ipa-cgraph order for candidate
+sources.*
+
+### M33: link layout (`tools/equiv_m33.py layout -v`, new)
+
+23 of 430 functions at their original address, **405 of 429 consecutive pairs with the original spacing** (round 2:
+402), **428 in the original order** (round 2: 427). The remaining spacing differences all follow a function that is
+equivalent but not byte-identical (the first: `aic3204_spi_write`, 96 vs 104 bytes), so every address after it moves.
+*Open: byte matches for the remaining 34 equivalent functions (or padding); would be settled per function with
+`equiv_m33.py diff`.*
+
+### M33: results (status.tsv, round 3)
+
+| Verdict | Ghidra functions | Bytes (of 29,282) |
+|---|---:|---:|
+| identical | 415 | 22,220 |
+| equivalent | 34 | 7,062 |
+| differs | 0 | 0 |
+| not yet | 0 | 0 |
+
+**Re-implemented: 100.0 %** of the 449 functions of the re-export, the same figure as the README (plus 18 identical
+functions Ghidra's list lacks). Round 2 measured 86.5 % against the old 427-function list.
+
+### M33: Ghidra (round 3)
+
+0x872F4 `printf_float_none` (the hook the sprintf family passes to the core: literal 0x872F5 at 0x85B04, 0x85B7C,
+0x85BD8; `movs r0, #0; bx lr`) is added to `tools/ghidra/entries_m33.tsv`, `IfdspM33Names.java`,
+`names_ifdsp.T12d.tsv` and `signatures_m33.tsv` (int32 (void)). Proved on a copy (`/home/user/ghidra_tasks/t24r3/proj`,
+OWNER root) [fact: logs there]: FixFuncEntries 43 created, 0 failed; IfdspM33Names 407 named; ApplySignatures 257
+applied, 0 failed; ExportDecomp **450 functions**, 0 failed, 150 warnings (the re-export has 449). Apply to the
+canonical project with the round-2 command block above (the first three tools, then CommentCode, ExportDecomp, the
+purposes pass and the readability stats exactly as listed there); afterwards `src/ifdsp_m33/aliases.tsv` can drop its
+`printf_float_none` row.
+
+### DISPLAY: harness (`tools/equiv_display_emu.py`)
+
+The A32/Thumb counterpart of `equiv_m33_emu.py`:
+
+- **Start state** = the memory after `__scatterload`: the image at 0x20100000, the three LZ regions of the
+  Region$$Table (0x204286A8) decompressed by the image's own `__decompress` (0x20100BFC, run in Unicorn), plus the
+  locale set-up of `__rt_lib_init` (libspace 0x2091D530 +4 and +0xC from 0x20163874 / 0x201638A0): without it
+  `tolower` and everything else using the ctype table read through a NULL pointer [fact: trials faulted at
+  0x201549EE]. The C++ constructors that `__rt_lib_init` runs next are not run (they touch peripherals).
+- **Linking**: R_ARM_CALL/JUMP24 (BLX to Thumb functions, a veneer for a tail branch to one), ABS32, MOVW/MOVT; the
+  scratch area is at 0x21000000, inside the ±32 MB reach of BL from `.text` (a first try at 0x30000000 jumped into
+  nowhere). The instruction set of every original function is in `src/display/modes.tsv` (64 of 2,251 are Thumb),
+  exported by the new `tools/ghidra/ExportFuncModes.java`.
+- **Stubs**: the NORTi service calls `itron_*` (argument counts from µITRON 4.0; seeded returns among E_OK, E_TMOUT,
+  E_PAR; a seeded word through output pointers); MMIO 0x3FE00000.., 0xE8000000.., 0xFCFE0000.. through `mmio_map`.
+- **Compared**: end, r0 (r0:r1 for 8-byte returns), RW memory (boot-info block, `.data` .. end of RAM, the uncached
+  mirror, the argument buffers), SCTLR, MMIO and stub-call sequences; plus a **static comparison of the CP15
+  operations**, because Unicorn executes cache and TLB maintenance as no-ops [fact: the mutation DCCIMVAC → DCIMVAC
+  passed the emulation and is caught by the static comparison].
+- **Budget**: armcc and GCC code differ in length, so a trial where only one side runs out of the 1M-instruction
+  budget is re-run with 8M; one where both run out is inconclusive (not compared; counted in the detail). Coverage
+  uses one self-removing code hook per static block leader (a block hook made a CRC check take 7 minutes).
+- **Build flags that the check needs**: `-fno-ipa-ra` (GCC otherwise keeps r0 across a call to a function of the same
+  file, which the check replaces by the image's own: `gpio_cfg_out_low` faulted) and
+  `-fno-tree-loop-distribute-patterns` (the copy loops of `lib/memory.c` would become calls of themselves).
+- `status` runs the functions in parallel and writes `src/display/status.tsv` (one row per Ghidra function, as the
+  M33); `tools/readability_stats.py` reads it for the "Re-implemented" column.
+
+### DISPLAY: recreated (src/display, round 3)
+
+`lib/string.c`, `lib/memory.c`, `lib/aeabi_div.c`, `lib/misc.c`, `app/crc.c`, `drivers/cp15.c`, `drivers/gpio.c`
+(src/display/README.md lists the functions). Findings on the way:
+
+- armcc's `strcmp` returns `rrx(b' - a')` from its word loop, not a byte difference; `memcmp` returns -1/1 from its
+  word loop and the difference from its byte loop [fact: 0x201553EC..0x20155448, 0x2015507C].
+- 0x20155180 (Ghidra: `memcpy`) returns with r0 at the end of the destination, so it is the void `__aeabi_memcpy`, not
+  C `memcpy` [fact: its exits]; `__aeabi_idivmod` by zero returns quotient 0 and the dividend as passed, also when
+  negative [fact: emulation]; the `__aeabi_idiv0` hook is a nop (0x2015569C).
+- Ghidra's decompiled C of `gpio_cfg_out_low`, `gpio_cfg_out_high` and `gpio_cfg_input` leaves out their first call,
+  `gpio_cfg_reset` [fact: bl 0x201003A0 at 0x20100428, 0x2010084C, 0x2010088C].
+- **Two Ghidra names were swapped**: 0x20100FD8 issues DCCIMVAC (clean and invalidate) and 0x20101088 DCIMVAC
+  (invalidate); `dcache_setway_all` op 0 is DCISW and op 2 DCCISW; the TLB helpers flush the branch predictor
+  (BPIALL), not the I-cache [fact: the mcr encodings, ARMv7-A ARM B4.2.1]. Corrected in
+  `docs/code/display/boot-rtos.md` and the names files (below).
+
+### DISPLAY: results (status.tsv, round 3)
+
+| Verdict | Ghidra functions | Bytes (of 396,272) |
+|---|---:|---:|
+| equivalent | 88 | 6,250 |
+| differs | 0 | 0 |
+| not yet | 2,125 | 390,022 |
+
+**Re-implemented: 1.58 %** (README column "Re-implemented" of the DISPLAY row, from `src/display/status.tsv`). By
+group: string 12, memory 5, division 4, small helpers 15, CRC 5, CP15/MMU 16, GPIO 31. Mutations reported as differing:
+the CRC polynomial, strcmp's zero-byte test (once the string preset had bytes >= 0x80; with ASCII only it passed),
+DCCIMVAC → DCIMVAC (by the CP15 comparison); a carry mutation inside `x != y` of strcmp is semantically equivalent and
+passes.
+
+### DISPLAY: Ghidra (round 3)
+
+`tools/ghidra/names_display.tsv` (and `names_display.T23e3.tsv`): 0x20100FD8 `dcache_invalidate_range` →
+`dcache_clean_invalidate_range`, 0x20101088 `dcache_clean_invalidate_range` → `dcache_invalidate_range`, 0x2010101C
+`dcache_invalidate_all` → `dcache_clean_invalidate_all`, corrected comment of `dcache_setway_all`, and four new names
+**[inference from their CP15 operations]**: 0x20100D0C `mmu_disable`, 0x20100D6C `mmu_enable`, 0x20100DC0
+`mmu_set_cacheable_ro`, 0x20100F84 `icache_invalidate_range`. New script `tools/ghidra/ExportFuncModes.java`
+(read-only). Proved on a copy (`/home/user/ghidra_tasks/t24r3/disp`): ApplyNames 1,823 applied, 0 failed, the swap
+included [fact: the function list after it]. Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the alias rows of the three renamed functions in `src/display/aliases.tsv` are redundant (they
+name the same addresses) and can go.
+
 ## Open steps
 
-1. M33 `vsnprintf_core` (2,778 B, 9.8 % of the code): translate 0x84EB0..0x85989 (flags, `*` width/precision, length
-   modifiers l ll L q h hh j z t, conversions a c d e f g i n o p s u x X, 64-bit values through `__aeabi_uldivmod`, the
-   hook for floating point) and check it with the printf-like inputs the harness now draws.
-2. M33 `console_rx_char` (1,058 B): the recreated one faults where the original returns (trial 0 of the harness: a
-   store at `s_line[s_lineLen]` with the random `.bss` length); needs a console-state preset (line length < 128, flags
-   0/1) and then the remaining differences of the line editor and both command modes.
-3. M33 remaining layout differences: sizes of the non-identical functions; `console_cmd_d`/`console_cmd_w` order.
-4. Apply the Ghidra corrections to the canonical project with the commands above and re-export (T23 rules), then add
-   0x872F4 (`printf_float_none`, the hook) to `entries_m33.tsv` (not a Ghidra function yet).
-5. DISPLAY: port the relocation and stub machinery to the A32 harness; NORTi service calls as stubs; then the
-   library functions (strcpy, strlen, memcpy, crc*) and the drivers. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.
+1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
+   original addresses (`equiv_m33.py layout -v` lists where the spacing breaks; the first is `aic3204_spi_write`).
+2. M33: the floating-point path of the printf core, with a preset hook that fills the digit buffer (round 3 above).
+3. Apply the round-3 Ghidra changes to the canonical projects with the commands above (M33: the `printf_float_none`
+   entry; DISPLAY: the CP15 renames and the four new names) and re-export (T23 rules).
+4. DISPLAY, next by size and self-containment: the RIIC driver (83 functions, 4.9 KB, the Renesas sample driver with
+   per-channel flag bytes 0x20800454..), SCIF (`scif_*`), the SPI flash and SPIBSC (`sflash_*`, `spibsc_*`), SDHI, VDC5
+   (the biggest, about 20 KB); the armcc run-time helpers that return in r2:r3 (`__aeabi_uldivmod`,
+   `__aeabi_ldivmod`) need assembly; the soft-float and printf internals; then the application.
+5. DISPLAY build: there is no linker script and no stand-in for NORTi yet, so the recreated files are checked one by
+   one but do not form an image. *Open: whether a NORTi shim or a µITRON-compatible kernel (TOPPERS/ASP is the
+   free one) is the way to a bootable build; would be settled by listing the service calls the recreated code uses and
+   their semantics in boot-rtos.md.*
+6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.

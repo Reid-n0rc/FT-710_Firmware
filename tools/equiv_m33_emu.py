@@ -143,7 +143,132 @@ def pwm_preset(rng, args):
             (0x886F4, struct.pack('<I', rng.choice([0, 1, 398, 399, 399, 400, 401, rng.getrandbits(32)])))]
 
 
-PRESETS = {'sct0_pwm_callback': pwm_preset, 'ipc_print_dsp_reply': dsp_message_preset, 'malloc': heap_preset, 'free': lambda rng, args: heap_preset(rng, args, True), 'fputc': stream_preset}
+def printf_core_preset(rng, args):
+    """A call of the printf core vsnprintf_core (0x84EB0) as sprintf & co. make it (T24 round 3): r0 a string stream
+    (flags 0xA, pointer into a 512-byte buffer, room drawn so that both the store and the fputc path run), r2:r3 the
+    64-bit limit (LLONG_MAX, small, 0, negative), stack 0 a printf format with every conversion the core knows
+    (floating point included), stack 1 a va_list that matches the format (a `*` width or precision gets a bounded int,
+    including negative ones and INT_MIN; integers 32 or 64 bits as the length says, 8-byte aligned; %s and %n a pointer
+    to a writable string, %s sometimes NULL; doubles 8-byte aligned), stack 2 the hook printf_float_none (0x872F5).
+    Random words as `*` widths made both versions run out of the instruction budget in the padding loops, where the
+    two states cannot be compared."""
+    f, buf, fmt, va, strs = 0x385000, 0x385100, 0x384000, 0x384400, 0x384800
+    w = [0] * 15
+    w[0] = buf
+    w[2] = rng.choice([0x7FFFFFFF, 0x7FFFFFFF, 40, 3, 0, -1 & 0xFFFFFFFF])
+    w[3] = 0xA
+    args['regs'][0] = f
+    lim = rng.choice([0x7FFFFFFFFFFFFFFF, 0x7FFFFFFFFFFFFFFF, rng.randrange(0, 64), 0, -1 & 0xFFFFFFFFFFFFFFFF,
+                      0x100000000, 0x8000000000000000])
+    args['regs'][2], args['regs'][3] = lim & 0xFFFFFFFF, lim >> 32
+    out, words = [], []
+
+    def word(v):
+        words.append(v & 0xFFFFFFFF)
+
+    def dword(v):
+        if len(words) % 2:
+            words.append(rng.getrandbits(32))   # the padding slot va_arg skips
+        words.extend([v & 0xFFFFFFFF, (v >> 32) & 0xFFFFFFFF])
+
+    def small():
+        return rng.choice([0, 1, 5, 9, 10, 24, -3 & 0xFFFFFFFF, -1 & 0xFFFFFFFF, 0x80000000])
+
+    def string():
+        return rng.choice([strs + 0x40 * rng.randrange(0, 8)] * 5 + [0])
+
+    for _ in range(rng.randrange(1, 7)):
+        if rng.random() < 0.25:
+            out.append(rng.choice('ab Z\r\n:'))
+            continue
+        c = '%' + ''.join(rng.choice('-+ #0') for _ in range(rng.randrange(0, 4)))
+        wd = rng.choice(['', '', str(rng.randrange(0, 25)), '*', '05'])
+        pr = rng.choice(['', '', '.' + str(rng.randrange(0, 25)), '.*', '.'])
+        ln = rng.choice(['', '', '', 'l', 'll', 'h', 'hh', 'j', 'z', 't', 'L', 'q', 'lh'])
+        cv = rng.choice('diuxXoscpn%cdduxsk' + 'eEfgGaAF' + 'diouxX')
+        out.append(c + wd + pr + ln + cv)
+        if wd == '*':
+            word(small())
+        if pr == '.*':
+            word(small())
+        if cv in 'diouxX':
+            v = rng.choice([0, 1, 7, 10, 99, -1, -10, 0x80000000, rng.getrandbits(32), rng.getrandbits(64),
+                            1 << 63, 10 ** 19])
+            if ln in ('ll', 'L', 'q', 'j'):
+                dword(v)
+            else:
+                word(v)
+        elif cv in 'cp':
+            word(rng.choice([ord('A'), 0, 0x41, rng.getrandbits(32)]))
+        elif cv == 's':
+            word(string())
+        elif cv == 'n':
+            word(strs + 0x40 * rng.randrange(0, 8))
+        elif cv in 'eEfgGaA':
+            dword(rng.getrandbits(64))
+    if rng.random() < 0.05:
+        out.append('%')
+    s = ''.join(out).encode() + b'\0'
+    words = (words + [rng.getrandbits(32) for _ in range(64)])[:64]
+    sbuf = bytearray()
+    for k in range(8):
+        t = ''.join(rng.choice('abcXYZ019 ') for _ in range(rng.randrange(0, 20))).encode()
+        sbuf += (t + b'\0' + bytes(0x40)).ljust(0x40, b'\0')[:0x40]
+    args['regs'][4], args['regs'][5], args['regs'][6] = fmt, va, 0x872F5
+    args['buffers'] = []   # the drawn buffers would overwrite these (0x384000 is the fifth argument's slot)
+    return [(f, struct.pack('<15I', *w)), (buf, bytes(rng.getrandbits(8) for _ in range(512))), (fmt, s),
+            (va, struct.pack('<64I', *words)), (strs, bytes(sbuf))]
+
+
+def console_line(rng):
+    """A console line as MAIN or a terminal sends it: machine frames ("rAAAAcc", "wAAAADDDDcc", "iDB0xcc", checksum
+    right or wrong), interactive commands ("r 0010", "w 1 2", "d 0", "i db01", unknown ones), with extra blanks and
+    tokens, or random characters."""
+    hx = '0123456789ABCDEFabcdef'
+    k = rng.random()
+    if k < 0.45:
+        cmd = rng.choice('rRdDiIwWxq')
+        body = cmd + (rng.choice(['DB00', 'DB01', 'db00', 'db01', 'DBxx']) if cmd in 'iI' else
+                      ''.join(rng.choice(hx) for _ in range(4)))
+        if cmd in 'wW' or rng.random() < 0.1:
+            body += ''.join(rng.choice(hx) for _ in range(4))
+        s = sum(body.encode()) & 0xFF
+        cs = f'{s:02X}' if rng.random() < 0.7 else f'{rng.randrange(256):02x}'
+        line = body + cs
+    elif k < 0.85:
+        words = [rng.choice(['r', 'R', 'w', 'd', 'D', 'i', 'x', 'help', 'r0'])]
+        for _ in range(rng.choice([0, 1, 1, 2, 2, 3, 4])):
+            words.append(rng.choice(['0010', '1', 'ffff', 'db00', 'db01', 'DB01', '12345678901234567', 'zz']))
+        line = (rng.choice(['', ' ', '  ']) + rng.choice([' ', '  ', '\t']).join(words) +
+                rng.choice(['', '', ' ', '\t']))
+    else:
+        line = ''.join(rng.choice('rwdi0123456789abcdef \t\x0b') for _ in range(rng.randrange(0, 30)))
+    return line.encode()[:127]
+
+
+def console_preset(rng, args):
+    """The console state of src/ifdsp_m33/app/console.c (T24 round 3): the token pointers as console_init sets them
+    (0x886F8 -> 0x88D2F + 16 i), a line of up to 127 characters at 0x88D6F with its length at 0x88708, the line
+    state 0x88DEF (0 idle, 1 collecting, now and then another value), echo 0x88D2E and interactive 0x88D2D 0/1; r0 a
+    character: end of line, the control characters the editor handles, printable or random. With random .bss the
+    recreated editor stored at s_line[random length] and faulted (round 2)."""
+    line = console_line(rng)
+    n = len(line) if rng.random() < 0.9 else rng.randrange(0, len(line) + 1)
+    state = rng.choice([0, 1, 1, 1, 1, 2])
+    if state == 0 and rng.random() < 0.5:
+        n = 0
+    args['regs'][0] = rng.choice([13, 13, 13, 10, 0, 3, 8, 0x7F, 0x1B, 0x20, 0x09, ord('a'), ord('Z'), ord('0'),
+                                  rng.randrange(256), rng.randrange(256), rng.getrandbits(32)])
+    fill = [(0x886F8, struct.pack('<4I', *[0x88D2F + 16 * i for i in range(4)])),
+            (0x88708, struct.pack('<i', n if rng.random() < 0.97 else rng.choice([127, 128, -1]))),
+            (0x88D2D, bytes([rng.choice([0, 1]), rng.choice([0, 1, 1])])),
+            (0x88D2F, bytes(rng.getrandbits(8) for _ in range(64))),
+            (0x88D6F, line.ljust(128, bytes([rng.getrandbits(8)]))[:128]),
+            (0x88DEF, bytes([state]))]
+    return fill
+
+
+PRESETS = {'console_rx_char': console_preset, 'vsnprintf_core': printf_core_preset, 'sct0_pwm_callback': pwm_preset, 'ipc_print_dsp_reply': dsp_message_preset, 'malloc': heap_preset, 'free': lambda rng, args: heap_preset(rng, args, True), 'fputc': stream_preset}
 
 
 def returns_value(obj, fname):

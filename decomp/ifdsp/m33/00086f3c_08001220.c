@@ -429,6 +429,22 @@ void free(int param_1)
 }
 
 
+// ===== printf_float_none @ 000872f4 (4 bytes)
+
+/* NEW (entries_m33.tsv): the hook sprintf, snprintf and vsprintf pass to the printf core
+   vsnprintf_core (literal 0x872F5 in their pools 0x85B04, 0x85B7C, 0x85BD8) [fact]; movs r0, #0; bx
+   lr [fact: 0x872F4]. The core calls it for the floating-point conversions a A e E f g G as
+   hook(conv, &arg, buf, flags, &prefix, &zeros, &lead, &trail) and prints the characters it returns
+   [fact: 0x85806..0x85822]; returning 0 prints none, so this printf has no floating point
+   [inference: from the call site; the name is this project's] (T24 round 3) */
+
+int printf_float_none(void)
+
+{
+  return 0;
+}
+
+
 // ===== setvbuf @ 000872f8 (62 bytes)
 
 /* _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 [inference] */
@@ -1414,19 +1430,5 @@ void IntDefaultHandler(void)
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
-}
-
-
-// ===== data_init @ 08001222 (18 bytes)
-
-void data_init(int param_1,int param_2,uint param_3)
-
-{
-  uint uVar1;
-  
-  for (uVar1 = 0; uVar1 < param_3; uVar1 = uVar1 + 4) {
-    *(undefined4 *)(uVar1 + param_2) = *(undefined4 *)(uVar1 + param_1);
-  }
-  return;
 }
 

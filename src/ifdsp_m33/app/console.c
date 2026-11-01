@@ -53,11 +53,18 @@ static uint8_t s_interactive; /* 1: interactive commands, lower-casing; 0: machi
 static uint8_t s_echo;        /* 1: echo input and print prompts */
 static char s_tokens[CONSOLE_MAX_ARGS][CONSOLE_TOKEN_LEN];
 static char s_line[CONSOLE_LINE_LEN];
-static uint8_t s_lineActive; /* a line is being collected */
+static uint8_t s_lineActive; /* line state: 0 idle, 1 a line is being collected */
 static char s_printBuf[256];
 
+/* LAYOUT_NOINLINE: no effect on the code (the handlers are reached only through s_commands, so they are never inlined);
+ * it makes GCC 10.2.1 emit console_cmd_i, _w, _d in the image's order (0x81274, 0x812C4, 0x812FC) [fact: without it
+ * GCC emits i, d, w, also with the handlers global, the dump as a macro, or other declaration orders (T24 round 3)].
+ * Open: which form of Yaesu's source gives that order without an attribute; would be settled by comparing GCC's
+ * -fdump-ipa-cgraph order for candidate sources. */
+#define LAYOUT_NOINLINE __attribute__((noinline))
+
 /* "i db00": machine mode, no echo; "i db01": interactive with echo */
-static void console_cmd_i(char **argv, int argc)
+static LAYOUT_NOINLINE void console_cmd_i(char **argv, int argc)
 {
     if (argc != 2)
     {
@@ -77,7 +84,7 @@ static void console_cmd_i(char **argv, int argc)
 }
 
 /* "w AAAA DDDD": write a register */
-static void console_cmd_w(char **argv, int argc)
+static LAYOUT_NOINLINE void console_cmd_w(char **argv, int argc)
 {
     if (argc != 3)
     {
@@ -90,7 +97,7 @@ static void console_cmd_w(char **argv, int argc)
 }
 
 /* Dump 0x40 registers from reg, 8 per line; header is the line-start format. */
-static inline __attribute__((always_inline)) void console_dump(uint16_t reg, const char *header)
+static inline __attribute__((always_inline)) void console_dump(uint16_t reg, const char *header, const char *trailer)
 {
     char buf[16];
     uint16_t end = reg + CONSOLE_DUMP_REGS;
@@ -110,18 +117,20 @@ static inline __attribute__((always_inline)) void console_dump(uint16_t reg, con
         }
         reg += 8;
     } while (end != reg);
+    console_puts(trailer);
 }
 
 /* "d AAAA": dump 0x40 registers */
 static void console_cmd_d(char **argv, int argc)
 {
-    if (argc != 2)
+    if (argc == 2)
+    {
+        console_dump((uint16_t)strtoul(argv[1], NULL, 16), "\r\n %04X :", PROMPT);
+    }
+    else
     {
         console_puts("\r\n?" PROMPT);
-        return;
     }
-    console_dump((uint16_t)strtoul(argv[1], NULL, 16), "\r\n %04X :");
-    console_puts(PROMPT);
 }
 
 void console_printf(const char *fmt, ...)
@@ -190,8 +199,7 @@ static void console_machine_frame(const char *frame)
             uint16_t reg = (uint16_t)strtoul(field, NULL, 16);
             if (cmd == 'd' || cmd == 'D')
             {
-                console_dump(reg, "\r\n%04X :");
-                console_puts("\r\n");
+                console_dump(reg, "\r\n%04X :", "\r\n");
             }
             else if (cmd == 'r' || cmd == 'R')
             {
@@ -327,17 +335,28 @@ run:
     if (!s_interactive)
     {
         console_machine_frame(s_argv[0]);
-        return;
-    }
-    for (int k = 0; k != ARRAY_SIZE(s_commands); k++)
-    {
-        if (strcmp(s_argv[0], s_commands[k].name) == 0)
+        /* with four tokens the image goes on to the "?" below, which it prints if the frame was "iDB01" (interactive
+         * again) [fact: 0x81716 cmp argc+1, #4] */
+        if (argc != CONSOLE_MAX_ARGS)
         {
-            s_commands[k].handler(s_argv, argc);
             return;
         }
     }
-    console_puts("\r\n?" PROMPT);
+    else
+    {
+        for (int k = 0; k != ARRAY_SIZE(s_commands); k++)
+        {
+            if (strcmp(s_argv[0], s_commands[k].name) == 0)
+            {
+                s_commands[k].handler(s_argv, argc);
+                return;
+            }
+        }
+    }
+    if (s_interactive)
+    {
+        console_puts("\r\n?" PROMPT);
+    }
 }
 
 /* One character from the link. */
@@ -390,7 +409,9 @@ void console_rx_char(int c)
     {
         uart0_write(&ch, 1);
     }
-    if (!s_lineActive)
+    /* s_lineActive is a state: 0 idle, 1 collecting; any other value ignores the character [fact: 0x814BA..0x814C2
+     * returns unless it is 0 or 1] */
+    if (s_lineActive == 0)
     {
         if (!isspace(ch))
         {
@@ -402,6 +423,10 @@ void console_rx_char(int c)
         {
             console_puts(PROMPT);
         }
+        return;
+    }
+    if (s_lineActive != 1)
+    {
         return;
     }
     if (ch == 0 || ch == '\n' || ch == '\r')

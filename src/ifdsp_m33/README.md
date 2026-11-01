@@ -5,7 +5,9 @@ and rebuilt. How it was made, the toolchain evidence and the results: [docs/task
 What the code does: [docs/code/ifdsp/](../../docs/code/ifdsp/README.md).
 
 Per-function status against the original image: [status.tsv](status.tsv) (generated; `identical` = same bytes,
-`equivalent` = passes the differential emulation, `differs`, `not yet`).
+`equivalent` = passes the differential emulation, `differs`, `not yet`). Since T24 round 3 every one of the 449
+functions of the Ghidra export is identical (415) or equivalent (34). `python3 -I ../../tools/equiv_m33.py layout -v`
+compares the linked ELF with the image's layout (functions in place, spacing, order).
 
 ## Layout
 
@@ -16,7 +18,7 @@ Per-function status against the original image: [status.tsv](status.tsv) (genera
 | `board/` | board, clock, pin-mux, peripherals, DSP start (`dsp_support.c`, `dsp_image.S`) and the rpmsg master (`dsp_ipc.c`) |
 | `app/` | the application: codec, register file, USART link and console, IPC tasks, PWM, `main` |
 | `libc/` | `__main`, the ctype table and `tolower`, the string functions (`string.c`), the private stream header |
-| `libc/redlib/` | the rest of NXP's closed Redlib as the image has it, one file per library member: heap, stdio streams, the `sprintf` family, `strtoul`, the `__sys_*` "no host" stubs; `__aeabi_uldivmod` and the `memcpy`/`memset` loops as hand-written assembly (`.S`). The printf core `vsnprintf_core.c` is a reduced stand-in (T24 open step) |
+| `libc/redlib/` | the rest of NXP's closed Redlib as the image has it, one file per library member: heap, stdio streams, the `sprintf` family, `strtoul`, the `__sys_*` "no host" stubs; `__aeabi_uldivmod` and the `memcpy`/`memset` loops as hand-written assembly (`.S`); the printf core `vsnprintf_core.c` translated in full (T24 round 3) |
 | `ifdsp_m33.ld`, `Makefile` | build and link (flash at 0x08001000, SRAM copy-down to 0x80000) |
 | `aliases.tsv`, `data_symbols.tsv` | original addresses of functions and data the check cannot take from Ghidra's list or learn, with evidence |
 

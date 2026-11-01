@@ -16,7 +16,6 @@
 20100f44	icache_enable	sets the I bit	fact	boot-rtos.md
 20100f64	dcache_enable	sets the C bit	fact	boot-rtos.md
 20101030	dcache_clean_range	CP15 clean D-cache line by MVA over the range	fact	boot-rtos.md
-20101088	dcache_clean_invalidate_range	DCCIMVAC per cache line over the range	fact	boot-rtos.md
 20101bbc	lcd_pins_enable	P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5	inference	peripherals.md
 20101cd4	gpio_p2_4_5_select	3-way select on P2_4/P2_5/P10_1	inference	peripherals.md
 20101d14	gpio_p2_4_5_clear	P2_4, P2_5 and P10_1 low	inference	peripherals.md

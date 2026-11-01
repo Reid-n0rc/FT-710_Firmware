@@ -1720,7 +1720,7 @@ uint isr_desc_check(int param_1)
 void gic_install_isr_stub(uint param_1,int param_2)
 
 {
-  FUN_20100f84(param_1,0x58);
+  icache_invalidate_range(param_1,0x58);
                     /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(param_1,0x58);
                     /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */

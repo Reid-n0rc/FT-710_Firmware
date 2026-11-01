@@ -411,7 +411,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x20100D48 | `mmu_l1_table_init` | Fills the 4096-entry L1 table 0x2044C000 with flat 1-MB sections (VA = PA, attributes 0x10C02) **[fact]**; called from Reset_Handler and reset_in_ram |
-| 0x20100E24 | `mmu_set_cacheable` | (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in 0x2044C000, then invalidates the TLB and the I-cache **[fact]** |
+| 0x20100E24 | `mmu_set_cacheable` | (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in 0x2044C000, then invalidates the TLB (TLBIALL) and the branch predictor (BPIALL, c7,c5,6) **[fact]** (T24 round 3: "I-cache" before) |
 
 ### NORTi / armcc helpers (T23e round 3)
 
@@ -462,9 +462,9 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x201010E0 | `dcache_setway_all` | (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) **[fact for the CP15 operations]** |
-| 0x20100FD8 | `dcache_invalidate_range` | (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2)) when addr or size is 0 **[fact]** |
-| 0x20101088 | `dcache_clean_invalidate_range` | (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and sdhi_read_block use it **[fact]** |
+| 0x201010E0 | `dcache_setway_all` | (op): walks every set and way of the data cache levels in CLIDR: op 0 (and below) invalidate (DCISW), 1 clean (DCCSW), 2 (and above) clean and invalidate (DCCISW) **[fact: cmp op, #1; mcrlt c7,c6,2 / mcreq c7,c10,2 / mcrgt c7,c14,2]** (T24 round 3 corrected 0 and 2) |
+| 0x20100FD8 | `dcache_clean_invalidate_range` | (addr, size): DCCIMVAC (mcr c7,c14,1) per cache line over the range, or clean and invalidate the whole cache (dcache_setway_all(2)) when addr or size is 0 **[fact]**. Was `dcache_invalidate_range` (T24 round 3) |
+| 0x20101088 | `dcache_invalidate_range` | (addr, size): DCIMVAC (mcr c7,c6,1) per cache line over the range, or invalidate the whole cache (dcache_setway_all(0)) when addr or size is 0; Reset_Handler, task_audio_codec and sdhi_read_block use it **[fact]**. Was `dcache_clean_invalidate_range` (T24 round 3) |
 
 ### CP15 cache control and small helpers (T23e round 3)
 
@@ -474,7 +474,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 | 0x20100F20 | `dcache_disable` | SCTLR: clears the C bit (2) when it is set **[fact]** |
 | 0x20100F44 | `icache_enable` | SCTLR: sets the I bit (12) **[fact]** |
 | 0x20100F64 | `dcache_enable` | SCTLR: sets the C bit (2) **[fact]** |
-| 0x2010101C | `dcache_invalidate_all` | dcache_setway_all(2) (invalidate by set/way) **[fact]** |
+| 0x2010101C | `dcache_clean_invalidate_all` | dcache_setway_all(2): clean and invalidate by set/way **[fact]**. Was `dcache_invalidate_all` (T24 round 3) |
 | 0x201341CC | `clamp_add_u8` | (a, b): a + b clamped to 0..255 **[fact]** |
 | 0x20135448 | `xorshift32_step` | (x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 **[fact]** |
 | 0x20135488 | `be16_store` | (v, dst): stores v big-endian (high byte first) **[fact]** |
@@ -511,3 +511,14 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 |---|---|---|
 | 0x2015632C | `knl_irq_enter` | IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack knl_sys.isr_area **[fact]** |
 | 0x201563EC | `knl_irq_exit` | Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns the new task's context, else the old one **[fact]** |
+
+### MMU and cache functions named in T24 round 3
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20100D0C | `mmu_disable` | TLBIALL, ICIALLU, BPIALL, ACTLR bit 1 off, SCTLR I, C and M off **[fact for the CP15 operations]**; name **[inference]** |
+| 0x20100D6C | `mmu_enable` | TTBR0 = 0x2044C000 \| 1, TTBCR 0, DACR 0x55555555 (all client), SCTLR M, Z, I, C on, ACTLR bit 1 on **[fact]**; name **[inference]** |
+| 0x20100DC0 | `mmu_set_cacheable_ro` | (addr, size): as `mmu_set_cacheable` with AP[2] = 1 (orr 0x8C00): cacheable read-only sections **[fact for the stores; read-only: inference from the AP encoding]** |
+| 0x20100F84 | `icache_invalidate_range` | (addr, size): ICIMVAU per cache line, or ICIALLU when addr or size is 0; then BPIALL **[fact]**; name **[inference]** |
+
+All of 0x20100D0C..0x20101183 is recreated in `src/display/drivers/cp15.c` (T24 round 3).

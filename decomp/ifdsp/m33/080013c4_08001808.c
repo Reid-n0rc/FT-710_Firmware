@@ -1,4 +1,17 @@
-// FT-710_IFDSP_V0101.bin — Ghidra decompile, 49 functions
+// FT-710_IFDSP_V0101.bin — Ghidra decompile, 50 functions
+
+// ===== USB_IRQHandler @ 080013c4 (8 bytes)
+
+/* MCUX_2.9.0 startup name of this vector slot [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)];
+   IfdspM33Setup names it USB0 (T24 round 2) */
+
+void USB_IRQHandler(void)
+
+{
+  IntDefaultHandler();
+  return;
+}
+
 
 // ===== USB_WAKEUP_IRQHandler @ 080013cc (8 bytes)
 
