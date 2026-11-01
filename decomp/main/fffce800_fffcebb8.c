@@ -589,11 +589,11 @@ void menu_ex030103_step(void)
 void menu_ex030104_step(void)
 
 {
-  byte bVar1;
+  byte g_opstate_ex030104_tuner_type_select_val;
   
-  bVar1 = g_opstate.ex030104_tuner_type_select;
+  g_opstate_ex030104_tuner_type_select_val = g_opstate.ex030104_tuner_type_select;
   menu_step_u8(0,3,&g_opstate.ex030104_tuner_type_select);
-  if (bVar1 == g_opstate.ex030104_tuner_type_select) {
+  if (g_opstate_ex030104_tuner_type_select_val == g_opstate.ex030104_tuner_type_select) {
     return;
   }
   g_ui.tuner_indicator = 0;

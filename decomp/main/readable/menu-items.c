@@ -241,19 +241,19 @@ void menu_ex010113_draw(undefined4 param_1)
 
 {
   bool bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   byte local_5;
   
   local_5 = g_opstate.ex010113_tx_bpf_sel;
   if (g_opstate.ex010113_tx_bpf_sel == 6) {
-    uVar2 = dest_code_get();
-    if ((uVar2 == 0x315b) || (uVar2 == 0x50e2)) {
+    dest_code_get_ret = dest_code_get();
+    if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (uVar2 == 0x1cb9)) {
+    if ((bVar1) || (dest_code_get_ret == 0x1cb9)) {
       bVar1 = true;
     }
     else {
@@ -367,12 +367,12 @@ void menu_ex010117_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex010118_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex010118_nar_width_val;
   
-  bVar1 = g_opstate.ex010118_nar_width;
+  g_opstate_ex010118_nar_width_val = g_opstate.ex010118_nar_width;
   local_5 = g_opstate.ex010118_nar_width;
   if (g_opstate.ex010118_nar_width == 6) {
     *param_1 = *param_1 | 0x80;
@@ -382,17 +382,17 @@ void menu_ex010118_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (0x16 < bVar1) {
+  if (0x16 < g_opstate_ex010118_nar_width_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0x390);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -1051,7 +1051,7 @@ void menu_ex010317_draw(byte *param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
+  int i;
   byte local_5;
   
   if (g_opstate.active_vfo == VFO_A) {
@@ -1076,7 +1076,7 @@ void menu_ex010317_draw(byte *param_1)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0x76b);
   param_1 = param_1 + 0x18;
-  for (iVar2 = 0x15; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_1 = *pbVar1;
     param_1 = param_1 + 1;
     pbVar1 = pbVar1 + 1;
@@ -1169,7 +1169,7 @@ void menu_ex010320_draw(byte *param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
+  int i;
   byte local_5;
   
   if (g_opstate.active_vfo == VFO_A) {
@@ -1194,7 +1194,7 @@ void menu_ex010320_draw(byte *param_1)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0x7aa);
   param_1 = param_1 + 0x18;
-  for (iVar2 = 0x15; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_1 = *pbVar1;
     param_1 = param_1 + 1;
     pbVar1 = pbVar1 + 1;
@@ -1217,9 +1217,9 @@ void menu_ex010321_draw(byte *param_1)
 
 {
   bool bVar1;
-  ushort uVar2;
-  byte *pbVar3;
-  int iVar4;
+  ushort dest_code_get_ret;
+  byte *pbVar2;
+  int i;
   byte local_5;
   
   if (g_opstate.active_vfo == VFO_A) {
@@ -1228,14 +1228,14 @@ void menu_ex010321_draw(byte *param_1)
   else {
     local_5 = g_opstate.vfo_b.tone_num;
   }
-  uVar2 = dest_code_get();
-  if ((uVar2 == 0x4380) || (uVar2 == 0x20b)) {
+  dest_code_get_ret = dest_code_get();
+  if ((dest_code_get_ret == 0x4380) || (dest_code_get_ret == 0x20b)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (uVar2 == 0x60e6)) {
+  if ((bVar1) || (dest_code_get_ret == 0x60e6)) {
     bVar1 = true;
   }
   else {
@@ -1257,14 +1257,14 @@ void menu_ex010321_draw(byte *param_1)
   if (0x31 < local_5) {
     local_5 = 0;
   }
-  pbVar3 = (byte *)(
+  pbVar2 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0x7e9);
   param_1 = param_1 + 0x18;
-  for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1) {
-    *param_1 = *pbVar3;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar2;
     param_1 = param_1 + 1;
-    pbVar3 = pbVar3 + 1;
+    pbVar2 = pbVar2 + 1;
   }
   return;
 }
@@ -1622,12 +1622,12 @@ void menu_ex010418_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex010419_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex010419_psk_tone_val;
   
-  bVar1 = g_opstate.ex010419_psk_tone;
+  g_opstate_ex010419_psk_tone_val = g_opstate.ex010419_psk_tone;
   local_5 = g_opstate.ex010419_psk_tone;
   if (g_opstate.ex010419_psk_tone == 0) {
     *param_1 = *param_1 | 0x80;
@@ -1637,17 +1637,17 @@ void menu_ex010419_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex010419_psk_tone_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xc03);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -1961,12 +1961,12 @@ void menu_ex010514_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex010515_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex010515_mark_frequency_val;
   
-  bVar1 = g_opstate.ex010515_mark_frequency;
+  g_opstate_ex010515_mark_frequency_val = g_opstate.ex010515_mark_frequency;
   local_5 = g_opstate.ex010515_mark_frequency;
   if (g_opstate.ex010515_mark_frequency == 1) {
     *param_1 = *param_1 | 0x80;
@@ -1976,17 +1976,17 @@ void menu_ex010515_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex010515_mark_frequency_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xc42);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2005,12 +2005,12 @@ void menu_ex010515_draw(byte *param_1)
 void menu_ex010516_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex010516_shift_frequency_val;
   
-  bVar1 = g_opstate.ex010516_shift_frequency;
+  g_opstate_ex010516_shift_frequency_val = g_opstate.ex010516_shift_frequency;
   local_5 = g_opstate.ex010516_shift_frequency;
   if (g_opstate.ex010516_shift_frequency == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2020,17 +2020,17 @@ void menu_ex010516_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex010516_shift_frequency_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xc6c);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2049,12 +2049,12 @@ void menu_ex010516_draw(byte *param_1)
 void menu_ex010517_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex010517_polarity_tx_val;
   
-  bVar1 = g_opstate.ex010517_polarity_tx;
+  g_opstate_ex010517_polarity_tx_val = g_opstate.ex010517_polarity_tx;
   local_5 = g_opstate.ex010517_polarity_tx;
   if (g_opstate.ex010517_polarity_tx == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2064,17 +2064,17 @@ void menu_ex010517_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex010517_polarity_tx_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xcc0);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2375,12 +2375,12 @@ void menu_ex020115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex020116_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020116_cw_bk_in_type_val;
   
-  bVar1 = g_opstate.ex020116_cw_bk_in_type;
+  g_opstate_ex020116_cw_bk_in_type_val = g_opstate.ex020116_cw_bk_in_type;
   local_5 = g_opstate.ex020116_cw_bk_in_type;
   if (g_opstate.ex020116_cw_bk_in_type == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2390,17 +2390,17 @@ void menu_ex020116_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex020116_cw_bk_in_type_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xcea);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2419,12 +2419,12 @@ void menu_ex020116_draw(byte *param_1)
 void menu_ex020117_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020117_cw_wave_shape_val;
   
-  bVar1 = g_opstate.ex020117_cw_wave_shape;
+  g_opstate_ex020117_cw_wave_shape_val = g_opstate.ex020117_cw_wave_shape;
   local_5 = g_opstate.ex020117_cw_wave_shape;
   if (g_opstate.ex020117_cw_wave_shape == 2) {
     *param_1 = *param_1 | 0x80;
@@ -2434,17 +2434,17 @@ void menu_ex020117_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex020117_cw_wave_shape_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xd14);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2463,12 +2463,12 @@ void menu_ex020117_draw(byte *param_1)
 void menu_ex020118_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020118_cw_freq_display_val;
   
-  bVar1 = g_opstate.ex020118_cw_freq_display;
+  g_opstate_ex020118_cw_freq_display_val = g_opstate.ex020118_cw_freq_display;
   local_5 = g_opstate.ex020118_cw_freq_display;
   if (g_opstate.ex020118_cw_freq_display == 1) {
     *param_1 = *param_1 | 0x80;
@@ -2478,17 +2478,17 @@ void menu_ex020118_draw(byte *param_1)
   }
   param_1[1] = 0xc;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex020118_cw_freq_display_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xd53);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2507,12 +2507,12 @@ void menu_ex020118_draw(byte *param_1)
 void menu_ex020119_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020119_qsk_delay_time_val;
   
-  bVar1 = g_opstate.ex020119_qsk_delay_time;
+  g_opstate_ex020119_qsk_delay_time_val = g_opstate.ex020119_qsk_delay_time;
   local_5 = g_opstate.ex020119_qsk_delay_time;
   if (g_opstate.ex020119_qsk_delay_time == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2522,17 +2522,17 @@ void menu_ex020119_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex020119_qsk_delay_time_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xd7d);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2570,12 +2570,12 @@ void menu_ex020120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex020201_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020201_keyer_type_val;
   
-  bVar1 = g_opstate.ex020201_keyer_type;
+  g_opstate_ex020201_keyer_type_val = g_opstate.ex020201_keyer_type;
   local_5 = g_opstate.ex020201_keyer_type;
   if (g_opstate.ex020201_keyer_type == 3) {
     *param_1 = *param_1 | 0x80;
@@ -2585,17 +2585,17 @@ void menu_ex020201_draw(byte *param_1)
   }
   param_1[1] = 8;
   param_1[2] = 0;
-  if (5 < bVar1) {
+  if (5 < g_opstate_ex020201_keyer_type_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xdfb);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2614,12 +2614,12 @@ void menu_ex020201_draw(byte *param_1)
 void menu_ex020202_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020202_keyer_dot_dash_val;
   
-  bVar1 = g_opstate.ex020202_keyer_dot_dash;
+  g_opstate_ex020202_keyer_dot_dash_val = g_opstate.ex020202_keyer_dot_dash;
   local_5 = g_opstate.ex020202_keyer_dot_dash;
   if (g_opstate.ex020202_keyer_dot_dash == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2629,17 +2629,17 @@ void menu_ex020202_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex020202_keyer_dot_dash_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xe79);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2660,9 +2660,9 @@ void menu_ex020202_draw(byte *param_1)
 void menu_ex020203_draw(byte *param_1)
 
 {
-  byte bVar1;
+  byte g_opstate_ex020203_cw_weight_val;
   
-  bVar1 = g_opstate.ex020203_cw_weight;
+  g_opstate_ex020203_cw_weight_val = g_opstate.ex020203_cw_weight;
   if (g_opstate.ex020203_cw_weight == 5) {
     *param_1 = *param_1 | 0x80;
   }
@@ -2692,9 +2692,9 @@ void menu_ex020203_draw(byte *param_1)
   param_1[0x1a] = 0x20;
   param_1[0x1b] = 0x20;
   param_1[0x2c] = 0x20;
-  param_1[0x18] = (byte)(bVar1 + 0x19) / 10 | 0x30;
+  param_1[0x18] = (byte)(g_opstate_ex020203_cw_weight_val + 0x19) / 10 | 0x30;
   param_1[0x19] = 0x2e;
-  param_1[0x1a] = (byte)(bVar1 + 0x19) % 10 | 0x30;
+  param_1[0x1a] = (byte)(g_opstate_ex020203_cw_weight_val + 0x19) % 10 | 0x30;
   return;
 }
 
@@ -2712,12 +2712,12 @@ void menu_ex020203_draw(byte *param_1)
 void menu_ex020204_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_5;
+  byte g_opstate_ex020204_number_style_val;
   
-  bVar1 = g_opstate.ex020204_number_style;
+  g_opstate_ex020204_number_style_val = g_opstate.ex020204_number_style;
   local_5 = g_opstate.ex020204_number_style;
   if (g_opstate.ex020204_number_style == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2727,17 +2727,17 @@ void menu_ex020204_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (6 < bVar1) {
+  if (6 < g_opstate_ex020204_number_style_val) {
     local_5 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_5 * 0x15 + 0xea3);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2913,9 +2913,9 @@ void menu_ex020211_draw(byte *param_1)
 void menu_ex030101_draw(byte *param_1)
 
 {
-  byte bVar1;
+  byte g_opstate_ex030101_beep_level_val;
   
-  bVar1 = g_opstate.ex030101_beep_level;
+  g_opstate_ex030101_beep_level_val = g_opstate.ex030101_beep_level;
   if (g_opstate.ex030101_beep_level == 0x14) {
     *param_1 = *param_1 | 0x80;
   }
@@ -2924,7 +2924,7 @@ void menu_ex030101_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  dec_to_str_u8(bVar1,param_1 + 0x18);
+  dec_to_str_u8(g_opstate_ex030101_beep_level_val,param_1 + 0x18);
   return;
 }
 
@@ -2942,12 +2942,12 @@ void menu_ex030101_draw(byte *param_1)
 void menu_ex030102_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030102_rf_sql_vr_val;
   
-  bVar1 = g_opstate.ex030102_rf_sql_vr;
+  g_opstate_ex030102_rf_sql_vr_val = g_opstate.ex030102_rf_sql_vr;
   local_7 = g_opstate.ex030102_rf_sql_vr;
   if (g_opstate.ex030102_rf_sql_vr == 0) {
     *param_1 = *param_1 | 0x80;
@@ -2957,17 +2957,17 @@ void menu_ex030102_draw(byte *param_1)
   }
   param_1[1] = 0xc;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030102_rf_sql_vr_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0xf60);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -2986,12 +2986,12 @@ void menu_ex030102_draw(byte *param_1)
 void menu_ex030103_draw(byte *param_1)
 
 {
-  tunlin_mode tVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   tunlin_mode local_7;
+  tunlin_mode g_opstate_ex030103_tun_lin_port_select_val;
   
-  tVar1 = g_opstate.ex030103_tun_lin_port_select;
+  g_opstate_ex030103_tun_lin_port_select_val = g_opstate.ex030103_tun_lin_port_select;
   local_7 = g_opstate.ex030103_tun_lin_port_select;
   if (g_opstate.ex030103_tun_lin_port_select == TUNLIN_EXT_TUNER) {
     *param_1 = *param_1 | 0x80;
@@ -3001,17 +3001,17 @@ void menu_ex030103_draw(byte *param_1)
   }
   param_1[1] = 9;
   param_1[2] = 0;
-  if (TUNLIN_GPO < tVar1) {
+  if (TUNLIN_GPO < g_opstate_ex030103_tun_lin_port_select_val) {
     local_7 = TUNLIN_EXT_TUNER;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 3999);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3030,12 +3030,12 @@ void menu_ex030103_draw(byte *param_1)
 void menu_ex030104_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030104_tuner_type_select_val;
   
-  bVar1 = g_opstate.ex030104_tuner_type_select;
+  g_opstate_ex030104_tuner_type_select_val = g_opstate.ex030104_tuner_type_select;
   local_7 = g_opstate.ex030104_tuner_type_select;
   if (g_opstate.ex030104_tuner_type_select == 0) {
     *param_1 = *param_1 | 0x80;
@@ -3045,17 +3045,17 @@ void menu_ex030104_draw(byte *param_1)
   }
   param_1[1] = 9;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex030104_tuner_type_select_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0xff3);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3112,12 +3112,12 @@ void menu_ex030106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex030107_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030107_cat_1_cat_3_stop_bit_val;
   
-  bVar1 = g_opstate.ex030107_cat_1_cat_3_stop_bit;
+  g_opstate_ex030107_cat_1_cat_3_stop_bit_val = g_opstate.ex030107_cat_1_cat_3_stop_bit;
   local_7 = g_opstate.ex030107_cat_1_cat_3_stop_bit;
   if (g_opstate.ex030107_cat_1_cat_3_stop_bit == 0) {
     *param_1 = *param_1 | 0x80;
@@ -3127,17 +3127,17 @@ void menu_ex030107_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030107_cat_1_cat_3_stop_bit_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (int)(&DAT_00002328 + (uint)local_7 * 0x15));
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3231,12 +3231,12 @@ void menu_ex030111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex030112_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030112_qmb_ch_val;
   
-  bVar1 = g_opstate.ex030112_qmb_ch;
+  g_opstate_ex030112_qmb_ch_val = g_opstate.ex030112_qmb_ch;
   local_7 = g_opstate.ex030112_qmb_ch;
   if (g_opstate.ex030112_qmb_ch == 0) {
     *param_1 = *param_1 | 0x80;
@@ -3246,17 +3246,17 @@ void menu_ex030112_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030112_qmb_ch_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1104);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3275,12 +3275,12 @@ void menu_ex030112_draw(byte *param_1)
 void menu_ex030113_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030113_band_stack_val;
   
-  bVar1 = g_opstate.ex030113_band_stack;
+  g_opstate_ex030113_band_stack_val = g_opstate.ex030113_band_stack;
   local_7 = g_opstate.ex030113_band_stack;
   if (g_opstate.ex030113_band_stack == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3290,17 +3290,17 @@ void menu_ex030113_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030113_band_stack_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0xdd1);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3319,12 +3319,12 @@ void menu_ex030113_draw(byte *param_1)
 void menu_ex030114_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030114_mem_group_val;
   
-  bVar1 = g_opstate.ex030114_mem_group;
+  g_opstate_ex030114_mem_group_val = g_opstate.ex030114_mem_group;
   local_7 = g_opstate.ex030114_mem_group;
   if (g_opstate.ex030114_mem_group == 0) {
     *param_1 = *param_1 | 0x80;
@@ -3334,17 +3334,17 @@ void menu_ex030114_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030114_mem_group_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0xdd1);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3364,15 +3364,17 @@ void menu_ex030115_draw(byte *param_1)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   byte local_9;
   
   bVar1 = g_opstate.ex030115_tx_time_out_timer;
-  uVar2 = dest_code_get();
-  if ((((((uVar2 == 0x20b) || (uVar2 == 0x1cb9)) || (uVar2 == 0x306f)) ||
-       ((uVar2 == 0x315b || (uVar2 == 0x4380)))) ||
-      ((uVar2 == 0x50e2 || ((uVar2 == 0x60e6 || (uVar2 == 0x7753)))))) ||
-     ((uVar2 == 0x9cf7 || (uVar2 == 0xd32d)))) {
+  dest_code_get_ret = dest_code_get();
+  if ((((((dest_code_get_ret == 0x20b) || (dest_code_get_ret == 0x1cb9)) ||
+        (dest_code_get_ret == 0x306f)) ||
+       ((dest_code_get_ret == 0x315b || (dest_code_get_ret == 0x4380)))) ||
+      ((dest_code_get_ret == 0x50e2 ||
+       ((dest_code_get_ret == 0x60e6 || (dest_code_get_ret == 0x7753)))))) ||
+     ((dest_code_get_ret == 0x9cf7 || (dest_code_get_ret == 0xd32d)))) {
     local_9 = 0;
   }
   else {
@@ -3414,12 +3416,12 @@ void menu_ex030115_draw(byte *param_1)
 void menu_ex030116_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030116_mic_scan_val;
   
-  bVar1 = g_opstate.ex030116_mic_scan;
+  g_opstate_ex030116_mic_scan_val = g_opstate.ex030116_mic_scan;
   local_7 = g_opstate.ex030116_mic_scan;
   if (g_opstate.ex030116_mic_scan == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3429,17 +3431,17 @@ void menu_ex030116_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030116_mic_scan_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0xdd1);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3458,12 +3460,12 @@ void menu_ex030116_draw(byte *param_1)
 void menu_ex030117_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030117_mic_scan_resume_val;
   
-  bVar1 = g_opstate.ex030117_mic_scan_resume;
+  g_opstate_ex030117_mic_scan_resume_val = g_opstate.ex030117_mic_scan_resume;
   local_7 = g_opstate.ex030117_mic_scan_resume;
   if (g_opstate.ex030117_mic_scan_resume == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3473,17 +3475,17 @@ void menu_ex030117_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030117_mic_scan_resume_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x112e);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3502,9 +3504,9 @@ void menu_ex030117_draw(byte *param_1)
 void menu_ex030118_draw(byte *param_1)
 
 {
-  sbyte sVar1;
+  sbyte g_opstate_ex030118_ref_freq_fine_adj_val;
   
-  sVar1 = g_opstate.ex030118_ref_freq_fine_adj;
+  g_opstate_ex030118_ref_freq_fine_adj_val = g_opstate.ex030118_ref_freq_fine_adj;
   if (g_opstate.ex030118_ref_freq_fine_adj == 0) {
     *param_1 = *param_1 | 0x80;
   }
@@ -3513,7 +3515,7 @@ void menu_ex030118_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  dec_to_str_s8((int)sVar1,param_1 + 0x18);
+  dec_to_str_s8((int)g_opstate_ex030118_ref_freq_fine_adj_val,param_1 + 0x18);
   return;
 }
 
@@ -3531,33 +3533,34 @@ void menu_ex030118_draw(byte *param_1)
 void menu_ex030119_draw(byte *param_1)
 
 {
-  byte bVar1;
-  ushort uVar2;
-  byte *pbVar3;
-  int iVar4;
+  ushort dest_code_get_ret;
+  byte *pbVar1;
+  int i;
   byte local_8;
   byte local_7;
+  byte g_opstate_ex030119_keyboard_language_val;
   
-  bVar1 = g_opstate.ex030119_keyboard_language;
+  g_opstate_ex030119_keyboard_language_val = g_opstate.ex030119_keyboard_language;
   local_7 = g_opstate.ex030119_keyboard_language;
-  uVar2 = dest_code_get();
-  if (uVar2 == 0xd950) {
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0xd950) {
 LAB_fffcbfc4:
     local_8 = 2;
     goto LAB_fffcbfc7;
   }
-  if (((uVar2 != 0x1cb9) && (uVar2 != 0x306f)) && (uVar2 != 0x315b)) {
-    if (uVar2 == 0x4380) {
+  if (((dest_code_get_ret != 0x1cb9) && (dest_code_get_ret != 0x306f)) &&
+     (dest_code_get_ret != 0x315b)) {
+    if (dest_code_get_ret == 0x4380) {
 LAB_fffcbfb7:
       local_8 = 0;
       goto LAB_fffcbfc7;
     }
-    if (uVar2 != 0x50e2) {
-      if (uVar2 == 0x60e6) goto LAB_fffcbfb7;
-      if ((uVar2 != 0x7753) && (uVar2 != 0x9cf7)) {
-        if (uVar2 == 0xa4c5) goto LAB_fffcbfc4;
-        if (uVar2 != 0xd32d) {
-          if (uVar2 != 0x20b) {
+    if (dest_code_get_ret != 0x50e2) {
+      if (dest_code_get_ret == 0x60e6) goto LAB_fffcbfb7;
+      if ((dest_code_get_ret != 0x7753) && (dest_code_get_ret != 0x9cf7)) {
+        if (dest_code_get_ret == 0xa4c5) goto LAB_fffcbfc4;
+        if (dest_code_get_ret != 0xd32d) {
+          if (dest_code_get_ret != 0x20b) {
             local_8 = 5;
             goto LAB_fffcbfc7;
           }
@@ -3568,7 +3571,7 @@ LAB_fffcbfb7:
   }
   local_8 = 1;
 LAB_fffcbfc7:
-  if (bVar1 == local_8) {
+  if (g_opstate_ex030119_keyboard_language_val == local_8) {
     *param_1 = *param_1 | 0x80;
   }
   if (DAT_00012271 == '\x01') {
@@ -3576,17 +3579,17 @@ LAB_fffcbfc7:
   }
   param_1[1] = 0xe;
   param_1[2] = 0;
-  if (10 < bVar1) {
+  if (10 < g_opstate_ex030119_keyboard_language_val) {
     local_7 = 0;
   }
-  pbVar3 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1158);
   param_1 = param_1 + 0x18;
-  for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1) {
-    *param_1 = *pbVar3;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar3 = pbVar3 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3738,12 +3741,12 @@ void menu_ex030126_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex030201_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030201_if_notch_width_val;
   
-  bVar1 = g_opstate.ex030201_if_notch_width;
+  g_opstate_ex030201_if_notch_width_val = g_opstate.ex030201_if_notch_width;
   local_7 = g_opstate.ex030201_if_notch_width;
   if (g_opstate.ex030201_if_notch_width == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3753,17 +3756,17 @@ void menu_ex030201_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030201_if_notch_width_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x13f8);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3782,12 +3785,12 @@ void menu_ex030201_draw(byte *param_1)
 void menu_ex030202_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030202_nb_rejection_val;
   
-  bVar1 = g_opstate.ex030202_nb_rejection;
+  g_opstate_ex030202_nb_rejection_val = g_opstate.ex030202_nb_rejection;
   local_7 = g_opstate.ex030202_nb_rejection;
   if (g_opstate.ex030202_nb_rejection == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3797,17 +3800,17 @@ void menu_ex030202_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030202_nb_rejection_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1422);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3826,12 +3829,12 @@ void menu_ex030202_draw(byte *param_1)
 void menu_ex030203_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030203_nb_width_val;
   
-  bVar1 = g_opstate.ex030203_nb_width;
+  g_opstate_ex030203_nb_width_val = g_opstate.ex030203_nb_width;
   local_7 = g_opstate.ex030203_nb_width;
   if (g_opstate.ex030203_nb_width == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3841,17 +3844,17 @@ void menu_ex030203_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030203_nb_width_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (int)(&DAT_00001461 + (uint)local_7 * 0x15));
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3870,12 +3873,12 @@ void menu_ex030203_draw(byte *param_1)
 void menu_ex030204_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030204_apf_width_val;
   
-  bVar1 = g_opstate.ex030204_apf_width;
+  g_opstate_ex030204_apf_width_val = g_opstate.ex030204_apf_width;
   local_7 = g_opstate.ex030204_apf_width;
   if (g_opstate.ex030204_apf_width == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3885,17 +3888,17 @@ void menu_ex030204_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030204_apf_width_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x14a0);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -3914,9 +3917,9 @@ void menu_ex030204_draw(byte *param_1)
 void menu_ex030205_draw(byte *param_1)
 
 {
-  sbyte sVar1;
+  sbyte g_opstate_ex030205_contour_level_val;
   
-  sVar1 = g_opstate.ex030205_contour_level;
+  g_opstate_ex030205_contour_level_val = g_opstate.ex030205_contour_level;
   if (g_opstate.ex030205_contour_level == -0xf) {
     *param_1 = *param_1 | 0x80;
   }
@@ -3925,7 +3928,7 @@ void menu_ex030205_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  dec_to_str_s8((int)sVar1,param_1 + 0x18);
+  dec_to_str_s8((int)g_opstate_ex030205_contour_level_val,param_1 + 0x18);
   return;
 }
 
@@ -3943,9 +3946,9 @@ void menu_ex030205_draw(byte *param_1)
 void menu_ex030206_draw(byte *param_1)
 
 {
-  byte bVar1;
+  byte g_opstate_ex030206_contour_width_val;
   
-  bVar1 = g_opstate.ex030206_contour_width;
+  g_opstate_ex030206_contour_width_val = g_opstate.ex030206_contour_width;
   if (g_opstate.ex030206_contour_width == 10) {
     *param_1 = *param_1 | 0x80;
   }
@@ -3954,7 +3957,7 @@ void menu_ex030206_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
-  dec_to_str_u8(bVar1,param_1 + 0x18);
+  dec_to_str_u8(g_opstate_ex030206_contour_width_val,param_1 + 0x18);
   return;
 }
 
@@ -3972,12 +3975,12 @@ void menu_ex030206_draw(byte *param_1)
 void menu_ex030301_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030301_amc_release_time_val;
   
-  bVar1 = g_opstate.ex030301_amc_release_time;
+  g_opstate_ex030301_amc_release_time_val = g_opstate.ex030301_amc_release_time;
   local_7 = g_opstate.ex030301_amc_release_time;
   if (g_opstate.ex030301_amc_release_time == 1) {
     *param_1 = *param_1 | 0x80;
@@ -3987,17 +3990,17 @@ void menu_ex030301_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030301_amc_release_time_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x14df);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4367,12 +4370,12 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 undefined4 menu_ex030401_draw(undefined4 param_1)
 
 {
-  byte bVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  byte g_opstate_ex030401_hf_max_power_val;
   
-  bVar1 = g_opstate.ex030401_hf_max_power;
-  uVar2 = max_power_limit(0);
-  menu_draw_max_power(param_1,bVar1,uVar2);
+  g_opstate_ex030401_hf_max_power_val = g_opstate.ex030401_hf_max_power;
+  uVar1 = max_power_limit(0);
+  menu_draw_max_power(param_1,g_opstate_ex030401_hf_max_power_val,uVar1);
   if (g_opstate.rf_power[0] <= g_opstate.ex030401_hf_max_power) {
     return 0x9aee;
   }
@@ -4397,12 +4400,12 @@ undefined4 menu_ex030401_draw(undefined4 param_1)
 undefined4 menu_ex030402_draw(undefined4 param_1)
 
 {
-  byte bVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  byte g_opstate_ex030402_50m_max_power_val;
   
-  bVar1 = g_opstate.ex030402_50m_max_power;
-  uVar2 = max_power_limit(1);
-  menu_draw_max_power(param_1,bVar1,uVar2);
+  g_opstate_ex030402_50m_max_power_val = g_opstate.ex030402_50m_max_power;
+  uVar1 = max_power_limit(1);
+  menu_draw_max_power(param_1,g_opstate_ex030402_50m_max_power_val,uVar1);
   if (g_opstate.rf_power[1] <= g_opstate.ex030402_50m_max_power) {
     return 0x9aef;
   }
@@ -4427,12 +4430,12 @@ undefined4 menu_ex030402_draw(undefined4 param_1)
 undefined4 menu_ex030403_draw(undefined4 param_1)
 
 {
-  byte bVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  byte g_opstate_ex030403_70m_max_power_val;
   
-  bVar1 = g_opstate.ex030403_70m_max_power;
-  uVar2 = max_power_limit(2);
-  menu_draw_max_power(param_1,bVar1,uVar2);
+  g_opstate_ex030403_70m_max_power_val = g_opstate.ex030403_70m_max_power;
+  uVar1 = max_power_limit(2);
+  menu_draw_max_power(param_1,g_opstate_ex030403_70m_max_power_val,uVar1);
   if (g_opstate.rf_power[2] <= g_opstate.ex030403_70m_max_power) {
     return 0x9af0;
   }
@@ -4457,21 +4460,21 @@ undefined4 menu_ex030403_draw(undefined4 param_1)
 undefined4 menu_ex030404_draw(undefined4 param_1)
 
 {
-  byte bVar1;
-  ushort uVar2;
-  undefined4 uVar3;
+  ushort dest_code_get_ret;
+  undefined4 uVar1;
   undefined1 uStack_11;
+  byte g_opstate_ex030404_am_max_power_val;
   
-  uVar2 = dest_code_get();
-  bVar1 = g_opstate.ex030404_am_max_power;
-  if (uVar2 == 0x60e6) {
+  dest_code_get_ret = dest_code_get();
+  g_opstate_ex030404_am_max_power_val = g_opstate.ex030404_am_max_power;
+  if (dest_code_get_ret == 0x60e6) {
     uStack_11 = 4;
   }
   else {
     uStack_11 = 3;
   }
-  uVar3 = max_power_limit(uStack_11);
-  menu_draw_max_power(param_1,bVar1,uVar3);
+  uVar1 = max_power_limit(uStack_11);
+  menu_draw_max_power(param_1,g_opstate_ex030404_am_max_power_val,uVar1);
   if (g_opstate.rf_power[3] <= g_opstate.ex030404_am_max_power) {
     return 0x9af1;
   }
@@ -4492,12 +4495,12 @@ undefined4 menu_ex030404_draw(undefined4 param_1)
 void menu_ex030405_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030405_vox_select_val;
   
-  bVar1 = g_opstate.ex030405_vox_select;
+  g_opstate_ex030405_vox_select_val = g_opstate.ex030405_vox_select;
   local_7 = g_opstate.ex030405_vox_select;
   if (g_opstate.ex030405_vox_select == 0) {
     *param_1 = *param_1 | 0x80;
@@ -4507,17 +4510,17 @@ void menu_ex030405_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030405_vox_select_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x151e);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4574,12 +4577,12 @@ void menu_ex030407_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex030408_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030408_meter_detector_val;
   
-  bVar1 = g_opstate.ex030408_meter_detector;
+  g_opstate_ex030408_meter_detector_val = g_opstate.ex030408_meter_detector;
   local_7 = g_opstate.ex030408_meter_detector;
   if (g_opstate.ex030408_meter_detector == 0) {
     *param_1 = *param_1 | 0x80;
@@ -4589,17 +4592,17 @@ void menu_ex030408_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex030408_meter_detector_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x155d);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4618,12 +4621,12 @@ void menu_ex030408_draw(byte *param_1)
 void menu_ex030501_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030501_ssb_cw_dial_step_val;
   
-  bVar1 = g_opstate.ex030501_ssb_cw_dial_step;
+  g_opstate_ex030501_ssb_cw_dial_step_val = g_opstate.ex030501_ssb_cw_dial_step;
   local_7 = g_opstate.ex030501_ssb_cw_dial_step;
   if (g_opstate.ex030501_ssb_cw_dial_step == 2) {
     *param_1 = *param_1 | 0x80;
@@ -4633,17 +4636,17 @@ void menu_ex030501_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030501_ssb_cw_dial_step_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1587);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4662,12 +4665,12 @@ void menu_ex030501_draw(byte *param_1)
 void menu_ex030502_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030502_rtty_psk_dial_step_val;
   
-  bVar1 = g_opstate.ex030502_rtty_psk_dial_step;
+  g_opstate_ex030502_rtty_psk_dial_step_val = g_opstate.ex030502_rtty_psk_dial_step;
   local_7 = g_opstate.ex030502_rtty_psk_dial_step;
   if (g_opstate.ex030502_rtty_psk_dial_step == 1) {
     *param_1 = *param_1 | 0x80;
@@ -4677,17 +4680,17 @@ void menu_ex030502_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030502_rtty_psk_dial_step_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1587);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4706,12 +4709,12 @@ void menu_ex030502_draw(byte *param_1)
 void menu_ex030503_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030503_ch_step_val;
   
-  bVar1 = g_opstate.ex030503_ch_step;
+  g_opstate_ex030503_ch_step_val = g_opstate.ex030503_ch_step;
   local_7 = g_opstate.ex030503_ch_step;
   if (g_opstate.ex030503_ch_step == 2) {
     *param_1 = *param_1 | 0x80;
@@ -4721,17 +4724,17 @@ void menu_ex030503_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex030503_ch_step_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x15c6);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4750,12 +4753,12 @@ void menu_ex030503_draw(byte *param_1)
 void menu_ex030504_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030504_am_ch_step_val;
   
-  bVar1 = g_opstate.ex030504_am_ch_step;
+  g_opstate_ex030504_am_ch_step_val = g_opstate.ex030504_am_ch_step;
   local_7 = g_opstate.ex030504_am_ch_step;
   if (g_opstate.ex030504_am_ch_step == 1) {
     *param_1 = *param_1 | 0x80;
@@ -4765,17 +4768,17 @@ void menu_ex030504_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (5 < bVar1) {
+  if (5 < g_opstate_ex030504_am_ch_step_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x161a);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4794,12 +4797,12 @@ void menu_ex030504_draw(byte *param_1)
 void menu_ex030505_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030505_fm_ch_step_val;
   
-  bVar1 = g_opstate.ex030505_fm_ch_step;
+  g_opstate_ex030505_fm_ch_step_val = g_opstate.ex030505_fm_ch_step;
   local_7 = g_opstate.ex030505_fm_ch_step;
   if (g_opstate.ex030505_fm_ch_step == 0) {
     *param_1 = *param_1 | 0x80;
@@ -4809,17 +4812,17 @@ void menu_ex030505_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (5 < bVar1) {
+  if (5 < g_opstate_ex030505_fm_ch_step_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1698);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4838,12 +4841,12 @@ void menu_ex030505_draw(byte *param_1)
 void menu_ex030506_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex030506_main_steps_per_rev_val;
   
-  bVar1 = g_opstate.ex030506_main_steps_per_rev;
+  g_opstate_ex030506_main_steps_per_rev_val = g_opstate.ex030506_main_steps_per_rev;
   local_7 = g_opstate.ex030506_main_steps_per_rev;
   if (g_opstate.ex030506_main_steps_per_rev == 2) {
     *param_1 = *param_1 | 0x80;
@@ -4853,17 +4856,17 @@ void menu_ex030506_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex030506_main_steps_per_rev_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1716);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4907,12 +4910,12 @@ void menu_ex040101_draw(byte *param_1)
 void menu_ex040102_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040102_my_call_time_val;
   
-  bVar1 = g_opstate.ex040102_my_call_time;
+  g_opstate_ex040102_my_call_time_val = g_opstate.ex040102_my_call_time;
   local_7 = g_opstate.ex040102_my_call_time;
   if (g_opstate.ex040102_my_call_time == 1) {
     *param_1 = *param_1 | 0x80;
@@ -4922,17 +4925,17 @@ void menu_ex040102_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (5 < bVar1) {
+  if (5 < g_opstate_ex040102_my_call_time_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1755);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4951,12 +4954,12 @@ void menu_ex040102_draw(byte *param_1)
 void menu_ex040103_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040103_pop_up_time_val;
   
-  bVar1 = g_opstate.ex040103_pop_up_time;
+  g_opstate_ex040103_pop_up_time_val = g_opstate.ex040103_pop_up_time;
   local_7 = g_opstate.ex040103_pop_up_time;
   if (g_opstate.ex040103_pop_up_time == 1) {
     *param_1 = *param_1 | 0x80;
@@ -4966,17 +4969,17 @@ void menu_ex040103_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex040103_pop_up_time_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x17d3);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -4995,12 +4998,12 @@ void menu_ex040103_draw(byte *param_1)
 void menu_ex040104_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040104_screen_saver_val;
   
-  bVar1 = g_opstate.ex040104_screen_saver;
+  g_opstate_ex040104_screen_saver_val = g_opstate.ex040104_screen_saver;
   local_7 = g_opstate.ex040104_screen_saver;
   if (g_opstate.ex040104_screen_saver == 3) {
     *param_1 = *param_1 | 0x80;
@@ -5010,17 +5013,17 @@ void menu_ex040104_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex040104_screen_saver_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (int)(&DAT_00001812 + (uint)local_7 * 0x15));
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5039,9 +5042,9 @@ void menu_ex040104_draw(byte *param_1)
 void menu_ex040105_draw(byte *param_1)
 
 {
-  byte bVar1;
+  byte g_opstate_ex040105_led_dimmer_val;
   
-  bVar1 = g_opstate.ex040105_led_dimmer;
+  g_opstate_ex040105_led_dimmer_val = g_opstate.ex040105_led_dimmer;
   if (g_opstate.ex040105_led_dimmer == 0x14) {
     *param_1 = *param_1 | 0x80;
   }
@@ -5050,13 +5053,13 @@ void menu_ex040105_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  if (bVar1 == 0) {
+  if (g_opstate_ex040105_led_dimmer_val == 0) {
     param_1[0x1a] = 0x46;
     param_1[0x18] = 0x4f;
     param_1[0x19] = 0x46;
     return;
   }
-  dec_to_str_u8(bVar1,param_1 + 0x18);
+  dec_to_str_u8(g_opstate_ex040105_led_dimmer_val,param_1 + 0x18);
   return;
 }
 
@@ -5074,9 +5077,9 @@ void menu_ex040105_draw(byte *param_1)
 void menu_ex040106_draw(byte *param_1)
 
 {
-  byte bVar1;
+  byte g_opstate_ex040106_mouse_pointer_speed_val;
   
-  bVar1 = g_opstate.ex040106_mouse_pointer_speed;
+  g_opstate_ex040106_mouse_pointer_speed_val = g_opstate.ex040106_mouse_pointer_speed;
   if (g_opstate.ex040106_mouse_pointer_speed == 10) {
     *param_1 = *param_1 | 0x80;
   }
@@ -5085,7 +5088,7 @@ void menu_ex040106_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
-  dec_to_str_u8(bVar1,param_1 + 0x18);
+  dec_to_str_u8(g_opstate_ex040106_mouse_pointer_speed_val,param_1 + 0x18);
   return;
 }
 
@@ -5103,12 +5106,12 @@ void menu_ex040106_draw(byte *param_1)
 void menu_ex040201_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040201_rbw_val;
   
-  bVar1 = g_opstate.ex040201_rbw;
+  g_opstate_ex040201_rbw_val = g_opstate.ex040201_rbw;
   local_7 = g_opstate.ex040201_rbw;
   if (g_opstate.ex040201_rbw == 0) {
     *param_1 = *param_1 | 0x80;
@@ -5118,17 +5121,17 @@ void menu_ex040201_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
-  if (2 < bVar1) {
+  if (2 < g_opstate_ex040201_rbw_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1866);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5147,12 +5150,12 @@ void menu_ex040201_draw(byte *param_1)
 void menu_ex040202_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040202_scope_ctr_val;
   
-  bVar1 = g_opstate.ex040202_scope_ctr;
+  g_opstate_ex040202_scope_ctr_val = g_opstate.ex040202_scope_ctr;
   local_7 = g_opstate.ex040202_scope_ctr;
   if (g_opstate.ex040202_scope_ctr == 1) {
     *param_1 = *param_1 | 0x80;
@@ -5162,17 +5165,17 @@ void menu_ex040202_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex040202_scope_ctr_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x18a5);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5191,12 +5194,12 @@ void menu_ex040202_draw(byte *param_1)
 void menu_ex040203_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040203_2d_disp_sensitivity_val;
   
-  bVar1 = g_opstate.ex040203_2d_disp_sensitivity;
+  g_opstate_ex040203_2d_disp_sensitivity_val = g_opstate.ex040203_2d_disp_sensitivity;
   local_7 = g_opstate.ex040203_2d_disp_sensitivity;
   if (g_opstate.ex040203_2d_disp_sensitivity == 1) {
     *param_1 = *param_1 | 0x80;
@@ -5206,17 +5209,17 @@ void menu_ex040203_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex040203_2d_disp_sensitivity_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x18cf);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5235,12 +5238,12 @@ void menu_ex040203_draw(byte *param_1)
 void menu_ex040204_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040204_3dss_disp_sensitivity_val;
   
-  bVar1 = g_opstate.ex040204_3dss_disp_sensitivity;
+  g_opstate_ex040204_3dss_disp_sensitivity_val = g_opstate.ex040204_3dss_disp_sensitivity;
   local_7 = g_opstate.ex040204_3dss_disp_sensitivity;
   if (g_opstate.ex040204_3dss_disp_sensitivity == 1) {
     *param_1 = *param_1 | 0x80;
@@ -5250,17 +5253,17 @@ void menu_ex040204_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex040204_3dss_disp_sensitivity_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x18cf);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5279,12 +5282,12 @@ void menu_ex040204_draw(byte *param_1)
 void menu_ex040301_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040301_vmi_color_vfo_a_val;
   
-  bVar1 = g_opstate.ex040301_vmi_color_vfo_a;
+  g_opstate_ex040301_vmi_color_vfo_a_val = g_opstate.ex040301_vmi_color_vfo_a;
   local_7 = g_opstate.ex040301_vmi_color_vfo_a;
   if (g_opstate.ex040301_vmi_color_vfo_a == 0) {
     *param_1 = *param_1 | 0x80;
@@ -5294,17 +5297,17 @@ void menu_ex040301_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex040301_vmi_color_vfo_a_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1ab5);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5323,12 +5326,12 @@ void menu_ex040301_draw(byte *param_1)
 void menu_ex040302_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040302_vmi_color_vfo_b_val;
   
-  bVar1 = g_opstate.ex040302_vmi_color_vfo_b;
+  g_opstate_ex040302_vmi_color_vfo_b_val = g_opstate.ex040302_vmi_color_vfo_b;
   local_7 = g_opstate.ex040302_vmi_color_vfo_b;
   if (g_opstate.ex040302_vmi_color_vfo_b == 1) {
     *param_1 = *param_1 | 0x80;
@@ -5338,17 +5341,17 @@ void menu_ex040302_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex040302_vmi_color_vfo_b_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1ab5);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5367,12 +5370,12 @@ void menu_ex040302_draw(byte *param_1)
 void menu_ex040303_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040303_vmi_color_memory_val;
   
-  bVar1 = g_opstate.ex040303_vmi_color_memory;
+  g_opstate_ex040303_vmi_color_memory_val = g_opstate.ex040303_vmi_color_memory;
   local_7 = g_opstate.ex040303_vmi_color_memory;
   if (g_opstate.ex040303_vmi_color_memory == 2) {
     *param_1 = *param_1 | 0x80;
@@ -5382,17 +5385,17 @@ void menu_ex040303_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (3 < bVar1) {
+  if (3 < g_opstate_ex040303_vmi_color_memory_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1b33);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5411,12 +5414,12 @@ void menu_ex040303_draw(byte *param_1)
 void menu_ex040304_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040304_vmi_color_clar_val;
   
-  bVar1 = g_opstate.ex040304_vmi_color_clar;
+  g_opstate_ex040304_vmi_color_clar_val = g_opstate.ex040304_vmi_color_clar;
   local_7 = g_opstate.ex040304_vmi_color_clar;
   if (g_opstate.ex040304_vmi_color_clar == 0) {
     *param_1 = *param_1 | 0x80;
@@ -5426,17 +5429,17 @@ void menu_ex040304_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex040304_vmi_color_clar_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x1b09);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5474,12 +5477,12 @@ void menu_ex040401_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void menu_ex040402_draw(byte *param_1)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *pbVar1;
+  int i;
   byte local_7;
+  byte g_opstate_ex040402_pixel_val;
   
-  bVar1 = g_opstate.ex040402_pixel;
+  g_opstate_ex040402_pixel_val = g_opstate.ex040402_pixel;
   local_7 = g_opstate.ex040402_pixel;
   if (g_opstate.ex040402_pixel == 0) {
     *param_1 = *param_1 | 0x80;
@@ -5489,17 +5492,17 @@ void menu_ex040402_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
-  if (1 < bVar1) {
+  if (1 < g_opstate_ex040402_pixel_val) {
     local_7 = 0;
   }
-  pbVar2 = (byte *)(
+  pbVar1 = (byte *)(
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_7 * 0x15 + 0x18f9);
   param_1 = param_1 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
-    *param_1 = *pbVar2;
+  for (i = 0x15; i != 0; i = i + -1) {
+    *param_1 = *pbVar1;
     param_1 = param_1 + 1;
-    pbVar2 = pbVar2 + 1;
+    pbVar1 = pbVar1 + 1;
   }
   return;
 }
@@ -5544,7 +5547,7 @@ void menu_m4_16_1_draw(byte *param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
+  int i;
   byte bStack_7;
   
   datetime_edit_load();
@@ -5562,7 +5565,7 @@ void menu_m4_16_1_draw(byte *param_1)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)bStack_7 * 0x15 + 0x1923);
   param_1 = param_1 + 0x18;
-  for (iVar2 = 0x15; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_1 = *pbVar1;
     param_1 = param_1 + 1;
     pbVar1 = pbVar1 + 1;
@@ -5788,53 +5791,53 @@ void menu_m4_17_6_draw(void)
 char * menu_m4_18_0_draw(char *param_1)
 
 {
-  byte bVar1;
-  char *pcVar2;
-  undefined4 *puVar3;
-  char *pcVar4;
-  int iVar5;
+  char *pcVar1;
+  undefined4 *puVar2;
+  char *pcVar3;
+  int iVar4;
+  byte g_cfg105_a008_gn_dbg_mode_enable_val;
   
-  bVar1 = g_cfg105.a008_gn_dbg_mode_enable;
-  pcVar4 = 
+  g_cfg105_a008_gn_dbg_mode_enable_val = g_cfg105.a008_gn_dbg_mode_enable;
+  pcVar3 = 
   "MAIN    : V00-00              DISPLAY : V00-00              DSP     : V00-00              SDR     : V00-00              DST     :                     BLUE                 GREEN                RED                  NONE                 RED                  NONE                 BLUE                 GREEN                WHITE                NONE                 OFF                  100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                550Hz                600Hz                650Hz                700Hz                750Hz                800Hz                850Hz                900Hz                950Hz                1000Hz               OFF                  700Hz                750Hz                800Hz                850Hz                900Hz                950Hz                1000Hz               1050Hz               1100Hz               1150Hz               1200Hz               1250Hz               1300Hz               1350Hz               1400Hz               1450Hz               1500Hz               1550Hz               1600Hz               1650Hz               1700Hz               1750Hz               1800Hz               1850Hz               1900Hz               1950Hz               2000Hz               2050Hz               2100Hz               2150Hz               2200Hz               2250Hz               2300Hz               2350Hz               2400Hz               2450Hz               2500Hz               2550Hz               2600Hz               2650Hz               2700Hz               2750Hz               2800Hz               2850Hz               2900Hz               2950Hz               3000Hz               3050Hz               3100Hz               3150Hz               3200Hz               3250Hz               3300Hz               3350Hz               3400Hz               3450Hz               3500Hz               3550Hz               3600Hz               3650Hz  ..." /* TRUNCATED STRING LITERAL */
   ;
-  pcVar2 = param_1;
-  for (iVar5 = 0x96; iVar5 != 0; iVar5 = iVar5 + -1) {
-    *pcVar2 = *pcVar4;
-    pcVar2 = pcVar2 + 1;
-    pcVar4 = pcVar4 + 1;
+  pcVar1 = param_1;
+  for (iVar4 = 0x96; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *pcVar1 = *pcVar3;
+    pcVar1 = pcVar1 + 1;
+    pcVar3 = pcVar3 + 1;
   }
-  puVar3 = (undefined4 *)ver_main();
-  *(undefined2 *)(param_1 + 0xe) = *(undefined2 *)(puVar3 + 1);
-  *(undefined4 *)(param_1 + 10) = *puVar3;
-  if (bVar1 != 0) {
+  puVar2 = (undefined4 *)ver_main();
+  *(undefined2 *)(param_1 + 0xe) = *(undefined2 *)(puVar2 + 1);
+  *(undefined4 *)(param_1 + 10) = *puVar2;
+  if (g_cfg105_a008_gn_dbg_mode_enable_val != 0) {
     param_1[0x10] = '-';
-    puVar3 = (undefined4 *)ver_main_ext1();
-    *(undefined4 *)(param_1 + 0x11) = *puVar3;
-    puVar3 = (undefined4 *)ver_main_ext2();
-    *(undefined4 *)(param_1 + 0x1a) = puVar3[1];
-    *(undefined4 *)(param_1 + 0x16) = *puVar3;
+    puVar2 = (undefined4 *)ver_main_ext1();
+    *(undefined4 *)(param_1 + 0x11) = *puVar2;
+    puVar2 = (undefined4 *)ver_main_ext2();
+    *(undefined4 *)(param_1 + 0x1a) = puVar2[1];
+    *(undefined4 *)(param_1 + 0x16) = *puVar2;
   }
-  puVar3 = (undefined4 *)ver_display();
-  *(undefined2 *)(param_1 + 0x2c) = *(undefined2 *)(puVar3 + 1);
-  *(undefined4 *)(param_1 + 0x28) = *puVar3;
-  if (bVar1 != 0) {
-    puVar3 = (undefined4 *)ver_display_date();
-    *(undefined4 *)(param_1 + 0x38) = puVar3[1];
-    *(undefined4 *)(param_1 + 0x34) = *puVar3;
+  puVar2 = (undefined4 *)ver_display();
+  *(undefined2 *)(param_1 + 0x2c) = *(undefined2 *)(puVar2 + 1);
+  *(undefined4 *)(param_1 + 0x28) = *puVar2;
+  if (g_cfg105_a008_gn_dbg_mode_enable_val != 0) {
+    puVar2 = (undefined4 *)ver_display_date();
+    *(undefined4 *)(param_1 + 0x38) = puVar2[1];
+    *(undefined4 *)(param_1 + 0x34) = *puVar2;
   }
-  puVar3 = (undefined4 *)ver_dsp();
-  *(undefined2 *)(param_1 + 0x4a) = *(undefined2 *)(puVar3 + 1);
-  *(undefined4 *)(param_1 + 0x46) = *puVar3;
-  puVar3 = (undefined4 *)ver_sdr();
-  *(undefined2 *)(param_1 + 0x68) = *(undefined2 *)(puVar3 + 1);
-  *(undefined4 *)(param_1 + 100) = *puVar3;
+  puVar2 = (undefined4 *)ver_dsp();
+  *(undefined2 *)(param_1 + 0x4a) = *(undefined2 *)(puVar2 + 1);
+  *(undefined4 *)(param_1 + 0x46) = *puVar2;
+  puVar2 = (undefined4 *)ver_sdr();
+  *(undefined2 *)(param_1 + 0x68) = *(undefined2 *)(puVar2 + 1);
+  *(undefined4 *)(param_1 + 100) = *puVar2;
   param_1 = param_1 + 0x82;
-  pcVar2 = (char *)FUN_fffb3fa7();
-  for (iVar5 = 0xf; iVar5 != 0; iVar5 = iVar5 + -1) {
-    *param_1 = *pcVar2;
+  pcVar1 = (char *)FUN_fffb3fa7();
+  for (iVar4 = 0xf; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *param_1 = *pcVar1;
     param_1 = param_1 + 1;
-    pcVar2 = pcVar2 + 1;
+    pcVar1 = pcVar1 + 1;
   }
   return param_1;
 }
@@ -6161,21 +6164,21 @@ void menu_ex010113_step(void)
 {
   bool bVar1;
   bool bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   bVar2 = false;
   if ((DAT_00015dfc == '\x01') ||
      (menu_step_u8(0,6,&g_opstate.ex010113_tx_bpf_sel), g_opstate.ex010113_tx_bpf_sel < 5)) {
     return;
   }
-  uVar3 = dest_code_get();
-  if ((uVar3 == 0x315b) || (uVar3 == 0x50e2)) {
+  dest_code_get_ret = dest_code_get();
+  if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (uVar3 == 0x1cb9)) {
+  if ((bVar1) || (dest_code_get_ret == 0x1cb9)) {
     bVar1 = true;
   }
   else {
@@ -7015,16 +7018,16 @@ void menu_ex010320_step(void)
 void menu_ex010321_step(void)
 
 {
-  vfo_rec *pvVar1;
   byte *local_4;
+  vfo_rec *p_vfo_rec;
   
   if (g_opstate.active_vfo == VFO_A) {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_4 = &pvVar1->tone_num;
+  local_4 = &p_vfo_rec->tone_num;
   menu_step_u8(0,0x31,local_4);
   return;
 }
@@ -8334,11 +8337,11 @@ void menu_ex030103_step(void)
 void menu_ex030104_step(void)
 
 {
-  byte bVar1;
+  byte g_opstate_ex030104_tuner_type_select_val;
   
-  bVar1 = g_opstate.ex030104_tuner_type_select;
+  g_opstate_ex030104_tuner_type_select_val = g_opstate.ex030104_tuner_type_select;
   menu_step_u8(0,3,&g_opstate.ex030104_tuner_type_select);
-  if (bVar1 == g_opstate.ex030104_tuner_type_select) {
+  if (g_opstate_ex030104_tuner_type_select_val == g_opstate.ex030104_tuner_type_select) {
     return;
   }
   g_ui.tuner_indicator = 0;
@@ -9288,11 +9291,11 @@ void menu_ex030404_step(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   undefined1 local_1;
   
-  uVar2 = dest_code_get();
-  if (uVar2 == 0x60e6) {
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0x60e6) {
     local_1 = 4;
   }
   else {
@@ -9334,11 +9337,13 @@ void menu_ex030405_step(void)
 void menu_ex030406_step(void)
 
 {
-  ushort uVar1;
+  ushort dest_code_get_ret;
   
-  uVar1 = dest_code_get();
-  if ((((uVar1 != 0x20b) && (uVar1 != 0x1cb9)) && (uVar1 != 0x315b)) &&
-     (((uVar1 != 0x4380 && (uVar1 != 0x50e2)) && (uVar1 != 0x60e6)))) {
+  dest_code_get_ret = dest_code_get();
+  if ((((dest_code_get_ret != 0x20b) && (dest_code_get_ret != 0x1cb9)) &&
+      (dest_code_get_ret != 0x315b)) &&
+     (((dest_code_get_ret != 0x4380 && (dest_code_get_ret != 0x50e2)) &&
+      (dest_code_get_ret != 0x60e6)))) {
     beep_request(3);
     return;
   }
@@ -9816,29 +9821,29 @@ void menu_ex040402_step(void)
 void menu_ex040101_enter(void)
 
 {
-  ui_state *puVar1;
-  ui_state *puVar2;
+  ui_state *p_ui_state;
+  ui_state *p_ui_state_2;
   
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 0;
   PTR_g_ui_00025d60->kbd_cursor = 0;
-  puVar1 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 8) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 9) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 10) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0xb) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 4) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 5) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 6) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 7) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0) = 0x20;
-  puVar2 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 1) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 2) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 3) = 0x20;
+  p_ui_state = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 8) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 9) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 10) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0xb) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 4) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 5) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 6) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 7) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0) = 0x20;
+  p_ui_state_2 = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 1) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 2) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 3) = 0x20;
   *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = g_opstate.ex040101_my_call._8_4_;
-  *(undefined4 *)(puVar2->msg_text[0] + 4) = g_opstate.ex040101_my_call._4_4_;
-  *(undefined4 *)puVar2->msg_text[0] = g_opstate.ex040101_my_call._0_4_;
+  *(undefined4 *)(p_ui_state_2->msg_text[0] + 4) = g_opstate.ex040101_my_call._4_4_;
+  *(undefined4 *)p_ui_state_2->msg_text[0] = g_opstate.ex040101_my_call._0_4_;
   beep_request(1);
   return;
 }
@@ -11832,31 +11837,31 @@ void menu_ex060518_draw(void)
 void menu_ex060101_enter(void)
 
 {
-  ui_state *puVar1;
-  ui_state *puVar2;
-  undefined4 *puVar3;
+  undefined4 *menu_preset_name_ptr_ret;
+  ui_state *p_ui_state;
+  ui_state *p_ui_state_2;
   
-  puVar3 = (undefined4 *)menu_preset_name_ptr();
+  menu_preset_name_ptr_ret = (undefined4 *)menu_preset_name_ptr();
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 6;
   PTR_g_ui_00025d60->kbd_cursor = 0;
-  puVar1 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 8) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 9) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 10) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0xb) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 4) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 5) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 6) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 7) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0) = 0x20;
-  puVar2 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 1) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 2) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 3) = 0x20;
-  *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = puVar3[2];
-  *(undefined4 *)(puVar2->msg_text[0] + 4) = puVar3[1];
-  *(undefined4 *)puVar2->msg_text[0] = *puVar3;
+  p_ui_state = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 8) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 9) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 10) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0xb) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 4) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 5) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 6) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 7) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0) = 0x20;
+  p_ui_state_2 = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 1) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 2) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 3) = 0x20;
+  *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = menu_preset_name_ptr_ret[2];
+  *(undefined4 *)(p_ui_state_2->msg_text[0] + 4) = menu_preset_name_ptr_ret[1];
+  *(undefined4 *)p_ui_state_2->msg_text[0] = *menu_preset_name_ptr_ret;
   beep_request(1);
   return;
 }
@@ -13428,14 +13433,14 @@ void menuitem_EX010101(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
   code *local_14;
   undefined2 local_10;
   undefined2 local_e;
-  opstate *local_c;
+  opstate *p_opstate;
   undefined1 local_8;
   undefined1 local_7;
   undefined1 local_6;
@@ -13451,7 +13456,7 @@ void menuitem_EX010101(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff85866;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13466,7 +13471,7 @@ void menuitem_EX010101(void)
   local_6 = 1;
   local_5 = 2;
   local_4 = 0;
-  local_c = &g_opstate;
+  p_opstate = &g_opstate;
   local_3 = 0;
   menu_register(local_38);
   return;
@@ -13488,7 +13493,7 @@ void menuitem_EX010102(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13511,7 +13516,7 @@ void menuitem_EX010102(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff8587b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13548,7 +13553,7 @@ void menuitem_EX010103(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13571,7 +13576,7 @@ void menuitem_EX010103(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff85890;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13608,7 +13613,7 @@ void menuitem_EX010104(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13631,7 +13636,7 @@ void menuitem_EX010104(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff858a5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13668,7 +13673,7 @@ void menuitem_EX010105(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13691,7 +13696,7 @@ void menuitem_EX010105(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff858ba;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13728,7 +13733,7 @@ void menuitem_EX010106(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13751,7 +13756,7 @@ void menuitem_EX010106(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff858cf;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13788,7 +13793,7 @@ void menuitem_EX010107(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13811,7 +13816,7 @@ void menuitem_EX010107(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff858e4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13848,7 +13853,7 @@ void menuitem_EX010108(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13871,7 +13876,7 @@ void menuitem_EX010108(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff858f9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13908,7 +13913,7 @@ void menuitem_EX010109(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13931,7 +13936,7 @@ void menuitem_EX010109(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff8590e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -13968,7 +13973,7 @@ void menuitem_EX010110(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -13991,7 +13996,7 @@ void menuitem_EX010110(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff85923;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14028,7 +14033,7 @@ void menuitem_EX010111(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14051,7 +14056,7 @@ void menuitem_EX010111(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff85938;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14088,7 +14093,7 @@ void menuitem_EX010112(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14111,7 +14116,7 @@ void menuitem_EX010112(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff8594d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14148,7 +14153,7 @@ void menuitem_EX010113(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14171,7 +14176,7 @@ void menuitem_EX010113(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff85962;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14208,7 +14213,7 @@ void menuitem_EX010114(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14231,7 +14236,7 @@ void menuitem_EX010114(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff85977;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14268,7 +14273,7 @@ void menuitem_EX010115(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14291,7 +14296,7 @@ void menuitem_EX010115(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff8598c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14328,7 +14333,7 @@ void menuitem_EX010116(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14351,7 +14356,7 @@ void menuitem_EX010116(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff859a1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14388,7 +14393,7 @@ void menuitem_EX010117(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14411,7 +14416,7 @@ void menuitem_EX010117(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff859b6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14448,7 +14453,7 @@ void menuitem_EX010118(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14471,7 +14476,7 @@ void menuitem_EX010118(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff859cb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14508,7 +14513,7 @@ void menuitem_EX010119(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14531,7 +14536,7 @@ void menuitem_EX010119(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff859e0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14568,7 +14573,7 @@ void menuitem_EX010201(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14591,7 +14596,7 @@ void menuitem_EX010201(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff859f5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14628,7 +14633,7 @@ void menuitem_EX010202(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14651,7 +14656,7 @@ void menuitem_EX010202(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff85a0a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14688,7 +14693,7 @@ void menuitem_EX010203(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14711,7 +14716,7 @@ void menuitem_EX010203(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff85a1f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14748,7 +14753,7 @@ void menuitem_EX010204(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14771,7 +14776,7 @@ void menuitem_EX010204(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff85a34;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14808,7 +14813,7 @@ void menuitem_EX010205(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14831,7 +14836,7 @@ void menuitem_EX010205(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff85a49;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14868,7 +14873,7 @@ void menuitem_EX010206(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14891,7 +14896,7 @@ void menuitem_EX010206(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff85a5e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14928,7 +14933,7 @@ void menuitem_EX010207(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -14951,7 +14956,7 @@ void menuitem_EX010207(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff85a73;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -14988,7 +14993,7 @@ void menuitem_EX010208(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15011,7 +15016,7 @@ void menuitem_EX010208(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff85a88;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15048,7 +15053,7 @@ void menuitem_EX010209(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15071,7 +15076,7 @@ void menuitem_EX010209(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff85a9d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15108,7 +15113,7 @@ void menuitem_EX010210(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15131,7 +15136,7 @@ void menuitem_EX010210(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff85ab2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15168,7 +15173,7 @@ void menuitem_EX010211(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15191,7 +15196,7 @@ void menuitem_EX010211(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff85ac7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15228,7 +15233,7 @@ void menuitem_EX010212(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15251,7 +15256,7 @@ void menuitem_EX010212(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff85adc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15288,7 +15293,7 @@ void menuitem_EX010213(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15311,7 +15316,7 @@ void menuitem_EX010213(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff85af1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15348,7 +15353,7 @@ void menuitem_EX010214(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15371,7 +15376,7 @@ void menuitem_EX010214(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff85b06;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15408,7 +15413,7 @@ void menuitem_EX010215(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15431,7 +15436,7 @@ void menuitem_EX010215(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff85b1b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15468,7 +15473,7 @@ void menuitem_EX010216(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15491,7 +15496,7 @@ void menuitem_EX010216(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff85b30;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15527,7 +15532,7 @@ void menuitem_EX010217(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15550,7 +15555,7 @@ void menuitem_EX010217(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff85b45;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15587,7 +15592,7 @@ void menuitem_EX010301(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15610,7 +15615,7 @@ void menuitem_EX010301(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff85b5a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15647,7 +15652,7 @@ void menuitem_EX010302(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15670,7 +15675,7 @@ void menuitem_EX010302(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff85b6f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15707,7 +15712,7 @@ void menuitem_EX010303(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15730,7 +15735,7 @@ void menuitem_EX010303(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff85b84;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15767,7 +15772,7 @@ void menuitem_EX010304(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15790,7 +15795,7 @@ void menuitem_EX010304(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff85b99;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15827,7 +15832,7 @@ void menuitem_EX010305(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15850,7 +15855,7 @@ void menuitem_EX010305(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff85bae;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15887,7 +15892,7 @@ void menuitem_EX010306(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15910,7 +15915,7 @@ void menuitem_EX010306(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff85bc3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -15947,7 +15952,7 @@ void menuitem_EX010307(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -15970,7 +15975,7 @@ void menuitem_EX010307(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff85bd8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16007,7 +16012,7 @@ void menuitem_EX010308(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16030,7 +16035,7 @@ void menuitem_EX010308(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff85bed;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16067,7 +16072,7 @@ void menuitem_EX010309(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16090,7 +16095,7 @@ void menuitem_EX010309(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff85c02;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16127,7 +16132,7 @@ void menuitem_EX010310(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16150,7 +16155,7 @@ void menuitem_EX010310(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff85c17;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16187,7 +16192,7 @@ void menuitem_EX010311(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16210,7 +16215,7 @@ void menuitem_EX010311(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff85c2c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16247,7 +16252,7 @@ void menuitem_EX010312(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16270,7 +16275,7 @@ void menuitem_EX010312(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff85c41;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16307,7 +16312,7 @@ void menuitem_EX010313(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16330,7 +16335,7 @@ void menuitem_EX010313(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff85c56;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16367,7 +16372,7 @@ void menuitem_EX010314(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16390,7 +16395,7 @@ void menuitem_EX010314(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff85c6b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16427,7 +16432,7 @@ void menuitem_EX010315(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16450,7 +16455,7 @@ void menuitem_EX010315(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff85c80;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16487,7 +16492,7 @@ void menuitem_EX010316(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16510,7 +16515,7 @@ void menuitem_EX010316(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff85c95;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16547,7 +16552,7 @@ void menuitem_EX010317(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16570,7 +16575,7 @@ void menuitem_EX010317(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff85caa;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16607,7 +16612,7 @@ void menuitem_EX010318(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16630,7 +16635,7 @@ void menuitem_EX010318(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff85cbf;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16667,7 +16672,7 @@ void menuitem_EX010319(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16690,7 +16695,7 @@ void menuitem_EX010319(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff85cd4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16727,7 +16732,7 @@ void menuitem_EX010320(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16750,7 +16755,7 @@ void menuitem_EX010320(void)
   local_38[5] = 0x13;
   pbVar2 = (byte *)0xfff85ce9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16787,7 +16792,7 @@ void menuitem_EX010321(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16810,7 +16815,7 @@ void menuitem_EX010321(void)
   local_38[5] = 0x14;
   pbVar2 = (byte *)0xfff85cfe;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16847,7 +16852,7 @@ void menuitem_EX010401(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16870,7 +16875,7 @@ void menuitem_EX010401(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff85d13;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16907,7 +16912,7 @@ void menuitem_EX010402(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16930,7 +16935,7 @@ void menuitem_EX010402(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff85d28;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -16967,7 +16972,7 @@ void menuitem_EX010403(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -16990,7 +16995,7 @@ void menuitem_EX010403(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff85d3d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17027,7 +17032,7 @@ void menuitem_EX010404(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17050,7 +17055,7 @@ void menuitem_EX010404(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff85d52;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17087,7 +17092,7 @@ void menuitem_EX010405(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17110,7 +17115,7 @@ void menuitem_EX010405(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff85d67;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17147,7 +17152,7 @@ void menuitem_EX010406(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17170,7 +17175,7 @@ void menuitem_EX010406(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff85d7c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17207,7 +17212,7 @@ void menuitem_EX010407(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17230,7 +17235,7 @@ void menuitem_EX010407(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff85d91;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17267,7 +17272,7 @@ void menuitem_EX010408(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17290,7 +17295,7 @@ void menuitem_EX010408(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff85da6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17327,7 +17332,7 @@ void menuitem_EX010409(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17350,7 +17355,7 @@ void menuitem_EX010409(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff85dbb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17387,7 +17392,7 @@ void menuitem_EX010410(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17410,7 +17415,7 @@ void menuitem_EX010410(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff85dd0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17447,7 +17452,7 @@ void menuitem_EX010411(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17470,7 +17475,7 @@ void menuitem_EX010411(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff85de5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17507,7 +17512,7 @@ void menuitem_EX010412(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17530,7 +17535,7 @@ void menuitem_EX010412(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff85dfa;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17567,7 +17572,7 @@ void menuitem_EX010413(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17590,7 +17595,7 @@ void menuitem_EX010413(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff85e0f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17627,7 +17632,7 @@ void menuitem_EX010414(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17650,7 +17655,7 @@ void menuitem_EX010414(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff85e24;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17687,7 +17692,7 @@ void menuitem_EX010415(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17710,7 +17715,7 @@ void menuitem_EX010415(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff85e39;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17747,7 +17752,7 @@ void menuitem_EX010416(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17770,7 +17775,7 @@ void menuitem_EX010416(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff85e4e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17807,7 +17812,7 @@ void menuitem_EX010417(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17830,7 +17835,7 @@ void menuitem_EX010417(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff85e63;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17867,7 +17872,7 @@ void menuitem_EX010418(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17890,7 +17895,7 @@ void menuitem_EX010418(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff85e78;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17927,7 +17932,7 @@ void menuitem_EX010419(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -17950,7 +17955,7 @@ void menuitem_EX010419(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff85e8d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -17987,7 +17992,7 @@ void menuitem_EX010420(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18010,7 +18015,7 @@ void menuitem_EX010420(void)
   local_38[5] = 0x13;
   pbVar2 = (byte *)0xfff85ea2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18047,7 +18052,7 @@ void menuitem_EX010501(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18070,7 +18075,7 @@ void menuitem_EX010501(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff85eb7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18107,7 +18112,7 @@ void menuitem_EX010502(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18130,7 +18135,7 @@ void menuitem_EX010502(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff85ecc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18167,7 +18172,7 @@ void menuitem_EX010503(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18190,7 +18195,7 @@ void menuitem_EX010503(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff85ee1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18227,7 +18232,7 @@ void menuitem_EX010504(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18250,7 +18255,7 @@ void menuitem_EX010504(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff85ef6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18287,7 +18292,7 @@ void menuitem_EX010505(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18310,7 +18315,7 @@ void menuitem_EX010505(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff85f0b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18347,7 +18352,7 @@ void menuitem_EX010506(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18370,7 +18375,7 @@ void menuitem_EX010506(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff85f20;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18407,7 +18412,7 @@ void menuitem_EX010507(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18430,7 +18435,7 @@ void menuitem_EX010507(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff85f35;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18467,7 +18472,7 @@ void menuitem_EX010508(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18490,7 +18495,7 @@ void menuitem_EX010508(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff85f4a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18526,7 +18531,7 @@ void menuitem_EX010509(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18549,7 +18554,7 @@ void menuitem_EX010509(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff85f5f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18586,7 +18591,7 @@ void menuitem_EX010510(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18609,7 +18614,7 @@ void menuitem_EX010510(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff85f74;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18646,7 +18651,7 @@ void menuitem_EX010511(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18669,7 +18674,7 @@ void menuitem_EX010511(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff85f89;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18706,7 +18711,7 @@ void menuitem_EX010512(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18729,7 +18734,7 @@ void menuitem_EX010512(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff85f9e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18766,7 +18771,7 @@ void menuitem_EX010513(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18789,7 +18794,7 @@ void menuitem_EX010513(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff85fb3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18826,7 +18831,7 @@ void menuitem_EX010514(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18849,7 +18854,7 @@ void menuitem_EX010514(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff85fc8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18886,7 +18891,7 @@ void menuitem_EX010515(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18909,7 +18914,7 @@ void menuitem_EX010515(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff85fdd;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -18946,7 +18951,7 @@ void menuitem_EX010516(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -18969,7 +18974,7 @@ void menuitem_EX010516(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff85ff2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19006,7 +19011,7 @@ void menuitem_EX010517(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19029,7 +19034,7 @@ void menuitem_EX010517(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff86007;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19066,7 +19071,7 @@ void menuitem_EX020101(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19089,7 +19094,7 @@ void menuitem_EX020101(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff8601c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19126,7 +19131,7 @@ void menuitem_EX020102(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19149,7 +19154,7 @@ void menuitem_EX020102(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86031;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19186,7 +19191,7 @@ void menuitem_EX020103(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19209,7 +19214,7 @@ void menuitem_EX020103(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86046;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19246,7 +19251,7 @@ void menuitem_EX020104(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19269,7 +19274,7 @@ void menuitem_EX020104(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff8605b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19306,7 +19311,7 @@ void menuitem_EX020105(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19329,7 +19334,7 @@ void menuitem_EX020105(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86070;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19366,7 +19371,7 @@ void menuitem_EX020106(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19389,7 +19394,7 @@ void menuitem_EX020106(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86085;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19426,7 +19431,7 @@ void menuitem_EX020107(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19449,7 +19454,7 @@ void menuitem_EX020107(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff8609a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19486,7 +19491,7 @@ void menuitem_EX020108(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19509,7 +19514,7 @@ void menuitem_EX020108(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff860af;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19546,7 +19551,7 @@ void menuitem_EX020109(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19569,7 +19574,7 @@ void menuitem_EX020109(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff860c4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19606,7 +19611,7 @@ void menuitem_EX020110(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19629,7 +19634,7 @@ void menuitem_EX020110(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff860d9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19666,7 +19671,7 @@ void menuitem_EX020111(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19689,7 +19694,7 @@ void menuitem_EX020111(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff860ee;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19726,7 +19731,7 @@ void menuitem_EX020112(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19749,7 +19754,7 @@ void menuitem_EX020112(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff86103;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19786,7 +19791,7 @@ void menuitem_EX020113(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19809,7 +19814,7 @@ void menuitem_EX020113(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff86118;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19846,7 +19851,7 @@ void menuitem_EX020114(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19869,7 +19874,7 @@ void menuitem_EX020114(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff8612d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19906,7 +19911,7 @@ void menuitem_EX020115(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19929,7 +19934,7 @@ void menuitem_EX020115(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff86142;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -19966,7 +19971,7 @@ void menuitem_EX020116(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -19989,7 +19994,7 @@ void menuitem_EX020116(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff86157;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20026,7 +20031,7 @@ void menuitem_EX020117(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20049,7 +20054,7 @@ void menuitem_EX020117(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff8616c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20086,7 +20091,7 @@ void menuitem_EX020118(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20109,7 +20114,7 @@ void menuitem_EX020118(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff86181;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20146,7 +20151,7 @@ void menuitem_EX020119(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20169,7 +20174,7 @@ void menuitem_EX020119(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff86196;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20206,7 +20211,7 @@ void menuitem_EX020120(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20229,7 +20234,7 @@ void menuitem_EX020120(void)
   local_38[5] = 0x13;
   pbVar2 = (byte *)0xfff861ab;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20266,7 +20271,7 @@ void menuitem_EX020201(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20289,7 +20294,7 @@ void menuitem_EX020201(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff861c0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20326,7 +20331,7 @@ void menuitem_EX020202(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20349,7 +20354,7 @@ void menuitem_EX020202(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff861d5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20386,7 +20391,7 @@ void menuitem_EX020203(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20409,7 +20414,7 @@ void menuitem_EX020203(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff861ea;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20446,7 +20451,7 @@ void menuitem_EX020204(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20469,7 +20474,7 @@ void menuitem_EX020204(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff861ff;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20506,7 +20511,7 @@ void menuitem_EX020205(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20529,7 +20534,7 @@ void menuitem_EX020205(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86214;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20566,7 +20571,7 @@ void menuitem_EX020206(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20589,7 +20594,7 @@ void menuitem_EX020206(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86229;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20626,7 +20631,7 @@ void menuitem_EX020207(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20649,7 +20654,7 @@ void menuitem_EX020207(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff8623e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20686,7 +20691,7 @@ void menuitem_EX020208(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20709,7 +20714,7 @@ void menuitem_EX020208(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86253;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20746,7 +20751,7 @@ void menuitem_EX020209(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20769,7 +20774,7 @@ void menuitem_EX020209(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86268;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20806,7 +20811,7 @@ void menuitem_EX020210(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20829,7 +20834,7 @@ void menuitem_EX020210(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff8627d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20866,7 +20871,7 @@ void menuitem_EX020211(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20889,7 +20894,7 @@ void menuitem_EX020211(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86292;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20926,7 +20931,7 @@ void menuitem_EX030101(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -20949,7 +20954,7 @@ void menuitem_EX030101(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff862a7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -20986,7 +20991,7 @@ void menuitem_EX030102(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21009,7 +21014,7 @@ void menuitem_EX030102(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff862bc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21046,7 +21051,7 @@ void menuitem_EX030103(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21069,7 +21074,7 @@ void menuitem_EX030103(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff862d1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21106,7 +21111,7 @@ void menuitem_EX030104(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21129,7 +21134,7 @@ void menuitem_EX030104(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff862e6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21166,7 +21171,7 @@ void menuitem_EX030105(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21189,7 +21194,7 @@ void menuitem_EX030105(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff862fb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21226,7 +21231,7 @@ void menuitem_EX030106(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21249,7 +21254,7 @@ void menuitem_EX030106(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86310;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21286,7 +21291,7 @@ void menuitem_EX030107(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21309,7 +21314,7 @@ void menuitem_EX030107(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86325;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21346,7 +21351,7 @@ void menuitem_EX030108(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21369,7 +21374,7 @@ void menuitem_EX030108(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff8633a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21406,7 +21411,7 @@ void menuitem_EX030109(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21429,7 +21434,7 @@ void menuitem_EX030109(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff8634f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21466,7 +21471,7 @@ void menuitem_EX030110(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21489,7 +21494,7 @@ void menuitem_EX030110(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86364;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21525,7 +21530,7 @@ void menuitem_EX030111(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21548,7 +21553,7 @@ void menuitem_EX030111(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86379;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21585,7 +21590,7 @@ void menuitem_EX030112(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21608,7 +21613,7 @@ void menuitem_EX030112(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff8638e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21645,7 +21650,7 @@ void menuitem_EX030113(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21668,7 +21673,7 @@ void menuitem_EX030113(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff863a3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21705,7 +21710,7 @@ void menuitem_EX030114(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21728,7 +21733,7 @@ void menuitem_EX030114(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff863b8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21765,7 +21770,7 @@ void menuitem_EX030115(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21788,7 +21793,7 @@ void menuitem_EX030115(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff863cd;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21825,7 +21830,7 @@ void menuitem_EX030116(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21848,7 +21853,7 @@ void menuitem_EX030116(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff863e2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21885,7 +21890,7 @@ void menuitem_EX030117(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21908,7 +21913,7 @@ void menuitem_EX030117(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff863f7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -21945,7 +21950,7 @@ void menuitem_EX030118(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -21968,7 +21973,7 @@ void menuitem_EX030118(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff8640c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22005,7 +22010,7 @@ void menuitem_EX030119(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22028,7 +22033,7 @@ void menuitem_EX030119(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff86421;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22065,7 +22070,7 @@ void menuitem_EX030120(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22088,7 +22093,7 @@ void menuitem_EX030120(void)
   local_38[5] = 0x13;
   pbVar2 = (byte *)0xfff86436;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22125,7 +22130,7 @@ void menuitem_EX030121(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22148,7 +22153,7 @@ void menuitem_EX030121(void)
   local_38[5] = 0x14;
   pbVar2 = (byte *)0xfff8644b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22185,7 +22190,7 @@ void menuitem_EX030122(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22208,7 +22213,7 @@ void menuitem_EX030122(void)
   local_38[5] = 0x15;
   pbVar2 = (byte *)0xfff86460;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22245,7 +22250,7 @@ void menuitem_EX030123(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22268,7 +22273,7 @@ void menuitem_EX030123(void)
   local_38[5] = 0x16;
   pbVar2 = (byte *)0xfff86475;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22305,7 +22310,7 @@ void menuitem_EX030124(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22328,7 +22333,7 @@ void menuitem_EX030124(void)
   local_38[5] = 0x17;
   pbVar2 = (byte *)0xfff8648a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22365,7 +22370,7 @@ void menuitem_EX030125(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22388,7 +22393,7 @@ void menuitem_EX030125(void)
   local_38[5] = 0x18;
   pbVar2 = (byte *)0xfff8649f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22425,7 +22430,7 @@ void menuitem_EX030126(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22448,7 +22453,7 @@ void menuitem_EX030126(void)
   local_38[5] = 0x19;
   pbVar2 = (byte *)0xfff864b4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22485,7 +22490,7 @@ void menuitem_EX030201(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22508,7 +22513,7 @@ void menuitem_EX030201(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff864c9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22545,7 +22550,7 @@ void menuitem_EX030202(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22568,7 +22573,7 @@ void menuitem_EX030202(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff864de;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22605,7 +22610,7 @@ void menuitem_EX030203(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22628,7 +22633,7 @@ void menuitem_EX030203(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff864f3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22665,7 +22670,7 @@ void menuitem_EX030204(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22688,7 +22693,7 @@ void menuitem_EX030204(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86508;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22725,7 +22730,7 @@ void menuitem_EX030205(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22748,7 +22753,7 @@ void menuitem_EX030205(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff8651d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22785,7 +22790,7 @@ void menuitem_EX030206(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22808,7 +22813,7 @@ void menuitem_EX030206(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86532;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22845,7 +22850,7 @@ void menuitem_EX030301(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22868,7 +22873,7 @@ void menuitem_EX030301(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86547;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22905,7 +22910,7 @@ void menuitem_EX030302(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22928,7 +22933,7 @@ void menuitem_EX030302(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff8655c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -22965,7 +22970,7 @@ void menuitem_EX030303(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -22988,7 +22993,7 @@ void menuitem_EX030303(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86571;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23025,7 +23030,7 @@ void menuitem_EX030304(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23048,7 +23053,7 @@ void menuitem_EX030304(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86586;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23085,7 +23090,7 @@ void menuitem_EX030305(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23108,7 +23113,7 @@ void menuitem_EX030305(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff8659b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23145,7 +23150,7 @@ void menuitem_EX030306(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23168,7 +23173,7 @@ void menuitem_EX030306(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff865b0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23205,7 +23210,7 @@ void menuitem_EX030307(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23228,7 +23233,7 @@ void menuitem_EX030307(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff865c5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23265,7 +23270,7 @@ void menuitem_EX030308(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23288,7 +23293,7 @@ void menuitem_EX030308(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff865da;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23325,7 +23330,7 @@ void menuitem_EX030309(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23348,7 +23353,7 @@ void menuitem_EX030309(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff865ef;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23385,7 +23390,7 @@ void menuitem_EX030310(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23408,7 +23413,7 @@ void menuitem_EX030310(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86604;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23445,7 +23450,7 @@ void menuitem_EX030311(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23468,7 +23473,7 @@ void menuitem_EX030311(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86619;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23505,7 +23510,7 @@ void menuitem_EX030312(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23528,7 +23533,7 @@ void menuitem_EX030312(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff8662e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23565,7 +23570,7 @@ void menuitem_EX030313(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23588,7 +23593,7 @@ void menuitem_EX030313(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff86643;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23625,7 +23630,7 @@ void menuitem_EX030314(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23648,7 +23653,7 @@ void menuitem_EX030314(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff86658;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23685,7 +23690,7 @@ void menuitem_EX030315(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23708,7 +23713,7 @@ void menuitem_EX030315(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff8666d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23745,7 +23750,7 @@ void menuitem_EX030316(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23768,7 +23773,7 @@ void menuitem_EX030316(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff86682;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23805,7 +23810,7 @@ void menuitem_EX030317(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23828,7 +23833,7 @@ void menuitem_EX030317(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff86697;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23865,7 +23870,7 @@ void menuitem_EX030318(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23888,7 +23893,7 @@ void menuitem_EX030318(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff866ac;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23925,7 +23930,7 @@ void menuitem_EX030319(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -23948,7 +23953,7 @@ void menuitem_EX030319(void)
   local_38[5] = 0x12;
   pbVar2 = (byte *)0xfff866c1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -23985,7 +23990,7 @@ void menuitem_EX030401(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24008,7 +24013,7 @@ void menuitem_EX030401(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff866d6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24045,7 +24050,7 @@ void menuitem_EX030402(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24068,7 +24073,7 @@ void menuitem_EX030402(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff866eb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24105,7 +24110,7 @@ void menuitem_EX030403(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24128,7 +24133,7 @@ void menuitem_EX030403(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86700;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24165,7 +24170,7 @@ void menuitem_EX030404(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24188,7 +24193,7 @@ void menuitem_EX030404(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86715;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24225,7 +24230,7 @@ void menuitem_EX030405(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24248,7 +24253,7 @@ void menuitem_EX030405(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff8672a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24285,7 +24290,7 @@ void menuitem_EX030406(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24308,7 +24313,7 @@ void menuitem_EX030406(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff8673f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24345,7 +24350,7 @@ void menuitem_EX030407(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24368,7 +24373,7 @@ void menuitem_EX030407(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86754;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24405,7 +24410,7 @@ void menuitem_EX030408(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24428,7 +24433,7 @@ void menuitem_EX030408(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86769;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24465,7 +24470,7 @@ void menuitem_EX030501(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24488,7 +24493,7 @@ void menuitem_EX030501(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff8677e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24524,7 +24529,7 @@ void menuitem_EX030502(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24547,7 +24552,7 @@ void menuitem_EX030502(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86793;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24584,7 +24589,7 @@ void menuitem_EX030503(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24607,7 +24612,7 @@ void menuitem_EX030503(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff867a8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24644,7 +24649,7 @@ void menuitem_EX030504(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24667,7 +24672,7 @@ void menuitem_EX030504(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff867bd;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24704,7 +24709,7 @@ void menuitem_EX030505(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24727,7 +24732,7 @@ void menuitem_EX030505(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff867d2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24764,7 +24769,7 @@ void menuitem_EX030506(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24787,7 +24792,7 @@ void menuitem_EX030506(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff867e7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24824,7 +24829,7 @@ void menuitem_EX040101(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24847,7 +24852,7 @@ void menuitem_EX040101(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff867fc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24884,7 +24889,7 @@ void menuitem_EX040102(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24907,7 +24912,7 @@ void menuitem_EX040102(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86811;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -24944,7 +24949,7 @@ void menuitem_EX040103(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -24967,7 +24972,7 @@ void menuitem_EX040103(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86826;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25004,7 +25009,7 @@ void menuitem_EX040104(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25027,7 +25032,7 @@ void menuitem_EX040104(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff8683b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25064,7 +25069,7 @@ void menuitem_EX040105(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25087,7 +25092,7 @@ void menuitem_EX040105(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86850;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25124,7 +25129,7 @@ void menuitem_EX040106(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25147,7 +25152,7 @@ void menuitem_EX040106(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86865;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25184,7 +25189,7 @@ void menuitem_EX040201(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25207,7 +25212,7 @@ void menuitem_EX040201(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff8687a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25244,7 +25249,7 @@ void menuitem_EX040202(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25267,7 +25272,7 @@ void menuitem_EX040202(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff8688f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25304,7 +25309,7 @@ void menuitem_EX040203(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25327,7 +25332,7 @@ void menuitem_EX040203(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff868a4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25364,7 +25369,7 @@ void menuitem_EX040204(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25387,7 +25392,7 @@ void menuitem_EX040204(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff868b9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25424,7 +25429,7 @@ void menuitem_EX040301(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25447,7 +25452,7 @@ void menuitem_EX040301(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff868ce;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25484,7 +25489,7 @@ void menuitem_EX040302(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25507,7 +25512,7 @@ void menuitem_EX040302(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff868e3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25544,7 +25549,7 @@ void menuitem_EX040303(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25567,7 +25572,7 @@ void menuitem_EX040303(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff868f8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25604,7 +25609,7 @@ void menuitem_EX040304(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25627,7 +25632,7 @@ void menuitem_EX040304(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff8690d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25664,7 +25669,7 @@ void menuitem_EX040401(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25687,7 +25692,7 @@ void menuitem_EX040401(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86922;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25724,7 +25729,7 @@ void menuitem_EX040402(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25747,7 +25752,7 @@ void menuitem_EX040402(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86937;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25784,7 +25789,7 @@ void menuitem_int4_16_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25807,7 +25812,7 @@ void menuitem_int4_16_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff8694c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25844,7 +25849,7 @@ void menuitem_int4_16_01(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25867,7 +25872,7 @@ void menuitem_int4_16_01(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86961;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25904,7 +25909,7 @@ void menuitem_int4_16_02(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25927,7 +25932,7 @@ void menuitem_int4_16_02(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86976;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -25964,7 +25969,7 @@ void menuitem_int4_16_03(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -25987,7 +25992,7 @@ void menuitem_int4_16_03(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff8698b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26024,7 +26029,7 @@ void menuitem_int4_16_04(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26047,7 +26052,7 @@ void menuitem_int4_16_04(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff869a0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26084,7 +26089,7 @@ void menuitem_int4_17_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26107,7 +26112,7 @@ void menuitem_int4_17_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff869b5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26144,7 +26149,7 @@ void menuitem_int4_17_01(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26167,7 +26172,7 @@ void menuitem_int4_17_01(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff869ca;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26204,7 +26209,7 @@ void menuitem_int4_17_02(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26227,7 +26232,7 @@ void menuitem_int4_17_02(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff869df;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26264,7 +26269,7 @@ void menuitem_int4_17_03(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26287,7 +26292,7 @@ void menuitem_int4_17_03(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff869f4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26324,7 +26329,7 @@ void menuitem_int4_17_04(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26347,7 +26352,7 @@ void menuitem_int4_17_04(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86a09;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26384,7 +26389,7 @@ void menuitem_int4_17_05(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26407,7 +26412,7 @@ void menuitem_int4_17_05(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86a1e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26444,7 +26449,7 @@ void menuitem_int4_17_06(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26467,7 +26472,7 @@ void menuitem_int4_17_06(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86a33;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26504,7 +26509,7 @@ void menuitem_int4_18_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26527,7 +26532,7 @@ void menuitem_int4_18_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86a48;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26564,7 +26569,7 @@ void menuitem_int4_19_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26587,7 +26592,7 @@ void menuitem_int4_19_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86a5d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26624,7 +26629,7 @@ void menuitem_int4_20_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26647,7 +26652,7 @@ void menuitem_int4_20_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86a72;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26684,7 +26689,7 @@ void menuitem_int4_20_01(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26707,7 +26712,7 @@ void menuitem_int4_20_01(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86a87;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26744,7 +26749,7 @@ void menuitem_int4_20_02(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26767,7 +26772,7 @@ void menuitem_int4_20_02(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86a9c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26804,7 +26809,7 @@ void menuitem_int4_21_00(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26827,7 +26832,7 @@ void menuitem_int4_21_00(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86ab1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26864,7 +26869,7 @@ void menuitem_EX060101(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26887,7 +26892,7 @@ void menuitem_EX060101(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86ac6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26924,7 +26929,7 @@ void menuitem_EX060102(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -26947,7 +26952,7 @@ void menuitem_EX060102(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86adb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -26984,7 +26989,7 @@ void menuitem_EX060103(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27007,7 +27012,7 @@ void menuitem_EX060103(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86af0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27044,7 +27049,7 @@ void menuitem_EX060104(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27067,7 +27072,7 @@ void menuitem_EX060104(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86b05;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27104,7 +27109,7 @@ void menuitem_EX060105(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27127,7 +27132,7 @@ void menuitem_EX060105(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86b1a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27164,7 +27169,7 @@ void menuitem_EX060106(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27187,7 +27192,7 @@ void menuitem_EX060106(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86b2f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27224,7 +27229,7 @@ void menuitem_EX060107(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27247,7 +27252,7 @@ void menuitem_EX060107(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86b44;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27284,7 +27289,7 @@ void menuitem_EX060108(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27307,7 +27312,7 @@ void menuitem_EX060108(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86b59;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27344,7 +27349,7 @@ void menuitem_EX060109(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27367,7 +27372,7 @@ void menuitem_EX060109(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86b6e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27404,7 +27409,7 @@ void menuitem_EX060110(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27427,7 +27432,7 @@ void menuitem_EX060110(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86b83;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27464,7 +27469,7 @@ void menuitem_EX060111(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27487,7 +27492,7 @@ void menuitem_EX060111(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86b98;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27523,7 +27528,7 @@ void menuitem_EX060112(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27546,7 +27551,7 @@ void menuitem_EX060112(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff86bad;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27583,7 +27588,7 @@ void menuitem_EX060113(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27606,7 +27611,7 @@ void menuitem_EX060113(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff86bc2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27643,7 +27648,7 @@ void menuitem_EX060114(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27666,7 +27671,7 @@ void menuitem_EX060114(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff86bd7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27703,7 +27708,7 @@ void menuitem_EX060115(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27726,7 +27731,7 @@ void menuitem_EX060115(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff86bec;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27763,7 +27768,7 @@ void menuitem_EX060116(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27786,7 +27791,7 @@ void menuitem_EX060116(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff86c01;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27823,7 +27828,7 @@ void menuitem_EX060117(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27846,7 +27851,7 @@ void menuitem_EX060117(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff86c16;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27883,7 +27888,7 @@ void menuitem_EX060118(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27906,7 +27911,7 @@ void menuitem_EX060118(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff86c2b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -27943,7 +27948,7 @@ void menuitem_EX060201(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -27966,7 +27971,7 @@ void menuitem_EX060201(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86c40;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28003,7 +28008,7 @@ void menuitem_EX060202(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28026,7 +28031,7 @@ void menuitem_EX060202(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86c55;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28063,7 +28068,7 @@ void menuitem_EX060203(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28086,7 +28091,7 @@ void menuitem_EX060203(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86c6a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28123,7 +28128,7 @@ void menuitem_EX060204(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28146,7 +28151,7 @@ void menuitem_EX060204(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86c7f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28183,7 +28188,7 @@ void menuitem_EX060205(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28206,7 +28211,7 @@ void menuitem_EX060205(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86c94;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28243,7 +28248,7 @@ void menuitem_EX060206(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28266,7 +28271,7 @@ void menuitem_EX060206(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86ca9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28303,7 +28308,7 @@ void menuitem_EX060207(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28326,7 +28331,7 @@ void menuitem_EX060207(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86cbe;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28363,7 +28368,7 @@ void menuitem_EX060208(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28386,7 +28391,7 @@ void menuitem_EX060208(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86cd3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28423,7 +28428,7 @@ void menuitem_EX060209(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28446,7 +28451,7 @@ void menuitem_EX060209(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86ce8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28483,7 +28488,7 @@ void menuitem_EX060210(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28506,7 +28511,7 @@ void menuitem_EX060210(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86cfd;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28543,7 +28548,7 @@ void menuitem_EX060211(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28566,7 +28571,7 @@ void menuitem_EX060211(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86d12;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28603,7 +28608,7 @@ void menuitem_EX060212(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28626,7 +28631,7 @@ void menuitem_EX060212(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff86d27;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28663,7 +28668,7 @@ void menuitem_EX060213(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28686,7 +28691,7 @@ void menuitem_EX060213(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff86d3c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28723,7 +28728,7 @@ void menuitem_EX060214(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28746,7 +28751,7 @@ void menuitem_EX060214(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff86d51;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28783,7 +28788,7 @@ void menuitem_EX060215(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28806,7 +28811,7 @@ void menuitem_EX060215(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff86d66;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28843,7 +28848,7 @@ void menuitem_EX060216(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28866,7 +28871,7 @@ void menuitem_EX060216(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff86d7b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28903,7 +28908,7 @@ void menuitem_EX060217(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28926,7 +28931,7 @@ void menuitem_EX060217(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff86d90;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -28963,7 +28968,7 @@ void menuitem_EX060218(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -28986,7 +28991,7 @@ void menuitem_EX060218(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff86da5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29023,7 +29028,7 @@ void menuitem_EX060301(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29046,7 +29051,7 @@ void menuitem_EX060301(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86dba;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29083,7 +29088,7 @@ void menuitem_EX060302(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29106,7 +29111,7 @@ void menuitem_EX060302(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86dcf;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29143,7 +29148,7 @@ void menuitem_EX060303(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29166,7 +29171,7 @@ void menuitem_EX060303(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86de4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29203,7 +29208,7 @@ void menuitem_EX060304(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29226,7 +29231,7 @@ void menuitem_EX060304(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86df9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29263,7 +29268,7 @@ void menuitem_EX060305(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29286,7 +29291,7 @@ void menuitem_EX060305(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86e0e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29323,7 +29328,7 @@ void menuitem_EX060306(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29346,7 +29351,7 @@ void menuitem_EX060306(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86e23;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29383,7 +29388,7 @@ void menuitem_EX060307(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29406,7 +29411,7 @@ void menuitem_EX060307(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86e38;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29443,7 +29448,7 @@ void menuitem_EX060308(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29466,7 +29471,7 @@ void menuitem_EX060308(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86e4d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29503,7 +29508,7 @@ void menuitem_EX060309(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29526,7 +29531,7 @@ void menuitem_EX060309(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86e62;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29563,7 +29568,7 @@ void menuitem_EX060310(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29586,7 +29591,7 @@ void menuitem_EX060310(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86e77;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29623,7 +29628,7 @@ void menuitem_EX060311(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29646,7 +29651,7 @@ void menuitem_EX060311(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff86e8c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29683,7 +29688,7 @@ void menuitem_EX060312(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29706,7 +29711,7 @@ void menuitem_EX060312(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff86ea1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29743,7 +29748,7 @@ void menuitem_EX060313(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29766,7 +29771,7 @@ void menuitem_EX060313(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff86eb6;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29803,7 +29808,7 @@ void menuitem_EX060314(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29826,7 +29831,7 @@ void menuitem_EX060314(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff86ecb;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29863,7 +29868,7 @@ void menuitem_EX060315(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29886,7 +29891,7 @@ void menuitem_EX060315(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff86ee0;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29923,7 +29928,7 @@ void menuitem_EX060316(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -29946,7 +29951,7 @@ void menuitem_EX060316(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff86ef5;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -29983,7 +29988,7 @@ void menuitem_EX060317(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30006,7 +30011,7 @@ void menuitem_EX060317(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff86f0a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30043,7 +30048,7 @@ void menuitem_EX060318(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30066,7 +30071,7 @@ void menuitem_EX060318(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff86f1f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30103,7 +30108,7 @@ void menuitem_EX060401(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30126,7 +30131,7 @@ void menuitem_EX060401(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff86f34;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30163,7 +30168,7 @@ void menuitem_EX060402(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30186,7 +30191,7 @@ void menuitem_EX060402(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff86f49;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30223,7 +30228,7 @@ void menuitem_EX060403(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30246,7 +30251,7 @@ void menuitem_EX060403(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff86f5e;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30283,7 +30288,7 @@ void menuitem_EX060404(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30306,7 +30311,7 @@ void menuitem_EX060404(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff86f73;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30343,7 +30348,7 @@ void menuitem_EX060405(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30366,7 +30371,7 @@ void menuitem_EX060405(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff86f88;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30403,7 +30408,7 @@ void menuitem_EX060406(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30426,7 +30431,7 @@ void menuitem_EX060406(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff86f9d;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30463,7 +30468,7 @@ void menuitem_EX060407(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30486,7 +30491,7 @@ void menuitem_EX060407(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff86fb2;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30522,7 +30527,7 @@ void menuitem_EX060408(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30545,7 +30550,7 @@ void menuitem_EX060408(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86fc7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30582,7 +30587,7 @@ void menuitem_EX060409(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30605,7 +30610,7 @@ void menuitem_EX060409(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86fdc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30642,7 +30647,7 @@ void menuitem_EX060410(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30665,7 +30670,7 @@ void menuitem_EX060410(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86ff1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30702,7 +30707,7 @@ void menuitem_EX060411(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30725,7 +30730,7 @@ void menuitem_EX060411(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff87006;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30762,7 +30767,7 @@ void menuitem_EX060412(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30785,7 +30790,7 @@ void menuitem_EX060412(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff8701b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30822,7 +30827,7 @@ void menuitem_EX060413(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30845,7 +30850,7 @@ void menuitem_EX060413(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff87030;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30882,7 +30887,7 @@ void menuitem_EX060414(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30905,7 +30910,7 @@ void menuitem_EX060414(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff87045;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -30942,7 +30947,7 @@ void menuitem_EX060415(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -30965,7 +30970,7 @@ void menuitem_EX060415(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff8705a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31002,7 +31007,7 @@ void menuitem_EX060416(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31025,7 +31030,7 @@ void menuitem_EX060416(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff8706f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31062,7 +31067,7 @@ void menuitem_EX060417(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31085,7 +31090,7 @@ void menuitem_EX060417(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff87084;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31122,7 +31127,7 @@ void menuitem_EX060418(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31145,7 +31150,7 @@ void menuitem_EX060418(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff87099;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31182,7 +31187,7 @@ void menuitem_EX060501(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31205,7 +31210,7 @@ void menuitem_EX060501(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff870ae;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31242,7 +31247,7 @@ void menuitem_EX060502(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31265,7 +31270,7 @@ void menuitem_EX060502(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff870c3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31302,7 +31307,7 @@ void menuitem_EX060503(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31325,7 +31330,7 @@ void menuitem_EX060503(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff870d8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31362,7 +31367,7 @@ void menuitem_EX060504(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31385,7 +31390,7 @@ void menuitem_EX060504(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff870ed;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31422,7 +31427,7 @@ void menuitem_EX060505(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31445,7 +31450,7 @@ void menuitem_EX060505(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff87102;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31482,7 +31487,7 @@ void menuitem_EX060506(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31505,7 +31510,7 @@ void menuitem_EX060506(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff87117;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31542,7 +31547,7 @@ void menuitem_EX060507(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31565,7 +31570,7 @@ void menuitem_EX060507(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff8712c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31602,7 +31607,7 @@ void menuitem_EX060508(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31625,7 +31630,7 @@ void menuitem_EX060508(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff87141;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31662,7 +31667,7 @@ void menuitem_EX060509(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31685,7 +31690,7 @@ void menuitem_EX060509(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff87156;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31722,7 +31727,7 @@ void menuitem_EX060510(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31745,7 +31750,7 @@ void menuitem_EX060510(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff8716b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31782,7 +31787,7 @@ void menuitem_EX060511(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31805,7 +31810,7 @@ void menuitem_EX060511(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff87180;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31842,7 +31847,7 @@ void menuitem_EX060512(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31865,7 +31870,7 @@ void menuitem_EX060512(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff87195;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31902,7 +31907,7 @@ void menuitem_EX060513(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31925,7 +31930,7 @@ void menuitem_EX060513(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff871aa;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -31962,7 +31967,7 @@ void menuitem_EX060514(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -31985,7 +31990,7 @@ void menuitem_EX060514(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff871bf;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -32022,7 +32027,7 @@ void menuitem_EX060515(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -32045,7 +32050,7 @@ void menuitem_EX060515(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff871d4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -32082,7 +32087,7 @@ void menuitem_EX060516(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -32105,7 +32110,7 @@ void menuitem_EX060516(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff871e9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -32142,7 +32147,7 @@ void menuitem_EX060517(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -32165,7 +32170,7 @@ void menuitem_EX060517(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff871fe;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -32202,7 +32207,7 @@ void menuitem_EX060518(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -32225,7 +32230,7 @@ void menuitem_EX060518(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff87213;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;

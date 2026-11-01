@@ -18,11 +18,11 @@
 void charput(byte param_1)
 
 {
-  uint uVar1;
+  uint dbg_dbgstat;
   
   do {
-    uVar1 = DBG_DBGSTAT;
-  } while ((uVar1 & 0x100) != 0);
+    dbg_dbgstat = DBG_DBGSTAT;
+  } while ((dbg_dbgstat & 0x100) != 0);
   DBG_C2E0 = (uint)param_1;
   return;
 }
@@ -66,11 +66,11 @@ uint charget(void)
 void _CLOSEALL(void)
 
 {
-  int local_4;
+  int i;
   
-  for (local_4 = 0; local_4 < 0x14; local_4 = local_4 + 1) {
-    if ((*(ushort *)(&DAT_0001ff74)[local_4] & 7) != 0) {
-      fclose((&DAT_0001ff74)[local_4]);
+  for (i = 0; i < 0x14; i = i + 1) {
+    if ((*(ushort *)(&DAT_0001ff74)[i] & 7) != 0) {
+      fclose((&DAT_0001ff74)[i]);
     }
   }
   return;
@@ -207,10 +207,10 @@ uint write(int param_1,void *param_2,int param_3)
 uint R_BSP_GetIClkFreqHz(void)
 
 {
-  uint uVar1;
+  uint get_iclk_freq_hz_ret;
   
-  uVar1 = get_iclk_freq_hz();
-  return uVar1;
+  get_iclk_freq_hz_ret = get_iclk_freq_hz();
+  return get_iclk_freq_hz_ret;
 }
 
 
@@ -323,10 +323,10 @@ LAB_fff8fcb2:
 void R_BSP_RegisterProtectEnable(int param_1)
 
 {
-  ushort uVar1;
-  byte bVar2;
+  byte bVar1;
   undefined1 auStack_8 [4];
   int local_4;
+  ushort system_prcr;
   
   local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
@@ -335,16 +335,16 @@ void R_BSP_RegisterProtectEnable(int param_1)
   }
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0x7f;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0xbf;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 | 0x80;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0x7f;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0xbf;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 | 0x80;
     }
     else {
-      uVar1 = SYSTEM_PRCR;
-      SYSTEM_PRCR = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
+      system_prcr = SYSTEM_PRCR;
+      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -369,23 +369,23 @@ void R_BSP_RegisterProtectEnable(int param_1)
 void R_BSP_RegisterProtectDisable(int param_1)
 
 {
-  ushort uVar1;
-  byte bVar2;
+  byte bVar1;
   undefined1 auStack_8 [4];
   int local_4;
+  ushort system_prcr;
   
   local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0x7f;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 | 0x40;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0x7f;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 | 0x40;
     }
     else {
-      uVar1 = SYSTEM_PRCR;
-      SYSTEM_PRCR = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
+      system_prcr = SYSTEM_PRCR;
+      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
     }
   }
   *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
@@ -938,10 +938,10 @@ undefined4 Undefined_0xD8(undefined4 param_1)
 undefined4 vec016_BSC_BUSERR(undefined4 param_1)
 
 {
-  byte bVar1;
+  byte bsc_berclr;
   
-  bVar1 = BSC_BERCLR;
-  BSC_BERCLR = bVar1 | 1;
+  bsc_berclr = BSC_BERCLR;
+  BSC_BERCLR = bsc_berclr | 1;
   R_BSP_InterruptControl(0xb,0,(void *)0x10000000);
   return param_1;
 }
@@ -1105,15 +1105,15 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
 void R_BSP_SoftwareInterruptClose(int param_1)
 
 {
-  byte local_11;
+  byte i;
   
   if (param_1 < 2) {
     R_BSP_SoftwareInterruptControl(param_1,2,(char *)0x10000000);
     R_BSP_SoftwareInterruptControl(param_1,5,(char *)0x10000000);
-    for (local_11 = 0; local_11 < 9; local_11 = local_11 + 1) {
-      *(undefined4 *)(&DAT_00020318 + (uint)local_11 * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x2031c) = &LAB_fff910bc;
-      *(undefined4 *)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x20320) = 0x10000000;
+    for (i = 0; i < 9; i = i + 1) {
+      *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c) = 0;
+      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
     (&DAT_00001430)[param_1] = 0;
@@ -1557,13 +1557,13 @@ void bsp_swint_get_all_task_status(int param_1,undefined4 *param_2)
 
 {
   undefined4 *local_10;
-  byte local_9;
+  byte i;
   
   local_10 = param_2;
-  for (local_9 = 0; local_9 < 9; local_9 = local_9 + 1) {
-    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)local_9 * 0xc + param_1 * 0x6c);
-    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x2031c);
-    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x20320);
+  for (i = 0; i < 9; i = i + 1) {
+    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c);
+    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c);
+    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320);
     local_10 = local_10 + 3;
   }
   return;
@@ -1997,22 +1997,22 @@ uint get_iclk_freq_hz(void)
 byte mcu_clock_setup(void)
 
 {
-  undefined4 uVar1;
-  undefined2 uVar2;
-  byte bVar3;
+  undefined2 uVar1;
+  byte R_BSP_SoftwareDelay_ret;
+  undefined4 system_sckcr;
   
   SYSTEM_PRCR = 0xa50b;
   clock_source_select();
   SYSTEM_SCKCR = 0x21c21222;
-  uVar1 = SYSTEM_SCKCR;
+  system_sckcr = SYSTEM_SCKCR;
   SYSTEM_SCKCR2 = 0x11;
-  uVar2 = SYSTEM_SCKCR2;
+  uVar1 = SYSTEM_SCKCR2;
   SYSTEM_SCKCR3 = 0x400;
-  uVar2 = SYSTEM_SCKCR3;
+  uVar1 = SYSTEM_SCKCR3;
   SYSTEM_LOCOCR = 1;
-  bVar3 = R_BSP_SoftwareDelay(0x19,1000000);
+  R_BSP_SoftwareDelay_ret = R_BSP_SoftwareDelay(0x19,1000000);
   SYSTEM_PRCR = 0xa500;
-  return bVar3;
+  return R_BSP_SoftwareDelay_ret;
 }
 
 
@@ -2036,8 +2036,8 @@ void clock_source_select(void)
   ushort uVar1;
   undefined1 uVar2;
   byte bVar3;
-  char cVar4;
   byte local_1;
+  char system_romwt;
   
   bVar3 = SYSTEM_MOFCR;
   SYSTEM_MOFCR = bVar3 & 0xfe;
@@ -2098,8 +2098,8 @@ void clock_source_select(void)
     bVar3 = SYSTEM_OSCOVFSR;
   } while ((bVar3 & 4) == 0);
   SYSTEM_ROMWT = 2;
-  cVar4 = SYSTEM_ROMWT;
-  if (cVar4 != '\x02') {
+  system_romwt = SYSTEM_ROMWT;
+  if (system_romwt != '\x02') {
     return;
   }
   return;
@@ -2386,10 +2386,10 @@ undefined4 vec111_GROUPBL1(undefined4 param_1)
 undefined4 vec107_GROUPBL2(undefined4 param_1)
 
 {
-  int iVar1;
+  int icu_grpbl2;
   
-  iVar1 = ICU_GRPBL2;
-  if (iVar1 << 0x1f < 0) {
+  icu_grpbl2 = ICU_GRPBL2;
+  if (icu_grpbl2 << 0x1f < 0) {
     R_BSP_InterruptControl(0x4b,0,(void *)0x10000000);
     return param_1;
   }
@@ -2775,17 +2775,17 @@ int strncmp(char *param_1,char *param_2,uint param_3)
 {
   char cVar1;
   char cVar2;
-  uint uVar3;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   if (param_3 == 0) {
     return 0;
   }
   do {
-    if (param_3 <= uVar3) break;
+    if (param_3 <= i) break;
     cVar1 = *param_1;
     param_1 = param_1 + 1;
-    uVar3 = uVar3 + 1;
+    i = i + 1;
     cVar2 = *param_2;
     param_2 = param_2 + 1;
   } while (cVar1 == cVar2);
@@ -2912,35 +2912,35 @@ uint fflush(ushort *param_1)
 
 {
   undefined4 uVar1;
-  uint uVar2;
-  void *pvVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  int iVar6;
-  uint uVar7;
+  uint fflush_ret;
+  void *pvVar2;
+  int iVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  uint uVar6;
   
   if (param_1 == (ushort *)0x0) {
-    puVar5 = &DAT_0001ff74;
-    uVar7 = 0;
-    for (iVar4 = 0; iVar4 < 0x14; iVar4 = iVar4 + 1) {
-      if (((ushort *)*puVar5 != (ushort *)0x0) &&
-         (uVar2 = fflush((ushort *)*puVar5), (int)uVar2 < 0)) {
-        uVar7 = 0xffffffff;
+    puVar4 = &DAT_0001ff74;
+    uVar6 = 0;
+    for (iVar3 = 0; iVar3 < 0x14; iVar3 = iVar3 + 1) {
+      if (((ushort *)*puVar4 != (ushort *)0x0) &&
+         (fflush_ret = fflush((ushort *)*puVar4), (int)fflush_ret < 0)) {
+        uVar6 = 0xffffffff;
       }
-      puVar5 = puVar5 + 1;
+      puVar4 = puVar4 + 1;
     }
   }
   else {
-    uVar7 = 0;
+    uVar6 = 0;
     if ((*param_1 & 0x2000) != 0) {
-      iVar4 = *(int *)(param_1 + 2);
-      iVar6 = 0;
+      iVar3 = *(int *)(param_1 + 2);
+      iVar5 = 0;
       while( true ) {
-        pvVar3 = (void *)(iVar6 + iVar4);
-        if (*(void **)(param_1 + 6) <= pvVar3) break;
-        uVar7 = write((int)*(char *)((int)param_1 + 3),pvVar3,
-                      (int)*(void **)(param_1 + 6) - (int)pvVar3);
-        if ((int)uVar7 < 1) {
+        pvVar2 = (void *)(iVar5 + iVar3);
+        if (*(void **)(param_1 + 6) <= pvVar2) break;
+        uVar6 = write((int)*(char *)((int)param_1 + 3),pvVar2,
+                      (int)*(void **)(param_1 + 6) - (int)pvVar2);
+        if ((int)uVar6 < 1) {
           uVar1 = *(undefined4 *)(param_1 + 2);
           *(undefined4 *)(param_1 + 6) = uVar1;
           *(undefined4 *)(param_1 + 10) = uVar1;
@@ -2948,17 +2948,17 @@ uint fflush(ushort *param_1)
           *(byte *)((int)param_1 + 1) = *(byte *)((int)param_1 + 1) | 2;
           return 0xffffffff;
         }
-        iVar6 = iVar6 + uVar7;
+        iVar5 = iVar5 + uVar6;
       }
       uVar1 = *(undefined4 *)(param_1 + 2);
-      uVar7 = 0;
+      uVar6 = 0;
       *(undefined4 *)(param_1 + 6) = uVar1;
       *(undefined4 *)(param_1 + 10) = uVar1;
       *(undefined4 *)(param_1 + 0x16) = uVar1;
       *(byte *)((int)param_1 + 1) = *(byte *)((int)param_1 + 1) & 0xdf;
     }
   }
-  return uVar7;
+  return uVar6;
 }
 
 
@@ -3084,30 +3084,30 @@ short * _file_alloc(void)
 
 {
   short *psVar1;
-  uint uVar2;
-  undefined4 *puVar3;
+  uint i;
+  undefined4 *puVar2;
   
-  puVar3 = &DAT_0001ff74;
-  uVar2 = 0;
+  puVar2 = &DAT_0001ff74;
+  i = 0;
   while( true ) {
-    if (0x13 < uVar2) {
+    if (0x13 < i) {
       return (short *)0x0;
     }
-    psVar1 = (short *)*puVar3;
+    psVar1 = (short *)*puVar2;
     if (psVar1 == (short *)0x0) break;
     if (*psVar1 == 0) {
       *psVar1 = -0x81;
       return psVar1;
     }
-    puVar3 = puVar3 + 1;
-    uVar2 = uVar2 + 1;
+    puVar2 = puVar2 + 1;
+    i = i + 1;
   }
   psVar1 = (short *)malloc(0x48);
   if (psVar1 == (short *)0x0) {
     return (short *)0x0;
   }
-  *puVar3 = psVar1;
-  *(char *)(psVar1 + 1) = (char)uVar2;
+  *puVar2 = psVar1;
+  *(char *)(psVar1 + 1) = (char)i;
   *psVar1 = 0x80;
   return psVar1;
 }
@@ -3129,7 +3129,7 @@ void _file_release(ushort *param_1)
 {
   ushort *puVar1;
   undefined4 *puVar2;
-  uint uVar3;
+  uint i;
   
   if ((*param_1 & 0x80) == 0) {
     puVar1 = param_1 + 0x22;
@@ -3145,10 +3145,10 @@ void _file_release(ushort *param_1)
     *(ushort **)(param_1 + 0xe) = param_1 + 0x12;
     return;
   }
-  uVar3 = 0;
+  i = 0;
   puVar2 = &DAT_0001ff74;
   do {
-    if (0x13 < uVar3) {
+    if (0x13 < i) {
 LAB_fffee106:
       free();
       return;
@@ -3158,7 +3158,7 @@ LAB_fffee106:
       goto LAB_fffee106;
     }
     puVar2 = puVar2 + 1;
-    uVar3 = uVar3 + 1;
+    i = i + 1;
   } while( true );
 }
 

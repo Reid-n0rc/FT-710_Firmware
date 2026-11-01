@@ -460,7 +460,7 @@ void ai_ex040101(void)
 
 {
   int iVar1;
-  byte bStack_1;
+  byte i;
   
   iVar1 = strncmp(&DAT_0001b355,0x9b01,0xc);
   if (iVar1 == 0) {
@@ -478,8 +478,8 @@ void ai_ex040101(void)
   DAT_0001b355._1_1_ = g_opstate.ex040101_my_call[1];
   DAT_0001b355._2_1_ = g_opstate.ex040101_my_call[2];
   DAT_0001b355._3_1_ = g_opstate.ex040101_my_call[3];
-  for (bStack_1 = 0; bStack_1 < 0xc; bStack_1 = bStack_1 + 1) {
-    (&DAT_0001b23d)[bStack_1] = g_opstate.ex040101_my_call[bStack_1];
+  for (i = 0; i < 0xc; i = i + 1) {
+    (&DAT_0001b23d)[i] = g_opstate.ex040101_my_call[i];
   }
   DAT_0001b249 = 0x3b;
   DAT_0001ff12 = 0x15;

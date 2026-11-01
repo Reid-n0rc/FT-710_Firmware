@@ -211,10 +211,10 @@ void menu_ex010317_step(void)
 byte menu_fm_rptshift_get(void)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return pbVar1[2] >> 2 & 3;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  return vfo_rec_ptr_ret[2] >> 2 & 3;
 }
 
 
@@ -226,10 +226,10 @@ byte menu_fm_rptshift_get(void)
 void menu_fm_rptshift_set(byte param_1)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
-  pbVar1[2] = pbVar1[2] & 0xf3 | (param_1 & 3) << 2;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  vfo_rec_ptr_ret[2] = vfo_rec_ptr_ret[2] & 0xf3 | (param_1 & 3) << 2;
   return;
 }
 
@@ -321,10 +321,10 @@ void menu_ex010320_step(void)
 byte menu_fm_encdec_get(void)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return pbVar1[3] >> 3 & 7;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  return vfo_rec_ptr_ret[3] >> 3 & 7;
 }
 
 
@@ -336,10 +336,10 @@ byte menu_fm_encdec_get(void)
 void menu_fm_encdec_set(byte param_1)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
-  pbVar1[3] = pbVar1[3] & 199 | (param_1 & 7) << 3;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  vfo_rec_ptr_ret[3] = vfo_rec_ptr_ret[3] & 199 | (param_1 & 7) << 3;
   return;
 }
 
@@ -351,16 +351,16 @@ void menu_fm_encdec_set(byte param_1)
 void menu_ex010321_step(void)
 
 {
-  vfo_rec *pvVar1;
   byte *local_4;
+  vfo_rec *p_vfo_rec;
   
   if (g_opstate.active_vfo == VFO_A) {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_4 = &pvVar1->tone_num;
+  local_4 = &p_vfo_rec->tone_num;
   menu_step_u8(0,0x31,local_4);
   return;
 }
@@ -373,16 +373,16 @@ void menu_ex010321_step(void)
 byte menu_fm_tone_get(void)
 
 {
-  vfo_rec *pvVar1;
   byte *local_8;
+  vfo_rec *p_vfo_rec;
   
   if (g_opstate.active_vfo == VFO_A) {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_8 = &pvVar1->tone_num;
+  local_8 = &p_vfo_rec->tone_num;
   return *local_8;
 }
 
@@ -394,16 +394,16 @@ byte menu_fm_tone_get(void)
 void menu_fm_tone_set(byte param_1)
 
 {
-  vfo_rec *pvVar1;
   byte *local_8;
+  vfo_rec *p_vfo_rec;
   
   if (g_opstate.active_vfo == VFO_A) {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_8 = &pvVar1->tone_num;
+  local_8 = &p_vfo_rec->tone_num;
   *local_8 = param_1;
   return;
 }

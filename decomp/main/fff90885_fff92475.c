@@ -75,15 +75,15 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
 void R_BSP_SoftwareInterruptClose(int param_1)
 
 {
-  byte local_11;
+  byte i;
   
   if (param_1 < 2) {
     R_BSP_SoftwareInterruptControl(param_1,2,(char *)0x10000000);
     R_BSP_SoftwareInterruptControl(param_1,5,(char *)0x10000000);
-    for (local_11 = 0; local_11 < 9; local_11 = local_11 + 1) {
-      *(undefined4 *)(&DAT_00020318 + (uint)local_11 * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x2031c) = &LAB_fff910bc;
-      *(undefined4 *)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x20320) = 0x10000000;
+    for (i = 0; i < 9; i = i + 1) {
+      *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c) = 0;
+      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
     (&DAT_00001430)[param_1] = 0;
@@ -452,13 +452,13 @@ void bsp_swint_get_all_task_status(int param_1,undefined4 *param_2)
 
 {
   undefined4 *local_10;
-  byte local_9;
+  byte i;
   
   local_10 = param_2;
-  for (local_9 = 0; local_9 < 9; local_9 = local_9 + 1) {
-    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)local_9 * 0xc + param_1 * 0x6c);
-    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x2031c);
-    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x20320);
+  for (i = 0; i < 9; i = i + 1) {
+    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c);
+    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c);
+    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320);
     local_10 = local_10 + 3;
   }
   return;
@@ -902,22 +902,22 @@ void hw_init_clock(void)
 byte mcu_clock_setup(void)
 
 {
-  undefined4 uVar1;
-  undefined2 uVar2;
-  byte bVar3;
+  undefined2 uVar1;
+  byte R_BSP_SoftwareDelay_ret;
+  undefined4 system_sckcr;
   
   SYSTEM_PRCR = 0xa50b;
   clock_source_select();
   SYSTEM_SCKCR = 0x21c21222;
-  uVar1 = SYSTEM_SCKCR;
+  system_sckcr = SYSTEM_SCKCR;
   SYSTEM_SCKCR2 = 0x11;
-  uVar2 = SYSTEM_SCKCR2;
+  uVar1 = SYSTEM_SCKCR2;
   SYSTEM_SCKCR3 = 0x400;
-  uVar2 = SYSTEM_SCKCR3;
+  uVar1 = SYSTEM_SCKCR3;
   SYSTEM_LOCOCR = 1;
-  bVar3 = R_BSP_SoftwareDelay(0x19,1000000);
+  R_BSP_SoftwareDelay_ret = R_BSP_SoftwareDelay(0x19,1000000);
   SYSTEM_PRCR = 0xa500;
-  return bVar3;
+  return R_BSP_SoftwareDelay_ret;
 }
 
 
@@ -933,8 +933,8 @@ void clock_source_select(void)
   ushort uVar1;
   undefined1 uVar2;
   byte bVar3;
-  char cVar4;
   byte local_1;
+  char system_romwt;
   
   bVar3 = SYSTEM_MOFCR;
   SYSTEM_MOFCR = bVar3 & 0xfe;
@@ -995,8 +995,8 @@ void clock_source_select(void)
     bVar3 = SYSTEM_OSCOVFSR;
   } while ((bVar3 & 4) == 0);
   SYSTEM_ROMWT = 2;
-  cVar4 = SYSTEM_ROMWT;
-  if (cVar4 != '\x02') {
+  system_romwt = SYSTEM_ROMWT;
+  if (system_romwt != '\x02') {
     return;
   }
   return;
@@ -1360,10 +1360,10 @@ undefined4 vec111_GROUPBL1(undefined4 param_1)
 undefined4 vec107_GROUPBL2(undefined4 param_1)
 
 {
-  int iVar1;
+  int icu_grpbl2;
   
-  iVar1 = ICU_GRPBL2;
-  if (iVar1 << 0x1f < 0) {
+  icu_grpbl2 = ICU_GRPBL2;
+  if (icu_grpbl2 << 0x1f < 0) {
     R_BSP_InterruptControl(0x4b,0,(void *)0x10000000);
     return param_1;
   }

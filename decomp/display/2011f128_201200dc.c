@@ -119,88 +119,88 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 {
   byte bVar1;
-  byte bVar2;
-  byte bVar3;
-  void *pvVar4;
-  uint uVar5;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  void *rspi_base_ret;
+  uint uVar2;
   int extraout_r1;
-  uint uVar6;
-  uint uVar7;
-  uint uVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar10;
-  undefined4 *puVar11;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  undefined4 *puVar6;
+  undefined4 *puVar7;
+  undefined4 *puVar8;
   undefined4 local_3c;
   
-  puVar10 = (undefined4 *)0x0;
-  puVar9 = (undefined4 *)0x0;
+  puVar7 = (undefined4 *)0x0;
+  puVar6 = (undefined4 *)0x0;
   bVar1 = 0;
-  pvVar4 = rspi_base(param_1);
+  rspi_base_ret = rspi_base(param_1);
   if (param_4 != 0xff) {
-    bVar1 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-    reg_rmw8((int)pvVar4 + 0x20,param_4,0,7);
+    bVar1 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+    reg_rmw8((int)rspi_base_ret + 0x20,param_4,0,7);
   }
-  bVar2 = reg_read8((byte *)((int)pvVar4 + 0xb),5,0x60);
-  if (bVar2 == 3) {
-    uVar8 = 4;
+  reg_read8_ret = reg_read8((byte *)((int)rspi_base_ret + 0xb),5,0x60);
+  if (reg_read8_ret == 3) {
+    uVar5 = 4;
   }
-  else if (bVar2 == 2) {
-    uVar8 = 2;
-    puVar10 = param_2;
+  else if (reg_read8_ret == 2) {
+    uVar5 = 2;
+    puVar7 = param_2;
     param_2 = (undefined4 *)0x0;
   }
   else {
-    uVar8 = 1;
-    puVar9 = param_2;
+    uVar5 = 1;
+    puVar6 = param_2;
     param_2 = (undefined4 *)0x0;
   }
-  bVar3 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-  uVar5 = *(uint *)(&DAT_20800434 + (uint)bVar3 * 4);
-  if ((uVar5 < uVar8) || (__aeabi_uidivmod(uVar5,uVar8), extraout_r1 != 0)) {
+  reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+  uVar2 = *(uint *)(&DAT_20800434 + (uint)reg_read8_ret_2 * 4);
+  if ((uVar2 < uVar5) || (__aeabi_uidivmod(uVar2,uVar5), extraout_r1 != 0)) {
     local_3c = 0xffffffff;
   }
   else {
     local_3c = 0;
     while (param_3 != 0) {
-      uVar6 = param_3 * uVar8;
-      uVar7 = uVar6;
-      if (uVar5 <= uVar6) {
-        uVar7 = uVar5;
+      uVar3 = param_3 * uVar5;
+      uVar4 = uVar3;
+      if (uVar2 <= uVar3) {
+        uVar4 = uVar2;
       }
       switch(param_1) {
       case 0:
-        rspi0_read_burst(uVar7);
+        rspi0_read_burst(uVar4);
         break;
       case 1:
-        rspi1_read_burst(uVar7);
+        rspi1_read_burst(uVar4);
         break;
       case 2:
-        rspi2_read_burst(uVar7);
+        rspi2_read_burst(uVar4);
         break;
       case 3:
-        rspi3_read_burst(uVar7);
+        rspi3_read_burst(uVar4);
         break;
       case 4:
-        rspi4_read_burst(uVar7,uVar5 > uVar6);
+        rspi4_read_burst(uVar4,uVar2 > uVar3);
       }
-      for (; uVar8 <= uVar7; uVar7 = uVar7 - uVar8) {
-        if (bVar2 == 3) {
-          puVar11 = param_2 + 1;
-          *param_2 = *(undefined4 *)((int)pvVar4 + 4);
+      for (; uVar5 <= uVar4; uVar4 = uVar4 - uVar5) {
+        if (reg_read8_ret == 3) {
+          puVar8 = param_2 + 1;
+          *param_2 = *(undefined4 *)((int)rspi_base_ret + 4);
         }
         else {
-          puVar11 = param_2;
-          if (bVar2 == 2) {
-            *(undefined2 *)puVar10 = *(undefined2 *)((int)pvVar4 + 4);
-            puVar10 = (undefined4 *)((int)puVar10 + 2);
+          puVar8 = param_2;
+          if (reg_read8_ret == 2) {
+            *(undefined2 *)puVar7 = *(undefined2 *)((int)rspi_base_ret + 4);
+            puVar7 = (undefined4 *)((int)puVar7 + 2);
           }
           else {
-            *(undefined1 *)puVar9 = *(undefined1 *)((int)pvVar4 + 4);
-            puVar9 = (undefined4 *)((int)puVar9 + 1);
+            *(undefined1 *)puVar6 = *(undefined1 *)((int)rspi_base_ret + 4);
+            puVar6 = (undefined4 *)((int)puVar6 + 1);
           }
         }
         param_3 = param_3 + -1;
-        param_2 = puVar11;
+        param_2 = puVar8;
       }
       switch(param_1) {
       case 0:
@@ -221,7 +221,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
     }
   }
   if (param_4 != 0xff) {
-    reg_rmw8((int)pvVar4 + 0x20,bVar1,0,7);
+    reg_rmw8((int)rspi_base_ret + 0x20,bVar1,0,7);
   }
   return local_3c;
 }
@@ -233,92 +233,92 @@ undefined4 FUN_2011f494(uint param_1,undefined4 *param_2,int param_3,int param_4
 
 {
   byte bVar1;
-  byte bVar2;
-  byte bVar3;
-  void *pvVar4;
-  uint uVar5;
-  undefined4 uVar6;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  void *rspi_base_ret;
+  uint uVar2;
+  undefined4 uVar3;
   int extraout_r1;
-  uint uVar7;
-  uint uVar8;
-  uint uVar9;
-  undefined4 *puVar10;
-  undefined4 *puVar11;
-  undefined4 *puVar12;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  undefined4 *puVar7;
+  undefined4 *puVar8;
+  undefined4 *puVar9;
   undefined4 uStack_3c;
   
-  uVar6 = 0;
+  uVar3 = 0;
   if ((param_1 < 5) && (0xf6 < param_4 - 8U)) {
     if (param_3 != 0) {
-      puVar11 = (undefined4 *)0x0;
-      puVar10 = (undefined4 *)0x0;
+      puVar8 = (undefined4 *)0x0;
+      puVar7 = (undefined4 *)0x0;
       bVar1 = 0;
-      pvVar4 = rspi_base(param_1);
+      rspi_base_ret = rspi_base(param_1);
       if (param_4 != 0xff) {
-        bVar1 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-        reg_rmw8((int)pvVar4 + 0x20,param_4,0,7);
+        bVar1 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+        reg_rmw8((int)rspi_base_ret + 0x20,param_4,0,7);
       }
-      bVar2 = reg_read8((byte *)((int)pvVar4 + 0xb),5,0x60);
-      if (bVar2 == 3) {
-        uVar9 = 4;
+      reg_read8_ret = reg_read8((byte *)((int)rspi_base_ret + 0xb),5,0x60);
+      if (reg_read8_ret == 3) {
+        uVar6 = 4;
       }
-      else if (bVar2 == 2) {
-        uVar9 = 2;
-        puVar11 = param_2;
+      else if (reg_read8_ret == 2) {
+        uVar6 = 2;
+        puVar8 = param_2;
         param_2 = (undefined4 *)0x0;
       }
       else {
-        uVar9 = 1;
-        puVar10 = param_2;
+        uVar6 = 1;
+        puVar7 = param_2;
         param_2 = (undefined4 *)0x0;
       }
-      bVar3 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-      uVar5 = *(uint *)(&DAT_20800434 + (uint)bVar3 * 4);
-      if ((uVar5 < uVar9) || (__aeabi_uidivmod(uVar5,uVar9), extraout_r1 != 0)) {
+      reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+      uVar2 = *(uint *)(&DAT_20800434 + (uint)reg_read8_ret_2 * 4);
+      if ((uVar2 < uVar6) || (__aeabi_uidivmod(uVar2,uVar6), extraout_r1 != 0)) {
         uStack_3c = 0xffffffff;
       }
       else {
         uStack_3c = 0;
         while (param_3 != 0) {
-          uVar7 = param_3 * uVar9;
-          uVar8 = uVar7;
-          if (uVar5 <= uVar7) {
-            uVar8 = uVar5;
+          uVar4 = param_3 * uVar6;
+          uVar5 = uVar4;
+          if (uVar2 <= uVar4) {
+            uVar5 = uVar2;
           }
           switch(param_1) {
           case 0:
-            rspi0_read_burst(uVar8);
+            rspi0_read_burst(uVar5);
             break;
           case 1:
-            rspi1_read_burst(uVar8);
+            rspi1_read_burst(uVar5);
             break;
           case 2:
-            rspi2_read_burst(uVar8);
+            rspi2_read_burst(uVar5);
             break;
           case 3:
-            rspi3_read_burst(uVar8);
+            rspi3_read_burst(uVar5);
             break;
           case 4:
-            rspi4_read_burst(uVar8,uVar5 > uVar7);
+            rspi4_read_burst(uVar5,uVar2 > uVar4);
           }
-          for (; uVar9 <= uVar8; uVar8 = uVar8 - uVar9) {
-            if (bVar2 == 3) {
-              puVar12 = param_2 + 1;
-              *param_2 = *(undefined4 *)((int)pvVar4 + 4);
+          for (; uVar6 <= uVar5; uVar5 = uVar5 - uVar6) {
+            if (reg_read8_ret == 3) {
+              puVar9 = param_2 + 1;
+              *param_2 = *(undefined4 *)((int)rspi_base_ret + 4);
             }
             else {
-              puVar12 = param_2;
-              if (bVar2 == 2) {
-                *(undefined2 *)puVar11 = *(undefined2 *)((int)pvVar4 + 4);
-                puVar11 = (undefined4 *)((int)puVar11 + 2);
+              puVar9 = param_2;
+              if (reg_read8_ret == 2) {
+                *(undefined2 *)puVar8 = *(undefined2 *)((int)rspi_base_ret + 4);
+                puVar8 = (undefined4 *)((int)puVar8 + 2);
               }
               else {
-                *(undefined1 *)puVar10 = *(undefined1 *)((int)pvVar4 + 4);
-                puVar10 = (undefined4 *)((int)puVar10 + 1);
+                *(undefined1 *)puVar7 = *(undefined1 *)((int)rspi_base_ret + 4);
+                puVar7 = (undefined4 *)((int)puVar7 + 1);
               }
             }
             param_3 = param_3 + -1;
-            param_2 = puVar12;
+            param_2 = puVar9;
           }
           switch(param_1) {
           case 0:
@@ -339,15 +339,15 @@ undefined4 FUN_2011f494(uint param_1,undefined4 *param_2,int param_3,int param_4
         }
       }
       if (param_4 != 0xff) {
-        reg_rmw8((int)pvVar4 + 0x20,bVar1,0,7);
+        reg_rmw8((int)rspi_base_ret + 0x20,bVar1,0,7);
       }
       return uStack_3c;
     }
   }
   else {
-    uVar6 = 0xffffffff;
+    uVar3 = 0xffffffff;
   }
-  return uVar6;
+  return uVar3;
 }
 
 
@@ -360,46 +360,46 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
 {
   uint uVar1;
   byte bVar2;
-  byte bVar3;
-  byte bVar4;
-  void *pvVar5;
-  uint uVar6;
-  undefined4 uVar7;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  void *rspi_base_ret;
+  uint uVar3;
+  undefined4 uVar4;
   int extraout_r1;
-  uint uVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar10;
-  undefined4 *puVar11;
+  uint uVar5;
+  undefined4 *puVar6;
+  undefined4 *puVar7;
+  undefined4 *puVar8;
   undefined4 local_48;
   
-  uVar7 = 0;
+  uVar4 = 0;
   if ((param_1 < 5) && (0xfa < param_4 - 4U)) {
     if (param_3 != 0) {
-      puVar10 = (undefined4 *)0x0;
-      puVar9 = (undefined4 *)0x0;
+      puVar7 = (undefined4 *)0x0;
+      puVar6 = (undefined4 *)0x0;
       bVar2 = 0;
-      pvVar5 = rspi_base(param_1);
+      rspi_base_ret = rspi_base(param_1);
       if (param_4 != 0xff) {
-        bVar2 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
-        reg_rmw8((int)pvVar5 + 0x20,param_4,4,0x30);
+        bVar2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
+        reg_rmw8((int)rspi_base_ret + 0x20,param_4,4,0x30);
       }
-      bVar3 = reg_read8((byte *)((int)pvVar5 + 0xb),5,0x60);
-      if (bVar3 == 3) {
-        uVar8 = 4;
+      reg_read8_ret = reg_read8((byte *)((int)rspi_base_ret + 0xb),5,0x60);
+      if (reg_read8_ret == 3) {
+        uVar5 = 4;
       }
-      else if (bVar3 == 2) {
-        uVar8 = 2;
-        puVar10 = param_2;
+      else if (reg_read8_ret == 2) {
+        uVar5 = 2;
+        puVar7 = param_2;
         param_2 = (undefined4 *)0x0;
       }
       else {
-        uVar8 = 1;
-        puVar9 = param_2;
+        uVar5 = 1;
+        puVar6 = param_2;
         param_2 = (undefined4 *)0x0;
       }
-      bVar4 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
-      uVar6 = *(uint *)(&DAT_20800424 + (uint)bVar4 * 4);
-      if ((uVar6 < uVar8) || (__aeabi_uidivmod(uVar6,uVar8), extraout_r1 != 0)) {
+      reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
+      uVar3 = *(uint *)(&DAT_20800424 + (uint)reg_read8_ret_2 * 4);
+      if ((uVar3 < uVar5) || (__aeabi_uidivmod(uVar3,uVar5), extraout_r1 != 0)) {
         local_48 = 0xffffffff;
       }
       else {
@@ -421,29 +421,29 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
           case 4:
             rspi4_tx_wait();
           }
-          uVar1 = uVar6;
-          if (param_3 * uVar8 < uVar6) {
-            uVar1 = param_3 * uVar8;
+          uVar1 = uVar3;
+          if (param_3 * uVar5 < uVar3) {
+            uVar1 = param_3 * uVar5;
           }
-          for (; uVar8 <= uVar1; uVar1 = uVar1 - uVar8) {
-            if (bVar3 == 3) {
-              puVar11 = param_2 + 1;
-              *(undefined4 *)((int)pvVar5 + 4) = *param_2;
+          for (; uVar5 <= uVar1; uVar1 = uVar1 - uVar5) {
+            if (reg_read8_ret == 3) {
+              puVar8 = param_2 + 1;
+              *(undefined4 *)((int)rspi_base_ret + 4) = *param_2;
             }
             else {
-              puVar11 = param_2;
-              if (bVar3 == 2) {
-                *(undefined2 *)((int)pvVar5 + 4) = *(undefined2 *)puVar10;
-                puVar10 = (undefined4 *)((int)puVar10 + 2);
+              puVar8 = param_2;
+              if (reg_read8_ret == 2) {
+                *(undefined2 *)((int)rspi_base_ret + 4) = *(undefined2 *)puVar7;
+                puVar7 = (undefined4 *)((int)puVar7 + 2);
               }
               else {
-                *(undefined1 *)((int)pvVar5 + 4) = *(undefined1 *)puVar9;
-                puVar9 = (undefined4 *)((int)puVar9 + 1);
+                *(undefined1 *)((int)rspi_base_ret + 4) = *(undefined1 *)puVar6;
+                puVar6 = (undefined4 *)((int)puVar6 + 1);
               }
             }
-            reg_read8((byte *)((int)pvVar5 + 3),7,0x80);
+            reg_read8((byte *)((int)rspi_base_ret + 3),7,0x80);
             param_3 = param_3 + -1;
-            param_2 = puVar11;
+            param_2 = puVar8;
           }
           switch(param_1) {
           case 0:
@@ -464,15 +464,15 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
         }
       }
       if (param_4 != 0xff) {
-        reg_rmw8((int)pvVar5 + 0x20,bVar2,4,0x30);
+        reg_rmw8((int)rspi_base_ret + 0x20,bVar2,4,0x30);
       }
       return local_48;
     }
   }
   else {
-    uVar7 = 0xffffffff;
+    uVar4 = 0xffffffff;
   }
-  return uVar7;
+  return uVar4;
 }
 
 

@@ -129,10 +129,10 @@ void PowerON_Reset(void)
 void FUN_fff8ff3d(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 4; local_4 = local_4 + 1) {
-    *(undefined2 *)(&DAT_0001b5fc + local_4 * 2) = 0;
+  for (i = 0; i < 4; i = i + 1) {
+    *(undefined2 *)(&DAT_0001b5fc + i * 2) = 0;
   }
   return;
 }
@@ -151,10 +151,10 @@ void FUN_fff8ff3d(void)
 void bsp_callbacks_clear(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x74; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_0001ffc4 + local_4 * 4) = 0;
+  for (i = 0; i < 0x74; i = i + 1) {
+    *(undefined4 *)(&DAT_0001ffc4 + i * 4) = 0;
   }
   return;
 }
@@ -174,10 +174,10 @@ void bsp_callbacks_clear(void)
 void bsp_interrupt_open(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x5f; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
+  for (i = 0; i < 0x5f; i = i + 1) {
+    *(undefined4 *)(&DAT_00020194 + i * 4) = 0x10000000;
   }
   icu_select_init();
   R_BSP_SoftwareInterruptOpen(0);
@@ -528,7 +528,7 @@ void displink_rx_F0_hello(int param_1)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   DAT_000019bb = 0;
   DAT_000019b7 = 0;
@@ -643,8 +643,8 @@ void displink_rx_F0_hello(int param_1)
         return;
       }
       if (bVar2 == 7) {
-        uVar3 = dest_code_get();
-        if ((uVar3 == 0xa983) || (uVar3 == 0xb5a7)) {
+        dest_code_get_ret = dest_code_get();
+        if ((dest_code_get_ret == 0xa983) || (dest_code_get_ret == 0xb5a7)) {
           bVar1 = true;
         }
         else {
@@ -654,7 +654,7 @@ void displink_rx_F0_hello(int param_1)
           dest_code_set(0xd950);
         }
         else {
-          if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+          if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
             bVar1 = true;
           }
           else {
@@ -830,12 +830,12 @@ void keyer_init(void)
 
 {
   undefined1 *puVar1;
-  int iVar2;
+  int i;
   
   g_ui.keyer_state = 0;
   DAT_0001215f = 0;
   puVar1 = &DAT_000120bc;
-  for (iVar2 = 0xa0; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0xa0; i != 0; i = i + -1) {
     *puVar1 = 0;
     puVar1 = puVar1 + 1;
   }
@@ -869,12 +869,12 @@ void keyer_task(void)
   bool bVar1;
   bool bVar2;
   byte bVar3;
-  char cVar4;
-  undefined1 *puVar5;
-  uint uVar6;
-  int iVar7;
-  undefined *puVar8;
-  ushort uVar9;
+  char hex2nib_ret;
+  undefined1 *puVar4;
+  uint uVar5;
+  int iVar6;
+  undefined *puVar7;
+  ushort uVar8;
   char cStack_19;
   char cStack_18;
   char cStack_17;
@@ -1001,10 +1001,10 @@ void keyer_task(void)
     if (DAT_0001215d != '\x01') {
       return;
     }
-    puVar5 = &DAT_000120bc;
-    for (iVar7 = 0xa0; iVar7 != 0; iVar7 = iVar7 + -1) {
-      *puVar5 = 0;
-      puVar5 = puVar5 + 1;
+    puVar4 = &DAT_000120bc;
+    for (iVar6 = 0xa0; iVar6 != 0; iVar6 = iVar6 + -1) {
+      *puVar4 = 0;
+      puVar4 = puVar4 + 1;
     }
     DAT_0001fa3a = 0;
     DAT_0001fa38 = 0;
@@ -1013,8 +1013,8 @@ void keyer_task(void)
     swtimer_start(0x1b,10000);
     keyer_state_clear();
     DAT_00021040 = vfo_rec_ptr(1);
-    iVar7 = tx_breakin_on();
-    if (iVar7 == 1) {
+    iVar6 = tx_breakin_on();
+    if (iVar6 == 1) {
       DAT_00012166 = '\x01';
       DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
     }
@@ -1043,16 +1043,16 @@ void keyer_task(void)
       if (bVar1) {
         bStack_9 = 1;
       }
-      iVar7 = (uint)bStack_9 * 0x98;
-      *(char *)((int)qmb + iVar7 + 0x2ec) = (char)(DAT_0001fa38 >> 8);
-      *(char *)((int)qmb + iVar7 + 0x2ed) = (char)DAT_0001fa3a;
-      puStack_8 = (undefined *)((int)qmb + iVar7 + 0x2ee);
-      puVar5 = &DAT_000120bc;
-      puVar8 = puStack_8;
-      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
-        *puVar8 = *puVar5;
-        puVar8 = puVar8 + 1;
-        puVar5 = puVar5 + 1;
+      iVar6 = (uint)bStack_9 * 0x98;
+      *(char *)((int)qmb + iVar6 + 0x2ec) = (char)(DAT_0001fa38 >> 8);
+      *(char *)((int)qmb + iVar6 + 0x2ed) = (char)DAT_0001fa3a;
+      puStack_8 = (undefined *)((int)qmb + iVar6 + 0x2ee);
+      puVar4 = &DAT_000120bc;
+      puVar7 = puStack_8;
+      for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
+        *puVar7 = *puVar4;
+        puVar7 = puVar7 + 1;
+        puVar4 = puVar4 + 1;
       }
       eeprom_save_msg(0,(uint)bStack_9);
     }
@@ -1084,15 +1084,15 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     DAT_0001fa3a = 0;
     if (g_opstate.ex020205_contest_number_be[bStack_9 + 2] == 1) {
-      iVar7 = (uint)bStack_9 * 0x98;
-      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar7],(&DAT_000093a8)[iVar7]);
-      puStack_8 = &DAT_000093a9 + iVar7;
-      puVar5 = &DAT_000120bc;
-      puVar8 = puStack_8;
-      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
-        *puVar5 = *puVar8;
-        puVar5 = puVar5 + 1;
-        puVar8 = puVar8 + 1;
+      iVar6 = (uint)bStack_9 * 0x98;
+      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar6],(&DAT_000093a8)[iVar6]);
+      puStack_8 = &DAT_000093a9 + iVar6;
+      puVar4 = &DAT_000120bc;
+      puVar7 = puStack_8;
+      for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
+        *puVar4 = *puVar7;
+        puVar4 = puVar4 + 1;
+        puVar7 = puVar7 + 1;
       }
     }
     else {
@@ -1108,16 +1108,16 @@ void keyer_task(void)
           uStack_e = contest_number_get();
           uStack_c = 1000;
           for (bStack_11 = 0; bStack_11 < 4; bStack_11 = bStack_11 + 1) {
-            uVar6 = (uint)uStack_e;
+            uVar5 = (uint)uStack_e;
             if (uStack_c != 0) {
-              uVar6 = uVar6 / uStack_c;
+              uVar5 = uVar5 / uStack_c;
             }
-            bStack_12 = (byte)uVar6;
-            uVar9 = uStack_e;
+            bStack_12 = (byte)uVar5;
+            uVar8 = uStack_e;
             if (uStack_c != 0) {
-              uVar9 = uStack_e / uStack_c;
+              uVar8 = uStack_e / uStack_c;
             }
-            uStack_e = uStack_e - uVar9 * uStack_c;
+            uStack_e = uStack_e - uVar8 * uStack_c;
             uStack_c = uStack_c / 10;
             bStack_14 = nib2hex(bStack_12);
             if ((bStack_11 == 0) && (bStack_14 == 0x30)) {
@@ -1147,15 +1147,15 @@ void keyer_task(void)
           }
         }
         else if (bStack_14 == 0x3c) {
-          iVar7 = tx_breakin_on();
-          if ((iVar7 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
+          iVar6 = tx_breakin_on();
+          if ((iVar6 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
             uStack_e = uStack_e + 1;
             contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x3e) {
-          iVar7 = tx_breakin_on();
-          if ((iVar7 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
+          iVar6 = tx_breakin_on();
+          if ((iVar6 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
             uStack_e = uStack_e - 1;
             contest_number_set(uStack_e);
           }
@@ -1178,8 +1178,8 @@ void keyer_task(void)
               bVar1 = true;
             }
             if (bVar1) {
-              cVar4 = hex2nib(bStack_14);
-              bStack_14 = cVar4 - 1;
+              hex2nib_ret = hex2nib(bStack_14);
+              bStack_14 = hex2nib_ret - 1;
               if (bStack_9 != bStack_14) {
                 keyer_text_msg_encode(bStack_14);
               }
@@ -1453,8 +1453,8 @@ void ladder_key_task(void)
 {
   bool bVar1;
   byte bVar2;
-  byte bVar3;
-  int iVar4;
+  byte key_event_filter_ret;
+  int iVar3;
   
   if (PTR_g_ui_00025d78->dialog_shown != 1) {
     bVar2 = remote_key_get();
@@ -1466,12 +1466,12 @@ void ladder_key_task(void)
         FUN_fffe4b73();
       }
       else if (bVar2 == 0xf9) {
-        iVar4 = ladder_key_delay();
-        if (iVar4 == 1) {
+        iVar3 = ladder_key_delay();
+        if (iVar3 == 1) {
           FUN_fffe4cc1();
         }
       }
-      else if ((bVar2 == 0xf7) && (iVar4 = ladder_key_delay(), iVar4 == 1)) {
+      else if ((bVar2 == 0xf7) && (iVar3 = ladder_key_delay(), iVar3 == 1)) {
         FUN_fffe4a67();
       }
     }
@@ -1492,7 +1492,8 @@ void ladder_key_task(void)
       else {
         bVar1 = true;
       }
-      if ((bVar1) && (bVar3 = key_event_filter(bVar2 + 0x86,1), bVar3 == 0)) {
+      if ((bVar1) &&
+         (key_event_filter_ret = key_event_filter(bVar2 + 0x86,1), key_event_filter_ret == 0)) {
         return;
       }
       if (DAT_0001b554 == 0xfa) {

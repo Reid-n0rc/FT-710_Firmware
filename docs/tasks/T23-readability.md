@@ -28,7 +28,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23e | Name the most-called functions from ranked work lists, with the clues side by side (`tools/naming_worklist.py`) | ApplyNames + re-export | first batch in the TSVs (MAIN 132, DISPLAY 66), DISPLAY round 2 (365), MAIN round 3 (427, 19.1 % of MAIN code bytes), DISPLAY round 3 (501 rows); Ghidra steps open; HiFi4 batch with T23d (733 new + 16 renames, 954/1,083 named); Ghidra steps open |
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
-| T23h | Variable and parameter names by rule (`tools/ghidra/NameVariables.java`, checker `tools/rename_check.py`, "Variables named" metric) | apply + re-export | script, bootstrap steps and metric done, proven on copies (0 structural changes); canonical apply open |
+| T23h | Variable and parameter names by rule (`tools/ghidra/NameVariables.java`, checker `tools/rename_check.py`, "Variables named" metric) | apply + re-export | done (2026-11-01): applied to the canonical projects, 2,452 renames, 0 structural changes; Variables named 0.8 % → 6.8 %. Rerun after new signatures/structs/SFR labels |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
 field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last. T23h (variable

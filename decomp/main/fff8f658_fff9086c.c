@@ -165,19 +165,19 @@ void FUN_fff8f809(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  undefined4 uVar3;
+  uint system_mstpcra;
+  undefined4 system_mstpcra_2;
   
   SYSTEM_PRCR = 0xa502;
+  system_mstpcra = SYSTEM_MSTPCRA;
   uVar1 = SYSTEM_MSTPCRA;
-  uVar2 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar2 & 0xfffeffff;
-  uVar3 = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = uVar1 & 0xfffeffff;
+  system_mstpcra_2 = SYSTEM_MSTPCRA;
   S12AD1_ADSAMPR = 3;
   S12AD1_ADSAM = 0x20;
   S12AD1_ADSAMPR = 2;
-  uVar2 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar2 & 0xfffeffff | uVar1 & 0x10000;
+  uVar1 = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = uVar1 & 0xfffeffff | system_mstpcra & 0x10000;
   SYSTEM_PRCR = 0xa500;
   return;
 }
@@ -188,11 +188,11 @@ void FUN_fff8f809(void)
 void FUN_fff8f879(void)
 
 {
-  uint uVar1;
   undefined4 local_4;
+  uint bsc_ebmapcr;
   
-  uVar1 = BSC_EBMAPCR;
-  local_4 = uVar1 & 0xfffca9b8 | 0x42130;
+  bsc_ebmapcr = BSC_EBMAPCR;
+  local_4 = bsc_ebmapcr & 0xfffca9b8 | 0x42130;
   BSC_EBMAPCR = local_4;
   return;
 }
@@ -206,11 +206,11 @@ void FUN_fff8f879(void)
 void charput(byte param_1)
 
 {
-  uint uVar1;
+  uint dbg_dbgstat;
   
   do {
-    uVar1 = DBG_DBGSTAT;
-  } while ((uVar1 & 0x100) != 0);
+    dbg_dbgstat = DBG_DBGSTAT;
+  } while ((dbg_dbgstat & 0x100) != 0);
   DBG_C2E0 = (uint)param_1;
   return;
 }
@@ -272,11 +272,11 @@ void _INIT_IOLIB(void)
 void _CLOSEALL(void)
 
 {
-  int local_4;
+  int i;
   
-  for (local_4 = 0; local_4 < 0x14; local_4 = local_4 + 1) {
-    if ((*(ushort *)(&DAT_0001ff74)[local_4] & 7) != 0) {
-      fclose((&DAT_0001ff74)[local_4]);
+  for (i = 0; i < 0x14; i = i + 1) {
+    if ((*(ushort *)(&DAT_0001ff74)[i] & 7) != 0) {
+      fclose((&DAT_0001ff74)[i]);
     }
   }
   return;
@@ -467,10 +467,10 @@ undefined4 FUN_fff8fc3f(void)
 uint R_BSP_GetIClkFreqHz(void)
 
 {
-  uint uVar1;
+  uint get_iclk_freq_hz_ret;
   
-  uVar1 = get_iclk_freq_hz();
-  return uVar1;
+  get_iclk_freq_hz_ret = get_iclk_freq_hz();
+  return get_iclk_freq_hz_ret;
 }
 
 
@@ -658,10 +658,10 @@ undefined1 FUN_fff8fdb8(undefined4 param_1)
 void R_BSP_RegisterProtectEnable(int param_1)
 
 {
-  ushort uVar1;
-  byte bVar2;
+  byte bVar1;
   undefined1 auStack_8 [4];
   int local_4;
+  ushort system_prcr;
   
   local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
@@ -670,16 +670,16 @@ void R_BSP_RegisterProtectEnable(int param_1)
   }
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0x7f;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0xbf;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 | 0x80;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0x7f;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0xbf;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 | 0x80;
     }
     else {
-      uVar1 = SYSTEM_PRCR;
-      SYSTEM_PRCR = (uVar1 | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
+      system_prcr = SYSTEM_PRCR;
+      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -696,23 +696,23 @@ void R_BSP_RegisterProtectEnable(int param_1)
 void R_BSP_RegisterProtectDisable(int param_1)
 
 {
-  ushort uVar1;
-  byte bVar2;
+  byte bVar1;
   undefined1 auStack_8 [4];
   int local_4;
+  ushort system_prcr;
   
   local_4 = param_1;
   R_BSP_InterruptControl(0x5e,6,auStack_8);
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 & 0x7f;
-      bVar2 = MPC_PWPR;
-      MPC_PWPR = bVar2 | 0x40;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 & 0x7f;
+      bVar1 = MPC_PWPR;
+      MPC_PWPR = bVar1 | 0x40;
     }
     else {
-      uVar1 = SYSTEM_PRCR;
-      SYSTEM_PRCR = uVar1 | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
+      system_prcr = SYSTEM_PRCR;
+      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
     }
   }
   *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
@@ -726,10 +726,10 @@ void R_BSP_RegisterProtectDisable(int param_1)
 void FUN_fff8ff3d(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 4; local_4 = local_4 + 1) {
-    *(undefined2 *)(&DAT_0001b5fc + local_4 * 2) = 0;
+  for (i = 0; i < 4; i = i + 1) {
+    *(undefined2 *)(&DAT_0001b5fc + i * 2) = 0;
   }
   return;
 }
@@ -742,10 +742,10 @@ void FUN_fff8ff3d(void)
 void bsp_callbacks_clear(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x74; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_0001ffc4 + local_4 * 4) = 0;
+  for (i = 0; i < 0x74; i = i + 1) {
+    *(undefined4 *)(&DAT_0001ffc4 + i * 4) = 0;
   }
   return;
 }
@@ -784,10 +784,10 @@ void R_BSP_InterruptRequestDisable(uint param_1)
 void bsp_interrupt_open(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x5f; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
+  for (i = 0; i < 0x5f; i = i + 1) {
+    *(undefined4 *)(&DAT_00020194 + i * 4) = 0x10000000;
   }
   icu_select_init();
   R_BSP_SoftwareInterruptOpen(0);
@@ -1422,10 +1422,10 @@ undefined4 Undefined_0xD8(undefined4 param_1)
 undefined4 vec016_BSC_BUSERR(undefined4 param_1)
 
 {
-  byte bVar1;
+  byte bsc_berclr;
   
-  bVar1 = BSC_BERCLR;
-  BSC_BERCLR = bVar1 | 1;
+  bsc_berclr = BSC_BERCLR;
+  BSC_BERCLR = bsc_berclr | 1;
   R_BSP_InterruptControl(0xb,0,(void *)0x10000000);
   return param_1;
 }

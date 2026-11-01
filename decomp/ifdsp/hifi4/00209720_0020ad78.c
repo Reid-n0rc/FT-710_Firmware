@@ -310,46 +310,46 @@ void CLOCK_EnableUsbhsHostClock(void)
 undefined4 CLOCK_EnableUsbhsPhyClock(undefined4 param_1,uint param_2)
 
 {
-  uint uVar1;
-  int iVar2;
-  undefined *puVar3;
+  int iVar1;
+  undefined *puVar2;
+  uint usbphy_pll_sic;
   
   memw();
   USBPHY_CTRL_CLR = 0x80000000;
   param_2 = 480000000 / param_2;
   if (param_2 == 0xd) {
-    puVar3 = (undefined *)0x0;
+    puVar2 = (undefined *)0x0;
   }
   else if (param_2 == 0xf) {
-    puVar3 = &DAT_00400000;
+    puVar2 = &DAT_00400000;
   }
   else if (param_2 == 0x10) {
-    puVar3 = (undefined *)0x800000;
+    puVar2 = (undefined *)0x800000;
   }
   else if (param_2 == 0x14) {
-    puVar3 = (undefined *)0xc00000;
+    puVar2 = (undefined *)0xc00000;
   }
   else if (param_2 == 0x16) {
-    puVar3 = (undefined *)0x1000000;
+    puVar2 = (undefined *)0x1000000;
   }
   else if (param_2 == 0x19) {
-    puVar3 = (undefined *)0x1400000;
+    puVar2 = (undefined *)0x1400000;
   }
   else if (param_2 == 0x1e) {
-    puVar3 = (undefined *)0x1800000;
+    puVar2 = (undefined *)0x1800000;
   }
   else {
     if (param_2 != 0xf0) {
       return 0;
     }
-    puVar3 = (undefined *)0x1c00000;
+    puVar2 = (undefined *)0x1c00000;
   }
   memw();
   USBPHY_PLL_SIC_SET = FLOAT_ARRAY_00201000;
   memw();
-  uVar1 = USBPHY_PLL_SIC;
+  usbphy_pll_sic = USBPHY_PLL_SIC;
   memw();
-  USBPHY_PLL_SIC = uVar1 & 0xfe3fffff | (uint)puVar3;
+  USBPHY_PLL_SIC = usbphy_pll_sic & 0xfe3fffff | (uint)puVar2;
   memw();
   USBPHY_PLL_SIC_CLR = &DAT_00010000;
   memw();
@@ -359,10 +359,10 @@ undefined4 CLOCK_EnableUsbhsPhyClock(undefined4 param_1,uint param_2)
   memw();
   USBPHY_PWD_SET = 0;
   memw();
-  iVar2 = USBPHY_PLL_SIC;
-  while (-1 < iVar2) {
+  iVar1 = USBPHY_PLL_SIC;
+  while (-1 < iVar1) {
     memw();
-    iVar2 = USBPHY_PLL_SIC;
+    iVar1 = USBPHY_PLL_SIC;
   }
   return 1;
 }
@@ -905,31 +905,31 @@ void CTIMER_RegisterCallBack(undefined4 *param_1,undefined4 param_2,undefined4 p
 void CTIMER0_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer0_ir;
   
   memw();
-  uVar1 = CTIMER0_IR;
+  ctimer0_ir = CTIMER0_IR;
   memw();
-  CTIMER0_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER0_IR = ctimer0_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238450 == 0) {
     if ((code *)*DAT_00238430 != (code *)0x0) {
-      (*(code *)*DAT_00238430)(uVar1);
+      (*(code *)*DAT_00238430)(ctimer0_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238430 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238430 + iVar3))(uVar1);
+      if (((ctimer0_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238430 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238430 + iVar1))(ctimer0_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -942,31 +942,31 @@ void CTIMER0_DriverIRQHandler(void)
 void CTIMER1_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer1_ir;
   
   memw();
-  uVar1 = CTIMER1_IR;
+  ctimer1_ir = CTIMER1_IR;
   memw();
-  CTIMER1_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER1_IR = ctimer1_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238454 == 0) {
     if ((code *)*DAT_00238434 != (code *)0x0) {
-      (*(code *)*DAT_00238434)(uVar1);
+      (*(code *)*DAT_00238434)(ctimer1_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238434 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238434 + iVar3))(uVar1);
+      if (((ctimer1_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238434 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238434 + iVar1))(ctimer1_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -979,31 +979,31 @@ void CTIMER1_DriverIRQHandler(void)
 void CTIMER2_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer2_ir;
   
   memw();
-  uVar1 = CTIMER2_IR;
+  ctimer2_ir = CTIMER2_IR;
   memw();
-  CTIMER2_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER2_IR = ctimer2_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238458 == 0) {
     if ((code *)*DAT_00238438 != (code *)0x0) {
-      (*(code *)*DAT_00238438)(uVar1);
+      (*(code *)*DAT_00238438)(ctimer2_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238438 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238438 + iVar3))(uVar1);
+      if (((ctimer2_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238438 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238438 + iVar1))(ctimer2_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -1016,31 +1016,31 @@ void CTIMER2_DriverIRQHandler(void)
 void CTIMER3_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer3_ir;
   
   memw();
-  uVar1 = CTIMER3_IR;
+  ctimer3_ir = CTIMER3_IR;
   memw();
-  CTIMER3_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER3_IR = ctimer3_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_0023845c == 0) {
     if ((code *)*DAT_0023843c != (code *)0x0) {
-      (*(code *)*DAT_0023843c)(uVar1);
+      (*(code *)*DAT_0023843c)(ctimer3_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_0023843c + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_0023843c + iVar3))(uVar1);
+      if (((ctimer3_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_0023843c + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_0023843c + iVar1))(ctimer3_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -1053,31 +1053,31 @@ void CTIMER3_DriverIRQHandler(void)
 void CTIMER4_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer4_ir;
   
   memw();
-  uVar1 = CTIMER4_IR;
+  ctimer4_ir = CTIMER4_IR;
   memw();
-  CTIMER4_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER4_IR = ctimer4_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238460 == 0) {
     if ((code *)*DAT_00238440 != (code *)0x0) {
-      (*(code *)*DAT_00238440)(uVar1);
+      (*(code *)*DAT_00238440)(ctimer4_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238440 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238440 + iVar3))(uVar1);
+      if (((ctimer4_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238440 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238440 + iVar1))(ctimer4_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }

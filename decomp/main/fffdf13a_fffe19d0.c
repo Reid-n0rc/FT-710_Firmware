@@ -49,7 +49,7 @@ ushort cat_ai_IF_OI(byte param_1)
   ushort uStack_16;
   uint uStack_14;
   uint uStack_10;
-  vfo_rec *local_c;
+  vfo_rec *p_vfo_rec;
   byte local_5;
   
   pcVar6 = 
@@ -64,7 +64,7 @@ ushort cat_ai_IF_OI(byte param_1)
   }
   local_46 = 0;
   if (local_5 == 0) {
-    local_c = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
     local_43[0] = 'I';
     local_43[1] = 0x46;
     local_27 = g_ui.clar_flags_a;
@@ -76,7 +76,7 @@ ushort cat_ai_IF_OI(byte param_1)
     }
   }
   else {
-    local_c = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
     local_43[0] = 'O';
     local_43[1] = 0x49;
     local_27 = g_ui.clar_flags_b;
@@ -172,7 +172,7 @@ ushort cat_ai_IF_OI(byte param_1)
     cVar2 = nib2hex(abStack_24[uVar5]);
     acStack_3e[uVar5] = cVar2;
   }
-  uStack_16 = CONCAT11(local_c->clar_offset_be[0],local_c->clar_offset_be[1]);
+  uStack_16 = CONCAT11(p_vfo_rec->clar_offset_be[0],p_vfo_rec->clar_offset_be[1]);
   if (local_5 == 0) {
     if (DAT_0001ff6e != uStack_16) {
       local_46 = 0x1c;
@@ -183,7 +183,7 @@ ushort cat_ai_IF_OI(byte param_1)
     local_46 = 0x1c;
     DAT_0001ff70 = uStack_16;
   }
-  if ((local_c->clar_offset_be[0] & 0x80) == 0) {
+  if ((p_vfo_rec->clar_offset_be[0] & 0x80) == 0) {
     uStack_35 = 0x2b;
   }
   else {
@@ -235,7 +235,7 @@ ushort cat_ai_IF_OI(byte param_1)
     uStack_30 = 0x31;
     uStack_2f = 0x31;
   }
-  bVar3 = local_c->mode & 0xf;
+  bVar3 = p_vfo_rec->mode & 0xf;
   if (local_5 == 0) {
     if (DAT_0001b512 != bVar3) {
       local_46 = 0x1c;
@@ -260,7 +260,7 @@ ushort cat_ai_IF_OI(byte param_1)
     DAT_0001b51c = local_25;
     local_46 = 0x1c;
   }
-  cVar2 = (char)((local_c->flags3 & 0x38) >> 3);
+  cVar2 = (char)((p_vfo_rec->flags3 & 0x38) >> 3);
   if (local_5 == 0) {
     if (DAT_0001b515 != cVar2) {
       local_46 = 0x1c;
@@ -282,7 +282,7 @@ ushort cat_ai_IF_OI(byte param_1)
   }
   uStack_2a = 0x30;
   uStack_2b = 0x30;
-  local_1a = (byte)((local_c->flags2 & 0xc) >> 2);
+  local_1a = (byte)((p_vfo_rec->flags2 & 0xc) >> 2);
   if (local_5 == 0) {
     if (DAT_0001b514 != local_1a) {
       local_46 = 0x1c;
@@ -326,12 +326,12 @@ ushort cat_ai_IF_OI(byte param_1)
 ushort cat_ai_IS(void)
 
 {
-  byte bVar1;
-  char cVar2;
-  uint uVar3;
-  undefined1 *puVar4;
-  undefined4 *puVar5;
-  ushort uVar6;
+  byte vfo_mode_ret;
+  char nib2hex_ret;
+  uint uVar1;
+  undefined1 *puVar2;
+  undefined4 *puVar3;
+  ushort uVar4;
   ushort uStack_22;
   byte *pbStack_20;
   byte bStack_1b;
@@ -345,29 +345,29 @@ ushort cat_ai_IS(void)
   local_c = 0x30303030;
   local_10 = 0x30305349;
   pbStack_20 = vfo_rec_ptr(0);
-  bVar1 = vfo_mode(0);
+  vfo_mode_ret = vfo_mode(0);
   uStack_22 = 0;
-  uVar3 = (uint)bVar1;
-  if (uVar3 - 2 < 2) {
+  uVar1 = (uint)vfo_mode_ret;
+  if (uVar1 - 2 < 2) {
     pbStack_20 = pbStack_20 + 0x1c;
     goto LAB_fffdf6fd;
   }
-  if (uVar3 - 4 < 2) {
+  if (uVar1 - 4 < 2) {
     pbStack_20 = pbStack_20 + 0x3a;
     goto LAB_fffdf6fd;
   }
-  if (uVar3 - 6 < 2) {
+  if (uVar1 - 6 < 2) {
 LAB_fffdf6f6:
     pbStack_20 = pbStack_20 + 0x44;
   }
   else {
-    if (1 < uVar3 - 8) {
-      if (uVar3 - 10 < 2) goto LAB_fffdf6f6;
-      if (uVar3 - 0xc < 2) {
+    if (1 < uVar1 - 8) {
+      if (uVar1 - 10 < 2) goto LAB_fffdf6f6;
+      if (uVar1 - 0xc < 2) {
         pbStack_20 = pbStack_20 + 0x26;
         goto LAB_fffdf6fd;
       }
-      if (uVar3 != 0xe) {
+      if (uVar1 != 0xe) {
         pbStack_20 = pbStack_20 + 0x12;
         goto LAB_fffdf6fd;
       }
@@ -392,26 +392,26 @@ LAB_fffdf6fd:
   }
   uStack_18 = 1000;
   for (bStack_1b = 0; bStack_1b < 4; bStack_1b = bStack_1b + 1) {
-    uVar3 = (uint)uStack_16;
+    uVar1 = (uint)uStack_16;
     if (uStack_18 != 0) {
-      uVar3 = uVar3 / uStack_18;
+      uVar1 = uVar1 / uStack_18;
     }
-    uVar6 = uStack_16;
+    uVar4 = uStack_16;
     if (uStack_18 != 0) {
-      uVar6 = uStack_16 / uStack_18;
+      uVar4 = uStack_16 / uStack_18;
     }
-    uStack_16 = uStack_16 - uVar6 * uStack_18;
+    uStack_16 = uStack_16 - uVar4 * uStack_18;
     uStack_18 = uStack_18 / 10;
-    cVar2 = nib2hex((byte)uVar3);
-    *(char *)((int)&local_c + bStack_1b + 1) = cVar2;
+    nib2hex_ret = nib2hex((byte)uVar1);
+    *(char *)((int)&local_c + bStack_1b + 1) = nib2hex_ret;
   }
   if (uStack_22 != 0) {
-    puVar5 = &local_10;
-    puVar4 = &DAT_00015e06;
-    for (uVar3 = (uint)uStack_22; uVar3 != 0; uVar3 = uVar3 - 1) {
-      *puVar4 = *(undefined1 *)puVar5;
-      puVar4 = puVar4 + 1;
-      puVar5 = (undefined4 *)((int)puVar5 + 1);
+    puVar3 = &local_10;
+    puVar2 = &DAT_00015e06;
+    for (uVar1 = (uint)uStack_22; uVar1 != 0; uVar1 = uVar1 - 1) {
+      *puVar2 = *(undefined1 *)puVar3;
+      puVar2 = puVar2 + 1;
+      puVar3 = (undefined4 *)((int)puVar3 + 1);
     }
   }
   return uStack_22;
@@ -430,14 +430,14 @@ LAB_fffdf6fd:
 undefined2 cat_ai_KP(void)
 
 {
-  char cVar1;
+  char nib2hex_ret;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  int iVar4;
+  int j;
   byte n;
   undefined2 local_14;
   byte local_f;
-  byte local_e;
+  byte i;
   byte local_d;
   char local_b [7];
   
@@ -449,22 +449,22 @@ undefined2 cat_ai_KP(void)
   }
   else {
     DAT_000187e1 = g_opstate.cw_pitch;
-    for (local_e = 0; local_e < 2; local_e = local_e + 1) {
+    for (i = 0; i < 2; i = i + 1) {
       n = local_f;
       if (local_d != 0) {
         n = local_f / local_d;
       }
       local_f = local_f - n * local_d;
       local_d = local_d / 10;
-      cVar1 = nib2hex(n);
-      local_b[local_e + 2] = cVar1;
+      nib2hex_ret = nib2hex(n);
+      local_b[i + 2] = nib2hex_ret;
     }
-    pcVar3 = local_b;
-    pcVar2 = &DAT_00015e06;
-    for (iVar4 = 5; iVar4 != 0; iVar4 = iVar4 + -1) {
-      *pcVar2 = *pcVar3;
+    pcVar2 = local_b;
+    pcVar1 = &DAT_00015e06;
+    for (j = 5; j != 0; j = j + -1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
-      pcVar3 = pcVar3 + 1;
     }
     local_14 = 5;
   }
@@ -484,7 +484,7 @@ ushort cat_ai_KR(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort local_a;
   char local_6 [6];
   
@@ -497,7 +497,7 @@ ushort cat_ai_KR(void)
     local_6[2] = nib2hex(g_opstate.keyer_on);
     pcVar2 = local_6;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -520,14 +520,14 @@ ushort cat_ai_KR(void)
 undefined2 cat_ai_KS(void)
 
 {
-  char cVar1;
+  char nib2hex_ret;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  int iVar4;
+  int j;
   byte n;
   undefined2 local_14;
   byte local_10;
-  byte local_f;
+  byte i;
   byte local_e;
   char local_c [8];
   
@@ -539,22 +539,22 @@ undefined2 cat_ai_KS(void)
   else {
     DAT_000187e3 = g_opstate.key_speed;
     local_e = 100;
-    for (local_f = 0; local_f < 3; local_f = local_f + 1) {
+    for (i = 0; i < 3; i = i + 1) {
       n = local_10;
       if (local_e != 0) {
         n = local_10 / local_e;
       }
       local_10 = local_10 - n * local_e;
       local_e = local_e / 10;
-      cVar1 = nib2hex(n);
-      local_c[local_f + 2] = cVar1;
+      nib2hex_ret = nib2hex(n);
+      local_c[i + 2] = nib2hex_ret;
     }
-    pcVar3 = local_c;
-    pcVar2 = &DAT_00015e06;
-    for (iVar4 = 6; iVar4 != 0; iVar4 = iVar4 + -1) {
-      *pcVar2 = *pcVar3;
+    pcVar2 = local_c;
+    pcVar1 = &DAT_00015e06;
+    for (j = 6; j != 0; j = j + -1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
-      pcVar3 = pcVar3 + 1;
     }
     local_14 = 6;
   }
@@ -679,35 +679,35 @@ ushort cat_ai_MD(char param_1)
 undefined2 cat_ai_MG(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  char cVar3;
-  char *pcVar4;
-  char *pcVar5;
-  int iVar6;
+  byte bVar1;
+  char nib2hex_ret;
+  char *pcVar2;
+  char *pcVar3;
+  int j;
   undefined2 uStack_1a;
   undefined2 uStack_18;
   byte bStack_15;
   byte bStack_14;
-  byte bStack_13;
+  byte i;
   char local_c [8];
+  uint vfo_mode_ret;
   
   builtin_strncpy(local_c,"MG000;",6);
-  bVar2 = vfo_mode(0);
-  uVar1 = (uint)bVar2;
-  if (uVar1 == 0xe) {
+  bVar1 = vfo_mode(0);
+  vfo_mode_ret = (uint)bVar1;
+  if (vfo_mode_ret == 0xe) {
 LAB_fffdfb48:
     bStack_15 = g_opstate.mic_gain[1];
   }
   else {
-    if (uVar1 - 4 < 2) {
+    if (vfo_mode_ret - 4 < 2) {
       bStack_15 = g_opstate.mic_gain[2];
       goto LAB_fffdfb64;
     }
-    if (1 < uVar1 - 6) {
-      if (uVar1 - 8 < 2) goto LAB_fffdfb48;
-      if (1 < uVar1 - 10) {
-        if (1 < uVar1) {
+    if (1 < vfo_mode_ret - 6) {
+      if (vfo_mode_ret - 8 < 2) goto LAB_fffdfb48;
+      if (1 < vfo_mode_ret - 10) {
+        if (1 < vfo_mode_ret) {
           return 0;
         }
         bStack_15 = g_opstate.mic_gain[0];
@@ -723,22 +723,22 @@ LAB_fffdfb64:
   else {
     DAT_000187e7 = bStack_15;
     bStack_14 = 100;
-    for (bStack_13 = 0; bStack_13 < 3; bStack_13 = bStack_13 + 1) {
-      bVar2 = bStack_15;
+    for (i = 0; i < 3; i = i + 1) {
+      bVar1 = bStack_15;
       if (bStack_14 != 0) {
-        bVar2 = bStack_15 / bStack_14;
+        bVar1 = bStack_15 / bStack_14;
       }
-      bStack_15 = bStack_15 - bVar2 * bStack_14;
+      bStack_15 = bStack_15 - bVar1 * bStack_14;
       bStack_14 = bStack_14 / 10;
-      cVar3 = nib2hex(bVar2);
-      local_c[bStack_13 + 2] = cVar3;
+      nib2hex_ret = nib2hex(bVar1);
+      local_c[i + 2] = nib2hex_ret;
     }
-    pcVar5 = local_c;
-    pcVar4 = &DAT_00015e06;
-    for (iVar6 = 6; iVar6 != 0; iVar6 = iVar6 + -1) {
-      *pcVar4 = *pcVar5;
-      pcVar4 = pcVar4 + 1;
-      pcVar5 = pcVar5 + 1;
+    pcVar3 = local_c;
+    pcVar2 = &DAT_00015e06;
+    for (j = 6; j != 0; j = j + -1) {
+      *pcVar2 = *pcVar3;
+      pcVar2 = pcVar2 + 1;
+      pcVar3 = pcVar3 + 1;
     }
     uStack_1a = 6;
   }
@@ -760,10 +760,10 @@ ushort cat_ai_ML(void)
 {
   bool n;
   uint uVar1;
-  char cVar2;
+  char nib2hex_ret;
+  char *pcVar2;
   char *pcVar3;
-  char *pcVar4;
-  int iVar5;
+  int i;
   char acStack_18 [11];
   byte bStack_d;
   int local_c;
@@ -824,8 +824,8 @@ LAB_fffdfc82:
       acStack_18[10] = acStack_18[10] - acStack_18[7] * acStack_18[9];
       acStack_18[9] = (byte)acStack_18[9] / 10;
       uVar1 = (uint)(byte)acStack_18[8];
-      cVar2 = nib2hex(acStack_18[7]);
-      acStack_18[uVar1 + 3] = cVar2;
+      nib2hex_ret = nib2hex(acStack_18[7]);
+      acStack_18[uVar1 + 3] = nib2hex_ret;
     }
   }
   else {
@@ -834,12 +834,12 @@ LAB_fffdfc82:
     acStack_18[7] = n;
     acStack_18[5] = nib2hex(n);
   }
-  pcVar4 = acStack_18;
-  pcVar3 = &DAT_00015e06;
-  for (iVar5 = 7; iVar5 != 0; iVar5 = iVar5 + -1) {
-    *pcVar3 = *pcVar4;
+  pcVar3 = acStack_18;
+  pcVar2 = &DAT_00015e06;
+  for (i = 7; i != 0; i = i + -1) {
+    *pcVar2 = *pcVar3;
+    pcVar2 = pcVar2 + 1;
     pcVar3 = pcVar3 + 1;
-    pcVar4 = pcVar4 + 1;
   }
   return 7;
 }
@@ -857,7 +857,7 @@ ushort cat_ai_MS(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort local_c;
   char local_8 [8];
   
@@ -871,7 +871,7 @@ ushort cat_ai_MS(void)
     local_8[2] = nib2hex(g_opstate.meter_sel);
     pcVar2 = local_8;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 5; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -894,7 +894,7 @@ ushort cat_ai_MX(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort local_c;
   ushort local_a;
   char local_7 [7];
@@ -909,7 +909,7 @@ ushort cat_ai_MX(void)
     local_7[2] = nib2hex(g_ui.ptt_mox);
     pcVar2 = local_7;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1006,10 +1006,10 @@ undefined2 cat_ai_NL(void)
 
 {
   uint uVar1;
-  char cVar2;
+  char nib2hex_ret;
+  char *pcVar2;
   char *pcVar3;
-  char *pcVar4;
-  int iVar5;
+  int i;
   undefined2 local_16;
   char local_11 [8];
   byte local_9;
@@ -1032,15 +1032,15 @@ undefined2 cat_ai_NL(void)
       local_11[7] = local_11[7] - local_7 * local_8;
       local_8 = local_8 / 10;
       uVar1 = (uint)local_9;
-      cVar2 = nib2hex(local_7);
-      local_11[uVar1 + 4] = cVar2;
+      nib2hex_ret = nib2hex(local_7);
+      local_11[uVar1 + 4] = nib2hex_ret;
     }
-    pcVar4 = local_11;
-    pcVar3 = &DAT_00015e06;
-    for (iVar5 = 7; iVar5 != 0; iVar5 = iVar5 + -1) {
-      *pcVar3 = *pcVar4;
+    pcVar3 = local_11;
+    pcVar2 = &DAT_00015e06;
+    for (i = 7; i != 0; i = i + -1) {
+      *pcVar2 = *pcVar3;
+      pcVar2 = pcVar2 + 1;
       pcVar3 = pcVar3 + 1;
-      pcVar4 = pcVar4 + 1;
     }
     local_16 = 7;
   }
@@ -1060,7 +1060,7 @@ ushort cat_ai_NR(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort uStack_12;
   char acStack_e [6];
   byte *pbStack_8;
@@ -1076,7 +1076,7 @@ ushort cat_ai_NR(void)
     acStack_e[3] = nib2hex(acStack_e[5]);
     pcVar2 = acStack_e;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 5; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1099,7 +1099,7 @@ undefined2 cat_ai_OS(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   undefined2 local_e;
   char local_9 [6];
   char local_3;
@@ -1131,7 +1131,7 @@ undefined2 cat_ai_OS(void)
     }
     pcVar2 = local_9;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 5; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1154,17 +1154,17 @@ undefined2 cat_ai_PA(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   undefined2 uStack_12;
   char acStack_e [6];
-  byte *pbStack_8;
+  byte *vfo_rec_ptr_ret;
   
-  pbStack_8 = vfo_rec_ptr(0);
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
   acStack_e[0] = 'P';
   acStack_e[1] = 'A';
   acStack_e[2] = '0';
   acStack_e[4] = ';';
-  acStack_e[5] = pbStack_8[5] & 3;
+  acStack_e[5] = vfo_rec_ptr_ret[5] & 3;
   if (DAT_000187f0 == acStack_e[5]) {
     uStack_12 = 0;
   }
@@ -1181,7 +1181,7 @@ undefined2 cat_ai_PA(void)
     pcVar2 = acStack_e;
     pcVar1 = &DAT_00015e06;
     DAT_000187f0 = acStack_e[5];
-    for (iVar3 = 5; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1206,10 +1206,10 @@ undefined2 cat_ai_PC(void)
 {
   uint uVar1;
   bool bVar2;
-  char cVar3;
+  char nib2hex_ret;
+  char *pcVar3;
   char *pcVar4;
-  char *pcVar5;
-  int iVar6;
+  int i;
   undefined2 uStack_20;
   char acStack_1c [7];
   byte bStack_15;
@@ -1257,15 +1257,15 @@ undefined2 cat_ai_PC(void)
       acStack_1c[6] = acStack_1c[6] - bStack_13 * bStack_15;
       bStack_15 = bStack_15 / 10;
       uVar1 = (uint)bStack_14;
-      cVar3 = nib2hex(bStack_13);
-      acStack_1c[uVar1 + 2] = cVar3;
+      nib2hex_ret = nib2hex(bStack_13);
+      acStack_1c[uVar1 + 2] = nib2hex_ret;
     }
-    pcVar5 = acStack_1c;
-    pcVar4 = &DAT_00015e06;
-    for (iVar6 = 6; iVar6 != 0; iVar6 = iVar6 + -1) {
-      *pcVar4 = *pcVar5;
+    pcVar4 = acStack_1c;
+    pcVar3 = &DAT_00015e06;
+    for (i = 6; i != 0; i = i + -1) {
+      *pcVar3 = *pcVar4;
+      pcVar3 = pcVar3 + 1;
       pcVar4 = pcVar4 + 1;
-      pcVar5 = pcVar5 + 1;
     }
     uStack_20 = 6;
   }
@@ -1284,14 +1284,14 @@ undefined2 cat_ai_PC(void)
 ushort cat_ai_PL(void)
 
 {
-  char cVar1;
+  char nib2hex_ret;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  uint uVar4;
+  uint uVar3;
   byte n;
   ushort local_12;
   byte local_10;
-  byte local_f;
+  byte i;
   byte local_e;
   char local_c [8];
   
@@ -1301,26 +1301,26 @@ ushort cat_ai_PL(void)
   if (DAT_000187f2 != g_opstate.proc_level) {
     DAT_000187f2 = g_opstate.proc_level;
     local_e = 100;
-    for (local_f = 0; local_f < 3; local_f = local_f + 1) {
+    for (i = 0; i < 3; i = i + 1) {
       n = local_10;
       if (local_e != 0) {
         n = local_10 / local_e;
       }
       local_10 = local_10 - n * local_e;
       local_e = local_e / 10;
-      cVar1 = nib2hex(n);
-      local_c[local_f + 2] = cVar1;
+      nib2hex_ret = nib2hex(n);
+      local_c[i + 2] = nib2hex_ret;
     }
     local_c[5] = 0x3b;
     local_12 = 6;
   }
   if (local_12 != 0) {
-    pcVar3 = local_c;
-    pcVar2 = &DAT_00015e06;
-    for (uVar4 = (uint)local_12; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *pcVar2 = *pcVar3;
+    pcVar2 = local_c;
+    pcVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)local_12; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
-      pcVar3 = pcVar3 + 1;
     }
   }
   return local_12;
@@ -1386,7 +1386,7 @@ ushort cat_ai_RA(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort uStack_12;
   char acStack_e [6];
   byte *pbStack_8;
@@ -1402,7 +1402,7 @@ ushort cat_ai_RA(void)
     acStack_e[3] = nib2hex(acStack_e[5]);
     pcVar2 = acStack_e;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 5; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1429,10 +1429,10 @@ undefined2 cat_ai_RG(void)
   bool bVar2;
   byte bVar3;
   byte bVar4;
-  char cVar5;
+  char nib2hex_ret;
+  char *pcVar5;
   char *pcVar6;
-  char *pcVar7;
-  int iVar8;
+  int i;
   undefined2 local_18;
   char local_12 [8];
   byte local_a;
@@ -1486,15 +1486,15 @@ undefined2 cat_ai_RG(void)
         local_a = local_a - local_7 * local_8;
         local_8 = local_8 / 10;
         uVar1 = (uint)local_9;
-        cVar5 = nib2hex(local_7);
-        local_12[uVar1 + 3] = cVar5;
+        nib2hex_ret = nib2hex(local_7);
+        local_12[uVar1 + 3] = nib2hex_ret;
       }
-      pcVar7 = local_12;
-      pcVar6 = &DAT_00015e06;
-      for (iVar8 = 7; iVar8 != 0; iVar8 = iVar8 + -1) {
-        *pcVar6 = *pcVar7;
+      pcVar6 = local_12;
+      pcVar5 = &DAT_00015e06;
+      for (i = 7; i != 0; i = i + -1) {
+        *pcVar5 = *pcVar6;
+        pcVar5 = pcVar5 + 1;
         pcVar6 = pcVar6 + 1;
-        pcVar7 = pcVar7 + 1;
       }
       local_18 = 7;
     }
@@ -1713,7 +1713,7 @@ ushort cat_ai_RL(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort uStack_14;
   char acStack_f [7];
   byte *pbStack_8;
@@ -1730,7 +1730,7 @@ ushort cat_ai_RL(void)
     acStack_f[4] = nib2hex((byte)acStack_f[6] % 10);
     pcVar2 = acStack_f;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 6; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 6; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -1753,13 +1753,13 @@ ushort cat_ai_RM(void)
 
 {
   bool bVar1;
-  char cVar2;
-  undefined1 *puVar3;
-  undefined4 *puVar4;
-  uint uVar5;
+  char nib2hex_ret;
+  undefined1 *puVar2;
+  undefined4 *puVar3;
+  uint uVar4;
   byte n;
   char local_18;
-  byte bStack_16;
+  byte i;
   byte bStack_15;
   ushort local_14;
   undefined4 local_11;
@@ -1833,25 +1833,25 @@ ushort cat_ai_RM(void)
       return 0;
     }
     bStack_15 = 100;
-    for (bStack_16 = 0; bStack_16 < 3; bStack_16 = bStack_16 + 1) {
+    for (i = 0; i < 3; i = i + 1) {
       n = local_7;
       if (bStack_15 != 0) {
         n = local_7 / bStack_15;
       }
       local_7 = local_7 - n * bStack_15;
       bStack_15 = bStack_15 / 10;
-      cVar2 = nib2hex(n);
-      *(char *)((int)&local_11 + bStack_16 + 3) = cVar2;
+      nib2hex_ret = nib2hex(n);
+      *(char *)((int)&local_11 + i + 3) = nib2hex_ret;
     }
     local_14 = 10;
   }
   if (local_14 != 0) {
-    puVar4 = &local_11;
-    puVar3 = &DAT_00015e06;
-    for (uVar5 = (uint)local_14; uVar5 != 0; uVar5 = uVar5 - 1) {
-      *puVar3 = *(undefined1 *)puVar4;
-      puVar3 = puVar3 + 1;
-      puVar4 = (undefined4 *)((int)puVar4 + 1);
+    puVar3 = &local_11;
+    puVar2 = &DAT_00015e06;
+    for (uVar4 = (uint)local_14; uVar4 != 0; uVar4 = uVar4 - 1) {
+      *puVar2 = *(undefined1 *)puVar3;
+      puVar2 = puVar2 + 1;
+      puVar3 = (undefined4 *)((int)puVar3 + 1);
     }
   }
   return local_14;
@@ -1927,10 +1927,10 @@ ushort cat_ai_SC(void)
 ushort cat_ai_SD(void)
 
 {
-  char cVar1;
+  char nib2hex_ret;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  uint uVar4;
+  uint uVar3;
   ushort local_12;
   char local_f [6];
   byte local_9;
@@ -1950,19 +1950,19 @@ ushort cat_ai_SD(void)
       }
       local_f[5] = local_f[5] - local_7 * local_8;
       local_8 = local_8 / 10;
-      uVar4 = (uint)local_9;
-      cVar1 = nib2hex(local_7);
-      local_f[uVar4 + 2] = cVar1;
+      uVar3 = (uint)local_9;
+      nib2hex_ret = nib2hex(local_7);
+      local_f[uVar3 + 2] = nib2hex_ret;
     }
     local_12 = 5;
   }
   if (local_12 != 0) {
-    pcVar3 = local_f;
-    pcVar2 = &DAT_00015e06;
-    for (uVar4 = (uint)local_12; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *pcVar2 = *pcVar3;
+    pcVar2 = local_f;
+    pcVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)local_12; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
-      pcVar3 = pcVar3 + 1;
     }
   }
   return local_12;
@@ -2211,7 +2211,7 @@ undefined2 cat_ai_SQ(void)
 {
   uint uVar1;
   bool bVar2;
-  char cVar3;
+  char nib2hex_ret;
   undefined2 local_1c;
   undefined4 local_17;
   undefined2 local_13;
@@ -2262,8 +2262,8 @@ undefined2 cat_ai_SQ(void)
           local_a = local_a - local_7 * local_8;
           local_8 = local_8 / 10;
           uVar1 = (uint)local_9;
-          cVar3 = nib2hex(local_7);
-          *(char *)((int)&local_17 + uVar1 + 3) = cVar3;
+          nib2hex_ret = nib2hex(local_7);
+          *(char *)((int)&local_17 + uVar1 + 3) = nib2hex_ret;
         }
         DAT_00015e0c = local_11;
         DAT_00015e0a = local_13;
@@ -2537,12 +2537,12 @@ undefined2 cat_ai_ST(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   undefined2 local_c;
   char local_a [7];
-  byte local_3;
+  byte g_opstate_split_on_val;
   
-  local_3 = g_opstate.split_on;
+  g_opstate_split_on_val = g_opstate.split_on;
   local_a[0] = 'S';
   local_a[1] = 'T';
   local_a[3] = ';';
@@ -2561,7 +2561,7 @@ undefined2 cat_ai_ST(void)
     }
     pcVar2 = local_a;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -2624,31 +2624,31 @@ undefined2 cat_ai_TX(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   undefined2 uStack_c;
-  char acStack_7 [7];
+  char ptt_source_get_ret [7];
   
-  acStack_7[4] = ptt_source_get();
-  acStack_7[0] = 'T';
-  acStack_7[1] = 'X';
-  acStack_7[3] = ';';
-  if (DAT_00018803 == acStack_7[4]) {
+  ptt_source_get_ret[4] = ptt_source_get();
+  ptt_source_get_ret[0] = 'T';
+  ptt_source_get_ret[1] = 'X';
+  ptt_source_get_ret[3] = ';';
+  if (DAT_00018803 == ptt_source_get_ret[4]) {
     uStack_c = 0;
   }
   else {
-    if (acStack_7[4] == 0) {
-      acStack_7[2] = 0x30;
+    if (ptt_source_get_ret[4] == 0) {
+      ptt_source_get_ret[2] = 0x30;
     }
-    else if (acStack_7[4] == 5) {
-      acStack_7[2] = 0x31;
+    else if (ptt_source_get_ret[4] == 5) {
+      ptt_source_get_ret[2] = 0x31;
     }
     else {
-      acStack_7[2] = 0x32;
+      ptt_source_get_ret[2] = 0x32;
     }
-    pcVar2 = acStack_7;
+    pcVar2 = ptt_source_get_ret;
     pcVar1 = &DAT_00015e06;
-    DAT_00018803 = acStack_7[4];
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    DAT_00018803 = ptt_source_get_ret[4];
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -2672,10 +2672,10 @@ undefined2 cat_ai_VD(void)
 
 {
   uint uVar1;
-  char cVar2;
+  char nib2hex_ret;
+  char *pcVar2;
   char *pcVar3;
-  char *pcVar4;
-  int iVar5;
+  int i;
   undefined2 local_14;
   char local_10 [6];
   byte local_a;
@@ -2705,15 +2705,15 @@ undefined2 cat_ai_VD(void)
       local_a = local_a - local_7 * local_8;
       local_8 = local_8 / 10;
       uVar1 = (uint)local_9;
-      cVar2 = nib2hex(local_7);
-      local_10[uVar1 + 2] = cVar2;
+      nib2hex_ret = nib2hex(local_7);
+      local_10[uVar1 + 2] = nib2hex_ret;
     }
-    pcVar4 = local_10;
-    pcVar3 = &DAT_00015e06;
-    for (iVar5 = 5; iVar5 != 0; iVar5 = iVar5 + -1) {
-      *pcVar3 = *pcVar4;
+    pcVar3 = local_10;
+    pcVar2 = &DAT_00015e06;
+    for (i = 5; i != 0; i = i + -1) {
+      *pcVar2 = *pcVar3;
+      pcVar2 = pcVar2 + 1;
       pcVar3 = pcVar3 + 1;
-      pcVar4 = pcVar4 + 1;
     }
     local_14 = 5;
   }
@@ -2734,10 +2734,10 @@ undefined2 cat_ai_VG(void)
 
 {
   uint uVar1;
-  char cVar2;
+  char nib2hex_ret;
+  char *pcVar2;
   char *pcVar3;
-  char *pcVar4;
-  int iVar5;
+  int i;
   undefined2 local_14;
   char local_10 [7];
   byte local_9;
@@ -2760,15 +2760,15 @@ undefined2 cat_ai_VG(void)
       local_10[6] = local_10[6] - local_7 * local_8;
       local_8 = local_8 / 10;
       uVar1 = (uint)local_9;
-      cVar2 = nib2hex(local_7);
-      local_10[uVar1 + 2] = cVar2;
+      nib2hex_ret = nib2hex(local_7);
+      local_10[uVar1 + 2] = nib2hex_ret;
     }
-    pcVar4 = local_10;
-    pcVar3 = &DAT_00015e06;
-    for (iVar5 = 6; iVar5 != 0; iVar5 = iVar5 + -1) {
-      *pcVar3 = *pcVar4;
+    pcVar3 = local_10;
+    pcVar2 = &DAT_00015e06;
+    for (i = 6; i != 0; i = i + -1) {
+      *pcVar2 = *pcVar3;
+      pcVar2 = pcVar2 + 1;
       pcVar3 = pcVar3 + 1;
-      pcVar4 = pcVar4 + 1;
     }
     local_14 = 6;
   }
@@ -2788,7 +2788,7 @@ ushort cat_ai_VS(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort local_c;
   char local_7 [7];
   
@@ -2802,7 +2802,7 @@ ushort cat_ai_VS(void)
     local_7[2] = nib2hex(g_opstate.active_vfo);
     pcVar2 = local_7;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -2826,7 +2826,7 @@ ushort cat_ai_VX(void)
   uint uVar1;
   char *pcVar2;
   char *pcVar3;
-  int iVar4;
+  int i;
   ushort uStack_12;
   char acStack_e [6];
   byte *pbStack_8;
@@ -2849,7 +2849,7 @@ ushort cat_ai_VX(void)
     acStack_e[2] = nib2hex(acStack_e[4]);
     pcVar3 = acStack_e;
     pcVar2 = &DAT_00015e06;
-    for (iVar4 = 4; iVar4 != 0; iVar4 = iVar4 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar2 = *pcVar3;
       pcVar2 = pcVar2 + 1;
       pcVar3 = pcVar3 + 1;
@@ -2867,13 +2867,13 @@ ushort cat_ai_VX(void)
 byte max4_u8(byte *param_1)
 
 {
-  byte local_7;
+  byte i;
   byte local_6;
   
   local_6 = *param_1;
-  for (local_7 = 0; local_7 < 4; local_7 = local_7 + 1) {
-    if (local_6 < param_1[local_7]) {
-      local_6 = param_1[local_7];
+  for (i = 0; i < 4; i = i + 1) {
+    if (local_6 < param_1[i]) {
+      local_6 = param_1[i];
     }
   }
   return local_6;
@@ -2887,13 +2887,13 @@ byte max4_u8(byte *param_1)
 byte min4_u8(byte *param_1)
 
 {
-  byte local_7;
+  byte i;
   byte local_6;
   
   local_6 = *param_1;
-  for (local_7 = 0; local_7 < 4; local_7 = local_7 + 1) {
-    if (param_1[local_7] < local_6) {
-      local_6 = param_1[local_7];
+  for (i = 0; i < 4; i = i + 1) {
+    if (param_1[i] < local_6) {
+      local_6 = param_1[i];
     }
   }
   return local_6;

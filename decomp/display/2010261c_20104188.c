@@ -39,8 +39,8 @@ void backlight_pwm_init(void)
 void backlight_set_pct(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint div10_round_ret;
+  int iVar1;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -48,12 +48,12 @@ void backlight_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  uVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
-  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
-  if (iVar2 == 0x140) {
-    iVar2 = 0x13f;
+  div10_round_ret = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
+  iVar1 = div10_round(div10_round_ret,(int)div10_round_ret >> 0x1f);
+  if (iVar1 == 0x140) {
+    iVar1 = 0x13f;
   }
-  MTU2_TGRD_4 = (short)iVar2 + -1;
+  MTU2_TGRD_4 = (short)iVar1 + -1;
   return;
 }
 
@@ -90,36 +90,36 @@ void backlight_init(void)
 void touch_cal_load(int *param_1,int *param_2)
 
 {
-  uint uVar1;
+  uint crc32_update_ret;
+  int iVar1;
   int iVar2;
   int iVar3;
-  int iVar4;
   
   if ((*param_1 != -1) && (*param_1 == -0x5a3cffff)) {
     crc32_make_table();
-    uVar1 = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
-    if (param_1[0xe] == ~uVar1) {
-      iVar2 = param_1[3];
-      iVar3 = param_1[4];
-      iVar4 = param_1[5];
+    crc32_update_ret = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
+    if (param_1[0xe] == ~crc32_update_ret) {
+      iVar1 = param_1[3];
+      iVar2 = param_1[4];
+      iVar3 = param_1[5];
       *param_2 = param_1[2];
-      param_2[1] = iVar2;
-      param_2[2] = iVar3;
-      param_2[3] = iVar4;
-      iVar2 = param_1[7];
-      iVar3 = param_1[8];
-      iVar4 = param_1[9];
+      param_2[1] = iVar1;
+      param_2[2] = iVar2;
+      param_2[3] = iVar3;
+      iVar1 = param_1[7];
+      iVar2 = param_1[8];
+      iVar3 = param_1[9];
       param_2[4] = param_1[6];
-      param_2[5] = iVar2;
-      param_2[6] = iVar3;
-      param_2[7] = iVar4;
-      iVar2 = param_1[0xb];
-      iVar3 = param_1[0xc];
-      iVar4 = param_1[0xd];
+      param_2[5] = iVar1;
+      param_2[6] = iVar2;
+      param_2[7] = iVar3;
+      iVar1 = param_1[0xb];
+      iVar2 = param_1[0xc];
+      iVar3 = param_1[0xd];
       param_2[8] = param_1[10];
-      param_2[9] = iVar2;
-      param_2[10] = iVar3;
-      param_2[0xb] = iVar4;
+      param_2[9] = iVar1;
+      param_2[10] = iVar2;
+      param_2[0xb] = iVar3;
     }
   }
   return;
@@ -1153,15 +1153,15 @@ undefined4 FUN_20103bd4(void)
 undefined4 sflash_sst_block_size(int param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 1;
+  i = 1;
   do {
-    if (*(short *)(&UNK_201651fc + iVar1 * 8) == param_1) {
-      return *(undefined4 *)(&UNK_20165200 + iVar1 * 8);
+    if (*(short *)(&UNK_201651fc + i * 8) == param_1) {
+      return *(undefined4 *)(&UNK_20165200 + i * 8);
     }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xb);
+    i = i + 1;
+  } while (i < 0xb);
   return 0x10000;
 }
 
@@ -1230,15 +1230,15 @@ int FUN_20103cc8(int param_1,int param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
   iVar1 = 0;
-  iVar2 = 0;
+  i = 0;
   if (0 < param_2) {
     do {
-      iVar1 = iVar1 + (*(byte *)(param_1 + iVar2) + 1 & 0xff);
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < param_2);
+      iVar1 = iVar1 + (*(byte *)(param_1 + i) + 1 & 0xff);
+      i = i + 1;
+    } while (i < param_2);
   }
   return iVar1;
 }
@@ -1439,15 +1439,15 @@ undefined4 sflash_erase_chip_uniform(int param_1)
 undefined1 sflash_read_mfr_id(void)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
+  undefined4 spibsc_drcmr_0;
+  undefined4 spibsc_drenr_0;
   
-  uVar1 = SPIBSC_DRCMR_0;
-  uVar2 = SPIBSC_DRENR_0;
+  spibsc_drcmr_0 = SPIBSC_DRCMR_0;
+  spibsc_drenr_0 = SPIBSC_DRENR_0;
   SPIBSC_DRCMR_0 = 0x9f0000;
   SPIBSC_DRENR_0 = 0x4000;
-  SPIBSC_DRCMR_0 = uVar1;
-  SPIBSC_DRENR_0 = uVar2;
+  SPIBSC_DRCMR_0 = spibsc_drcmr_0;
+  SPIBSC_DRENR_0 = spibsc_drenr_0;
   return DAT_18000000;
 }
 

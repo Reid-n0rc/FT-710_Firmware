@@ -5,9 +5,10 @@
 void FUN_fffc8f48(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if (((PTR_g_ui_00025d5c->dl_block_7a != 0) && (bVar1 = swtimer_expired(0x43), bVar1 == 1)) &&
+  if (((PTR_g_ui_00025d5c->dl_block_7a != 0) &&
+      (swtimer_expired_ret = swtimer_expired(0x43), swtimer_expired_ret == 1)) &&
      (PTR_g_ui_00025d5c->dl_block_7a = 0, PTR_g_ui_00025d5c->dl_req_50 == 1)) {
     PTR_g_ui_00025d5c->dl_req_sd = 1;
     return;
@@ -32,9 +33,10 @@ void FUN_fffc8f8b(ushort param_1)
 void FUN_fffc8fa6(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if ((PTR_g_ui_00025d5c->func_panel_open != 0) && (bVar1 = swtimer_expired(0x44), bVar1 == 1)) {
+  if ((PTR_g_ui_00025d5c->func_panel_open != 0) &&
+     (swtimer_expired_ret = swtimer_expired(0x44), swtimer_expired_ret == 1)) {
     PTR_g_ui_00025d5c->func_panel_open = 0;
     PTR_g_ui_00025d5c->func_blink_en = 0;
     PTR_g_ui_00025d5c->func_blink_on = 1;
@@ -51,10 +53,10 @@ void FUN_fffc8fa6(void)
 void FUN_fffc8ff9(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   if (((PTR_g_ui_00025d5c->func_panel_open != 0) && (PTR_g_ui_00025d5c->func_blink_en != 0)) &&
-     (bVar1 = swtimer_expired(0x45), bVar1 == 1)) {
+     (swtimer_expired_ret = swtimer_expired(0x45), swtimer_expired_ret == 1)) {
     if (PTR_g_ui_00025d5c->func_blink_on == 0) {
       PTR_g_ui_00025d5c->func_blink_on = 1;
     }
@@ -73,9 +75,10 @@ void FUN_fffc8ff9(void)
 void FUN_fffc9046(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if ((PTR_g_ui_00025d5c->lamp_restore_req != 0) && (bVar1 = swtimer_expired(0x41), bVar1 == 1)) {
+  if ((PTR_g_ui_00025d5c->lamp_restore_req != 0) &&
+     (swtimer_expired_ret = swtimer_expired(0x41), swtimer_expired_ret == 1)) {
     PTR_g_ui_00025d5c->lamp_restore_req = 0;
     ui_lamp_set(DAT_00012233,DAT_00012234);
     return;
@@ -89,9 +92,10 @@ void FUN_fffc9046(void)
 void FUN_fffc9084(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if ((DAT_0001b4f2 != '\0') && (bVar1 = swtimer_expired(0x48), bVar1 == 1)) {
+  if ((DAT_0001b4f2 != '\0') &&
+     (swtimer_expired_ret = swtimer_expired(0x48), swtimer_expired_ret == 1)) {
     popup_mark_clear();
     return;
   }
@@ -130,9 +134,10 @@ void popup_mark_clear(void)
 void FUN_fffc90cb(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if ((DAT_0001b4f3 == '\x01') && (bVar1 = swtimer_expired(0x49), bVar1 == 1)) {
+  if ((DAT_0001b4f3 == '\x01') &&
+     (swtimer_expired_ret = swtimer_expired(0x49), swtimer_expired_ret == 1)) {
     DAT_0001b4f3 = 0;
     return;
   }
@@ -154,9 +159,10 @@ undefined1 FUN_fffc90ed(void)
 void FUN_fffc90fc(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  if ((DAT_0001b4f4 == '\x01') && (bVar1 = swtimer_expired(0x4a), bVar1 == 1)) {
+  if ((DAT_0001b4f4 == '\x01') &&
+     (swtimer_expired_ret = swtimer_expired(0x4a), swtimer_expired_ret == 1)) {
     DAT_0001b4f4 = 0;
     return;
   }
@@ -190,15 +196,15 @@ void FUN_fffc912d(undefined1 param_1)
 void R_MTU2_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffffdff;
-  bVar2 = MTU_TSTRA;
-  MTU_TSTRA = bVar2 & 0xfb;
-  bVar2 = MTU_TSYRA;
-  MTU_TSYRA = bVar2 & 0xfb;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffffdff;
+  bVar1 = MTU_TSTRA;
+  MTU_TSTRA = bVar1 & 0xfb;
+  bVar1 = MTU_TSYRA;
+  MTU_TSYRA = bVar1 & 0xfb;
   MTU2_TCR = 0x40;
   MTU2_TCR2 = 0;
   MTU2_TIER = 0;
@@ -206,8 +212,8 @@ void R_MTU2_Create(void)
   MTU2_TGRA = 11999;
   MTU2_TGRB = 0x726;
   MPC_P27PFS = 1;
-  bVar2 = PORT2_PMR;
-  PORT2_PMR = bVar2 | 0x80;
+  bVar1 = PORT2_PMR;
+  PORT2_PMR = bVar1 | 0x80;
   R_MTU2_Create_UserInit();
   return;
 }
@@ -221,10 +227,10 @@ void R_MTU2_Create(void)
 void R_MTU2_Start(void)
 
 {
-  byte bVar1;
+  byte mtu_tstra;
   
-  bVar1 = MTU_TSTRA;
-  MTU_TSTRA = bVar1 | 4;
+  mtu_tstra = MTU_TSTRA;
+  MTU_TSTRA = mtu_tstra | 4;
   return;
 }
 
@@ -237,10 +243,10 @@ void R_MTU2_Start(void)
 void R_MTU2_Stop(void)
 
 {
-  byte bVar1;
+  byte mtu_tstra;
   
-  bVar1 = MTU_TSTRA;
-  MTU_TSTRA = bVar1 & 0xfb;
+  mtu_tstra = MTU_TSTRA;
+  MTU_TSTRA = mtu_tstra & 0xfb;
   return;
 }
 
@@ -264,42 +270,42 @@ void R_MTU2_Create_UserInit(void)
 void R_SCI6_Create_IIC(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xfdffffff;
-  bVar2 = ICU_IPR086;
-  ICU_IPR086 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR087;
-  ICU_IPR087 = bVar2 & 0xfa | 10;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xfdffffff;
+  bVar1 = ICU_IPR086;
+  ICU_IPR086 = bVar1 & 0xfa | 10;
+  bVar1 = ICU_IPR087;
+  ICU_IPR087 = bVar1 & 0xfa | 10;
   SCI6_SCR = 0;
   SCI6_SIMR3 = 0xf0;
   SCI6_SMR = 0;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 & 0xfe;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 & 0xfb;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 | 8;
+  bVar1 = SCI6_SCMR;
+  SCI6_SCMR = bVar1 & 0xfe;
+  bVar1 = SCI6_SCMR;
+  SCI6_SCMR = bVar1 & 0xfb;
+  bVar1 = SCI6_SCMR;
+  SCI6_SCMR = bVar1 | 8;
   SCI6_BRR = 0x12;
   SCI6_SEMR = 0;
-  bVar2 = SCI6_SIMR1;
-  SCI6_SIMR1 = bVar2 | 1;
-  bVar2 = SCI6_SIMR2;
-  SCI6_SIMR2 = bVar2 | 0x22;
+  bVar1 = SCI6_SIMR1;
+  SCI6_SIMR1 = bVar1 | 1;
+  bVar1 = SCI6_SIMR2;
+  SCI6_SIMR2 = bVar1 | 0x22;
   SCI6_SPMR = 0;
   SCI6_SCR = 0xf4;
   MPC_P01PFS = 10;
-  bVar2 = PORT0_ODR0;
-  PORT0_ODR0 = bVar2 | 4;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 | 2;
+  bVar1 = PORT0_ODR0;
+  PORT0_ODR0 = bVar1 | 4;
+  bVar1 = PORT0_PMR;
+  PORT0_PMR = bVar1 | 2;
   MPC_P00PFS = 10;
-  bVar2 = PORT0_ODR0;
-  PORT0_ODR0 = bVar2 | 1;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 | 1;
+  bVar1 = PORT0_ODR0;
+  PORT0_ODR0 = bVar1 | 1;
+  bVar1 = PORT0_PMR;
+  PORT0_PMR = bVar1 | 1;
   R_SCI6_Create_UserInit();
   return;
 }
@@ -451,13 +457,13 @@ void R_SCI6_Create_UserInit(void)
 void r_sci6_iic_txi(void)
 
 {
-  undefined1 uVar1;
-  byte bVar2;
+  undefined1 sci6_rdr;
+  byte sci6_sisr;
   
-  bVar2 = SCI6_SISR;
-  if ((bVar2 & 1) == 1) {
-    uVar1 = SCI6_RDR;
-    *DAT_00021050 = uVar1;
+  sci6_sisr = SCI6_SISR;
+  if ((sci6_sisr & 1) == 1) {
+    sci6_rdr = SCI6_RDR;
+    *DAT_00021050 = sci6_rdr;
     DAT_00021050 = DAT_00021050 + 1;
     DAT_0001fa44 = DAT_0001fa44 + 1;
   }
@@ -608,32 +614,32 @@ void r_sci6_callback_receiveend(void)
 void R_SCI7_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xfeffffff;
-  bVar2 = ICU_IPR098;
-  ICU_IPR098 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR099;
-  ICU_IPR099 = bVar2 & 0xfa | 10;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xfeffffff;
+  bVar1 = ICU_IPR098;
+  ICU_IPR098 = bVar1 & 0xfa | 10;
+  bVar1 = ICU_IPR099;
+  ICU_IPR099 = bVar1 & 0xfa | 10;
   SCI7_SCR = 0;
   SCI7_SCR = 0;
-  bVar2 = SCI7_SIMR1;
-  SCI7_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI7_SIMR1;
+  SCI7_SIMR1 = bVar1 & 0xfe;
   SCI7_SPMR = 0;
   SCI7_SMR = 0;
   SCI7_SCMR = 0x72;
   SCI7_SEMR = 0;
   SCI7_BRR = 0xc2;
   MPC_P92PFS = 10;
-  bVar2 = PORT9_PMR;
-  PORT9_PMR = bVar2 | 4;
+  bVar1 = PORT9_PMR;
+  PORT9_PMR = bVar1 | 4;
   MPC_P90PFS = 10;
-  bVar2 = PORT9_PODR;
-  PORT9_PODR = bVar2 | 1;
-  bVar2 = PORT9_PDR;
-  PORT9_PDR = bVar2 | 1;
+  bVar1 = PORT9_PODR;
+  PORT9_PODR = bVar1 | 1;
+  bVar1 = PORT9_PDR;
+  PORT9_PDR = bVar1 | 1;
   R_SCI7_Create_UserInit();
   return;
 }
@@ -842,11 +848,11 @@ void r_sci7_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci7_rdr;
   
   if (DAT_0001fa4a < DAT_0001fa4c) {
-    uVar2 = SCI7_RDR;
-    *DAT_00021058 = uVar2;
+    sci7_rdr = SCI7_RDR;
+    *DAT_00021058 = sci7_rdr;
     DAT_00021058 = DAT_00021058 + 1;
     DAT_0001fa4a = DAT_0001fa4a + 1;
   }
@@ -869,11 +875,11 @@ void r_sci7_receive_interrupt(void)
 void r_sci7_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci7_ssr;
   
   r_sci7_callback_receiveerror();
-  bVar1 = SCI7_SSR;
-  SCI7_SSR = bVar1 & 199 | 0xc0;
+  sci7_ssr = SCI7_SSR;
+  SCI7_SSR = sci7_ssr & 199 | 0xc0;
   return;
 }
 

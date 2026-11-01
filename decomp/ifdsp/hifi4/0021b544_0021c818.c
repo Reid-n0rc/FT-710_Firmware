@@ -8,12 +8,12 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
 
 {
   int iVar1;
-  uint uVar2;
+  uint i;
+  int *piVar2;
   int *piVar3;
-  int *piVar4;
-  code **ppcVar5;
-  undefined4 uVar6;
-  uint uVar7;
+  code **ppcVar4;
+  undefined4 uVar5;
+  uint uVar6;
   char *pcStack_50;
   char *pcStack_4c;
   code *apcStack_48 [2];
@@ -26,39 +26,39 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
     env_memset(param_4,0,0xf4);
     iVar1 = env_init();
     if (iVar1 == 0) {
-      ppcVar5 = apcStack_48;
-      piVar4 = local_40;
-      uVar7 = param_1 + 0x800;
+      ppcVar4 = apcStack_48;
+      piVar3 = local_40;
+      uVar6 = param_1 + 0x800;
       pcStack_50 = "tx_vq";
       pcStack_4c = "rx_vq";
       apcStack_48[0] = rpmsg_lite_tx_callback;
       apcStack_48[1] = rpmsg_lite_rx_callback;
       ppcStack_28 = &pcStack_50;
       param_4[8] = (int)&PTR_vq_tx_remote_002008e0;
-      piVar3 = param_4 + 9;
+      piVar2 = param_4 + 9;
       uStack_2c = param_2 << 1;
-      uVar2 = 0;
-      if ((uVar7 & 3) != 0) {
-        uVar7 = (uVar7 & 0xfffffffc) + 4;
+      i = 0;
+      if ((uVar6 & 3) != 0) {
+        uVar6 = (uVar6 & 0xfffffffc) + 4;
       }
-      param_4[5] = uVar7;
+      param_4[5] = uVar6;
       do {
         uStack_30 = 2;
         local_40[3] = 0x10;
-        uVar6 = ae_zext16(uStack_2c | uVar2 & 1);
+        uVar5 = ae_zext16(uStack_2c | i & 1);
         local_40[2] = param_1;
         iVar1 = virtqueue_create_static
-                          (uVar6,*ppcStack_28,local_40 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar3);
+                          (uVar5,*ppcStack_28,local_40 + 2,*ppcVar4,virtqueue_notify,piVar3,piVar2);
         if (iVar1 != 0) {
           return (int *)0x0;
         }
-        ppcVar5 = ppcVar5 + 1;
+        ppcVar4 = ppcVar4 + 1;
         ppcStack_28 = ppcStack_28 + 1;
-        piVar3 = piVar3 + 0x1a;
-        *(int **)(*piVar4 + 100) = param_4;
-        uVar2 = uVar2 + 1;
-        piVar4 = piVar4 + 1;
-      } while (uVar2 != 2);
+        piVar2 = piVar2 + 0x1a;
+        *(int **)(*piVar3 + 100) = param_4;
+        i = i + 1;
+        piVar3 = piVar3 + 1;
+      } while (i != 2);
       iVar1 = env_create_mutex(param_4 + 3,1);
       if (iVar1 == 0) {
         param_4[1] = local_40[0];
@@ -975,16 +975,16 @@ void regfile_set_defaults(void)
 void tx_gpio_to_reg4004(void)
 
 {
-  byte bVar1;
-  byte bVar2;
-  short sVar3;
+  short sVar1;
+  byte gpio_b0_21;
+  byte gpio_b0_22;
   
-  sVar3 = regfile_gpio_sel();
+  sVar1 = regfile_gpio_sel();
   memw();
-  bVar1 = GPIO_B0_21;
+  gpio_b0_21 = GPIO_B0_21;
   memw();
-  bVar2 = GPIO_B0_22;
-  DAT_20078008 = (ushort)bVar2 | sVar3 << 2 | (ushort)bVar1 << 1;
+  gpio_b0_22 = GPIO_B0_22;
+  DAT_20078008 = (ushort)gpio_b0_22 | sVar1 << 2 | (ushort)gpio_b0_21 << 1;
   return;
 }
 

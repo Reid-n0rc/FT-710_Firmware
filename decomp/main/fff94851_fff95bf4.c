@@ -60,11 +60,11 @@ void r_sci5_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci5_rdr;
   
   if (DAT_0001b624 < DAT_0001b626) {
-    uVar2 = SCI5_RDR;
-    *DAT_00020820 = uVar2;
+    sci5_rdr = SCI5_RDR;
+    *DAT_00020820 = sci5_rdr;
     sci5_rx_byte_hook();
     DAT_00020820 = DAT_00020820 + 1;
     DAT_0001b624 = DAT_0001b624 + 1;
@@ -88,11 +88,11 @@ void r_sci5_receive_interrupt(void)
 void r_sci5_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci5_ssr;
   
   r_sci5_callback_receiveerror();
-  bVar1 = SCI5_SSR;
-  SCI5_SSR = bVar1 & 199 | 0xc0;
+  sci5_ssr = SCI5_SSR;
+  SCI5_SSR = sci5_ssr & 199 | 0xc0;
   return;
 }
 
@@ -165,21 +165,21 @@ void sci5_rx_byte_hook(void)
 void R_TPU0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfe;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+  TPUA_TSTR = bVar1 & 0xfe;
   ICU_SLIBXR130 = 0xf;
-  bVar2 = ICU_IPR130;
-  ICU_IPR130 = bVar2 & 0xf4 | 4;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfe;
+  bVar1 = ICU_IPR130;
+  ICU_IPR130 = bVar1 & 0xf4 | 4;
+  bVar1 = TPUA_TSYR;
+  TPUA_TSYR = bVar1 & 0xfe;
   TPU0_TCR = 0x2a;
-  bVar2 = TPU0_TIER;
-  TPU0_TIER = bVar2 | 0x41;
+  bVar1 = TPU0_TIER;
+  TPU0_TIER = bVar1 | 0x41;
   TPU0_TIORH = 0;
   TPU0_TIORL = 0;
   TPU0_TGRA = 0x176;
@@ -261,21 +261,21 @@ void r_tpu0_tgia_isr(void)
 void R_TPU1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfd;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+  TPUA_TSTR = bVar1 & 0xfd;
   ICU_SLIBR144 = 0x14;
-  bVar2 = ICU_IPR144;
-  ICU_IPR144 = bVar2 & 0xfe | 0xe;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfd;
+  bVar1 = ICU_IPR144;
+  ICU_IPR144 = bVar1 & 0xfe | 0xe;
+  bVar1 = TPUA_TSYR;
+  TPUA_TSYR = bVar1 & 0xfd;
   TPU1_TCR = 0x20;
-  bVar2 = TPU1_TIER;
-  TPU1_TIER = bVar2 | 0x41;
+  bVar1 = TPU1_TIER;
+  TPU1_TIER = bVar1 | 0x41;
   TPU1_TIOR = 0;
   TPU1_TGRA = 0x270;
   TPU1_TGRB = 5999;
@@ -625,12 +625,12 @@ void displink_task(void)
   byte bVar2;
   bool bVar3;
   char cVar4;
-  ushort uVar5;
-  char *pcVar6;
+  ushort displink_rx_len_of_ret;
+  char *displink_rx_buf_ret;
+  char *pcVar5;
+  int iVar6;
   char *pcVar7;
-  int iVar8;
-  char *pcVar9;
-  uint uVar10;
+  uint uVar8;
   
   freq_cache_update();
   FUN_fffc8b55();
@@ -639,28 +639,28 @@ void displink_task(void)
   bVar2 = displink_rx_ready();
   if (bVar2 == 1) {
     bVar1 = false;
-    pcVar6 = (char *)displink_rx_buf();
-    uVar5 = displink_rx_len_of(*pcVar6);
-    pcVar7 = &DAT_0000198f;
-    pcVar9 = pcVar6;
-    for (uVar10 = (uint)uVar5; uVar10 != 0; uVar10 = uVar10 - 1) {
-      *pcVar7 = *pcVar9;
+    displink_rx_buf_ret = (char *)displink_rx_buf();
+    displink_rx_len_of_ret = displink_rx_len_of(*displink_rx_buf_ret);
+    pcVar5 = &DAT_0000198f;
+    pcVar7 = displink_rx_buf_ret;
+    for (uVar8 = (uint)displink_rx_len_of_ret; uVar8 != 0; uVar8 = uVar8 - 1) {
+      *pcVar5 = *pcVar7;
+      pcVar5 = pcVar5 + 1;
       pcVar7 = pcVar7 + 1;
-      pcVar9 = pcVar9 + 1;
     }
     displink_rx_rearm();
-    if (uVar5 == 0) {
+    if (displink_rx_len_of_ret == 0) {
       DAT_0001b3cd = '\x01';
       bVar1 = true;
     }
     else {
-      if ((*pcVar6 == '\x06') || (*pcVar6 == '\x15')) {
+      if ((*displink_rx_buf_ret == '\x06') || (*displink_rx_buf_ret == '\x15')) {
         bVar3 = false;
       }
       else {
         bVar3 = true;
       }
-      if ((bVar3) && (bVar3 = displink_check_sum(0x198f,uVar5), !bVar3)) {
+      if ((bVar3) && (bVar3 = displink_check_sum(0x198f,displink_rx_len_of_ret), !bVar3)) {
         DAT_0001b3cd = '\x01';
         bVar1 = true;
       }
@@ -731,8 +731,8 @@ void displink_task(void)
         displink_send_nak();
       }
     }
-    iVar8 = FUN_fffc911e();
-    if (iVar8 == 0) {
+    iVar6 = FUN_fffc911e();
+    if (iVar6 == 0) {
       cVar4 = FUN_fff9ccd3();
       if (cVar4 == '\0') {
         PTR_g_ui_00025d38->freq_settled_a = 1;
@@ -1062,7 +1062,7 @@ void displink_rx_F0_hello(int param_1)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   DAT_000019bb = 0;
   DAT_000019b7 = 0;
@@ -1177,8 +1177,8 @@ void displink_rx_F0_hello(int param_1)
         return;
       }
       if (bVar2 == 7) {
-        uVar3 = dest_code_get();
-        if ((uVar3 == 0xa983) || (uVar3 == 0xb5a7)) {
+        dest_code_get_ret = dest_code_get();
+        if ((dest_code_get_ret == 0xa983) || (dest_code_get_ret == 0xb5a7)) {
           bVar1 = true;
         }
         else {
@@ -1188,7 +1188,7 @@ void displink_rx_F0_hello(int param_1)
           dest_code_set(0xd950);
         }
         else {
-          if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+          if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
             bVar1 = true;
           }
           else {
@@ -1252,17 +1252,17 @@ void displink_rx_E0_key(int param_1)
 
 {
   byte bVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte key_event_filter_ret;
+  ushort uVar2;
   
-  uVar3 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
+  uVar2 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
   bVar1 = *(byte *)(param_1 + 1);
   DAT_0001b3cc = 1;
-  bVar2 = key_event_filter(uVar3,bVar1);
-  if (bVar2 != 0) {
+  key_event_filter_ret = key_event_filter(uVar2,bVar1);
+  if (key_event_filter_ret != 0) {
     PTR_g_ui_00025d38->key_ev_src = bVar1 >> 4;
     PTR_g_ui_00025d38->key_ev_type = bVar1 & 0xf;
-    PTR_g_ui_00025d38->key_ev_code = uVar3;
+    PTR_g_ui_00025d38->key_ev_code = uVar2;
     PTR_g_ui_00025d38->key_ev_flag = 1;
     return;
   }

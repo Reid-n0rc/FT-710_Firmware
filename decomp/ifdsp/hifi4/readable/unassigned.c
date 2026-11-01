@@ -286,17 +286,17 @@ undefined4 FUN_0022419c(byte *param_1)
   char cVar3;
   undefined4 uVar4;
   byte bVar5;
-  int iVar6;
+  int i;
+  char cVar6;
   char cVar7;
-  char cVar8;
-  int iVar9;
-  byte bVar10;
-  int iVar11;
+  int iVar8;
+  byte bVar9;
+  int iVar10;
   
-  iVar6 = 0;
+  i = 0;
   uVar4 = 0;
   bVar5 = DAT_00261dd5;
-  bVar10 = DAT_00261dd4;
+  bVar9 = DAT_00261dd4;
   do {
     bVar1 = *param_1;
     param_1 = param_1 + 1;
@@ -310,7 +310,7 @@ LAB_002241f0:
         memset(&DAT_00261ab4,2,400);
         DAT_00261aa8 = 0;
         DAT_00261aa4 = 0;
-        bVar10 = 2;
+        bVar9 = 2;
         DAT_00261dd4 = 2;
         bVar5 = 0xfa;
         DAT_00261dd5 = 0xfa;
@@ -322,7 +322,7 @@ LAB_002241f0:
         memset(&DAT_00261ab4,2,400);
         DAT_00261aa8 = 0;
         DAT_00261aa4 = 0;
-        bVar10 = 2;
+        bVar9 = 2;
         DAT_00261dd4 = 2;
         bVar5 = 0xfa;
         DAT_00261dd5 = 0xfa;
@@ -332,8 +332,8 @@ LAB_002241ea:
       DAT_00261ab0 = 0;
     }
     if (DAT_00261a94 == 2) {
-      DAT_00261dd4 = bVar10;
-      if (bVar10 < bVar1) {
+      DAT_00261dd4 = bVar9;
+      if (bVar9 < bVar1) {
         DAT_00261dd4 = bVar1;
       }
       DAT_00261dd5 = bVar5;
@@ -341,7 +341,7 @@ LAB_002241ea:
         DAT_00261dd5 = bVar1;
       }
       DAT_00261aa8 = DAT_00261aa8 + 1;
-      bVar10 = DAT_00261dd4;
+      bVar9 = DAT_00261dd4;
       bVar5 = DAT_00261dd5;
       if (DAT_00261a96 <= DAT_00261aa8) {
         DAT_00261aa8 = 0;
@@ -349,49 +349,49 @@ LAB_002241ea:
         (&DAT_00261ab5)[DAT_00261aa4 * 2] = DAT_00261dd5;
         DAT_00261aa4 = DAT_00261aa4 + 1;
         if (199 < DAT_00261aa4) {
-          iVar11 = (uint)DAT_00261ab7 - (uint)DAT_00261ab4;
+          iVar10 = (uint)DAT_00261ab7 - (uint)DAT_00261ab4;
           if ((uint)DAT_00261ab4 < (uint)DAT_00261ab7) {
-            iVar9 = iVar11 + 1;
-            if (-1 < iVar11) {
-              iVar9 = iVar11;
+            iVar8 = iVar10 + 1;
+            if (-1 < iVar10) {
+              iVar8 = iVar10;
             }
-            DAT_00261ab4 = DAT_00261ab4 + (char)(iVar9 >> 1);
+            DAT_00261ab4 = DAT_00261ab4 + (char)(iVar8 >> 1);
             DAT_00261ab7 = DAT_00261ab4;
           }
-          iVar11 = (uint)DAT_00261ab5 - (uint)DAT_00261ab6;
+          iVar10 = (uint)DAT_00261ab5 - (uint)DAT_00261ab6;
           if ((uint)DAT_00261ab6 < (uint)DAT_00261ab5) {
-            iVar9 = iVar11 + 1;
-            if (-1 < iVar11) {
-              iVar9 = iVar11;
+            iVar8 = iVar10 + 1;
+            if (-1 < iVar10) {
+              iVar8 = iVar10;
             }
-            DAT_00261ab5 = DAT_00261ab6 + (char)(iVar9 >> 1);
+            DAT_00261ab5 = DAT_00261ab6 + (char)(iVar8 >> 1);
             DAT_00261ab6 = DAT_00261ab5;
           }
           cVar2 = -DAT_00261ab4;
           DAT_00261ab4 = -DAT_00261ab5 - 4;
           cVar3 = -DAT_00261ab6;
           DAT_00261ab6 = -DAT_00261ab7 - 4;
-          cVar7 = -4 - DAT_00261ab8;
+          cVar6 = -4 - DAT_00261ab8;
           DAT_00261ab8 = -4 - DAT_00261ab9;
-          cVar8 = -4 - DAT_00261aba;
+          cVar7 = -4 - DAT_00261aba;
           DAT_00261aba = -4 - DAT_00261abb;
           DAT_00261ab5 = cVar2 - 4;
           DAT_00261ab7 = cVar3 - 4;
-          DAT_00261ab9 = cVar7;
-          DAT_00261abb = cVar8;
+          DAT_00261ab9 = cVar6;
+          DAT_00261abb = cVar7;
           memcpy(&DAT_00261c44,&DAT_00261ab4,400);
           DAT_00261a94 = 0;
           DAT_00261ab0 = 0;
           uVar4 = 1;
         }
-        bVar10 = 2;
+        bVar9 = 2;
         DAT_00261dd4 = 2;
         bVar5 = 0xfa;
         DAT_00261dd5 = 0xfa;
       }
     }
-    iVar6 = iVar6 + 1;
-    if (iVar6 == 0x280) {
+    i = i + 1;
+    if (i == 0x280) {
       return uVar4;
     }
   } while( true );
@@ -409,10 +409,10 @@ undefined4 FUN_0022439c(byte *param_1)
   char cVar3;
   char cVar4;
   char cVar5;
-  int iVar6;
+  int i;
   byte *local_30;
   
-  iVar6 = 0;
+  i = 0;
   uVar2 = 0;
   local_30 = param_1;
   do {
@@ -425,7 +425,7 @@ undefined4 FUN_0022439c(byte *param_1)
     if (bVar1 < DAT_00261dd5) {
       DAT_00261dd5 = bVar1;
     }
-    iVar6 = iVar6 + 1;
+    i = i + 1;
     if (DAT_00261a96 <= DAT_00261aa8) {
       DAT_00261aa8 = 0;
       (&DAT_00261ab4)[DAT_00261aa4 * 2] = DAT_00261dd4;
@@ -453,7 +453,7 @@ undefined4 FUN_0022439c(byte *param_1)
       DAT_00261dd4 = 2;
       DAT_00261dd5 = 0xfa;
     }
-  } while (iVar6 != 0x280);
+  } while (i != 0x280);
   return uVar2;
 }
 

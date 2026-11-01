@@ -364,16 +364,16 @@ void FUN_fffd18a5(char param_1)
 
 {
   char cVar1;
+  byte menu_count_groups_ret;
   byte bVar2;
-  byte bVar3;
   
-  bVar2 = menu_count_groups(PTR_g_ui_00025d60->menu_p1);
+  menu_count_groups_ret = menu_count_groups(PTR_g_ui_00025d60->menu_p1);
   cVar1 = (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1];
   if ('\0' < param_1) {
-    bVar3 = cVar1 + 1;
-    if (bVar3 < bVar2) {
-      (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1] = bVar3;
-      PTR_g_ui_00025d60->menu_p2 = bVar3;
+    bVar2 = cVar1 + 1;
+    if (bVar2 < menu_count_groups_ret) {
+      (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1] = bVar2;
+      PTR_g_ui_00025d60->menu_p2 = bVar2;
       return;
     }
     PTR_g_ui_00025d60->menu_state = 1;
@@ -393,14 +393,14 @@ void FUN_fffd18a5(char param_1)
 void FUN_fffd1943(char param_1)
 
 {
-  char cVar1;
+  char menu_count_groups_ret;
   
-  cVar1 = menu_count_groups(PTR_g_ui_00025d60->menu_p1);
+  menu_count_groups_ret = menu_count_groups(PTR_g_ui_00025d60->menu_p1);
   if (-1 < param_1) {
     return;
   }
-  (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1] = cVar1 + -1;
-  PTR_g_ui_00025d60->menu_p2 = cVar1 - 1;
+  (&DAT_00015e00)[PTR_g_ui_00025d60->menu_p1] = menu_count_groups_ret + -1;
+  PTR_g_ui_00025d60->menu_p2 = menu_count_groups_ret - 1;
   PTR_g_ui_00025d60->menu_state = 0;
   return;
 }
@@ -412,30 +412,30 @@ void FUN_fffd199a(char param_1)
 
 {
   byte bVar1;
-  byte *pbVar2;
+  byte *menu_cursor_of_ret;
   
   bVar1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  pbVar2 = (byte *)menu_cursor_of(bVar1);
-  if (pbVar2 != (byte *)0x0) {
+  menu_cursor_of_ret = (byte *)menu_cursor_of(bVar1);
+  if (menu_cursor_of_ret != (byte *)0x0) {
     bVar1 = menu_count_items(bVar1);
     if ('\0' < param_1) {
-      if ((int)(bVar1 - 1) <= (int)(uint)(byte)(*pbVar2 + pbVar2[1])) {
+      if ((int)(bVar1 - 1) <= (int)(uint)(byte)(*menu_cursor_of_ret + menu_cursor_of_ret[1])) {
         PTR_g_ui_00025d60->menu_state = 4;
         return;
       }
-      if (*pbVar2 < 4) {
-        *pbVar2 = *pbVar2 + 1;
+      if (*menu_cursor_of_ret < 4) {
+        *menu_cursor_of_ret = *menu_cursor_of_ret + 1;
         return;
       }
-      pbVar2[1] = pbVar2[1] + 1;
+      menu_cursor_of_ret[1] = menu_cursor_of_ret[1] + 1;
       return;
     }
-    if ((byte)(*pbVar2 + pbVar2[1]) != 0) {
-      if (*pbVar2 != 0) {
-        *pbVar2 = *pbVar2 - 1;
+    if ((byte)(*menu_cursor_of_ret + menu_cursor_of_ret[1]) != 0) {
+      if (*menu_cursor_of_ret != 0) {
+        *menu_cursor_of_ret = *menu_cursor_of_ret - 1;
         return;
       }
-      pbVar2[1] = pbVar2[1] - 1;
+      menu_cursor_of_ret[1] = menu_cursor_of_ret[1] - 1;
       return;
     }
   }
@@ -464,23 +464,23 @@ void FUN_fffd1a24(char param_1)
 void FUN_fffd1a46(char param_1)
 
 {
-  char cVar1;
-  byte bVar2;
-  byte bVar3;
-  char *pcVar4;
+  char menu_count_items_ret;
+  byte menu_p2_global_ret;
+  byte menu_count_items_ret_2;
+  char *menu_cursor_of_ret;
   
-  cVar1 = menu_count_items(PTR_g_ui_00025d60->menu_p2);
-  if ((cVar1 != '\0') && (param_1 < '\0')) {
-    bVar2 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-    bVar3 = menu_count_items(bVar2);
-    pcVar4 = (char *)menu_cursor_of(bVar2);
-    if (bVar3 < 6) {
-      pcVar4[1] = '\0';
-      *pcVar4 = bVar3 - 1;
+  menu_count_items_ret = menu_count_items(PTR_g_ui_00025d60->menu_p2);
+  if ((menu_count_items_ret != '\0') && (param_1 < '\0')) {
+    menu_p2_global_ret = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
+    menu_count_items_ret_2 = menu_count_items(menu_p2_global_ret);
+    menu_cursor_of_ret = (char *)menu_cursor_of(menu_p2_global_ret);
+    if (menu_count_items_ret_2 < 6) {
+      menu_cursor_of_ret[1] = '\0';
+      *menu_cursor_of_ret = menu_count_items_ret_2 - 1;
     }
     else {
-      pcVar4[1] = bVar3 - 5;
-      *pcVar4 = '\x04';
+      menu_cursor_of_ret[1] = menu_count_items_ret_2 - 5;
+      *menu_cursor_of_ret = '\x04';
     }
     PTR_g_ui_00025d60->menu_state = 2;
     return;
@@ -768,7 +768,7 @@ void menu_draw_preset_cat_rate(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -813,7 +813,7 @@ void menu_draw_preset_cat_rate(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_b * 0x15 + 0x1047);
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;
@@ -891,7 +891,7 @@ void menu_draw_preset_cat_tot(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -936,7 +936,7 @@ void menu_draw_preset_cat_tot(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_b * 0x15 + 0x10b0);
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1014,7 +1014,7 @@ void menu_draw_preset_stop_bit(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -1059,7 +1059,7 @@ void menu_draw_preset_stop_bit(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (int)(&DAT_00002328 + (uint)local_b * 0x15));
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;

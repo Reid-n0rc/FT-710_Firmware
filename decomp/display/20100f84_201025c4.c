@@ -687,10 +687,10 @@ void sd_power(int param_1)
 uint sd_card_detect(void)
 
 {
-  ushort uVar1;
+  ushort port_ppr11;
   
-  uVar1 = PORT_PPR11;
-  return (uVar1 & 0x1f) >> 4;
+  port_ppr11 = PORT_PPR11;
+  return (port_ppr11 & 0x1f) >> 4;
 }
 
 
@@ -1261,10 +1261,10 @@ void mouse_middle_get_event(void *param_1)
 void mouse_middle_down(void)
 
 {
-  bool bVar1;
+  bool key_func_is_held_ret;
   
   if ((((DAT_20800030 == 0 && DAT_20800034 == 0) && DAT_20800038 == 0) && DAT_20800048 == 0) &&
-     (bVar1 = key_func_is_held(), !bVar1)) {
+     (key_func_is_held_ret = key_func_is_held(), !key_func_is_held_ret)) {
     if (DAT_20800054 == 0) {
       DAT_2080005c = 1;
     }
@@ -1291,14 +1291,14 @@ void mouse_middle_up(void)
 uint mouse_middle_is_func(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
+  ushort gui_middle_key_ret;
+  uint uVar1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   if ((DAT_2080005c != 0 || (DAT_20800058 != 0 || DAT_20800054 != 0)) &&
-     (uVar1 = gui_middle_key(), uVar1 == 0x30f)) {
-    uVar2 = 1;
+     (gui_middle_key_ret = gui_middle_key(), gui_middle_key_ret == 0x30f)) {
+    uVar1 = 1;
   }
-  return uVar2;
+  return uVar1;
 }
 

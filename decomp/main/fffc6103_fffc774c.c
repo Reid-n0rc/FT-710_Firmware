@@ -399,11 +399,11 @@ void playback_knob_turn(char param_1)
 void FUN_fffc670d(char param_1)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   if (DAT_0001b4eb == '\x01') {
-    bVar1 = swtimer_expired(0x47);
-    if (bVar1 == 0) {
+    swtimer_expired_ret = swtimer_expired(0x47);
+    if (swtimer_expired_ret == 0) {
       return;
     }
     DAT_0001b4eb = '\0';
@@ -511,7 +511,7 @@ void memlist_page_down(void)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   if (PTR_g_ui_00025d58->memlist_row != 3) {
     PTR_g_ui_00025d58->memlist_first = PTR_g_ui_00025d58->memlist_first + 1;
@@ -524,20 +524,20 @@ void memlist_page_down(void)
       PTR_g_ui_00025d58->memlist_first = PTR_g_ui_00025d58->memlist_first + 1;
       return;
     }
-    uVar3 = dest_code_get();
-    if ((uVar3 == 0x4380) || (uVar3 == 0x20b)) {
+    dest_code_get_ret = dest_code_get();
+    if ((dest_code_get_ret == 0x4380) || (dest_code_get_ret == 0x20b)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (uVar3 == 0x60e6)) {
+    if ((bVar1) || (dest_code_get_ret == 0x60e6)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (uVar3 == 0x1cb9)) {
+    if ((bVar1) || (dest_code_get_ret == 0x1cb9)) {
       bVar1 = true;
     }
     else {
@@ -550,7 +550,7 @@ void memlist_page_down(void)
       }
     }
     else {
-      if ((uVar3 == 0x315b) || (uVar3 == 0x50e2)) {
+      if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
         bVar1 = true;
       }
       else {
@@ -567,7 +567,7 @@ void memlist_page_down(void)
         }
       }
       else {
-        if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+        if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
           bVar1 = true;
         }
         else {
@@ -593,7 +593,7 @@ void memlist_page_up(void)
 
 {
   bool bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   
   if (PTR_g_ui_00025d58->memlist_first < 0x84) {
     if (PTR_g_ui_00025d58->memlist_first != 0) {
@@ -602,8 +602,8 @@ void memlist_page_up(void)
     }
   }
   else {
-    uVar2 = dest_code_get();
-    if ((uVar2 == 0x315b) || (uVar2 == 0x50e2)) {
+    dest_code_get_ret = dest_code_get();
+    if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
       bVar1 = true;
     }
     else {
@@ -613,19 +613,19 @@ void memlist_page_up(void)
       PTR_g_ui_00025d58->memlist_first = 0x83;
       return;
     }
-    if ((uVar2 == 0x4380) || (uVar2 == 0x20b)) {
+    if ((dest_code_get_ret == 0x4380) || (dest_code_get_ret == 0x20b)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (uVar2 == 0x60e6)) {
+    if ((bVar1) || (dest_code_get_ret == 0x60e6)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (uVar2 == 0x1cb9)) {
+    if ((bVar1) || (dest_code_get_ret == 0x1cb9)) {
       bVar1 = true;
     }
     else {
@@ -648,13 +648,13 @@ void memlist_page_up(void)
 void memlist_mode_step(char param_1)
 
 {
-  vfo_rec *pvVar1;
+  vfo_rec *p_vfo_rec;
   byte bStack_9;
   
   popup_duration_get(0x55);
   popup_open_timed();
-  pvVar1 = memch + PTR_g_ui_00025d58->memlist_ch;
-  bStack_9 = pvVar1->mode & 0xf;
+  p_vfo_rec = memch + PTR_g_ui_00025d58->memlist_ch;
+  bStack_9 = p_vfo_rec->mode & 0xf;
   if (param_1 < '\x01') {
     if (bStack_9 != 0) {
       bStack_9 = bStack_9 - 1;
@@ -663,7 +663,7 @@ void memlist_mode_step(char param_1)
   else if (bStack_9 < 0xe) {
     bStack_9 = bStack_9 + 1;
   }
-  pvVar1->mode = pvVar1->mode & 0xf0 | bStack_9;
+  p_vfo_rec->mode = p_vfo_rec->mode & 0xf0 | bStack_9;
   eeprom_save_memch(PTR_g_ui_00025d58->memlist_ch);
   return;
 }
@@ -1088,13 +1088,13 @@ void funcknob_scope_level(char param_1)
 void funcknob_scope_level_step(char param_1)
 
 {
-  byte *pbVar1;
+  byte *scope_level_cur_ptr_ret;
   undefined2 uStack_4;
   
   popup_duration_get(0x1e);
   popup_open_timed();
-  pbVar1 = (byte *)scope_level_cur_ptr();
-  uStack_4 = (ushort)*pbVar1 + (short)param_1;
+  scope_level_cur_ptr_ret = (byte *)scope_level_cur_ptr();
+  uStack_4 = (ushort)*scope_level_cur_ptr_ret + (short)param_1;
   if (uStack_4 < 0x79) {
     if (uStack_4 < 0) {
       uStack_4 = 0;
@@ -1103,7 +1103,7 @@ void funcknob_scope_level_step(char param_1)
   else {
     uStack_4 = 0x78;
   }
-  *pbVar1 = (byte)uStack_4;
+  *scope_level_cur_ptr_ret = (byte)uStack_4;
   return;
 }
 
@@ -1325,8 +1325,8 @@ void FUN_fffc729c(byte param_1)
 
 {
   char cVar1;
-  bool bVar2;
-  ushort uVar3;
+  bool memch_valid_ret;
+  ushort dest_code_get_ret;
   byte *pbStack_c;
   byte bStack_6;
   char cStack_5;
@@ -1352,8 +1352,8 @@ void FUN_fffc729c(byte param_1)
       cStack_5 = FUN_fff9cb6b();
     }
     do {
-      bVar2 = memch_valid(bStack_4,&pbStack_c);
-      if (bVar2) {
+      memch_valid_ret = memch_valid(bStack_4,&pbStack_c);
+      if (memch_valid_ret) {
         FUN_fffc73bf(bStack_4,bStack_2,local_1);
         return;
       }
@@ -1363,8 +1363,9 @@ void FUN_fffc729c(byte param_1)
     cStack_5 = 0;
   }
   if (bStack_3 == 7) {
-    uVar3 = dest_code_get();
-    if ((((uVar3 == 0x315b) || (uVar3 == 0x50e2)) || (uVar3 == 0xa4c5)) || (uVar3 == 0xd950)) {
+    dest_code_get_ret = dest_code_get();
+    if ((((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) ||
+        (dest_code_get_ret == 0xa4c5)) || (dest_code_get_ret == 0xd950)) {
       bStack_4 = FUN_fffc7392();
       FUN_fffc73bf(bStack_4,bStack_2,local_1);
       return;
@@ -1388,14 +1389,15 @@ void FUN_fffc729c(byte param_1)
 char FUN_fffc7392(void)
 
 {
-  byte bVar1;
-  byte local_2;
+  byte memch_dest_blocked_ret;
+  byte i;
   
-  local_2 = 0;
-  while ((local_2 < 0xf && (bVar1 = memch_dest_blocked(local_2 + 0x75), bVar1 != 0))) {
-    local_2 = local_2 + 1;
+  i = 0;
+  while ((i < 0xf &&
+         (memch_dest_blocked_ret = memch_dest_blocked(i + 0x75), memch_dest_blocked_ret != 0))) {
+    i = i + 1;
   }
-  return local_2 + 0x75;
+  return i + 0x75;
 }
 
 
@@ -1419,8 +1421,8 @@ void FUN_fffc73df(byte param_1)
 
 {
   char cVar1;
-  bool bVar2;
-  ushort uVar3;
+  bool memch_valid_ret;
+  ushort uVar2;
   byte *pbStack_c;
   byte bStack_6;
   char cStack_5;
@@ -1435,8 +1437,8 @@ void FUN_fffc73df(byte param_1)
   while( true ) {
     while( true ) {
       bStack_3 = bStack_3 - 1;
-      if ((((bStack_3 == 7) && (uVar3 = dest_code_get(), uVar3 != 0x315b)) && (uVar3 != 0x50e2)) &&
-         ((uVar3 != 0xa4c5 && (uVar3 != 0xd950)))) {
+      if ((((bStack_3 == 7) && (uVar2 = dest_code_get(), uVar2 != 0x315b)) && (uVar2 != 0x50e2)) &&
+         ((uVar2 != 0xa4c5 && (uVar2 != 0xd950)))) {
         bStack_3 = 6;
       }
       if (bStack_3 == 0) break;
@@ -1458,8 +1460,8 @@ void FUN_fffc73df(byte param_1)
         cStack_5 = FUN_fff9cb6b();
       }
       do {
-        bVar2 = memch_valid(bStack_4,&pbStack_c);
-        if (bVar2) {
+        memch_valid_ret = memch_valid(bStack_4,&pbStack_c);
+        if (memch_valid_ret) {
           FUN_fffc73bf(bStack_4,bStack_2,local_1);
           return;
         }
@@ -1473,8 +1475,8 @@ void FUN_fffc73df(byte param_1)
       FUN_fffc73bf(0x84,bStack_2,local_1);
       return;
     }
-    uVar3 = dest_code_get();
-    if (((uVar3 == 0x315b) || (uVar3 == 0x50e2)) || ((uVar3 == 0xa4c5 || (uVar3 == 0xd950)))) break;
+    uVar2 = dest_code_get();
+    if (((uVar2 == 0x315b) || (uVar2 == 0x50e2)) || ((uVar2 == 0xa4c5 || (uVar2 == 0xd950)))) break;
     bStack_3 = 7;
   }
   bStack_4 = FUN_fffc7392();
@@ -1505,14 +1507,14 @@ void funcknob_mic_gain(char param_1)
 void funcknob_mic_gain_step(char param_1)
 
 {
-  byte *pbVar1;
+  byte *mic_gain_ptr_ret;
   short sStack_4;
   
   popup_duration_get(0x25);
   popup_open_timed();
-  pbVar1 = (byte *)mic_gain_ptr();
-  if (pbVar1 != (byte *)0x0) {
-    sStack_4 = (ushort)*pbVar1 + (short)param_1;
+  mic_gain_ptr_ret = (byte *)mic_gain_ptr();
+  if (mic_gain_ptr_ret != (byte *)0x0) {
+    sStack_4 = (ushort)*mic_gain_ptr_ret + (short)param_1;
     if (sStack_4 < 0x65) {
       if (sStack_4 < 0) {
         sStack_4 = 0;
@@ -1521,7 +1523,7 @@ void funcknob_mic_gain_step(char param_1)
     else {
       sStack_4 = 100;
     }
-    *pbVar1 = (byte)sStack_4;
+    *mic_gain_ptr_ret = (byte)sStack_4;
     return;
   }
   return;

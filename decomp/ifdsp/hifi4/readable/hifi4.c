@@ -205,59 +205,59 @@ void DMA_IRQHandle(dword *param_1)
   undefined4 *puVar1;
   int *piVar2;
   uint uVar3;
+  int i;
   int iVar4;
-  int iVar5;
-  code *pcVar6;
+  code *pcVar5;
   
-  iVar4 = 0x21;
+  i = 0x21;
   if (param_1 != &DMA0_CTRL) {
-    iVar5 = 0;
+    iVar4 = 0;
     if (param_1 != &DMA0_CTRL) {
-      iVar5 = 0x21;
+      iVar4 = 0x21;
     }
   }
   else {
-    iVar5 = 0;
+    iVar4 = 0;
   }
-  piVar2 = &DAT_00238470 + iVar5;
+  piVar2 = &DAT_00238470 + iVar4;
   do {
     puVar1 = (undefined4 *)*piVar2;
     if (puVar1 != (undefined4 *)0x0) {
       uVar3 = (uint)*(byte *)(puVar1 + 3);
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,0);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,0);
         }
       }
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,1);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,1);
         }
-        iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+        iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       }
       memw();
-      if ((*(uint *)(iVar5 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],0,2);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],0,2);
         }
       }
     }
-    iVar4 = iVar4 + -1;
+    i = i + -1;
     piVar2 = piVar2 + 1;
-  } while (iVar4 != 0);
+  } while (i != 0);
   return;
 }
 
@@ -767,22 +767,22 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4,int 
 {
   int iVar1;
   undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
+  int i;
+  undefined4 *puVar3;
   
   if (param_1 == 0) {
     return (int *)0x0;
   }
   env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
-  puVar4 = *(undefined4 **)(param_1 + 8);
+  puVar3 = *(undefined4 **)(param_1 + 8);
   if (param_2 == -1) {
-    iVar3 = 1;
-    while (iVar1 = iVar3, puVar2 = puVar4, puVar4 != (undefined4 *)0x0) {
-      while (*(int *)*puVar2 != iVar3) {
+    i = 1;
+    while (iVar1 = i, puVar2 = puVar3, puVar3 != (undefined4 *)0x0) {
+      while (*(int *)*puVar2 != i) {
         puVar2 = (undefined4 *)puVar2[2];
         if (puVar2 == (undefined4 *)0x0) goto LAB_0021aff6;
       }
-      if ((puVar2 == (undefined4 *)0x0) || (iVar3 = iVar3 + 1, iVar1 = param_2, iVar3 == -1)) break;
+      if ((puVar2 == (undefined4 *)0x0) || (i = i + 1, iVar1 = param_2, i == -1)) break;
     }
 LAB_0021aff6:
     param_2 = iVar1;
@@ -792,9 +792,9 @@ LAB_0021aff6:
     }
   }
   else {
-    for (; puVar4 != (undefined4 *)0x0; puVar4 = (undefined4 *)puVar4[2]) {
-      if (*(int *)*puVar4 == param_2) {
-        if (puVar4 != (undefined4 *)0x0) {
+    for (; puVar3 != (undefined4 *)0x0; puVar3 = (undefined4 *)puVar3[2]) {
+      if (*(int *)*puVar3 == param_2) {
+        if (puVar3 != (undefined4 *)0x0) {
           env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
           return (int *)0x0;
         }
@@ -853,12 +853,12 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
 
 {
   int iVar1;
-  uint uVar2;
+  uint i;
+  int *piVar2;
   int *piVar3;
-  int *piVar4;
-  code **ppcVar5;
-  undefined4 uVar6;
-  uint uVar7;
+  code **ppcVar4;
+  undefined4 uVar5;
+  uint uVar6;
   char *pcStack_50;
   char *pcStack_4c;
   code *apcStack_48 [2];
@@ -871,39 +871,39 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
     env_memset(param_4,0,0xf4);
     iVar1 = env_init();
     if (iVar1 == 0) {
-      ppcVar5 = apcStack_48;
-      piVar4 = local_40;
-      uVar7 = param_1 + 0x800;
+      ppcVar4 = apcStack_48;
+      piVar3 = local_40;
+      uVar6 = param_1 + 0x800;
       pcStack_50 = "tx_vq";
       pcStack_4c = "rx_vq";
       apcStack_48[0] = rpmsg_lite_tx_callback;
       apcStack_48[1] = rpmsg_lite_rx_callback;
       ppcStack_28 = &pcStack_50;
       param_4[8] = (int)&PTR_vq_tx_remote_002008e0;
-      piVar3 = param_4 + 9;
+      piVar2 = param_4 + 9;
       uStack_2c = param_2 << 1;
-      uVar2 = 0;
-      if ((uVar7 & 3) != 0) {
-        uVar7 = (uVar7 & 0xfffffffc) + 4;
+      i = 0;
+      if ((uVar6 & 3) != 0) {
+        uVar6 = (uVar6 & 0xfffffffc) + 4;
       }
-      param_4[5] = uVar7;
+      param_4[5] = uVar6;
       do {
         uStack_30 = 2;
         local_40[3] = 0x10;
-        uVar6 = ae_zext16(uStack_2c | uVar2 & 1);
+        uVar5 = ae_zext16(uStack_2c | i & 1);
         local_40[2] = param_1;
         iVar1 = virtqueue_create_static
-                          (uVar6,*ppcStack_28,local_40 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar3);
+                          (uVar5,*ppcStack_28,local_40 + 2,*ppcVar4,virtqueue_notify,piVar3,piVar2);
         if (iVar1 != 0) {
           return (int *)0x0;
         }
-        ppcVar5 = ppcVar5 + 1;
+        ppcVar4 = ppcVar4 + 1;
         ppcStack_28 = ppcStack_28 + 1;
-        piVar3 = piVar3 + 0x1a;
-        *(int **)(*piVar4 + 100) = param_4;
-        uVar2 = uVar2 + 1;
-        piVar4 = piVar4 + 1;
-      } while (uVar2 != 2);
+        piVar2 = piVar2 + 0x1a;
+        *(int **)(*piVar3 + 100) = param_4;
+        i = i + 1;
+        piVar3 = piVar3 + 1;
+      } while (i != 2);
       iVar1 = env_create_mutex(param_4 + 3,1);
       if (iVar1 == 0) {
         param_4[1] = local_40[0];
@@ -1128,16 +1128,16 @@ void regfile_set_defaults(void)
 void tx_gpio_to_reg4004(void)
 
 {
-  byte bVar1;
-  byte bVar2;
-  short sVar3;
+  short sVar1;
+  byte gpio_b0_21;
+  byte gpio_b0_22;
   
-  sVar3 = regfile_gpio_sel();
+  sVar1 = regfile_gpio_sel();
   memw();
-  bVar1 = GPIO_B0_21;
+  gpio_b0_21 = GPIO_B0_21;
   memw();
-  bVar2 = GPIO_B0_22;
-  DAT_20078008 = (ushort)bVar2 | sVar3 << 2 | (ushort)bVar1 << 1;
+  gpio_b0_22 = GPIO_B0_22;
+  DAT_20078008 = (ushort)gpio_b0_22 | sVar1 << 2 | (ushort)gpio_b0_21 << 1;
   return;
 }
 
@@ -1801,9 +1801,9 @@ undefined4 rx_audio_fifo_pop(int param_1)
 {
   undefined6 uVar1;
   byte bVar2;
-  int iVar3;
+  int i;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1812,10 +1812,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
   undefined1 in_st_PSOWB;
   
   if (0xb < DAT_00257320) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1824,10 +1824,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar3 = 0;
+    i = 0;
     do {
       memcpy(param_1,&DAT_00256a20 + (uint)DAT_00257322 * 0x60,0x60);
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       param_1 = param_1 + 0x60;
       DAT_00257320 = DAT_00257320 - 1;
       bVar2 = 0;
@@ -1835,10 +1835,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
         bVar2 = DAT_00257322 + 1;
       }
       DAT_00257322 = bVar2;
-    } while (iVar3 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1862,10 +1862,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
 
 {
   undefined6 uVar1;
-  int iVar2;
-  char cVar3;
+  int i;
+  char cVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1875,10 +1875,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
   
   param_1 = param_1 * (int)&DAT_00000908;
   if ((byte)(&DAT_002580f0)[param_1] < 0xd) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1887,21 +1887,21 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar2 = 0;
+    i = 0;
     do {
       memcpy(&DAT_002577f0 + (uint)(byte)(&DAT_002580f1)[param_1] * 0x60 + param_1,param_2,0x60);
-      iVar2 = iVar2 + 1;
+      i = i + 1;
       param_2 = param_2 + 0x60;
-      cVar3 = '\0';
+      cVar2 = '\0';
       if ((byte)(&DAT_002580f1)[param_1] < 0x17) {
-        cVar3 = (&DAT_002580f1)[param_1] + 1;
+        cVar2 = (&DAT_002580f1)[param_1] + 1;
       }
-      (&DAT_002580f1)[param_1] = cVar3;
+      (&DAT_002580f1)[param_1] = cVar2;
       (&DAT_002580f0)[param_1] = (&DAT_002580f0)[param_1] + '\x01';
-    } while (iVar2 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }

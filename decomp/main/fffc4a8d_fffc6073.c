@@ -140,13 +140,13 @@ void vfo_mode_select(byte mode)
 void band_select_on(byte param_1,byte param_2)
 
 {
-  vfo_side vVar1;
+  vfo_side g_opstate_active_vfo_val;
   
-  vVar1 = g_opstate.active_vfo;
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
   g_opstate.active_vfo = param_2;
   band_select(param_1);
   g_opstate.split_on = 0;
-  g_opstate.active_vfo = vVar1;
+  g_opstate.active_vfo = g_opstate_active_vfo_val;
   tuner_rearm();
   return;
 }
@@ -191,23 +191,23 @@ void ui_clear_415_423(void)
 undefined1 FUN_fffc4cc5(short param_1,uint param_2)
 
 {
-  ui_state *puVar1;
   undefined1 local_d;
   char *pcStack_c;
   byte bStack_8;
-  byte bStack_6;
+  byte i;
+  ui_state *p_ui_state;
   
   local_d = 0;
   if (PTR_g_ui_00025d54->numentry_mode == 1) {
     if (((byte)param_2 & 0xf) == 1) {
       popup_close();
       PTR_g_ui_00025d54->popup_code = 0x5e;
-      puVar1 = PTR_g_ui_00025d54;
+      p_ui_state = PTR_g_ui_00025d54;
       bStack_8 = 0xff;
       if ((char)(param_2 >> 4) != '\x04') {
-        for (bStack_6 = 0; bStack_6 < 0x1c; bStack_6 = bStack_6 + 1) {
-          if (*(short *)(BYTE_ARRAY_fff88270 + (uint)bStack_6 * 0xc + 0x154) == param_1) {
-            bStack_8 = bStack_6;
+        for (i = 0; i < 0x1c; i = i + 1) {
+          if (*(short *)(BYTE_ARRAY_fff88270 + (uint)i * 0xc + 0x154) == param_1) {
+            bStack_8 = i;
             break;
           }
         }
@@ -219,8 +219,8 @@ undefined1 FUN_fffc4cc5(short param_1,uint param_2)
         pcStack_c = " LOCK/PWR" + (uint)bStack_8 * 0xc;
       }
       PTR_g_ui_00025d54->popup_text[8] = pcStack_c[8];
-      *(undefined4 *)(puVar1->popup_text + 4) = *(undefined4 *)(pcStack_c + 4);
-      *(undefined4 *)puVar1->popup_text = *(undefined4 *)pcStack_c;
+      *(undefined4 *)(p_ui_state->popup_text + 4) = *(undefined4 *)(pcStack_c + 4);
+      *(undefined4 *)p_ui_state->popup_text = *(undefined4 *)pcStack_c;
       popup_duration_get(0x5e);
       popup_open_timed();
       beep_request(1);
@@ -237,22 +237,22 @@ void FUN_fffc4d93(void)
 
 {
   int iVar1;
-  preset *ppVar2;
-  preset *ppVar3;
+  preset *p_preset;
+  preset *p_preset_2;
   byte local_2;
   
   local_2 = g_opstate.preset_sel;
   if (4 < g_opstate.preset_sel) {
     local_2 = 4;
   }
-  ppVar3 = g_opstate.presets + local_2;
-  iVar1 = strncmp(0x20b4c,ppVar3,0x1f);
+  p_preset_2 = g_opstate.presets + local_2;
+  iVar1 = strncmp(0x20b4c,p_preset_2,0x1f);
   if (iVar1 != 0) {
-    ppVar2 = &g_ui.preset_active;
+    p_preset = &g_ui.preset_active;
     for (iVar1 = 0x1f; iVar1 != 0; iVar1 = iVar1 + -1) {
-      ppVar2->name[0] = ppVar3->name[0];
-      ppVar2 = (preset *)(ppVar2->name + 1);
-      ppVar3 = (preset *)(ppVar3->name + 1);
+      p_preset->name[0] = p_preset_2->name[0];
+      p_preset = (preset *)(p_preset->name + 1);
+      p_preset_2 = (preset *)(p_preset_2->name + 1);
     }
     sci3_set_baud();
     return;
@@ -418,7 +418,7 @@ void FUN_fffc4f9e(char param_1)
 uint qmb_current_slot(void *param_1)
 
 {
-  vfo_rec *local_14;
+  vfo_rec *p_vfo_rec;
   byte local_a;
   vfo_state local_9;
   
@@ -442,13 +442,13 @@ uint qmb_current_slot(void *param_1)
     local_a = local_a - 1;
   }
   if (local_9 == VFO_STATE_QMB) {
-    local_14 = qmb + g_qmb_hdr.order[local_a];
+    p_vfo_rec = qmb + g_qmb_hdr.order[local_a];
     *(byte *)param_1 = g_qmb_hdr.order[local_a];
   }
   else {
-    local_14 = (vfo_rec *)0x0;
+    p_vfo_rec = (vfo_rec *)0x0;
   }
-  return (uint)local_14;
+  return (uint)p_vfo_rec;
 }
 
 
@@ -457,18 +457,18 @@ uint qmb_current_slot(void *param_1)
 void FUN_fffc506b(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if (uVar1 == 0) {
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if (qmb_current_slot_ret == 0) {
     return;
   }
   local_1 = local_1 & 3;
-  *(byte *)(uVar1 + 3) = *(byte *)(uVar1 + 3) & 0xfc;
-  *(byte *)(uVar1 + 3) = *(byte *)(uVar1 + 3) | local_1;
+  *(byte *)(qmb_current_slot_ret + 3) = *(byte *)(qmb_current_slot_ret + 3) & 0xfc;
+  *(byte *)(qmb_current_slot_ret + 3) = *(byte *)(qmb_current_slot_ret + 3) | local_1;
   eeprom_save_qmb_slot(bStack_2);
   return;
 }
@@ -479,18 +479,18 @@ void FUN_fffc506b(byte param_1)
 void FUN_fffc50a0(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if (uVar1 == 0) {
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if (qmb_current_slot_ret == 0) {
     return;
   }
   local_1 = local_1 & 3;
-  *(byte *)(uVar1 + 5) = *(byte *)(uVar1 + 5) & 0xfc;
-  *(byte *)(uVar1 + 5) = *(byte *)(uVar1 + 5) | local_1;
+  *(byte *)(qmb_current_slot_ret + 5) = *(byte *)(qmb_current_slot_ret + 5) & 0xfc;
+  *(byte *)(qmb_current_slot_ret + 5) = *(byte *)(qmb_current_slot_ret + 5) | local_1;
   eeprom_save_qmb_slot(bStack_2);
   return;
 }
@@ -501,14 +501,14 @@ void FUN_fffc50a0(byte param_1)
 void FUN_fffc50d5(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if ((uVar1 != 0) && (local_1 < 2)) {
-    FUN_fffc0948(uVar1,local_1);
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if ((qmb_current_slot_ret != 0) && (local_1 < 2)) {
+    FUN_fffc0948(qmb_current_slot_ret,local_1);
     eeprom_save_qmb_slot(bStack_2);
     return;
   }
@@ -521,14 +521,14 @@ void FUN_fffc50d5(byte param_1)
 void FUN_fffc50fe(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if ((uVar1 != 0) && (local_1 < 5)) {
-    FUN_fffc0a49(uVar1,local_1);
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if ((qmb_current_slot_ret != 0) && (local_1 < 5)) {
+    FUN_fffc0a49(qmb_current_slot_ret,local_1);
     eeprom_save_qmb_slot(bStack_2);
     return;
   }
@@ -541,18 +541,18 @@ void FUN_fffc50fe(byte param_1)
 void FUN_fffc5127(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if ((uVar1 != 0) && (local_1 < 2)) {
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if ((qmb_current_slot_ret != 0) && (local_1 < 2)) {
     if (local_1 == 0) {
-      *(byte *)(uVar1 + 6) = *(byte *)(uVar1 + 6) & 0xef;
+      *(byte *)(qmb_current_slot_ret + 6) = *(byte *)(qmb_current_slot_ret + 6) & 0xef;
     }
     else {
-      *(byte *)(uVar1 + 6) = *(byte *)(uVar1 + 6) | 0x10;
+      *(byte *)(qmb_current_slot_ret + 6) = *(byte *)(qmb_current_slot_ret + 6) | 0x10;
     }
     eeprom_save_qmb_slot(bStack_2);
     return;
@@ -566,21 +566,21 @@ void FUN_fffc5127(byte param_1)
 void FUN_fffc515d(byte param_1)
 
 {
-  uint uVar1;
+  uint qmb_current_slot_ret;
   byte bStack_2;
   byte local_1;
   
   local_1 = param_1;
-  uVar1 = qmb_current_slot(&bStack_2);
-  if (uVar1 != 0) {
+  qmb_current_slot_ret = qmb_current_slot(&bStack_2);
+  if (qmb_current_slot_ret != 0) {
     if (0xf < local_1) {
       local_1 = 0xf;
     }
     if (local_1 == 0) {
       local_1 = 1;
     }
-    *(byte *)(uVar1 + 6) = *(byte *)(uVar1 + 6) & 0xf0;
-    *(byte *)(uVar1 + 6) = *(byte *)(uVar1 + 6) | local_1;
+    *(byte *)(qmb_current_slot_ret + 6) = *(byte *)(qmb_current_slot_ret + 6) & 0xf0;
+    *(byte *)(qmb_current_slot_ret + 6) = *(byte *)(qmb_current_slot_ret + 6) | local_1;
     eeprom_save_qmb_slot(bStack_2);
     return;
   }
@@ -598,11 +598,11 @@ bool key_dest_allowed(ushort param_1,char param_2)
 
 {
   bool bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   bool bStack_7;
   
-  uVar2 = dest_code_get();
-  if ((uVar2 == 0x315b) || (uVar2 == 0x50e2)) {
+  dest_code_get_ret = dest_code_get();
+  if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
     bVar1 = true;
   }
   else {
@@ -843,8 +843,8 @@ void memch_step(byte param_1,byte param_2)
 
 {
   bool bVar1;
-  byte bVar2;
-  int iVar3;
+  byte memch_current_ret;
+  int iVar2;
   byte local_3;
   
   local_3 = 0;
@@ -858,15 +858,15 @@ void memch_step(byte param_1,byte param_2)
       memch_step_down(param_2);
     }
   }
-  if ((g_ui.scan_running == 1) && (iVar3 = memch_current_skip(), iVar3 == 1)) {
+  if ((g_ui.scan_running == 1) && (iVar2 = memch_current_skip(), iVar2 == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
   if (!bVar1) {
-    bVar2 = memch_current(param_2);
-    eeprom_save_memch(bVar2);
+    memch_current_ret = memch_current(param_2);
+    eeprom_save_memch(memch_current_ret);
     return;
   }
   return;
@@ -881,9 +881,9 @@ void memch_step_up(byte param_1)
 
 {
   bool bVar1;
+  byte memch_current_ret;
   byte bVar2;
-  byte bVar3;
-  int iVar4;
+  int iVar3;
   byte bStack_5;
   byte bStack_3;
   byte bStack_2;
@@ -894,7 +894,7 @@ void memch_step_up(byte param_1)
   if (bStack_2 == bStack_3) {
     return;
   }
-  bVar2 = memch_current(local_1);
+  memch_current_ret = memch_current(local_1);
   while( true ) {
     bStack_5 = memch_current(local_1);
     do {
@@ -911,17 +911,17 @@ void memch_step_up(byte param_1)
         bVar1 = false;
       }
     } while ((bVar1) &&
-            ((iVar4 = dest_has_5mhz_channels(), iVar4 == 0 ||
-             (bVar3 = memch_dest_blocked(bStack_5), bVar3 == 1))));
+            ((iVar3 = dest_has_5mhz_channels(), iVar3 == 0 ||
+             (bVar2 = memch_dest_blocked(bStack_5), bVar2 == 1))));
     memch_current_set(local_1,bStack_5);
     if (0x74 < bStack_5) break;
-    bVar3 = memch_current_valid(local_1);
-    if (bVar3 == 1) {
-      FUN_fffc566d(local_1,bVar2);
+    bVar2 = memch_current_valid(local_1);
+    if (bVar2 == 1) {
+      FUN_fffc566d(local_1,memch_current_ret);
       return;
     }
   }
-  FUN_fffc566d(local_1,bVar2);
+  FUN_fffc566d(local_1,memch_current_ret);
   return;
 }
 
@@ -934,9 +934,9 @@ void memch_step_down(byte param_1)
 
 {
   bool bVar1;
+  byte memch_current_ret;
   byte bVar2;
-  byte bVar3;
-  int iVar4;
+  int iVar3;
   byte bStack_5;
   byte bStack_3;
   byte bStack_2;
@@ -947,7 +947,7 @@ void memch_step_down(byte param_1)
   if (bStack_2 == bStack_3) {
     return;
   }
-  bVar2 = memch_current(local_1);
+  memch_current_ret = memch_current(local_1);
   while( true ) {
     bStack_5 = memch_current(local_1);
     do {
@@ -964,17 +964,17 @@ void memch_step_down(byte param_1)
         bVar1 = false;
       }
     } while ((bVar1) &&
-            ((iVar4 = dest_has_5mhz_channels(), iVar4 == 0 ||
-             (bVar3 = memch_dest_blocked(bStack_5), bVar3 == 1))));
+            ((iVar3 = dest_has_5mhz_channels(), iVar3 == 0 ||
+             (bVar2 = memch_dest_blocked(bStack_5), bVar2 == 1))));
     memch_current_set(local_1,bStack_5);
     if (0x74 < bStack_5) break;
-    bVar3 = memch_current_valid(local_1);
-    if (bVar3 == 1) {
-      FUN_fffc566d(local_1,bVar2);
+    bVar2 = memch_current_valid(local_1);
+    if (bVar2 == 1) {
+      FUN_fffc566d(local_1,memch_current_ret);
       return;
     }
   }
-  FUN_fffc566d(local_1,bVar2);
+  FUN_fffc566d(local_1,memch_current_ret);
   return;
 }
 
@@ -984,10 +984,10 @@ void memch_step_down(byte param_1)
 void FUN_fffc566d(byte param_1,byte param_2)
 
 {
-  byte bVar1;
+  byte memch_current_ret;
   
-  bVar1 = memch_current(param_1);
-  if (bVar1 == param_2) {
+  memch_current_ret = memch_current(param_1);
+  if (memch_current_ret == param_2) {
     return;
   }
   FUN_fffc568a(param_1);
@@ -1093,30 +1093,30 @@ void FUN_fffc5798(void)
   undefined2 uVar1;
   bool local_f;
   bool local_d;
-  vfo_rec *local_c;
-  vfo_rec *local_8;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
   byte local_3;
   
   local_f = g_opstate.active_vfo == VFO_A;
   if (local_f) {
-    local_8 = &g_opstate.vfo_a;
-    local_c = &g_opstate.vfo_b;
+    p_vfo_rec_2 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
   else {
-    local_8 = &g_opstate.vfo_b;
-    local_c = &g_opstate.vfo_a;
+    p_vfo_rec_2 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   local_d = !local_f;
   if (PTR_g_ui_00025d58->transmitting == 0) {
     local_f = local_d;
-    local_3 = local_8->mode & 0xf;
+    local_3 = p_vfo_rec_2->mode & 0xf;
   }
   else if (g_opstate.split_on == 1) {
-    local_3 = local_c->mode & 0xf;
+    local_3 = p_vfo_rec->mode & 0xf;
   }
   else {
     local_f = local_d;
-    local_3 = local_8->mode & 0xf;
+    local_3 = p_vfo_rec_2->mode & 0xf;
   }
   uVar1 = FUN_fffc5850(local_3);
   if (PTR_g_ui_00025d58->ch_knob_mode != 0) {
@@ -1366,7 +1366,7 @@ void vfo_dial_tune(undefined1 param_1)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte memch_current_is_special_ret;
   vfo_state local_3;
   bool local_2;
   
@@ -1398,8 +1398,8 @@ void vfo_dial_tune(undefined1 param_1)
         local_3 = g_opstate.vfo_state_b;
       }
       if (local_3 == VFO_STATE_MEMORY) {
-        bVar2 = memch_current_is_special(local_2);
-        if (bVar2 == 1) {
+        memch_current_is_special_ret = memch_current_is_special(local_2);
+        if (memch_current_is_special_ret == 1) {
           return;
         }
         vfo_mem_to_memtune(local_2);
@@ -1420,7 +1420,7 @@ void vfo_dial_tune(undefined1 param_1)
 void FUN_fffc5c8f(byte param_1,undefined1 param_2)
 
 {
-  byte bVar1;
+  byte memch_current_is_special_ret;
   vfo_state local_3;
   
   if (param_1 == 0) {
@@ -1430,8 +1430,8 @@ void FUN_fffc5c8f(byte param_1,undefined1 param_2)
     local_3 = g_opstate.vfo_state_b;
   }
   if (local_3 == VFO_STATE_MEMORY) {
-    bVar1 = memch_current_is_special(param_1);
-    if (bVar1 == 1) {
+    memch_current_is_special_ret = memch_current_is_special(param_1);
+    if (memch_current_is_special_ret == 1) {
       return;
     }
     vfo_mem_to_memtune(param_1);
@@ -1449,11 +1449,11 @@ void FUN_fffc5c8f(byte param_1,undefined1 param_2)
 void vfo_mem_to_memtune(char param_1)
 
 {
-  byte bVar1;
+  byte pms_load_limits_ret;
   undefined1 uStack_2;
   
-  bVar1 = pms_load_limits(param_1);
-  if (bVar1 == 1) {
+  pms_load_limits_ret = pms_load_limits(param_1);
+  if (pms_load_limits_ret == 1) {
     uStack_2 = VFO_STATE_PMS;
   }
   else {
@@ -1535,18 +1535,18 @@ byte pms_load_limits(byte param_1)
 void FUN_fffc5e0a(byte param_1,byte param_2)
 
 {
-  vfo_rec *pvVar1;
   uint local_c;
   byte *local_8;
   byte local_3;
+  vfo_rec *p_vfo_rec;
   
   if (param_1 == 0) {
-    pvVar1 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
   else {
-    pvVar1 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
-  local_8 = pvVar1->freq_be;
+  local_8 = p_vfo_rec->freq_be;
   local_c = (uint)*local_8 << 0x18 | (uint)local_8[1] << 0x10 | (uint)local_8[2] << 8 |
             (uint)local_8[3];
   PTR_g_ui_00025d58->step_dial_req = 1;
@@ -1715,7 +1715,7 @@ uint FUN_fffc6073(byte param_1,uint param_2)
 {
   bool bVar1;
   byte bVar2;
-  uint uVar3;
+  uint dial_step_hz_ret;
   uint uStack_18;
   uint local_10 [2];
   uint local_8;
@@ -1731,12 +1731,12 @@ uint FUN_fffc6073(byte param_1,uint param_2)
   local_8 = param_2;
   local_1 = param_1;
   if ((!bVar1) || (bVar1 = FUN_fffc6103(param_1,&local_8,(int *)local_10), bVar1)) {
-    uVar3 = dial_step_hz(local_1);
-    if (local_10[0] < uVar3) {
+    dial_step_hz_ret = dial_step_hz(local_1);
+    if (local_10[0] < dial_step_hz_ret) {
       local_10[0] = 0;
     }
     else {
-      local_10[0] = local_10[0] - uVar3;
+      local_10[0] = local_10[0] - dial_step_hz_ret;
     }
     bVar2 = FUN_fffc5f2c(local_1,local_10);
     if (bVar2 == 1) {

@@ -93,11 +93,11 @@ void r_sci5_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci5_rdr;
   
   if (DAT_0001b624 < DAT_0001b626) {
-    uVar2 = SCI5_RDR;
-    *DAT_00020820 = uVar2;
+    sci5_rdr = SCI5_RDR;
+    *DAT_00020820 = sci5_rdr;
     sci5_rx_byte_hook();
     DAT_00020820 = DAT_00020820 + 1;
     DAT_0001b624 = DAT_0001b624 + 1;
@@ -131,7 +131,7 @@ void sdr_init(void)
 {
   byte bVar1;
   undefined2 *puVar2;
-  int iVar3;
+  int i;
   undefined1 uStack_b;
   undefined1 uStack_a;
   undefined1 uStack_9;
@@ -157,7 +157,7 @@ void sdr_init(void)
     bVar1 = swtimer_expired(0x1f);
   } while (bVar1 != 1);
   puVar2 = &DAT_0001b736;
-  for (iVar3 = 0x4e; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x4e; i != 0; i = i + -1) {
     *(undefined1 *)puVar2 = 0xff;
     puVar2 = (undefined2 *)((int)puVar2 + 1);
   }
@@ -196,18 +196,18 @@ void sdr_init(void)
 /* Returns the pointer to the scope reference-level byte for a frequency and VFO side
    (FUN_fffb3480); used by SS sel 4 and SDR reg 0x27 [inference] */
 
-uint scope_level_ptr(uint param_1,byte param_2)
+uint scope_level_ptr(uint freq,byte param_2)
 
 {
-  byte bVar1;
+  byte freq_range_index_ret;
   undefined *puStack_14;
   
-  bVar1 = freq_range_index(param_1);
+  freq_range_index_ret = freq_range_index(freq);
   if (param_2 == 0) {
-    puStack_14 = (&PTR_g_opstate_scope_level_rx_0__fff88648)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_rx_0__fff88648)[freq_range_index_ret];
   }
   else {
-    puStack_14 = (&PTR_g_opstate_scope_level_tx_0__fff88680)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_tx_0__fff88680)[freq_range_index_ret];
   }
   return (uint)puStack_14;
 }
@@ -225,20 +225,20 @@ uint scope_level_ptr(uint param_1,byte param_2)
 /* Returns the pointer to the scope span index for a frequency (FUN_fffb3480); used by SS sel 5 and
    SDR reg 0x20/0x21 [inference] */
 
-uint scope_span_ptr(uint param_1)
+uint scope_span_ptr(uint freq)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte freq_range_index_ret;
   undefined *puStack_10;
+  byte g_opstate_scope_mode_val;
   
-  bVar1 = g_opstate.scope_mode;
-  bVar2 = freq_range_index(param_1);
-  if (bVar1 == 2) {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)bVar2 * 2];
+  g_opstate_scope_mode_val = g_opstate.scope_mode;
+  freq_range_index_ret = freq_range_index(freq);
+  if (g_opstate_scope_mode_val == 2) {
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)freq_range_index_ret * 2];
   }
   else {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)bVar2 * 2];
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)freq_range_index_ret * 2];
   }
   return (uint)puStack_10;
 }
@@ -296,11 +296,11 @@ void sdr_req_reg1(void)
 void sdr_upd_r03(void)
 
 {
-  uint uVar1;
+  uint vfo_freq_ret;
   undefined2 uStack_6;
   
-  uVar1 = vfo_freq(1,2);
-  if (uVar1 < 0x3b9aca1) {
+  vfo_freq_ret = vfo_freq(1,2);
+  if (vfo_freq_ret < 0x3b9aca1) {
     uStack_6 = -0x19c3;
   }
   else {
@@ -352,47 +352,47 @@ void sdr_upd_r04(void)
 /* Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while
    0x1204D != 0 */
 
-void sdr_upd_r0a_demod(byte param_1)
+void sdr_upd_r0a_demod(byte which)
 
 {
-  uint uVar1;
-  byte bVar2;
-  byte bVar3;
+  byte bVar1;
+  byte ptt_source_get_ret;
   sdr_mod_class sStack_4;
+  uint vfo_mode_ret;
   
-  bVar2 = vfo_mode(param_1);
-  bVar3 = ptt_source_get();
-  if (bVar3 == 0) {
+  bVar1 = vfo_mode(which);
+  ptt_source_get_ret = ptt_source_get();
+  if (ptt_source_get_ret == 0) {
     return;
   }
-  uVar1 = (uint)bVar2;
-  if (uVar1 == 0) {
+  vfo_mode_ret = (uint)bVar1;
+  if (vfo_mode_ret == 0) {
 LAB_fffa1791:
     sStack_4 = SDR_MOD_LSB;
-    bVar2 = tx_cw_keying_class();
-    if (bVar2 == 3) {
+    bVar1 = tx_cw_keying_class();
+    if (bVar1 == 3) {
       sStack_4 = SDR_MOD_CW;
     }
   }
   else {
-    if ((uVar1 == 1) || (uVar1 == 0xe)) {
+    if ((vfo_mode_ret == 1) || (vfo_mode_ret == 0xe)) {
 LAB_fffa17a1:
       sStack_4 = SDR_MOD_USB;
-      bVar2 = tx_cw_keying_class();
-      if (bVar2 == 3) {
+      bVar1 = tx_cw_keying_class();
+      if (bVar1 == 3) {
         sStack_4 = SDR_MOD_CW;
       }
       goto LAB_fffa17b2;
     }
-    if (uVar1 - 4 < 2) {
+    if (vfo_mode_ret - 4 < 2) {
       sStack_4 = SDR_MOD_AM;
       goto LAB_fffa17b2;
     }
-    if (1 < uVar1 - 6) {
-      if (uVar1 == 8) goto LAB_fffa1791;
-      if (uVar1 == 9) goto LAB_fffa17a1;
-      if (1 < uVar1 - 10) {
-        if (uVar1 == 2 || uVar1 == 3) {
+    if (1 < vfo_mode_ret - 6) {
+      if (vfo_mode_ret == 8) goto LAB_fffa1791;
+      if (vfo_mode_ret == 9) goto LAB_fffa17a1;
+      if (1 < vfo_mode_ret - 10) {
+        if (vfo_mode_ret == 2 || vfo_mode_ret == 3) {
           sStack_4 = SDR_MOD_CW;
         }
         else {
@@ -425,21 +425,21 @@ LAB_fffa17b2:
 /* WARNING: Removing unreachable block (ram,0xfffa17fc) */
 /* Reg 0x0B = per-band word from 0xFFF87FFA (RX) / 0xFFF87FFE (TX), 8-byte rows */
 
-void sdr_upd_r0b_band(char param_1)
+void sdr_upd_r0b_band(char which)
 
 {
-  byte bVar1;
+  byte gen_subband_of_freq_ret;
   uint freq;
   short sStack_a;
   
-  vfo_mode(param_1);
-  freq = vfo_freq(param_1,2);
-  bVar1 = gen_subband_of_freq(freq);
-  if (param_1 == '\0') {
-    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8);
+  vfo_mode(which);
+  freq = vfo_freq(which,2);
+  gen_subband_of_freq_ret = gen_subband_of_freq(freq);
+  if (which == '\0') {
+    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8);
   }
   else {
-    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 4);
+    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 4);
   }
   if (DAT_0001b744 != sStack_a) {
     DAT_0001b784 = 0xb;
@@ -562,25 +562,25 @@ void sdr_upd_r0e(void)
 /* Reg 0x0F = per-band word 0xFFF87FFC/0xFFF88000, 0 when ADC 0x20B14 >= 0xE8B, unchanged between
    0x9B3..0xE8A */
 
-void sdr_upd_r0f_band(char param_1)
+void sdr_upd_r0f_band(char which)
 
 {
-  byte bVar1;
+  byte gen_subband_of_freq_ret;
   uint freq;
   short sStack_a;
   
-  vfo_mode(param_1);
+  vfo_mode(which);
   if (g_ui.adc_sdr_det < 0xe8b) {
     if (0x9b2 < g_ui.adc_sdr_det) {
       return;
     }
-    freq = vfo_freq(param_1,2);
-    bVar1 = gen_subband_of_freq(freq);
-    if (param_1 == '\0') {
-      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 2);
+    freq = vfo_freq(which,2);
+    gen_subband_of_freq_ret = gen_subband_of_freq(freq);
+    if (which == '\0') {
+      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 2);
     }
     else {
-      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 6);
+      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 6);
     }
   }
   else {
@@ -655,11 +655,11 @@ void sdr_upd_r13(void)
 void sdr_upd_r14_mode(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret;
   short sStack_2;
   
-  bVar1 = vfo_mode(1);
-  switch(bVar1) {
+  vfo_mode_ret = vfo_mode(1);
+  switch(vfo_mode_ret) {
   case 2:
   case 3:
     sStack_2 = 0x2000;
@@ -743,15 +743,15 @@ void sdr_upd_r16_filter(void)
   bool bVar1;
   uint uVar2;
   ushort uVar3;
-  char *pcVar4;
+  char *aess_level_ptr_ret;
   undefined1 uStack_7;
   undefined1 uStack_6;
   byte bStack_5;
   short sStack_2;
   
   bStack_5 = vfo_mode(0);
-  pcVar4 = (char *)aess_level_ptr();
-  bVar1 = *pcVar4 == '\0';
+  aess_level_ptr_ret = (char *)aess_level_ptr();
+  bVar1 = *aess_level_ptr_ret == '\0';
   vfo_filter_width_hz(&uStack_7);
   uVar3 = CONCAT11(uStack_7,uStack_6);
   uVar2 = (uint)bStack_5;
@@ -857,23 +857,23 @@ LAB_fffa1c3f:
 void sdr_upd_r1a_nb_level(void)
 
 {
-  byte bVar1;
-  byte bVar2;
-  byte *pbVar3;
+  byte vfo_mode_ret;
+  byte *vfo_rec_ptr_ret;
   short sStack_6;
+  byte g_opstate_nb_level_val;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar1 = g_opstate.nb_level;
-  if ((pbVar3[2] & 2) == 0) {
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  g_opstate_nb_level_val = g_opstate.nb_level;
+  if ((vfo_rec_ptr_ret[2] & 2) == 0) {
     sStack_6 = 0;
   }
   else {
-    bVar2 = vfo_mode(0);
-    if (bVar2 == 4 || bVar2 == 5) {
-      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0x90);
+    vfo_mode_ret = vfo_mode(0);
+    if (vfo_mode_ret == 4 || vfo_mode_ret == 5) {
+      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_nb_level_val * 2 + 0x90);
     }
     else {
-      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0xa6);
+      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_nb_level_val * 2 + 0xa6);
     }
   }
   if (DAT_0001b75c == sStack_6) {
@@ -901,18 +901,18 @@ void sdr_upd_r1a_nb_level(void)
 void sdr_upd_r1b(void)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte vfo_mode_ret;
   short sStack_2;
+  byte g_opstate_ex030203_nb_width_val;
   
   vfo_mode(0);
-  bVar1 = g_opstate.ex030203_nb_width;
-  bVar2 = vfo_mode(0);
-  if (bVar2 == 4 || bVar2 == 5) {
-    sStack_2 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0xbc);
+  g_opstate_ex030203_nb_width_val = g_opstate.ex030203_nb_width;
+  vfo_mode_ret = vfo_mode(0);
+  if (vfo_mode_ret == 4 || vfo_mode_ret == 5) {
+    sStack_2 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_ex030203_nb_width_val * 2 + 0xbc);
   }
   else {
-    sStack_2 = *(short *)((int)&PTR_DAT_fff880bc + (uint)bVar1 * 2);
+    sStack_2 = *(short *)((int)&PTR_DAT_fff880bc + (uint)g_opstate_ex030203_nb_width_val * 2);
   }
   if (DAT_0001b75e == sStack_2) {
     return;
@@ -1258,31 +1258,31 @@ void sdr_upd_r1e_passband(void)
 void sdr_upd_r1f_width(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret_2;
   undefined1 uStack_4;
   undefined1 uStack_3;
   short local_2;
-  uint uVar2;
+  uint vfo_mode_ret;
   
   local_2 = 0;
-  bVar1 = vfo_mode(0);
-  uVar2 = (uint)bVar1;
-  if (uVar2 < 4) goto LAB_fffa2703;
-  if (uVar2 != 4) {
-    if (uVar2 == 5) {
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret < 4) goto LAB_fffa2703;
+  if (vfo_mode_ret != 4) {
+    if (vfo_mode_ret == 5) {
       local_2 = 6000;
       goto LAB_fffa272e;
     }
-    if (uVar2 == 6) {
+    if (vfo_mode_ret == 6) {
 LAB_fffa2729:
       local_2 = 16000;
       goto LAB_fffa272e;
     }
-    if (uVar2 != 7) {
-      if (1 < uVar2 - 8) {
-        if (uVar2 == 10) goto LAB_fffa2729;
-        if (uVar2 == 0xb) goto LAB_fffa271c;
-        if (2 < uVar2 - 0xc) goto LAB_fffa272e;
+    if (vfo_mode_ret != 7) {
+      if (1 < vfo_mode_ret - 8) {
+        if (vfo_mode_ret == 10) goto LAB_fffa2729;
+        if (vfo_mode_ret == 0xb) goto LAB_fffa271c;
+        if (2 < vfo_mode_ret - 0xc) goto LAB_fffa272e;
       }
 LAB_fffa2703:
       vfo_filter_width_hz(&uStack_4);
@@ -1314,24 +1314,24 @@ LAB_fffa272e:
 /* WARNING: Removing unreachable block (ram,0xfffa2913) */
 /* Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000) */
 
-void sdr_upd_r22_scope_span(byte param_1)
+void sdr_upd_r22_scope_span(byte which)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte freq_range_index_ret;
   uint freq;
   undefined1 *puStack_10;
   short sStack_a;
+  byte g_opstate_scope_mode_val;
   
-  bVar1 = g_opstate.scope_mode;
-  freq = vfo_freq(param_1,2);
-  bVar2 = freq_range_index(freq);
+  g_opstate_scope_mode_val = g_opstate.scope_mode;
+  freq = vfo_freq(which,2);
+  freq_range_index_ret = freq_range_index(freq);
   sStack_a = 1000;
-  if (bVar1 == 2) {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)bVar2 * 2];
+  if (g_opstate_scope_mode_val == 2) {
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)freq_range_index_ret * 2];
   }
   else {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)bVar2 * 2];
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)freq_range_index_ret * 2];
   }
   switch(*puStack_10) {
   case 0:
@@ -1574,42 +1574,42 @@ void sdr_upd_r26(char param_1)
 
 /* Reg 0x27 = 0x8000 | -(scope ref level byte + offset) + 0/2/4 (setting 0x9B14) [inference] */
 
-void sdr_upd_r27_scope_level(char param_1)
+void sdr_upd_r27_scope_level(char which)
 
 {
-  byte bVar1;
-  byte bVar2;
-  ushort uVar3;
-  uint uVar4;
-  char *pcVar5;
+  ushort uVar1;
+  uint vfo_freq_ret;
+  char *scope_level_ptr_ret;
   undefined1 uStack_14;
   undefined1 uStack_13;
+  byte g_cfg105_a049_rx_scope_sdr_ref_val;
+  byte g_opstate_ex040201_rbw_val;
   
-  bVar2 = g_opstate.ex040201_rbw;
-  bVar1 = g_cfg105.a049_rx_scope_sdr_ref;
-  uVar4 = vfo_freq(param_1,2);
-  pcVar5 = (char *)scope_level_ptr(uVar4,param_1);
-  if (bVar2 == 1) {
+  g_opstate_ex040201_rbw_val = g_opstate.ex040201_rbw;
+  g_cfg105_a049_rx_scope_sdr_ref_val = g_cfg105.a049_rx_scope_sdr_ref;
+  vfo_freq_ret = vfo_freq(which,2);
+  scope_level_ptr_ret = (char *)scope_level_ptr(vfo_freq_ret,which);
+  if (g_opstate_ex040201_rbw_val == 1) {
     uStack_14 = '\x02';
   }
-  else if (bVar2 == 2) {
+  else if (g_opstate_ex040201_rbw_val == 2) {
     uStack_14 = '\x04';
   }
   else {
     uStack_14 = '\0';
   }
-  if (param_1 == '\0') {
-    uStack_13 = *pcVar5 + bVar1 + 0x44;
+  if (which == '\0') {
+    uStack_13 = *scope_level_ptr_ret + g_cfg105_a049_rx_scope_sdr_ref_val + 0x44;
   }
   else {
-    uStack_13 = *pcVar5 - 0x37;
+    uStack_13 = *scope_level_ptr_ret - 0x37;
   }
-  uVar3 = (byte)(~uStack_13 + 1 + uStack_14) | 0x8000;
-  if (DAT_0001b776 == uVar3) {
+  uVar1 = (byte)(~uStack_13 + 1 + uStack_14) | 0x8000;
+  if (DAT_0001b776 == uVar1) {
     return;
   }
   DAT_0001b784 = 0x27;
-  DAT_0001b786 = uVar3;
+  DAT_0001b786 = uVar1;
   sdr_send_frame('w');
   return;
 }
@@ -1857,14 +1857,14 @@ byte sdr_poll_reply(char param_1,void *param_2)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint sdr_rx_buf_ret;
   undefined1 local_e;
   
   local_e = 0;
   bVar1 = sdr_rx_ready();
   if (bVar1 == 1) {
-    uVar2 = sdr_rx_buf();
-    *(uint *)param_2 = uVar2;
+    sdr_rx_buf_ret = sdr_rx_buf();
+    *(uint *)param_2 = sdr_rx_buf_ret;
     DAT_00001c8b = 0;
     DAT_00001c8c = 0;
     if (param_1 == 'r') {
@@ -1901,11 +1901,11 @@ char sdr_sum8(int param_1,byte param_2)
 
 {
   undefined1 local_8;
-  undefined1 local_7;
+  undefined1 i;
   
   local_8 = '\0';
-  for (local_7 = 0; local_7 < param_2; local_7 = local_7 + 1) {
-    local_8 = *(char *)((uint)local_7 + param_1) + local_8;
+  for (i = 0; i < param_2; i = i + 1) {
+    local_8 = *(char *)((uint)i + param_1) + local_8;
   }
   return local_8;
 }
@@ -2053,10 +2053,10 @@ void sdr_send_cmd(uint param_1,ushort param_2)
 void gpo_a_dir_out(void)
 
 {
-  byte bVar1;
+  byte port1_pdr;
   
-  bVar1 = PORT1_PDR;
-  PORT1_PDR = bVar1 | 8;
+  port1_pdr = PORT1_PDR;
+  PORT1_PDR = port1_pdr | 8;
   return;
 }
 

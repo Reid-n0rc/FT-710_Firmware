@@ -234,56 +234,56 @@ void knl_tick_table_dbf84(void)
   byte bVar2;
   uint uVar3;
   uint uVar4;
-  uint uVar5;
-  byte *pbVar6;
-  uint uVar7;
-  short *psVar8;
-  uint uVar9;
-  bool bVar10;
+  byte *pbVar5;
+  uint uVar6;
+  short *psVar7;
+  uint uVar8;
+  bool bVar9;
+  uint knl_sys_tick_lo_val;
   
-  uVar3 = knl_sys.tick_lo;
-  uVar9 = (uint)(short)knl_sys.tick_hi;
-  uVar4 = knl_sys.tmo_mask_2 & knl_sys.tick_lo;
-  bVar1 = (&DAT_20800402)[uVar4];
+  knl_sys_tick_lo_val = knl_sys.tick_lo;
+  uVar8 = (uint)(short)knl_sys.tick_hi;
+  uVar3 = knl_sys.tmo_mask_2 & knl_sys.tick_lo;
+  bVar1 = (&DAT_20800402)[uVar3];
   do {
-    uVar5 = (uint)bVar1;
-    if (uVar5 == 0) {
+    uVar4 = (uint)bVar1;
+    if (uVar4 == 0) {
       return;
     }
-    psVar8 = (short *)(&DAT_208dbf84)[uVar5];
-    pbVar6 = (byte *)((int)psVar8 + 9);
+    psVar7 = (short *)(&DAT_208dbf84)[uVar4];
+    pbVar5 = (byte *)((int)psVar7 + 9);
     while( true ) {
-      uVar7 = *(uint *)(psVar8 + 2);
-      bVar10 = uVar7 == uVar3;
-      if (bVar10) {
-        uVar7 = (uint)*psVar8;
+      uVar6 = *(uint *)(psVar7 + 2);
+      bVar9 = uVar6 == knl_sys_tick_lo_val;
+      if (bVar9) {
+        uVar6 = (uint)*psVar7;
       }
-      if (bVar10 && uVar7 == uVar9) break;
-      if (uVar5 == *pbVar6) {
+      if (bVar9 && uVar6 == uVar8) break;
+      if (uVar4 == *pbVar5) {
         return;
       }
-      uVar5 = (uint)*(byte *)(psVar8 + 4);
-      psVar8 = (short *)(&DAT_208dbf84)[uVar5];
+      uVar4 = (uint)*(byte *)(psVar7 + 4);
+      psVar7 = (short *)(&DAT_208dbf84)[uVar4];
     }
-    bVar1 = *(byte *)((int)psVar8 + 9);
-    pbVar6 = &DAT_20800402 + (*(uint *)(psVar8 + 2) & (uint)knl_sys.tmo_mask_2);
-    if (bVar1 == uVar5) {
-      *pbVar6 = 0;
+    bVar1 = *(byte *)((int)psVar7 + 9);
+    pbVar5 = &DAT_20800402 + (*(uint *)(psVar7 + 2) & (uint)knl_sys.tmo_mask_2);
+    if (bVar1 == uVar4) {
+      *pbVar5 = 0;
     }
     else {
-      bVar2 = *(byte *)(psVar8 + 4);
-      if (*pbVar6 == uVar5) {
-        *pbVar6 = bVar2;
+      bVar2 = *(byte *)(psVar7 + 4);
+      if (*pbVar5 == uVar4) {
+        *pbVar5 = bVar2;
       }
       *(byte *)((&DAT_208dbf84)[bVar2] + 9) = bVar1;
       *(byte *)((&DAT_208dbf84)[bVar1] + 8) = bVar2;
     }
-    *(undefined1 *)(psVar8 + 4) = 0;
-    *(undefined1 *)((int)psVar8 + 9) = 0;
+    *(undefined1 *)(psVar7 + 4) = 0;
+    *(undefined1 *)((int)psVar7 + 9) = 0;
     software_interrupt(0);
-    (**(code **)(psVar8 + 8))(*(undefined4 *)(psVar8 + 6));
+    (**(code **)(psVar7 + 8))(*(undefined4 *)(psVar7 + 6));
     software_interrupt(0);
-    bVar1 = (&DAT_20800402)[uVar4];
+    bVar1 = (&DAT_20800402)[uVar3];
   } while( true );
 }
 
@@ -338,76 +338,76 @@ void knl_tick_cyclic(void)
   byte bVar1;
   byte bVar2;
   byte bVar3;
-  ushort uVar4;
+  uint uVar4;
   uint uVar5;
   uint uVar6;
-  uint uVar7;
-  uint uVar8;
-  byte *pbVar9;
-  short *psVar10;
-  uint uVar11;
-  bool bVar12;
+  byte *pbVar7;
+  short *psVar8;
+  uint uVar9;
+  bool bVar10;
+  ushort knl_sys_tick_hi_val;
+  uint knl_sys_tick_lo_val;
   
-  uVar5 = knl_sys.tick_lo;
-  uVar4 = knl_sys.tick_hi;
-  uVar11 = (uint)(short)knl_sys.tick_hi;
-  uVar6 = knl_sys.tmo_mask_1 & knl_sys.tick_lo;
+  knl_sys_tick_lo_val = knl_sys.tick_lo;
+  knl_sys_tick_hi_val = knl_sys.tick_hi;
+  uVar9 = (uint)(short)knl_sys.tick_hi;
+  uVar4 = knl_sys.tmo_mask_1 & knl_sys.tick_lo;
   do {
-    uVar7 = (uint)(byte)(&DAT_20800401)[uVar6];
-    if (uVar7 == 0) {
+    uVar5 = (uint)(byte)(&DAT_20800401)[uVar4];
+    if (uVar5 == 0) {
       return;
     }
-    psVar10 = *(short **)(&DAT_208dbf64 + uVar7 * 4);
-    pbVar9 = (byte *)((int)psVar10 + 9);
+    psVar8 = *(short **)(&DAT_208dbf64 + uVar5 * 4);
+    pbVar7 = (byte *)((int)psVar8 + 9);
     while( true ) {
-      uVar8 = *(uint *)(psVar10 + 2);
-      bVar12 = uVar8 == uVar5;
-      if (bVar12) {
-        uVar8 = (uint)*psVar10;
+      uVar6 = *(uint *)(psVar8 + 2);
+      bVar10 = uVar6 == knl_sys_tick_lo_val;
+      if (bVar10) {
+        uVar6 = (uint)*psVar8;
       }
-      if (bVar12 && uVar8 == uVar11) break;
-      if (uVar7 == *pbVar9) {
+      if (bVar10 && uVar6 == uVar9) break;
+      if (uVar5 == *pbVar7) {
         return;
       }
-      uVar7 = (uint)*(byte *)(psVar10 + 4);
-      psVar10 = *(short **)(&DAT_208dbf64 + uVar7 * 4);
+      uVar5 = (uint)*(byte *)(psVar8 + 4);
+      psVar8 = *(short **)(&DAT_208dbf64 + uVar5 * 4);
     }
-    bVar1 = *(byte *)((int)psVar10 + 9);
-    pbVar9 = &DAT_20800401 + (*(uint *)(psVar10 + 2) & (uint)knl_sys.tmo_mask_1);
-    if (bVar1 == uVar7) {
-      *pbVar9 = 0;
+    bVar1 = *(byte *)((int)psVar8 + 9);
+    pbVar7 = &DAT_20800401 + (*(uint *)(psVar8 + 2) & (uint)knl_sys.tmo_mask_1);
+    if (bVar1 == uVar5) {
+      *pbVar7 = 0;
     }
     else {
-      bVar2 = *(byte *)(psVar10 + 4);
-      if (*pbVar9 == uVar7) {
-        *pbVar9 = bVar2;
+      bVar2 = *(byte *)(psVar8 + 4);
+      if (*pbVar7 == uVar5) {
+        *pbVar7 = bVar2;
       }
       *(byte *)(*(int *)(&DAT_208dbf64 + (uint)bVar2 * 4) + 9) = bVar1;
       *(byte *)(*(int *)(&DAT_208dbf64 + (uint)bVar1 * 4) + 8) = bVar2;
     }
-    uVar8 = *(uint *)(psVar10 + 10) + uVar5;
-    *(uint *)(psVar10 + 2) = uVar8;
-    *psVar10 = psVar10[8] + uVar4;
-    if (uVar8 < *(uint *)(psVar10 + 10)) {
-      *psVar10 = psVar10[8] + uVar4 + 1;
+    uVar6 = *(uint *)(psVar8 + 10) + knl_sys_tick_lo_val;
+    *(uint *)(psVar8 + 2) = uVar6;
+    *psVar8 = psVar8[8] + knl_sys_tick_hi_val;
+    if (uVar6 < *(uint *)(psVar8 + 10)) {
+      *psVar8 = psVar8[8] + knl_sys_tick_hi_val + 1;
     }
-    bVar1 = (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar8];
-    bVar2 = (byte)uVar7;
+    bVar1 = (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar6];
+    bVar2 = (byte)uVar5;
     if (bVar1 == 0) {
-      (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar8] = bVar2;
-      *(byte *)(psVar10 + 4) = bVar2;
-      *(byte *)((int)psVar10 + 9) = bVar2;
+      (&DAT_20800401)[knl_sys.tmo_mask_1 & uVar6] = bVar2;
+      *(byte *)(psVar8 + 4) = bVar2;
+      *(byte *)((int)psVar8 + 9) = bVar2;
     }
     else {
-      *(byte *)(psVar10 + 4) = bVar1;
+      *(byte *)(psVar8 + 4) = bVar1;
       bVar3 = *(byte *)(*(int *)(&DAT_208dbf64 + (uint)bVar1 * 4) + 9);
       *(byte *)(*(int *)(&DAT_208dbf64 + (uint)bVar1 * 4) + 9) = bVar2;
-      *(byte *)((int)psVar10 + 9) = bVar3;
+      *(byte *)((int)psVar8 + 9) = bVar3;
       *(byte *)(*(int *)(&DAT_208dbf64 + (uint)bVar3 * 4) + 8) = bVar2;
     }
     software_interrupt(0);
-    if ((*(byte *)(psVar10 + 6) & 1) != 0) {
-      (**(code **)(psVar10 + 0xe))(*(undefined4 *)(psVar10 + 0xc));
+    if ((*(byte *)(psVar8 + 6) & 1) != 0) {
+      (**(code **)(psVar8 + 0xe))(*(undefined4 *)(psVar8 + 0xc));
     }
     software_interrupt(0);
   } while( true );
@@ -793,7 +793,7 @@ void FUN_20153f28(uint param_1)
   int iVar2;
   int iVar3;
   byte *pbVar4;
-  knl_mtx *pkVar5;
+  knl_mtx *p_knl_mtx;
   knl_tcb *tcb;
   
   tcb = knl_tsk_tab[param_1];
@@ -801,21 +801,21 @@ void FUN_20153f28(uint param_1)
     iVar2 = (int)tcb->mtx_held;
     iVar3 = (int)tcb->bpri;
     do {
-      pkVar5 = knl_mtx_tab[iVar2];
-      if (pkVar5->mtxatr == 2) {
+      p_knl_mtx = knl_mtx_tab[iVar2];
+      if (p_knl_mtx->mtxatr == 2) {
         iVar2 = 1;
-        for (pbVar4 = pkVar5->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
+        for (pbVar4 = p_knl_mtx->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
           iVar2 = iVar2 + 1;
         }
         if (iVar2 < iVar3) {
           iVar3 = iVar2;
         }
-        pkVar5->pri = (sbyte)iVar2;
+        p_knl_mtx->pri = (sbyte)iVar2;
       }
-      else if ((pkVar5->mtxatr == 3) && (pkVar5->pri < iVar3)) {
-        iVar3 = (int)pkVar5->pri;
+      else if ((p_knl_mtx->mtxatr == 3) && (p_knl_mtx->pri < iVar3)) {
+        iVar3 = (int)p_knl_mtx->pri;
       }
-      iVar2 = (int)pkVar5->prev_held;
+      iVar2 = (int)p_knl_mtx->prev_held;
     } while (iVar2 != 0);
     sVar1 = tcb->pri;
     if (sVar1 == iVar3) {
@@ -845,17 +845,17 @@ void FUN_20153f28(uint param_1)
       FUN_20153b8c(*(undefined4 *)(tcb->sp + 4));
       return;
     }
-    pkVar5 = knl_mtx_tab[*(int *)(tcb->sp + 4)];
-    if (pkVar5->mtxatr != 2) {
+    p_knl_mtx = knl_mtx_tab[*(int *)(tcb->sp + 4)];
+    if (p_knl_mtx->mtxatr != 2) {
       return;
     }
     iVar3 = 1;
-    for (pbVar4 = pkVar5->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
+    for (pbVar4 = p_knl_mtx->wq; *pbVar4 == 0; pbVar4 = pbVar4 + 1) {
       iVar3 = iVar3 + 1;
     }
-    if (pkVar5->pri == iVar3) break;
-    param_1 = (uint)pkVar5->owner;
-    pkVar5->pri = (sbyte)iVar3;
+    if (p_knl_mtx->pri == iVar3) break;
+    param_1 = (uint)p_knl_mtx->owner;
+    p_knl_mtx->pri = (sbyte)iVar3;
     tcb = knl_tsk_tab[param_1];
   }
   return;
@@ -874,40 +874,40 @@ code * knl_tick_task_timeouts(void)
   byte bVar1;
   byte bVar2;
   byte bVar3;
-  uint uVar4;
-  code *pcVar5;
-  knl_mtx *pkVar6;
-  uint uVar7;
-  byte *pbVar8;
+  code *pcVar4;
+  knl_mtx *p_knl_mtx;
+  uint uVar5;
+  byte *pbVar6;
   knl_tcb *tcb;
   code *tskid;
+  uint knl_sys_tick_lo_val;
   
-  uVar4 = knl_sys.tick_lo;
-  pcVar5 = (code *)0x208003e0;
-  uVar7 = knl_sys.tick_lo & knl_sys.tmo_mask;
+  knl_sys_tick_lo_val = knl_sys.tick_lo;
+  pcVar4 = (code *)0x208003e0;
+  uVar5 = knl_sys.tick_lo & knl_sys.tmo_mask;
   do {
-    tskid = (code *)(uint)(byte)(&DAT_20800400)[uVar7];
+    tskid = (code *)(uint)(byte)(&DAT_20800400)[uVar5];
     if (tskid == (code *)0x0) {
-      return pcVar5;
+      return pcVar4;
     }
     tcb = knl_tsk_tab[(int)tskid];
-    pbVar8 = &tcb->tmo_prev;
-    while (tcb->tmo_due != uVar4) {
-      if (tskid == (code *)(uint)*pbVar8) {
-        return (code *)(uint)*pbVar8;
+    pbVar6 = &tcb->tmo_prev;
+    while (tcb->tmo_due != knl_sys_tick_lo_val) {
+      if (tskid == (code *)(uint)*pbVar6) {
+        return (code *)(uint)*pbVar6;
       }
       tskid = (code *)(uint)tcb->tmo_next;
       tcb = knl_tsk_tab[(int)tskid];
     }
-    pbVar8 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
+    pbVar6 = &DAT_20800400 + (tcb->tmo_due & (uint)knl_sys.tmo_mask);
     bVar1 = tcb->tmo_prev;
     if ((code *)(uint)bVar1 == tskid) {
-      *pbVar8 = 0;
+      *pbVar6 = 0;
     }
     else {
       bVar2 = tcb->tmo_next;
-      if ((code *)(uint)*pbVar8 == tskid) {
-        *pbVar8 = bVar2;
+      if ((code *)(uint)*pbVar6 == tskid) {
+        *pbVar6 = bVar2;
       }
       knl_tsk_tab[bVar2]->tmo_prev = bVar1;
       knl_tsk_tab[(int)(uint)bVar1]->tmo_next = bVar2;
@@ -922,9 +922,9 @@ code * knl_tick_task_timeouts(void)
       if (0x4f < bVar1) {
         knl_queue_remove(tcb,(uint)tskid);
         if ((bVar1 & 0xfc) == 0x94) {
-          pkVar6 = knl_mtx_tab[*(int *)(tcb->sp + 4)];
-          if ((pkVar6->mtxatr == 2) && (tcb->pri <= pkVar6->pri)) {
-            FUN_20153f28(pkVar6->owner);
+          p_knl_mtx = knl_mtx_tab[*(int *)(tcb->sp + 4)];
+          if ((p_knl_mtx->mtxatr == 2) && (tcb->pri <= p_knl_mtx->pri)) {
+            FUN_20153f28(p_knl_mtx->owner);
           }
         }
         else if ((bVar1 & 0xfc) == 0x60) {
@@ -939,12 +939,12 @@ code * knl_tick_task_timeouts(void)
       if ((int)tcb->pri < (int)knl_sys.run_pri) {
         knl_sys.dsp_pending = 1;
       }
-      pbVar8 = knl_rdq + tcb->pri;
-      tcb->queue = pbVar8;
-      bVar1 = *pbVar8;
+      pbVar6 = knl_rdq + tcb->pri;
+      tcb->queue = pbVar6;
+      bVar1 = *pbVar6;
       bVar2 = (byte)tskid;
       if (bVar1 == 0) {
-        *pbVar8 = bVar2;
+        *pbVar6 = bVar2;
         tcb->q_next = bVar2;
         tcb->q_prev = bVar2;
       }
@@ -956,7 +956,7 @@ code * knl_tick_task_timeouts(void)
         knl_tsk_tab[bVar3]->q_next = bVar2;
       }
     }
-    pcVar5 = FUN_20156830;
+    pcVar4 = FUN_20156830;
     software_interrupt(0);
   } while( true );
 }
@@ -1058,10 +1058,10 @@ void knl_timeout_add(int tmout,knl_tcb *tcb,byte tskid)
 /* (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem
    use it for released waiters [fact] */
 
-void knl_ready_requeue(knl_tcb *param_1,uint param_2)
+void knl_ready_requeue(knl_tcb *tcb,uint tskid)
 
 {
-  knl_queue_move(knl_rdq + param_1->pri,param_1,param_2);
+  knl_queue_move(knl_rdq + tcb->pri,tcb,tskid);
   return;
 }
 
@@ -1071,10 +1071,10 @@ void knl_ready_requeue(knl_tcb *param_1,uint param_2)
 /* Unlinks the woken task from the wait queue and returns without dispatch; itron_sig_sem takes this
    path when TCB +9 (suspend count) is non-zero [fact] */
 
-code * knl_release_suspended(knl_tcb *param_1,uint param_2)
+code * knl_release_suspended(knl_tcb *tcb,uint tskid)
 
 {
-  knl_queue_remove(param_1,param_2);
+  knl_queue_remove(tcb,tskid);
   software_interrupt(0);
   return knl_svc_return;
 }
@@ -1082,13 +1082,13 @@ code * knl_release_suspended(knl_tcb *param_1,uint param_2)
 
 // ===== FUN_20154538 @ 20154538 (72 bytes)
 
-code * FUN_20154538(knl_tcb *param_1,byte param_2)
+code * FUN_20154538(knl_tcb *tcb,byte tskid)
 
 {
   sbyte sVar1;
   
-  sVar1 = param_1->pri;
-  FUN_201538d4(knl_rdq + sVar1,param_1,param_2);
+  sVar1 = tcb->pri;
+  FUN_201538d4(knl_rdq + sVar1,tcb,tskid);
   if ((int)sVar1 < (int)knl_sys.run_pri) {
     software_interrupt(0);
     return knl_dispatch;
@@ -1104,13 +1104,13 @@ code * FUN_20154538(knl_tcb *param_1,byte param_2)
    0x2015655C if it beats the running priority 0x208003DF, else the plain return 0x201567F4 [fact];
    called by itron_sig_sem/set_flg/snd_mbx when a waiter is released [inference] */
 
-code * knl_make_ready(knl_tcb *param_1,uint param_2)
+code * knl_make_ready(knl_tcb *tcb,uint tskid)
 
 {
   sbyte sVar1;
   
-  sVar1 = param_1->pri;
-  knl_queue_move(knl_rdq + sVar1,param_1,param_2);
+  sVar1 = tcb->pri;
+  knl_queue_move(knl_rdq + sVar1,tcb,tskid);
   if ((int)sVar1 < (int)knl_sys.run_pri) {
     software_interrupt(0);
     return knl_dispatch;
@@ -1125,10 +1125,10 @@ code * knl_make_ready(knl_tcb *param_1,uint param_2)
 /* (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues
    at knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk [fact] */
 
-code * knl_wait_self(knl_tcb *param_1,uint param_2)
+code * knl_wait_self(knl_tcb *tcb,uint tskid)
 
 {
-  knl_queue_remove(param_1,param_2);
+  knl_queue_remove(tcb,tskid);
   software_interrupt(0);
   return knl_resched;
 }
@@ -1140,10 +1140,10 @@ code * knl_wait_self(knl_tcb *param_1,uint param_2)
    0x201566F0; the tail of every blocking itron_t* call (twai_sem, twai_flg, trcv_*, tsnd_*,
    tget_mpf, tloc_mtx) [fact for callers, inference for the role] */
 
-code * knl_wait_enter(byte *param_1,knl_tcb *param_2,uint param_3)
+code * knl_wait_enter(byte *queue,knl_tcb *tcb,uint tskid)
 
 {
-  knl_queue_move(param_1,param_2,param_3);
+  knl_queue_move(queue,tcb,tskid);
   software_interrupt(0);
   return knl_resched;
 }
@@ -1410,13 +1410,13 @@ void FUN_20154930(int param_1)
 
 {
   short sVar1;
-  knl_mtx *pkVar2;
+  knl_mtx *p_knl_mtx;
   
   do {
-    pkVar2 = knl_mtx_tab[param_1];
-    sVar1 = pkVar2->prev_held;
-    pkVar2->prev_held = 0;
-    FUN_201547d0(pkVar2,param_1);
+    p_knl_mtx = knl_mtx_tab[param_1];
+    sVar1 = p_knl_mtx->prev_held;
+    p_knl_mtx->prev_held = 0;
+    FUN_201547d0(p_knl_mtx,param_1);
     param_1 = (int)sVar1;
   } while (sVar1 != 0);
   return;

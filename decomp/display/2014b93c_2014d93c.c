@@ -1107,18 +1107,18 @@ int fs_ucs2_to_ascii_upper(char *param_1,byte *param_2)
   int iVar2;
   uint uVar3;
   char *pcVar4;
+  int i;
   int iVar5;
-  int iVar6;
   
+  i = 0;
   iVar5 = 0;
-  iVar6 = 0;
   pcVar4 = param_1;
   do {
     uVar3 = (uint)*param_2;
     iVar2 = uVar3 + (uint)param_2[1] * 0x100;
     if (iVar2 == 0) {
       *pcVar4 = '\0';
-      return iVar6;
+      return iVar5;
     }
     if (iVar2 == 0xa5) {
       *pcVar4 = '\\';
@@ -1139,12 +1139,12 @@ int fs_ucs2_to_ascii_upper(char *param_1,byte *param_2)
       }
       *pcVar4 = cVar1;
     }
-    iVar5 = iVar5 + 1;
+    i = i + 1;
     pcVar4 = pcVar4 + 1;
     param_2 = param_2 + 2;
-    iVar6 = iVar6 + 1;
-  } while (iVar5 < 0xc);
-  return iVar6;
+    iVar5 = iVar5 + 1;
+  } while (i < 0xc);
+  return iVar5;
 }
 
 
@@ -1302,14 +1302,14 @@ void fs_strcpy(char *param_1,char *param_2)
 void fs_strncpy(char *param_1,char *param_2,uint param_3)
 
 {
-  uint uVar1;
+  uint i;
   
-  uVar1 = 0;
+  i = 0;
   if (param_3 == 0) {
     return;
   }
   do {
-    uVar1 = uVar1 + 1;
+    i = i + 1;
     if (*param_2 == '\0') {
       *param_1 = '\0';
     }
@@ -1318,7 +1318,7 @@ void fs_strncpy(char *param_1,char *param_2,uint param_3)
       param_2 = param_2 + 1;
     }
     param_1 = param_1 + 1;
-  } while (uVar1 < param_3);
+  } while (i < param_3);
   return;
 }
 
@@ -1331,9 +1331,9 @@ void fs_wstrncpy(char *param_1,char *param_2,uint param_3)
 
 {
   char *pcVar1;
-  uint uVar2;
+  uint i;
   
-  uVar2 = 0;
+  i = 0;
   if (param_3 != 0) {
     do {
       if ((*param_2 == '\0') && (param_2[1] == '\0')) {
@@ -1347,8 +1347,8 @@ void fs_wstrncpy(char *param_1,char *param_2,uint param_3)
         param_1[1] = *pcVar1;
       }
       param_1 = param_1 + 2;
-      uVar2 = uVar2 + 1;
-    } while (uVar2 < param_3);
+      i = i + 1;
+    } while (i < param_3);
     return;
   }
   return;
@@ -1551,9 +1551,9 @@ int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
   int extraout_r3;
   ushort *puVar8;
   ushort *puVar9;
-  uint uVar10;
+  uint i;
   
-  uVar10 = 0;
+  i = 0;
   puVar8 = param_2;
   puVar9 = param_1;
   if (param_3 != 0) {
@@ -1585,10 +1585,10 @@ int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
       if (iVar7 != 0) {
         return iVar7;
       }
-      uVar10 = uVar10 + 1;
+      i = i + 1;
       puVar8 = puVar8 + 1;
       puVar9 = puVar9 + 1;
-      if (param_3 <= uVar10) {
+      if (param_3 <= i) {
         return 0;
       }
     }
@@ -1772,11 +1772,11 @@ int fs_strnicmp_sjis(char *param_1,char *param_2,uint param_3)
   char extraout_r2;
   int iVar4;
   int iVar5;
-  uint uVar6;
-  undefined8 uVar7;
+  uint i;
+  undefined8 uVar6;
   
   bVar1 = false;
-  uVar6 = 0;
+  i = 0;
   if (param_3 != 0) {
     do {
       iVar5 = (int)*param_1;
@@ -1804,16 +1804,16 @@ joined_r0x2014d7ec:
           bVar1 = true;
           goto joined_r0x2014d7ec;
         }
-        uVar7 = fs_toupper(iVar5);
-        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar7 >> 0x20),(int)uVar7);
+        uVar6 = fs_toupper(iVar5);
+        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar6 >> 0x20),(int)uVar6);
         if ((char)(extraout_r2 - cVar2) != 0) {
           return (int)(char)(extraout_r2 - cVar2);
         }
       }
-      uVar6 = uVar6 + 1;
+      i = i + 1;
       param_2 = param_2 + 1;
       param_1 = param_1 + 1;
-    } while (uVar6 < param_3);
+    } while (i < param_3);
   }
   return 0;
 }

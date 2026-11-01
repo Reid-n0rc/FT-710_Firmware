@@ -19,11 +19,13 @@ void menu_ex030405_step(void)
 void menu_ex030406_step(void)
 
 {
-  ushort uVar1;
+  ushort dest_code_get_ret;
   
-  uVar1 = dest_code_get();
-  if ((((uVar1 != 0x20b) && (uVar1 != 0x1cb9)) && (uVar1 != 0x315b)) &&
-     (((uVar1 != 0x4380 && (uVar1 != 0x50e2)) && (uVar1 != 0x60e6)))) {
+  dest_code_get_ret = dest_code_get();
+  if ((((dest_code_get_ret != 0x20b) && (dest_code_get_ret != 0x1cb9)) &&
+      (dest_code_get_ret != 0x315b)) &&
+     (((dest_code_get_ret != 0x4380 && (dest_code_get_ret != 0x50e2)) &&
+      (dest_code_get_ret != 0x60e6)))) {
     beep_request(3);
     return;
   }
@@ -351,29 +353,29 @@ void menu_ex040402_step(void)
 void menu_ex040101_enter(void)
 
 {
-  ui_state *puVar1;
-  ui_state *puVar2;
+  ui_state *p_ui_state;
+  ui_state *p_ui_state_2;
   
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 0;
   PTR_g_ui_00025d60->kbd_cursor = 0;
-  puVar1 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 8) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 9) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 10) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0xb) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 4) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 5) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 6) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 7) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0) = 0x20;
-  puVar2 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 1) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 2) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 3) = 0x20;
+  p_ui_state = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 8) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 9) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 10) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0xb) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 4) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 5) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 6) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 7) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0) = 0x20;
+  p_ui_state_2 = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 1) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 2) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 3) = 0x20;
   *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = g_opstate.ex040101_my_call._8_4_;
-  *(undefined4 *)(puVar2->msg_text[0] + 4) = g_opstate.ex040101_my_call._4_4_;
-  *(undefined4 *)puVar2->msg_text[0] = g_opstate.ex040101_my_call._0_4_;
+  *(undefined4 *)(p_ui_state_2->msg_text[0] + 4) = g_opstate.ex040101_my_call._4_4_;
+  *(undefined4 *)p_ui_state_2->msg_text[0] = g_opstate.ex040101_my_call._0_4_;
   beep_request(1);
   return;
 }
@@ -635,14 +637,14 @@ ushort FUN_fffcf5bd(void)
 undefined4 FUN_fffcf5f9(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  undefined4 uVar3;
+  ushort dest_code_get_ret;
+  uint uVar1;
+  undefined4 uVar2;
   
-  uVar1 = dest_code_get();
+  dest_code_get_ret = dest_code_get();
   if (DAT_00015de5 == '\0') {
-    uVar2 = FUN_fffcf5bd();
-    if (uVar1 == uVar2) {
+    uVar1 = FUN_fffcf5bd();
+    if (dest_code_get_ret == uVar1) {
       PTR_g_ui_00025d60->dialog_msg = 10;
     }
     else {
@@ -650,8 +652,8 @@ undefined4 FUN_fffcf5f9(void)
     }
   }
   else {
-    uVar2 = FUN_fffcf5bd();
-    if (uVar1 == uVar2) {
+    uVar1 = FUN_fffcf5bd();
+    if (dest_code_get_ret == uVar1) {
       PTR_g_ui_00025d60->dialog_msg = 10;
     }
     else {
@@ -659,8 +661,8 @@ undefined4 FUN_fffcf5f9(void)
     }
   }
   PTR_g_ui_00025d60->dialog_has_choice = 0;
-  uVar3 = dialog_open();
-  return uVar3;
+  uVar2 = dialog_open();
+  return uVar2;
 }
 
 

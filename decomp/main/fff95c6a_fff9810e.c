@@ -139,12 +139,12 @@ void displink_rx_C3(int param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
+  int i;
   
   DAT_0001b3cc = 1;
   PTR_g_ui_00025d38->sd_answer_ready = 1;
   pbVar1 = PTR_g_ui_00025d38->sd_answer;
-  for (iVar2 = 0x109; param_1 = param_1 + 1, iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x109; param_1 = param_1 + 1, i != 0; i = i + -1) {
     *pbVar1 = *(byte *)param_1;
     pbVar1 = pbVar1 + 1;
   }
@@ -160,12 +160,12 @@ void displink_rx_C4_C5(int param_1)
 
 {
   byte *pbVar1;
-  int iVar2;
+  int i;
   
   DAT_0001b3cc = 1;
   PTR_g_ui_00025d38->sd_answer_ready = 1;
   pbVar1 = PTR_g_ui_00025d38->sd_answer;
-  for (iVar2 = 0x109; param_1 = param_1 + 1, iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0x109; param_1 = param_1 + 1, i != 0; i = i + -1) {
     *pbVar1 = *(byte *)param_1;
     pbVar1 = pbVar1 + 1;
   }
@@ -240,7 +240,7 @@ void displink_tx_schedule(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte swtimer_expired_ret;
   
   if (DAT_0001b3d0 == '\x01') {
     displink_tx_60_hello();
@@ -380,8 +380,8 @@ LAB_fff96124:
     return;
   }
   if (PTR_g_ui_00025d38->dl_req_40 == 1) {
-    bVar2 = swtimer_expired(0x29);
-    if (bVar2 != 1) {
+    swtimer_expired_ret = swtimer_expired(0x29);
+    if (swtimer_expired_ret != 1) {
       return;
     }
     swtimer_start(0x29,100);
@@ -444,7 +444,7 @@ void displink_build_60(void)
   undefined4 *puVar3;
   undefined1 *puVar4;
   undefined1 *puVar5;
-  int iVar6;
+  int i;
   
   mem_zero(0xb5,0x1456);
   DAT_00001456 = 0x60;
@@ -501,7 +501,7 @@ void displink_build_60(void)
   displink_build_status();
   puVar5 = &DAT_000016a1;
   puVar4 = &DAT_00001465;
-  for (iVar6 = 0x97; iVar6 != 0; iVar6 = iVar6 + -1) {
+  for (i = 0x97; i != 0; i = i + -1) {
     *puVar4 = *puVar5;
     puVar4 = puVar4 + 1;
     puVar5 = puVar5 + 1;
@@ -1325,35 +1325,35 @@ byte dlstat_tx_vfo_flags(void)
   char cVar2;
   byte bVar3;
   byte bVar4;
-  byte *pbVar5;
+  byte *vfo_rec_ptr_ret;
+  int iVar5;
   int iVar6;
-  int iVar7;
-  char *pcVar8;
+  char *moni_level_ptr_ret;
   byte bStack_a;
   char cStack_9;
   
-  pbVar5 = vfo_rec_ptr(1);
-  bVar3 = *pbVar5 & 0xf;
-  iVar6 = FUN_fff9752b(pbVar5);
-  iVar7 = keyer_mode_class(pbVar5);
-  if ((iVar7 == 0) || (g_opstate.keyer_on != 1)) {
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  bVar3 = *vfo_rec_ptr_ret & 0xf;
+  iVar5 = FUN_fff9752b(vfo_rec_ptr_ret);
+  iVar6 = keyer_mode_class(vfo_rec_ptr_ret);
+  if ((iVar6 == 0) || (g_opstate.keyer_on != 1)) {
     cVar2 = '\0';
   }
   else {
     cVar2 = '\x01';
   }
-  pcVar8 = (char *)moni_level_ptr();
-  if (pcVar8 == (char *)0x0) {
+  moni_level_ptr_ret = (char *)moni_level_ptr();
+  if (moni_level_ptr_ret == (char *)0x0) {
     cStack_9 = '\0';
   }
-  else if (*pcVar8 == '\0') {
+  else if (*moni_level_ptr_ret == '\0') {
     cStack_9 = '\0';
   }
   else {
     cStack_9 = '\x01';
   }
-  bVar4 = mode_block_byte0(pbVar5);
-  bStack_a = ((bVar4 & 2) != 0) << 2 | cStack_9 << 4 | cVar2 << 5 | (iVar6 != 0) << 6;
+  bVar4 = mode_block_byte0(vfo_rec_ptr_ret);
+  bStack_a = ((bVar4 & 2) != 0) << 2 | cStack_9 << 4 | cVar2 << 5 | (iVar5 != 0) << 6;
   if ((bVar3 == 6) || (bVar3 == 7)) {
     bVar1 = true;
   }
@@ -1373,7 +1373,7 @@ byte dlstat_tx_vfo_flags(void)
     bVar1 = false;
   }
   if (bVar1) {
-    bStack_a = bStack_a | (pbVar5[2] >> 2 & 3) + 1;
+    bStack_a = bStack_a | (vfo_rec_ptr_ret[2] >> 2 & 3) + 1;
   }
   return bStack_a;
 }
@@ -1491,11 +1491,11 @@ byte dlstat_tone_tuner(void)
 byte dlstat_peak(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   byte bStack_2;
   
-  bVar1 = swtimer_expired(0x2a);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x2a);
+  if (swtimer_expired_ret == 0) {
     bStack_2 = 0x40;
   }
   else {
@@ -1511,15 +1511,15 @@ byte dlstat_peak(void)
 /* Status-block byte 17 of displink_build_status (0xFFF96455): span index and CENTER/CURSOR/FIX << 6
    [fact: display-link.md "0x97-byte radio status block" table, row 17] */
 
-byte dlstat_span_center(byte param_1)
+byte dlstat_span_center(byte side)
 
 {
   byte bVar1;
-  byte bVar2;
+  byte scope_span_index_ret;
   
   bVar1 = g_opstate.scope_mode << 6;
-  bVar2 = scope_span_index(param_1);
-  return bVar2 | bVar1;
+  scope_span_index_ret = scope_span_index(side);
+  return scope_span_index_ret | bVar1;
 }
 
 
@@ -1527,23 +1527,23 @@ byte dlstat_span_center(byte param_1)
 
 /* Index into span table 0xFFF89D24 */
 
-byte scope_span_index(byte param_1)
+byte scope_span_index(byte side)
 
 {
-  byte bVar1;
+  byte freq_range_index_ret;
   uint freq;
   byte bStack_9;
   
-  freq = vfo_freq_clar(0,param_1);
-  bVar1 = freq_range_index(freq);
-  if (bVar1 == 0xff) {
+  freq = vfo_freq_clar(0,side);
+  freq_range_index_ret = freq_range_index(freq);
+  if (freq_range_index_ret == 0xff) {
     bStack_9 = 0;
   }
   else if (g_opstate.scope_mode == 2) {
-    bStack_9 = g_opstate.scope_span_idx_b[bVar1];
+    bStack_9 = g_opstate.scope_span_idx_b[freq_range_index_ret];
   }
   else {
-    bStack_9 = g_opstate.scope_span_idx_a[bVar1];
+    bStack_9 = g_opstate.scope_span_idx_a[freq_range_index_ret];
   }
   return bStack_9;
 }
@@ -1627,10 +1627,10 @@ LAB_fff9781b:
 void dlstat_zero_in(void *param_1)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x28);
-  if (bVar1 == 1) {
+  swtimer_expired_ret = swtimer_expired(0x28);
+  if (swtimer_expired_ret == 1) {
     swtimer_start(0x28,100);
     if (PTR_g_ui_00025d38->transmitting == 1) {
       DAT_0001ff1a = 0;

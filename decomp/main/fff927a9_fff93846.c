@@ -7,13 +7,13 @@
 void R_IWDT_Create(void)
 
 {
-  byte bVar1;
+  byte icu_nmier;
   
   IWDT_IWDTCR = 0x3350;
   IWDT_IWDTRCR = 0;
   IWDT_IWDTCSTPR = 0x80;
-  bVar1 = ICU_NMIER;
-  ICU_NMIER = bVar1 | 8;
+  icu_nmier = ICU_NMIER;
+  ICU_NMIER = icu_nmier | 8;
   R_IWDT_Create_UserInit();
   return;
 }
@@ -51,19 +51,19 @@ void R_IWDT_Create_UserInit(void)
 void R_DA_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfff7ffff;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfff7ffff;
   DA_DADPR = 0;
   DA_DAADSCR = 0;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 & 0xf7;
-  bVar2 = PORT0_PDR;
-  PORT0_PDR = bVar2 & 0xf7;
-  bVar2 = MPC_P03PFS;
-  MPC_P03PFS = bVar2 | 0x80;
+  bVar1 = PORT0_PMR;
+  PORT0_PMR = bVar1 & 0xf7;
+  bVar1 = PORT0_PDR;
+  PORT0_PDR = bVar1 & 0xf7;
+  bVar1 = MPC_P03PFS;
+  MPC_P03PFS = bVar1 | 0x80;
   R_DA_Create_UserInit();
   return;
 }
@@ -94,10 +94,10 @@ void R_DA0_Start(void)
 void R_DA0_Stop(void)
 
 {
-  byte bVar1;
+  byte da_dacr;
   
-  bVar1 = DA_DACR;
-  DA_DACR = bVar1 & 0xbf;
+  da_dacr = DA_DACR;
+  DA_DACR = da_dacr & 0xbf;
   return;
 }
 
@@ -133,20 +133,20 @@ void R_DA_Create_UserInit(void)
 void R_S12AD0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte bVar1;
+  ushort uVar2;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffdffff;
-  uVar3 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar3 & 0xefff;
-  uVar3 = S12AD_ADCMPCR;
-  S12AD_ADCMPCR = uVar3 & 0x7fff;
-  uVar3 = S12AD_ADCMPCR;
-  S12AD_ADCMPCR = uVar3 & 0xdfff;
-  bVar2 = ICU_IER17;
-  ICU_IER17 = bVar2 & 0xfb;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffdffff;
+  uVar2 = S12AD_ADCSR;
+  S12AD_ADCSR = uVar2 & 0xefff;
+  uVar2 = S12AD_ADCMPCR;
+  S12AD_ADCMPCR = uVar2 & 0x7fff;
+  uVar2 = S12AD_ADCMPCR;
+  S12AD_ADCMPCR = uVar2 & 0xdfff;
+  bVar1 = ICU_IER17;
+  ICU_IER17 = bVar1 & 0xfb;
   S12AD_ADCSR = 0;
   S12AD_ADDISCR = 0;
   S12AD_ADSSTR1 = 0xb;
@@ -159,42 +159,42 @@ void R_S12AD0_Create(void)
   S12AD_ADADS0 = 0xe8;
   S12AD_ADSHCR = 0x618;
   S12AD_ADCER = 0;
-  uVar3 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar3 | 0x1000;
+  uVar2 = S12AD_ADCSR;
+  S12AD_ADCSR = uVar2 | 0x1000;
   S12AD_ADADC = 0x83;
   S12AD_ADCMPCR = 0;
   ICU_SLIBR186 = 0x40;
-  bVar2 = ICU_IPR186;
-  ICU_IPR186 = bVar2 & 0xf6 | 6;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xfd;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xfd;
+  bVar1 = ICU_IPR186;
+  ICU_IPR186 = bVar1 & 0xf6 | 6;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xfd;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xfd;
   MPC_P41PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xfb;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xfb;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xfb;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xfb;
   MPC_P42PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xf7;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xf7;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xf7;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xf7;
   MPC_P43PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xdf;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xdf;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xdf;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xdf;
   MPC_P45PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xbf;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xbf;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xbf;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xbf;
   MPC_P46PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0x7f;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0x7f;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0x7f;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0x7f;
   MPC_P47PFS = 0x80;
   R_S12AD0_Create_UserInit();
   return;
@@ -209,14 +209,14 @@ void R_S12AD0_Start(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad_adcsr;
   
   bVar1 = ICU_IR186;
   ICU_IR186 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
   ICU_IER17 = bVar1 | 4;
-  uVar2 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar2 | 0x8000;
+  s12ad_adcsr = S12AD_ADCSR;
+  S12AD_ADCSR = s12ad_adcsr | 0x8000;
   return;
 }
 
@@ -227,10 +227,10 @@ void R_S12AD0_Stop(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad_adcsr;
   
-  uVar2 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar2 & 0x7fff;
+  s12ad_adcsr = S12AD_ADCSR;
+  S12AD_ADCSR = s12ad_adcsr & 0x7fff;
   bVar1 = ICU_IR186;
   ICU_IR186 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
@@ -349,20 +349,20 @@ void r_s12ad0_scan_end_isr(void)
 void R_S12AD1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte bVar1;
+  ushort uVar2;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffeffff;
-  uVar3 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar3 & 0xefff;
-  uVar3 = S12AD1_ADCMPCR;
-  S12AD1_ADCMPCR = uVar3 & 0x7fff;
-  uVar3 = S12AD1_ADCMPCR;
-  S12AD1_ADCMPCR = uVar3 & 0xdfff;
-  bVar2 = ICU_IER17;
-  ICU_IER17 = bVar2 & 0xdf;
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffeffff;
+  uVar2 = S12AD1_ADCSR;
+  S12AD1_ADCSR = uVar2 & 0xefff;
+  uVar2 = S12AD1_ADCMPCR;
+  S12AD1_ADCMPCR = uVar2 & 0x7fff;
+  uVar2 = S12AD1_ADCMPCR;
+  S12AD1_ADCMPCR = uVar2 & 0xdfff;
+  bVar1 = ICU_IER17;
+  ICU_IER17 = bVar1 & 0xdf;
   S12AD1_ADDISCR = 0;
   S12AD1_ADCSR = 0x5000;
   S12AD1_ADCER = 0;
@@ -377,27 +377,27 @@ void R_S12AD1_Create(void)
   S12AD1_ADSSTRL = 0xb;
   S12AD1_ADCMPCR = 0;
   ICU_SLIBR189 = 0x44;
-  bVar2 = ICU_IPR189;
-  ICU_IPR189 = bVar2 & 0xf6 | 6;
-  bVar2 = PORTD_PMR;
-  PORTD_PMR = bVar2 & 0xfe;
-  bVar2 = PORTD_PDR;
-  PORTD_PDR = bVar2 & 0xfe;
+  bVar1 = ICU_IPR189;
+  ICU_IPR189 = bVar1 & 0xf6 | 6;
+  bVar1 = PORTD_PMR;
+  PORTD_PMR = bVar1 & 0xfe;
+  bVar1 = PORTD_PDR;
+  PORTD_PDR = bVar1 & 0xfe;
   MPC_PD0PFS = 0x80;
-  bVar2 = PORTD_PMR;
-  PORTD_PMR = bVar2 & 0xfd;
-  bVar2 = PORTD_PDR;
-  PORTD_PDR = bVar2 & 0xfd;
+  bVar1 = PORTD_PMR;
+  PORTD_PMR = bVar1 & 0xfd;
+  bVar1 = PORTD_PDR;
+  PORTD_PDR = bVar1 & 0xfd;
   MPC_PD1PFS = 0x80;
-  bVar2 = PORT9_PMR;
-  PORT9_PMR = bVar2 & 0xfd;
-  bVar2 = PORT9_PDR;
-  PORT9_PDR = bVar2 & 0xfd;
+  bVar1 = PORT9_PMR;
+  PORT9_PMR = bVar1 & 0xfd;
+  bVar1 = PORT9_PDR;
+  PORT9_PDR = bVar1 & 0xfd;
   MPC_P91PFS = 0x80;
-  bVar2 = PORT9_PMR;
-  PORT9_PMR = bVar2 & 0xf7;
-  bVar2 = PORT9_PDR;
-  PORT9_PDR = bVar2 & 0xf7;
+  bVar1 = PORT9_PMR;
+  PORT9_PMR = bVar1 & 0xf7;
+  bVar1 = PORT9_PDR;
+  PORT9_PDR = bVar1 & 0xf7;
   MPC_P93PFS = 0x80;
   R_S12AD1_Create_UserInit();
   return;
@@ -410,14 +410,14 @@ void R_S12AD1_Start(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad1_adcsr;
   
   bVar1 = ICU_IR189;
   ICU_IR189 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
   ICU_IER17 = bVar1 | 0x20;
-  uVar2 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar2 | 0x8000;
+  s12ad1_adcsr = S12AD1_ADCSR;
+  S12AD1_ADCSR = s12ad1_adcsr | 0x8000;
   return;
 }
 
@@ -428,10 +428,10 @@ void R_S12AD1_Stop(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad1_adcsr;
   
-  uVar2 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar2 & 0x7fff;
+  s12ad1_adcsr = S12AD1_ADCSR;
+  S12AD1_ADCSR = s12ad1_adcsr & 0x7fff;
   bVar1 = ICU_IER17;
   ICU_IER17 = bVar1 & 0xdf;
   bVar1 = ICU_IR189;
@@ -758,32 +758,32 @@ void FUN_fff9321e(void)
 void R_SCI0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0x7fffffff;
-  bVar2 = ICU_IPR058;
-  ICU_IPR058 = bVar2 & 0xf8 | 8;
-  bVar2 = ICU_IPR059;
-  ICU_IPR059 = bVar2 & 0xf8 | 8;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0x7fffffff;
+  bVar1 = ICU_IPR058;
+  ICU_IPR058 = bVar1 & 0xf8 | 8;
+  bVar1 = ICU_IPR059;
+  ICU_IPR059 = bVar1 & 0xf8 | 8;
   SCI0_SCR = 0;
   SCI0_SCR = 0;
-  bVar2 = SCI0_SIMR1;
-  SCI0_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI0_SIMR1;
+  SCI0_SIMR1 = bVar1 & 0xfe;
   SCI0_SPMR = 0;
   SCI0_SMR = 1;
   SCI0_SCMR = 0x72;
   SCI0_SEMR = 0x10;
   SCI0_BRR = 0xc2;
   MPC_P33PFS = 0xb;
-  bVar2 = PORT3_PMR;
-  PORT3_PMR = bVar2 | 8;
+  bVar1 = PORT3_PMR;
+  PORT3_PMR = bVar1 | 8;
   MPC_P32PFS = 0xb;
-  bVar2 = PORT3_PODR;
-  PORT3_PODR = bVar2 | 4;
-  bVar2 = PORT3_PDR;
-  PORT3_PDR = bVar2 | 4;
+  bVar1 = PORT3_PODR;
+  PORT3_PODR = bVar1 | 4;
+  bVar1 = PORT3_PDR;
+  PORT3_PDR = bVar1 | 4;
   R_SCI0_Create_UserInit();
   return;
 }
@@ -977,11 +977,11 @@ void r_sci0_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci0_rdr;
   
   if (DAT_0001b606 < DAT_0001b608) {
-    uVar2 = SCI0_RDR;
-    *DAT_000207f8 = uVar2;
+    sci0_rdr = SCI0_RDR;
+    *DAT_000207f8 = sci0_rdr;
     r_sci0_rx_byte_hook();
     DAT_000207f8 = DAT_000207f8 + 1;
     DAT_0001b606 = DAT_0001b606 + 1;
@@ -1005,11 +1005,11 @@ void r_sci0_receive_interrupt(void)
 void r_sci0_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci0_ssr;
   
   r_sci0_callback_receiveerror();
-  bVar1 = SCI0_SSR;
-  SCI0_SSR = bVar1 & 199 | 0xc0;
+  sci0_ssr = SCI0_SSR;
+  SCI0_SSR = sci0_ssr & 199 | 0xc0;
   return;
 }
 
@@ -1067,32 +1067,32 @@ void r_sci0_rx_byte_hook(void)
 void R_SCI1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xbfffffff;
-  bVar2 = ICU_IPR060;
-  ICU_IPR060 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR061;
-  ICU_IPR061 = bVar2 & 0xfa | 10;
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xbfffffff;
+  bVar1 = ICU_IPR060;
+  ICU_IPR060 = bVar1 & 0xfa | 10;
+  bVar1 = ICU_IPR061;
+  ICU_IPR061 = bVar1 & 0xfa | 10;
   SCI1_SCR = 0;
   SCI1_SCR = 0;
-  bVar2 = SCI1_SIMR1;
-  SCI1_SIMR1 = bVar2 & 0xfe;
+  bVar1 = SCI1_SIMR1;
+  SCI1_SIMR1 = bVar1 & 0xfe;
   SCI1_SPMR = 0;
   SCI1_SMR = 8;
   SCI1_SCMR = 0x72;
   SCI1_SEMR = 0x10;
   SCI1_BRR = 10;
   MPC_P30PFS = 10;
-  bVar2 = PORT3_PMR;
-  PORT3_PMR = bVar2 | 1;
+  bVar1 = PORT3_PMR;
+  PORT3_PMR = bVar1 | 1;
   MPC_P26PFS = 10;
-  bVar2 = PORT2_PODR;
-  PORT2_PODR = bVar2 | 0x40;
-  bVar2 = PORT2_PDR;
-  PORT2_PDR = bVar2 | 0x40;
+  bVar1 = PORT2_PODR;
+  PORT2_PODR = bVar1 | 0x40;
+  bVar1 = PORT2_PDR;
+  PORT2_PDR = bVar1 | 0x40;
   R_SCI1_Create_UserInit();
   return;
 }
@@ -1290,11 +1290,11 @@ void r_sci1_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci1_rdr;
   
   if (DAT_0001b60c < DAT_0001b60e) {
-    uVar2 = SCI1_RDR;
-    *DAT_00020800 = uVar2;
+    sci1_rdr = SCI1_RDR;
+    *DAT_00020800 = sci1_rdr;
     displink_rx_frame_len();
     DAT_00020800 = DAT_00020800 + 1;
     DAT_0001b60c = DAT_0001b60c + 1;
@@ -1318,11 +1318,11 @@ void r_sci1_receive_interrupt(void)
 void r_sci1_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci1_ssr;
   
   r_sci1_callback_receiveerror();
-  bVar1 = SCI1_SSR;
-  SCI1_SSR = bVar1 & 199 | 0xc0;
+  sci1_ssr = SCI1_SSR;
+  SCI1_SSR = sci1_ssr & 199 | 0xc0;
   return;
 }
 
