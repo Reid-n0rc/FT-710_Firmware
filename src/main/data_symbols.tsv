@@ -165,3 +165,38 @@ g_bsp_swint_nested	1432	bsp_swint_execute_task 0xFFF910DF tests 0x1432[unit] == 
 bsp_prcr_masks	fff87ed0	R_BSP_RegisterProtectDisable 0xFFF8FEEB loads the PRCR bit of the region from 0xFFF87ED0 (u16 1, 2, 8)
 bsp_hoco_freqs	fff8f30c	get_iclk_freq_hz 0xFFF91306 copies three words from 0xFFF8F30C (16, 18, 20 MHz)
 bsp_swint_dummy_task	fff910bc	R_BSP_SoftwareInterruptOpen stores 0xFFF910BC as the task of a free slot (code: SUB #4,SP; MOV.L R1,[SP]; NOP; RTSD #4)
+meter_vdd_val	12043	meter_vdd 0xFFFB74B4 stores the averaged VDD; meter_get_vdd 0xFFFB6E05 loads it
+meter_idd_val	12044	meter_idd 0xFFFB74FB; meter_get_idd 0xFFFB6E14
+meter_alc_val	12045	meter_alc 0xFFFB7541; meter_get_alc 0xFFFB6E23
+meter_swr_val	12046	meter_get_swr 0xFFFB6E32; swr_meter_protect stores the averaged SWR
+meter_swr_raw_val	12047	meter_get_swr_raw 0xFFFB6E41
+meter_po_val	12048	meter_po 0xFFFB7865; meter_get_po 0xFFFB6E7D (METER DETECTOR 0)
+meter_comp_val	12049	meter_comp 0xFFFB794E; meter_get_comp 0xFFFB6E9A
+meter_s_val	1204a	meter_s 0xFFFB7A20 / 0xFFFB7A34; meter_get_s 0xFFFB6EA9
+meter_po_peak	1204b	FUN_fffb94f9 stores the highest PO sample; meter_get_po 0xFFFB6E87 (METER DETECTOR 1)
+remote_key	1204c	remote_keypad_scan 0xFFFB7AD4 / 0xFFFB7AFC; remote_key_get 0xFFFB6EB8
+meter_swr_f	20fc4	FUN_fffb6e4e 0xFFFB6E50 loads the word
+meter_swr_avg_f	20fc8	FUN_fffb948b stores the ring sum / 16; FUN_fffb6e5c 0xFFFB6E5E loads it
+vdd_scale	20fc0	vdd_scale_calc 0xFFFB745E / 0xFFFB7478 stores it; meter_vdd 0xFFFB7491 reads it
+remote_key_count	1b4c8	remote_keypad_scan 0xFFFB7AC2 / 0xFFFB7B33
+remote_key_last	1b4c9	remote_keypad_scan 0xFFFB7A90 / 0xFFFB7AA4
+meter_ring_vdd	12052	FUN_fffb92e7: 16 samples at 0x12052, index 0x12062
+meter_ring_idd	12063	FUN_fffb9350: 16 samples at 0x12063, index 0x12073
+meter_ring_alc	12074	FUN_fffb93b9: 16 samples at 0x12074, index 0x12084
+meter_ring_swr	12085	FUN_fffb9422: 16 samples at 0x12085, index 0x12095
+meter_ring_swr_f_idx	12096	FUN_fffb948b 0xFFFB948F
+meter_ring_swr_f	20fd0	FUN_fffb948b stores the float sample at 0x20FD0 + index * 4
+meter_ring_po	12097	FUN_fffb94f9: 16 samples at 0x12097, index 0x120A7
+meter_ring_s	120a8	FUN_fffb959c: 16 samples at 0x120A8, index 0x120B8
+meter_po_curve	fff88c74	meter_po 0xFFFB77FE: 8 x {watts_min, slope, offset} floats
+meter_s_curve	fff88bfc	meter_s 0xFFFB7988: 10 x {slope, offset, level_max} floats
+remote_key_windows	fff815ab	remote_keypad_scan 0xFFFB7A5A: 12 x {low, high} A/D bytes
+g_ui_ptr_d58	25d58	dial_step_hz 0xFFFC6195: mov.l [0x25D58], then 1045[r14] (a pointer to the UI state = 0x20B04, structs_main.h PTR_DAT_00025d58)
+ch_step_x10_inhibit	1b4e5	FUN_fffc648c 0xFFFC649E: with FAST, 1 here leaves the channel step as it is
+ch_step_x10_skipped	1b4e6	FUN_fffc648c 0xFFFC64AA sets it to 1 instead of multiplying
+ch_step_table	fff88514	ch_step_hz 0xFFFC642A: u16 step by CH STEP (EX030503)
+am_ch_step_table	fff8851c	ch_step_hz 0xFFFC6450: u16 step by AM CH STEP (EX030504)
+fm_ch_step_table	fff88528	ch_step_hz 0xFFFC6476: u16 step by FM CH STEP (EX030505)
+beep_state	12040	beep_request 0xFFFB2DE7 stores 1; beep_stop 0xFFFB2DF4 stores 3
+beep_pattern	12041	beep_request 0xFFFB2DDF stores the pattern; FUN_fffb2dfe 0xFFFB2E00 loads it
+tone_idle_level	1ff1c	tone_idle 0xFFFB2E11 writes the u16 at 0x1FF1C to DA0; tone_set passes 0x1FF1C to tone_play

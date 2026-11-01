@@ -1015,8 +1015,20 @@ UI_PRESETS = {
     'bsp_swint_execute_task': swint_unit_args(), 'R_BSP_SoftwareInterruptSetTask': swint_unit_args(),
     'R_BSP_SoftwareInterruptControl': swint_unit_args(list(range(14))),
     'bsp_swint_set_interrupt_priority': swint_unit_args(),
+    # dial steps (src/main/app/ui_dial.c): the request flags of g_ui through the pointer 0x25D58, FINE / FAST, the
+    # DIAL STEP menu values, the mode nibble of both VFO records
+    'dial_step_hz': both(lambda rng, regs: ([(0x25D58, G_UI.to_bytes(4, 'little'))], None),
+                         ram_bytes({G_UI + 0x415: (0, 0, 0, 1), G_UI + 0x416: (0, 1), G_UI + 0x418: (0, 0, 1),
+                                    G_UI + 0x46A: (0, 0, 0, 1), G_UI + 0x46B: (0, 0, 1), G_UI + 0x46D: (0, 1),
+                                    G_UI + 0x478: (0, 1), G_UI + 0x479: (0, 1), G_OP + 0x237: (0, 1, 2),
+                                    0x9D09: range(16), 0x9D63: range(16)})),
+    'dial_step_mode_hz': ram_bytes({G_OP + 0x237: (0, 1, 2, 3), G_OP + 0xCF: (0, 1, 2, 3), G_OP + 0xD0: (0, 1, 2, 3)}),
+    'ch_step_scale': ram_bytes({G_OP + 0x237: (0, 1, 2, 2), 0x1B4E5: (0, 1)}),
 }
 PRESETS.update(UI_PRESETS)
+# adc_scan_blocking polls adc_scan_done, which waits on the S12AD scan-end flag; with random peripheral reads both runs
+# ran out of budget in every trial, so the two drivers are stubbed (their calls are compared)
+FUNC_STUBS.update({'adc_scan_blocking': {'adc_scan_start': (0, [0]), 'adc_scan_done': (0, [0, 0, 1])}})
 
 
 def norm_stack_ptrs(a, h):
