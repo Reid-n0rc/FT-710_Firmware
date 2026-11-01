@@ -1782,6 +1782,126 @@ a branch without this patch then refuses to bootstrap that Ghidra, as with round
   (`cat_ai_IF_OI` 1,333, `cat_ai_SS` 1,121, `cat_ai_poll` 979), the extended CAT commands (`cat_ext_PE` 1,166,
   `cat_ext_EO` 847, `cat_ext_JP` 822), `keyer_output_step` (1,397) and `keyer_elekey` (1,225).
 
+## DISPLAY, USB track (2026-11-01)
+
+A track parallel to DISPLAY round 9 (which takes the FAT file system, the MAIN link, the update code, the GUI building
+blocks and the SD presets). This track takes USB, the scope object, the SCIF4 text terminal and the NORTi helpers that
+are plain C, in new files only, and writes only its own rows of `status.tsv`.
+
+### Plan (USB track)
+
+1. `tools/equiv_display_emu.py status FUNCTION… / --object OBJ`: check only those and keep every other row of
+   `status.tsv`, so two sessions can add their own objects without re-running each other's.
+2. Code, the self-contained parts first: the keyboard layout tables (large, pure stores), the ring indices, the scope
+   object's methods and thunks, the NORTi free lists and message-buffer ring, the USB host's requests and small helpers,
+   the HID helpers, the keyboard objects, the text terminal's ring.
+3. Presets where random arguments miss the paths; a mutation per non-trivial function.
+4. Ghidra entries for the tail-call targets without one, proved on a copy.
+
+### Harness (USB track)
+
+- `status` takes function names and `--object` (repeatable). The other rows are read back from `status.tsv` and kept as
+  they are; the totals are computed over the whole table. A run with one function left the file byte-identical
+  **[fact: diff after `status crc16_xmodem`]**.
+- Presets (one block in `PRESETS`, `scope_args`, `knl_list_args`, `knl_mbf_args`, `hid_args`, `textterm_args`): the scope
+  methods get the real instance 0x2047963C (a random pointer would put the 0x82FB8-byte object's fields in other
+  arguments' buffers), COLOR 0..10, bank 0..3, mode 8/9/other; a valid address-ordered free list with requests that fit,
+  merge and overlap; a message-buffer control block with a length at the read index and sizes around the free count;
+  HID items of every size code, report bit fields, configuration records with 0..8 endpoints; the text terminal's
+  answer ring.
+
+### Code (USB track)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `drivers/usb_kbd_layout.c` (new) | 15 | the eleven layout builders as tables (the words each writes, extracted by running it in Unicorn on tables of 0x00 and 0xFF), `kbd_layout_base_fill`, `kbd_layout_jpn_init`, `kbd_layout_tables_init`, `kbd_char_lookup` |
+| `app/scope_rings.c` (new) | 21 | ring100/133/20/30 offset, next, advance; ring133_reset; ring32; `scope3d_widths_init`; the ring16 pointer ring |
+| `app/scope_obj.c` (new) | 45 | the scope object's methods (16 without a Ghidra entry) and the GUI's thunks to the instance |
+| `lib/norti_knl.c` (new) | 14 | free-list alloc/free and the five pool wrappers, `knl_mbf_get` / `_put`, `knl_memcpy`, `msgbuf_init`, `os_mbx_create_fifo`, `os_mbx_send` |
+| `drivers/usb_host.c` (new) | 13 | the standard requests, `usbh_control_req`, port context, bounce test, USBI0/1 entries, pipe transfer switch, pipe-done mark, `usbh_loc_cpu` |
+| `drivers/usb_hid.c` (new) | 4 | `hid_report_bits_get`, `hid_item_data`, `usbhid_find_int_in`, `usbhid_pipe_read` |
+| `drivers/usb_kbd.c` (new) | 9 | `kbdobj_*`, `usbkbd_active`, `usbkbd_set_layout`, `usbkbd_reset`, `usbkbd_last_key`, `kbd_set_current` |
+| `app/textterm.c` (new) | 5 | state clear, answer ring push / clear / expect, send-all loop |
+
+Findings are in docs/code/display/gui.md "Scope object methods, recreated", input.md "USB host, HID and keyboard
+parts, recreated" and boot-rtos.md "NORTi helpers, recreated". In short **[fact]**: `hid_item_data` reads a four-byte
+item as two bytes; `usbhid_find_int_in` never looks at endpoint entry 0; `usbh_get_hub_descriptor` sends wValue 0;
+`scope_record_hold_copy` is a pass-through to `scope_obj_levels_get`, not a copy; `scope_wf_bank_set(obj, 1)` selects bank
+1 without clearing it; the kernel's two optional pool areas are configured off (0x20165A30 / 0x20165A34 are 0).
+
+Mutations reported as differing: one character of the US table, the free-list merge size, the ring's free count in
+`knl_mbf_get`, `free < len + 2` → `<=` in `knl_mbf_put`, the four-byte skip of `hid_item_data`, the lead shift of
+`hid_report_bits_get`, the max-packet bound of `usbhid_find_int_in`. A defect the check found: `scope_obj_layout_set`
+first let GCC move the scale-pointer stores ahead of the byte stores, so a trial that faulted on the first byte store
+left different memory; the struct is now volatile, as the image's order is.
+
+### Results (status.tsv, USB track)
+
+Partial runs (`status --object …` for the eight new objects; every other row unchanged **[fact: compared with the
+round-8 table]**), pinned xPack GCC 10.2.1, 200 trials per function. 126 recreated functions:
+
+| Verdict | Rows with a Ghidra function | Bytes | Rows without one (new entries) |
+|---|---:|---:|---:|
+| identical | 5 | 68 | 1 |
+| equivalent | 106 | 11,840 | 9 |
+| not yet | 3 | 0 | 2 |
+
+**Re-implemented: 22.00 %** of the table (87,196 of 396,256 bytes; round 8 after its re-export: 19.00 %), this track
+11,908 bytes. Bytes count with the Ghidra sizes of the round-8 export; with the sizes of the proved copy (below), where
+the thunks count only their own code and the new methods their own rows, this track's passing rows come to 11,804 bytes
+**[fact: the sizes of modes.tsv there]**. Not yet: `scope_objects_init`, `scope_obj_init` (budget), `scope_palette_set`
+and `scope_obj_palette_set` (no trial returns normally; *open: where the image's ramp methods end; would be settled by
+a trial trace of `scope_obj_palette_set` with the instance's start contents*),
+`textterm_send_all` (the UART object, below).
+
+### Ghidra (USB track)
+
+`tools/ghidra/entries_display.T24usb.tsv` has 16 new entries, the scope object's methods that the thunks
+0x201342B4..0x201344AF tail-call (also appended to `entries_display.tsv`); `names_display.T24usb.tsv` 22 names with
+evidence (also in `names_display.tsv`): the 16 entries and `FUN_20162d48` → `scope_obj_set_2e04`, `FUN_201584f8` →
+`scope_obj_set_2e00`, `FUN_20158544` → `scope_obj_set_2e02`, `FUN_20134444` → `scope_set_2e04_2e00`, `FUN_20134468` →
+`scope_set_2e00`, `FUN_20134474` → `scope_set_2e02` (structural names: they say which fields the functions write).
+Proved on a copy (`/home/user/ghidra_tasks/t24usb/disp`, OWNER root) **[fact: apply.log, modes_before.tsv and modes.tsv
+there]**: FixFuncEntries 16 created, 0 failed, 15 branches marked as tail calls; ApplyNames 1,961 applied, 0 failed;
+ExportFuncModes 2,288 functions (was 2,273), all A32; the thunks shrink to their own code (`scope_objects_init` 448 → 28,
+`scope_palette_set` 256 → 16, `scope3d_add_line` 588 → 20, `scope3d_redraw_history` 452 → 16, `scope_history_push` 212
+→ 16, `scope_store_frame` 168 → 12, `scope3d_layout_set` 120 → 12, `scope_wf_row_addr` 116 → 16), `FUN_201584f8` 88 → 68
+and `FUN_20158544` 136 → 28; 0x201578C4 was listed as `thunk_FUN_20162d48` and becomes `scope_obj_set_2e04_thunk`. No
+other entry, size or mode changes. Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24usb.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the thunks count their own bytes and the 16 methods their own rows. The alias rows of this track
+that give addresses become redundant; those that give FUN_ names fall back to the source name, which the rename makes
+the Ghidra name (round 7's resolver rule), so the build keeps resolving. If round 9's rows are applied in the same run,
+apply both entries files before ApplyNames.
+
+### Blockers and next steps (USB track)
+
+- Not linked or boot-checked: this track ran no `make link` / `linkcheck` / `bootcheck`, to leave the long runs to round
+  9 (the gap has about 14 KB left after round 8, so the new code would go to RAM2). *Open: whether the hybrid with these
+  objects still boots like the original; would be settled by `make bootcheck` and `make linkcheck` after the merge.*
+- `scope_obj_init` and `scope_objects_init`: every trial runs out of the budget (see gui.md); `textterm_send_all`: no
+  trial returns, because `textterm_send_setting` uses the SCIF4 UART object that the C++ constructors build and the
+  harness's start state does not run them. *Open: would be settled by a preset that constructs the UART object
+  (`scif_uarts_ctor`) before the trial.*
+- Next, in this area: the USB port, BRDY and enumeration tasks and the pipe read/write paths (they wait on event
+  flags: the stubs' seeded returns reach them), `hid_report_desc_parse` (1,540 bytes, needs a report-descriptor preset),
+  `usbhid_device_task`, the keyboard report and FIFO, `textterm_send_setting` / `textterm_tx_poll`, the scope object's
+  history and waterfall methods, the AF-FFT object and its level maps, and the NORTi tick processing.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
