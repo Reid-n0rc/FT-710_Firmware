@@ -1452,6 +1452,43 @@ entries (the round-2 NULL-buffer case); fixed before the run above.
 - Coverage: `cat_dispatch` reaches 55 % of its 598 blocks and `trx_sequencer` 60 % of 173 with 200 trials; more
   trials or presets that drive the handlers' own state would raise both.
 
+## SDR RTL, round 1 (2026-11-01)
+
+### Plan (SDR round 1)
+
+Re-implement the RX front end that #172/#193 traced, block by block, each against a netlist slice whose cell set is a
+`slice:N` row of `tools/sdr_blocks.tsv` (so the verified cells and the counted cells are the same): the DC removal of
+both ADC channels, the gain/round/clamp stage of both, then the A + B combine. Slice boundaries go on registers with a
+clear meaning (IDDR outputs, the y register, register-bank bits, the operand registers' D nets); every other slice
+input is driven with random bits. Then the register file, the scope writer and the decimator stages, as far as the
+round goes.
+
+### SDR: results (round 1)
+
+| Block (tsv row) | RTL | Cells | Check [fact, Icarus 11] |
+|---|---|---|---|
+| `adc_dc_a`, `adc_dc_b` | `hdl/sdr/adc_dc.v` | 227 + 225 | `tb_adc_dc.v -DSTRUCT` (`-DCHB`): 4,000,000 clocks each, 0 mismatching clocks |
+| `adc_gain_a`, `adc_gain_b` | `hdl/sdr/adc_gain.v` | 190 + 189 | `tb_adc_gain.v -DSTRUCT` (`-DCHB`): 2,000,000 clocks each, 0 mismatching clocks |
+| `adc_combine_mux` | `hdl/sdr/adc_combine.v` | 378 | `tb_adc_combine.v -DSTRUCT`: 2,000,000 clocks, 0 mismatching clocks |
+
+SDR re-implemented: **3.1 % -> 5.0 %** of 63,735 cells (1,973 -> 3,182; `decomp/sdr/progress.tsv`). New
+`tools/sdr_progress.py --slice BLOCK OUT.v` writes the slice of a `slice:N` row. Findings (rounding half away from zero,
+symmetric clamp, gain 0x8000 = unity, the 8-bit override fields, the combine's strobe/reset and the level flag's
+thresholds) are in [netlist.md 3.7](../code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172).
+
+### SDR: blockers and next steps (round 1)
+
+- **Register file** (`register_bank`, 1,597 cells): not a block with one boundary. A scan for flip-flops whose D comes
+  from the link's nibble registers finds 974 register bits under 86 write enables spread over the die, with the read
+  mux in `SLICE_X9..X14Y63..Y70`. A slice from the read-data flops back pulls in most of the link; it needs the
+  `uart_link.v` style of check (whole-netlist co-simulation, writes checked through read-back and through the register
+  bits' Q), plus the address map of every bit. Open: the address of each write enable; would be settled by a
+  write-one-register-at-a-time sweep in the whole netlist that logs which enables pulse (as #193 did for reg 0x0A).
+- **Scope writer** (1,948 cells) and **decimator stages**: their slices reach block RAMs (delay lines, coefficient
+  ROMs, the scope RAM), so the Icarus slice runs need `hdl/sdr/sim/xc7_bram_vl.v` in place of the Yosys RAMB18E1 and
+  stops on the BRAM outputs or the BRAMs as seeds; not started.
+- **Override fields of the gain stage.** Open: which MAIN register holds them; would be settled by a register sweep.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
