@@ -173,7 +173,7 @@ void dsp_set_peq_freq(char param_1)
   if ((bVar2 - 2 < 2) || (bVar2 - 8 < 7)) {
     local_d = 0;
   }
-  bVar2 = FUN_fffb2dfe();
+  bVar2 = beep_pattern_get();
   if (((bVar2 == 4) || (bVar2 - 9 < 3)) && (g_ui.transmitting != 0)) {
     local_d = 0;
   }

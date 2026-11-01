@@ -5,7 +5,7 @@
 fff8f8f5	_INIT_IOLIB	CC-RX stdio init	fact	README.md
 fff8fc57	R_BSP_SoftwareDelay	units must be 1000000 / 1000 / 1	inference	bsp.md
 fff8fe3c	R_BSP_RegisterProtectEnable	the counterpart of R_BSP_RegisterProtectDisable	inference	bsp.md
-fff8ff3d	FUN_fff8ff3d	Clears 4 halfwords at 0x1B5FC	fact	README.md
+fff8ff3d	bsp_register_protect_open	Clears 4 halfwords at 0x1B5FC	fact	README.md
 fff8ff5f	bsp_callbacks_clear	Clears 0x74 words at 0x1FFC4	fact	README.md
 fff8fffb	R_BSP_InterruptWrite	Registers a group-interrupt callback by index	inference	sci.md
 fff9085e	R_BSP_SoftwareUnlock	writes 0, returns true	inference	bsp.md

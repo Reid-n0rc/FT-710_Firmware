@@ -40,7 +40,7 @@ void hardware_setup(void)
   FUN_fff8f800();
   FUN_fff8f802();
   FUN_fff8f804();
-  FUN_fff91608();
+  bsp_non_existent_port_init();
   FUN_fff8f809();
   FUN_fff8f879();
   return;
@@ -110,7 +110,7 @@ void PowerON_Reset(void)
   _INIT_IOLIB();
   bsp_interrupt_open();
                     /* Clears 4 halfwords at 0x1B5FC [doc] */
-  FUN_fff8ff3d();
+  bsp_register_protect_open();
   hardware_setup();
   R_BSP_InterruptControl(0xb,1,(void *)0x10000000);
   main();
@@ -122,15 +122,19 @@ void PowerON_Reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fff8ff3d @ fff8ff3d  (34 bytes, 1 callers, export file fff8f658_fff9086c.c)
+ * bsp_register_protect_open @ fff8ff3d  (34 bytes, 1 callers, export file fff8f658_fff9086c.c)
+ * Name on the doc page: FUN_fff8ff3d
  * Inferred name: —
  * Purpose: Clears 4 halfwords at 0x1B5FC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/main/README.md
  */
-// ===== FUN_fff8ff3d @ fff8ff3d (34 bytes)
+// ===== bsp_register_protect_open @ fff8ff3d (34 bytes)
 
-void FUN_fff8ff3d(void)
+/* Clears the four R_BSP_RegisterProtect* counters at 0x1B5FC [fact: fff8ff3d]; FIT name [inference]
+    */
+
+void bsp_register_protect_open(void)
 
 {
   uint i;
@@ -217,13 +221,13 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
   local_8 = param_2;
   local_4 = param_1;
   if (param_2 == 6) {
-    local_14 = FUN_fff90181('\0',param_3);
+    local_14 = bsp_fit_interrupts_control('\0',param_3);
   }
   else if (param_2 == 1) {
-    local_14 = FUN_fff916ac(param_1,'\x01');
+    local_14 = bsp_interrupt_enable_disable(param_1,'\x01');
   }
   else if (param_2 == 2) {
-    local_14 = FUN_fff916ac(param_1,'\0');
+    local_14 = bsp_interrupt_enable_disable(param_1,'\0');
   }
   else if (param_2 == 3) {
     if ((param_3 == (void *)0x0) || (param_3 == (void *)0x10000000)) {
@@ -243,7 +247,7 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
     local_14 = bsp_interrupt_group_enable_disable(param_1,'\0',0);
   }
   else if (param_2 == 5) {
-    local_14 = FUN_fff90181('\x01',param_3);
+    local_14 = bsp_fit_interrupts_control('\x01',param_3);
   }
   else if (param_2 == 0) {
     if ((*(int *)(&DAT_00020194 + param_1 * 4) == 0) ||
@@ -1234,7 +1238,7 @@ void keyer_task(void)
       keyer_has_number = 0;
       return;
     }
-    bVar3 = FUN_fffb2dfe();
+    bVar3 = beep_pattern_get();
     if (bVar3 == 1) {
       return;
     }

@@ -128,7 +128,7 @@ void hardware_setup(void)
   FUN_fff8f800();
   FUN_fff8f802();
   FUN_fff8f804();
-  FUN_fff91608();
+  bsp_non_existent_port_init();
   FUN_fff8f809();
   FUN_fff8f879();
   return;
@@ -457,7 +457,7 @@ void PowerON_Reset(void)
   _INIT_IOLIB();
   bsp_interrupt_open();
                     /* Clears 4 halfwords at 0x1B5FC [doc] */
-  FUN_fff8ff3d();
+  bsp_register_protect_open();
   hardware_setup();
   R_BSP_InterruptControl(0xb,1,(void *)0x10000000);
   main();
@@ -468,9 +468,12 @@ void PowerON_Reset(void)
 }
 
 
-// ===== FUN_fff8fc3f @ fff8fc3f (14 bytes)
+// ===== R_BSP_GetVersion @ fff8fc3f (14 bytes)
 
-undefined4 FUN_fff8fc3f(void)
+/* Returns 0x50040 [fact: fff8fc3f]; the FIT R_BSP_GetVersion form (major << 16 | minor) [inference]
+    */
+
+undefined4 R_BSP_GetVersion(void)
 
 {
   return 0x50040;
@@ -578,23 +581,11 @@ LAB_fff8fcb2:
 }
 
 
-// ===== FUN_fff8fd6d @ fff8fd6d (23 bytes)
+// ===== R_BSP_InterruptsDisable @ fff8fd6d (23 bytes)
 
-void FUN_fff8fd6d(void)
+/* CLRPSW I unless PSW.PM (user mode) [fact: fff8fd6d]; FIT r_bsp_cpu.c name [inference] */
 
-{
-  uint in_PSW;
-  
-  if ((in_PSW & 0x100000) != 0) {
-    return;
-  }
-  return;
-}
-
-
-// ===== FUN_fff8fd84 @ fff8fd84 (23 bytes)
-
-void FUN_fff8fd84(void)
+void R_BSP_InterruptsDisable(void)
 
 {
   uint in_PSW;
@@ -606,18 +597,40 @@ void FUN_fff8fd84(void)
 }
 
 
-// ===== FUN_fff8fd9b @ fff8fd9b (29 bytes)
+// ===== R_BSP_InterruptsEnable @ fff8fd84 (23 bytes)
 
-void FUN_fff8fd9b(void)
+/* SETPSW I unless PSW.PM [fact: fff8fd84]; bsp_swint_execute_task calls it for nesting; FIT name
+   [inference] */
+
+void R_BSP_InterruptsEnable(void)
+
+{
+  uint in_PSW;
+  
+  if ((in_PSW & 0x100000) != 0) {
+    return;
+  }
+  return;
+}
+
+
+// ===== R_BSP_CpuInterruptLevelRead @ fff8fd9b (29 bytes)
+
+/* Returns PSW.IPL ((PSW & 0x0F000000) >> 24) [fact: fff8fd9b]; FIT name [inference] */
+
+void R_BSP_CpuInterruptLevelRead(void)
 
 {
   return;
 }
 
 
-// ===== FUN_fff8fdb8 @ fff8fdb8 (132 bytes)
+// ===== R_BSP_CpuInterruptLevelWrite @ fff8fdb8 (132 bytes)
 
-undefined1 FUN_fff8fdb8(undefined4 param_1)
+/* (level): MVTIPL #level through a 16-entry table (0xFFF8EEA4), true; false above 15 or in user
+   mode [fact: fff8fdb8]; FIT name [inference] */
+
+undefined1 R_BSP_CpuInterruptLevelWrite(undefined4 param_1)
 
 {
   uint in_PSW;
@@ -698,7 +711,7 @@ void R_BSP_RegisterProtectEnable(int param_1)
     else {
                     /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
-      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
+      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&bsp_prcr_masks + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -733,7 +746,7 @@ void R_BSP_RegisterProtectDisable(int param_1)
     else {
                     /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
-      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
+      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&bsp_prcr_masks + local_4 * 2) | 0xa500;
     }
   }
   *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
@@ -742,9 +755,12 @@ void R_BSP_RegisterProtectDisable(int param_1)
 }
 
 
-// ===== FUN_fff8ff3d @ fff8ff3d (34 bytes)
+// ===== bsp_register_protect_open @ fff8ff3d (34 bytes)
 
-void FUN_fff8ff3d(void)
+/* Clears the four R_BSP_RegisterProtect* counters at 0x1B5FC [fact: fff8ff3d]; FIT name [inference]
+    */
+
+void bsp_register_protect_open(void)
 
 {
   uint i;
@@ -842,9 +858,12 @@ uint R_BSP_InterruptWrite(int param_1,int param_2)
 }
 
 
-// ===== FUN_fff90046 @ fff90046 (81 bytes)
+// ===== R_BSP_InterruptRead @ fff90046 (81 bytes)
 
-void FUN_fff90046(int param_1,undefined4 *param_2)
+/* (vector, *out): copies the registered callback 0x20194[vector] to *out unless none [fact:
+   fff90046]; FIT name [inference] */
+
+void R_BSP_InterruptRead(int param_1,undefined4 *param_2)
 
 {
   bool bVar1;
@@ -883,13 +902,13 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
   local_8 = param_2;
   local_4 = param_1;
   if (param_2 == 6) {
-    local_14 = FUN_fff90181('\0',param_3);
+    local_14 = bsp_fit_interrupts_control('\0',param_3);
   }
   else if (param_2 == 1) {
-    local_14 = FUN_fff916ac(param_1,'\x01');
+    local_14 = bsp_interrupt_enable_disable(param_1,'\x01');
   }
   else if (param_2 == 2) {
-    local_14 = FUN_fff916ac(param_1,'\0');
+    local_14 = bsp_interrupt_enable_disable(param_1,'\0');
   }
   else if (param_2 == 3) {
     if ((param_3 == (void *)0x0) || (param_3 == (void *)0x10000000)) {
@@ -909,7 +928,7 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
     local_14 = bsp_interrupt_group_enable_disable(param_1,'\0',0);
   }
   else if (param_2 == 5) {
-    local_14 = FUN_fff90181('\x01',param_3);
+    local_14 = bsp_fit_interrupts_control('\x01',param_3);
   }
   else if (param_2 == 0) {
     if ((*(int *)(&DAT_00020194 + param_1 * 4) == 0) ||
@@ -934,11 +953,13 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
 }
 
 
-// ===== FUN_fff90181 @ fff90181 (119 bytes)
+// ===== bsp_fit_interrupts_control @ fff90181 (119 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff901f5) */
+/* (enable, *ipl): R_BSP_InterruptControl commands 5/6: saves PSW.IPL and raises it to 15, or
+   restores it; 2 bad pointer, 3 user mode, 5 not written [fact: fff90181]; FIT name [inference] */
 
-uint FUN_fff90181(char param_1,uint *param_2)
+uint bsp_fit_interrupts_control(char param_1,uint *param_2)
 
 {
   bool bVar1;
@@ -964,12 +985,12 @@ uint FUN_fff90181(char param_1,uint *param_2)
         local_20 = *param_2;
       }
       else {
-        uVar3 = FUN_fff8fd9b();
+        uVar3 = R_BSP_CpuInterruptLevelRead();
         *param_2 = uVar3;
         local_20 = 0xf;
       }
       if (*param_2 < 0xf) {
-        cVar2 = FUN_fff8fdb8(local_20);
+        cVar2 = R_BSP_CpuInterruptLevelWrite(local_20);
         if (cVar2 == '\0') {
           local_14 = 5;
         }

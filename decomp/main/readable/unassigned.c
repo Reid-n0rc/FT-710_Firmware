@@ -176,35 +176,25 @@ undefined4 FUN_fff8fbca(void)
 }
 
 
-/* -- FUN_fff8fc3f: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff8fc3f @ fff8fc3f (14 bytes)
+/* -- R_BSP_GetVersion: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_GetVersion @ fff8fc3f (14 bytes)
 
-undefined4 FUN_fff8fc3f(void)
+/* Returns 0x50040 [fact: fff8fc3f]; the FIT R_BSP_GetVersion form (major << 16 | minor) [inference]
+    */
+
+undefined4 R_BSP_GetVersion(void)
 
 {
   return 0x50040;
 }
 
 
-/* -- FUN_fff8fd6d: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff8fd6d @ fff8fd6d (23 bytes)
+/* -- R_BSP_InterruptsDisable: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_InterruptsDisable @ fff8fd6d (23 bytes)
 
-void FUN_fff8fd6d(void)
+/* CLRPSW I unless PSW.PM (user mode) [fact: fff8fd6d]; FIT r_bsp_cpu.c name [inference] */
 
-{
-  uint in_PSW;
-  
-  if ((in_PSW & 0x100000) != 0) {
-    return;
-  }
-  return;
-}
-
-
-/* -- FUN_fff8fd84: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff8fd84 @ fff8fd84 (23 bytes)
-
-void FUN_fff8fd84(void)
+void R_BSP_InterruptsDisable(void)
 
 {
   uint in_PSW;
@@ -216,20 +206,43 @@ void FUN_fff8fd84(void)
 }
 
 
-/* -- FUN_fff8fd9b: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff8fd9b @ fff8fd9b (29 bytes)
+/* -- R_BSP_InterruptsEnable: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_InterruptsEnable @ fff8fd84 (23 bytes)
 
-void FUN_fff8fd9b(void)
+/* SETPSW I unless PSW.PM [fact: fff8fd84]; bsp_swint_execute_task calls it for nesting; FIT name
+   [inference] */
+
+void R_BSP_InterruptsEnable(void)
+
+{
+  uint in_PSW;
+  
+  if ((in_PSW & 0x100000) != 0) {
+    return;
+  }
+  return;
+}
+
+
+/* -- R_BSP_CpuInterruptLevelRead: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_CpuInterruptLevelRead @ fff8fd9b (29 bytes)
+
+/* Returns PSW.IPL ((PSW & 0x0F000000) >> 24) [fact: fff8fd9b]; FIT name [inference] */
+
+void R_BSP_CpuInterruptLevelRead(void)
 
 {
   return;
 }
 
 
-/* -- FUN_fff8fdb8: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff8fdb8 @ fff8fdb8 (132 bytes)
+/* -- R_BSP_CpuInterruptLevelWrite: 1 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_CpuInterruptLevelWrite @ fff8fdb8 (132 bytes)
 
-undefined1 FUN_fff8fdb8(undefined4 param_1)
+/* (level): MVTIPL #level through a 16-entry table (0xFFF8EEA4), true; false above 15 or in user
+   mode [fact: fff8fdb8]; FIT name [inference] */
+
+undefined1 R_BSP_CpuInterruptLevelWrite(undefined4 param_1)
 
 {
   uint in_PSW;
@@ -279,10 +292,13 @@ undefined1 FUN_fff8fdb8(undefined4 param_1)
 }
 
 
-/* -- FUN_fff90046: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff90046 @ fff90046 (81 bytes)
+/* -- R_BSP_InterruptRead: 0 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== R_BSP_InterruptRead @ fff90046 (81 bytes)
 
-void FUN_fff90046(int param_1,undefined4 *param_2)
+/* (vector, *out): copies the registered callback 0x20194[vector] to *out unless none [fact:
+   fff90046]; FIT name [inference] */
+
+void R_BSP_InterruptRead(int param_1,undefined4 *param_2)
 
 {
   bool bVar1;
@@ -301,12 +317,14 @@ void FUN_fff90046(int param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_fff90181: 2 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
-// ===== FUN_fff90181 @ fff90181 (119 bytes)
+/* -- bsp_fit_interrupts_control: 2 callers, export file fff8f658_fff9086c.c; not on a subsystem page */
+// ===== bsp_fit_interrupts_control @ fff90181 (119 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff901f5) */
+/* (enable, *ipl): R_BSP_InterruptControl commands 5/6: saves PSW.IPL and raises it to 15, or
+   restores it; 2 bad pointer, 3 user mode, 5 not written [fact: fff90181]; FIT name [inference] */
 
-uint FUN_fff90181(char param_1,uint *param_2)
+uint bsp_fit_interrupts_control(char param_1,uint *param_2)
 
 {
   bool bVar1;
@@ -332,12 +350,12 @@ uint FUN_fff90181(char param_1,uint *param_2)
         local_20 = *param_2;
       }
       else {
-        uVar3 = FUN_fff8fd9b();
+        uVar3 = R_BSP_CpuInterruptLevelRead();
         *param_2 = uVar3;
         local_20 = 0xf;
       }
       if (*param_2 < 0xf) {
-        cVar2 = FUN_fff8fdb8(local_20);
+        cVar2 = R_BSP_CpuInterruptLevelWrite(local_20);
         if (cVar2 == '\0') {
           local_14 = 5;
         }
@@ -480,10 +498,13 @@ void byte_bnot(byte *p,uint bit)
 }
 
 
-/* -- FUN_fff91608: 1 callers, export file fff90885_fff92475.c; not on a subsystem page */
-// ===== FUN_fff91608 @ fff91608 (164 bytes)
+/* -- bsp_non_existent_port_init: 1 callers, export file fff90885_fff92475.c; not on a subsystem page */
+// ===== bsp_non_existent_port_init @ fff91608 (164 bytes)
 
-void FUN_fff91608(void)
+/* Sets the PDR bits of the pins the package lacks (P0 |= 0x50 ... PG = 0xFF, PJ |= 0xD7) [fact:
+   fff91608]; FIT name [inference] */
+
+void bsp_non_existent_port_init(void)
 
 {
   byte bVar1;
@@ -547,10 +568,14 @@ void FUN_fff91608(void)
 }
 
 
-/* -- FUN_fff916ac: 2 callers, export file fff90885_fff92475.c; not on a subsystem page */
-// ===== FUN_fff916ac @ fff916ac (158 bytes)
+/* -- bsp_interrupt_enable_disable: 2 callers, export file fff90885_fff92475.c; not on a subsystem page */
+// ===== bsp_interrupt_enable_disable @ fff916ac (158 bytes)
 
-uint FUN_fff916ac(int param_1,char param_2)
+/* (vector, enable): R_BSP_InterruptControl commands 1/2 for NMI pin (2), FPU exceptions FPSW 0x7C00
+   (3), bus error IR016/IPR000/BEREN (11); 3 = not supported [fact: fff916ac]; FIT name [inference]
+    */
+
+uint bsp_interrupt_enable_disable(int param_1,char param_2)
 
 {
   byte bVar1;
@@ -2007,10 +2032,12 @@ void FUN_fffb2210(uint param_1)
 }
 
 
-/* -- FUN_fffb2dfe: 4 callers, export file fffb1dad_fffb2f79.c; not on a subsystem page */
-// ===== FUN_fffb2dfe @ fffb2dfe (15 bytes)
+/* -- beep_pattern_get: 4 callers, export file fffb1dad_fffb2f79.c; not on a subsystem page */
+// ===== beep_pattern_get @ fffb2dfe (15 bytes)
 
-byte FUN_fffb2dfe(void)
+/* Returns the beep pattern 0x12041 [fact: fffb2dfe] */
+
+byte beep_pattern_get(void)
 
 {
   return DAT_00012041;
@@ -2563,10 +2590,12 @@ void FUN_fffb6f94(byte param_1)
 // ## from fffb70b0_fffb93b9.c: 3 functions
 // ####################################################################################################
 
-/* -- FUN_fffb92e7: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
-// ===== FUN_fffb92e7 @ fffb92e7 (105 bytes)
+/* -- meter_avg_vdd: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
+// ===== meter_avg_vdd @ fffb92e7 (105 bytes)
 
-undefined1 FUN_fffb92e7(undefined1 param_1)
+/* (v): 16-sample moving average of the VDD meter (ring 0x12052, index 0x12062) [fact: fffb92e7] */
+
+undefined1 meter_avg_vdd(undefined1 param_1)
 
 {
   byte i;
@@ -2585,10 +2614,12 @@ undefined1 FUN_fffb92e7(undefined1 param_1)
 }
 
 
-/* -- FUN_fffb9350: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
-// ===== FUN_fffb9350 @ fffb9350 (105 bytes)
+/* -- meter_avg_idd: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
+// ===== meter_avg_idd @ fffb9350 (105 bytes)
 
-undefined1 FUN_fffb9350(undefined1 param_1)
+/* (v): the same for IDD (ring 0x12063) [fact: fffb9350] */
+
+undefined1 meter_avg_idd(undefined1 param_1)
 
 {
   byte i;
@@ -2607,10 +2638,12 @@ undefined1 FUN_fffb9350(undefined1 param_1)
 }
 
 
-/* -- FUN_fffb93b9: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
-// ===== FUN_fffb93b9 @ fffb93b9 (105 bytes)
+/* -- meter_avg_alc: 1 callers, export file fffb70b0_fffb93b9.c; not on a subsystem page */
+// ===== meter_avg_alc @ fffb93b9 (105 bytes)
 
-undefined1 FUN_fffb93b9(undefined1 param_1)
+/* (v): the same for ALC (ring 0x12074) [fact: fffb93b9] */
+
+undefined1 meter_avg_alc(undefined1 param_1)
 
 {
   byte i;
@@ -2633,10 +2666,12 @@ undefined1 FUN_fffb93b9(undefined1 param_1)
 // ## from fffb9422_fffbc38e.c: 13 functions
 // ####################################################################################################
 
-/* -- FUN_fffb9422: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
-// ===== FUN_fffb9422 @ fffb9422 (105 bytes)
+/* -- meter_avg_swr: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
+// ===== meter_avg_swr @ fffb9422 (105 bytes)
 
-undefined1 FUN_fffb9422(undefined1 param_1)
+/* (v): the same for SWR (ring 0x12085; swr_meter_protect) [fact: fffb9422] */
+
+undefined1 meter_avg_swr(undefined1 param_1)
 
 {
   byte i;
@@ -2655,10 +2690,12 @@ undefined1 FUN_fffb9422(undefined1 param_1)
 }
 
 
-/* -- FUN_fffb948b: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
-// ===== FUN_fffb948b @ fffb948b (110 bytes)
+/* -- meter_avg_swr_f: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
+// ===== meter_avg_swr_f @ fffb948b (110 bytes)
 
-void FUN_fffb948b(undefined4 param_1)
+/* (swr): float ring 0x20FD0, 0x20FC8 = sum / 16 [fact: fffb948b] */
+
+void meter_avg_swr_f(undefined4 param_1)
 
 {
   byte i;
@@ -2678,10 +2715,12 @@ void FUN_fffb948b(undefined4 param_1)
 }
 
 
-/* -- FUN_fffb94f9: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
-// ===== FUN_fffb94f9 @ fffb94f9 (163 bytes)
+/* -- meter_avg_po: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
+// ===== meter_avg_po @ fffb94f9 (163 bytes)
 
-undefined1 FUN_fffb94f9(undefined1 param_1)
+/* (v): PO average (ring 0x12097) and the peak of the ring into 0x1204B [fact: fffb94f9] */
+
+undefined1 meter_avg_po(undefined1 param_1)
 
 {
   byte local_5;
@@ -2706,10 +2745,12 @@ undefined1 FUN_fffb94f9(undefined1 param_1)
 }
 
 
-/* -- FUN_fffb959c: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
-// ===== FUN_fffb959c @ fffb959c (105 bytes)
+/* -- meter_avg_s: 1 callers, export file fffb9422_fffbc38e.c; not on a subsystem page */
+// ===== meter_avg_s @ fffb959c (105 bytes)
 
-undefined1 FUN_fffb959c(undefined1 param_1)
+/* (v): the same for S (ring 0x120A8) [fact: fffb959c] */
+
+undefined1 meter_avg_s(undefined1 param_1)
 
 {
   byte i;
@@ -10432,10 +10473,12 @@ bool FUN_fffc6103(byte param_1,uint *param_2,int *param_3)
 }
 
 
-/* -- FUN_fffc648c: 3 callers, export file fffc6073_fffc76e9.c; not on a subsystem page */
-// ===== FUN_fffc648c @ fffc648c (52 bytes)
+/* -- ch_step_scale: 3 callers, export file fffc6073_fffc76e9.c; not on a subsystem page */
+// ===== ch_step_scale @ fffc648c (52 bytes)
 
-uint FUN_fffc648c(uint param_1)
+/* (step): x10 with FAST unless 0x1B4E5 = 1, which sets 0x1B4E6 instead [fact: fffc648c] */
+
+uint ch_step_scale(uint param_1)
 
 {
   undefined4 local_4;
@@ -18612,7 +18655,7 @@ void FUN_fffec8a1(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  DAT_00025d04 = (float)FUN_fffb6e5c();
+  DAT_00025d04 = (float)meter_get_swr_avg_f();
   if (DAT_00025d04 <= 4.3) {
     if (1.1 < DAT_00025d04 != (bool)((byte)(uVar1 >> 3) & 1)) {
       send_a_set(0);
@@ -18751,7 +18794,7 @@ void FUN_fffeca7e(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar2 = (float)FUN_fffb6e4e();
+  fVar2 = (float)meter_get_swr_f();
   if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
@@ -18858,7 +18901,7 @@ void FUN_fffecce7(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar2 = (float)FUN_fffb6e4e();
+  fVar2 = (float)meter_get_swr_f();
   if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
@@ -19246,7 +19289,7 @@ void FUN_fffed50f(void)
   uint uVar2;
   
   uVar2 = (uint)SBORROW4((int)&stack0x00000000,4) << 3;
-  fVar1 = (float)FUN_fffb6e4e();
+  fVar1 = (float)meter_get_swr_f();
   if (2.0 < fVar1 == (bool)((byte)(uVar2 >> 3) & 1)) {
     if (DAT_00025d10 < fVar1) {
       DAT_0001b3c2 = DAT_0001b3c2 + 1;
@@ -19539,7 +19582,7 @@ void FUN_fffed934(void)
   
   swtimer_expired_ret = swtimer_expired(0x26);
   if (swtimer_expired_ret != 0) {
-    DAT_00025d14 = FUN_fffb6e5c();
+    DAT_00025d14 = meter_get_swr_avg_f();
     send_a_set(0);
     send_b_set(0);
     swtimer_start(0x26,5);
@@ -19625,7 +19668,7 @@ void FUN_fffeda3b(void)
     swtimer_start(0x26,0xfa);
     return;
   }
-  fVar1 = (float)FUN_fffb6e5c();
+  fVar1 = (float)meter_get_swr_avg_f();
   if (DAT_00025d14 <= fVar1) {
     ext_tuner_step = 0xe;
     return;

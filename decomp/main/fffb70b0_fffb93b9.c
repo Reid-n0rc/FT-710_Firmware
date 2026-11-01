@@ -524,7 +524,7 @@ void meter_vdd(void)
   if (0xff < uStack_4) {
     uStack_4 = 0xff;
   }
-  DAT_00012043 = FUN_fffb92e7((undefined1)uStack_4);
+  DAT_00012043 = meter_avg_vdd((undefined1)uStack_4);
   return;
 }
 
@@ -547,7 +547,7 @@ void meter_idd(void)
   if (0xff < uVar1) {
     local_6 = 0xff;
   }
-  DAT_00012044 = FUN_fffb9350(local_6);
+  DAT_00012044 = meter_avg_idd(local_6);
   return;
 }
 
@@ -570,7 +570,7 @@ void meter_alc(void)
   if (0xff < uVar1) {
     local_6 = 0xff;
   }
-  DAT_00012045 = FUN_fffb93b9(local_6);
+  DAT_00012045 = meter_avg_alc(local_6);
   return;
 }
 
@@ -660,7 +660,7 @@ void swr_meter_protect(void)
       }
     }
     DAT_00020fc4 = local_18;
-    FUN_fffb948b(local_18);
+    meter_avg_swr_f(local_18);
     if (1.5 < local_18 == (bool)((byte)(uVar6 >> 3) & 1)) {
       fStack_1c = (float)uVar3 / 1.5;
       fStack_20 = -fStack_1c;
@@ -686,7 +686,7 @@ void swr_meter_protect(void)
       uStack_22 = 0xff;
     }
     DAT_00012047 = (undefined1)uStack_22;
-    DAT_00012046 = FUN_fffb9422((undefined1)uStack_22);
+    DAT_00012046 = meter_avg_swr((undefined1)uStack_22);
     return;
   }
   g_ui.hi_swr = 0;
@@ -732,7 +732,7 @@ LAB_fffb7837:
       if (255.0 < fStack_1c) {
         fStack_1c = 255.0;
       }
-      DAT_00012048 = FUN_fffb94f9((uint)(longlong)fStack_1c & 0xff);
+      DAT_00012048 = meter_avg_po((uint)(longlong)fStack_1c & 0xff);
       return;
     }
     iVar4 = (uint)i * 0xc;
@@ -837,7 +837,7 @@ LAB_fffb79e0:
         DAT_0001204a = 0;
         return;
       }
-      DAT_0001204a = FUN_fffb959c((uint)(longlong)fStack_18 & 0xff);
+      DAT_0001204a = meter_avg_s((uint)(longlong)fStack_18 & 0xff);
       return;
     }
     iVar2 = (uint)i * 0xc;
@@ -2470,9 +2470,11 @@ void rtty_fsk_keying(void)
 }
 
 
-// ===== FUN_fffb92e7 @ fffb92e7 (105 bytes)
+// ===== meter_avg_vdd @ fffb92e7 (105 bytes)
 
-undefined1 FUN_fffb92e7(undefined1 param_1)
+/* (v): 16-sample moving average of the VDD meter (ring 0x12052, index 0x12062) [fact: fffb92e7] */
+
+undefined1 meter_avg_vdd(undefined1 param_1)
 
 {
   byte i;
@@ -2491,9 +2493,11 @@ undefined1 FUN_fffb92e7(undefined1 param_1)
 }
 
 
-// ===== FUN_fffb9350 @ fffb9350 (105 bytes)
+// ===== meter_avg_idd @ fffb9350 (105 bytes)
 
-undefined1 FUN_fffb9350(undefined1 param_1)
+/* (v): the same for IDD (ring 0x12063) [fact: fffb9350] */
+
+undefined1 meter_avg_idd(undefined1 param_1)
 
 {
   byte i;
@@ -2512,9 +2516,11 @@ undefined1 FUN_fffb9350(undefined1 param_1)
 }
 
 
-// ===== FUN_fffb93b9 @ fffb93b9 (105 bytes)
+// ===== meter_avg_alc @ fffb93b9 (105 bytes)
 
-undefined1 FUN_fffb93b9(undefined1 param_1)
+/* (v): the same for ALC (ring 0x12074) [fact: fffb93b9] */
+
+undefined1 meter_avg_alc(undefined1 param_1)
 
 {
   byte i;

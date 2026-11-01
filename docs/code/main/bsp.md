@@ -132,6 +132,28 @@ The boot-chain functions (`PowerON_Reset`, `_INITSCT`, `_INIT_IOLIB`, `bsp_callb
 - `R_BSP_SoftwareInterruptSetTask` has no caller in V01-12 **[fact]**, so the software-interrupt queue is probably never filled and
   `vec026` / `vec027` only run empty slots **[inference]**; whether SWINT is ever requested was not traced.
 
+## Found by the source recreation (T24 MAIN UI track)
+
+`src/main/bsp/r_bsp_sys.c` recreates this BSP; each function passes the differential emulation (src/main/status.tsv).
+Points it settled:
+
+- The 0x74 words at 0x1FFC4 that `bsp_callbacks_clear` zeroes are the **hardware lock words**: `R_BSP_HardwareLock`
+  passes 0x1FFC4 + id x 4 to `R_BSP_SoftwareLock` (0xFFF9086C) **[fact]**; the callback table is 0x20194
+  (`bsp_interrupt_open`, 0x5F words) **[fact]**. The Ghidra name `bsp_callbacks_clear` is kept.
+- Five `FUN_` helpers are the FIT CPU and interrupt helpers (names in `tools/ghidra/names_main.T24ui.tsv`): 0xFFF8FD6D /
+  0xFFF8FD84 CLRPSW I / SETPSW I unless PSW.PM, 0xFFF8FD9B PSW.IPL, 0xFFF8FDB8 a 16-entry MVTIPL table, 0xFFF90181 the
+  IPL save / raise to 15 / restore of `R_BSP_InterruptControl` commands 5 and 6, 0xFFF916AC commands 1 and 2 (NMI pin,
+  FPSW 0x7C00, bus error) **[fact]**; FUN_fff8fc3f returns 0x50040, FIT's version form for BSP 5.64 **[inference]**.
+- `bsp_interrupt_group_enable_disable` keeps the higher of the requested and the current group priority, and refuses
+  to disable a group while its GEN register is non-zero (4) **[fact: 0xFFF90278..0xFFF902D9]**; its range test
+  0x10..0x0F never holds **[fact: 0xFFF90233]**.
+- `get_iclk_freq_hz` copies the HOCO table 0xFFF8F30C to the stack with the PLL input in the next word, so HOCOCR2 = 3
+  reads that word (the PLL input with the PLL, an unset word with the HOCO) **[fact]**. *Open: the radio's value in
+  the HOCO case; HCFRQ = 3 is reserved in the RX651 manual, so it would be settled by whether any code writes 3 there.*
+- 0xFFF8FF2C..0xFFF8FF3C is code no function holds: `R_BSP_RegisterProtectDisable(1)`, SWRR = 0xA501, endless NOP loop
+  **[fact]**, the FIT `R_BSP_SoftwareReset` shape **[inference]**. *Open: its callers; would be settled by a
+  FixFuncEntries row and a reference search.*
+
 <!-- T23e3:begin -->
 
 ### More functions (T23e round 3)
