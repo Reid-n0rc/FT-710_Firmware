@@ -1024,7 +1024,16 @@ UI_PRESETS = {
                                     0x9D09: range(16), 0x9D63: range(16)})),
     'dial_step_mode_hz': ram_bytes({G_OP + 0x237: (0, 1, 2, 3), G_OP + 0xCF: (0, 1, 2, 3), G_OP + 0xD0: (0, 1, 2, 3)}),
     'ch_step_scale': ram_bytes({G_OP + 0x237: (0, 1, 2, 2), 0x1B4E5: (0, 1)}),
+    # key tables (src/main/app/ui_keys.c): the microphone assignments 0..20 and a key code inside the 863-entry
+    # tables (a random code read a word past the table that pointed at Undefined_0xD8, whose RTE pops the caller's
+    # frame: trial 89 of key_call_press)
+    'key_assign_slot': lambda rng, regs: (regs.__setitem__(0, rng.choice([0x348, 0x34E, 0x35B, 0x35C, 0x35D, 0x35E,
+                                                                           rng.randrange(0x35F)])) or [], None),
 }
+for _n in ('key_call_press', 'key_call_short', 'key_call_long', 'key_call_repeat', 'key_call_release'):
+    UI_PRESETS[_n] = lambda rng, regs: ([(0x1FA40, rng.choice([0x300, 0x30F, 0x312, rng.randrange(0x35F)]).to_bytes(2, 'little'))], None)
+UI_PRESETS['key_class_of'] = both(UI_PRESETS['key_assign_slot'],
+                                  ram_bytes({G_OP + 0x9E + k: list(range(21)) for k in range(6)}))
 PRESETS.update(UI_PRESETS)
 # adc_scan_blocking polls adc_scan_done, which waits on the S12AD scan-end flag; with random peripheral reads both runs
 # ran out of budget in every trial, so the two drivers are stubbed (their calls are compared)

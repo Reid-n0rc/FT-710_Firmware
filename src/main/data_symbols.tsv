@@ -200,3 +200,13 @@ fm_ch_step_table	fff88528	ch_step_hz 0xFFFC6476: u16 step by FM CH STEP (EX03050
 beep_state	12040	beep_request 0xFFFB2DE7 stores 1; beep_stop 0xFFFB2DF4 stores 3
 beep_pattern	12041	beep_request 0xFFFB2DDF stores the pattern; FUN_fffb2dfe 0xFFFB2E00 loads it
 tone_idle_level	1ff1c	tone_idle 0xFFFB2E11 writes the u16 at 0x1FF1C to DA0; tone_set passes 0x1FF1C to tone_play
+key_class_table	fff83164	key_class_of 0xFFFBC1E4: class byte per key code (ui-keys.md)
+key_slot_class_table	fff834b6	key_class_of 0xFFFBC20D: byte at 0xFFF834C3 + slot - 13 = 0xFFF834B6 + slot, the class of slots 13..20
+key_assign_codes	fff88534	key_class_of 0xFFFBC1F7 / key_slot_press 0xFFFC40E1: u16 key code of slots 0..12
+key_press_table	fff89d94	key_call_press 0xFFFBC37F: JSR through the u32 handler of the code
+key_short_table	fff8ab10	key_call_short 0xFFFBC3AE
+key_long_table	fff8b88c	key_call_long 0xFFFBC3F7
+key_repeat_table	fff8c608	key_call_repeat 0xFFFBC426
+key_release_table	fff8d384	key_call_release 0xFFFBC455
+key_slot_tables	fff8e100	key_slot_press 0xFFFC40F9: 0xFFF8E100 + slot * 4 - 52; five 8-entry tables 0x20 apart (ui-keys.md)
+key_code	1fa40	key_call_press 0xFFFBC361 loads the u16 code
