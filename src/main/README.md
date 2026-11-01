@@ -49,7 +49,7 @@ python3 -I tools/readability_stats.py readme                               # the
 The check needs the decoded image (`build/FT-710_MAIN_V0112.bin`, or `FT710_BUILD=<dir>`), a copy of the MAIN Ghidra
 project (`FT710_MAIN_PROJECT=<dir>`, default `/home/user/ghidra_tasks/t24main/proj`; each worker copies it again and
 opens it read-only), the rx62t module installed in Ghidra (docs/tooling.md) and `rx-elf-ld` (`RX_BINUTILS=<prefix>`).
-`status` with 200 trials and 3 workers takes about 15 minutes for the current 133 functions.
+`status` with 200 trials and 3 workers takes about 30 minutes for the current 256 functions. It needs the RX module with `tools/ghidra/rx62t-gccforms-fix.patch` (`tools/bootstrap.sh --only rx`; or `GHIDRA_HEADLESS` pointing at a Ghidra that has it): GCC's `REVL Rd,Rd` (`eeprom_hdr_update`) needs the fix. `eeprom_read`/`eeprom_write` are stubs in the checks of their callers (`STUBS`).
 
 ## Writing a function
 
