@@ -385,6 +385,7 @@ void cat_SS(int param_1,char param_2)
     cat_error = 1;
     return;
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   cVar2 = hex2nib(*(byte *)(param_1 + 3));
   if (param_2 == '\0') {
     if (cVar2 == '\0') {
@@ -941,6 +942,7 @@ void cat_ST(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x305,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -978,6 +980,7 @@ void cat_SV(uint param_1,byte param_2)
   bool bVar1;
   byte key_event_filter_ret;
   
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x30a,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1123,6 +1126,7 @@ void cat_TS(int param_1,char param_2)
     cat_error = 1;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0xec,0);
   pbVar3 = &bStack_60;
   if (key_event_filter_ret == 0) {
@@ -1223,6 +1227,7 @@ void cat_TX(int param_1,char param_2)
     cat_error = 1;
     return;
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   hex2nib_ret = hex2nib(*(byte *)(param_1 + 2));
   if (hex2nib_ret == '\0') {
     g_ui.cat_tx_req = 0;
@@ -1308,6 +1313,7 @@ void cat_VD(int param_1,char param_2)
   }
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x2a;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x2a);
     popup_open_timed();
     return;
@@ -1377,6 +1383,7 @@ void cat_VG(int param_1,char param_2)
   g_opstate.vox_gain = local_d;
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x29;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x29);
     popup_open_timed();
     return;
@@ -1446,6 +1453,7 @@ void cat_VM(int param_1,short param_2)
     DAT_0001b788 = 6;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x309,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1566,6 +1574,7 @@ void cat_VS(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x30a,0);
   if (key_event_filter_ret != 0) {
     if ((g_ui.scan_running == 1) || (g_ui.mic_key_hold == 1)) {
@@ -1684,6 +1693,7 @@ void cat_VX(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x302,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1716,6 +1726,7 @@ void cat_ZI(int param_1)
   byte key_event_filter_ret;
   byte *vfo_rec_ptr_ret;
   
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x307,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1752,6 +1763,7 @@ void cat_ZI(int param_1)
     cat_error = 1;
     return;
   }
+                    /* Front-panel key 0x307 ZIN/SPOT, short handler [doc, inference] */
   key_zin_spot_short();
   return;
 }
@@ -1797,6 +1809,7 @@ bool cat_checksum_ok(int param_1,ushort param_2)
 {
   char sum8_ret;
   
+                    /* 8-bit sum of n bytes [doc] */
   sum8_ret = sum8(param_1,param_2);
   return sum8_ret == *(char *)((uint)param_2 + param_1);
 }
@@ -1842,13 +1855,16 @@ void eeprom_init(void)
   byte bVar1;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 | 1;
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 & 0xdf;
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 | 0x20;
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
   eeprom_spi_tx(1);
   eeprom_spi_tx(0x80);
   bVar1 = PORTE_PODR;
@@ -1867,12 +1883,15 @@ void eeprom_init(void)
 void eeprom_load_all(void)
 
 {
+                    /* Read the 10-byte header; byte 0x4658 says what is valid [fact: README.md] */
   eeprom_read(0,g_ee_hdr.stamp,10);
   if (g_ee_hdr.state == 1) {
+                    /* Valid image: read everything [fact: README.md] */
     eeprom_read(0,g_ee_hdr.stamp,0x5837);
     return;
   }
   if (g_ee_hdr.state == 0) {
+                    /* State 0: keep cfg105 and region, rest default [fact: README.md] */
     eeprom_read(10,&g_cfg105.a001_gn_vdd_mtr,0x105);
     eeprom_read(0x10f,dest_code,3);
     settings_defaults(0);
@@ -1880,6 +1899,7 @@ void eeprom_load_all(void)
   else {
     g_ee_hdr.save_count_be[3] = 0;
     g_ee_hdr.state = 0;
+                    /* Blank EEPROM: clear the header, full defaults [fact: README.md] */
     g_ee_hdr.stamp[4] = 0;
     g_ee_hdr.save_count_be[0] = 0;
     g_ee_hdr.save_count_be[1] = 0;
@@ -1905,7 +1925,9 @@ void eeprom_load_all(void)
 void eeprom_save_all(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x112,(byte *)bandstack_a,0x5725);
   eeprom_hdr_update(1);
   return;
@@ -1920,7 +1942,9 @@ void eeprom_save_all(void)
 void eeprom_save_opstate(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x53db,(byte *)&g_opstate,0x45c);
   eeprom_write(0x1a62,bandstack_level_a,0x18);
   eeprom_hdr_update(1);
@@ -1944,7 +1968,9 @@ void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint buf)
     if (param_1 != '\0') {
       local_a = 0xdba;
     }
+                    /* Counter++, state flag, 10-byte header write [doc] */
     eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
     eeprom_write((ushort)param_2 * 0x5a + (ushort)param_3 * 0x438 + local_a,(byte *)buf,0x5a);
     eeprom_hdr_update(1);
     return;
@@ -1960,7 +1986,9 @@ void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint buf)
 void eeprom_save_image(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x1a7a,&g_mem_hdr.chan_a,0x2f49);
   eeprom_hdr_update(1);
   return;
@@ -1980,7 +2008,9 @@ void eeprom_save_memch(byte param_1)
   if (supply_undervolt_check_ret == '\x01') {
     return;
   }
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x1a7a,&g_mem_hdr.chan_a,0x87);
   eeprom_write((ushort)param_1 * 0x5a + 0x1b01,&memch[param_1].mode,0x5a);
   eeprom_hdr_update(1);
@@ -1995,7 +2025,9 @@ void eeprom_save_memch(byte param_1)
 void eeprom_save_qmb(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x49c3,g_qmb_hdr.used_mask_be,0x395);
   eeprom_hdr_update(1);
   return;
@@ -2015,7 +2047,9 @@ void eeprom_save_qmb_slot(byte param_1)
   if (supply_undervolt_check_ret == '\x01') {
     return;
   }
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x49c3,g_qmb_hdr.used_mask_be,0x11);
   eeprom_write((ushort)param_1 * 0x5a + 0x49d4,&qmb[param_1].mode,0x5a);
   eeprom_hdr_update(1);
@@ -2045,8 +2079,10 @@ void eeprom_save_msg(int param_1,int param_2)
     }
     if (!bVar2) {
       sVar1 = (short)param_2 + -1;
+                    /* Counter++, state flag, 10-byte header write [doc] */
       eeprom_hdr_update(0);
       if (param_1 == 0) {
+                    /* Page-split write with WIP poll and WREN [doc] */
         eeprom_write(sVar1 * 0x98 + 0x4d58,&DAT_000093a7 + (ushort)(sVar1 * 0x98),0x98);
       }
       else if (param_1 == 1) {
@@ -2077,7 +2113,9 @@ void eeprom_save_atu_mem(void)
   if (supply_undervolt_check_ret == '\x01') {
     return;
   }
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x5249,&DAT_00009898,0x192);
   eeprom_hdr_update(1);
   return;
@@ -2091,6 +2129,7 @@ void eeprom_save_atu_mem(void)
 void eeprom_save_cfg105(void)
 
 {
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(10,&g_cfg105.a001_gn_vdd_mtr,0x105);
   return;
 }
@@ -2103,6 +2142,7 @@ void eeprom_save_cfg105(void)
 void eeprom_save_dest(void)
 
 {
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x10f,dest_code,3);
   return;
 }
@@ -2136,8 +2176,11 @@ void settings_defaults(byte param_1)
     dest_code[0] = 0x43;
     dest_code[1] = 0x80;
   }
+                    /* Default VFO-A/B working records 0x9D09/0x9D63 [doc, inference] */
   defaults_vfo();
+                    /* Clears 0x4761..0x60C8 and fills 6 band-stack sets [doc, inference] */
   defaults_bandstack();
+                    /* Clears the QMB block 0x9012 [doc, inference] */
   defaults_qmb();
   defaults_memch();
   defaults_msg();
@@ -2225,6 +2268,7 @@ void reset_menu(void)
 void eeprom_read_raw(ushort addr,byte *buf,ushort n)
 
 {
+                    /* READ + 16-bit address, n bytes [doc] */
   eeprom_read(addr,buf,n);
   return;
 }
@@ -2237,6 +2281,7 @@ void eeprom_read_raw(ushort addr,byte *buf,ushort n)
 void eeprom_write_raw(ushort addr,uint buf,ushort n)
 
 {
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(addr,(byte *)buf,n);
   return;
 }
@@ -2509,6 +2554,7 @@ void defaults_bandstack(void)
     *(byte *)pavVar1 = 0;
     pavVar1 = (vfo_rec (*) [12])((int)pavVar1 + 1);
   }
+                    /* Fills one band-stack set [doc] */
   defaults_bandstack_set(bandstack_a);
   defaults_bandstack_set(0x4b99);
   defaults_bandstack_set(0x4fd1);
@@ -3141,6 +3187,7 @@ void menu_defaults_load(void)
   menu_defaults_operation();
   menu_defaults_display();
   FUN_fffb1303();
+                    /* 5 x PRESET block 0x9B2E+0x1Fn <- ROM 0xFFF80F4E [doc, inference] */
   menu_defaults_presets();
   FUN_fffb13e2();
   pbVar1 = g_opstate.zero_9c17;

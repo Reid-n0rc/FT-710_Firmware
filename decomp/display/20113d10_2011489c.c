@@ -21,14 +21,23 @@ void dimmer_pwm_init(void)
 {
   byte mtu2_tstr;
   
+                    /* Timer control_0 [sfr] */
   MTU2_TCR_0 = 0x22;
+                    /* Timer counter_0 [sfr] */
   MTU2_TCNT_0 = 0;
+                    /* Timer general A_0 [sfr] */
   MTU2_TGRA_0 = 19999;
+                    /* Timer general B_0 [sfr] */
   MTU2_TGRB_0 = 0;
+                    /* Timer general C_0 [sfr] */
   MTU2_TGRC_0 = 0;
+                    /* Timer general D_0 [sfr] */
   MTU2_TGRD_0 = 0;
+                    /* Timer I/O control H_0 [sfr] */
   MTU2_TIORH_0 = 0x12;
+                    /* Timer mode_0 [sfr] */
   MTU2_TMDR_0 = 2;
+                    /* Timer start [sfr] */
   mtu2_tstr = MTU2_TSTR;
   MTU2_TSTR = mtu2_tstr | 1;
   return;
@@ -56,6 +65,7 @@ void dimmer_set_pct(int param_1)
   if (iVar1 == 20000) {
     iVar1 = 19999;
   }
+                    /* Timer general B_0 [sfr] */
   MTU2_TGRB_0 = (short)iVar1 + -1;
   return;
 }
@@ -258,6 +268,7 @@ void task_powon(void)
       } while (itron_twai_flg_ret != (void *)0x0);
     } while (uStack_4 != 1);
     port_ppr2 = PORT_PPR2;
+                    /* Port pin read_2 [sfr] */
     key_set_power_level(port_ppr2 & 1);
     gic_enable_irq(0x25);
   } while( true );
@@ -276,6 +287,7 @@ void powon_isr(void)
   gic_disable_irq(0x25);
   itron_set_flg(DAT_20800358,1);
   itron_iwup_tsk(DAT_2080035c);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x20) != 0) {
     uVar1 = INTC_IRQRR;
@@ -295,6 +307,7 @@ void powon_init(void)
   ushort uVar1;
   uint uVar2;
   
+                    /* Interrupt control 1 [sfr] */
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
@@ -427,6 +440,7 @@ void rtc_send_byte(uint param_1)
   
   i = 0;
   do {
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     if ((param_1 & 1) == 0) {
       PORT_PSR1 = 0x10000;
@@ -471,8 +485,10 @@ byte rtc_recv_byte(void)
   i = 0;
   do {
     uVar1 = uVar1 >> 1;
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     rtc_delay();
+                    /* Port pin read_1 [sfr] */
     port_ppr1 = PORT_PPR1;
     PORT_PSR1 = 0x20002;
     if ((port_ppr1 & 1) != 0) {
@@ -512,6 +528,7 @@ byte rtc_read_reg(uint param_1)
   byte rtc_recv_byte_ret;
   
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(param_1 | 0x86);
@@ -536,6 +553,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
   local_10._2_2_ = (undefined2)((uint)param_4 >> 0x10);
   local_10 = CONCAT22(local_10._2_2_,CONCAT11(param_2,param_1)) | 6;
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_bytes(&local_10,2);
@@ -553,6 +571,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
 void rtc_port_idle(void)
 
 {
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x20002;
   PORT_PSR1 = 0x40000;
   return;
@@ -567,6 +586,7 @@ void rtc_write_datetime_raw(uint param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x26);
@@ -586,6 +606,7 @@ void rtc_write_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x66);
@@ -605,6 +626,7 @@ void rtc_read_datetime_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xa6);
@@ -625,6 +647,7 @@ void rtc_read_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xe6);
@@ -844,6 +867,7 @@ void rtc_init(void)
 {
   t_cmtx local_10;
   
+                    /* CK high, CS low [doc, inference] */
   rtc_port_idle();
   rtc_write_reg(0,2);
   rtc_write_reg(0x40,0);

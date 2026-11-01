@@ -2677,6 +2677,7 @@ void FUN_00228d68(int param_1)
 void FUN_00228e1c(undefined4 param_1)
 
 {
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   return;
 }
@@ -2688,6 +2689,7 @@ void FUN_00228e1c(undefined4 param_1)
 void FUN_00228e28(undefined4 param_1)
 
 {
+                    /* XOS clib support [doc, inference] */
   __malloc_unlock(param_1);
   return;
 }

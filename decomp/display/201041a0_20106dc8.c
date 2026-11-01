@@ -112,6 +112,7 @@ int spibsc_xfer(int param_1,ushort *param_2,uint param_3,int param_4)
       uVar4 = uVar4 | (uint)(byte)*puVar6 << 0x18;
 LAB_201043b4:
       if (uVar8 == 1) {
+                    /* 8-bit register store [doc] */
         spibsc_reg_write8(param_1,uVar4 & 0xff,0x40);
       }
       else {
@@ -145,6 +146,7 @@ LAB_201043b4:
       }
 LAB_201043ac:
       if (uVar8 != 2) goto LAB_201043b4;
+                    /* 16-bit register store [doc] */
       spibsc_reg_write16(param_1,uVar4 & 0xffff,0x40);
     }
     param_3 = param_3 - uVar8;
@@ -382,8 +384,10 @@ undefined4 sflash_wait_ready(undefined4 param_1)
   i = 1000000;
   local_14[0] = 5;
   local_18 = 0;
+                    /* Sends command/address bytes [doc] */
   sflash_cmd_write(param_1,local_14,1);
   do {
+                    /* Reads response bytes [doc, inference] */
     sflash_cmd_read(param_1,&local_18,1);
     if ((local_18 & 0x81) == 0) break;
     i = i + -1;
@@ -414,8 +418,10 @@ undefined4 sflash_wait_wel(undefined4 param_1)
   i = 1000000;
   local_14[0] = 5;
   local_18 = 0;
+                    /* Sends command/address bytes [doc] */
   sflash_cmd_write(param_1,local_14,1);
   do {
+                    /* Reads response bytes [doc, inference] */
     sflash_cmd_read(param_1,&local_18,1);
     if (((local_18 & 2) != 0) && ((local_18 & 0x81) == 0)) break;
     i = i + -1;
@@ -444,7 +450,9 @@ uint sflash_read_sr2(undefined4 param_1)
   
   local_c[0] = 0x35;
   local_10 = 0;
+                    /* Sends command/address bytes [doc] */
   sflash_cmd_write(param_1,local_c,1);
+                    /* Reads response bytes [doc, inference] */
   sflash_cmd_read(param_1,&local_10,1);
   sflash_cmd_read(param_1,&local_10,1,0);
   return local_10 & 0xff;
@@ -511,6 +519,7 @@ undefined4 spibsc_exit_spi_mode(int param_1)
 {
   uint uVar1;
   
+                    /* Waits for TEND [doc] */
   spibsc_ensure_idle();
   spibsc_reg_write32(param_1,*(undefined4 *)(param_1 + 0x24),0xc);
   spibsc_reg_write32(param_1,*(undefined4 *)(param_1 + 0x20),0);
@@ -541,15 +550,20 @@ int sflash_fast_read(int param_1,undefined4 param_2,int param_3)
                                 CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),0xb)))
   ;
   local_14 = 0x80000ff;
+                    /* Saves DRCR and CMNCR [doc] */
   iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
+                    /* Command 0x35, returns the byte [doc] */
     sflash_read_sr2(param_1);
+                    /* Sends command/address bytes [doc] */
     sflash_cmd_write(param_1,&local_18,5,1);
+                    /* Reads response bytes [doc, inference] */
     sflash_cmd_read(param_1,param_2,param_3,0);
     if (*(int *)(param_1 + 4) != 0) {
       param_3 = param_3 / 2;
     }
     *(int *)(param_1 + 0xc) = *(int *)(param_1 + 0xc) + param_3;
+                    /* Restores DRCR and CMNCR and flushes the read cache [doc] */
     spibsc_exit_spi_mode(&DAT_20810d90);
     iVar1 = 0;
   }
@@ -576,15 +590,19 @@ int sflash_erase_block(int param_1)
                        CONCAT12((char)((ushort)*(undefined2 *)(param_1 + 0xc) >> 8),
                                 CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),0xd8))
                       );
+                    /* Saves DRCR and CMNCR [doc] */
   iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
+                    /* Sends command/address bytes [doc] */
     sflash_cmd_write(param_1,local_c,1,0);
+                    /* RDSR until WEL [doc] */
     iVar1 = sflash_wait_wel(param_1);
     if (iVar1 == 0) {
       thunk_FUN_20104154(&DAT_208000a8);
       sflash_cmd_write(param_1,&local_10,4,0);
       iVar1 = sflash_wait_ready(param_1);
       thunk_FUN_20104154(&DAT_208000a8);
+                    /* Restores DRCR and CMNCR and flushes the read cache [doc] */
       spibsc_exit_spi_mode(&DAT_20810d90);
     }
   }
@@ -608,6 +626,7 @@ int sflash_page_program(int param_1,undefined1 *param_2,int param_3)
   local_30 = 2;
   local_2c[0] = 6;
   iVar2 = *(int *)(param_1 + 4) * 0x100 + 0x100;
+                    /* Saves DRCR and CMNCR [doc] */
   iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
     if (param_3 != 0) {
@@ -616,7 +635,9 @@ int sflash_page_program(int param_1,undefined1 *param_2,int param_3)
                             CONCAT12((char)((ushort)*(undefined2 *)(param_1 + 0xc) >> 8),
                                      CONCAT11((char)((uint)*(undefined4 *)(param_1 + 0xc) >> 0x10),
                                               (undefined1)local_30)));
+                    /* Sends command/address bytes [doc] */
         sflash_cmd_write(param_1,local_2c,1,0);
+                    /* RDSR until WEL [doc] */
         iVar1 = sflash_wait_wel(param_1);
         if (iVar1 != 0) {
           return iVar1;
@@ -652,6 +673,7 @@ int sflash_page_program(int param_1,undefined1 *param_2,int param_3)
         if ((iVar1 != 0) || (param_3 == 0)) break;
       }
     }
+                    /* Restores DRCR and CMNCR and flushes the read cache [doc] */
     spibsc_exit_spi_mode(&DAT_20810d90);
   }
   return iVar1;
@@ -672,13 +694,17 @@ int sflash_global_unlock(undefined4 param_1)
   
   local_10[0] = 0x98;
   local_c[0] = 6;
+                    /* Saves DRCR and CMNCR [doc] */
   iVar1 = spibsc_enter_spi_mode(param_1);
   if (iVar1 == 0) {
+                    /* Sends command/address bytes [doc] */
     sflash_cmd_write(param_1,local_c,1,0);
+                    /* RDSR until WEL [doc] */
     iVar1 = sflash_wait_wel(param_1);
     if (iVar1 == 0) {
       sflash_cmd_write(param_1,local_10,1,0);
       iVar1 = sflash_wait_ready(param_1);
+                    /* Restores DRCR and CMNCR and flushes the read cache [doc] */
       spibsc_exit_spi_mode(&DAT_20810d90);
     }
   }
@@ -796,6 +822,7 @@ uint sflash_dev_write(char *param_1,uint param_2)
       return 0xfffffffc;
     }
     if (cVar1 == 'b') {
+                    /* WREN and command 0x98, waits ready [doc] */
       sflash_global_unlock(&DAT_20810d90);
       return param_2;
     }
@@ -862,6 +889,7 @@ undefined4 FUN_201050ac(void)
       DAT_208000e0 = 0;
       return 0;
     }
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     DAT_208000bc = fs_task_ctx_get();
     DAT_208000e0 = 0;
   }
@@ -998,6 +1026,7 @@ uint wav_open_read(int *param_1,int param_2)
   local_84 = 0;
   local_80 = 0;
   local_7c = 0;
+                    /* word copy while aligned [doc, inference] */
   strcpy(&local_b8,pcVar7);
   strcat(&local_b8,0x20105524);
   strcat(&local_b8,*param_1);
@@ -1040,6 +1069,7 @@ uint wav_open_read(int *param_1,int param_2)
 LAB_20105468:
   iVar1 = param_1[8];
   if (iVar1 != 0) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     uVar2 = __aeabi_uidivmod(local_20,local_5c);
     uVar5 = (uint)((ulonglong)uVar2 * 0x91a2b3c5 >> 0x20);
     uVar6 = (uVar5 & 0x7ffff) >> 0xb;
@@ -1115,6 +1145,7 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       }
       pcVar3 = "I:\\FT-710\\MESSAGE";
     }
+                    /* directory handle, 0 on error [doc] */
     local_34 = fs_opendir(pcVar3);
     if (local_34 == 0) {
       iVar2 = -4;
@@ -1124,12 +1155,14 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       iVar4 = work_buf_get(0x33cc);
       iVar2 = 0;
 LAB_201055b8:
+                    /* next directory entry or 0 at the end [doc] */
       piVar5 = (int *)fs_readdir(local_34);
       if (piVar5 != (int *)0x0) {
         iVar6 = fs_attr_check((int)*(char *)(*piVar5 + 0xb),0);
         if (iVar6 == 0) {
           iVar6 = (int)piVar5 + 10;
           if (piVar5 == (int *)0xfffffff6) goto LAB_20105660;
+                    /* Word-at-a-time string length [doc] */
           uVar7 = strlen(iVar6);
           uVar9 = uVar7;
           if (uVar7 < 0x15) {
@@ -1144,6 +1177,7 @@ LAB_201055b8:
               goto LAB_20105660;
             }
             iVar2 = iVar4 + iVar2 * 0x34;
+                    /* Copies up to n bytes and pads with 0 [doc] */
             strncpy(iVar2,iVar6,uVar7 - 4);
             local_44 = 0;
             local_4c = 0;
@@ -1173,6 +1207,7 @@ LAB_20105660:
         iVar2 = -4;
       }
       else {
+                    /* insertion sort, with a quicksort pass [doc] */
         qsort(iVar4,iVar2,0x34,strcasecmp);
         __aeabi_memclr4(local_30,0x33cc);
         iVar6 = 0;
@@ -1193,6 +1228,7 @@ LAB_20105660:
           puVar13[0xc] = puVar14[0xc];
         } while (iVar6 < iVar2);
       }
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
       scope3d_tables_init();
       gui_scope_draw_hold_set(0);
     }
@@ -1272,9 +1308,11 @@ LAB_20105820:
           iVar2 = iVar2 + 1;
         } while (iVar2 < 10);
       }
+                    /* word copy while aligned [doc, inference] */
       strcpy(auStack_a0,pcVar3);
       strcat(auStack_a0,0x20105524);
       strcat(auStack_a0,param_1);
+                    /* deletes a file [doc] */
       iVar2 = fs_remove(auStack_a0);
       if (iVar2 == 0) {
         uVar1 = wav_list_dir(param_2,param_3,param_4);
@@ -1336,6 +1374,7 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
             *(undefined1 *)((int)param_2 + 3),*(undefined1 *)((int)param_2 + 4),
             *(undefined1 *)((int)param_2 + 5),*(undefined1 *)((int)param_2 + 6),
             *(undefined1 *)((int)param_2 + 7));
+                    /* Copies up to n bytes and pads with 0 [doc] */
     strncpy(0x20811067,&UNK_20165274 + param_3 * 10,10);
     DAT_208000d0 = 1;
     DAT_208000b3 = param_4;
@@ -1496,6 +1535,7 @@ void play_progress(void *param_1,uint param_2)
   }
   uVar1 = (uVar2 / 64000) % 0xe10;
   sprintf(param_2,"%02d:%02d:%02d",(uVar2 / 64000) / 0xe10,uVar1 / 0x3c,uVar1 % 0x3c);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar2 = __aeabi_uidivmod(uVar2,DAT_208000e4 / 100);
   if (100 < uVar2) {
     uVar2 = 100;
@@ -1632,6 +1672,7 @@ uint play_read_block(int param_1,void *param_2)
       *(undefined1 *)((int)param_2 + 3) = 0x12;
       return 0;
     }
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     DAT_208000bc = fs_task_ctx_get();
     if (DAT_208000bc == 0xfffffff2) {
       return 0xfffffffb;
@@ -1684,6 +1725,7 @@ uint play_seek(int param_1)
     fs_fseek_ret = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
     uVar2 = 0;
     if (fs_fseek_ret != 0) {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
       DAT_208000bc = fs_task_ctx_get();
       play_close();
       uVar2 = 0xfffffffe;
@@ -1717,6 +1759,7 @@ int play_prime(int param_1)
       DAT_208000b8 = DAT_208000b8 + 1;
     }
   }
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_208f4de0 + (uint)DAT_208000b0 * 0x11f8,unaff_r7);
   return uVar1;
 }
@@ -1733,6 +1776,7 @@ void rec_close_abort(void)
   DAT_208000dc = 0;
   DAT_208000e8 = 0;
   if (DAT_20810fcc != '\0') {
+                    /* deletes a file [doc] */
     fs_remove(&DAT_20810fcc);
   }
   __aeabi_memclr4_veneer(&DAT_20810fcc,0x80);
@@ -1891,9 +1935,11 @@ uint rec_open_wav(void *param_1,int param_2)
         local_4c = 0x544d4349;
         local_48 = 0x20;
         if (param_2 == 1) {
+                    /* Word-at-a-time string length [doc] */
           iVar1 = strlen(*(undefined4 *)((int)param_1 + 4));
           iVar3 = strlen(*(undefined4 *)((int)param_1 + 8));
           if ((uint)(iVar3 + iVar1) < 0x1f) {
+                    /* word copy while aligned [doc, inference] */
             strcpy(auStack_44,*(undefined4 *)((int)param_1 + 4));
             strcat(auStack_44,0x20106558);
             strcat(auStack_44,*(undefined4 *)((int)param_1 + 8));
@@ -1919,14 +1965,17 @@ uint rec_open_wav(void *param_1,int param_2)
         strcat(&DAT_20810fcc,*(undefined4 *)param_1);
         strcat(&DAT_20810fcc,0x20106570);
         if (param_2 == 2) {
+                    /* deletes a file [doc] */
           fs_remove(&DAT_20810fcc);
         }
         DAT_208000dc = fs_fopen(0x20810fcc,0x20106578);
+                    /* creates a directory [doc] */
         if ((DAT_208000dc == 0) &&
            (((DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0 &&
              ((DAT_208000bc = fs_mkdir("I:\\FT-710"), DAT_208000bc != 0 ||
               (DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0)))) ||
             (DAT_208000dc = fs_fopen(0x20810fcc,0x20106578), DAT_208000dc == 0)))) {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
           DAT_208000bc = fs_task_ctx_get();
         }
         else {
@@ -2027,6 +2076,7 @@ void task_audio_codec(void)
       local_34 = 0;
       local_30 = 0;
       local_2c = 0;
+                    /* drive 'I' free space == 0 [doc, inference] */
       uVar4 = sd_is_full('I');
       if (uVar4 == 0) {
         local_4c = &DAT_2081104c;
@@ -2091,6 +2141,7 @@ void task_audio_codec(void)
                   }
                   break;
                 }
+                    /* DCCIMVAC per cache line over the range [doc] */
                 dcache_clean_invalidate_range(local_5c,4000);
                 DAT_208000e4 = DAT_208000e4 + iVar6 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
@@ -2174,6 +2225,7 @@ LAB_20106a5c:
                         (&DAT_208f4de0)[uVar4 * 0x11f8] = 0;
                         iVar5 = uVar4 * 0x11f8;
                         *(undefined1 *)(iVar5 + 0x208f4de1) = 0;
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
                         dcache_clean_range(&DAT_208f4de0 + iVar5,local_58);
                         itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
                         DAT_208000b0 = DAT_208000b0 + 1;

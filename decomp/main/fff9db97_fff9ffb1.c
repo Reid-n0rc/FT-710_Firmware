@@ -45,6 +45,7 @@ void dsp_set_tx_gain(void)
   byte tx_mod_gain_ret;
   ushort uStack_2;
   
+                    /* Constant tables per audio-route state [doc] */
   uStack_2 = dsp_route_param(0x20);
   tx_mod_gain_ret = tx_mod_gain();
   if (uStack_2 == 0xffff) {
@@ -200,6 +201,7 @@ void dsp_set_peq_freq(char param_1)
     uStack_14 = 0x25;
   }
   uStack_a = uStack_c;
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(uStack_14);
   if ((dsp_route_param_ret == 0) || (uStack_c == 0)) {
     bVar1 = true;
@@ -2308,7 +2310,9 @@ void dsp_set_aess(void)
   char *aess_mode_ptr_ret;
   undefined2 uStack_2;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (char *)aess_level_ptr();
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (char *)aess_mode_ptr();
   if (*aess_level_ptr_ret == '\0') {
     uStack_2 = 0;

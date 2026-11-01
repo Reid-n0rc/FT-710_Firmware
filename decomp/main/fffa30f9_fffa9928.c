@@ -253,6 +253,7 @@ void cat_parse(void)
     return;
   }
   if (bStack_9 == bStack_a) {
+                    /* Ring empty: only an E9 frame from the E9 slot is handled [fact: cat.md] */
     pcStack_8 = (char *)cat_e9_slot();
     if (*pcStack_8 == '\x01') {
       bStack_b = pcStack_8[1];
@@ -280,20 +281,25 @@ void cat_parse(void)
     }
   }
   else {
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
     screensaver_timer_restart();
+                    /* Take the oldest command from the 60-slot CAT ring [fact: cat.md] */
     pbStack_4 = (byte *)cat_ring_pop();
     bStack_b = *pbStack_4;
     bVar3 = sci_tx_end((uint)bStack_b);
     if (bVar3 == 0) {
+                    /* Port still sending: put the command back [fact: 0xFFFA34C7] */
       cat_ring_unpop();
       return;
     }
     uStack_d = *(undefined2 *)(pbStack_4 + 4);
     len = *(ushort *)(pbStack_4 + 2);
     cat_port = bStack_b;
+                    /* Upper-case the two mnemonic characters only [fact: cat.md] */
     for (bStack_e = 0; bStack_e < 2; bStack_e = bStack_e + 1) {
       toupper_inplace((char *)((int)&uStack_d + (uint)bStack_e));
     }
+                    /* Look the mnemonic up in cat_mnemonics (104 entries) [fact: 0xFFF805EC] */
     for (bStack_e = 0; bStack_e < 0x68; bStack_e = bStack_e + 1) {
       iVar1 = scmpu(&uStack_d,(uint)bStack_e * 2 + -0x7fa14,2);
       if (-1 < iVar1 == iVar1 < 1) {
@@ -302,6 +308,7 @@ void cat_parse(void)
       }
     }
     if (g_ui.radio_on == 0) {
+                    /* Radio off: only index 0x47 = PS with '1' passes [fact: cat.md] */
       if ((bStack_f == 0x47) && (pbStack_4[6] == 0x31)) {
         bVar2 = true;
       }
@@ -313,6 +320,7 @@ void cat_parse(void)
       }
     }
     if (bStack_f == 0xff) {
+                    /* Not primary: look up cat_ext_mnemonics (10) [fact: 0xFFF806BC] */
       for (bStack_e = 0; bStack_e < 10; bStack_e = bStack_e + 1) {
         iVar1 = scmpu(&uStack_d,(uint)bStack_e * 2 + -0x7f944,2);
         if (-1 < iVar1 == iVar1 < 1) {
@@ -321,6 +329,7 @@ void cat_parse(void)
         }
       }
       if (bStack_f == 0xff) {
+                    /* Unknown mnemonic: answer ?; [fact: cat.md] */
         cat_error = 1;
       }
       else if (bStack_f == 0) {
@@ -331,6 +340,7 @@ void cat_parse(void)
       }
     }
     else {
+                    /* Primary: switch on the index, length check [fact: 0xFFFA3B6E] */
       cat_dispatch((int)pbStack_4,bStack_f,len);
     }
     if (cat_error == 0) {
@@ -342,6 +352,7 @@ void cat_parse(void)
       cat_reply_error();
     }
     if (DAT_0001b788 != 0) {
+                    /* Reply from 0x1C8E on the request's port [fact: 0xFFFB1D12] */
       cat_send_reply((uint)bStack_b,0x1c8e,DAT_0001b788);
     }
   }
@@ -349,6 +360,7 @@ void cat_parse(void)
     key_dsp_press();
     cat_spn_save_pending = 0;
   }
+                    /* AI: report changed items to ports with AI on [fact: 0xFFFDD797] */
   cat_ai_poll();
   return;
 }
@@ -382,6 +394,7 @@ void cat_ext_SP(int param_1)
       bVar2 = false;
     }
     if (bVar2) {
+                    /* Parses 4-hex address and 4-hex value [doc] */
       cat_SP_sdr_reg(param_1 + 4,'\x01');
       return;
     }
@@ -466,6 +479,7 @@ void cat_ext_SP(int param_1)
     DAT_00001c92 = *(undefined1 *)(param_1 + 8);
     _DAT_00001c8e = *(undefined4 *)(param_1 + 4);
     if (cVar1 == 'W') {
+                    /* Byte read/write at a 16-bit EEPROM address [doc] */
       cat_SP_eeprom_byte(param_1 + 4,'\x01');
       return;
     }
@@ -486,6 +500,7 @@ void cat_ext_SP(int param_1)
     }
     _DAT_00001c8e =
          CONCAT22(CONCAT11(DAT_00001c91,*(undefined1 *)(param_1 + 6)),*(undefined2 *)(param_1 + 4));
+                    /* 8 binary bytes [doc, inference] */
     cat_SP_meters();
     return;
   }
@@ -632,6 +647,7 @@ void cat_dispatch_ext(int param_1,char param_2,short param_3)
       _DAT_00001c8e =
            CONCAT22(CONCAT11(DAT_00001c91,*(undefined1 *)(param_1 + 6)),*(undefined2 *)(param_1 + 4)
                    );
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       hex2nib_ret = hex2nib(*(byte *)(param_1 + 6));
       cat_ext_VE(hex2nib_ret);
       return;
@@ -1746,6 +1762,7 @@ void cat_SP_sdr_reg(uint param_1,char param_2)
   local_4 = param_1;
   uStack_8 = hex2word((char *)(param_1 + 4));
   uStack_a = hex2word((char *)(local_4 + 8));
+                    /* Waits until idle [doc] */
   sdr_reg_access_ret = sdr_reg_access(uStack_8,&uStack_a,local_5);
   if (sdr_reg_access_ret == 0) {
     cat_error = 1;
@@ -1920,6 +1937,7 @@ void cat_SP_table(int param_1,char param_2,short param_3)
   g_ui.align_item = uVar2;
   align_load_preset();
   DAT_00001c91 = (&g_cfg105.a001_gn_vdd_mtr)[uVar2];
+                    /* 8-bit sum of n bytes [doc] */
   DAT_00001c92 = sum8(0x1c8e,4);
   DAT_00001c93._0_1_ = 0x3b;
   DAT_0001b788 = 6;
@@ -1953,6 +1971,7 @@ void cat_SP_eeprom_byte(int param_1,char param_2)
   }
   eeprom_read_raw(local_c,&local_d,1);
   DAT_00001c93._0_1_ = local_d;
+                    /* 8-bit sum of n bytes [doc] */
   DAT_00001c93._1_1_ = sum8(0x1c8e,6);
   DAT_00001c93._2_1_ = 0x3b;
   DAT_0001b788 = 8;
@@ -1980,6 +1999,7 @@ void cat_SP_meters(void)
   DAT_00001c99 = 0;
   uRam00001c9a = 0;
   uRam00001c9b = 0;
+                    /* 8-bit sum of n bytes [doc] */
   DAT_00001c9c = sum8(0x1c8e,0xe);
   DAT_00001c9d = 0x3b;
   DAT_0001b788 = 0x10;
@@ -1999,6 +2019,7 @@ void cat_ext_E8(void)
   char cStack_a;
   ushort i;
   
+                    /* Pseudo-random byte from timer counter 0x88116 [doc] */
   cat_rand8_ret = cat_rand8();
   cStack_a = '\0';
   DAT_00001c91 = cat_rand8_ret + '\a';
@@ -2032,12 +2053,15 @@ void cat_ext_VE(char param_1)
   undefined4 uStack_8;
   
   if (param_1 == '\0') {
+                    /* Returns pointer to MAIN version string 0xFFFFFF00 [doc, inference] */
     uStack_8 = ver_main();
   }
   else if (param_1 == '\x01') {
+                    /* Returns pointer to DISPLAY version 0x1436 [doc, inference] */
     uStack_8 = ver_display();
   }
   else if (param_1 == '\x02') {
+                    /* Returns pointer to SDR version 0x144A [doc, inference] */
     uStack_8 = ver_sdr();
   }
   else {
@@ -2045,6 +2069,7 @@ void cat_ext_VE(char param_1)
       cat_error = 1;
       return;
     }
+                    /* Returns pointer to DSP version 0x1444 [doc, inference] */
     uStack_8 = ver_dsp();
   }
   DAT_00001c91 = *(undefined1 *)(uStack_8 + 1);
@@ -2426,6 +2451,7 @@ void cat_ext_EO(int param_1,byte param_2)
   byte bStack_6;
   
   vfo_rec_ptr_ret = vfo_rec_ptr(0);
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   bVar2 = hex2nib(*(byte *)(param_1 + 2));
   if (2 < bVar2) {
     cat_error = 1;
@@ -2734,6 +2760,7 @@ void cat_ext_PE(int param_1,char param_2)
           cat_error = 1;
           return;
         }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
         cVar2 = hex2nib(*(byte *)((uint)local_b + param_1));
         local_e = cVar2 * local_a + local_e;
         local_a = local_a / 10;
@@ -2776,6 +2803,7 @@ void cat_ext_PE(int param_1,char param_2)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* Timer 0x32 for 200 ms, flag 0x187C2 [doc] */
       cat_ai_holdoff();
       return;
     }
@@ -2916,6 +2944,7 @@ void cat_AC(int param_1,char param_2)
         DAT_00001c92 = '3';
       }
       else {
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
         bVar3 = vfo_tuner_bit_get();
         DAT_00001c92 = nib2hex(bVar3);
       }
@@ -2925,6 +2954,7 @@ void cat_AC(int param_1,char param_2)
     return;
   }
   if (*(char *)(param_1 + 2) == '0') {
+                    /* Checks a key code against about 20 mode locks [doc] */
     key_event_filter_ret = key_event_filter(0x301,0);
     if (key_event_filter_ret == 0) {
       cat_error = 1;
@@ -3106,9 +3136,11 @@ void cat_AI(int param_1,char param_2)
     g_ui.cat_ai_on[1] = hex2nib(*(byte *)(param_1 + 2));
   }
   else if (cat_port == 1) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     g_ui.cat_ai_on[0] = hex2nib(*(byte *)(param_1 + 2));
   }
   if (*(char *)(param_1 + 2) == '1') {
+                    /* Timer 0x32 for 200 ms, flag 0x187C2 [doc] */
     cat_ai_holdoff();
     return;
   }
@@ -3268,6 +3300,7 @@ void cat_AO(int param_1,char param_2)
       return;
     }
     g_ui.popup_code = 0x28;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x28);
     popup_open_timed();
     return;
@@ -3305,7 +3338,9 @@ void cat_AS(int param_1,char param_2)
   byte bStack_c;
   byte bStack_b;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (byte *)aess_level_ptr();
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (char *)aess_mode_ptr();
   bVar1 = *(char *)(param_1 + 2) == '1';
   if (param_2 == '\0') {
@@ -3368,6 +3403,7 @@ void cat_AS(int param_1,char param_2)
     *aess_level_ptr_ret = bStack_d / 5;
     if (g_opstate.ex030126_scu_lan10 == 0) {
       g_ui.popup_code = 0x33;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(0x33);
       popup_open_timed();
       return;
@@ -3480,6 +3516,7 @@ void cat_AV(int param_1,char param_2)
   }
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x2b;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x2b);
     popup_open_timed();
     return;
@@ -3669,6 +3706,7 @@ LAB_fffa7214:
     pbStack_14 = pbStack_14 + 0x29;
   }
 LAB_fffa72ae:
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   hex2nib_ret = hex2nib(*(byte *)(param_1 + 3));
   if (hex2nib_ret == '\0') {
     *pbStack_14 = *pbStack_14 & 0x7f;
@@ -4080,6 +4118,7 @@ LAB_fffa786d:
     pbStack_14 = pbStack_14 + 0x3c;
   }
 LAB_fffa78fd:
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   hex2nib_ret = hex2nib(*(byte *)(param_1 + 2));
   if (hex2nib_ret == '\0') {
     *pbStack_14 = *pbStack_14 & 0xfd;
@@ -4473,6 +4512,7 @@ void cat_BS(int param_1)
       bVar1 = false;
     }
     if (!bVar1) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       hex2nib_ret = hex2nib(*(byte *)(param_1 + 2));
       if ((*(byte *)(param_1 + 3) < 0x30) || (0x39 < *(byte *)(param_1 + 3))) {
         bVar1 = true;
@@ -4568,6 +4608,7 @@ void cat_CF(int param_1,char param_2)
       local_1d = g_ui.clar_flags_a;
     }
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   n = hex2nib(*(byte *)(param_1 + 4));
   if (1 < n) {
     cat_error = 1;
@@ -4626,6 +4667,7 @@ void cat_CF(int param_1,char param_2)
     DAT_0001b788 = 0xb;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   bVar2 = key_event_filter(0x306,0);
   if (bVar2 != 0) {
     if (g_opstate.split_on == 1) {
@@ -4796,6 +4838,7 @@ void cat_CH(int param_1)
   }
   if (*(char *)(param_1 + 2) == '0') {
     g_ui.ch_knob_mode = 0;
+                    /* n channel steps up [doc] */
     memch_step(1,g_opstate.active_vfo);
     return;
   }
@@ -5228,6 +5271,7 @@ void cat_CS(int param_1,char param_2)
     return;
   }
   vfo_rec_ptr_ret = vfo_rec_ptr(1);
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x307,2);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -5470,6 +5514,7 @@ void cat_DN(void)
   bool bVar1;
   byte key_event_filter_ret;
   
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x34e,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -5547,6 +5592,7 @@ void cat_UP(void)
   bool bVar1;
   byte key_event_filter_ret;
   
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x348,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -5641,6 +5687,7 @@ void cat_DT(int param_1,char param_2)
     if (bVar1) {
       DAT_00001c91 = 0x32;
       DAT_00001c92 = 0x30;
+                    /* Packed BCD byte [doc] */
       bcd_to_ascii2(&DAT_00001c93,g_ui.rtc_yy);
       bcd_to_ascii2(0x1c95,g_ui.rtc_mm);
       bcd_to_ascii2(&DAT_00001c97,g_ui.rtc_dd);
@@ -5733,6 +5780,7 @@ void cat_DT(int param_1,char param_2)
         cat_error = 1;
         return;
       }
+                    /* Two ASCII digits [doc] */
       g_ui.rtc_yy = ascii2_to_bcd(param_1 + 5);
       g_ui.rtc_set[0] = g_ui.rtc_yy;
       g_ui.rtc_mm = ascii2_to_bcd(param_1 + 7);

@@ -146,6 +146,7 @@ void FUN_fffe3be4(void)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return;
     }
@@ -270,6 +271,7 @@ void ladder_key_task(void)
       else {
         bVar1 = true;
       }
+                    /* Checks a key code against about 20 mode locks [doc] */
       if ((bVar1) &&
          (key_event_filter_ret = key_event_filter(bVar2 + 0x86,1), key_event_filter_ret == 0)) {
         return;
@@ -394,6 +396,7 @@ void ladder_key_task(void)
           msg_slot_key_5();
           break;
         case 6:
+                    /* Sets UI +0x1C7 [doc, inference] */
           msg_type_select();
           break;
         case 7:
@@ -658,6 +661,7 @@ void msg_slot_key(byte param_1)
 void msg_cw_slot_key_1(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(1);
   return;
 }
@@ -671,6 +675,7 @@ void msg_cw_slot_key_1(void)
 void msg_cw_slot_key_2(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(2);
   return;
 }
@@ -684,6 +689,7 @@ void msg_cw_slot_key_2(void)
 void msg_cw_slot_key_3(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(3);
   return;
 }
@@ -697,6 +703,7 @@ void msg_cw_slot_key_3(void)
 void msg_cw_slot_key_4(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(4);
   return;
 }
@@ -710,6 +717,7 @@ void msg_cw_slot_key_4(void)
 void msg_cw_slot_key_5(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(5);
   return;
 }
@@ -733,6 +741,7 @@ void msg_cw_slot_key(undefined1 param_1)
   }
   if (PTR_g_ui_00025d78->msg_active != 0) {
     PTR_g_ui_00025d78->msg_active = 0;
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
     msg_cw_stop();
     return;
   }
@@ -834,6 +843,7 @@ void msg_type_select(void)
           beep_request(1);
           return;
         }
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
         msg_cw_stop();
         return;
       }
@@ -879,6 +889,7 @@ void FUN_fffe46b0(void)
   if (PTR_g_ui_00025d78->kbd_target != 5) {
     return;
   }
+                    /* Keyboard target 5 [doc] */
   kbd_edit_file_name(0x84);
   return;
 }
@@ -1030,6 +1041,7 @@ void msg_cw_slot_key_latched(undefined1 param_1)
     return;
   }
   if (PTR_g_ui_00025d78->msg_active == 1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
     msg_cw_stop();
     beep_request(1);
     return;
@@ -1065,19 +1077,23 @@ void FUN_fffe47c8(void)
   uVar1 = (uint)PTR_g_ui_00025d78->kbd_target;
   if (uVar1 != 6) {
     if (uVar1 == 1) {
+                    /* Keyboard target 1 [doc] */
       kbd_edit_memory_name(0x85);
     }
     else if (uVar1 == 2) {
+                    /* Keyboard target 2 [doc] */
       kbd_edit_cw_text(0x85);
     }
     else if (1 < uVar1 - 3) {
       if (uVar1 == 5) {
+                    /* Keyboard target 5 [doc] */
         kbd_edit_file_name(0x85);
       }
       else {
         if (uVar1 != 0) {
           return;
         }
+                    /* Keyboard target 0 [doc] */
         kbd_edit_mycall(0x85);
       }
     }

@@ -98,6 +98,7 @@ void eeprom_hdr_update(byte param_1)
     g_ee_hdr.save_count_be[local_2] = (byte)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
   }
   g_ee_hdr.state = param_1;
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0,g_ee_hdr.stamp,10);
   return;
 }
@@ -117,12 +118,15 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
   byte bStack_6;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
   eeprom_spi_tx(3);
   eeprom_spi_tx((byte)(addr >> 8));
   bStack_6 = (byte)addr;
   eeprom_spi_tx(bStack_6);
   for (i = 0; i < n; i = i + 1) {
+                    /* Shift one byte in from PE7 [doc] */
     bVar1 = eeprom_spi_rx();
     buf[i] = bVar1;
   }
@@ -160,8 +164,11 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
     bVar2 = true;
     while (bVar2) {
       bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
       PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
       eeprom_spi_tx(5);
+                    /* Shift one byte in from PE7 [doc] */
       eeprom_spi_rx_ret = eeprom_spi_rx();
       bVar1 = PORTE_PODR;
       PORTE_PODR = bVar1 | 1;
@@ -204,6 +211,7 @@ void eeprom_spi_tx(byte b)
   undefined1 local_1;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 & 0xdf;
   local_1 = b;
   for (i = 0; i < 8; i = i + 1) {
@@ -248,6 +256,7 @@ byte eeprom_spi_rx(void)
       local_3 = local_3 | 1;
     }
     bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
     PORTE_PODR = bVar1 & 0xdf;
   }
   return local_3;
@@ -267,6 +276,7 @@ void sci_start_all(void)
   sci2_configure();
   sci3_set_baud();
   FUN_fffb1a81();
+                    /* Clears 0xA2B3 and starts SCI5 [doc] */
   sdr_link_start();
   return;
 }
@@ -297,9 +307,12 @@ void sci0_set_baud(void)
     local_1 = 0;
   }
   bVar1 = SCI0_SMR;
+                    /* Serial Mode [sfr] */
   SCI0_SMR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xfc;
+                    /* Bit Rate [sfr] */
   SCI0_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
   bVar1 = SCI0_SEMR;
+                    /* Serial Extended Mode [sfr] */
   SCI0_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
   bVar1 = SCI0_SEMR;
   SCI0_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
@@ -389,6 +402,7 @@ byte sci1_tx_end(void)
 {
   byte sci1_ssr;
   
+                    /* Serial Status [sfr] */
   sci1_ssr = SCI1_SSR;
   return sci1_ssr >> 2 & 1;
 }
@@ -423,11 +437,15 @@ void sci2_configure(void)
     gpo_d_set(0);
   }
   if ((bVar1 == 3) || (bVar1 == 1)) {
+                    /* Module Stop Control B [sfr] */
     system_mstpcrb = SYSTEM_MSTPCRB;
     SYSTEM_MSTPCRB = system_mstpcrb | 0x20000000;
+                    /* P12 Pin Function Control [sfr] */
     MPC_P12PFS = 0;
     bVar1 = PORT1_PMR;
+                    /* Port Mode [sfr] */
     PORT1_PMR = bVar1 & 0xfb;
+                    /* P13 Pin Function Control [sfr] */
     MPC_P13PFS = 0;
     gpo_a_dir_out();
     gpo_b_dir_out();
@@ -443,13 +461,16 @@ void sci2_configure(void)
       bStack_1 = 3;
     }
     bVar1 = SCI2_SMR;
+                    /* Serial Mode [sfr] */
     bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar1 & 0xf4;
     if (g_opstate.ex030107_cat_1_cat_3_stop_bit != 0) {
       bStack_3 = bStack_3 | 8;
     }
     SCI2_SMR = bStack_3;
+                    /* Bit Rate [sfr] */
     SCI2_BRR = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 2];
     bVar1 = SCI2_SEMR;
+                    /* Serial Extended Mode [sfr] */
     SCI2_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
     bVar1 = SCI2_SEMR;
     SCI2_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
@@ -599,13 +620,16 @@ void sci3_set_baud(void)
     local_1 = 3;
   }
   bVar1 = SCI3_SMR;
+                    /* Serial Mode [sfr] */
   bStack_3 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xf4;
   if (local_4 != 0) {
     bStack_3 = bStack_3 | 8;
   }
   SCI3_SMR = bStack_3;
+                    /* Bit Rate [sfr] */
   SCI3_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
   bVar1 = SCI3_SEMR;
+                    /* Serial Extended Mode [sfr] */
   SCI3_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
   bVar1 = SCI3_SEMR;
   SCI3_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;

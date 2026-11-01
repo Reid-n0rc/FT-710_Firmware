@@ -217,11 +217,13 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
+                    /* Receive [sfr] */
   uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
@@ -237,11 +239,13 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 {
   uint mub_cr;
   
+                    /* isr_table entry store [doc, inference] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_002390d0);
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
+                    /* Control [sfr] */
       mub_cr = MUB_CR;
       memw();
       MUB_CR = mub_cr & 0xfff0fff7 | 0x4000000;
@@ -273,6 +277,7 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
   if (bVar1) {
     if (DAT_002390d4 == 0) {
       memw();
+                    /* Control [sfr] */
       mub_cr = MUB_CR;
       memw();
       MUB_CR = mub_cr & 0xfbf0fff7;
@@ -300,12 +305,14 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
+                    /* Status [sfr] */
     uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
       uVar1 = MUB_SR;
     }
     memw();
+                    /* Transmit [sfr] */
     MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;

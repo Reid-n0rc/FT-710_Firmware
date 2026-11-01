@@ -12,6 +12,7 @@ void FUN_fffd0194(char param_1)
     PTR_g_ui_00025d60->sd_busy = 1;
     return;
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }
@@ -360,18 +361,22 @@ void sd_menu_task(void)
       return;
     }
     if (DAT_00015de3 == '\x04') {
+                    /* Mode 4 step machine [doc, inference] */
       sd_format_step();
       return;
     }
     if (DAT_00015de3 == '\x02') {
+                    /* Mode 2 step machine [doc, inference] */
       sd_save_step();
       return;
     }
     if (DAT_00015de3 == '\x03') {
+                    /* Mode 3 step machine [doc, inference] */
       sd_info_step();
       return;
     }
     if (DAT_00015de3 == '\x01') {
+                    /* Mode 1 step machine on +0x3F7 [doc, inference] */
       sd_load_step();
       return;
     }

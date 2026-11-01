@@ -535,6 +535,7 @@ void riic_transmit_stop(int param_1)
 {
   void *riic_base_ret;
   
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
   reg_rmw8((int)riic_base_ret + 4,1,3,8);
@@ -554,28 +555,44 @@ void riic_transmit_restart(int param_1)
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(1);
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
     userdef_riic0_init_tx_empty();
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
     userdef_riic0_init_tx_end(0);
   }
   else if (param_1 == 1) {
+                    /* spins on RIIC1CR2 bit 7 [doc, inference] */
     userdef_riic1_wait_bus_master(1);
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
     userdef_riic1_init_tx_empty();
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
     userdef_riic1_init_tx_end(0);
   }
   else if (param_1 == 2) {
+                    /* spins on RIIC2CR2 bit 7 [doc, inference] */
     userdef_riic2_wait_bus_master(1);
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
     userdef_riic2_init_tx_empty();
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
     userdef_riic2_init_tx_end(0);
   }
   else if (param_1 == 3) {
+                    /* spins on RIIC3CR2 bit 7 [doc, inference] */
     userdef_riic3_wait_bus_master(1);
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
     userdef_riic3_init_tx_empty();
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
     userdef_riic3_init_tx_end(0);
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 4,1,2,4);
   return;
@@ -594,28 +611,44 @@ void riic_transmit_start(int param_1)
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(0);
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
     userdef_riic0_init_tx_empty();
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
     userdef_riic0_init_tx_end(0);
   }
   else if (param_1 == 1) {
+                    /* spins on RIIC1CR2 bit 7 [doc, inference] */
     userdef_riic1_wait_bus_master(0);
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
     userdef_riic1_init_tx_empty();
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
     userdef_riic1_init_tx_end(0);
   }
   else if (param_1 == 2) {
+                    /* spins on RIIC2CR2 bit 7 [doc, inference] */
     userdef_riic2_wait_bus_master(0);
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
     userdef_riic2_init_tx_empty();
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
     userdef_riic2_init_tx_end(0);
   }
   else if (param_1 == 3) {
+                    /* spins on RIIC3CR2 bit 7 [doc, inference] */
     userdef_riic3_wait_bus_master(0);
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
     userdef_riic3_init_tx_empty();
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
     userdef_riic3_init_tx_end(0);
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 4,1,1,2);
   return;
@@ -658,24 +691,29 @@ undefined4 riic_transmit(int param_1,undefined1 param_2)
   void *riic_base_ret;
   undefined4 uVar1;
   
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
   if (reg_read8_ret == 0) {
     uVar1 = 0;
     if (param_1 == 0) {
       userdef_riic0_wait_tx_empty();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
       userdef_riic0_init_tx_empty();
     }
     else if (param_1 == 1) {
       userdef_riic1_wait_tx_empty();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
       userdef_riic1_init_tx_empty();
     }
     else if (param_1 == 2) {
       userdef_riic2_wait_tx_empty();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
       userdef_riic2_init_tx_empty();
     }
     else if (param_1 == 3) {
       userdef_riic3_wait_tx_empty();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
       userdef_riic3_init_tx_empty();
     }
     *(undefined1 *)((int)riic_base_ret + 0x3c) = param_2;
@@ -701,24 +739,34 @@ int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
   void *riic_base_ret;
   
   if ((param_1 < 4) && (param_3 < 2)) {
+                    /* returns -2 on NACK [doc] */
     iVar1 = riic_transmit(param_1,param_2);
     if (iVar1 == 0) {
       if (param_1 == 0) {
+                    /* spins until the ch0 transmit-end flag [doc, inference] */
         userdef_riic0_wait_tx_end(param_3);
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
         userdef_riic0_init_tx_end(param_3);
       }
       else if (param_1 == 1) {
+                    /* spins until the ch1 transmit-end flag [doc, inference] */
         userdef_riic1_wait_tx_end(param_3);
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
         userdef_riic1_init_tx_end(param_3);
       }
       else if (param_1 == 2) {
+                    /* spins until the ch2 transmit-end flag [doc, inference] */
         userdef_riic2_wait_tx_end(param_3);
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
         userdef_riic2_init_tx_end(param_3);
       }
       else if (param_1 == 3) {
+                    /* spins until the ch3 transmit-end flag [doc, inference] */
         userdef_riic3_wait_tx_end(param_3);
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
         userdef_riic3_init_tx_end(param_3);
       }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
       riic_base_ret = riic_base(param_1);
       reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
       if (reg_read8_ret != 0) {
@@ -753,6 +801,7 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
   else {
     i = 0;
     do {
+                    /* returns -2 on NACK [doc] */
       iVar1 = riic_transmit(param_1,*(undefined1 *)(param_2 + i));
       if (iVar1 != 0) {
         return iVar1;
@@ -760,21 +809,30 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
       i = i + 1;
     } while (i < param_3);
     if (param_1 == 0) {
+                    /* spins until the ch0 transmit-end flag [doc, inference] */
       userdef_riic0_wait_tx_end(0);
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
       userdef_riic0_init_tx_end(0);
     }
     else if (param_1 == 1) {
+                    /* spins until the ch1 transmit-end flag [doc, inference] */
       userdef_riic1_wait_tx_end(0);
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
       userdef_riic1_init_tx_end(0);
     }
     else if (param_1 == 2) {
+                    /* spins until the ch2 transmit-end flag [doc, inference] */
       userdef_riic2_wait_tx_end(0);
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
       userdef_riic2_init_tx_end(0);
     }
     else if (param_1 == 3) {
+                    /* spins until the ch3 transmit-end flag [doc, inference] */
       userdef_riic3_wait_tx_end(0);
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
       userdef_riic3_init_tx_end(0);
     }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
     iVar1 = 0;
@@ -809,18 +867,23 @@ void riic_detect_stop(int param_1)
   void *riic_base_ret;
   
   if (param_1 == 0) {
+                    /* Spins until RIIC0SR2 bit 3 [doc, inference] */
     userdef_riic0_wait_stop();
   }
   else if (param_1 == 1) {
+                    /* Spins until RIIC1SR2 bit 3 [doc, inference] */
     userdef_riic1_wait_stop();
   }
   else if (param_1 == 2) {
+                    /* Spins until RIIC2SR2 bit 3 [doc, inference] */
     userdef_riic2_wait_stop();
   }
   else if (param_1 == 3) {
     userdef_riic3_wait_stop();
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
+                    /* clears ICSR2 NACKF [doc] */
   riic_clear_nack();
   reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
   return;
@@ -838,21 +901,30 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
   void *riic_base_ret;
   
   if (param_1 == 0) {
+                    /* Spins until the ch0 receive-full flag 0x20800454 is set [doc, inference] */
     userdef_riic0_wait_rx_full();
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
   }
   else if (param_1 == 1) {
+                    /* Spins until the ch1 receive-full flag 0x20800455 is set [doc, inference] */
     userdef_riic1_wait_rx_full();
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
   }
   else if (param_1 == 2) {
+                    /* Spins until the ch2 receive-full flag 0x20800456 is set [doc, inference] */
     userdef_riic2_wait_rx_full();
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
   }
   else if (param_1 == 3) {
+                    /* Spins until the ch3 receive-full flag 0x20800457 is set [doc, inference] */
     userdef_riic3_wait_rx_full();
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   switch(param_2) {
   case 1:
@@ -867,6 +939,7 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
     reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     break;
   case 4:
+                    /* clears ICSR2 STOP [doc, inference] */
     riic_transmit_stop(param_1);
   }
   *param_3 = *(undefined1 *)((int)riic_base_ret + 0x40);
@@ -882,6 +955,7 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
 void riic_receive_dummy(uint param_1)
 
 {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base(param_1);
   return;
 }
@@ -901,16 +975,19 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
     return 0xffffffff;
   }
   if (param_3 != 0) {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     if (param_3 == 1) {
       reg_rmw8((int)riic_base_ret + 0x10,1,6,0x40);
       reg_rmw8((int)riic_base_ret + 0x10,1,4,0x10);
       reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     }
+                    /* only computes the channel base in this build [doc] */
     riic_receive_dummy(param_1);
     if (param_3 != 1) {
       if (param_3 != 2) {
         for (; 3 < param_3; param_3 = param_3 - 1) {
+                    /* waits for receive full [doc] */
           riic_receive(param_1,0,param_2);
           param_2 = param_2 + 1;
         }
@@ -922,6 +999,7 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
     }
     riic_receive(param_1,4,param_2);
     reg_rmw8((int)riic_base_ret + 0x10,0,6,0x40);
+                    /* waits for the STOP flag, clears NACKF and STOP [doc, inference] */
     riic_detect_stop(param_1);
     return 0;
   }
@@ -937,6 +1015,7 @@ undefined4 R_RIIC_ReadDummy(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* only computes the channel base in this build [doc] */
     riic_receive_dummy(param_1);
     return 0;
   }
@@ -952,6 +1031,7 @@ undefined4 R_RIIC_DetectStop(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* waits for the STOP flag, clears NACKF and STOP [doc, inference] */
     riic_detect_stop(param_1);
     return 0;
   }
@@ -967,7 +1047,9 @@ undefined4 R_RIIC_ClearNack(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base(param_1);
+                    /* clears ICSR2 NACKF [doc] */
     riic_clear_nack();
     return 0;
   }
@@ -987,12 +1069,15 @@ undefined4 R_RIIC_RiInterrupt(uint param_1)
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 receive-full flag 0x20800454 [doc] */
       userdef_riic0_set_rx_full();
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 receive-full flag 0x20800455 [doc] */
       userdef_riic1_set_rx_full();
     }
     else if (param_1 == 2) {
+                    /* Sets the ch2 receive-full flag 0x20800456 [doc] */
       userdef_riic2_set_rx_full();
     }
     else if (param_1 == 3) {
@@ -1018,9 +1103,11 @@ undefined4 R_RIIC_TiInterrupt(uint param_1)
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 transmit-empty flag 0x20800458 [doc] */
       userdef_riic0_set_tx_empty();
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 transmit-empty flag 0x20800459 [doc] */
       userdef_riic1_set_tx_empty();
     }
     else if (param_1 == 2) {
@@ -1052,17 +1139,21 @@ R_RIIC_TeiInterrupt(uint param_1,undefined4 param_2,undefined4 param_3,undefined
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 transmit-end flag 0x2080045C [doc] */
       userdef_riic0_set_tx_end(0);
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 transmit-end flag 0x2080045D [doc] */
       userdef_riic1_set_tx_end();
     }
     else if (param_1 == 2) {
+                    /* Sets the ch2 transmit-end flag 0x2080045E [doc] */
       userdef_riic2_set_tx_end();
     }
     else if (param_1 == 3) {
       userdef_riic3_set_tx_end();
     }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,param_4);
     reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);

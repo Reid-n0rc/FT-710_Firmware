@@ -38,6 +38,7 @@ void func_color_select(void)
 
 {
   g_opstate.func_knob = 3;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xb);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 0xb;
@@ -136,6 +137,7 @@ void func_keyer_toggle(void)
     return;
   }
   g_opstate.keyer_on = g_opstate.keyer_on != 1;
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
   beep_request(1);
   PTR_g_ui_00025d54->key_consumed = 1;
@@ -214,6 +216,7 @@ void func_bk_in_toggle(void)
       return;
     }
     vfo_bk_in_bit_toggle(vfo_rec_ptr_ret);
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
     keyer_init();
     beep_request(1);
     PTR_g_ui_00025d54->key_consumed = 1;
@@ -1155,6 +1158,7 @@ void FUN_fffc49c1(void)
   byte *pbVar1;
   byte bVar2;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;
@@ -1187,6 +1191,7 @@ void FUN_fffc4a47(void)
 {
   byte *pbVar1;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;

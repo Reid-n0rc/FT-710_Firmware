@@ -509,6 +509,7 @@ undefined4 __ratio(int param_1,int param_2)
     uStack_38 = (int)uVar5;
     iStack_34 = iVar3;
   }
+                    /* XCC soft double [doc, inference] */
   uVar1 = __divdf3((int)uVar5,iVar3,(int)uVar6,iVar4);
   return uVar1;
 }
@@ -533,6 +534,7 @@ undefined8 _mprec_log10(int param_1)
     return 0;
   }
   do {
+                    /* XCC soft double [doc, inference] */
     uVar1 = __muldf3((int)uVar1,(int)((ulonglong)uVar1 >> 0x20),0,0x40240000);
     i = i + 1;
   } while (i != param_1);
@@ -573,6 +575,7 @@ int __sread(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4
 {
   int iVar1;
   
+                    /* newlib reent read [doc, inference] */
   iVar1 = _read_r(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
   if (-1 < iVar1) {
     *(int *)(param_2 + 0x50) = *(int *)(param_2 + 0x50) + iVar1;
@@ -599,6 +602,7 @@ undefined4 __swrite(undefined4 param_1,int param_2,undefined4 param_3,undefined4
     uVar1 = *(ushort *)(param_2 + 0xc);
   }
   *(ushort *)(param_2 + 0xc) = uVar1 & 0xefff;
+                    /* newlib reent write [doc, inference] */
   uVar2 = _write_r(param_1,(int)*(short *)(param_2 + 0xe),param_3,param_4);
   return uVar2;
 }
@@ -915,6 +919,7 @@ char * _vfiprintf_r(int param_1,int param_2,byte *param_3,int param_4,int param_
     uVar8 = (uint)*(short *)(param_2 + 0xc);
   }
   if (((uVar8 & 0x1a) == 10) && (-1 < *(short *)(param_2 + 0xe))) {
+                    /* newlib vfiprintf.c copy of __sbprintf [doc, inference] */
     pcVar10 = (char *)__sbprintf_i(iStack_60,param_2,param_3,iStack_34,iStack_30,iStack_2c);
     return pcVar10;
   }
@@ -2340,6 +2345,7 @@ int * _realloc_r(undefined4 *param_1,int *param_2,uint param_3)
     piVar1 = (int *)_malloc_r(param_1,param_3);
     return piVar1;
   }
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   uVar7 = param_2[-1];
   piVar1 = param_2 + -2;
@@ -2611,6 +2617,7 @@ joined_r0x00232bf4:
     *(uint *)((int)piVar1 + uStack_28 + 4) = *(uint *)((int)piVar1 + uStack_28 + 4) | 1;
     _free_r(param_1,(int)piVar1 + uVar2 + 8);
   }
+                    /* XOS clib support [doc, inference] */
   __malloc_unlock(param_1);
   return piVar1 + 2;
 }
@@ -3038,6 +3045,7 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
     else if (((param_1 & 0x1fffffff) != 0) || ((uVar5 + 1 & 0x1fffffff) != 0)) {
       return 0xfffffffe;
     }
+                    /* rdtlb1 of the 8 x 512 MB regions [doc, inference] */
     uVar2 = xthal_get_cacheattr();
     uVar5 = uVar2;
     if (uVar7 < uVar6) {

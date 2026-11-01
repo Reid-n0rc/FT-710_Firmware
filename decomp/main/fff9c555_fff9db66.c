@@ -678,6 +678,7 @@ void freq_cache_update(void)
         PTR_g_ui_00025d38->dsp_knob_apf = 0;
       }
     }
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
     uVar3 = vfo_freq_clar(1,2);
     uVar3 = tx_freq_repeater_shift(uVar3);
     PTR_g_ui_00025d38->freq_tx = uVar3;
@@ -692,6 +693,7 @@ void freq_cache_update(void)
       else {
         uStack_8 = PTR_g_ui_00025d38->freq_b;
       }
+                    /* Mode-dependent signed offset [doc, inference] */
       vfo_display_offset_ret = vfo_display_offset();
       uStack_c = (uint)vfo_display_offset_ret;
       if ((vfo_display_offset_ret & 0x8000) != 0) {
@@ -762,6 +764,7 @@ void dsp_link_init(void)
     bVar2 = dsp_check_reply('r',&iStack_10);
   } while (bVar2 != 1);
   DAT_0001b6e0 = hex2word((char *)(iStack_10 + 1));
+                    /* if/else chain over the register number [doc] */
   dsp_shadow_store();
   bVar1 = true;
 LAB_fff9d11b:
@@ -813,13 +816,16 @@ void dsp_link_poll(void)
   local_1 = g_ui.transmitting;
   local_2 = g_ui.trx_state;
   if (DAT_00001c5e == '\x01') {
+                    /* Write in flight: ACK 0x06 confirms the shadow value [fact: dsp-link.md] */
     bVar2 = dsp_check_reply('w',&iStack_8);
     if (bVar2 != 1) {
       return;
     }
+                    /* if/else chain over the register number [doc] */
     dsp_shadow_store();
   }
   if (DAT_00001c5f == '\x01') {
+                    /* Read in flight: valid r-reply goes to the shadow [fact: dsp-link.md] */
     bVar2 = dsp_check_reply('r',&iStack_8);
     if (bVar2 != 1) {
       return;
@@ -828,6 +834,7 @@ void dsp_link_poll(void)
     dsp_shadow_store();
   }
   if (DAT_00001c63 == '\x01') {
+                    /* ISP tunnel for a DSP firmware update [fact: dsp-link.md] */
     dsp_isp_bridge();
   }
   if ((local_2 == 3) || (local_2 == 8)) {
@@ -836,6 +843,7 @@ void dsp_link_poll(void)
   else {
     bVar1 = false;
   }
+                    /* RX/TX steady: read status regs 1..4, one per pass [fact: dsp-link.md] */
   if ((bVar1) && (bVar2 = swtimer_expired(0xb), bVar2 == 1)) {
     if (DAT_0001b3da == '\x02') {
       dsp_read_status3();
@@ -850,6 +858,7 @@ void dsp_link_poll(void)
     if (DAT_0001b3da != '\0') {
       dsp_read_status4();
       DAT_0001b3da = 0;
+                    /* After reg 4: next status burst in 20 ms [fact: dsp-link.md] */
       swtimer_start(0xb,0x14);
       return;
     }
@@ -879,6 +888,9 @@ void dsp_link_poll(void)
     DAT_0001b3d9 = local_1;
   }
   dsp_set_r08(local_1);
+                    /* Setter chain: the first register that changed is sent [fact: dsp-link.md] */
+                    /* reg 0x30 = 0xFF in FM modes [doc, inference] */
+                    /* reg 0x62 AGC on, reg 0x66 AGC delay [doc, inference] */
   if ((((((((DAT_00001c5e == '\0') && (dsp_set_r09(local_1), DAT_00001c5e == '\0')) &&
           (dsp_set_r0a(local_1), DAT_00001c5e == '\0')) &&
          ((dsp_set_r0d(local_1), DAT_00001c5e == '\0' &&
@@ -1285,6 +1297,7 @@ void dsp_set_r08(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(8);
   if (DAT_0001b640 == dsp_route_param_ret) {
     return;
@@ -1305,6 +1318,7 @@ void dsp_set_r09(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(9);
   if (DAT_0001b642 == dsp_route_param_ret) {
     return;
@@ -1325,6 +1339,7 @@ void dsp_set_r0a(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(10);
   if (DAT_0001b644 == dsp_route_param_ret) {
     return;
@@ -1362,6 +1377,7 @@ void dsp_set_r0d(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(0xd);
   if (DAT_0001b648 == dsp_route_param_ret) {
     return;
@@ -1382,6 +1398,7 @@ void dsp_set_r0e(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(0xe);
   if (DAT_0001b64a == dsp_route_param_ret) {
     return;

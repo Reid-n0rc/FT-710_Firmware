@@ -112,6 +112,7 @@ uint scif4_rxi_count_get(void)
 void scif_uarts_ctor(void)
 
 {
+                    /* sets the vtable pointer 0x2042803C [doc] */
   uart_obj_ctor(&scif3_uart);
   uart_obj_ctor(&scif4_uart);
   uart_obj_ctor(&scif5_uart);
@@ -194,6 +195,7 @@ uint sfl_crc(uint param_1)
   
   uVar1 = 0xffffffff;
   local_10 = 0x139eeca6;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
   crc32_make_table();
   while (fs_fread_ret = fs_fread((uint)auStack_110,1,0x100,param_1), fs_fread_ret != 0) {
     uVar1 = crc32_update(uVar1,fs_fread_ret,(uint)auStack_110);
@@ -341,6 +343,7 @@ uint sfl_read_header(uint param_1,int param_2)
     iVar3 = iVar3 + 1;
   } while (iVar3 < 9);
   local_d8 = 0;
+                    /* Word-at-a-time string length [doc] */
   iVar3 = strlen(auStack_118);
   if (iVar3 == 0x40) {
     uVar1 = sfl_crc(param_1);
@@ -354,6 +357,7 @@ uint sfl_read_header(uint param_1,int param_2)
       iVar3 = iVar3 + 1;
     } while (iVar3 < 8);
     iVar3 = fs_fgets(auStack_118,0x100,param_1);
+                    /* next token, 0 at the end [doc] */
     if ((((iVar3 != 0) && (iVar3 = strtok_r(local_18,&DWORD_20114df0,&local_18), iVar3 != 0)) &&
         (iVar3 = strtok_r(local_18,&DWORD_20114df0,&local_18), iVar3 != 0)) &&
        (pbVar2 = (byte *)strtok_r(local_18,&DWORD_20114df0,&local_18), pbVar2 != (byte *)0x0)) {
@@ -375,6 +379,7 @@ void system_reboot(void)
 
 {
   itron_chg_pri(0,1);
+                    /* P2_4, P2_5 and P10_1 low [doc, inference] */
   gpio_p2_4_5_clear();
   backlight_enable(0);
   lvds_pins_enable(0);
@@ -385,12 +390,14 @@ void system_reboot(void)
   gpio_p7_9_11(1);
   itron_dly_tsk(4);
   gpio_rx_update(0);
+                    /* Drive the MAIN reset and boot pins [fact: mainlink.md] */
   gpio_rx_reset(1);
   itron_dly_tsk(1);
   gpio_p8_5(1);
   gpio_rx_reset(0);
   itron_dly_tsk(0xe);
   gpio_qf_reset(1);
+                    /* Then reset the DISPLAY by the watchdog [fact: 0x20100268] */
   wdt_system_reset();
   return;
 }
@@ -456,6 +463,7 @@ void uart4_link_init(void)
   if ((0 < (int)itron_acre_tsk_ret) &&
      (uVar1 = itron_acre_flg(0,(byte *)&cflg_uart4), 0 < (int)uVar1)) {
     *(uint *)(DAT_20450020 + 0x14) = uVar1;
+                    /* UART object on SCIF4 [doc, inference] */
     scif4_get_ret = scif4_get(uVar1);
     uVar1 = DAT_20450020;
     *(void **)(DAT_20450020 + 0x10) = scif4_get_ret;
@@ -769,6 +777,7 @@ void mainlink_submit(uint param_1,uint param_2)
   int iVar6;
   
   uVar2 = mainlink_tx_alloc((int)(g_ml.link_obj + 0x8218));
+                    /* Mailbox header: tag 0xAA, length [fact: mainlink.md] */
   *(undefined2 *)(uVar2 + 4) = 0xaa;
   *(short *)(uVar2 + 6) = (short)param_2 + 1;
   memcpy(uVar2 + 8,param_1,param_2);
@@ -785,12 +794,14 @@ void mainlink_submit(uint param_1,uint param_2)
       } while (iVar3 < iVar5);
     }
     *(char *)((uint)*(ushort *)(uVar2 + 6) + uVar2 + 7) = cVar4;
+                    /* F0/F1: send at once, no ACK wait [fact: mainlink.md] */
     mainlink_tx_post((int)(g_ml.link_obj + 0x8218),uVar2);
     return;
   }
   if (DAT_2080049c == '\0') {
     if (g_ml.ack_pending == 0) {
       __aeabi_memclr4(&DAT_2045efc0,0x105);
+                    /* Keep a copy for a resend [fact: mainlink.md] */
       memcpy(&DAT_2045efc0,param_1,param_2);
       g_ml.resend_len = param_2;
       mainlink_set_wait_cmd(*(byte *)(uVar2 + 8));
@@ -806,6 +817,7 @@ void mainlink_submit(uint param_1,uint param_2)
       }
       *(char *)((uint)*(ushort *)(uVar2 + 6) + uVar2 + 7) = cVar4;
       mainlink_tx_post((int)(g_ml.link_obj + 0x8218),uVar2);
+                    /* Wait for ACK: start the ACK timeout handler [fact: mainlink.md] */
       g_ml.ack_pending = 1;
       g_ml.retry_count = 0;
       itron_sta_cyc(g_ml.ack_tmo_cyc);
@@ -813,6 +825,7 @@ void mainlink_submit(uint param_1,uint param_2)
     }
     if (bVar1 == 0xe4) {
       DAT_20470108 = 0;
+                    /* ACK pending: park the frame, one slot per type [fact: mainlink.md] */
       memcpy(&DAT_20470108,param_1,param_2);
       DAT_2045f241 = 1;
       return;
@@ -823,6 +836,7 @@ void mainlink_submit(uint param_1,uint param_2)
         g_ml.e0_wr = (byte)(uVar2 % 10);
         iVar3 = (uVar2 % 10) * 5;
         FUN_20163668(iVar3 + 0x20470117,(uVar2 / 10) * -5,uVar2 * -0x33333333);
+                    /* E0 keys park in a 10-entry ring [fact: mainlink.md] */
         memcpy(iVar3 + 0x20470117,param_1,param_2);
         DAT_2045f244 = 1;
         return;
@@ -864,6 +878,7 @@ void mainlink_submit(uint param_1,uint param_2)
     }
     else {
       if (bVar1 == 0xe7) {
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
         __aeabi_memclr(&DAT_20470153,9);
         memcpy(&DAT_20470153,param_1,param_2);
         DAT_2045f247 = 1;
@@ -947,6 +962,7 @@ void mainlink_queue_frame(uint param_1,uint param_2)
     goto LAB_20115704;
   }
   if (gui_frame.cmd == 0x7b) {
+                    /* On the '{' screen a key frame becomes E4 [fact: mainlink.md] */
     if ((gui_frame.byte1 != 0) && (DAT_2045f4a0 == -0x1e)) {
       local_30[0] = 0xe4;
       DAT_20800488 = 1;
@@ -971,6 +987,7 @@ LAB_2011553c:
     }
   }
   if (DAT_20800494 != '\0') {
+                    /* FIRMWARE UPDATE entry + power key: arm update mode [fact: mainlink.md] */
     return;
   }
   if ((((g_ml.fwupdate_armed != 0) && (DAT_2045f4a0 == -0x20)) && (DAT_2045f4a1 == 0)) &&
@@ -979,6 +996,7 @@ LAB_2011553c:
     return;
   }
 LAB_20115704:
+                    /* Pass the filtered frame on [fact: 0x201150F8] */
   mainlink_submit(local_2c,param_2);
   return;
 }
@@ -1004,6 +1022,7 @@ void mainlink_send_enc(byte *param_1)
   if (g_ml.ack_pending != 0) {
     itron_twai_sem(g_ml.enc_sem,0xffffffff);
     uVar3 = (uint)*param_1;
+                    /* ACK pending: queue the encoder event [fact: mainlink.md] */
     g_ml.enc_queue_mask = g_ml.enc_queue_mask | (byte)(1 << uVar3);
     iVar4 = (&DAT_2045f224)[uVar3];
     if (iVar4 < 10) {
@@ -1013,6 +1032,7 @@ void mainlink_send_enc(byte *param_1)
     else {
       iVar4 = iVar4 * 5 + uVar3 * 0x32;
       cVar1 = (&DAT_2045f0c5)[iVar4 + -4];
+                    /* Copies 5 bytes [doc] */
       copy5(&DAT_2045f0c5 + iVar4 + -5,param_1);
       switch(uVar3) {
       case 1:
@@ -1028,6 +1048,7 @@ void mainlink_send_enc(byte *param_1)
         else if (0x7f < iVar2) {
           iVar2 = 0x7f;
         }
+                    /* Queue full: sum the deltas, clamped to +-127 [fact: mainlink.md] */
         (&DAT_2045f0c5)[iVar4 + -4] = (char)iVar2;
         break;
       case 4:
@@ -1041,6 +1062,7 @@ void mainlink_send_enc(byte *param_1)
   uVar3 = mainlink_tx_alloc((int)(g_ml.link_obj + 0x8218));
   *(undefined2 *)(uVar3 + 4) = 0xaa;
   *(undefined2 *)(uVar3 + 6) = 7;
+                    /* Send an E1 encoder frame now [fact: mainlink.md] */
   *(undefined1 *)(uVar3 + 8) = 0xe1;
   copy5(uVar3 + 9,param_1);
   FUN_201636a8(0x20450068);
@@ -1125,6 +1147,7 @@ uint pot5_filter(uint param_1)
     g_ml.pot5_hist[g_ml.pot5_last[1]] = g_ml.pot5_last[0];
     if (((param_1 - 3 < 0xfa) && (g_ml.pot5_hist[0] != g_ml.pot5_hist[2])) &&
        (g_ml.pot5_hist[1] != g_ml.pot5_hist[3])) {
+                    /* min or max of 4 bytes [doc, inference] */
       uVar1 = minmax4(1,g_ml.pot5_hist);
       minmax4_ret = minmax4(0,g_ml.pot5_hist);
       if (2 < (int)(uVar1 - minmax4_ret)) {
@@ -1162,6 +1185,7 @@ uint pot4_filter(uint param_1)
     g_ml.pot4_hist[g_ml.pot4_last[1]] = g_ml.pot4_last[0];
     if (((param_1 - 3 < 0xfa) && (g_ml.pot4_hist[0] != g_ml.pot4_hist[2])) &&
        (g_ml.pot4_hist[1] != g_ml.pot4_hist[3])) {
+                    /* min or max of 4 bytes [doc, inference] */
       uVar1 = minmax4(1,g_ml.pot4_hist);
       minmax4_ret = minmax4(0,g_ml.pot4_hist);
       if (2 < (int)(uVar1 - minmax4_ret)) {
@@ -1189,6 +1213,7 @@ void mainlink_renc_event(byte *param_1,undefined4 param_2,undefined4 param_3,und
     return;
   }
   local_10 = param_4;
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
   iVar2 = full_mode_get();
   if (iVar2 == 0) {
     return;
@@ -1273,6 +1298,7 @@ void mainlink_tx_e1_raw(uint param_1)
   *(undefined2 *)(mainlink_tx_alloc_ret + 4) = 0xaa;
   *(undefined2 *)(mainlink_tx_alloc_ret + 6) = 7;
   *(undefined1 *)(mainlink_tx_alloc_ret + 8) = 0xe1;
+                    /* Copies 5 bytes [doc] */
   copy5(mainlink_tx_alloc_ret + 9,param_1);
   cVar1 = '\0';
   i = 0;
@@ -1374,6 +1400,7 @@ void mainlink_flush_parked(void)
     return;
   }
   mainlink_submit(0x20470153,9);
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(&DAT_20470153,9);
   DAT_2045f247 = 0;
   return;
@@ -1411,6 +1438,7 @@ void mainlink_flush_enc(void)
     FUN_20163668(&DAT_2045f0c5 + (&DAT_2045f224)[uVar2] * 5 + uVar2 * 0x32);
     return;
   }
+                    /* Copies 5 bytes [doc] */
   copy5(abStack_28);
   iVar3 = (&DAT_2045f224)[uVar2];
   i = 0;
@@ -1436,8 +1464,10 @@ void mainlink_on_ack(void)
 {
   if (g_ml.ack_pending != 0) {
     itron_clr_flg(g_ml.retry_flg,0);
+                    /* ACK: stop the timeout, clear pending [fact: mainlink.md] */
     itron_stp_cyc(g_ml.ack_tmo_cyc);
     g_ml.ack_pending = 0;
+                    /* Send the next parked frame, then a queued encoder [fact: mainlink.md] */
     mainlink_flush_parked();
     if (g_ml.enc_queue_mask != 0) {
       mainlink_flush_enc();
@@ -1462,9 +1492,11 @@ void mainlink_on_nak(void)
     if (2 < g_ml.retry_count) {
       if (g_ml.err_box_on_fail != 0) {
         bVar1 = mainlink_get_wait_cmd();
+                    /* 3 failures after a 0xDB hello: show the command in hex [fact: mainlink.md] */
         gui_link_error_popup(0,bVar1);
         return;
       }
+                    /* 3 failures: reset MAIN and the DISPLAY [fact: 0x20114DF4] */
       system_reboot();
       return;
     }
@@ -1473,6 +1505,7 @@ void mainlink_on_nak(void)
       mainlink_tx_e1_raw(0x20450068);
     }
     else {
+                    /* NAK: resend the kept frame at once [fact: mainlink.md] */
       mainlink_tx_raw(0x2045efc0,g_ml.resend_len);
     }
     itron_sta_cyc(g_ml.ack_tmo_cyc);

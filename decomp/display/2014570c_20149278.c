@@ -10,6 +10,7 @@ undefined4 sfn_match_dotted(char *param_1)
   char *pcVar1;
   char local_18 [12];
   
+                    /* "NAME.EXT" to the 11-byte space-padded 8.3 form [doc] */
   sfn_from_dotted(local_18);
   pcVar1 = local_18;
   while( true ) {
@@ -275,11 +276,13 @@ int root_lfn_collect(int param_1,int param_2,short *param_3,uint param_4,int par
   local_30 = -1;
   local_50 = (byte *)(param_6 + 0xe0c);
   uVar4 = *(uint *)(param_1 + 0x6c) >> 5;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar7 = __aeabi_uidivmod(param_2,uVar4);
   iVar6 = (int)uVar7;
   if ((param_2 != 0) && ((int)((ulonglong)uVar7 >> 0x20) == 0)) {
     iVar6 = __aeabi_uidivmod(param_2 + -1,uVar4);
   }
+                    /* sector n of the fixed FAT12/16 root directory [doc] */
   iVar1 = root_sector_get(param_1,iVar6,&local_50);
   if (iVar1 == 0) {
     uVar4 = *(uint *)(param_1 + 0x6c);
@@ -299,6 +302,7 @@ int root_lfn_collect(int param_1,int param_2,short *param_3,uint param_4,int par
       local_2c = param_4 - 1;
       do {
         pbVar5 = pbVar5 + -0x20;
+                    /* Copies the 13 UTF-16 characters of a long-name entry [doc] */
         iVar1 = lfn_entry_get_chars(pbVar5,local_4c);
         psVar3 = local_4c;
         while (iVar1 != 0) {
@@ -400,6 +404,7 @@ int root_dir_find(int param_1,undefined4 param_2,undefined4 param_3,int param_4,
   else if (cVar2 == '\0') goto LAB_20145edc;
   if ((local_40[0] == '\0') && (param_4 == 0 || param_4 == 2)) {
     fs_memcpy(auStack_54,local_30,0xd);
+                    /* Case-insensitive string compare [doc] */
     fs_stricmp(auStack_70,auStack_54);
   }
 LAB_20145edc:
@@ -409,8 +414,10 @@ LAB_20145edc:
   uVar1 = (undefined2)(uVar5 + 1);
   if (*(short *)(local_34 + 10) != 0) {
     do {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       uVar12 = __aeabi_uidivmod(uVar7,*(uint *)(local_34 + 0x6c) >> 5);
       uVar13 = (undefined4)uVar12;
+                    /* sector n of the fixed FAT12/16 root directory [doc] */
       if (((int)((ulonglong)uVar12 >> 0x20) == 0) &&
          (iVar3 = root_sector_get(local_34,uVar13,&local_3c), pcVar4 = local_3c, local_38 = uVar13,
          iVar3 != 0)) {
@@ -443,6 +450,7 @@ LAB_20145edc:
             fs_utoa6(&local_60,uVar9);
           }
           cVar2 = sfn_matches_long(local_30,auStack_70,&local_60);
+                    /* "NAME.EXT" to the 11-byte space-padded 8.3 form [doc] */
           sfn_from_dotted(local_80,auStack_70,local_34);
           if (local_80[0] == -0x1b) {
             local_80[0] = '\x05';
@@ -500,6 +508,7 @@ LAB_201461a8:
             }
           }
           else {
+                    /* Byte-wise string length [doc] */
             uVar5 = fs_strlen(local_30);
             if (uVar5 < 0xd) {
               if (uVar9 != 0) {
@@ -565,8 +574,10 @@ root_dir_find_locked
   int iVar1;
   undefined4 uVar2;
   
+                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
   iVar1 = fs_lock_a();
   if (iVar1 == 0) {
+                    /* Searches the fixed FAT12/16 root directory for a name [doc, inference] */
     uVar2 = root_dir_find(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
     fs_unlock_a(param_1);
   }
@@ -591,6 +602,7 @@ int dir_cluster_alloc_zeroed(int param_1,undefined4 param_2,int param_3,int para
   int local_18;
   
   local_18 = param_4;
+                    /* fat_alloc_cluster under fs_lock_b [doc] */
   iVar1 = fat_alloc_cluster_locked(param_1,param_2,&local_18,param_3);
   if (iVar1 == 0) {
     if (local_18 == 0) {
@@ -598,6 +610,7 @@ int dir_cluster_alloc_zeroed(int param_1,undefined4 param_2,int param_3,int para
       return 0;
     }
     iVar2 = fat_clust2sect(param_1);
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
     fs_memset(param_3 + 0x60c,0,0x200);
     i = 0;
     if (*(short *)(param_1 + 4) != 0) {
@@ -677,6 +690,7 @@ undefined4 sfn_equals(char *param_1)
   char local_18 [12];
   
   pcVar3 = local_18;
+                    /* "NAME.EXT" to the 11-byte space-padded 8.3 form [doc] */
   sfn_from_dotted(local_18);
   if (local_18[0] == -0x1b) {
     local_18[0] = '\x05';
@@ -722,12 +736,15 @@ undefined4 sfn_numtail_next(undefined4 param_1,undefined4 param_2,undefined4 par
   undefined1 auStack_18 [12];
   
   iVar1 = sfn_numtail_match();
+                    /* Second identical copy of fs_atoi [doc] */
   iVar2 = fs_atoi_2(param_3);
   if (iVar2 <= iVar1) {
     if (0x98967e < iVar1) {
       return 0xffffffbe;
     }
+                    /* Second identical copy of fs_itoa [doc] */
     fs_itoa_2(iVar1 + 1,auStack_18,10);
+                    /* Byte string copy including the terminator [doc] */
     fs_strcpy(param_3,auStack_18);
   }
   return 0;
@@ -752,6 +769,7 @@ undefined4 subdir_lfn_match(int param_1,byte *param_2,short *param_3,int param_4
   short local_40 [14];
   
   iVar7 = 0;
+                    /* Checksum of an 11-byte 8.3 name [doc] */
   uVar2 = lfn_checksum(param_2);
   do {
     pbVar1 = param_2;
@@ -763,6 +781,7 @@ undefined4 subdir_lfn_match(int param_1,byte *param_2,short *param_3,int param_4
     }
     param_2 = pbVar1 + -0x20;
     if ((pbVar1[-0x15] != 0xf) || (pbVar1[-0x13] != uVar2)) goto LAB_201466e0;
+                    /* Copies the 13 UTF-16 characters of a long-name entry [doc] */
     iVar3 = lfn_entry_get_chars(param_2,local_40);
     psVar6 = local_40;
     for (; 0 < iVar3; iVar3 = iVar3 + -1) {
@@ -827,10 +846,12 @@ void subdir_write_lfn(int param_1,undefined4 *param_2,int param_3,char *param_4,
     }
     pbVar3 = local_28 + (*(uint *)(param_1 + 0x6c) & 0xffffffe0);
   }
+                    /* Checksum of an 11-byte 8.3 name [doc] */
   bVar1 = lfn_checksum(param_4);
   bVar6 = 1;
   do {
     pbVar4 = pbVar3 + -0x20;
+                    /* fills one 32-byte long-name directory entry [doc] */
     iVar2 = lfn_entry_fill(pbVar4,param_5,param_1);
     *pbVar4 = bVar6;
     param_5 = param_5 + iVar2 * 2;
@@ -871,6 +892,7 @@ int dirent_get_cluster(int param_1,int param_2)
   int iVar2;
   
   if (param_2 != 0xc && param_2 != 0x10) {
+                    /* 16-bit field read from an on-disk structure [doc] */
     iVar1 = fat_ld_word(param_1 + 0x1a);
     iVar2 = fat_ld_word(param_1 + 0x14);
     return iVar1 + iVar2 * 0x10000;
@@ -936,6 +958,7 @@ uint subdir_find(int param_1,int param_2,undefined4 param_3,undefined4 param_4,i
   local_30 = param_2;
   local_2c = param_3;
   local_28 = param_4;
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(local_6c,0x20,0xb,*(undefined4 *)(param_1 + 0x6c));
   local_6c[0] = 0x2e;
   local_b8[0] = (char *)(param_9 + 0x60c);
@@ -954,6 +977,7 @@ uint subdir_find(int param_1,int param_2,undefined4 param_3,undefined4 param_4,i
   local_87 = 0;
   uVar9 = 0;
   uVar10 = 0;
+                    /* fat_entry_rw under fs_lock_b, result to out [doc] */
   uVar3 = fat_entry_rw_locked(param_1,local_3c,local_30,0,0x72,param_9);
   if (uVar3 == 0) {
     if (local_3c[0] == 0) {
@@ -964,8 +988,11 @@ LAB_20146b94:
       local_50 = param_9 + 0x40c;
       iVar4 = sjis_to_ucs2_str(local_2c,local_50,local_40);
       if (iVar4 != -99) {
+                    /* Byte-wise string length [doc] */
         if ((param_5 == 0 || param_5 == 2) && (uVar3 = fs_strlen(local_2c), uVar3 < 0xd)) {
+                    /* Byte string copy including the terminator [doc] */
           fs_strcpy(local_a0,local_2c);
+                    /* Lower-cases a string in place, skipping Shift-JIS pairs [doc] */
           fs_strlwr_sjis(local_a0);
         }
         if (local_a0[0] == '\0') {
@@ -980,6 +1007,7 @@ LAB_20146b94:
         local_90 = uVar11 + 1 & 0xffff;
         if (((local_70 != 0) && (local_40[0] == '\0')) && (param_5 == 0 || param_5 == 2)) {
           fs_memcpy(auStack_60,local_a0,0xd);
+                    /* Case-insensitive string compare [doc] */
           iVar4 = fs_stricmp(auStack_c8,auStack_60);
           if (iVar4 == 0) {
             local_70 = 0;
@@ -1000,6 +1028,8 @@ LAB_20146b94:
               }
               local_d4[0] = iVar4;
               if (local_44 == 1) {
+                    /* Case-insensitive compare of at most n bytes [doc] */
+                    /* First cluster of an entry [doc] */
                 if ((*(int *)(param_1 + 0x34) != local_30) &&
                    ((iVar5 = fs_strnicmp(local_b8[0],local_6c,0xb), iVar5 != 0 ||
                     (iVar5 = dirent_get_cluster(pcVar12,(int)*(char *)(param_1 + 0x10)),
@@ -1049,6 +1079,7 @@ LAB_20146b94:
                         if (local_ac[0] == -0x1b) {
                           local_ac[0] = '\x05';
                         }
+                    /* keeps the next free numeric tail [doc] */
                         uVar11 = sfn_numtail_next(pcVar12,local_ac,&local_88);
                         if (uVar11 != 0) {
                           return uVar11;
@@ -1109,6 +1140,7 @@ LAB_201470bc:
                           return uVar11;
                         }
                         sfn_matches_long(local_2c,auStack_c8,&local_88);
+                    /* converts the dotted name to 8.3 [doc] */
                         iVar5 = sfn_equals(pcVar12,auStack_c8,param_1);
                         if (iVar5 == 0) goto LAB_201470bc;
                       }
@@ -1141,6 +1173,7 @@ LAB_201470bc:
             if (-1 < (int)uVar14) {
 LAB_20146bf4:
               sfn_matches_long(local_2c,auStack_c8,&local_88);
+                    /* "NAME.EXT" to the 11-byte space-padded 8.3 form [doc] */
               sfn_from_dotted(local_ac,auStack_c8,param_1);
               fs_memcpy(local_28,local_ac,0xb);
               if (-1 < (int)uVar14) {
@@ -1154,6 +1187,7 @@ LAB_20146bf4:
                                           local_90,param_9);
                 return uVar10;
               }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
               uVar15 = __aeabi_uidivmod(((local_90 + uVar3) - iVar13) + -1,
                                         *(uint *)(param_1 + 0x6c) >> 5);
               sVar7 = (short)((uint6)uVar15 >> 0x20);
@@ -1199,6 +1233,7 @@ LAB_20146e24:
   }
   else if (uVar10 - 1 == local_8c) {
     uVar6 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     uVar10 = fs_task_ctx_get();
     if (uVar10 != 0) {
       return uVar10;
@@ -1250,8 +1285,10 @@ subdir_find_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
   uVar2 = param_2;
   uVar3 = param_3;
   uVar4 = param_4;
+                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
   iVar1 = fs_lock_a(param_1);
   if (iVar1 == 0) {
+                    /* Searches a directory cluster chain for a name [doc, inference] */
     uVar2 = subdir_find(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9,
                         param_1,uVar2,uVar3,uVar4);
     fs_unlock_a(param_1);
@@ -1315,9 +1352,11 @@ int path_components_len(int param_1)
   pcVar3 = (char *)(param_1 + 2);
   cVar1 = *(char *)(param_1 + 2);
   iVar4 = 0;
+                    /* copies the "\\name" component at p [doc] */
   while (((cVar1 != '\0' &&
           (pcVar3 = (char *)path_next_component(pcVar3,local_218), local_218[0] != '\0')) &&
          (*pcVar3 != '\0'))) {
+                    /* Byte-wise string length [doc] */
     iVar2 = fs_strlen(local_218);
     iVar4 = iVar2 + iVar4 + 1;
     cVar1 = *pcVar3;
@@ -1413,6 +1452,7 @@ int fs_path_validate(char *param_1)
     cVar1 = param_1[2];
     param_1 = param_1 + 2;
     while( true ) {
+                    /* copies the "\\name" component at p [doc] */
       if ((cVar1 == '\0') ||
          (param_1 = (char *)path_next_component(param_1,local_218), local_218[0] == '\0')) {
         return 0;
@@ -1448,6 +1488,7 @@ void dirent_set_time(int param_1,int param_2,uint param_3)
   int iStack_30;
   int local_2c;
   
+                    /* rtc_get_tm into the caller's struct tm, returns 1 [doc] */
   iVar1 = fs_get_time_tm(&local_40);
   if (iVar1 == 0) {
     uVar2 = 0;
@@ -1510,6 +1551,7 @@ void fat_time_to_tm(int *param_1,undefined4 param_2,undefined4 param_3)
   
   uStack_14 = param_2;
   uStack_10 = param_3;
+                    /* 16-bit field read from an on-disk structure [doc] */
   uVar1 = fat_ld_word(&uStack_14);
   uVar2 = fat_ld_word(&uStack_10);
   *param_1 = (uVar1 & 0x1f) << 1;
@@ -1747,6 +1789,7 @@ void fs_utoa_zeropad(uint param_1,char *param_2,int param_3)
   char *pcVar2;
   
   if (0 < param_3 + -10) {
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
     fs_memset(param_2,0x30,param_3,0x200);
     param_2 = param_2 + param_3 + -10;
     param_3 = 10;
@@ -1845,6 +1888,7 @@ undefined4 sfn_pack(undefined1 *param_1,int param_2,int param_3)
   if ((uVar4 != 0) && (4 < (int)(uVar3 - uVar4))) {
     return 0xffffff9d;
   }
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(param_1,0x20,0xb,*(undefined4 *)(param_3 + 0x6c));
   uVar4 = 0;
   param_1[0xb] = 0;
@@ -1883,6 +1927,7 @@ int FUN_20147c20(char *param_1)
   char local_18 [12];
   char *pcVar3;
   
+                    /* 11-byte space-padded 8.3 form of a name [doc] */
   iVar1 = sfn_pack(local_18);
   if (iVar1 == 0) {
     pcVar3 = local_18;
@@ -1968,8 +2013,10 @@ int root_dir_add_entry(int param_1,undefined4 param_2,undefined4 param_3,int par
   uVar1 = (undefined2)uVar3;
   if (*(short *)(local_34 + 10) != 0) {
     do {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       uVar11 = __aeabi_uidivmod(uVar7,*(uint *)(local_34 + 0x6c) >> 5);
       uVar12 = (undefined4)uVar11;
+                    /* sector n of the fixed FAT12/16 root directory [doc] */
       if (((int)((ulonglong)uVar11 >> 0x20) == 0) &&
          (iVar2 = root_sector_get(local_34,uVar12,&local_44), pcVar5 = local_44, local_40 = uVar12,
          iVar2 != 0)) {
@@ -2004,6 +2051,7 @@ int root_dir_add_entry(int param_1,undefined4 param_2,undefined4 param_3,int par
             *(short *)(local_58 + 0x20) = (short)uVar8;
             *(undefined2 *)(local_58 + 0x22) = uVar1;
             if (param_4 != 3) {
+                    /* decimal digits of value, zero-padded to width [doc] */
               fs_utoa_zeropad(*param_6,&puStack_68,8);
               fs_memcpy(local_2c,&puStack_68,0xb);
               if (local_38 != 0) {
@@ -2041,8 +2089,10 @@ LAB_20147f14:
             }
           }
           else {
+                    /* Length of a UTF-16 string in bytes [doc] */
             uVar3 = fs_wstrlen_bytes(iVar4);
             if (uVar3 < 0x19) {
+                    /* UTF-16 name to 8-bit upper case [doc] */
               fs_ucs2_to_ascii_upper(auStack_54,iVar4);
               iVar2 = FUN_20147c20(pcVar5,auStack_54,local_34);
               if (iVar2 == 0) goto LAB_20147f14;
@@ -2089,6 +2139,7 @@ root_dir_add_entry_locked
   int iVar1;
   undefined4 uVar2;
   
+                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
   iVar1 = fs_lock_a();
   if (iVar1 == 0) {
     uVar2 = root_dir_add_entry(param_1,param_2,param_3,param_4,param_5,param_6,param_7);
@@ -2113,6 +2164,7 @@ int FUN_201480b4(char *param_1)
   char local_18 [12];
   
   pcVar3 = local_18;
+                    /* 11-byte space-padded 8.3 form of a name [doc] */
   iVar1 = sfn_pack(local_18);
   if (iVar1 != 0) {
     return iVar1;
@@ -2211,6 +2263,7 @@ uint subdir_add_entry(int param_1,int param_2,undefined4 param_3,undefined4 para
   local_30 = param_2;
   uStack_2c = param_3;
   local_28 = param_4;
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(local_6c,0x20,0xb,*(undefined4 *)(param_1 + 0x6c));
   local_6c[0] = 0x2e;
   local_a0[0] = (char *)(param_9 + 0x60c);
@@ -2227,6 +2280,7 @@ uint subdir_add_entry(int param_1,int param_2,undefined4 param_3,undefined4 para
   uVar10 = 0;
   uVar11 = 0;
   local_50 = 0;
+                    /* fat_entry_rw under fs_lock_b, result to out [doc] */
   uVar3 = fat_entry_rw_locked(param_1,&local_40,local_30,0,0x72,param_9);
   if (uVar3 == 0) {
     if (local_40 == 0) {
@@ -2254,6 +2308,8 @@ LAB_2014836c:
               }
               local_b4[0] = iVar4;
               if (local_a4 == 1) {
+                    /* Case-insensitive compare of at most n bytes [doc] */
+                    /* First cluster of an entry [doc] */
                 if ((*(int *)(param_1 + 0x34) != local_30) &&
                    ((iVar5 = fs_strnicmp(local_a0[0],local_6c,0xb), iVar5 != 0 ||
                     (iVar5 = dirent_get_cluster(pcVar12,(int)*(char *)(param_1 + 0x10)),
@@ -2343,8 +2399,10 @@ LAB_20148840:
                         }
                         return 0;
                       }
+                    /* Length of a UTF-16 string in bytes [doc] */
                       uVar7 = fs_wstrlen_bytes(local_70);
                       if (uVar7 < 0x19) {
+                    /* UTF-16 name to 8-bit upper case [doc] */
                         fs_ucs2_to_ascii_upper(auStack_60,local_70);
                         iVar5 = FUN_201480b4(pcVar12,auStack_60,param_1);
                         if (iVar5 == 0) goto LAB_20148840;
@@ -2385,6 +2443,7 @@ LAB_201483cc:
                 if (param_5 == 3) {
                   return 0;
                 }
+                    /* decimal digits of value, zero-padded to width [doc] */
                 fs_utoa_zeropad(local_44 * (*(uint *)(param_1 + 0x6c) >> 5) + uVar14,local_a0 + 3,8)
                 ;
                 fs_memcpy(local_28,local_a0 + 3,0xb);
@@ -2393,6 +2452,7 @@ LAB_201483cc:
                 return uVar11;
               }
               iVar13 = (local_b4[3] + uVar3) - iVar13;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
               uVar15 = __aeabi_uidivmod(iVar13 + -1,*(uint *)(param_1 + 0x6c) >> 5);
               sVar8 = (short)((uint6)uVar15 >> 0x20);
               iVar5 = 0;
@@ -2437,6 +2497,7 @@ LAB_20148620:
   }
   else if (uVar11 - 1 == local_84) {
     uVar6 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     uVar11 = fs_task_ctx_get();
     if (uVar11 != 0) {
       return uVar11;
@@ -2491,8 +2552,10 @@ subdir_add_entry_locked
   uVar2 = param_2;
   uVar3 = param_3;
   uVar4 = param_4;
+                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
   iVar1 = fs_lock_a(param_1);
   if (iVar1 == 0) {
+                    /* Sub-directory counterpart of root_dir_add_entry [doc, inference] */
     uVar2 = subdir_add_entry(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9
                              ,param_1,uVar2,uVar3,uVar4);
     fs_unlock_a(param_1);
@@ -2559,6 +2622,7 @@ int wpath_dir_len(int param_1)
   while ((((*pcVar2 != '\0' || (pcVar2[1] != '\0')) &&
           ((pcVar2 = (char *)wpath_next_component(pcVar2,&local_218), local_218 != '\0' ||
            (local_217 != '\0')))) && ((*pcVar2 != '\0' || (pcVar2[1] != '\0'))))) {
+                    /* Length of a UTF-16 string in bytes [doc] */
     iVar1 = fs_wstrlen_bytes(&local_218);
     iVar3 = iVar1 + iVar3 + 2;
   }
@@ -2824,6 +2888,7 @@ undefined4 fat32_fsinfo_read(int param_1,int param_2)
   iVar1 = memcmp(param_2,"RRaA",4);
   if ((((iVar1 == 0) && (iVar1 = memcmp(param_2 + 0x1e4,"rrAa",4), iVar1 == 0)) &&
       (*(char *)(param_2 + 0x1fe) == 'U')) && (*(char *)(param_2 + 0x1ff) == -0x56)) {
+                    /* 32-bit field read from an on-disk structure [doc] */
     uVar2 = fat_ld_dword(param_2 + 0x1e8);
     *(undefined4 *)(param_1 + 0x3c) = uVar2;
     uVar2 = fat_ld_dword(param_2 + 0x1ec);
@@ -2874,6 +2939,7 @@ uint fat_mount(int param_1,int param_2)
     return 0xffffffff;
   }
   *(ushort *)(param_1 + 4) = (ushort)*(byte *)(param_2 + 0xd);
+                    /* 16-bit field read from an on-disk structure [doc] */
   uVar2 = fat_ld_word(param_2 + 0xe);
   *(undefined2 *)(param_1 + 6) = uVar2;
   *(ushort *)(param_1 + 8) = (ushort)*(byte *)(param_2 + 0x10);
@@ -2882,6 +2948,7 @@ uint fat_mount(int param_1,int param_2)
   iVar3 = fat_ld_word(param_2 + 0x13);
   *(int *)(param_1 + 0x14) = iVar3;
   if (iVar3 == 0) {
+                    /* 32-bit field read from an on-disk structure [doc] */
     uVar4 = fat_ld_dword(param_2 + 0x20);
     *(undefined4 *)(param_1 + 0x14) = uVar4;
   }
@@ -3004,6 +3071,7 @@ int fat_table_sector_get(int param_1,uint param_2,int *param_3,uint param_4)
     else {
       iVar2 = fatcache_lookup(param_1,iVar1);
       if (iVar2 == 0) {
+                    /* Evicts the oldest FAT cache slot [doc] */
         iVar1 = fatcache_load(param_1,iVar1,&local_18);
         if (iVar1 != 0) {
           return iVar1;

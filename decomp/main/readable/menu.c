@@ -96,6 +96,7 @@ void cat_EX(uint text,char is_set,ushort len)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* Timer 0x32 for 200 ms, flag 0x187C2 [doc] */
     cat_ai_holdoff();
     return;
   }
@@ -125,6 +126,7 @@ void menu_defaults_load(void)
   menu_defaults_operation();
   menu_defaults_display();
   FUN_fffb1303();
+                    /* 5 x PRESET block 0x9B2E+0x1Fn <- ROM 0xFFF80F4E [doc, inference] */
   menu_defaults_presets();
   FUN_fffb13e2();
   pbVar1 = g_opstate.zero_9c17;
@@ -496,6 +498,7 @@ bool menu_close_if_open(void)
   
   bVar1 = PTR_g_ui_00025d54->dl_req_40 != 0;
   if (bVar1) {
+                    /* Clears UI +0x95 [doc] */
     menu_screen_close();
   }
   return bVar1;
@@ -541,6 +544,7 @@ void menu_row_key(undefined1 param_1)
 {
   char cVar1;
   
+                    /* sets the row cursor of the current group [doc] */
   cVar1 = menu_select_row(param_1);
   if (cVar1 != '\x01') {
     return;
@@ -716,6 +720,7 @@ void menu_draw_flags(byte *param_1,char param_2)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)param_2,param_1 + 0x18);
   return;
 }
@@ -746,6 +751,7 @@ void menu_draw_agc_delay(byte *param_1,byte param_2,short param_3)
   }
   param_1[1] = 8;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(sVar2,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[0] = 0x6d;
@@ -787,6 +793,7 @@ void menu_draw_lcut_freq(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x32,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -867,6 +874,7 @@ void menu_draw_hcut_freq(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x28a,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -937,6 +945,7 @@ void menu_draw_out_level(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -1070,6 +1079,7 @@ void menu_draw_usb_mod_gain(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -1098,6 +1108,7 @@ void menu_draw_rear_mod_gain(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -1483,6 +1494,7 @@ void menu_draw_eq_freq(byte *param_1,short param_2,byte param_3,byte param_4)
   if (0xc80 < local_c) {
     local_c = 0xc80;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(local_c,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -1511,6 +1523,7 @@ void menu_draw_eq_level(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)param_2,param_1 + 0x18);
   return;
 }
@@ -1537,6 +1550,7 @@ void menu_draw_eq_bwth(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -1567,6 +1581,7 @@ void menu_draw_max_power(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 4;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(param_2,param_1 + 0x18);
   param_1[bVar1 + 0x18] = 0x57;
   return;
@@ -1737,6 +1752,7 @@ undefined1 menu_select_row(char param_1)
         DAT_0001b4fc = '\x01';
       }
       else {
+                    /* Runs the selected row's on_enter [doc, inference] */
         menu_ui_enter();
       }
     }
@@ -2711,6 +2727,7 @@ void menu_screen_close(void)
   }
   PTR_g_ui_00025d60->dl_req_37 = 0;
   PTR_g_ui_00025d60->popup_code = 5;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(5);
   popup_open_timed();
   return;
@@ -3038,6 +3055,7 @@ void menu_draw_preset_agc_fast(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
@@ -3100,6 +3118,7 @@ void menu_draw_preset_agc_mid(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
@@ -3162,6 +3181,7 @@ void menu_draw_preset_agc_slow(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar2 = dec_to_str_u16((ushort)local_b * 0x14 + 0x14,param_2 + 0x18);
   param_2 = param_2 + bVar2 + 0x18;
   param_2[0] = 0x6d;
@@ -3514,6 +3534,7 @@ void menu_draw_preset_usb_out_level(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -3574,6 +3595,7 @@ void menu_draw_preset_rear_out_level(byte param_1,byte *param_2)
   }
   param_2[1] = 0xe;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -3779,6 +3801,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xc;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -3839,6 +3862,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -6028,6 +6052,7 @@ void menu_init(void)
 
 {
   DAT_0001fa4e = 0;
+                    /* 314 BSR menuitem_ in order [doc] */
   menu_build_all();
   return;
 }
@@ -6486,11 +6511,13 @@ byte ex_command(char *text,byte is_set,ushort len,byte *reply,ushort *reply_len)
   local_8 = len;
   local_5 = is_set;
   local_4 = text;
+                    /* Requires 6 decimal digits [doc] */
   bStack_18 = ex_parse_key(acStack_1b,(byte *)&local_17);
   if (bStack_18 == 0) {
     bStack_1c = 1;
   }
   else {
+                    /* String or numeric, read or set [doc] */
     bStack_18 = ex_read_or_write(acStack_1b,local_4,local_5,local_8);
     if ((bool)bStack_18) {
       if (local_5 == 1) {
@@ -6865,6 +6892,7 @@ byte ex_write_value(char *key,char *text,ushort len,byte lim [16])
       bStack_13 = bStack_12;
       uStack_1e = (ushort)(char)bStack_12;
     }
+                    /* Refuses key {0,0,12} [doc] */
     bStack_10 = ex_value_allowed(local_8,uStack_1e);
     if (bStack_10 == 0) {
       return 0;
@@ -7096,6 +7124,7 @@ bool ex_parse_4digits(char *text,ushort *out,ushort min,ushort max,byte digits,u
         return false;
       }
     }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     hex2nib_ret = hex2nib(*text);
     hex2nib_ret_2 = hex2nib(text[1]);
     hex2nib_ret_3 = hex2nib(text[2]);
@@ -7166,6 +7195,7 @@ byte ex_parse_byte(char *text,byte *out,byte digits,byte is_signed,byte min,byte
       if (bVar1) {
         return 0;
       }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       local_10 = hex2nib(*text);
     }
     else {
@@ -7325,6 +7355,7 @@ byte ex_parse_key(char *param_1,byte *param_2)
   local_14 = param_2;
   while( true ) {
     if (5 < i) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       hex2nib_ret = hex2nib(*param_2);
       if (hex2nib_ret == -1) {
         local_15 = 0;

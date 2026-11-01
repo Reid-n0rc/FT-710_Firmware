@@ -138,6 +138,7 @@ undefined1 memch_current_skip(void)
   undefined1 uVar1;
   
   memch_current_ret = memch_current(g_opstate.active_vfo);
+                    /* Memory channel n [doc] */
   uVar1 = memch_skip_get(memch_current_ret);
   return uVar1;
 }
@@ -504,11 +505,13 @@ byte ex_command(char *text,byte is_set,ushort len,byte *reply,ushort *reply_len)
   local_8 = len;
   local_5 = is_set;
   local_4 = text;
+                    /* Requires 6 decimal digits [doc] */
   bStack_18 = ex_parse_key(acStack_1b,(byte *)&local_17);
   if (bStack_18 == 0) {
     bStack_1c = 1;
   }
   else {
+                    /* String or numeric, read or set [doc] */
     bStack_18 = ex_read_or_write(acStack_1b,local_4,local_5,local_8);
     if ((bool)bStack_18) {
       if (local_5 == 1) {
@@ -851,6 +854,7 @@ byte ex_write_value(char *key,char *text,ushort len,byte lim [16])
       bStack_13 = bStack_12;
       uStack_1e = (ushort)(char)bStack_12;
     }
+                    /* Refuses key {0,0,12} [doc] */
     bStack_10 = ex_value_allowed(local_8,uStack_1e);
     if (bStack_10 == 0) {
       return 0;
@@ -1055,6 +1059,7 @@ bool ex_parse_4digits(char *text,ushort *out,ushort min,ushort max,byte digits,u
         return false;
       }
     }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     hex2nib_ret = hex2nib(*text);
     hex2nib_ret_2 = hex2nib(text[1]);
     hex2nib_ret_3 = hex2nib(text[2]);
@@ -1118,6 +1123,7 @@ byte ex_parse_byte(char *text,byte *out,byte digits,byte is_signed,byte min,byte
       if (bVar1) {
         return 0;
       }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       local_10 = hex2nib(*text);
     }
     else {
@@ -1270,6 +1276,7 @@ byte ex_parse_key(char *param_1,byte *param_2)
   local_14 = param_2;
   while( true ) {
     if (5 < i) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       hex2nib_ret = hex2nib(*param_2);
       if (hex2nib_ret == -1) {
         local_15 = 0;
@@ -1416,6 +1423,7 @@ void ai_ex010101(void)
     return;
   }
   DAT_0001b29a = g_opstate.ex010101_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010101_af_treble_gain,0,1);
   return;
 }
@@ -1432,6 +1440,7 @@ void ai_ex010102(void)
     return;
   }
   DAT_0001b29b = g_opstate.ex010102_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010102_af_middle_tone_gain,0,1);
   return;
 }
@@ -1448,6 +1457,7 @@ void ai_ex010103(void)
     return;
   }
   DAT_0001b29c = g_opstate.ex010103_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010103_af_bass_gain,0,1);
   return;
 }
@@ -1464,6 +1474,7 @@ void ai_ex010104(void)
     return;
   }
   DAT_0001b29d = g_opstate.ex010104_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010104_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -1480,6 +1491,7 @@ void ai_ex010105(void)
     return;
   }
   DAT_0001b29e = g_opstate.ex010105_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010105_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -1496,6 +1508,7 @@ void ai_ex010106(void)
     return;
   }
   DAT_0001b29f = g_opstate.ex010106_agc_slow_dely;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010106_agc_slow_dely + 1) * 0x14);
   return;
 }
@@ -1512,6 +1525,7 @@ void ai_ex010107(void)
     return;
   }
   DAT_0001b2a0 = g_opstate.ex010107_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010107_lcut_freq,0,0);
   return;
 }
@@ -1546,6 +1560,7 @@ void ai_ex010109(void)
     return;
   }
   DAT_0001b2a2 = g_opstate.ex010109_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010109_hcut_freq,0,0);
   return;
 }
@@ -1580,6 +1595,7 @@ void ai_ex010111(void)
     return;
   }
   DAT_0001b2a4 = g_opstate.ex010111_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010111_usb_out_level,1,0);
   return;
 }
@@ -1596,6 +1612,7 @@ void ai_ex010112(void)
     return;
   }
   DAT_0001b2a5 = g_opstate.ex010112_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010112_rear_out_level,1,0);
   return;
 }

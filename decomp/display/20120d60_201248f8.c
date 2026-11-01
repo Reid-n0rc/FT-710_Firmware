@@ -12,6 +12,7 @@ undefined4 affft_spectrum_columns(int param_1,int param_2)
   byte local_260 [392];
   undefined1 auStack_d8 [200];
   
+                    /* n/4 words dst = ~src [doc] */
   copy_inverted_words(&DAT_208dce3c,auStack_d8,&DAT_208dd73c,200);
   FUN_20134074(local_260,auStack_d8);
   iVar1 = 0;
@@ -62,6 +63,7 @@ undefined4 affft_bins_get(int param_1)
   int i;
   byte local_d8 [204];
   
+                    /* n/4 words dst = ~src [doc] */
   copy_inverted_words(&DAT_208dce3c,local_d8,&DAT_208dd73c,200);
   i = 0;
   do {
@@ -90,9 +92,11 @@ void affft_wf_add_row(void)
   undefined1 auStack_d8 [200];
   
   if (DAT_208dd994 == '\0') {
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words(&DAT_208dce3c,auStack_1a0,&DAT_208dd73c,200);
     FUN_20134074(local_4b0,auStack_1a0);
     FUN_20134074(auStack_329,auStack_d8);
+                    /* returns idx and advances it with ring100_next [doc] */
     iVar3 = ring100_advance(&DAT_208f0b14);
     i = 0;
     do {
@@ -668,6 +672,7 @@ void gui_input_poll(void)
   undefined4 local_8;
   
   local_8 = in_r3;
+                    /* Every GUI frame [doc] */
   usbkbd_screen_settings();
   local_8 = 0;
   if ((gui_frame.cmd == 0x7b) && (gui_frame.byte1 != 0)) {
@@ -735,6 +740,7 @@ void cursor_window_update(void)
   undefined2 local_a;
   
   mouse_cursor_get_pos(local_14,local_18);
+                    /* 12x21 mouse-cursor window for graphics 3 [doc, inference] */
   cursor_rect_calc(&local_10,0,local_14[0],local_18[0]);
   DAT_20808584 = local_10;
   DAT_20808586 = local_e;
@@ -921,6 +927,7 @@ void scr_screen_saver(void)
   
   iVar2 = fb_get_layer_addr(DAT_208085bc);
   if (DAT_208004ca == 0) {
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
     __aeabi_memclr(iVar2,0xbb800);
     layer_hide(3);
     layer_hide(4);
@@ -1741,6 +1748,7 @@ void filter_graph_small(void)
   int iVar9;
   
   if (DAT_20800480 == '\0') {
+                    /* Returns the 3D work buffer pointer 0x208085B4 [doc] */
     iVar8 = scope3d_buf_get();
   }
   else {
@@ -1755,6 +1763,7 @@ void filter_graph_small(void)
   uVar7 = (uint)DAT_208f4628;
   iVar9 = (int)DAT_208f460a;
   uVar6 = (uint)DAT_208f4616;
+                    /* passband edge pixels for the mode group [doc] */
   filter_passband_calc(&DAT_208007dc,DAT_208f4606,DAT_208f460e,uVar7);
   filter_passband_calc(&DAT_208007e2,uVar1,uVar6,uVar7);
   if (-1 < (int)(uVar4 << 0x1a)) {
@@ -1775,6 +1784,7 @@ void filter_graph_small(void)
     if ((gui_frame.flags9 & 8) != 0) {
       filter_graph_affft_overlay(iVar3,0x81,0x209,200);
     }
+                    /* marker sprites on row 0x81 at the computed positions [doc] */
     filter_graph_draw_markers(iVar3,uVar1);
     if (iVar8 != 0) {
       iVar2 = iVar2 + 0x2acb6;
@@ -1969,6 +1979,7 @@ void filter_graph_value_text(uint param_1,int param_2)
         puVar5 = &DAT_20803350;
       }
       sprintf(&local_48,"%dHz",(int)DAT_208f460a);
+                    /* Word-at-a-time string length [doc] */
       sVar1 = strlen(&local_48);
       gui_draw_text(local_2c,&local_48,0xe2,sVar1 * -0x1b + 0x2ed,0x1b,puVar5);
     }
@@ -2053,6 +2064,7 @@ void main_filter_graph(void)
   int iVar10;
   
   if (DAT_20800480 == '\0') {
+                    /* Returns the 3D work buffer pointer 0x208085B4 [doc] */
     iVar8 = scope3d_buf_get();
   }
   else {
@@ -2066,6 +2078,7 @@ void main_filter_graph(void)
   uVar2 = DAT_208f4616;
   uVar1 = DAT_208f4606;
   iVar10 = (int)DAT_208f460a;
+                    /* passband edge pixels for the mode group [doc] */
   filter_passband_calc(&DAT_208007dc,DAT_208f4606,DAT_208f460e,DAT_208f4628);
   filter_passband_calc(&DAT_208007e2,uVar1,uVar2,uVar3);
   if (iVar8 != 0) {
@@ -2101,9 +2114,11 @@ void main_filter_graph(void)
   if ((gui_frame.flags9 & 8) != 0) {
     filter_graph_affft_overlay(iVar9,0x81,0x209,200);
   }
+                    /* marker sprites on row 0x81 at the computed positions [doc] */
   filter_graph_draw_markers(iVar9,uVar1);
   filter_graph_value_text(iVar6,DAT_208007e2);
   FUN_20123808(iVar6);
+                    /* Bottom row of main_filter_graph [doc] */
   filter_graph_buttons(iVar6);
   if (iVar8 != 0) {
     iVar5 = 0;
@@ -2231,6 +2246,7 @@ LAB_20124054:
     uVar12 = be32_load(gui_frame.scope_start_be);
     uVar19 = *(int *)(&UNK_2016d6e8 + uVar18 * 4) + uVar12;
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   sVar5 = __aeabi_uidivmod((be32_load_ret - uVar12) * 0x317,uVar19 - uVar12);
   uStack_5c = (uint)(short)(sVar5 + 4);
   bVar21 = SBORROW4(uStack_5c,10);
@@ -3002,6 +3018,7 @@ undefined4 audio_screen_poll(void)
           (gui_frame.main_vfo.mode == 6 || gui_frame.main_vfo.mode == 7)) &&
          (((DAT_20800490 == '\x01' || (DAT_2080048f == '\x01')) &&
           (uVar2 = audio_error(), uVar2 != 0)))) {
+                    /* E8 frame b1 = 1, b2 = state [doc] */
         mainlink_send_e8_state(0,1);
         audio_error();
         mainlink_send_audio_error();
@@ -3021,6 +3038,7 @@ undefined4 audio_screen_poll(void)
     }
   }
   if ((DAT_2080048e == '\x01') && (uVar2 = audio_error(), uVar2 != 0)) {
+                    /* E7 frame b1 = 1, b2 = state [doc] */
     mainlink_send_e7_state(0,1);
     audio_error();
     mainlink_send_audio_error();

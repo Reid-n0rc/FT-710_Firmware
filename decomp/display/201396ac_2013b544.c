@@ -85,6 +85,7 @@ void usbh_port_isr(int param_1,int param_2)
      (*(int *)(&DAT_2090bb28 + iVar1) = *(int *)(&DAT_2090bb28 + iVar1) + 1, (uVar4 & 0x1000) != 0))
   {
     uVar6 = uVar6 | 1;
+                    /* Sets +0x30 = 1 in the pipe slot [doc] */
     usbh_pipe_mark_done(param_1,0);
     FUN_20139658(param_1,0);
   }
@@ -125,6 +126,7 @@ undefined4 FUN_201398a0(int param_1,uint param_2)
   do {
     uVar4 = (&DAT_2042019c)[i * 7];
     if ((param_2 & uVar4) != 0) {
+                    /* itron_loc_cpu, returns 0 [doc] */
       uVar1 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[i * 7]) =
            *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[i * 7]) & 0xf7ff;
@@ -194,6 +196,7 @@ LAB_20139a10:
       uVar7 = uVar7 >> 1;
     } while (i < 10);
     if (!bVar2) {
+                    /* itron_loc_cpu, returns 0 [doc] */
       uVar4 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x200;
       itron_unl_cpu(uVar4);
@@ -320,6 +323,7 @@ undefined4 FUN_20139c68(int param_1)
       uVar5 = uVar5 >> 1;
     } while (i < 10);
   } while (bVar2);
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar4 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x400;
   itron_unl_cpu(uVar4);
@@ -382,6 +386,7 @@ void usbh_port_task(int param_1)
           if ((((&DAT_204201a0)[i * 7] & local_c) != 0) &&
              ((*(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) & 0x1000) !=
               0)) {
+                    /* itron_loc_cpu, returns 0 [doc] */
             uVar1 = usbh_loc_cpu();
             *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) =
                  *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) & 0xefff;
@@ -681,6 +686,7 @@ undefined4 usbh_brdy_handler(int param_1)
       uVar5 = uVar5 >> 1;
     } while (i < 10);
   } while (bVar2);
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar3 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x100;
   itron_unl_cpu(uVar3);
@@ -745,6 +751,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) & 0xffbf | 0x10;
   itron_dly_tsk(2);
+                    /* Low word of itron_get_tim [doc] */
   uVar2 = fs_get_tick();
   uVar3 = uVar2;
   do {
@@ -775,6 +782,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   } while (uVar5 != 3);
   uVar7 = 0;
 LAB_2013a5c8:
+                    /* itron_loc_cpu, returns 0 [doc] */
   usbh_loc_cpu();
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) & 0xefff;
@@ -1020,6 +1028,7 @@ undefined4 FUN_2013a9e8(int param_1)
 {
   undefined4 uVar1;
   
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar1 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x36) = *(ushort *)(*(int *)(param_1 + 8) + 0x36) | 0x3ff;
   *(ushort *)(*(int *)(param_1 + 8) + 0x38) = *(ushort *)(*(int *)(param_1 + 8) + 0x38) | 0x3ff;
@@ -1074,6 +1083,7 @@ undefined4 FUN_2013aab4(undefined4 *param_1)
 {
   ushort uVar1;
   
+                    /* System configuration control_0 [sfr] */
   uVar1 = USB_SYSCFG0_0;
   if ((uVar1 & 2) == 0) {
     uVar1 = USB_SYSCFG0_0;
@@ -1386,6 +1396,7 @@ LAB_2013b114:
           *(ushort *)(iVar7 + 0x20) = (ushort)local_126 + (ushort)local_125 * 0x100;
           *(ushort *)(iVar7 + 0x22) = (ushort)local_124 + (ushort)local_123 * 0x100;
           do {
+                    /* SETUP 0x80, 6, wValue 0x0200 [doc] */
             iVar5 = usbh_get_config_descriptor(iVar7,local_130,0xff);
             if (-1 < iVar5) {
               iVar8 = (uint)local_12e + (uint)local_12d * 0x100;
@@ -1401,6 +1412,7 @@ LAB_2013b114:
                 iVar8 = iVar8 - (uint)bVar1;
                 pbVar6 = pbVar6 + bVar1;
               } while (0 < iVar8);
+                    /* Reads the configuration descriptor [doc] */
               iVar8 = usbh_enumerate_config(local_30,uVar4,iVar7);
               if (iVar8 == 0) {
                 *(code **)(iVar7 + 0x28) = FUN_20138410;
@@ -1637,6 +1649,7 @@ void usbh_hw_init(void)
 {
   gic_def_inh(0x49,0x204201b8);
   gic_enable_irq(0x49);
+                    /* stores the port's register base and speed [doc] */
   usbh_port_open(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
   gic_def_inh(0x4a,0x204201c4);
   gic_enable_irq(0x4a);

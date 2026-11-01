@@ -16,6 +16,7 @@ void bandmem_set(char param_1,uint freq_2)
   int iStack_10;
   byte bStack_b;
   
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   freq = vfo_freq_clar(0,2);
   bVar1 = band_of_freq(freq);
   if (param_1 == '\x02') {
@@ -503,6 +504,7 @@ void rf_ctrl_task(void)
   atu_relay_update();
   main_dac_update();
   pa_dac_update();
+                    /* rf_ctrl_task's sixth sub-task [doc] */
   audio_level_update();
   if (DAT_00012042 != '\0') {
     return;
@@ -550,6 +552,7 @@ void pa_relay_update(void)
   if (bVar2 == 1) {
     uStack_8 = uStack_8 | 0x200;
   }
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cVar4 = tx_band_of_freq(g_ui_freq_tx_val);
   if (cVar4 == '\n') {
     uStack_8 = uStack_8 | 0x400;
@@ -779,6 +782,7 @@ void pa_dac_update(void)
   
   g_ui_freq_tx_val = g_ui.freq_tx;
   bVar2 = (byte)(g_ui.adc_pa_hf_th >> 4);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   uVar3 = tx_band_of_freq(g_ui.freq_tx);
   switch(uVar3) {
   case 0:
@@ -989,6 +993,7 @@ void audio_level_update(void)
   byte bStack_8;
   byte bStack_7;
   
+                    /* Returns the audio-route state 0..14 [doc] */
   audio_route_state_ret = audio_route_state();
   bVar2 = vfo_mode(0);
   bVar3 = FUN_fffb2dfe();
@@ -1861,6 +1866,7 @@ void trx_init(void)
   DAT_0001204d = 0;
   swtimer_start(0x13,0x9c4);
   portb_podr = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = portb_podr | 8;
   g_ui.pb3_last = 1;
   for (i = 0; i < 4; i = i + 1) {
@@ -1886,25 +1892,31 @@ void io_task(void)
   bVar1 = swtimer_expired(0x2a);
   if (((bVar1 != 0) && (af_mute_get_ret = af_mute_get(), af_mute_get_ret != (bool)g_ui.pb3_last)) &&
      (g_ui.trx_state == 8)) {
+                    /* AF mute follows PB3 while in RX (state 8) [fact: README.md] */
     af_mute_set(g_ui.pb3_last);
   }
   meter_task();
+                    /* GPIO poll and TX state machine on trx_state [fact: README.md] */
   io_poll();
   lamp_map_update();
   FUN_fffb9605();
+                    /* Supply ADC < 0x7DD: power off and save [fact: 0xFFFB4B28] */
   supply_undervolt_check_ret = supply_undervolt_check();
   if (supply_undervolt_check_ret != '\x01') {
     if (g_ui.power_key_req == 2) {
       g_opstate.auto_power_on = 0;
       menu_cursors_save();
       if (g_ui.zz_align_mode == 0) {
+                    /* Power key: save the operating state to EEPROM [fact: README.md] */
         eeprom_save_opstate();
       }
       do {
         bVar1 = sci1_tx_end();
       } while (bVar1 == 0);
+                    /* Software reset, back to the power-off loop [fact: 0xFFFB3E55] */
       sw_reset();
     }
+                    /* Screen-saver timer: ask the DISPLAY to toggle it [fact: README.md] */
     iVar2 = screensaver_timer_expired();
     if (iVar2 == 1) {
       if (g_ui.screensaver_on == 0) {
@@ -2048,6 +2060,7 @@ bool ckey_det(void)
 {
   char port8_pidr;
   
+                    /* Port Input [sfr] */
   port8_pidr = PORT8_PIDR;
   return -1 < port8_pidr;
 }
@@ -2063,6 +2076,7 @@ bool ckey_dot(void)
   byte port1_pidr;
   
   port1_pidr = PORT1_PIDR;
+                    /* Port Input [sfr] */
   return (port1_pidr & 0x40) == 0;
 }
 
@@ -2076,6 +2090,7 @@ bool ckey_dash(void)
 {
   char port1_pidr;
   
+                    /* Port Input [sfr] */
   port1_pidr = PORT1_PIDR;
   return -1 < port1_pidr;
 }
@@ -2090,6 +2105,7 @@ byte jp_p51_get(void)
 {
   byte port5_pidr;
   
+                    /* Port Input [sfr] */
   port5_pidr = PORT5_PIDR;
   return port5_pidr >> 1 & 1;
 }
@@ -2102,6 +2118,7 @@ byte FUN_fffb6f3d(void)
 {
   byte port5_pidr;
   
+                    /* Port Input [sfr] */
   port5_pidr = PORT5_PIDR;
   return port5_pidr >> 2 & 1;
 }
@@ -2114,6 +2131,7 @@ byte FUN_fffb6f50(void)
 {
   byte port5_pidr;
   
+                    /* Port Input [sfr] */
   port5_pidr = PORT5_PIDR;
   return port5_pidr >> 3 & 1;
 }
@@ -2126,6 +2144,7 @@ byte FUN_fffb6f63(void)
 {
   byte port5_pidr;
   
+                    /* Port Input [sfr] */
   port5_pidr = PORT5_PIDR;
   return port5_pidr >> 4 & 1;
 }
@@ -2140,6 +2159,7 @@ bool atas_det(void)
 {
   byte port5_pidr;
   
+                    /* Port Input [sfr] */
   port5_pidr = PORT5_PIDR;
   return (port5_pidr >> 5 & 1) == 1;
 }
@@ -2153,6 +2173,7 @@ void FUN_fffb6f94(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
@@ -2167,6 +2188,7 @@ byte tx_line_get(void)
 {
   byte port7_podr;
   
+                    /* Port Output Data [sfr] */
   port7_podr = PORT7_PODR;
   return port7_podr >> 3 & 1;
 }
@@ -2179,6 +2201,7 @@ byte send_a_get(void)
 {
   byte porta_podr;
   
+                    /* Port Output Data [sfr] */
   porta_podr = PORTA_PODR;
   return porta_podr >> 2 & 1;
 }
@@ -2196,6 +2219,7 @@ void send_a_set(byte param_1)
   bool bVar2;
   byte local_1;
   
+                    /* Port Input [sfr] */
   bVar1 = PORT1_PIDR;
   if (((bVar1 >> 4 & 1) == 1) || (bVar1 = PORT7_PODR, (bVar1 & 8) == 0)) {
     bVar2 = true;
@@ -2208,6 +2232,7 @@ void send_a_set(byte param_1)
     local_1 = 0;
   }
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0xfb | (local_1 & 1) << 2;
   return;
 }
@@ -2225,6 +2250,7 @@ void send_b_set(byte param_1)
   bool bVar2;
   byte local_1;
   
+                    /* Port Input [sfr] */
   bVar1 = PORT1_PIDR;
   if (((bVar1 >> 4 & 1) == 1) || (bVar1 = PORT7_PODR, (bVar1 & 8) == 0)) {
     bVar2 = true;
@@ -2237,6 +2263,7 @@ void send_b_set(byte param_1)
     local_1 = 0;
   }
   bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = bVar1 & 0xef | (local_1 & 1) << 4;
   return;
 }
@@ -2251,6 +2278,7 @@ void sdr_reset_set(char param_1)
 {
   byte port7_podr;
   
+                    /* Port Output Data [sfr] */
   port7_podr = PORT7_PODR;
   PORT7_PODR = port7_podr & 0x7f | param_1 << 7;
   return;
@@ -2268,6 +2296,7 @@ void sdr_update_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xbf | (param_1 & 1) << 6;
   return;
 }
@@ -2284,6 +2313,7 @@ void dsp_reset_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xfd | (param_1 & 1) << 1;
   return;
 }
@@ -2300,6 +2330,7 @@ void dsp_update_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
@@ -2316,6 +2347,7 @@ void af_reset_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xef | (param_1 & 1) << 4;
   return;
 }

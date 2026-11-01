@@ -94,6 +94,7 @@ void FUN_fffb9605(void)
   bVar4 = gen_subband_of_freq(uVar6);
   vfo_mode_ret = vfo_mode(0);
   bVar5 = g_ui.trx_state;
+                    /* Returns the audio-route state 0..14 [doc] */
   uVar6 = audio_route_state();
   bVar1 = DAT_000120ba != bVar3;
   if (!bVar1) {
@@ -317,6 +318,7 @@ void keyer_task(void)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
     keyer_init();
     keyer_sidetone_off();
     g_ui.ptt_keyer = 0;
@@ -361,6 +363,7 @@ void keyer_task(void)
     DAT_00021014 = 1200000 / DAT_0001b4d5;
   }
   DAT_00021010 = ((local_1 + 0x19) * DAT_00021014) / 10;
+                    /* Returns EX020119 QSK DELAY TIME x 5 + 15 [doc] */
   DAT_0001215c = qsk_delay_ticks();
   if (DAT_0001215f == 0) {
     DAT_0001215c = 0xf;
@@ -543,6 +546,7 @@ void keyer_task(void)
               bVar1 = false;
             }
             if (!bVar1) {
+                    /* Cut-number substitution by EX020204 NUMBER STYLE [doc] */
               bStack_14 = contest_cut_digit(bStack_14);
               bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
               bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
@@ -551,6 +555,7 @@ void keyer_task(void)
                   keyer_elem_put(1);
                 }
                 else {
+                    /* Appends to the keyer element ring 0x120BC [doc] */
                   keyer_elem_put(2);
                 }
                 keyer_elem_put(0);
@@ -594,6 +599,7 @@ void keyer_task(void)
               bVar1 = true;
             }
             if (bVar1) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
               hex2nib_ret = hex2nib(bStack_14);
               bStack_14 = hex2nib_ret - 1;
               if (bStack_9 != bStack_14) {
@@ -1048,6 +1054,7 @@ void keyer_elekey(char param_1,char param_2)
       DAT_0001fa3a = DAT_0001fa38;
     }
   }
+                    /* Helper of keyer_elekey [doc] */
   if ((local_2 == '\x01') && (iVar3 = keyer_ring_limit(), iVar3 == 1)) {
     g_ui.keyer_state = 4;
     return;
@@ -1162,6 +1169,7 @@ void keyer_elekey(char param_1,char param_2)
   if (bVar1) {
     timer_start_us(0x1d,DAT_00021014);
   }
+                    /* Appends to the keyer element ring 0x120BC [doc] */
   keyer_elem_put(DAT_00012161);
   return;
 }
@@ -1209,6 +1217,7 @@ void keyer_straight_bug(char param_1)
     }
     cStack_9 = DAT_00012161;
     swtimer_start(0x17,2);
+                    /* Appends to the keyer element ring 0x120BC [doc] */
     keyer_elem_put(DAT_00012161);
     return;
   }
@@ -1268,6 +1277,7 @@ void FUN_fffba9c3(void)
       uStack_6 = keyer_ring_next(DAT_0001fa38);
     }
     else {
+                    /* Ring index + 1, wraps to 0 above 0x4FF [doc] */
       uStack_6 = keyer_ring_next(DAT_0001fa38);
       if ((DAT_0001fa3c == uStack_6) ||
          (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_6 >> 3)] & 1 << ((byte)uStack_6 & 7)) == 0)) {
@@ -1384,6 +1394,7 @@ void keyer_output_step(byte param_1)
         uStack_12 = DAT_0001fa3a;
         for (i = 0; i < bStack_18; i = i + 1) {
           if (i != 0) {
+                    /* Ring index + 1, wraps to 0 above 0x4FF [doc] */
             uStack_12 = keyer_ring_next(uStack_12);
           }
           if (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_12 >> 3)] & 1 << ((byte)uStack_12 & 7)) !=
@@ -1593,6 +1604,7 @@ undefined4 keyer_elem_put(char param_1)
   byte i;
   
   if (param_1 != '\0') {
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
     screensaver_timer_restart();
   }
   if (param_1 != '\x02') {
@@ -1621,6 +1633,7 @@ undefined4 keyer_elem_put(char param_1)
       (&DAT_000120bc)[bVar2] = 0;
     }
     (&DAT_000120bc)[bVar2] = (&DAT_000120bc)[bVar2] | (byte)(1 << (bVar1 & 7));
+                    /* Ring index + 1, wraps to 0 above 0x4FF [doc] */
     DAT_0001fa38 = keyer_ring_next(DAT_0001fa38);
   }
   uVar3 = keyer_sidetone_on();
@@ -1924,6 +1937,7 @@ void keyer_text_msg_encode(byte param_1)
         }
         if (bVar3) {
           bVar4 = true;
+                    /* Cut-number substitution by EX020204 NUMBER STYLE [doc] */
           bVar6 = contest_cut_digit(nib2hex_ret);
           bVar2 = BYTE_ARRAY_fff815c3[(uint)bVar6 * 2];
           local_13 = BYTE_ARRAY_fff815c3[(uint)bVar6 * 2 + 1];
@@ -1932,6 +1946,7 @@ void keyer_text_msg_encode(byte param_1)
               keyer_elem_put(1);
             }
             else {
+                    /* Appends to the keyer element ring 0x120BC [doc] */
               keyer_elem_put(2);
             }
             keyer_elem_put(0);
@@ -2096,6 +2111,7 @@ void align_load_preset(void)
     p_vfo_rec_2->freq_be[3] = (&LAB_fff88cdc)[(uint)PTR_g_ui_00025d4c->align_item * 0xc];
     PTR_g_ui_00025d4c->freq_refresh_req = 1;
   }
+                    /* returns &g_opstate.rf_power[i] for the TX band [doc] */
   DAT_00021048 = rf_power_ptr(&local_4,&bStack_5);
   if ((PTR_g_ui_00025d4c->align_item < 0x45) || (0xda < PTR_g_ui_00025d4c->align_item)) {
     bVar2 = false;
@@ -2328,6 +2344,7 @@ void FUN_fffbbbdc(char param_1)
     cal_adjust(0x19,0xe6,param_1);
     return;
   }
+                    /* Pointer table 0x25D50 = 0x4659 and 0x25D4C = 0x20B04 [doc] */
   cal_adjust(0,0xff,param_1);
   return;
 }
@@ -2493,6 +2510,7 @@ void key_task(void)
     }
   }
   else if ((DAT_0001b4dc == '\x01') && (bVar3 = swtimer_expired(0x40), bVar3 == 1)) {
+                    /* Auto-repeat on timer 0x40 [fact: README.md] */
     key_call_repeat();
     return;
   }

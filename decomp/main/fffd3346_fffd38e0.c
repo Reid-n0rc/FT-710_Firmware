@@ -50,6 +50,7 @@ void menu_step_preset_cat1_cat3_stop_bit(byte param_1)
 void menu_ex060105_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(1);
   return;
 }
@@ -62,6 +63,7 @@ void menu_ex060105_step(void)
 void menu_ex060205_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(2);
   return;
 }
@@ -74,6 +76,7 @@ void menu_ex060205_step(void)
 void menu_ex060305_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(3);
   return;
 }
@@ -86,6 +89,7 @@ void menu_ex060305_step(void)
 void menu_ex060405_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(4);
   return;
 }
@@ -98,6 +102,7 @@ void menu_ex060405_step(void)
 void menu_ex060505_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(5);
   return;
 }
@@ -153,6 +158,7 @@ void menu_step_preset_agc_fast_delay(byte param_1)
 void menu_ex060106_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(1);
   return;
 }
@@ -165,6 +171,7 @@ void menu_ex060106_step(void)
 void menu_ex060206_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(2);
   return;
 }
@@ -177,6 +184,7 @@ void menu_ex060206_step(void)
 void menu_ex060306_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(3);
   return;
 }
@@ -189,6 +197,7 @@ void menu_ex060306_step(void)
 void menu_ex060406_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(4);
   return;
 }
@@ -201,6 +210,7 @@ void menu_ex060406_step(void)
 void menu_ex060506_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(5);
   return;
 }
@@ -256,6 +266,7 @@ void menu_step_preset_agc_mid_delay(byte param_1)
 void menu_ex060107_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(1);
   return;
 }
@@ -268,6 +279,7 @@ void menu_ex060107_step(void)
 void menu_ex060207_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(2);
   return;
 }
@@ -280,6 +292,7 @@ void menu_ex060207_step(void)
 void menu_ex060307_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(3);
   return;
 }
@@ -292,6 +305,7 @@ void menu_ex060307_step(void)
 void menu_ex060407_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(4);
   return;
 }
@@ -304,6 +318,7 @@ void menu_ex060407_step(void)
 void menu_ex060507_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(5);
   return;
 }
@@ -359,6 +374,7 @@ void menu_step_preset_agc_slow_delay(byte param_1)
 void menu_ex060108_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(1);
   return;
 }
@@ -371,6 +387,7 @@ void menu_ex060108_step(void)
 void menu_ex060208_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(2);
   return;
 }
@@ -383,6 +400,7 @@ void menu_ex060208_step(void)
 void menu_ex060308_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(3);
   return;
 }
@@ -395,6 +413,7 @@ void menu_ex060308_step(void)
 void menu_ex060408_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(4);
   return;
 }
@@ -407,6 +426,7 @@ void menu_ex060408_step(void)
 void menu_ex060508_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(5);
   return;
 }
@@ -462,6 +482,7 @@ void menu_step_preset_lcut_freq(byte param_1)
 void menu_ex060109_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(1);
   return;
 }
@@ -474,6 +495,7 @@ void menu_ex060109_step(void)
 void menu_ex060209_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(2);
   return;
 }
@@ -486,6 +508,7 @@ void menu_ex060209_step(void)
 void menu_ex060309_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(3);
   return;
 }
@@ -498,6 +521,7 @@ void menu_ex060309_step(void)
 void menu_ex060409_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(4);
   return;
 }
@@ -510,6 +534,7 @@ void menu_ex060409_step(void)
 void menu_ex060509_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(5);
   return;
 }
@@ -565,6 +590,7 @@ void menu_step_preset_lcut_slope(byte param_1)
 void menu_ex060110_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(1);
   return;
 }
@@ -577,6 +603,7 @@ void menu_ex060110_step(void)
 void menu_ex060210_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(2);
   return;
 }
@@ -589,6 +616,7 @@ void menu_ex060210_step(void)
 void menu_ex060310_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(3);
   return;
 }
@@ -601,6 +629,7 @@ void menu_ex060310_step(void)
 void menu_ex060410_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(4);
   return;
 }
@@ -613,6 +642,7 @@ void menu_ex060410_step(void)
 void menu_ex060510_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(5);
   return;
 }
@@ -668,6 +698,7 @@ void menu_step_preset_hcut_freq(byte param_1)
 void menu_ex060111_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(1);
   return;
 }
@@ -680,6 +711,7 @@ void menu_ex060111_step(void)
 void menu_ex060211_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(2);
   return;
 }
@@ -692,6 +724,7 @@ void menu_ex060211_step(void)
 void menu_ex060311_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(3);
   return;
 }
@@ -704,6 +737,7 @@ void menu_ex060311_step(void)
 void menu_ex060411_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(4);
   return;
 }
@@ -716,6 +750,7 @@ void menu_ex060411_step(void)
 void menu_ex060511_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(5);
   return;
 }
@@ -771,6 +806,7 @@ void menu_step_preset_hcut_slope(byte param_1)
 void menu_ex060112_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(1);
   return;
 }
@@ -783,6 +819,7 @@ void menu_ex060112_step(void)
 void menu_ex060212_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(2);
   return;
 }
@@ -795,6 +832,7 @@ void menu_ex060212_step(void)
 void menu_ex060312_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(3);
   return;
 }
@@ -807,6 +845,7 @@ void menu_ex060312_step(void)
 void menu_ex060412_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(4);
   return;
 }
@@ -819,6 +858,7 @@ void menu_ex060412_step(void)
 void menu_ex060512_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(5);
   return;
 }
@@ -874,6 +914,7 @@ void menu_step_preset_usb_out_level(byte param_1)
 void menu_ex060113_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(1);
   return;
 }

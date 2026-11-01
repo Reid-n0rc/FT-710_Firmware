@@ -7,6 +7,7 @@
 void ai_ex060518(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(5);
   return;
 }
@@ -126,6 +127,7 @@ void tuner_init(void)
 
 {
   tuner_task();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -139,13 +141,16 @@ void tuner_task(void)
 
 {
   if (g_opstate.ex030104_tuner_type_select == 3) {
+                    /* tuner_task for TUNER TYPE SELECT 3 [doc] */
     tuner_atas_task();
     return;
   }
   if (1 < g_opstate.ex030104_tuner_type_select) {
+                    /* tuner_task for TUNER TYPE SELECT 2 [doc] */
     tuner_ext_task();
     return;
   }
+                    /* tuner_task for TUNER TYPE SELECT 0/1 [doc] */
   tuner_int_task();
   return;
 }
@@ -290,6 +295,7 @@ void tuner_rearm(void)
     }
   }
   else if (g_opstate.ex030104_tuner_type_select < 2) {
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
     iVar2 = vfo_tuner_bit_get();
     if (iVar2 == 0) {
       if ((g_ui.atu_state == 1) || (g_ui.atu_state == 2)) {
@@ -441,6 +447,7 @@ void FUN_fffec728(void)
       }
       if (cStack_5 != -1) {
         DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
         DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
         FUN_fffed12f();
         g_ui.atu_state = 2;
@@ -467,6 +474,7 @@ void FUN_fffec7f9(void)
   tx_freq_allowed_ret = tx_freq_allowed(g_ui.freq_tx);
   if (tx_freq_allowed_ret) {
     DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
     DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
     FUN_fffec493();
     g_ui.tune_cycle_3d = 2;
@@ -1223,6 +1231,7 @@ void FUN_fffed401(void)
     swtimer_start(0x20,60000);
   }
   else {
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
     iVar1 = tx_band_of_freq(g_ui.freq_tx);
     if (iVar1 == 9) {
       DAT_0001b3c0 = '\x01';

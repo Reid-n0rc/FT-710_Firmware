@@ -242,6 +242,7 @@ void menu_screen_close(void)
   }
   PTR_g_ui_00025d60->dl_req_37 = 0;
   PTR_g_ui_00025d60->popup_code = 5;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(5);
   popup_open_timed();
   return;
@@ -454,6 +455,7 @@ void FUN_fffd1a24(char param_1)
   else {
     PTR_g_ui_00025d60->menu_step_dir = 0;
   }
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   return;
 }
@@ -522,6 +524,7 @@ void FUN_fffd1ad8(void)
     return;
   }
   if (bVar1 == 2) {
+                    /* Runs the selected row's on_enter [doc, inference] */
     menu_ui_enter();
     return;
   }
@@ -829,6 +832,7 @@ void menu_draw_preset_cat_rate(byte param_1,byte *param_2)
 void menu_ex060103_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(1);
   return;
 }
@@ -841,6 +845,7 @@ void menu_ex060103_draw(void)
 void menu_ex060203_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(2);
   return;
 }
@@ -853,6 +858,7 @@ void menu_ex060203_draw(void)
 void menu_ex060303_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(3);
   return;
 }
@@ -865,6 +871,7 @@ void menu_ex060303_draw(void)
 void menu_ex060403_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(4);
   return;
 }
@@ -877,6 +884,7 @@ void menu_ex060403_draw(void)
 void menu_ex060503_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(5);
   return;
 }

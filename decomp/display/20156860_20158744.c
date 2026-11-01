@@ -890,6 +890,7 @@ undefined4 FUN_201574e8(int param_1,undefined4 param_2,undefined4 param_3,int pa
   undefined1 auStack_1a0 [200];
   byte local_d8 [204];
   
+                    /* n/4 words dst = ~src [doc] */
   copy_inverted_words(param_1,auStack_1a0,param_1 + 0x900,200);
   FUN_20134084(local_d8,auStack_1a0);
   i = 0;
@@ -1005,6 +1006,7 @@ void scope_obj_history_clear(int param_1)
   __aeabi_memset(param_1 + 0x9c7f,0x352,0xff);
   __aeabi_memset(param_1 + 0x9fd1,0x352,0xff);
   __aeabi_memclr4(param_1 + 0x10abc,0x6798);
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(param_1 + 0xa323,24000);
   __aeabi_memclr4(param_1 + 0x17258,0x3ed4);
   __aeabi_memclr4_veneer(param_1 + 0x100e4,0x9d8);
@@ -1038,6 +1040,7 @@ void scope_obj_reset_bank0(int param_1)
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
   scope_obj_history_clear();
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(param_1,0);
   return;
 }
@@ -1122,6 +1125,7 @@ void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
         iVar5 = iVar5 + 1;
       } while (iVar5 < param_2);
     }
+                    /* returns idx and advances it [doc] */
     iVar5 = ring133_advance(param_1 + 0x82fb4);
     puVar10 = &DAT_20450278;
     if (DAT_20450280 == 1) {
@@ -1181,8 +1185,10 @@ void FUN_20157f8c(int param_1)
   
   if (((*(char *)(param_1 + 0x9c7c) == '\0') && (*(char *)(param_1 + 0x9c7d) == '\0')) &&
      (*(char *)(param_1 + 0x9c7e) == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(param_1 + 0x1b12c,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(param_1,param_1 + iVar1 * 800 + 0x17258,param_1 + 0x9c98,800);
     return;
   }
@@ -1250,6 +1256,7 @@ void scope_obj_reset_bank1(int param_1)
 {
   *(undefined1 *)(param_1 + 0x9c7e) = 0;
   scope_obj_history_clear();
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(param_1,1);
   return;
 }
@@ -1311,6 +1318,7 @@ void mainlink_tx_init(int param_1,uint param_2)
   int iVar3;
   
   *(uint *)(param_1 + 0x18) = param_2;
+                    /* Creates the pool mutex [doc] */
   txpool_init_mutex();
   uVar2 = 0;
   do {
@@ -1319,6 +1327,7 @@ void mainlink_tx_init(int param_1,uint param_2)
     txpool_set_slot(param_1 + 0x811c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x81a4) = uVar1;
   return;

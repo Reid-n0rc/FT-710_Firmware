@@ -1615,6 +1615,7 @@ void cat_ai_poll(void)
         local_2 = cat_ai_AO();
       }
       if (local_2 == 0) {
+                    /* AI change detector for AS [doc] */
         local_2 = cat_ai_AS(1);
       }
       if (local_2 == 0) {
@@ -1651,9 +1652,11 @@ void cat_ai_poll(void)
         local_2 = cat_ai_CT();
       }
       if (local_2 == 0) {
+                    /* AI change detector for the EX menu [doc, inference] */
         local_2 = cat_ai_ex();
       }
       if (local_2 == 0) {
+                    /* AI change detector for FA/FB [doc] */
         local_2 = cat_ai_FA_FB();
       }
       if (local_2 == 0) {
@@ -1666,12 +1669,14 @@ void cat_ai_poll(void)
         local_2 = cat_ai_GT();
       }
       if (local_2 == 0) {
+                    /* AI change detector for IF/OI [doc] */
         local_2 = cat_ai_IF_OI(0);
       }
       if (local_2 == 0) {
         local_2 = cat_ai_IF_OI(1);
       }
       if (local_2 == 0) {
+                    /* AI change detector for IS [doc] */
         local_2 = cat_ai_IS();
       }
       if (local_2 == 0) {
@@ -1813,6 +1818,7 @@ void cat_ai_poll(void)
         local_2 = cat_ai_VS();
       }
       if (local_2 == 0) {
+                    /* Sends FD00n<9 digits> [doc] */
         local_2 = cat_ai_FD();
       }
       if (DAT_000187c2 == '\x01') {
@@ -2050,6 +2056,7 @@ undefined2 cat_ai_AC(void)
         local_f[4] = 0x33;
       }
       else {
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
         iVar2 = vfo_tuner_bit_get();
         if (iVar2 == 1) {
           local_f[4] = 0x31;
@@ -2136,7 +2143,9 @@ undefined2 cat_ai_AG(void)
     if (bVar2) {
       return 0;
     }
+                    /* Largest of 4 bytes at p [doc] */
     bVar3 = max4_u8(&DAT_0001b53e);
+                    /* Smallest of 4 bytes at p [doc] */
     bVar4 = min4_u8(&DAT_0001b53e);
     if ((int)((uint)bVar3 - (uint)bVar4) < 3) {
       return 0;
@@ -2242,6 +2251,7 @@ ushort cat_ai_AS(char param_1)
   local_e = 0;
   builtin_strncpy(local_15,"AS0000;",7);
   if (param_1 == '\x01') {
+                    /* Pointer to the active mode's AESS level byte [doc] */
     pcVar1 = (char *)aess_level_ptr();
     bStack_9 = *pcVar1;
     if (DAT_000187cb != bStack_9) {
@@ -2264,6 +2274,7 @@ ushort cat_ai_AS(char param_1)
     }
   }
   else if (param_1 == '\x02') {
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
     pcVar1 = (char *)aess_mode_ptr();
     bStack_9 = *pcVar1;
     if (DAT_000187cc != bStack_9) {

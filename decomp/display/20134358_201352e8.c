@@ -323,6 +323,7 @@ void capture_merge_row(ushort param_1,int param_2,int param_3,uint param_4)
   uVar2 = 0;
   do {
     sVar1 = *(short *)(param_3 + uVar2 * 2);
+                    /* pixel inside a layer's opaque alpha window [doc, inference] */
     if ((sVar1 != 0) ||
        (layer_alpha_rect_hit_ret = layer_alpha_rect_hit(param_4,uVar2 & 0xffff,(uint)param_1),
        layer_alpha_rect_hit_ret != 0)) {
@@ -381,6 +382,7 @@ undefined4 bmp_write_screen(uint param_1)
     i = 0x1df;
     while( true ) {
       memcpy(&DAT_20908710,iVar2 + i * 0x640,0x640);
+                    /* overlay one layer row [doc, inference] */
       capture_merge_row((ushort)i,0x20908710,(int)((int)fb_get_front_addr_ret + i * 0x640),4);
       capture_merge_row((ushort)i,0x20908710,(int)((int)fb_get_front_addr_ret_2 + i * 0x640),5);
       rgb565_row_to_bgr24(0x20908710,0x20908d50);
@@ -421,8 +423,10 @@ void screen_capture_bmp(void)
     return;
   }
   screenshot_popup();
+                    /* flip only graphics 1 [doc, inference] */
   gui_flip_one(0);
   itron_tslp_tsk(0xffffffff);
+                    /* directory handle, 0 on error [doc] */
   iVar1 = fs_opendir("I:\\FT-710\\Capture");
   if (iVar1 == 0) {
     iVar1 = fs_opendir("I:\\FT-710");
@@ -436,6 +440,7 @@ LAB_201347b8:
       iVar1 = fs_mkdir("I:\\FT-710\\Capture");
       if (iVar1 == 0) goto LAB_201346c0;
     }
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     fs_task_ctx_get();
   }
   else {
@@ -581,9 +586,11 @@ void sdmenu_scr_search_files(int param_1)
     mainlink_queue_frame(&local_64,0x22);
     return;
   }
+                    /* opens the SD folder for the kind [doc] */
   DAT_20909cf0 = sdmenu_list_files(uVar4 != 1 && uVar4 != 2,&DAT_209096b0,100);
   iVar3 = sd_state_bit7();
   if (iVar3 == 0) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
     mainlink_send_sd_absent();
     return;
   }
@@ -740,6 +747,7 @@ bool sdmenu_scr_loading(int param_1)
   else {
     iVar5 = sd_state_bit7();
     if (iVar5 == 0) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
       mainlink_send_sd_absent();
       return false;
     }
@@ -758,6 +766,7 @@ bool sdmenu_scr_loading(int param_1)
     be16_store(32000,(int)&local_80 + 3);
 LAB_201615c8:
     if (local_34 == 0) {
+                    /* MAIN transfer code 0x41 [doc, inference] */
       sdmenu_req_save((uint)(uVar6 != 0x41),32000);
     }
   }
@@ -812,6 +821,7 @@ void sdmenu_scr_load_wait(int param_1)
   while( true ) {
     iVar3 = sd_state_bit7();
     if (iVar3 == 0) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
       mainlink_send_sd_absent();
       return;
     }
@@ -876,6 +886,7 @@ void sdmenu_scr_name_check(int param_1)
   local_38 = 0;
   if (bVar2 == 0xff) {
     if (DAT_20909cf0 < 100) {
+                    /* "20YY_MM_DD_NN" from the RTC date [doc, inference] */
       sdmenu_default_name(unaff_r5,&DAT_209096b0,DAT_20909cf0,(int)&local_58 + 3);
     }
     else {
@@ -884,6 +895,7 @@ void sdmenu_scr_name_check(int param_1)
     }
   }
   else {
+                    /* word copy while aligned [doc, inference] */
     strcpy((int)&local_58 + 3);
     sdmenu_file_exists_ret = sdmenu_file_exists(unaff_r5,(uint)(&DAT_209096b0 + (uint)bVar2 * 0x10))
     ;
@@ -929,6 +941,7 @@ void sdmenu_scr_name_lookup(int param_1)
   i = 0;
   if (0 < DAT_20909cf0) {
     do {
+                    /* Case-insensitive compare with tolower [doc] */
       iVar3 = strcasecmp(param_1 + 3,&DAT_209096b0 + i * 0x10);
       if (iVar3 == 0) {
         puVar4 = &DAT_209096b0 + i * 0x10;
@@ -1002,6 +1015,7 @@ void sdmenu_scr_save_xfer(uint param_1)
   gui_draw_runs32(uVar2,0x1e,3,&DAT_203e5e2c);
   gui_draw_text_centered(uVar2,0x20428261,0xdc,400,0xf,0x20800b1c);
   uVar4 = (uint)(bVar1 != 0x42);
+                    /* MAIN transfer code 0x42 [doc, inference] */
   sdmenu_req_load(uVar4,be16_load_ret);
   local_5c = 0;
   local_6c = 0;
@@ -1019,6 +1033,7 @@ void sdmenu_scr_save_xfer(uint param_1)
   while( true ) {
     iVar3 = sd_state_bit7();
     if (iVar3 == 0) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
       mainlink_send_sd_absent();
       return;
     }
@@ -1097,6 +1112,7 @@ void sdmenu_scr_saving(int param_1)
     local_64 = 0;
     local_60 = 0;
     local_5c = 0;
+                    /* "20YY_MM_DD_NN" from the RTC date [doc, inference] */
     sdmenu_default_name(uVar5 != 0x42,&DAT_209096b0,DAT_20909cf0,&local_68);
   }
   sdmenu_select(uVar5 != 0x42,(uint)&local_68,(byte)local_2c);
@@ -1117,6 +1133,7 @@ void sdmenu_scr_saving(int param_1)
   else {
     iVar4 = sd_state_bit7();
     if (iVar4 == 0) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
       mainlink_send_sd_absent();
       return;
     }
@@ -1410,6 +1427,7 @@ void sdmenu_scr_format_run(int param_1)
   }
   sd_format_done();
   if ((iVar3 != 1) && (local_28 == 5)) {
+                    /* E2 frame with byte 1 = 0 [doc, inference] */
     mainlink_send_sd_absent();
     return;
   }
@@ -1884,11 +1902,13 @@ undefined4 debug_log_recv_cmd(undefined1 *param_1,undefined4 param_2)
     DAT_20808930 = *param_1;
     snprintf(auStack_44,0x32,"%s\\%s","I:\\FT-710\\DEBUG_RECV_CMD","dummy.txt");
     uVar2 = fs_fopen((uint)auStack_44,0x201353d8);
+                    /* creates a directory [doc] */
     if ((uVar2 == 0) &&
        (((iVar1 = fs_mkdir("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0 &&
          ((iVar1 = fs_mkdir("I:\\FT-710"), iVar1 != 0 ||
           (iVar1 = fs_mkdir("I:\\FT-710\\DEBUG_RECV_CMD"), iVar1 != 0)))) ||
         (uVar2 = fs_fopen((uint)auStack_44,0x201353d8), uVar2 == 0)))) {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
       fs_task_ctx_get();
       return 0xffffffff;
     }

@@ -173,6 +173,7 @@ void menu_ex040104_step(void)
 
 {
   menu_step_u8(0,3,&g_opstate.ex040104_screen_saver);
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
   screensaver_timer_restart();
   return;
 }
@@ -388,6 +389,7 @@ void menu_ex040101_enter(void)
 void menu_m4_16_0_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(1,0x31,PTR_g_ui_00025d60->rtc_set + 2);
   return;
 }
@@ -423,6 +425,7 @@ void menu_step_bcd(byte param_1,byte param_2,byte *param_3)
 void menu_m4_16_1_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(1,0x12,PTR_g_ui_00025d60->rtc_set + 1);
   return;
 }
@@ -435,6 +438,7 @@ void menu_m4_16_1_step(void)
 void menu_m4_16_2_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x99,PTR_g_ui_00025d60->rtc_set);
   return;
 }
@@ -447,6 +451,7 @@ void menu_m4_16_2_step(void)
 void menu_m4_16_3_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x23,PTR_g_ui_00025d60->rtc_set + 3);
   return;
 }
@@ -459,6 +464,7 @@ void menu_m4_16_3_step(void)
 void menu_m4_16_4_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x59,PTR_g_ui_00025d60->rtc_set + 4);
   return;
 }
@@ -473,10 +479,12 @@ void menu_m4_17_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* MEM LIST LOAD after the confirmation [doc, inference] */
   sd_memlist_load_start();
   return;
 }

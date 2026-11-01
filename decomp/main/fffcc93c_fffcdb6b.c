@@ -487,6 +487,7 @@ void menu_ex040105_draw(byte *param_1)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex040105_led_dimmer_val,param_1 + 0x18);
   return;
 }
@@ -510,6 +511,7 @@ void menu_ex040106_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex040106_mouse_pointer_speed_val,param_1 + 0x18);
   return;
 }
@@ -1139,6 +1141,7 @@ char * menu_m4_18_0_draw(char *param_1)
     pcVar1 = pcVar1 + 1;
     pcVar3 = pcVar3 + 1;
   }
+                    /* Returns pointer to MAIN version string 0xFFFFFF00 [doc, inference] */
   puVar2 = (undefined4 *)ver_main();
   *(undefined2 *)(param_1 + 0xe) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 10) = *puVar2;
@@ -1146,10 +1149,12 @@ char * menu_m4_18_0_draw(char *param_1)
     param_1[0x10] = '-';
     puVar2 = (undefined4 *)ver_main_ext1();
     *(undefined4 *)(param_1 + 0x11) = *puVar2;
+                    /* Returns 0xFFFFFF20, the ROM string "24-02-16" [doc] */
     puVar2 = (undefined4 *)ver_main_ext2();
     *(undefined4 *)(param_1 + 0x1a) = puVar2[1];
     *(undefined4 *)(param_1 + 0x16) = *puVar2;
   }
+                    /* Returns pointer to DISPLAY version 0x1436 [doc, inference] */
   puVar2 = (undefined4 *)ver_display();
   *(undefined2 *)(param_1 + 0x2c) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 0x28) = *puVar2;
@@ -1158,9 +1163,11 @@ char * menu_m4_18_0_draw(char *param_1)
     *(undefined4 *)(param_1 + 0x38) = puVar2[1];
     *(undefined4 *)(param_1 + 0x34) = *puVar2;
   }
+                    /* Returns pointer to DSP version 0x1444 [doc, inference] */
   puVar2 = (undefined4 *)ver_dsp();
   *(undefined2 *)(param_1 + 0x4a) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 0x46) = *puVar2;
+                    /* Returns pointer to SDR version 0x144A [doc, inference] */
   puVar2 = (undefined4 *)ver_sdr();
   *(undefined2 *)(param_1 + 0x68) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 100) = *puVar2;
@@ -1325,6 +1332,7 @@ undefined1 menu_select_row(char param_1)
         DAT_0001b4fc = '\x01';
       }
       else {
+                    /* Runs the selected row's on_enter [doc, inference] */
         menu_ui_enter();
       }
     }
@@ -1349,6 +1357,7 @@ void FUN_fffcdb26(void)
   if ((DAT_0001b4fc == '\x02') &&
      (swtimer_expired_ret = swtimer_expired(0x31), swtimer_expired_ret == 1)) {
     DAT_0001b4fc = 0;
+                    /* Runs the selected row's on_enter [doc, inference] */
     menu_ui_enter();
     return;
   }

@@ -476,6 +476,7 @@ int I3C_MasterWaitForTxReady(int param_1,int param_2)
   memw();
   *(undefined4 *)(param_1 + 0x88) = 0x400;
   if (param_2 != 0) {
+                    /* state table 0x200420 [doc, inference] */
     iVar3 = I3C_MasterGetState(param_1);
     while (iVar3 != 0) {
       iVar3 = I3C_MasterGetState(param_1);
@@ -571,6 +572,7 @@ undefined * I3C_MasterEmitStop(int param_1,int param_2)
   undefined *puVar3;
   uint uVar4;
   
+                    /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
   if (iVar1 != 3) {
     return &DAT_00001ee6;
@@ -703,28 +705,35 @@ void I3C_Init(uint *param_1,uint *param_2,undefined4 param_3)
   uVar10 = uVar9 >> 8 & 0xff;
   if (uVar10 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
   else if (uVar10 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
   else if (uVar10 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
   else if (uVar10 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
   else if (uVar10 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
   else if (uVar10 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar9 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar8 * 4));
   uVar9 = param_2[7];
   uVar10 = *param_2;
@@ -814,28 +823,35 @@ void I3C_MasterInit(uint *param_1,uint *param_2,undefined4 param_3)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   memw();
   *param_1 = ((byte)param_2[3] & 1) << 6 | (*(byte *)((int)param_2 + 0xd) & 1) << 0x18 |
@@ -871,23 +887,27 @@ void I3C_MasterDeinit(undefined4 param_1)
   uint uVar3;
   
   iVar1 = I3C_GetInstance(param_1);
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   uVar2 = *(uint *)(&DAT_00200404 + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238e38)[iVar1] = 0;
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238e38)[iVar1] = 0;
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238e38)[iVar1] = 0;
     return;
@@ -895,6 +915,7 @@ void I3C_MasterDeinit(undefined4 param_1)
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       (&DAT_00238e38)[iVar1] = 0;
       return;
@@ -904,11 +925,13 @@ void I3C_MasterDeinit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238e38)[iVar1] = 0;
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   (&DAT_00238e38)[iVar1] = 0;
   return;
@@ -1005,6 +1028,7 @@ I3C_MasterStart(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefin
   int iVar1;
   undefined *puVar2;
   
+                    /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
   if ((iVar1 != 0) && (iVar1 != 3)) {
     return &DAT_00001edc;
@@ -1044,6 +1068,7 @@ undefined * I3C_MasterStop(int param_1)
   undefined *puVar3;
   uint uVar4;
   
+                    /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
   if (iVar1 != 3) {
     return &DAT_00001ee6;
@@ -1182,6 +1207,7 @@ LAB_00210ffb:
     }
     if (bVar1) {
       if ((param_4 & 4) == 0) {
+                    /* state table 0x200420 [doc, inference] */
         iVar4 = I3C_MasterGetState(param_1);
         while (iVar4 != 0) {
           iVar4 = I3C_MasterGetState(param_1);
@@ -1242,6 +1268,7 @@ int I3C_MasterSend(int param_1,byte *param_2,uint param_3,uint param_4)
   }
   iVar3 = I3C_MasterWaitForTxReady(param_1,0);
   if ((iVar3 == 0) && ((param_4 & 4) == 0)) {
+                    /* state table 0x200420 [doc, inference] */
     iVar3 = I3C_MasterGetState(param_1);
     if (iVar3 == 4) {
       I3C_MasterEmitRequest(param_1,6);
@@ -1319,6 +1346,7 @@ undefined * I3C_MasterProcessDAA(int param_1,byte *param_2,int param_3)
     } while ((uVar5 & 0x200) == 0);
     memw();
     *(undefined4 *)(param_1 + 0x88) = 0x200;
+                    /* state table 0x200420 [doc, inference] */
     iVar4 = I3C_MasterGetState(param_1);
     if ((iVar4 == 5) && (memw(), (*(uint *)(param_1 + 0x88) & 0x10) != 0)) {
       if ((uStack_30 < uStack_28) || (uVar6 = uStack_28 + 1, 10 < uVar6)) {
@@ -1365,6 +1393,7 @@ undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
   uint uVar5;
   
   uVar5 = param_2[2];
+                    /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
   if ((iVar1 != 0) && (iVar1 != 3)) {
     return &DAT_00001edc;
@@ -1502,6 +1531,7 @@ undefined * I3C_MasterTransferNonBlocking(int param_1,char *param_2,int param_3)
   char cVar2;
   int iVar3;
   
+                    /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
   if ((*param_2 != '\0') || ((iVar1 != 0 && (iVar1 != 3)))) {
     return &DAT_00001edc;
@@ -1655,6 +1685,7 @@ void I3C_MasterTransferHandleIRQ(int param_1,char *param_2)
   uVar2 = I3C_MasterGetPendingInterrupts(param_1);
   memw();
   *(undefined4 *)(param_1 + 0x88) = uVar2;
+                    /* state table 0x200420 [doc, inference] */
   iVar3 = I3C_MasterGetState(param_1);
   uVar2 = I3C_MasterGetErrorStatusFlags(param_1);
   puVar4 = (undefined *)I3C_MasterCheckAndClearError(param_1,uVar2);
@@ -1942,28 +1973,35 @@ void I3C_SlaveInit(int param_1,byte *param_2,uint param_3)
   uVar13 = uVar11 >> 8 & 0xff;
   if (uVar13 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
   else if (uVar13 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
   else if (uVar13 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
   else if (uVar13 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
   else if (uVar13 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
   else if (uVar13 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar11 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar10 * 4));
   bVar1 = param_2[0x12];
   bVar5 = param_2[1];
@@ -2015,23 +2053,27 @@ void I3C_SlaveDeinit(undefined4 param_1)
   uint uVar3;
   
   iVar1 = I3C_GetInstance(param_1);
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200408 + iVar1 * 4));
   uVar2 = *(uint *)(&DAT_00200404 + iVar1 * 4);
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238f10)[iVar1] = 0;
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238f10)[iVar1] = 0;
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238f10)[iVar1] = 0;
     return;
@@ -2039,6 +2081,7 @@ void I3C_SlaveDeinit(undefined4 param_1)
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       (&DAT_00238f10)[iVar1] = 0;
       return;
@@ -2048,11 +2091,13 @@ void I3C_SlaveDeinit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     (&DAT_00238f10)[iVar1] = 0;
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   (&DAT_00238f10)[iVar1] = 0;
   return;

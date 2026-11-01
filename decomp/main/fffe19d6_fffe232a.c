@@ -5,6 +5,7 @@
 void FUN_fffe19d6(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(8);
   return;
 }
@@ -15,6 +16,7 @@ void FUN_fffe19d6(void)
 void FUN_fffe19dc(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(9);
   return;
 }
@@ -25,6 +27,7 @@ void FUN_fffe19dc(void)
 void FUN_fffe19e2(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(10);
   return;
 }
@@ -35,6 +38,7 @@ void FUN_fffe19e2(void)
 void FUN_fffe19e8(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xb);
   return;
 }
@@ -45,6 +49,7 @@ void FUN_fffe19e8(void)
 void FUN_fffe19ee(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xc);
   return;
 }
@@ -55,6 +60,7 @@ void FUN_fffe19ee(void)
 void FUN_fffe19f4(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xd);
   return;
 }
@@ -65,6 +71,7 @@ void FUN_fffe19f4(void)
 void FUN_fffe19fa(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xe);
   return;
 }
@@ -162,6 +169,7 @@ void freq_keypad_key(char param_1)
         PTR_g_ui_00025d6c->keypad_bcd[i] = PTR_g_ui_00025d6c->keypad_bcd[i] & 0xf0;
       }
     }
+                    /* Packed BCD byte [doc] */
     bcd_to_bin_ret = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[1]);
     bcd_to_bin_ret_2 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[2]);
     bcd_to_bin_ret_3 = bcd_to_bin(PTR_g_ui_00025d6c->keypad_bcd[3]);
@@ -400,6 +408,7 @@ void FUN_fffe1f60(void)
 void FUN_fffe2025(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\0');
   return;
 }
@@ -410,6 +419,7 @@ void FUN_fffe2025(void)
 void FUN_fffe202b(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x01');
   return;
 }
@@ -420,6 +430,7 @@ void FUN_fffe202b(void)
 void FUN_fffe2031(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x02');
   return;
 }
@@ -430,6 +441,7 @@ void FUN_fffe2031(void)
 void FUN_fffe2037(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x03');
   return;
 }
@@ -440,6 +452,7 @@ void FUN_fffe2037(void)
 void FUN_fffe203d(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x04');
   return;
 }
@@ -450,6 +463,7 @@ void FUN_fffe203d(void)
 void FUN_fffe2043(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x05');
   return;
 }
@@ -460,6 +474,7 @@ void FUN_fffe2043(void)
 void FUN_fffe2049(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x06');
   return;
 }
@@ -470,6 +485,7 @@ void FUN_fffe2049(void)
 void FUN_fffe204f(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\a');
   return;
 }
@@ -480,6 +496,7 @@ void FUN_fffe204f(void)
 void FUN_fffe2055(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\b');
   return;
 }
@@ -490,6 +507,7 @@ void FUN_fffe2055(void)
 void FUN_fffe205b(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\t');
   return;
 }
@@ -500,6 +518,7 @@ void FUN_fffe205b(void)
 void FUN_fffe2061(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\n');
   return;
 }
@@ -510,6 +529,7 @@ void FUN_fffe2061(void)
 void FUN_fffe2067(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\v');
   return;
 }
@@ -520,6 +540,7 @@ void FUN_fffe2067(void)
 void FUN_fffe206d(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\f');
   return;
 }
@@ -530,6 +551,7 @@ void FUN_fffe206d(void)
 void FUN_fffe2073(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\r');
   return;
 }
@@ -540,6 +562,7 @@ void FUN_fffe2073(void)
 void FUN_fffe2079(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x0e');
   return;
 }
@@ -611,6 +634,7 @@ void keypad_2digit_key(char param_1)
       FUN_fffe1e70();
       return;
     }
+                    /* Packed BCD byte [doc] */
     bcd_to_bin(bVar2);
     popup8_close();
     FUN_fffe1f3d();

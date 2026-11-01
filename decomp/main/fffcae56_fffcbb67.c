@@ -8,6 +8,7 @@ void menu_ex010513_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010513_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -275,6 +276,7 @@ void menu_ex020111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex020111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -288,6 +290,7 @@ void menu_ex020112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex020112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -301,6 +304,7 @@ void menu_ex020113_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex020113_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -327,6 +331,7 @@ void menu_ex020115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex020115_pc_keying,0,param_4,param_5,param_1);
   return;
 }
@@ -714,6 +719,7 @@ void menu_ex020205_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   dec_to_str_u16(sVar1,param_1 + 0x18);
   return;
 }
@@ -838,6 +844,7 @@ void menu_ex020211_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 99;
@@ -865,6 +872,7 @@ void menu_ex030101_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex030101_beep_level_val,param_1 + 0x18);
   return;
 }

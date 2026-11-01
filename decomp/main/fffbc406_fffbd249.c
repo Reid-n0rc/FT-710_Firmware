@@ -185,6 +185,7 @@ bool menu_close_if_open(void)
   
   bVar1 = PTR_g_ui_00025d54->dl_req_40 != 0;
   if (bVar1) {
+                    /* Clears UI +0x95 [doc] */
     menu_screen_close();
   }
   return bVar1;
@@ -312,6 +313,7 @@ void FUN_fffbc782(void)
       FUN_fffe1e70();
       PTR_g_ui_00025d54->keypad_pos = 0;
       PTR_g_ui_00025d54->keypad_set_fix = 1;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(8);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 8;
@@ -432,6 +434,7 @@ void FUN_fffbc99c(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(6);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 6;
@@ -467,6 +470,7 @@ void FUN_fffbca2b(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xd);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 0xd;
@@ -495,6 +499,7 @@ void FUN_fffbcaba(void)
     popup_close();
   }
   else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0);
     popup_open_timed();
     PTR_g_ui_00025d54->popup_code = 0;
@@ -701,6 +706,7 @@ void FUN_fffbcd48(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(10);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 10;
@@ -736,6 +742,7 @@ void FUN_fffbcdd7(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(9);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 9;
@@ -766,12 +773,14 @@ void FUN_fffbce66(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(1);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 1;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -804,12 +813,14 @@ void FUN_fffbcefc(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(2);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 2;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -867,12 +878,14 @@ void FUN_fffbcf91(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(3);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 3;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -894,6 +907,7 @@ void FUN_fffbd074(void)
   PTR_g_ui_00025d54->func_panel_open = 0;
   if (PTR_g_ui_00025d54->scan_running != 1) {
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -920,6 +934,7 @@ void FUN_fffbd0b9(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(4);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 4;
@@ -936,6 +951,7 @@ void FUN_fffbd109(void)
   byte bVar1;
   byte *pbVar2;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar2 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar2 == (byte *)0x0) {
     return;

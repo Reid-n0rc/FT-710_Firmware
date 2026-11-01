@@ -21,6 +21,7 @@ void ai_ex010101(void)
     return;
   }
   DAT_0001b29a = g_opstate.ex010101_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010101_af_treble_gain,0,1);
   return;
 }
@@ -44,6 +45,7 @@ void ai_ex010102(void)
     return;
   }
   DAT_0001b29b = g_opstate.ex010102_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010102_af_middle_tone_gain,0,1);
   return;
 }
@@ -67,6 +69,7 @@ void ai_ex010103(void)
     return;
   }
   DAT_0001b29c = g_opstate.ex010103_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010103_af_bass_gain,0,1);
   return;
 }
@@ -90,6 +93,7 @@ void ai_ex010104(void)
     return;
   }
   DAT_0001b29d = g_opstate.ex010104_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010104_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -113,6 +117,7 @@ void ai_ex010105(void)
     return;
   }
   DAT_0001b29e = g_opstate.ex010105_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010105_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -136,6 +141,7 @@ void ai_ex010106(void)
     return;
   }
   DAT_0001b29f = g_opstate.ex010106_agc_slow_dely;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010106_agc_slow_dely + 1) * 0x14);
   return;
 }
@@ -159,6 +165,7 @@ void ai_ex010107(void)
     return;
   }
   DAT_0001b2a0 = g_opstate.ex010107_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010107_lcut_freq,0,0);
   return;
 }
@@ -207,6 +214,7 @@ void ai_ex010109(void)
     return;
   }
   DAT_0001b2a2 = g_opstate.ex010109_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010109_hcut_freq,0,0);
   return;
 }
@@ -255,6 +263,7 @@ void ai_ex010111(void)
     return;
   }
   DAT_0001b2a4 = g_opstate.ex010111_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010111_usb_out_level,1,0);
   return;
 }
@@ -278,6 +287,7 @@ void ai_ex010112(void)
     return;
   }
   DAT_0001b2a5 = g_opstate.ex010112_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010112_rear_out_level,1,0);
   return;
 }
@@ -350,6 +360,7 @@ void ai_ex010115(void)
     return;
   }
   DAT_0001b2a8 = g_opstate.ex010115_usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010115_usb_mod_gain,1,0);
   return;
 }
@@ -373,6 +384,7 @@ void ai_ex010116(void)
     return;
   }
   DAT_0001b2a9 = g_opstate.ex010116_rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010116_rear_mod_gain,1,0);
   return;
 }
@@ -421,6 +433,7 @@ void ai_ex010118(void)
     return;
   }
   DAT_0001b2ab = g_opstate.ex010118_nar_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010118_nar_width,0,0);
   return;
 }
@@ -469,6 +482,7 @@ void ai_ex010201(void)
     return;
   }
   DAT_0001b2ad = g_opstate.ex010201_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010201_af_treble_gain,0,1);
   return;
 }
@@ -492,6 +506,7 @@ void ai_ex010202(void)
     return;
   }
   DAT_0001b2ae = g_opstate.ex010202_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010202_af_middle_tone_gain,0,1);
   return;
 }
@@ -515,6 +530,7 @@ void ai_ex010203(void)
     return;
   }
   DAT_0001b2af = g_opstate.ex010203_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010203_af_bass_gain,0,1);
   return;
 }
@@ -538,6 +554,7 @@ void ai_ex010204(void)
     return;
   }
   DAT_0001b2b0 = g_opstate.ex010204_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010204_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -561,6 +578,7 @@ void ai_ex010205(void)
     return;
   }
   DAT_0001b2b1 = g_opstate.ex010205_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010205_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -584,6 +602,7 @@ void ai_ex010206(void)
     return;
   }
   DAT_0001b2b2 = g_opstate.ex010206_agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010206_agc_slow_delay + 1) * 0x14);
   return;
 }
@@ -607,6 +626,7 @@ void ai_ex010207(void)
     return;
   }
   DAT_0001b2b3 = g_opstate.ex010207_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010207_lcut_freq,0,0);
   return;
 }
@@ -655,6 +675,7 @@ void ai_ex010209(void)
     return;
   }
   DAT_0001b2b5 = g_opstate.ex010209_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010209_hcut_freq,0,0);
   return;
 }
@@ -703,6 +724,7 @@ void ai_ex010211(void)
     return;
   }
   DAT_0001b2b7 = g_opstate.ex010211_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010211_usb_out_level,1,0);
   return;
 }
@@ -726,6 +748,7 @@ void ai_ex010212(void)
     return;
   }
   DAT_0001b2b8 = g_opstate.ex010212_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010212_rear_out_level,1,0);
   return;
 }
@@ -799,6 +822,7 @@ void ai_ex010215(void)
     return;
   }
   DAT_0001b2bb = g_opstate.ex010215_usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010215_usb_mod_gain,1,0);
   return;
 }
@@ -822,6 +846,7 @@ void ai_ex010216(void)
     return;
   }
   DAT_0001b2bc = g_opstate.ex010216_rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010216_rear_mod_gain,1,0);
   return;
 }
@@ -870,6 +895,7 @@ void ai_ex010301(void)
     return;
   }
   DAT_0001b2be = g_opstate.ex010301_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010301_af_treble_gain,0,1);
   return;
 }
@@ -893,6 +919,7 @@ void ai_ex010302(void)
     return;
   }
   DAT_0001b2bf = g_opstate.ex010302_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010302_af_middle_tone_gain,0,1);
   return;
 }
@@ -916,6 +943,7 @@ void ai_ex010303(void)
     return;
   }
   DAT_0001b2c0 = g_opstate.ex010303_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010303_af_bass_gain,0,1);
   return;
 }
@@ -939,6 +967,7 @@ void ai_ex010304(void)
     return;
   }
   DAT_0001b2c1 = g_opstate.ex010304_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010304_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -962,6 +991,7 @@ void ai_ex010305(void)
     return;
   }
   DAT_0001b2c2 = g_opstate.ex010305_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010305_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -985,6 +1015,7 @@ void ai_ex010306(void)
     return;
   }
   DAT_0001b2c3 = g_opstate.ex010306_agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010306_agc_slow_delay + 1) * 0x14);
   return;
 }
@@ -1008,6 +1039,7 @@ void ai_ex010307(void)
     return;
   }
   DAT_0001b2c4 = g_opstate.ex010307_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010307_lcut_freq,0,0);
   return;
 }
@@ -1056,6 +1088,7 @@ void ai_ex010309(void)
     return;
   }
   DAT_0001b2c6 = g_opstate.ex010309_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010309_hcut_freq,0,0);
   return;
 }
@@ -1104,6 +1137,7 @@ void ai_ex010311(void)
     return;
   }
   DAT_0001b2c8 = g_opstate.ex010311_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010311_usb_out_level,1,0);
   return;
 }
@@ -1127,6 +1161,7 @@ void ai_ex010312(void)
     return;
   }
   DAT_0001b2c9 = g_opstate.ex010312_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010312_rear_out_level,1,0);
   return;
 }
@@ -1175,6 +1210,7 @@ void ai_ex010314(void)
     return;
   }
   DAT_0001b2cb = g_opstate.ex010314_usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010314_usb_mod_gain,1,0);
   return;
 }
@@ -1198,6 +1234,7 @@ void ai_ex010315(void)
     return;
   }
   DAT_0001b2cc = g_opstate.ex010315_rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010315_rear_mod_gain,1,0);
   return;
 }
@@ -1282,6 +1319,7 @@ void ai_ex010318(void)
     return;
   }
   DAT_0001b2cf = g_opstate.ex010318_rpt_shift_28mhz;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((ushort)g_opstate.ex010318_rpt_shift_28mhz * 10);
   return;
 }
@@ -1311,6 +1349,7 @@ void ai_ex010319(void)
     return;
   }
   DAT_0001ff14 = sVar1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4(sVar1 * 10);
   return;
 }
@@ -1376,6 +1415,7 @@ void ai_ex010321(void)
     return;
   }
   DAT_0001b2d1 = local_1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(local_1,1,0);
   return;
 }
@@ -1399,6 +1439,7 @@ void ai_ex010401(void)
     return;
   }
   DAT_0001b2d2 = g_opstate.ex010401_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010401_af_treble_gain,0,1);
   return;
 }
@@ -1422,6 +1463,7 @@ void ai_ex010402(void)
     return;
   }
   DAT_0001b2d3 = g_opstate.ex010402_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010402_af_middle_tone_gain,0,1);
   return;
 }
@@ -1445,6 +1487,7 @@ void ai_ex010403(void)
     return;
   }
   DAT_0001b2d4 = g_opstate.ex010403_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010403_af_bass_gain,0,1);
   return;
 }
@@ -1468,6 +1511,7 @@ void ai_ex010404(void)
     return;
   }
   DAT_0001b2d5 = g_opstate.ex010404_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010404_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -1491,6 +1535,7 @@ void ai_ex010405(void)
     return;
   }
   DAT_0001b2d6 = g_opstate.ex010405_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010405_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -1514,6 +1559,7 @@ void ai_ex010406(void)
     return;
   }
   DAT_0001b2d7 = g_opstate.ex010406_agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010406_agc_slow_delay + 1) * 0x14);
   return;
 }
@@ -1536,6 +1582,7 @@ void ai_ex010407(void)
     return;
   }
   DAT_0001b2d8 = g_opstate.ex010407_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010407_lcut_freq,0,0);
   return;
 }
@@ -1584,6 +1631,7 @@ void ai_ex010409(void)
     return;
   }
   DAT_0001b2da = g_opstate.ex010409_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010409_hcut_freq,0,0);
   return;
 }
@@ -1632,6 +1680,7 @@ void ai_ex010411(void)
     return;
   }
   DAT_0001b2dc = g_opstate.ex010411_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010411_usb_out_level,1,0);
   return;
 }
@@ -1655,6 +1704,7 @@ void ai_ex010412(void)
     return;
   }
   DAT_0001b2dd = g_opstate.ex010412_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010412_rear_out_level,1,0);
   return;
 }
@@ -1728,6 +1778,7 @@ void ai_ex010415(void)
     return;
   }
   DAT_0001b2e0 = g_opstate.ex010415_usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010415_usb_mod_gain,1,0);
   return;
 }
@@ -1751,6 +1802,7 @@ void ai_ex010416(void)
     return;
   }
   DAT_0001b2e1 = g_opstate.ex010416_rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010416_rear_mod_gain,1,0);
   return;
 }
@@ -1799,6 +1851,7 @@ void ai_ex010418(void)
     return;
   }
   DAT_0001b2e3 = g_opstate.ex010418_nar_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010418_nar_width,0,0);
   return;
 }
@@ -1852,6 +1905,7 @@ void ai_ex010420(void)
     return;
   }
   DAT_0001ff16 = sVar1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4(sVar1 * 10);
   return;
 }
@@ -1875,6 +1929,7 @@ void ai_ex010501(void)
     return;
   }
   DAT_0001b2e5 = g_opstate.ex010501_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010501_af_treble_gain,0,1);
   return;
 }
@@ -1898,6 +1953,7 @@ void ai_ex010502(void)
     return;
   }
   DAT_0001b2e6 = g_opstate.ex010502_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010502_af_middle_tone_gain,0,1);
   return;
 }
@@ -1921,6 +1977,7 @@ void ai_ex010503(void)
     return;
   }
   DAT_0001b2e7 = g_opstate.ex010503_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010503_af_bass_gain,0,1);
   return;
 }
@@ -1944,6 +2001,7 @@ void ai_ex010504(void)
     return;
   }
   DAT_0001b2e8 = g_opstate.ex010504_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010504_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -1967,6 +2025,7 @@ void ai_ex010505(void)
     return;
   }
   DAT_0001b2e9 = g_opstate.ex010505_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010505_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -1990,6 +2049,7 @@ void ai_ex010506(void)
     return;
   }
   DAT_0001b2ea = g_opstate.ex010506_agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex010506_agc_slow_delay + 1) * 0x14);
   return;
 }
@@ -2013,6 +2073,7 @@ void ai_ex010507(void)
     return;
   }
   DAT_0001b2eb = g_opstate.ex010507_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010507_lcut_freq,0,0);
   return;
 }
@@ -2061,6 +2122,7 @@ void ai_ex010509(void)
     return;
   }
   DAT_0001b2ed = g_opstate.ex010509_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010509_hcut_freq,0,0);
   return;
 }
@@ -2109,6 +2171,7 @@ void ai_ex010511(void)
     return;
   }
   DAT_0001b2ef = g_opstate.ex010511_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010511_usb_out_level,1,0);
   return;
 }
@@ -2132,6 +2195,7 @@ void ai_ex010512(void)
     return;
   }
   DAT_0001b2f0 = g_opstate.ex010512_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010512_rear_out_level,1,0);
   return;
 }
@@ -2180,6 +2244,7 @@ void ai_ex010514(void)
     return;
   }
   DAT_0001b2f2 = g_opstate.ex010514_nar_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex010514_nar_width,0,0);
   return;
 }
@@ -2282,6 +2347,7 @@ void ai_ex020101(void)
     return;
   }
   DAT_0001b2f6 = g_opstate.ex020101_af_treble_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020101_af_treble_gain,0,1);
   return;
 }
@@ -2305,6 +2371,7 @@ void ai_ex020102(void)
     return;
   }
   DAT_0001b2f7 = g_opstate.ex020102_af_middle_tone_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020102_af_middle_tone_gain,0,1);
   return;
 }
@@ -2328,6 +2395,7 @@ void ai_ex020103(void)
     return;
   }
   DAT_0001b2f8 = g_opstate.ex020103_af_bass_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020103_af_bass_gain,0,1);
   return;
 }
@@ -2351,6 +2419,7 @@ void ai_ex020104(void)
     return;
   }
   DAT_0001b2f9 = g_opstate.ex020104_agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex020104_agc_fast_delay + 1) * 0x14);
   return;
 }
@@ -2374,6 +2443,7 @@ void ai_ex020105(void)
     return;
   }
   DAT_0001b2fa = g_opstate.ex020105_agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex020105_agc_mid_delay + 1) * 0x14);
   return;
 }
@@ -2397,6 +2467,7 @@ void ai_ex020106(void)
     return;
   }
   DAT_0001b2fb = g_opstate.ex020106_agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.ex020106_agc_slow_delay + 1) * 0x14);
   return;
 }
@@ -2420,6 +2491,7 @@ void ai_ex020107(void)
     return;
   }
   DAT_0001b2fc = g_opstate.ex020107_lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020107_lcut_freq,0,0);
   return;
 }
@@ -2468,6 +2540,7 @@ void ai_ex020109(void)
     return;
   }
   DAT_0001b2fe = g_opstate.ex020109_hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020109_hcut_freq,0,0);
   return;
 }
@@ -2516,6 +2589,7 @@ void ai_ex020111(void)
     return;
   }
   DAT_0001b300 = g_opstate.ex020111_usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020111_usb_out_level,1,0);
   return;
 }
@@ -2539,6 +2613,7 @@ void ai_ex020112(void)
     return;
   }
   DAT_0001b301 = g_opstate.ex020112_rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020112_rear_out_level,1,0);
   return;
 }
@@ -2587,6 +2662,7 @@ void ai_ex020114(void)
     return;
   }
   DAT_0001b303 = g_opstate.ex020114_nar_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020114_nar_width,0,0);
   return;
 }
@@ -2809,6 +2885,7 @@ void ai_ex020203(void)
     return;
   }
   DAT_0001b30c = g_opstate.ex020203_cw_weight;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020203_cw_weight,0,0);
   return;
 }
@@ -2862,6 +2939,7 @@ void ai_ex020205(void)
     return;
   }
   DAT_0001ff18 = sVar1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4(sVar1);
   return;
 }
@@ -3010,6 +3088,7 @@ void ai_ex020211(void)
     return;
   }
   DAT_0001b313 = g_opstate.ex020211_repeat_interval;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020211_repeat_interval,0,0);
   return;
 }
@@ -3033,6 +3112,7 @@ void ai_ex030101(void)
     return;
   }
   DAT_0001b314 = g_opstate.ex030101_beep_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030101_beep_level,1,0);
   return;
 }
@@ -3381,6 +3461,7 @@ void ai_ex030115(void)
     return;
   }
   DAT_0001b322 = g_opstate.ex030115_tx_time_out_timer;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030115_tx_time_out_timer,0,0);
   return;
 }
@@ -3454,6 +3535,7 @@ void ai_ex030118(void)
     return;
   }
   DAT_0001b325 = g_opstate.ex030118_ref_freq_fine_adj;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030118_ref_freq_fine_adj,0,1);
   return;
 }
@@ -3477,6 +3559,7 @@ void ai_ex030119(void)
     return;
   }
   DAT_0001b326 = g_opstate.ex030119_keyboard_language;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030119_keyboard_language,0,0);
   return;
 }
@@ -3500,6 +3583,7 @@ void ai_ex030120(void)
     return;
   }
   DAT_0001b327 = g_opstate.ex030120_mic_p1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030120_mic_p1,0,0);
   return;
 }
@@ -3523,6 +3607,7 @@ void ai_ex030121(void)
     return;
   }
   DAT_0001b328 = g_opstate.ex030121_mic_p2;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030121_mic_p2,0,0);
   return;
 }
@@ -3546,6 +3631,7 @@ void ai_ex030122(void)
     return;
   }
   DAT_0001b329 = g_opstate.ex030122_mic_p3;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030122_mic_p3,0,0);
   return;
 }
@@ -3569,6 +3655,7 @@ void ai_ex030123(void)
     return;
   }
   DAT_0001b32a = g_opstate.ex030123_mic_p4;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030123_mic_p4,0,0);
   return;
 }
@@ -3592,6 +3679,7 @@ void ai_ex030124(void)
     return;
   }
   DAT_0001b32b = g_opstate.ex030124_mic_up;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030124_mic_up,0,0);
   return;
 }
@@ -3615,6 +3703,7 @@ void ai_ex030125(void)
     return;
   }
   DAT_0001b32c = g_opstate.ex030125_mic_down;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030125_mic_down,0,0);
   return;
 }
@@ -3763,6 +3852,7 @@ void ai_ex030205(void)
     return;
   }
   DAT_0001b332 = g_opstate.ex030205_contour_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030205_contour_level,0,1);
   return;
 }
@@ -3786,6 +3876,7 @@ void ai_ex030206(void)
     return;
   }
   DAT_0001b333 = g_opstate.ex030206_contour_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030206_contour_width,0,0);
   return;
 }
@@ -3834,6 +3925,7 @@ void ai_ex030302(void)
     return;
   }
   DAT_0001b335 = g_opstate.ex030302_prmtrc_eq1_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030302_prmtrc_eq1_freq,0,0);
   return;
 }
@@ -3857,6 +3949,7 @@ void ai_ex030303(void)
     return;
   }
   DAT_0001b336 = g_opstate.ex030303_prmtrc_eq1_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030303_prmtrc_eq1_level,0,1);
   return;
 }
@@ -3880,6 +3973,7 @@ void ai_ex030304(void)
     return;
   }
   DAT_0001b337 = g_opstate.ex030304_prmtrc_eq1_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030304_prmtrc_eq1_bwth,0,0);
   return;
 }
@@ -3903,6 +3997,7 @@ void ai_ex030305(void)
     return;
   }
   DAT_0001b338 = g_opstate.ex030305_prmtrc_eq2_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030305_prmtrc_eq2_freq,0,0);
   return;
 }
@@ -3926,6 +4021,7 @@ void ai_ex030306(void)
     return;
   }
   DAT_0001b339 = g_opstate.ex030306_prmtrc_eq2_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030306_prmtrc_eq2_level,0,1);
   return;
 }
@@ -3948,6 +4044,7 @@ void ai_ex030307(void)
     return;
   }
   DAT_0001b33a = g_opstate.ex030307_prmtrc_eq2_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030307_prmtrc_eq2_bwth,0,0);
   return;
 }
@@ -3971,6 +4068,7 @@ void ai_ex030308(void)
     return;
   }
   DAT_0001b33b = g_opstate.ex030308_prmtrc_eq3_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030308_prmtrc_eq3_freq,0,0);
   return;
 }
@@ -3994,6 +4092,7 @@ void ai_ex030309(void)
     return;
   }
   DAT_0001b33c = g_opstate.ex030309_prmtrc_eq3_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030309_prmtrc_eq3_level,0,1);
   return;
 }
@@ -4017,6 +4116,7 @@ void ai_ex030310(void)
     return;
   }
   DAT_0001b33d = g_opstate.ex030310_prmtrc_eq3_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030310_prmtrc_eq3_bwth,0,0);
   return;
 }
@@ -4040,6 +4140,7 @@ void ai_ex030311(void)
     return;
   }
   DAT_0001b33e = g_opstate.ex030311_p_prmtrc_eq1_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030311_p_prmtrc_eq1_freq,0,0);
   return;
 }
@@ -4063,6 +4164,7 @@ void ai_ex030312(void)
     return;
   }
   DAT_0001b33f = g_opstate.ex030312_p_prmtrc_eq1_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030312_p_prmtrc_eq1_level,0,1);
   return;
 }
@@ -4086,6 +4188,7 @@ void ai_ex030313(void)
     return;
   }
   DAT_0001b340 = g_opstate.ex030313_p_prmtrc_eq1_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030313_p_prmtrc_eq1_bwth,0,0);
   return;
 }
@@ -4109,6 +4212,7 @@ void ai_ex030314(void)
     return;
   }
   DAT_0001b341 = g_opstate.ex030314_p_prmtrc_eq2_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030314_p_prmtrc_eq2_freq,0,0);
   return;
 }
@@ -4132,6 +4236,7 @@ void ai_ex030315(void)
     return;
   }
   DAT_0001b342 = g_opstate.ex030315_p_prmtrc_eq2_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030315_p_prmtrc_eq2_level,0,1);
   return;
 }
@@ -4155,6 +4260,7 @@ void ai_ex030316(void)
     return;
   }
   DAT_0001b343 = g_opstate.ex030316_p_prmtrc_eq2_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030316_p_prmtrc_eq2_bwth,0,0);
   return;
 }
@@ -4178,6 +4284,7 @@ void ai_ex030317(void)
     return;
   }
   DAT_0001b344 = g_opstate.ex030317_p_prmtrc_eq3_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030317_p_prmtrc_eq3_freq,0,0);
   return;
 }
@@ -4201,6 +4308,7 @@ void ai_ex030318(void)
     return;
   }
   DAT_0001b345 = g_opstate.ex030318_p_prmtrc_eq3_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030318_p_prmtrc_eq3_level,0,1);
   return;
 }
@@ -4224,6 +4332,7 @@ void ai_ex030319(void)
     return;
   }
   DAT_0001b346 = g_opstate.ex030319_p_prmtrc_eq3_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030319_p_prmtrc_eq3_bwth,0,0);
   return;
 }
@@ -4247,6 +4356,7 @@ void ai_ex030401(void)
     return;
   }
   DAT_0001b347 = g_opstate.ex030401_hf_max_power;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030401_hf_max_power,1,0);
   return;
 }
@@ -4270,6 +4380,7 @@ void ai_ex030402(void)
     return;
   }
   DAT_0001b348 = g_opstate.ex030402_50m_max_power;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030402_50m_max_power,1,0);
   return;
 }
@@ -4293,6 +4404,7 @@ void ai_ex030403(void)
     return;
   }
   DAT_0001b349 = g_opstate.ex030403_70m_max_power;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030403_70m_max_power,1,0);
   return;
 }
@@ -4316,6 +4428,7 @@ void ai_ex030404(void)
     return;
   }
   DAT_0001b34a = g_opstate.ex030404_am_max_power;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030404_am_max_power,1,0);
   return;
 }
@@ -4706,6 +4819,7 @@ void ai_ex040105(void)
     return;
   }
   DAT_0001b364 = g_opstate.ex040105_led_dimmer;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex040105_led_dimmer,0,0);
   return;
 }
@@ -4729,6 +4843,7 @@ void ai_ex040106(void)
     return;
   }
   DAT_0001b365 = g_opstate.ex040106_mouse_pointer_speed;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex040106_mouse_pointer_speed,0,0);
   return;
 }
@@ -5376,6 +5491,7 @@ void ai_ex_preset_agc_fast_delay(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b564 != g_opstate.presets[0].agc_fast_delay)) {
     DAT_0001b564 = g_opstate.presets[0].agc_fast_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.presets[0].agc_fast_delay + 1) * 0x14);
     return;
   }
@@ -5429,6 +5545,7 @@ void ai_ex_preset_agc_mid_delay(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b569 != g_opstate.presets[0].agc_mid_delay)) {
     DAT_0001b569 = g_opstate.presets[0].agc_mid_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.presets[0].agc_mid_delay + 1) * 0x14);
     return;
   }
@@ -5482,6 +5599,7 @@ void ai_ex_preset_agc_slow_delay(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b56e != g_opstate.presets[0].agc_slow_delay)) {
     DAT_0001b56e = g_opstate.presets[0].agc_slow_delay;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u16_4((g_opstate.presets[0].agc_slow_delay + 1) * 0x14);
     return;
   }
@@ -5534,6 +5652,7 @@ void ai_ex_preset_lcut_freq(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b573 != g_opstate.presets[0].lcut_freq)) {
     DAT_0001b573 = g_opstate.presets[0].lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].lcut_freq,0,0);
     return;
   }
@@ -5641,6 +5760,7 @@ void ai_ex_preset_hcut_freq(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b57d != g_opstate.presets[0].hcut_freq)) {
     DAT_0001b57d = g_opstate.presets[0].hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].hcut_freq,0,0);
     return;
   }
@@ -5748,6 +5868,7 @@ void ai_ex_preset_usb_out_level(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b587 != g_opstate.presets[0].usb_out_level)) {
     DAT_0001b587 = g_opstate.presets[0].usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].usb_out_level,1,0);
     return;
   }
@@ -5801,6 +5922,7 @@ void ai_ex_preset_rear_out_level(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b58c != g_opstate.presets[0].rear_out_level)) {
     DAT_0001b58c = g_opstate.presets[0].rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].rear_out_level,1,0);
     return;
   }
@@ -5962,6 +6084,7 @@ void ai_ex_preset_usb_mod_gain(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b59b != g_opstate.presets[0].usb_mod_gain)) {
     DAT_0001b59b = g_opstate.presets[0].usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].usb_mod_gain,1,0);
     return;
   }
@@ -6015,6 +6138,7 @@ void ai_ex_preset_rear_mod_gain(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b5a0 != g_opstate.presets[0].rear_mod_gain)) {
     DAT_0001b5a0 = g_opstate.presets[0].rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].rear_mod_gain,1,0);
     return;
   }
@@ -6090,6 +6214,7 @@ void ai_ex_preset_rptt_select(char param_1)
 void ai_ex060101(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(1);
   return;
 }
@@ -6109,6 +6234,7 @@ void ai_ex060101(void)
 void ai_ex060102(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(1);
   return;
 }
@@ -6128,6 +6254,7 @@ void ai_ex060102(void)
 void ai_ex060103(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(1);
   return;
 }
@@ -6147,6 +6274,7 @@ void ai_ex060103(void)
 void ai_ex060104(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(1);
   return;
 }
@@ -6166,6 +6294,7 @@ void ai_ex060104(void)
 void ai_ex060105(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(1);
   return;
 }
@@ -6185,6 +6314,7 @@ void ai_ex060105(void)
 void ai_ex060106(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(1);
   return;
 }
@@ -6204,6 +6334,7 @@ void ai_ex060106(void)
 void ai_ex060107(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(1);
   return;
 }
@@ -6223,6 +6354,7 @@ void ai_ex060107(void)
 void ai_ex060108(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(1);
   return;
 }
@@ -6242,6 +6374,7 @@ void ai_ex060108(void)
 void ai_ex060109(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(1);
   return;
 }
@@ -6261,6 +6394,7 @@ void ai_ex060109(void)
 void ai_ex060110(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(1);
   return;
 }
@@ -6280,6 +6414,7 @@ void ai_ex060110(void)
 void ai_ex060111(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(1);
   return;
 }
@@ -6299,6 +6434,7 @@ void ai_ex060111(void)
 void ai_ex060112(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(1);
   return;
 }
@@ -6318,6 +6454,7 @@ void ai_ex060112(void)
 void ai_ex060113(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(1);
   return;
 }
@@ -6337,6 +6474,7 @@ void ai_ex060113(void)
 void ai_ex060114(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(1);
   return;
 }
@@ -6356,6 +6494,7 @@ void ai_ex060114(void)
 void ai_ex060115(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(1);
   return;
 }
@@ -6375,6 +6514,7 @@ void ai_ex060115(void)
 void ai_ex060116(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(1);
   return;
 }
@@ -6394,6 +6534,7 @@ void ai_ex060116(void)
 void ai_ex060117(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(1);
   return;
 }
@@ -6413,6 +6554,7 @@ void ai_ex060117(void)
 void ai_ex060118(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(1);
   return;
 }
@@ -6432,6 +6574,7 @@ void ai_ex060118(void)
 void ai_ex060201(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(2);
   return;
 }
@@ -6451,6 +6594,7 @@ void ai_ex060201(void)
 void ai_ex060202(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(2);
   return;
 }
@@ -6470,6 +6614,7 @@ void ai_ex060202(void)
 void ai_ex060203(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(2);
   return;
 }
@@ -6489,6 +6634,7 @@ void ai_ex060203(void)
 void ai_ex060204(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(2);
   return;
 }
@@ -6508,6 +6654,7 @@ void ai_ex060204(void)
 void ai_ex060205(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(2);
   return;
 }
@@ -6527,6 +6674,7 @@ void ai_ex060205(void)
 void ai_ex060206(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(2);
   return;
 }
@@ -6546,6 +6694,7 @@ void ai_ex060206(void)
 void ai_ex060207(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(2);
   return;
 }
@@ -6565,6 +6714,7 @@ void ai_ex060207(void)
 void ai_ex060208(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(2);
   return;
 }
@@ -6584,6 +6734,7 @@ void ai_ex060208(void)
 void ai_ex060209(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(2);
   return;
 }
@@ -6603,6 +6754,7 @@ void ai_ex060209(void)
 void ai_ex060210(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(2);
   return;
 }
@@ -6622,6 +6774,7 @@ void ai_ex060210(void)
 void ai_ex060211(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(2);
   return;
 }
@@ -6641,6 +6794,7 @@ void ai_ex060211(void)
 void ai_ex060212(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(2);
   return;
 }
@@ -6660,6 +6814,7 @@ void ai_ex060212(void)
 void ai_ex060213(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(2);
   return;
 }
@@ -6679,6 +6834,7 @@ void ai_ex060213(void)
 void ai_ex060214(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(2);
   return;
 }
@@ -6698,6 +6854,7 @@ void ai_ex060214(void)
 void ai_ex060215(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(2);
   return;
 }
@@ -6717,6 +6874,7 @@ void ai_ex060215(void)
 void ai_ex060216(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(2);
   return;
 }
@@ -6736,6 +6894,7 @@ void ai_ex060216(void)
 void ai_ex060217(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(2);
   return;
 }
@@ -6755,6 +6914,7 @@ void ai_ex060217(void)
 void ai_ex060218(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(2);
   return;
 }
@@ -6774,6 +6934,7 @@ void ai_ex060218(void)
 void ai_ex060301(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(3);
   return;
 }
@@ -6793,6 +6954,7 @@ void ai_ex060301(void)
 void ai_ex060302(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(3);
   return;
 }
@@ -6812,6 +6974,7 @@ void ai_ex060302(void)
 void ai_ex060303(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(3);
   return;
 }
@@ -6830,6 +6993,7 @@ void ai_ex060303(void)
 void ai_ex060304(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(3);
   return;
 }
@@ -6849,6 +7013,7 @@ void ai_ex060304(void)
 void ai_ex060305(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(3);
   return;
 }
@@ -6868,6 +7033,7 @@ void ai_ex060305(void)
 void ai_ex060306(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(3);
   return;
 }
@@ -6887,6 +7053,7 @@ void ai_ex060306(void)
 void ai_ex060307(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(3);
   return;
 }
@@ -6906,6 +7073,7 @@ void ai_ex060307(void)
 void ai_ex060308(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(3);
   return;
 }
@@ -6925,6 +7093,7 @@ void ai_ex060308(void)
 void ai_ex060309(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(3);
   return;
 }
@@ -6944,6 +7113,7 @@ void ai_ex060309(void)
 void ai_ex060310(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(3);
   return;
 }
@@ -6963,6 +7133,7 @@ void ai_ex060310(void)
 void ai_ex060311(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(3);
   return;
 }
@@ -6982,6 +7153,7 @@ void ai_ex060311(void)
 void ai_ex060312(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(3);
   return;
 }
@@ -7001,6 +7173,7 @@ void ai_ex060312(void)
 void ai_ex060313(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(3);
   return;
 }
@@ -7020,6 +7193,7 @@ void ai_ex060313(void)
 void ai_ex060314(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(3);
   return;
 }
@@ -7039,6 +7213,7 @@ void ai_ex060314(void)
 void ai_ex060315(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(3);
   return;
 }
@@ -7058,6 +7233,7 @@ void ai_ex060315(void)
 void ai_ex060316(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(3);
   return;
 }
@@ -7077,6 +7253,7 @@ void ai_ex060316(void)
 void ai_ex060317(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(3);
   return;
 }
@@ -7096,6 +7273,7 @@ void ai_ex060317(void)
 void ai_ex060318(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(3);
   return;
 }
@@ -7115,6 +7293,7 @@ void ai_ex060318(void)
 void ai_ex060401(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(4);
   return;
 }
@@ -7134,6 +7313,7 @@ void ai_ex060401(void)
 void ai_ex060402(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(4);
   return;
 }
@@ -7153,6 +7333,7 @@ void ai_ex060402(void)
 void ai_ex060403(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(4);
   return;
 }
@@ -7172,6 +7353,7 @@ void ai_ex060403(void)
 void ai_ex060404(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(4);
   return;
 }
@@ -7191,6 +7373,7 @@ void ai_ex060404(void)
 void ai_ex060405(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(4);
   return;
 }
@@ -7210,6 +7393,7 @@ void ai_ex060405(void)
 void ai_ex060406(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(4);
   return;
 }
@@ -7229,6 +7413,7 @@ void ai_ex060406(void)
 void ai_ex060407(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(4);
   return;
 }
@@ -7248,6 +7433,7 @@ void ai_ex060407(void)
 void ai_ex060408(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(4);
   return;
 }
@@ -7267,6 +7453,7 @@ void ai_ex060408(void)
 void ai_ex060409(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(4);
   return;
 }
@@ -7286,6 +7473,7 @@ void ai_ex060409(void)
 void ai_ex060410(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(4);
   return;
 }
@@ -7305,6 +7493,7 @@ void ai_ex060410(void)
 void ai_ex060411(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(4);
   return;
 }
@@ -7324,6 +7513,7 @@ void ai_ex060411(void)
 void ai_ex060412(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(4);
   return;
 }
@@ -7343,6 +7533,7 @@ void ai_ex060412(void)
 void ai_ex060413(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(4);
   return;
 }
@@ -7362,6 +7553,7 @@ void ai_ex060413(void)
 void ai_ex060414(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(4);
   return;
 }
@@ -7381,6 +7573,7 @@ void ai_ex060414(void)
 void ai_ex060415(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(4);
   return;
 }
@@ -7400,6 +7593,7 @@ void ai_ex060415(void)
 void ai_ex060416(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(4);
   return;
 }
@@ -7419,6 +7613,7 @@ void ai_ex060416(void)
 void ai_ex060417(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(4);
   return;
 }
@@ -7438,6 +7633,7 @@ void ai_ex060417(void)
 void ai_ex060418(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(4);
   return;
 }
@@ -7457,6 +7653,7 @@ void ai_ex060418(void)
 void ai_ex060501(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(5);
   return;
 }
@@ -7476,6 +7673,7 @@ void ai_ex060501(void)
 void ai_ex060502(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(5);
   return;
 }
@@ -7495,6 +7693,7 @@ void ai_ex060502(void)
 void ai_ex060503(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(5);
   return;
 }
@@ -7514,6 +7713,7 @@ void ai_ex060503(void)
 void ai_ex060504(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(5);
   return;
 }
@@ -7533,6 +7733,7 @@ void ai_ex060504(void)
 void ai_ex060505(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(5);
   return;
 }
@@ -7552,6 +7753,7 @@ void ai_ex060505(void)
 void ai_ex060506(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(5);
   return;
 }
@@ -7571,6 +7773,7 @@ void ai_ex060506(void)
 void ai_ex060507(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(5);
   return;
 }
@@ -7590,6 +7793,7 @@ void ai_ex060507(void)
 void ai_ex060508(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(5);
   return;
 }
@@ -7609,6 +7813,7 @@ void ai_ex060508(void)
 void ai_ex060509(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(5);
   return;
 }
@@ -7628,6 +7833,7 @@ void ai_ex060509(void)
 void ai_ex060510(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(5);
   return;
 }
@@ -7647,6 +7853,7 @@ void ai_ex060510(void)
 void ai_ex060511(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(5);
   return;
 }
@@ -7666,6 +7873,7 @@ void ai_ex060511(void)
 void ai_ex060512(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(5);
   return;
 }
@@ -7685,6 +7893,7 @@ void ai_ex060512(void)
 void ai_ex060513(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(5);
   return;
 }
@@ -7704,6 +7913,7 @@ void ai_ex060513(void)
 void ai_ex060514(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(5);
   return;
 }
@@ -7723,6 +7933,7 @@ void ai_ex060514(void)
 void ai_ex060515(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(5);
   return;
 }
@@ -7742,6 +7953,7 @@ void ai_ex060515(void)
 void ai_ex060516(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(5);
   return;
 }
@@ -7761,6 +7973,7 @@ void ai_ex060516(void)
 void ai_ex060517(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(5);
   return;
 }
@@ -7779,6 +7992,7 @@ void ai_ex060517(void)
 void ai_ex060518(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(5);
   return;
 }

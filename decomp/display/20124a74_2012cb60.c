@@ -314,6 +314,7 @@ LAB_20125294:
         local_48 = 0;
         local_44 = 0;
         playlist_entry_name(uVar4,bVar5,&local_50);
+                    /* word copy while aligned [doc, inference] */
         strcpy(auStack_3c,&local_50);
         gui_draw_text(local_58,&local_50,DAT_208006d2,DAT_208006d0,0xf,&DAT_20800b1c);
         fb_fill_rect(local_58,0x4a69,(uint)DAT_208006d6,(uint)DAT_208006d4,
@@ -451,6 +452,7 @@ LAB_20125a30:
           return;
         }
         local_5c[0] = 0;
+                    /* "%02d:%02d:%02d" + percent [doc, inference] */
         play_progress(local_5c,(uint)&local_50);
         if (local_5c[0] == 0) {
           local_50 = 0;
@@ -603,6 +605,7 @@ bool playlist_play_poll(void)
         return bVar1;
       }
       local_30[0] = 0;
+                    /* "%02d:%02d:%02d" + percent [doc, inference] */
       play_progress(local_30,(uint)auStack_28);
       if (local_30[0] != 100) {
         return bVar1;
@@ -650,6 +653,7 @@ void touch_calibration(int param_1)
   undefined4 local_24;
   
   uVar1 = fb_get_layer_addr(DAT_208085bc);
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   fb_fill_rect(uVar1,0,0,0,800,0x1e0);
   gui_draw_runs(uVar1,(uint)*(ushort *)(&DAT_2016d61e + param_1 * 4),
@@ -686,6 +690,7 @@ void scr_lcd_test(int param_1)
   int iVar1;
   
   iVar1 = fb_get_layer_addr(DAT_208085bc);
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   switch(*(undefined1 *)(param_1 + 1)) {
   case 0:
@@ -753,6 +758,7 @@ void FUN_2012616c(int param_1)
     return;
   }
   DAT_208007cc = 0;
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   return;
@@ -798,10 +804,12 @@ void scr_sd_menu(int param_1)
 switchD_2012629c_caseD_43:
     if (*(char *)(param_1 + 2) == '\x01') {
 LAB_20126304:
+                    /* scr_sd_menu 0x41..0x44 step 1 [doc] */
       sdmenu_scr_file_list(param_1);
       return;
     }
     if ((*(char *)(param_1 + 2) == '\x10') && (iVar2 = sdmenu_scr_loading(param_1), iVar2 != 0)) {
+                    /* scr_sd_menu step 0x10 after sdmenu_scr_loading [doc] */
       sdmenu_scr_load_wait(param_1);
       return;
     }
@@ -815,12 +823,15 @@ LAB_20126304:
       case 2:
       case 3:
       case 4:
+                    /* scr_sd_menu byte 1 = 1..4 [doc] */
         sdmenu_scr_search_files(param_1);
         return;
       case 5:
+                    /* scr_sd_menu byte 1 = 5 [doc] */
         sdmenu_scr_info(param_1);
         return;
       case 8:
+                    /* scr_sd_menu byte 1 = 8 [doc] */
         sdmenu_scr_card_check(param_1);
         return;
       }
@@ -830,17 +841,20 @@ LAB_20126304:
     case 0x44:
       bVar1 = *(byte *)(param_1 + 2);
       if (bVar1 == 3) {
+                    /* scr_sd_menu 0x42/0x44 step 3 [doc] */
         sdmenu_scr_name_lookup(param_1);
         return;
       }
       if (3 < bVar1) {
         if (bVar1 == 4) {
+                    /* scr_sd_menu 0x42/0x44 step 4 [doc] */
           sdmenu_scr_save_xfer(param_1);
           return;
         }
         if (bVar1 != 0x10) {
           return;
         }
+                    /* scr_sd_menu 0x42/0x44 step 0x10 [doc] */
         sdmenu_scr_saving(param_1);
         return;
       }
@@ -848,6 +862,7 @@ LAB_20126304:
         if (bVar1 != 2) {
           return;
         }
+                    /* scr_sd_menu 0x42/0x44 step 2 [doc] */
         sdmenu_scr_name_check(param_1);
         return;
       }
@@ -859,10 +874,12 @@ LAB_20126304:
       return;
     case 0x48:
       if (*(char *)(param_1 + 2) == '\x01') {
+                    /* scr_sd_menu 0x48 step 1 [doc] */
         sdmenu_scr_format_confirm(param_1);
         return;
       }
       if (*(char *)(param_1 + 2) == '\x10') {
+                    /* scr_sd_menu 0x48 step 0x10 [doc] */
         sdmenu_scr_format_run(param_1);
         return;
       }
@@ -1281,6 +1298,7 @@ void scr_setup_menu(int param_1,int param_2,int param_3)
       local_5c = 0;
       local_58 = 0;
       iVar1 = param_1 + i * 0x1c;
+                    /* Copies up to n bytes and pads with 0 [doc] */
       strncpy(&local_30,iVar1 + 0x9a,5);
       strncpy(&local_70,iVar1 + 0x9f,0x14);
       strncpy(&local_58,iVar1 + 0xb3,3);
@@ -1528,6 +1546,7 @@ void scr_keyboard(int param_1,int param_2,int param_3)
                  (uint)DAT_2080054a);
     fb_fill_rect(local_48,0x821,(uint)DAT_20800562,(uint)DAT_20800560,(uint)DAT_20800564,
                  (uint)DAT_20800566);
+                    /* scr_keyboard key grid [doc, inference] */
     keyboard_draw_keys((uint)DAT_20800464);
     __aeabi_memclr4(local_a8,0x32);
     __aeabi_memclr4(local_a8 + 0x34,local_28);
@@ -1611,6 +1630,7 @@ void scr_keyboard(int param_1,int param_2,int param_3)
     local_a8[0x33] = 0;
     memcpy(local_a8,param_1 + 0xa4,0x14);
     uVar6 = 0;
+                    /* Word-at-a-time string length [doc] */
     iVar5 = strlen(local_a8);
     if (iVar5 != 0) {
       do {
@@ -1802,6 +1822,7 @@ void scr_memory_list(int param_1,int param_2)
   local_3c = 0;
   local_38 = 0;
   local_34 = 0;
+                    /* Copies 5 bytes [doc] */
   copy5(&local_40,param_1 + 0xab);
   gui_draw_text(uVar1,&local_40,DAT_2080059e,DAT_2080059c,0xf,&DAT_2080099c);
   local_3c = 0;
@@ -2174,6 +2195,7 @@ void text_list_item_rows(int param_1,int param_2,int param_3)
       if ((*(byte *)(iVar4 + 0x11a) & 0x1f) != 0) {
         iVar4 = memcmp(iVar4 + 0x131,"DONE",4);
         if (iVar4 == 0) {
+                    /* row label and a "DONE" button box [doc] */
           text_list_row_done(uVar6,param_1);
           if (bVar7 == 2 && uVar6 == uVar8) {
             fb_draw_round_frame_wrap
@@ -2353,10 +2375,12 @@ LAB_20129000:
   text_list_left_pane(param_1,param_2,param_3);
   if (*(char *)(param_1 + 0x98) != '\0') {
     if (*(char *)(param_1 + 0x98) == '\x01') {
+                    /* Right pane, plain form [doc] */
       text_list_plain_rows(param_1,param_2,param_3);
     }
     return;
   }
+                    /* Right pane, item form [doc] */
   text_list_item_rows(param_1,param_2,param_3);
   return;
 }
@@ -2477,6 +2501,7 @@ void voice_msg_play_rec(int param_1)
         } while (local_24 < 5);
         if (local_28 != '\0') {
           if (DAT_20800490 == '\0') {
+                    /* E8 frame b1 = 1, b2 = state [doc] */
             mainlink_send_e8_state(1);
           }
           play_start((uint)&local_48,2);
@@ -2760,6 +2785,7 @@ void vfo_audio_status_draw(int param_1,int param_2)
   fb_fill_rect(local_30,0x821,0xfc,0x249,0x6e,0x3c);
   gui_draw_runs(local_30,0xfc,0x249,&DAT_2016eb2c);
   gui_draw_runs(local_30,DAT_208007ba + 0xfc & 0xffff,DAT_208007b8 + 0x249 & 0xffff,&DAT_2016eb1c);
+                    /* Voice-message screen action [doc] */
   voice_msg_play_rec(param_1);
   return;
 }
@@ -2864,6 +2890,7 @@ void vfo_clar_draw(int param_1,int param_2,int param_3)
   }
   if ((param_3 != 0 || uVar5 != uVar6) || (uVar3 != uVar1)) {
     fb_clear_rect(iVar2,(uint)DAT_20800522,(uint)DAT_20800520,(uint)DAT_20800528,0x26);
+                    /* fills 8 bytes with byte [doc] */
     fill8(auStack_2c,0x20);
     local_27 = 0;
     clar_offset_format(uVar3,auStack_2c);
@@ -2992,6 +3019,7 @@ void vfo_sub_draw(char *param_1,int param_2,int param_3)
   bVar1 = param_1[0x49];
   local_44 = (uint)*(byte *)(param_2 + 0x49);
   local_64 = (uint)bVar1;
+                    /* Copies 5 bytes [doc] */
   copy5(&uStack_8c,param_1 + 0x4a);
   copy5(auStack_50,param_2 + 0x4a);
   bVar2 = param_1[3];
@@ -3199,6 +3227,7 @@ void scr_vfo(char *param_1,char *param_2,int param_3)
   bVar5 = param_1[0x49] & 0xf;
   bVar2 = param_2[0x49];
   uVar3 = (uint)(byte)param_2[0x30];
+                    /* Copies 5 bytes [doc] */
   copy5(&uStack_38,param_1 + 0x31);
   copy5(auStack_2c,param_2 + 0x31);
   memcpy(auStack_58,param_1 + 0x36,0xd);
@@ -3501,6 +3530,7 @@ void scr_value_popup(int param_1)
                    (uint)*puVar5 + (uint)*puVar8 & 0xffff,0x22,0x208015bc);
         return;
       }
+                    /* Word-at-a-time string length [doc] */
       sVar3 = strlen(&local_38);
       gui_draw_text(local_2c,&local_38,
                     *(short *)(&DAT_208026de + iVar1) + *(short *)(&DAT_208028e6 + iVar2),
@@ -4090,6 +4120,7 @@ void audio_error_check(int param_1)
     return;
   }
   DAT_2080048e = 3;
+                    /* Voice-message screen action [doc] */
   voice_msg_play_rec(param_1);
   return;
 }
@@ -4144,6 +4175,7 @@ void multi_panel_label_draw(int param_1,int param_2)
   
   iVar3 = fb_get_layer_addr(0);
   if (DAT_20800480 == '\0') {
+                    /* Returns the 3D work buffer pointer 0x208085B4 [doc] */
     iVar5 = scope3d_buf_get();
   }
   else {

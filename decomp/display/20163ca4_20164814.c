@@ -70,6 +70,7 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
@@ -350,6 +351,7 @@ undefined4 ring100_advance(undefined4 *param_1)
   undefined4 uVar2;
   
   uVar2 = *param_1;
+                    /* idx + 1, wrapping at 100 [doc] */
   uVar1 = ring100_next();
   *param_1 = uVar1;
   return uVar2;
@@ -377,6 +379,7 @@ undefined4 ring133_advance(undefined4 *param_1)
   undefined4 uVar2;
   
   uVar2 = *param_1;
+                    /* idx + 1, wrapping at 133 [doc] */
   uVar1 = ring133_next();
   *param_1 = uVar1;
   return uVar2;
@@ -406,6 +409,7 @@ undefined4 ring20_advance(undefined4 *param_1)
   undefined4 uVar2;
   
   uVar2 = *param_1;
+                    /* idx + 1, wrapping at 20 [doc] */
   uVar1 = ring20_next();
   *param_1 = uVar1;
   return uVar2;
@@ -423,6 +427,7 @@ undefined4 ring30_advance(undefined4 *param_1)
   undefined4 uVar2;
   
   uVar2 = *param_1;
+                    /* idx + 1, wrapping at 30 [doc] */
   uVar1 = ring30_next();
   *param_1 = uVar1;
   return uVar2;
@@ -531,6 +536,7 @@ undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,un
   mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x84),1);
   iVar1 = ring32_post_inc(param_1);
   uVar2 = *(undefined4 *)(param_1 + iVar1 * 4 + 4);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&uStack_10);
   return uVar2;
 }

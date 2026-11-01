@@ -212,6 +212,7 @@ void uart4_tx_init(int param_1,uint param_2)
   int iVar3;
   
   *(uint *)(param_1 + 0x18) = param_2;
+                    /* Creates the pool mutex [doc] */
   txpool_init_mutex();
   uVar2 = 0;
   do {
@@ -220,6 +221,7 @@ void uart4_tx_init(int param_1,uint param_2)
     txpool_set_slot(param_1 + 0x111c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x11a4) = uVar1;
   return;
@@ -301,7 +303,9 @@ void mainlink_obj_run(int param_1)
      && (itron_acre_tsk_ret_2 = itron_acre_tsk(0,(byte *)&ctsk_uart_5900),
         0 < (int)itron_acre_tsk_ret_2)) {
     uVar2 = param_1 + 0x8218;
+                    /* 32 x 0x408 B buffer pool + mailbox [doc, inference] */
     mainlink_tx_init(uVar2,*(uint *)(param_1 + 0x10));
+                    /* 32 x 0x408 B pool + mailbox [doc, inference] */
     mainlink_disp_init(param_1 + 0x58,uVar2);
     *(undefined4 *)(param_1 + 0x4c) = *(undefined4 *)(param_1 + 0x14);
     mainlink_rx_bind(param_1 + 0x18,*(uint *)(param_1 + 0x10),uVar2,param_1 + 0x58);
@@ -439,6 +443,7 @@ void mainlink_send_ui_e2(void *param_1,uint param_2)
   
   local_18 = 0xe2;
   uStack_14 = 0;
+                    /* Copies 5 bytes [doc] */
   copy5((int)&local_18 + 1,param_2);
   if (DAT_20800494 != '\0') {
     mainlink_queue_frame(&local_18,6);
@@ -547,6 +552,7 @@ void bootloader_entry_screen(undefined4 param_1,int param_2)
     fb_clear_rect(uVar2,0,0,800,0x1e0);
     gui_draw_text_centered(uVar2,0x204280a8,100,400,0xc,0x208038c0);
     do {
+                    /* Radio off from the GUI side [doc] */
       if (DAT_20800493 != '\0') {
         display_power_down();
       }
@@ -586,6 +592,7 @@ void update_error_screen(void)
   pointer_touch_poll();
   do {
     cursor_window_update();
+                    /* Radio off from the GUI side [doc] */
     if (DAT_20800493 != '\0') {
       display_power_down();
     }
@@ -1057,12 +1064,14 @@ LAB_20159dec:
       }
       local_4b5 = *(char *)(param_1 + 299);
       local_4b3 = FUN_20158fa8(*(undefined1 *)(param_1 + 299));
+                    /* title bar, four target rows [doc] */
       fwupdate_select_draw(param_1,local_4b8,local_2c);
       if (DAT_20800494 == '\0') {
         iVar1 = fb_get_layer_addr(DAT_208085bc);
         fb_clear_rect_checked(iVar1,0x19a,0x1a4,0x17c,0x46);
         gui_update_layers();
       }
+                    /* Touch/mouse loop of the target list [doc] */
       iVar2 = fwupdate_select_loop(param_1,local_4b8,local_2c);
       if (iVar2 == 0) {
 LAB_20159f50:
@@ -1075,6 +1084,7 @@ LAB_20159f50:
       local_4b3 = 10;
       fwupdate_confirm_draw(param_1,local_4b8);
       gui_update_layers();
+                    /* Touch/mouse loop of the "UPDATE?" box [doc] */
       iVar2 = fwupdate_confirm_loop(param_1);
       if (iVar2 == 0) goto LAB_20159f50;
       mainlink_send_e6(0);
@@ -1131,6 +1141,7 @@ LAB_2015a100:
   uVar3 = fb_get_layer_addr(DAT_208085bc);
   fb_clear_rect_checked(uVar3,0x1a,0,800,0x1c6);
   gui_draw_text_centered(uVar3,DAT_2080856c,100,400,0xc,0x208038c0);
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   gui_update_layers();
   iVar1 = fb_get_layer_addr(DAT_208085bc);
@@ -1403,6 +1414,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
   uVar2 = fwfile_status_text(param_1 + 8,0);
   gui_update_layers();
   local_4c = fb_get_layer_addr(DAT_208085bc);
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   itron_dly_tsk(0x32);
@@ -1440,6 +1452,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
       iVar3 = 0;
       do {
         sprintf(&stack0xffffff88,&DAT_2042813c,*(undefined2 *)(param_1 + iVar3 * 2));
+                    /* Case-insensitive compare with tolower [doc] */
         iVar4 = strcasecmp(param_1 + iVar3 * 0x48 + 0x31,&stack0xffffff88);
         if (0 < iVar4) {
           local_70 = CONCAT13(local_70._3_1_ | (byte)(1 << (7U - iVar3 & 0xff)),(uint3)local_70);
@@ -1786,6 +1799,7 @@ LAB_2015a994:
         if (iVar15 != iVar4 && iVar1 < 0 == bVar17) {
           local_29c = local_29c ^ (byte)(1 << (7 - uVar7 & 0xff));
           local_29b = (byte)uVar7;
+                    /* title bar, four target rows [doc] */
           fwupdate_select_draw(local_30,auStack_2a0,local_28);
           if (DAT_20800494 != '\0') {
             mainlink_send_e6(0);
@@ -2253,7 +2267,9 @@ void scope3d_line_render(undefined4 param_1,int param_2,undefined4 param_3,int p
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
   uVar2 = scope_ramp_get(param_5);
   uVar3 = scope3d_line_markers(param_2);
+                    /* entry i of the vertical scale table 0x20450278 [doc] */
   uVar4 = scope3d_vscale(param_2,param_5);
+                    /* line i at x = 5i+4, width 791-10i [doc, inference] */
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -2309,8 +2325,10 @@ void scope3d_render_large(void *param_1,uint n,int param_3,ushort *param_4,uint 
   scope3d_add_line(8,(uint)DAT_208085b0,param_3);
   __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
   if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
+                    /* every N frames [doc, inference] */
     scope3d_redraw_history(8,param_3);
   }
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(*(undefined4 *)param_1,0x6b080);
   i = 1;
   do {
@@ -2355,7 +2373,9 @@ void scope3d_line_render_alt
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
   uVar2 = scope_ramp_get(param_5);
   uVar3 = scope3d_line_markers(param_2);
+                    /* entry i of the vertical scale table 0x20450278 [doc] */
   uVar4 = scope3d_vscale(param_2,param_5);
+                    /* line i at x = 5i+4, width 791-10i [doc, inference] */
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -2396,9 +2416,11 @@ void scope3d_render_small(void *param_1,uint n,int param_3,ushort *param_4,uint 
   scope3d_add_line(9,(uint)DAT_208085b0,param_3);
   __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
   if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
+                    /* every N frames [doc, inference] */
     scope3d_redraw_history(9,param_3);
   }
   uVar1 = *(undefined4 *)param_1;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(uVar1,unaff_r4 * 0x640);
   i = 1;
   do {
@@ -2581,6 +2603,7 @@ int touch_hit_test(undefined4 param_1,undefined4 param_2)
   byte gui_frame_dsp_knob_val;
   
   if (gui_frame.cmd == 0x40) {
+                    /* touch_hit_test for screen 0x40 [doc] */
     iVar4 = touch_hit_text_list(param_1,param_2);
 switchD_2015c074_caseD_32:
     if (iVar4 != 0x1ff) {
@@ -2592,6 +2615,7 @@ switchD_2015c074_caseD_32:
       iVar4 = 0x1ff;
       switch(gui_frame.cmd) {
       case 0x30:
+                    /* touch_hit_test for screen 0x30 [doc] */
         iVar4 = touch_hit_select_popup(param_1,param_2,gui_frame.payload[0]);
         break;
       case 0x31:
@@ -2635,11 +2659,13 @@ switchD_2015c074_caseD_32:
       }
       else {
         if (gui_frame.cmd != 0x43) goto LAB_2015c240;
+                    /* touch_hit_test for screen 0x43 [doc] */
         iVar4 = touch_hit_sd_menu(param_1,param_2);
       }
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x70) {
+                    /* touch_hit_test for screen 0x70 [doc] */
       iVar4 = touch_hit_dialog(param_1,param_2);
       goto switchD_2015c074_caseD_32;
     }

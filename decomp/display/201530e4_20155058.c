@@ -608,6 +608,7 @@ byte FUN_20153b8c(int param_1)
     while (tskid != 0) {
       tcb = knl_tsk_tab[tskid];
       iVar7 = *(int *)(tcb->sp + 8) + 8;
+                    /* First-fit allocator on a free list {next, size} [doc] */
       piVar3 = (int *)knl_freelist_alloc(iVar8 + 4,iVar7);
       if (piVar3 == (int *)0x0) {
         return bVar6;
@@ -746,6 +747,7 @@ byte FUN_20153dec(int param_1)
         if (*(int *)(tcb->sp + 8) == 0) {
           return bVar7;
         }
+                    /* puts a message into the message-buffer ring [doc] */
         iVar4 = knl_mbf_put(iVar3,*(undefined4 *)(tcb->sp + 0xc));
         if (iVar4 == 0) {
           return bVar7;
@@ -1259,6 +1261,7 @@ uint FUN_201546bc(uint *param_1,int *param_2)
 void knl_stack_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -1285,6 +1288,7 @@ void knl_sys_free_a(undefined4 param_1,undefined4 param_2)
 void knl_pool_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -1313,6 +1317,7 @@ void knl_pool_free(undefined4 param_1,undefined4 param_2)
 void knl_sys_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -1359,6 +1364,7 @@ byte FUN_201547d0(int param_1,short param_2)
     while (tskid_00 != 0) {
       tcb = knl_tsk_tab[tskid_00];
       if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(tcb,tskid_00);
       }
       knl_queue_remove(tcb,tskid_00);
@@ -1752,6 +1758,7 @@ LAB_20154d80:
         uVar4 = uVar4 | 0x800;
       }
       *param_1 = uVar4;
+                    /* %e/%f/%g conversion of the armcc printf core [doc, inference] */
       iVar5 = _printf_fp_dec(param_1,uVar1,param_2);
       if (iVar5 == 0) goto LAB_20154c6c;
       if (iVar5 == 1) {
@@ -2007,6 +2014,7 @@ void qsort_partition(undefined4 param_1,uint param_2,uint param_3,code *param_4)
             } while (uVar3 != 0);
           }
           puVar8 = (undefined4 *)((int)puVar8 - param_3);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
           iVar2 = __aeabi_uidivmod((int)puVar8 - (int)puVar9,param_3);
           uVar3 = iVar2 - 1;
           uVar5 = (uVar5 - uVar3) - 1;
@@ -2058,6 +2066,7 @@ void qsort(uint param_1,uint param_2,uint param_3,code *param_4)
   
   if ((param_3 != 0) && (param_2 != 0)) {
     if (10 < param_2) {
+                    /* the quicksort stage of qsort for n > 10 [doc, inference] */
       qsort_partition();
     }
     uVar7 = param_1;

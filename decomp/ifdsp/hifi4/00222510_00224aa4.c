@@ -480,6 +480,7 @@ void fm_tx_audio(undefined4 param_1,undefined4 param_2)
   float fVar1;
   undefined8 uVar2;
   
+                    /* iir_cascade_process on 0x25BFF0 [doc, inference] */
   fm_tx_hpf_process(param_1,&DAT_0025c010);
   uVar2 = ae_l32_i(DAT_0025bff8);
   fVar1 = (float)uVar2;
@@ -788,18 +789,23 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   int iVar2;
   
   memcpy(&DAT_0025c360,param_1,0x60);
+                    /* 12 kHz core: EQ, processor, BPF, FM, limiter [fact: 0x2220E8] */
   tx_core_12k(&DAT_0025c360,&DAT_0025c360);
+                    /* TX ALC per sample; gain reduction to reg 2 high byte [fact: dsp-chains.md] */
   tx_alc(&DAT_0025c360,&DAT_0025c3c0);
   if (DAT_2007000c == 9) {
+                    /* FM: 3 kHz low-pass [fact: dsp-chains.md] */
     fm_post_lpf(&DAT_0025c3c0,&DAT_0025c360);
   }
   else {
     memcpy(&DAT_0025c360,&DAT_0025c3c0,0x60);
   }
   memcpy(param_2,&DAT_0025c360,0x60);
+                    /* Sub-tones: CTCSS, two-tone test, DCS [fact: dsp-chains.md] */
   ctcss_encoder(&DAT_0025c360,&DAT_0025c420);
   two_tone_test_gen(&DAT_0025c420,&DAT_0025c420);
   dcs_encoder(&DAT_0025c420,&DAT_0025c420);
+                    /* reg 0x4006 = 0 (default): baseband to block 1 [fact: 0x2231BD] */
   memcpy(param_3,&DAT_0025c420,0x60);
   sVar1 = DAT_0025c350;
   if (DAT_2007800c != 0) {
@@ -814,6 +820,7 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
     case 4:
     case 6:
       if (iVar2 != 0) {
+                    /* reg 0x4006 set: modulator by reg 6 (Weaver, AM, FM) [fact: dsp-chains.md] */
         weaver_ssb_mod_init(0);
       }
       weaver_ssb_mod(&DAT_0025c420,&DAT_0025c420);
@@ -1099,6 +1106,7 @@ undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
       }
       uVar5 = scl_float2int(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c484,0);
+                    /* mic and not speaker [doc, inference] */
       iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
@@ -1260,6 +1268,7 @@ undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
       }
       uVar5 = scl_float2int(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c788,0);
+                    /* mic and not speaker [doc, inference] */
       iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
@@ -2483,10 +2492,12 @@ void Thread_Spi_entry(void)
   uint uStack_34;
   undefined4 uStack_30;
   
+                    /* SPI_MasterTransferCreateHandleDMA on FLEXCOMM1 [doc] */
   spi_fc1_dma_init();
   uVar2 = spi_tx_buffer_ptr();
   memset(uVar2,1,200);
   memset(&DAT_00266490,1,400);
+                    /* memcpy into 0x200607E0 if offset + len <= 0x11F8 [doc] */
   spi_tx_buffer_write(200,&DAT_00266490,400);
   uVar9 = const_s(0);
   uVar10 = 0x3dfa35de;
@@ -2617,7 +2628,9 @@ void Thread_Spi_entry(void)
         iVar3 = spi_tx_buffer_ptr();
         FUN_002244c8(iVar3 + 200);
         iVar3 = spi_tx_buffer_ptr();
+                    /* reads the int16 recording ring 0x266ED8 [doc, inference] */
         rec_ring_read_to_spi(iVar3 + 600);
+                    /* SPI_MasterTransferDMA of the 0x200607E0 buffer [doc, inference] */
         spi_fc1_start();
       }
     }

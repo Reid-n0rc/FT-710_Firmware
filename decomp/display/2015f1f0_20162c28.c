@@ -112,6 +112,7 @@ undefined4 fwdbg_write_other_bank(int param_1,uint param_2)
       if (uVar3 == 0) {
         kbd_led_status(4,7);
         local_48 = 0xffffffff;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
         crc32_make_table();
         do {
           uVar3 = fs_fread(param_1 + 4,1,0x100,uVar1);
@@ -303,6 +304,7 @@ LAB_2015f638:
     } while (uVar3 == 0);
     bVar1 = false;
     local_54 = 0xffffffff;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
     crc32_make_table();
     do {
       uVar4 = fs_fread((int)param_1 + 4,1,0x100,uVar3);
@@ -346,6 +348,7 @@ undefined4 FUN_2015fa40(int param_1,undefined4 param_2,undefined4 param_3,undefi
   mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x588),1);
   iVar1 = ring32_post_inc(param_1 + 0x504);
   uVar2 = *(undefined4 *)(param_1 + 0x504 + iVar1 * 4 + 4);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&uStack_10);
   return uVar2;
 }
@@ -486,6 +489,7 @@ void mouse_cursor_obj_init(int param_1)
     FUN_20164524(param_1 + 0x504,uVar2 & 0xffff,iVar3 + 4);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x58c) = uVar1;
   *(undefined1 *)(param_1 + 0x590) = 0;
@@ -633,6 +637,7 @@ void FUN_2015ff94(int param_1,undefined4 param_2)
     FUN_20164454(param_1 + 0x894,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x10);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x8dc) = uVar1;
   return;
@@ -692,6 +697,7 @@ void mainlink_disp_init(int param_1,uint param_2)
   int iVar3;
   
   *(uint *)(param_1 + 0x10) = param_2;
+                    /* Creates the pool mutex [doc] */
   txpool_init_mutex();
   uVar2 = 0;
   do {
@@ -700,6 +706,7 @@ void mainlink_disp_init(int param_1,uint param_2)
     txpool_set_slot(param_1 + 0x8114,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x819c) = uVar1;
   return;
@@ -723,17 +730,20 @@ void task_mainlink_dispatch(int param_1)
     *(int *)(param_1 + 0x81a0) = *(int *)(param_1 + 0x81a0) + 1;
     bVar1 = *(byte *)(aiStack_8[0] + 8);
     if (bVar1 == 0x21) {
+                    /* 0x21: payload to 0x20450035 [fact: mainlink.md] */
       memcpy(&g_ml.last21,aiStack_8[0] + 9,*(ushort *)(aiStack_8[0] + 6) - 2);
       g_ml.got21 = 1;
     }
     else if (bVar1 < 0x22) {
       if (bVar1 == 6) {
         *(int *)(param_1 + 0x81a4) = *(int *)(param_1 + 0x81a4) + 1;
+                    /* 0x06: ACK [fact: mainlink.md] */
         mainlink_audio_ack();
         mainlink_on_ack();
       }
       else if (bVar1 == 0x15) {
         *(int *)(param_1 + 0x81a8) = *(int *)(param_1 + 0x81a8) + 1;
+                    /* 0x15: NAK [fact: mainlink.md] */
         mainlink_on_nak();
       }
       else if (bVar1 == 0x1b) {
@@ -748,6 +758,7 @@ void task_mainlink_dispatch(int param_1)
       DAT_208084d4 = 1;
     }
     else if (bVar1 == 0x24) {
+                    /* 0x24: display settings from +0x98 [fact: mainlink.md] */
       FUN_201636f8(g_ml.settings24,aiStack_8[0] + 0xa0);
       g_ml.got24 = 1;
     }
@@ -757,8 +768,10 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 == 0x60) {
       g_ml.got60 = 1;
       __aeabi_memcpy4(&DAT_2045fb00,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
+                    /* Returns the radio-on flag 0x208003A0 [doc] */
       iVar2 = radio_on_flag_get();
       if (((iVar2 == 0) && (*(int *)(param_1 + 0x81b0) != 0)) && (DAT_2045fbb3 == '\x01')) {
+                    /* 2nd 0x60 with 0xB3 = 1 while off: power on [fact: mainlink.md] */
         radio_on_flag_set(1);
       }
       *(int *)(param_1 + 0x81b0) = *(int *)(param_1 + 0x81b0) + 1;
@@ -766,6 +779,7 @@ void task_mainlink_dispatch(int param_1)
     g_ml.last_rx_cmd = *(byte *)(aiStack_8[0] + 8);
     if ((g_ml.last_rx_cmd != 6 && g_ml.last_rx_cmd != 0x15) && g_ml.last_rx_cmd != 0x1b) {
       __aeabi_memcpy4(&ml_rx_frame,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
+                    /* GUI snapshot of the frame (0x240 bytes) [fact: mainlink.md] */
       __aeabi_memcpy4(&ml_gui_snapshot,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
     }
   } while( true );
@@ -818,6 +832,7 @@ undefined4 fwobj_sdr_run(int param_1,uint param_2,int param_3)
     uVar1 = 1;
   }
   else {
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(5);
     itron_rot_rdq(0);
     fs_fsize(fs_fopen_ret,&local_1c);
@@ -861,6 +876,7 @@ uint fwobj_sdr_ctor(uint param_1,byte param_2)
 {
   undefined4 *fwobj_base_ctor_ret;
   
+                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
   fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
   *fwobj_base_ctor_ret = &DAT_20428070;
   *(byte *)((int)fwobj_base_ctor_ret + 0xab) = param_2;
@@ -905,6 +921,7 @@ uint fwobj_match_name(int param_1,uint param_2,uint param_3)
   fwname_pattern_match_ret = fwname_pattern_match((int *)(param_1 + 0x14),param_2,param_3);
   uVar2 = 0;
   if (fwname_pattern_match_ret != 0) {
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
     copy32(auStack_30,param_2);
     if (*(char *)(param_1 + 0x57) == '\0') {
       memcpy(param_1 + 0x37,auStack_30,0x20);
@@ -932,6 +949,7 @@ void fwobj_set_status(int param_1,uint param_2)
   undefined4 uVar1;
   undefined1 auStack_28 [32];
   
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
   uVar1 = copy32(auStack_28);
   memcpy(param_1 + 0x89,uVar1,0x20);
   return;
@@ -974,10 +992,13 @@ int fwobj_base_ctor(void *param_1)
   int iVar1;
   
   *(undefined **)param_1 = &DAT_2042807c;
+                    /* memcpy of 10 bytes, returns dst [doc] */
   iVar1 = copy10((int)param_1 + 4,&DAT_20428430);
   iVar1 = FUN_20160c5c(iVar1 + 10,"-----");
   iVar1 = copy10(iVar1 + 0x1e,&DAT_20428430);
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
   iVar1 = copy32(iVar1 + 0xb,&DAT_20428430);
+                    /* memcpy of 0x30 bytes, returns dst [doc] */
   iVar1 = copy48(iVar1 + 0x21,&DAT_20428430);
   iVar1 = copy32(iVar1 + 0x31,&DAT_20428430);
   return iVar1 + -0x89;
@@ -995,6 +1016,7 @@ void fwname_pattern_init(int *param_1,int param_2,int param_3)
   
   param_1[1] = param_2;
   param_1[2] = param_3;
+                    /* Word-at-a-time string length [doc] */
   iVar1 = strlen(param_2);
   param_1[3] = iVar1;
   iVar1 = strlen(param_3);
@@ -1028,6 +1050,7 @@ undefined4 fwobj_main_run(int param_1,uint param_2,int param_3,int param_4)
     uVar1 = 1;
   }
   else {
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(5);
     itron_rot_rdq(0);
     itron_get_pri(0,&local_18);
@@ -1069,6 +1092,7 @@ uint fwobj_main_ctor(uint param_1)
 {
   undefined4 *fwobj_base_ctor_ret;
   
+                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
   fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
   *fwobj_base_ctor_ret = &DAT_20428088;
   return (uint)fwobj_base_ctor_ret;
@@ -1094,6 +1118,7 @@ undefined4 fwobj_ifdsp_run(int param_1,uint param_2,int param_3)
     uVar1 = 1;
   }
   else {
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(5);
     itron_rot_rdq(0);
     itron_get_pri(0,&stack0xffffffd8);
@@ -1130,6 +1155,7 @@ uint fwobj_ifdsp_ctor(uint param_1,byte param_2)
 {
   undefined4 *fwobj_base_ctor_ret;
   
+                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
   fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
   *fwobj_base_ctor_ret = &DAT_20428094;
   *(byte *)((int)fwobj_base_ctor_ret + 0xab) = param_2;
@@ -1192,11 +1218,13 @@ undefined4 fwobj_display_run(int param_1,uint param_2,int param_3)
     unaff_r10 = (uint *)&DAT_20428203;
     iVar3 = strstr(auStack_d0,&DAT_20428203);
     if (iVar3 != 0) {
+                    /* Word-at-a-time string length [doc] */
       iVar4 = strlen(&DAT_20428203);
       iVar3 = iVar3 + iVar4;
       *(undefined1 *)(iVar3 + 8) = 0;
       iVar4 = memcmp("#UP0    ",iVar3,8);
       if (iVar4 == 0) {
+                    /* memcpy of 10 bytes, returns dst [doc] */
         uVar5 = copy10(auStack_3c,iVar3);
         memcpy(param_1 + 4,uVar5,10);
         uVar5 = copy10(auStack_30,&DAT_20428210);
@@ -1245,7 +1273,9 @@ undefined4 fwobj_display_run(int param_1,uint param_2,int param_3)
     unaff_r10 = &g_bootinfo.bank2_flag;
   }
   sfl_stream_init(auStack_68,local_78,0,1);
+                    /* maps a fraction into the range [doc, inference] */
   uVar6 = progress_scale(auStack_70);
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(uVar6);
   if (g_bootinfo.mode == 2) {
     bVar1 = true;
@@ -1264,6 +1294,7 @@ LAB_201609ec:
   if (uVar6 == 0) {
     progress_range_init(auStack_48,local_6c,99);
     local_4c = 0xffffffff;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
     crc32_make_table();
     while( true ) {
       uVar6 = sfl_stream_read(local_50,1,0x100,(int)auStack_68);
@@ -1328,6 +1359,7 @@ uint fwobj_display_ctor(uint param_1)
 {
   undefined4 *fwobj_base_ctor_ret;
   
+                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
   fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
   *fwobj_base_ctor_ret = &DAT_204280a0;
   return (uint)fwobj_base_ctor_ret;

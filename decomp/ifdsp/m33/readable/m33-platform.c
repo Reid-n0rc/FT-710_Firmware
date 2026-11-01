@@ -60,10 +60,12 @@ void POWER_SetBiasConfig(void)
 {
   int iVar1;
   
+                    /* body-bias (RBB/FBB) voltage level and RBB ... [sfr] */
   iVar1 = PMC_BIASCFG;
   if (iVar1 != 0x4040808) {
     PMC_BIASCFG = 0x4040808;
   }
+                    /* PMC controls used during deep sleep mode [sfr] */
   iVar1 = PMC_SLEEPCTRL;
   if (iVar1 != 10) {
     PMC_SLEEPCTRL = 10;
@@ -138,13 +140,17 @@ bool countPartitionSwitches(void)
   uint uVar1;
   uint uVar2;
   
+                    /* Run configuration 1 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   uVar1 = SYSCTL0_PDSLEEPCFG1;
   if (((uVar2 ^ 0x1f000fff) & uVar1 & 0x1f000fff) == 0) {
     uVar2 = SYSCTL0_PDRUNCFG2;
     uVar1 = SYSCTL0_PDSLEEPCFG2;
     if (((uVar2 ^ 0x3fffffff) & uVar1 & 0x3fffffff) == 0) {
+                    /* Run configuration 3 [sfr] */
       uVar2 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
       uVar1 = SYSCTL0_PDSLEEPCFG3;
       return ((uVar2 ^ 0x3fffffff) & uVar1 & 0x3fffffff) != 0;
     }
@@ -186,6 +192,7 @@ uint POWER_CalculateSafetyCount(int param_1)
   uint pmc_sleepctrl;
   int sysctl0_pdruncfg0;
   
+                    /* Sleep configuration 0 [sfr] */
   uVar9 = SYSCTL0_PDSLEEPCFG0;
   bVar12 = (uVar9 & 0x10017d0) == 0x10017d0;
   if (bVar12) {
@@ -197,9 +204,12 @@ uint POWER_CalculateSafetyCount(int param_1)
     iVar6 = 0;
   }
   uVar9 = SYSCTL0_PDSLEEPCFG0;
+                    /* PMC controls used during run mode [sfr] */
   uVar1 = PMC_RUNCTRL;
+                    /* PMC controls used during deep sleep mode [sfr] */
   pmc_sleepctrl = PMC_SLEEPCTRL;
   iVar7 = (uVar1 & 0x3f) - (pmc_sleepctrl & 0x3f);
+                    /* Run configuration 0 [sfr] */
   uVar1 = SYSCTL0_PDRUNCFG0;
   if ((uVar9 & 0x10) == 0) {
     iVar2 = 0x4c;
@@ -230,6 +240,7 @@ uint POWER_CalculateSafetyCount(int param_1)
     puVar5 = &DAT_00006590;
   }
   bVar12 = countPartitionSwitches();
+                    /* Sleep configuration 1 [sfr] */
   iVar8 = SYSCTL0_PDSLEEPCFG1;
   if (iVar8 < 0) {
     iVar8 = 8000;
@@ -276,6 +287,7 @@ uint POWER_CalculateSafetyCount(int param_1)
   else {
     iVar6 = uVar9 / 0xd + 0x98;
   }
+                    /* FFRO control 0 [sfr] */
   uVar9 = CLKCTL0_FFROCTL0;
   if ((uVar9 & 0xc0000) == 0) {
     iVar7 = 0xc;
@@ -321,6 +333,7 @@ void initFlexSPI(void)
     else {
       uVar4 = 3;
     }
+                    /* Flash Control 0 [sfr] */
     uVar1 = FLEXSPI_FLSHB1CR0;
     if (((uVar1 & 0x7fffff) != 0) || (uVar1 = FLEXSPI_FLSHB2CR0, (uVar1 & 0x7fffff) != 0)) {
       uVar4 = uVar4 | 0x30000;
@@ -328,6 +341,7 @@ void initFlexSPI(void)
     iVar3 = 10;
     do {
       while( true ) {
+                    /* Status 2 [sfr] */
         uVar1 = FLEXSPI_STS2;
         if ((uVar4 & ~uVar1) == 0) {
           iVar3 = 100;
@@ -410,32 +424,50 @@ void POWER_EnterSleep_mode1(void)
   }
   disableIRQinterrupts();
   uVar4 = POWER_SetBiasConfig(uVar3);
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
+                    /* Interrupt Set Enable [sfr] */
   nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 & 0xfffff7fe | 1;
+                    /* Run configuration 1 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
   SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
   SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 1;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -474,32 +506,50 @@ void POWER_EnterSleep_mode2(void)
   }
   disableIRQinterrupts();
   uVar4 = POWER_SetBiasConfig(uVar3);
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
+                    /* Interrupt Set Enable [sfr] */
   nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 & 0xffffeffe | 1;
+                    /* Run configuration 1 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
   SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
   SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 2;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -537,32 +587,50 @@ uint POWER_EnterSleep_mode3(void)
     uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
+                    /* Interrupt Set Enable [sfr] */
   nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 | 0x1801;
+                    /* Run configuration 1 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
   SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
   SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 3;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
   if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -620,21 +688,36 @@ void POWER_EnterDeepSleep(void)
   }
   disableIRQinterrupts();
   puVar4 = (uint *)POWER_SetBiasConfig();
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
+                    /* main clock selection A [sfr] */
   uVar2 = CLKCTL0_MAINCLKSELA;
+                    /* main clock selection B [sfr] */
   clkctl0_mainclkselb = CLKCTL0_MAINCLKSELB;
+                    /* DSP clock selection A [sfr] */
   clkctl1_dspcpuclksela = CLKCTL1_DSPCPUCLKSELA;
+                    /* DSP clock selection B [sfr] */
   clkctl1_dspcpuclkselb = CLKCTL1_DSPCPUCLKSELB;
+                    /* system cpu AHB clock divider [sfr] */
   clkctl0_syscpuahbclkdiv = CLKCTL0_SYSCPUAHBCLKDIV;
+                    /* Run configuration 0 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar3 & ~*puVar4 & 0xfffffff9 | ~*puVar4 & 0x3effffd1;
+                    /* Run configuration 1 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   SYSCTL0_PDSLEEPCFG1 = (uVar3 | 0x9f000fff) & ~puVar4[1];
+                    /* Run configuration 2 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
   SYSCTL0_PDSLEEPCFG2 = (uVar3 | 0x3fffffff) & ~puVar4[2];
+                    /* Run configuration 3 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
   SYSCTL0_PDSLEEPCFG3 = (uVar3 | 0x3fffffff) & ~puVar4[3];
+                    /* PMIC power mode select control configuration [sfr] */
   PMC_PMICCFG = 0x73;
   uVar3 = SYSCTL0_PDSLEEPCFG0;
   SYSCTL0_PDSLEEPCFG0 = uVar3 | 2;
@@ -644,22 +727,28 @@ void POWER_EnterDeepSleep(void)
     iVar6 = SYSCTL0_DSPSTALL;
     if (iVar6 == 0) {
       bVar11 = true;
+                    /* DSP stall [sfr] */
       SYSCTL0_DSPSTALL = 1;
     }
     else {
       bVar11 = false;
     }
   }
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   uVar5 = PMC_FLAGS;
   PMC_FLAGS = uVar5;
+                    /* Memory Sequencer Control [sfr] */
   uVar3 = PMC_MEMSEQCTRL;
   PMC_MEMSEQCTRL = uVar3 | 0x3f;
+                    /* PMC control [sfr] */
   uVar3 = PMC_CTRL;
   PMC_CTRL = uVar3 & 0xffcfffff;
   iVar6 = SYSCTL0_PDRUNCFG0;
   bVar14 = iVar6 << 0xf < 0;
   if (bVar14) {
+                    /* Run configuration 0 clear [sfr] */
     SYSCTL0_PDRUNCFG0_CLR = 0x10000;
+                    /* fsl_power.c busy loop [doc, inference] */
     delay(0x960);
   }
   iVar6 = SYSCTL0_PDSLEEPCFG0;
@@ -668,6 +757,7 @@ void POWER_EnterDeepSleep(void)
   }
   else {
     uVar5 = POWER_CalculateSafetyCount();
+                    /* Main Clock Safety [sfr] */
     SYSCTL0_MAINCLKSAFETY = uVar5;
   }
   deinitXip();
@@ -699,6 +789,7 @@ void POWER_EnterDeepSleep(void)
     }
     uVar12 = 0;
 LAB_000806f8:
+                    /* sys pll0 PFD [sfr] */
     uVar8 = CLKCTL0_SYSPLL0PFD;
     uVar8 = ~uVar8 & 0x80808080;
     if ((uVar10 & 0x180000) == 0) {
@@ -707,6 +798,7 @@ LAB_000806f8:
     }
   }
   else if (uVar8 != 0) goto LAB_000806f8;
+                    /* audio pll0 PFD [sfr] */
   uVar10 = CLKCTL1_AUDIOPLL0PFD;
   uVar10 = ~uVar10 & 0x80808080;
 LAB_00080716:
@@ -714,10 +806,13 @@ LAB_00080716:
   CLKCTL0_SYSPLL0PFD = uVar1 | uVar8;
   uVar1 = CLKCTL1_AUDIOPLL0PFD;
   CLKCTL1_AUDIOPLL0PFD = uVar1 | uVar10;
+                    /* system pll0 control0 [sfr] */
   uVar10 = CLKCTL0_SYSPLL0CTL0;
   CLKCTL0_SYSPLL0CTL0 = uVar10 | uVar13;
+                    /* audio pll0 control0 [sfr] */
   uVar10 = CLKCTL1_AUDIOPLL0CTL0;
   CLKCTL1_AUDIOPLL0CTL0 = uVar10 | uVar12;
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = uVar7;
   WaitForInterrupt();
   uVar1 = SYSCTL0_PDRUNCFG0;
@@ -786,6 +881,7 @@ LAB_00080716:
   if (bVar14) {
     SYSCTL0_PDRUNCFG0_SET = 0x10000;
   }
+                    /* re-enable FlexSPI clock and initFlexSPI after deep sleep [doc, inference] */
   initXip();
   PMC_CTRL = uVar3;
   if (bVar11) {
@@ -904,17 +1000,21 @@ void BOARD_SetFlexspiClock(uint param_1,int param_2)
   uint uVar1;
   int clkctl0_flexspifclkdiv;
   
+                    /* FlexSPI FCLK selection [sfr] */
   uVar1 = CLKCTL0_FLEXSPIFCLKSEL;
   if ((uVar1 != (param_1 & 7)) || (uVar1 = CLKCTL0_FLEXSPIFCLKDIV, (uVar1 & 0xff) != param_2 - 1U))
   {
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 0x10000;
     CLKCTL0_FLEXSPIFCLKSEL = param_1 & 7;
+                    /* FlexSPI FCLK divider [sfr] */
     uVar1 = CLKCTL0_FLEXSPIFCLKDIV;
     CLKCTL0_FLEXSPIFCLKDIV = uVar1 | 0x20000000;
     CLKCTL0_FLEXSPIFCLKDIV = param_2 - 1U & 0xff;
     do {
       clkctl0_flexspifclkdiv = CLKCTL0_FLEXSPIFCLKDIV;
     } while (clkctl0_flexspifclkdiv < 0);
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 0x10000;
   }
   return;
@@ -1026,6 +1126,7 @@ void vStartFirstTask(void)
   bool bVar1;
   undefined4 *puVar2;
   
+                    /* Vector Table Offset [sfr] */
   puVar2 = (undefined4 *)SCB_VTOR;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
@@ -1145,6 +1246,7 @@ void SCTIMER_StartTimer(void)
 {
   uint sct0_ctrl;
   
+                    /* SCT control [sfr] */
   sct0_ctrl = SCT0_CTRL;
   SCT0_CTRL = sct0_ctrl & 0xfffffffb;
   return;
@@ -1164,6 +1266,7 @@ bool xPortIsInsideInterrupt(void)
 {
   uint scb_icsr;
   
+                    /* Interrupt Control and State [sfr] */
   scb_icsr = SCB_ICSR;
   return (scb_icsr & 0x1ff) != 0;
 }
@@ -1379,8 +1482,11 @@ void prvTaskExitError(void)
 void vPortSetupTimerInterrupt(void)
 
 {
+                    /* SysTick Control and Status [sfr] */
   SysTick_CTRL = 0;
+                    /* SysTick Current Value [sfr] */
   SysTick_VAL = 0;
+                    /* SysTick Reload Value [sfr] */
   SysTick_LOAD = DAT_00087ec0 / 1000 - 1;
   SysTick_CTRL = 7;
   return;
@@ -1754,6 +1860,7 @@ uint vTaskStartScheduler(void)
     ulSetInterruptMask();
     DAT_000888ac = 0xffffffff;
     DAT_000888e4 = 0;
+                    /* System Handler Priority 3 [sfr] */
     uVar1 = SCB_SHPR3;
     SCB_SHPR3 = uVar1 | 0xff0000;
     uVar1 = SCB_SHPR3;
@@ -2969,6 +3076,7 @@ undefined4 CLOCK_GetOsc32KFreq(void)
   undefined4 uVar1;
   uint clkctl0_osc32khzctl0;
   
+                    /* 32k oscillator control0 [sfr] */
   clkctl0_osc32khzctl0 = CLKCTL0_OSC32KHZCTL0;
   uVar1 = 0;
   if ((clkctl0_osc32khzctl0 & 1) != 0) {
@@ -2997,6 +3105,7 @@ undefined4 CLOCK_GetXtalInClkFreq(void)
   int iVar1;
   undefined4 *puVar2;
   
+                    /* system oscillator bypass [sfr] */
   iVar1 = CLKCTL0_SYSOSCBYPASS;
   if (iVar1 == 0) {
     puVar2 = &DAT_00088930;
@@ -3030,6 +3139,7 @@ uint CLOCK_GetFFroFreq(void)
   uint uVar1;
   uint clkctl0_ffroctl0;
   
+                    /* FFRO control 0 [sfr] */
   clkctl0_ffroctl0 = CLKCTL0_FFROCTL0;
   if ((clkctl0_ffroctl0 & 0xc0000) != 0) {
     uVar1 = 60000000;
@@ -3064,6 +3174,7 @@ uint CLOCK_GetSysPllFreq(void)
   undefined4 clkctl0_syspll0denom;
   uint clkctl0_syspll0num;
   
+                    /* system pll0 clock selection [sfr] */
   uVar2 = CLKCTL0_SYSPLL0CLKSEL;
   uVar2 = uVar2 & 7;
   if (uVar2 == 1) {
@@ -3079,9 +3190,12 @@ uint CLOCK_GetSysPllFreq(void)
       uVar1 = 0;
     }
   }
+                    /* system pll0 control0 [sfr] */
   uVar2 = CLKCTL0_SYSPLL0CTL0;
   if ((uVar2 & 1) == 0) {
+                    /* system pll0 number [sfr] */
     clkctl0_syspll0num = CLKCTL0_SYSPLL0NUM;
+                    /* system pll0 denom [sfr] */
     clkctl0_syspll0denom = CLKCTL0_SYSPLL0DENOM;
     clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
     __aeabi_uldivmod_ret =
@@ -3114,10 +3228,12 @@ uint CLOCK_GetSysPfdFreq(uint param_1)
   int clkctl0_syspll0ctl0;
   
   uVar1 = CLOCK_GetSysPllFreq();
+                    /* system pll0 control0 [sfr] */
   clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
   if (-1 < clkctl0_syspll0ctl0 << 0x1f) {
     switch(param_1) {
     case 0:
+                    /* sys pll0 PFD [sfr] */
       uVar2 = CLKCTL0_SYSPLL0PFD;
       uVar2 = uVar2 & 0x3f;
       break;
@@ -3162,6 +3278,7 @@ uint CLOCK_GetMainPllClkFreq(void)
   uint clkctl0_mainpllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(0);
+                    /* main pll clk divider [sfr] */
   clkctl0_mainpllclkdiv = CLKCTL0_MAINPLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_mainpllclkdiv & 0xff) + 1);
 }
@@ -3186,6 +3303,7 @@ uint CLOCK_GetAux0PllClkFreq(void)
   uint clkctl0_aux0pllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(2);
+                    /* aux0 pll clk divider [sfr] */
   clkctl0_aux0pllclkdiv = CLKCTL0_AUX0PLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_aux0pllclkdiv & 0xff) + 1);
 }
@@ -3210,6 +3328,7 @@ uint CLOCK_GetAux1PllClkFreq(void)
   uint clkctl0_aux1pllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(3);
+                    /* aux1 pll clk divider [sfr] */
   clkctl0_aux1pllclkdiv = CLKCTL0_AUX1PLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_aux1pllclkdiv & 0xff) + 1);
 }
@@ -3237,6 +3356,7 @@ uint CLOCK_GetAudioPllFreq(void)
   undefined4 clkctl1_audiopll0denom;
   uint clkctl1_audiopll0num;
   
+                    /* audio pll0 clock selection [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0CLKSEL;
   uVar2 = uVar2 & 7;
   if (uVar2 == 1) {
@@ -3252,9 +3372,12 @@ uint CLOCK_GetAudioPllFreq(void)
       uVar1 = 0;
     }
   }
+                    /* audio pll0 control0 [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0CTL0;
   if ((uVar2 & 1) == 0) {
+                    /* audio pll0 number [sfr] */
     clkctl1_audiopll0num = CLKCTL1_AUDIOPLL0NUM;
+                    /* Audio pll0 denom [sfr] */
     clkctl1_audiopll0denom = CLKCTL1_AUDIOPLL0DENOM;
     clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
     __aeabi_uldivmod_ret =
@@ -3287,10 +3410,12 @@ uint CLOCK_GetAudioPfdFreq(uint param_1)
   int clkctl1_audiopll0ctl0;
   
   uVar1 = CLOCK_GetAudioPllFreq();
+                    /* audio pll0 control0 [sfr] */
   clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
   if (-1 < clkctl1_audiopll0ctl0 << 0x1f) {
     switch(param_1) {
     case 0:
+                    /* audio pll0 PFD [sfr] */
       uVar2 = CLKCTL1_AUDIOPLL0PFD;
       uVar2 = uVar2 & 0x3f;
       break;
@@ -3335,6 +3460,7 @@ uint CLOCK_GetAudioPllClkFreq(void)
   uint clkctl1_audiopllclkdiv;
   
   CLOCK_GetAudioPfdFreq_ret = CLOCK_GetAudioPfdFreq(0);
+                    /* audio pll0 clock divider [sfr] */
   clkctl1_audiopllclkdiv = CLKCTL1_AUDIOPLLCLKDIV;
   return CLOCK_GetAudioPfdFreq_ret / ((clkctl1_audiopllclkdiv & 0xff) + 1);
 }
@@ -3359,6 +3485,7 @@ void * CLOCK_GetMainClkFreq(void)
   void *pvVar2;
   uint uVar3;
   
+                    /* main clock selection B [sfr] */
   uVar3 = CLKCTL0_MAINCLKSELB;
   uVar3 = uVar3 & 3;
   if (uVar3 == 2) {
@@ -3414,10 +3541,12 @@ undefined * CLOCK_GetDspMainClkFreq(void)
   uint CLOCK_GetSysPfdFreq_ret;
   uint uVar2;
   
+                    /* DSP clock selection B [sfr] */
   uVar2 = CLKCTL1_DSPCPUCLKSELB;
   uVar2 = uVar2 & 3;
   if (uVar2 == 2) {
     CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(1);
+                    /* dsp pll clk divider [sfr] */
     uVar2 = CLKCTL0_DSPPLLCLKDIV;
     puVar1 = (undefined *)(CLOCK_GetSysPfdFreq_ret / ((uVar2 & 0xff) + 1));
   }
@@ -3477,12 +3606,14 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
     dVar4 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[param_1 * 8];
   }
   else if (param_1 == 0xe) {
+                    /* flexcomm14 clock selection [sfr] */
     dVar4 = CLKCTL1_FC14FCLKSEL;
   }
   else {
     if (param_1 != 0xf) {
       return 16000000;
     }
+                    /* flexcomm15 clock selection [sfr] */
     dVar4 = CLKCTL1_FC15FCLKSEL;
   }
   switch(dVar4) {
@@ -3511,6 +3642,7 @@ LAB_000833e4:
     case 0:
       goto switchD_000833ea_caseD_0;
     case 1:
+                    /* FRG pll clock divider [sfr] */
       uVar3 = CLKCTL1_FRGPLLCLKDIV;
       CLOCK_GetMainPllClkFreq_ret = CLOCK_GetMainPllClkFreq();
       pvVar2 = (void *)(CLOCK_GetMainPllClkFreq_ret / ((uVar3 & 0xff) + 1));
@@ -3527,7 +3659,9 @@ LAB_000833e4:
   }
   else {
     if (param_1 == 0xe) {
+                    /* FRG clock selection 14 [sfr] */
       uVar3 = CLKCTL1_FRG14CLKSEL;
+                    /* FRG clock controller 14 [sfr] */
       uVar7 = CLKCTL1_FRG14CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG14CTL;
@@ -3536,7 +3670,9 @@ LAB_000833e4:
       goto LAB_000833e4;
     }
     if (param_1 == 0xf) {
+                    /* FRG clock selection 15 [sfr] */
       uVar3 = CLKCTL1_FRG15CLKSEL;
+                    /* FRG clock controller 15 [sfr] */
       uVar7 = CLKCTL1_FRG15CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG15CTL;
@@ -3954,12 +4090,16 @@ void CLOCK_SetFRGClock(byte *param_1)
     return;
   }
   if (uVar1 == 0xe) {
+                    /* FRG clock selection 14 [sfr] */
     CLKCTL1_FRG14CLKSEL = (uint)param_1[1];
+                    /* FRG clock controller 14 [sfr] */
     CLKCTL1_FRG14CTL = (uint)*(ushort *)(param_1 + 2);
     return;
   }
   if (uVar1 == 0xf) {
+                    /* FRG clock selection 15 [sfr] */
     CLKCTL1_FRG15CLKSEL = (uint)param_1[1];
+                    /* FRG clock controller 15 [sfr] */
     CLKCTL1_FRG15CTL = (uint)*(ushort *)(param_1 + 2);
   }
   return;
@@ -3992,9 +4132,11 @@ void CLOCK_EnableFfroClk(int param_1)
   local_1c = 0;
   local_18 = 0;
   local_14[0] = 0;
+                    /* FFRO control 1 [sfr] */
   uVar2 = CLKCTL0_FFROCTL1;
   CLKCTL0_FFROCTL1 = uVar2 | 1;
   CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+                    /* system cpu AHB clock divider [sfr] */
   uVar2 = CLKCTL0_SYSCPUAHBCLKDIV;
   (*(code *)0x13009ff9)((uint)CLOCK_GetMainClkFreq_ret / ((uVar2 & 0xff) + 1));
   if (param_1 == 0) {
@@ -4016,6 +4158,7 @@ void CLOCK_EnableFfroClk(int param_1)
   else {
     uVar2 = 0xc0000;
   }
+                    /* FFRO control 0 [sfr] */
   CLKCTL0_FFROCTL0 = (local_1c & 0x3f) << 5 | (local_18 & 0x7f) << 0xb | local_20 & 0x1f | uVar2;
   uVar2 = CLKCTL0_FFROCTL1;
   CLKCTL0_FFROCTL1 = uVar2 & 0xfffffffe;
@@ -4044,6 +4187,7 @@ void CLOCK_EnableSfroClk(undefined4 param_1)
   
   local_c = 0;
   CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+                    /* system cpu AHB clock divider [sfr] */
   clkctl0_syscpuahbclkdiv = CLKCTL0_SYSCPUAHBCLKDIV;
   (*(code *)0x13009ff9)((uint)CLOCK_GetMainClkFreq_ret / ((clkctl0_syscpuahbclkdiv & 0xff) + 1));
   (*(code *)0x1300a057)(0xd,&local_c,extraout_r2,0x1300a057,param_1);
@@ -4068,12 +4212,17 @@ void CLOCK_InitSysPll(byte *param_1)
 {
   uint uVar1;
   
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = 0x60000;
+                    /* system pll0 clock selection [sfr] */
   CLKCTL0_SYSPLL0CLKSEL = (uint)*param_1;
+                    /* system pll0 number [sfr] */
   CLKCTL0_SYSPLL0NUM = *(undefined4 *)(param_1 + 4);
+                    /* system pll0 denom [sfr] */
   CLKCTL0_SYSPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
+                    /* system pll0 control0 [sfr] */
     uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
@@ -4108,7 +4257,9 @@ void CLOCK_InitSysPll(byte *param_1)
 switchD_00083a22_default:
   uVar1 = CLKCTL0_SYSPLL0CTL0;
   CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xfffffffd;
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x60000;
+                    /* system pll0 lock time [sfr] */
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
   uVar1 = CLKCTL0_SYSPLL0CTL0;
@@ -4140,6 +4291,7 @@ void CLOCK_InitSysPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
+                    /* sys pll0 PFD [sfr] */
   uVar2 = CLKCTL0_SYSPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
   CLKCTL0_SYSPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
@@ -4169,12 +4321,17 @@ void CLOCK_InitAudioPll(byte *param_1)
 {
   uint uVar1;
   
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = 0x180000;
+                    /* audio pll0 clock selection [sfr] */
   CLKCTL1_AUDIOPLL0CLKSEL = (uint)*param_1;
+                    /* audio pll0 number [sfr] */
   CLKCTL1_AUDIOPLL0NUM = *(undefined4 *)(param_1 + 4);
+                    /* Audio pll0 denom [sfr] */
   CLKCTL1_AUDIOPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
+                    /* audio pll0 control0 [sfr] */
     uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
@@ -4209,7 +4366,9 @@ void CLOCK_InitAudioPll(byte *param_1)
 switchD_00083b72_default:
   uVar1 = CLKCTL1_AUDIOPLL0CTL0;
   CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xfffffffd;
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x180000;
+                    /* audio pll0 lock time [sfr] */
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
   uVar1 = CLKCTL1_AUDIOPLL0CTL0;
@@ -4241,6 +4400,7 @@ void CLOCK_InitAudioPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
+                    /* audio pll0 PFD [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
   CLKCTL1_AUDIOPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
@@ -4269,7 +4429,9 @@ void CLOCK_EnableSysOscClk(int param_1,uint param_2,uint param_3)
 
 {
   if (param_1 != 0) {
+                    /* system oscillator control 0 [sfr] */
     CLKCTL0_SYSOSCCTL0 = param_2;
+                    /* system oscillator bypass [sfr] */
     CLKCTL0_SYSOSCBYPASS = 0;
     SDK_DelayAtLeastUs(param_3,300000000);
     return;
@@ -4407,6 +4569,7 @@ void DMA_IRQHandle(void *param_1,undefined4 param_2,undefined4 param_3,undefined
 void DMA0_DriverIRQHandler(void)
 
 {
+                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
   DMA_IRQHandle(&DMA0_CTRL);
   return;
 }
@@ -4425,6 +4588,7 @@ void DMA0_DriverIRQHandler(void)
 void DMA1_DriverIRQHandler(void)
 
 {
+                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
   DMA_IRQHandle(&DMA1_CTRL);
   return;
 }
@@ -4951,6 +5115,7 @@ void HASHCRYPT_DriverIRQHandler(void)
   int hashcrypt_status;
   
   iVar1 = DAT_00088ab0;
+                    /* Indicates status of Hash peripheral [sfr] */
   hashcrypt_status = HASHCRYPT_STATUS;
   if (hashcrypt_status << 0x1d < 0) {
     uVar2 = 1;
@@ -4963,11 +5128,14 @@ void HASHCRYPT_DriverIRQHandler(void)
         uVar3 = uVar4;
       }
       *(uint *)(DAT_00088ab0 + 0x4c) = uVar4 - uVar3;
+                    /* Setup Master to access memory (if available) [sfr] */
       HASHCRYPT_MEMCTRL = uVar3 << 0x10 | 1;
       return;
     }
+                    /* Write 1 to clear interrupts [sfr] */
     HASHCRYPT_INTENCLR = 6;
     HASHCRYPT_MEMCTRL = 0;
+                    /* n = 5 if ctx byte +0x44 == 1 [doc, inference] */
     hashcrypt_save_running_hash(0x40158000,DAT_00088ab0);
     uVar2 = 0;
   }
@@ -4997,10 +5165,12 @@ void I3C0_DriverIRQHandler(void)
   uint i3c_mconfig;
   int i3c_sconfig;
   
+                    /* Master Configuration [sfr] */
   i3c_mconfig = I3C_MCONFIG;
   if (((i3c_mconfig & 3) == 1) && (DAT_00088ab8 != (code *)0x0)) {
     (*DAT_00088ab8)(&I3C_MCONFIG,DAT_00088ab4);
   }
+                    /* Slave Configuration [sfr] */
   i3c_sconfig = I3C_SCONFIG;
   if ((i3c_sconfig << 0x1f < 0) && (DAT_00088ac0 != (code *)0x0)) {
                     /* WARNING: Could not recover jumptable at 0x000842b0. Too many branches */
@@ -5052,6 +5222,7 @@ void PIN_INT0_DriverIRQHandler(void)
   if (DAT_00088acc != (code *)0x0) {
     (*DAT_00088acc)(0,uVar1);
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 1) == 0) {
     PINT_PinInterruptClrStatus();
@@ -5087,6 +5258,7 @@ void PIN_INT1_DriverIRQHandler(void)
     (*DAT_00088ad0)(1,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1e) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,1,uVar2,in_r3);
@@ -5122,6 +5294,7 @@ void PIN_INT2_DriverIRQHandler(void)
     (*DAT_00088ad4)(2,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1d) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,2,uVar2,in_r3);
@@ -5157,6 +5330,7 @@ void PIN_INT3_DriverIRQHandler(void)
     (*DAT_00088ad8)(3,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1c) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,3,uVar2,in_r3);
@@ -5192,6 +5366,7 @@ void PIN_INT4_DriverIRQHandler(void)
     (*DAT_00088adc)(4,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1b) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,4,uVar2,in_r3);
@@ -5227,6 +5402,7 @@ void PIN_INT5_DriverIRQHandler(void)
     (*DAT_00088ae0)(5,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1a) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,5,uVar2,in_r3);
@@ -5262,6 +5438,7 @@ void PIN_INT6_DriverIRQHandler(void)
     (*DAT_00088ae4)(6,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x19) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,6,uVar2,in_r3);
@@ -5297,6 +5474,7 @@ void PIN_INT7_DriverIRQHandler(void)
     (*DAT_00088ae8)(7,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x18) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,7,uVar2,in_r3);
@@ -5325,6 +5503,7 @@ void POWER_ApplyPD(void)
   do {
     iVar1 = PMC_STATUS;
   } while (iVar1 << 0x1f < 0);
+                    /* PMC control [sfr] */
   pmc_ctrl = PMC_CTRL;
   PMC_CTRL = pmc_ctrl | 1;
   do {
@@ -5371,36 +5550,42 @@ void RESET_SetPeripheralReset(uint param_1)
   uVar2 = 1 << (param_1 & 0xff);
   switch(param_1 >> 8) {
   case 0:
+                    /* peripheral reset set 0 [sfr] */
     RSTCTL0_PRSTCTL0_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL0;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 1:
+                    /* peripheral reset set 1 [sfr] */
     RSTCTL0_PRSTCTL1_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL1;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 2:
+                    /* peripheral reset set 2 [sfr] */
     RSTCTL0_PRSTCTL2_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL2;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 3:
+                    /* peripheral reset set 0 [sfr] */
     RSTCTL1_PRSTCTL0_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL0;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 4:
+                    /* peripheral reset set 1 [sfr] */
     RSTCTL1_PRSTCTL1_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL1;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 5:
+                    /* peripheral reset set 2 [sfr] */
     RSTCTL1_PRSTCTL2_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL2;
@@ -5426,6 +5611,7 @@ undefined4 SCTIMER_Init(uint *param_1,byte *param_2)
   undefined4 *puVar2;
   int i;
   
+                    /* clock set 0 [sfr] */
   CLKCTL0_PSCCTL0_SET = 0x1000000;
   RESET_ClearPeripheralReset(0x18);
   bVar1 = *param_2;
@@ -5734,6 +5920,7 @@ void BOARD_BootClockRUN(void)
 {
   uint clkctl1_audiopll0ctl0;
   
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x4000;
   SYSCTL0_PDRUNCFG0_CLR = 0x10000;
   CLOCK_EnableFfroClk(0);
@@ -5746,11 +5933,13 @@ void BOARD_BootClockRUN(void)
   CLOCK_EnableSysOscClk(1,1,0x104);
   DAT_00088930 = 24000000;
   DAT_00088928 = 0x1194000;
+                    /* system oscillator bypass [sfr] */
   CLKCTL0_SYSOSCBYPASS = 1;
   CLOCK_InitSysPll(&DAT_00087a08);
   CLOCK_InitSysPfd(0,0xc);
   CLOCK_InitSysPfd(2,0x18);
   CLOCK_InitAudioPll(&DAT_000879f8);
+                    /* audio pll0 control0 [sfr] */
   clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
   CLKCTL1_AUDIOPLL0CTL0 = clkctl1_audiopll0ctl0 | 1;
   CLOCK_InitAudioPfd(0,0x1a);
@@ -5781,6 +5970,7 @@ void BOARD_InitPins_P0(uint param_1,uint param_2,uint param_3,uint param_4)
   uint local_10;
   uint local_c;
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 1;
   local_18 = param_1 & 0xffff0000;
   local_14 = param_2;
@@ -5793,9 +5983,13 @@ void BOARD_InitPins_P0(uint param_1,uint param_2,uint param_3,uint param_4)
   GPIO_PinInit(0x40100000,0,0x15,(char *)&local_10);
   local_c = local_c & 0xffff0000;
   GPIO_PinInit(0x40100000,0,0x16,(char *)&local_c);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_21 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_22 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_4 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_5 = 0x40;
   return;
 }
@@ -5818,6 +6012,7 @@ void BOARD_InitPins_codec_spi(void)
   char local_18 [4];
   char local_14 [4];
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 2;
   CLKCTL1_PSCCTL1_SET = 4;
   local_24[0] = '\x01';
@@ -5835,10 +6030,15 @@ void BOARD_InitPins_codec_spi(void)
   local_14[0] = '\x01';
   local_14[1] = 0;
   GPIO_PinInit(0x40100000,2,0x1d,local_14);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_0 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_1 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_7 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_28 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_29 = 0;
   return;
 }
@@ -5866,6 +6066,7 @@ void BOARD_InitPins_debug_gpio(void)
   char local_18 [4];
   char local_14 [4];
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 1;
   CLKCTL1_PSCCTL1_SET = 4;
   local_28[0] = '\x01';
@@ -5886,11 +6087,17 @@ void BOARD_InitPins_debug_gpio(void)
   local_14[0] = '\x01';
   local_14[1] = 0;
   GPIO_PinInit(0x40100000,2,6,local_14);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_28 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_29 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_31 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_4 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_5 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_6 = 0;
   return;
 }
@@ -6037,6 +6244,7 @@ byte tolower(int param_1)
 void stdio_init(void)
 
 {
+                    /* Opens fd with mode "r"/"w"/"a"[+][b] into a FILE [doc, inference] */
   _Cfdopen(0,"r",&DAT_00088b78);
   setvbuf(&DAT_00088b78,0,0x400,0x100);
   _Cfdopen(1,"w",&DAT_00088bb4);
@@ -6114,6 +6322,7 @@ LAB_00084ec2:
       iVar8 = param_1[2];
       param_1[2] = iVar8 + -1;
       if (iVar8 + -1 < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
         fputc(bVar1,param_1);
       }
       else {
@@ -7028,6 +7237,7 @@ undefined4 siprintf(undefined1 *param_1,undefined4 param_2,undefined4 param_3,un
                          &LAB_000872f4_1);
   local_4c = local_4c + -1;
   if (local_4c < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_54);
   }
   else {
@@ -7074,6 +7284,7 @@ undefined4 snprintf(undefined1 *param_1,int param_2,undefined4 param_3,undefined
   uVar1 = vsnprintf_core(local_54,extraout_r1,param_2 + -1,0,param_3,local_58,&LAB_000872f4_1);
   local_4c = local_4c + -1;
   if (local_4c < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_54);
   }
   else {
@@ -7109,6 +7320,7 @@ undefined4 sprintf(undefined1 *param_1,undefined4 param_2,undefined4 param_3)
   ;
   local_44 = local_44 + -1;
   if (local_44 < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_4c);
   }
   else {
@@ -7217,6 +7429,7 @@ LAB_00085c30:
   uVar6 = 0;
   uVar7 = 0;
   bVar1 = false;
+                    /* ctype-table digit value for strtoul [doc, inference] */
   while (_Cdigit_value_ret = _Cdigit_value(uVar3,param_3), -1 < _Cdigit_value_ret) {
     uVar6 = uVar6 * param_3 + _Cdigit_value_ret;
     uVar7 = uVar7 * param_3 + (uVar6 >> 0x10);
@@ -7332,6 +7545,7 @@ void * _sbrk(int param_1)
   }
   puVar2 = DAT_00088b6c;
   puVar1 = DAT_00088b6c + (param_1 + 3U & 0xfffffffc);
+                    /* new_end >= 0xA2EF8 [doc] */
   __check_heap_overflow_ret = __check_heap_overflow(puVar1);
   if (__check_heap_overflow_ret) {
     puVar2 = (undefined *)0xffffffff;
@@ -7609,6 +7823,7 @@ void HardFault_Handler(void)
 void vPortYield(void)
 
 {
+                    /* Interrupt Control and State [sfr] */
   SCB_ICSR = 0x10000000;
   DataSynchronizationBarrier(0xf);
   InstructionSynchronizationBarrier(0xf);
@@ -7633,6 +7848,7 @@ void SysTick_Handler(void)
   ulSetInterruptMask_ret = ulSetInterruptMask();
   xTaskIncrementTick_ret = xTaskIncrementTick();
   if (xTaskIncrementTick_ret != 0) {
+                    /* Interrupt Control and State [sfr] */
     SCB_ICSR = 0x10000000;
   }
   vClearInterruptMask(ulSetInterruptMask_ret);
@@ -7652,6 +7868,7 @@ void vPortSVCHandler_C(int param_1)
 
 {
   if (*(char *)(*(int *)(param_1 + 0x18) + -2) == '\x02') {
+                    /* PSPLIM/CONTROL=2/PSP from pxCurrentTCB [doc, inference] */
     vRestoreContextOfFirstTask();
     return;
   }
@@ -8906,6 +9123,7 @@ void CTIMER0_DriverIRQHandler(void)
   uint i;
   uint ctimer0_ir;
   
+                    /* Interrupt [sfr] */
   ctimer0_ir = CTIMER0_IR;
   CTIMER0_IR = ctimer0_ir;
   if (DAT_000a1ef0 == '\0') {
@@ -9586,14 +9804,23 @@ void app_init_nop(void)
 void BOARD_InitPins_flexcomm(void)
 
 {
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_1 = 1;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_10 = 1;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_2 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_7 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_8 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_9 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_10 = 0x101;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_2 = 2;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_30 = 0x45;
   return;
 }
@@ -9614,13 +9841,21 @@ void BOARD_InitPins_flexcomm(void)
 void BOARD_InitPins_i2s(void)
 
 {
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_14 = 0x941;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_15 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_16 = 0x101;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_23 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_30 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_3 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_4 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_5 = 0x101;
   return;
 }
@@ -9658,6 +9893,7 @@ void main(void)
 
 {
   stdio_init();
+                    /* SEMA42 init/reset, flags 1 [doc] */
   app_main();
   return;
 }
@@ -9927,6 +10163,7 @@ void file_clear_flag20(void *param_1)
 {
   *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffffdf;
   if (*(int *)((int)param_1 + 0x18) != *(int *)((int)param_1 + 0x28)) {
+                    /* clears flag 0x80000 [doc] */
     file_flush_write_buffer();
     *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffcfef | 0x10;
     *(undefined4 *)((int)param_1 + 0x18) = *(undefined4 *)((int)param_1 + 0x28);
@@ -10180,6 +10417,7 @@ undefined4 _Cfclose(int param_1)
       fflush();
       __sys_close(uVar3);
       if ((int)(uVar1 << 0x14) < 0) {
+                    /* Marks block 0x10000000 and merges free successors [doc, inference] */
         free(iVar2);
       }
       if ((uVar1 & 0xffc00000) == 0xad800000) {
@@ -10245,6 +10483,7 @@ uint _Cfflush1(int *param_1)
       iVar2 = (*param_1 + param_1[6]) - param_1[4];
     }
     param_1[3] = param_1[3] & 0xffffcfff;
+                    /* clears flag 0x80000 [doc] */
     uVar1 = file_flush_write_buffer(param_1);
     fseek(param_1,iVar2,0);
   }
@@ -10290,6 +10529,7 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
     }
     iVar3 = 0;
     if (uVar6 <= uVar5) {
+                    /* shift-and-subtract division of the 64-bit r1:r0 by r2 [doc] */
       iVar3 = udiv64by32_helper(uVar5,0);
       n = n & 0xffffffff;
     }
@@ -10727,6 +10967,7 @@ void ResetISR(void)
   dword *pdVar2;
   
   disableIRQinterrupts();
+                    /* Vector Table Offset [sfr] */
   SCB_VTOR = 0x8001000;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
@@ -11860,6 +12101,7 @@ undefined4 getFFroFreq(void)
   undefined4 uVar1;
   uint clkctl0_ffroctl0;
   
+                    /* FFRO control 0 [sfr] */
   clkctl0_ffroctl0 = CLKCTL0_FFROCTL0;
   if ((clkctl0_ffroctl0 & 0xc0000) != 0) {
     uVar1 = 60000000;
@@ -11894,6 +12136,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
   uint uVar7;
   uint clkctl0_syspll0ctl0;
   
+                    /* main clock selection B [sfr] */
   uVar7 = CLKCTL0_MAINCLKSELB;
   uVar7 = uVar7 & 3;
   if (uVar7 == 2) {
@@ -11919,21 +12162,26 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
         uVar5 = 0;
       }
     }
+                    /* system pll0 control0 [sfr] */
     uVar7 = CLKCTL0_SYSPLL0CTL0;
     uVar7 = uVar7 & 1;
     if (uVar7 == 0) {
+                    /* system pll0 number [sfr] */
       uVar3 = CLKCTL0_SYSPLL0NUM;
+                    /* system pll0 denom [sfr] */
       uVar2 = CLKCTL0_SYSPLL0DENOM;
       clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
       iVar6 = ____aeabi_uldivmod_veneer
                         ((int)((ulonglong)uVar5 * (ulonglong)uVar3),
                          (int)((ulonglong)uVar5 * (ulonglong)uVar3 >> 0x20),uVar2,0,param_1,0,
                          param_3);
+                    /* sys pll0 PFD [sfr] */
       uVar3 = CLKCTL0_SYSPLL0PFD;
       lVar1 = (ulonglong)(iVar6 + uVar5 * ((clkctl0_syspll0ctl0 & 0xffffff) >> 0x10)) * 0x12;
       uVar5 = ____aeabi_uldivmod_veneer
                         ((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar3 & 0x3f,uVar7);
     }
+                    /* main pll clk divider [sfr] */
     uVar7 = CLKCTL0_MAINPLLCLKDIV;
     puVar4 = (undefined *)(uVar5 / ((uVar7 & 0xff) + 1));
   }
@@ -11959,14 +12207,17 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
       }
       else {
         puVar4 = (undefined *)0x0;
+                    /* system oscillator bypass [sfr] */
         uVar2 = CLKCTL0_SYSOSCBYPASS;
       }
     }
     else {
+                    /* FFROCTL0 trim range 0 [doc, inference] */
       uVar7 = getFFroFreq();
       puVar4 = (undefined *)(uVar7 >> 2);
     }
   }
+                    /* system cpu AHB clock divider [sfr] */
   uVar7 = CLKCTL0_SYSCPUAHBCLKDIV;
   DAT_00087ec0 = (uint)puVar4 / ((uVar7 & 0xff) + 1);
   return;
@@ -11987,15 +12238,20 @@ void SystemInit(void)
   int iVar1;
   uint uVar2;
   
+                    /* Coprocessor Access Control [sfr] */
   uVar2 = SCB_CPACR;
   SCB_CPACR = uVar2 | 0xf00000;
   uVar2 = SCB_CPACR;
   SCB_CPACR = uVar2 | 0xf;
+                    /* Non-secure Access Control [sfr] */
   uVar2 = SCB_NSACR;
   SCB_NSACR = uVar2 | 0xc03;
+                    /* DSP stall [sfr] */
   SYSCTL0_DSPSTALL = 1;
+                    /* Policy Select [sfr] */
   iVar1 = CACHE64_POLSEL_POLSEL;
   if (iVar1 == 0) {
+                    /* Cache control [sfr] */
     CACHE64_CCR = 0x5000000;
     uVar2 = CACHE64_CCR;
     CACHE64_CCR = uVar2 | 0x80000000;
@@ -12003,7 +12259,9 @@ void SystemInit(void)
       iVar1 = CACHE64_CCR;
     } while (iVar1 < 0);
     CACHE64_CCR = 3;
+                    /* Region 0 Top Boundary [sfr] */
     CACHE64_POLSEL_REG0_TOP = 0x7fffc00;
+                    /* Region 1 Top Boundary [sfr] */
     CACHE64_POLSEL_REG1_TOP = 0;
     CACHE64_POLSEL_POLSEL = 1;
     InstructionSynchronizationBarrier(0xf);
@@ -12152,6 +12410,7 @@ ulonglong ____aeabi_uldivmod_veneer
 void __HASHCRYPT_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ59, base 0x40158000 [doc] */
   HASHCRYPT_DriverIRQHandler(param_1);
   return;
 }
@@ -12371,6 +12630,7 @@ void __HWVAD0_DriverIRQHandler_veneer(void)
 void __FLEXCOMM1_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ15, generic fsl_flexcomm handler [doc] */
   FLEXCOMM1_DriverIRQHandler(param_1);
   return;
 }
@@ -12668,6 +12928,7 @@ void __DMIC0_DriverIRQHandler_veneer(void)
 void __I3C0_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ49, base 0x40036000 [doc] */
   I3C0_DriverIRQHandler(param_1);
   return;
 }

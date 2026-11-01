@@ -310,6 +310,7 @@ void enc2_step(char param_1)
           func_knob_turn((int)param_1);
           return;
         }
+                    /* knob turn on the PlayList / message-memory screens [doc] */
         playback_knob_turn((int)param_1);
         return;
       }
@@ -410,6 +411,7 @@ void FUN_fffc670d(char param_1)
   }
   if (DAT_0001b4ea == '\0') {
     DAT_0001b4ea = 1;
+                    /* set or clear one bit of UI +0x34 [doc] */
     ui_lamp_set(DAT_0001b4e9,1);
     swtimer_start(0x47,100);
     DAT_0001b4eb = 1;
@@ -484,6 +486,7 @@ void memlist_row_step(char param_1)
 {
   if (param_1 < '\x01') {
     if (PTR_g_ui_00025d58->memlist_row == 0) {
+                    /* Scrolls the memory list up one channel [doc] */
       memlist_page_up();
     }
     else {
@@ -494,6 +497,7 @@ void memlist_row_step(char param_1)
     PTR_g_ui_00025d58->memlist_row = PTR_g_ui_00025d58->memlist_row + 1;
   }
   else {
+                    /* Scrolls the memory list down one channel [doc] */
     memlist_page_down();
   }
   memlist_cursor_channel();
@@ -651,6 +655,7 @@ void memlist_mode_step(char param_1)
   vfo_rec *p_vfo_rec;
   byte bStack_9;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x55);
   popup_open_timed();
   p_vfo_rec = memch + PTR_g_ui_00025d58->memlist_ch;
@@ -679,6 +684,7 @@ void memlist_scan_bit_step(char param_1)
 {
   byte *pbVar1;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x56);
   popup_open_timed();
   pbVar1 = &memch[PTR_g_ui_00025d58->memlist_ch].flags1;
@@ -703,6 +709,7 @@ void memlist_type_bit_step(char param_1)
 {
   byte *pbVar1;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x57);
   popup_open_timed();
   pbVar1 = &memch[PTR_g_ui_00025d58->memlist_ch].flags5;
@@ -750,6 +757,7 @@ void func_knob_turn(char param_1)
     return;
   }
   if (PTR_g_ui_00025d58->popup_code < 0x1e) {
+                    /* knob turn while a list pop-up [doc] */
     funcknob_list_popup_step((int)param_1);
     return;
   }
@@ -809,6 +817,7 @@ void FUN_fffc6cd7(char param_1)
     local_4 = 0xf;
   }
   PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(5);
   popup_open_timed();
   return;
@@ -841,6 +850,7 @@ void FUN_fffc6d28(char param_1)
   else {
     PTR_g_ui_00025d58->popup_cursor = 0xb;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xb);
   popup_open_timed();
   return;
@@ -864,6 +874,7 @@ void FUN_fffc6d8c(char param_1)
     local_4 = 0xb;
   }
   PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xc);
   popup_open_timed();
   return;
@@ -895,6 +906,7 @@ void funcknob_popup_step(char param_1,char param_2)
     return;
   }
   if (param_1 == '$') {
+                    /* M GROUP pop-up [doc] */
     funcknob_mgroup_step((int)param_2);
     return;
   }
@@ -990,22 +1002,27 @@ void funcknob_step(char param_1,char param_2)
     return;
   }
   if (param_1 == '\x01') {
+                    /* FUNC-knob function for PEAK [doc] */
     funcknob_peak((int)param_2);
     return;
   }
   if (param_1 == '\x03') {
+                    /* FUNC-knob function 3 [doc] */
     funcknob_color_popup();
     return;
   }
   if (param_1 == '\x04') {
+                    /* FUNC-knob function for CONTRAST [doc] */
     funcknob_contrast((int)param_2);
     return;
   }
   if (param_1 == '\x05') {
+                    /* FUNC-knob function for DIMMER [doc] */
     funcknob_dimmer((int)param_2);
     return;
   }
   if (param_1 == '\x06') {
+                    /* FUNC-knob function for M GROUP [doc] */
     funcknob_mgroup((int)param_2);
     return;
   }
@@ -1054,6 +1071,7 @@ void funcknob_step(char param_1,char param_2)
     return;
   }
   if (param_1 == '\x15') {
+                    /* FUNC-knob function for AESS [doc] */
     funcknob_aess_level((int)param_2);
     return;
   }
@@ -1091,6 +1109,7 @@ void funcknob_scope_level_step(char param_1)
   byte *scope_level_cur_ptr_ret;
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x1e);
   popup_open_timed();
   scope_level_cur_ptr_ret = (byte *)scope_level_cur_ptr();
@@ -1132,6 +1151,7 @@ void funcknob_peak_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x1f);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.ss01_peak + (short)param_1;
@@ -1157,6 +1177,7 @@ void funcknob_peak_step(char param_1)
 void funcknob_color_popup(void)
 
 {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xb);
   popup_open_timed();
   PTR_g_ui_00025d58->popup_code = 0xb;
@@ -1189,6 +1210,7 @@ void funcknob_contrast_step(char param_1)
 {
   short sStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x22);
   popup_open_timed();
   sStack_4 = (ushort)g_opstate.tft_contrast + (short)param_1;
@@ -1230,6 +1252,7 @@ void funcknob_dimmer_step(char param_1)
 {
   short sStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x23);
   popup_open_timed();
   sStack_4 = (ushort)g_opstate.tft_brightness + (short)param_1;
@@ -1256,6 +1279,7 @@ void funcknob_mgroup(char param_1)
 
 {
   PTR_g_ui_00025d58->popup_code = 0x24;
+                    /* M GROUP pop-up [doc] */
   funcknob_mgroup_step((int)param_1);
   return;
 }
@@ -1272,6 +1296,7 @@ void funcknob_mgroup_step(char param_1)
   bool bVar1;
   byte bVar2;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x24);
   popup_open_timed();
   if ((g_opstate.ex030114_mem_group == 0) || (PTR_g_ui_00025d58->transmitting == 1)) {
@@ -1510,6 +1535,7 @@ void funcknob_mic_gain_step(char param_1)
   byte *mic_gain_ptr_ret;
   short sStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x25);
   popup_open_timed();
   mic_gain_ptr_ret = (byte *)mic_gain_ptr();
@@ -1541,6 +1567,7 @@ void funcknob_mic_eq_step(char param_1)
   bool bVar1;
   
   bVar1 = false;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x26);
   popup_open_timed();
   if (param_1 < '\x01') {
@@ -1585,6 +1612,7 @@ void funcknob_proc_level_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x27);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.proc_level + (short)param_1;
@@ -1625,6 +1653,7 @@ void funcknob_amc_level_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x28);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.amc_level + (short)param_1;
@@ -1665,6 +1694,7 @@ void funcknob_vox_gain_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x29);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.vox_gain + (short)param_1;
@@ -1706,6 +1736,7 @@ void funcknob_vox_delay_step(char param_1)
   short sStack_a;
   byte *pbStack_8;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x2a);
   popup_open_timed();
   if (g_opstate.ex030405_vox_select == 0) {

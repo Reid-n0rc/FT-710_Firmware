@@ -207,9 +207,12 @@ void PINT_Init(undefined4 *param_1)
   DAT_00238f38 = 0;
   DAT_00238f3c = 0;
   memw();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = &RSTCTL0_SYSRSTSTAT;
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(0x51e);
   memw();
+                    /* Pattern match interrupt bit slice configuration [sfr] */
   PINT_PMCFG = 0x3600;
   return;
 }
@@ -530,7 +533,9 @@ void PINT_Deinit(undefined4 *param_1)
     DAT_00238f38 = 0;
     DAT_00238f3c = 0;
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = &RSTCTL0_SYSRSTSTAT;
+                    /* set then clear [doc, inference] */
     RESET_PeripheralReset(0x51e);
   }
   return;
@@ -552,6 +557,7 @@ void PIN_INT0_DriverIRQHandler(void)
     (*DAT_00238f20)(0,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 1) != 0) {
     return;
@@ -576,6 +582,7 @@ void PIN_INT1_DriverIRQHandler(void)
     (*DAT_00238f24)(1,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 2) != 0) {
     return;
@@ -600,6 +607,7 @@ void PIN_INT2_DriverIRQHandler(void)
     (*DAT_00238f28)(2,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 4) != 0) {
     return;
@@ -624,6 +632,7 @@ void PIN_INT3_DriverIRQHandler(void)
     (*DAT_00238f2c)(3,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 8) != 0) {
     return;
@@ -648,6 +657,7 @@ void PIN_INT4_DriverIRQHandler(void)
     (*DAT_00238f30)(4,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 0x10) != 0) {
     return;
@@ -672,6 +682,7 @@ void PIN_INT5_DriverIRQHandler(void)
     (*DAT_00238f34)(5,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 0x20) != 0) {
     return;
@@ -696,6 +707,7 @@ void PIN_INT6_DriverIRQHandler(void)
     (*DAT_00238f38)(6,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 0x40) != 0) {
     return;
@@ -720,6 +732,7 @@ void PIN_INT7_DriverIRQHandler(void)
     (*DAT_00238f3c)(7,uVar1);
   }
   memw();
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 0x80) != 0) {
     return;
@@ -743,8 +756,10 @@ void RESET_SetPeripheralReset(uint param_1)
   if (uVar2 == 0) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
+                    /* peripheral reset set 0 [sfr] */
     RSTCTL0_PRSTCTL0_SET = uVar1;
     memw();
+                    /* peripheral reset control 0 [sfr] */
     uVar2 = RSTCTL0_PRSTCTL0;
     while ((uVar2 & uVar1) == 0) {
       memw();
@@ -839,8 +854,10 @@ void RESET_ClearPeripheralReset(uint param_1)
   if (uVar2 == 0) {
     uVar1 = 1 << 0x20 - (0x20 - (param_1 & 0x1f));
     memw();
+                    /* peripheral reset clear 0 [sfr] */
     RSTCTL0_PRSTCTL0_CLR = uVar1;
     memw();
+                    /* peripheral reset control 0 [sfr] */
     uVar2 = RSTCTL0_PRSTCTL0;
     while ((~uVar2 & uVar1) == 0) {
       memw();
@@ -928,6 +945,7 @@ void RESET_ClearPeripheralReset(uint param_1)
 void RESET_PeripheralReset(undefined4 param_1)
 
 {
+                    /* RSTCTL0/1 PRSTCTL_SET, wait [doc, inference] */
   RESET_SetPeripheralReset(param_1);
   RESET_ClearPeripheralReset(param_1);
   return;
@@ -942,6 +960,7 @@ void RTC_Init(uint *param_1)
 
 {
   memw();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80;
   memw();
   memw();
@@ -1222,22 +1241,26 @@ void SEMA42_Init(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock set 1 [sfr] */
       CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -1245,10 +1268,12 @@ void SEMA42_Init(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -1270,22 +1295,26 @@ void SEMA42_Deinit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -1293,10 +1322,12 @@ void SEMA42_Deinit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -1380,6 +1411,7 @@ undefined4 SEMA42_ResetGate(int param_1,ushort param_2)
 void SPI_SlaveTransferHandleIRQ(undefined4 param_1,undefined4 param_2)
 
 {
+                    /* installed by SPI_MasterTransferCreateHandle [doc] */
   SPI_MasterTransferHandleIRQ(param_1,param_2);
   return;
 }
@@ -1405,6 +1437,7 @@ void SPI_SetDummyData(undefined4 param_1,undefined1 param_2)
 {
   int iVar1;
   
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   (&DAT_00238f40)[iVar1] = param_2;
@@ -1421,6 +1454,7 @@ undefined * SPI_GetConfig(undefined4 param_1)
 {
   int iVar1;
   
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   return &DAT_00238f50 + iVar1 * 8;
 }
@@ -1462,6 +1496,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (((param_1 == 0) || (param_2 == (byte *)0x0)) || (param_3 == 0)) {
     return 4;
   }
+                    /* clock enable, reset, PSELID [doc, inference] */
   iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
@@ -1470,6 +1505,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (iVar1 != 0) {
     return iVar1;
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();

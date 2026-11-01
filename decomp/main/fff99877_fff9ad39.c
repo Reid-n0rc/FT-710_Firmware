@@ -53,6 +53,7 @@ void popup_fmt_cw_speed(ushort param_1)
   
   (&DAT_00001748)[param_1] = 0x6d;
   *(undefined2 *)(&DAT_00001746 + param_1) = 0x7077;
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.key_speed,2,&DAT_00001a02);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001746 + (param_1 - uVar4);
@@ -79,6 +80,7 @@ void popup_fmt_cw_pitch(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n((ushort)g_opstate.cw_pitch * 10 + 300,4,&DAT_00001a0a);
   (&DAT_00001747)[param_1] = 0x48;
   (&DAT_00001748)[param_1] = 0x7a;
@@ -113,6 +115,7 @@ void popup_fmt_bk_delay(ushort param_1)
   if (0x21 < g_opstate.cw_bkin_delay) {
     local_3 = 0;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(*(undefined2 *)(BYTE_ARRAY_fff87ed4 + (uint)local_3 * 2 + 2),4,&DAT_00001a12)
   ;
   uVar4 = (uint)bVar1;
@@ -141,7 +144,9 @@ void popup_fmt_aess_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (byte *)aess_level_ptr();
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n((uint)*aess_level_ptr_ret * 5,3,&DAT_00001a1a);
   (&DAT_00001748)[param_1] = 0x25;
   uVar4 = (uint)bVar1;
@@ -171,6 +176,7 @@ void popup_fmt_aess_cf(ushort param_1)
   uint uVar4;
   undefined2 uStack_4;
   
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (char *)aess_mode_ptr();
   if (*aess_mode_ptr_ret == '\0') {
     uStack_4 = 700;
@@ -178,6 +184,7 @@ void popup_fmt_aess_cf(ushort param_1)
   else {
     uStack_4 = 1000;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(uStack_4,4,&DAT_00001a22);
   (&DAT_00001747)[param_1] = 0x48;
   (&DAT_00001748)[param_1] = 0x7a;
@@ -206,6 +213,7 @@ void popup_fmt_amc_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.amc_level,3,&DAT_00001a2a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -262,6 +270,7 @@ void popup_fmt_nb_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.nb_level,2,&DAT_00001a32);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -294,6 +303,7 @@ void popup_fmt_dnr_level(ushort param_1)
     local_4 = g_opstate.vfo_b.dnr;
   }
   local_4 = local_4 & 0xf;
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(local_4,2,&DAT_00001a3a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -329,6 +339,7 @@ void popup_fmt_qmb(ushort param_1)
     local_3 = g_qmb_hdr.ptr_b[0];
   }
   uVar1 = FUN_fff96d94(local_3);
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar2 = dec_to_str_n(uVar1,2,&DAT_00001a42);
   uVar5 = (uint)bVar2;
   puVar3 = &DAT_00001749 + (param_1 - uVar5);
@@ -500,6 +511,7 @@ void popup_fmt_contrast(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.tft_contrast,2,&DAT_00001a4a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -615,6 +627,7 @@ void popup_fmt_dimmer(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.tft_brightness,2,&DAT_00001a52);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -856,7 +869,9 @@ void dl50_mycall(void)
   DAT_000017e9 = 0x41;
   DAT_000017ea = 0x4c;
   DAT_000017eb = 0x4c;
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -884,6 +899,7 @@ void dl50_memory_name(void)
     DAT_000017d9 = 2;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
+                    /* channel label text [doc] */
   memch_label_fmt(&DAT_000017db,PTR_g_ui_00025d38->memlist_ch);
   iVar3 = suntil(0xfff8f350,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
@@ -893,7 +909,9 @@ void dl50_memory_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -1031,7 +1049,9 @@ void dl50_file_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0x14);
   return;
 }
@@ -1066,7 +1086,9 @@ void dl50_preset_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -1145,7 +1167,9 @@ void dl50_slot_label(void)
 void dl50_msg_text(void)
 
 {
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text + PTR_g_ui_00025d38->msg_slot_idx,0x1803,0x32);
   return;
 }
@@ -1347,6 +1371,7 @@ void displink_build_37(void)
   dl37_slot_record(0x177);
   dl37_slot_play(0x181);
   dl37_slot_txw(0x18b);
+                    /* writes an empty FUNC-panel slot of frame 0x37 [doc] */
   dl37_slot_empty(0x195);
   dl37_slot_aess(0x19f);
   dl37_slot_aess_cf(0x1a9);
@@ -1382,6 +1407,7 @@ void dl37_slot_scope_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the SCOPE LEVEL pop-up [doc] */
   popup_fmt_scope_level(param_1);
   return;
 }
@@ -1401,6 +1427,7 @@ void dl37_slot_peak(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the PEAK pop-up [doc] */
   popup_fmt_peak(param_1);
   return;
 }

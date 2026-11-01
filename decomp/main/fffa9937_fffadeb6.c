@@ -35,6 +35,7 @@ void cat_EX(uint text,char is_set,ushort len)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* Timer 0x32 for 200 ms, flag 0x187C2 [doc] */
     cat_ai_holdoff();
     return;
   }
@@ -526,6 +527,7 @@ LAB_fffaa1ac:
     pbStack_14 = pbStack_14 + 0x29;
   }
 LAB_fffaa1b3:
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   bVar1 = hex2nib(*(byte *)(param_1 + 3));
   if (4 < bVar1) {
     cat_error = 1;
@@ -610,6 +612,7 @@ void cat_GP(int param_1,char param_2)
     cat_error = 1;
     return;
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   bVar2 = hex2nib(*(byte *)(param_1 + 2));
   gpo_a_set(bVar2);
   bVar2 = hex2nib(*(byte *)(param_1 + 3));
@@ -950,6 +953,7 @@ void cat_KM(int param_1,char param_2,ushort param_3)
   uint uVar6;
   byte bStack_d;
   
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   bVar2 = hex2nib(*(byte *)(param_1 + 2));
   if (param_2 == '\0') {
     if (*(char *)(param_1 + 2) == '1') {
@@ -1203,6 +1207,7 @@ void cat_KP(int param_1,char param_2)
   g_opstate.cw_pitch = local_d;
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x31;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x31);
     popup_open_timed();
     return;
@@ -1225,6 +1230,7 @@ void cat_KR(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0xe0,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1314,6 +1320,7 @@ void cat_KS(int param_1,char param_2)
       return;
     }
     g_ui.popup_code = 0x30;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x30);
     popup_open_timed();
     return;
@@ -1344,6 +1351,7 @@ void cat_KY(int param_1)
   byte hex2nib_ret;
   int iVar2;
   
+                    /* Checks a key code against about 20 mode locks [doc] */
   bVar1 = key_event_filter(0x87,0);
   if (bVar1 == 0) {
     cat_error = 1;
@@ -1363,6 +1371,7 @@ void cat_KY(int param_1)
     cat_error = 1;
     return;
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   bVar1 = hex2nib(*(byte *)(param_1 + 3));
   if (bVar1 == 0) {
     g_ui.keyer_state = 7;
@@ -1404,6 +1413,7 @@ void cat_KY(int param_1)
     g_ui.keyer_state = 5;
     return;
   }
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
   msg_cw_stop();
   g_ui.ky_queued = 1;
   return;
@@ -1423,6 +1433,7 @@ void cat_LK(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x300,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1432,6 +1443,7 @@ void cat_LK(int param_1,char param_2)
     g_opstate.lock_on = 1;
     if (g_opstate.ex030126_scu_lan10 == 0) {
       g_ui.popup_code = 0x47;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(0x47);
       popup_open_timed();
       return;
@@ -1479,6 +1491,7 @@ void cat_LM(int param_1,char param_2)
     DAT_0001b788 = 5;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x87,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1569,6 +1582,7 @@ void cat_LM(int param_1,char param_2)
       cat_error = 1;
       return;
     }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     g_ui.msg_slot = hex2nib(*(byte *)(param_1 + 3));
     g_ui.msgmem_type = 0;
     g_ui.dvs_busy = 1;
@@ -1593,6 +1607,7 @@ void cat_MA(void)
   int i;
   
   p_vfo_rec_2 = memch + g_mem_hdr.chan_a;
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x308,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1626,6 +1641,7 @@ void cat_MB(void)
   int i;
   
   p_vfo_rec_2 = memch + g_mem_hdr.chan_b;
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x308,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1872,6 +1888,7 @@ void cat_MD(int param_1,char param_2)
     DAT_0001b788 = 5;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x30c,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -1965,6 +1982,7 @@ LAB_fffaba23:
         return;
       }
       if (*(char *)(param_1 + 2) == '0') {
+                    /* per-mode switch used by cat_MD and cat_NA [doc] */
         vfo_mode_select(local_d);
         return;
       }
@@ -2060,6 +2078,7 @@ LAB_fffabaef:
         *pbStack_1c = (byte)uStack_14;
         if (g_opstate.ex030126_scu_lan10 == 0) {
           g_ui.popup_code = 0x25;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
           popup_duration_get(0x25);
           popup_open_timed();
         }
@@ -2245,6 +2264,7 @@ LAB_fffabcc3:
   *pbStack_1c = bStack_12;
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x2d;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x2d);
     popup_open_timed();
     return;
@@ -2611,6 +2631,7 @@ void cat_MS(int param_1,char param_2)
     return;
   }
   if (*(char *)(param_1 + 3) == '0') {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     hex2nib_ret = hex2nib(*(byte *)(param_1 + 2));
     if (5 < hex2nib_ret) {
       cat_error = 1;
@@ -2867,15 +2888,19 @@ void cat_MX(int param_1,char param_2)
     DAT_0001b788 = 4;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x302,2);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
     return;
   }
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   hex2nib_ret = hex2nib(*(byte *)(param_1 + 2));
   if (hex2nib_ret == '\0') {
     if (g_ui_ptt_mox_val != 0) {
+                    /* Front-panel key 0x302 MOX/VOX, press handler [doc, inference] */
       key_mox_vox_press();
+                    /* Front-panel key 0x302 MOX/VOX, short handler [doc, inference] */
       key_mox_vox_short();
       return;
     }
@@ -2886,6 +2911,7 @@ void cat_MX(int param_1,char param_2)
       return;
     }
     if (g_ui_ptt_mox_val == 0) {
+                    /* Front-panel key 0x302 MOX/VOX, long handler [doc, inference] */
       key_mox_vox_long();
       return;
     }
@@ -2920,6 +2946,7 @@ void cat_NA(int param_1,char param_2)
     DAT_0001b788 = 5;
   }
   else {
+                    /* Checks a key code against about 20 mode locks [doc] */
     key_event_filter_ret = key_event_filter(0x30d,0);
     if (key_event_filter_ret == 0) {
       cat_error = 1;
@@ -2953,6 +2980,7 @@ void cat_NA(int param_1,char param_2)
       DAT_00001c91 = 0x30;
     }
     else if (*(char *)(param_1 + 3) == '1') {
+                    /* per-mode switch used by cat_MD and cat_NA [doc] */
       vfo_mode_select(5);
     }
     break;
@@ -3047,6 +3075,7 @@ void cat_NB(int param_1,char param_2)
     DAT_0001b788 = 5;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x303,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -3135,6 +3164,7 @@ void cat_NL(int param_1,char param_2)
     return;
   }
   g_ui.popup_code = 0x38;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x38);
   popup_open_timed();
   return;
@@ -3165,6 +3195,7 @@ void cat_NR(int param_1,char param_2)
     DAT_0001b788 = 5;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x304,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -3324,6 +3355,7 @@ void cat_PB(int param_1,char param_2)
     DAT_0001b788 = 5;
     return;
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(0x87,0);
   if (key_event_filter_ret == 0) {
     cat_error = 1;
@@ -3354,6 +3386,7 @@ void cat_PB(int param_1,char param_2)
     }
     if (g_ui.dvs_state == 0) {
       g_ui.dvs_state = 1;
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
       g_ui.msg_slot = hex2nib(*(byte *)(param_1 + 3));
       g_ui.dvs_slot = g_ui.msg_slot - 1;
       iVar1 = tx_breakin_on();
@@ -3405,6 +3438,7 @@ void cat_PC(int param_1,char param_2)
   
   vfo_freq_ret = vfo_freq(0,2);
   bVar2 = vfo_mode(0);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cVar3 = tx_band_of_freq(vfo_freq_ret);
   if ((bVar2 == 4) || (bVar2 == 5)) {
     bVar1 = true;
@@ -3492,6 +3526,7 @@ void cat_PC(int param_1,char param_2)
       return;
     }
     g_ui.popup_code = 0x2c;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x2c);
     popup_open_timed();
     return;
@@ -3579,6 +3614,7 @@ void cat_PL(int param_1,char param_2)
       return;
     }
     g_ui.popup_code = 0x27;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x27);
     popup_open_timed();
     return;
@@ -3715,6 +3751,7 @@ void cat_RA(int param_1,char param_2)
     return;
   }
   if (param_2 != '\0') {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     hex2nib_ret = hex2nib(*(byte *)(param_1 + 3));
     if (hex2nib_ret < 4) {
       vfo_rec_ptr_ret[3] = vfo_rec_ptr_ret[3] & 0xfc;
@@ -3826,6 +3863,7 @@ void cat_RI(int param_1)
     else {
       DAT_00001c91 = 0x31;
     }
+                    /* Returns 1 while a message/DVS recording runs [doc] */
     n = msg_rec_play_state();
     DAT_00001c92 = nib2hex(n);
     if (g_ui.tx_lamp == 0) {
@@ -3944,6 +3982,7 @@ void cat_RL(int param_1,char param_2)
     vfo_rec_ptr_ret[6] = vfo_rec_ptr_ret[6] | bStack_d;
     if (g_opstate.ex030126_scu_lan10 == 0) {
       g_ui.popup_code = 0x39;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(0x39);
       popup_open_timed();
     }
@@ -3972,6 +4011,7 @@ void cat_RM(int param_1)
   byte bStack_b;
   byte bStack_9;
   
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   cStack_d = hex2nib(*(byte *)(param_1 + 2));
   if (cStack_d == '\0') {
     if (g_ui.tx_lamp == 1) {
@@ -4174,6 +4214,7 @@ void cat_SD(int param_1,char param_2)
   g_opstate.cw_bkin_delay = local_a;
   if (g_opstate.ex030126_scu_lan10 == 0) {
     g_ui.popup_code = 0x32;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x32);
     popup_open_timed();
     return;

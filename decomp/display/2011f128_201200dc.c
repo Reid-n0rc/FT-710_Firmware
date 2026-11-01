@@ -156,6 +156,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
   }
   reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
   uVar2 = *(uint *)(&DAT_20800434 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   if ((uVar2 < uVar5) || (__aeabi_uidivmod(uVar2,uVar5), extraout_r1 != 0)) {
     local_3c = 0xffffffff;
   }
@@ -169,6 +170,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
       }
       switch(param_1) {
       case 0:
+                    /* dummy 0xFF writes, wait RX [doc, inference] */
         rspi0_read_burst(uVar4);
         break;
       case 1:
@@ -399,6 +401,7 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
       }
       reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
       uVar3 = *(uint *)(&DAT_20800424 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       if ((uVar3 < uVar5) || (__aeabi_uidivmod(uVar3,uVar5), extraout_r1 != 0)) {
         local_48 = 0xffffffff;
       }
@@ -547,12 +550,14 @@ undefined4 rspi_rx_isr(uint param_1)
   }
   switch(param_1) {
   case 0:
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
     break;
   case 1:
     rspi1_rx_isr();
     break;
   case 2:
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
     break;
   case 3:
@@ -577,6 +582,7 @@ undefined4 rspi_tx_isr(uint param_1)
   }
   switch(param_1) {
   case 0:
+                    /* clear SPTIE, flag 0x2080041D [doc, inference] */
     rspi0_tx_isr();
     break;
   case 1:

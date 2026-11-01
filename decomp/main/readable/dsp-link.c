@@ -18,27 +18,42 @@ void R_SCI4_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xf7ffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR082;
   ICU_IPR082 = bVar1 & 0xfa | 10;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR083;
   ICU_IPR083 = bVar1 & 0xfa | 10;
+                    /* Serial Control [sfr] */
   SCI4_SCR = 0;
   SCI4_SCR = 0;
   bVar1 = SCI4_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI4_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI4_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI4_SMR = 0;
+                    /* Smart Card Mode [sfr] */
   SCI4_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI4_SEMR = 0x50;
+                    /* Bit Rate [sfr] */
   SCI4_BRR = 0x40;
+                    /* PB0 Pin Function Control [sfr] */
   MPC_PB0PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORTB_PMR;
   PORTB_PMR = bVar1 | 1;
+                    /* PB1 Pin Function Control [sfr] */
   MPC_PB1PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORTB_PODR;
   PORTB_PODR = bVar1 | 2;
+                    /* Port Direction [sfr] */
   bVar1 = PORTB_PDR;
   PORTB_PDR = bVar1 | 2;
   R_SCI4_Create_UserInit();
@@ -67,6 +82,7 @@ ushort R_SCI4_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b61e = 0;
     bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
     SCI4_SCR = bVar1 | 0x40;
     bVar1 = SCI4_SCR;
     SCI4_SCR = bVar1 | 0x10;
@@ -102,9 +118,12 @@ ushort R_SCI4_Serial_Send(uint param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER0A = bVar1 & 0xf7;
       bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
       SCI4_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORTB_PMR;
       PORTB_PMR = bVar1 | 2;
       bVar1 = ICU_IER0A;
@@ -136,11 +155,13 @@ void r_sci4_transmit_interrupt(void)
   
   if (DAT_0001b61c == 0) {
     bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
     SCI4_SCR = bVar1 & 0x7f;
     bVar1 = SCI4_SCR;
     SCI4_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI4_TDR = *DAT_00020814;
   DAT_00020814 = DAT_00020814 + 1;
   DAT_0001b61c = DAT_0001b61c + -1;
@@ -171,13 +192,16 @@ void r_sci4_receive_interrupt(void)
   
   if (DAT_0001b61e < DAT_0001b620) {
     sci4_rdr = SCI4_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00020818 = sci4_rdr;
+                    /* SCI4 per-byte receive callback [doc] */
     sci4_rx_frame_len();
     DAT_00020818 = DAT_00020818 + 1;
     DAT_0001b61e = DAT_0001b61e + 1;
   }
   if (DAT_0001b620 <= DAT_0001b61e) {
     bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
     SCI4_SCR = bVar1 & 0xbf;
     bVar1 = SCI4_SCR;
     SCI4_SCR = bVar1 & 0xef;
@@ -363,6 +387,7 @@ void dsp_link_init(void)
     bVar2 = dsp_check_reply('r',&iStack_10);
   } while (bVar2 != 1);
   DAT_0001b6e0 = hex2word((char *)(iStack_10 + 1));
+                    /* if/else chain over the register number [doc] */
   dsp_shadow_store();
   bVar1 = true;
 LAB_fff9d11b:
@@ -422,13 +447,16 @@ void dsp_link_poll(void)
   local_1 = g_ui.transmitting;
   local_2 = g_ui.trx_state;
   if (DAT_00001c5e == '\x01') {
+                    /* Write in flight: ACK 0x06 confirms the shadow value [fact: dsp-link.md] */
     bVar2 = dsp_check_reply('w',&iStack_8);
     if (bVar2 != 1) {
       return;
     }
+                    /* if/else chain over the register number [doc] */
     dsp_shadow_store();
   }
   if (DAT_00001c5f == '\x01') {
+                    /* Read in flight: valid r-reply goes to the shadow [fact: dsp-link.md] */
     bVar2 = dsp_check_reply('r',&iStack_8);
     if (bVar2 != 1) {
       return;
@@ -437,6 +465,7 @@ void dsp_link_poll(void)
     dsp_shadow_store();
   }
   if (DAT_00001c63 == '\x01') {
+                    /* ISP tunnel for a DSP firmware update [fact: dsp-link.md] */
     dsp_isp_bridge();
   }
   if ((local_2 == 3) || (local_2 == 8)) {
@@ -445,6 +474,7 @@ void dsp_link_poll(void)
   else {
     bVar1 = false;
   }
+                    /* RX/TX steady: read status regs 1..4, one per pass [fact: dsp-link.md] */
   if ((bVar1) && (bVar2 = swtimer_expired(0xb), bVar2 == 1)) {
     if (DAT_0001b3da == '\x02') {
       dsp_read_status3();
@@ -459,6 +489,7 @@ void dsp_link_poll(void)
     if (DAT_0001b3da != '\0') {
       dsp_read_status4();
       DAT_0001b3da = 0;
+                    /* After reg 4: next status burst in 20 ms [fact: dsp-link.md] */
       swtimer_start(0xb,0x14);
       return;
     }
@@ -488,6 +519,9 @@ void dsp_link_poll(void)
     DAT_0001b3d9 = local_1;
   }
   dsp_set_r08(local_1);
+                    /* Setter chain: the first register that changed is sent [fact: dsp-link.md] */
+                    /* reg 0x30 = 0xFF in FM modes [doc, inference] */
+                    /* reg 0x62 AGC on, reg 0x66 AGC delay [doc, inference] */
   if ((((((((DAT_00001c5e == '\0') && (dsp_set_r09(local_1), DAT_00001c5e == '\0')) &&
           (dsp_set_r0a(local_1), DAT_00001c5e == '\0')) &&
          ((dsp_set_r0d(local_1), DAT_00001c5e == '\0' &&
@@ -888,6 +922,7 @@ void dsp_set_r08(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(8);
   if (DAT_0001b640 == dsp_route_param_ret) {
     return;
@@ -914,6 +949,7 @@ void dsp_set_r09(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(9);
   if (DAT_0001b642 == dsp_route_param_ret) {
     return;
@@ -940,6 +976,7 @@ void dsp_set_r0a(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(10);
   if (DAT_0001b644 == dsp_route_param_ret) {
     return;
@@ -989,6 +1026,7 @@ void dsp_set_r0d(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(0xd);
   if (DAT_0001b648 == dsp_route_param_ret) {
     return;
@@ -1015,6 +1053,7 @@ void dsp_set_r0e(byte param_1)
 {
   ushort dsp_route_param_ret;
   
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(0xe);
   if (DAT_0001b64a == dsp_route_param_ret) {
     return;
@@ -1134,6 +1173,7 @@ void dsp_set_tx_gain(void)
   byte tx_mod_gain_ret;
   ushort uStack_2;
   
+                    /* Constant tables per audio-route state [doc] */
   uStack_2 = dsp_route_param(0x20);
   tx_mod_gain_ret = tx_mod_gain();
   if (uStack_2 == 0xffff) {
@@ -1307,6 +1347,7 @@ void dsp_set_peq_freq(char param_1)
     uStack_14 = 0x25;
   }
   uStack_a = uStack_c;
+                    /* Constant tables per audio-route state [doc] */
   dsp_route_param_ret = dsp_route_param(uStack_14);
   if ((dsp_route_param_ret == 0) || (uStack_c == 0)) {
     bVar1 = true;
@@ -3599,7 +3640,9 @@ void dsp_set_aess(void)
   char *aess_mode_ptr_ret;
   undefined2 uStack_2;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (char *)aess_level_ptr();
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (char *)aess_mode_ptr();
   if (*aess_level_ptr_ret == '\0') {
     uStack_2 = 0;
@@ -3976,21 +4019,25 @@ void dsp_shadow_store(void)
   }
   if (DAT_0001b6de == 1) {
     DAT_0001b636 = DAT_0001b6e0;
+                    /* Filters for regs 1–4 [doc] */
     dsp_status1_filter();
     return;
   }
   if (DAT_0001b6de == 2) {
     DAT_0001b638 = DAT_0001b6e0;
+                    /* 32-sample average of each byte [doc, inference] */
     dsp_status2_filter();
     return;
   }
   if (DAT_0001b6de == 3) {
     DAT_0001b63a = DAT_0001b6e0;
+                    /* 16-sample average of low byte [doc, inference] */
     dsp_status3_filter();
     return;
   }
   if (DAT_0001b6de == 4) {
     DAT_0001b63c = DAT_0001b6e0;
+                    /* most frequent of last 8 samples [doc, inference] */
     dsp_status4_filter();
     return;
   }
@@ -4341,6 +4388,7 @@ byte dsp_check_reply(char param_1,void *param_2)
   local_e = 0;
   bVar1 = sci4_rx_ready();
   if (bVar1 == 1) {
+                    /* Returns the SCI4 receive buffer [doc, inference] */
     sci4_rx_buf_ret = sci4_rx_buf();
     *(uint *)param_2 = sci4_rx_buf_ret;
     DAT_00001c5e = 0;
@@ -4395,6 +4443,7 @@ void dsp_send_frame(char param_1)
   else {
     DAT_00001c5f = 1;
   }
+                    /* 8-bit sum of n bytes [doc] */
   dsp_sum8_ret = dsp_sum8(0x1a5e,local_2);
   byte2hex(&DAT_00001a5e + local_2,dsp_sum8_ret);
   (&DAT_00001a5e)[(byte)(local_2 + 2)] = 0xd;
@@ -4449,6 +4498,7 @@ byte dsp_reply_sum_ok(int param_1,byte param_2)
   
   local_5 = param_2;
   local_4 = param_1;
+                    /* 8-bit sum of n bytes [doc] */
   bVar1 = dsp_sum8(param_1,param_2);
   byte2hex(&cStack_8,bVar1);
   if ((cStack_8 == *(char *)((uint)local_5 + local_4)) &&
@@ -4481,6 +4531,7 @@ ushort dsp_route_param(ushort param_1)
   uint audio_route_state_ret;
   ushort uStack_a;
   
+                    /* Returns the audio-route state 0..14 [doc] */
   audio_route_state_ret = audio_route_state();
   uStack_a = 0;
   switch(audio_route_state_ret) {
@@ -5298,6 +5349,7 @@ void dsp_reset_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xfd | (param_1 & 1) << 1;
   return;
 }
@@ -5322,6 +5374,7 @@ void dsp_update_set(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
@@ -5371,27 +5424,42 @@ void R_SCI7_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xfeffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR098;
   ICU_IPR098 = bVar1 & 0xfa | 10;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR099;
   ICU_IPR099 = bVar1 & 0xfa | 10;
+                    /* Serial Control [sfr] */
   SCI7_SCR = 0;
   SCI7_SCR = 0;
   bVar1 = SCI7_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI7_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI7_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI7_SMR = 0;
+                    /* Smart Card Mode [sfr] */
   SCI7_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI7_SEMR = 0;
+                    /* Bit Rate [sfr] */
   SCI7_BRR = 0xc2;
+                    /* P92 Pin Function Control [sfr] */
   MPC_P92PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORT9_PMR;
   PORT9_PMR = bVar1 | 4;
+                    /* P90 Pin Function Control [sfr] */
   MPC_P90PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT9_PODR;
   PORT9_PODR = bVar1 | 1;
+                    /* Port Direction [sfr] */
   bVar1 = PORT9_PDR;
   PORT9_PDR = bVar1 | 1;
   R_SCI7_Create_UserInit();
@@ -5418,11 +5486,13 @@ void r_sci7_transmit_interrupt(void)
   
   if (DAT_0001fa48 == 0) {
     bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
     SCI7_SCR = bVar1 & 0x7f;
     bVar1 = SCI7_SCR;
     SCI7_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI7_TDR = *DAT_00021054;
   DAT_00021054 = DAT_00021054 + 1;
   DAT_0001fa48 = DAT_0001fa48 + -1;
@@ -5453,12 +5523,14 @@ void r_sci7_receive_interrupt(void)
   
   if (DAT_0001fa4a < DAT_0001fa4c) {
     sci7_rdr = SCI7_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00021058 = sci7_rdr;
     DAT_00021058 = DAT_00021058 + 1;
     DAT_0001fa4a = DAT_0001fa4a + 1;
   }
   if (DAT_0001fa4c <= DAT_0001fa4a) {
     bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
     SCI7_SCR = bVar1 & 0xbf;
     bVar1 = SCI7_SCR;
     SCI7_SCR = bVar1 & 0xef;

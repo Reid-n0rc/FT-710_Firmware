@@ -41,11 +41,15 @@ void aic3204_spi_write(int param_1,uint param_2)
   int i;
   
   uVar1 = param_2 | param_1 << 9;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(1);
   i = 0x10;
   do {
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     GPIO_B2_29 = 1;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     if ((int)(uVar1 << 0x10) < 0) {
       GPIO_B1_1 = 1;
     }
@@ -80,15 +84,21 @@ void aic3204_init(void)
   byte *pbVar1;
   
   i = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_0 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_29 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_1 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(20000);
   GPIO_B1_0 = 1;
   delay_us(20000);
   pbVar1 = &DAT_00087a1c;
   do {
+                    /* 16-bit word reg<<9 | val [doc] */
     aic3204_spi_write((uint)*pbVar1,(uint)pbVar1[1]);
     i = i + 1;
     delay_us((uint)*(ushort *)(pbVar1 + 2));
@@ -150,6 +160,7 @@ void regfile_write(int param_1,ushort param_2)
 {
   if ((&DAT_20070000 + param_1 * 2 < (ushort *)0x20080000) &&
      (*(ushort *)(&DAT_20070000 + param_1 * 2) = param_2, param_1 == 10)) {
+                    /* Page 1, R55 = 0x10 [doc] */
     aic3204_select_right_input((param_2 & 0xf) != 1);
     return;
   }
@@ -208,6 +219,7 @@ int uart0_write(int param_1,int param_2)
       DAT_000886d4 = DAT_000886d4 + 1;
       if (param_2 == iVar2) break;
     } while (DAT_000886d4 < 0x400);
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
     usart0_fifointenset = USART0_FIFOINTENSET;
     if (-1 < usart0_fifointenset << 0x1d) {
       USART0_FIFOINTENSET = 0xf;
@@ -242,6 +254,7 @@ void uart0_init(void)
   local_20[1] = 1;
   local_20[2] = 0xff;
   local_20[3] = 0;
+                    /* FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15 [doc, inference] */
   CLOCK_SetFRGClock(local_20);
   CLOCK_AttachClk(0x80004508);
   USART_GetDefaultConfig(local_1c);
@@ -250,7 +263,9 @@ void uart0_init(void)
   CLOCK_GetFlexCommClkFreq_ret = CLOCK_GetFlexCommClkFreq(0);
   USART_Init(&USART0_CFG,local_1c,CLOCK_GetFlexCommClkFreq_ret);
   DAT_00087ec4 = xEventGroupCreate();
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
   USART0_FIFOINTENSET = 10;
+                    /* Interrupt Set Enable [sfr] */
   NVIC_ISER0 = 0x4000;
   return;
 }
@@ -286,6 +301,7 @@ void CommandTask(void)
   DAT_000886d4 = 0;
   vPortExitCritical();
   uart0_init();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_5 = 1;
   do {
     do {
@@ -297,6 +313,7 @@ void CommandTask(void)
       DAT_000882d0 = DAT_000882d0 + 1 & 0x3ff;
       DAT_000882c8 = DAT_000882c8 + -1;
       vPortExitCritical();
+                    /* Line editor, tokenizer and both command interpreters [doc] */
       console_rx_char((uint)bVar1);
     }
   } while( true );
@@ -349,11 +366,13 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
   undefined4 uStack_10;
   uint usart0_fifostat;
   
+                    /* FIFO status [sfr] */
   usart0_fifostat = USART0_FIFOSTAT;
   if ((usart0_fifostat & 0x42) != 0) {
     local_14 = usart0_fifostat & 2;
     if (local_14 == 0) {
       if (DAT_000882c8 < 0x400) {
+                    /* FIFO read data [sfr] */
         uVar2 = USART0_FIFORD;
         DAT_000882c8 = DAT_000882c8 + 1;
         (&DAT_00087ec8)[DAT_000882cc] = (char)uVar2;
@@ -361,6 +380,7 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
         uStack_10 = param_3;
         xEventGroupSetBitsFromISR_ret = xEventGroupSetBitsFromISR(DAT_00087ec4,1,(uint)&local_14);
         if ((xEventGroupSetBitsFromISR_ret != 0) && (local_14 != 0)) {
+                    /* Interrupt Control and State [sfr] */
           SCB_ICSR = 0x10000000;
         }
       }
@@ -380,6 +400,7 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
         return;
       }
     }
+                    /* FIFO interrupt enable clear (disable) and read [sfr] */
     USART0_FIFOINTENCLR = 5;
   }
   return;
@@ -421,6 +442,7 @@ void sct0_pwm_callback(void)
   DAT_000886f4 = DAT_000886f4 + 1;
   if (399 < DAT_000886f4) {
     DAT_000886f4 = 0;
+                    /* reg < 0x8000 ? word[reg] [doc] */
     uVar1 = regfile_read(0x4005);
     if (uVar1 == 0) {
       uVar1 = 1;
@@ -431,7 +453,9 @@ void sct0_pwm_callback(void)
     DAT_00088d2c = (undefined1)uVar1;
     SCTIMER_UpdatePwmDutycycle(&SCT0_CONFIG,0,DAT_00088d2c,DAT_000886f0,in_r3);
   }
+                    /* SCT event flag [sfr] */
   sct0_evflag = SCT0_EVFLAG;
+                    /* SCT conflict flag [sfr] */
   sct0_conflag = SCT0_CONFLAG;
   uVar2 = 1 << (DAT_000886f0 & 0xff);
   if (((sct0_conflag & 0xc0000000 | sct0_evflag & 0xffff) & uVar2) != 0) {
@@ -467,9 +491,11 @@ void sct0_pwm_init(void)
   local_28[1] = 1;
   uVar1 = SCTIMER_SetupPwm(0x40146000,local_28,1,20000,uVar1,&DAT_000886f0);
   if (uVar1 != 1) {
+                    /* SCT event interrupt enable [sfr] */
     uVar1 = SCT0_EVEN;
     SCT0_EVEN = 1 << (DAT_000886f0 & 0xff) | uVar1;
     SCTIMER_SetCallback(&SCT0_CONFIG,0x81165);
+                    /* Interrupt Set Enable [sfr] */
     NVIC_ISER0 = 0x1000;
   }
   return;
@@ -526,6 +552,7 @@ void console_cmd_w(int param_1,int param_2)
   if (param_2 == 3) {
     strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
     strtoul_ret_2 = strtoul(*(byte **)(param_1 + 8),(byte *)0x0,0x10);
+                    /* Store if reg < 0x8000 [doc] */
     regfile_write((uint)strtoul_ret,strtoul_ret_2);
     console_puts(0x87bfb);
     return;
@@ -568,6 +595,7 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
       console_puts((uint)&iStack_28);
       i = 0;
       do {
+                    /* reg < 0x8000 ? word[reg] [doc] */
         uVar1 = regfile_read(uVar2 + i & 0xffff);
         snprintf(&iStack_28,0x10," %04X",uVar1);
         console_puts((uint)&iStack_28);
@@ -629,7 +657,9 @@ void console_cmd_r(int param_1,int param_2)
   
   if (param_2 == 2) {
     strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+                    /* reg < 0x8000 ? word[reg] [doc] */
     regfile_read_ret = regfile_read((uint)strtoul_ret);
+                    /* vsprintf into 0x88DF0 [doc] */
     console_printf("\r\nr %04X %04X\r\n>> ",strtoul_ret,regfile_read_ret);
     return;
   }
@@ -702,12 +732,14 @@ void console_rx_char(int param_1)
   if (param_1 - 0x20U < 0x5f) {
 LAB_000814ac:
     if (DAT_00088d2e != '\0') {
+                    /* Echo the character (echo flag 0x88D2E) [fact: control-link.md] */
       uart0_write(&local_41,1);
     }
     if (DAT_00088def != '\0') {
       if (DAT_00088def != '\x01') {
         return;
       }
+                    /* CR/LF (mask 0x2401): end of line, tokenize and run [fact: control-link.md] */
       if ((local_41 < 0xe) && ((~(0x2401U >> (uint)local_41) & 1) == 0)) {
         (&DAT_00088d6f)[DAT_00088708] = 0;
         memset(&DAT_00088d2f,0,0x40);
@@ -721,6 +753,7 @@ LAB_000814ac:
             DAT_00088def = 0;
             return;
           }
+                    /* Split at whitespace: up to 4 tokens of 15 chars [fact: control-link.md] */
           uVar12 = ctype_table[*pbVar10] & 1;
           pbVar16 = pbVar10 + 1;
         } while ((ctype_table[*pbVar10] & 1) != 0);
@@ -747,6 +780,7 @@ LAB_00081596:
                   iVar8 = strlen((uint *)*piVar15);
                   if (DAT_00088d2d != '\0') {
                     for (i = 0; i < iVar8; i = i + 1) {
+                    /* Interactive mode: lower-case every token [fact: control-link.md] */
                       bVar2 = tolower((uint)*(byte *)(*piVar15 + i));
                       *(byte *)(*piVar15 + i) = bVar2;
                     }
@@ -768,10 +802,12 @@ LAB_00081596:
                 if (DAT_00088d2d == '\0') {
                   pbVar16 = (byte *)((int)DAT_000886f8 + 1);
                   bVar2 = (byte)*DAT_000886f8;
+                    /* Machine mode: the rest of argv[0] must be hex [fact: control-link.md] */
                   uVar12 = is_hex_string(pbVar16);
                   if (uVar12 != 0) {
                     iVar6 = strlen(puVar11);
                     if (iVar6 == 7) {
+                    /* 7-char frame: checksum of the first 5 chars [fact: control-link.md] */
                       bVar3 = frame_checksum_ok((char *)puVar11,5);
                       if (bVar3) {
                         memcpy(auStack_40,pbVar16,4);
@@ -782,6 +818,7 @@ LAB_00081596:
 LAB_00081778:
                           uVar14 = uVar12 + 0x40;
                           do {
+                    /* d: dump 64 words, 8 per line [fact: control-link.md] */
                             snprintf(local_38,0x10,"\r\n%04X :",uVar12);
                             console_puts((uint)local_38);
                             iVar6 = 0;
@@ -791,6 +828,7 @@ LAB_00081778:
                               console_puts((uint)local_38);
                               bVar3 = uart0_tx_pending();
                               if (bVar3) {
+                    /* Pace the dump to the UART [fact: control-link.md] */
                                 vTaskDelay(1);
                               }
                               iVar6 = iVar6 + 1;
@@ -810,6 +848,7 @@ LAB_00081778:
                         else if (bVar2 != 0x69) {
                           if (bVar2 != 0x72) goto LAB_00081716;
 LAB_0008172a:
+                    /* r: read reply "r" + value + sum, no CR [fact: control-link.md] */
                           uVar4 = regfile_read(uVar12);
                           local_38[0] = 0x72;
                           siprintf(local_38 + 1,"%04X",uVar4);
@@ -819,6 +858,7 @@ LAB_0008172a:
                           pcVar5 = local_38;
                           goto LAB_00081772;
                         }
+                    /* i DB00 / DB01: machine or interactive mode [fact: control-link.md] */
                         iVar6 = strncmp((uint *)auStack_40,(uint *)"db",2);
                         if ((iVar6 == 0) ||
                            (iVar6 = strncmp((uint *)auStack_40,(uint *)"DB",2), iVar6 == 0)) {
@@ -841,6 +881,7 @@ LAB_00081828:
                       pcVar5 = "?";
                     }
                     else {
+                    /* 11-char w frame with a good checksum, else ? [fact: control-link.md] */
                       if ((iVar6 != 0xb) || (bVar3 = frame_checksum_ok((char *)puVar11,9), !bVar3))
                       goto LAB_00081828;
                       memcpy(auStack_40,pbVar16,4);
@@ -849,6 +890,7 @@ LAB_00081828:
                       memcpy(auStack_40,(void *)((int)puVar11 + 5),4);
                       strtoul_ret = strtoul(auStack_40,(byte *)0x0,0x10);
                       if ((bVar2 & 0xdf) != 0x57) goto LAB_00081716;
+                    /* w: write the register, reply ACK 0x06 [fact: control-link.md] */
                       regfile_write((uint)uVar4,strtoul_ret);
                       pcVar5 = "\x06";
                     }
@@ -866,6 +908,7 @@ LAB_00081716:
                   pcVar5 = "r";
                   iVar6 = 0;
                   do {
+                    /* Interactive: look argv[0] up in table 0x8795C [fact: control-link.md] */
                     iVar8 = strcmp(DAT_000886f8,(uint *)pcVar5);
                     if (iVar8 == 0) {
                       (*(code *)(&DAT_0008796c)[iVar6 * 5])(&DAT_000886f8,iVar13);
@@ -882,6 +925,7 @@ LAB_00081716:
                   DAT_00088def = 0;
                   return;
                 }
+                    /* Unknown command or too many tokens: ? [fact: control-link.md] */
                 pcVar5 = "\r\n?\r\n>> ";
                 goto LAB_00081676;
               }
@@ -989,6 +1033,7 @@ void aic3204_select_right_input(int param_1)
   else {
     uVar1 = 0x40;
   }
+                    /* 16-bit word reg<<9 | val [doc] */
   aic3204_spi_write(0,1);
   aic3204_spi_write(0x37,uVar1);
   aic3204_spi_write(0,0);
@@ -1010,6 +1055,7 @@ void console_puts(uint param_1)
   int strlen_ret;
   
   strlen_ret = strlen((uint *)param_1);
+                    /* Copy bytes into the TX ring [doc] */
   uart0_write(param_1,strlen_ret);
   return;
 }

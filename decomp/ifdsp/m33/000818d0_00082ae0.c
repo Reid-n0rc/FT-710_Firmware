@@ -10,6 +10,7 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
 {
   uint mua_cr;
   
+                    /* isr_table[32] at 0x88720 [doc] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_00088714);
   if (DAT_00088710 < 0) {
@@ -18,6 +19,7 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
     } while( true );
   }
   if (DAT_00088710 == 0) {
+                    /* Control [sfr] */
     mua_cr = MUA_CR;
     MUA_CR = mua_cr & 0xfff0ffff | 0x4000000;
   }
@@ -51,6 +53,7 @@ bool xPortIsInsideInterrupt(void)
 {
   uint scb_icsr;
   
+                    /* Interrupt Control and State [sfr] */
   scb_icsr = SCB_ICSR;
   return (scb_icsr & 0x1ff) != 0;
 }
@@ -72,6 +75,7 @@ void platform_interrupt_enable(void)
   disableIRQinterrupts();
   DAT_0008870c = DAT_0008870c + -1;
   if (DAT_0008870c == 0) {
+                    /* Interrupt Set Enable [sfr] */
     NVIC_ISER1 = 4;
   }
   enableIRQinterrupts();
@@ -93,6 +97,7 @@ void platform_interrupt_disable(void)
   }
   disableIRQinterrupts();
   if (DAT_0008870c == 0) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 4;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -115,6 +120,7 @@ int platform_init(void)
   
   MU_Init();
   NVIC_IPR8._2_1_ = 0x60;
+                    /* Interrupt Set Enable [sfr] */
   NVIC_ISER1 = 4;
   env_create_mutex_ret = env_create_mutex(&DAT_00088714,1);
   return -(uint)(env_create_mutex_ret != 0);
@@ -142,6 +148,7 @@ uint env_init(void)
     DAT_0008871c = (int *)xQueueGenericCreate(1,0,3);
     memset(&DAT_00088720,0,0x80);
     xTaskResumeAll();
+                    /* MU_Init, NVIC IRQ 34 prio 0x60 + enable, platform_lock [doc] */
     uVar1 = platform_init();
     xQueueGenericSend((int)DAT_0008871c,0,0,0);
   }
@@ -209,6 +216,7 @@ rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *par
       memcpy(param_4,local_20,local_1c);
       uVar1 = 0;
     }
+                    /* return rx buffer [doc] */
     rpmsg_queue_nocopy_free_ret = rpmsg_queue_nocopy_free(rpmsg_lite_dev,local_20);
     if (rpmsg_queue_nocopy_free_ret == 0) {
       return uVar1;
@@ -340,6 +348,7 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
   if ((((0x7ff < uVar1) && (param_3 == 0)) && (param_1 != 0)) &&
      (pvPortMalloc_ret = (int *)pvPortMalloc(0x24), pvPortMalloc_ret != (int *)0x0)) {
     memset(pvPortMalloc_ret,0,0x24);
+                    /* env counter, semaphore, isr_table clear, platform_init [doc] */
     uVar1 = env_init();
     if (uVar1 == 0) {
       pvPortMalloc_ret[6] = uVar3 >> 9;
@@ -407,6 +416,7 @@ LAB_00081d56:
               }
               piVar5 = piVar5 + 1;
               if (iVar2 != 0) {
+                    /* register ISR, CR RIE1 on first use [doc] */
                 platform_init_interrupt(*(undefined2 *)(*pvPortMalloc_ret + 0x50));
                 platform_init_interrupt(*(undefined2 *)(pvPortMalloc_ret[1] + 0x50));
                 platform_interrupt_disable();
@@ -656,8 +666,11 @@ void prvTaskExitError(void)
 void vPortSetupTimerInterrupt(void)
 
 {
+                    /* SysTick Control and Status [sfr] */
   SysTick_CTRL = 0;
+                    /* SysTick Current Value [sfr] */
   SysTick_VAL = 0;
+                    /* SysTick Reload Value [sfr] */
   SysTick_LOAD = DAT_00087ec0 / 1000 - 1;
   SysTick_CTRL = 7;
   return;
@@ -963,6 +976,7 @@ uint vTaskStartScheduler(void)
     ulSetInterruptMask();
     DAT_000888ac = 0xffffffff;
     DAT_000888e4 = 0;
+                    /* System Handler Priority 3 [sfr] */
     uVar1 = SCB_SHPR3;
     SCB_SHPR3 = uVar1 | 0xff0000;
     uVar1 = SCB_SHPR3;

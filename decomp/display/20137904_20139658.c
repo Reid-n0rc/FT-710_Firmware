@@ -20,12 +20,14 @@ void dmac9_rspi_tx_setup(int param_1)
   uint uVar1;
   uint uVar2;
   
+                    /* Channel Control 9 [sfr] */
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 8;
   gic_disable_irq(0x32);
   DAT_20808a98 = 0;
+                    /* DMA extended resource selector 4 [sfr] */
   uVar1 = DMAC_DMARS4;
   DMAC_DMARS4 = uVar1 & 0xffff;
   uVar1 = DMAC_DMARS4;
@@ -36,6 +38,7 @@ void dmac9_rspi_tx_setup(int param_1)
     uVar2 = 0x1210000;
   }
   DMAC_DMARS4 = uVar1 | uVar2;
+                    /* Channel Configuration 9 [sfr] */
   DMAC_CHCFG_9 = 0;
   reg_rmw32(&DMAC_CHCFG_9,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_9,0,0xc,0xf000);
@@ -54,7 +57,9 @@ void dmac9_rspi_tx_setup(int param_1)
   reg_rmw32(&DMAC_CHCFG_9,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_9,0,3,8);
   reg_rmw32(&DMAC_CHCFG_9,1,0,7);
+                    /* Channel Interval 9 [sfr] */
   DMAC_CHITVL_9 = 0;
+                    /* Channel Extension 9 [sfr] */
   DMAC_CHEXT_9 = 0;
   gic_enable_irq(0x32);
   return;
@@ -97,12 +102,14 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   undefined4 uVar3;
   
   uVar3 = 0;
+                    /* Channel Control 10 [sfr] */
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 8;
   gic_disable_irq(0x33);
   DAT_20808a9c = 0;
+                    /* DMA extended resource selector 5 [sfr] */
   uVar1 = DMAC_DMARS5;
   DMAC_DMARS5 = uVar1 & 0xffff0000;
   uVar1 = DMAC_DMARS5;
@@ -113,6 +120,7 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
     uVar2 = 0x122;
   }
   DMAC_DMARS5 = uVar1 | uVar2;
+                    /* Channel Configuration 10 [sfr] */
   DMAC_CHCFG_10 = 0;
   reg_rmw32(&DMAC_CHCFG_10,0,0x10,0xf0000,uVar3);
   reg_rmw32(&DMAC_CHCFG_10,0,0xc,0xf000);
@@ -131,10 +139,15 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   reg_rmw32(&DMAC_CHCFG_10,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_10,0,3,8);
   reg_rmw32(&DMAC_CHCFG_10,2,0,7);
+                    /* Channel Interval 10 [sfr] */
   DMAC_CHITVL_10 = 0;
+                    /* Channel Extension 10 [sfr] */
   DMAC_CHEXT_10 = 0;
+                    /* Next0 Source Address 10 [sfr] */
   DMAC_N0SA_10 = param_2;
+                    /* Next0 Destination Address 10 [sfr] */
   DMAC_N0DA_10 = param_3;
+                    /* Next0 Transaction Byte 10 [sfr] */
   DMAC_N0TB_10 = param_4;
   gic_enable_irq(0x33);
   reg_rmw32(&DMAC_CHCTRL_10,1,0);
@@ -392,6 +405,7 @@ undefined4 usbh_enumerate_config(uint param_1,int param_2,undefined4 *param_3)
     *(undefined1 *)(iVar10 + -0x8d8) = *(undefined1 *)((int)param_3 + 0x26);
     __aeabi_memclr4(iVar10 + -0xa4,0x78);
     *param_3 = 1;
+                    /* SETUP 0x80, 6, wValue 0x0200 [doc] */
     uVar12 = usbh_get_config_descriptor(param_3,iVar10 + -0x8b6,0x7ff);
     if (-1 < (int)uVar12) {
       uVar17 = 0xffffffff;
@@ -658,6 +672,7 @@ undefined4 usbh_ports_init(void)
   i = 0;
   DAT_20808ab8 = 0;
   do {
+                    /* m596 / udevtsk%d names [doc, inference] */
     usbh_create_objects_ret = usbh_create_objects(i,(int)(&DAT_2090b660 + i * 0x4d8));
     uVar1 = DAT_20808ab8;
     if ((int)usbh_create_objects_ret < 0) {
@@ -1052,6 +1067,7 @@ LAB_20138ea8:
 void usbh_control_req(void)
 
 {
+                    /* Control transfer on a pipe object under its semaphore [doc, inference] */
   usbh_control_transfer();
   return;
 }
@@ -1316,6 +1332,7 @@ int usbh_pipe_write(int param_1,int param_2,int param_3)
         iVar2 = 0x2000;
       }
       memcpy(*(undefined4 *)(param_1 + 0x48),param_2 + iVar3,iVar2);
+                    /* sends the buffer packet by packet with FUN_20138fdc [doc] */
       iVar2 = usbh_pipe_write_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar2 < 0) {
         return iVar2;
@@ -1429,6 +1446,7 @@ int usbh_pipe_read(int param_1,int param_2,int param_3)
       if (0x2000 < param_3) {
         iVar2 = 0x2000;
       }
+                    /* reads up to len bytes [doc] */
       iVar3 = usbh_pipe_read_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar3 < 0) {
         return iVar3;

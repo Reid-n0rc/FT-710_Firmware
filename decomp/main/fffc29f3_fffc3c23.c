@@ -526,6 +526,7 @@ byte FUN_fffc3006(void)
   uint freq;
   undefined1 uStack_9;
   
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   freq = vfo_freq_clar(0,2);
   uStack_9 = band_of_freq(freq);
   if (uStack_9 == 0xff) {
@@ -664,6 +665,7 @@ void qmb_enter(byte param_1)
   FUN_fffc334c(param_1);
   qmb_popup_open();
   eeprom_save_qmb_slot(0);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -847,6 +849,7 @@ void FUN_fffc334c(int param_1)
 void qmb_popup_open(void)
 
 {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x43);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 0x43;
@@ -1229,6 +1232,7 @@ void FUN_fffc38fa(void)
     beep_request(1);
     return;
   }
+                    /* Memory-list button by g_ui.memlist_group [doc] */
   memlist_btn_press();
   PTR_g_ui_00025d54->key_consumed = 1;
   return;
@@ -1355,9 +1359,11 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(1);
     return;
   case 2:
+                    /* FUNC menu slot 2 [doc] */
     func_marker_toggle();
     return;
   case 3:
+                    /* FUNC menu slot 3 [doc] */
     func_color_select();
     return;
   case 4:
@@ -1373,6 +1379,7 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(7);
     return;
   case 8:
+                    /* FUNC menu item 8 [doc] */
     func_mic_eq_toggle();
     return;
   case 9:
@@ -1397,9 +1404,11 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(0xf);
     return;
   case 0x10:
+                    /* FUNC menu slot 16 [doc] */
     func_keyer_toggle();
     return;
   case 0x11:
+                    /* FUNC menu item 0x11 [doc] */
     func_bk_in_toggle();
     return;
   case 0x12:
@@ -1412,15 +1421,19 @@ void func_menu_select(undefined1 param_1)
     func_knob_assign(0x14);
     return;
   case 0x15:
+                    /* FUNC menu item 0x15 [doc] */
     func_message_open();
     return;
   case 0x16:
+                    /* FUNC menu slot 22 [doc] */
     func_record_toggle();
     return;
   case 0x17:
+                    /* FUNC menu slot 23 [doc] */
     func_play_open();
     return;
   case 0x18:
+                    /* FUNC menu slot 24 [doc] */
     func_txw_toggle();
     return;
   case 0x1a:

@@ -20,6 +20,7 @@ byte scope_span_index(byte side)
   uint freq;
   byte bStack_9;
   
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   freq = vfo_freq_clar(0,side);
   freq_range_index_ret = freq_range_index(freq);
   if (freq_range_index_ret == 0xff) {
@@ -239,6 +240,7 @@ void freq_cache_update(void)
         PTR_g_ui_00025d38->dsp_knob_apf = 0;
       }
     }
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
     uVar3 = vfo_freq_clar(1,2);
     uVar3 = tx_freq_repeater_shift(uVar3);
     PTR_g_ui_00025d38->freq_tx = uVar3;
@@ -253,6 +255,7 @@ void freq_cache_update(void)
       else {
         uStack_8 = PTR_g_ui_00025d38->freq_b;
       }
+                    /* Mode-dependent signed offset [doc, inference] */
       vfo_display_offset_ret = vfo_display_offset();
       uStack_c = (uint)vfo_display_offset_ret;
       if ((vfo_display_offset_ret & 0x8000) != 0) {
@@ -350,6 +353,7 @@ void sdr_task(void)
   local_1 = g_ui.transmitting;
   local_2 = g_ui.trx_state;
   if (DAT_00001c8b == '\x01') {
+                    /* Write pending: wait for the FPGA's ACK [fact: sdr-link.md] */
     bVar2 = sdr_poll_reply('w',auStack_8);
     if (bVar2 != 1) {
       return;
@@ -357,9 +361,11 @@ void sdr_task(void)
     sdr_shadow_update();
   }
   if (DAT_00001c8d == '\x01') {
+                    /* CAT/DISPLAY asked for the SDR update bridge [fact: sdr-link.md] */
     sdr_bridge_mode();
   }
   if (DAT_0001b3dd != local_1) {
+                    /* TX/RX change: wait until the old switching line drops [fact: sdr-link.md] */
     if ((local_1 == 1) && (bVar2 = rx_line_get(), bVar2 != 0)) {
       bVar1 = true;
     }
@@ -380,7 +386,19 @@ void sdr_task(void)
     }
     DAT_0001b3dd = local_1;
   }
+                    /* Reg 0x0A = mode class 0..5 [doc, inference] */
   sdr_upd_r0a_demod(local_1);
+                    /* Change detectors: the first send ends the pass [fact: sdr-link.md] */
+                    /* Reg 0x0D = 9/14/19 from setting 0x9AA1 [doc, inference] */
+                    /* Reg 0x22 = scope span in kHz [doc, inference] */
+                    /* Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 [doc, inference] */
+                    /* RX-only registers, skipped while transmitting [fact: sdr-link.md] */
+                    /* Reg 0x16 = filter class by mode and width [doc, inference] */
+                    /* Reg 0x1B = table 0xFFF880B6 [doc, inference] */
+                    /* Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 [doc, inference] */
+                    /* Reg 0x1D = notch offset/5 Hz [doc, inference] */
+                    /* Reg 0x1E = signed passband centre / 5 Hz [doc, inference] */
+                    /* Reg 0x1F = filter width in Hz [doc, inference] */
   if (((((((((DAT_00001c8b == '\0') && (sdr_upd_r0b_band(local_1), DAT_00001c8b == '\0')) &&
            (sdr_upd_r0c_rtty_shift(), DAT_00001c8b == '\0')) &&
           ((sdr_upd_r0d(), DAT_00001c8b == '\0' && (sdr_upd_r0f_band(local_1), DAT_00001c8b == '\0')
@@ -404,6 +422,7 @@ void sdr_task(void)
          ((sdr_upd_r1e_passband(), DAT_00001c8b == '\0' &&
           (sdr_upd_r1f_width(), DAT_00001c8b == '\0')))))))))))) {
     if (DAT_0001b3dc == '\0') {
+                    /* First full sync: reg 0x15 = 0x2000, reg 0x24 = 0x0317 [fact: sdr-link.md] */
       sdr_init_r15();
       if (DAT_00001c8b != '\0') {
         return;
@@ -421,6 +440,7 @@ void sdr_task(void)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* SDR settled for the TX sequencer (state 1 or 7) [inference: sdr-link.md] */
       g_ui.tx_ack_sdr = 1;
       return;
     }
@@ -539,6 +559,7 @@ void sdr_upd_r18_rx_freq(void)
   pbStack_4 = vfo_rec_ptr(0);
   bStack_14 = vfo_mode(0);
   uStack_a = 0;
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   uStack_8 = vfo_freq_clar(0,2);
   sStack_10 = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                        g_opstate.ex010420_data_shift_ssb_be[1]);
@@ -707,6 +728,7 @@ void sdr_upd_r20_scope_freq(char which)
   g_opstate_scope_mode_val = g_opstate.scope_mode;
   scope_span_ptr_ret = (undefined1 *)scope_span_ptr(uVar1);
   if (which == '\0') {
+                    /* Mode-dependent signed offset [doc, inference] */
     vfo_display_offset_ret = vfo_display_offset();
     if (g_opstate_scope_mode_val == 0) {
       if ((vfo_display_offset_ret & 0x8000) == 0) {
@@ -1395,6 +1417,7 @@ void bandmem_set(char param_1,uint freq_2)
   int iStack_10;
   byte bStack_b;
   
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   freq = vfo_freq_clar(0,2);
   bVar1 = band_of_freq(freq);
   if (param_1 == '\x02') {
@@ -1789,6 +1812,7 @@ void vm_toggle(void)
   if (g_ui.memlist_open != 1) {
     msg_send_cancel();
     vm_toggle_core();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     return;
   }
@@ -1849,6 +1873,7 @@ void vfo_ab_toggle(void)
   else {
     vm_toggle();
   }
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   PTR_g_ui_00025d54->freq_refresh_req = 1;
   return;
@@ -1918,6 +1943,7 @@ void qmb_recall(void)
     }
     if (local_3 == 0) {
       if (g_qmb_hdr.ptr_a[0] != 0) {
+                    /* state = 5, load QMB slot, save header [doc, inference] */
         qmb_enter(0);
         return;
       }
@@ -1933,6 +1959,7 @@ void qmb_recall(void)
     qmb_set_depth(local_3);
     vfo_reload(local_3);
     PTR_g_ui_00025d54->vfo_refresh_req = 1;
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     popup_close();
     return;
@@ -3607,6 +3634,7 @@ void qmb_enter(byte param_1)
   FUN_fffc334c(param_1);
   qmb_popup_open();
   eeprom_save_qmb_slot(0);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -3792,6 +3820,7 @@ void band_select_on(byte param_1,byte param_2)
   band_select(param_1);
   g_opstate.split_on = 0;
   g_opstate.active_vfo = g_opstate_active_vfo_val;
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -3989,11 +4018,13 @@ void memch_step(byte param_1,byte param_2)
   local_3 = 0;
   if (PTR_g_ui_00025d58->ch_knob_mode == 0) {
     for (; local_3 < param_1; local_3 = local_3 + 1) {
+                    /* memory channel +1, wrapping to the first [doc] */
       memch_step_up(param_2);
     }
   }
   else {
     for (; local_3 < param_1; local_3 = local_3 + 1) {
+                    /* memory channel -1 [doc] */
       memch_step_down(param_2);
     }
   }
@@ -4264,6 +4295,7 @@ void vfo_step_up(uint param_1)
   local_8 = p_vfo_rec->freq_be;
   if (local_2 == VFO_STATE_MEMORY) {
     if (PTR_g_ui_00025d58->ch_step_mode == 1) {
+                    /* memory channel +1, wrapping to the first [doc] */
       memch_step_up(bVar1);
       return;
     }
@@ -4319,6 +4351,7 @@ void vfo_step_down(uint param_1)
   local_8 = p_vfo_rec->freq_be;
   if (local_2 == VFO_STATE_MEMORY) {
     if (PTR_g_ui_00025d58->ch_step_mode == 1) {
+                    /* memory channel -1 [doc] */
       memch_step_down(bVar1);
       return;
     }
@@ -4431,6 +4464,7 @@ undefined1 msg_cw_send_start(byte param_1)
       bVar1 = false;
     }
     if ((bVar1) && (param_1 == PTR_g_ui_00025d78->msg_slot)) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       uStack_3 = 0;
     }

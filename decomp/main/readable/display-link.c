@@ -45,6 +45,7 @@ void qmb_boot_init(void)
   FUN_fffc3501();
   if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
     bVar2 = true;
+                    /* boot check of a VFO left in QMB state [doc] */
     iVar3 = qmb_side_revalidate(0);
     if (iVar3 == 0) {
       bVar1 = true;
@@ -105,6 +106,7 @@ void displink_task(void)
   FUN_fffc8b55();
   FUN_fffcf45c();
   FUN_fff9513c();
+                    /* A complete frame from the DISPLAY? [fact: display-link.md] */
   bVar2 = displink_rx_ready();
   if (bVar2 == 1) {
     bVar1 = false;
@@ -129,12 +131,14 @@ void displink_task(void)
       else {
         bVar3 = true;
       }
+                    /* Bad checksum: answer NAK [fact: display-link.md] */
       if ((bVar3) && (bVar3 = displink_check_sum(0x198f,displink_rx_len_of_ret), !bVar3)) {
         DAT_0001b3cd = '\x01';
         bVar1 = true;
       }
     }
     if (!bVar1) {
+                    /* Dispatch by the frame's type byte [fact: 0xFFF95331] */
       displink_rx_dispatch(&DAT_0000198f);
     }
   }
@@ -155,6 +159,7 @@ void displink_task(void)
     }
     DAT_0001b3d2 = '\0';
     DAT_0001b3d3 = '\x01';
+                    /* Retry timer 0x3B for the frame just sent [fact: display-link.md] */
     swtimer_start(0x3b,2);
   }
   if ((DAT_0001b3d3 == '\x01') && (bVar2 = swtimer_expired(0x3b), bVar2 == 1)) {
@@ -176,6 +181,7 @@ void displink_task(void)
         displink_send_nak();
       }
       else {
+                    /* Send the next queued frame [fact: display-link.md] */
         displink_tx_poll();
         if (DAT_0001b3d2 == '\x01') {
           DAT_0001b3d5 = '\x01';
@@ -344,6 +350,7 @@ void displink_rx_dispatch(char *param_1)
   
   cVar1 = *param_1;
   if (cVar1 == -0xf) {
+                    /* 0xF1: SDR bridge, DSP ISP tunnel or CAT disable [fact: display-link.md] */
     displink_rx_F1_sys((int)param_1);
   }
   else if (cVar1 == '\x15') {
@@ -353,6 +360,7 @@ void displink_rx_dispatch(char *param_1)
     FUN_fff95ec9();
   }
   else if (cVar1 == -0x3d) {
+                    /* 0xC3: answer to an SD CARD command (0x43) [fact: display-link.md] */
     displink_rx_C3((int)param_1);
   }
   else if (cVar1 == -0x3c) {
@@ -362,34 +370,43 @@ void displink_rx_dispatch(char *param_1)
     displink_rx_C4_C5((int)param_1);
   }
   else if (cVar1 == -0x20) {
+                    /* 0xE0: key or touch event [fact: display-link.md] */
     displink_rx_E0_key((int)param_1);
   }
   else if (cVar1 == -0x1f) {
+                    /* 0xE1: encoder step [fact: display-link.md] */
     displink_rx_E1_encoder((int)param_1);
   }
   else if (cVar1 == -0x1e) {
+                    /* 0xE2: SD-card state [inference: display-link.md] */
     displink_rx_E2((int)param_1);
   }
   else if (cVar1 == -0x1d) {
+                    /* 0xE3: date/time from the DISPLAY RTC [inference: display-link.md] */
     displink_rx_E3_clock((int)param_1);
   }
   else if (cVar1 == -0x1c) {
     displink_rx_E4();
+                    /* 0xE4: the DISPLAY woke up, screen saver off [fact: display-link.md] */
     PTR_g_ui_00025d38->screensaver_on = 0;
   }
   else if (cVar1 == -0x1b) {
     displink_rx_E5();
   }
   else if (cVar1 == -0x1a) {
+                    /* 0xE6: beep request [fact: display-link.md] */
     displink_rx_E6_beep((int)param_1);
   }
   else if (cVar1 == -0x19) {
+                    /* 0xE7: PlayList recorder/player status [fact: display-link.md] */
     displink_rx_E7((int)param_1);
   }
   else if (cVar1 == -0x18) {
+                    /* result code in +0x48C [doc, inference] */
     displink_rx_E8((int)param_1);
   }
   else if (cVar1 == -0x10) {
+                    /* 0xF0: hello with version, date and boot code [fact: display-link.md] */
     displink_rx_F0_hello((int)param_1);
   }
   else if (cVar1 == '\x06') {
@@ -397,6 +414,7 @@ void displink_rx_dispatch(char *param_1)
   }
   cVar1 = *param_1;
   if (((cVar1 != '\x06') && (cVar1 != '\x15')) && (cVar1 != -0x1d)) {
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
     screensaver_timer_restart();
     return;
   }
@@ -900,6 +918,7 @@ void displink_tx_schedule(void)
   byte swtimer_expired_ret;
   
   if (DAT_0001b3d0 == '\x01') {
+                    /* 1: 0x60 hello reply with the four versions [fact: display-link.md] */
     displink_tx_60_hello();
     return;
   }
@@ -915,10 +934,12 @@ void displink_tx_schedule(void)
   }
   if (bVar1) {
     PTR_g_ui_00025d38->dl_req_24 = 0;
+                    /* 3: 0x24 display settings [fact: display-link.md] */
     displink_tx_24();
     return;
   }
   if (PTR_g_ui_00025d38->restart_req == 1) {
+                    /* 4: 0x7F power command, EEPROM save, reset [fact: display-link.md] */
     power_down_save();
     return;
   }
@@ -938,6 +959,7 @@ void displink_tx_schedule(void)
   }
   if (PTR_g_ui_00025d38->dl_req_7c == 1) {
     PTR_g_ui_00025d38->dl_req_7c = 0;
+                    /* 6: 0x7C, blocks until E5 [fact: display-link.md] */
     displink_tx_7C();
     return;
   }
@@ -946,6 +968,7 @@ void displink_tx_schedule(void)
   }
   if (PTR_g_ui_00025d38->screensaver_toggle_req == 1) {
     PTR_g_ui_00025d38->screensaver_toggle_req = 0;
+                    /* 7: 0x7B screen saver on/off [fact: display-link.md] */
     displink_tx_7B();
     return;
   }
@@ -961,10 +984,12 @@ void displink_tx_schedule(void)
     return;
   }
   if (PTR_g_ui_00025d38->dialog_shown == 1) {
+                    /* 9: 0x70 dialog box [fact: display-link.md] */
     displink_tx_70();
     return;
   }
   if (PTR_g_ui_00025d38->dl_req_sd == 1) {
+                    /* 10: 0x43/0x44/0x45 SD CARD requests [fact: display-link.md] */
     displink_tx_req();
     return;
   }
@@ -992,6 +1017,7 @@ void displink_tx_schedule(void)
     return;
   }
   if (PTR_g_ui_00025d38->dl_req_65_clock == 1) {
+                    /* 14: 0x65 clock for the DISPLAY RTC [inference: display-link.md] */
     displink_tx_65_clock();
     return;
   }
@@ -1041,15 +1067,18 @@ LAB_fff96124:
     if (swtimer_expired_ret != 1) {
       return;
     }
+                    /* 21: 0x40 menu page, at most every 100 units [fact: display-link.md] */
     swtimer_start(0x29,100);
     displink_tx_40();
     return;
   }
   if (PTR_g_ui_00025d38->dl_req_37 == 1) {
+                    /* 22: 0x37 FUNC panel [fact: display-link.md] */
     displink_tx_37();
     return;
   }
   if (PTR_g_ui_00025d38->memlist_open != 1) {
+                    /* 24: 0x20 status block, sent only when changed [fact: display-link.md] */
     displink_tx_20_status();
     return;
   }
@@ -1123,17 +1152,20 @@ void displink_build_60(void)
   
   mem_zero(0xb5,0x1456);
   DAT_00001456 = 0x60;
+                    /* Returns pointer to MAIN version string 0xFFFFFF00 [doc, inference] */
   puVar3 = (undefined4 *)ver_main();
   _DAT_000019c3 = *(undefined2 *)(puVar3 + 1);
   DAT_000019bf._1_1_ = (byte)((uint)*puVar3 >> 8);
   bVar2 = DAT_000019bf._1_1_;
   DAT_000019bf = *puVar3;
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   cVar1 = hex2nib(bVar2);
   bVar2 = hex2nib(DAT_000019bf._2_1_);
   DAT_00001457 = cVar1 << 4 | bVar2;
   cVar1 = hex2nib(DAT_000019c3);
   bVar2 = hex2nib(DAT_000019c4);
   DAT_00001458 = cVar1 << 4 | bVar2;
+                    /* Returns pointer to DISPLAY version 0x1436 [doc, inference] */
   puVar3 = (undefined4 *)ver_display();
   _DAT_000019c3 = *(undefined2 *)(puVar3 + 1);
   DAT_000019bf._1_1_ = (byte)((uint)*puVar3 >> 8);
@@ -1145,6 +1177,7 @@ void displink_build_60(void)
   cVar1 = hex2nib(DAT_000019c3);
   bVar2 = hex2nib(DAT_000019c4);
   DAT_0000145a = cVar1 << 4 | bVar2;
+                    /* Returns pointer to DSP version 0x1444 [doc, inference] */
   puVar3 = (undefined4 *)ver_dsp();
   _DAT_000019c3 = *(undefined2 *)(puVar3 + 1);
   DAT_000019bf._1_1_ = (byte)((uint)*puVar3 >> 8);
@@ -1156,6 +1189,7 @@ void displink_build_60(void)
   cVar1 = hex2nib(DAT_000019c3);
   bVar2 = hex2nib(DAT_000019c4);
   DAT_0000145c = cVar1 << 4 | bVar2;
+                    /* Returns pointer to SDR version 0x144A [doc, inference] */
   puVar3 = (undefined4 *)ver_sdr();
   _DAT_000019c3 = *(undefined2 *)(puVar3 + 1);
   DAT_000019bf._1_1_ = (byte)((uint)*puVar3 >> 8);
@@ -1244,62 +1278,77 @@ ushort displink_build_status(void)
   local_a = !local_a;
   DAT_000016a1 = g_opstate.scope_flag_37;
   local_6 = 2;
+                    /* Status-block byte 2 of displink_build_status [doc] */
   DAT_000016a2 = dlstat_scope_mode();
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 3 of displink_build_status [doc] */
   uVar3 = dlstat_vfo_side_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 4 of displink_build_status [doc] */
   uVar3 = dlstat_screen_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 5 of displink_build_status [doc] */
   uVar3 = dlstat_split_expand();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 6 of displink_build_status [doc] */
   uVar3 = dlstat_disp_sensitivity();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 7 of displink_build_status [doc] */
   uVar3 = dlstat_swr_tx_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 8 of displink_build_status [doc] */
   uVar3 = dlstat_led_mask();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 9 of displink_build_status [doc] */
   uVar3 = dlstat_affft_overlay();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 10 of displink_build_status [doc] */
   uVar3 = dlstat_tx_bpf(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   (&DAT_000016a0)[(ushort)(local_6 + 1)] = g_opstate.meter_sel & 7;
   local_6 = local_6 + 2;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 12 of displink_build_status [doc] */
   uVar3 = dlstat_att_ipo_dnf(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 13 of displink_build_status [doc] */
   uVar3 = dlstat_dsp_flags_agc(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 14 of displink_build_status [doc] */
   uVar3 = dlstat_tx_vfo_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 15 of displink_build_status [doc] */
   uVar3 = dlstat_tone_tuner();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 16 of displink_build_status [doc] */
   uVar3 = dlstat_peak();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 17 of displink_build_status [doc] */
   uVar3 = dlstat_span_center(local_a);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
@@ -1311,6 +1360,7 @@ ushort displink_build_status(void)
     (&DAT_000016a0)[local_6] = g_opstate.ss03_value & 0x5f | 0x50;
   }
   local_6 = local_6 + 1;
+                    /* Status-block byte 19 of displink_build_status [doc] */
   dlstat_default_width(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
   local_9 = DAT_00020874->mode & 0xf;
@@ -1321,30 +1371,38 @@ ushort displink_build_status(void)
     bVar2 = false;
   }
   if (bVar2) {
+                    /* Status-block byte 21 of displink_build_status [doc] */
     dlstat_zero_in(&DAT_000016a0 + local_6);
   }
   local_6 = local_6 + 4;
+                    /* Status-block byte 25 of displink_build_status [doc] */
   dlstat_contour(&DAT_000016a0 + local_6,DAT_00020874);
   if (g_opstate.ex030205_contour_level < 0) {
     (&DAT_000016a0)[local_6] = (&DAT_000016a0)[local_6] | 0x80;
   }
   local_6 = local_6 + 2;
+                    /* Status-block byte 27 of displink_build_status [doc] */
   dlstat_notch(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
+                    /* Status-block byte 29 of displink_build_status [doc] */
   dlstat_width(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
+                    /* Status-block byte 31 of displink_build_status [doc] */
   dlstat_shift(&DAT_000016a0 + local_6,DAT_00020874);
   (&DAT_000016a0)[(ushort)(local_6 + 2)] = g_opstate.apf_freq;
   (&DAT_000016a0)[(ushort)(local_6 + 3)] = g_opstate.cw_pitch + 0x1e;
   local_6 = local_6 + 4;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 35 of displink_build_status [doc] */
   uVar3 = dlstat_dsp_knob_flags(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 36 of displink_build_status [doc] */
   uVar3 = dlstat_voice_mem();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
+                    /* Status-block byte 37 of displink_build_status [doc] */
   dlstat_scope_settings(&DAT_000016a0 + local_6);
   (&DAT_000016a0)[(ushort)(local_6 + 6)] = 0xff;
   uVar5 = local_6 + 7;
@@ -1354,6 +1412,7 @@ ushort displink_build_status(void)
   }
   else {
     local_6 = uVar5;
+                    /* Status-block byte 44 of displink_build_status [doc] */
     uVar3 = dlstat_func_knob();
     (&DAT_000016a0)[uVar5] = uVar3;
     local_6 = local_6 + 1;
@@ -1363,11 +1422,13 @@ ushort displink_build_status(void)
   DAT_0001b62e = local_6 + 1;
   uVar1 = (uint)DAT_0001b62e;
   local_6 = DAT_0001b62e;
+                    /* Status-block byte 46 of displink_build_status [doc] */
   bVar4 = dlstat_vfo_state_code('\0',&local_9);
   (&DAT_000016a0)[uVar1] = bVar4;
   (&DAT_000016a0)[(ushort)(local_6 + 1)] = local_9;
   local_6 = local_6 + 2;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 48 of displink_build_status [doc] */
   uVar3 = dlstat_vfo_flags48(0);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
@@ -1440,10 +1501,12 @@ ushort displink_build_status(void)
     (&DAT_000016a0)[DAT_0001b630] = 10;
   }
   uVar1 = (uint)local_6;
+                    /* Status-block byte 95 of displink_build_status [doc] */
   uVar3 = dlstat_meter();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
+                    /* Status-block byte 96 of displink_build_status [doc] */
   uVar3 = dlstat_tuning_flags(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   (&DAT_000016a0)[(ushort)(local_6 + 7)] = 0;
@@ -2613,12 +2676,15 @@ byte dlstat_dsp_knob_flags(undefined4 param_1)
   }
   local_6 = PTR_g_ui_00025d38->dsp_knob_func | PTR_g_ui_00025d38->dsp_knob_apf << 2 | local_6;
   local_4 = param_1;
+                    /* Status-block byte 29 of displink_build_status [doc] */
   dlstat_width(auStack_8,param_1);
+                    /* Status-block byte 19 of displink_build_status [doc] */
   dlstat_default_width(&uStack_a,local_4);
   iVar1 = strncmp(auStack_8,&uStack_a,2);
   if (iVar1 != 0) {
     local_6 = local_6 | 0x10;
   }
+                    /* Status-block byte 31 of displink_build_status [doc] */
   dlstat_shift(auStack_8,local_4);
   uStack_a = 0;
   iVar1 = strncmp(auStack_8,&uStack_a,2);
@@ -3787,116 +3853,144 @@ void displink_build_31(void)
     return;
   }
   if (bVar1 == 0x1f) {
+                    /* Value text of the PEAK pop-up [doc] */
     popup_fmt_peak(0x99);
     return;
   }
   if (bVar1 == 0x22) {
+                    /* Value text of the CONTRAST pop-up [doc] */
     popup_fmt_contrast(0x99);
     return;
   }
   if (bVar1 == 0x23) {
+                    /* Value text of the DIMMER pop-up [doc] */
     popup_fmt_dimmer(0x99);
     return;
   }
   if (bVar1 == 0x24) {
+                    /* Value text of the M GROUP pop-up [doc] */
     popup_fmt_mgroup(0x99);
     return;
   }
   if (bVar1 == 0x25) {
+                    /* Value text of the MIC GAIN pop-up [doc] */
     popup_fmt_mic_gain(0x99);
     return;
   }
   if (bVar1 == 0x26) {
+                    /* Value text of the MIC EQ pop-up [doc] */
     popup_fmt_mic_eq(0x99);
     return;
   }
   if (bVar1 == 0x27) {
+                    /* Value text of the PROC LEVEL pop-up [doc] */
     popup_fmt_proc_level(0x99);
     return;
   }
   if (bVar1 == 0x28) {
+                    /* Value text of the AMC LEVEL pop-up [doc] */
     popup_fmt_amc_level(0x99);
     return;
   }
   if (bVar1 == 0x29) {
+                    /* Value text of the VOX GAIN pop-up [doc] */
     popup_fmt_vox_gain(0x99);
     return;
   }
   if (bVar1 == 0x2a) {
+                    /* Value text of the VOX DELAY pop-up [doc] */
     popup_fmt_vox_delay(0x99);
     return;
   }
   if (bVar1 == 0x2b) {
+                    /* Value text of the ANTI VOX pop-up [doc] */
     popup_fmt_anti_vox(0x99);
     return;
   }
   if (bVar1 == 0x2c) {
+                    /* Value text of the RF POWER pop-up [doc] */
     popup_fmt_rf_power(0x99);
     return;
   }
   if (bVar1 == 0x2d) {
+                    /* Value text of the MONI LEVEL pop-up [doc] */
     popup_fmt_moni_level(0x99);
     return;
   }
   if (bVar1 == 0x2f) {
+                    /* Value text of the BK IN pop-up [doc] */
     popup_fmt_bk_in(0x99);
     return;
   }
   if (bVar1 == 0x30) {
+                    /* Value text of the CW SPEED pop-up [doc] */
     popup_fmt_cw_speed(0x99);
     return;
   }
   if (bVar1 == 0x31) {
+                    /* Value text of the CW PITCH pop-up [doc] */
     popup_fmt_cw_pitch(0x99);
     return;
   }
   if (bVar1 == 0x32) {
+                    /* Value text of the BK DELAY pop-up [doc] */
     popup_fmt_bk_delay(0x99);
     return;
   }
   if (bVar1 == 0x33) {
+                    /* Value text of the AESS pop-up [doc] */
     popup_fmt_aess_level(0x99);
     return;
   }
   if (bVar1 == 0x38) {
+                    /* Value text of the NB LEVEL pop-up [doc] */
     popup_fmt_nb_level(0x99);
     return;
   }
   if (bVar1 == 0x39) {
+                    /* Value text of the DNR LEVEL pop-up [doc] */
     popup_fmt_dnr_level(0x99);
     return;
   }
   if (bVar1 == 0x3a) {
+                    /* Value text of the DEC LVL pop-up [doc] */
     popup_fmt_dec_level(0x99);
     return;
   }
   if (bVar1 == 0x43) {
+                    /* Value text of the QMB pop-up [doc] */
     popup_fmt_qmb(0x99);
     return;
   }
   if (bVar1 == 0x44) {
+                    /* Value text of the SCAN pop-up [doc] */
     popup_fmt_mem_scan(0x99);
     return;
   }
   if (bVar1 == 0x45) {
+                    /* Value text of the TYPE pop-up [doc] */
     popup_fmt_mem_type(0x99);
     return;
   }
   if (bVar1 == 0x46) {
+                    /* Value text of the KEYER pop-up [doc] */
     popup_fmt_keyer(0x99);
     return;
   }
   if (bVar1 == 0x55) {
+                    /* Value text of the MODE pop-up [doc] */
     popup_fmt_mem_mode(0x99);
     return;
   }
   if (bVar1 == 0x58) {
+                    /* Value text of the AESS CF pop-up [doc] */
     popup_fmt_aess_cf(0x99);
     return;
   }
   if (bVar1 != 0x1e) {
     return;
   }
+                    /* Value text of the SCOPE LEVEL pop-up [doc] */
   popup_fmt_scope_level(0x99);
   return;
 }
@@ -4020,6 +4114,7 @@ void popup_fmt_rf_power(ushort param_1)
   uint uVar5;
   
   uVar1 = FUN_fffb4062();
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar2 = dec_to_str_n(uVar1,3,&DAT_000019ca);
   (&DAT_00001748)[param_1] = 0x57;
   uVar5 = (uint)bVar2;
@@ -4064,6 +4159,7 @@ void popup_fmt_moni_level(ushort param_1)
     cStack_3 = *moni_level_ptr_ret;
   }
   if (cStack_3 != '\0') {
+                    /* decimal without leading zeros, returns the length [doc] */
     bVar1 = dec_to_str_n(cStack_3,3,&DAT_000019d2);
     uVar4 = (uint)bVar1;
     puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4101,6 +4197,7 @@ void popup_fmt_vox_gain(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.vox_gain,3,&DAT_000019da);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4145,6 +4242,7 @@ void popup_fmt_vox_delay(ushort param_1)
   if (0x21 < local_3) {
     local_3 = 0;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(*(undefined2 *)(BYTE_ARRAY_fff87ed4 + (uint)local_3 * 2 + 2),4,&DAT_000019e2)
   ;
   uVar4 = (uint)bVar1;
@@ -4186,6 +4284,7 @@ void popup_fmt_anti_vox(ushort param_1)
   else {
     local_3 = g_opstate.antivox[1];
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(local_3,3,&DAT_000019ea);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4220,6 +4319,7 @@ void popup_fmt_proc_level(ushort param_1)
   uint uVar4;
   
   if (g_opstate.proc_level != 0) {
+                    /* decimal without leading zeros, returns the length [doc] */
     bVar1 = dec_to_str_n(g_opstate.proc_level,3,&DAT_000019f2);
     uVar4 = (uint)bVar1;
     puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4265,6 +4365,7 @@ void popup_fmt_mic_gain(ushort param_1)
   else {
     uStack_3 = *puVar2;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(uStack_3,3,&DAT_000019fa);
   uVar4 = (uint)bVar1;
   puVar3 = &DAT_00001749 + (param_1 - uVar4);
@@ -4299,6 +4400,7 @@ void popup_fmt_cw_speed(ushort param_1)
   
   (&DAT_00001748)[param_1] = 0x6d;
   *(undefined2 *)(&DAT_00001746 + param_1) = 0x7077;
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.key_speed,2,&DAT_00001a02);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001746 + (param_1 - uVar4);
@@ -4332,6 +4434,7 @@ void popup_fmt_cw_pitch(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n((ushort)g_opstate.cw_pitch * 10 + 300,4,&DAT_00001a0a);
   (&DAT_00001747)[param_1] = 0x48;
   (&DAT_00001748)[param_1] = 0x7a;
@@ -4373,6 +4476,7 @@ void popup_fmt_bk_delay(ushort param_1)
   if (0x21 < g_opstate.cw_bkin_delay) {
     local_3 = 0;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(*(undefined2 *)(BYTE_ARRAY_fff87ed4 + (uint)local_3 * 2 + 2),4,&DAT_00001a12)
   ;
   uVar4 = (uint)bVar1;
@@ -4408,7 +4512,9 @@ void popup_fmt_aess_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (byte *)aess_level_ptr();
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n((uint)*aess_level_ptr_ret * 5,3,&DAT_00001a1a);
   (&DAT_00001748)[param_1] = 0x25;
   uVar4 = (uint)bVar1;
@@ -4445,6 +4551,7 @@ void popup_fmt_aess_cf(ushort param_1)
   uint uVar4;
   undefined2 uStack_4;
   
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (char *)aess_mode_ptr();
   if (*aess_mode_ptr_ret == '\0') {
     uStack_4 = 700;
@@ -4452,6 +4559,7 @@ void popup_fmt_aess_cf(ushort param_1)
   else {
     uStack_4 = 1000;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(uStack_4,4,&DAT_00001a22);
   (&DAT_00001747)[param_1] = 0x48;
   (&DAT_00001748)[param_1] = 0x7a;
@@ -4487,6 +4595,7 @@ void popup_fmt_amc_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.amc_level,3,&DAT_00001a2a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4557,6 +4666,7 @@ void popup_fmt_nb_level(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.nb_level,2,&DAT_00001a32);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4596,6 +4706,7 @@ void popup_fmt_dnr_level(ushort param_1)
     local_4 = g_opstate.vfo_b.dnr;
   }
   local_4 = local_4 & 0xf;
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(local_4,2,&DAT_00001a3a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4638,6 +4749,7 @@ void popup_fmt_qmb(ushort param_1)
     local_3 = g_qmb_hdr.ptr_b[0];
   }
   uVar1 = FUN_fff96d94(local_3);
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar2 = dec_to_str_n(uVar1,2,&DAT_00001a42);
   uVar5 = (uint)bVar2;
   puVar3 = &DAT_00001749 + (param_1 - uVar5);
@@ -4850,6 +4962,7 @@ void popup_fmt_contrast(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.tft_contrast,2,&DAT_00001a4a);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -4979,6 +5092,7 @@ void popup_fmt_dimmer(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.tft_brightness,2,&DAT_00001a52);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -5277,7 +5391,9 @@ void dl50_mycall(void)
   DAT_000017e9 = 0x41;
   DAT_000017ea = 0x4c;
   DAT_000017eb = 0x4c;
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -5312,6 +5428,7 @@ void dl50_memory_name(void)
     DAT_000017d9 = 2;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
+                    /* channel label text [doc] */
   memch_label_fmt(&DAT_000017db,PTR_g_ui_00025d38->memlist_ch);
   iVar3 = suntil(0xfff8f350,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
@@ -5321,7 +5438,9 @@ void dl50_memory_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -5484,7 +5603,9 @@ void dl50_file_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0x14);
   return;
 }
@@ -5525,7 +5646,9 @@ void dl50_preset_name(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text,0x1803,0xc);
   return;
 }
@@ -5630,7 +5753,9 @@ void dl50_slot_label(void)
 void dl50_msg_text(void)
 
 {
+                    /* Keyboard frame 0x50 [doc] */
   kbd_fmt_char_pos(&DAT_000017f9);
+                    /* copies the keyboard text and marks the cursor character [doc] */
   kbd_copy_text(PTR_g_ui_00025d38->msg_text + PTR_g_ui_00025d38->msg_slot_idx,0x1803,0x32);
   return;
 }
@@ -5875,6 +6000,7 @@ void displink_build_37(void)
   dl37_slot_record(0x177);
   dl37_slot_play(0x181);
   dl37_slot_txw(0x18b);
+                    /* writes an empty FUNC-panel slot of frame 0x37 [doc] */
   dl37_slot_empty(0x195);
   dl37_slot_aess(0x19f);
   dl37_slot_aess_cf(0x1a9);
@@ -5918,6 +6044,7 @@ void dl37_slot_scope_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the SCOPE LEVEL pop-up [doc] */
   popup_fmt_scope_level(param_1);
   return;
 }
@@ -5945,6 +6072,7 @@ void dl37_slot_peak(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the PEAK pop-up [doc] */
   popup_fmt_peak(param_1);
   return;
 }
@@ -6028,6 +6156,7 @@ void dl37_slot_contrast(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CONTRAST pop-up [doc] */
   popup_fmt_contrast(param_1);
   return;
 }
@@ -6055,6 +6184,7 @@ void dl37_slot_dimmer(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the DIMMER pop-up [doc] */
   popup_fmt_dimmer(param_1);
   return;
 }
@@ -6106,6 +6236,7 @@ void dl37_slot_mic_gain(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the MIC GAIN pop-up [doc] */
   popup_fmt_mic_gain(param_1);
   return;
 }
@@ -6176,6 +6307,7 @@ void dl37_slot_proc_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the PROC LEVEL pop-up [doc] */
   popup_fmt_proc_level(param_1);
   return;
 }
@@ -6203,6 +6335,7 @@ void dl37_slot_amc_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AMC LEVEL pop-up [doc] */
   popup_fmt_amc_level(param_1);
   return;
 }
@@ -6230,6 +6363,7 @@ void dl37_slot_vox_gain(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the VOX GAIN pop-up [doc] */
   popup_fmt_vox_gain(param_1);
   return;
 }
@@ -6257,6 +6391,7 @@ void dl37_slot_vox_delay(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the VOX DELAY pop-up [doc] */
   popup_fmt_vox_delay(param_1);
   return;
 }
@@ -6284,6 +6419,7 @@ void dl37_slot_anti_vox(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the ANTI VOX pop-up [doc] */
   popup_fmt_anti_vox(param_1);
   return;
 }
@@ -6311,6 +6447,7 @@ void dl37_slot_rf_power(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the RF POWER pop-up [doc] */
   popup_fmt_rf_power(param_1);
   return;
 }
@@ -6338,6 +6475,7 @@ void dl37_slot_moni_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the MONI LEVEL pop-up [doc] */
   popup_fmt_moni_level(param_1);
   return;
 }
@@ -6464,6 +6602,7 @@ void dl37_slot_cw_speed(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CW SPEED pop-up [doc] */
   popup_fmt_cw_speed(param_1);
   return;
 }
@@ -6491,6 +6630,7 @@ void dl37_slot_cw_pitch(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CW PITCH pop-up [doc] */
   popup_fmt_cw_pitch(param_1);
   return;
 }
@@ -6518,6 +6658,7 @@ void dl37_slot_bk_delay(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the BK DELAY pop-up [doc] */
   popup_fmt_bk_delay(param_1);
   return;
 }
@@ -6648,6 +6789,7 @@ void dl37_slot_aess(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AESS pop-up [doc] */
   popup_fmt_aess_level(param_1);
   return;
 }
@@ -6675,6 +6817,7 @@ void dl37_slot_aess_cf(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AESS CF pop-up [doc] */
   popup_fmt_aess_cf(param_1);
   return;
 }
@@ -7213,6 +7356,7 @@ void displink_build_41(void)
       bStack_1 = DAT_00020884->flags5 >> 7 | DAT_00020884->flags1 >> 6 & 2;
       (&DAT_00001741)[DAT_0001b632] = bStack_1;
       DAT_0001b632 = DAT_0001b632 + 1;
+                    /* channel label text [doc] */
       memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
       DAT_0001b632 = DAT_0001b632 + 5;
       FUN_fff9c2f9(&DAT_00001741 + DAT_0001b632,bStack_4);
@@ -7410,6 +7554,7 @@ undefined4 * memch_label_fmt(undefined4 *param_1,byte param_2)
       *(byte *)((int)param_1 + 3) = param_2 + 0x31;
     }
     else {
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
       dec_to_str_u8(param_2 + 1,(undefined2 *)((int)param_1 + 2));
     }
     *(undefined1 *)(param_1 + 1) = 0x20;
@@ -7540,6 +7685,7 @@ void displink_build_62(void)
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
     }
+                    /* 3-character value of an alignment item for 0x62 [doc] */
     displink_62_value(uStack_4,(uint)i * 0x1c + 0xb3);
     uStack_4 = uStack_4 + 1;
     if (0x104 < uStack_4) {
@@ -7925,6 +8071,7 @@ void dsp_isp_bridge(void)
     }
     bVar2 = sci4_rx_ready();
     if (bVar2 == 1) {
+                    /* Returns the SCI4 receive buffer [doc, inference] */
       pcVar3 = (char *)sci4_rx_buf();
       sci4_rx_len_ret = sci4_rx_len();
       do {
@@ -7939,6 +8086,7 @@ void dsp_isp_bridge(void)
         pcVar4 = pcVar4 + 1;
         pcVar3 = pcVar3 + 1;
       }
+                    /* 8-bit sum of n bytes [doc] */
       dsp_sum8_ret = dsp_sum8((int)acStack_40c,(byte)(sci4_rx_len_ret + 3));
       acStack_40c[(ushort)(sci4_rx_len_ret + 3)] = dsp_sum8_ret;
       displink_uart_send((uint)acStack_40c,sci4_rx_len_ret + 4);
@@ -8089,6 +8237,7 @@ byte sci1_tx_end(void)
 {
   byte sci1_ssr;
   
+                    /* Serial Status [sfr] */
   sci1_ssr = SCI1_SSR;
   return sci1_ssr >> 2 & 1;
 }
@@ -8564,6 +8713,7 @@ void dialog_open(void)
 undefined1 dialog_close_to_menu_ok(void)
 
 {
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return 1;
 }

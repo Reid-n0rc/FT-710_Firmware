@@ -80,6 +80,7 @@ LAB_fffbdc83:
 void notch_reset_beep(void)
 
 {
+                    /* manual NOTCH of the VFO's mode block = 0x0096 [doc] */
   vfo_notch_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
@@ -261,6 +262,7 @@ void dsp_knob_apf_toggle(void)
 void apf_reset_beep(void)
 
 {
+                    /* g_opstate.apf_freq = 0 and bit 5 [doc] */
   vfo_apf_reset(g_opstate.active_vfo != VFO_A);
   beep_request(2);
   return;
@@ -548,6 +550,7 @@ void FUN_fffbe1af(void)
 
 {
   func_knob_assign_key(0xe1);
+                    /* Sets UI +0x443 [doc] */
   vfo_mark_edited_if_vfo();
   return;
 }

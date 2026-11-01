@@ -370,6 +370,7 @@ undefined4 CLOCK_GetOsc32KFreq(void)
   undefined4 uVar1;
   uint clkctl0_osc32khzctl0;
   
+                    /* 32k oscillator control0 [sfr] */
   clkctl0_osc32khzctl0 = CLKCTL0_OSC32KHZCTL0;
   uVar1 = 0;
   if ((clkctl0_osc32khzctl0 & 1) != 0) {
@@ -390,6 +391,7 @@ undefined4 CLOCK_GetXtalInClkFreq(void)
   int iVar1;
   undefined4 *puVar2;
   
+                    /* system oscillator bypass [sfr] */
   iVar1 = CLKCTL0_SYSOSCBYPASS;
   if (iVar1 == 0) {
     puVar2 = &DAT_00088930;
@@ -415,6 +417,7 @@ uint CLOCK_GetFFroFreq(void)
   uint uVar1;
   uint clkctl0_ffroctl0;
   
+                    /* FFRO control 0 [sfr] */
   clkctl0_ffroctl0 = CLKCTL0_FFROCTL0;
   if ((clkctl0_ffroctl0 & 0xc0000) != 0) {
     uVar1 = 60000000;
@@ -441,6 +444,7 @@ uint CLOCK_GetSysPllFreq(void)
   undefined4 clkctl0_syspll0denom;
   uint clkctl0_syspll0num;
   
+                    /* system pll0 clock selection [sfr] */
   uVar2 = CLKCTL0_SYSPLL0CLKSEL;
   uVar2 = uVar2 & 7;
   if (uVar2 == 1) {
@@ -456,9 +460,12 @@ uint CLOCK_GetSysPllFreq(void)
       uVar1 = 0;
     }
   }
+                    /* system pll0 control0 [sfr] */
   uVar2 = CLKCTL0_SYSPLL0CTL0;
   if ((uVar2 & 1) == 0) {
+                    /* system pll0 number [sfr] */
     clkctl0_syspll0num = CLKCTL0_SYSPLL0NUM;
+                    /* system pll0 denom [sfr] */
     clkctl0_syspll0denom = CLKCTL0_SYSPLL0DENOM;
     clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
     __aeabi_uldivmod_ret =
@@ -483,10 +490,12 @@ uint CLOCK_GetSysPfdFreq(uint param_1)
   int clkctl0_syspll0ctl0;
   
   uVar1 = CLOCK_GetSysPllFreq();
+                    /* system pll0 control0 [sfr] */
   clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
   if (-1 < clkctl0_syspll0ctl0 << 0x1f) {
     switch(param_1) {
     case 0:
+                    /* sys pll0 PFD [sfr] */
       uVar2 = CLKCTL0_SYSPLL0PFD;
       uVar2 = uVar2 & 0x3f;
       break;
@@ -523,6 +532,7 @@ uint CLOCK_GetMainPllClkFreq(void)
   uint clkctl0_mainpllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(0);
+                    /* main pll clk divider [sfr] */
   clkctl0_mainpllclkdiv = CLKCTL0_MAINPLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_mainpllclkdiv & 0xff) + 1);
 }
@@ -539,6 +549,7 @@ uint CLOCK_GetAux0PllClkFreq(void)
   uint clkctl0_aux0pllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(2);
+                    /* aux0 pll clk divider [sfr] */
   clkctl0_aux0pllclkdiv = CLKCTL0_AUX0PLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_aux0pllclkdiv & 0xff) + 1);
 }
@@ -555,6 +566,7 @@ uint CLOCK_GetAux1PllClkFreq(void)
   uint clkctl0_aux1pllclkdiv;
   
   CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(3);
+                    /* aux1 pll clk divider [sfr] */
   clkctl0_aux1pllclkdiv = CLKCTL0_AUX1PLLCLKDIV;
   return CLOCK_GetSysPfdFreq_ret / ((clkctl0_aux1pllclkdiv & 0xff) + 1);
 }
@@ -574,6 +586,7 @@ uint CLOCK_GetAudioPllFreq(void)
   undefined4 clkctl1_audiopll0denom;
   uint clkctl1_audiopll0num;
   
+                    /* audio pll0 clock selection [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0CLKSEL;
   uVar2 = uVar2 & 7;
   if (uVar2 == 1) {
@@ -589,9 +602,12 @@ uint CLOCK_GetAudioPllFreq(void)
       uVar1 = 0;
     }
   }
+                    /* audio pll0 control0 [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0CTL0;
   if ((uVar2 & 1) == 0) {
+                    /* audio pll0 number [sfr] */
     clkctl1_audiopll0num = CLKCTL1_AUDIOPLL0NUM;
+                    /* Audio pll0 denom [sfr] */
     clkctl1_audiopll0denom = CLKCTL1_AUDIOPLL0DENOM;
     clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
     __aeabi_uldivmod_ret =
@@ -616,10 +632,12 @@ uint CLOCK_GetAudioPfdFreq(uint param_1)
   int clkctl1_audiopll0ctl0;
   
   uVar1 = CLOCK_GetAudioPllFreq();
+                    /* audio pll0 control0 [sfr] */
   clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
   if (-1 < clkctl1_audiopll0ctl0 << 0x1f) {
     switch(param_1) {
     case 0:
+                    /* audio pll0 PFD [sfr] */
       uVar2 = CLKCTL1_AUDIOPLL0PFD;
       uVar2 = uVar2 & 0x3f;
       break;
@@ -656,6 +674,7 @@ uint CLOCK_GetAudioPllClkFreq(void)
   uint clkctl1_audiopllclkdiv;
   
   CLOCK_GetAudioPfdFreq_ret = CLOCK_GetAudioPfdFreq(0);
+                    /* audio pll0 clock divider [sfr] */
   clkctl1_audiopllclkdiv = CLKCTL1_AUDIOPLLCLKDIV;
   return CLOCK_GetAudioPfdFreq_ret / ((clkctl1_audiopllclkdiv & 0xff) + 1);
 }
@@ -672,6 +691,7 @@ void * CLOCK_GetMainClkFreq(void)
   void *pvVar2;
   uint uVar3;
   
+                    /* main clock selection B [sfr] */
   uVar3 = CLKCTL0_MAINCLKSELB;
   uVar3 = uVar3 & 3;
   if (uVar3 == 2) {
@@ -719,10 +739,12 @@ undefined * CLOCK_GetDspMainClkFreq(void)
   uint CLOCK_GetSysPfdFreq_ret;
   uint uVar2;
   
+                    /* DSP clock selection B [sfr] */
   uVar2 = CLKCTL1_DSPCPUCLKSELB;
   uVar2 = uVar2 & 3;
   if (uVar2 == 2) {
     CLOCK_GetSysPfdFreq_ret = CLOCK_GetSysPfdFreq(1);
+                    /* dsp pll clk divider [sfr] */
     uVar2 = CLKCTL0_DSPPLLCLKDIV;
     puVar1 = (undefined *)(CLOCK_GetSysPfdFreq_ret / ((uVar2 & 0xff) + 1));
   }
@@ -775,12 +797,14 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
     dVar4 = (&CLKCTL1_FLEXCOMM0_FCFCLKSEL)[param_1 * 8];
   }
   else if (param_1 == 0xe) {
+                    /* flexcomm14 clock selection [sfr] */
     dVar4 = CLKCTL1_FC14FCLKSEL;
   }
   else {
     if (param_1 != 0xf) {
       return 16000000;
     }
+                    /* flexcomm15 clock selection [sfr] */
     dVar4 = CLKCTL1_FC15FCLKSEL;
   }
   switch(dVar4) {
@@ -809,6 +833,7 @@ LAB_000833e4:
     case 0:
       goto switchD_000833ea_caseD_0;
     case 1:
+                    /* FRG pll clock divider [sfr] */
       uVar3 = CLKCTL1_FRGPLLCLKDIV;
       CLOCK_GetMainPllClkFreq_ret = CLOCK_GetMainPllClkFreq();
       pvVar2 = (void *)(CLOCK_GetMainPllClkFreq_ret / ((uVar3 & 0xff) + 1));
@@ -825,7 +850,9 @@ LAB_000833e4:
   }
   else {
     if (param_1 == 0xe) {
+                    /* FRG clock selection 14 [sfr] */
       uVar3 = CLKCTL1_FRG14CLKSEL;
+                    /* FRG clock controller 14 [sfr] */
       uVar7 = CLKCTL1_FRG14CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG14CTL;
@@ -834,7 +861,9 @@ LAB_000833e4:
       goto LAB_000833e4;
     }
     if (param_1 == 0xf) {
+                    /* FRG clock selection 15 [sfr] */
       uVar3 = CLKCTL1_FRG15CLKSEL;
+                    /* FRG clock controller 15 [sfr] */
       uVar7 = CLKCTL1_FRG15CTL;
       uVar3 = uVar3 & 7;
       uVar1 = CLKCTL1_FRG15CTL;
@@ -1239,12 +1268,16 @@ void CLOCK_SetFRGClock(byte *param_1)
     return;
   }
   if (uVar1 == 0xe) {
+                    /* FRG clock selection 14 [sfr] */
     CLKCTL1_FRG14CLKSEL = (uint)param_1[1];
+                    /* FRG clock controller 14 [sfr] */
     CLKCTL1_FRG14CTL = (uint)*(ushort *)(param_1 + 2);
     return;
   }
   if (uVar1 == 0xf) {
+                    /* FRG clock selection 15 [sfr] */
     CLKCTL1_FRG15CLKSEL = (uint)param_1[1];
+                    /* FRG clock controller 15 [sfr] */
     CLKCTL1_FRG15CTL = (uint)*(ushort *)(param_1 + 2);
   }
   return;
@@ -1271,9 +1304,11 @@ void CLOCK_EnableFfroClk(int param_1)
   local_1c = 0;
   local_18 = 0;
   local_14[0] = 0;
+                    /* FFRO control 1 [sfr] */
   uVar2 = CLKCTL0_FFROCTL1;
   CLKCTL0_FFROCTL1 = uVar2 | 1;
   CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+                    /* system cpu AHB clock divider [sfr] */
   uVar2 = CLKCTL0_SYSCPUAHBCLKDIV;
   (*(code *)0x13009ff9)((uint)CLOCK_GetMainClkFreq_ret / ((uVar2 & 0xff) + 1));
   if (param_1 == 0) {
@@ -1295,6 +1330,7 @@ void CLOCK_EnableFfroClk(int param_1)
   else {
     uVar2 = 0xc0000;
   }
+                    /* FFRO control 0 [sfr] */
   CLKCTL0_FFROCTL0 = (local_1c & 0x3f) << 5 | (local_18 & 0x7f) << 0xb | local_20 & 0x1f | uVar2;
   uVar2 = CLKCTL0_FFROCTL1;
   CLKCTL0_FFROCTL1 = uVar2 & 0xfffffffe;
@@ -1317,6 +1353,7 @@ void CLOCK_EnableSfroClk(undefined4 param_1)
   
   local_c = 0;
   CLOCK_GetMainClkFreq_ret = CLOCK_GetMainClkFreq();
+                    /* system cpu AHB clock divider [sfr] */
   clkctl0_syscpuahbclkdiv = CLKCTL0_SYSCPUAHBCLKDIV;
   (*(code *)0x13009ff9)((uint)CLOCK_GetMainClkFreq_ret / ((clkctl0_syscpuahbclkdiv & 0xff) + 1));
   (*(code *)0x1300a057)(0xd,&local_c,extraout_r2,0x1300a057,param_1);
@@ -1335,12 +1372,17 @@ void CLOCK_InitSysPll(byte *param_1)
 {
   uint uVar1;
   
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = 0x60000;
+                    /* system pll0 clock selection [sfr] */
   CLKCTL0_SYSPLL0CLKSEL = (uint)*param_1;
+                    /* system pll0 number [sfr] */
   CLKCTL0_SYSPLL0NUM = *(undefined4 *)(param_1 + 4);
+                    /* system pll0 denom [sfr] */
   CLKCTL0_SYSPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
+                    /* system pll0 control0 [sfr] */
     uVar1 = CLKCTL0_SYSPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
@@ -1375,7 +1417,9 @@ void CLOCK_InitSysPll(byte *param_1)
 switchD_00083a22_default:
   uVar1 = CLKCTL0_SYSPLL0CTL0;
   CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xfffffffd;
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x60000;
+                    /* system pll0 lock time [sfr] */
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
   uVar1 = CLKCTL0_SYSPLL0CTL0;
@@ -1401,6 +1445,7 @@ void CLOCK_InitSysPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
+                    /* sys pll0 PFD [sfr] */
   uVar2 = CLKCTL0_SYSPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
   CLKCTL0_SYSPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
@@ -1424,12 +1469,17 @@ void CLOCK_InitAudioPll(byte *param_1)
 {
   uint uVar1;
   
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = 0x180000;
+                    /* audio pll0 clock selection [sfr] */
   CLKCTL1_AUDIOPLL0CLKSEL = (uint)*param_1;
+                    /* audio pll0 number [sfr] */
   CLKCTL1_AUDIOPLL0NUM = *(undefined4 *)(param_1 + 4);
+                    /* Audio pll0 denom [sfr] */
   CLKCTL1_AUDIOPLL0DENOM = *(undefined4 *)(param_1 + 8);
   switch(param_1[0xc]) {
   case 0:
+                    /* audio pll0 control0 [sfr] */
     uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     uVar1 = uVar1 & 0xff00ffff | 0x100000;
     break;
@@ -1464,7 +1514,9 @@ void CLOCK_InitAudioPll(byte *param_1)
 switchD_00083b72_default:
   uVar1 = CLKCTL1_AUDIOPLL0CTL0;
   CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xfffffffd;
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x180000;
+                    /* audio pll0 lock time [sfr] */
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs((uVar1 & 0xffff) >> 1,300000000);
   uVar1 = CLKCTL1_AUDIOPLL0CTL0;
@@ -1490,6 +1542,7 @@ void CLOCK_InitAudioPfd(int param_1,uint param_2)
   uint uVar2;
   
   uVar1 = param_1 << 3;
+                    /* audio pll0 PFD [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0PFD;
   uVar2 = uVar2 & ~(0xbf << (uVar1 & 0xff));
   CLKCTL1_AUDIOPLL0PFD = 0x80 << (uVar1 & 0xff) | uVar2;
@@ -1512,7 +1565,9 @@ void CLOCK_EnableSysOscClk(int param_1,uint param_2,uint param_3)
 
 {
   if (param_1 != 0) {
+                    /* system oscillator control 0 [sfr] */
     CLKCTL0_SYSOSCCTL0 = param_2;
+                    /* system oscillator bypass [sfr] */
     CLKCTL0_SYSOSCBYPASS = 0;
     SDK_DelayAtLeastUs(param_3,300000000);
     return;
@@ -1625,6 +1680,7 @@ void DMA_IRQHandle(void *param_1,undefined4 param_2,undefined4 param_3,undefined
 void DMA0_DriverIRQHandler(void)
 
 {
+                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
   DMA_IRQHandle(&DMA0_CTRL);
   return;
 }
@@ -1637,6 +1693,7 @@ void DMA0_DriverIRQHandler(void)
 void DMA1_DriverIRQHandler(void)
 
 {
+                    /* fsl_dma.c channel interrupt dispatcher [doc, inference] */
   DMA_IRQHandle(&DMA1_CTRL);
   return;
 }
@@ -1688,8 +1745,10 @@ void DSP_Init(void)
   uint uVar1;
   int rstctl0_prstctl0;
   
+                    /* Run configuration 1 [sfr] */
   uVar1 = SYSCTL0_PDRUNCFG1;
   if ((uVar1 & 0xf000000) != 0) {
+                    /* Run configuration 1 clear [sfr] */
     SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
@@ -1700,6 +1759,7 @@ void DSP_Init(void)
   }
   rstctl0_prstctl0 = RSTCTL0_PRSTCTL0;
   if (rstctl0_prstctl0 << 0x1e < 0) {
+                    /* peripheral reset clear 0 [sfr] */
     RSTCTL0_PRSTCTL0_CLR = 2;
     do {
       uVar1 = RSTCTL0_PRSTCTL0;

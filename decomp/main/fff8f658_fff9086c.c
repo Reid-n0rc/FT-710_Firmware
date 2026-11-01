@@ -22,11 +22,14 @@ void R_Systeminit(void)
 {
   byte bVar1;
   
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa50b;
   bVar1 = MPC_PWPR;
+                    /* Write-Protect [sfr] */
   MPC_PWPR = bVar1 & 0x7f;
   bVar1 = MPC_PWPR;
   MPC_PWPR = bVar1 | 0x40;
+                    /* Port Output Enable Control 2 [sfr] */
   POE3_POECR2 = 0;
   FUN_fff8f7c4();
   R_Pins_Create();
@@ -49,6 +52,7 @@ void R_Systeminit(void)
   R_SCI7_Create();
   R_TPU2_Create();
   FUN_fff8f7ca();
+                    /* Registers a group-interrupt callback by index [doc, inference] */
   R_BSP_InterruptWrite(10,-0x709a3);
   R_BSP_InterruptWrite(7,-0x6d820);
   R_BSP_InterruptWrite(0x14,-0x6cba6);
@@ -102,7 +106,9 @@ void FUN_fff8f7ca(void)
   byte bVar1;
   
   bVar1 = ICU_IER0D;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0D = bVar1 & 0xbf;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR110;
   ICU_IPR110 = bVar1 & 0xf8 | 8;
   bVar1 = ICU_IER0D;
@@ -168,12 +174,16 @@ void FUN_fff8f809(void)
   uint system_mstpcra;
   undefined4 system_mstpcra_2;
   
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa502;
+                    /* Module Stop Control A [sfr] */
   system_mstpcra = SYSTEM_MSTPCRA;
   uVar1 = SYSTEM_MSTPCRA;
   SYSTEM_MSTPCRA = uVar1 & 0xfffeffff;
   system_mstpcra_2 = SYSTEM_MSTPCRA;
+                    /* A/D Conversion Time Setting Protection Release [sfr] */
   S12AD1_ADSAMPR = 3;
+                    /* A/D Conversion Time Setting [sfr] */
   S12AD1_ADSAM = 0x20;
   S12AD1_ADSAMPR = 2;
   uVar1 = SYSTEM_MSTPCRA;
@@ -191,6 +201,7 @@ void FUN_fff8f879(void)
   undefined4 local_4;
   uint bsc_ebmapcr;
   
+                    /* Extended Bus Master Priority Control [sfr] */
   bsc_ebmapcr = BSC_EBMAPCR;
   local_4 = bsc_ebmapcr & 0xfffca9b8 | 0x42130;
   BSC_EBMAPCR = local_4;
@@ -211,6 +222,7 @@ void charput(byte param_1)
   do {
     dbg_dbgstat = DBG_DBGSTAT;
   } while ((dbg_dbgstat & 0x100) != 0);
+                    /* Debug console CPU-to-emulator data [sfr] */
   DBG_C2E0 = (uint)param_1;
   return;
 }
@@ -229,6 +241,7 @@ uint charget(void)
   do {
     uVar1 = DBG_DBGSTAT;
   } while ((uVar1 & 0x1000) == 0);
+                    /* Debug console emulator-to-CPU data [sfr] */
   uVar1 = DBG_E2C0;
   return uVar1 & 0xff;
 }
@@ -436,10 +449,14 @@ void PowerON_Reset(void)
 
 {
   hw_init_clock();
+                    /* CC-RX section init [doc] */
   _INITSCT();
+                    /* Clears 0x74 words at 0x1FFC4 [doc] */
   bsp_callbacks_clear();
+                    /* CC-RX stdio init [doc] */
   _INIT_IOLIB();
   bsp_interrupt_open();
+                    /* Clears 4 halfwords at 0x1B5FC [doc] */
   FUN_fff8ff3d();
   hardware_setup();
   R_BSP_InterruptControl(0xb,1,(void *)0x10000000);
@@ -671,6 +688,7 @@ void R_BSP_RegisterProtectEnable(int param_1)
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
       bVar1 = MPC_PWPR;
+                    /* Write-Protect [sfr] */
       MPC_PWPR = bVar1 & 0x7f;
       bVar1 = MPC_PWPR;
       MPC_PWPR = bVar1 & 0xbf;
@@ -678,6 +696,7 @@ void R_BSP_RegisterProtectEnable(int param_1)
       MPC_PWPR = bVar1 | 0x80;
     }
     else {
+                    /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
       SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
     }
@@ -706,11 +725,13 @@ void R_BSP_RegisterProtectDisable(int param_1)
   if (*(short *)(&DAT_0001b5fc + local_4 * 2) == 0) {
     if (local_4 == 3) {
       bVar1 = MPC_PWPR;
+                    /* Write-Protect [sfr] */
       MPC_PWPR = bVar1 & 0x7f;
       bVar1 = MPC_PWPR;
       MPC_PWPR = bVar1 | 0x40;
     }
     else {
+                    /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
       SYSTEM_PRCR = system_prcr | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
     }
@@ -1029,6 +1050,7 @@ LAB_fff90228:
           bVar1 = ICU_IPR106;
           if (param_3 <= (bVar1 & 0xf)) {
             bVar1 = ICU_IPR106;
+                    /* Interrupt Source Priority 000 [sfr] */
             local_1c = bVar1 & 0xf;
           }
           bVar1 = ICU_IPR106;
@@ -1062,6 +1084,7 @@ LAB_fff90228:
             bVar1 = ICU_IPR110;
             if (param_3 <= (bVar1 & 0xf)) {
               bVar1 = ICU_IPR110;
+                    /* Interrupt Source Priority 000 [sfr] */
               local_1c = bVar1 & 0xf;
             }
             bVar1 = ICU_IPR110;
@@ -1095,6 +1118,7 @@ LAB_fff90228:
               bVar1 = ICU_IPR111;
               if (param_3 <= (bVar1 & 0xf)) {
                 bVar1 = ICU_IPR111;
+                    /* Interrupt Source Priority 000 [sfr] */
                 local_1c = bVar1 & 0xf;
               }
               bVar1 = ICU_IPR111;
@@ -1128,6 +1152,7 @@ LAB_fff90228:
                 bVar1 = ICU_IPR107;
                 if (param_3 <= (bVar1 & 0xf)) {
                   bVar1 = ICU_IPR107;
+                    /* Interrupt Source Priority 000 [sfr] */
                   local_1c = bVar1 & 0xf;
                 }
                 bVar1 = ICU_IPR107;
@@ -1161,6 +1186,7 @@ LAB_fff90228:
                   bVar1 = ICU_IPR112;
                   if (param_3 <= (bVar1 & 0xf)) {
                     bVar1 = ICU_IPR112;
+                    /* Interrupt Source Priority 000 [sfr] */
                     local_1c = bVar1 & 0xf;
                   }
                   bVar1 = ICU_IPR112;
@@ -1194,6 +1220,7 @@ LAB_fff90228:
                     bVar1 = ICU_IPR113;
                     if (param_3 <= (bVar1 & 0xf)) {
                       bVar1 = ICU_IPR113;
+                    /* Interrupt Source Priority 000 [sfr] */
                       local_1c = bVar1 & 0xf;
                     }
                     bVar1 = ICU_IPR113;
@@ -1298,6 +1325,7 @@ void NMI(void)
   byte bVar1;
   bool bVar2;
   
+                    /* Non-Maskable Interrupt Status [sfr] */
   bVar1 = ICU_NMISR;
   if (((bVar1 & 1) == 1) && (bVar1 = ICU_NMIER, (bVar1 & 1) == 1)) {
     bVar2 = true;
@@ -1308,6 +1336,7 @@ void NMI(void)
   if (bVar2) {
     R_BSP_InterruptControl(2,0,(void *)0x10000000);
     bVar1 = ICU_NMICLR;
+                    /* Non-Maskable Interrupt Status Clear [sfr] */
     ICU_NMICLR = bVar1 | 1;
   }
   bVar1 = ICU_NMISR;
@@ -1382,8 +1411,10 @@ void NMI(void)
     if ((bVar1 & 1) == 1) {
       R_BSP_InterruptControl(0xc,0,(void *)0x10000000);
       bVar1 = RAM_RAMSTS;
+                    /* RAM Error Status [sfr] */
       RAM_RAMSTS = bVar1 & 0xfe;
     }
+                    /* Expansion RAM Error Status [sfr] */
     bVar1 = RAM_EXRAMSTS;
     if ((bVar1 & 1) == 1) {
       R_BSP_InterruptControl(0xd,0,(void *)0x10000000);
@@ -1425,6 +1456,7 @@ undefined4 vec016_BSC_BUSERR(undefined4 param_1)
   byte bsc_berclr;
   
   bsc_berclr = BSC_BERCLR;
+                    /* Bus Error Status Clear [sfr] */
   BSC_BERCLR = bsc_berclr | 1;
   R_BSP_InterruptControl(0xb,0,(void *)0x10000000);
   return param_1;

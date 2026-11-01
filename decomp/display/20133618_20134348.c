@@ -503,6 +503,7 @@ void fb_layer2_restore(undefined4 param_1)
 {
   undefined4 uVar1;
   
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   uVar1 = fb_get_layer_addr(DAT_208085bc);
   memcpy(uVar1,param_1,0xbb800);
@@ -832,6 +833,7 @@ void FUN_201340a4(void)
   undefined2 *puVar3;
   int iVar4;
   
+                    /* fills the 3DSS line width table 0x317 - 10i [doc] */
   scope3d_widths_init(&DAT_2090836c,&DAT_203a70ae);
   scope3d_widths_init(&DAT_209083ac,&DAT_203a70ae);
   iVar4 = 0;
@@ -998,6 +1000,7 @@ void scope_objects_init(void)
   FUN_20163f80(&DAT_2047f400,0,0xf,&DAT_203d9a9e);
   FUN_20164018(&DAT_2047c848,&DAT_203b6704);
   FUN_20163f44(&DAT_2047f400,&DAT_203daf14);
+                    /* resets the three sub-objects [doc] */
   scope3d_obj_init(&DAT_20470294);
   uVar1 = FUN_20164680(&DAT_2047f400);
   uVar2 = FUN_2016469c(&DAT_2047c848);
@@ -1013,6 +1016,7 @@ void scope_objects_init(void)
   FUN_20158544(&DAT_2047963c,0);
   FUN_20162c28(&DAT_2047c442,DAT_2047032c);
   FUN_20162c28(&DAT_2047c644,DAT_20474d00);
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(&DAT_2047963c,2);
   scope_obj_history_clear(&DAT_2047963c);
   return;
@@ -1027,6 +1031,7 @@ void scope_objects_init(void)
 void scope_obj_bank_reset(undefined4 param_1)
 
 {
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(&DAT_2047963c,param_1);
   return;
 }
@@ -1139,11 +1144,13 @@ void scope3d_redraw_history(int param_1,int param_2)
   int *piVar5;
   
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring30_advance();
     iVar2 = 0x1d;
     do {
       iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       iVar4 = iVar2 * 800 + 0x2048395f;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
       __aeabi_memclr(iVar4,800);
       if (param_1 == 8) {
         if (param_2 == 0) {
@@ -1235,6 +1242,7 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
       } while (iVar2 < DAT_20494714);
     }
     *(int *)(&DAT_2048feb8 + iVar1 * 0x54) = DAT_20494714;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
     __aeabi_memclr(&DAT_20483c7f,800);
     if (param_1 == 8) {
       if (param_3 == 0) {
@@ -1298,8 +1306,10 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(&DAT_20494768,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);

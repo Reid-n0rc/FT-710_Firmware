@@ -1251,6 +1251,7 @@ void create_Thread_Rx_Audio(void)
                     ,6,0,0);
   xos_msgq_create(PTR_DAT_00236bc0,2,4,0);
   if_agc_init();
+                    /* state word 0x2576E4 = 0xFFFF [doc, inference] */
   rx_audio_init();
   return;
 }
@@ -1496,12 +1497,14 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   memcpy(&DAT_00259da0,param_1,0x60);
   uVar1 = DAT_2007000c;
   DAT_002577e0 = DAT_2007000c;
+                    /* Feed-forward AGC, one gain per block [fact: dsp-chains.md] */
   if_agc_process(&DAT_00259da0);
   switch(uVar1) {
   case 0:
   case 2:
   case 4:
   case 6:
+                    /* reg 6 = 0/2/4/6: Weaver, NCO 18 kHz + 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(0);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
@@ -1509,14 +1512,17 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   case 3:
   case 5:
   case 7:
+                    /* reg 6 = 1/3/5/7: Weaver, NCO at 18 kHz - 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(1);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 8:
+                    /* reg 6 = 8: AM envelope [fact: dsp-chains.md] */
     am_demod_init();
     am_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 9:
+                    /* reg 6 = 9: FM discriminator and noise squelch [fact: dsp-chains.md] */
     fm_demod_init();
     fm_demod(&DAT_00259da0,&DAT_00259da0);
   }
@@ -1551,6 +1557,7 @@ void Thread_Rx_Audio_entry(void)
     } while (iVar1 != 0);
     rx_audio_fifo_pop(&DAT_00259e00);
     rx_audio_chain(&DAT_00259e00,&DAT_0025a280,&DAT_0025a700);
+                    /* pushes 12 blocks of 96 bytes into FIFO ch [doc] */
     rx_audio_out_fifo_push(0,&DAT_0025a280);
     rx_audio_out_fifo_push(1,&DAT_0025a700);
   } while( true );
@@ -1582,6 +1589,7 @@ void fc1_spi_dma_init(void)
   SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
   DMA_Init(&DMA0_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA0_ENABLESET0;
   memw();
   DMA0_ENABLESET0 = uVar1 | 8;
@@ -1590,10 +1598,12 @@ void fc1_spi_dma_init(void)
   memw();
   DMA0_ENABLESET0 = uVar1 | 4;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL3_CFG;
   memw();
   DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL2_CFG;
   memw();
   DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
@@ -1614,6 +1624,7 @@ void spi_fc1_dma_init(void)
   DAT_0025abb0 = 0;
   memset(&DAT_200607e0,0,&DAT_000011f8);
   memset(&DAT_200619e0,0,&DAT_000011f8);
+                    /* DMA callbacks 0x2151B8 / 0x2151F0 [doc, inference] */
   SPI_MasterTransferCreateHandleDMA
             (&SPI1_BASE,&DAT_0025abd4,spi_fc1_dma_callback,0,&DAT_0025abb4,&DAT_0025abc4);
   return;
@@ -2690,10 +2701,12 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
   int i;
   undefined8 uVar7;
   
+                    /* G1, G2 from regs 0x31/0x32, level P from 0x34 [fact: dsp-chains.md] */
   tx_alc_update();
   i = 0;
   if (DAT_0025b5c8 == 0) {
     if (param_1 != param_2) {
+                    /* reg 0x34 bit 12 off: pass-through [fact: dsp-chains.md] */
       memcpy(param_2,param_1,0x60);
       return;
     }
@@ -2774,6 +2787,7 @@ void tx_core_init(void)
 {
   DAT_0025b600 = iir_cascade_init(&DAT_0025b610,5,&DAT_002373d0,1);
   DAT_0025b604 = iir_cascade_init(&DAT_0025b6d0,5,&DAT_002373d0,1);
+                    /* clears the TX EQ states 0x25AC00 [doc, inference] */
   tx_param_eq_init();
   peak_limiter_init(0);
   soft_knee_compressor_init();
@@ -2797,6 +2811,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   undefined8 uVar3;
   undefined8 uVar4;
   
+                    /* Decimate by 6 to 12 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b600,&DAT_0025b790,param_1,0x18);
   uVar2 = ae_l32_ip(DAT_0025b790);
   uVar1 = ae_l32_ip(DAT_0025b7a8);
@@ -2806,16 +2821,22 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7f8 = ae_s32_l_ip(uVar4);
   uVar1 = ae_l32_ip(DAT_0025b7d8);
   DAT_0025b7fc = ae_s32_l_ip(uVar1);
+                    /* 3-band parametric EQ (regs 0x25..0x2D) [fact: dsp-chains.md] */
   tx_param_eq_3band(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Speech processor = limiter instance 0 (0x2E/0x3B) [fact: dsp-chains.md] */
   peak_limiter(0,&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Soft-knee compressor (0x401A..0x401F; off) [fact: dsp-chains.md] */
   soft_knee_compressor(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* TX band-pass, one of 7 by reg 0x2F [fact: dsp-chains.md] */
   tx_bpf_select(&DAT_0025b7f0,&DAT_0025b800);
   if (DAT_2007000c == 9) {
+                    /* FM: HPF 293 Hz, gain reg 0x30, pre-emphasis [fact: dsp-chains.md] */
     fm_tx_audio(&DAT_0025b800,&DAT_0025b7f0);
   }
   else {
     memcpy(&DAT_0025b7f0,&DAT_0025b800,0x10);
   }
+                    /* Soft-knee limiter (0x4015..0x4019; off) [fact: dsp-chains.md] */
   soft_knee_limiter(&DAT_0025b7f0,&DAT_0025b7f0);
   memset(&DAT_0025b790,0,0x60);
   uVar1 = ae_l32_ip(DAT_0025b7f0);
@@ -2826,6 +2847,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7a8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar2 * 6.0));
   DAT_0025b7c0 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * 6.0));
   DAT_0025b7d8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * 6.0));
+                    /* Interpolate by 6 back to 72 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b604,param_2,&DAT_0025b790,0x18);
   return &DAT_0025b800;
 }
@@ -3021,7 +3043,9 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
           uVar5 = ae_l32_i(uVar2);
           fVar7 = (float)uVar5;
           uVar5 = __extendsfdf2();
+                    /* XCC soft double using the HiFi4 f64 assist ops [doc, inference] */
           uVar5 = __adddf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0xbff00000);
+                    /* XCC soft double [doc, inference] */
           uVar5 = __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __truncdfsf2();
