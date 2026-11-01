@@ -491,7 +491,8 @@ def infer_neighbours(objs, res):
 def _check_pass(objs, res):
     out = []
     for obj in objs:
-        base = os.path.relpath(obj.path, ROOT) if obj.path.startswith(ROOT) else os.path.basename(obj.path)
+        ap = os.path.abspath(obj.path)
+        base = os.path.relpath(ap, os.path.join(SRC, 'out', 'obj')) if ap.startswith(SRC) else os.path.basename(ap)
         for fname, shndx, off, size in obj.functions():
             oaddr = None if res.alias.get(fname) == '-' else res.func_addr(fname)
             if oaddr is None:
@@ -561,7 +562,16 @@ def build_status(rows, emu=None):
         cur = best.get(oaddr)
         if cur is None or RANK[verdict] < RANK[cur[4]]:
             best[oaddr] = (oaddr, oaddr + size, fname, obj, verdict, detail)
-    checked = sorted(best.values())
+    # a recreated function covers the original bytes from its address up to the next original function at most
+    # (a longer recompiled body must not count as covering its neighbour)
+    starts = sorted({a for a, _ in funcs.values()} | set(best))
+    import bisect
+    capped = []
+    for c in sorted(best.values()):
+        i = bisect.bisect_right(starts, c[0])
+        end = min(c[1], starts[i]) if i < len(starts) else c[1]
+        capped.append((c[0], end) + c[2:])
+    checked = capped
     out = []
     for gname, (a, n) in sorted(funcs.items(), key=lambda kv: kv[1][0]):
         over = [c for c in checked if c[0] < a + n and c[1] > a]
