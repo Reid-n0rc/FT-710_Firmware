@@ -3,18 +3,18 @@
 # decomp/ifdsp/m33/functions.tsv lacks. covered = bytes of the Ghidra function inside recreated
 # functions that passed (identical or equivalent); tools/readability_stats.py sums it.
 address	ghidra_name	size	source	file	verdict	covered	detail
-00080000	-	12	IAP_FlexspiNorInit	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 0008000c	IAP_FlexspiNorAutoConfig	32	IAP_FlexspiNorAutoConfig	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
 00080030	POWER_SetBiasConfig	24	POWER_SetBiasConfig	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	24	bytes and relocations match (size 32, Ghidra size 24)
 00080050	delay	14	delay	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	14	bytes and relocations match
 0008005e	deinitXip	48	deinitXip	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	48	bytes and relocations match (size 62, Ghidra size 48)
-0008009c	countPartitionSwitches	68			not yet	0	
+0008009c	countPartitionSwitches	68	countPartitionSwitches.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	68	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 000800e8	POWER_CalculateSafetyCount	424	POWER_CalculateSafetyCount	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	424	bytes and relocations match (size 448, Ghidra size 424)
-000802aa	initFlexSPI	124			not yet	0	
+000802a8	-	132	initFlexSPI.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+000802aa	initFlexSPI	124	initFlexSPI.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	124	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 0008032c	initXip	26	initXip	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	26	bytes and relocations match (size 32, Ghidra size 26)
-0008034c	POWER_EnterSleep_mode1	182			not yet	0	
-00080414	POWER_EnterSleep_mode2	182			not yet	0	
-000804dc	POWER_EnterSleep_mode3	174			not yet	0	
+0008034c	POWER_EnterSleep_mode1	182	POWER_EnterRbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00080414	POWER_EnterSleep_mode2	182	POWER_EnterFbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+000804dc	POWER_EnterSleep_mode3	174	POWER_EnterNbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	174	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 0008059c	POWER_EnterDeepSleep	852	POWER_EnterDeepSleep	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	852	bytes and relocations match (size 888, Ghidra size 852)
 00080914	BOARD_DeinitXip	26	BOARD_DeinitXip	board/board.o	identical	26	bytes and relocations match
 0008092e	BOARD_InitXip	114	BOARD_InitXip	board/board.o	identical	114	bytes and relocations match

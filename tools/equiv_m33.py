@@ -346,13 +346,17 @@ def check_function(obj, res, fname, shndx, off, size, oaddr, osize):
     return 'differs', '; '.join(problems[:4])
 
 
-def locate(obj, shndx, img):
-    """Addresses where a function section's bytes occur in the image, relocated fields masked (for functions that
-    Ghidra's list lacks, e.g. bodies it merged into a neighbour)."""
-    body = obj.section_data(shndx)
+def locate(obj, shndx, img, off=0):
+    """Addresses where a function's bytes (at off in its section) occur in the image, relocated fields masked (for
+    functions that Ghidra's list lacks, e.g. bodies it merged into a neighbour)."""
+    n = obj.extent(shndx, off)
+    body = obj.section_data(shndx)[off:off + n]
     mask = bytearray(len(body))
     for r in obj.relocs.get(shndx, []):
-        mask[r['r_offset']:r['r_offset'] + 4] = b'\1' * 4
+        o = r['r_offset'] - off
+        if 0 <= o < len(body):
+            mask[o:o + 4] = b'\1' * 4
+    mask = mask[:len(body)]
     # anchor on the longest unmasked run
     best, start, i = (0, 0), None, 0
     for i in range(len(body) + 1):
@@ -391,8 +395,8 @@ def check_objects(paths, img=None, res=None):
                 res.weak_alias[a] = c
     for obj in objs:
         for fname, shndx, off, size in obj.functions():
-            if off == 0 and res.func_addr(fname) is None and res.alias.get(fname) != '-':
-                hits = locate(obj, shndx, img)
+            if res.func_addr(fname) is None and res.alias.get(fname) != '-':
+                hits = locate(obj, shndx, img, off)
                 if hits:
                     res.located[fname] = hits[0]
     infer_neighbours(objs, res)
@@ -569,7 +573,8 @@ def build_status(rows, emu=None):
     capped = []
     for c in sorted(best.values()):
         i = bisect.bisect_right(starts, c[0])
-        end = min(c[1], starts[i]) if i < len(starts) else c[1]
+        # (an identical function's extent is exact, even where Ghidra put a function start inside it)
+        end = min(c[1], starts[i]) if i < len(starts) and c[4] != 'identical' else c[1]
         capped.append((c[0], end) + c[2:])
     checked = capped
     out = []
