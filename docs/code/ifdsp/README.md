@@ -67,7 +67,7 @@ sequenceDiagram
   ROM->>M: FlexSPI A boot, FCFB @0x08000400, vectors @0x08001000
   M->>M: ResetISR 0x080011A8: SystemInit (FPU, DSPSTALL=1, CACHE64)
   M->>M: copy 0x7EC4 B to SRAM 0x00080000, zero .bss, main 0x000872AE
-  M->>M: stdio_init, app_main 0x0008106C: GPIO, BOARD_InitPins, BOARD_BootClockRUN (198 MHz)
+  M->>M: stdio_init, main 0x0008106C: GPIO, BOARD_InitBootPins, BOARD_BootClockRUN (198 MHz)
   M->>M: regfile_clear (64 KB @0x20070000), aic3204_init, sct0_pwm_init, ipc_init (rpmsg master)
   M->>D: BOARD_DSP_Init: copy 3 images, DSPSTALL=0
   M->>D: MU-A flags=1
@@ -81,7 +81,7 @@ sequenceDiagram
   MAIN->>M: r/w register frames
 ```
 
-All steps **[fact]** from `app_main` (0x0008106C) and `BOARD_DSP_Init` (0x00084AD8). The meaning of the MU flag values on the DSP
+All steps **[fact]** from `main` (0x0008106C) and `BOARD_DSP_Init` (0x00084AD8). The meaning of the MU flag values on the DSP
 side is **[inference]**.
 
 ## Memory map summary
@@ -156,5 +156,5 @@ Pages not yet written are tracked by their sub-task on the board (`docs/tasks/RE
 | XOS thread priorities | Thread_Main 4, Thread_Ipc 13, Thread_Rx_Path / Thread_Tx_Path 7, Thread_Rx_Audio 6, Thread_Spi 5 | `xos_thread_create` arguments (T12e) **[fact]** |
 | CLKIN | 18.432 MHz (0x1194000), from the SDR module's `DSP_CLK` on PIO2_30 (func 5) | 0x0008494C; p19 **[fact]** |
 | Console UART | FLEXCOMM0, 115200 baud (0x1C200), 1 KB RX and TX rings | `uart0_init` 0x00080D0C **[fact]** |
-| IFDSP version register | reg 0 = 0x0101 (V01-01); MAIN reads regs 0–4 | `app_main`; MAIN `FUN_fff9d957`.. **[fact]** |
+| IFDSP version register | reg 0 = 0x0101 (V01-01); MAIN reads regs 0–4 | `main`; MAIN `FUN_fff9d957`.. **[fact]** |
 | Codec | AIC3204 is I2S master (BCLK/WCLK out), 32-bit words, PLL from MCLK, NDAC=5 MDAC=4 DOSR=64, NADC=5 MADC=4 AOSR=64 | init table 0x00087A1C **[fact: values]**, decode **[inference]** |

@@ -90,7 +90,7 @@ static void console_cmd_w(char **argv, int argc)
 }
 
 /* Dump 0x40 registers from reg, 8 per line; header is the line-start format. */
-static void console_dump(uint16_t reg, const char *header)
+static inline __attribute__((always_inline)) void console_dump(uint16_t reg, const char *header)
 {
     char buf[16];
     uint16_t end = reg + CONSOLE_DUMP_REGS;

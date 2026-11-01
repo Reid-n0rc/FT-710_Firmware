@@ -21,20 +21,22 @@
 00080c4c	regfile_write	void	int32, uint16	asm	asm: live-in r0:L,r1:W (= decompiler 2), 0/4 call sites read r0, writes r0 1, return void
 00080c78	regfile_set_bits	void	int32, uint16	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 1, return void
 00080d0c	uart0_init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
+00080f0c	uart0_printf	void	char * format	doc	recreated src/ifdsp_m33/app/uart.c (variadic; only the format is locked) (T24 round 2)
 00080f3c	uart0_tx_pending	bool	void	asm	asm: live-in - (= decompiler 0), 2/2 call sites read r0, writes r0 1, return value
 00081064	get_task_handles	void *	void	asm	asm: live-in - (= decompiler 0), 2/2 call sites read r0, writes r0 1, return value
 000811e0	sct0_pwm_init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
-00081264	SCTIMER_StartTimer	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
+00081264	sct0_pwm_start	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void (T24 round 2: was SCTIMER_StartTimer)
 000813b4	console_cmd_r	void	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 1, return void
 000813ec	console_init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 00081430	console_rx_char	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
-00081944	xPortIsInsideInterrupt	bool	void	asm	asm: live-in - (= decompiler 0), 4/4 call sites read r0, writes r0 1, return value
+00081944	platform_in_isr	bool	void	asm	asm: live-in - (= decompiler 0), 4/4 call sites read r0, writes r0 1, return value (T24 round 2: was xPortIsInsideInterrupt)
 00081958	platform_interrupt_enable	void	void	asm	asm: live-in - (= decompiler 0), 0/2 call sites read r0, writes r0 0, return void
 00081980	platform_interrupt_disable	void	void	asm	asm: live-in - (= decompiler 0), 0/2 call sites read r0, writes r0 0, return void
 000819b4	platform_init	int32	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 000819e8	env_init	uint32	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 00081a60	env_register_isr	void	uint32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
-00081be8	rpmsg_queue_nocopy_free	int32	void * rpmsg_lite_dev, void * data	doc	rpmsg-lite API int32_t rpmsg_queue_nocopy_free(struct rpmsg_lite_instance *, void *); live-in r0, r1 [fact, 0x81BE8]
+00081a74	env_isr	void	uint32 vector	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00081be8	rpmsg_lite_release_rx_buffer	int32	void * rpmsg_lite_dev, void * rxbuf	doc	rpmsg-lite v3.1.0 rpmsg_lite.c int32_t rpmsg_lite_release_rx_buffer(struct rpmsg_lite_instance *, void *); byte-identical [fact: T24 status.tsv]; was rpmsg_queue_nocopy_free (T24 round 2)
 00081c28	rpmsg_lite_master_init	int32 *	uint32, uint32, int32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00081dec	virtqueue_create	uint32	uint16, uint32, int32 *, uint32, uint32, int32 *	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 6), 1/1 call sites read r0, writes r0 1, return value
 00081e80	prvInsertBlockIntoFreeList	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
@@ -45,6 +47,7 @@
 00082084	vPortEnterCritical	void	void	asm	asm: live-in - (= decompiler 0), 0/27 call sites read r0, writes r0 1, return void
 000820a0	vPortExitCritical	void	void	asm	asm: live-in - (= decompiler 0), 0/31 call sites read r0, writes r0 1, return void
 000820c8	pxPortInitialiseStack	void *	int32, uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (= decompiler 4), 1/1 call sites read r0, writes r0 1, return value
+00082138	xPortStartScheduler	int32	void	doc	port.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00082174	xEventGroupSetBitsFromISR	uint32	uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00082184	vQueueAddToRegistry	void	uint32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
 000821a8	vQueueUnregisterQueue	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
@@ -74,12 +77,26 @@
 00082bec	prvCheckForValidListAndQueue	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
 00082c44	prvInsertTimerInActiveList	uint32	int32, uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (= decompiler 4), 2/3 call sites read r0, writes r0 1, return value
 00082cc4	xTimerGenericCommand	uint32	int32, int32, uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 5), 3/3 call sites read r0, writes r0 1, return value
+00082f48	xTimerPendFunctionCallFromISR	int32	void * xFunctionToPend, void * pvParameter1, uint32 ulParameter2, int32 * pxHigherPriorityTaskWoken	doc	timers.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00082fb4	CLOCK_GetFFroFreq	uint32	void	asm	asm: live-in - (= decompiler 0), 3/4 call sites read r0, writes r0 1, return value
 00083038	CLOCK_GetSysPfdFreq	uint32	uint32	asm	asm: live-in r0:L (= decompiler 1), 4/4 call sites read r0, writes r0 1, return value
 00083098	CLOCK_GetMainPllClkFreq	uint32	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 00083148	CLOCK_GetAudioPfdFreq	uint32	uint32	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 000831c4	CLOCK_GetMainClkFreq	void *	void	asm	asm: live-in - (= decompiler 0), 2/4 call sites read r0, writes r0 1, return value
+000832a8	CLOCK_GetAdcClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00083318	CLOCK_GetClockOutClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000833c0	CLOCK_GetFRGClock	uint32	uint32 id	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00083470	CLOCK_GetFlexCommClkFreq	uint32	uint32	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
+000834d0	CLOCK_GetFlexspiClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+0008351c	CLOCK_GetSctClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00083570	CLOCK_GetMclkClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000835a4	CLOCK_GetWdtClkFreq	uint32	uint32 id	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000835cc	CLOCK_GetSystickClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00083614	CLOCK_GetSdioClkFreq	uint32	uint32 id	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00083678	CLOCK_GetI3cClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000836ac	CLOCK_GetUsbClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000836e0	CLOCK_GetDmicClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00083758	CLOCK_GetAcmpClkFreq	uint32	void	doc	fsl_clock.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 000838a8	CLOCK_SetFRGClock	void	uint8 *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 000838f4	CLOCK_EnableFfroClk	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 000839fc	CLOCK_InitSysPll	void	uint8 *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
@@ -87,6 +104,7 @@
 00083b4c	CLOCK_InitAudioPll	void	uint8 *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 00083c54	CLOCK_InitAudioPfd	void	int32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 1, return void
 00083c9c	CLOCK_EnableSysOscClk	void	int32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 1, return void
+00083ce4	CTIMER_GenericIRQHandler	void	uint32 index	doc	fsl_ctimer.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00083d40	DMA_GetInstance	uint32	void *	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 00083e28	DMIC0_DriverIRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 00083e38	HWVAD0_DriverIRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
@@ -98,6 +116,8 @@
 00084470	POWER_ApplyPD	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008448c	POWER_UpdateOscSettlingTime	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 00084498	RESET_SetPeripheralReset	void	uint8	skip	a locked uint8 parameter loses the jump-table switch variable (7 new warnings, T23f export check)
+00084504	RESET_ClearPeripheralReset	void	uint32 peripheral	doc	fsl_reset.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+0008457c	SCTIMER_EventHandleIRQ	void	void * base	doc	fsl_sctimer.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00084670	SCTIMER_CreateAndScheduleEvent	uint8	int32 *, uint32, int32, uint32, char, uint32 *	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 6), 2/2 call sites read r0, writes r0 1, return value
 0008477c	SCTIMER_SetupPwm	uint32	int32, uint8 *, int32, uint32, uint32, uint32 *	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 6), 1/1 call sites read r0, writes r0 1, return value
 000848f4	SEMA42_Init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
@@ -110,6 +130,7 @@
 00084e04	_Csys_alloc	int32	uint32	asm	asm: live-in r0:L (> decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 00084e24	tolower	uint8	int32	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 00084e38	stdio_init	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
+00085b80	vsprintf	int32	char * buf, char * format, void * ap	doc	(buffer, format, va_list): console_printf and uart0_printf pass the address of their variadic arguments as the third argument [fact: 0x8138C, 0x80F0C] (T24 round 2)
 00085bdc	_Cdigit_value	int32	int32, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 1/1 call sites read r0, writes r0 1, return value
 00085cc0	strtoul	uint16	uint8 *, uint8 *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 7/8 call sites read r0, writes r0 1, return value
 00085d48	_sbrk	void *	int32	asm	asm: live-in r0:L (= decompiler 1), 2/2 call sites read r0, writes r0 1, return value
@@ -119,18 +140,32 @@
 00085fae	console_puts	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/10 call sites read r0, writes r0 1, return void
 00086014	is_hex_string	uint32	uint8 *	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 00086044	frame_checksum_ok	bool	char *, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 2/2 call sites read r0, writes r0 1, return value
+0008606c	platform_patova	void *	uint32 addr	doc	rpmsg_platform.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+0008606e	env_allocate_memory	void *	uint32 size	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00086072	env_free_memory	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
+0008607a	env_memset	void	void * ptr, int32 value, uint32 size	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+0008607e	env_memcpy	void	void * dst, void * src, uint32 len	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00086082	env_strncpy	void	char * dest, char * src, uint32 len	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00086086	env_mb	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008608c	env_rmb	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 00086092	env_wmb	void	void	asm	asm: live-in - (= decompiler 0), 0/2 call sites read r0, writes r0 0, return void
+00086098	env_map_vatopa	uint32	void * address	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+0008609c	env_map_patova	void *	uint32 address	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 000860a0	env_create_mutex	int32	int32 *, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 2/2 call sites read r0, writes r0 1, return value
+000860c0	env_delete_mutex	void	void * lock	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 000860c4	env_lock_mutex	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/7 call sites read r0, writes r0 1, return void
 000860de	env_unlock_mutex	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/7 call sites read r0, writes r0 1, return void
+000860fa	env_sleep_msec	void	uint32 num_msec	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000860fe	env_enable_interrupt	void	uint32 vector_id	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00086102	env_disable_interrupt	void	uint32 vector_id	doc	rpmsg_env_freertos.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00086106	env_create_queue	int32	int32 *, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00086120	env_put_queue	bool	uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 0008616e	env_get_queue	bool	uint32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00086200	add_to_list	void	int32 *, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/1 call sites read r0, writes r0 0, return void
 0008621e	rpmsg_lite_tx_callback	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/0 call sites read r0, writes r0 0, return void
+00086240	vq_rx_free_master	void	void * rvq, void * buffer, uint32 len, uint16 idx	doc	rpmsg_lite.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+00086244	vq_tx_alloc_master	void *	void * tvq, uint32 * len, uint16 * idx	doc	rpmsg_lite.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
+000862ae	vq_rx_master	void *	void * rvq, uint32 * len, uint16 * idx	doc	rpmsg_lite.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 000862b2	rpmsg_lite_create_ept	int32 *	int32, int32, int32, int32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (= decompiler 4), 1/1 call sites read r0, writes r0 1, return value
 00086342	vq_ring_update_avail	void	int32, uint16	asm	asm: live-in r0:L,r1:W (= decompiler 2), 0/2 call sites read r0, writes r0 1, return void
 00086370	vq_ring_update_used	void	int32, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 1, return void
@@ -140,11 +175,13 @@
 000864aa	virtqueue_disable_cb	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 000864d2	virtqueue_kick	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 1, return void
 00086518	vq_ring_init	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
+00086538	virtqueue_notification	void	void * vq	doc	virtqueue.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00086542	vPortYield	void	void	asm	asm: live-in - (= decompiler 0), 0/14 call sites read r0, writes r0 0, return void
 00086596	ulSetInterruptMask	uint32	void	asm	asm: live-in - (= decompiler 0), 3/67 call sites read r0, writes r0 1, return value
 000865ac	vClearInterruptMask	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 0, return void
 000865ba	xEventGroupCreate	void *	void	asm	asm: live-in - (= decompiler 0), 1/1 call sites read r0, writes r0 1, return value
 000865d4	xEventGroupWaitBits	uint32	uint32 *, uint32, int32, int32, int32	asm	asm: live-in r0:L,r1:L,r2:L,r3:L (stack decompiler 5), 1/1 call sites read r0, writes r0 1, return value
+00086712	vEventGroupSetBitsCallback	void	void * pvEventGroup, uint32 ulBitsToSet	doc	event_groups.c vendor prototype, byte-identical function [fact: T24 src/ifdsp_m33/status.tsv] (T24 round 2)
 00086716	vListInitialise	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/10 call sites read r0, writes r0 0, return void
 0008672c	vListInitialiseItem	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/2 call sites read r0, writes r0 0, return void
 00086732	vListInsertEnd	void	int32 *, int32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/10 call sites read r0, writes r0 0, return void
@@ -169,16 +206,17 @@
 00086f14	MU_SetFlags	void	int32, uint32	asm	asm: live-in r0:L,r1:L (= decompiler 2), 0/2 call sites read r0, writes r0 0, return void
 00086f2e	PINT_PatternMatchResetDetectLogic	uint32	int32	skip	PIN_INT0_DriverIRQHandler passes r2/r3 on to an indirect callback after the call; locking kills them (in_r3, extraout_r2; T23f export check)
 00086f3c	PINT_PinInterruptClrStatus	void	uint32 *, uint32	skip	PIN_INT0_DriverIRQHandler tail-calls it after an indirect callback; locking it gives the handler extraout_r2/in_r3 (T23f export check)
-00086f52	RESET_ClearPeripheralReset	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/4 call sites read r0, writes r0 1, return void
+00086f52	RESET_PeripheralReset	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/4 call sites read r0, writes r0 1, return void (T24 round 2: was RESET_ClearPeripheralReset)
 00086f64	SCTIMER_GetDefaultConfig	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 00086fec	SEMA42_Lock	void	int32, uint32, char	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/1 call sites read r0, writes r0 1, return void
 0008702c	USART_GetDefaultConfig	void	void *	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 0008704e	USART_SetBaudRate	void *	uint32 *, uint32, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 1/1 call sites read r0, writes r0 1, return value
 00087234	BOARD_FlexspiClockSafeConfig	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
-00087240	app_init_nop	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
+0008723c	BOARD_InitBootClocks	void	void	doc	recreated board/clock_config.c (T24 round 2)
+00087240	BOARD_InitBootPeripherals	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void (T24 round 2: was app_init_nop)
 00087242	BOARD_InitPins_flexcomm	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008726c	BOARD_InitPins_i2s	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
-00087294	BOARD_InitPins	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void
+00087294	BOARD_InitBootPins	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 1, return void (T24 round 2: was BOARD_InitPins)
 000872c4	free	void	int32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 0, return void
 00087336	strcmp	int32	uint32 *, uint32 *	asm	asm: live-in r0:L,r1:L (= decompiler 2), 3/3 call sites read r0, writes r0 1, return value
 0008737a	strlen	int32	uint32 *	asm	asm: live-in r0:L (= decompiler 1), 10/10 call sites read r0, writes r0 1, return value
@@ -188,8 +226,8 @@
 00087702	remove	void	uint32	asm	asm: live-in r0:L (= decompiler 1), 0/1 call sites read r0, writes r0 1, return void
 00087716	_Cfflush1	uint32	int32 *	asm	asm: live-in r0:L (= decompiler 1), 1/1 call sites read r0, writes r0 1, return value
 00087756	__aeabi_uldivmod	uint64	uint64 n, uint64 d	doc	ARM RTABI (IHI 0043) 4.3.1: n in r0:r1, d in r2:r3, quotient in r0:r1 (the remainder in r2:r3 is not modelled) [fact]
-000878cc	memcpy	void	void *, void *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/7 call sites read r0, writes r0 0, return void
-00087900	memset	void	uint32 *, uint32, uint32	skip	never writes r0 and callers (siprintf/sprintf/snprintf) keep r1-r3 across it (gcc -fipa-ra); locking loses their variadic arguments (T23f export check)
+000878cc	memcpy_body	void	void *, void *, uint32	asm	asm: live-in r0:L,r1:L,r2:L (= decompiler 3), 0/7 call sites read r0, writes r0 0, return void (T24 round 2: was memcpy)
+00087900	memset_body	void	uint32 *, uint32, uint32	skip	never writes r0 and callers (siprintf/sprintf/snprintf) keep r1-r3 across it (gcc -fipa-ra); locking loses their variadic arguments (T23f export check) (T24 round 2: was memset)
 00087932	__sys_appexit	void	void	asm	asm: live-in - (= decompiler 0), 0/1 call sites read r0, writes r0 0, return void
 0008793a	__sys_flen	uint32	void	asm	asm: live-in - (= decompiler 0), 2/2 call sites read r0, writes r0 1, return value
 00087940	__sys_istty	uint32	void	asm	asm: live-in - (= decompiler 0), 2/2 call sites read r0, writes r0 1, return value
@@ -211,17 +249,17 @@
 080012fc	ACMP_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 0800130c	Reserved42_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 08001314	HYPERVISOR_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
-0800131c	SECURE_VIOLATION_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
+0800131c	SECUREVIOLATION_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void (T24 round 2: was SECURE_VIOLATION_IRQHandler)
 0800132c	Reserved46_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 08001334	RNG_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 0800133c	RTC_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
-08001344	DSP_TIE_EXPSTATE1_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
+08001344	DSPWAKE_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void (T24 round 2: was DSP_TIE_EXPSTATE1_IRQHandler)
 080013ac	SGPIO_INTA_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 080013b4	SGPIO_INTB_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
-080013c4	USB0_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
-080013cc	USB0_NEEDCLK_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
+080013c4	USB_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void (T24 round 2: was USB0_IRQHandler)
+080013cc	USB_WAKEUP_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void (T24 round 2: was USB0_NEEDCLK_IRQHandler)
 080013d4	WDT1_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
-080013dc	USB_PHYDCD_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
+080013dc	USBPHY_DCD_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void (T24 round 2: was USB_PHYDCD_IRQHandler)
 080013ec	PUF_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 080013f4	POWERQUAD_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void
 080013fc	CASPER_IRQHandler	void	void	asm	asm: live-in - (= decompiler 0), 0/0 call sites read r0, writes r0 0, return void

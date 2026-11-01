@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 started) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 86.5 % re-implemented, round 2; DISPLAY started) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -159,7 +159,7 @@ functions lands at its original address (the Redlib stand-ins are smaller, the s
 2-aligned/4-aligned interleaving of the startup differs). *Open: whether the built image boots; would be settled by
 loading it into RAM over SWD (J2009) with the owner's approval, or by a full-system emulation of the reset path.*
 
-### Findings for the Ghidra project (not applied: `ghidra/` and `decomp/` were not changed by T24)
+### Findings for the Ghidra project (round 1; put into the Ghidra scripts in round 2, below)
 
 - Names Ghidra has wrong, with the byte evidence in `src/ifdsp_m33/aliases.tsv`: 0x872AE is Redlib's `__main` and 0x8106C
   (`app_main`) is `main`; `POWER_EnterSleep_mode1/2/3` are `POWER_EnterRbb/Fbb/Nbb`; 0x86F52 is `RESET_PeripheralReset`
@@ -174,11 +174,140 @@ loading it into RAM over SWD (J2009) with the owner's approval, or by a full-sys
   `memcpy`/`memset` entries 0x872BC/0x872C0, `CTIMER_GenericIRQHandler`, ... (status.tsv rows with `ghidra_name` "-").
 - `is_hex_string` (0x86014) checks only about the first half of its string (index and pointer both advance) [fact].
 
+## IFDSP M33, round 2 (2026-11-01)
+
+### Plan (round 2)
+
+1. Ghidra side from the round-1 findings: names, the functions Ghidra lacks (FixFuncEntries entries), signatures,
+   docs; prove the update on a copy of the canonical project and compare the export quality.
+2. Redlib stand-ins (one file per original member), checked by bytes or emulation; the three app functions that
+   differ; the PWM functions; the link layout.
+3. Start the next image (DISPLAY) as far as the budget goes.
+
+### Ghidra corrections (applied to the scripts, proved on a copy; `ghidra/` and `decomp/` unchanged)
+
+The byte check names a function as a **[fact]** where it is byte-identical to a known source function; the full list
+with evidence is `docs/code/ifdsp/m33-platform.md` section 11. Renamed in `tools/ghidra/IfdspM33Names.java`,
+`names_ifdsp.T12d.tsv`, `signatures_m33.tsv` and `docs/code/ifdsp/*.md`: 0x872AE `main` → `__main`, 0x8106C `app_main`
+→ `main`, `POWER_EnterSleep_mode1/2/3` → `POWER_EnterRbb/Fbb/Nbb`, 0x81944 `xPortIsInsideInterrupt` → `platform_in_isr`,
+0x8606A `env_map_vatopa` → `platform_vatopa`, 0x85B80 `sprintf` → `vsprintf`, 0x85A9C `siprintf` → `sprintf`, 0x86F52
+`RESET_ClearPeripheralReset` → `RESET_PeripheralReset`, 0x87008 `SEMA42_ResetAllGates` → `SEMA42_ResetGate`, 0x81BE8
+`rpmsg_queue_nocopy_free` → `rpmsg_lite_release_rx_buffer`, 0x81264 `SCTIMER_StartTimer` → `sct0_pwm_start`, 0x878CC /
+0x87900 `memcpy`/`memset` → `memcpy_body`/`memset_body` (the linked `memcpy`/`memset` are the `b.w` entries 0x872BC /
+0x872C0), `DefaultHandler` → `IntDefaultHandler`, five vector handlers to their SDK 2.9 startup names; **[inference]**:
+0x87240 `app_init_nop` → `BOARD_InitBootPeripherals`, 0x87294 `BOARD_InitPins` → `BOARD_InitBootPins`. Correction of
+round 1's finding: of the `env_*` names only 0x8606A was wrong; the others Ghidra had were right, and ten more were
+missing. `tools/ghidra/entries_m33.tsv` gains 40 entries (the 38 functions outside any Ghidra function, two bodies
+merged into `CLOCK_GetFlexCommClkFreq`), and `initFlexSPI` moves to 0x802A8 (the `ldr` before its `push`).
+`is_hex_string`'s bug is documented in `docs/code/ifdsp/control-link.md` (it checks only the first half of the string).
+
+**Commands for the canonical project** (repository root; `GHIDRA_JAVA_HOME` only where the default JDK is not 21):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/ifdsp/m33/quality.tsv /tmp/quality_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_m33.tsv \
+  -postScript IfdspM33Names.java \
+  -postScript ApplySignatures.java tools/ghidra/signatures_m33.tsv \
+  -postScript NameVariables.java log=/tmp/namevars_ifdsp_m33.tsv sfr=tools/ghidra/sfr_rt685.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript CommentCode.java tools/ghidra/sfr_rt685.tsv tools/ghidra/purposes_m33.tsv tools/ghidra/comments_m33.tsv /tmp/comments_m33.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/ifdsp/m33" 50
+# the purposes follow the exported names: derive them again, comment again, export again (converges here)
+python3 -I tools/code_comments.py purposes m33
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript CommentCode.java tools/ghidra/sfr_rt685.tsv tools/ghidra/purposes_m33.tsv tools/ghidra/comments_m33.tsv /tmp/comments_m33.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/ifdsp/m33" 50
+python3 -I tools/decomp_quality.py compare /tmp/quality_before.tsv decomp/ifdsp/m33/quality.tsv m33
+python3 -I tools/code_comments.py check m33 && python3 -I tools/readable_view.py build ifdsp/m33
+python3 -I tools/readability_stats.py readme
+```
+
+Proof on a copy (`/home/user/ghidra_tasks/t24r2/proj`, OWNER root, 2026-11-01) [fact: logs there]: FixFuncEntries 42
+created, 1 late start removed, 0 failed, 30 branches marked as tail calls; IfdspM33Names 406 named; ApplySignatures 256
+applied, 0 failed; NameVariables 34 renamed, 0 failed; ExportDecomp 449 functions (was 427; the new thunks are not
+exported), 0 failed. `decomp_quality.py compare` against the committed export: **no metric worse, 9 better** (warnings
+179 → 150, functions with warnings 92 → 87, unreachable-block warnings 37 → 16, functions with `in_` 9 → 8, `extraout_`
+16 → 13). The second CommentCode pass gives the same quality, and a third `purposes` run changes nothing. Until the
+re-export, the README shows the M33 "documented" figure at 98.6 % (the docs use the new names, `decomp/` the old ones).
+
+### Harness (tools/equiv_m33_emu.py)
+
+Round 1's rule ("a quarter of the trials return") let the printf core pass although its format argument (on the stack)
+was never drawn: every trial formatted an empty string [fact: the reduced stand-in passed]. Round 2 adds: four stack
+argument slots; printf-like format strings; **block coverage** of the original (block hook, which leaves Thumb IT blocks
+alone, against a static leader scan); `equivalent` needs every trial to agree, one normal return and at least half of
+the original's blocks reached. PRESETS build valid state where a function walks a structure (heap list, stream, DSP
+message, PWM event/ticks); the `__sys_*` calls are stubbed with random returns, because in the image they always fail
+and leave most stdio unreachable. `equiv_m33.py`: an equivalent function covers the original up to the next original
+function, as the metric above defines (round 1 counted only its own recompiled size).
+
+The PWM functions: their round-1 trials did not hang in a poll loop; they faulted in `SCTIMER_UpdatePwmDutycycle`
+reading `EV[event]` with the random `.bss` event number [fact: trial trace]. With a valid event number both pass
+(`sct0_pwm_init` byte-identical, `sct0_pwm_callback` equivalent, 200 of 200 trials return, all blocks reached).
+
+### Redlib stand-ins (src/ifdsp_m33/libc/redlib/)
+
+One file per original member. Byte-identical: `_Csys_alloc`, `free`, `__check_heap_overflow`, `ftell`, `remove`,
+`file_clear_flag20`, `_Cfclose`, the eight `__sys_*` stubs, `memcpy`/`memset` entries, and as **hand-written assembly**
+(`.S`, the image's instructions, labels by original address) `__aeabi_uldivmod` with its helper and the copy/fill loops
+[inference for "hand-written": flag-setting instructions inside IT blocks and carry tricks no compiler emits].
+Equivalent (with coverage): `malloc` (100 % of 23 blocks), `fputc` (93 %), `fseek`, `_Cfdopen`, `_Cfflush1`,
+`_Cwrite_buffer`, `fflush`, `file_flush_write_buffer`, `setvbuf`, `stdio_init`, `_sbrk`, `sprintf`, `snprintf`,
+`vsprintf`, `strtoul`, `_strtoul_core`, `_Cdigit_value`. `malloc` does not byte-match with any GCC 9.2..12.2 or -O1/-O2/-Os
+(its loop is laid out test-at-bottom with the preheader at the end); *Open: Redlib's compiler and options; would be
+settled by the MCUXpresso IDE release that bundled 10-2020-q4 and its Redlib build notes*. The printf core
+`vsnprintf_core` (2,778 bytes) is a **reduced stand-in** with the original interface `(stream, 64-bit limit in r2:r3,
+format, va_list, hook)`; it differs (open below).
+
+### Link layout
+
+The image's order is reproduced by: object order application, rpmsg-lite (platform, env, queue, llist, lite,
+virtqueue), FreeRTOS (heap_4, port, portasm, event_groups, list, queue, tasks, timers), SDK drivers by file name, board
+files, C library members; input sections sorted by alignment (16, 4, 2) **including CodeQuickAccess**, which is also
+kept although unreferenced [fact: IAP_FlexspiNorAutoConfig, POWER_EnterDeepSleep and OTFAD_Init have no callers but are
+in the image, ordered fsl_iap, fsl_power, board (4-byte aligned), fsl_otfad (2)]. Result: 23 of 431 functions at their
+original address (round 1: 1), **402 of 430 consecutive pairs with the original spacing, 428 in the original order**;
+every address difference follows a function whose recreated size differs (the first: `aic3204_spi_write`, 96 vs 100
+bytes). The remaining order difference is in console.c (GCC emits `console_cmd_d` before `console_cmd_w`); *Open:
+whether the IDE build used -fno-toplevel-reorder; would be settled by building console.c with it and comparing the
+order of every other file*. `console_dump` is now inlined into both callers (the image has no separate dump function:
+`console_cmd_d` is 128 bytes) [inference].
+
+### Results (status.tsv, round 2)
+
+| Verdict | Ghidra functions | Bytes (of 28,424) |
+|---|---:|---:|
+| identical | 392 | 21,182 |
+| equivalent (with coverage) | 33 | 3,398 |
+| differs | 2 (`console_rx_char`, `vsnprintf_core`) | 3,836 |
+| not yet | 0 | |
+
+**Re-implemented: 86.5 %** (24,580 of 28,416 bytes; round 1: 74.2 %).
+
+### DISPLAY (started 2026-11-01)
+
+`src/display/app/crc.c` (`crc16_xmodem` 0x2010AA30) and `tools/equiv_display_emu.py` (Unicorn, A32): **equivalent**,
+200 trials; the mutation 0x1021 → 0x1023 is reported as differing. The harness handles leaf functions without
+relocations. Blockers and next steps: armcc 5 is not available (no byte match, as planned); the A32 harness needs the
+relocation/stub machinery of `equiv_m33_emu.py` (callees at original addresses, NORTi service calls stubbed:
+`docs/code/display/boot-rtos.md` lists them) before functions with callees or globals can be checked; no
+`status.tsv` for DISPLAY yet (the README column stays "not started" until one exists). Also seen: Ghidra types
+`crc16_xmodem`'s return as `byte`, but the code returns 16 bits (`uxth r0`) [fact: 0x2010AA4C].
+
 ## Open steps
 
-1. M33: make `console_rx_char`, `FLEXCOMM0_IRQHandler`, `create_IpcTasks` byte-identical or equivalent (diff shows the
-   remaining scheduling differences); teach the harness to model the SCTimer registers so the PWM functions can be checked.
-2. M33: Redlib stand-ins for the rest (stdio, heap, printf core, `__aeabi_uldivmod`), checked by emulation; then the exact
-   link layout (object order, Redlib sizes) so the built image can be compared byte for byte as a whole.
-3. Apply the Ghidra findings above to the canonical project (rename list, missing functions) and re-export (T23 rules).
-4. Next images in this order: DISPLAY (Unicorn, ARM), HiFi4 (Ghidra p-code), MAIN (CC-RX check first).
+1. M33 `vsnprintf_core` (2,778 B, 9.8 % of the code): translate 0x84EB0..0x85989 (flags, `*` width/precision, length
+   modifiers l ll L q h hh j z t, conversions a c d e f g i n o p s u x X, 64-bit values through `__aeabi_uldivmod`, the
+   hook for floating point) and check it with the printf-like inputs the harness now draws.
+2. M33 `console_rx_char` (1,058 B): the recreated one faults where the original returns (trial 0 of the harness: a
+   store at `s_line[s_lineLen]` with the random `.bss` length); needs a console-state preset (line length < 128, flags
+   0/1) and then the remaining differences of the line editor and both command modes.
+3. M33 remaining layout differences: sizes of the non-identical functions; `console_cmd_d`/`console_cmd_w` order.
+4. Apply the Ghidra corrections to the canonical project with the commands above and re-export (T23 rules), then add
+   0x872F4 (`printf_float_none`, the hook) to `entries_m33.tsv` (not a Ghidra function yet).
+5. DISPLAY: port the relocation and stub machinery to the A32 harness; NORTi service calls as stubs; then the
+   library functions (strcpy, strlen, memcpy, crc*) and the drivers. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.
