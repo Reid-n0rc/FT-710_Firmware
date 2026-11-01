@@ -756,6 +756,8 @@ library string is lowsrc's `C:\stdin`/`C:\stdout`/`C:\stderr` at 0xFFF8F2E9..0xF
 | Driver source | **Renesas Code Generator** (`r_cg_*`, `R_<module>_Create/_Start/_Stop`, empty `_Create_UserInit`) **[inference: names and structure, T05/T23d]** | e.g. `R_SCI0_Create` 0xFFF9321F .. `R_SCI0_Create_UserInit` 0xFFF9340D (`rts`); BSP pieces with the FIT `r_bsp` API (`R_BSP_InterruptRequestEnable`, `R_BSP_SoftwareInterruptControl`, bsp.md) |
 | CC-RX version | **Open** | *Open: the version and the exact options; would be settled by compiling the Code Generator's `r_cg_sci.c`/`r_cg_sci_user.c` at `-optimize=0 -isa=rxv2 -fpu` with each candidate CC-RX release and comparing bytes, as done for the M33 GCC (the image's `-optimize=0` code is regular enough that a byte match per function is likely), or by the release notes of the first CC-RX release that emits FTOU* |
 
+**Owner decision (2026-11-01): use the CC-RX evaluation edition.** It is still not reachable from the container (www.renesas.com fails at the proxy). It becomes usable once the owner either allows the Renesas download host in the environment's network settings or puts the installer in the container. Nothing of CC-RX (installer, compiler, libraries, licence files) may be committed (AGENTS.md); builds with it stay in `src/main/out/`.
+
 **Obtaining CC-RX: blocked.** www.renesas.com (where the evaluation edition and its licence are published) and
 llvm-gcc-renesas.com are refused by the container's proxy [fact: `curl` CONNECT 403, and the proxy's
 `recentRelayFailures` list `connect_rejected` for both hosts, 2026-11-01]; the evaluation edition's licence terms
