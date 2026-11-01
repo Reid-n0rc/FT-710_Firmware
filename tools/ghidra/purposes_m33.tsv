@@ -16,7 +16,6 @@
 00080c78	regfile_set_bits	word[reg] |= v in a critical section	fact	control-link.md
 00080ca4	uart0_write	Copy bytes into the TX ring	fact	control-link.md
 00080e50	FLEXCOMM0_IRQHandler	One byte per interrupt	fact	control-link.md
-00080f3c	uart0_tx_pending	TX count ≠ 0	fact	control-link.md
 00080fe8	ipc_print_dsp_reply	category/command text on the console	fact	ipc.md
 0008106c	app_main	SEMA42 init/reset, flags 1	fact	ipc.md
 00081164	sct0_pwm_callback	Every 400 periods	fact	control-link.md
@@ -42,7 +41,6 @@
 00085f70	__check_heap_overflow	new_end >= 0xA2EF8	fact	m33-platform.md
 00085f88	aic3204_select_right_input	Page 1, R55 = 0x10	fact	control-link.md
 00086014	is_hex_string	All chars in 0-9A-Fa-f	fact	control-link.md
-000861da	rpmsg_queue_create	queue of vq_nentries × 12 B	fact	ipc.md
 00086ec4	hashcrypt_save_running_hash	n = 5 if ctx byte +0x44 == 1	inference	m33-platform.md
 000872c4	free	Marks block 0x10000000 and merges free successors	inference	m33-platform.md
 000874b0	fputc	FILE output slow path, 19 callers	inference	m33-platform.md

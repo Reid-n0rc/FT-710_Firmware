@@ -3,9 +3,14 @@
 # Applied by tools/ghidra/CommentCode.java as a comment above the first call of each function in every caller.
 # address	name	purpose	tag (fact / inference, from the doc row)	doc page
 fff8f8f5	_INIT_IOLIB	CC-RX stdio init	fact	README.md
+fff8fc57	R_BSP_SoftwareDelay	units must be 1000000 / 1000 / 1	inference	bsp.md
+fff8fe3c	R_BSP_RegisterProtectEnable	the counterpart of R_BSP_RegisterProtectDisable	inference	bsp.md
 fff8ff3d	FUN_fff8ff3d	Clears 4 halfwords at 0x1B5FC	fact	README.md
 fff8ff5f	bsp_callbacks_clear	Clears 0x74 words at 0x1FFC4	fact	README.md
 fff8fffb	R_BSP_InterruptWrite	Registers a group-interrupt callback by index	inference	sci.md
+fff9085e	R_BSP_SoftwareUnlock	writes 0, returns true	inference	bsp.md
+fff9086c	R_BSP_HardwareLock	R_BSP_SoftwareLock on the lock word 0x1FFC4 + id4	inference	bsp.md
+fff90885	R_BSP_HardwareUnlock	R_BSP_SoftwareUnlock on 0x1FFC4 + id4	inference	bsp.md
 fff90a96	R_BSP_SoftwareInterruptSetTask	queues fn in the next of 8 slots	fact	bsp.md
 fff91059	bsp_swint_get_access_control	Exchanges the access word 0x20310[unit] with arg	fact	bsp.md
 fff91087	bsp_swint_release_access_control	Exchanges back into 0x20310[unit]	fact	bsp.md
@@ -16,16 +21,77 @@ fff94bf1	ver_display	Returns pointer to DISPLAY version 0x1436	inference	cat.md
 fff94c1b	ver_display_date_set	Stores the 8-char DISPLAY date "yy-mm-dd"	fact	eeprom.md
 fff94c2d	ver_dsp	Returns pointer to DSP version 0x1444	inference	dsp-link.md
 fff94c4b	ver_sdr	Returns pointer to SDR version 0x144A	inference	display-link.md
+fff94fd5	qmb_side_revalidate	boot check of a VFO left in QMB state	fact	ui-keys.md
 fff95bf4	displink_rx_E2	+0xA5..+0xA7 on/off state	inference	display-link.md
 fff95cbc	displink_rx_E7	result code in +0x488	inference	display-link.md
 fff95dad	displink_rx_E8	result code in +0x48C	inference	display-link.md
+fff96dde	dlstat_scope_mode	Status-block byte 2 of displink_build_status	fact	display-link.md
+fff96f3e	dlstat_vfo_side_flags	Status-block byte 3 of displink_build_status	fact	display-link.md
+fff96fb7	dlstat_screen_flags	Status-block byte 4 of displink_build_status	fact	display-link.md
+fff9700b	dlstat_split_expand	Status-block byte 5 of displink_build_status	fact	display-link.md
+fff97049	dlstat_disp_sensitivity	Status-block byte 6 of displink_build_status	fact	display-link.md
+fff97075	dlstat_swr_tx_flags	Status-block byte 7 of displink_build_status	fact	display-link.md
+fff970b8	dlstat_led_mask	Status-block byte 8 of displink_build_status	fact	display-link.md
+fff97105	dlstat_affft_overlay	Status-block byte 9 of displink_build_status	fact	display-link.md
+fff9716f	dlstat_tx_bpf	Status-block byte 10 of displink_build_status	fact	display-link.md
+fff971fc	dlstat_att_ipo_dnf	Status-block byte 12 of displink_build_status	fact	display-link.md
+fff9728c	dlstat_dsp_flags_agc	Status-block byte 13 of displink_build_status	fact	display-link.md
+fff97430	dlstat_tx_vfo_flags	Status-block byte 14 of displink_build_status	fact	display-link.md
+fff97567	dlstat_tone_tuner	Status-block byte 15 of displink_build_status	fact	display-link.md
+fff976d2	dlstat_peak	Status-block byte 16 of displink_build_status	fact	display-link.md
+fff9770b	dlstat_span_center	Status-block byte 17 of displink_build_status	fact	display-link.md
+fff977b3	dlstat_default_width	Status-block byte 19 of displink_build_status	fact	display-link.md
+fff9782b	dlstat_zero_in	Status-block byte 21 of displink_build_status	fact	display-link.md
+fff978eb	dlstat_contour	Status-block byte 25 of displink_build_status	fact	display-link.md
+fff9795f	dlstat_notch	Status-block byte 27 of displink_build_status	fact	display-link.md
+fff979d3	dlstat_width	Status-block byte 29 of displink_build_status	fact	display-link.md
+fff97a44	dlstat_shift	Status-block byte 31 of displink_build_status	fact	display-link.md
+fff97abc	dlstat_dsp_knob_flags	Status-block byte 35 of displink_build_status	fact	display-link.md
+fff97b7b	dlstat_voice_mem	Status-block byte 36 of displink_build_status	fact	display-link.md
+fff97ba6	dlstat_scope_settings	Status-block byte 37 of displink_build_status	fact	display-link.md
+fff97c74	dlstat_func_knob	Status-block byte 44 of displink_build_status	fact	display-link.md
+fff97cf7	dlstat_vfo_state_code	Status-block byte 46 of displink_build_status	fact	display-link.md
+fff97e1d	dlstat_vfo_flags48	Status-block byte 48 of displink_build_status	fact	display-link.md
+fff9849e	dlstat_meter	Status-block byte 95 of displink_build_status	fact	display-link.md
+fff98526	dlstat_tuning_flags	Status-block byte 96 of displink_build_status	fact	display-link.md
 fff98727	ui_lamp_set	set or clear one bit of UI +0x34	fact	display-link.md
 fff98797	power_down_save	Shutdown message, full save, reset	fact	eeprom.md
+fff99475	popup_fmt_scope_level	Value text of the SCOPE LEVEL pop-up	fact	display-link.md
+fff9959f	popup_fmt_peak	Value text of the PEAK pop-up	fact	display-link.md
+fff995cc	popup_fmt_rf_power	Value text of the RF POWER pop-up	fact	display-link.md
+fff9960e	popup_fmt_moni_level	Value text of the MONI LEVEL pop-up	fact	display-link.md
+fff996e2	popup_fmt_vox_gain	Value text of the VOX GAIN pop-up	fact	display-link.md
+fff99717	popup_fmt_vox_delay	Value text of the VOX DELAY pop-up	fact	display-link.md
+fff9978c	popup_fmt_anti_vox	Value text of the ANTI VOX pop-up	fact	display-link.md
+fff997df	popup_fmt_proc_level	Value text of the PROC LEVEL pop-up	fact	display-link.md
+fff99837	popup_fmt_mic_gain	Value text of the MIC GAIN pop-up	fact	display-link.md
+fff998e2	popup_fmt_cw_speed	Value text of the CW SPEED pop-up	fact	display-link.md
+fff9992a	popup_fmt_cw_pitch	Value text of the CW PITCH pop-up	fact	display-link.md
+fff99989	popup_fmt_bk_delay	Value text of the BK DELAY pop-up	fact	display-link.md
+fff999e3	popup_fmt_aess_level	Value text of the AESS pop-up	fact	display-link.md
+fff99a29	popup_fmt_aess_cf	Value text of the AESS CF pop-up	fact	display-link.md
+fff99a8a	popup_fmt_amc_level	Value text of the AMC LEVEL pop-up	fact	display-link.md
+fff99abf	popup_fmt_mgroup	Value text of the M GROUP pop-up	fact	display-link.md
+fff99b70	popup_fmt_nb_level	Value text of the NB LEVEL pop-up	fact	display-link.md
+fff99ba5	popup_fmt_dnr_level	Value text of the DNR LEVEL pop-up	fact	display-link.md
+fff99bfe	popup_fmt_qmb	Value text of the QMB pop-up	fact	display-link.md
+fff99c58	popup_fmt_mem_mode	Value text of the MODE pop-up	fact	display-link.md
+fff99ca2	popup_fmt_mem_scan	Value text of the SCAN pop-up	fact	display-link.md
+fff99cf2	popup_fmt_mem_type	Value text of the TYPE pop-up	fact	display-link.md
+fff99d42	popup_fmt_dec_level	Value text of the DEC LVL pop-up	fact	display-link.md
+fff99d48	popup_fmt_keyer	Value text of the KEYER pop-up	fact	display-link.md
+fff99d82	popup_fmt_bk_in	Value text of the BK IN pop-up	fact	display-link.md
+fff99ddb	popup_fmt_mic_eq	Value text of the MIC EQ pop-up	fact	display-link.md
+fff99e15	popup_fmt_contrast	Value text of the CONTRAST pop-up	fact	display-link.md
 fff99e4a	dec_to_str_n	decimal without leading zeros, returns the length	fact	display-link.md
+fff9a00f	popup_fmt_dimmer	Value text of the DIMMER pop-up	fact	display-link.md
 fff9a7a2	kbd_fmt_char_pos	Keyboard frame 0x50	fact	display-link.md
 fff9a804	kbd_copy_text	copies the keyboard text and marks the cursor character	fact	display-link.md
+fff9b65d	dl37_slot_empty	writes an empty FUNC-panel slot of frame 0x37	fact	display-link.md
+fff9c089	memch_label_fmt	channel label text	fact	display-link.md
 fff9c555	displink_62_value	3-character value of an alignment item for 0x62	fact	display-link.md
 fff9c6f0	dec_to_str_u8	u8 as 1..3 ASCII digits without leading zeros	fact	display-link.md
+fff9c787	dec_to_str_s8	Signed byte to decimal text	fact	menu.md
 fff9c843	dec_to_str_u16	u16 as 1..5 ASCII digits without leading zeros	fact	display-link.md
 fff9e21f	dsp_set_r30	reg 0x30 = 0xFF in FM modes	inference	dsp-link.md
 fff9f681	dsp_set_agc	reg 0x62 AGC on, reg 0x66 AGC delay	inference	dsp-link.md
@@ -42,7 +108,6 @@ fffa1738	sdr_upd_r0a_demod	Reg 0x0A = mode class 0..5	inference	sdr-link.md
 fffa17dc	sdr_upd_r0b_band	Reg 0x0B = per-band word from 0xFFF87FFA	inference	sdr-link.md
 fffa18ae	sdr_upd_r0d	Reg 0x0D = 9/14/19 from setting 0x9AA1	inference	sdr-link.md
 fffa1abb	sdr_upd_r16_filter	Reg 0x16 = filter class by mode and width	inference	sdr-link.md
-fffa1fd1	sdr_upd_r1a_nb_level	Reg 0x1A = NB level	inference	sdr-link.md
 fffa2049	sdr_upd_r1b	Reg 0x1B = table 0xFFF880B6	inference	sdr-link.md
 fffa20af	sdr_upd_r1c	Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2	inference	sdr-link.md
 fffa20f7	sdr_upd_r1d_notch	Reg 0x1D = notch offset/5 Hz	inference	sdr-link.md
@@ -50,7 +115,6 @@ fffa2478	sdr_upd_r1e_passband	Reg 0x1E = signed passband centre / 5 Hz	inference
 fffa26cf	sdr_upd_r1f_width	Reg 0x1F = filter width in Hz	inference	sdr-link.md
 fffa28ea	sdr_upd_r22_scope_span	Reg 0x22 = scope span in kHz	inference	sdr-link.md
 fffa2992	sdr_upd_r23	Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14	inference	sdr-link.md
-fffa2a16	sdr_upd_r25_tx_drive	Reg 0x25 = TX drive	inference	sdr-link.md
 fffa3083	sdr_poll_reply	Non-blocking reply check with timeout	fact	sdr-link.md
 fffa31db	sdr_check_hex_sum	Reply checksum test	fact	sdr-link.md
 fffa4e31	cat_SP_sdr_reg	Parses 4-hex address and 4-hex value	fact	cat.md
@@ -59,6 +123,7 @@ fffa5284	cat_SP_meters	8 binary bytes	inference	cat.md
 fffb01af	sum8	8-bit sum of n bytes	fact	cat.md
 fffb01f3	eeprom_init	Port setup and WRSR 0x80	fact	eeprom.md
 fffb06e5	defaults_vfo	Default VFO-A/B working records 0x9D09/0x9D63	inference	eeprom.md
+fffb0779	defaults_bandstack_set	Fills one band-stack set	fact	eeprom.md
 fffb0a28	defaults_bandstack	Clears 0x4761..0x60C8 and fills 6 band-stack sets	inference	eeprom.md
 fffb0a7c	defaults_qmb	Clears the QMB block 0x9012	inference	eeprom.md
 fffb1193	menu_defaults_mode	RADIO SETTING mode groups 0x9A2A..0x9A90 <- ROM	inference	menu.md
@@ -76,39 +141,36 @@ fffb2718	cat_rand8	Pseudo-random byte from timer counter 0x88116	fact	cat.md
 fffb28d1	dac_init_idle	DAC output = 0x1FF1C, R_DA0_Start	fact	README.md
 fffb2f07	hex2nib	Accepts 0-9/A-F/a-f, else returns 0xFF	fact	cat.md
 fffb2fc0	bcd_to_bin	Packed BCD byte	fact	cat.md
+fffb30b5	ascii2_to_bcd	Two ASCII digits	fact	cat.md
+fffb311d	bcd_to_ascii2	Packed BCD byte	fact	cat.md
 fffb3371	tx_band_of_freq	index 0..10 of the first bound in ROM 0xFFF8870C	fact	tx-protection.md
 fffb35d7	vfo_freq_clar	vfo_freq plus the clarifier offset +0x48	fact	radio-control.md
 fffb3ba6	dest_jumper_apply	Swaps between paired destination codes	fact	eeprom.md
 fffb4219	audio_route_state	Returns the audio-route state 0..14	fact	dsp-link.md
 fffb44f7	key_event_filter	Checks a key code against about 20 mode locks	fact	cat.md
 fffb4c45	vfo_display_offset	Mode-dependent signed offset	inference	radio-control.md
+fffb548a	qsk_delay_ticks	Returns EX020119 QSK DELAY TIME x 5 + 15	fact	tx-protection.md
 fffb54a0	aess_level_ptr	Pointer to the active mode's AESS level byte	fact	peripherals.md
 fffb552c	aess_mode_ptr	Pointer to the active mode's AESS on/off byte	fact	radio-control.md
+fffb5d68	audio_level_update	rf_ctrl_task's sixth sub-task	fact	tx-protection.md
 fffb98c8	keyer_init	Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC	fact	README.md
+fffbb024	keyer_elem_put	Appends to the keyer element ring 0x120BC	fact	tx-protection.md
+fffbb10b	keyer_ring_limit	Helper of keyer_elekey	fact	tx-protection.md
+fffbb16b	keyer_ring_next	Ring index + 1, wraps to 0 above 0x4FF	fact	tx-protection.md
+fffbb2bf	contest_cut_digit	Cut-number substitution by EX020204 NUMBER STYLE	fact	tx-protection.md
 fffbba0f	align_store	DSP key in alignment mode	inference	cat.md
 fffbbc0a	cal_adjust	Pointer table 0x25D50 = 0x4659 and 0x25D4C = 0x20B04	fact	eeprom.md
 fffbbcb8	align_store_dsp_async	Starts a DSP status read	inference	eeprom.md
 fffbbd52	align_store_nop	Empty store handler	inference	ui-keys.md
+fffbda47	dsp_knob_shift_toggle	DSP key short press with knob function 0	fact	ui-keys.md
+fffbdad5	dsp_knob_width_toggle	DSP key short press with knob function 1	fact	ui-keys.md
+fffbdb63	dsp_knob_notch_toggle	DSP key short press with knob function 2	fact	ui-keys.md
 fffbe582	key_lock_pwr_press	Front-panel key 0x300 LOCK/PWR, press handler	inference	ui-keys.md
 fffbe593	key_lock_pwr_short	Front-panel key 0x300 LOCK/PWR, short handler	inference	ui-keys.md
 fffbe63d	key_lock_pwr_long	Front-panel key 0x300 LOCK/PWR, long handler	inference	ui-keys.md
-fffbe680	key_tune_press	Front-panel key 0x301 TUNE, press handler	inference	ui-keys.md
-fffbe6bc	key_tune_short	Front-panel key 0x301 TUNE, short handler	inference	ui-keys.md
-fffbe794	key_tune_long	Front-panel key 0x301 TUNE, long handler	inference	ui-keys.md
 fffbe7e7	key_mox_vox_press	Front-panel key 0x302 MOX/VOX, press handler	inference	ui-keys.md
 fffbe83f	key_mox_vox_short	Front-panel key 0x302 MOX/VOX, short handler	inference	ui-keys.md
 fffbe8d2	key_mox_vox_long	Front-panel key 0x302 MOX/VOX, long handler	inference	ui-keys.md
-fffbe92f	key_nb_press	Front-panel key 0x303 NB, press handler	inference	ui-keys.md
-fffbe96b	key_nb_short	Front-panel key 0x303 NB, short handler	inference	ui-keys.md
-fffbe9d6	key_nb_long	Front-panel key 0x303 NB, long handler	inference	ui-keys.md
-fffbea9c	key_dnr_press	Front-panel key 0x304 DNR, press handler	inference	ui-keys.md
-fffbeb2c	key_dnr_short	Front-panel key 0x304 DNR, short handler	inference	ui-keys.md
-fffbeba3	key_dnr_long	Front-panel key 0x304 DNR, long handler	inference	ui-keys.md
-fffbec6c	key_split_press	Front-panel key 0x305 SPLIT, press handler	inference	ui-keys.md
-fffbee05	key_split_long	Front-panel key 0x305 SPLIT, long handler	inference	ui-keys.md
-fffbee52	key_clar_press	Front-panel key 0x306 CLAR, press handler	inference	ui-keys.md
-fffbeea9	key_clar_short	Front-panel key 0x306 CLAR, short handler	inference	ui-keys.md
-fffbefa0	key_clar_long	Front-panel key 0x306 CLAR, long handler	inference	ui-keys.md
 fffbf00d	key_zin_spot_press	Front-panel key 0x307 ZIN/SPOT, press handler	inference	ui-keys.md
 fffbf0b6	key_zin_spot_short	Front-panel key 0x307 ZIN/SPOT, short handler	inference	ui-keys.md
 fffbf1d4	key_zin_spot_long	Front-panel key 0x307 ZIN/SPOT, long handler	inference	ui-keys.md
@@ -119,45 +181,52 @@ fffbf3f6	key_vm_mw_press	Front-panel key 0x309 V/M W, press handler	inference	ui
 fffbf43b	key_vm_mw_long	Front-panel key 0x309 V/M W, long handler	inference	ui-keys.md
 fffbf482	key_a_b_press	Front-panel key 0x30A A/B, press handler	inference	ui-keys.md
 fffbf5d6	key_a_b_long	Front-panel key 0x30A A/B, long handler	inference	ui-keys.md
-fffbf600	key_band_press	Front-panel key 0x30B BAND, press handler	inference	ui-keys.md
-fffbf62f	key_band_short	Front-panel key 0x30B BAND, short handler	inference	ui-keys.md
-fffbf6c1	key_mode_press	Front-panel key 0x30C MODE, press handler	inference	ui-keys.md
-fffbf6c8	key_mode_short	Front-panel key 0x30C MODE, short handler	inference	ui-keys.md
-fffbf7a7	key_mode_long	Front-panel key 0x30C MODE, long handler	inference	ui-keys.md
-fffbf7d7	key_nar_press	Front-panel key 0x30D NAR, press handler	inference	ui-keys.md
-fffbf807	key_nar_short	Front-panel key 0x30D NAR, short handler	inference	ui-keys.md
-fffbf8ee	key_qmb_press	Front-panel key 0x30E QMB, press handler	inference	ui-keys.md
-fffbfc37	key_func_press	Front-panel key 0x30F FUNC, press handler	inference	ui-keys.md
-fffbfd17	key_func_short	Front-panel key 0x30F FUNC, short handler	inference	ui-keys.md
-fffbfd21	key_func_long	Front-panel key 0x30F FUNC, long handler	inference	ui-keys.md
-fffbfd7e	key_func_release	Front-panel key 0x30F FUNC, release handler	inference	ui-keys.md
 fffbfe14	key_step_mch_press	Front-panel key 0x310 STEP/MCH, press handler	inference	ui-keys.md
 fffbfe5e	key_step_mch_short	Front-panel key 0x310 STEP/MCH, short handler	inference	ui-keys.md
 fffbfe8e	key_step_mch_long	Front-panel key 0x310 STEP/MCH, long handler	inference	ui-keys.md
 fffbfee9	key_fine_fast_press	Front-panel key 0x311 FINE/FAST, press handler	inference	ui-keys.md
 fffbff22	key_fine_fast_short	Front-panel key 0x311 FINE/FAST, short handler	inference	ui-keys.md
 fffbff57	key_fine_fast_long	Front-panel key 0x311 FINE/FAST, long handler	inference	ui-keys.md
-fffbff93	key_dsp_press	Front-panel key 0x312 DSP, press handler	inference	ui-keys.md
-fffc0003	key_dsp_short	Front-panel key 0x312 DSP, short handler	inference	ui-keys.md
-fffc0047	key_dsp_long	Front-panel key 0x312 DSP, long handler	inference	ui-keys.md
-fffc008f	key_dsp_release	Front-panel key 0x312 DSP, release handler	inference	ui-keys.md
 fffc0d69	vfo_edit_begin	Returns 0 while a message plays	fact	radio-control.md
+fffc20dd	memlist_btn_press	Memory-list button by g_ui.memlist_group	fact	ui-keys.md
+fffc2137	memlist_btn_name	Memory-list button 0 NAME	fact	ui-keys.md
+fffc21e8	memlist_btn_mode	Memory-list button 1	fact	ui-keys.md
+fffc224e	memlist_btn_scan	Memory-list button 2	fact	ui-keys.md
+fffc2296	memlist_btn_type	Memory-list button 3	fact	ui-keys.md
+fffc22de	memlist_btn_valid_toggle	Memory-list button 4	fact	ui-keys.md
 fffc316c	qmb_enter	state = 5, load QMB slot, save header	inference	radio-control.md
-fffc40d7	key_slot_press	Mic/slot key, press role	fact	ui-keys.md
+fffc3659	vfo_notch_reset	manual NOTCH of the VFO's mode block = 0x0096	fact	ui-keys.md
+fffc388d	vfo_apf_reset	g_opstate.apf_freq = 0 and bit 5	fact	ui-keys.md
+fffc3c9f	func_marker_toggle	FUNC menu slot 2	fact	ui-keys.md
+fffc3cd9	func_color_select	FUNC menu slot 3	fact	ui-keys.md
+fffc3d26	func_mic_eq_toggle	FUNC menu item 8	fact	ui-keys.md
+fffc3de8	func_keyer_toggle	FUNC menu slot 16	fact	ui-keys.md
+fffc3eaa	func_bk_in_toggle	FUNC menu item 0x11	fact	ui-keys.md
+fffc3f9c	func_txw_toggle	FUNC menu slot 24	fact	ui-keys.md
 fffc47dd	preamp_step	Record +0x05 bits 0-1	fact	eeprom.md
 fffc4850	preamp_ipo	Record +0x05 bits 0-1 = 0	fact	eeprom.md
 fffc4b3d	vfo_filter_byte_ptr	Returns VFO-A/B record	fact	eeprom.md
+fffc4bd5	vfo_mode_select	per-mode switch used by cat_MD and cat_NA	fact	cat.md
+fffc4dec	dsp_knob_reset	DSP key long press in the FUNC panel	fact	ui-keys.md
 fffc5290	vfo_mark_edited_if_vfo	Sets UI +0x443	fact	radio-control.md
 fffc54cc	memch_step	n channel steps up	fact	radio-control.md
 fffc5541	memch_step_up	memory channel +1, wrapping to the first	fact	radio-control.md
 fffc55d7	memch_step_down	memory channel -1	fact	radio-control.md
-fffc89b0	func_display_open	Opens the FUNC-knob function display	fact	ui-keys.md
+fffc6595	playback_knob_turn	knob turn on the PlayList / message-memory screens	fact	ui-keys.md
+fffc68c2	memlist_page_down	Scrolls the memory list down one channel	fact	ui-keys.md
+fffc6a0a	memlist_page_up	Scrolls the memory list up one channel	fact	ui-keys.md
+fffc6ca4	funcknob_list_popup_step	knob turn while a list pop-up	fact	ui-keys.md
+fffc7053	funcknob_peak	FUNC-knob function for PEAK	fact	ui-keys.md
+fffc70af	funcknob_color_popup	FUNC-knob function 3	fact	ui-keys.md
+fffc70db	funcknob_contrast	FUNC-knob function for CONTRAST	fact	ui-keys.md
+fffc7145	funcknob_dimmer	FUNC-knob function for DIMMER	fact	ui-keys.md
+fffc71af	funcknob_mgroup	FUNC-knob function for M GROUP	fact	ui-keys.md
+fffc71c7	funcknob_mgroup_step	M GROUP pop-up	fact	ui-keys.md
+fffc7827	rf_power_ptr	returns &g_opstate.rf_power[i] for the TX band	fact	ui-keys.md
+fffc7ba4	funcknob_aess_level	FUNC-knob function for AESS	fact	ui-keys.md
 fffc8cbb	popup_duration_get	display time of pop-up id for POP-UP TIME 0x9B0E	fact	display-link.md
-fffc9c29	menu_draw_agc_delay	AGC FAST/MID/SLOW DELAY row	fact	menu.md
 fffc9f61	menu_draw_out_level	USB / REAR OUT LEVEL row	fact	menu.md
 fffca2a1	menu_draw_rptt_select	RPTT SELECT / PC KEYING row	fact	menu.md
-fffcb34b	menu_draw_off_on	OFF / ON row	fact	menu.md
-fffcb672	menu_draw_cw_memory	CW MEMORY 1..5 row	fact	menu.md
 fffcc04a	menu_draw_mic_key	MIC P1..P4 / UP / DOWN row	fact	menu.md
 fffcc4af	menu_draw_eq_freq	PRMTRC EQ1..3 FREQ row	fact	menu.md
 fffcc56b	menu_draw_eq_level	PRMTRC EQ1..3 LEVEL row	fact	menu.md
@@ -166,50 +235,113 @@ fffcda51	menu_select_row	sets the row cursor of the current group	fact	menu.md
 fffcdc1f	menu_ui_enter	Runs the selected row's on_enter	inference	menu.md
 fffcdc78	menu_enter_nop	Empty menu on_enter	inference	menu.md
 fffcdd7e	menu_ui_step	Front-panel dial on the selected row	fact	menu.md
+fffce495	menu_step_u16	+1/-1 by the step direction g_ui.menu_step_dir, clamped	fact	menu.md
 fffcf38f	menu_step_bcd	+/-1 on a packed-BCD byte by direction +0x421, clamped	fact	menu.md
 fffcf6dd	sd_memlist_load_start	MEM LIST LOAD after the confirmation	inference	menu.md
 fffcf88b	sd_info_start	mode 3, op 5, first frame 0x43	inference	menu.md
 fffcf951	sd_format_start	mode 4, op 8, first frame 0x43	inference	menu.md
 fffcfe77	dialog_close_to_menu_ok	dialog_close_to_menu, returns 1	fact	display-link.md
 fffd0149	dialog_close_to_menu	Clears UI +0x88	fact	display-link.md
-fffd0582	sd_menu_task	SD CARD menu operations	fact	README.md
 fffd05ea	sd_load_step	Mode 1 step machine on +0x3F7	inference	menu.md
 fffd0a68	sd_save_step	Mode 2 step machine	inference	menu.md
 fffd1394	sd_info_step	Mode 3 step machine	inference	menu.md
 fffd14b9	sd_format_step	Mode 4 step machine	inference	menu.md
 fffd1712	menu_screen_close	Clears UI +0x95	fact	menu.md
-fffd1c25	menu_draw_preset_name	PRESET1..5 PRESET NAME row	fact	menu.md
-fffd1d86	menu_draw_preset_cat_rate	PRESET n CAT-1 RATE row	fact	menu.md
 fffd1eb1	menu_draw_preset_cat_tot	PRESET n CAT-1 TIME OUT TIMER row	fact	menu.md
-fffd1fdd	menu_draw_preset_stop_bit	PRESET n CAT-1 CAT-3 STOP BIT row	fact	menu.md
-fffd2108	menu_draw_preset_agc_fast	PRESET n AGC FAST DELAY row	fact	menu.md
-fffd2239	menu_draw_preset_agc_mid	PRESET n AGC MID DELAY row	fact	menu.md
-fffd236b	menu_draw_preset_agc_slow	PRESET n AGC SLOW DELAY row	fact	menu.md
+fffd25c9	menu_draw_preset_lcut_slope	PRESET n lcut_slope row	fact	menu.md
+fffd26f4	menu_draw_preset_hcut_freq	PRESET n hcut_freq row	fact	menu.md
+fffd2821	menu_draw_preset_hcut_slope	PRESET n hcut_slope row	fact	menu.md
+fffd294c	menu_draw_preset_usb_out_level	PRESET n usb_out_level row	fact	menu.md
+fffd2a63	menu_draw_preset_rear_out_level	PRESET n rear_out_level row	fact	menu.md
+fffd2b7a	menu_draw_preset_tx_bpf_sel	PRESET n tx_bpf_sel row	fact	menu.md
+fffd2ca5	menu_draw_preset_mod_source	PRESET n mod_source row	fact	menu.md
+fffd2dd0	menu_draw_preset_usb_mod_gain	PRESET n usb_mod_gain row	fact	menu.md
+fffd2ee7	menu_draw_preset_rear_mod_gain	PRESET n rear_mod_gain row	fact	menu.md
+fffd2ffe	menu_draw_preset_rptt_select	PRESET n rptt_select row	fact	menu.md
+fffd30e8	menu_preset_name_ptr	Returns the RAM address of the open PRESET's name	fact	menu.md
 fffd31e3	menu_step_nop	Empty menu on_step	inference	menu.md
+fffd3202	menu_step_preset_cat1_rate	PRESET n cat1_rate on_step	fact	menu.md
+fffd32a4	menu_step_preset_cat1_tot	PRESET n cat1_tot on_step	fact	menu.md
+fffd3346	menu_step_preset_cat1_cat3_stop_bit	PRESET n cat1_cat3_stop_bit on_step	fact	menu.md
+fffd33e8	menu_step_preset_agc_fast_delay	PRESET n agc_fast_delay on_step	fact	menu.md
+fffd348b	menu_step_preset_agc_mid_delay	PRESET n agc_mid_delay on_step	fact	menu.md
+fffd352e	menu_step_preset_agc_slow_delay	PRESET n agc_slow_delay on_step	fact	menu.md
+fffd35d1	menu_step_preset_lcut_freq	PRESET n lcut_freq on_step	fact	menu.md
+fffd3674	menu_step_preset_lcut_slope	PRESET n lcut_slope on_step	fact	menu.md
+fffd3716	menu_step_preset_hcut_freq	PRESET n hcut_freq on_step	fact	menu.md
+fffd37b9	menu_step_preset_hcut_slope	PRESET n hcut_slope on_step	fact	menu.md
+fffd385b	menu_step_preset_usb_out_level	PRESET n usb_out_level on_step	fact	menu.md
+fffd38fe	menu_step_preset_rear_out_level	PRESET n rear_out_level on_step	fact	menu.md
+fffd39a1	menu_step_preset_tx_bpf_sel	PRESET n tx_bpf_sel on_step	fact	menu.md
+fffd3a43	menu_step_preset_mod_source	PRESET n mod_source on_step	fact	menu.md
+fffd3ae5	menu_step_preset_usb_mod_gain	PRESET n usb_mod_gain on_step	fact	menu.md
+fffd3b88	menu_step_preset_rear_mod_gain	PRESET n rear_mod_gain on_step	fact	menu.md
+fffd3c2b	menu_step_preset_rptt_select	PRESET n rptt_select on_step	fact	menu.md
 fffd43b9	sd_menu_enter_check	SD CARD action on_enter guard	fact	menu.md
 fffd4c30	menu_build_all	314 BSR menuitem_ in order	fact	menu.md
 fffdd797	cat_ai_poll	Runs about 70 change detectors	fact	cat.md
 fffddb6a	cat_ai_holdoff	Timer 0x32 for 200 ms, flag 0x187C2	fact	cat.md
 fffddb7e	cat_ai_FD	Sends FD00n<9 digits>	fact	cat.md
+fffde064	cat_ai_AS	AI change detector for AS	fact	cat.md
 fffdecec	cat_ai_ex	AI change detector for the EX menu	inference	cat.md
+fffded19	cat_ai_FA_FB	AI change detector for FA/FB	fact	cat.md
+fffdf13a	cat_ai_IF_OI	AI change detector for IF/OI	fact	cat.md
+fffdf66f	cat_ai_IS	AI change detector for IS	fact	cat.md
+fffe0755	msg_rec_play_state	Returns 1 while a message/DVS recording runs	fact	cat.md
+fffe1805	max4_u8	Largest of 4 bytes at p	fact	cat.md
+fffe1839	min4_u8	Smallest of 4 bytes at p	fact	cat.md
 fffe1a00	freq_keypad_key	direct frequency entry	fact	ui-keys.md
 fffe207f	keypad_2digit_key	two-digit BCD entry in UI +0x411/+0x412	fact	ui-keys.md
+fffe2680	kbd_edit_mycall	Keyboard target 0	fact	ui-keys.md
+fffe273a	kbd_edit_memory_name	Keyboard target 1	fact	ui-keys.md
+fffe2811	kbd_edit_cw_text	Keyboard target 2	fact	ui-keys.md
+fffe2912	kbd_edit_rtty_text	Keyboard target 3	fact	ui-keys.md
+fffe2918	kbd_edit_psk_text	Keyboard target 4	fact	ui-keys.md
+fffe291e	kbd_edit_file_name	Keyboard target 5	fact	ui-keys.md
+fffe29b7	kbd_edit_key	the on-screen keyboard key handler	fact	ui-keys.md
+fffe2add	kbd_backspace	deletes the character before the cursor	fact	ui-keys.md
+fffe2b7a	kbd_max_cursor	Last cursor position for the keyboard target	fact	ui-keys.md
+fffe2bcd	kbd_cursor_left	Moves g_ui.kbd_cursor left while above 0	fact	ui-keys.md
+fffe2bfd	kbd_cursor_right	Moves g_ui.kbd_cursor right while below kbd_max_cursor	fact	ui-keys.md
+fffe2c33	kbd_edit_preset_name	Keyboard target 6	fact	ui-keys.md
+fffe2ee4	func_record_toggle	FUNC menu slot 22	fact	ui-keys.md
+fffe2fa8	func_play_open	FUNC menu slot 23	fact	ui-keys.md
 fffe376a	dispreq_e8_result	E8 code actions	fact	display-link.md
-fffe3d24	msg_send_cancel	Cancels a running keyer/message send	fact	radio-control.md
+fffe3979	func_message_open	FUNC menu item 0x15	fact	ui-keys.md
 fffe3e2a	ladder_key_task	Acts on key code 0x1204C	inference	README.md
 fffe4378	msg_cw_slot_key	stops a latched send	fact	ui-keys.md
 fffe4407	msg_type_select	Sets UI +0x1C7	inference	cat.md
-fffe481d	keyer_text_endmark	Front-panel keyer text editor	inference	cat.md
 fffe53c0	msg_cw_stop	Clears +0x1CC, +0x1CD, +0x417, +0x1D1	fact	radio-control.md
 fffe5e3b	memch_skip_get	Memory channel n	fact	eeprom.md
 fffe6299	ex_read_or_write	String or numeric, read or set	fact	menu.md
 fffe668a	ex_value_allowed	Refuses key {0,0,12}	fact	menu.md
 fffe6c27	ex_parse_key	Requires 6 decimal digits	fact	menu.md
-fffe6e26	cat_ai_ex_holdoff	After an EX set	inference	cat.md
+fffea63a	ai_ex_preset_name	Shared AI detector for EX060n01	fact	cat-ai.md
+fffea88c	ai_ex_preset_cat1_rate	Shared AI detector for EX060n02	fact	cat-ai.md
+fffeaa08	ai_ex_preset_cat1_tot	Shared AI detector for EX060n03	fact	cat-ai.md
+fffeab84	ai_ex_preset_cat1_cat3_stop_bit	Shared AI detector for EX060n04	fact	cat-ai.md
+fffead00	ai_ex_preset_agc_fast_delay	Shared AI detector for EX060n05	fact	cat-ai.md
+fffeae77	ai_ex_preset_agc_mid_delay	Shared AI detector for EX060n06	fact	cat-ai.md
+fffeafee	ai_ex_preset_agc_slow_delay	Shared AI detector for EX060n07	fact	cat-ai.md
+fffeb165	ai_ex_preset_lcut_freq	Shared AI detector for EX060n08	fact	cat-ai.md
+fffeb2b9	ai_ex_preset_lcut_slope	Shared AI detector for EX060n09	fact	cat-ai.md
+fffeb435	ai_ex_preset_hcut_freq	Shared AI detector for EX060n10	fact	cat-ai.md
+fffeb589	ai_ex_preset_hcut_slope	Shared AI detector for EX060n11	fact	cat-ai.md
+fffeb705	ai_ex_preset_usb_out_level	Shared AI detector for EX060n12	fact	cat-ai.md
+fffeb859	ai_ex_preset_rear_out_level	Shared AI detector for EX060n13	fact	cat-ai.md
+fffeb9ad	ai_ex_preset_tx_bpf_sel	Shared AI detector for EX060n14	fact	cat-ai.md
+fffebb29	ai_ex_preset_mod_source	Shared AI detector for EX060n15	fact	cat-ai.md
+fffebca5	ai_ex_preset_usb_mod_gain	Shared AI detector for EX060n16	fact	cat-ai.md
+fffebdf9	ai_ex_preset_rear_mod_gain	Shared AI detector for EX060n17	fact	cat-ai.md
+fffebf4d	ai_ex_preset_rptt_select	Shared AI detector for EX060n18	fact	cat-ai.md
 fffec2e5	ai_ex_fmt_u8	CAT AI EX reply value at 0x1B23D	fact	cat-ai.md
 fffec3f8	ai_ex_fmt_u16_4	CAT AI EX reply value at 0x1B23D	fact	cat-ai.md
 fffec46c	tuner_init	One tuner_task pass	fact	README.md
+fffec55a	vfo_tuner_bit_get	Returns bit 2 of the TX VFO record's flags1	fact	tx-protection.md
 fffec578	tuner_rearm	TUNER TYPE SELECT 0x9AB8 = 2 path	fact	tx-protection.md
+fffec62b	tuner_int_task	tuner_task for TUNER TYPE SELECT 0/1	fact	tx-protection.md
+fffed165	tuner_atas_task	tuner_task for TUNER TYPE SELECT 3	fact	tx-protection.md
+fffed62a	tuner_ext_task	tuner_task for TUNER TYPE SELECT 2	fact	tx-protection.md
 fffededa	_INITSCT	CC-RX section init	fact	README.md
 fffedfa7	_freopen_core	Parses the mode string	inference	bsp.md
 fffee0c2	_file_release	Resets a static FILE	inference	bsp.md

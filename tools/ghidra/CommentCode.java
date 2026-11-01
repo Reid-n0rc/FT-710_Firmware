@@ -17,6 +17,8 @@
 //             "[doc, inference]"). The table already leaves out purposes the callee's name says.
 //     [enum]  equality tests of a constant against a value returned by a function whose return type is an enum (ApplyEnums)
 //             that the decompiler printed as a plain number (the local lost the type), e.g. "7 MODE_FM_N, 0xb MODE_DATA_U [enum]".
+// A curated row at a call replaces that call's [doc] line. Generated comments skip places where a comment would print
+// above an "else if" condition (the decompiler would then write "else { if" and change the shape of the C).
 // Ownership: a PRE comment line that ends in one of these tags belongs to this script and is replaced on every run;
 // other lines (hand-written comments) are kept above it. Idempotent and deterministic: a second run changes nothing.
 // @category FT710

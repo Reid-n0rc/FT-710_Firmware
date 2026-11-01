@@ -26,7 +26,6 @@
 0020e3e0	I2C_SlaveTransferCreateHandle	IRQ handler 0x20E4E8	inference	hifi4-libraries.md
 0020e720	I2C_EnableInterrupts_dma	fsl_i2c.h inline, fsl_i2c_dma.c copy	fact	hifi4-libraries.md
 0020e730	I2C_DisableInterrupts_dma	fsl_i2c.h inline, fsl_i2c_dma.c copy	fact	hifi4-libraries.md
-0020eaec	I2C_MasterTransferCallbackDMA	fsl_i2c_dma.c static DMA callback	inference	hifi4-libraries.md
 0020f0bc	I2S_TxTransferCreateHandle	IRQ handler 0x20F518	inference	hifi4-libraries.md
 0020f154	I2S_TxTransferNonBlocking	fsl_i2s.c order, kStatus_I2S_Busy 0xA8E	inference	hifi4-libraries.md
 0020f2c0	I2S_RxTransferCreateHandle	IRQ handler 0x20F8A0	inference	hifi4-libraries.md
@@ -67,7 +66,6 @@
 0021c600	apf_init	clears the APF state 0x244510	inference	hifi4.md
 00220c68	rx_audio_init	state word 0x2576E4 = 0xFFFF	inference	hifi4.md
 00220da4	rx_audio_out_fifo_push	pushes 12 blocks of 96 bytes into FIFO ch	fact	hifi4.md
-00220e34	rx_audio_out_fifo_pop	the matching pop	fact	hifi4.md
 00220ee0	rx_demod_dispatch	Copies the block, runs if_agc_process	fact	dsp-chains.md
 00220f90	Thread_Rx_Audio_entry	batch processing of 12 × 24 = 288 samples	fact	hifi4.md
 002210a4	spi_fc1_dma_init	SPI_MasterTransferCreateHandleDMA on FLEXCOMM1	fact	hifi4.md

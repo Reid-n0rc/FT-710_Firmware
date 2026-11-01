@@ -15,7 +15,7 @@ docs/code/ function table (found the way tools/readable_view.py assigns them) ha
     backticks and a leading "(args):" or "Name:" ;
   - cut at the first clause break ("; ", ": ", " — ", ". ", " (", ", then ");
   - kept only when it has 3..9 words and at most 56 characters, is not boilerplate (library matches, "code shape" rows,
-    menu-item rows, CAT handler rows) and says more than the function's name (at most 60 % of its words in the name);
+    menu-item rows, CAT handler rows) and says more than the function's name (under half of its words in the name);
   - kept only when the table row carries [fact] or [inference] (an untagged row is not evidence; a [guess] row neither).
     tag = fact when the row has only [fact], else inference (CommentCode.java prints "[doc]" / "[doc, inference]").
 CommentCode.java comments the first call of each such function in every caller.
@@ -78,12 +78,12 @@ def accept(short, fname):
     if FRAGMENT.search(short) or (' = ' in short and len(words) < 5):  # a clause that needs its context
         return False
     content = [w.lower().strip('(),.;:') for w in words]
-    content = [w for w in content if len(w) >= 3 and w not in STOP]
+    content = [w for w in content if len(w) >= 2 and w not in STOP and not w.isdigit()]
     if not content:
         return False
     nw = name_words(fname)
     overlap = sum(1 for w in content if w in nw or w.rstrip('s') in nw)
-    return overlap / len(content) <= 0.6
+    return overlap / len(content) < 0.5
 
 
 def purposes(image):
