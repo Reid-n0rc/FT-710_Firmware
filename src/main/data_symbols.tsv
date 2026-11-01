@@ -1,0 +1,35 @@
+# MAIN RAM variables used by the recreated source (T24): linker symbol -> original address. tools/equiv_main_emu.py
+# defines each name at its address when it links a recreated function. Evidence: the instruction that names the
+# address (Ghidra's decompile shows them as DAT_<address>).
+name	address	evidence
+g_sci0_tx_count	1b604	R_SCI0_Serial_Send 0xFFF933AE stores the length
+gp_sci0_tx_address	207f4	R_SCI0_Serial_Send 0xFFF933AE stores the buffer
+g_sci0_rx_count	1b606	R_SCI0_Serial_Receive 0xFFF9336A clears it
+g_sci0_rx_length	1b608	R_SCI0_Serial_Receive 0xFFF9336A stores the length
+gp_sci0_rx_address	207f8	R_SCI0_Serial_Receive 0xFFF9336A stores the buffer
+g_sci1_tx_count	1b60a	R_SCI1_Serial_Send 0xFFF936DB stores the length
+gp_sci1_tx_address	207fc	R_SCI1_Serial_Send 0xFFF936DB stores the buffer
+g_sci1_rx_count	1b60c	R_SCI1_Serial_Receive 0xFFF93697 clears it
+g_sci1_rx_length	1b60e	R_SCI1_Serial_Receive 0xFFF93697 stores the length
+gp_sci1_rx_address	20800	R_SCI1_Serial_Receive 0xFFF93697 stores the buffer
+g_sci2_tx_count	1b610	R_SCI2_Serial_Send 0xFFF93C15 stores the length
+gp_sci2_tx_address	20804	R_SCI2_Serial_Send 0xFFF93C15 stores the buffer
+g_sci2_rx_count	1b612	R_SCI2_Serial_Receive 0xFFF93BD1 clears it
+g_sci2_rx_length	1b614	R_SCI2_Serial_Receive 0xFFF93BD1 stores the length
+gp_sci2_rx_address	20808	R_SCI2_Serial_Receive 0xFFF93BD1 stores the buffer
+g_sci3_tx_count	1b616	R_SCI3_Serial_Send 0xFFF9409C stores the length
+gp_sci3_tx_address	2080c	R_SCI3_Serial_Send 0xFFF9409C stores the buffer
+g_sci3_rx_count	1b618	R_SCI3_Serial_Receive 0xFFF94058 clears it
+g_sci3_rx_length	1b61a	R_SCI3_Serial_Receive 0xFFF94058 stores the length
+gp_sci3_rx_address	20810	R_SCI3_Serial_Receive 0xFFF94058 stores the buffer
+g_sci4_tx_count	1b61c	R_SCI4_Serial_Send 0xFFF943CB stores the length
+gp_sci4_tx_address	20814	R_SCI4_Serial_Send 0xFFF943CB stores the buffer
+g_sci4_rx_count	1b61e	R_SCI4_Serial_Receive 0xFFF94387 clears it
+g_sci4_rx_length	1b620	R_SCI4_Serial_Receive 0xFFF94387 stores the length
+gp_sci4_rx_address	20818	R_SCI4_Serial_Receive 0xFFF94387 stores the buffer
+g_sci5_tx_count	1b622	R_SCI5_Serial_Send 0xFFF947F1 stores the length
+gp_sci5_tx_address	2081c	R_SCI5_Serial_Send 0xFFF947F1 stores the buffer
+g_sci5_rx_count	1b624	R_SCI5_Serial_Receive 0xFFF947AD clears it
+g_sci5_rx_length	1b626	R_SCI5_Serial_Receive 0xFFF947AD stores the length
+gp_sci5_rx_address	20820	R_SCI5_Serial_Receive 0xFFF947AD stores the buffer
+heap_break	25d34	sbrk 0xFFF912C7 (docs/code/main/bsp.md)

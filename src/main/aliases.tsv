@@ -1,0 +1,3 @@
+# MAIN: recreated functions whose source name is not the Ghidra name, or whose address Ghidra's list lacks (T24):
+# source name -> original address, with the evidence. tools/equiv_main_emu.py checks the function against that address.
+name	address	evidence
