@@ -931,6 +931,53 @@ VDC5_TABLE_ARGS = {
 }
 
 
+def vdc5_shrd_blocks(rng):
+    """The shared parameters (include/vdc5.h) with their enum fields in range: common 0x208DCCC4 (2 x 0x10: clock
+    selects, colour space, input and sync selects, cascade, und_sel 0/1), scaling 0x208DCCE4 (6 x 0xC: writing mode
+    0..5, interlace and colour space 0/1, buffer size), graphics 0x208DCD2C (12 x 0x12: line direction 0/1, frame
+    select 0..3, format 0..11, colour space and adj_sel 0/1, area and buffer size random halfwords)."""
+    small = lambda n: rng.randrange(n)
+    com = bytearray(rng.getrandbits(8) for _ in range(0x20))
+    for c in range(2):
+        for o in range(7):
+            com[0x10 * c + o] = small(2)
+    sca = bytearray(rng.getrandbits(8) for _ in range(6 * 0xC))
+    for k in range(6):
+        sca[0xC * k], sca[0xC * k + 1], sca[0xC * k + 2] = small(6), small(2), small(2)
+    gra = bytearray(rng.getrandbits(8) for _ in range(12 * 0x12))
+    for k in range(12):
+        o = 0x12 * k
+        gra[o:o + 5] = bytes([small(2), small(4), rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]), small(2), small(2)])
+    return [(0x208DCCC4, bytes(com)), (0x208DCCE4, bytes(sca)), (0x208DCD2C, bytes(gra))]
+
+
+def vdc5_read_args(rng, args, kind):
+    """(ch, graphics 0..5, parameter) of the read side (round 7): vdc5_read_t (line direction, IMR inversion, burst
+    0/1, frame select 0..3, address and line offset random, format 0..11 with 8 = YCbCr422 often, swaps 0..7, area
+    random halfwords) for vdc5_reg_read_data_control; vdc5_read_chg_t (each pointer NULL or a block; display select int8
+    -1..3 and a few other negatives) for the change; (ch, graphics 0/1, frame select 0..3, enlargement 0/1) for vdc5_change_graphics_vin; the
+    shared parameters in range."""
+    fill = vdc5_args(rng, args) + vdc5_shrd_blocks(rng)
+    regs = args['regs']
+    regs[1] = rng.randrange(6)
+    a = SCRATCH_ARGS + 0x4000
+    r = bytearray(rng.getrandbits(8) for _ in range(0x40))
+    r[0:4] = bytes([rng.randrange(2), rng.randrange(4), rng.randrange(2), rng.randrange(2)])
+    r[0x10:0x14] = bytes([rng.randrange(2), rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10, 11]), rng.randrange(8),
+                          rng.randrange(8)])
+    for k in range(4):              # the change block: four pointers, NULL or into the block's upper half
+        if rng.random() < 0.3:
+            struct.pack_into('<I', r, 0x20 + 4 * k, 0)
+        else:
+            struct.pack_into('<I', r, 0x20 + 4 * k, rng.getrandbits(32) if k == 0 else a + 0x30)
+    r[0x30] = rng.choice([0xFF, 0, 1, 2, 3, 0xFE, 0x85])     # -1 = keep; other negative values sign-extend
+    args['buffers'] = [b for b in args['buffers'] if not a <= b[0] < a + 0x2000] + [(a, bytes(r))]
+    regs[2] = a + 0x20 if kind == 'chg' else a
+    if kind == 'vin':
+        regs[1], regs[2], regs[3] = rng.randrange(2), rng.randrange(4), rng.randrange(2)
+    return fill
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -1038,6 +1085,9 @@ def preset_for(fname):
             args['regs'][1] = rng.randrange(6)
             return fill
         return sh
+    if fname in ('vdc5_reg_read_data_control', 'vdc5_reg_change_read_process', 'vdc5_change_graphics_vin'):
+        kind = {'vdc5_reg_change_read_process': 'chg', 'vdc5_change_graphics_vin': 'vin'}.get(fname, 'read')
+        return lambda rng, args: vdc5_read_args(rng, args, kind)
     if fname in VDC5_TABLE_ARGS:
         return lambda rng, args: vdc5_table_args(rng, args, *VDC5_TABLE_ARGS[fname])
     if fname == 'vdc5_color_conversion':      # (graphics format, colour): every case of the switch and past it

@@ -104,3 +104,4 @@ vdc5_set_scaling_up	0x2011aaf8	[fact] SCL0_US1/US5/US6 and DS1/DS5/DS6 by buffer
 vdc5_set_scaler_graphics	0x2011acd8	[fact] the scaler (0, 1 or OIR by graphics id) read side: SCL0_US2..4 and US8, the up-scaling (0x2011AAF8), GRx_FLM4 from SCL1_WR4; called from 0x2011AF94 and 0x2011B514; Ghidra FUN_2011acd8
 vdc5_confirm_graphics_enlargement	0x2011aecc	[fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4; Ghidra FUN_2011aecc
 __aeabi_uidiv	0x20156260	[inference] GCC calls __aeabi_uidiv for an unsigned division; the image's divisions call __aeabi_uidivmod 0x20156260 (e.g. 0x2011AAD8), whose quotient in r0 is __aeabi_uidiv's result (RTABI)
+vdc5_change_graphics_vin	0x2011b374	[fact] the tail call of vdc5_reg_change_read_process (b 0x2011B374 at 0x2011B6CC): the cascade and the VIN layer of the change path (drivers/vdc5_reg.c); Ghidra counts its body into vdc5_reg_change_read_process

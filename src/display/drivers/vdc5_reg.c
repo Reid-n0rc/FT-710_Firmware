@@ -1940,3 +1940,211 @@ unsigned vdc5_confirm_graphics_enlargement(unsigned gr, unsigned flm_sel, const 
     }
     return 1;
 }
+
+/* 0x2011AF34: (ch, graphics 0..5, read): the register part of R_VDC5_ReadDataControl. The scaler read side (graphics
+ * 0, 1, OIR); the frame-buffer read control: line direction, frame select, burst (GRx_FLM1), IMR field inversion
+ * (frame select 2), buffer address (FLM2), line offset (FLM3), buffer size (FLM5/6, size - 1), format and swap (FLM6),
+ * start pixel (frame select 0/1); the display area (AB2/AB3; AB1 bit 0: graphics 1..3 blend with the layer below);
+ * graphics 1..3 the alpha rectangle over the area, graphics 0 and OIR opaque (AB10/AB11 alpha 0xFF); for graphics 0/1
+ * the YCbCr422 swap and conversion (FLM6 bits 15..13, 8), the VIN layer, the background colour, the colour matrix
+ * and ADJx_ENH_TIM1 bit 4 by the buffer's colour space; graphics 1 gets a GBR matrix while only graphics 0 is in
+ * use; GRx_UPDATE [fact: 0x2011AF34..0x2011B34C, from the disassembly: Ghidra's C of it is broken] */
+void vdc5_reg_read_data_control(unsigned ch, unsigned gr, const vdc5_read_t *p)
+{
+    const vdc5_regaddr_img_synthesizer_t *g = &vdc5_regaddr_img_synthesizer[ch][gr];
+    const vdc5_width_read_fb_t *fb = vdc5_shrd_get_fr_buff_width_rd(ch, gr);
+    unsigned enlarge = vdc5_confirm_graphics_enlargement(gr, p->gr_flm_sel, fb, &p->gr_grc);
+    uint32_t v;
+
+    if (gr == 0 || gr == 1 || gr == VDC5_GR_TYPE_OIR)
+    {
+        vdc5_set_scaler_graphics(ch, gr, fb, &p->gr_grc, p->gr_flm_sel, enlarge);
+    }
+    *g->gr_flm1 &= 0xFFFEFCFEU;
+    if (p->gr_ln_off_dir != 0)
+    {
+        *g->gr_flm1 |= 0x10000;
+    }
+    *g->gr_flm1 |= (uint32_t)p->gr_flm_sel << 8;
+    if (p->gr_bst_md != 0)
+    {
+        *g->gr_flm1 |= 1;
+    }
+    if (p->gr_flm_sel == 2)
+    {
+        if (p->gr_imr_flm_inv != 0)
+        {
+            *g->gr_flm1 |= 0x10;
+        }
+        else
+        {
+            *g->gr_flm1 &= ~0x10U;
+        }
+    }
+    *g->gr_flm2 = (uint32_t)p->gr_base & ~7U;
+    *g->gr_flm3 &= 0x8000FC00U;
+    *g->gr_flm3 |= (uint32_t)(uint16_t)p->gr_ln_off << 16;
+    *g->gr_flm5 = 0x7FF;
+    *g->gr_flm5 |= (uint32_t)(fb->in_vw - 1) << 16;
+    *g->gr_flm6 &= 0x0800E3C0U;
+    *g->gr_flm6 |= (uint32_t)p->gr_format << 28;
+    *g->gr_flm6 |= (uint32_t)(fb->in_hw - 1) << 16;
+    *g->gr_flm6 |= (uint32_t)p->gr_rdswa << 10;
+    if (p->gr_flm_sel == 0 || p->gr_flm_sel == 1)
+    {
+        *g->gr_flm6 |= vdc5_display_start_pixel((uint32_t)p->gr_base, p->gr_format);
+    }
+    *g->gr_ab1 &= ~3U;
+    v = *g->gr_ab1;
+    if (gr != 0 && gr != VDC5_GR_TYPE_OIR)
+    {
+        v |= 1;
+    }
+    *g->gr_ab1 = v;
+    *g->gr_ab2 = (uint32_t)p->gr_grc.vs << 16;
+    *g->gr_ab2 |= p->gr_grc.vw;
+    *g->gr_ab3 = (uint32_t)p->gr_grc.hs << 16;
+    *g->gr_ab3 |= p->gr_grc.hw;
+    if (gr == 1 || gr == 2 || gr == 3)
+    {
+        *g->gr_ab1 &= ~0xD000U;
+        *g->gr_ab4 = *g->gr_ab2;
+        *g->gr_ab5 = *g->gr_ab3;
+        *g->gr_ab6 &= 0xFE00FF00U;
+        *g->gr_ab7 |= 0xFF0000;
+    }
+    *g->gr_ab7 &= ~1U;
+    if (gr == 0 || gr == VDC5_GR_TYPE_OIR)
+    {
+        *g->gr_ab10 |= 0xFF000000U;
+        *g->gr_ab11 |= 0xFF000000U;
+    }
+    if (gr == 0 || gr == 1)
+    {
+        const vdc5_regaddr_img_qlty_imp_t *q = &vdc5_regaddr_img_qlty_imp[ch][gr];
+        unsigned cs;
+
+        *g->gr_flm6 &= ~0xE000U;
+        v = *g->gr_flm6;
+        if (p->gr_format == 8)
+        {
+            *g->gr_flm6 = v | (uint32_t)p->gr_ycc_swap << 13;
+            v = *g->gr_flm6 | 0x100;
+        }
+        *g->gr_flm6 = v;
+        vdc5_setup_graphics_vin(ch, gr, p->gr_flm_sel, enlarge);
+        cs = vdc5_shrd_get_color_space_fb_rd(ch, gr);
+        vdc5_set_scaler_background_color(ch, gr, cs);
+        vdc5_set_img_qa_improver_color_mtx(ch, gr, cs);
+        if (cs == 0)
+        {
+            *q->adj_enh_tim1 &= ~0x10U;
+        }
+        else
+        {
+            *q->adj_enh_tim1 |= 0x10;
+        }
+        *q->adj_update |= 1;
+    }
+    if (r_vdc5_shrd_get_resource(ch, 4) == 0 && gr == 0)
+    {
+        vdc5_set_img_qa_improver_color_mtx(ch, 1, 0);
+    }
+    *g->gr_update |= 0x111;
+}
+
+/* 0x2011B374 (Ghidra: part of vdc5_reg_change_read_process, which tail-calls it): (ch, graphics 0/1, frame select,
+ * enlargement): the cascade again and, with graphics 0 in use, the VIN layer: without the cascade as in
+ * vdc5_setup_graphics_vin (the area only, no alpha rectangle); with a cascade newly set the VIN shows graphics 0
+ * alone (AB1 bits 2..0 = 101b); GR_VIN_UPDATE [fact: 0x2011B374..0x2011B494] */
+void vdc5_change_graphics_vin(unsigned ch, unsigned gr, unsigned flm_sel, unsigned enlarge)
+{
+    const vdc5_regaddr_img_synthesizer_t *vin = &vdc5_regaddr_img_synthesizer[ch][4];
+    const vdc5_regaddr_img_synthesizer_t *src;
+    unsigned was = vdc5_shrd_get_cascade(ch);
+    unsigned cascade = vdc5_set_cascade(ch, gr, flm_sel, enlarge);
+
+    if (r_vdc5_shrd_get_resource(ch, 3) == 0)
+    {
+        return;
+    }
+    if (cascade == 0)
+    {
+        if (vdc5_shrd_get_und_sel(ch) != 0)
+        {
+            *vin->gr_ab1 |= 4;
+            src = &vdc5_regaddr_img_synthesizer[ch][0];
+        }
+        else
+        {
+            *vin->gr_ab1 &= ~4U;
+            src = &vdc5_regaddr_img_synthesizer[ch][1];
+        }
+        *vin->gr_ab1 &= ~3U;
+        *vin->gr_ab1 |= 3;
+        *vin->gr_ab2 = *src->gr_ab2;
+        *vin->gr_ab3 = *src->gr_ab3;
+    }
+    else if (was == 0)
+    {
+        *vin->gr_ab1 |= 4;
+        *vin->gr_ab1 &= ~3U;
+        *vin->gr_ab1 |= 1;
+    }
+    *vin->gr_update |= 0x110;
+}
+
+/* 0x2011B498: (ch, graphics 0..5, change): the register part of R_VDC5_ChangeReadProcess, with the frame select,
+ * area and buffer size recorded in the shared parameters: the scaler read side (graphics 0, 1, OIR); each part only
+ * when given: buffer address (FLM2) and start pixel (FLM6 bits 5..0, frame select 0/1), buffer size (FLM5/FLM6 bits
+ * 26..16), display select (AB1 bits 1..0, not when -1), display area (AB2/AB3); GRx_UPDATE; for graphics 0/1 the VIN
+ * layer [fact: 0x2011B498..0x2011B6D4] */
+void vdc5_reg_change_read_process(unsigned ch, unsigned gr, const vdc5_read_chg_t *c)
+{
+    unsigned flm_sel = vdc5_shrd_get_sel_fb_addr_sig(ch, gr);
+    const vdc5_period_rect_t *area = vdc5_shrd_get_display_area(ch, gr);
+    const vdc5_width_read_fb_t *fb = vdc5_shrd_get_fr_buff_width_rd(ch, gr);
+    unsigned enlarge = vdc5_confirm_graphics_enlargement(gr, flm_sel, fb, area);
+    const vdc5_regaddr_img_synthesizer_t *g;
+
+    if (gr == 0 || gr == 1 || gr == VDC5_GR_TYPE_OIR)
+    {
+        vdc5_set_scaler_graphics(ch, gr, fb, area, flm_sel, enlarge);
+    }
+    g = &vdc5_regaddr_img_synthesizer[ch][gr];
+    if (c->gr_base != NULL)
+    {
+        *g->gr_flm2 = (uint32_t)c->gr_base & ~7U;
+        if (flm_sel == 0 || flm_sel == 1)
+        {
+            unsigned fmt = vdc5_shrd_get_graphics_format(ch, gr);
+
+            *g->gr_flm6 &= ~0x3FU;
+            *g->gr_flm6 |= vdc5_display_start_pixel((uint32_t)c->gr_base, fmt);
+        }
+    }
+    if (c->width_read_fb != NULL)
+    {
+        *g->gr_flm5 &= ~0x07FF0000U;
+        *g->gr_flm5 |= (uint32_t)(c->width_read_fb->in_vw - 1) << 16;
+        *g->gr_flm6 &= ~0x07FF0000U;
+        *g->gr_flm6 |= (uint32_t)(c->width_read_fb->in_hw - 1) << 16;
+    }
+    if (c->gr_disp_sel != NULL && *(const int8_t *)c->gr_disp_sel != -1)
+    {
+        *g->gr_ab1 &= ~3U;
+        *g->gr_ab1 |= (uint32_t)(int32_t)*(const int8_t *)c->gr_disp_sel;
+    }
+    if (c->gr_grc != NULL)
+    {
+        *g->gr_ab2 = (uint32_t)c->gr_grc->vs << 16;
+        *g->gr_ab2 |= c->gr_grc->vw;
+        *g->gr_ab3 = (uint32_t)c->gr_grc->hs << 16;
+        *g->gr_ab3 |= c->gr_grc->hw;
+    }
+    *g->gr_update |= 0x11;
+    if (gr == 0 || gr == 1)
+    {
+        vdc5_change_graphics_vin(ch, gr, flm_sel, enlarge);
+    }
+}
