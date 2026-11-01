@@ -293,6 +293,59 @@ void cat_SC(const uint8_t *text, uint8_t set)
     }
 }
 
+void func_display_open(void);
+
+/* SF0's characters and the FUNC knob function each stands for [fact: the two switches of cat_SF 0xFFFADEB6] */
+static const uint8_t sf_chars[] = "123456789ABCDEFGH";
+static const uint8_t sf_funcs[] = {0, 1, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 0x12, 0x13, 0x14};
+
+/* cat_SF 0xFFFADEB6: SF P1 P2. P1 = 0: the FUNC knob function (g_opstate.func_knob, also kept in func_knob_sf);
+ * P1 = 1: the DSP knob item 1..5 = UI knob item 0x1D..0x21 (a set opens the function display); a read of anything
+ * else answers '0'. Another P1 reads only the ';' and is ignored by a set. */
+void cat_SF(const uint8_t *text, uint8_t set)
+{
+    unsigned i;
+
+    if (!set) {
+        if (text[2] == '0') {
+            cat_reply[3] = '0';
+            for (i = 0; i < sizeof sf_funcs; i++) {
+                if (g_opstate.func_knob == sf_funcs[i]) {
+                    cat_reply[3] = sf_chars[i];
+                    break;
+                }
+            }
+        } else if (text[2] == '1') {
+            uint8_t item = g_ui.func_knob_item;
+
+            cat_reply[3] = item >= 0x1Du && item <= 0x21u ? (uint8_t)('1' + item - 0x1Du) : '0';
+        }
+        reply_done(4);
+        return;
+    }
+    if (text[2] == '0') {
+        for (i = 0; i < sizeof sf_funcs; i++) {
+            if (text[3] == sf_chars[i]) {
+                g_opstate.func_knob = sf_funcs[i];
+                g_opstate.func_knob_sf = sf_funcs[i];
+                return;
+            }
+        }
+        cat_error = 1;
+        return;
+    }
+    if (text[2] != '1')
+        return;
+    if (text[3] < '1' || text[3] > '5') {
+        cat_error = 1;
+        return;
+    }
+    /* '1'..'5' = items 0x1D..0x21 with the DSP knob functions 0, 1, 2, 3, 3 */
+    g_ui.func_knob_item = (uint8_t)(0x1Du + (text[3] - '1'));
+    g_ui.dsp_knob_func = text[3] == '5' ? 3u : (uint8_t)(text[3] - '1');
+    func_display_open();
+}
+
 /* cat_SM 0xFFFAE64B: SM0 = S-meter 0..255 as three decimal digits */
 void cat_SM(const uint8_t *text)
 {

@@ -803,6 +803,16 @@ def cat_mw_args(rng, regs):
     return [(ARGBUF, bytes(t))] + loads[1:], None
 
 
+def cat_sf_args(rng, regs):
+    """cat_SF: P1 0/1, P2 one of its characters, the FUNC knob and the DSP knob item among the values it maps."""
+    loads, _ = cat_handler_args(rng, regs)
+    t = bytearray(loads[0][1])
+    t[2] = rng.choice(b'0011X')
+    t[3] = rng.choice(b'0123456789ABCDEFGHI')
+    return [(ARGBUF, bytes(t)), (G_OP + 0x39F, bytes([rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0x12, 0x13, 0x14, 0x15])])),
+            (G_UI + 0x7A, bytes([rng.choice(range(0x1C, 0x23))]))], None
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -820,6 +830,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
            'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args, 'cat_MR': memch_text_args, 'cat_MW': cat_mw_args,
+           'cat_MC': memch_text_args, 'cat_SF': cat_sf_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),

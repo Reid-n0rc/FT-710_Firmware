@@ -1,5 +1,5 @@
 /* The CAT commands of the MAIN image that read or set a VFO's frequency and state (T24 round 4; docs/code/main/
- * cat.md, radio-control.md): FA / FB, IF / OI, CF, MR, MW. */
+ * cat.md, radio-control.md): FA / FB, IF / OI, CF, MR, MW, MC. */
 #include "cat_util.h"
 #include "cat_cmds.h"
 
@@ -490,4 +490,73 @@ void cat_MW(const uint8_t *ctext, uint8_t set)
     eeprom_save_memch(ch);
     vfo_mark_edited(side);
     vfo_store_back(side);
+}
+
+uint8_t dest_has_5mhz_channels(void);        /* 1 = the destination has the 60 m channels */
+uint8_t memch_dest_blocked(uint8_t ch);       /* 1 = the destination does not allow channel ch */
+
+static void rec_copy(struct vfo_rec *dst, const struct vfo_rec *src)
+{
+    uint8_t *d = (uint8_t *)dst;
+    const uint8_t *s = (const uint8_t *)src;
+    unsigned i;
+
+    for (i = 0; i < sizeof *dst; i++)
+        d[i] = s[i];
+}
+
+/* cat_MC 0xFFFAB4F3: MC P1 = the active VFO's memory channel (001..099 or a name). A set (not while the TX lamp is
+ * on) recalls the channel: the 60 m channels only where the destination has them, EMG only with EX030406
+ * EMERGENCY FREQ TX, an empty channel is refused. The VFO's record is kept as its memory-tune record, the channel
+ * record is copied into it, and the state becomes MEMORY; the save is of channel 1 whatever the channel
+ * [fact: eeprom_save_memch(1), 0xFFFAB7B9]. */
+void cat_MC(const uint8_t *ctext, uint8_t set)
+{
+    uint8_t *text = (uint8_t *)ctext;       /* the ring slot; upper-cased in place */
+    struct vfo_rec *cur = (struct vfo_rec *)vfo_rec_ptr(0);
+    uint8_t side, ch;
+    uint8_t *used;
+
+    toupper_inplace((char *)&text[2]);
+    toupper_inplace((char *)&text[3]);
+    toupper_inplace((char *)&text[4]);
+    side = g_opstate.active_vfo;
+    if (!set) {
+        put_channel(&cat_reply[2], side == VFO_A ? g_mem_hdr.chan_a : g_mem_hdr.chan_b);
+        reply_done(5);
+        return;
+    }
+    if (g_ui.tx_lamp != 0) {
+        cat_error = 1;
+        return;
+    }
+    ch = parse_channel(text);
+    if (ch == 0xFF)
+        return;
+    if (ch > 0x74u && ch < 0x84u) {         /* the 60 m channels */
+        if (dest_has_5mhz_channels() != 1 || memch_dest_blocked(ch) == 1) {
+            cat_error = 1;
+            return;
+        }
+    }
+    if (g_opstate.ex030406_emergency_freq_tx == 0 && ch == 0x84u) {
+        cat_error = 1;
+        return;
+    }
+    if (!memch_valid(ch, &used)) {
+        cat_error = 1;
+        return;
+    }
+    if (side == VFO_A) {
+        g_mem_hdr.chan_a = ch;
+        g_opstate.vfo_state_a = VFO_STATE_MEMORY;
+        rec_copy(&g_opstate.memtune_a, cur);
+    } else {
+        g_mem_hdr.chan_b = ch;
+        g_opstate.vfo_state_b = VFO_STATE_MEMORY;
+        rec_copy(&g_opstate.memtune_b, cur);
+    }
+    rec_copy(cur, &memch[ch]);
+    eeprom_save_memch(1);
+    g_ui.freq_refresh_req = 1;
 }
