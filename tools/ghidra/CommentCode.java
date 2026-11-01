@@ -52,7 +52,7 @@ public class CommentCode extends GhidraScript {
     /** A line this script owns: ends in a generated tag or a curated evidence tag. */
     static final Pattern OWNED = Pattern.compile(".* \\[(sfr|enum|doc|doc, inference|fact: [^\\]]+|inference(: [^\\]]+)?)\\]$");
     static final Pattern EVIDENCE = Pattern.compile("\\[(fact: [^\\]]+|inference(: [^\\]]+)?)\\]");
-    static final int MAX_LEN = 110, SFR_LEN = 50;
+    static final int MAX_LEN = 74, SFR_LEN = 50;  // longer comments wrap in the C (line width 100, indent 20)
 
     static final int CURATED = 0, SFR = 1, DOC = 2, ENUM = 3;
     static final String[] RULE = {"curated", "sfr", "doc", "enum"};
@@ -61,13 +61,17 @@ public class CommentCode extends GhidraScript {
     final TreeMap<Address, TreeMap<String, String>> want = new TreeMap<>();
     final int[] perRule = new int[4];
     final List<String[]> outRows = new ArrayList<>();
-    int failed = 0;
+    int failed = 0, tooLong = 0;
 
     void add(Address a, int rule, String text, Function f) {
         text = text.replace("*/", "* /").replace("/*", "/ *").replaceAll("\\s+", " ").trim();
         if (text.length() > MAX_LEN) {
-            printerr("CommentCode: comment longer than " + MAX_LEN + " at " + a + ": " + text);
-            failed++;
+            if (rule == CURATED) {
+                printerr("CommentCode: comment longer than " + MAX_LEN + " at " + a + ": " + text);
+                failed++;
+            } else {
+                tooLong++;  // a generated comment that would wrap: left out
+            }
             return;
         }
         TreeMap<String, String> m = want.computeIfAbsent(a, k -> new TreeMap<>());
@@ -210,6 +214,28 @@ public class CommentCode extends GhidraScript {
         return false;
     }
 
+    /**
+     * True for a call or load whose value is used only by the condition of a loop's back edge in the same block: the
+     * decompiler prints such a call inside "while (...)", and a comment there would land inside the expression.
+     */
+    static boolean inLoopCondition(PcodeOp op) {
+        if (!(op.getParent() instanceof PcodeBlockBasic)) return false;
+        PcodeBlockBasic b = (PcodeBlockBasic) op.getParent();
+        PcodeOp last = b.getLastOp();
+        if (last == null || last.getOpcode() != PcodeOp.CBRANCH) return false;
+        boolean back = false;
+        for (int i = 0; i < b.getOutSize(); i++) {
+            if (b.getOut(i).getStart().compareTo(b.getStart()) <= 0) back = true;
+        }
+        if (!back) return false;
+        Varnode out = op.getOutput();
+        if (out == null) return false;
+        for (Iterator<PcodeOp> it = out.getDescendants(); it.hasNext();) {
+            if (it.next().getParent() != b) return false;
+        }
+        return true;
+    }
+
     static String hex(long v) {
         return v < 10 ? Long.toString(v) : "0x" + Long.toHexString(v);
     }
@@ -280,6 +306,17 @@ public class CommentCode extends GhidraScript {
                 continue;
             }
             Address entry = f.getEntryPoint();
+            Set<Address> inCond = new HashSet<>();
+            // curated rows obey the same shape guard (fail them: move the row to a statement line)
+            for (Address a : new ArrayList<>(want.subMap(f.getBody().getMinAddress(), true, f.getBody().getMaxAddress(), true).keySet())) {
+                if (!f.getBody().contains(a)) continue;
+                TreeMap<String, String> m = want.get(a);
+                if (m.keySet().stream().anyMatch(k -> k.startsWith(CURATED + ":")) && elseIfHeader(hf, a)) {
+                    printerr("CommentCode: curated row at " + a + " would print above an else-if condition and turn it into "
+                            + "else { if }: move it to a statement line");
+                    failed++;
+                }
+            }
             // collect per rule, ordered by address, then keep the first per register / callee / call
             TreeMap<Address, TreeSet<Address>> regAt = new TreeMap<>();
             TreeMap<Address, Address> callAt = new TreeMap<>();
@@ -291,6 +328,7 @@ public class CommentCode extends GhidraScript {
                 Address at = op.getSeqnum().getTarget();
                 if (at == null || !f.getBody().contains(at)) continue;
                 int oc = op.getOpcode();
+                if (inLoopCondition(op)) inCond.add(at);
                 // [sfr]
                 List<Address> regs = new ArrayList<>();
                 if (oc == PcodeOp.LOAD || oc == PcodeOp.STORE) {
@@ -329,14 +367,15 @@ public class CommentCode extends GhidraScript {
             }
             Set<Address> seenReg = new HashSet<>();
             for (Map.Entry<Address, TreeSet<Address>> e : regAt.entrySet()) {
-                if (e.getKey().equals(entry) || elseIfHeader(hf, e.getKey())) continue;
+                if (e.getKey().equals(entry) || inCond.contains(e.getKey()) || elseIfHeader(hf, e.getKey())) continue;
                 List<String> names = new ArrayList<>();
                 for (Address a : e.getValue()) if (seenReg.add(a)) names.add(sfr.get(a));
                 if (!names.isEmpty()) add(e.getKey(), SFR, String.join("; ", names) + " [sfr]", f);
             }
             Set<Address> seenCall = new HashSet<>();
             for (Map.Entry<Address, Address> e : callAt.entrySet()) {
-                if (e.getKey().equals(entry) || elseIfHeader(hf, e.getKey()) || !seenCall.add(e.getValue())) continue;
+                if (e.getKey().equals(entry) || inCond.contains(e.getKey()) || elseIfHeader(hf, e.getKey())
+                        || !seenCall.add(e.getValue())) continue;
                 add(e.getKey(), DOC, purpose.get(e.getValue()), f);
             }
             for (Map.Entry<Address, TreeMap<Address, TreeSet<Long>>> e : enumAt.entrySet()) {
@@ -385,6 +424,6 @@ public class CommentCode extends GhidraScript {
         println("CommentCode: " + want.size() + " addresses: " + perRule[CURATED] + " curated (of " + curatedRows + " rows), "
                 + perRule[SFR] + " sfr, " + perRule[DOC] + " doc, " + perRule[ENUM] + " enum; " + changed + " set, " + removed
                 + " removed, " + kept + " with hand-written lines kept; " + decompFailed + " functions not decompiled, "
-                + failed + " failed");
+                + tooLong + " generated left out as too long, " + failed + " failed");
     }
 }

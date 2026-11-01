@@ -57,7 +57,7 @@ IDENT = re.compile(r'\b[A-Za-z_][A-Za-z0-9_]*\b')
 DAT = re.compile(r'\b(?:PTR_)?DAT_([0-9a-f]{8})\b')
 MARK = re.compile(r'^// ===== ', re.M)
 # an inline comment of T23i (CommentCode.java) ends in its evidence tag; Ghidra may wrap it, so match the tag before */
-COMMENTED = re.compile(r'\[(?:sfr|enum|doc|doc, inference|fact: [^\]]+|inference(?:: [^\]]+)?)\] \*/')
+COMMENTED = re.compile(r'\[(?:sfr|enum|doc|doc, inference|fact:\s[^\]]+|inference(?::\s[^\]]+)?)\]\s*\*/')
 
 
 def read_tsv(path):

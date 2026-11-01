@@ -45,8 +45,8 @@ FRAGMENT = re.compile(r'^(\(|in |when |if |for |at |with |which\b|side\b|param|p
 STOP = {'the', 'a', 'an', 'of', 'to', 'and', 'or', 'in', 'on', 'for', 'by', 'with', 'from', 'at', 'is', 'it', 'its',
         'into', 'per', 'as', 'when', 'if', 'then', 'one', 'all', 'set', 'get', 'sets', 'gets'}
 MAX_WORDS, MIN_WORDS, MAX_CHARS = 9, 3, 56
-CURATED_EVIDENCE = re.compile(r'^\[(fact: [^\]]+|inference(: [^\]]+)?)\]$')
-MAX_COMMENT = 110
+CURATED_EVIDENCE = re.compile(r'^\[(fact:\s[^\]]+|inference(:\s[^\]]+)?)\]$')
+MAX_COMMENT = 74  # Ghidra wraps a PRE comment longer than this (line width 100, comment indent 20)
 
 
 def name_words(name):
@@ -158,7 +158,7 @@ def check_curated(image):
 
 
 INLINE = re.compile(r'^\s*/\* (.*?) \*/\s*$')
-TAGGED = re.compile(r'\[(sfr|enum|doc|doc, inference|fact: [^\]]+|inference(: [^\]]+)?)\]$')
+TAGGED = re.compile(r'\[(sfr|enum|doc|doc, inference|fact:\s[^\]]+|inference(:\s[^\]]+)?)\]$')
 
 
 def export_comments(img_dir):
