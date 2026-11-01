@@ -1,0 +1,14 @@
+# T24 MAIN round 2: the CC-RX intrinsic setters and helpers between the getters at 0xFFF91228.. and the IWDT error
+# callback; FixFuncEntries.java nolate (each is 4 bytes and the next function starts right after it). The setters are
+# FUN_ functions in the current project already; the rows keep them independent of auto-analysis. 0xFFF927E0 was no
+# function (code between R_IWDT_Create_UserInit 0xFFF927DF and R_DA_Create 0xFFF927E5).
+fff91228		chg_pmusr: PUSH R1; MVFC PSW,R1; BTST #20 (PM); BSET #20; XCHG into an RTE frame [fact: 0xFFF91228..0xFFF91247]
+fff91248		set_bpsw: MVTC R1,BPSW; RTS [fact]
+fff9125f		set_bpc: MVTC R1,BPC; RTS [fact]
+fff91276		set_extb: MVTC R1,EXTB; RTS [fact]
+fff9128d		set_acc_hi: MVTACHI R1,A0; RTS [fact]
+fff91291		set_acc_lo: MVTACLO R1,A0; RTS [fact]
+fff912bb		byte_bset: BSET R2,[R1].B; RTS [fact]
+fff912bf		byte_bclr: BCLR R2,[R1].B; RTS [fact]
+fff912c3		byte_bnot: BNOT R2,[R1].B; RTS [fact]
+fff927e0		iwdt_error_nmi_cb: BSR.A sw_reset; RTS; registered by R_Systeminit as R_BSP_InterruptWrite(7, 0xFFF927E0) at 0xFFF8F6DD [fact]

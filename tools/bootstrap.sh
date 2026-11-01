@@ -382,7 +382,7 @@ step_hifi4() {
 G=$REPO/tools/ghidra
 build_main() {
   local bin=$BUILD/FT-710_MAIN_V0112.bin
-  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
+  local st; st=$(stamp_of "$bin" "$G/SetupRX651.java" "$G/FixFuncEntries.java" "$G/entries_main.tsv" "$G/entries_main_menu.tsv" "$G/entries_main.T24m2.tsv" "$G/ApplyNames.java" "$G/names_main.tsv" "$G/DefineRomData.java" \
     "$G/ApplySignatures.java" "$G/signatures_main.tsv" "$G/ApplyStructs.java" "$G/structs_main.h" "$G/ApplySfr.java" "$G/sfr_rx651.tsv" "$RX_MODULE_DIR/data/languages/rx62t.sinc" \
     "$G/ApplyEnums.java" "$G/enums_main.h" "$G/enum_uses_main.tsv" "$G/NameVariables.java")
   if stamp_ok FT710_MAIN main "$st"; then info "FT710_MAIN up to date"; return; fi
@@ -393,6 +393,7 @@ build_main() {
     -preScript SetupRX651.java copy=0xFFF8EADC:0xFFF8EC1C:0x25D20 copy=0xFFF8EE4C:0xFFF8EEA4:0x1FF1A copy=0xFFF8EC1C:0xFFF8EE4C:0x1B3CC \
     -postScript FixFuncEntries.java "$G/entries_main.tsv" nolate \
     -postScript FixFuncEntries.java "$G/entries_main_menu.tsv" nolate \
+    -postScript FixFuncEntries.java "$G/entries_main.T24m2.tsv" nolate \
     -postScript ApplyNames.java "$G/names_main.tsv" \
     -postScript DefineRomData.java "$OUT/logs/main_undefined.tsv" code=0xFFF8F658 \
     -postScript ApplySignatures.java "$G/signatures_main.tsv" \
