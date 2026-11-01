@@ -278,7 +278,7 @@ uint ch_step_hz(byte param_1)
       if (5 < g_opstate.ex030504_am_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 8));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 8));
       return uVar1;
     }
     if (uVar1 - 6 < 2) {
@@ -287,7 +287,7 @@ LAB_fffc6462:
       if (5 < g_opstate.ex030505_fm_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 0x14));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 0x14));
       return uVar1;
     }
     if (1 < uVar1 - 8) {
@@ -301,14 +301,16 @@ LAB_fffc6462:
   if (3 < g_opstate.ex030503_ch_step) {
     local_d = 0;
   }
-  uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2));
+  uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2));
   return uVar1;
 }
 
 
-// ===== FUN_fffc648c @ fffc648c (52 bytes)
+// ===== ch_step_scale @ fffc648c (52 bytes)
 
-uint FUN_fffc648c(uint param_1)
+/* (step): x10 with FAST unless 0x1B4E5 = 1, which sets 0x1B4E6 instead [fact: fffc648c] */
+
+uint ch_step_scale(uint param_1)
 
 {
   undefined4 local_4;

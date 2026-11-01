@@ -1491,7 +1491,7 @@ uint audio_route_state(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte beep_pattern_get_ret;
   byte tx_cw_keying_class_ret;
   byte bStack_b;
   uint uStack_8;
@@ -1505,7 +1505,7 @@ uint audio_route_state(void)
   
   g_ui_tx_lamp_val = g_ui.tx_lamp;
   bStack_b = vfo_mode(g_ui.transmitting);
-  bVar2 = FUN_fffb2dfe();
+  beep_pattern_get_ret = beep_pattern_get();
   g_ui_ky_send_1_val = g_ui.ky_send_1;
   g_ui_ky_send_0_val = g_ui.ky_send_0;
   g_ui_msg_rec_active_val = g_ui.msg_rec_active;
@@ -1571,7 +1571,7 @@ uint audio_route_state(void)
   }
   if (bVar1) {
     if (g_ui_tx_lamp_val != 1) {
-      if ((g_ui.cw_spot_on == 1) || (bVar2 == 4)) {
+      if ((g_ui.cw_spot_on == 1) || (beep_pattern_get_ret == 4)) {
         bVar1 = true;
       }
       else {
@@ -1640,7 +1640,7 @@ uint audio_route_state(void)
     }
   }
   else if (g_ui_tx_lamp_val != 1) {
-    if ((tx_cw_keying_class_ret == 0) || (bVar2 != 4)) {
+    if ((tx_cw_keying_class_ret == 0) || (beep_pattern_get_ret != 4)) {
       bVar1 = false;
     }
     else {
@@ -1690,7 +1690,7 @@ uint audio_route_state(void)
     }
   }
   else {
-    if ((tx_cw_keying_class_ret == 3) && (bVar2 == 4)) {
+    if ((tx_cw_keying_class_ret == 3) && (beep_pattern_get_ret == 4)) {
       bVar1 = true;
     }
     else {
