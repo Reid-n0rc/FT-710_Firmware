@@ -185,6 +185,13 @@ fields 1, 5 and 7 are 0 as decoded; RVS 0x004 and FWD 0x002 (no TX); `PA_VDD` 0x
 - `beep_task` (main loop) plays patterns requested by *beep_request(n)*: 880 Hz (0x445C0000) and 1046.5 Hz (0x4482D010) beeps of
   100 ms with gaps **[fact]**. Pattern 7 is requested when the TX time-out timer pre-warns (`ptt_arbiter`). Pattern 4 is the sidetone
   for PC keying (`pc_keying`) **[fact for the calls, inference for the meaning]**.
+  The patterns, from the recreated `src/main/app/beep.c` (T24 MAIN round 5, equivalent to 0xFFFB28E2) **[fact: the constants
+  of each case]**: 1 A5 880 Hz 100 ms; 2 880, 10 ms pause, 880; 3 three C6 1046.502 Hz with 100 ms pauses; 4 the CW pitch
+  (menu × 10 + 300 Hz), restarted only when the pitch changes; 5 C6, E6 1318.51, G6 1567.982 with 10 ms pauses; 6 G5 783.991,
+  E5 659.255; 7 five E6 with 40/20/20/20 ms pauses; 8 three C6 with 70 ms pauses, silence, then the restart request (UI
+  +0x447); 9..11 the RTTY test tones held until stopped: MARK (1275 / 2125 Hz), SHIFT (170 / 200 / 425 / 850 Hz), mark +
+  shift. `beep_request` lets pattern 8 replace anything, an RTTY tone replace only pattern 4, anything else wait for none.
+  `tone_set` converts with FTOU: TGRA = 1 / (36 f / 60e6) − 1, truncated.
 - The off-chip DACs (BU2505FV Q1005 on MAIN and Q4041 on PA) are written over the shift-register bus. See [tx-protection.md](tx-protection.md#pa-and-rf-control-registers).
 
 ## Timers

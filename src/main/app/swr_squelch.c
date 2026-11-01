@@ -108,7 +108,7 @@ void swr_meter_protect(void)
 struct meter_seg {
     float bound, slope, offset;
 };
-extern const struct meter_seg po_meter_segs[8];
+extern const struct meter_seg po_meter_curve[8];
 
 /* meter_po 0xFFFB7772: forward power in watts from AN002, P = x^2 (Pmax - k s) / s^2 + k x with s the PO-meter
  * scale x 16 and k = 0.00694025, Pmax 50 W on 50 MHz else 100 W (eeprom.md "PO"), then the segment table */
@@ -125,9 +125,9 @@ void meter_po(void)
     float slope = 0.0f, offset = 0.0f;   /* not reached for a number: the last bound is 0 and watts >= 0; for a NaN
                                           * the image keeps two stack words, and the result is 0xFF either way */
     for (uint8_t i = 0; i < 8; i++) {
-        if (!is_nan(watts) && watts >= po_meter_segs[i].bound) {    /* scale 0 and no power: 0 x inf */
-            slope = po_meter_segs[i].slope;
-            offset = po_meter_segs[i].offset;
+        if (!is_nan(watts) && watts >= po_meter_curve[i].bound) {    /* scale 0 and no power: 0 x inf */
+            slope = po_meter_curve[i].slope;
+            offset = po_meter_curve[i].offset;
             break;
         }
     }
@@ -171,7 +171,7 @@ void meter_comp(void)
 
 /* the S meter's segments: the first row whose bound is >= (S+40 calibration - signal) gives slope and offset;
  * none: the row-9 values [fact: ROM 0xFFF88BFC, 10 rows of {slope, offset, bound}, read at 0xFFFB798E..0xFFFB79D0] */
-extern const struct s_meter_seg { float slope, offset, bound; } s_meter_segs[10];
+extern const struct s_meter_seg { float slope, offset, bound; } s_meter_curve[10];
 
 /* meter_s 0xFFFB7959: S meter from the DSP signal level against alignment item 041 (S-MTR +40), clamped to 0..255;
  * 0 while the TX lamp is on; only when soft timer 0x2A has expired */
@@ -183,11 +183,11 @@ void meter_s(void)
         return;
     float sig = (float)level;
     float below = cal - sig;
-    float slope = s_meter_segs[9].slope, offset = s_meter_segs[9].offset;
+    float slope = s_meter_curve[9].slope, offset = s_meter_curve[9].offset;
     for (uint8_t i = 0; i < 10; i++) {
-        if (below <= s_meter_segs[i].bound) {
-            slope = s_meter_segs[i].slope;
-            offset = s_meter_segs[i].offset;
+        if (below <= s_meter_curve[i].bound) {
+            slope = s_meter_curve[i].slope;
+            offset = s_meter_curve[i].offset;
             break;
         }
     }

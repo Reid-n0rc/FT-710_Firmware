@@ -170,8 +170,8 @@ meter_po_val	12048	meter_po 0xFFFB7865: FUN_fffb94f9 of the PO position
 meter_comp_val	12049	meter_comp 0xFFFB7954: the COMP meter position
 meter_s_val	1204a	meter_s 0xFFFB7A26 / 0xFFFB7A3A: 0 in TX, else FUN_fffb959c of the S position
 fm_sql_last_mode	1b4cb	fm_noise_squelch 0xFFFB7D42 / 0xFFFB7D5A: the mode of the last pass, while FM
-po_meter_segs	fff88c74	meter_po 0xFFFB77FE..0xFFFB7827: 8 rows of {bound, slope, offset} floats
-s_meter_segs	fff88bfc	meter_s 0xFFFB7988..0xFFFB79D0: 10 rows of {slope, offset, bound} floats
+po_meter_curve	fff88c74	meter_po 0xFFFB77FE..0xFFFB7827: 8 rows of {bound, slope, offset} floats
+s_meter_curve	fff88bfc	meter_s 0xFFFB7988..0xFFFB79D0: 10 rows of {slope, offset, bound} floats
 tx_row_ptrs	fff8861c	sdr_upd_r25_tx_drive 0xFFFA2A38..0xFFFA2A40: MOV.L [band, 0xFFF8861C], the TX row pointer (names_main.tsv @tx_row_ptrs)
 dl_hello_req	1b3d0	displink_tx_schedule 0xFFF95F5A: 1 sends the 0x60 hello reply first; power_on_request sets it (README.md "Power-on")
 remote_key_last	1b554	ladder_key_task 0xFFFE3E3E..: compared with remote_key_get, stored after each change

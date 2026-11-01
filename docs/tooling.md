@@ -331,6 +331,17 @@ manual are the model's and stay open: underflow is decided on the exact result (
 flags do not change when an exception is generated" also covers a masked exception (*Open: both; would be settled by
 FADD of a result just below 2^-126 and of 0.1f + 0.2f on an RX651, reading the destination and PSW*).
 
+### MIN and MAX (T24 MAIN round 5): `tools/ghidra/rx62t-minmax-fix.patch`
+
+The module's six MIN/MAX constructors all read `if (src > dest) skip; dest = src`, an **unsigned minimum** for MIN and
+MAX alike; the manual (MIN p. 118, MAX p. 117) compares signed and MAX keeps the larger value. `rx_semcheck.py` now models
+MIN/MAX, and `rx_semcheck_forms.sh` adds MIN #imm (GCC's clamp `min #255`), MIN/MAX Rs and #imm, SCGE.L and SCLT.L: 318 of
+5,000 cases failed (MIN 217, MAX 101), **5,000 / 5,000** agree with the patch **[fact: the check, run on a private Ghidra copy]**.
+MAIN has no MIN or MAX [fact: `rx-elf-objdump`]; GCC uses `min` in `cat_SS`, `display_link.o`, `keyer.o` and `meters.o`;
+their functions are equivalent in the round-5 status run, which used the patched module. The patch is the eleventh
+`bootstrap.sh --only rx` stage (`RX_SINC_FPU` `ff99d4e8…cd25` → `RX_SINC_FIXED` `8b7bc4f0…bb2c`; checked with `RX_MODULE_DIR` on
+a copy of the round-4 module, both stages and the compile). **Not installed into the container's shared Ghidra.**
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
