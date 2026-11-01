@@ -128,3 +128,4 @@ sd_drive_attach	0x2013e6d0	[fact] driver op 5 (b 0x2013E6D0 at 0x2013E7D0): slot
 sd_lock	0x2013f9f4	[fact] b itron_loc_cpu; called around the drive flag updates of sd_drive_mount and sd_drive_unmount; no Ghidra entry
 sd_unlock	0x2013f9f8	[fact] b itron_unl_cpu; the pair of sd_lock; no Ghidra entry
 sd_card_write_protected	0x2013fd70	[fact] (index): bit 5 of +0x68 of the drive 0x20808B60[index], 0 without a handle +0x24; called from 0x20103BC4 (b); no Ghidra entry
+fs_byte_pair_sum	0x2014d8b4	[fact] sbfx r1, r0, #8, #8; sxtab; sxtb: the signed sum of the two low bytes; Ghidra FUN_2014d8b4

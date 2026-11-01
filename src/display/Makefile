@@ -39,7 +39,7 @@ endif
 CFLAGS := -std=gnu99 -g -O2 -marm -mcpu=cortex-a9 -mfloat-abi=soft -ffreestanding -fno-builtin -fno-common \
           -ffunction-sections -fdata-sections -fno-strict-aliasing -fno-tree-loop-distribute-patterns -fno-ipa-ra -Wall -Wextra -Wno-unused-parameter -Iinclude
 
-SRCS := $(wildcard app/*.c lib/*.c drivers/*.c)
+SRCS := $(wildcard app/*.c lib/*.c drivers/*.c fs/*.c)
 ASRCS := $(wildcard lib/*.S startup/*.S)
 OBJ := $(patsubst %.c,$(OUT)/obj/%.o,$(SRCS)) $(patsubst %.S,$(OUT)/obj/%.o,$(ASRCS))
 

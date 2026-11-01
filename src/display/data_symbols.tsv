@@ -111,3 +111,5 @@ sd_mtx	20808b6c	[fact] the SD mutex id, 0x20808B58 + 0x14 (sd_mutex_create, sd_m
 sd_ins_ctsk	2042053c	[fact] the SDInsCheck creation packet sd_card_task_start passes to os_create_tsk_named (literal 0x2013FA5C)
 sd_ins_name	2013fa50	[fact] "SDInsCheck" in sd_card_task_start's literal pool (add r1, pc, #0x20 at 0x2013FA28)
 sd_mtx_cmtx	20420558	[fact] the 12-byte mutex packet sd_mutex_create copies to the stack (0x2042053C + 0x1C..0x24)
+sjis_ucs2_81	20420756	[fact] sjis_to_ucs2_char indexes it with (lead << 8 | trail) - 0x8140 (literal 0x20420756 at 0x2014CAFC); ucs2_to_ascii_char searches its 0x1EBD entries
+sjis_ucs2_e0	204244d0	[fact] the same for lead bytes 0xE0..0xFC, index - 0xE040 (literal at 0x2014CB64); 0x1CBD entries searched by ucs2_to_ascii_char

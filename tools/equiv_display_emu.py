@@ -1652,6 +1652,59 @@ PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('s
                                                                              'strncpy')})
 
 
+def wide_strings(rng, args, sized=False):
+    """two_strings for the file system's UTF-16 compares (round 9): the same related pairs as 16-bit characters, the
+    high byte mostly 0 (so the case folding of the low byte runs) and now and then 0x30 or 0xFF (code differences);
+    the second string's characters are a mixture of the first's and others."""
+    two_strings(rng, args, sized)
+    bufs = []
+    for i, (a, data) in enumerate(args['buffers'][-2:]):
+        txt = data[:data.index(0)]
+        hi = rng.choice([0, 0, 0, 0x30, 0xFF])
+        w = b''.join(bytes([c, hi if rng.random() < 0.3 else 0]) for c in txt) + b'\0\0' + data[len(txt) + 1:]
+        bufs.append((a & ~1, w))
+        args['regs'][i] = a & ~1
+    args['buffers'] = args['buffers'][:-2] + bufs
+    return []
+
+
+def fs_len_args(rng, args, k_len, k_eq=None):
+    """A length for the file system's copy and fill loops (round 9): 0..0x400 bytes over word and 32-byte steps, or
+    a random 16-bit one; for fs_memset the block size argument k_eq is the length (word fill) or 0x200 (byte fill)
+    on 32-byte aligned buffers. A random 32-bit length ran past the 1M budget in a quarter of the trials."""
+    regs = args['regs']
+    regs[k_len] = rng.choice([0, 1, 3, 4, 31, 32, 33, 64, 0x200, 0x200, rng.randrange(0x400), rng.getrandbits(12)])
+    if k_eq is not None:
+        regs[k_eq] = regs[k_len] if rng.random() < 0.6 else 0x200
+        regs[0] = SCRATCH_ARGS + rng.choice([0, 0, 0, 1, 2, 4])
+    return []
+
+
+PRESETS.update({n: two_strings for n in ('fs_stricmp', 'fs_stricmp_sjis')})
+PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('fs_strnicmp', 'fs_strnicmp_sjis')})
+PRESETS['fs_wstricmp'] = wide_strings
+PRESETS['fs_wstrnicmp'] = lambda rng, args: wide_strings(rng, args, True)
+PRESETS.update({n: (lambda rng, args: fs_len_args(rng, args, 2)) for n in ('fs_memcpy', 'fs_strncpy', 'fs_wstrncpy')})
+
+
+def fs_move_args(rng, args):
+    """fs_memmove: overlapping areas in one 1 KB buffer half of the time (dst a few bytes above or below src), so
+    that its backward copy runs with a length (a mutation of it passed before this preset)."""
+    fs_len_args(rng, args, 2)
+    if rng.random() < 0.5:
+        a = SCRATCH_ARGS + 0x200
+        args['buffers'] = [b for b in args['buffers'] if b[0] != SCRATCH_ARGS] + \
+            [(SCRATCH_ARGS, bytes(rng.getrandbits(8) for _ in range(0x800)))]
+        args['regs'][1] = a
+        args['regs'][0] = a + rng.choice([-16, -1, 1, 2, 7, 64])
+        args['regs'][2] = rng.choice([0, 1, 2, 8, 100, 0x100])
+    return []
+
+
+PRESETS['fs_memmove'] = fs_move_args
+PRESETS['fs_memset'] = lambda rng, args: fs_len_args(rng, args, 2, 3)
+
+
 def byte_check(res, obj, fname, shndx, off, oaddr):
     """identical: the section linked so that the function lands at its original address gives the image's bytes over
     the whole function symbol (code and its literals), which must cover at least the Ghidra function. In practice
