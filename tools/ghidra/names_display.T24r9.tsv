@@ -1,0 +1,11 @@
+# FT-710 DISPLAY: T24 round 9 names (also appended to names_display.tsv; the superseded rows of 0x2014D1C4, 0x2014AFCC,
+# 0x20143C1C and 0x2014A818 there are replaced)
+20148e80	fat_detect_superfloppy	[fact] (drive, sector 0): a volume without a partition table: first sector 0, the type from the boot-sector names (EXFAT at +3, FAT32 at +0x52, FAT12/FAT16 at +0x36); 0, or -1 for exFAT and an unknown type; fat_find_volume's tail call at 0x2014918C; new entry (T24 round 9, src/display/fs/fat_volume.c)
+201447f4	fs_last_error_get	[fact] returns the layer's last error 0x20808BA4 (what fs_set_error stores); Ghidra FUN_201447f4 (T24 round 9, fs/fat_table.c)
+2014d8b4	fs_byte_pair_sum	[fact] the signed byte sum of the two low bytes of its argument (sbfx, sxtab, sxtb); no caller found; Ghidra FUN_2014d8b4 (T24 round 9, fs/fs_string.c)
+2014a818	fs_drive_attach_512	[fact] fs_drive_attach with the sixth argument (bytes per sector) 0x200 (mov ip, #0x200 at 0x2014A81C); was fs_drive_attach_thunk (T24 round 9, fs/fat_volume.c)
+2014d1c4	fs_memmove	[fact] byte move; for dst above src inside the area it copies backwards from src[n] down to src[1], one byte above the area (ldrb r2, [ip], #-1 with ip = src + n at 0x2014D1EC), so an overlapping move shifts the wrong bytes (T24 round 9)
+2014afcc	fs_split_sectors	[fact] (sectors, *hi, *lo, bytes per sector): *hi whole units of 0x800000 / (bps / 512) sectors (4 GiB of 512-byte sectors), *lo the rest in bytes (T24 round 9; was "8 MB units")
+20143c1c	fs_fatcache_setup_a	[fact] fs_fatcache_setup with one sector per slot (mov r3, #1), the result through fs_set_error (T24 round 9)
+201636f8	ml_settings24_copy	[fact] mainlink_get_settings24 passes (out, 0x2045006D), the settings of the last 0x24 frame; Ghidra FUN_201636f8 (T24 round 9, app/mainlink.c)
+20163668	ml_enc_entry_clear	[fact] mainlink_tx_reset calls it for each 5-byte entry 0x2045F0C5 + 5 j + 0x32 i of the encoder queue (7 x 10); Ghidra FUN_20163668 (T24 round 9, app/mainlink.c)

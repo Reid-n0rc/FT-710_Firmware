@@ -58,6 +58,10 @@ ICCIAR = 0xE820200C
 GIC_TABLE, GIC_IDS = 0x208DC1E0, 587
 OSTM0_ID = 0x86
 MMIO = [(0x3FE00000, 0x40000000), (0xE8000000, 0xE8300000), (0xFCFE0000, 0xFD000000)]
+# --sd (round 9): the card's sectors and the RAM disk driver, at addresses the image does not use
+SD_DISK, SD_CODE = 0x30000000, 0x30F00000
+SD_DRIVER_OP = 0x2013E71C          # sd_driver_op, the drive I: driver entry (drivers/sd_drive.c)
+SD_CD_PORT = 0xFCFE322C            # PPR11: P11_4 is SD_CD (peripherals.md section 6)
 # mirror block (1 MB, top 12 bits) -> normal block (Table 53.1)
 MIRROR = {0x600: 0x200, 0x601: 0x205, 0x602: 0x206, 0x603: 0x201, 0x604: 0x202, 0x605: 0x207, 0x606: 0x208,
           0x607: 0x203, 0x608: 0x204, 0x609: 0x209}
@@ -78,7 +82,7 @@ def image_path():
 
 
 class Boot:
-    def __init__(self, image, seed, watch, slice_, entries=None, ram2=None):
+    def __init__(self, image, seed, watch, slice_, entries=None, ram2=None, sd=None):
         self.uc = uc = Uc(UC_ARCH_ARM, UC_MODE_ARM)
         try:
             uc.ctl_set_cpu_model(A.UC_CPU_ARM_CORTEX_A9)
@@ -120,6 +124,37 @@ class Boot:
                 a = BASE + 4 * k
                 uc.hook_add(UC_HOOK_CODE, self.on_ccnt, begin=a, end=a)
         uc.hook_add(UC_HOOK_MEM_UNMAPPED, self.on_unmapped)
+        self.sd = sd is not None
+        self.sd_ops = collections.Counter()
+        if self.sd:
+            self._sd_card(sd)
+
+    def _sd_card(self, card):
+        """An SD card (round 9): the card's sectors at SD_DISK and the RAM disk driver of the equivalence checks
+        (equiv_display_emu.RAMDISK_WORDS, its disk address and size patched) at SD_CODE. The drive's driver entry
+        sd_driver_op (0x2013E71C) is entered by the image for every operation; reads (1), writes (2) and the mount
+        (7) go to the RAM disk instead (code hook at the entry), the rest (attach 5, unmount 8, card check 9) run
+        as they are. SD_CD (PPR11 bit 4, 0xFCFE322C) reads low: a card is in. The SDHI command path itself is not
+        modelled: what this exercises is the card monitor, the drive and the FAT layer above the driver entry."""
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import equiv_display_emu as E
+        uc = self.uc
+        size = (len(card) + 0xFFFFF) & ~0xFFFFF
+        uc.mem_map(SD_DISK, size, UC_PROT_ALL)
+        uc.mem_write(SD_DISK, card)
+        words = list(E.RAMDISK_WORDS)
+        k = words.index(E.DISK)
+        words[k], words[k + 1] = SD_DISK, len(card) // 512
+        uc.mem_map(SD_CODE, 0x1000, UC_PROT_ALL)
+        uc.mem_write(SD_CODE, struct.pack(f'<{len(words)}I', *words))
+        self.sd_drv = SD_CODE + (E.RAMDISK_DRV - E.RAMDISK_CODE)
+        uc.hook_add(UC_HOOK_CODE, self.on_sd_driver_op, begin=SD_DRIVER_OP, end=SD_DRIVER_OP)
+
+    def on_sd_driver_op(self, uc, addr, size, _):
+        op = uc.reg_read(A.UC_ARM_REG_R1)
+        self.sd_ops[op] += 1
+        if op in (1, 2, 7):
+            uc.reg_write(A.UC_ARM_REG_PC, self.sd_drv)
 
     def _map_block(self, va, normal, base):
         """Map one 1 MB block at va onto the host RAM of normal block `normal`, with the watched pages as MMIO."""
@@ -177,7 +212,10 @@ class Boot:
             v, self.inject = (self.inject if self.inject is not None else 1023), None
             return v
         v = self.io.get(a, 0)
-        return (v ^ self.rng.getrandbits(8 * size)) if self.rng.random() < 0.5 else v
+        v = (v ^ self.rng.getrandbits(8 * size)) if self.rng.random() < 0.5 else v
+        if self.sd and a == SD_CD_PORT:
+            v &= ~0x10            # SD_CD low: a card is in (sd_card_detect 0x20101D94)
+        return v
 
     def on_io_write(self, uc, off, size, value, base):
         self.io[base + off] = value & ((1 << (8 * size)) - 1)
@@ -296,6 +334,15 @@ def report(label, b, watch, funcs, extra=None):
             'gui': 0x20130188 in b.reached, 'watched': len(b.watched)}
 
 
+def sd_summary(b, addrs):
+    """With --sd: the driver operations seen and how many FAT-layer functions (0x20140BE8..0x2014E200) ran."""
+    if not b.sd:
+        return None
+    fat = [a for a in addrs if 0x20140BE8 <= a < 0x2014E200]
+    return (f'SD driver operations {dict(sorted(b.sd_ops.items()))}; FAT layer functions reached '
+            f'{len(b.reached & set(fat))} of {len(fat)}')
+
+
 def hybrid_code(elf):
     """Start addresses of the recreated functions in a hybrid ELF (display_link.py) and RAM2's end."""
     from elftools.elf.elffile import ELFFile
@@ -321,30 +368,45 @@ def main():
     ap.add_argument('--slice', type=int, default=50_000)
     ap.add_argument('--seed', type=int, default=1)
     ap.add_argument('--watch', nargs=2, default=['0x2091D000', '0x20980000'])
+    ap.add_argument('--sd', nargs='?', const='synthetic', default=None,
+                    help='boot with an SD card: a card image file, or a synthetic FAT32 one (tools/fat_image.py)')
     args = ap.parse_args()
+    sd = None
+    if args.sd == 'synthetic':
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import fat_image as F
+        sd, _ = F.card(32, 0x4000, spc=8, files=F.DEFAULT_FILES, dirs=F.DEFAULT_DIRS)
+    elif args.sd:
+        sd = open(args.sd, 'rb').read()
     watch = tuple(int(x, 0) for x in args.watch)
     funcs = sorted((int(r[0], 16), r[1]) for r in read_tsv(os.path.join(ROOT, 'decomp/display/functions.tsv'))[1:]
                    if int(r[0], 16) >= BASE)
     addrs = [a for a, _ in funcs]
     img = open(args.image or image_path(), 'rb').read()
-    b = Boot(img, args.seed, watch, args.slice, entries=addrs)
+    b = Boot(img, args.seed, watch, args.slice, entries=addrs, sd=sd)
     b.run(args.insns)
-    orig = report(f'original, seed {args.seed}', b, watch, funcs)
+    orig = report(f'original, seed {args.seed}', b, watch, funcs, extra=sd_summary(b, addrs))
     if not args.compare:
         return
     hyb = open(args.compare, 'rb').read()
     code, ram2_end = hybrid_code(os.path.join(os.path.dirname(args.compare), 'display_hybrid.elf'))
     hwatch = (max(watch[0], (ram2_end + 0xFFF) & ~0xFFF), watch[1])
-    b2 = Boot(hyb, args.seed, hwatch, args.slice, entries=set(addrs) | code)
+    b2 = Boot(hyb, args.seed, hwatch, args.slice, entries=set(addrs) | code, sd=sd)
     b2.run(args.insns)
     ran = len(b2.reached & code)
     ram2 = hyb[RAM2_FILE_OFF:]
     loaded = bytes(b2.uc.mem_read(RAM2, len(ram2))) == ram2 if ram2 else None
     h = report(f'hybrid, seed {args.seed}', b2, hwatch, funcs,
                extra=f'recreated functions executed: {ran} of {len(code)}; RAM2 '
-                     + ('empty' if loaded is None else f'{len(ram2)} bytes, loaded intact: {loaded}'))
+                     + ('empty' if loaded is None else f'{len(ram2)} bytes, loaded intact: {loaded}')
+                     + ('; ' + sd_summary(b2, addrs) if sd else ''))
     ok = (h['stop'] is None and h['tasks'] == orig['tasks'] and h['gui'] == orig['gui'] and loaded is not False
           and h['watched'] == 0)
+    if sd:
+        same_disk = bytes(b.uc.mem_read(SD_DISK, len(sd))) == bytes(b2.uc.mem_read(SD_DISK, len(sd)))
+        print(f'display_boot_emu: SD card: driver operations original {dict(b.sd_ops)}, hybrid {dict(b2.sd_ops)}; '
+              f'card contents after the boots {"equal" if same_disk else "DIFFER"}')
+        ok = ok and same_disk and b.sd_ops == b2.sd_ops
     print(f'display_boot_emu: hybrid boot {"agrees with" if ok else "DIFFERS from"} the original (no fault, same '
           f'number of tasks, GUI loop reached alike, RAM2 intact, nothing in the watched range)')
     sys.exit(0 if ok else 1)

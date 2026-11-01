@@ -245,3 +245,4 @@
 2013f9f4		sd_lock: b itron_loc_cpu after sd_format's literal pool; called from 0x2013E664 and 0x2013E6B4 (drivers/sd_drive.c)
 2013f9f8		sd_unlock: b itron_unl_cpu; called from 0x2013E694 and 0x2013E6C4 (drivers/sd_drive.c)
 2013fd70		sd_card_write_protected: ldr at 0x2013FD70 after sd_card_unmount's bx lr; reached by b 0x2013FD70 at 0x20103BC4 (drivers/sd_drive.c)
+20148e80		fat_detect_superfloppy: push at 0x20148E80 right after fs_wstrnicmp_ucs2's end (0x20148E7C); reached only by the tail call b 0x20148E80 at 0x2014918C in fat_find_volume (src/display/fs/fat_volume.c)

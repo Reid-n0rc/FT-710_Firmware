@@ -1014,7 +1014,6 @@
 2014d8c8	fs_wstr_store_le	Copies a 0-terminated UTF-16 string to bytes, little-endian, including the terminator [fact]
 2014cff4	fs_wstrcpy_len	Copies a 0-terminated UTF-16 string, returns its length in characters, sets *flag = 1 [fact]
 2014d050	fs_ucs2_to_ascii_upper	UTF-16 name to 8-bit upper case: 0x00A5 -> '\\', 0x203E -> '~', U+FF61..FF9F -> half-width kana 0xA1..0xDF, 0 for any other character outside 0x20..0x7E [fact]
-2014d1c4	fs_memmove	Byte copy that copies backwards when the areas overlap [fact]
 2014d248	fs_wstrlen_bytes	Length of a UTF-16 string in bytes [fact]
 2014d270	fs_strcpy	Byte string copy including the terminator [fact]
 2014d288	fs_strncpy	Copies up to n bytes, pads with 0 after the terminator [fact]
@@ -1096,7 +1095,6 @@
 2014a360	fs_clmap_size	Bytes a drive's cluster bitmap needs: (clusters + 7) / 8, clusters = min(FAT entries, data clusters + 2) [fact]
 2014a4d0	fs_init	(drive table, n, file table, m): clears the 0x450-byte drive and 0x24C-byte file tables (0x20808B90..9C), creates the pools and semaphores; errors -30/-36/-33/-39/-42 [fact]
 2014a5dc	fs_drive_attach	(drv, letter, driver fn, ctx, no_mount, sector size): links a drive into the list 0x20808BA0, calls the driver (op 5 init, op 7 mount), sets up the caches [fact]
-2014a818	fs_drive_attach_thunk	Tail call to fs_drive_attach [fact]
 2014a83c	fs_exit	Reverse of fs_init: clears the tables, deletes the drive semaphores, pools and semaphores (errors -53..-48) [fact]
 2014a99c	fs_vol_clear_geometry	Zeroes the BPB fields of a drive (type, sectors/cluster, reserved, FATs, root entries, sizes, root cluster, FSInfo) [fact]
 2014a9d4	fs_drive_mount	Driver op 7 (mount) on a drive, re-reads the geometry, FAT32 free count via 0x2014B730 when unknown, sets mounted bit 0x80 of +0x68; -16 for clusters > 128 KB [fact]
@@ -1114,7 +1112,6 @@
 2014af14	fs_get_attr	Attribute byte (entry byte 11) of a path from fs_stat; sdmenu_file_exists [fact]
 2014af44	fs_file_size_copy	Copies the 4-byte size at file +0x2C [fact]
 2014af64	fs_fsize	(fd, *size): file size; the firmware loaders compare it with image sizes (0x43075A in fwobj_sdr_run, < 0x242 in fwobj_display_run) [fact]
-2014afcc	fs_split_sectors	Splits a sector count into whole 8 MB units and a byte remainder for a sector size [fact for the arithmetic]
 2014b020	fs_disk_total_calc	Total data size of a drive: (clusters - 2) * sectors per cluster, split by fs_split_sectors; -17 for an unknown drive [fact]
 2014b140	fs_disk_size	(letter, *hi, *lo): checked wrapper of fs_disk_total_calc; sd_info_screen [fact]
 2014b1e0	fat32_count_free	Counts the zero FAT32 entries (free clusters) [inference: same loop as fat16_count_free]
@@ -1179,7 +1176,6 @@
 20143a58	fs_remove_work	Validates and normalises the path, file_remove_core, fs_flush [fact]
 20143b20	fs_remove	(path): deletes a file; wav_delete, rec_close_abort and rec_open_wav call it on WAV files [fact]
 20143b70	fs_fatcache_setup	(drive, buffer, size, sectors per slot): FAT cache in a caller buffer (0x206 bytes per sector slot, 4-byte aligned), -24 when too small [fact]
-20143c1c	fs_fatcache_setup_a	fs_fatcache_setup and fs_set_error [fact]
 20143c34	fs_fatcache_setup_b	Second identical wrapper [fact]
 20143eac	fs_dircache_setup	(drive, buffer, size, sectors per slot): directory cache (0x208 bytes per sector, at least 3 slots), -28 otherwise [fact]
 2014440c	dircache_flush	Writes every dirty directory cache slot back (fs_dev_op2) and clears the dirty bit [fact]
@@ -1970,3 +1966,12 @@
 2013f9f4	sd_lock	[fact] b itron_loc_cpu (callers 0x2013E664, 0x2013E6B4); new entry (T24 round 8)
 2013f9f8	sd_unlock	[fact] b itron_unl_cpu; new entry (T24 round 8)
 2013fd70	sd_card_write_protected	[fact] (index): bit 5 of +0x68 of the drive 0x20808B60[index], 0 without a handle; called from 0x20103BC4; new entry (T24 round 8)
+20148e80	fat_detect_superfloppy	[fact] (drive, sector 0): a volume without a partition table: first sector 0, the type from the boot-sector names (EXFAT at +3, FAT32 at +0x52, FAT12/FAT16 at +0x36); 0, or -1 for exFAT and an unknown type; fat_find_volume's tail call at 0x2014918C; new entry (T24 round 9, src/display/fs/fat_volume.c)
+201447f4	fs_last_error_get	[fact] returns the layer's last error 0x20808BA4 (what fs_set_error stores); Ghidra FUN_201447f4 (T24 round 9, fs/fat_table.c)
+2014d8b4	fs_byte_pair_sum	[fact] the signed byte sum of the two low bytes of its argument (sbfx, sxtab, sxtb); no caller found; Ghidra FUN_2014d8b4 (T24 round 9, fs/fs_string.c)
+2014a818	fs_drive_attach_512	[fact] fs_drive_attach with the sixth argument (bytes per sector) 0x200 (mov ip, #0x200 at 0x2014A81C); was fs_drive_attach_thunk (T24 round 9, fs/fat_volume.c)
+2014d1c4	fs_memmove	[fact] byte move; for dst above src inside the area it copies backwards from src[n] down to src[1], one byte above the area (ldrb r2, [ip], #-1 with ip = src + n at 0x2014D1EC), so an overlapping move shifts the wrong bytes (T24 round 9)
+2014afcc	fs_split_sectors	[fact] (sectors, *hi, *lo, bytes per sector): *hi whole units of 0x800000 / (bps / 512) sectors (4 GiB of 512-byte sectors), *lo the rest in bytes (T24 round 9; was "8 MB units")
+20143c1c	fs_fatcache_setup_a	[fact] fs_fatcache_setup with one sector per slot (mov r3, #1), the result through fs_set_error (T24 round 9)
+201636f8	ml_settings24_copy	[fact] mainlink_get_settings24 passes (out, 0x2045006D), the settings of the last 0x24 frame; Ghidra FUN_201636f8 (T24 round 9, app/mainlink.c)
+20163668	ml_enc_entry_clear	[fact] mainlink_tx_reset calls it for each 5-byte entry 0x2045F0C5 + 5 j + 0x32 i of the encoder queue (7 x 10); Ghidra FUN_20163668 (T24 round 9, app/mainlink.c)

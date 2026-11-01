@@ -1,0 +1,3 @@
+# FT-710 DISPLAY: the T24 round-9 entries alone (also in entries_display.tsv), for applying them to the canonical project
+# without re-running the older rows. Applied with FixFuncEntries.java before ApplyNames.java.
+20148e80		fat_detect_superfloppy: push at 0x20148E80 right after fs_wstrnicmp_ucs2's end (0x20148E7C); reached only by the tail call b 0x20148E80 at 0x2014918C in fat_find_volume (src/display/fs/fat_volume.c)
