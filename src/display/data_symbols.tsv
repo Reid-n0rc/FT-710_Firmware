@@ -144,3 +144,9 @@ fs_drives	20808b90	[fact] fs_init stores the drive table (literal 0x20808B90); f
 fs_ndrives	20808b94	[fact] fs_init stores its count (strh)
 fs_files	20808b98	[fact] fs_init stores the file table
 fs_nfiles	20808b9c	[fact] fs_init stores its count (strh)
+g_ml	20450024	[fact] the MAIN link's state block (struct ml_state, tools/ghidra/structs_display.h; literal 0x20450024 in mainlink_got_frame60 & co.)
+ml_gui_snapshot	2045f8c0	[fact] the newest MAIN frame (0x240 bytes) mainlink_get_last_frame / _set_last_frame / _last_frame_differs copy or compare
+ml_frame60	2045fb00	[fact] the newest 0x60 frame (mainlink_get_frame60)
+ml_resend	2045efc0	[fact] the frame kept for a resend (mainlink_on_nak passes it to mainlink_tx_raw)
+ml_parked	2045f240	[fact] three words mainlink_tx_reset clears (0x2045EFC0 + 0x280..0x288)
+ml_enc_queue	2045f0c5	[fact] the encoder queue, 7 x 10 entries of 5 bytes (mainlink_tx_reset, literal 0x2045F0C5)
