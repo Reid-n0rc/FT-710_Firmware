@@ -1,5 +1,5 @@
 /* The CAT commands of the MAIN image that read or set a VFO's frequency and state (T24 round 4; docs/code/main/
- * cat.md, radio-control.md): FA / FB. */
+ * cat.md, radio-control.md): FA / FB, IF / OI, CF, MR, MW. */
 #include "cat_util.h"
 #include "cat_cmds.h"
 
@@ -40,13 +40,57 @@ extern const uint8_t cat_mode_codes[];        /* 0xFFF806D0: the CAT mode charac
 extern const uint8_t cat_vfo_state_codes[];   /* 0xFFF806DF: the CAT P7 character per VFO state */
 extern const uint8_t cat_pms_names[][3];      /* 0xFFF806E9: names of the channels from 99 on */
 
+/* the channel as three characters: 001..099, or the name of channel 99 + n with n in 8 bits [fact: add #0x9D,
+ * cat_IF_OI 0xFFFAA44E, cat_MR] */
+static void put_channel(uint8_t *at, uint8_t ch)
+{
+    if (ch < 99u) {
+        put_dec(at, (uint8_t)(ch + 1u), 100);
+    } else {
+        const uint8_t *nm = cat_pms_names[(uint8_t)(ch + 0x9Du)];
+
+        at[2] = nm[2];
+        at[0] = nm[0];
+        at[1] = nm[1];
+    }
+}
+
+/* the clarifier offset (s16, big-endian) as sign and four digits */
+static void put_clar_offset(uint8_t *at, const struct vfo_rec *r)
+{
+    uint16_t off = be16(r->clar_offset_be);
+
+    if (r->clar_offset_be[0] & 0x80u) {
+        at[0] = '-';
+        off = (uint16_t)(~off + 1u);
+    } else {
+        at[0] = '+';
+    }
+    put_dec16(&at[1], off, 1000);
+}
+
+/* P6..P10 of IF / OI / MR at cat_reply[21..26]: mode, VFO state, tone mode (1 -> '2', 2 -> '1', else '0'), "00",
+ * repeater shift (0 minus -> '2', 2 plus -> '1', else '0') */
+static void put_info_tail(const struct vfo_rec *r, uint8_t state)
+{
+    uint8_t v;
+
+    cat_reply[21] = cat_mode_codes[r->mode & 0x0Fu];
+    cat_reply[22] = cat_vfo_state_codes[state];
+    v = (uint8_t)((r->flags3 & 0x38u) >> 3);
+    cat_reply[23] = v == 1 ? '2' : v == 2 ? '1' : '0';
+    cat_reply[25] = '0';
+    cat_reply[24] = '0';
+    v = (uint8_t)((r->flags2 & 0x0Cu) >> 2);
+    cat_reply[26] = v == 0 ? '2' : v == 2 ? '1' : '0';
+}
+
 /* cat_IF_OI 0xFFFAA39C: IF (VFO-A) / OI (VFO-B) information, 28 bytes: P1 channel (3), P2 frequency (9), P3 clarifier
  * offset (sign + 4), P4 RX / P5 TX clarifier, P6 mode, P7 VFO state, P8 tone mode, P9 "00", P10 repeater shift */
 void cat_IF_OI(uint8_t opposite)
 {
     const struct vfo_rec *r;
     uint8_t ch, state, clar;
-    uint16_t off;
 
     if (opposite == 0) {
         r = &g_opstate.vfo_a;
@@ -59,29 +103,14 @@ void cat_IF_OI(uint8_t opposite)
         state = g_opstate.vfo_state_b;
         clar = g_ui.clar_flags_b;
     }
-    if (ch < 99u) {                         /* 001..099 */
-        put_dec(&cat_reply[2], (uint8_t)(ch + 1u), 100);
-    } else {                                /* the name of channel 99 + n, n in 8 bits [fact: add #0x9D, 0xFFFAA44E] */
-        const uint8_t *nm = cat_pms_names[(uint8_t)(ch + 0x9Du)];
-
-        cat_reply[4] = nm[2];
-        cat_reply[2] = nm[0];
-        cat_reply[3] = nm[1];
-    }
+    put_channel(&cat_reply[2], ch);
     if (state == VFO_STATE_VFO || state == VFO_STATE_MEMTUNE || state == VFO_STATE_QMB) {
         cat_reply[2] = '0';
         cat_reply[3] = '0';
         cat_reply[4] = '0';
     }
     put_dec32(&cat_reply[5], vfo_freq(0, opposite), 100000000u);
-    off = be16(r->clar_offset_be);
-    if (r->clar_offset_be[0] & 0x80u) {     /* s16, printed as sign and magnitude */
-        cat_reply[14] = '-';
-        off = (uint16_t)(~off + 1u);
-    } else {
-        cat_reply[14] = '+';
-    }
-    put_dec16(&cat_reply[15], off, 1000);
+    put_clar_offset(&cat_reply[14], r);
     switch (clar) {                         /* bit 0 RX, bit 1 TX; other values leave P4 P5 as they are */
     case 0:
         cat_reply[19] = '0';
@@ -102,33 +131,176 @@ void cat_IF_OI(uint8_t opposite)
     default:
         break;
     }
-    cat_reply[21] = cat_mode_codes[r->mode & 0x0Fu];
-    cat_reply[22] = cat_vfo_state_codes[state];
-    switch ((r->flags3 & 0x38u) >> 3) {     /* tone mode 1 -> '2', 2 -> '1', else '0' */
-    case 1:
-        cat_reply[23] = '2';
-        break;
-    case 2:
-        cat_reply[23] = '1';
-        break;
-    default:
-        cat_reply[23] = '0';
-        break;
-    }
-    cat_reply[25] = '0';
-    cat_reply[24] = '0';
-    switch ((r->flags2 & 0x0Cu) >> 2) {     /* repeater shift 0 minus -> '2', 2 plus -> '1', else '0' */
-    case 0:
-        cat_reply[26] = '2';
-        break;
-    case 2:
-        cat_reply[26] = '1';
-        break;
-    default:
-        cat_reply[26] = '0';
-        break;
-    }
+    put_info_tail(r, state);
     reply_done(27);
+}
+
+int strncmp(const char *a, const char *b, size_t n);      /* the image's C library (no stop at a shared NUL) */
+uint8_t memch_valid(uint8_t ch, uint8_t **rec);            /* 1 = the channel holds a memory */
+
+/* cat_MR 0xFFFABEA5: MR P1 = memory channel read: 001..099 or a name (P1L .. EMG, 34 names from channel 99 on; upper
+ * case first); the answer is IF's layout from the channel record, with the active VFO's state as P7 and the
+ * record's clarifier flags (flags1 bits 4 / 3); an empty channel or a frequency of 0 is refused. */
+void cat_MR(const uint8_t *ctext, uint8_t set)
+{
+    uint8_t *text = (uint8_t *)ctext;       /* the ring slot; upper-cased in place */
+    const struct vfo_rec *r;
+    uint8_t *rec;
+    uint8_t ch = 0, n, k;
+    uint32_t hz = 0;
+
+    (void)set;
+    toupper_inplace((char *)&text[2]);
+    toupper_inplace((char *)&text[3]);
+    toupper_inplace((char *)&text[4]);
+    if (text[2] == '0') {
+        if (!get_dec(&text[2], 3, 100, &n))
+            return;
+        /* 001..099; for 000 or above 099 the image keeps an uninitialised stack byte as the channel [fact: no store
+         * on that path, 0xFFFABEA5..]; 0 here, which is what the check's zeroed stack gives the original */
+        if (n != 0 && n <= 99u)
+            ch = (uint8_t)(n - 1u);
+    } else {
+        for (k = 0; k < 0x22u; k++) {
+            if (strncmp((const char *)cat_pms_names[k], (const char *)&text[2], 3) == 0) {
+                ch = (uint8_t)(k + 99u);
+                break;
+            }
+        }
+        if (ch < 99u) {
+            cat_error = 1;
+            return;
+        }
+    }
+    if (!memch_valid(ch, &rec)) {
+        cat_error = 1;
+        return;
+    }
+    r = &memch[ch];
+    put_channel(&cat_reply[2], ch);
+    for (k = 0; k < 4; k++)
+        hz = hz << 8 | r->freq_be[k];
+    if (hz == 0) {
+        cat_error = 1;
+        return;
+    }
+    put_dec32(&cat_reply[5], hz, 100000000u);
+    put_clar_offset(&cat_reply[14], r);
+    cat_reply[19] = (r->flags1 & 0x10u) ? '1' : '0';
+    cat_reply[20] = (r->flags1 & 0x08u) ? '1' : '0';
+    put_info_tail(r, g_opstate.active_vfo == VFO_A ? g_opstate.vfo_state_a : g_opstate.vfo_state_b);
+    reply_done(27);
+}
+
+/* cat_CF 0xFFFA7FA1: CF P1 P2 P3 P4.. = clarifier of the active (P1 = 0) or the other VFO (P1 = 1); P2 is not
+ * checked. P3 = 0: P4 RX and P5 TX on/off ("000" after them), kept in the UI byte (bit 0 RX, bit 1 TX) and in record
+ * flags1 bits 4 / 3; P3 = 1: the offset as sign and four digits (s16, Hz, big-endian in the record). A set is
+ * refused by the CLAR key's filter (0x306), in SPLIT and while the VFO is locked. */
+void cat_CF(const uint8_t *text, uint8_t set)
+{
+    struct vfo_rec *r;
+    uint8_t *clar;
+    uint8_t p3, ui, rf;
+    uint16_t off;
+
+    if (text[2] == '0') {
+        r = g_opstate.active_vfo == VFO_A ? &g_opstate.vfo_a : &g_opstate.vfo_b;
+        clar = g_opstate.active_vfo == VFO_A ? &g_ui.clar_flags_a : &g_ui.clar_flags_b;
+    } else if (text[2] == '1') {
+        r = g_opstate.active_vfo == VFO_A ? &g_opstate.vfo_b : &g_opstate.vfo_a;
+        clar = g_opstate.active_vfo == VFO_A ? &g_ui.clar_flags_b : &g_ui.clar_flags_a;
+    } else {
+        cat_error = 1;
+        return;
+    }
+    ui = *clar;
+    p3 = (uint8_t)hex2nib(text[4]);
+    if (p3 > 1u) {
+        cat_error = 1;
+        return;
+    }
+    if (!set) {
+        cat_reply[3] = '0';
+        cat_reply[4] = (uint8_t)nib2hex(p3);
+        if (p3 == 0) {
+            switch (ui) {                   /* other values leave P4 P5 as they are */
+            case 0:
+                cat_reply[5] = '0';
+                cat_reply[6] = '0';
+                break;
+            case 1:
+                cat_reply[5] = '1';
+                cat_reply[6] = '0';
+                break;
+            case 2:
+                cat_reply[5] = '0';
+                cat_reply[6] = '1';
+                break;
+            case 3:
+                cat_reply[5] = '1';
+                cat_reply[6] = '1';
+                break;
+            default:
+                break;
+            }
+            cat_reply[7] = '0';
+            cat_reply[8] = '0';
+            cat_reply[9] = '0';
+        } else {
+            off = be16(r->clar_offset_be);
+            if (r->clar_offset_be[0] & 0x80u) {
+                cat_reply[5] = '-';
+                off = (uint16_t)(~off + 1u);
+            } else {
+                cat_reply[5] = '+';
+            }
+            put_dec16(&cat_reply[6], off, 1000);
+        }
+        reply_done(10);
+        return;
+    }
+    if (!key_allowed(0x306, 0))
+        return;
+    if (g_opstate.split_on == 1 || vfo_tune_locked(g_opstate.active_vfo) == 1) {
+        cat_error = 1;
+        return;
+    }
+    if (p3 == 0) {
+        if (text[7] != '0' || text[8] != '0' || text[9] != '0') {
+            cat_error = 1;
+            return;
+        }
+        ui = 0;
+        rf = 0;
+        if (text[5] == '1') {
+            ui = 1;
+            rf = 0x10;
+        } else if (text[5] != '0') {
+            cat_error = 1;
+            return;
+        }
+        if (text[6] == '1') {
+            ui |= 2u;
+            rf |= 0x08u;
+        } else if (text[6] != '0') {
+            cat_error = 1;
+            return;
+        }
+        *clar = ui;
+        r->flags1 &= 0xE7u;
+        r->flags1 |= rf;
+    } else {
+        if (!get_dec16(&text[6], 4, 1000, &off))
+            return;
+        if (text[5] == '-') {
+            off = (uint16_t)(~off + 1u);
+        } else if (text[5] != '+') {
+            cat_error = 1;
+            return;
+        }
+        put_be16(r->clar_offset_be, off);
+    }
+    g_ui.freq_refresh_req = 1;
 }
 
 /* cat_FA_FB 0xFFFA99BD: FA / FB P1 = the frequency of VFO-A / VFO-B in Hz, 9 digits. A read gives the TX frequency
@@ -196,4 +368,126 @@ refused:
     g_opstate.vfo_state_a = state_a;
     g_opstate.vfo_state_b = state_b;
     cat_error = 1;
+}
+
+void memch_mark_used(uint8_t ch);
+
+/* the channel of MR / MW text[2..4]: 001..099 or one of the 34 names (after toupper); 0xFF = refused */
+static uint8_t parse_channel(const uint8_t *text)
+{
+    uint8_t n, k;
+
+    if (text[2] == '0') {
+        if (!get_dec(&text[2], 3, 100, &n))
+            return 0xFF;
+        if (n == 0 || n > 99u) {
+            cat_error = 1;
+            return 0xFF;
+        }
+        return (uint8_t)(n - 1u);
+    }
+    for (k = 0; k < 0x22u; k++)
+        if (strncmp((const char *)cat_pms_names[k], (const char *)&text[2], 3) == 0)
+            return (uint8_t)(k + 99u);
+    cat_error = 1;
+    return 0xFF;
+}
+
+/* cat_MW 0xFFFAC534: MW P1..P10 = memory channel write, IF's layout: channel, frequency (9 digits, in the bands),
+ * clarifier (sign and four digits, checked but not stored: the offset and both clarifier flags are cleared), P4 P5
+ * 0/1, mode (a CAT mode character), P7 '1', tone mode, "00", repeater shift. The channel becomes the active VFO's
+ * memory channel before the rest is checked [fact: 0xFFFAC64F]. */
+void cat_MW(const uint8_t *ctext, uint8_t set)
+{
+    uint8_t *text = (uint8_t *)ctext;       /* the ring slot; upper-cased in place */
+    uint8_t side, ch, mode, tone, shift;
+    struct vfo_rec *r;
+    uint32_t hz;
+    unsigned i;
+
+    (void)set;
+    toupper_inplace((char *)&text[2]);
+    toupper_inplace((char *)&text[3]);
+    toupper_inplace((char *)&text[4]);
+    side = g_opstate.active_vfo;
+    ch = parse_channel(text);
+    if (ch == 0xFF)
+        return;
+    if (ch > 0x75u) {                       /* the names past EMG */
+        cat_error = 1;
+        return;
+    }
+    if (side == VFO_A)
+        g_mem_hdr.chan_a = ch;
+    else
+        g_mem_hdr.chan_b = ch;
+    r = &memch[ch];
+    if (!get_dec32(&text[5], 9, 100000000u, &hz))
+        return;
+    if (freq_in_range(hz) == 0) {
+        cat_error = 1;
+        return;
+    }
+    for (i = 15; i < 19; i++) {
+        if (text[i] < '0' || text[i] > '9') {
+            cat_error = 1;
+            return;
+        }
+    }
+    if ((text[14] != '-' && text[14] != '+') || (text[19] != '0' && text[19] != '1') ||
+        (text[20] != '0' && text[20] != '1')) {
+        cat_error = 1;
+        return;
+    }
+    for (mode = 0; mode <= MODE_PSK; mode++)
+        if (text[21] == cat_mode_codes[mode])
+            break;
+    if (mode > MODE_PSK || text[22] != '1') {
+        cat_error = 1;
+        return;
+    }
+    switch (text[23]) {                     /* '2' -> tone mode 1, '1' -> 2, '0' -> 0 */
+    case '2':
+        tone = 1;
+        break;
+    case '1':
+        tone = 2;
+        break;
+    case '0':
+        tone = 0;
+        break;
+    default:
+        cat_error = 1;
+        return;
+    }
+    if (text[24] != '0' || text[25] != '0') {
+        cat_error = 1;
+        return;
+    }
+    switch (text[26]) {                     /* '2' -> shift 0 (minus), '1' -> 2 (plus), '0' -> 1 (simplex) */
+    case '2':
+        shift = 0;
+        break;
+    case '1':
+        shift = 2;
+        break;
+    case '0':
+        shift = 1;
+        break;
+    default:
+        cat_error = 1;
+        return;
+    }
+    for (i = 0; i < 4; i++)
+        r->freq_be[i] = (uint8_t)(hz >> (8u * (3u - i)));
+    r->clar_offset_be[0] = 0;
+    r->clar_offset_be[1] = 0;
+    r->flags1 &= 0xE7u;
+    r->mode = (uint8_t)((r->mode & 0xF0u) | mode);
+    r->flags3 = (uint8_t)((r->flags3 & 0xC7u) | tone << 3);
+    r->flags2 = (uint8_t)((r->flags2 & 0xF3u) | shift << 2);
+    memch_mark_used(ch);
+    eeprom_save_memch(ch);
+    vfo_mark_edited(side);
+    vfo_store_back(side);
 }

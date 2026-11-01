@@ -770,6 +770,39 @@ def keyer_task_args(rng, regs):
     return loads, None
 
 
+def memch_text_args(rng, regs):
+    """The memory-channel commands (MR, ...): "XX" + a channel 000..120 as three digits or one of the 34 names from
+    channel 99 on (cat_pms_names 0xFFF806E9, sometimes lower case), the channel-used flags 0x60CB.. mostly 1."""
+    cat_handler_args(rng, regs)                  # the set flag and length as for the other handlers
+    t = bytearray(cat_text(rng, b'XX'))
+    if rng.random() < 0.6:
+        t[2:5] = b'%03d' % rng.choice([0, 1, 2, 50, 98, 99, 100, 117, 120, rng.randrange(1, 100)])
+    else:
+        nm = _IMG.read(0xFFF806E9 + 3 * rng.randrange(0x23), 3)
+        t[2:5] = bytes(c | 0x20 if rng.random() < 0.3 and 0x41 <= c <= 0x5A else c for c in nm)
+    used = bytes(1 if rng.random() < 0.8 else rng.choice([0, 2]) for _ in range(117))
+    return [(ARGBUF, bytes(t)), (0x60CB, used)], None
+
+
+def cat_mw_args(rng, regs):
+    """cat_MW: memch_text_args, then IF's layout with each field valid most of the time: a frequency in or out of
+    the bands, sign and clarifier digits, P4 P5, a mode character (cat_mode_codes 0xFFF806D0), '1', tone, "00",
+    shift."""
+    loads, _ = memch_text_args(rng, regs)
+    t = bytearray(loads[0][1])
+    ok = lambda p: rng.random() < p
+    t[5:14] = b'%09d' % rng.choice([7074000, 14074000, 50313000, 144000000, 0, 999999999, rng.randrange(10 ** 9)])
+    t[14] = rng.choice(b'+-') if ok(0.9) else ord('0')
+    t[15:19] = b'%04d' % rng.randrange(10000) if ok(0.9) else b'12A4'
+    t[19], t[20] = rng.choice(b'01') if ok(0.95) else ord('2'), rng.choice(b'01') if ok(0.95) else ord('X')
+    t[21] = _IMG.read(0xFFF806D0 + rng.randrange(16), 1)[0] if ok(0.9) else ord('Z')
+    t[22] = ord('1') if ok(0.9) else ord('0')
+    t[23] = rng.choice(b'012') if ok(0.9) else ord('3')
+    t[24:26] = b'00' if ok(0.9) else b'01'
+    t[26] = rng.choice(b'012') if ok(0.9) else ord('3')
+    return [(ARGBUF, bytes(t))] + loads[1:], None
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -786,7 +819,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
-           'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args,
+           'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args, 'cat_MR': memch_text_args, 'cat_MW': cat_mw_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
