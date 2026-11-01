@@ -83,8 +83,10 @@ field read `(reg, shift, mask)`) **[fact]** (names from T23e).
 | 0x2011F7B4 / 0x2011F758 | `rspi_reset_buffers` / `rspi_fifo_reset` | Clears the driver's TX/RX-done flags and pulses SPBFCR.TXRST/RXRST **[fact]** |
 | 0x2011F8F8 | `rspi_wait_tx_end` | Spins on SPSR.TEND (bit 6) through `rspiN_wait_tend` 0x2011EB58–0x2011EBE8 **[fact]** |
 | 0x2011F230 | `rspi_base` | Channel → register base **[fact]** |
-| 0x2011F278 | `rspi_read` | `(ch, buf, count, rxtrg)`: PIO read in chunks of the RX trigger level (table 0x20800434). Clocks dummy 0xFF bytes through `rspiN_read_burst` 0x2011E3FC/E570/E6DC/E850/E9BC. No callers **[fact]** |
-| 0x2011F718 | `rspi_write` | `(ch, buf, count, txtrg)`: PIO write by TX trigger level (table 0x20800424). It waits on the TX-empty flag (`rspiN_tx_wait` 0x2011E3D0/E544/E6B0/E824/E990) **[fact]** |
+| 0x2011F494 | `rspi_read` | `(ch, buf, count, rxtrg)`: the argument checks (ch < 5, RX trigger 0..7 or 0xFF.. = keep, count 0 returns 0), then `rspi_read_pio`. No callers. Was FUN_2011f494 (T24 round 7) **[fact]** |
+| 0x2011F278 | `rspi_read_pio` | the body: PIO read in chunks of the RX trigger level (table 0x20800434: 1, 2, 4, 8, 16, 24, 32, 5 bytes), -1 when the trigger is not a multiple of the SPDR access size. Clocks dummy 0xFF words through `rspiN_read_burst` 0x2011E3FC/E570/E6DC/E850/E9BC, whose second argument (fewer bytes than the trigger) makes them poll SPBFDR instead of waiting for the receive interrupt. Was `rspi_read` (T24 round 7) **[fact]** |
+| 0x2011F718 | `rspi_write` | `(ch, buf, count, txtrg)`: the argument checks (TX trigger 0..3 or 0xFF..), then `rspi_write_pio` **[fact]** |
+| 0x2011F4D4 | `rspi_write_pio` | (no Ghidra entry before T24 round 7) the body: PIO write by TX trigger level (table 0x20800424: 1, 2, 4, 8 bytes); per chunk it waits for the transmit interrupt (`rspiN_tx_wait` 0x2011E3D0/E544/E6B0/E824/E990), after each access it reads and drops SPDR when SPSR.SPRF is set **[fact]** |
 | 0x2011F840 | `rspi_rx_isr` | SPRI dispatch → `rspiN_rx_isr` 0x2011E1F0/E240/E290/E2B8/E2E0. Ch0/1 reset the RX buffer and count RX-full events (0x208DCE28/0x208DCE2C). Ch2–4 clear SPRIE. All set the RX flag 0x20800418+n **[fact]** |
 | 0x2011F89C | `rspi_tx_isr` | SPTI dispatch → `rspiN_tx_isr` 0x2011E308–0x2011E3A8: clear SPTIE, set the TX flag 0x2080041D+n **[fact]** |
 | 0x2011ECD4–0x2011ED1C | *`rspiN_spti_isr`* / *`rspiN_spri_isr`* | Ten 2-instruction stubs (`mov r0,#n; b …`) that the ISR descriptors 0x20166A84–0x20166B38 point to **[fact]** |
@@ -428,6 +430,7 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0x20137DB8 | `dmac4_enable` | calls `reg_rmw32`; 20 B, callers: 2 **[fact]** (code shape) |
 | 0x20137DCC | `dmac4_disable` | calls `reg_rmw32`; 20 B, callers: 1 **[fact]** (code shape) |
 | 0x20137DE0 | `dmac4_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
+| 0x20137DEC | `dmac9_enable` | (no Ghidra entry before T24 round 7) CHCTRL_9 SETEN (`reg_rmw32(0xE8200468, 1, 0, 1)`) **[fact]** |
 | 0x20137E00 | `dmac9_stop` | CHCTRL.CLREN **[inference]** |
 | 0x20137E34 | `dmac9_set_callback` | no direct calls; 12 B, callers: 1 **[fact]** (code shape) |
 | 0x20137E40 | `dmac10_enable` | calls `reg_rmw32`; 20 B, callers: 3 **[fact]** (code shape) |

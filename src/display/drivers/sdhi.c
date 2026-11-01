@@ -10,6 +10,7 @@
  */
 #include "display.h"
 #include "norti.h"
+#include "sd.h"
 
 #define SDHI0 0xE804E000U
 #define SD_CMD REG16(SDHI0 + 0x00)
@@ -490,20 +491,6 @@ int sdhi_cmd(int cmd, int app, uint32_t arg)
 #define CC_EXT_MODE REG16(SDHI0 + 0xD8)           /* bit 1: DMA mode */
 #define DMARS0 REG32(0xFCFE1000U)
 #define ICDIPR_REG(id) REG32(0xE8201400U + ((id) & ~3U))
-
-/* the parts of the SD driver's card context these functions use [fact: the offsets below] */
-typedef struct
-{
-    uint8_t _r0[0x2B0];
-    union
-    {
-        uint32_t r1;          /* +0x2B0: short response */
-        uint8_t r2[15];       /* +0x2B0: long response, RSP07 low byte first .. RSP00 */
-    } rsp;
-    uint16_t addr_mode;       /* +0x2C0: 2 = block addressing (next block addr + 1), else bytes (+ 0x200) */
-    uint16_t _r1[2];
-    uint16_t card_type;       /* +0x2C6: 1 = MMC (docs/code/display/filesystem.md) */
-} sd_card_t;
 
 /* the R1 status bits that count as an error, per card type [fact: the literals of the four users] */
 extern const uint32_t sd_r1_err_cmd12[];   /* 0x20420234 */

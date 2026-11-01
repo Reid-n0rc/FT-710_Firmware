@@ -233,6 +233,8 @@ class Resolver:
         if n.startswith('0x'):
             a = int(n, 16)
             return a, self.by_addr.get(a, (None, 0, False))[2]
+        if n not in self.funcs and n != name:
+            n = name         # an alias to a Ghidra name a re-export renamed (round 7: vdc5_config): the name itself
         if n in self.funcs:
             a, _, t = self.funcs[n]
             return a, t
@@ -1051,6 +1053,45 @@ def sd_card_args(rng, args, kind):
     return [(0x20808B78, irq)]
 
 
+SDHI_OPS = 0x20420564       # the SDHI operation table (src/display/drivers/sdhi.c)
+
+
+def sd_handle_args(rng, args, kind):
+    """The SD card layer (round 7): a handle {card context, the image's SDHI operation table} with the context's RCA,
+    addressing and card type (0 or 1) set, the SDHI status registers biased as for sd_card_args; (status out,
+    handle) for CMD13; a 16-byte CSD for the checks; an MBR geometry block (sectors per track 0/32/63, heads
+    0/16/255, start and count small or past the CHS limit, FAT type 12/16/32/other) for the partition helpers."""
+    fill = sd_card_args(rng, args, 'none')
+    regs = args['regs']
+    ctx, h = SCRATCH_ARGS + 0xC000, SCRATCH_ARGS + 0xB000
+    out = SCRATCH_ARGS + 0xB100
+    args['buffers'] += [(h, struct.pack('<II', ctx, SDHI_OPS)), (out, bytes(16))]
+    if kind == 'handle':
+        regs[0] = h
+    elif kind == 'status':
+        regs[0], regs[1] = out, h
+    elif kind == 'csd':
+        csd = bytearray(rng.getrandbits(8) for _ in range(16))
+        if rng.random() < 0.5:      # often a plausible CSD, so that the later tests are reached
+            csd[0] &= 0x4F
+            csd[1] &= 0x7F
+            csd[3] &= 0x7F
+            csd[5] = (csd[5] & 0xF0) | rng.choice([9, 10, 11, 12])
+            csd[12] &= 0xE3 | (rng.randrange(8) << 2)
+        args['buffers'] += [(out, bytes(csd))]
+        regs[0] = out
+    elif kind == 'geom':
+        g = bytearray(0x18)
+        lim = 0xFB0400
+        struct.pack_into('<HHIIIIB', g, 0, rng.choice([0, 32, 63, 63]), rng.choice([0, 16, 255, 255]), 0,
+                         rng.choice([0, 63, rng.getrandbits(20), lim - 1, lim, rng.getrandbits(32)]),
+                         rng.choice([1, 0x7FA7, 0x7FA8, 0xFFFF, 0x10000, rng.getrandbits(24), lim, rng.getrandbits(32)]),
+                         0, rng.choice([12, 16, 32, 32, 0, 33]))
+        args['buffers'] += [(out, bytes(g))]
+        regs[0], regs[1] = out, out + 0x80
+    return fill
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -1168,6 +1209,11 @@ def preset_for(fname):
           'sdhi_read_buf_pio': 'pio', 'sdhi_dma_open': 'irq', 'sdhi_open': 'irq'}.get(fname)
     if sd:
         return lambda rng, args: sd_card_args(rng, args, sd)
+    sd = {'sd_cmd0_go_idle': 'handle', 'sd_cmd2_all_send_cid': 'handle', 'sd_cmd9_send_csd': 'handle',
+          'sd_cmd10_send_cid': 'handle', 'sd_cmd13_send_status': 'status', 'sd_csd_check': 'csd', 'mmc_csd_check': 'csd',
+          'csd_read_bl_len': 'csd', 'csd_c_size': 'csd', 'csd_c_size_mult': 'csd'}.get(fname)
+    if sd or fname.startswith('mbr_'):
+        return lambda rng, args: sd_handle_args(rng, args, sd or 'geom')
     if fname.startswith('rspi'):
         kind = ('xfer' if fname in ('rspi_read', 'rspi_read_pio', 'rspi_write', 'rspi_write_pio') else
                 'burst' if fname.endswith('_read_burst') else 'config' if fname == 'rspi_hw_config' else

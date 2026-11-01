@@ -89,3 +89,6 @@ sd_r1_err_cmd16	2042023c	[fact] the same for sd_cmd16_set_blocklen (literal 0x20
 sd_r1_err_read	20420244	[fact] the same for sdhi_read_sectors_cmd (literal 0x20140B48)
 sd_r1_err_write	2042024c	[fact] the same for sdhi_write_sectors_cmd (literal 0x20140B4C)
 sdhi_dma_irq	20808b78	[fact] two {handler definition, GIC id, registered (-1 until gic_def_inh), state} of 0xC bytes for the SDHI DMA end interrupts; sdhi_dma_open 0x2013FE68 (literal 0x20140124)
+sd_r1_err_cmd13	2042022c	[fact] R1 error mask per card type that sd_cmd13_send_status tests (literal 0x2013DE40, index +0x2C6)
+fat_fmt_geom_small	20420300	[fact] 0x2C-byte format parameter block that fat_format_geometry_small copies below 0x7E0000 sectors (literal 0x2013F9E4)
+fat_fmt_geom_large	2042032c	[fact] the block for 0x7E0000 sectors and more (literal 0x2013F9E8)

@@ -1,0 +1,6 @@
+# FT-710 DISPLAY: the T24 round-7 entries alone (also in entries_display.tsv), for applying them to the canonical project
+# without re-running the older rows. Applied with FixFuncEntries.java before ApplyNames.java.
+2011b374		VDC5 ChangeGraphicsVIN: push at 0x2011B374 after vdc5_reg_read_data_control's literal pool; reached only by the tail call b 0x2011B374 at 0x2011B6CC (drivers/vdc5_reg.c)
+2011f4d4		rspi_write_pio: push at 0x2011F4D4 right after rspi_read's tail call b 0x2011F278 (0x2011F4D0); reached by b 0x2011F4D4 at 0x2011F754 (drivers/rspi.c)
+20137dec		dmac9_enable: ldr/mov/b reg_rmw32(CHCTRL_9, 1, 0, 1) at 0x20137DEC after dmac4_set_callback's bx lr (drivers/dmac.c)
+2013fe68		sdhi_dma_open: push at 0x2013FE68 after the one-instruction function 0x2013FE64; reached by the tail call b 0x2013FE68 at 0x20140B94 (drivers/sdhi.c)

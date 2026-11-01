@@ -93,7 +93,6 @@ vdc5_color_conversion	0x2011c3a4	[fact] switch on the graphics format calling rg
 vdc5_set_clut	0x2011c5b4	[fact] copies color_num words to the CLUT RAM pointer of 0x201666E0; called by vdc5_reg_clut; Ghidra FUN_2011c5b4
 vdc5_set_gamma_gain	0x2011c85c	[fact] 16 registers of two halfwords, called with the GAM_x_LUT pointers of 0x201667D8 + 0x4C ch; Ghidra FUN_2011c85c
 vdc5_set_gamma_threshold	0x2011c8a4	[fact] 3 + 7 x 4 bytes into GAM_x_AREA1..8 (0x20166818 + 0x4C ch); Ghidra FUN_2011c8a4
-vdc5_reg_write_data_control	vdc5_config	[fact] the register part of R_VDC5_WriteDataControl: called by r_vdc5_write_data_control after the shared-parameter calls, programs SCL0_DS2/3 and SCL1_WR1..10 of the scaler table 0x20165CE0 (0x2011A394)
 vdc5_ratio_one	0x2011a288	[fact] mov r0, #0x1000; bx lr; no caller; Ghidra FUN_2011a288
 vdc5_set_scaling_down	0x2011a290	[fact] SCL0_DS1/DS4/DS5/DS6 and US1/US6 from the scaling block; called by 0x2011A394 and 0x2011A6C8 (0x2011A574, 0x2011A78C); Ghidra FUN_2011a290
 vdc5_set_scaler_background_color	0x2011a848	[fact] SCL0_OVR1 and GRx_BASE from vdc5_shrd_get_bg_color, for scaler 0 or 1; called from 0x2011B2CC; Ghidra FUN_2011a848
