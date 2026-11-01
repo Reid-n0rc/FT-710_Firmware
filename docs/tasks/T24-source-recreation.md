@@ -1782,6 +1782,21 @@ a branch without this patch then refuses to bootstrap that Ghidra, as with round
   (`cat_ai_IF_OI` 1,333, `cat_ai_SS` 1,121, `cat_ai_poll` 979), the extended CAT commands (`cat_ext_PE` 1,166,
   `cat_ext_EO` 847, `cat_ext_JP` 822), `keyer_output_step` (1,397) and `keyer_elekey` (1,225).
 
+## DISPLAY, round 9 (2026-11-01)
+
+### Plan (round 9)
+
+1. Harness first (round 8's proposals): compare only the pages a run wrote, and per-entry times for `linkcheck`;
+   faster, never a weaker comparison (a switch runs the old whole-range comparison beside the new one).
+2. Code, biggest self-contained first: the FAT file system (`docs/code/display/filesystem.md`) from its leaves up
+   (byte and string helpers, OS glue, cluster and FAT-table code, mount), with an MBR and boot-sector preset that
+   brings `sd_mount_volume` / `sd_drive_mount` over the coverage floor; then the MAIN link, the update code and GUI
+   building blocks as far as the round goes.
+3. Mutations round 8 left uncaught: the SDR104 clock in `sd_switch_uhs_speed`, the "cannot switch" test in
+   `sd_set_driver_strength`, the `rsv < 9` boundary of `fat_format_layout`; each gets a preset that reaches it.
+4. After linking: `linkcheck` and the emulated boot, if possible with a synthetic FAT32 SD card so that the boot
+   reaches the SD and FAT code; any defect fixed. `status.tsv`, readability stats, Ghidra rows with evidence.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
