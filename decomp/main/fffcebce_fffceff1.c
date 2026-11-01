@@ -622,11 +622,11 @@ void menu_ex030404_step(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort dest_code_get_ret;
   undefined1 local_1;
   
-  uVar2 = dest_code_get();
-  if (uVar2 == 0x60e6) {
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0x60e6) {
     local_1 = 4;
   }
   else {

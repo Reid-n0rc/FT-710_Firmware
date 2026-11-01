@@ -156,24 +156,24 @@ void FUN_20158920(int param_1)
 void task_uart4_rx(int param_1)
 
 {
-  void *pvVar1;
-  undefined4 uVar2;
+  void *itron_twai_flg_ret;
+  undefined4 uVar1;
   uint local_114;
   undefined1 auStack_110 [260];
   
   __aeabi_memclr4(auStack_110,0x100);
   FUN_20158920(param_1);
   while( true ) {
-    while (pvVar1 = itron_twai_flg(*(uint *)(param_1 + 0x24),0xc001,5,&local_114,-1),
-          pvVar1 == (void *)0xffffffce) {
+    while (itron_twai_flg_ret = itron_twai_flg(*(uint *)(param_1 + 0x24),0xc001,5,&local_114,-1),
+          itron_twai_flg_ret == (void *)0xffffffce) {
       *(int *)(param_1 + 0x20) = *(int *)(param_1 + 0x20) + 1;
     }
-    if (pvVar1 != (void *)0x0) break;
+    if (itron_twai_flg_ret != (void *)0x0) break;
     if (((local_114 & 0xc000) == 0) && ((local_114 & 1) != 0)) {
       *(int *)(param_1 + 0x1c) = *(int *)(param_1 + 0x1c) + 1;
-      uVar2 = (**(code **)(**(int **)(param_1 + 0x10) + 0x10))
+      uVar1 = (**(code **)(**(int **)(param_1 + 0x10) + 0x10))
                         (*(int **)(param_1 + 0x10),auStack_110,0x100);
-      decode_text_rx(auStack_110,uVar2);
+      decode_text_rx(auStack_110,uVar1);
     }
   }
   return;
@@ -212,6 +212,7 @@ void uart4_tx_init(int param_1,uint param_2)
   int iVar3;
   
   *(uint *)(param_1 + 0x18) = param_2;
+                    /* Creates the pool mutex [doc] */
   txpool_init_mutex();
   uVar2 = 0;
   do {
@@ -220,6 +221,7 @@ void uart4_tx_init(int param_1,uint param_2)
     txpool_set_slot(param_1 + 0x111c,uVar2 & 0xffff,iVar3 + 0x1c);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x11a4) = uVar1;
   return;
@@ -291,21 +293,25 @@ void mainlink_obj_run(int param_1)
 
 {
   uint uVar1;
+  uint itron_acre_tsk_ret;
+  uint itron_acre_tsk_ret_2;
   uint uVar2;
-  uint uVar3;
-  uint uVar4;
   
   uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uart_5938);
-  if (((0 < (int)uVar1) && (uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart_591c), 0 < (int)uVar2)) &&
-     (uVar3 = itron_acre_tsk(0,(byte *)&ctsk_uart_5900), 0 < (int)uVar3)) {
-    uVar4 = param_1 + 0x8218;
-    mainlink_tx_init(uVar4,*(uint *)(param_1 + 0x10));
-    mainlink_disp_init(param_1 + 0x58,uVar4);
+  if (((0 < (int)uVar1) &&
+      (itron_acre_tsk_ret = itron_acre_tsk(0,(byte *)&ctsk_uart_591c), 0 < (int)itron_acre_tsk_ret))
+     && (itron_acre_tsk_ret_2 = itron_acre_tsk(0,(byte *)&ctsk_uart_5900),
+        0 < (int)itron_acre_tsk_ret_2)) {
+    uVar2 = param_1 + 0x8218;
+                    /* 32 x 0x408 B buffer pool + mailbox [doc, inference] */
+    mainlink_tx_init(uVar2,*(uint *)(param_1 + 0x10));
+                    /* 32 x 0x408 B pool + mailbox [doc, inference] */
+    mainlink_disp_init(param_1 + 0x58,uVar2);
     *(undefined4 *)(param_1 + 0x4c) = *(undefined4 *)(param_1 + 0x14);
-    mainlink_rx_bind(param_1 + 0x18,*(uint *)(param_1 + 0x10),uVar4,param_1 + 0x58);
-    uVar1 = itron_sta_tsk(uVar1,uVar4);
-    if (((uVar1 == 0) && (uVar1 = itron_sta_tsk(uVar2,param_1 + 0x58), uVar1 == 0)) &&
-       (uVar1 = itron_sta_tsk(uVar3,param_1 + 0x18), uVar1 == 0)) {
+    mainlink_rx_bind(param_1 + 0x18,*(uint *)(param_1 + 0x10),uVar2,param_1 + 0x58);
+    uVar1 = itron_sta_tsk(uVar1,uVar2);
+    if (((uVar1 == 0) && (uVar1 = itron_sta_tsk(itron_acre_tsk_ret,param_1 + 0x58), uVar1 == 0)) &&
+       (uVar1 = itron_sta_tsk(itron_acre_tsk_ret_2,param_1 + 0x18), uVar1 == 0)) {
       (**(code **)(**(int **)(param_1 + 0x10) + 4))(*(int **)(param_1 + 0x10),0x54600,8,0);
       itron_tslp_tsk(0xffffffff);
       return;
@@ -341,10 +347,10 @@ void uart4_obj_run(int param_1)
 {
   int iVar1;
   uint uVar2;
+  uint itron_acre_tsk_ret;
+  uint itron_acre_tsk_ret_2;
   uint uVar3;
-  uint uVar4;
-  uint uVar5;
-  int iVar6;
+  int i;
   undefined4 local_20;
   
   local_20 = 1;
@@ -356,48 +362,50 @@ void uart4_obj_run(int param_1)
     DAT_2045001d = '\x02';
     itron_tslp_tsk(0xffffffff);
   }
-  iVar6 = 5;
+  i = 5;
   do {
     local_20 = 0xf0;
     (**(code **)(**(int **)(param_1 + 0x10) + 0x24))(*(int **)(param_1 + 0x10),&local_20,1);
     iVar1 = (**(code **)(**(int **)(param_1 + 0x10) + 0x18))
                       (*(int **)(param_1 + 0x10),&DAT_2045001e,2,100);
     if (iVar1 != -1) {
-      iVar6 = iVar6 + -1;
+      i = i + -1;
     }
     if (DAT_2045001d == '\x01') {
       DAT_2045001d = '\x02';
       itron_tslp_tsk(0xffffffff);
     }
-  } while (iVar6 != 0);
+  } while (i != 0);
   DAT_2045001c = 1;
   uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart4_583c);
-  if (((0 < (int)uVar2) && (uVar3 = itron_acre_tsk(0,(byte *)&ctsk_uart4_5820), 0 < (int)uVar3)) &&
-     (uVar4 = itron_acre_tsk(0,(byte *)&ctsk_uart4_5804), 0 < (int)uVar4)) {
-    uVar5 = param_1 + 0x938;
-    uart4_tx_init(uVar5,*(uint *)(param_1 + 0x10));
-    FUN_2015ff94(param_1 + 0x50,uVar5);
+  if (((0 < (int)uVar2) &&
+      (itron_acre_tsk_ret = itron_acre_tsk(0,(byte *)&ctsk_uart4_5820), 0 < (int)itron_acre_tsk_ret)
+      ) && (itron_acre_tsk_ret_2 = itron_acre_tsk(0,(byte *)&ctsk_uart4_5804),
+           0 < (int)itron_acre_tsk_ret_2)) {
+    uVar3 = param_1 + 0x938;
+    uart4_tx_init(uVar3,*(uint *)(param_1 + 0x10));
+    FUN_2015ff94(param_1 + 0x50,uVar3);
     *(undefined4 *)(param_1 + 0x3c) = *(undefined4 *)(param_1 + 0x14);
-    FUN_20158914(param_1 + 0x18,*(undefined4 *)(param_1 + 0x10),uVar5,param_1 + 0x50);
-    uVar2 = itron_sta_tsk(uVar2,uVar5);
-    if (((uVar2 == 0) && (uVar2 = itron_sta_tsk(uVar3,param_1 + 0x50), uVar2 == 0)) &&
-       (uVar2 = itron_sta_tsk(uVar4,param_1 + 0x18), uVar2 == 0)) {
+    FUN_20158914(param_1 + 0x18,*(undefined4 *)(param_1 + 0x10),uVar3,param_1 + 0x50);
+    uVar2 = itron_sta_tsk(uVar2,uVar3);
+    if (((uVar2 == 0) && (uVar2 = itron_sta_tsk(itron_acre_tsk_ret,param_1 + 0x50), uVar2 == 0)) &&
+       (uVar2 = itron_sta_tsk(itron_acre_tsk_ret_2,param_1 + 0x18), uVar2 == 0)) {
       itron_dly_tsk(10);
-      uVar2 = uart4_tx_alloc(uVar5);
+      uVar2 = uart4_tx_alloc(uVar3);
       *(undefined2 *)(uVar2 + 4) = 0xaa;
       *(undefined2 *)(uVar2 + 6) = 3;
       *(undefined1 *)(uVar2 + 8) = 0x1e;
       *(undefined1 *)(uVar2 + 9) = 0;
       *(undefined1 *)(uVar2 + 10) = 0x31;
-      uart4_tx_post(uVar5,uVar2);
+      uart4_tx_post(uVar3,uVar2);
       itron_dly_tsk(10);
-      uVar2 = uart4_tx_alloc(uVar5);
+      uVar2 = uart4_tx_alloc(uVar3);
       *(undefined2 *)(uVar2 + 4) = 0xaa;
       *(undefined2 *)(uVar2 + 6) = 3;
       *(undefined1 *)(uVar2 + 8) = 0x1f;
       *(undefined1 *)(uVar2 + 9) = 0;
       *(undefined1 *)(uVar2 + 10) = 0x32;
-      uart4_tx_post(uVar5,uVar2);
+      uart4_tx_post(uVar3,uVar2);
       itron_tslp_tsk(0xffffffff);
       return;
     }
@@ -435,6 +443,7 @@ void mainlink_send_ui_e2(void *param_1,uint param_2)
   
   local_18 = 0xe2;
   uStack_14 = 0;
+                    /* Copies 5 bytes [doc] */
   copy5((int)&local_18 + 1,param_2);
   if (DAT_20800494 != '\0') {
     mainlink_queue_frame(&local_18,6);
@@ -543,6 +552,7 @@ void bootloader_entry_screen(undefined4 param_1,int param_2)
     fb_clear_rect(uVar2,0,0,800,0x1e0);
     gui_draw_text_centered(uVar2,0x204280a8,100,400,0xc,0x208038c0);
     do {
+                    /* Radio off from the GUI side [doc] */
       if (DAT_20800493 != '\0') {
         display_power_down();
       }
@@ -582,6 +592,7 @@ void update_error_screen(void)
   pointer_touch_poll();
   do {
     cursor_window_update();
+                    /* Radio off from the GUI side [doc] */
     if (DAT_20800493 != '\0') {
       display_power_down();
     }
@@ -1053,12 +1064,14 @@ LAB_20159dec:
       }
       local_4b5 = *(char *)(param_1 + 299);
       local_4b3 = FUN_20158fa8(*(undefined1 *)(param_1 + 299));
+                    /* title bar, four target rows [doc] */
       fwupdate_select_draw(param_1,local_4b8,local_2c);
       if (DAT_20800494 == '\0') {
         iVar1 = fb_get_layer_addr(DAT_208085bc);
         fb_clear_rect_checked(iVar1,0x19a,0x1a4,0x17c,0x46);
         gui_update_layers();
       }
+                    /* Touch/mouse loop of the target list [doc] */
       iVar2 = fwupdate_select_loop(param_1,local_4b8,local_2c);
       if (iVar2 == 0) {
 LAB_20159f50:
@@ -1071,6 +1084,7 @@ LAB_20159f50:
       local_4b3 = 10;
       fwupdate_confirm_draw(param_1,local_4b8);
       gui_update_layers();
+                    /* Touch/mouse loop of the "UPDATE?" box [doc] */
       iVar2 = fwupdate_confirm_loop(param_1);
       if (iVar2 == 0) goto LAB_20159f50;
       mainlink_send_e6(0);
@@ -1127,6 +1141,7 @@ LAB_2015a100:
   uVar3 = fb_get_layer_addr(DAT_208085bc);
   fb_clear_rect_checked(uVar3,0x1a,0,800,0x1c6);
   gui_draw_text_centered(uVar3,DAT_2080856c,100,400,0xc,0x208038c0);
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   gui_update_layers();
   iVar1 = fb_get_layer_addr(DAT_208085bc);
@@ -1399,6 +1414,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
   uVar2 = fwfile_status_text(param_1 + 8,0);
   gui_update_layers();
   local_4c = fb_get_layer_addr(DAT_208085bc);
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   itron_dly_tsk(0x32);
@@ -1436,6 +1452,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
       iVar3 = 0;
       do {
         sprintf(&stack0xffffff88,&DAT_2042813c,*(undefined2 *)(param_1 + iVar3 * 2));
+                    /* Case-insensitive compare with tolower [doc] */
         iVar4 = strcasecmp(param_1 + iVar3 * 0x48 + 0x31,&stack0xffffff88);
         if (0 < iVar4) {
           local_70 = CONCAT13(local_70._3_1_ | (byte)(1 << (7U - iVar3 & 0xff)),(uint3)local_70);
@@ -1484,150 +1501,150 @@ void fwupdate_select_screen(int param_1,int param_2)
 
 {
   char cVar1;
-  byte bVar2;
-  uint uVar3;
-  int iVar4;
-  uint uVar5;
-  undefined2 *puVar6;
-  uint uVar7;
-  bool bVar8;
+  byte fwupdate_poll_ret;
+  uint uVar2;
+  int iVar3;
+  uint uVar4;
+  undefined2 *puVar5;
+  uint uVar6;
+  bool bVar7;
   char acStack_270 [288];
   undefined1 auStack_150 [288];
-  uint uVar9;
+  uint uVar8;
   
   cVar1 = *(char *)(param_2 + 2);
   if (cVar1 == '\x01') {
-    uVar9 = fb_get_layer_addr(DAT_208085bc);
-    uVar7 = (uint)*(byte *)(param_2 + 5);
-    fb_clear_rect(uVar9,0,0,800,0x1e0);
-    fb_fill_rect(uVar9,0x3186,2,2,0x31a,0x18);
-    gui_draw_runs(uVar9,4,400,&DAT_2016dc08);
-    gui_draw_text_centered(uVar9,DAT_20808540,4,400,0xf,0x20800cac);
-    uVar3 = 0;
+    uVar8 = fb_get_layer_addr(DAT_208085bc);
+    uVar6 = (uint)*(byte *)(param_2 + 5);
+    fb_clear_rect(uVar8,0,0,800,0x1e0);
+    fb_fill_rect(uVar8,0x3186,2,2,0x31a,0x18);
+    gui_draw_runs(uVar8,4,400,&DAT_2016dc08);
+    gui_draw_text_centered(uVar8,DAT_20808540,4,400,0xf,0x20800cac);
+    uVar2 = 0;
     do {
-      uVar5 = 1 << (7 - uVar3 & 0xff);
-      if ((*(byte *)(param_2 + 3) & uVar5) != 0) {
-        iVar4 = uVar3 * 0x44 + 0x32;
-        fb_clear_rect(uVar9,iVar4,0x75,0x78,0x43);
-        if ((*(byte *)(param_2 + 4) & uVar5) == 0) {
-          puVar6 = (undefined2 *)&DAT_203a5684;
-          *(undefined4 *)(param_1 + uVar3 * 0x48 + 0x3c) = 0;
+      uVar4 = 1 << (7 - uVar2 & 0xff);
+      if ((*(byte *)(param_2 + 3) & uVar4) != 0) {
+        iVar3 = uVar2 * 0x44 + 0x32;
+        fb_clear_rect(uVar8,iVar3,0x75,0x78,0x43);
+        if ((*(byte *)(param_2 + 4) & uVar4) == 0) {
+          puVar5 = (undefined2 *)&DAT_203a5684;
+          *(undefined4 *)(param_1 + uVar2 * 0x48 + 0x3c) = 0;
         }
         else {
-          puVar6 = &DAT_203a5694;
-          *(undefined4 *)(param_1 + uVar3 * 0x48 + 0x3c) = 1;
+          puVar5 = &DAT_203a5694;
+          *(undefined4 *)(param_1 + uVar2 * 0x48 + 0x3c) = 1;
         }
-        gui_draw_runs(uVar9,iVar4,0x75,puVar6);
-        if (uVar3 == uVar7) {
-          fb_draw_round_frame_wrap(uVar9,iVar4,0x75,*puVar6);
+        gui_draw_runs(uVar8,iVar3,0x75,puVar5);
+        if (uVar2 == uVar6) {
+          fb_draw_round_frame_wrap(uVar8,iVar3,0x75,*puVar5);
         }
       }
-      iVar4 = param_1 + uVar3 * 0x48;
-      gui_draw_text(uVar9,iVar4 + 9,uVar3 * 0x44 + 0x41,0xc4);
-      gui_draw_text(uVar9,iVar4 + 0x1d,uVar3 * 0x44 + 0x43,0x1dc);
-      uVar3 = uVar3 + 1 & 0xff;
-    } while (uVar3 < 4);
-    gui_button_draw_shadow(uVar9,0x19a,0xfa,2);
+      iVar3 = param_1 + uVar2 * 0x48;
+      gui_draw_text(uVar8,iVar3 + 9,uVar2 * 0x44 + 0x41,0xc4);
+      gui_draw_text(uVar8,iVar3 + 0x1d,uVar2 * 0x44 + 0x43,0x1dc);
+      uVar2 = uVar2 + 1 & 0xff;
+    } while (uVar2 < 4);
+    gui_button_draw_shadow(uVar8,0x19a,0xfa,2);
     if (*(char *)(param_2 + 4) == '\0') {
-      gui_draw_runs(uVar9,0x1a6,0x10f,&DAT_20255114);
+      gui_draw_runs(uVar8,0x1a6,0x10f,&DAT_20255114);
     }
     else {
-      gui_draw_runs(uVar9,0x1a6,0x10f,&DAT_20254600);
+      gui_draw_runs(uVar8,0x1a6,0x10f,&DAT_20254600);
     }
-    if (uVar7 == 10) {
-      fb_draw_round_frame_wrap(uVar9,0x19a,0xfa,*DAT_20802294);
+    if (uVar6 == 10) {
+      fb_draw_round_frame_wrap(uVar8,0x19a,0xfa,*DAT_20802294);
     }
     if (DAT_20800494 != '\0') {
-      gui_button_draw_shadow(uVar9,0x19a,0x1a4,2);
-      gui_draw_runs(uVar9,0x1a6,0x1b9,&DAT_20251ec8);
-      if (uVar7 == 0xb) {
-        fb_draw_round_frame_wrap(uVar9,0x19a,0x1a4,*DAT_20802294);
+      gui_button_draw_shadow(uVar8,0x19a,0x1a4,2);
+      gui_draw_runs(uVar8,0x1a6,0x1b9,&DAT_20251ec8);
+      if (uVar6 == 0xb) {
+        fb_draw_round_frame_wrap(uVar8,0x19a,0x1a4,*DAT_20802294);
       }
     }
     return;
   }
   if (cVar1 == '\x02') {
-    uVar9 = fb_get_layer_addr(DAT_208085bc);
+    uVar8 = fb_get_layer_addr(DAT_208085bc);
     cVar1 = *(char *)(param_2 + 5);
-    fb_clear_rect(uVar9,0,0,800,0x1e0);
-    fb_fill_rect(uVar9,0x3186,2,2,0x31a,0x18);
-    gui_draw_runs(uVar9,4,400,&DAT_2016dc08);
-    gui_draw_runs(uVar9,8,0x168,&DAT_203a56b4);
-    gui_draw_text_centered(uVar9,0x20428153,0xf0,400,0xf,0x20800cac);
-    gui_button_draw_shadow(uVar9,0x19a,0xfa,2);
-    gui_draw_runs(uVar9,0x1a6,0x10f,&DAT_20253aec);
+    fb_clear_rect(uVar8,0,0,800,0x1e0);
+    fb_fill_rect(uVar8,0x3186,2,2,0x31a,0x18);
+    gui_draw_runs(uVar8,4,400,&DAT_2016dc08);
+    gui_draw_runs(uVar8,8,0x168,&DAT_203a56b4);
+    gui_draw_text_centered(uVar8,0x20428153,0xf0,400,0xf,0x20800cac);
+    gui_button_draw_shadow(uVar8,0x19a,0xfa,2);
+    gui_draw_runs(uVar8,0x1a6,0x10f,&DAT_20253aec);
     if (cVar1 == '\n') {
-      fb_draw_round_frame_wrap(uVar9,0x19a,0xfa,*DAT_20802294);
+      fb_draw_round_frame_wrap(uVar8,0x19a,0xfa,*DAT_20802294);
     }
-    gui_button_draw_shadow(uVar9,0x19a,0x1a4,2);
-    gui_draw_runs(uVar9,0x1a6,0x1b9,&DAT_20251ec8);
+    gui_button_draw_shadow(uVar8,0x19a,0x1a4,2);
+    gui_draw_runs(uVar8,0x1a6,0x1b9,&DAT_20251ec8);
     if (cVar1 == '\v') {
-      fb_draw_round_frame_wrap(uVar9,0x19a,0x1a4,*DAT_20802294);
+      fb_draw_round_frame_wrap(uVar8,0x19a,0x1a4,*DAT_20802294);
     }
     return;
   }
   if (cVar1 != '\x03') {
     return;
   }
-  uVar3 = fb_get_layer_addr(DAT_208085bc);
+  uVar2 = fb_get_layer_addr(DAT_208085bc);
   mouse_detach_post();
   DAT_20800496 = 1;
   DAT_20800495 = 0;
-  fb_clear_rect(uVar3,0,0,800,0x1e0);
-  fb_fill_rect(uVar3,0x3186,2,2,0x31a,0x18);
-  gui_draw_runs(uVar3,4,400,&DAT_2016dc08);
-  gui_draw_text_centered(uVar3,DAT_20808540,4,400,0xf,0x20800cac);
-  gui_draw_text_centered(uVar3,DAT_20808544,0x1a7,400,0xf,0x20800cac);
-  uVar9 = 0xff;
+  fb_clear_rect(uVar2,0,0,800,0x1e0);
+  fb_fill_rect(uVar2,0x3186,2,2,0x31a,0x18);
+  gui_draw_runs(uVar2,4,400,&DAT_2016dc08);
+  gui_draw_text_centered(uVar2,DAT_20808540,4,400,0xf,0x20800cac);
+  gui_draw_text_centered(uVar2,DAT_20808544,0x1a7,400,0xf,0x20800cac);
+  uVar8 = 0xff;
   __aeabi_memcpy4(acStack_270,param_1 + 8,0x120);
   __aeabi_memcpy4(auStack_150,param_1 + 8,0x120);
   gui_scope_draw_hold_set(1);
   while( true ) {
-    bVar2 = fwupdate_poll(param_1 + 8);
-    uVar7 = (uint)bVar2;
-    iVar4 = sd_state_bit6();
-    if (iVar4 == 0) break;
-    bVar8 = uVar9 != uVar7;
-    uVar9 = uVar7;
-    if ((bVar8) || (iVar4 = memcmp(param_1 + 8,auStack_150,0x120), iVar4 != 0)) {
+    fwupdate_poll_ret = fwupdate_poll(param_1 + 8);
+    uVar6 = (uint)fwupdate_poll_ret;
+    iVar3 = sd_state_bit6();
+    if (iVar3 == 0) break;
+    bVar7 = uVar8 != uVar6;
+    uVar8 = uVar6;
+    if ((bVar7) || (iVar3 = memcmp(param_1 + 8,auStack_150,0x120), iVar3 != 0)) {
       __aeabi_memcpy4(auStack_150,param_1 + 8,0x120);
-      uVar5 = 0;
+      uVar4 = 0;
       do {
-        iVar4 = param_1 + uVar5 * 0x48;
-        gui_draw_text(uVar3,iVar4 + 9,uVar5 * 0x44 + 0x41,0xc4,0xf,&DAT_20800b1c);
-        cVar1 = *(char *)(iVar4 + 8);
+        iVar3 = param_1 + uVar4 * 0x48;
+        gui_draw_text(uVar2,iVar3 + 9,uVar4 * 0x44 + 0x41,0xc4,0xf,&DAT_20800b1c);
+        cVar1 = *(char *)(iVar3 + 8);
         if (cVar1 == '\x04') {
-          if (acStack_270[uVar5 * 0x48] != '\x04') {
-            fb_clear_rect(uVar3,uVar5 * 0x44 + 0x42,0x1dc,0x144,0x19);
+          if (acStack_270[uVar4 * 0x48] != '\x04') {
+            fb_clear_rect(uVar2,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
           }
           gui_draw_progress_bar
-                    (uVar3,uVar5 * 0x44 + 0x42,0x1dc,*(uint *)(iVar4 + 0x40) & 0xffff,
-                     *(uint *)(iVar4 + 0x40));
+                    (uVar2,uVar4 * 0x44 + 0x42,0x1dc,*(uint *)(iVar3 + 0x40) & 0xffff,
+                     *(uint *)(iVar3 + 0x40));
         }
         else {
           if (cVar1 == '\x05') {
-            if (acStack_270[uVar5 * 0x48] != '\x05') {
-              fb_clear_rect(uVar3,uVar5 * 0x44 + 0x42,0x1dc,0x144,0x19);
+            if (acStack_270[uVar4 * 0x48] != '\x05') {
+              fb_clear_rect(uVar2,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
             }
-            gui_draw_runs(uVar3,uVar5 * 0x44 + 0x32,0x75,&DAT_203a56a4);
+            gui_draw_runs(uVar2,uVar4 * 0x44 + 0x32,0x75,&DAT_203a56a4);
           }
-          else if (cVar1 != acStack_270[uVar5 * 0x48]) {
-            fb_clear_rect(uVar3,uVar5 * 0x44 + 0x42,0x1dc,0x144,0x19);
+          else if (cVar1 != acStack_270[uVar4 * 0x48]) {
+            fb_clear_rect(uVar2,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
           }
-          gui_draw_text(uVar3,iVar4 + 0x1d,uVar5 * 0x44 + 0x43,0x1dc,0xf,&DAT_20800b1c);
+          gui_draw_text(uVar2,iVar3 + 0x1d,uVar4 * 0x44 + 0x43,0x1dc,0xf,&DAT_20800b1c);
         }
-        uVar5 = uVar5 + 1 & 0xff;
-      } while (uVar5 < 4);
+        uVar4 = uVar4 + 1 & 0xff;
+      } while (uVar4 < 4);
       __aeabi_memcpy4(acStack_270,param_1 + 8,0x120);
-      if (uVar7 != 0) goto LAB_2015b360;
+      if (uVar6 != 0) goto LAB_2015b360;
       gui_update_layers();
-      uVar3 = fb_get_layer_addr(DAT_208085bc);
+      uVar2 = fb_get_layer_addr(DAT_208085bc);
     }
   }
-  uVar7 = 2;
+  uVar6 = 2;
 LAB_2015b360:
   FUN_2010e4a0();
-  if (uVar7 != 1) {
+  if (uVar6 != 1) {
     update_error_screen();
   }
   system_reboot();
@@ -1782,6 +1799,7 @@ LAB_2015a994:
         if (iVar15 != iVar4 && iVar1 < 0 == bVar17) {
           local_29c = local_29c ^ (byte)(1 << (7 - uVar7 & 0xff));
           local_29b = (byte)uVar7;
+                    /* title bar, four target rows [doc] */
           fwupdate_select_draw(local_30,auStack_2a0,local_28);
           if (DAT_20800494 != '\0') {
             mainlink_send_e6(0);
@@ -2043,11 +2061,11 @@ void fwupdate_progress_screen(int param_1,undefined4 param_2,int param_3)
 
 {
   char cVar1;
-  byte bVar2;
-  int iVar3;
+  byte fwupdate_poll_ret;
+  int iVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
-  bool bVar6;
+  bool bVar5;
   char local_270 [288];
   undefined1 auStack_150 [288];
   uint local_30;
@@ -2070,51 +2088,51 @@ void fwupdate_progress_screen(int param_1,undefined4 param_2,int param_3)
   __aeabi_memcpy4(auStack_150,param_1 + 8,0x120);
   gui_scope_draw_hold_set(1);
   while( true ) {
-    bVar2 = fwupdate_poll(param_1 + 8);
-    uVar5 = (uint)bVar2;
-    iVar3 = sd_state_bit6();
-    if (iVar3 == 0) break;
-    bVar6 = local_2c != uVar5;
-    local_2c = uVar5;
-    if ((bVar6) || (iVar3 = memcmp(param_1 + 8,auStack_150,0x120), iVar3 != 0)) {
+    fwupdate_poll_ret = fwupdate_poll(param_1 + 8);
+    uVar4 = (uint)fwupdate_poll_ret;
+    iVar2 = sd_state_bit6();
+    if (iVar2 == 0) break;
+    bVar5 = local_2c != uVar4;
+    local_2c = uVar4;
+    if ((bVar5) || (iVar2 = memcmp(param_1 + 8,auStack_150,0x120), iVar2 != 0)) {
       __aeabi_memcpy4(auStack_150,param_1 + 8,0x120);
-      uVar4 = 0;
+      uVar3 = 0;
       do {
-        iVar3 = param_1 + uVar4 * 0x48;
-        gui_draw_text(local_30,iVar3 + 9,uVar4 * 0x44 + 0x41,0xc4,0xf,&DAT_20800b1c);
-        cVar1 = *(char *)(iVar3 + 8);
+        iVar2 = param_1 + uVar3 * 0x48;
+        gui_draw_text(local_30,iVar2 + 9,uVar3 * 0x44 + 0x41,0xc4,0xf,&DAT_20800b1c);
+        cVar1 = *(char *)(iVar2 + 8);
         if (cVar1 == '\x04') {
-          if (local_270[uVar4 * 0x48] != '\x04') {
-            fb_clear_rect(local_30,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
+          if (local_270[uVar3 * 0x48] != '\x04') {
+            fb_clear_rect(local_30,uVar3 * 0x44 + 0x42,0x1dc,0x144,0x19);
           }
           gui_draw_progress_bar
-                    (local_30,uVar4 * 0x44 + 0x42,0x1dc,*(uint *)(iVar3 + 0x40) & 0xffff,
-                     *(uint *)(iVar3 + 0x40));
+                    (local_30,uVar3 * 0x44 + 0x42,0x1dc,*(uint *)(iVar2 + 0x40) & 0xffff,
+                     *(uint *)(iVar2 + 0x40));
         }
         else {
           if (cVar1 == '\x05') {
-            if (local_270[uVar4 * 0x48] != '\x05') {
-              fb_clear_rect(local_30,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
+            if (local_270[uVar3 * 0x48] != '\x05') {
+              fb_clear_rect(local_30,uVar3 * 0x44 + 0x42,0x1dc,0x144,0x19);
             }
-            gui_draw_runs(local_30,uVar4 * 0x44 + 0x32,0x75,&DAT_203a56a4);
+            gui_draw_runs(local_30,uVar3 * 0x44 + 0x32,0x75,&DAT_203a56a4);
           }
-          else if (cVar1 != local_270[uVar4 * 0x48]) {
-            fb_clear_rect(local_30,uVar4 * 0x44 + 0x42,0x1dc,0x144,0x19);
+          else if (cVar1 != local_270[uVar3 * 0x48]) {
+            fb_clear_rect(local_30,uVar3 * 0x44 + 0x42,0x1dc,0x144,0x19);
           }
-          gui_draw_text(local_30,iVar3 + 0x1d,uVar4 * 0x44 + 0x43,0x1dc,0xf,&DAT_20800b1c);
+          gui_draw_text(local_30,iVar2 + 0x1d,uVar3 * 0x44 + 0x43,0x1dc,0xf,&DAT_20800b1c);
         }
-        uVar4 = uVar4 + 1 & 0xff;
-      } while (uVar4 < 4);
+        uVar3 = uVar3 + 1 & 0xff;
+      } while (uVar3 < 4);
       __aeabi_memcpy4(local_270,param_1 + 8,0x120);
-      if (uVar5 != 0) goto LAB_2015b360;
+      if (uVar4 != 0) goto LAB_2015b360;
       gui_update_layers();
       local_30 = fb_get_layer_addr(DAT_208085bc);
     }
   }
-  uVar5 = 2;
+  uVar4 = 2;
 LAB_2015b360:
   FUN_2010e4a0();
-  if (uVar5 != 1) {
+  if (uVar4 != 1) {
     update_error_screen();
   }
   system_reboot();
@@ -2249,7 +2267,9 @@ void scope3d_line_render(undefined4 param_1,int param_2,undefined4 param_3,int p
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
   uVar2 = scope_ramp_get(param_5);
   uVar3 = scope3d_line_markers(param_2);
+                    /* entry i of the vertical scale table 0x20450278 [doc] */
   uVar4 = scope3d_vscale(param_2,param_5);
+                    /* line i at x = 5i+4, width 791-10i [doc, inference] */
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -2273,46 +2293,48 @@ void scope3d_history_clear(void)
 
 /* mode 8: 29 lines, 222/274 rows */
 
-void scope3d_render_large(void *param_1,uint param_2,int param_3,ushort *param_4,uint param_5)
+void scope3d_render_large(void *param_1,uint n,int param_3,ushort *param_4,uint param_5)
 
 {
   short sVar1;
-  int iVar2;
-  code *pcVar3;
+  int i;
+  code *pcVar2;
   int unaff_r7;
-  bool bVar4;
-  ulonglong uVar5;
+  bool bVar3;
+  ulonglong __aeabi_idivmod_ret;
   undefined4 local_28;
   
-  bVar4 = param_3 == 0;
-  if (!bVar4) {
+  bVar3 = param_3 == 0;
+  if (!bVar3) {
     unaff_r7 = (int)param_1 + 0x7c;
   }
   local_28 = 0;
-  if (bVar4) {
+  if (bVar3) {
     unaff_r7 = (int)param_1 + 4;
   }
-  if (bVar4) {
-    pcVar3 = scope3d_line_render;
+  if (bVar3) {
+    pcVar2 = scope3d_line_render;
   }
   else {
-    pcVar3 = scope3d_line_render_alt;
+    pcVar2 = scope3d_line_render_alt;
   }
   if (3 < *param_4) {
     local_28 = CONCAT22(param_4[1],*param_4);
   }
   scope_history_push((uint)DAT_208085b0,&local_28);
   scope3d_add_line(8,(uint)DAT_208085b0,param_3);
-  uVar5 = __aeabi_idivmod(param_2,(uint)DAT_208085b0);
-  if ((int)(uVar5 >> 0x20) == 0) {
+  __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
+  if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
+                    /* every N frames [doc, inference] */
     scope3d_redraw_history(8,param_3);
   }
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(*(undefined4 *)param_1,0x6b080);
-  iVar2 = 1;
+  i = 1;
   do {
-    (*pcVar3)(*(undefined4 *)param_1,iVar2,*(uint *)(unaff_r7 + iVar2 * 4) & 0xffff,4,8,0);
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 0x1e);
+    (*pcVar2)(*(undefined4 *)param_1,i,*(uint *)(unaff_r7 + i * 4) & 0xffff,4,8,0);
+    i = i + 1;
+  } while (i < 0x1e);
   if (param_3 == 0) {
     sVar1 = 0xde;
   }
@@ -2351,7 +2373,9 @@ void scope3d_line_render_alt
   uVar1 = FUN_201343c4(param_2,param_5,auStack_358);
   uVar2 = scope_ramp_get(param_5);
   uVar3 = scope3d_line_markers(param_2);
+                    /* entry i of the vertical scale table 0x20450278 [doc] */
   uVar4 = scope3d_vscale(param_2,param_5);
+                    /* line i at x = 5i+4, width 791-10i [doc, inference] */
   scope3d_draw_line(local_34,param_3,param_2 * 5 + param_4 & 0xffff,param_2 * -10 + 0x317U & 0xffff,
                     uVar4,auStack_358 + param_2 * 5,uVar1,param_2,uVar2,uVar3,param_6);
   return;
@@ -2362,26 +2386,26 @@ void scope3d_line_render_alt
 
 /* mode 9: 14 lines, 104/156 rows */
 
-void scope3d_render_small(void *param_1,uint param_2,int param_3,ushort *param_4,uint param_5)
+void scope3d_render_small(void *param_1,uint n,int param_3,ushort *param_4,uint param_5)
 
 {
   short unaff_r4;
-  int iVar1;
+  int i;
   int unaff_r6;
-  undefined4 uVar2;
-  bool bVar3;
-  ulonglong uVar4;
+  undefined4 uVar1;
+  bool bVar2;
+  ulonglong __aeabi_idivmod_ret;
   undefined4 local_28;
   
-  bVar3 = param_3 != 0;
-  if (bVar3) {
+  bVar2 = param_3 != 0;
+  if (bVar2) {
     unaff_r6 = (int)param_1 + 0x130;
   }
   local_28 = 0;
-  if (bVar3) {
+  if (bVar2) {
     unaff_r4 = 0x9c;
   }
-  if (!bVar3) {
+  if (!bVar2) {
     unaff_r6 = (int)param_1 + 0xf4;
     unaff_r4 = 0x68;
   }
@@ -2390,19 +2414,20 @@ void scope3d_render_small(void *param_1,uint param_2,int param_3,ushort *param_4
   }
   scope_history_push((uint)DAT_208085b0,&local_28);
   scope3d_add_line(9,(uint)DAT_208085b0,param_3);
-  uVar4 = __aeabi_idivmod(param_2,(uint)DAT_208085b0);
-  if ((int)(uVar4 >> 0x20) == 0) {
+  __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
+  if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
+                    /* every N frames [doc, inference] */
     scope3d_redraw_history(9,param_3);
   }
-  uVar2 = *(undefined4 *)param_1;
-  __aeabi_memclr(uVar2,unaff_r4 * 0x640);
-  iVar1 = 1;
+  uVar1 = *(undefined4 *)param_1;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
+  __aeabi_memclr(uVar1,unaff_r4 * 0x640);
+  i = 1;
   do {
-    scope3d_line_render(*(undefined4 *)param_1,iVar1,*(uint *)(unaff_r6 + iVar1 * 4) & 0xffff,4,9,0)
-    ;
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xf);
-  memcpy(param_5,uVar2,unaff_r4 * 0x640);
+    scope3d_line_render(*(undefined4 *)param_1,i,*(uint *)(unaff_r6 + i * 4) & 0xffff,4,9,0);
+    i = i + 1;
+  } while (i < 0xf);
+  memcpy(param_5,uVar1,unaff_r4 * 0x640);
   return;
 }
 
@@ -2566,78 +2591,82 @@ undefined2 touch_hit_table(uint param_1,uint param_2,int param_3,int param_4)
 int touch_hit_test(undefined4 param_1,undefined4 param_2)
 
 {
-  byte bVar1;
+  uint uVar1;
   uint uVar2;
   uint uVar3;
-  uint uVar4;
-  int iVar5;
+  int iVar4;
   undefined4 unaff_r4;
   undefined4 unaff_r5;
   undefined4 unaff_r6;
-  byte bVar6;
-  undefined4 uVar7;
+  byte bVar5;
+  undefined4 uVar6;
+  byte gui_frame_dsp_knob_val;
   
   if (gui_frame.cmd == 0x40) {
-    iVar5 = touch_hit_text_list(param_1,param_2);
+                    /* touch_hit_test for screen 0x40 [doc] */
+    iVar4 = touch_hit_text_list(param_1,param_2);
 switchD_2015c074_caseD_32:
-    if (iVar5 != 0x1ff) {
-      return iVar5;
+    if (iVar4 != 0x1ff) {
+      return iVar4;
     }
   }
   else {
     if (gui_frame.cmd < 0x41) {
-      iVar5 = 0x1ff;
+      iVar4 = 0x1ff;
       switch(gui_frame.cmd) {
       case 0x30:
-        iVar5 = touch_hit_select_popup(param_1,param_2,gui_frame.payload[0]);
+                    /* touch_hit_test for screen 0x30 [doc] */
+        iVar4 = touch_hit_select_popup(param_1,param_2,gui_frame.payload[0]);
         break;
       case 0x31:
-        iVar5 = FUN_20130998();
-        if (iVar5 == 0) {
+        iVar4 = FUN_20130998();
+        if (iVar4 == 0) {
           return 0xff;
         }
         goto LAB_2015c240;
       case 0x34:
-        iVar5 = touch_hit_table(param_1,param_2,&DAT_20266736,4);
+        iVar4 = touch_hit_table(param_1,param_2,&DAT_20266736,4);
         break;
       case 0x37:
-        iVar5 = touch_hit_table(param_1,param_2,&DAT_2080188c,0x23);
-        if ((iVar5 == 0x10e7) && (gui_frame.payload[0xe0] == 0x35)) {
+        iVar4 = touch_hit_table(param_1,param_2,&DAT_2080188c,0x23);
+        if ((iVar4 == 0x10e7) && (gui_frame.payload[0xe0] == 0x35)) {
           return 0x10e9;
         }
         break;
       case 0x39:
         if ((gui_frame.payload[0x19] & 3) == 0) {
-          iVar5 = touch_hit_table(param_1,param_2,&DAT_2016ebdc,0xb);
+          iVar4 = touch_hit_table(param_1,param_2,&DAT_2016ebdc,0xb);
         }
         else if ((gui_frame.payload[0x19] & 3) == 1) {
-          iVar5 = touch_hit_table(param_1,param_2,&DAT_2016ec4a,0xb);
+          iVar4 = touch_hit_table(param_1,param_2,&DAT_2016ec4a,0xb);
         }
         else {
-          iVar5 = touch_hit_table(param_1,param_2,&DAT_20376520,0xb);
+          iVar4 = touch_hit_table(param_1,param_2,&DAT_20376520,0xb);
         }
         break;
       case 0x3a:
-        iVar5 = touch_hit_table(param_1,param_2,&DAT_2016e1c4,0xd);
+        iVar4 = touch_hit_table(param_1,param_2,&DAT_2016e1c4,0xd);
       }
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x50) {
-      iVar5 = touch_hit_table(param_1,param_2,(&PTR_DAT_20802198)[DAT_20800464],0x30);
+      iVar4 = touch_hit_table(param_1,param_2,(&PTR_DAT_20802198)[DAT_20800464],0x30);
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd < 0x51) {
       if (gui_frame.cmd == 0x41) {
-        iVar5 = touch_hit_table(param_1,param_2,&DAT_2016db98,0xb);
+        iVar4 = touch_hit_table(param_1,param_2,&DAT_2016db98,0xb);
       }
       else {
         if (gui_frame.cmd != 0x43) goto LAB_2015c240;
-        iVar5 = touch_hit_sd_menu(param_1,param_2);
+                    /* touch_hit_test for screen 0x43 [doc] */
+        iVar4 = touch_hit_sd_menu(param_1,param_2);
       }
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x70) {
-      iVar5 = touch_hit_dialog(param_1,param_2);
+                    /* touch_hit_test for screen 0x70 [doc] */
+      iVar4 = touch_hit_dialog(param_1,param_2);
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x7c) {
@@ -2645,57 +2674,57 @@ switchD_2015c074_caseD_32:
     }
   }
 LAB_2015c240:
-  bVar1 = gui_frame.dsp_knob;
-  uVar2 = (uint)gui_frame.scope_flags;
-  uVar3 = (uint)gui_frame.dsp_knob;
-  uVar4 = (uint)gui_frame.scope_cfg[0];
-  bVar6 = gui_frame.scope_cfg[1] & 0x7f;
-  uVar7 = param_2;
-  if ((((int)(uVar2 << 0x1a) < 0) || (gui_frame.cmd == 0x37)) ||
-     (iVar5 = touch_hit_rect(param_1,param_2,&DAT_20192748,0,param_1,param_2,unaff_r4,unaff_r5,
-                             unaff_r6), iVar5 == 0x1ff)) {
-    iVar5 = touch_hit_rect(param_1,param_2,&DAT_2042007c,0,param_1,uVar7,unaff_r4,unaff_r5,unaff_r6)
+  gui_frame_dsp_knob_val = gui_frame.dsp_knob;
+  uVar1 = (uint)gui_frame.scope_flags;
+  uVar2 = (uint)gui_frame.dsp_knob;
+  uVar3 = (uint)gui_frame.scope_cfg[0];
+  bVar5 = gui_frame.scope_cfg[1] & 0x7f;
+  uVar6 = param_2;
+  if ((((int)(uVar1 << 0x1a) < 0) || (gui_frame.cmd == 0x37)) ||
+     (iVar4 = touch_hit_rect(param_1,param_2,&DAT_20192748,0,param_1,param_2,unaff_r4,unaff_r5,
+                             unaff_r6), iVar4 == 0x1ff)) {
+    iVar4 = touch_hit_rect(param_1,param_2,&DAT_2042007c,0,param_1,uVar6,unaff_r4,unaff_r5,unaff_r6)
     ;
   }
-  if (iVar5 == 0x1ff) {
-    iVar5 = touch_hit_rect(param_1,param_2,&DAT_20350ac8,0,param_1,uVar7,unaff_r4,unaff_r5,unaff_r6)
+  if (iVar4 == 0x1ff) {
+    iVar4 = touch_hit_rect(param_1,param_2,&DAT_20350ac8,0,param_1,uVar6,unaff_r4,unaff_r5,unaff_r6)
     ;
   }
-  if (iVar5 == 0x1ff) {
-    iVar5 = touch_hit_table(param_1,param_2,&DAT_2021cc58,3);
+  if (iVar4 == 0x1ff) {
+    iVar4 = touch_hit_table(param_1,param_2,&DAT_2021cc58,3);
   }
-  if (((iVar5 == 0x1ff) || (gui_frame.cmd != 0x30)) || (3 < gui_frame.payload[0] - 1)) {
-    if (iVar5 != 0x1ff) goto LAB_2015cc24;
+  if (((iVar4 == 0x1ff) || (gui_frame.cmd != 0x30)) || (3 < gui_frame.payload[0] - 1)) {
+    if (iVar4 != 0x1ff) goto LAB_2015cc24;
   }
   else {
-    iVar5 = 0x1ff;
+    iVar4 = 0x1ff;
   }
-  if ((-1 < (int)(uVar2 << 0x1a)) && (gui_frame.cmd != 0x37)) {
-    iVar5 = touch_hit_table(param_1,param_2,&DAT_2016e15c,4);
+  if ((-1 < (int)(uVar1 << 0x1a)) && (gui_frame.cmd != 0x37)) {
+    iVar4 = touch_hit_table(param_1,param_2,&DAT_2016e15c,4);
   }
 LAB_2015cc24:
-  if ((((iVar5 == 0x1ff) && ((char)bVar1 < '\0')) &&
-      (iVar5 = touch_hit_table(param_1,param_2,&DAT_201ac45c,5), iVar5 == 0x10c3)) &&
-     ((int)(uVar3 << 0x1d) < 0)) {
-    iVar5 = 0x10c4;
+  if ((((iVar4 == 0x1ff) && ((char)gui_frame_dsp_knob_val < '\0')) &&
+      (iVar4 = touch_hit_table(param_1,param_2,&DAT_201ac45c,5), iVar4 == 0x10c3)) &&
+     ((int)(uVar2 << 0x1d) < 0)) {
+    iVar4 = 0x10c4;
   }
   if (DAT_20800483 == '\0') {
-    if (iVar5 == 0x1ff) {
-      iVar5 = touch_hit_scope(param_1,param_2);
+    if (iVar4 == 0x1ff) {
+      iVar4 = touch_hit_scope(param_1,param_2);
     }
-    if (iVar5 == 0x1ff) {
-      iVar5 = touch_hit_table(param_1,param_2,&DAT_2016e304,6);
-      if (iVar5 == 0x1000) {
-        if ((uVar4 & 0x7f) == 0xb) {
+    if (iVar4 == 0x1ff) {
+      iVar4 = touch_hit_table(param_1,param_2,&DAT_2016e304,6);
+      if (iVar4 == 0x1000) {
+        if ((uVar3 & 0x7f) == 0xb) {
           return 0x1008;
         }
-        iVar5 = (uVar4 & 0x7f) + 0x1000;
+        iVar4 = (uVar3 & 0x7f) + 0x1000;
       }
-      if (iVar5 == 0x1003 && bVar6 == 0xc) {
-        iVar5 = 0x1009;
+      if (iVar4 == 0x1003 && bVar5 == 0xc) {
+        iVar4 = 0x1009;
       }
     }
   }
-  return iVar5;
+  return iVar4;
 }
 

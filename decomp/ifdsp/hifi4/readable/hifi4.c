@@ -57,6 +57,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
   }
   else if (param_1 == 0xe) {
     memw();
+                    /* flexcomm14 clock selection [sfr] */
     dVar3 = CLKCTL1_FC14FCLKSEL;
   }
   else {
@@ -64,12 +65,14 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
       return 16000000;
     }
     memw();
+                    /* flexcomm15 clock selection [sfr] */
     dVar3 = CLKCTL1_FC15FCLKSEL;
   }
   if (dVar3 == 0) {
     return 16000000;
   }
   if (dVar3 == 1) {
+                    /* 48 / 60 MHz by FFROCTL0 trim range [doc, inference] */
     uVar2 = CLOCK_GetFFroFreq();
     return uVar2;
   }
@@ -86,6 +89,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
   }
   uVar1 = CLOCK_GetAudioPfdFreq(0);
   memw();
+                    /* audio pll0 clock divider [sfr] */
   uVar2 = CLKCTL1_AUDIOPLLCLKDIV;
   return uVar1 / ((uVar2 & 0xff) + 1);
 }
@@ -114,32 +118,39 @@ void DMA_Init(dword *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
   if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
   param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
@@ -182,6 +193,7 @@ void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
   param_1[3] = 0;
   *(char *)(param_1 + 3) = (char)param_3;
   (&DAT_00238470)[param_3 + iVar1] = param_1;
+                    /* fsl_dma.c static, called by DMA_CreateHandle [doc, inference] */
   DMA_GetVirtualStartChannel();
   return;
 }
@@ -205,59 +217,59 @@ void DMA_IRQHandle(dword *param_1)
   undefined4 *puVar1;
   int *piVar2;
   uint uVar3;
+  int i;
   int iVar4;
-  int iVar5;
-  code *pcVar6;
+  code *pcVar5;
   
-  iVar4 = 0x21;
+  i = 0x21;
   if (param_1 != &DMA0_CTRL) {
-    iVar5 = 0;
+    iVar4 = 0;
     if (param_1 != &DMA0_CTRL) {
-      iVar5 = 0x21;
+      iVar4 = 0x21;
     }
   }
   else {
-    iVar5 = 0;
+    iVar4 = 0;
   }
-  piVar2 = &DAT_00238470 + iVar5;
+  piVar2 = &DAT_00238470 + iVar4;
   do {
     puVar1 = (undefined4 *)*piVar2;
     if (puVar1 != (undefined4 *)0x0) {
       uVar3 = (uint)*(byte *)(puVar1 + 3);
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,0);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,0);
         }
       }
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,1);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,1);
         }
-        iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+        iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       }
       memw();
-      if ((*(uint *)(iVar5 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],0,2);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],0,2);
         }
       }
     }
-    iVar4 = iVar4 + -1;
+    i = i + -1;
     piVar2 = piVar2 + 1;
-  } while (iVar4 != 0);
+  } while (i != 0);
   return;
 }
 
@@ -278,6 +290,7 @@ void I2S_TxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -322,6 +335,7 @@ void I2S_RxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -457,6 +471,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -495,6 +510,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
@@ -531,6 +547,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -569,6 +586,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
@@ -704,6 +722,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (((param_1 == 0) || (param_2 == (byte *)0x0)) || (param_3 == 0)) {
     return 4;
   }
+                    /* clock enable, reset, PSELID [doc, inference] */
   iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
@@ -712,6 +731,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (iVar1 != 0) {
     return iVar1;
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();
@@ -752,7 +772,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_create_ept @ 0021af9c  (149 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_create_ept @ 0021af9c  (149 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg-lite remote
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -767,22 +787,22 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4,int 
 {
   int iVar1;
   undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
+  int i;
+  undefined4 *puVar3;
   
   if (param_1 == 0) {
     return (int *)0x0;
   }
   env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
-  puVar4 = *(undefined4 **)(param_1 + 8);
+  puVar3 = *(undefined4 **)(param_1 + 8);
   if (param_2 == -1) {
-    iVar3 = 1;
-    while (iVar1 = iVar3, puVar2 = puVar4, puVar4 != (undefined4 *)0x0) {
-      while (*(int *)*puVar2 != iVar3) {
+    i = 1;
+    while (iVar1 = i, puVar2 = puVar3, puVar3 != (undefined4 *)0x0) {
+      while (*(int *)*puVar2 != i) {
         puVar2 = (undefined4 *)puVar2[2];
         if (puVar2 == (undefined4 *)0x0) goto LAB_0021aff6;
       }
-      if ((puVar2 == (undefined4 *)0x0) || (iVar3 = iVar3 + 1, iVar1 = param_2, iVar3 == -1)) break;
+      if ((puVar2 == (undefined4 *)0x0) || (i = i + 1, iVar1 = param_2, i == -1)) break;
     }
 LAB_0021aff6:
     param_2 = iVar1;
@@ -792,9 +812,9 @@ LAB_0021aff6:
     }
   }
   else {
-    for (; puVar4 != (undefined4 *)0x0; puVar4 = (undefined4 *)puVar4[2]) {
-      if (*(int *)*puVar4 == param_2) {
-        if (puVar4 != (undefined4 *)0x0) {
+    for (; puVar3 != (undefined4 *)0x0; puVar3 = (undefined4 *)puVar3[2]) {
+      if (*(int *)*puVar3 == param_2) {
+        if (puVar3 != (undefined4 *)0x0) {
           env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
           return (int *)0x0;
         }
@@ -818,7 +838,7 @@ LAB_0021aff6:
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_is_link_up @ 0021b078  (13 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_is_link_up @ 0021b078  (13 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: rpmsg-lite remote
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -839,7 +859,7 @@ undefined4 rpmsg_lite_is_link_up(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_remote_init @ 0021b544  (285 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_lite_remote_init @ 0021b544  (285 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg-lite remote
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -853,12 +873,12 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
 
 {
   int iVar1;
-  uint uVar2;
+  uint i;
+  int *piVar2;
   int *piVar3;
-  int *piVar4;
-  code **ppcVar5;
-  undefined4 uVar6;
-  uint uVar7;
+  code **ppcVar4;
+  undefined4 uVar5;
+  uint uVar6;
   char *pcStack_50;
   char *pcStack_4c;
   code *apcStack_48 [2];
@@ -871,39 +891,39 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
     env_memset(param_4,0,0xf4);
     iVar1 = env_init();
     if (iVar1 == 0) {
-      ppcVar5 = apcStack_48;
-      piVar4 = local_40;
-      uVar7 = param_1 + 0x800;
+      ppcVar4 = apcStack_48;
+      piVar3 = local_40;
+      uVar6 = param_1 + 0x800;
       pcStack_50 = "tx_vq";
       pcStack_4c = "rx_vq";
       apcStack_48[0] = rpmsg_lite_tx_callback;
       apcStack_48[1] = rpmsg_lite_rx_callback;
       ppcStack_28 = &pcStack_50;
       param_4[8] = (int)&PTR_vq_tx_remote_002008e0;
-      piVar3 = param_4 + 9;
+      piVar2 = param_4 + 9;
       uStack_2c = param_2 << 1;
-      uVar2 = 0;
-      if ((uVar7 & 3) != 0) {
-        uVar7 = (uVar7 & 0xfffffffc) + 4;
+      i = 0;
+      if ((uVar6 & 3) != 0) {
+        uVar6 = (uVar6 & 0xfffffffc) + 4;
       }
-      param_4[5] = uVar7;
+      param_4[5] = uVar6;
       do {
         uStack_30 = 2;
         local_40[3] = 0x10;
-        uVar6 = ae_zext16(uStack_2c | uVar2 & 1);
+        uVar5 = ae_zext16(uStack_2c | i & 1);
         local_40[2] = param_1;
         iVar1 = virtqueue_create_static
-                          (uVar6,*ppcStack_28,local_40 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar3);
+                          (uVar5,*ppcStack_28,local_40 + 2,*ppcVar4,virtqueue_notify,piVar3,piVar2);
         if (iVar1 != 0) {
           return (int *)0x0;
         }
-        ppcVar5 = ppcVar5 + 1;
+        ppcVar4 = ppcVar4 + 1;
         ppcStack_28 = ppcStack_28 + 1;
-        piVar3 = piVar3 + 0x1a;
-        *(int **)(*piVar4 + 100) = param_4;
-        uVar2 = uVar2 + 1;
-        piVar4 = piVar4 + 1;
-      } while (uVar2 != 2);
+        piVar2 = piVar2 + 0x1a;
+        *(int **)(*piVar3 + 100) = param_4;
+        i = i + 1;
+        piVar3 = piVar3 + 1;
+      } while (i != 2);
       iVar1 = env_create_mutex(param_4 + 3,1);
       if (iVar1 == 0) {
         param_4[1] = local_40[0];
@@ -924,7 +944,7 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
 
 
 /* -----------------------------------------------------------------------------
- * ipc_handle_msg @ 0021bd40  (139 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * ipc_handle_msg @ 0021bd40  (139 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg-lite remote
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -972,7 +992,7 @@ undefined4 ipc_handle_msg(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_set_defaults @ 0021be80  (479 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * regfile_set_defaults @ 0021be80  (479 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: clear + defaults
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1116,7 +1136,7 @@ void regfile_set_defaults(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_gpio_to_reg4004 @ 0021c060  (44 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * tx_gpio_to_reg4004 @ 0021c060  (44 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: GPIO P0_4/21/22 → reg 0x4004
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1128,22 +1148,24 @@ void regfile_set_defaults(void)
 void tx_gpio_to_reg4004(void)
 
 {
-  byte bVar1;
-  byte bVar2;
-  short sVar3;
+  short sVar1;
+  byte gpio_b0_21;
+  byte gpio_b0_22;
   
-  sVar3 = regfile_gpio_sel();
+  sVar1 = regfile_gpio_sel();
   memw();
-  bVar1 = GPIO_B0_21;
+  gpio_b0_21 = GPIO_B0_21;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   memw();
-  bVar2 = GPIO_B0_22;
-  DAT_20078008 = (ushort)bVar2 | sVar3 << 2 | (ushort)bVar1 << 1;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
+  gpio_b0_22 = GPIO_B0_22;
+  DAT_20078008 = (ushort)gpio_b0_22 | sVar1 << 2 | (ushort)gpio_b0_21 << 1;
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * regfile_capture_init @ 0021c090  (39 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * regfile_capture_init @ 0021c090  (39 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: capture block table 0x2390E0 = {0x2007E000, 0x2007F000} (regs 0x7000/0x7800), memset 4 KB each
  *     [inference]
  * Tag: [inference]
@@ -1170,7 +1192,7 @@ void regfile_capture_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_capture_clear @ 0021c0b8  (28 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * regfile_capture_clear @ 0021c0b8  (28 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: memset(block[idx], 0, 0x1000) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1191,7 +1213,7 @@ void regfile_capture_clear(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * regfile_capture_set_ctrl @ 0021c0d4  (20 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * regfile_capture_set_ctrl @ 0021c0d4  (20 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: *(u16 *)block[idx] = v (control word); no caller [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1212,7 +1234,7 @@ void regfile_capture_set_ctrl(uint param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sincos_fft_tables_init @ 0021c140  (211 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * sincos_fft_tables_init @ 0021c140  (211 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: DSP main: memset 0x239100, 2*pi constant, fft_realf_ie and fft_spectrumf on tables 0x200CF8 / 0x201900,
  *     manual_notch_init [inference]
  * Tag: [inference]
@@ -1280,7 +1302,7 @@ void sincos_fft_tables_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * cpu_load_to_regs_2000 @ 0021c230  (298 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * cpu_load_to_regs_2000 @ 0021c230  (298 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: XOS CPU load → regs 0x2000..
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1358,7 +1380,7 @@ void cpu_load_to_regs_2000(void)
 
 
 /* -----------------------------------------------------------------------------
- * Thread_Main_entry @ 0021c360  (53 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * Thread_Main_entry @ 0021c360  (53 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Thread: `Thread_Main`
  * Created in: 0x0021C498
  * Prio: 4
@@ -1395,7 +1417,7 @@ void Thread_Main_entry(void)
 
 
 /* -----------------------------------------------------------------------------
- * ipc_ept_rx_cb @ 0021c398  (26 bytes, 3 callers, export file 0021b34c_0021c748.c)
+ * ipc_ept_rx_cb @ 0021c398  (26 bytes, 3 callers, export file 0021b544_0021c818.c)
  * Purpose: rpmsg-lite remote
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1417,7 +1439,7 @@ undefined4 ipc_ept_rx_cb(undefined4 param_1,int param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * Thread_Ipc_entry @ 0021c3b4  (224 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * Thread_Ipc_entry @ 0021c3b4  (224 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Thread: `Thread_Ipc`
  * Created in: 0x0021C498
  * Prio: 13
@@ -1458,6 +1480,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
   uVar2 = rpmsg_lite_create_ept(*param_1,0x1e,ipc_ept_rx_cb,param_1[2],auStack_dc);
   param_1[1] = uVar2;
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   while ((uVar1 & 7) != 1) {
     memw();
@@ -1481,7 +1504,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_create_main_ipc_threads @ 0021c498  (193 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * xos_create_main_ipc_threads @ 0021c498  (193 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: DSP main: MPU attrs, regfile defaults, clocks, audio init, threads, `xos_start`
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1499,6 +1522,7 @@ undefined4 xos_create_main_ipc_threads(void)
   xthal_set_region_attribute(&DAT_20060000,0x31e0,2,0);
   xthal_set_region_attribute(&DAT_20060000,0,2,0);
   regfile_set_defaults();
+                    /* capture block table 0x2390E0 = {0x2007E000, 0x2007F000} [doc, inference] */
   regfile_capture_init();
   DAT_002cb680 = 594000000;
   xos_start_system_timer(0xffffffff,0);
@@ -1520,7 +1544,7 @@ undefined4 xos_create_main_ipc_threads(void)
 
 
 /* -----------------------------------------------------------------------------
- * deinterleave2_u32 @ 0021c560  (54 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * deinterleave2_u32 @ 0021c560  (54 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: (dst0, dst1, src, n): src[2i] -> dst0[i], src[2i+1] -> dst1[i]; used by codec_in_from_dma and
  *     rxif_dma_to_fifo [fact]
  * Tag: [fact]
@@ -1548,7 +1572,7 @@ deinterleave2_u32(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,in
 
 
 /* -----------------------------------------------------------------------------
- * interleave2_u32 @ 0021c598  (52 bytes, 2 callers, export file 0021b34c_0021c748.c)
+ * interleave2_u32 @ 0021c598  (52 bytes, 2 callers, export file 0021b544_0021c818.c)
  * Purpose: (dst, src0, src1, n): the inverse; used by codec_out_fill_dma and txaf_fifo_pop_to_dma [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1575,7 +1599,7 @@ interleave2_u32(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,int 
 
 
 /* -----------------------------------------------------------------------------
- * regfile_gpio_sel @ 0021c5cc  (42 bytes, 3 callers, export file 0021b34c_0021c748.c)
+ * regfile_gpio_sel @ 0021c5cc  (42 bytes, 3 callers, export file 0021b544_0021c818.c)
  * Purpose: (reg 0xC & 0xF000) == 0x1000 -> GPIO P0_4 byte [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1591,17 +1615,19 @@ undefined1 regfile_gpio_sel(void)
   
   if ((DAT_20070018 & 0xf000) != 0x1000) {
     memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     uVar1 = GPIO_B0_4;
     return uVar1;
   }
   memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   uVar1 = GPIO_B0_5;
   return uVar1;
 }
 
 
 /* -----------------------------------------------------------------------------
- * apf_init @ 0021c600  (15 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_init @ 0021c600  (15 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Purpose: clears the APF state 0x244510; called by rx_audio_chain_init, placed before apf_config [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1621,7 +1647,7 @@ void apf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_chain_init @ 0021f410  (113 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * rx_audio_chain_init @ 0021f410  (113 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Purpose: calls the init of every Rx_Audio block (decimator 0x2373D0, fm_audio_post_init, cw_zero_in_init, NR,
  *     notch, APF,...); placed before rx_audio_chain [inference]
  * Tag: [inference]
@@ -1645,6 +1671,7 @@ void rx_audio_chain_init(void)
   spectral_nr_init();
   nlms_auto_notch_init();
   contour_init();
+                    /* clears the APF state 0x244510 [doc, inference] */
   apf_init();
   peak_limiter_init(1);
   af_hicut_init();
@@ -1657,7 +1684,7 @@ void rx_audio_chain_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * create_Thread_Rx_Audio @ 00220bd0  (152 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * create_Thread_Rx_Audio @ 00220bd0  (152 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: thread + msgq (2 × 4)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1704,13 +1731,14 @@ void create_Thread_Rx_Audio(void)
                     ,6,0,0);
   xos_msgq_create(PTR_DAT_00236bc0,2,4,0);
   if_agc_init();
+                    /* state word 0x2576E4 = 0xFFFF [doc, inference] */
   rx_audio_init();
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_init @ 00220c68  (17 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_init @ 00220c68  (17 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: create_Thread_Rx_Audio: state word 0x2576E4 = 0xFFFF, then rx_audio_chain_init [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1729,7 +1757,7 @@ void rx_audio_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_fifo_push @ 00220c7c  (151 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_fifo_push @ 00220c7c  (151 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: 24-deep block ring, posts Rx_Audio at 12
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1785,7 +1813,7 @@ undefined4 rx_audio_fifo_push(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_fifo_pop @ 00220d14  (142 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_fifo_pop @ 00220d14  (142 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: pops 12 blocks of 96 bytes from the FIFO 0x2572A4 under PS.INTLEVEL 2, or zero-fills and returns 0;
  *     pairs with rx_audio_fifo_push [fact]
  * Tag: [fact]
@@ -1801,9 +1829,9 @@ undefined4 rx_audio_fifo_pop(int param_1)
 {
   undefined6 uVar1;
   byte bVar2;
-  int iVar3;
+  int i;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1812,10 +1840,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
   undefined1 in_st_PSOWB;
   
   if (0xb < DAT_00257320) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1824,10 +1852,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar3 = 0;
+    i = 0;
     do {
       memcpy(param_1,&DAT_00256a20 + (uint)DAT_00257322 * 0x60,0x60);
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       param_1 = param_1 + 0x60;
       DAT_00257320 = DAT_00257320 - 1;
       bVar2 = 0;
@@ -1835,10 +1863,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
         bVar2 = DAT_00257322 + 1;
       }
       DAT_00257322 = bVar2;
-    } while (iVar3 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1848,7 +1876,7 @@ undefined4 rx_audio_fifo_pop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_out_fifo_push @ 00220da4  (140 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_out_fifo_push @ 00220da4  (140 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (ch, src): pushes 12 blocks of 96 bytes into FIFO ch (0x258074 + ch * 0x908, max 13 entries) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1862,10 +1890,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
 
 {
   undefined6 uVar1;
-  int iVar2;
-  char cVar3;
+  int i;
+  char cVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1875,10 +1903,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
   
   param_1 = param_1 * (int)&DAT_00000908;
   if ((byte)(&DAT_002580f0)[param_1] < 0xd) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1887,21 +1915,21 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar2 = 0;
+    i = 0;
     do {
       memcpy(&DAT_002577f0 + (uint)(byte)(&DAT_002580f1)[param_1] * 0x60 + param_1,param_2,0x60);
-      iVar2 = iVar2 + 1;
+      i = i + 1;
       param_2 = param_2 + 0x60;
-      cVar3 = '\0';
+      cVar2 = '\0';
       if ((byte)(&DAT_002580f1)[param_1] < 0x17) {
-        cVar3 = (&DAT_002580f1)[param_1] + 1;
+        cVar2 = (&DAT_002580f1)[param_1] + 1;
       }
-      (&DAT_002580f1)[param_1] = cVar3;
+      (&DAT_002580f1)[param_1] = cVar2;
       (&DAT_002580f0)[param_1] = (&DAT_002580f0)[param_1] + '\x01';
-    } while (iVar2 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1910,7 +1938,7 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_out_fifo_pop @ 00220e34  (168 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_out_fifo_pop @ 00220e34  (168 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (ch, dst): the matching pop; called by rx_audio_push_block [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1969,7 +1997,7 @@ undefined4 rx_audio_out_fifo_pop(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_push_block @ 00220f74  (28 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * rx_audio_push_block @ 00220f74  (28 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * Purpose: 24-deep block ring, posts Rx_Audio at 12
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -1987,7 +2015,7 @@ void rx_audio_push_block(undefined4 param_1,undefined4 param_2,undefined4 param_
 
 
 /* -----------------------------------------------------------------------------
- * Thread_Rx_Audio_entry @ 00220f90  (64 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * Thread_Rx_Audio_entry @ 00220f90  (64 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Thread: `Thread_Rx_Audio`
  * Created in: 0x00220BD0
  * Prio: 6
@@ -2013,6 +2041,7 @@ void Thread_Rx_Audio_entry(void)
     } while (iVar1 != 0);
     rx_audio_fifo_pop(&DAT_00259e00);
     rx_audio_chain(&DAT_00259e00,&DAT_0025a280,&DAT_0025a700);
+                    /* pushes 12 blocks of 96 bytes into FIFO ch [doc] */
     rx_audio_out_fifo_push(0,&DAT_0025a280);
     rx_audio_out_fifo_push(1,&DAT_0025a700);
   } while( true );
@@ -2020,7 +2049,7 @@ void Thread_Rx_Audio_entry(void)
 
 
 /* -----------------------------------------------------------------------------
- * fc1_spi_dma_init @ 00220fd0  (210 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fc1_spi_dma_init @ 00220fd0  (210 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: FC1 SPI master 1 MHz + DMA0 ch2/3
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2050,6 +2079,7 @@ void fc1_spi_dma_init(void)
   SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
   DMA_Init(&DMA0_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA0_ENABLESET0;
   memw();
   DMA0_ENABLESET0 = uVar1 | 8;
@@ -2058,10 +2088,12 @@ void fc1_spi_dma_init(void)
   memw();
   DMA0_ENABLESET0 = uVar1 | 4;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL3_CFG;
   memw();
   DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL2_CFG;
   memw();
   DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
@@ -2072,7 +2104,7 @@ void fc1_spi_dma_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_fc1_dma_init @ 002210a4  (55 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * spi_fc1_dma_init @ 002210a4  (55 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: Thread_Spi: SPI_MasterTransferCreateHandleDMA on FLEXCOMM1 (0x40107000), buffers 0x200607E0 / 0x200619E0
  *     (0x11F8 bytes), callback 0x22118C [fact]
  * Tag: [fact]
@@ -2089,6 +2121,7 @@ void spi_fc1_dma_init(void)
   DAT_0025abb0 = 0;
   memset(&DAT_200607e0,0,&DAT_000011f8);
   memset(&DAT_200619e0,0,&DAT_000011f8);
+                    /* DMA callbacks 0x2151B8 / 0x2151F0 [doc, inference] */
   SPI_MasterTransferCreateHandleDMA
             (&SPI1_BASE,&DAT_0025abd4,spi_fc1_dma_callback,0,&DAT_0025abb4,&DAT_0025abc4);
   return;
@@ -2096,7 +2129,7 @@ void spi_fc1_dma_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_fc1_start @ 002210dc  (62 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * spi_fc1_start @ 002210dc  (62 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: SPI_MasterTransferDMA of the 0x200607E0 buffer [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2130,7 +2163,7 @@ void spi_fc1_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_fc1_dma_done @ 0022111c  (109 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * spi_fc1_dma_done @ 0022111c  (109 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: restarts SPI_MasterTransferDMA, then spi_post_tx_done [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2168,7 +2201,7 @@ void spi_fc1_dma_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_fc1_dma_callback @ 0022118c  (12 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * spi_fc1_dma_callback @ 0022118c  (12 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: SPI DMA callback: if status == 0, spi_fc1_dma_done [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2189,7 +2222,7 @@ void spi_fc1_dma_callback(undefined4 param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * spi_tx_buffer_write @ 00221198  (29 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * spi_tx_buffer_write @ 00221198  (29 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (offset, src, len): memcpy into 0x200607E0 if offset + len <= 0x11F8 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2210,7 +2243,7 @@ void spi_tx_buffer_write(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * spi_tx_buffer_ptr @ 002211b8  (8 bytes, 6 callers, export file 0021f7ec_00222244.c)
+ * spi_tx_buffer_ptr @ 002211b8  (8 bytes, 6 callers, export file 0021f8bc_002224e0.c)
  * Purpose: returns 0x200607E0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2227,7 +2260,7 @@ undefined * spi_tx_buffer_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_rx_buffer_ptr @ 002211c0  (8 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * spi_rx_buffer_ptr @ 002211c0  (8 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: returns 0x200619E0 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2244,7 +2277,7 @@ undefined * spi_rx_buffer_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_hpf_init @ 00222dd4  (25 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_hpf_init @ 00222dd4  (25 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: iir_cascade_init(0x25C030, coefficients 0x2371F0) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2262,7 +2295,7 @@ void fm_tx_hpf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * nlms_51tap_update @ 00223250  (207 bytes, 2 callers, export file 002224e0_00224a10.c)
+ * nlms_51tap_update @ 00223250  (207 bytes, 2 callers, export file 00222510_00224aa4.c)
  * Purpose: 51-tap normalised LMS (error, power + 1e-12, weight update), used by the VOX detectors
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2340,7 +2373,7 @@ nlms_51tap_update(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * spectrum_frame @ 00223c8c  (856 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * spectrum_frame @ 00223c8c  (856 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: Thread_Spi: window, fft_realf_ie, fft_spectrumf, vec_log10f, vec_scale_sf (regs 0x5C/0x5D, docs)
  *     [inference]
  * Tag: [inference]
@@ -2516,7 +2549,7 @@ LAB_00223d26:
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_fill_dma @ 002246c0  (113 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_fill_dma @ 002246c0  (113 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: codec-side buffers
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2549,7 +2582,7 @@ void codec_out_fill_dma(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * codec_in_from_dma @ 00224734  (96 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_in_from_dma @ 00224734  (96 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: codec-side buffers
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2579,7 +2612,7 @@ void codec_in_from_dma(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * routing_regs_init @ 002249b0  (30 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * routing_regs_init @ 002249b0  (30 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: clears the 7 selector words 0x263D50 used by routing_regs_decode [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2603,7 +2636,7 @@ void routing_regs_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * create_Thread_Spi @ 00224a10  (148 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * create_Thread_Spi @ 00224a10  (148 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: SPI state init, thread + msgq (4 × 4)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2651,8 +2684,9 @@ void create_Thread_Spi(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * Thread_Spi_entry @ 00224aa4  (655 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * Thread_Spi_entry @ 00224aa4  (655 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Thread: `Thread_Spi`
  * Created in: 0x00224A10
  * Prio: 5
@@ -2694,10 +2728,12 @@ void Thread_Spi_entry(void)
   uint uStack_34;
   undefined4 uStack_30;
   
+                    /* SPI_MasterTransferCreateHandleDMA on FLEXCOMM1 [doc] */
   spi_fc1_dma_init();
   uVar2 = spi_tx_buffer_ptr();
   memset(uVar2,1,200);
   memset(&DAT_00266490,1,400);
+                    /* memcpy into 0x200607E0 if offset + len <= 0x11F8 [doc] */
   spi_tx_buffer_write(200,&DAT_00266490,400);
   uVar9 = const_s(0);
   uVar10 = 0x3dfa35de;
@@ -2828,16 +2864,17 @@ void Thread_Spi_entry(void)
         iVar3 = spi_tx_buffer_ptr();
         FUN_002244c8(iVar3 + 200);
         iVar3 = spi_tx_buffer_ptr();
+                    /* reads the int16 recording ring 0x266ED8 [doc, inference] */
         rec_ring_read_to_spi(iVar3 + 600);
+                    /* SPI_MasterTransferDMA of the 0x200607E0 buffer [doc, inference] */
         spi_fc1_start();
       }
     }
   } while( true );
 }
 
-
 /* -----------------------------------------------------------------------------
- * spi_post_tx_done @ 00224d40  (23 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * spi_post_tx_done @ 00224d40  (23 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: 14-deep ring, posts Spi at 7 / msg 1
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2856,7 +2893,7 @@ void spi_post_tx_done(void)
 
 
 /* -----------------------------------------------------------------------------
- * spi_fifo_push @ 00224d58  (152 bytes, 5 callers, export file 00224aa4_0022689c.c)
+ * spi_fifo_push @ 00224d58  (152 bytes, 5 callers, export file 00224d40_00226a50.c)
  * Purpose: 14-deep ring, posts Spi at 7 / msg 1
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2912,7 +2949,7 @@ undefined4 spi_fifo_push(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * test_tone_init @ 00225250  (19 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * test_tone_init @ 00225250  (19 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: state 0x266EA8; placed before test_tone_gen [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2933,7 +2970,7 @@ void test_tone_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_resample_init @ 002254a0  (76 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_resample_init @ 002254a0  (76 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: ring resets, iir_cascade_init(0x237700); placed before rec_resample_sink [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -2947,6 +2984,7 @@ void rec_resample_init(void)
 {
   undefined8 uVar1;
   
+                    /* clears the ring 0x268D1C indices under PS.INTLEVEL 2 [doc] */
   rec_ring_reset_0();
   rec_ring_reset_1();
   DAT_00266ec0 = iir_cascade_init(&DAT_002c6a30,3,&DAT_00237700,1);
@@ -2961,7 +2999,7 @@ void rec_resample_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_ring_read_to_spi @ 00225790  (162 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_ring_read_to_spi @ 00225790  (162 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: Thread_Spi: reads the int16 recording ring 0x266ED8 (4000 bytes) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3024,7 +3062,7 @@ void rec_ring_read_to_spi(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_fifo_pop_to_dma @ 00225c9c  (90 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_fifo_pop_to_dma @ 00225c9c  (90 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: SDR-side FIFOs
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3048,7 +3086,7 @@ void txaf_fifo_pop_to_dma(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rxif_dma_to_fifo @ 00225cf8  (78 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rxif_dma_to_fifo @ 00225cf8  (78 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: SDR-side FIFOs
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3070,7 +3108,7 @@ void rxif_dma_to_fifo(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rxif_fifo_pop @ 00225d48  (123 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rxif_fifo_pop @ 00225d48  (123 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: Thread_Rx_Path: pops a block and converts Q31 -> float with vec_int2float [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3120,7 +3158,7 @@ void rxif_fifo_pop(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * create_rx_tx_path_threads @ 00225e40  (661 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * create_rx_tx_path_threads @ 00225e40  (661 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: I2S/DMA1 init (FC2–5), Rx/Tx path threads, then Rx_Audio
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3138,21 +3176,28 @@ void create_rx_tx_path_threads(void)
   CLOCK_AttachClk(0x80002568);
   CLOCK_AttachClk(0x80002588);
   CLOCK_AttachClk(0x800025a8);
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(0x30a);
   RESET_PeripheralReset(0x30b);
   RESET_PeripheralReset(0x30c);
   RESET_PeripheralReset(0x30d);
   CLOCK_AttachClk(0x80001740);
+                    /* write divider, wait REQFLAG [doc, inference] */
   CLOCK_SetClkDiv(0x80000744,1);
   memw();
+                    /* mclk direction control [sfr] */
   SYSCTL1_MCLKPINDIR = 1;
   memw();
+                    /* shared control set N [sfr] */
   SYSCTL1_SHAREDCTRLSET0 = 0x22;
   memw();
+                    /* flexcomm control selection N [sfr] */
   SYSCTL1_FCCTRLSEL3 = 0x101;
   memw();
+                    /* shared control set N [sfr] */
   SYSCTL1_SHAREDCTRLSET1 = 0x55;
   memw();
+                    /* flexcomm control selection N [sfr] */
   SYSCTL1_FCCTRLSEL4 = 0x202;
   xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DMA1_CTRL);
   xos_interrupt_enable(0x17);
@@ -3182,6 +3227,7 @@ void create_rx_tx_path_threads(void)
   I2S_RxInit(&I2S4_BASE,&DAT_002c825c);
   DMA_Init(&DMA1_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA1_ENABLESET0;
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x20;
@@ -3190,10 +3236,12 @@ void create_rx_tx_path_threads(void)
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x40;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL5_CFG;
   memw();
   DMA1_CHANNEL5_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL6_CFG;
   memw();
   DMA1_CHANNEL6_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
@@ -3208,16 +3256,20 @@ void create_rx_tx_path_threads(void)
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x100;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL11_CFG;
   memw();
   DMA1_CHANNEL11_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL8_CFG;
   memw();
   DMA1_CHANNEL8_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
   DMA_CreateHandle(&DAT_002c8298,&DMA1_CTRL,0xb);
   DMA_CreateHandle(&DAT_002c82a8,&DMA1_CTRL,8);
+                    /* resets both TXAF FIFOs and the mute ramp [doc, inference] */
   txaf_out_init();
+                    /* resets both codec-out FIFOs and the mute ramp [doc, inference] */
   codec_out_init();
   xos_thread_create(&DAT_002c7890,0,Thread_Rx_Path_entry,0,"Thread_Rx_Path",&DAT_002c83b0,
                     &DAT_00001398,7,0,0);
@@ -3241,7 +3293,7 @@ void create_rx_tx_path_threads(void)
 
 
 /* -----------------------------------------------------------------------------
- * audio_i2s_fc3_fc4_fc5_init @ 002260d8  (331 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * audio_i2s_fc3_fc4_fc5_init @ 002260d8  (331 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: DMA handles and ping-pong transfers for FC2–FC5
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3292,7 +3344,7 @@ void audio_i2s_fc3_fc4_fc5_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fc2_txaf_dma_done @ 00226224  (47 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * fc2_txaf_dma_done @ 00226224  (47 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: DMA callbacks (above)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3311,7 +3363,7 @@ void fc2_txaf_dma_done(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * fc3_rxif_dma_done @ 00226254  (47 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * fc3_rxif_dma_done @ 00226254  (47 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: names-file group "audio I/O: I2S FLEXCOMM2-5 + DMA1, SPI FLEXCOMM1 + DMA0"; calls
  *     `I2S_RxTransferReceiveDMA`, `rxif_dma_to_fifo`; 47 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -3331,7 +3383,7 @@ void fc3_rxif_dma_done(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * fc5_codec_out_dma_done @ 00226284  (59 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * fc5_codec_out_dma_done @ 00226284  (59 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: names-file group "audio I/O: I2S FLEXCOMM2-5 + DMA1, SPI FLEXCOMM1 + DMA0"; calls
  *     `I2S_TxTransferSendDMA`, `codec_out_fill_dma`, `xos_msgq_put`; 59 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
@@ -3352,7 +3404,7 @@ void fc5_codec_out_dma_done(undefined4 param_1,undefined4 param_2,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * fc4_codec_in_dma_done @ 002262c0  (59 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * fc4_codec_in_dma_done @ 002262c0  (59 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: DMA callbacks (above)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3372,7 +3424,7 @@ void fc4_codec_in_dma_done(undefined4 param_1,undefined4 param_2,undefined4 para
 
 
 /* -----------------------------------------------------------------------------
- * Thread_Rx_Path_entry @ 002262fc  (353 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * Thread_Rx_Path_entry @ 002262fc  (353 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Thread: `Thread_Rx_Path`
  * Created in: 0x00225E40
  * Prio: 7
@@ -3395,15 +3447,20 @@ void Thread_Rx_Path_entry(void)
     do {
       iVar1 = xos_msgq_get(PTR_DAT_0023773c,auStack_30);
     } while (iVar1 != 0);
+                    /* Next 24-sample block of the RX IF stream [fact: dsp-chains.md] */
     rxif_fifo_pop(&DAT_002cab90);
+                    /* AGC, then the demodulator chosen by reg 6 [fact: 0x220EE0] */
     rx_demod_dispatch(&DAT_002cab90,&DAT_002cab90);
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), iVar1 == 1)) {
+                    /* reg 6 = 10 and reg 10 n0 = 1: codec ADC ch 1 instead [fact: dsp-chains.md] */
       codec_in_fifo_pop(1,&DAT_002cabf0);
+                    /* Gain from reg 0x60 [doc, inference] */
       rx_aux_in_gain(&DAT_002cabf0);
       rx_audio_push_block(&DAT_002cabf0,&DAT_002cac50,&DAT_002cacb0);
       memcpy(&DAT_002cad10,&DAT_002cab90,0x60);
     }
     else {
+                    /* Hand the block to Rx_Audio (12 blocks) [fact: dsp-chains.md] */
       rx_audio_push_block(&DAT_002cab90,&DAT_002cac50,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d56,0);
@@ -3414,6 +3471,7 @@ void Thread_Rx_Path_entry(void)
       codec_out_sink(1,&DAT_002cad10);
     }
     else if (iVar1 == 6) {
+                    /* per-output gain, clip, into the codec-out object [doc, inference] */
       codec_out_sink(1,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
@@ -3445,8 +3503,10 @@ void Thread_Rx_Path_entry(void)
       rec_resample_sink(&DAT_002cac50);
     }
     else if (iVar1 == 6) {
+                    /* x2/9 to 16 kHz, int16 ring 0x266ED8 [doc, inference] */
       rec_resample_sink(&DAT_002cacb0);
     }
+                    /* Output gains and mute from regs 0xD, 0xE, 0x10 [fact: 0x224814] */
     rx_out_gain_mute_update();
     play_gain_update();
   } while( true );
@@ -3454,7 +3514,7 @@ void Thread_Rx_Path_entry(void)
 
 
 /* -----------------------------------------------------------------------------
- * Thread_Tx_Path_entry @ 0022647c  (595 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * Thread_Tx_Path_entry @ 0022647c  (595 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Thread: `Thread_Tx_Path`
  * Created in: 0x00225E40
  * Prio: 7
@@ -3482,7 +3542,9 @@ void Thread_Tx_Path_entry(void)
       iVar1 = xos_msgq_get(PTR_DAT_00237740,auStack_30);
       fVar3 = (float)in_aed0;
     } while (iVar1 != 0);
+                    /* Split regs 8/9/10 into the routing selectors [fact: 0x2249D0] */
     routing_regs_decode();
+                    /* Mic block from codec input ch 0 [inference: dsp-chains.md] */
     codec_in_fifo_pop(0,&DAT_002cad70);
     uVar2 = 0;
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), uVar2 = 0, iVar1 != 1)) {
@@ -3490,6 +3552,7 @@ void Thread_Tx_Path_entry(void)
       uVar2 = 1;
     }
     aux_in_gain_lp(uVar2,&DAT_002cadd0);
+                    /* Playback block from the 4000-block ring [fact: dsp-chains.md] */
     playback_ring_read(&DAT_002cae30);
     iVar1 = ae_l16ui_n(&DAT_00263d5a,0);
     if (iVar1 == 2) {
@@ -3499,7 +3562,9 @@ void Thread_Tx_Path_entry(void)
       rec_resample_sink(&DAT_002cae30);
     }
     else if (iVar1 == 4) {
+                    /* Test tone (regs 0x4013/0x4014) [fact: dsp-chains.md] */
       test_tone_gen(&DAT_002cae90,0x18);
+                    /* x2/9 to 16 kHz, int16 ring 0x266ED8 [doc, inference] */
       rec_resample_sink(&DAT_002cae90);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d5c,0);
@@ -3510,6 +3575,7 @@ void Thread_Tx_Path_entry(void)
       memcpy(&DAT_002cae90,&DAT_002cae30,0x60);
     }
     else if (iVar1 == 4) {
+                    /* Sine, phase += f·2π/72000 [doc] */
       test_tone_gen(&DAT_002cae90,0x18);
     }
     else {
@@ -3539,6 +3605,7 @@ void Thread_Tx_Path_entry(void)
       codec_out_sink(1,&DAT_002cadd0);
     }
     else if (iVar1 == 7) {
+                    /* per-output gain, clip, into the codec-out object [doc, inference] */
       codec_out_sink(1,&DAT_002caef0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
@@ -3578,14 +3645,16 @@ void Thread_Tx_Path_entry(void)
     else if (iVar1 == 2) {
       txaf_out_push(&DAT_002cafb0);
     }
+                    /* mute = reg 0x10 bit 1 or GPIO P0_4 [doc] */
     tx_mute_ctrl();
+                    /* Recorder gain from reg 0x12 [doc] */
     rec_gain_update();
   } while( true );
 }
 
 
 /* -----------------------------------------------------------------------------
- * xos_register_interrupt_handler @ 002266fc  (29 bytes, 6 callers, export file 00224aa4_0022689c.c)
+ * xos_register_interrupt_handler @ 002266fc  (29 bytes, 6 callers, export file 00224d40_00226a50.c)
  * Purpose: XOS interrupts (IRQ 22 = DMA0, 23 = DMA1)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3608,7 +3677,7 @@ undefined4 xos_register_interrupt_handler(uint param_1,undefined *param_2,undefi
 
 
 /* -----------------------------------------------------------------------------
- * xos_interrupt_enable @ 0022678c  (57 bytes, 4 callers, export file 00224aa4_0022689c.c)
+ * xos_interrupt_enable @ 0022678c  (57 bytes, 4 callers, export file 00224d40_00226a50.c)
  * Purpose: XOS interrupts (IRQ 22 = DMA0, 23 = DMA1)
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3634,7 +3703,7 @@ void xos_interrupt_enable(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_msgq_create @ 00226a50  (82 bytes, 5 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_create @ 00226a50  (82 bytes, 5 callers, export file 00224d40_00226a50.c)
  * Purpose: XOS message queues
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3674,9 +3743,8 @@ undefined4 xos_msgq_create(int param_1,int param_2,uint param_3,uint param_4)
   return uVar1;
 }
 
-
 /* -----------------------------------------------------------------------------
- * xos_msgq_put @ 00226b38  (138 bytes, 6 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_put @ 00226b38  (138 bytes, 6 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS message queues
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3750,7 +3818,7 @@ int xos_msgq_put(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * xos_msgq_get @ 00226cec  (141 bytes, 5 callers, export file 00226a50_002284e8.c)
+ * xos_msgq_get @ 00226cec  (141 bytes, 5 callers, export file 00226aa4_00228564.c)
  * Purpose: XOS message queues
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3824,7 +3892,7 @@ int xos_msgq_get(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * xos_get_cpu_load @ 0022735c  (363 bytes, 1 callers, export file 00226a50_002284e8.c)
+ * xos_get_cpu_load @ 0022735c  (363 bytes, 1 callers, export file 00226aa4_00228564.c)
  * Purpose: Cadence XOS
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -3967,7 +4035,7 @@ undefined4 xos_get_cpu_load(int *param_1,int *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * xos_thread_create @ 002274e0  (517 bytes, 7 callers, export file 00226a50_002284e8.c)
+ * xos_thread_create @ 002274e0  (517 bytes, 7 callers, export file 00226aa4_00228564.c)
  * Purpose: Cadence XOS
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4126,7 +4194,7 @@ LAB_0022754e:
 
 
 /* -----------------------------------------------------------------------------
- * xos_start @ 002277f0  (178 bytes, 1 callers, export file 00226a50_002284e8.c)
+ * xos_start @ 002277f0  (178 bytes, 1 callers, export file 00226aa4_00228564.c)
  * Purpose: Cadence XOS
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4175,7 +4243,7 @@ void xos_start(void)
 
 
 /* -----------------------------------------------------------------------------
- * xos_start_system_timer @ 0022835c  (115 bytes, 1 callers, export file 00226a50_002284e8.c)
+ * xos_start_system_timer @ 0022835c  (115 bytes, 1 callers, export file 00226aa4_00228564.c)
  * Purpose: Cadence XOS
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4224,7 +4292,7 @@ int xos_start_system_timer(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * xos_thread_sleep @ 0022866c  (140 bytes, 1 callers, export file 00228564_0022b880.c)
+ * xos_thread_sleep @ 0022866c  (140 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: Cadence XOS
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4283,7 +4351,7 @@ int xos_thread_sleep(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * iir_cascade_init @ 002340fc  (194 bytes, 51 callers, export file 00233a10_00236080.c)
+ * iir_cascade_init @ 002340fc  (194 bytes, 51 callers, export file 00233d08_00236170.c)
  * Purpose: biquad engine
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4371,7 +4439,7 @@ undefined1  [16] iir_cascade_init(int param_1,int param_2,undefined4 *param_3,un
 
 
 /* -----------------------------------------------------------------------------
- * iir_cascade_process @ 002341c0  (1352 bytes, 46 callers, export file 00233a10_00236080.c)
+ * iir_cascade_process @ 002341c0  (1352 bytes, 46 callers, export file 00233d08_00236170.c)
  * Purpose: biquad engine
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -4818,7 +4886,7 @@ void iir_cascade_process(uint *param_1,undefined8 *param_2,undefined8 *param_3,u
 
 
 /* -----------------------------------------------------------------------------
- * __udivdi3 @ 00235900  (619 bytes, 21 callers, export file 00233a10_00236080.c)
+ * __udivdi3 @ 00235900  (619 bytes, 21 callers, export file 00233d08_00236170.c)
  * Purpose: runtime
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5004,7 +5072,7 @@ ulonglong __udivdi3(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * memcpy @ 00235d30  (364 bytes, 96 callers, export file 00233a10_00236080.c)
+ * memcpy @ 00235d30  (364 bytes, 96 callers, export file 00233d08_00236170.c)
  * Purpose: runtime
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5164,7 +5232,7 @@ LAB_00235db2:
 
 
 /* -----------------------------------------------------------------------------
- * memset @ 00235eb0  (134 bytes, 140 callers, export file 00233a10_00236080.c)
+ * memset @ 00235eb0  (134 bytes, 140 callers, export file 00233d08_00236170.c)
  * Purpose: runtime
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5231,7 +5299,7 @@ LAB_00235f2e:
 
 
 /* -----------------------------------------------------------------------------
- * _WindowOverflow4 @ 24020400  (15 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _WindowOverflow4 @ 24020400  (15 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 15 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5253,7 +5321,7 @@ void _WindowOverflow4(undefined4 param_1,undefined4 param_2,undefined4 param_3,i
 
 
 /* -----------------------------------------------------------------------------
- * _WindowUnderflow4 @ 24020440  (15 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _WindowUnderflow4 @ 24020440  (15 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 15 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5271,7 +5339,7 @@ undefined8 _WindowUnderflow4(void)
 
 
 /* -----------------------------------------------------------------------------
- * _WindowOverflow8 @ 24020480  (30 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _WindowOverflow8 @ 24020480  (30 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 30 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5300,7 +5368,7 @@ void _WindowOverflow8(undefined4 param_1,undefined4 param_2,undefined4 param_3,u
 
 
 /* -----------------------------------------------------------------------------
- * _WindowUnderflow8 @ 240204c0  (30 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _WindowUnderflow8 @ 240204c0  (30 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 30 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5324,7 +5392,7 @@ undefined1  [16] _WindowUnderflow8(void)
 
 
 /* -----------------------------------------------------------------------------
- * _WindowOverflow12 @ 24020500  (42 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _WindowOverflow12 @ 24020500  (42 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 42 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5361,7 +5429,7 @@ void _WindowOverflow12(undefined4 param_1,undefined4 param_2,undefined4 param_3,
 
 
 /* -----------------------------------------------------------------------------
- * _WindowUnderflow12 @ 24020540  (42 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _WindowUnderflow12 @ 24020540  (42 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 42 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5385,7 +5453,7 @@ undefined1  [16] _WindowUnderflow12(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_57c @ 2402057c  (26 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _Vector_57c @ 2402057c  (26 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 26 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5412,7 +5480,7 @@ void _Vector_57c(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_59c @ 2402059c  (12 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _Vector_59c @ 2402059c  (12 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5433,7 +5501,7 @@ void _Vector_59c(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_5bc @ 240205bc  (12 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _Vector_5bc @ 240205bc  (12 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5454,7 +5522,7 @@ void _Vector_5bc(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_5dc @ 240205dc  (12 bytes, 1 callers, export file 002360e0_2402063c.c)
+ * _Vector_5dc @ 240205dc  (12 bytes, 1 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5475,7 +5543,7 @@ void _Vector_5dc(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_61c @ 2402061c  (24 bytes, 3 callers, export file 002360e0_2402063c.c)
+ * _Vector_61c @ 2402061c  (24 bytes, 3 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 24 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md
@@ -5506,7 +5574,7 @@ void _Vector_61c(void)
 
 
 /* -----------------------------------------------------------------------------
- * _Vector_63c @ 2402063c  (6 bytes, 2 callers, export file 002360e0_2402063c.c)
+ * _Vector_63c @ 2402063c  (6 bytes, 2 callers, export file 002361d0_2402063c.c)
  * Purpose: no direct calls; 6 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/hifi4.md

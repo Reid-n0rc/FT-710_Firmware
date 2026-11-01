@@ -358,6 +358,7 @@ undefined * FLEXSPI_TransferNonBlocking(int param_1,int *param_2,undefined4 *par
   iVar2 = *param_2;
   *(uint *)(param_1 + 0xb0) = *(uint *)(param_1 + 0xb0) | 1;
   if (iVar2 == 2) {
+                    /* fsl_flexspi.h inline emitted out of line [doc] */
     FLEXSPI_EnableInterrupts(param_1,0x82b);
     return (undefined *)0x0;
   }
@@ -1042,28 +1043,35 @@ void GPIO_PortInit(undefined4 param_1,int param_2)
   uVar2 = (uint)puVar1 >> 8 & 0xff;
   if (uVar2 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset((&PTR_DAT_002002c0)[param_2]);
   return;
 }
@@ -1083,26 +1091,32 @@ void GPIO_PinInit(int param_1,int param_2,uint param_3,int *param_4)
   uVar2 = (uint)puVar1 >> 8 & 0xff;
   if (uVar2 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   else if (uVar2 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - ((uint)puVar1 & 0x1f));
   }
   param_1 = param_2 * 4 + param_1;
@@ -1842,6 +1856,7 @@ void I2C_MasterTransferCreateHandle
 
 {
   memset(param_2,0,0x40);
+                    /* 9 FLEXCOMM bases at 0x2002E0 [doc, inference] */
   I2C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x38) = param_3;
   *(undefined4 *)(param_2 + 0x3c) = param_4;

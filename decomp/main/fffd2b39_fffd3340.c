@@ -7,6 +7,7 @@
 void menu_ex060114_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(1);
   return;
 }
@@ -19,6 +20,7 @@ void menu_ex060114_draw(void)
 void menu_ex060214_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(2);
   return;
 }
@@ -31,6 +33,7 @@ void menu_ex060214_draw(void)
 void menu_ex060314_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(3);
   return;
 }
@@ -43,6 +46,7 @@ void menu_ex060314_draw(void)
 void menu_ex060414_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(4);
   return;
 }
@@ -55,6 +59,7 @@ void menu_ex060414_draw(void)
 void menu_ex060514_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(5);
   return;
 }
@@ -71,7 +76,7 @@ void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -116,7 +121,7 @@ void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_b * 0x15 + 0x22bf);
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;
@@ -132,6 +137,7 @@ void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
 void menu_ex060115_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(1);
   return;
 }
@@ -144,6 +150,7 @@ void menu_ex060115_draw(void)
 void menu_ex060215_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(2);
   return;
 }
@@ -156,6 +163,7 @@ void menu_ex060215_draw(void)
 void menu_ex060315_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(3);
   return;
 }
@@ -168,6 +176,7 @@ void menu_ex060315_draw(void)
 void menu_ex060415_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(4);
   return;
 }
@@ -180,6 +189,7 @@ void menu_ex060415_draw(void)
 void menu_ex060515_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(5);
   return;
 }
@@ -196,7 +206,7 @@ void menu_draw_preset_mod_source(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -241,7 +251,7 @@ void menu_draw_preset_mod_source(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_b * 0x15 + 0x2e8);
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;
@@ -257,6 +267,7 @@ void menu_draw_preset_mod_source(byte param_1,byte *param_2)
 void menu_ex060116_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(1);
   return;
 }
@@ -269,6 +280,7 @@ void menu_ex060116_draw(void)
 void menu_ex060216_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(2);
   return;
 }
@@ -281,6 +293,7 @@ void menu_ex060216_draw(void)
 void menu_ex060316_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(3);
   return;
 }
@@ -293,6 +306,7 @@ void menu_ex060316_draw(void)
 void menu_ex060416_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(4);
   return;
 }
@@ -305,6 +319,7 @@ void menu_ex060416_draw(void)
 void menu_ex060516_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(5);
   return;
 }
@@ -357,6 +372,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xc;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -369,6 +385,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
 void menu_ex060117_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(1);
   return;
 }
@@ -381,6 +398,7 @@ void menu_ex060117_draw(void)
 void menu_ex060217_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(2);
   return;
 }
@@ -393,6 +411,7 @@ void menu_ex060217_draw(void)
 void menu_ex060317_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(3);
   return;
 }
@@ -405,6 +424,7 @@ void menu_ex060317_draw(void)
 void menu_ex060417_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(4);
   return;
 }
@@ -417,6 +437,7 @@ void menu_ex060417_draw(void)
 void menu_ex060517_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(5);
   return;
 }
@@ -469,6 +490,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -481,6 +503,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
 void menu_ex060118_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(1);
   return;
 }
@@ -493,6 +516,7 @@ void menu_ex060118_draw(void)
 void menu_ex060218_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(2);
   return;
 }
@@ -505,6 +529,7 @@ void menu_ex060218_draw(void)
 void menu_ex060318_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(3);
   return;
 }
@@ -517,6 +542,7 @@ void menu_ex060318_draw(void)
 void menu_ex060418_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(4);
   return;
 }
@@ -529,6 +555,7 @@ void menu_ex060418_draw(void)
 void menu_ex060518_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(5);
   return;
 }
@@ -545,7 +572,7 @@ void menu_draw_preset_rptt_select(byte param_1,byte *param_2)
 {
   bool bVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_b;
   
   if ((param_1 == 0) || (5 < param_1)) {
@@ -590,7 +617,7 @@ void menu_draw_preset_rptt_select(byte param_1,byte *param_2)
                    "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                    + (uint)local_b * 0x15 + 0x33c);
   param_2 = param_2 + 0x18;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *param_2 = *pbVar2;
     param_2 = param_2 + 1;
     pbVar2 = pbVar2 + 1;
@@ -608,23 +635,23 @@ void menu_draw_preset_rptt_select(byte param_1,byte *param_2)
 uint menu_preset_name_ptr(void)
 
 {
-  char cVar1;
+  char menu_p2_global_ret;
   uint uStack_8;
   
-  cVar1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  if (cVar1 == '\x1a') {
+  menu_p2_global_ret = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
+  if (menu_p2_global_ret == '\x1a') {
     uStack_8 = 0x9baa;
   }
-  else if (cVar1 == '\x17') {
+  else if (menu_p2_global_ret == '\x17') {
     uStack_8 = 0x9b4d;
   }
-  else if (cVar1 == '\x18') {
+  else if (menu_p2_global_ret == '\x18') {
     uStack_8 = 0x9b6c;
   }
-  else if (cVar1 == '\x19') {
+  else if (menu_p2_global_ret == '\x19') {
     uStack_8 = 0x9b8b;
   }
-  else if (cVar1 == '\x16') {
+  else if (menu_p2_global_ret == '\x16') {
     uStack_8 = 0x9b2e;
   }
   else {
@@ -641,31 +668,32 @@ uint menu_preset_name_ptr(void)
 void menu_ex060101_enter(void)
 
 {
-  ui_state *puVar1;
-  ui_state *puVar2;
-  undefined4 *puVar3;
+  undefined4 *menu_preset_name_ptr_ret;
+  ui_state *p_ui_state;
+  ui_state *p_ui_state_2;
   
-  puVar3 = (undefined4 *)menu_preset_name_ptr();
+                    /* Returns the RAM address of the open PRESET's name [doc] */
+  menu_preset_name_ptr_ret = (undefined4 *)menu_preset_name_ptr();
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 6;
   PTR_g_ui_00025d60->kbd_cursor = 0;
-  puVar1 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 8) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 9) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 10) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0xb) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 4) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 5) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 6) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 7) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 0) = 0x20;
-  puVar2 = PTR_g_ui_00025d60;
-  *(byte *)((int)(puVar1->msg_text + 0) + 1) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 2) = 0x20;
-  *(byte *)((int)(puVar1->msg_text + 0) + 3) = 0x20;
-  *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = puVar3[2];
-  *(undefined4 *)(puVar2->msg_text[0] + 4) = puVar3[1];
-  *(undefined4 *)puVar2->msg_text[0] = *puVar3;
+  p_ui_state = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 8) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 9) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 10) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0xb) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 4) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 5) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 6) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 7) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 0) = 0x20;
+  p_ui_state_2 = PTR_g_ui_00025d60;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 1) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 2) = 0x20;
+  *(byte *)((int)(p_ui_state->msg_text + 0) + 3) = 0x20;
+  *(undefined4 *)(PTR_g_ui_00025d60->msg_text[0] + 8) = menu_preset_name_ptr_ret[2];
+  *(undefined4 *)(p_ui_state_2->msg_text[0] + 4) = menu_preset_name_ptr_ret[1];
+  *(undefined4 *)p_ui_state_2->msg_text[0] = *menu_preset_name_ptr_ret;
   beep_request(1);
   return;
 }
@@ -689,6 +717,7 @@ void menu_step_nop(void)
 void menu_ex060102_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(1);
   return;
 }
@@ -701,6 +730,7 @@ void menu_ex060102_step(void)
 void menu_ex060202_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(2);
   return;
 }
@@ -713,6 +743,7 @@ void menu_ex060202_step(void)
 void menu_ex060302_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(3);
   return;
 }
@@ -725,6 +756,7 @@ void menu_ex060302_step(void)
 void menu_ex060402_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(4);
   return;
 }
@@ -737,6 +769,7 @@ void menu_ex060402_step(void)
 void menu_ex060502_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(5);
   return;
 }
@@ -792,6 +825,7 @@ void menu_step_preset_cat1_rate(byte param_1)
 void menu_ex060103_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(1);
   return;
 }
@@ -804,6 +838,7 @@ void menu_ex060103_step(void)
 void menu_ex060203_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(2);
   return;
 }
@@ -816,6 +851,7 @@ void menu_ex060203_step(void)
 void menu_ex060303_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(3);
   return;
 }
@@ -828,6 +864,7 @@ void menu_ex060303_step(void)
 void menu_ex060403_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(4);
   return;
 }
@@ -840,6 +877,7 @@ void menu_ex060403_step(void)
 void menu_ex060503_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(5);
   return;
 }
@@ -895,6 +933,7 @@ void menu_step_preset_cat1_tot(byte param_1)
 void menu_ex060104_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(1);
   return;
 }
@@ -907,6 +946,7 @@ void menu_ex060104_step(void)
 void menu_ex060204_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(2);
   return;
 }
@@ -919,6 +959,7 @@ void menu_ex060204_step(void)
 void menu_ex060304_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(3);
   return;
 }
@@ -931,6 +972,7 @@ void menu_ex060304_step(void)
 void menu_ex060404_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(4);
   return;
 }
@@ -943,6 +985,7 @@ void menu_ex060404_step(void)
 void menu_ex060504_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(5);
   return;
 }

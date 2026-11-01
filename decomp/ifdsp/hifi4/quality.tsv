@@ -1,23 +1,21 @@
 metric	value
-functions	1083
+functions	1081
 decompile_failures	0
-warnings	258
-functions_with_warnings	99
+warnings	256
+functions_with_warnings	98
 spacebase_warnings	0
 unreachable_block_warnings	187
-halt_baddata	1
-functions_with_halt_baddata	1
-functions_with_in_vars	162
-functions_with_unaff_vars	14
+halt_baddata	0
+functions_with_halt_baddata	0
+functions_with_in_vars	161
+functions_with_unaff_vars	13
 functions_with_extraout_vars	10
-functions_with_in_unaff_extraout	172
-undefined_nonff_bytes	6377
-undefined_nonff_bytes:sram_dsp_text	5401
+functions_with_in_unaff_extraout	171
+undefined_nonff_bytes	6366
+undefined_nonff_bytes:sram_dsp_text	5390
 undefined_nonff_bytes:dsp_itcm	976
-bookmarks_error	1
-bookmarks_bad_instruction	1
-warning:Bad instruction - Truncating control flow here	1
-warning:Control flow encountered bad instruction data	1
+bookmarks_error	0
+bookmarks_bad_instruction	0
 warning:Could not recover jumptable at #. Too many branches	4
 warning:Do nothing block with infinite loop	20
 warning:Does not return	3

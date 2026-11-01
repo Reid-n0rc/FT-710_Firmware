@@ -7,16 +7,16 @@
 void memtune_backup_b(void)
 
 {
-  vfo_rec *pvVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int i;
   
-  pvVar2 = &g_opstate.vfo_b;
-  pvVar1 = &g_opstate.memtune_b;
-  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-    pvVar1->mode = pvVar2->mode;
-    pvVar1 = (vfo_rec *)&pvVar1->flags1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+  p_vfo_rec_2 = &g_opstate.vfo_b;
+  p_vfo_rec = &g_opstate.memtune_b;
+  for (i = 0x5a; i != 0; i = i + -1) {
+    p_vfo_rec->mode = p_vfo_rec_2->mode;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
   }
   return;
 }
@@ -30,20 +30,20 @@ void bandstack_save(void)
 
 {
   uint uVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
-  vfo_rec *pvVar4;
+  vfo_rec *p_vfo_rec_2;
+  int iVar2;
+  vfo_rec *p_vfo_rec_3;
   bool local_13;
   byte bStack_12;
   band_idx bStack_11;
   vfo_rec (*pavStack_c) [12];
-  vfo_rec *pvStack_4;
+  vfo_rec *p_vfo_rec;
   
   local_13 = g_opstate.active_vfo == VFO_A;
   if (local_13) {
     uVar1 = vfo_freq(0,0);
     g_opstate.band_a = band_of_freq(uVar1);
-    pvStack_4 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
     bStack_12 = bandstack_level_a[g_opstate.band_a];
     pavStack_c = bandstack_a + bStack_12;
     bStack_11 = g_opstate.band_a;
@@ -51,24 +51,24 @@ void bandstack_save(void)
   else {
     uVar1 = vfo_freq(0,1);
     g_opstate.band_b = band_of_freq(uVar1);
-    pvStack_4 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
     bStack_12 = bandstack_level_b[g_opstate.band_b];
     pavStack_c = bandstack_b + bStack_12;
     bStack_11 = g_opstate.band_b;
   }
   local_13 = !local_13;
-  pvVar2 = *pavStack_c + bStack_11;
-  iVar3 = strncmp(pvVar2,pvStack_4,0x5a);
-  if (iVar3 == 0) {
+  p_vfo_rec_2 = *pavStack_c + bStack_11;
+  iVar2 = strncmp(p_vfo_rec_2,p_vfo_rec,0x5a);
+  if (iVar2 == 0) {
     return;
   }
-  pvVar4 = pvVar2;
-  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-    pvVar4->mode = pvStack_4->mode;
-    pvVar4 = (vfo_rec *)&pvVar4->flags1;
-    pvStack_4 = (vfo_rec *)&pvStack_4->flags1;
+  p_vfo_rec_3 = p_vfo_rec_2;
+  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_vfo_rec_3->mode = p_vfo_rec->mode;
+    p_vfo_rec_3 = (vfo_rec *)&p_vfo_rec_3->flags1;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
   }
-  eeprom_save_bandstack(local_13,bStack_11,bStack_12,(uint)pvVar2);
+  eeprom_save_bandstack(local_13,bStack_11,bStack_12,(uint)p_vfo_rec_2);
   return;
 }
 
@@ -124,10 +124,10 @@ void band_select_pms(char param_1,byte param_2)
 void band_select_mem(byte param_1,byte param_2)
 
 {
-  byte bVar1;
+  byte memch_current_is_special_ret;
   
-  bVar1 = memch_current_is_special(param_1);
-  if (bVar1 != 0) {
+  memch_current_is_special_ret = memch_current_is_special(param_1);
+  if (memch_current_is_special_ret != 0) {
     return;
   }
   vfo_clear_tag(param_1);
@@ -294,18 +294,18 @@ void vfo_reload_bandstack(byte param_1)
 void bandstack_load(byte param_1)
 
 {
-  vfo_rec *pvVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int iVar1;
   
   if (param_1 == 0) {
     if (g_opstate.vfo_state_a != VFO_STATE_QMB) {
-      pvVar1 = &g_opstate.vfo_a;
-      pvVar2 = bandstack_a[bandstack_level_a[g_opstate.band_a]] + g_opstate.band_a;
-      for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-        pvVar1->mode = pvVar2->mode;
-        pvVar1 = (vfo_rec *)&pvVar1->flags1;
-        pvVar2 = (vfo_rec *)&pvVar2->flags1;
+      p_vfo_rec = &g_opstate.vfo_a;
+      p_vfo_rec_2 = bandstack_a[bandstack_level_a[g_opstate.band_a]] + g_opstate.band_a;
+      for (iVar1 = 0x5a; iVar1 != 0; iVar1 = iVar1 + -1) {
+        p_vfo_rec->mode = p_vfo_rec_2->mode;
+        p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+        p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
       }
       return;
     }
@@ -314,12 +314,12 @@ void bandstack_load(byte param_1)
     return;
   }
   if (g_opstate.vfo_state_b != VFO_STATE_QMB) {
-    pvVar1 = &g_opstate.vfo_b;
-    pvVar2 = bandstack_b[bandstack_level_b[g_opstate.band_b]] + g_opstate.band_b;
-    for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-      pvVar1->mode = pvVar2->mode;
-      pvVar1 = (vfo_rec *)&pvVar1->flags1;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
+    p_vfo_rec = &g_opstate.vfo_b;
+    p_vfo_rec_2 = bandstack_b[bandstack_level_b[g_opstate.band_b]] + g_opstate.band_b;
+    for (iVar1 = 0x5a; iVar1 != 0; iVar1 = iVar1 + -1) {
+      p_vfo_rec->mode = p_vfo_rec_2->mode;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
     }
     return;
   }
@@ -407,16 +407,16 @@ void vfo_reload_memory(byte param_1)
 void memtune_restore_a(void)
 
 {
-  vfo_rec *pvVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int i;
   
-  pvVar2 = &g_opstate.memtune_a;
-  pvVar1 = &g_opstate.vfo_a;
-  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-    pvVar1->mode = pvVar2->mode;
-    pvVar1 = (vfo_rec *)&pvVar1->flags1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+  p_vfo_rec_2 = &g_opstate.memtune_a;
+  p_vfo_rec = &g_opstate.vfo_a;
+  for (i = 0x5a; i != 0; i = i + -1) {
+    p_vfo_rec->mode = p_vfo_rec_2->mode;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
   }
   return;
 }
@@ -429,16 +429,16 @@ void memtune_restore_a(void)
 void memtune_restore_b(void)
 
 {
-  vfo_rec *pvVar1;
-  vfo_rec *pvVar2;
-  int iVar3;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int i;
   
-  pvVar2 = &g_opstate.memtune_b;
-  pvVar1 = &g_opstate.vfo_b;
-  for (iVar3 = 0x5a; iVar3 != 0; iVar3 = iVar3 + -1) {
-    pvVar1->mode = pvVar2->mode;
-    pvVar1 = (vfo_rec *)&pvVar1->flags1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+  p_vfo_rec_2 = &g_opstate.memtune_b;
+  p_vfo_rec = &g_opstate.vfo_b;
+  for (i = 0x5a; i != 0; i = i + -1) {
+    p_vfo_rec->mode = p_vfo_rec_2->mode;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
   }
   return;
 }
@@ -472,33 +472,33 @@ void FUN_fffc1e6f(void)
 
 {
   byte *pbVar1;
-  vfo_rec *pvVar2;
-  vfo_rec *pvVar3;
-  int iVar4;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int iVar2;
   
   if (PTR_g_ui_00025d54->txw_swap != 1) {
     return;
   }
   PTR_g_ui_00025d54->txw_swap = 0;
-  pvVar2 = &g_opstate.vfo_a;
+  p_vfo_rec = &g_opstate.vfo_a;
   pbVar1 = &DAT_0001216d;
-  for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-    *pbVar1 = pvVar2->mode;
+  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    *pbVar1 = p_vfo_rec->mode;
     pbVar1 = pbVar1 + 1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
   }
-  pvVar3 = &g_opstate.vfo_b;
-  pvVar2 = &g_opstate.vfo_a;
-  for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-    pvVar2->mode = pvVar3->mode;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
-    pvVar3 = (vfo_rec *)&pvVar3->flags1;
+  p_vfo_rec_2 = &g_opstate.vfo_b;
+  p_vfo_rec = &g_opstate.vfo_a;
+  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_vfo_rec->mode = p_vfo_rec_2->mode;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
   }
-  pvVar2 = &g_opstate.vfo_b;
+  p_vfo_rec = &g_opstate.vfo_b;
   pbVar1 = &DAT_0001216d;
-  for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-    pvVar2->mode = *pbVar1;
-    pvVar2 = (vfo_rec *)&pvVar2->flags1;
+  for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+    p_vfo_rec->mode = *pbVar1;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
     pbVar1 = pbVar1 + 1;
   }
   PTR_g_ui_00025d54->vfo_refresh_req = 1;
@@ -619,10 +619,12 @@ void memlist_key(byte param_1)
       if (PTR_g_ui_00025d54->memlist_flag == 0) {
         memlist_cursor_channel();
       }
+                    /* Memory-list button by g_ui.memlist_group [doc] */
       memlist_btn_press();
       return;
     }
     if (uVar1 == 8) {
+                    /* Memory-list button 4 [doc] */
       memlist_btn_valid_toggle();
       eeprom_save_memch(PTR_g_ui_00025d54->memlist_ch);
       return;
@@ -659,24 +661,29 @@ void memlist_btn_press(void)
     return;
   }
   if (bVar1 == 1) {
+                    /* Memory-list button 1 [doc] */
     memlist_btn_mode();
     return;
   }
   if (bVar1 == 2) {
+                    /* Memory-list button 2 [doc] */
     memlist_btn_scan();
     return;
   }
   if (bVar1 == 3) {
+                    /* Memory-list button 3 [doc] */
     memlist_btn_type();
     return;
   }
   if (bVar1 == 4) {
+                    /* Memory-list button 4 [doc] */
     memlist_btn_valid_toggle();
     return;
   }
   if (bVar1 != 0) {
     return;
   }
+                    /* Memory-list button 0 NAME [doc] */
   memlist_btn_name();
   return;
 }
@@ -691,26 +698,26 @@ void memlist_btn_name(void)
 
 {
   byte bVar1;
-  ui_state *puVar2;
-  bool bVar3;
-  byte (*pabVar4) [50];
-  int iVar5;
+  bool memch_valid_ret;
+  byte (*pabVar2) [50];
+  int i;
   byte *pbStack_4;
+  ui_state *p_ui_state;
   
-  bVar3 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
-  if (bVar3) {
+  memch_valid_ret = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
+  if (memch_valid_ret) {
     PTR_g_ui_00025d54->kbd_open = 1;
     PTR_g_ui_00025d54->kbd_target = 1;
     PTR_g_ui_00025d54->kbd_cursor = 0;
-    pabVar4 = PTR_g_ui_00025d54->msg_text;
-    for (iVar5 = 0x32; puVar2 = PTR_g_ui_00025d54, iVar5 != 0; iVar5 = iVar5 + -1) {
-      (*pabVar4)[0] = 0x20;
-      pabVar4 = (byte (*) [50])(*pabVar4 + 1);
+    pabVar2 = PTR_g_ui_00025d54->msg_text;
+    for (i = 0x32; p_ui_state = PTR_g_ui_00025d54, i != 0; i = i + -1) {
+      (*pabVar2)[0] = 0x20;
+      pabVar2 = (byte (*) [50])(*pabVar2 + 1);
     }
     bVar1 = PTR_g_ui_00025d54->memlist_ch;
     *(undefined4 *)(PTR_g_ui_00025d54->msg_text[0] + 8) = *(undefined4 *)(memch[bVar1].tag + 8);
-    *(undefined4 *)(puVar2->msg_text[0] + 4) = *(undefined4 *)(memch[bVar1].tag + 4);
-    *(undefined4 *)puVar2->msg_text[0] = *(undefined4 *)memch[bVar1].tag;
+    *(undefined4 *)(p_ui_state->msg_text[0] + 4) = *(undefined4 *)(memch[bVar1].tag + 4);
+    *(undefined4 *)p_ui_state->msg_text[0] = *(undefined4 *)memch[bVar1].tag;
     beep_request(1);
     return;
   }
@@ -757,6 +764,7 @@ void memlist_btn_mode(void)
   }
   PTR_g_ui_00025d54->memlist_popup55 = 1;
   PTR_g_ui_00025d54->popup_code = 0x55;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x55);
   popup_open_timed();
   beep_request(1);
@@ -772,13 +780,14 @@ void memlist_btn_mode(void)
 void memlist_btn_scan(void)
 
 {
-  bool bVar1;
+  bool memch_valid_ret;
   byte *pbStack_4;
   
-  bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
-  if (bVar1) {
+  memch_valid_ret = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
+  if (memch_valid_ret) {
     PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x44;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x44);
     popup_open_timed();
     beep_request(1);
@@ -797,13 +806,14 @@ void memlist_btn_scan(void)
 void memlist_btn_type(void)
 
 {
-  bool bVar1;
+  bool memch_valid_ret;
   byte *pbStack_4;
   
-  bVar1 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
-  if (bVar1) {
+  memch_valid_ret = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
+  if (memch_valid_ret) {
     PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x45;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x45);
     popup_open_timed();
     beep_request(1);
@@ -875,6 +885,7 @@ void menu_row_key(undefined1 param_1)
 {
   char cVar1;
   
+                    /* sets the row cursor of the current group [doc] */
   cVar1 = menu_select_row(param_1);
   if (cVar1 != '\x01') {
     return;
@@ -901,6 +912,7 @@ void FUN_fffc23a4(void)
 
 {
   PTR_g_ui_00025d54->key_consumed = 1;
+                    /* Clears UI +0x95 [doc] */
   menu_screen_close();
   return;
 }
@@ -956,7 +968,7 @@ undefined1 m_to_v_exec(void)
   bool bVar1;
   bool bVar2;
   undefined1 uVar3;
-  ushort uVar4;
+  ushort dest_code_get_ret;
   byte local_4;
   
   bVar1 = g_opstate.active_vfo != VFO_A;
@@ -1005,8 +1017,8 @@ undefined1 m_to_v_exec(void)
       local_4 = g_mem_hdr.chan_a;
     }
   }
-  uVar4 = dest_code_get();
-  if (uVar4 == 0x315b) {
+  dest_code_get_ret = dest_code_get();
+  if (dest_code_get_ret == 0x315b) {
     if ((local_4 < 0x75) || (0x83 < local_4)) {
       bVar2 = false;
     }
@@ -1030,11 +1042,11 @@ undefined1 m_to_v_exec(void)
 undefined1 memch_to_vfo_copy(byte param_1)
 
 {
-  byte bVar1;
+  byte memch_current_valid_ret;
   undefined1 uStack_3;
   
-  bVar1 = memch_current_valid(param_1);
-  if (bVar1 == 0) {
+  memch_current_valid_ret = memch_current_valid(param_1);
+  if (memch_current_valid_ret == 0) {
     uStack_3 = 0;
   }
   else {
@@ -1065,9 +1077,9 @@ void memch_load_to_vfo(char param_1)
 
 {
   byte bVar1;
-  vfo_rec *pvVar2;
-  vfo_rec *pvVar3;
-  int iVar4;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int iVar2;
   
   bVar1 = memch_current_valid(param_1);
   if (bVar1 == 0) {
@@ -1075,21 +1087,21 @@ void memch_load_to_vfo(char param_1)
   }
   bVar1 = memch_current(param_1);
   if (param_1 == '\0') {
-    pvVar3 = memch + bVar1;
-    pvVar2 = &g_opstate.vfo_a;
-    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-      pvVar2->mode = pvVar3->mode;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
-      pvVar3 = (vfo_rec *)&pvVar3->flags1;
+    p_vfo_rec_2 = memch + bVar1;
+    p_vfo_rec = &g_opstate.vfo_a;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec->mode = p_vfo_rec_2->mode;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
     }
   }
   else {
-    pvVar3 = memch + bVar1;
-    pvVar2 = &g_opstate.vfo_b;
-    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-      pvVar2->mode = pvVar3->mode;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
-      pvVar3 = (vfo_rec *)&pvVar3->flags1;
+    p_vfo_rec_2 = memch + bVar1;
+    p_vfo_rec = &g_opstate.vfo_b;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec->mode = p_vfo_rec_2->mode;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
     }
   }
   if (param_1 == '\0') {

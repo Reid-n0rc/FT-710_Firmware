@@ -7,6 +7,7 @@
 void menu_ex060213_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(2);
   return;
 }
@@ -19,6 +20,7 @@ void menu_ex060213_step(void)
 void menu_ex060313_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(3);
   return;
 }
@@ -31,6 +33,7 @@ void menu_ex060313_step(void)
 void menu_ex060413_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(4);
   return;
 }
@@ -43,6 +46,7 @@ void menu_ex060413_step(void)
 void menu_ex060513_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(5);
   return;
 }
@@ -98,6 +102,7 @@ void menu_step_preset_rear_out_level(byte param_1)
 void menu_ex060114_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(1);
   return;
 }
@@ -110,6 +115,7 @@ void menu_ex060114_step(void)
 void menu_ex060214_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(2);
   return;
 }
@@ -122,6 +128,7 @@ void menu_ex060214_step(void)
 void menu_ex060314_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(3);
   return;
 }
@@ -134,6 +141,7 @@ void menu_ex060314_step(void)
 void menu_ex060414_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(4);
   return;
 }
@@ -146,6 +154,7 @@ void menu_ex060414_step(void)
 void menu_ex060514_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(5);
   return;
 }
@@ -201,6 +210,7 @@ void menu_step_preset_tx_bpf_sel(byte param_1)
 void menu_ex060115_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(1);
   return;
 }
@@ -213,6 +223,7 @@ void menu_ex060115_step(void)
 void menu_ex060215_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(2);
   return;
 }
@@ -225,6 +236,7 @@ void menu_ex060215_step(void)
 void menu_ex060315_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(3);
   return;
 }
@@ -237,6 +249,7 @@ void menu_ex060315_step(void)
 void menu_ex060415_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(4);
   return;
 }
@@ -249,6 +262,7 @@ void menu_ex060415_step(void)
 void menu_ex060515_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(5);
   return;
 }
@@ -304,6 +318,7 @@ void menu_step_preset_mod_source(byte param_1)
 void menu_ex060116_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(1);
   return;
 }
@@ -316,6 +331,7 @@ void menu_ex060116_step(void)
 void menu_ex060216_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(2);
   return;
 }
@@ -328,6 +344,7 @@ void menu_ex060216_step(void)
 void menu_ex060316_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(3);
   return;
 }
@@ -340,6 +357,7 @@ void menu_ex060316_step(void)
 void menu_ex060416_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(4);
   return;
 }
@@ -352,6 +370,7 @@ void menu_ex060416_step(void)
 void menu_ex060516_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(5);
   return;
 }
@@ -407,6 +426,7 @@ void menu_step_preset_usb_mod_gain(byte param_1)
 void menu_ex060117_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(1);
   return;
 }
@@ -419,6 +439,7 @@ void menu_ex060117_step(void)
 void menu_ex060217_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(2);
   return;
 }
@@ -431,6 +452,7 @@ void menu_ex060217_step(void)
 void menu_ex060317_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(3);
   return;
 }
@@ -443,6 +465,7 @@ void menu_ex060317_step(void)
 void menu_ex060417_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(4);
   return;
 }
@@ -455,6 +478,7 @@ void menu_ex060417_step(void)
 void menu_ex060517_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(5);
   return;
 }
@@ -510,6 +534,7 @@ void menu_step_preset_rear_mod_gain(byte param_1)
 void menu_ex060118_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(1);
   return;
 }
@@ -522,6 +547,7 @@ void menu_ex060118_step(void)
 void menu_ex060218_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(2);
   return;
 }
@@ -534,6 +560,7 @@ void menu_ex060218_step(void)
 void menu_ex060318_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(3);
   return;
 }
@@ -546,6 +573,7 @@ void menu_ex060318_step(void)
 void menu_ex060418_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(4);
   return;
 }
@@ -558,6 +586,7 @@ void menu_ex060418_step(void)
 void menu_ex060518_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(5);
   return;
 }
@@ -817,7 +846,7 @@ byte menu_register(byte *desc)
   byte bVar1;
   byte *pbVar2;
   byte *pbVar3;
-  int iVar4;
+  int i;
   byte local_6;
   
   if (desc == (byte *)0x0) {
@@ -829,7 +858,7 @@ byte menu_register(byte *desc)
   else {
     pbVar2 = &DAT_0002105c + (uint)DAT_0001fa4e * 0x38;
     pbVar3 = desc;
-    for (iVar4 = 0x38; iVar4 != 0; iVar4 = iVar4 + -1) {
+    for (i = 0x38; i != 0; i = i + -1) {
       *pbVar2 = *pbVar3;
       pbVar2 = pbVar2 + 1;
       pbVar3 = pbVar3 + 1;
@@ -880,33 +909,33 @@ byte menu_group_visible(char param_1,char param_2)
 
 {
   bool bVar1;
-  byte bVar2;
-  ushort uStack_6;
+  byte menu_dest_mask_ret;
+  ushort i;
   
-  bVar2 = menu_dest_mask();
-  uStack_6 = 0;
+  menu_dest_mask_ret = menu_dest_mask();
+  i = 0;
   do {
-    if (0x15d < uStack_6) {
+    if (0x15d < i) {
       return 0;
     }
-    if ((&DAT_0002105c)[(uint)uStack_6 * 0x38] == '\x01') {
-      if (((&DAT_0002105f)[(uint)uStack_6 * 0x38] == param_1) &&
-         ((&DAT_00021060)[(uint)uStack_6 * 0x38] == param_2)) {
+    if ((&DAT_0002105c)[(uint)i * 0x38] == '\x01') {
+      if (((&DAT_0002105f)[(uint)i * 0x38] == param_1) &&
+         ((&DAT_00021060)[(uint)i * 0x38] == param_2)) {
         bVar1 = true;
       }
       else {
         bVar1 = false;
       }
       if (bVar1) {
-        if ((&DAT_0002105d)[(uint)uStack_6 * 0x38] == '\0') {
+        if ((&DAT_0002105d)[(uint)i * 0x38] == '\0') {
           return 1;
         }
-        if (((&DAT_0002105d)[(uint)uStack_6 * 0x38] & bVar2) != 0) {
+        if (((&DAT_0002105d)[(uint)i * 0x38] & menu_dest_mask_ret) != 0) {
           return 1;
         }
       }
     }
-    uStack_6 = uStack_6 + 1;
+    i = i + 1;
   } while( true );
 }
 
@@ -921,12 +950,12 @@ ushort menu_find(char *param_1)
   char cVar1;
   ushort uVar2;
   bool bVar3;
-  byte bVar4;
+  byte menu_dest_mask_ret;
   undefined *puStack_10;
-  ushort uStack_8;
+  ushort i;
   
   if (param_1 != (char *)0x0) {
-    bVar4 = menu_dest_mask();
+    menu_dest_mask_ret = menu_dest_mask();
     cVar1 = *param_1;
     if (cVar1 == '\x05') {
       puStack_10 = &DAT_0001fe38;
@@ -949,8 +978,8 @@ ushort menu_find(char *param_1)
       }
       puStack_10 = &DAT_0001fa50;
     }
-    for (uStack_8 = 0; uStack_8 < 100; uStack_8 = uStack_8 + 1) {
-      uVar2 = *(ushort *)(puStack_10 + (uint)uStack_8 * 2);
+    for (i = 0; i < 100; i = i + 1) {
+      uVar2 = *(ushort *)(puStack_10 + (uint)i * 2);
       if ((&DAT_0002105c)[(uint)uVar2 * 0x38] == '\x01') {
         if ((*param_1 == (&DAT_0002105f)[(uint)uVar2 * 0x38]) &&
            (param_1[1] == (&DAT_00021060)[(uint)uVar2 * 0x38])) {
@@ -969,7 +998,7 @@ ushort menu_find(char *param_1)
           if ((&DAT_0002105d)[(uint)uVar2 * 0x38] == '\0') {
             return uVar2;
           }
-          if (((&DAT_0002105d)[(uint)uVar2 * 0x38] & bVar4) != 0) {
+          if (((&DAT_0002105d)[(uint)uVar2 * 0x38] & menu_dest_mask_ret) != 0) {
             return uVar2;
           }
         }
@@ -988,9 +1017,9 @@ byte menu_get_desc(char *key,byte *desc)
 
 {
   bool bVar1;
-  ushort uVar2;
-  byte *pbVar3;
-  int iVar4;
+  ushort menu_find_ret;
+  byte *pbVar2;
+  int i;
   byte local_d;
   
   if ((key == (char *)0x0) || (desc == (byte *)0x0)) {
@@ -1003,16 +1032,16 @@ byte menu_get_desc(char *key,byte *desc)
     local_d = 0;
   }
   else {
-    uVar2 = menu_find(key);
-    if (uVar2 == 0xffff) {
+    menu_find_ret = menu_find(key);
+    if (menu_find_ret == 0xffff) {
       local_d = 0;
     }
     else {
-      pbVar3 = &DAT_0002105c + (uint)uVar2 * 0x38;
-      for (iVar4 = 0x38; iVar4 != 0; iVar4 = iVar4 + -1) {
-        *desc = *pbVar3;
+      pbVar2 = &DAT_0002105c + (uint)menu_find_ret * 0x38;
+      for (i = 0x38; i != 0; i = i + -1) {
+        *desc = *pbVar2;
         desc = desc + 1;
-        pbVar3 = pbVar3 + 1;
+        pbVar2 = pbVar2 + 1;
       }
       local_d = 1;
     }
@@ -1029,9 +1058,9 @@ byte menu_get_name(char *key,char *name)
 
 {
   bool bVar1;
-  ushort uVar2;
-  char *pcVar3;
-  int iVar4;
+  ushort menu_find_ret;
+  char *pcVar2;
+  int i;
   byte local_d;
   
   if ((key == (char *)0x0) || (name == (char *)0x0)) {
@@ -1044,16 +1073,16 @@ byte menu_get_name(char *key,char *name)
     local_d = 0;
   }
   else {
-    uVar2 = menu_find(key);
-    if (uVar2 == 0xffff) {
+    menu_find_ret = menu_find(key);
+    if (menu_find_ret == 0xffff) {
       local_d = 0;
     }
     else {
-      pcVar3 = &DAT_00021062 + (uint)uVar2 * 0x38;
-      for (iVar4 = 0x15; iVar4 != 0; iVar4 = iVar4 + -1) {
-        *name = *pcVar3;
+      pcVar2 = &DAT_00021062 + (uint)menu_find_ret * 0x38;
+      for (i = 0x15; i != 0; i = i + -1) {
+        *name = *pcVar2;
         name = name + 1;
-        pcVar3 = pcVar3 + 1;
+        pcVar2 = pcVar2 + 1;
       }
       local_d = 1;
     }
@@ -1070,26 +1099,26 @@ char menu_count_items(char param_1)
 
 {
   bool bVar1;
-  byte bVar2;
-  ushort local_6;
+  byte menu_dest_mask_ret;
+  ushort i;
   char local_3;
   
   local_3 = '\0';
-  for (local_6 = 0; local_6 < 0x15e; local_6 = local_6 + 1) {
-    if (((&DAT_0002105c)[(uint)local_6 * 0x38] == '\x01') &&
-       (param_1 == (&DAT_00021060)[(uint)local_6 * 0x38])) {
+  for (i = 0; i < 0x15e; i = i + 1) {
+    if (((&DAT_0002105c)[(uint)i * 0x38] == '\x01') && (param_1 == (&DAT_00021060)[(uint)i * 0x38]))
+    {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (bVar1) {
-      if ((&DAT_0002105d)[(uint)local_6 * 0x38] == '\0') {
+      if ((&DAT_0002105d)[(uint)i * 0x38] == '\0') {
         local_3 = local_3 + '\x01';
       }
       else {
-        bVar2 = menu_dest_mask();
-        if (((&DAT_0002105d)[(uint)local_6 * 0x38] & bVar2) != 0) {
+        menu_dest_mask_ret = menu_dest_mask();
+        if (((&DAT_0002105d)[(uint)i * 0x38] & menu_dest_mask_ret) != 0) {
           local_3 = local_3 + '\x01';
         }
       }
@@ -1107,31 +1136,31 @@ char menu_count_groups(char param_1)
 
 {
   bool bVar1;
-  byte bVar2;
-  ushort local_8;
+  byte menu_dest_mask_ret;
+  ushort i;
   char local_5;
   char local_3;
   
   local_3 = '\0';
   local_5 = -1;
-  for (local_8 = 0; local_8 < 0x15e; local_8 = local_8 + 1) {
-    if (((&DAT_0002105c)[(uint)local_8 * 0x38] == '\x01') &&
-       (param_1 == (&DAT_0002105f)[(uint)local_8 * 0x38])) {
+  for (i = 0; i < 0x15e; i = i + 1) {
+    if (((&DAT_0002105c)[(uint)i * 0x38] == '\x01') && (param_1 == (&DAT_0002105f)[(uint)i * 0x38]))
+    {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (local_5 != (&DAT_00021060)[(uint)local_8 * 0x38])) {
-      if ((&DAT_0002105d)[(uint)local_8 * 0x38] == '\0') {
+    if ((bVar1) && (local_5 != (&DAT_00021060)[(uint)i * 0x38])) {
+      if ((&DAT_0002105d)[(uint)i * 0x38] == '\0') {
         local_3 = local_3 + '\x01';
-        local_5 = (&DAT_00021060)[(uint)local_8 * 0x38];
+        local_5 = (&DAT_00021060)[(uint)i * 0x38];
       }
       else {
-        bVar2 = menu_dest_mask();
-        if (((&DAT_0002105d)[(uint)local_8 * 0x38] & bVar2) != 0) {
+        menu_dest_mask_ret = menu_dest_mask();
+        if (((&DAT_0002105d)[(uint)i * 0x38] & menu_dest_mask_ret) != 0) {
           local_3 = local_3 + '\x01';
-          local_5 = (&DAT_00021060)[(uint)local_8 * 0x38];
+          local_5 = (&DAT_00021060)[(uint)i * 0x38];
         }
       }
     }
@@ -1144,19 +1173,19 @@ char menu_count_groups(char param_1)
 
 /* key, buf -> desc.on_draw(buf) (+0x1C): encode value for the DISPLAY menu page */
 
-void menu_call_draw(uint param_1,uint param_2)
+void menu_call_draw(uint key,uint param_2)
 
 {
-  byte bVar1;
+  byte menu_get_desc_ret;
   byte abStack_40 [28];
   code *pcStack_24;
   uint local_8;
   uint local_4;
   
   local_8 = param_2;
-  local_4 = param_1;
-  bVar1 = menu_get_desc((char *)param_1,abStack_40);
-  if (bVar1 != 1) {
+  local_4 = key;
+  menu_get_desc_ret = menu_get_desc((char *)key,abStack_40);
+  if (menu_get_desc_ret != 1) {
     return;
   }
   (*pcStack_24)(local_8,pcStack_24);
@@ -1168,17 +1197,17 @@ void menu_call_draw(uint param_1,uint param_2)
 
 /* key -> desc.on_step() (+0x20): dial step, or apply hook when 0x15DFC=1 (CAT) */
 
-void menu_call_step(uint param_1)
+void menu_call_step(uint key)
 
 {
-  byte bVar1;
+  byte menu_get_desc_ret;
   byte abStack_3c [32];
   code *pcStack_1c;
   uint local_4;
   
-  local_4 = param_1;
-  bVar1 = menu_get_desc((char *)param_1,abStack_3c);
-  if (bVar1 != 1) {
+  local_4 = key;
+  menu_get_desc_ret = menu_get_desc((char *)key,abStack_3c);
+  if (menu_get_desc_ret != 1) {
     return;
   }
   (*pcStack_1c)(pcStack_1c);
@@ -1190,17 +1219,17 @@ void menu_call_step(uint param_1)
 
 /* key -> desc.on_enter() (+0x24): action items (SD card, reset, calibration...) */
 
-void menu_call_enter(uint param_1)
+void menu_call_enter(uint key)
 
 {
-  byte bVar1;
+  byte menu_get_desc_ret;
   byte abStack_3c [36];
   code *pcStack_18;
   uint local_4;
   
-  local_4 = param_1;
-  bVar1 = menu_get_desc((char *)param_1,abStack_3c);
-  if (bVar1 != 1) {
+  local_4 = key;
+  menu_get_desc_ret = menu_get_desc((char *)key,abStack_3c);
+  if (menu_get_desc_ret != 1) {
     return;
   }
   (*pcStack_18)(pcStack_18);

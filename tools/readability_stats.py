@@ -27,6 +27,13 @@ Definitions (also printed under the table):
   Calls named  share of call sites in the decompiled C whose callee has a real name.
   Registers    share of peripheral-register references printed with a register name instead of DAT_<address>
                ("not mapped yet" until a register table exists for that chip; T23a MAIN, T23b DISPLAY and IFDSP).
+  Commented    share of functions whose decompiled body has at least one inline comment from T23i
+               (tools/ghidra/CommentCode.java: a line ending in [sfr], [doc], [enum], [fact: ...] or [inference]).
+  Variables    share of uses of parameters and local variables in the function bodies whose name is not a Ghidra
+               default (param_N, <t>VarN, local_<x>, <t>Stack_<x>, stack0x<x>, in_*, unaff_*, extraout_*; T23h).
+               A function's variables are its parameters (signature), its declared locals (the declaration lines
+               at the top of the body) and the undeclared in_/unaff_/extraout_ names; a use is one occurrence in the
+               body after the declarations.
   Re-implemented  share of code bytes in functions whose recreated source (src/<image>/, T24) compiles to the same
                bytes or passes the differential-emulation equivalence check (column `covered` of status.tsv).
 
@@ -59,6 +66,71 @@ DEFAULT_NAME = re.compile(r'^(thunk_)?FUN_[0-9a-f]+$')
 CALL = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 IDENT = re.compile(r'\b[A-Za-z_][A-Za-z0-9_]*\b')
 DAT = re.compile(r'\b(?:PTR_)?DAT_([0-9a-f]{8})\b')
+MARK = re.compile(r'^// ===== ', re.M)
+# an inline comment of T23i (CommentCode.java) ends in its evidence tag; Ghidra may wrap it, so match the tag before */
+COMMENTED = re.compile(r'\[(?:sfr|enum|doc|doc, inference|fact:\s[^\]]+|inference(?::\s[^\]]+)?)\]\s*\*/')
+# Ghidra's default variable names (T23h): what the decompiler prints for a parameter or local nobody named
+AUTO_VAR = re.compile(r'^(?:param_\d+|[a-z]*Var\d+|local_(?:res)?[0-9a-f]+|[a-z]*StackX?_[0-9a-f]+|stack0x[0-9a-f]+)'
+                      r'(?:_[0-9a-f]+)?$|^(?:in|unaff|extraout)_\w+$')
+UNDECLARED = re.compile(r'\b(?:in|unaff|extraout)_[A-Za-z0-9_]+\b')
+MARKER = re.compile(r'^// ===== (\S+) @ \S+.*$', re.M)
+DECL_LINE = re.compile(r'^  \S.*;\s*$')
+DECL_NAME = re.compile(r'\(\*\s*([A-Za-z_]\w*)\)|([A-Za-z_]\w*)\s*(?:\[[^\]]*\]\s*)*;\s*$')
+
+
+def param_names(header, fname):
+    """Parameter names from a function's signature (the text before its opening brace)."""
+    i = header.rfind(fname + '(')
+    if i < 0:
+        return set()
+    j, depth = i + len(fname), 0
+    for k in range(j, len(header)):
+        depth += {'(': 1, ')': -1}.get(header[k], 0)
+        if depth == 0:
+            break
+    names, part, depth = set(), '', 0
+    for ch in header[j + 1:k] + ',':
+        depth += {'(': 1, ')': -1}.get(ch, 0)
+        if ch == ',' and depth == 0:
+            fp = re.search(r'\(\*\s*([A-Za-z_]\w*)\)', part)
+            ids = re.findall(r'[A-Za-z_]\w*', part)
+            if fp:
+                names.add(fp.group(1))
+            elif len(ids) > 1:
+                names.add(ids[-1])
+            part = ''
+        else:
+            part += ch
+    return names
+
+
+def variable_uses(text):
+    """(uses, named uses) of parameters and locals over the function bodies of one export file."""
+    uses = named = 0
+    ms = list(MARKER.finditer(text))
+    for n, m in enumerate(ms):
+        chunk = text[m.end():ms[n + 1].start() if n + 1 < len(ms) else len(text)]
+        lines = chunk.split('\n')
+        if '{' not in lines:
+            continue
+        b = lines.index('{')
+        names = param_names('\n'.join(lines[:b]), m.group(1))
+        e = b + 1
+        while e < len(lines) and DECL_LINE.match(lines[e]):
+            e += 1
+        if e < len(lines) and not lines[e].strip():  # declarations end at a blank line
+            for ln in lines[b + 1:e]:
+                d = DECL_NAME.search(ln)
+                if d:
+                    names.add(d.group(1) or d.group(2))
+        else:
+            e = b + 1
+        body = '\n'.join(lines[e:])
+        for w in IDENT.findall(body):
+            if w in names or UNDECLARED.fullmatch(w):
+                uses += 1
+                named += not AUTO_VAR.match(w)
+    return uses, named
 
 
 def read_tsv(path):
@@ -131,7 +203,8 @@ def image_stats(d, label, docdir, sfr, ranges):
         'decompiled_bytes': sum(sz for n, sz in funcs if n not in failed),
         'named_bytes': sum(sz for n, sz in funcs if n in real),
         'documented_bytes': sum(sz for n, sz in funcs if n in real and n in words),
-        'calls': 0, 'calls_named': 0, 'reg_refs': None, 'reg_named': None,
+        'calls': 0, 'calls_named': 0, 'reg_refs': None, 'reg_named': None, 'var_uses': 0, 'var_named': 0,
+        'commented_functions': 0,
         'warnings_functions': quality(f'{base}/quality.tsv').get('functions_with_warnings', 0),
         'reimpl_bytes': reimplemented_bytes(d),
     }
@@ -141,6 +214,13 @@ def image_stats(d, label, docdir, sfr, ranges):
     for f in cfiles:
         text = open(f, encoding='utf-8', errors='replace').read()
         body = re.sub(r'^// =====.*$', '', text, flags=re.M)
+        for chunk in MARK.split(text)[1:]:
+            i = chunk.find('\n{\n')  # the body; the plate comment above the signature does not count
+            if i >= 0 and COMMENTED.search(chunk, i):
+                s['commented_functions'] += 1
+        vu, vn = variable_uses(text)
+        s['var_uses'] += vu
+        s['var_named'] += vn
         for m in CALL.finditer(body):
             if m.group(1) in names:
                 s['calls'] += 1
@@ -191,7 +271,8 @@ def pct(a, b):
 
 def table(stats, sdr=None):
     tot = {k: sum(x[k] for x in stats) for k in ('functions', 'bytes', 'named_functions', 'decompiled_bytes', 'named_bytes',
-                                                  'documented_bytes', 'calls', 'calls_named')}
+                                                  'documented_bytes', 'calls', 'calls_named', 'var_uses', 'var_named',
+                                                  'commented_functions')}
     regs = [x for x in stats if x['reg_refs'] is not None]
     out = [
         f"**Understood: {pct(tot['named_bytes'], tot['bytes'])} of the code** (bytes in named functions), "
@@ -203,8 +284,8 @@ def table(stats, sdr=None):
             f"**{pct(sdr['reimplemented'], sdr['cells'])} re-implemented** in RTL (in netlist cells, second table; "
             'see [docs/code/sdr](docs/code/sdr/README.md)).'),
         '',
-        '| Image | Functions | Code | Decompiled | Named | Documented | Calls named | Registers named | Re-implemented |',
-        '|---|---:|---:|---:|---:|---:|---:|---:|---:|',
+        '| Image | Functions | Code | Decompiled | Named | Documented | Calls named | Registers named | Variables named | Commented | Re-implemented |',
+        '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|',
     ]
     tot['reimpl_bytes'] = sum(x['reimpl_bytes'] or 0 for x in stats)
     for x in stats + [dict(tot, image='**All CPU images**', reg_refs=None, reg_named=None)]:
@@ -215,16 +296,22 @@ def table(stats, sdr=None):
             reg = pct(sum(r['reg_named'] for r in regs), sum(r['reg_refs'] for r in regs)) + part if regs else '—'
         out.append(f"| {x['image']} | {x['named_functions']:,} / {x['functions']:,} | {x['bytes'] / 1024:,.0f} KB | "
                    f"{pct(x['decompiled_bytes'], x['bytes'])} | {pct(x['named_bytes'], x['bytes'])} | "
-                   f"{pct(x['documented_bytes'], x['bytes'])} | {pct(x['calls_named'], x['calls'])} | {reg} | {reimpl} |")
+                   f"{pct(x['documented_bytes'], x['bytes'])} | {pct(x['calls_named'], x['calls'])} | {reg} | "
+                   f"{pct(x['var_named'], x['var_uses'])} | {pct(x['commented_functions'], x['functions'])} | {reimpl} |")
     out += [
         '',
-        '*Functions* = named / total. Percentages are of code bytes, except *Calls named* (call sites) and *Registers named* '
-        '(peripheral-register references). *Decompiled* = in functions Ghidra decompiles without a failure; *Named* = in '
+        '*Functions* = named / total. Percentages are of code bytes, except *Calls named* (call sites), *Registers named* '
+        '(peripheral-register references) and *Variables named* (uses of parameters and local variables in the function '
+        'bodies whose name is not a Ghidra default such as `param_1`, `uVar3`, `local_1c`, `auStack_20`, `in_r0`, '
+        '`unaff_r4` or `extraout_r1`). *Decompiled* = in functions Ghidra decompiles without a failure; *Named* = in '
         'functions with a real name instead of `FUN_<address>`; *Documented* = in named functions that the '
-        '`docs/code/` pages mention; *Re-implemented* = in functions whose recreated source in `src/<image>/` compiles to '
-        'the same bytes or passes the differential-emulation equivalence check (`src/<image>/status.tsv`, '
-        '[T24](docs/tasks/T24-source-recreation.md)). Generated by `tools/readability_stats.py` from the committed '
-        '`decomp/` export; the plan to raise these numbers is [T23](docs/tasks/T23-readability.md).',
+        '`docs/code/` pages mention; *Commented* = functions (share of all) whose decompiled C has at least one short '
+        'inline comment with its evidence tag (a register name, a callee\'s documented purpose, an enum value or a '
+        'curated step note; [T23i](docs/tasks/T23-readability.md#t23i--inline-comments)); *Re-implemented* = in '
+        'functions whose recreated source in `src/<image>/` compiles to the same bytes or passes the differential-emulation '
+        'equivalence check (`src/<image>/status.tsv`, [T24](docs/tasks/T24-source-recreation.md)). Generated by '
+        '`tools/readability_stats.py` from the committed `decomp/` export; the plan to raise these numbers is '
+        '[T23](docs/tasks/T23-readability.md).',
     ]
     if sdr is not None:
         out += sdr_table(sdr)

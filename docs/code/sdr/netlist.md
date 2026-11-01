@@ -534,7 +534,37 @@ after clock 700,000. Controls with one extra write after the same three (compare
 0x0031 (FM filter class) and reg 0x19 + 1 Hz each change all of them **[fact, simulation]**. So the RX path listens to
 0x18/0x19, 0x1E and 0x16, not to 0x0A or 0x08.
 
-**What the words contain is not settled.** With the tone on the ADC the 72 kHz words look like white noise near full
+**#193 follow-up: one cause found and fixed, the words are still not interpretable.**
+
+- **Capture skew (fixed) [fact, simulation].** Driving 400-LSB tones at 10 kHz, 1 MHz and 10 MHz and comparing the DC-free
+  word on DSP48_X1Y26.P (y_A · 0x8000) bit by bit with the driven sample showed ADC bits 4–7 and 12–13 arriving 7 clocks after
+  the pins and bits 0–3 and 8–11 arriving 23 clocks after them (every bit matching 100 % at its delay), while the IDDR outputs
+  themselves matched the pins at delay 0. The late bits are exactly those whose capture SRL is the O6 half of a dual SRL16; the
+  netlist gave those halves address A6 = 1, i.e. 16 extra clocks ("Dual SRL16 address" in section 4). At 10 kHz the error is
+  invisible, at 1 MHz and above the word is scrambled to about 10 times the tone amplitude whatever that amplitude is, which
+  accounts for the amplitude-independent noise above. With the fixed netlist all 14 bits arrive at delay 7, y_A is the clean
+  tone (6.71·10⁹ = 400 · 512 · 32768 peak) and doubles with the input; the mixers (DSP48_X1Y35/X1Y39, X0Y35/37/41/57) and the
+  multiply-accumulate DSPs DSP48_X1Y12, X1Y10, X1Y8 and X0Y9 are linear (RMS error of v(2A) − 2·v(A) ≤ 1 %, `lin2.py`-style
+  comparison of two runs at 400 and 800 LSB, 12,000 clocks from clock 700,000). UART B still ACKs all 30 frames of a full
+  MAIN RX register set **[fact, simulation]**.
+- **Still noise at M17 [fact, simulation].** With the fixed netlist the 72 kHz words on M17 are still white and near full scale,
+  both for the #214 stimulus (class 4, NCO 10 MHz, 400 and 4,000 LSB) and with MAIN's whole RX register set written first (30
+  frames: 0x03, 0x04, 0x08–0x0F, 0x12–0x16, 0x18/0x19, 0x1A–0x1F, 0x20–0x27 with USB values, NCO = carrier + 1,500 Hz, tone at
+  carrier + 1 kHz; and FM values, reg 0x0A = 2, 0x16 = 0x31, 0x1F = 16,000), at every bit offset of the 64-bit frame.
+- **Where the signal stops scaling [fact, simulation].** Two upper partial products, DSP48_X0Y7 (cascade X0Y6/X0Y7) and DSP48_X1Y3
+  (chain X1Y0..X1Y3), keep the same RMS at 400 and 800 LSB (4.2·10⁷ / 4.0·10⁷ and 2.6·10⁷ / 2.4·10⁷), and the output multiplier
+  DSP48_X0Y12 that feeds the FIFO grows only from 1.9·10⁹ to 2.5·10⁹. Their operands come through the wide time-multiplexed
+  operand muxes in front of DSP48_X0Y11..X0Y15, which select among about 70 BRAM and DSP outputs. A stage whose output is
+  independent of the input level is either a legitimate normalisation (an AGC or block-floating-point step in the FPGA) or
+  the next model error (candidates: the BRAM read/write-collision and output-register corner cases, the LUT-RAM SMALL halves,
+  the DSP pattern-detect/dynamic-OPMODE paths of the two dynamic DSPs) **[open]**.
+
+So the carrier placement per mode is still **not** confirmed by simulation. Open: where the SSB carrier and the FM carrier land
+in the 72 kHz stream; would be settled by finding why DSP48_X0Y7 / X1Y3 do not scale (probe their A/B operands and the operand-mux
+selects over one 1,736-clock output period, with A and 2A), then re-running the USB/LSB/FM/AM register sets above and reading
+the tone's position on M17.
+
+**Before #193's fix:** **What the words contain is not settled.** With the tone on the ADC the 72 kHz words look like white noise near full
 scale (spectral peak < 10 % of the power), from 40 LSB (−46 dBFS) to 4,000 LSB input, while the stages up to the mixers
 are clean sinusoids (above). So something between the mixers and the FIFO does not work in this simulation as it does on
 the radio: a register MAIN writes and these runs did not (the full RX set is reg 0x03, 0x04, 0x0B..0x16, 0x1A..0x1F,
@@ -611,6 +641,16 @@ DID[0] via AX..DX to DI2, read on O6; DID[1] via DI to DI1, read on O5) and Figu
 and O5, SHIFTIN2 (AX) to DI2 and O6/MC31) **[fact, `Manuals/AMD/ug474_7Series_CLB.pdf`]**; nextpnr-xilinx packs them the same way. `tools/xc7_netlist.py` had the two swapped until #92; 556 O5-half cells are
 affected. UART B and the console give identical answers with the old and the new netlist; data paths that use these cells
 should be re-simulated.
+
+**Dual SRL16 address (#193) [fact].** In the same SMALL mode the LUT's A6 pin is the mode select (tied high) and both SRL16
+halves are addressed by A[5:2] only (UG474 Figure 18, p. 36: `A[3:0]` → `A[5:2]` on both halves, no A6). `tools/xc7_netlist.py`
+wrote the O6 half as an SRLC32E with `A[4]` = A6 = 1, i.e. 16 clocks deeper than the hardware; the O5 half already had
+`A[4]` = 0. All **220** O6 halves of SRL16 pairs were affected. One visible effect: in the ADC capture (3.7) the O6 halves carry
+ADC bits 0–3 and 8–11 of each channel, so in simulation those bits arrived 16 clocks after bits 4–7 and 12–13 (measured on
+DSP48_X1Y26.P with a 1 MHz tone: delay 23 against 7 clocks, every bit matching at its delay). Constant or slow inputs, which #172
+used, hide this; any fast signal is scrambled, with errors near full scale whatever the tone level, which is what #214 saw on M17.
+Fixed in `tools/xc7_netlist.py` (both halves `A[4]` = GND); rebuild `build/sdr/netlist.json` and `ft710_sdr.v` before any further
+data-path simulation.
 
 **Approximations** (written as comments next to the instance): `USE_MULT = "MULTIPLY"` on every DSP (no segbits; see 3.5, #91),
 RAMB36 pairs without the BRAM36 width flag written as two RAMB18E1 halves (the 31 flagged x9 pairs are written as RAMB36E1 since #164, section 4.4), IDDR edge mode not decoded, OLOGIC T inversion not decoded (tri-state
@@ -990,24 +1030,56 @@ That 30 Hz equals the DISPLAY GUI's one-record-per-33-ms rate is **[inference]**
 576 kbit/s. The bit clock idles high and data changes on its rising edge; the DISPLAY's RSPI2 slave is set to CPOL 0, CPHA 1,
 which also samples on the falling edge, so the bits agree; only the idle level differs **[inference]**.
 
-**Writer side and the header/trailer [fact for the wiring].** Port A of RAMB18_X2Y21 (x9, 125 MHz clock BUFHCE_X1Y21) is
-written in the other bank (`SLICE_X41Y110/AFF = ~SLICE_X34Y53/AFF`): ping-pong, so a frame is never read while it is written.
-Write enable `SLICE_X35Y127/BFF`, address from two counters muxed by `SLICE_X35Y127/CLUT` (`SLICE_X35Y120`, `SLICE_X40Y120`),
-data = a 10-bit value (`SLICE_X41Y64`, `X41Y65`, `X40Y66`) plus a rounding bit through the carry chain `SLICE_X57Y53..X57Y55`,
-clamped by `SLICE_X58Y53/54` when bits 8-10 are set (to 0xFE: the clamp clears bit 0) **[fact for the equations; 0xFE reading
-inference]**.
-In the whole-netlist runs with MAIN's register set-up (`scope_main.cpp`, ADC noise or a sine) the writer fills **all 850
-positions of a bank alike**: before the #172 DSP-mode fix, bytes 0..849 were all values 0x0F..0x38 with no distinct bytes at
-0..24 or 825..849; with the fix every byte, header and trailer positions included, reads 0xCC (the first frame after the
-enable is all 0, the bank not yet written) **[fact, simulation]**. So the serializer adds no header, counter or register
-field of its own, and in the simulated state the writer treats positions 0..24 and 825..849 like the 800 points: the
-DISPLAY's "25-byte header / trailer" look like 25 extra trace bins on each side of the 800 drawn ones **[inference]**. Real
-values depend on the DSP chain and register state that simulation does not reproduce yet; a capture of the FT4222 PC stream
-would settle them.
+**Writer side [fact for the wiring].** Port A of RAMB18_X2Y21 (x9, clock BUFHCE_X1Y21 from BUFGCTRL_X0Y16, the 125 MHz
+fabric clock; port B shares the same net) is written in the other bank (`SLICE_X41Y110/AFF = ~SLICE_X34Y53/AFF`): ping-pong,
+so a frame is never read while it is written. Write enable `SLICE_X35Y127/BFF` (= `ENARDEN` = `WEA`), data `DIADI0..7` =
+`SLICE_X58Y53/54` A/B LUTs: a 10-bit value (`SLICE_X41Y64`, `X41Y65`, `X40Y66`) plus a rounding bit through the carry chain
+`SLICE_X57Y53..X57Y55`, clamped when bits 8-10 are set (the clamp clears bit 0, so it gives 0xFE) **[fact for the equations;
+0xFE also seen in simulation]**. The index (address bits 3-12) is a LUT mux (`SLICE_X41Y120` A-D LUTs, `SLICE_X38Y123/BLUT`,
+`SLICE_X37Y120/ALUT`) of **two 10-bit counters**, `SLICE_X35Y120..X35Y122` and `SLICE_X40Y120..X40Y122` (same reset/set
+net `SLICE_X31Y121/DLUT`, same enable `SLICE_X34Y122/BLUT`), switched by `SLICE_X35Y127/CLUT`, one state of the writer's
+sequencer (`SLICE_X30Y125..X30Y127`, `SLICE_X31Y126/127`, `SLICE_X33Y124`) **[fact, LUT INITs]**.
+
+**Write order: one centre-out sweep per frame [fact, whole-netlist simulation, `hdl/sdr/sim/scope_wr_main.cpp`].** With
+MAIN's set-up, every frame period the writer makes exactly **852 writes** into the free bank, in 14,884 clocks: index 425
+twice (both counters start there), then the pairs 425 − k, 425 + k for k = 1..425, i.e. one counter counts down 425 → 0 and the
+other up 425 → 850, 9 clocks then 26 clocks apart. Index 850 is written but never sent (the serializer reads 0..849). The
+sweep starts 8,430 clocks after each bank switch (sweeps at 1,268,269 + 614,400 n; bank switches at 1,259,839 + 614,400 n)
+**[fact, simulation with both clocks at 125 MHz]**; that the bank switch is what starts it is **[inference]** from the fixed
+offset. The bytes the probe saw written are exactly the bytes the serializer sent in the next frame **[fact: all 850 equal in
+every frame compared]**.
+
+**Header and trailer = the outermost 25 bins on each side [fact for the mechanism; inference for "bins"].**
+
+- The header (frame bytes 0..24) and trailer (825..849) are written in the same sweep, by the same two counters, through the
+  same data path as the 800 points: the header is steps k = 401..425 of the down counter (index 425 − k), the trailer steps
+  k = 400..424 of the up counter (index 425 + k) **[fact, simulation]**.
+- The data path does not depend on the index counters or on the writer's sequencer: neither appears in its fan-in within
+  three register stages (`SLICE_X58Y53/54` back through `SLICE_X41Y64/65`, `X40Y66`, the `SLICE_X38Y71..X38Y74` adder, register-bank
+  flops such as `SLICE_X10Y81/CFF` and `SLICE_X11Y82`, and DSP48_X0Y37/X0Y40 two stages back) **[fact, netlist cone]**. So no
+  constant, counter or register field is inserted at fixed positions.
+- Reg 0x27 (the scope reference level, [main/sdr-link.md](../main/sdr-link.md)) moves **all 850 bytes alike**: with ADC noise,
+  0x8080 instead of MAIN's 0x8044 adds +0x3C (mod 256) to every byte, header and trailer included (850 of 850, two frames)
+  **[fact, simulation]**. Header and trailer bytes cover the same value range as the middle (0xD7..0xF0/0xF8 vs 0xD7..0xFB
+  for one noise frame) **[fact, simulation]**.
+- Before MAIN's last set-up writes (0x26, 0x27) arrive every byte is 0xCC; with no ADC input, or with the sine drive of this
+  harness, every byte is the clamp value 0xFE afterwards **[fact, simulation]**. (The serializer's 850-byte 0xCC filler is
+  separate logic; whether the equal value is a coincidence is not known.)
+
+So the 850-byte record is one trace line of 850 positions centred on index 425 (bin 0 of the span); the DISPLAY draws
+positions 25..824 and passes all 850 to the PC **[inference from the write order and the shared data path]**. *Open:* what the
+outer 25 bins on each side show on the radio (beyond the drawn span, possibly in the filter roll-off), and which of reg 0x26 /
+0x27 releases the 0xCC state; would be settled by an FT4222 capture, or by a simulation with a scope chain that produces a
+real spectrum (the values in these runs are not a recognisable spectrum of the input).
+
+*Netlist version (2026-11-01):* the write-order, period and reg 0x27 results above were re-run on the netlist with the SRL16
+fix from #193 (`tools/xc7_netlist.py`, O6 SRL16 half address bit A[4] = 0), with the same frame period (614,400), frame size
+(13,600 bits), sweep (852 writes) and offsets; only the noise-frame byte values changed (they depend on the DSP chain).
 
 Reproduce: the slice and `hdl/sdr/tb_scope_spi.v` (commands in [hdl/sdr/README.md](../../../hdl/sdr/README.md)); the whole
-netlist with `hdl/sdr/sim/scope_main.cpp` (probe and build commands in the file), e.g.
-`GAP=20 LOGTO=2600000 ADC=noise Vft710_sdr 2600000 w00152000 w00240317 w0003E63D w00040519 w00200000 w00210000 w00220006 w00238000 w00260610 w00278044`.
+netlist with `hdl/sdr/sim/scope_main.cpp` (frames on the pins) or `hdl/sdr/sim/scope_wr_main.cpp` (RAM writes plus frames;
+probe and build commands in the files), e.g.
+`GAP=20 ADC=noise Vft710_sdr 3200000 w00152000 w00240317 w0003E63D w00040519 w00200000 w00210000 w00220006 w00238000 w00260610 w00278044`.
 
 ### 5.7 Remaining pins
 

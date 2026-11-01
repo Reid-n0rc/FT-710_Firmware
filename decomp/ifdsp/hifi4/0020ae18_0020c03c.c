@@ -81,59 +81,59 @@ void DMA_IRQHandle(dword *param_1)
   undefined4 *puVar1;
   int *piVar2;
   uint uVar3;
+  int i;
   int iVar4;
-  int iVar5;
-  code *pcVar6;
+  code *pcVar5;
   
-  iVar4 = 0x21;
+  i = 0x21;
   if (param_1 != &DMA0_CTRL) {
-    iVar5 = 0;
+    iVar4 = 0;
     if (param_1 != &DMA0_CTRL) {
-      iVar5 = 0x21;
+      iVar4 = 0x21;
     }
   }
   else {
-    iVar5 = 0;
+    iVar4 = 0;
   }
-  piVar2 = &DAT_00238470 + iVar5;
+  piVar2 = &DAT_00238470 + iVar4;
   do {
     puVar1 = (undefined4 *)*piVar2;
     if (puVar1 != (undefined4 *)0x0) {
       uVar3 = (uint)*(byte *)(puVar1 + 3);
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x58) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,0);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x58) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,0);
         }
       }
-      iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+      iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       memw();
-      if ((*(uint *)(iVar5 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x60) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],1,1);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x60) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],1,1);
         }
-        iVar5 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
+        iVar4 = (uint)(*(byte *)(puVar1 + 3) >> 5) * 4 + puVar1[2];
       }
       memw();
-      if ((*(uint *)(iVar5 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
+      if ((*(uint *)(iVar4 + 0x40) >> (uVar3 & 0x1f) & 1) != 0) {
         memw();
-        pcVar6 = (code *)*puVar1;
-        *(int *)(iVar5 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
-        if (pcVar6 != (code *)0x0) {
-          (*pcVar6)(puVar1,puVar1[1],0,2);
+        pcVar5 = (code *)*puVar1;
+        *(int *)(iVar4 + 0x40) = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
+        if (pcVar5 != (code *)0x0) {
+          (*pcVar5)(puVar1,puVar1[1],0,2);
         }
       }
     }
-    iVar4 = iVar4 + -1;
+    i = i + -1;
     piVar2 = piVar2 + 1;
-  } while (iVar4 != 0);
+  } while (i != 0);
   return;
 }
 
@@ -189,28 +189,35 @@ void DMIC_Init(int param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(0x318);
   memw();
   *(undefined4 *)(param_1 + 0x80) = 0;
@@ -246,22 +253,26 @@ void DMIC_DeInit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -269,10 +280,12 @@ void DMIC_DeInit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -783,33 +796,41 @@ undefined4 FLEXCOMM_Init(int param_1,uint param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar2 = FLEXCOMM_GetInstance(param_1);
   uVar3 = *(uint *)(&DAT_00200200 + iVar2 * 4);
   uVar4 = uVar3 >> 8 & 0xff;
   if (uVar4 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_00200230 + iVar2 * 4));
   if (param_2 != 0) {
     if (param_2 < 5) {
@@ -856,6 +877,7 @@ void FLEXCOMM_SetIRQHandler(undefined4 param_1,undefined4 param_2,undefined4 par
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(param_1);
   *(undefined4 *)(&DAT_00238580 + iVar1 * 4) = param_2;
   *(undefined4 *)(&DAT_002385b0 + iVar1 * 4) = param_3;
@@ -872,6 +894,7 @@ void FLEXCOMM0_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&USART0_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -888,6 +911,7 @@ void FLEXCOMM1_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&SPI1_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -904,6 +928,7 @@ void FLEXCOMM2_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&I2S2_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -920,6 +945,7 @@ void FLEXCOMM3_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&I2S3_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -936,6 +962,7 @@ void FLEXCOMM4_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&I2S4_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -952,6 +979,7 @@ void FLEXCOMM5_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&I2S5_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -968,6 +996,7 @@ void FLEXCOMM6_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&USART6_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -984,6 +1013,7 @@ void FLEXCOMM7_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&USART7_CFG);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -1000,6 +1030,7 @@ void FLEXCOMM14_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&FLEXCOMM14_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -1016,6 +1047,7 @@ void FLEXCOMM15_DriverIRQHandler(void)
 {
   int iVar1;
   
+                    /* index of base in s_flexcommBaseAddrs 0x2001D0 [doc, inference] */
   iVar1 = FLEXCOMM_GetInstance(&FLEXCOMM15_BASE);
   (**(code **)(&DAT_00238580 + iVar1 * 4))
             ((&PTR_USART0_CFG_002001d0)[iVar1],*(undefined4 *)(&DAT_002385b0 + iVar1 * 4));
@@ -1130,26 +1162,32 @@ void FLEXSPI_Init(uint *param_1,uint *param_2)
   uVar4 = uVar3 >> 8 & 0xff;
   if (uVar4 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   else if (uVar4 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar3 & 0x1f));
   }
   memw();

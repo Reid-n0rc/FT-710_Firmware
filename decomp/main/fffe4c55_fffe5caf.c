@@ -171,6 +171,7 @@ undefined1 msg_cw_send_start(byte param_1)
       bVar1 = false;
     }
     if ((bVar1) && (param_1 == PTR_g_ui_00025d78->msg_slot)) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       uStack_3 = 0;
     }
@@ -455,12 +456,12 @@ void FUN_fffe5137(void)
 void FUN_fffe5138(void)
 
 {
-  ui_state *puVar1;
-  ushort uVar2;
+  ushort uVar1;
+  ui_state *p_ui_state;
   
-  puVar1 = PTR_g_ui_00025d78;
-  uVar2 = contest_number_get();
-  puVar1->msg_timer = uVar2;
+  p_ui_state = PTR_g_ui_00025d78;
+  uVar1 = contest_number_get();
+  p_ui_state->msg_timer = uVar1;
   if (1 < PTR_g_ui_00025d78->msg_timer) {
     PTR_g_ui_00025d78->msg_timer = PTR_g_ui_00025d78->msg_timer - 1;
   }
@@ -586,12 +587,12 @@ void FUN_fffe52dd(void)
 void FUN_fffe5302(void)
 
 {
-  vfo_side vVar1;
+  vfo_side g_opstate_active_vfo_val;
   
-  vVar1 = g_opstate.active_vfo;
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
   PTR_g_ui_00025d78->step_fast_req = 1;
   PTR_g_ui_00025d78->step_fast_100k = 1;
-  FUN_fffc5c8f(vVar1,1);
+  FUN_fffc5c8f(g_opstate_active_vfo_val,1);
   PTR_g_ui_00025d78->step_fast_req = 0;
   PTR_g_ui_00025d78->step_fast_100k = 0;
   return;
@@ -742,6 +743,7 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
   }
   if (bVar1) {
     if (PTR_g_ui_00025d78->keyer_state != 1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return 0;
     }
@@ -791,11 +793,11 @@ undefined1 keyer_can_send(void)
 bool vfo_mode_is_cw(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret;
   bool bStack_3;
   
-  bVar1 = vfo_mode(1);
-  if ((bVar1 == 3) || (bVar1 == 2)) {
+  vfo_mode_ret = vfo_mode(1);
+  if ((vfo_mode_ret == 3) || (vfo_mode_ret == 2)) {
     bStack_3 = false;
   }
   else {
@@ -813,11 +815,11 @@ bool vfo_mode_is_cw(void)
 undefined1 msg_voice_mode_ok(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret;
   undefined1 uStack_3;
   
-  bVar1 = vfo_mode(1);
-  if ((bVar1 < 2) || (bVar1 - 4 < 4)) {
+  vfo_mode_ret = vfo_mode(1);
+  if ((vfo_mode_ret < 2) || (vfo_mode_ret - 4 < 4)) {
     uStack_3 = 1;
   }
   else {
@@ -832,22 +834,22 @@ undefined1 msg_voice_mode_ok(void)
 void FUN_fffe56e4(byte param_1)
 
 {
-  ui_state *puVar1;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  int iVar4;
+  int i;
   undefined1 local_84 [4];
   undefined4 *local_80;
   char acStack_79 [120];
   byte local_1;
+  ui_state *p_ui_state;
   
-  pcVar3 = "     RM 1";
-  pcVar2 = acStack_79;
+  pcVar2 = "     RM 1";
+  pcVar1 = acStack_79;
   local_1 = param_1;
-  for (iVar4 = 0x78; iVar4 != 0; iVar4 = iVar4 + -1) {
-    *pcVar2 = *pcVar3;
+  for (i = 0x78; i != 0; i = i + -1) {
+    *pcVar1 = *pcVar2;
+    pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
-    pcVar3 = pcVar3 + 1;
   }
   if ((local_1 == 0) || (0xc < local_1)) {
     local_84 = (undefined1  [4])0x0;
@@ -861,10 +863,11 @@ void FUN_fffe56e4(byte param_1)
     beep_request(1);
     popup_close();
     PTR_g_ui_00025d78->popup_code = 0x5e;
-    puVar1 = PTR_g_ui_00025d78;
+    p_ui_state = PTR_g_ui_00025d78;
     *(undefined2 *)(PTR_g_ui_00025d78->popup_text + 8) = *(undefined2 *)(local_80 + 2);
-    *(undefined4 *)(puVar1->popup_text + 4) = local_80[1];
-    *(undefined4 *)puVar1->popup_text = *local_80;
+    *(undefined4 *)(p_ui_state->popup_text + 4) = local_80[1];
+    *(undefined4 *)p_ui_state->popup_text = *local_80;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x5e);
     popup_open_timed();
     PTR_g_ui_00025d78->key_consumed = 1;
@@ -914,15 +917,15 @@ byte FUN_fffe5783(void)
 byte FUN_fffe584e(int param_1)
 
 {
-  byte local_6;
+  byte i;
   
-  local_6 = 0;
+  i = 0;
   while( true ) {
-    if (0x31 < local_6) {
+    if (0x31 < i) {
       return 0;
     }
-    if (*(char *)((uint)local_6 + param_1) == '#') break;
-    local_6 = local_6 + 1;
+    if (*(char *)((uint)i + param_1) == '#') break;
+    i = i + 1;
   }
   return 1;
 }
@@ -1095,14 +1098,15 @@ void FUN_fffe5a47(void)
 
 {
   bool bVar1;
-  vfo_side vVar2;
-  byte bVar3;
-  int iVar4;
+  byte vfo_is_memory_ret;
+  int iVar2;
+  vfo_side g_opstate_active_vfo_val;
   
-  vVar2 = g_opstate.active_vfo;
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
   PTR_g_ui_00025d7c->scan_hold = 1;
-  iVar4 = FUN_fffe5f82();
-  if ((iVar4 == 0) || (bVar3 = vfo_is_memory(vVar2), bVar3 == 1)) {
+  iVar2 = FUN_fffe5f82();
+  if ((iVar2 == 0) ||
+     (vfo_is_memory_ret = vfo_is_memory(g_opstate_active_vfo_val), vfo_is_memory_ret == 1)) {
     bVar1 = true;
   }
   else {
@@ -1138,10 +1142,10 @@ bool FUN_fffe5ab2(void)
 bool FUN_fffe5acf(void)
 
 {
-  bool bVar1;
+  bool af_mute_get_ret;
   
-  bVar1 = af_mute_get();
-  return bVar1;
+  af_mute_get_ret = af_mute_get();
+  return af_mute_get_ret;
 }
 
 
@@ -1150,10 +1154,10 @@ bool FUN_fffe5acf(void)
 bool FUN_fffe5ae7(void)
 
 {
-  bool bVar1;
+  bool af_mute_get_ret;
   
-  bVar1 = af_mute_get();
-  return bVar1;
+  af_mute_get_ret = af_mute_get();
+  return af_mute_get_ret;
 }
 
 
@@ -1193,7 +1197,7 @@ byte FUN_fffe5b51(void)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   byte bStack_7;
   
   if (g_opstate.ex030114_mem_group == 0) {
@@ -1203,8 +1207,8 @@ byte FUN_fffe5b51(void)
     bVar2 = FUN_fff9bfb8();
     if (bVar2 < 8) {
       if (bVar2 == 7) {
-        uVar3 = dest_code_get();
-        if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+        dest_code_get_ret = dest_code_get();
+        if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
           bVar1 = true;
         }
         else {
@@ -1214,7 +1218,7 @@ byte FUN_fffe5b51(void)
           bStack_7 = FUN_fffe5c26('u',7);
         }
         else {
-          if ((uVar3 == 0x315b) || (uVar3 == 0x50e2)) {
+          if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
             bVar1 = true;
           }
           else {
@@ -1249,8 +1253,8 @@ byte FUN_fffe5b51(void)
 byte FUN_fffe5c26(char param_1,byte param_2)
 
 {
-  bool bVar1;
-  int iVar2;
+  bool memch_valid_ret;
+  int iVar1;
   byte *pbStack_c;
   byte local_5;
   byte local_4;
@@ -1265,8 +1269,9 @@ byte FUN_fffe5c26(char param_1,byte param_2)
     if (local_2 <= local_4) {
       return 0;
     }
-    bVar1 = memch_valid(local_1 + local_4,&pbStack_c);
-    if (((bVar1) && (iVar2 = memch_skip_get(local_1 + local_4), iVar2 == 0)) &&
+    memch_valid_ret = memch_valid(local_1 + local_4,&pbStack_c);
+                    /* Memory channel n [doc] */
+    if (((memch_valid_ret) && (iVar1 = memch_skip_get(local_1 + local_4), iVar1 == 0)) &&
        (local_5 = local_5 + 1, 1 < local_5)) break;
     local_4 = local_4 + 1;
   }

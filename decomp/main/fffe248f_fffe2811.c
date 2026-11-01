@@ -485,32 +485,39 @@ void kbd_key_dispatch(undefined1 param_1)
   
   bVar1 = PTR_g_ui_00025d6c->kbd_target;
   if (bVar1 == 6) {
+                    /* Keyboard target 6 [doc] */
     kbd_edit_preset_name(param_1);
     return;
   }
   if (bVar1 == 1) {
+                    /* Keyboard target 1 [doc] */
     kbd_edit_memory_name(param_1);
     return;
   }
   if (bVar1 == 2) {
+                    /* Keyboard target 2 [doc] */
     kbd_edit_cw_text(param_1);
     return;
   }
   if (bVar1 == 3) {
+                    /* Keyboard target 3 [doc] */
     kbd_edit_rtty_text(param_1);
     return;
   }
   if (bVar1 == 4) {
+                    /* Keyboard target 4 [doc] */
     kbd_edit_psk_text(param_1);
     return;
   }
   if (bVar1 == 5) {
+                    /* Keyboard target 5 [doc] */
     kbd_edit_file_name(param_1);
     return;
   }
   if (bVar1 != 0) {
     return;
   }
+                    /* Keyboard target 0 [doc] */
   kbd_edit_mycall(param_1);
   return;
 }
@@ -531,6 +538,7 @@ void kbd_edit_mycall(char param_1)
     DAT_0001880b = g_opstate.ex040101_my_call._0_4_;
     DAT_0001b54f = '\0';
   }
+                    /* the on-screen keyboard key handler [doc] */
   kbd_edit_key(PTR_g_ui_00025d6c->msg_text,param_1);
   if (param_1 == -0x7c) {
     g_opstate.ex040101_my_call[8] = (char)DAT_00018813;
@@ -584,6 +592,7 @@ void kbd_edit_memory_name(char param_1)
     DAT_00018817 = g_ui.msg_text[0]._0_4_;
     DAT_0001b550 = '\0';
   }
+                    /* the on-screen keyboard key handler [doc] */
   kbd_edit_key(0x20bc6,param_1);
   if (param_1 == -0x7c) {
     g_ui.msg_text[0][8] = (byte)DAT_0001881f;
@@ -640,6 +649,7 @@ void kbd_edit_cw_text(char param_1)
     }
     DAT_0001b551 = '\0';
   }
+                    /* the on-screen keyboard key handler [doc] */
   kbd_edit_key(g_ui.msg_text + bVar1,param_1);
   if (param_1 == -0x7c) {
     if (PTR_g_ui_00025d6c->msg_slot_idx == 0) {

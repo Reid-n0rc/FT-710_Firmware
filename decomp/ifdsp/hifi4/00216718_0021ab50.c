@@ -37,6 +37,7 @@ USART_TransferCreateHandleDMA
   int *piVar2;
   
   if ((param_1 != 0) && (param_2 != 0)) {
+                    /* 8 bases at 0x2005B0 [doc, inference] */
     iVar1 = USART_GetInstance(param_1);
     memset(param_2,0,0x20);
     piVar2 = (int *)(&DAT_00239040 + iVar1 * 8);
@@ -240,8 +241,10 @@ void UTICK_Init(dword *param_1)
 
 {
   memw();
+                    /* clock set 2 [sfr] */
   CLKCTL0_PSCCTL2_SET =
        1 << 0x20 - (0x20 - ((byte)(&DAT_00200618)[(uint)(param_1 != &UTICK0_CTRL) * 4] & 0x1f));
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)(&DAT_0020061c + (uint)(param_1 != &UTICK0_CTRL) * 4));
   DAT_00239080 = UTICK_HandleIRQ;
   return;
@@ -272,6 +275,7 @@ void UTICK_Deinit(dword *param_1)
     return;
   }
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL0_PSCCTL2_CLR = 1;
   return;
 }
@@ -372,32 +376,39 @@ void WWDT_Init(dword *param_1,byte *param_2)
   uVar7 = uVar4 >> 8 & 0xff;
   if (uVar7 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   else if (uVar7 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   else if (uVar7 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   else if (uVar7 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   else if (uVar7 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   else if (uVar7 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
   }
   iVar5 = 0;
   if (param_1 != &WWDT0_MOD) {
     iVar5 = 4;
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200630 + iVar5));
   bVar2 = param_2[1];
   bVar3 = param_2[3];
@@ -453,33 +464,39 @@ void WWDT_Deinit(dword *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 != 2) {
     if (uVar3 == 3) {
       memw();
+                    /* clock clear 0 [sfr] */
       CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
       return;
     }
     if (uVar3 != 4) {
       if (uVar3 == 5) {
         memw();
+                    /* clock clear 2 [sfr] */
         CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
         return;
       }
       return;
     }
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   return;
 }
@@ -1604,7 +1621,7 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
 }
 
 
-// ===== ifft_cplxf_ie @ 00217d10 (2329 bytes)
+// ===== ifft_cplxf_ie @ 00217d10 (2332 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
@@ -2239,18 +2256,6 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   auVar5._8_4_ = param_1;
   auVar5._12_4_ = 0;
   return auVar5 << 0x20;
-}
-
-
-// ===== FUN_00218480 @ 00218480 (3 bytes)
-
-/* WARNING: Control flow encountered bad instruction data */
-
-void FUN_00218480(void)
-
-{
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
 }
 
 
@@ -5050,5 +5055,16 @@ undefined4 env_strncmp(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   
   uVar1 = strncmp(param_1,param_2,param_3);
   return uVar1;
+}
+
+
+// ===== env_mb @ 0021ab50 (7 bytes)
+
+/* rpmsg_env_bm.c [inference] */
+
+void env_mb(void)
+
+{
+  return;
 }
 

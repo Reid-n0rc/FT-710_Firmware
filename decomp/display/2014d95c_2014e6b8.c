@@ -92,24 +92,24 @@ int fs_unlock_a(int param_1)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    if ((&DAT_2091d4c4)[iVar2 * 8] == *(char *)(param_1 + 0x11)) {
-      if ((&DAT_2091d4c0)[iVar2 * 2] == 0) {
+    if ((&DAT_2091d4c4)[i * 8] == *(char *)(param_1 + 0x11)) {
+      if ((&DAT_2091d4c0)[i * 2] == 0) {
         return -0x26;
       }
       itron_dis_dsp();
-      iVar1 = itron_sig_sem((&DAT_2091d4c0)[iVar2 * 2]);
+      iVar1 = itron_sig_sem((&DAT_2091d4c0)[i * 2]);
       if (iVar1 == 0) {
-        (&DAT_2091d4c4)[iVar2 * 8] = 0;
+        (&DAT_2091d4c4)[i * 8] = 0;
       }
       itron_ena_dsp();
       return iVar1;
     }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return -0x26;
 }
 
@@ -122,20 +122,21 @@ int fs_unlock_a(int param_1)
 void fs_sem_a_create(void)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint os_create_sem_named_ret;
+  int i;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(&DAT_2091d4c0,0,0x28,0x200);
-  iVar2 = 0;
+  i = 0;
   do {
-    uVar1 = os_create_sem_named(&DAT_20427e4c,0x2014db20);
-    if ((int)uVar1 < 1) {
+    os_create_sem_named_ret = os_create_sem_named(&DAT_20427e4c,0x2014db20);
+    if ((int)os_create_sem_named_ret < 1) {
       return;
     }
-    (&DAT_2091d4c0)[iVar2 * 2] = uVar1;
+    (&DAT_2091d4c0)[i * 2] = os_create_sem_named_ret;
     itron_sig_sem();
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return;
 }
 
@@ -148,17 +149,17 @@ undefined4 fs_sem_a_delete(void)
 
 {
   undefined4 uVar1;
-  int iVar2;
+  int i;
   
   uVar1 = 0;
-  iVar2 = 0;
+  i = 0;
   do {
-    if ((&DAT_2091d4c0)[iVar2 * 2] != 0) {
+    if ((&DAT_2091d4c0)[i * 2] != 0) {
       uVar1 = itron_del_sem();
-      (&DAT_2091d4c0)[iVar2 * 2] = 0;
+      (&DAT_2091d4c0)[i * 2] = 0;
     }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return uVar1;
 }
 
@@ -212,24 +213,24 @@ int fs_unlock_b(int param_1)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    if ((&DAT_2091d4ec)[iVar2 * 8] == *(char *)(param_1 + 0x11)) {
-      if ((&DAT_2091d4e8)[iVar2 * 2] == 0) {
+    if ((&DAT_2091d4ec)[i * 8] == *(char *)(param_1 + 0x11)) {
+      if ((&DAT_2091d4e8)[i * 2] == 0) {
         return -0x23;
       }
       itron_dis_dsp();
-      iVar1 = itron_sig_sem((&DAT_2091d4e8)[iVar2 * 2]);
+      iVar1 = itron_sig_sem((&DAT_2091d4e8)[i * 2]);
       if (iVar1 == 0) {
-        (&DAT_2091d4ec)[iVar2 * 8] = 0;
+        (&DAT_2091d4ec)[i * 8] = 0;
       }
       itron_ena_dsp();
       return iVar1;
     }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return -0x23;
 }
 
@@ -241,20 +242,21 @@ int fs_unlock_b(int param_1)
 void fs_sem_b_create(void)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint os_create_sem_named_ret;
+  int i;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(&DAT_2091d4e8,0,0x28,0x200);
-  iVar2 = 0;
+  i = 0;
   do {
-    uVar1 = os_create_sem_named(&DAT_20427e5c,0x2014dccc);
-    if ((int)uVar1 < 1) {
+    os_create_sem_named_ret = os_create_sem_named(&DAT_20427e5c,0x2014dccc);
+    if ((int)os_create_sem_named_ret < 1) {
       return;
     }
-    (&DAT_2091d4e8)[iVar2 * 2] = uVar1;
+    (&DAT_2091d4e8)[i * 2] = os_create_sem_named_ret;
     itron_sig_sem();
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return;
 }
 
@@ -267,17 +269,17 @@ undefined4 fs_sem_b_delete(void)
 
 {
   undefined4 uVar1;
-  int iVar2;
+  int i;
   
   uVar1 = 0;
-  iVar2 = 0;
+  i = 0;
   do {
-    if ((&DAT_2091d4e8)[iVar2 * 2] != 0) {
+    if ((&DAT_2091d4e8)[i * 2] != 0) {
       uVar1 = itron_del_sem();
-      (&DAT_2091d4e8)[iVar2 * 2] = 0;
+      (&DAT_2091d4e8)[i * 2] = 0;
     }
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 5);
+    i = i + 1;
+  } while (i < 5);
   return uVar1;
 }
 
@@ -416,12 +418,12 @@ undefined4 fs_sem1_signal(void)
 void fs_sem1_create(void)
 
 {
-  uint uVar1;
+  uint os_create_sem_named_ret;
   
   DAT_20808bb4 = 0;
-  uVar1 = os_create_sem_named(&DAT_20427e7c,0x2014debc);
-  if (0 < (int)uVar1) {
-    DAT_20808bb4 = uVar1;
+  os_create_sem_named_ret = os_create_sem_named(&DAT_20427e7c,0x2014debc);
+  if (0 < (int)os_create_sem_named_ret) {
+    DAT_20808bb4 = os_create_sem_named_ret;
     itron_sig_sem();
     return;
   }
@@ -487,12 +489,12 @@ undefined4 fs_sem2_signal(void)
 void fs_sem2_create(void)
 
 {
-  uint uVar1;
+  uint os_create_sem_named_ret;
   
   DAT_20808bb8 = 0;
-  uVar1 = os_create_sem_named(&DAT_20427e8c,0x2014df7c);
-  if (0 < (int)uVar1) {
-    DAT_20808bb8 = uVar1;
+  os_create_sem_named_ret = os_create_sem_named(&DAT_20427e8c,0x2014df7c);
+  if (0 < (int)os_create_sem_named_ret) {
+    DAT_20808bb8 = os_create_sem_named_ret;
     itron_sig_sem();
     return;
   }
@@ -552,12 +554,12 @@ void fsys_sem_signal(void)
 void fsys_init_sem(void)
 
 {
-  uint uVar1;
+  uint os_create_sem_named_ret;
   
   DAT_20808bbc = 0;
-  uVar1 = os_create_sem_named(&DAT_20427e9c,0x2014e034);
-  if (0 < (int)uVar1) {
-    DAT_20808bbc = uVar1;
+  os_create_sem_named_ret = os_create_sem_named(&DAT_20427e9c,0x2014e034);
+  if (0 < (int)os_create_sem_named_ret) {
+    DAT_20808bbc = os_create_sem_named_ret;
     itron_sig_sem();
     return;
   }
@@ -986,6 +988,7 @@ uint str_to_long(byte *param_1,undefined4 *param_2,uint param_3)
       uVar10 = 0;
       bVar2 = false;
       if (bVar12) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
         uVar14 = __aeabi_uidivmod(0x80000000);
       }
       else {
@@ -1061,15 +1064,15 @@ LAB_2014e52c:
 uint os_create_sem_named(void *param_1,uint param_2)
 
 {
-  uint uVar1;
+  uint itron_acre_sem_ret;
   t_csem local_18;
   
   local_18.sematr = *(uint *)param_1;
   local_18.isemcnt = *(uint *)((int)param_1 + 4);
   local_18.maxsem = *(uint *)((int)param_1 + 8);
   local_18.name = (char *)param_2;
-  uVar1 = itron_acre_sem(0,&local_18);
-  return uVar1;
+  itron_acre_sem_ret = itron_acre_sem(0,&local_18);
+  return itron_acre_sem_ret;
 }
 
 

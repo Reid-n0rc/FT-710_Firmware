@@ -102,10 +102,14 @@ void PowerON_Reset(void)
 
 {
   hw_init_clock();
+                    /* CC-RX section init [doc] */
   _INITSCT();
+                    /* Clears 0x74 words at 0x1FFC4 [doc] */
   bsp_callbacks_clear();
+                    /* CC-RX stdio init [doc] */
   _INIT_IOLIB();
   bsp_interrupt_open();
+                    /* Clears 4 halfwords at 0x1B5FC [doc] */
   FUN_fff8ff3d();
   hardware_setup();
   R_BSP_InterruptControl(0xb,1,(void *)0x10000000);
@@ -129,10 +133,10 @@ void PowerON_Reset(void)
 void FUN_fff8ff3d(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 4; local_4 = local_4 + 1) {
-    *(undefined2 *)(&DAT_0001b5fc + local_4 * 2) = 0;
+  for (i = 0; i < 4; i = i + 1) {
+    *(undefined2 *)(&DAT_0001b5fc + i * 2) = 0;
   }
   return;
 }
@@ -151,10 +155,10 @@ void FUN_fff8ff3d(void)
 void bsp_callbacks_clear(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x74; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_0001ffc4 + local_4 * 4) = 0;
+  for (i = 0; i < 0x74; i = i + 1) {
+    *(undefined4 *)(&DAT_0001ffc4 + i * 4) = 0;
   }
   return;
 }
@@ -174,10 +178,10 @@ void bsp_callbacks_clear(void)
 void bsp_interrupt_open(void)
 
 {
-  uint local_4;
+  uint i;
   
-  for (local_4 = 0; local_4 < 0x5f; local_4 = local_4 + 1) {
-    *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
+  for (i = 0; i < 0x5f; i = i + 1) {
+    *(undefined4 *)(&DAT_00020194 + i * 4) = 0x10000000;
   }
   icu_select_init();
   R_BSP_SoftwareInterruptOpen(0);
@@ -301,128 +305,251 @@ void hw_init_clock(void)
 void icu_select_init(void)
 
 {
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR128 = 1;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR129 = 2;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR146 = 3;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR147 = 4;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR148 = 5;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR149 = 6;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR150 = 7;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR151 = 8;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR152 = 9;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR153 = 10;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR154 = 0xb;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR155 = 0xc;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR156 = 0xd;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR157 = 0xe;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR130 = 0xf;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR131 = 0x10;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR132 = 0x11;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR133 = 0x12;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR134 = 0x13;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR144 = 0x14;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR135 = 0x15;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR136 = 0x16;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR137 = 0x17;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR138 = 0x18;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR139 = 0x19;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR140 = 0x1a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR141 = 0x1b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR142 = 0x1c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR143 = 0x1d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR145 = 0x1e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR158 = 0x1f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR159 = 0x20;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR160 = 0x21;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR161 = 0x22;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR162 = 0x23;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR163 = 0x24;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR164 = 0x25;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR165 = 0x26;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR166 = 0x27;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR167 = 0x28;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR168 = 0x29;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR169 = 0x2a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR170 = 0x2b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR171 = 0x2c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR172 = 0x2d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR173 = 0x2e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR174 = 0x2f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR175 = 0x30;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR176 = 0x31;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR177 = 0x32;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR178 = 0x33;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR179 = 0x34;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR180 = 0x35;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR181 = 0x36;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR182 = 0x37;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR183 = 0x38;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR184 = 0x39;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR185 = 0x3e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR186 = 0x40;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR187 = 0x41;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR188 = 0x42;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR189 = 0x44;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR190 = 0x45;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR191 = 0x46;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR192 = 0x4c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR193 = 0x4f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR194 = 0x50;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR195 = 0x55;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR196 = 0x56;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR197 = 0x57;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR198 = 0x58;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR199 = 0x59;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR200 = 0x5a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR201 = 0x5b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR202 = 0x5c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR203 = 0x5d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR204 = 0x5e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR205 = 0x5f;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR209 = 1;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR210 = 2;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR211 = 3;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR212 = 4;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR213 = 5;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR214 = 6;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR215 = 7;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR208 = 8;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR216 = 9;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR217 = 10;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR218 = 0xb;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR219 = 0xc;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR220 = 0xd;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR221 = 0xe;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR222 = 0xf;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR223 = 0x10;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR224 = 0x11;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR225 = 0x12;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR226 = 0x13;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR227 = 0x14;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR228 = 0x15;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR229 = 0x16;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR230 = 0x17;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR231 = 0x18;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR232 = 0x19;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR233 = 0x1b;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR234 = 0x1c;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR235 = 0x1d;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR236 = 0x1e;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR237 = 0x1f;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR238 = 0x20;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR239 = 0x21;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR240 = 0x22;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR241 = 0x23;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR242 = 0x24;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR243 = 0x25;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR244 = 0x26;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR245 = 0x27;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR246 = 0x29;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR247 = 0x2a;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR248 = 0x2b;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR249 = 0x2c;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR250 = 0x2d;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR251 = 0x58;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR252 = 0x59;
   return;
 }
@@ -446,11 +573,14 @@ void app_main(void)
   wdt_kick();
   timers_init();
   FUN_fffb27df();
+                    /* Port setup and WRSR 0x80 [doc] */
   eeprom_init();
+                    /* Load the settings, or defaults on a blank EEPROM [fact: README.md] */
   eeprom_load_all();
   key_task_init();
   sci_start_all();
   qmb_boot_init();
+                    /* Power-off loop: only the DISPLAY link and CAT (PS1) run [fact: README.md] */
   while (g_ui.radio_on == 0) {
     displink_task();
     cat_parse();
@@ -458,20 +588,29 @@ void app_main(void)
   }
   if (g_ui.defaults_loaded == 1) {
     g_ui.defaults_loaded = 0;
+                    /* Defaults loaded: write the RAM image to EEPROM [fact: 0xFFFB02AF] */
     eeprom_save_all();
     g_ui.freq_refresh_req = 1;
     wdt_kick();
   }
+                    /* Radio on: drive the port outputs for the on state [fact: README.md] */
   shreg_bus_init();
   trx_init();
+                    /* SDR FPGA handshake on SCI5 [fact: sdr-link.md] */
   sdr_init();
+                    /* DSP handshake on SCI4 ("i DB00", read reg 0/1) [fact: dsp-link.md] */
   dsp_link_init();
   portctl_init();
+                    /* DAC output = 0x1FF1C, R_DA0_Start [doc] */
   dac_init_idle();
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
+                    /* One tuner_task pass [doc] */
   tuner_init();
   menu_subsys_init();
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
   screensaver_timer_restart();
+                    /* Never returns: the 16-task round-robin loop [fact: 0xFFF94B8B] */
   main_loop();
   return;
 }
@@ -493,19 +632,28 @@ void main_loop(void)
 {
   do {
     wdt_kick();
+                    /* Task 2: TX/RX and power supervisor [fact: README.md] */
     io_task();
+                    /* Task 3: push changed radio state to the SDR FPGA [fact: sdr-link.md] */
     sdr_task();
+                    /* Task 4: DSP register writes and status reads [fact: dsp-link.md] */
     dsp_link_poll();
+                    /* Task 5: shift registers and DACs on P6/P7/PA/PB [fact: README.md] */
     rf_ctrl_task();
     beep_task();
+                    /* Task 7: one CAT command per pass [fact: cat.md] */
     cat_parse();
+                    /* Task 8: FH-2 remote keypad on the resistor ladder [fact: ui-keys.md] */
     ladder_key_task();
     scan_task();
     dispreq_e8_task();
     dispreq_e7_task();
     keyer_task();
+                    /* Task 13: SD CARD menu load/save steps [fact: README.md] */
     sd_menu_task();
+                    /* Task 14: DISPLAY link receive, ACK/NAK, next frame [fact: display-link.md] */
     displink_task();
+                    /* Task 15: key events through the key handler tables [fact: ui-keys.md] */
     key_task();
     tuner_task();
   } while( true );
@@ -528,7 +676,7 @@ void displink_rx_F0_hello(int param_1)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   DAT_000019bb = 0;
   DAT_000019b7 = 0;
@@ -539,6 +687,7 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3 = 0;
   DAT_0000199f = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
+                    /* b1, b2: DISPLAY version string "Vxx-yy" [fact: display-link.md] */
   DAT_0000199f._0_1_ = 0x56;
   bVar2 = *(byte *)(param_1 + 1) >> 4;
   if ((bVar2 < 10) || (0xf < bVar2)) {
@@ -586,6 +735,7 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3 = 0;
   DAT_0000199f = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
+                    /* b4..b6: DISPLAY date "yy-mm-dd" [fact: display-link.md] */
   DAT_0000199f._0_1_ = *(byte *)(param_1 + 4) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_0000199f._1_1_ = *(byte *)(param_1 + 4) & 0x3f | 0x30;
@@ -601,11 +751,14 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3._2_1_ = *(byte *)(param_1 + 6) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._3_1_ = *(byte *)(param_1 + 6) & 0x3f | 0x30;
+                    /* Stores the 8-char DISPLAY date "yy-mm-dd" [doc] */
   ver_display_date_set(&DAT_0000199f);
+                    /* b7: boot code (key held at the DISPLAY's power-on) [fact: display-link.md] */
   PTR_g_ui_00025d38->power_on_reason = *(byte *)(param_1 + 7);
   PTR_g_ui_00025d38->link_tx_enabled = 1;
   DAT_0001b3cc = 1;
   DAT_0001b3d0 = 1;
+                    /* Power on: link up, hello reply pending [fact: display-link.md] */
   PTR_g_ui_00025d38->radio_on = 1;
   bVar2 = PTR_g_ui_00025d38->power_on_reason;
   if (bVar2 == 0x10) {
@@ -616,11 +769,13 @@ void displink_rx_F0_hello(int param_1)
   }
   else {
     if (bVar2 == 2) {
+                    /* Boot code 2: factory alignment mode [fact: display-link.md] */
       PTR_g_ui_00025d38->zz_align_mode = 1;
       align_load_preset();
       return;
     }
     if (bVar2 == 4) {
+                    /* Boot code 4: numeric-entry/adjust mode [fact: display-link.md] */
       PTR_g_ui_00025d38->numentry_mode = 1;
       PTR_g_ui_00025d38->lamp_map = 0;
       return;
@@ -632,19 +787,22 @@ void displink_rx_F0_hello(int param_1)
       }
       dest_code[2] = 0;
       if (4 < g_opstate.ex010113_tx_bpf_sel) {
+                    /* TTBF unlock off: TX BPF SEL above 4 back to 1 [fact: display-link.md] */
         g_opstate.ex010113_tx_bpf_sel = 1;
         return;
       }
     }
     else {
       if (bVar2 == 6) {
+                    /* Boot code 6: DISPLAY loader screen, link down [fact: display-link.md] */
         PTR_g_ui_00025d38->link_tx_enabled = 0;
         DAT_0001b3d0 = 0;
         return;
       }
       if (bVar2 == 7) {
-        uVar3 = dest_code_get();
-        if ((uVar3 == 0xa983) || (uVar3 == 0xb5a7)) {
+                    /* Boot code 7: swap the region (destination code) [fact: display-link.md] */
+        dest_code_get_ret = dest_code_get();
+        if ((dest_code_get_ret == 0xa983) || (dest_code_get_ret == 0xb5a7)) {
           bVar1 = true;
         }
         else {
@@ -654,7 +812,7 @@ void displink_rx_F0_hello(int param_1)
           dest_code_set(0xd950);
         }
         else {
-          if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+          if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
             bVar1 = true;
           }
           else {
@@ -668,8 +826,10 @@ void displink_rx_F0_hello(int param_1)
         return;
       }
       if (bVar2 == 1) {
+                    /* Boot code 1: full reset of the settings [fact: display-link.md] */
         settings_defaults(0);
         g_ui.defaults_loaded = 1;
+                    /* Swaps between paired destination codes [doc] */
         dest_jumper_apply();
         return;
       }
@@ -830,12 +990,12 @@ void keyer_init(void)
 
 {
   undefined1 *puVar1;
-  int iVar2;
+  int i;
   
   g_ui.keyer_state = 0;
   DAT_0001215f = 0;
   puVar1 = &DAT_000120bc;
-  for (iVar2 = 0xa0; iVar2 != 0; iVar2 = iVar2 + -1) {
+  for (i = 0xa0; i != 0; i = i + -1) {
     *puVar1 = 0;
     puVar1 = puVar1 + 1;
   }
@@ -869,12 +1029,12 @@ void keyer_task(void)
   bool bVar1;
   bool bVar2;
   byte bVar3;
-  char cVar4;
-  undefined1 *puVar5;
-  uint uVar6;
-  int iVar7;
-  undefined *puVar8;
-  ushort uVar9;
+  char hex2nib_ret;
+  undefined1 *puVar4;
+  uint uVar5;
+  int iVar6;
+  undefined *puVar7;
+  ushort uVar8;
   char cStack_19;
   char cStack_18;
   char cStack_17;
@@ -901,6 +1061,7 @@ void keyer_task(void)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
     keyer_init();
     keyer_sidetone_off();
     g_ui.ptt_keyer = 0;
@@ -945,6 +1106,7 @@ void keyer_task(void)
     DAT_00021014 = 1200000 / DAT_0001b4d5;
   }
   DAT_00021010 = ((local_1 + 0x19) * DAT_00021014) / 10;
+                    /* Returns EX020119 QSK DELAY TIME x 5 + 15 [doc] */
   DAT_0001215c = qsk_delay_ticks();
   if (DAT_0001215f == 0) {
     DAT_0001215c = 0xf;
@@ -1001,10 +1163,10 @@ void keyer_task(void)
     if (DAT_0001215d != '\x01') {
       return;
     }
-    puVar5 = &DAT_000120bc;
-    for (iVar7 = 0xa0; iVar7 != 0; iVar7 = iVar7 + -1) {
-      *puVar5 = 0;
-      puVar5 = puVar5 + 1;
+    puVar4 = &DAT_000120bc;
+    for (iVar6 = 0xa0; iVar6 != 0; iVar6 = iVar6 + -1) {
+      *puVar4 = 0;
+      puVar4 = puVar4 + 1;
     }
     DAT_0001fa3a = 0;
     DAT_0001fa38 = 0;
@@ -1013,8 +1175,8 @@ void keyer_task(void)
     swtimer_start(0x1b,10000);
     keyer_state_clear();
     DAT_00021040 = vfo_rec_ptr(1);
-    iVar7 = tx_breakin_on();
-    if (iVar7 == 1) {
+    iVar6 = tx_breakin_on();
+    if (iVar6 == 1) {
       DAT_00012166 = '\x01';
       DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
     }
@@ -1043,16 +1205,16 @@ void keyer_task(void)
       if (bVar1) {
         bStack_9 = 1;
       }
-      iVar7 = (uint)bStack_9 * 0x98;
-      *(char *)((int)qmb + iVar7 + 0x2ec) = (char)(DAT_0001fa38 >> 8);
-      *(char *)((int)qmb + iVar7 + 0x2ed) = (char)DAT_0001fa3a;
-      puStack_8 = (undefined *)((int)qmb + iVar7 + 0x2ee);
-      puVar5 = &DAT_000120bc;
-      puVar8 = puStack_8;
-      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
-        *puVar8 = *puVar5;
-        puVar8 = puVar8 + 1;
-        puVar5 = puVar5 + 1;
+      iVar6 = (uint)bStack_9 * 0x98;
+      *(char *)((int)qmb + iVar6 + 0x2ec) = (char)(DAT_0001fa38 >> 8);
+      *(char *)((int)qmb + iVar6 + 0x2ed) = (char)DAT_0001fa3a;
+      puStack_8 = (undefined *)((int)qmb + iVar6 + 0x2ee);
+      puVar4 = &DAT_000120bc;
+      puVar7 = puStack_8;
+      for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
+        *puVar7 = *puVar4;
+        puVar7 = puVar7 + 1;
+        puVar4 = puVar4 + 1;
       }
       eeprom_save_msg(0,(uint)bStack_9);
     }
@@ -1084,15 +1246,15 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     DAT_0001fa3a = 0;
     if (g_opstate.ex020205_contest_number_be[bStack_9 + 2] == 1) {
-      iVar7 = (uint)bStack_9 * 0x98;
-      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar7],(&DAT_000093a8)[iVar7]);
-      puStack_8 = &DAT_000093a9 + iVar7;
-      puVar5 = &DAT_000120bc;
-      puVar8 = puStack_8;
-      for (iVar7 = 0x96; iVar7 != 0; iVar7 = iVar7 + -1) {
-        *puVar5 = *puVar8;
-        puVar5 = puVar5 + 1;
-        puVar8 = puVar8 + 1;
+      iVar6 = (uint)bStack_9 * 0x98;
+      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar6],(&DAT_000093a8)[iVar6]);
+      puStack_8 = &DAT_000093a9 + iVar6;
+      puVar4 = &DAT_000120bc;
+      puVar7 = puStack_8;
+      for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
+        *puVar4 = *puVar7;
+        puVar4 = puVar4 + 1;
+        puVar7 = puVar7 + 1;
       }
     }
     else {
@@ -1108,16 +1270,16 @@ void keyer_task(void)
           uStack_e = contest_number_get();
           uStack_c = 1000;
           for (bStack_11 = 0; bStack_11 < 4; bStack_11 = bStack_11 + 1) {
-            uVar6 = (uint)uStack_e;
+            uVar5 = (uint)uStack_e;
             if (uStack_c != 0) {
-              uVar6 = uVar6 / uStack_c;
+              uVar5 = uVar5 / uStack_c;
             }
-            bStack_12 = (byte)uVar6;
-            uVar9 = uStack_e;
+            bStack_12 = (byte)uVar5;
+            uVar8 = uStack_e;
             if (uStack_c != 0) {
-              uVar9 = uStack_e / uStack_c;
+              uVar8 = uStack_e / uStack_c;
             }
-            uStack_e = uStack_e - uVar9 * uStack_c;
+            uStack_e = uStack_e - uVar8 * uStack_c;
             uStack_c = uStack_c / 10;
             bStack_14 = nib2hex(bStack_12);
             if ((bStack_11 == 0) && (bStack_14 == 0x30)) {
@@ -1127,6 +1289,7 @@ void keyer_task(void)
               bVar1 = false;
             }
             if (!bVar1) {
+                    /* Cut-number substitution by EX020204 NUMBER STYLE [doc] */
               bStack_14 = contest_cut_digit(bStack_14);
               bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
               bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
@@ -1135,6 +1298,7 @@ void keyer_task(void)
                   keyer_elem_put(1);
                 }
                 else {
+                    /* Appends to the keyer element ring 0x120BC [doc] */
                   keyer_elem_put(2);
                 }
                 keyer_elem_put(0);
@@ -1147,15 +1311,15 @@ void keyer_task(void)
           }
         }
         else if (bStack_14 == 0x3c) {
-          iVar7 = tx_breakin_on();
-          if ((iVar7 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
+          iVar6 = tx_breakin_on();
+          if ((iVar6 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
             uStack_e = uStack_e + 1;
             contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x3e) {
-          iVar7 = tx_breakin_on();
-          if ((iVar7 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
+          iVar6 = tx_breakin_on();
+          if ((iVar6 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
             uStack_e = uStack_e - 1;
             contest_number_set(uStack_e);
           }
@@ -1178,8 +1342,9 @@ void keyer_task(void)
               bVar1 = true;
             }
             if (bVar1) {
-              cVar4 = hex2nib(bStack_14);
-              bStack_14 = cVar4 - 1;
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
+              hex2nib_ret = hex2nib(bStack_14);
+              bStack_14 = hex2nib_ret - 1;
               if (bStack_9 != bStack_14) {
                 keyer_text_msg_encode(bStack_14);
               }
@@ -1291,18 +1456,22 @@ void sd_menu_task(void)
       return;
     }
     if (DAT_00015de3 == '\x04') {
+                    /* Mode 4 step machine [doc, inference] */
       sd_format_step();
       return;
     }
     if (DAT_00015de3 == '\x02') {
+                    /* Mode 2 step machine [doc, inference] */
       sd_save_step();
       return;
     }
     if (DAT_00015de3 == '\x03') {
+                    /* Mode 3 step machine [doc, inference] */
       sd_info_step();
       return;
     }
     if (DAT_00015de3 == '\x01') {
+                    /* Mode 1 step machine on +0x3F7 [doc, inference] */
       sd_load_step();
       return;
     }
@@ -1453,8 +1622,8 @@ void ladder_key_task(void)
 {
   bool bVar1;
   byte bVar2;
-  byte bVar3;
-  int iVar4;
+  byte key_event_filter_ret;
+  int iVar3;
   
   if (PTR_g_ui_00025d78->dialog_shown != 1) {
     bVar2 = remote_key_get();
@@ -1466,12 +1635,12 @@ void ladder_key_task(void)
         FUN_fffe4b73();
       }
       else if (bVar2 == 0xf9) {
-        iVar4 = ladder_key_delay();
-        if (iVar4 == 1) {
+        iVar3 = ladder_key_delay();
+        if (iVar3 == 1) {
           FUN_fffe4cc1();
         }
       }
-      else if ((bVar2 == 0xf7) && (iVar4 = ladder_key_delay(), iVar4 == 1)) {
+      else if ((bVar2 == 0xf7) && (iVar3 = ladder_key_delay(), iVar3 == 1)) {
         FUN_fffe4a67();
       }
     }
@@ -1492,7 +1661,9 @@ void ladder_key_task(void)
       else {
         bVar1 = true;
       }
-      if ((bVar1) && (bVar3 = key_event_filter(bVar2 + 0x86,1), bVar3 == 0)) {
+                    /* Checks a key code against about 20 mode locks [doc] */
+      if ((bVar1) &&
+         (key_event_filter_ret = key_event_filter(bVar2 + 0x86,1), key_event_filter_ret == 0)) {
         return;
       }
       if (DAT_0001b554 == 0xfa) {
@@ -1615,6 +1786,7 @@ void ladder_key_task(void)
           msg_slot_key_5();
           break;
         case 6:
+                    /* Sets UI +0x1C7 [doc, inference] */
           msg_type_select();
           break;
         case 7:
@@ -1667,6 +1839,7 @@ void tuner_init(void)
 
 {
   tuner_task();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -1688,13 +1861,16 @@ void tuner_task(void)
 
 {
   if (g_opstate.ex030104_tuner_type_select == 3) {
+                    /* tuner_task for TUNER TYPE SELECT 3 [doc] */
     tuner_atas_task();
     return;
   }
   if (1 < g_opstate.ex030104_tuner_type_select) {
+                    /* tuner_task for TUNER TYPE SELECT 2 [doc] */
     tuner_ext_task();
     return;
   }
+                    /* tuner_task for TUNER TYPE SELECT 0/1 [doc] */
   tuner_int_task();
   return;
 }

@@ -8,27 +8,27 @@ void key_nar_short(void)
 
 {
   bool bVar1;
-  vfo_rec *pvVar2;
   byte local_d;
   byte *local_c;
   bool local_5;
-  vfo_rec *local_4;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
   
   bVar1 = false;
   if (g_ui.memlist_open == 1) {
     memlist_close();
   }
   if (g_opstate.active_vfo == VFO_A) {
-    local_4 = &g_opstate.vfo_a;
-    pvVar2 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
+    p_vfo_rec_2 = &g_opstate.vfo_a;
   }
   else {
-    local_4 = &g_opstate.vfo_b;
-    pvVar2 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
+    p_vfo_rec_2 = &g_opstate.vfo_b;
   }
-  local_c = &pvVar2->nar_flags;
+  local_c = &p_vfo_rec_2->nar_flags;
   local_5 = g_opstate.active_vfo != VFO_A;
-  switch(local_4->mode & 0xf) {
+  switch(p_vfo_rec->mode & 0xf) {
   case 0:
   case 1:
     bVar1 = true;
@@ -162,6 +162,7 @@ void qmb_recall(void)
     }
     if (local_3 == 0) {
       if (g_qmb_hdr.ptr_a[0] != 0) {
+                    /* state = 5, load QMB slot, save header [doc, inference] */
         qmb_enter(0);
         return;
       }
@@ -177,6 +178,7 @@ void qmb_recall(void)
     qmb_set_depth(local_3);
     vfo_reload(local_3);
     PTR_g_ui_00025d54->vfo_refresh_req = 1;
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     popup_close();
     return;
@@ -197,9 +199,9 @@ void qmb_store(void)
   bool bVar1;
   bool bVar2;
   byte bVar3;
-  vfo_rec *pvVar4;
-  int iVar5;
-  vfo_rec *local_10;
+  vfo_rec *p_vfo_rec_2;
+  int i;
+  vfo_rec *p_vfo_rec;
   bool local_5;
   ushort local_4;
   byte local_2;
@@ -229,17 +231,17 @@ void qmb_store(void)
          *(undefined1 *)((int)&g_qmb_hdr + (0xb - (uint)local_5));
   }
   g_qmb_hdr.order[0] = local_2;
-  pvVar4 = qmb + local_2;
+  p_vfo_rec_2 = qmb + local_2;
   if (bVar1) {
-    local_10 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
   }
   else {
-    local_10 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
   }
-  for (iVar5 = 0x5a; iVar5 != 0; iVar5 = iVar5 + -1) {
-    pvVar4->mode = local_10->mode;
-    pvVar4 = (vfo_rec *)&pvVar4->flags1;
-    local_10 = (vfo_rec *)&local_10->flags1;
+  for (i = 0x5a; i != 0; i = i + -1) {
+    p_vfo_rec_2->mode = p_vfo_rec->mode;
+    p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
+    p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
   }
   bVar2 = 7 < local_2;
   if (bVar2) {
@@ -452,8 +454,10 @@ void key_step_mch_long(void)
   bVar1 = g_opstate.active_vfo != VFO_A;
   vfo_shift_reset(bVar1);
   vfo_width_reset(bVar1);
+                    /* manual NOTCH of the VFO's mode block = 0x0096 [doc] */
   vfo_notch_reset(bVar1);
   vfo_contour_reset(bVar1);
+                    /* g_opstate.apf_freq = 0 and bit 5 [doc] */
   vfo_apf_reset(bVar1);
   vfo_mark_edited(bVar1);
   vfo_store_back(bVar1);
@@ -546,6 +550,7 @@ void key_dsp_press(void)
     return;
   }
   if (PTR_g_ui_00025d54->zz_align_mode == 1) {
+                    /* DSP key in alignment mode [doc, inference] */
     iVar1 = align_store();
     if (iVar1 == 1) {
       beep_request(1);
@@ -580,6 +585,7 @@ void key_dsp_short(void)
   else {
     PTR_g_ui_00025d54->dsp_key_state = 1;
   }
+                    /* Sets UI +0x443 [doc] */
   vfo_mark_edited_if_vfo();
   return;
 }
@@ -619,12 +625,13 @@ void key_dsp_release(void)
 {
   bool bVar1;
   byte bVar2;
-  uint uVar3;
+  uint vfo_mode_ret;
   
   if (g_ui.zz_align_mode != 1) {
     if (PTR_g_ui_00025d54->func_panel_open == 1) {
       if (PTR_g_ui_00025d54->dsp_key_func_short == 1) {
         if (PTR_g_ui_00025d54->dsp_key_func_long == 1) {
+                    /* DSP key long press in the FUNC panel [doc] */
           dsp_knob_reset();
           PTR_g_ui_00025d54->dsp_key_func_long = 0;
           PTR_g_ui_00025d54->dsp_key_func_short = 0;
@@ -644,12 +651,15 @@ void key_dsp_release(void)
               }
             }
             else if (bVar2 == 1) {
+                    /* DSP key short press with knob function 1 [doc] */
               dsp_knob_width_toggle();
             }
             else if (bVar2 == 2) {
+                    /* DSP key short press with knob function 2 [doc] */
               dsp_knob_notch_toggle();
             }
             else if (bVar2 == 0) {
+                    /* DSP key short press with knob function 0 [doc] */
               dsp_knob_shift_toggle();
             }
           }
@@ -675,8 +685,8 @@ void key_dsp_release(void)
     }
     else if (PTR_g_ui_00025d54->dsp_key_state != 2) {
       bVar2 = vfo_mode(0);
-      uVar3 = (uint)bVar2;
-      if ((uVar3 - 6 < 2) || (uVar3 == 10 || uVar3 == 0xb)) {
+      vfo_mode_ret = (uint)bVar2;
+      if ((vfo_mode_ret - 6 < 2) || (vfo_mode_ret == 10 || vfo_mode_ret == 0xb)) {
         beep_request(3);
         PTR_g_ui_00025d54->key_consumed = 1;
       }

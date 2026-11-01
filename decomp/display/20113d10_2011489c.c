@@ -19,18 +19,27 @@ void key_task_resume(void)
 void dimmer_pwm_init(void)
 
 {
-  byte bVar1;
+  byte mtu2_tstr;
   
+                    /* Timer control_0 [sfr] */
   MTU2_TCR_0 = 0x22;
+                    /* Timer counter_0 [sfr] */
   MTU2_TCNT_0 = 0;
+                    /* Timer general A_0 [sfr] */
   MTU2_TGRA_0 = 19999;
+                    /* Timer general B_0 [sfr] */
   MTU2_TGRB_0 = 0;
+                    /* Timer general C_0 [sfr] */
   MTU2_TGRC_0 = 0;
+                    /* Timer general D_0 [sfr] */
   MTU2_TGRD_0 = 0;
+                    /* Timer I/O control H_0 [sfr] */
   MTU2_TIORH_0 = 0x12;
+                    /* Timer mode_0 [sfr] */
   MTU2_TMDR_0 = 2;
-  bVar1 = MTU2_TSTR;
-  MTU2_TSTR = bVar1 | 1;
+                    /* Timer start [sfr] */
+  mtu2_tstr = MTU2_TSTR;
+  MTU2_TSTR = mtu2_tstr | 1;
   return;
 }
 
@@ -42,8 +51,8 @@ void dimmer_pwm_init(void)
 void dimmer_set_pct(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint div10_round_ret;
+  int iVar1;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -51,12 +60,13 @@ void dimmer_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  uVar1 = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
-  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
-  if (iVar2 == 20000) {
-    iVar2 = 19999;
+  div10_round_ret = div10_round(param_1 * 20000,param_1 * 20000 >> 0x1f);
+  iVar1 = div10_round(div10_round_ret,(int)div10_round_ret >> 0x1f);
+  if (iVar1 == 20000) {
+    iVar1 = 19999;
   }
-  MTU2_TGRB_0 = (short)iVar2 + -1;
+                    /* Timer general B_0 [sfr] */
+  MTU2_TGRB_0 = (short)iVar1 + -1;
   return;
 }
 
@@ -102,13 +112,13 @@ void FUN_20113de0(int param_1,undefined1 param_2)
 void mouse_cursor_init(void)
 
 {
-  uint uVar1;
+  uint itron_acre_tsk_ret;
   
   __aeabi_memclr4(&DAT_208d9c40,0x5a0);
   DAT_20800330 = FUN_2015f040(&DAT_208d9c40);
-  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_56e4);
-  if (0 < (int)uVar1) {
-    itron_sta_tsk(uVar1,DAT_20800330);
+  itron_acre_tsk_ret = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_56e4);
+  if (0 < (int)itron_acre_tsk_ret) {
+    itron_sta_tsk(itron_acre_tsk_ret,DAT_20800330);
     return;
   }
   return;
@@ -247,18 +257,19 @@ void mouse_cursor_get_pos(void *param_1,void *param_2)
 void task_powon(void)
 
 {
-  ushort uVar1;
-  void *pvVar2;
+  void *itron_twai_flg_ret;
   uint uStack_4;
+  ushort port_ppr2;
   
   do {
     do {
       do {
-        pvVar2 = itron_twai_flg(DAT_20800358,1,5,&uStack_4,-1);
-      } while (pvVar2 != (void *)0x0);
+        itron_twai_flg_ret = itron_twai_flg(DAT_20800358,1,5,&uStack_4,-1);
+      } while (itron_twai_flg_ret != (void *)0x0);
     } while (uStack_4 != 1);
-    uVar1 = PORT_PPR2;
-    key_set_power_level(uVar1 & 1);
+    port_ppr2 = PORT_PPR2;
+                    /* Port pin read_2 [sfr] */
+    key_set_power_level(port_ppr2 & 1);
     gic_enable_irq(0x25);
   } while( true );
 }
@@ -276,6 +287,7 @@ void powon_isr(void)
   gic_disable_irq(0x25);
   itron_set_flg(DAT_20800358,1);
   itron_iwup_tsk(DAT_2080035c);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x20) != 0) {
     uVar1 = INTC_IRQRR;
@@ -295,6 +307,7 @@ void powon_init(void)
   ushort uVar1;
   uint uVar2;
   
+                    /* Interrupt control 1 [sfr] */
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
@@ -406,14 +419,14 @@ uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined
 void rtc_delay(void)
 
 {
-  int iVar1;
-  bool bVar2;
+  int i;
+  bool bVar1;
   
-  iVar1 = 0x14;
+  i = 0x14;
   do {
-    bVar2 = iVar1 != 0;
-    iVar1 = iVar1 + -1;
-  } while (bVar2);
+    bVar1 = i != 0;
+    i = i + -1;
+  } while (bVar1);
   return;
 }
 
@@ -423,10 +436,11 @@ void rtc_delay(void)
 void rtc_send_byte(uint param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 0;
+  i = 0;
   do {
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     if ((param_1 & 1) == 0) {
       PORT_PSR1 = 0x10000;
@@ -438,8 +452,8 @@ void rtc_send_byte(uint param_1)
     PORT_PSR1 = 0x20002;
     param_1 = param_1 >> 1;
     rtc_delay();
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 8);
+    i = i + 1;
+  } while (i < 8);
   return;
 }
 
@@ -462,27 +476,29 @@ void rtc_send_bytes(void *param_1,int param_2)
 byte rtc_recv_byte(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
-  int iVar3;
+  uint uVar1;
+  int i;
+  ushort port_ppr1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   rtc_dt_input();
-  iVar3 = 0;
+  i = 0;
   do {
-    uVar2 = uVar2 >> 1;
+    uVar1 = uVar1 >> 1;
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     rtc_delay();
-    uVar1 = PORT_PPR1;
+                    /* Port pin read_1 [sfr] */
+    port_ppr1 = PORT_PPR1;
     PORT_PSR1 = 0x20002;
-    if ((uVar1 & 1) != 0) {
-      uVar2 = uVar2 | 0x80;
+    if ((port_ppr1 & 1) != 0) {
+      uVar1 = uVar1 | 0x80;
     }
     rtc_delay();
-    iVar3 = iVar3 + 1;
-  } while (iVar3 < 8);
+    i = i + 1;
+  } while (i < 8);
   rtc_dt_output();
-  return (byte)uVar2;
+  return (byte)uVar1;
 }
 
 
@@ -491,11 +507,11 @@ byte rtc_recv_byte(void)
 void rtc_recv_bytes(void *param_1,int param_2)
 
 {
-  byte bVar1;
+  byte rtc_recv_byte_ret;
   
   for (; param_2 != 0; param_2 = param_2 + -1) {
-    bVar1 = rtc_recv_byte();
-    *(byte *)param_1 = bVar1;
+    rtc_recv_byte_ret = rtc_recv_byte();
+    *(byte *)param_1 = rtc_recv_byte_ret;
     param_1 = (byte *)((int)param_1 + 1);
   }
   return;
@@ -509,18 +525,19 @@ void rtc_recv_bytes(void *param_1,int param_2)
 byte rtc_read_reg(uint param_1)
 
 {
-  byte bVar1;
+  byte rtc_recv_byte_ret;
   
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(param_1 | 0x86);
-  bVar1 = rtc_recv_byte();
+  rtc_recv_byte_ret = rtc_recv_byte();
   rtc_delay();
   PORT_PSR1 = 0x40000;
   itron_unl_mtx(DAT_20800368);
   rtc_delay();
-  return bVar1;
+  return rtc_recv_byte_ret;
 }
 
 
@@ -536,6 +553,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
   local_10._2_2_ = (undefined2)((uint)param_4 >> 0x10);
   local_10 = CONCAT22(local_10._2_2_,CONCAT11(param_2,param_1)) | 6;
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_bytes(&local_10,2);
@@ -553,6 +571,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
 void rtc_port_idle(void)
 
 {
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x20002;
   PORT_PSR1 = 0x40000;
   return;
@@ -567,6 +586,7 @@ void rtc_write_datetime_raw(uint param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x26);
@@ -586,6 +606,7 @@ void rtc_write_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x66);
@@ -605,6 +626,7 @@ void rtc_read_datetime_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xa6);
@@ -625,6 +647,7 @@ void rtc_read_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xe6);
@@ -844,6 +867,7 @@ void rtc_init(void)
 {
   t_cmtx local_10;
   
+                    /* CK high, CS low [doc, inference] */
   rtc_port_idle();
   rtc_write_reg(0,2);
   rtc_write_reg(0x40,0);

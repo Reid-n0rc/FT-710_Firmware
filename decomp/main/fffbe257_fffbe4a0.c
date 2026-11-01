@@ -309,6 +309,7 @@ void FUN_fffbe370(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   beep_request(1);
   return;
@@ -321,6 +322,7 @@ void FUN_fffbe388(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   DAT_0001b4dc = 1;
@@ -335,6 +337,7 @@ void FUN_fffbe3b3(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   return;
@@ -356,6 +359,7 @@ void FUN_fffbe3d0(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   beep_request(1);
   return;
@@ -368,6 +372,7 @@ void FUN_fffbe3e8(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   DAT_0001b4dc = 1;
@@ -382,6 +387,7 @@ void FUN_fffbe413(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   return;

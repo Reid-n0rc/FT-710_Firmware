@@ -7,6 +7,7 @@
 void ai_ex060518(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(5);
   return;
 }
@@ -90,31 +91,31 @@ short ai_ex_fmt_u8(byte param_1,char param_2,int param_3)
 short ai_ex_fmt_u16_4(ushort param_1)
 
 {
-  char cVar1;
-  uint uVar2;
-  ushort uVar3;
+  char nib2hex_ret;
+  uint uVar1;
+  ushort uVar2;
   ushort local_c;
-  byte local_a;
+  byte i;
   ushort local_6;
   
   local_c = 1000;
   local_6 = param_1;
-  for (local_a = 0; local_a < 4; local_a = local_a + 1) {
-    uVar2 = (uint)local_6;
+  for (i = 0; i < 4; i = i + 1) {
+    uVar1 = (uint)local_6;
     if (local_c != 0) {
-      uVar2 = uVar2 / local_c;
+      uVar1 = uVar1 / local_c;
     }
-    uVar3 = local_6;
+    uVar2 = local_6;
     if (local_c != 0) {
-      uVar3 = local_6 / local_c;
+      uVar2 = local_6 / local_c;
     }
-    local_6 = local_6 - uVar3 * local_c;
+    local_6 = local_6 - uVar2 * local_c;
     local_c = local_c / 10;
-    cVar1 = nib2hex((byte)uVar2);
-    (&DAT_0001b23d)[local_a] = cVar1;
+    nib2hex_ret = nib2hex((byte)uVar1);
+    (&DAT_0001b23d)[i] = nib2hex_ret;
   }
-  (&DAT_0001b23d)[local_a] = 0x3b;
-  return (byte)(local_a + 1) + 8;
+  (&DAT_0001b23d)[i] = 0x3b;
+  return (byte)(i + 1) + 8;
 }
 
 
@@ -126,6 +127,7 @@ void tuner_init(void)
 
 {
   tuner_task();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -139,13 +141,16 @@ void tuner_task(void)
 
 {
   if (g_opstate.ex030104_tuner_type_select == 3) {
+                    /* tuner_task for TUNER TYPE SELECT 3 [doc] */
     tuner_atas_task();
     return;
   }
   if (1 < g_opstate.ex030104_tuner_type_select) {
+                    /* tuner_task for TUNER TYPE SELECT 2 [doc] */
     tuner_ext_task();
     return;
   }
+                    /* tuner_task for TUNER TYPE SELECT 0/1 [doc] */
   tuner_int_task();
   return;
 }
@@ -229,14 +234,14 @@ void FUN_fffec52d(void)
 void vfo_tuner_bit_set(char param_1)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
   if (param_1 != '\0') {
-    pbVar1[1] = pbVar1[1] | 4;
+    vfo_rec_ptr_ret[1] = vfo_rec_ptr_ret[1] | 4;
     return;
   }
-  pbVar1[1] = pbVar1[1] & 0xfb;
+  vfo_rec_ptr_ret[1] = vfo_rec_ptr_ret[1] & 0xfb;
   return;
 }
 
@@ -249,10 +254,10 @@ void vfo_tuner_bit_set(char param_1)
 bool vfo_tuner_bit_get(void)
 
 {
-  byte *pbVar1;
+  byte *vfo_rec_ptr_ret;
   
-  pbVar1 = vfo_rec_ptr(1);
-  return (pbVar1[1] & 4) != 0;
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  return (vfo_rec_ptr_ret[1] & 4) != 0;
 }
 
 
@@ -290,6 +295,7 @@ void tuner_rearm(void)
     }
   }
   else if (g_opstate.ex030104_tuner_type_select < 2) {
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
     iVar2 = vfo_tuner_bit_get();
     if (iVar2 == 0) {
       if ((g_ui.atu_state == 1) || (g_ui.atu_state == 2)) {
@@ -323,7 +329,7 @@ void tuner_int_task(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte blink_phase_ret;
   
   g_ui.tuner_indicator = 0;
   if ((g_ui.atu_state == 2) || (g_ui.atu_state == 1)) {
@@ -334,7 +340,7 @@ void tuner_int_task(void)
   }
   if (bVar1) {
     g_ui.tuner_indicator = 1;
-    if ((g_ui.tune_cycle_3d == 2) && (bVar2 = blink_phase(0), bVar2 == 0)) {
+    if ((g_ui.tune_cycle_3d == 2) && (blink_phase_ret = blink_phase(0), blink_phase_ret == 0)) {
       bVar1 = true;
     }
     else {
@@ -420,10 +426,10 @@ void FUN_fffec70a(void)
 void FUN_fffec728(void)
 
 {
-  uint uVar1;
   char cStack_5;
+  uint g_ui_freq_tx_val;
   
-  uVar1 = g_ui.freq_tx;
+  g_ui_freq_tx_val = g_ui.freq_tx;
   if (g_ui.tune_cycle_3d == 1) {
     DAT_0001b3ac = 2;
   }
@@ -437,17 +443,18 @@ void FUN_fffec728(void)
     if (g_ui.atu_state == 1) {
       cStack_5 = FUN_fffecfac(g_ui.freq_tx);
       if (cStack_5 == -1) {
-        cStack_5 = FUN_fffed0ae(uVar1);
+        cStack_5 = FUN_fffed0ae(g_ui_freq_tx_val);
       }
       if (cStack_5 != -1) {
-        DAT_00025d00 = uVar1;
-        DAT_0001b3bb = tx_band_of_freq(uVar1);
+        DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
+        DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
         FUN_fffed12f();
         g_ui.atu_state = 2;
       }
     }
   }
-  if ((g_ui.atu_state == 2) && (DAT_00025d00 / 10000 != uVar1 / 10000)) {
+  if ((g_ui.atu_state == 2) && (DAT_00025d00 / 10000 != g_ui_freq_tx_val / 10000)) {
     g_ui.atu_state = 1;
     return;
   }
@@ -460,14 +467,15 @@ void FUN_fffec728(void)
 void FUN_fffec7f9(void)
 
 {
-  uint uVar1;
-  bool bVar2;
+  bool tx_freq_allowed_ret;
+  uint g_ui_freq_tx_val;
   
-  uVar1 = g_ui.freq_tx;
-  bVar2 = tx_freq_allowed(g_ui.freq_tx);
-  if (bVar2) {
-    DAT_00025d00 = uVar1;
-    DAT_0001b3bb = tx_band_of_freq(uVar1);
+  g_ui_freq_tx_val = g_ui.freq_tx;
+  tx_freq_allowed_ret = tx_freq_allowed(g_ui.freq_tx);
+  if (tx_freq_allowed_ret) {
+    DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
+    DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
     FUN_fffec493();
     g_ui.tune_cycle_3d = 2;
     g_ui.ptt_atu_tune = 1;
@@ -489,10 +497,10 @@ void FUN_fffec7f9(void)
 void FUN_fffec881(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x27);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   swtimer_start(0x27,0xa0);
@@ -506,17 +514,17 @@ void FUN_fffec881(void)
 void FUN_fffec8a1(void)
 
 {
-  byte bVar1;
-  uint uVar2;
+  byte swtimer_expired_ret;
+  uint uVar1;
   
-  bVar1 = swtimer_expired(0x27);
-  uVar2 = 0;
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  uVar1 = 0;
+  if (swtimer_expired_ret == 0) {
     return;
   }
   DAT_00025d04 = (float)FUN_fffb6e5c();
   if (DAT_00025d04 <= 4.3) {
-    if (1.1 < DAT_00025d04 != (bool)((byte)(uVar2 >> 3) & 1)) {
+    if (1.1 < DAT_00025d04 != (bool)((byte)(uVar1 >> 3) & 1)) {
       send_a_set(0);
       send_b_set(0);
       swtimer_start(0x27,5);
@@ -541,10 +549,10 @@ void FUN_fffec8a1(void)
 void FUN_fffec911(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x27);
-  if (bVar1 != 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  if (swtimer_expired_ret != 0) {
     DAT_0001b3b2 = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 10];
     DAT_0001b3ae = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 0xb];
     DAT_0001b3b4 = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 0xc];
@@ -565,10 +573,10 @@ void FUN_fffec911(void)
 void FUN_fffec9b4(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x27);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   FUN_fffed12f();
@@ -588,14 +596,14 @@ void FUN_fffec9b4(void)
 void FUN_fffec9ed(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   if (g_ui.atu_state == 3) {
     DAT_0001b3ac = 0xf;
     return;
   }
-  bVar1 = swtimer_expired(0x27);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   send_a_set(1);
@@ -616,10 +624,10 @@ void FUN_fffec9ed(void)
 void FUN_fffeca48(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x27);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   swtimer_start(0x27,5);
@@ -639,27 +647,27 @@ void FUN_fffeca7e(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  float fVar3;
-  uint uVar4;
+  byte swtimer_expired_ret;
+  float fVar2;
+  uint uVar3;
   
-  bVar2 = swtimer_expired(0x27);
-  uVar4 = 0;
-  if (bVar2 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  uVar3 = 0;
+  if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar3 = (float)FUN_fffb6e4e();
-  if ((fVar3 - 1.0 < 0.0 != (bool)((byte)(uVar4 >> 3) & 1)) || (DAT_00025cfc <= fVar3)) {
+  fVar2 = (float)FUN_fffb6e4e();
+  if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
   else {
     bVar1 = true;
   }
   if (bVar1) {
-    DAT_00025cfc = fVar3;
+    DAT_00025cfc = fVar2;
     DAT_0001b3b9 = DAT_0001b3ad;
     DAT_0001b3ba = DAT_0001b3af;
-    if ((g_opstate.ex030104_tuner_type_select == 1) && (fVar3 <= 1.5)) {
+    if ((g_opstate.ex030104_tuner_type_select == 1) && (fVar2 <= 1.5)) {
       DAT_0001b3ac = 9;
       return;
     }
@@ -744,17 +752,17 @@ void FUN_fffecce7(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  float fVar3;
-  uint uVar4;
+  byte swtimer_expired_ret;
+  float fVar2;
+  uint uVar3;
   
-  bVar2 = swtimer_expired(0x27);
-  uVar4 = 0;
-  if (bVar2 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x27);
+  uVar3 = 0;
+  if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar3 = (float)FUN_fffb6e4e();
-  if ((fVar3 - 1.0 < 0.0 != (bool)((byte)(uVar4 >> 3) & 1)) || (DAT_00025cfc <= fVar3)) {
+  fVar2 = (float)FUN_fffb6e4e();
+  if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
   else {
@@ -763,7 +771,7 @@ void FUN_fffecce7(void)
   if (bVar1) {
     DAT_0001b3b9 = DAT_0001b3ad;
     DAT_0001b3ba = DAT_0001b3af;
-    DAT_00025cfc = fVar3;
+    DAT_00025cfc = fVar2;
   }
   if ((ushort)DAT_0001b3b7 < (ushort)((ushort)DAT_0001b3b0 + (ushort)DAT_0001b3b4)) {
     DAT_0001b3b0 = DAT_0001b3b8;
@@ -861,15 +869,15 @@ void atu_mem_store(void)
 
 {
   uint uVar1;
-  byte bStack_16;
+  byte i;
   byte bStack_15;
   undefined1 uStack_4;
   
   uVar1 = FUN_fffb4135(DAT_00025d00);
   bStack_15 = 0xff;
-  bStack_16 = 0;
+  i = 0;
   do {
-    if (DAT_00009899 <= bStack_16) {
+    if (DAT_00009899 <= i) {
 LAB_fffecf38:
       if (bStack_15 == 0xff) {
         (&DAT_0000989a)[(uint)DAT_00009898 * 4] = (char)(uVar1 >> 0x18);
@@ -890,14 +898,14 @@ LAB_fffecf38:
       eeprom_save_atu_mem();
       return;
     }
-    if (uVar1 >> 0x10 ==
-        (uint)CONCAT11((&DAT_0000989a)[(uint)bStack_16 * 4],(&DAT_0000989b)[(uint)bStack_16 * 4])) {
-      (&DAT_0000989c)[(uint)bStack_16 * 4] = DAT_0001b3af;
-      (&DAT_0000989d)[(uint)bStack_16 * 4] = DAT_0001b3ad;
-      bStack_15 = bStack_16;
+    if (uVar1 >> 0x10 == (uint)CONCAT11((&DAT_0000989a)[(uint)i * 4],(&DAT_0000989b)[(uint)i * 4]))
+    {
+      (&DAT_0000989c)[(uint)i * 4] = DAT_0001b3af;
+      (&DAT_0000989d)[(uint)i * 4] = DAT_0001b3ad;
+      bStack_15 = i;
       goto LAB_fffecf38;
     }
-    bStack_16 = bStack_16 + 1;
+    i = i + 1;
   } while( true );
 }
 
@@ -916,7 +924,7 @@ byte FUN_fffecfac(char *param_1)
   byte bVar2;
   int iVar3;
   byte local_25;
-  byte local_1d;
+  byte i;
   char *pcStack_1c;
   char *pcStack_18;
   char *local_10;
@@ -930,9 +938,8 @@ byte FUN_fffecfac(char *param_1)
     local_10 = "RADIO SETTING       CW SETTING          OPERATION SETTING   DISPLAY SETTING     EXTENSION SETTING   PRESET              MODE SSB     MODE AM      MODE FM      MODE PSK/DATAMODE RTTY    MODE CW      KEYER        GENERAL      RX DSP       TX AUDIO     TX GENERAL   TUNING       DISPLAY      SCOPE        VFO IND COLOREXT MONITOR  DATE&TIME    SD CARD      SOFT VERSION CALIBRATION  RESET        CERTIFICATIONPRESET1      PRESET2      PRESET3      PRESET4      PRESET5      6dB/oct              18dB/oct              50-3050Hz           100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz            50-4000Hz           TTBF                 100-2900Hz           200-2800Hz           300-2700Hz           400-2600Hz           MIC                  USB                  REAR                 AUTO                 OFF                  RTS                  DTR                  DAKY                 300Hz                400Hz                600Hz                850Hz                1100Hz               1200Hz               1500Hz               1650Hz               1800Hz               1950Hz               2100Hz               2250Hz               2400Hz               2450Hz               2500Hz               2600Hz               2700Hz               2800Hz               2900Hz               3000Hz               3200Hz               3500Hz               4000Hz               50Hz                 100Hz                150Hz                200Hz                250Hz                300Hz                350Hz                400Hz                450Hz                500Hz                600Hz                800Hz                1200Hz               1400Hz               1700Hz               2000Hz               2400Hz               3000Hz               3200Hz               3500Hz               4000Hz               OFF                  50M                  ON                   -                    SIMP                 +                    OFF                  ENC                  TSQ                  67.0                 69..." /* TRUNCATED STRING LITERAL */
                + (int)(param_1 + 0x29cc);
   }
-  for (local_1d = 0; local_1d < bVar2; local_1d = local_1d + 1) {
-    iVar3 = FUN_fffb2fec(CONCAT11((&DAT_0000989a)[(uint)local_1d * 4],
-                                  (&DAT_0000989b)[(uint)local_1d * 4]));
+  for (i = 0; i < bVar2; i = i + 1) {
+    iVar3 = FUN_fffb2fec(CONCAT11((&DAT_0000989a)[(uint)i * 4],(&DAT_0000989b)[(uint)i * 4]));
     pcStack_1c = (char *)(iVar3 * 10000);
     if ((pcStack_1c < local_10) || (param_1 + 500000 < pcStack_1c)) {
       bVar1 = false;
@@ -948,11 +955,11 @@ byte FUN_fffecfac(char *param_1)
         pcStack_1c = pcStack_1c + -(int)param_1;
       }
       if (local_25 == 0xff) {
-        local_25 = local_1d;
+        local_25 = i;
         pcStack_18 = pcStack_1c;
       }
       else if (pcStack_1c < pcStack_18) {
-        local_25 = local_1d;
+        local_25 = i;
         pcStack_18 = pcStack_1c;
       }
     }
@@ -976,21 +983,21 @@ byte FUN_fffed0ae(uint param_1)
 
 {
   int iVar1;
-  byte local_d;
+  byte i;
   
-  local_d = 0;
+  i = 0;
   while( true ) {
-    if (0xa9 < local_d) {
+    if (0xa9 < i) {
       return 0xff;
     }
-    iVar1 = FUN_fffb2fec(CONCAT11(BYTE_ARRAY_fff87bf2[(uint)local_d * 4 + 0x36],
-                                  BYTE_ARRAY_fff87bf2[(uint)local_d * 4 + 0x37]));
+    iVar1 = FUN_fffb2fec(CONCAT11(BYTE_ARRAY_fff87bf2[(uint)i * 4 + 0x36],
+                                  BYTE_ARRAY_fff87bf2[(uint)i * 4 + 0x37]));
     if (param_1 < (uint)(iVar1 * 10000)) break;
-    local_d = local_d + 1;
+    i = i + 1;
   }
-  DAT_0001b3ae = BYTE_ARRAY_fff87bf2[(uint)local_d * 4 + 0x39];
-  DAT_0001b3b0 = BYTE_ARRAY_fff87bf2[(uint)local_d * 4 + 0x38];
-  return local_d;
+  DAT_0001b3ae = BYTE_ARRAY_fff87bf2[(uint)i * 4 + 0x39];
+  DAT_0001b3b0 = BYTE_ARRAY_fff87bf2[(uint)i * 4 + 0x38];
+  return i;
 }
 
 
@@ -1107,14 +1114,14 @@ void FUN_fffed2a9(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  int iVar3;
+  byte swtimer_expired_ret;
+  int iVar2;
   
   if (g_ui.tx_lamp == 0) {
     tuner_tune_state_set(0);
     return;
   }
-  if ((g_ui.tuner_result == 0) || (iVar3 = FUN_fffed61e(), iVar3 == 0)) {
+  if ((g_ui.tuner_result == 0) || (iVar2 = FUN_fffed61e(), iVar2 == 0)) {
     bVar1 = false;
   }
   else {
@@ -1137,8 +1144,8 @@ void FUN_fffed2a9(void)
       return;
     }
     g_ui.tuner_result = 1;
-    bVar2 = swtimer_expired(0x20);
-    if (bVar2 != 0) {
+    swtimer_expired_ret = swtimer_expired(0x20);
+    if (swtimer_expired_ret != 0) {
       g_ui.tuner_key_req = 0;
       return;
     }
@@ -1224,6 +1231,7 @@ void FUN_fffed401(void)
     swtimer_start(0x20,60000);
   }
   else {
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
     iVar1 = tx_band_of_freq(g_ui.freq_tx);
     if (iVar1 == 9) {
       DAT_0001b3c0 = '\x01';
@@ -1244,10 +1252,10 @@ void FUN_fffed401(void)
 void FUN_fffed48f(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x20);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x20);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   if (DAT_0001b3bf == '\0') {
@@ -1274,14 +1282,14 @@ void FUN_fffed48f(void)
 void FUN_fffed50f(void)
 
 {
-  byte bVar1;
-  float fVar2;
-  uint uVar3;
+  byte swtimer_expired_ret;
+  float fVar1;
+  uint uVar2;
   
-  uVar3 = (uint)SBORROW4((int)&stack0x00000000,4) << 3;
-  fVar2 = (float)FUN_fffb6e4e();
-  if (2.0 < fVar2 == (bool)((byte)(uVar3 >> 3) & 1)) {
-    if (DAT_00025d10 < fVar2) {
+  uVar2 = (uint)SBORROW4((int)&stack0x00000000,4) << 3;
+  fVar1 = (float)FUN_fffb6e4e();
+  if (2.0 < fVar1 == (bool)((byte)(uVar2 >> 3) & 1)) {
+    if (DAT_00025d10 < fVar1) {
       DAT_0001b3c2 = DAT_0001b3c2 + 1;
     }
     else {
@@ -1291,15 +1299,15 @@ void FUN_fffed50f(void)
   else {
     DAT_0001b3c2 = 0;
   }
-  DAT_00025d10 = fVar2;
+  DAT_00025d10 = fVar1;
   if (2 < DAT_0001b3c2) {
     g_ui.tuner_result = 1;
     swtimer_start(0x20,2000);
     DAT_0001b3be = 4;
     return;
   }
-  bVar1 = swtimer_expired(0x20);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x20);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   if (DAT_0001b3c1 == '\0') {
@@ -1318,11 +1326,11 @@ void FUN_fffed50f(void)
 void FUN_fffed5c5(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   DAT_0001b3bf = 1;
-  bVar1 = swtimer_expired(0x20);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x20);
+  if (swtimer_expired_ret == 0) {
     return;
   }
   DAT_0001b3be = 5;
@@ -1361,10 +1369,10 @@ void FUN_fffed5ea(void)
 bool FUN_fffed61e(void)
 
 {
-  bool bVar1;
+  bool atas_det_ret;
   
-  bVar1 = atas_det();
-  return bVar1;
+  atas_det_ret = atas_det();
+  return atas_det_ret;
 }
 
 

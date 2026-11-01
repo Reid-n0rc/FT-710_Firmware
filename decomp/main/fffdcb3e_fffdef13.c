@@ -9,7 +9,7 @@ void menuitem_EX060408(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -32,7 +32,7 @@ void menuitem_EX060408(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff86fc7;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -63,7 +63,7 @@ void menuitem_EX060409(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -86,7 +86,7 @@ void menuitem_EX060409(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff86fdc;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -117,7 +117,7 @@ void menuitem_EX060410(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -140,7 +140,7 @@ void menuitem_EX060410(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff86ff1;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -171,7 +171,7 @@ void menuitem_EX060411(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -194,7 +194,7 @@ void menuitem_EX060411(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff87006;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -225,7 +225,7 @@ void menuitem_EX060412(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -248,7 +248,7 @@ void menuitem_EX060412(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff8701b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -279,7 +279,7 @@ void menuitem_EX060413(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -302,7 +302,7 @@ void menuitem_EX060413(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff87030;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -333,7 +333,7 @@ void menuitem_EX060414(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -356,7 +356,7 @@ void menuitem_EX060414(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff87045;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -387,7 +387,7 @@ void menuitem_EX060415(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -410,7 +410,7 @@ void menuitem_EX060415(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff8705a;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -441,7 +441,7 @@ void menuitem_EX060416(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -464,7 +464,7 @@ void menuitem_EX060416(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff8706f;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -495,7 +495,7 @@ void menuitem_EX060417(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -518,7 +518,7 @@ void menuitem_EX060417(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff87084;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -549,7 +549,7 @@ void menuitem_EX060418(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -572,7 +572,7 @@ void menuitem_EX060418(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff87099;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -603,7 +603,7 @@ void menuitem_EX060501(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -626,7 +626,7 @@ void menuitem_EX060501(void)
   local_38[5] = 0;
   pbVar2 = (byte *)0xfff870ae;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -657,7 +657,7 @@ void menuitem_EX060502(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -680,7 +680,7 @@ void menuitem_EX060502(void)
   local_38[5] = 1;
   pbVar2 = (byte *)0xfff870c3;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -711,7 +711,7 @@ void menuitem_EX060503(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -734,7 +734,7 @@ void menuitem_EX060503(void)
   local_38[5] = 2;
   pbVar2 = (byte *)0xfff870d8;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -765,7 +765,7 @@ void menuitem_EX060504(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -788,7 +788,7 @@ void menuitem_EX060504(void)
   local_38[5] = 3;
   pbVar2 = (byte *)0xfff870ed;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -819,7 +819,7 @@ void menuitem_EX060505(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -842,7 +842,7 @@ void menuitem_EX060505(void)
   local_38[5] = 4;
   pbVar2 = (byte *)0xfff87102;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -873,7 +873,7 @@ void menuitem_EX060506(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -896,7 +896,7 @@ void menuitem_EX060506(void)
   local_38[5] = 5;
   pbVar2 = (byte *)0xfff87117;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -927,7 +927,7 @@ void menuitem_EX060507(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -950,7 +950,7 @@ void menuitem_EX060507(void)
   local_38[5] = 6;
   pbVar2 = (byte *)0xfff8712c;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -981,7 +981,7 @@ void menuitem_EX060508(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1004,7 +1004,7 @@ void menuitem_EX060508(void)
   local_38[5] = 7;
   pbVar2 = (byte *)0xfff87141;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1035,7 +1035,7 @@ void menuitem_EX060509(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1058,7 +1058,7 @@ void menuitem_EX060509(void)
   local_38[5] = 8;
   pbVar2 = (byte *)0xfff87156;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1089,7 +1089,7 @@ void menuitem_EX060510(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1112,7 +1112,7 @@ void menuitem_EX060510(void)
   local_38[5] = 9;
   pbVar2 = (byte *)0xfff8716b;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1143,7 +1143,7 @@ void menuitem_EX060511(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1166,7 +1166,7 @@ void menuitem_EX060511(void)
   local_38[5] = 10;
   pbVar2 = (byte *)0xfff87180;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1197,7 +1197,7 @@ void menuitem_EX060512(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1220,7 +1220,7 @@ void menuitem_EX060512(void)
   local_38[5] = 0xb;
   pbVar2 = (byte *)0xfff87195;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1251,7 +1251,7 @@ void menuitem_EX060513(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1274,7 +1274,7 @@ void menuitem_EX060513(void)
   local_38[5] = 0xc;
   pbVar2 = (byte *)0xfff871aa;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1305,7 +1305,7 @@ void menuitem_EX060514(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1328,7 +1328,7 @@ void menuitem_EX060514(void)
   local_38[5] = 0xd;
   pbVar2 = (byte *)0xfff871bf;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1359,7 +1359,7 @@ void menuitem_EX060515(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1382,7 +1382,7 @@ void menuitem_EX060515(void)
   local_38[5] = 0xe;
   pbVar2 = (byte *)0xfff871d4;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1413,7 +1413,7 @@ void menuitem_EX060516(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1436,7 +1436,7 @@ void menuitem_EX060516(void)
   local_38[5] = 0xf;
   pbVar2 = (byte *)0xfff871e9;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1467,7 +1467,7 @@ void menuitem_EX060517(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1490,7 +1490,7 @@ void menuitem_EX060517(void)
   local_38[5] = 0x10;
   pbVar2 = (byte *)0xfff871fe;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1521,7 +1521,7 @@ void menuitem_EX060518(void)
 {
   byte *pbVar1;
   byte *pbVar2;
-  int iVar3;
+  int i;
   byte local_38 [28];
   code *local_1c;
   code *local_18;
@@ -1544,7 +1544,7 @@ void menuitem_EX060518(void)
   local_38[5] = 0x11;
   pbVar2 = (byte *)0xfff87213;
   pbVar1 = local_38 + 6;
-  for (iVar3 = 0x15; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x15; i != 0; i = i + -1) {
     *pbVar1 = *pbVar2;
     pbVar1 = pbVar1 + 1;
     pbVar2 = pbVar2 + 1;
@@ -1576,8 +1576,8 @@ void cat_ai_poll(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  int iVar3;
+  byte swtimer_expired_ret;
+  int iVar2;
   ushort local_2;
   
   if ((g_ui.cat_ai_on[0] == 1) || (g_ui.cat_ai_on[1] == 1)) {
@@ -1593,14 +1593,14 @@ void cat_ai_poll(void)
     bVar1 = false;
   }
   if (bVar1) {
-    iVar3 = cat_tx_busy(1);
-    if ((iVar3 == 0) && (iVar3 = cat_tx_busy(2), iVar3 == 0)) {
+    iVar2 = cat_tx_busy(1);
+    if ((iVar2 == 0) && (iVar2 = cat_tx_busy(2), iVar2 == 0)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (iVar3 = cat_tx_busy(3), iVar3 == 0)) {
+    if ((bVar1) && (iVar2 = cat_tx_busy(3), iVar2 == 0)) {
       bVar1 = true;
     }
     else {
@@ -1615,6 +1615,7 @@ void cat_ai_poll(void)
         local_2 = cat_ai_AO();
       }
       if (local_2 == 0) {
+                    /* AI change detector for AS [doc] */
         local_2 = cat_ai_AS(1);
       }
       if (local_2 == 0) {
@@ -1651,9 +1652,11 @@ void cat_ai_poll(void)
         local_2 = cat_ai_CT();
       }
       if (local_2 == 0) {
+                    /* AI change detector for the EX menu [doc, inference] */
         local_2 = cat_ai_ex();
       }
       if (local_2 == 0) {
+                    /* AI change detector for FA/FB [doc] */
         local_2 = cat_ai_FA_FB();
       }
       if (local_2 == 0) {
@@ -1666,12 +1669,14 @@ void cat_ai_poll(void)
         local_2 = cat_ai_GT();
       }
       if (local_2 == 0) {
+                    /* AI change detector for IF/OI [doc] */
         local_2 = cat_ai_IF_OI(0);
       }
       if (local_2 == 0) {
         local_2 = cat_ai_IF_OI(1);
       }
       if (local_2 == 0) {
+                    /* AI change detector for IS [doc] */
         local_2 = cat_ai_IS();
       }
       if (local_2 == 0) {
@@ -1813,11 +1818,12 @@ void cat_ai_poll(void)
         local_2 = cat_ai_VS();
       }
       if (local_2 == 0) {
+                    /* Sends FD00n<9 digits> [doc] */
         local_2 = cat_ai_FD();
       }
       if (DAT_000187c2 == '\x01') {
-        bVar2 = swtimer_expired(0x32);
-        if (bVar2 != 1) {
+        swtimer_expired_ret = swtimer_expired(0x32);
+        if (swtimer_expired_ret != 1) {
           return;
         }
         DAT_000187c2 = '\0';
@@ -1863,11 +1869,11 @@ ushort cat_ai_FD(void)
 
 {
   bool bVar1;
-  char cVar2;
-  uint uVar3;
+  char nib2hex_ret;
+  uint uVar2;
+  char *pcVar3;
   char *pcVar4;
-  char *pcVar5;
-  int iVar6;
+  int i;
   ushort uStack_26;
   char acStack_23 [4];
   undefined1 uStack_1f;
@@ -1879,14 +1885,14 @@ ushort cat_ai_FD(void)
   uint uStack_10;
   uint uStack_c;
   
-  uVar3 = vfo_freq(0,2);
-  bStack_11 = band_of_freq(uVar3);
-  pcVar5 = "FD000000000000;";
-  pcVar4 = acStack_23;
-  for (iVar6 = 0x10; iVar6 != 0; iVar6 = iVar6 + -1) {
-    *pcVar4 = *pcVar5;
+  uVar2 = vfo_freq(0,2);
+  bStack_11 = band_of_freq(uVar2);
+  pcVar4 = "FD000000000000;";
+  pcVar3 = acStack_23;
+  for (i = 0x10; i != 0; i = i + -1) {
+    *pcVar3 = *pcVar4;
+    pcVar3 = pcVar3 + 1;
     pcVar4 = pcVar4 + 1;
-    pcVar5 = pcVar5 + 1;
   }
   uStack_26 = 0;
   if (g_ui.tx_lamp == 1) {
@@ -1917,28 +1923,28 @@ ushort cat_ai_FD(void)
     for (bStack_12 = 0; bStack_12 < 9; bStack_12 = bStack_12 + 1) {
       if (uStack_10 == 0) {
         bStack_13 = (byte)uStack_c;
-        uVar3 = uStack_c;
+        uVar2 = uStack_c;
       }
       else {
         bStack_13 = (byte)(uStack_c / uStack_10);
-        uVar3 = uStack_c / uStack_10;
+        uVar2 = uStack_c / uStack_10;
       }
-      uStack_c = uStack_c - uVar3 * uStack_10;
+      uStack_c = uStack_c - uVar2 * uStack_10;
       uStack_10 = uStack_10 / 10;
-      uVar3 = (uint)bStack_12;
-      cVar2 = nib2hex(bStack_13);
-      acStack_1e[uVar3] = cVar2;
+      uVar2 = (uint)bStack_12;
+      nib2hex_ret = nib2hex(bStack_13);
+      acStack_1e[uVar2] = nib2hex_ret;
     }
     uStack_15 = 0x3b;
     uStack_26 = 0xf;
   }
   if (uStack_26 != 0) {
-    pcVar5 = acStack_23;
-    pcVar4 = &DAT_00015e06;
-    for (uVar3 = (uint)uStack_26; uVar3 != 0; uVar3 = uVar3 - 1) {
-      *pcVar4 = *pcVar5;
+    pcVar4 = acStack_23;
+    pcVar3 = &DAT_00015e06;
+    for (uVar2 = (uint)uStack_26; uVar2 != 0; uVar2 = uVar2 - 1) {
+      *pcVar3 = *pcVar4;
+      pcVar3 = pcVar3 + 1;
       pcVar4 = pcVar4 + 1;
-      pcVar5 = pcVar5 + 1;
     }
   }
   return uStack_26;
@@ -2050,6 +2056,7 @@ undefined2 cat_ai_AC(void)
         local_f[4] = 0x33;
       }
       else {
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
         iVar2 = vfo_tuner_bit_get();
         if (iVar2 == 1) {
           local_f[4] = 0x31;
@@ -2099,10 +2106,10 @@ undefined2 cat_ai_AG(void)
   bool bVar2;
   byte bVar3;
   byte bVar4;
-  char cVar5;
+  char nib2hex_ret;
+  char *pcVar5;
   char *pcVar6;
-  char *pcVar7;
-  int iVar8;
+  int i;
   char local_11 [8];
   byte local_9;
   byte local_8;
@@ -2136,7 +2143,9 @@ undefined2 cat_ai_AG(void)
     if (bVar2) {
       return 0;
     }
+                    /* Largest of 4 bytes at p [doc] */
     bVar3 = max4_u8(&DAT_0001b53e);
+                    /* Smallest of 4 bytes at p [doc] */
     bVar4 = min4_u8(&DAT_0001b53e);
     if ((int)((uint)bVar3 - (uint)bVar4) < 3) {
       return 0;
@@ -2151,15 +2160,15 @@ undefined2 cat_ai_AG(void)
     local_11[7] = local_11[7] - local_7 * local_8;
     local_8 = local_8 / 10;
     uVar1 = (uint)local_9;
-    cVar5 = nib2hex(local_7);
-    local_11[uVar1 + 3] = cVar5;
+    nib2hex_ret = nib2hex(local_7);
+    local_11[uVar1 + 3] = nib2hex_ret;
   }
-  pcVar7 = local_11;
-  pcVar6 = &DAT_00015e06;
-  for (iVar8 = 7; iVar8 != 0; iVar8 = iVar8 + -1) {
-    *pcVar6 = *pcVar7;
+  pcVar6 = local_11;
+  pcVar5 = &DAT_00015e06;
+  for (i = 7; i != 0; i = i + -1) {
+    *pcVar5 = *pcVar6;
+    pcVar5 = pcVar5 + 1;
     pcVar6 = pcVar6 + 1;
-    pcVar7 = pcVar7 + 1;
   }
   return 7;
 }
@@ -2178,7 +2187,7 @@ undefined2 cat_ai_AO(void)
 
 {
   uint uVar1;
-  char cVar2;
+  char nib2hex_ret;
   undefined2 local_12;
   undefined4 local_10;
   undefined2 local_c;
@@ -2204,8 +2213,8 @@ undefined2 cat_ai_AO(void)
       local_a = local_a - local_7 * local_8;
       local_8 = local_8 / 10;
       uVar1 = (uint)local_9;
-      cVar2 = nib2hex(local_7);
-      *(char *)((int)&local_10 + uVar1 + 2) = cVar2;
+      nib2hex_ret = nib2hex(local_7);
+      *(char *)((int)&local_10 + uVar1 + 2) = nib2hex_ret;
     }
     DAT_00015e0a = local_c;
     _DAT_00015e06 = local_10;
@@ -2226,10 +2235,10 @@ undefined2 cat_ai_AO(void)
 ushort cat_ai_AS(char param_1)
 
 {
-  char cVar1;
+  char nib2hex_ret;
+  char *pcVar1;
   char *pcVar2;
-  char *pcVar3;
-  uint uVar4;
+  uint uVar3;
   char local_15 [7];
   ushort local_e;
   byte bStack_c;
@@ -2242,8 +2251,9 @@ ushort cat_ai_AS(char param_1)
   local_e = 0;
   builtin_strncpy(local_15,"AS0000;",7);
   if (param_1 == '\x01') {
-    pcVar2 = (char *)aess_level_ptr();
-    bStack_9 = *pcVar2;
+                    /* Pointer to the active mode's AESS level byte [doc] */
+    pcVar1 = (char *)aess_level_ptr();
+    bStack_9 = *pcVar1;
     if (DAT_000187cb != bStack_9) {
       local_15[2] = 0x31;
       bStack_a = bStack_9 * '\x05';
@@ -2256,16 +2266,17 @@ ushort cat_ai_AS(char param_1)
         }
         bStack_a = bStack_a - bStack_9 * bStack_b;
         bStack_b = bStack_b / 10;
-        uVar4 = (uint)bStack_c;
-        cVar1 = nib2hex(bStack_9);
-        local_15[uVar4 + 3] = cVar1;
+        uVar3 = (uint)bStack_c;
+        nib2hex_ret = nib2hex(bStack_9);
+        local_15[uVar3 + 3] = nib2hex_ret;
       }
       local_e = 7;
     }
   }
   else if (param_1 == '\x02') {
-    pcVar2 = (char *)aess_mode_ptr();
-    bStack_9 = *pcVar2;
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
+    pcVar1 = (char *)aess_mode_ptr();
+    bStack_9 = *pcVar1;
     if (DAT_000187cc != bStack_9) {
       local_15[2] = 0x32;
       if (bStack_9 == '\0') {
@@ -2283,12 +2294,12 @@ ushort cat_ai_AS(char param_1)
     }
   }
   if (local_e != 0) {
-    pcVar3 = local_15;
-    pcVar2 = &DAT_00015e06;
-    for (uVar4 = (uint)local_e; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *pcVar2 = *pcVar3;
+    pcVar2 = local_15;
+    pcVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)local_e; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
-      pcVar3 = pcVar3 + 1;
     }
   }
   return local_e;
@@ -2309,7 +2320,7 @@ undefined2 cat_ai_AV(void)
 {
   uint uVar1;
   bool bVar2;
-  char cVar3;
+  char nib2hex_ret;
   undefined2 local_1a;
   undefined4 local_17;
   undefined2 local_13;
@@ -2351,8 +2362,8 @@ undefined2 cat_ai_AV(void)
       local_11 = local_11 - local_e * local_f;
       local_f = local_f / 10;
       uVar1 = (uint)local_10;
-      cVar3 = nib2hex(local_e);
-      *(char *)((int)&local_17 + uVar1 + 2) = cVar3;
+      nib2hex_ret = nib2hex(local_e);
+      *(char *)((int)&local_17 + uVar1 + 2) = nib2hex_ret;
     }
     DAT_00015e0a = local_13;
     _DAT_00015e06 = local_17;
@@ -2372,40 +2383,40 @@ undefined2 cat_ai_AV(void)
 undefined2 cat_ai_BC(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  byte *pbVar3;
+  byte vfo_mode_ret_2;
+  byte *vfo_rec_ptr_ret;
   undefined2 uStack_12;
   undefined4 uStack_f;
   byte bStack_a;
+  uint vfo_mode_ret;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar2 = vfo_mode(0);
-  uVar1 = (uint)bVar2;
-  if (uVar1 - 2 < 2) {
-    bStack_a = pbVar3[0x15];
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret - 2 < 2) {
+    bStack_a = vfo_rec_ptr_ret[0x15];
   }
-  else if (uVar1 - 4 < 2) {
-    bStack_a = pbVar3[0x33];
+  else if (vfo_mode_ret - 4 < 2) {
+    bStack_a = vfo_rec_ptr_ret[0x33];
   }
   else {
-    if (uVar1 - 6 < 2) {
+    if (vfo_mode_ret - 6 < 2) {
       return 0;
     }
-    if (1 < uVar1 - 8) {
-      if (uVar1 - 10 < 2) {
+    if (1 < vfo_mode_ret - 8) {
+      if (vfo_mode_ret - 10 < 2) {
         return 0;
       }
-      if (uVar1 - 0xc < 2) {
-        bStack_a = pbVar3[0x1f];
+      if (vfo_mode_ret - 0xc < 2) {
+        bStack_a = vfo_rec_ptr_ret[0x1f];
         goto LAB_fffde2eb;
       }
-      if (uVar1 != 0xe) {
-        bStack_a = pbVar3[0xb];
+      if (vfo_mode_ret != 0xe) {
+        bStack_a = vfo_rec_ptr_ret[0xb];
         goto LAB_fffde2eb;
       }
     }
-    bStack_a = pbVar3[0x29];
+    bStack_a = vfo_rec_ptr_ret[0x29];
   }
 LAB_fffde2eb:
   bStack_a = bStack_a & 0x80;
@@ -2438,39 +2449,39 @@ LAB_fffde2eb:
 undefined2 cat_ai_BI(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  byte *pbVar3;
+  byte vfo_mode_ret_2;
+  byte *vfo_rec_ptr_ret;
   undefined2 uStack_10;
   undefined4 uStack_e;
   byte bStack_a;
+  uint vfo_mode_ret;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar2 = vfo_mode(0);
-  uVar1 = (uint)bVar2;
-  if (uVar1 - 2 < 2) {
-    bStack_a = pbVar3[0x14];
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret - 2 < 2) {
+    bStack_a = vfo_rec_ptr_ret[0x14];
   }
-  else if (uVar1 - 4 < 2) {
-    bStack_a = pbVar3[0x32];
+  else if (vfo_mode_ret - 4 < 2) {
+    bStack_a = vfo_rec_ptr_ret[0x32];
   }
   else {
-    if (1 < uVar1 - 6) {
-      if (uVar1 - 8 < 2) {
+    if (1 < vfo_mode_ret - 6) {
+      if (vfo_mode_ret - 8 < 2) {
         return 0;
       }
-      if (1 < uVar1 - 10) {
-        if (uVar1 - 0xc < 2) {
+      if (1 < vfo_mode_ret - 10) {
+        if (vfo_mode_ret - 0xc < 2) {
           return 0;
         }
-        if (uVar1 == 0xe) {
+        if (vfo_mode_ret == 0xe) {
           return 0;
         }
-        bStack_a = pbVar3[10];
+        bStack_a = vfo_rec_ptr_ret[10];
         goto LAB_fffde3b1;
       }
     }
-    bStack_a = pbVar3[0x3c];
+    bStack_a = vfo_rec_ptr_ret[0x3c];
   }
 LAB_fffde3b1:
   bStack_a = bStack_a & 2;
@@ -2505,11 +2516,11 @@ LAB_fffde3b1:
 ushort cat_ai_BP(void)
 
 {
-  char cVar1;
-  undefined1 *puVar2;
-  char *pcVar3;
-  uint uVar4;
-  ushort uVar5;
+  char nib2hex_ret;
+  undefined1 *puVar1;
+  char *pcVar2;
+  uint uVar3;
+  ushort uVar4;
   char acStack_20 [8];
   ushort uStack_18;
   ushort uStack_16;
@@ -2522,40 +2533,40 @@ ushort cat_ai_BP(void)
   byte bStack_d;
   byte *pbStack_c;
   
-  pcVar3 = acStack_20;
+  pcVar2 = acStack_20;
   pbStack_c = vfo_rec_ptr(0);
   bStack_d = vfo_mode(0);
   uStack_18 = 0;
   builtin_strncpy(acStack_20,"BP00000;",8);
-  uVar4 = (uint)bStack_d;
-  if (uVar4 - 2 < 2) {
+  uVar3 = (uint)bStack_d;
+  if (uVar3 - 2 < 2) {
     bStack_f = pbStack_c[0x14];
     bStack_13 = pbStack_c[0x18];
     bStack_12 = pbStack_c[0x19];
     goto LAB_fffde4d3;
   }
-  if (uVar4 - 4 < 2) {
+  if (uVar3 - 4 < 2) {
     bStack_f = pbStack_c[0x32];
     bStack_13 = pbStack_c[0x36];
     bStack_12 = pbStack_c[0x37];
     goto LAB_fffde4d3;
   }
-  if (uVar4 - 6 < 2) {
+  if (uVar3 - 6 < 2) {
 LAB_fffde4c1:
     bStack_f = pbStack_c[0x3c];
     bStack_13 = pbStack_c[0x40];
     bStack_12 = pbStack_c[0x41];
   }
   else {
-    if (1 < uVar4 - 8) {
-      if (uVar4 - 10 < 2) goto LAB_fffde4c1;
-      if (uVar4 - 0xc < 2) {
+    if (1 < uVar3 - 8) {
+      if (uVar3 - 10 < 2) goto LAB_fffde4c1;
+      if (uVar3 - 0xc < 2) {
         bStack_f = pbStack_c[0x1e];
         bStack_13 = pbStack_c[0x22];
         bStack_12 = pbStack_c[0x23];
         goto LAB_fffde4d3;
       }
-      if (uVar4 != 0xe) {
+      if (uVar3 != 0xe) {
         bStack_f = pbStack_c[10];
         bStack_13 = pbStack_c[0xe];
         bStack_12 = pbStack_c[0xf];
@@ -2575,20 +2586,20 @@ LAB_fffde4d3:
       bStack_10 = 100;
       DAT_0001ff06 = uStack_16;
       for (bStack_11 = 0; bStack_11 < 3; bStack_11 = bStack_11 + 1) {
-        uVar4 = (uint)uStack_16;
+        uVar3 = (uint)uStack_16;
         if (bStack_10 != 0) {
-          uVar4 = uVar4 / bStack_10;
+          uVar3 = uVar3 / bStack_10;
         }
-        bStack_e = (byte)uVar4;
-        uVar5 = uStack_16;
+        bStack_e = (byte)uVar3;
+        uVar4 = uStack_16;
         if (bStack_10 != 0) {
-          uVar5 = uStack_16 / bStack_10;
+          uVar4 = uStack_16 / bStack_10;
         }
-        uStack_16 = uStack_16 - uVar5 * bStack_10;
+        uStack_16 = uStack_16 - uVar4 * bStack_10;
         bStack_10 = bStack_10 / 10;
-        uVar4 = (uint)bStack_11;
-        cVar1 = nib2hex(bStack_e);
-        acStack_20[uVar4 + 4] = cVar1;
+        uVar3 = (uint)bStack_11;
+        nib2hex_ret = nib2hex(bStack_e);
+        acStack_20[uVar3 + 4] = nib2hex_ret;
       }
       uStack_18 = 8;
     }
@@ -2605,11 +2616,11 @@ LAB_fffde4d3:
     uStack_18 = 8;
   }
   if (uStack_18 != 0) {
-    puVar2 = &DAT_00015e06;
-    for (uVar4 = (uint)uStack_18; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *puVar2 = *pcVar3;
-      puVar2 = puVar2 + 1;
-      pcVar3 = pcVar3 + 1;
+    puVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)uStack_18; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *puVar1 = *pcVar2;
+      puVar1 = puVar1 + 1;
+      pcVar2 = pcVar2 + 1;
     }
   }
   return uStack_18;
@@ -3088,7 +3099,7 @@ undefined2 cat_ai_CT(void)
   byte bVar1;
   char *pcVar2;
   char *pcVar3;
-  int iVar4;
+  int i;
   undefined2 local_e;
   char local_a [6];
   byte local_4;
@@ -3118,7 +3129,7 @@ undefined2 cat_ai_CT(void)
     }
     pcVar3 = local_a;
     pcVar2 = &DAT_00015e06;
-    for (iVar4 = 5; iVar4 != 0; iVar4 = iVar4 + -1) {
+    for (i = 5; i != 0; i = i + -1) {
       *pcVar2 = *pcVar3;
       pcVar2 = pcVar2 + 1;
       pcVar3 = pcVar3 + 1;
@@ -3170,10 +3181,10 @@ ushort cat_ai_ex(void)
 ushort cat_ai_FA_FB(void)
 
 {
-  char cVar1;
-  undefined1 *puVar2;
-  undefined2 *puVar3;
-  uint uVar4;
+  char nib2hex_ret;
+  undefined1 *puVar1;
+  undefined2 *puVar2;
+  uint uVar3;
   undefined2 local_28;
   undefined2 uStack_26;
   undefined4 local_24;
@@ -3219,25 +3230,25 @@ ushort cat_ai_FA_FB(void)
   for (local_19 = 0; local_19 < 9; local_19 = local_19 + 1) {
     if (local_18 == 0) {
       local_1a = (byte)local_c;
-      uVar4 = local_c;
+      uVar3 = local_c;
     }
     else {
       local_1a = (byte)(local_c / local_18);
-      uVar4 = local_c / local_18;
+      uVar3 = local_c / local_18;
     }
-    local_c = local_c - uVar4 * local_18;
+    local_c = local_c - uVar3 * local_18;
     local_18 = local_18 / 10;
-    uVar4 = (uint)local_19;
-    cVar1 = nib2hex(local_1a);
-    *(char *)((int)&uStack_26 + uVar4) = cVar1;
+    uVar3 = (uint)local_19;
+    nib2hex_ret = nib2hex(local_1a);
+    *(char *)((int)&uStack_26 + uVar3) = nib2hex_ret;
   }
   if (local_1c != 0) {
-    puVar3 = &local_28;
-    puVar2 = &DAT_00015e06;
-    for (uVar4 = (uint)local_1c; uVar4 != 0; uVar4 = uVar4 - 1) {
-      *puVar2 = *(undefined1 *)puVar3;
-      puVar2 = puVar2 + 1;
-      puVar3 = (undefined2 *)((int)puVar3 + 1);
+    puVar2 = &local_28;
+    puVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)local_1c; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *puVar1 = *(undefined1 *)puVar2;
+      puVar1 = puVar1 + 1;
+      puVar2 = (undefined2 *)((int)puVar2 + 1);
     }
   }
   return local_1c;
@@ -3256,7 +3267,7 @@ ushort cat_ai_FN(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   ushort local_c;
   char local_6 [6];
   
@@ -3269,7 +3280,7 @@ ushort cat_ai_FN(void)
     local_6[2] = nib2hex(g_opstate.fn_select);
     pcVar2 = local_6;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -3292,12 +3303,12 @@ undefined2 cat_ai_FT(void)
 {
   char *pcVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   undefined2 local_c;
   char local_a [7];
-  byte local_3;
+  byte g_opstate_split_on_val;
   
-  local_3 = g_opstate.split_on;
+  g_opstate_split_on_val = g_opstate.split_on;
   builtin_strncpy(local_a,"FT0;",4);
   if (DAT_000187df == g_opstate.split_on) {
     local_c = 0;
@@ -3317,7 +3328,7 @@ undefined2 cat_ai_FT(void)
     }
     pcVar2 = local_a;
     pcVar1 = &DAT_00015e06;
-    for (iVar3 = 4; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 4; i != 0; i = i + -1) {
       *pcVar1 = *pcVar2;
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
@@ -3337,126 +3348,126 @@ undefined2 cat_ai_FT(void)
 ushort cat_ai_GT(void)
 
 {
-  byte bVar1;
-  byte *pbVar2;
-  char *pcVar3;
-  char *pcVar4;
-  uint uVar5;
+  byte vfo_mode_ret;
+  byte *vfo_rec_ptr_ret;
+  char *pcVar1;
+  char *pcVar2;
+  uint uVar3;
   ushort uStack_12;
   byte bStack_e;
   char local_7 [7];
   
   builtin_strncpy(local_7,"GT00;",5);
-  pbVar2 = vfo_rec_ptr(0);
-  bVar1 = vfo_mode(0);
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  vfo_mode_ret = vfo_mode(0);
   uStack_12 = 0;
   bStack_e = 0;
-  uVar5 = (uint)bVar1;
-  if (uVar5 == 0xe) {
+  uVar3 = (uint)vfo_mode_ret;
+  if (uVar3 == 0xe) {
 LAB_fffdf011:
-    if ((pbVar2[0x29] & 0x40) != 0) {
-      uVar5 = (pbVar2[0x29] & 0x30) >> 4;
-      if (uVar5 == 0) {
+    if ((vfo_rec_ptr_ret[0x29] & 0x40) != 0) {
+      uVar3 = (vfo_rec_ptr_ret[0x29] & 0x30) >> 4;
+      if (uVar3 == 0) {
         bStack_e = 5;
       }
-      else if (uVar5 == 3) {
+      else if (uVar3 == 3) {
         bStack_e = 3;
       }
-      else if (uVar5 == 2) {
+      else if (uVar3 == 2) {
         bStack_e = 2;
       }
-      else if (uVar5 == 1) {
+      else if (uVar3 == 1) {
         bStack_e = 1;
       }
     }
   }
   else {
-    if (uVar5 - 2 < 2) {
-      if ((pbVar2[0x15] & 0x40) != 0) {
-        uVar5 = (pbVar2[0x15] & 0x30) >> 4;
-        if (uVar5 == 3) {
+    if (uVar3 - 2 < 2) {
+      if ((vfo_rec_ptr_ret[0x15] & 0x40) != 0) {
+        uVar3 = (vfo_rec_ptr_ret[0x15] & 0x30) >> 4;
+        if (uVar3 == 3) {
           bStack_e = 3;
         }
-        else if (uVar5 == 1) {
+        else if (uVar3 == 1) {
           bStack_e = 1;
         }
-        else if (uVar5 == 2) {
+        else if (uVar3 == 2) {
           bStack_e = 2;
         }
-        else if (uVar5 == 0) {
+        else if (uVar3 == 0) {
           bStack_e = 4;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (uVar5 - 4 < 2) {
-      if ((pbVar2[0x33] & 0x40) != 0) {
-        uVar5 = (pbVar2[0x33] & 0x30) >> 4;
-        if (uVar5 == 0) {
+    if (uVar3 - 4 < 2) {
+      if ((vfo_rec_ptr_ret[0x33] & 0x40) != 0) {
+        uVar3 = (vfo_rec_ptr_ret[0x33] & 0x30) >> 4;
+        if (uVar3 == 0) {
           bStack_e = 6;
         }
-        else if (uVar5 == 3) {
+        else if (uVar3 == 3) {
           bStack_e = 3;
         }
-        else if (uVar5 == 2) {
+        else if (uVar3 == 2) {
           bStack_e = 2;
         }
-        else if (uVar5 == 1) {
+        else if (uVar3 == 1) {
           bStack_e = 1;
         }
       }
       goto LAB_fffdf0fe;
     }
-    if (1 < uVar5 - 6) {
-      if (uVar5 - 8 < 2) goto LAB_fffdf011;
-      if (1 < uVar5 - 10) {
-        if (uVar5 - 0xc < 2) {
-          if ((pbVar2[0x1f] & 0x40) != 0) {
-            uVar5 = (pbVar2[0x1f] & 0x30) >> 4;
-            if (uVar5 == 0) {
+    if (1 < uVar3 - 6) {
+      if (uVar3 - 8 < 2) goto LAB_fffdf011;
+      if (1 < uVar3 - 10) {
+        if (uVar3 - 0xc < 2) {
+          if ((vfo_rec_ptr_ret[0x1f] & 0x40) != 0) {
+            uVar3 = (vfo_rec_ptr_ret[0x1f] & 0x30) >> 4;
+            if (uVar3 == 0) {
               bStack_e = 5;
             }
-            else if (uVar5 == 3) {
+            else if (uVar3 == 3) {
               bStack_e = 3;
             }
-            else if (uVar5 == 2) {
+            else if (uVar3 == 2) {
               bStack_e = 2;
             }
-            else if (uVar5 == 1) {
+            else if (uVar3 == 1) {
               bStack_e = 1;
             }
           }
         }
-        else if ((uVar5 < 2) && ((pbVar2[0xb] & 0x40) != 0)) {
-          uVar5 = (pbVar2[0xb] & 0x30) >> 4;
-          if (uVar5 == 0) {
+        else if ((uVar3 < 2) && ((vfo_rec_ptr_ret[0xb] & 0x40) != 0)) {
+          uVar3 = (vfo_rec_ptr_ret[0xb] & 0x30) >> 4;
+          if (uVar3 == 0) {
             bStack_e = 6;
           }
-          else if (uVar5 == 3) {
+          else if (uVar3 == 3) {
             bStack_e = 3;
           }
-          else if (uVar5 == 2) {
+          else if (uVar3 == 2) {
             bStack_e = 2;
           }
-          else if (uVar5 == 1) {
+          else if (uVar3 == 1) {
             bStack_e = 1;
           }
         }
         goto LAB_fffdf0fe;
       }
     }
-    if ((pbVar2[0x3d] & 0x40) != 0) {
-      uVar5 = (pbVar2[0x3d] & 0x30) >> 4;
-      if (uVar5 == 3) {
+    if ((vfo_rec_ptr_ret[0x3d] & 0x40) != 0) {
+      uVar3 = (vfo_rec_ptr_ret[0x3d] & 0x30) >> 4;
+      if (uVar3 == 3) {
         bStack_e = 3;
       }
-      else if (uVar5 == 1) {
+      else if (uVar3 == 1) {
         bStack_e = 1;
       }
-      else if (uVar5 == 2) {
+      else if (uVar3 == 2) {
         bStack_e = 2;
       }
-      else if (uVar5 == 0) {
+      else if (uVar3 == 0) {
         bStack_e = 4;
       }
     }
@@ -3468,12 +3479,12 @@ LAB_fffdf0fe:
     uStack_12 = 5;
   }
   if (uStack_12 != 0) {
-    pcVar4 = local_7;
-    pcVar3 = &DAT_00015e06;
-    for (uVar5 = (uint)uStack_12; uVar5 != 0; uVar5 = uVar5 - 1) {
-      *pcVar3 = *pcVar4;
-      pcVar3 = pcVar3 + 1;
-      pcVar4 = pcVar4 + 1;
+    pcVar2 = local_7;
+    pcVar1 = &DAT_00015e06;
+    for (uVar3 = (uint)uStack_12; uVar3 != 0; uVar3 = uVar3 - 1) {
+      *pcVar1 = *pcVar2;
+      pcVar1 = pcVar1 + 1;
+      pcVar2 = pcVar2 + 1;
     }
   }
   return uStack_12;

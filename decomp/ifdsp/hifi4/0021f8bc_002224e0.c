@@ -1,63 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== ctcss_config @ 0021f7ec (207 bytes)
-
-/* WARNING: Removing unreachable block (ram,0x0021f856) */
-/* reg 0x53 */
-
-void ctcss_config(void)
-
-{
-  undefined6 uVar1;
-  uint uVar2;
-  undefined1 in_st_PSINTLEVEL;
-  undefined1 in_st_PSUM;
-  undefined1 in_st_PSWOE;
-  undefined1 in_st_PSEXCM;
-  undefined1 in_st_PSCALLINC;
-  undefined1 in_st_PSOWB;
-  uint uVar3;
-  
-  uVar3 = (uint)DAT_200700a6;
-  if (DAT_00253640._2_2_ != uVar3) {
-    ae_s16i_n(uVar3,&DAT_00253640,2);
-    if ((((DAT_200700a6 >> 0xc & 1) == 0) || ((DAT_200700a6 & 0xfff) == 0)) ||
-       (0x32 < (uVar3 & 0xfff))) {
-      ae_s16i_n(0,&DAT_00253640,0);
-      DAT_00253644 = 0;
-    }
-    else {
-      ae_s16i_n(1,&DAT_00253640,0);
-      DAT_00253644 = DAT_200700a6;
-      DAT_00253648 = iir_cascade_init(&DAT_00253980,4,&DAT_00236940,1);
-      DAT_0025364c = iir_cascade_init(&DAT_00253a20,8,&DAT_00236990,1);
-      ae_l32_i(FLOAT_ARRAY_00204be0[uVar3 & 0xfff]);
-      ctcss_goertzel_init();
-    }
-    DAT_00253646 = 0;
-    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
-    ;
-    if ((uVar3 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
-      in_st_PSWOE = (undefined1)uVar1;
-      in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
-      in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
-      in_st_PSUM = (undefined1)((uint6)uVar1 >> 0x18);
-      in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
-      in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
-      rsync();
-    }
-    DAT_20070002 = DAT_20070002 & 0xffbf;
-    uVar2 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
-    ;
-    wsr_ps(uVar3 & 0xf | uVar2 & 0xfffffff0);
-    rsync();
-    return;
-  }
-  return;
-}
-
-
 // ===== ctcss_goertzel_retune @ 0021f8bc (166 bytes)
 
 /* (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2
@@ -1309,6 +1251,7 @@ void create_Thread_Rx_Audio(void)
                     ,6,0,0);
   xos_msgq_create(PTR_DAT_00236bc0,2,4,0);
   if_agc_init();
+                    /* state word 0x2576E4 = 0xFFFF [doc, inference] */
   rx_audio_init();
   return;
 }
@@ -1387,9 +1330,9 @@ undefined4 rx_audio_fifo_pop(int param_1)
 {
   undefined6 uVar1;
   byte bVar2;
-  int iVar3;
+  int i;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1398,10 +1341,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
   undefined1 in_st_PSOWB;
   
   if (0xb < DAT_00257320) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1410,10 +1353,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar3 = 0;
+    i = 0;
     do {
       memcpy(param_1,&DAT_00256a20 + (uint)DAT_00257322 * 0x60,0x60);
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       param_1 = param_1 + 0x60;
       DAT_00257320 = DAT_00257320 - 1;
       bVar2 = 0;
@@ -1421,10 +1364,10 @@ undefined4 rx_audio_fifo_pop(int param_1)
         bVar2 = DAT_00257322 + 1;
       }
       DAT_00257322 = bVar2;
-    } while (iVar3 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1442,10 +1385,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
 
 {
   undefined6 uVar1;
-  int iVar2;
-  char cVar3;
+  int i;
+  char cVar2;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
@@ -1455,10 +1398,10 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
   
   param_1 = param_1 * (int)&DAT_00000908;
   if ((byte)(&DAT_002580f0)[param_1] < 0xd) {
-    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    if ((uVar4 & 0xf) < 2) {
-      uVar1 = wsr_ps(uVar4 & 0xfffffff0 | 2);
+    if ((uVar3 & 0xf) < 2) {
+      uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
       in_st_PSWOE = (undefined1)uVar1;
       in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
       in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -1467,21 +1410,21 @@ undefined4 rx_audio_out_fifo_push(int param_1,int param_2)
       in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
       rsync();
     }
-    iVar2 = 0;
+    i = 0;
     do {
       memcpy(&DAT_002577f0 + (uint)(byte)(&DAT_002580f1)[param_1] * 0x60 + param_1,param_2,0x60);
-      iVar2 = iVar2 + 1;
+      i = i + 1;
       param_2 = param_2 + 0x60;
-      cVar3 = '\0';
+      cVar2 = '\0';
       if ((byte)(&DAT_002580f1)[param_1] < 0x17) {
-        cVar3 = (&DAT_002580f1)[param_1] + 1;
+        cVar2 = (&DAT_002580f1)[param_1] + 1;
       }
-      (&DAT_002580f1)[param_1] = cVar3;
+      (&DAT_002580f1)[param_1] = cVar2;
       (&DAT_002580f0)[param_1] = (&DAT_002580f0)[param_1] + '\x01';
-    } while (iVar2 != 0xc);
-    uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
+    } while (i != 0xc);
+    uVar4 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,in_st_PSINTLEVEL)
     ;
-    wsr_ps(uVar4 & 0xf | uVar5 & 0xfffffff0);
+    wsr_ps(uVar3 & 0xf | uVar4 & 0xfffffff0);
     rsync();
     return 1;
   }
@@ -1554,12 +1497,14 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   memcpy(&DAT_00259da0,param_1,0x60);
   uVar1 = DAT_2007000c;
   DAT_002577e0 = DAT_2007000c;
+                    /* Feed-forward AGC, one gain per block [fact: dsp-chains.md] */
   if_agc_process(&DAT_00259da0);
   switch(uVar1) {
   case 0:
   case 2:
   case 4:
   case 6:
+                    /* reg 6 = 0/2/4/6: Weaver, NCO 18 kHz + 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(0);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
@@ -1567,14 +1512,17 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   case 3:
   case 5:
   case 7:
+                    /* reg 6 = 1/3/5/7: Weaver, NCO at 18 kHz - 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(1);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 8:
+                    /* reg 6 = 8: AM envelope [fact: dsp-chains.md] */
     am_demod_init();
     am_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 9:
+                    /* reg 6 = 9: FM discriminator and noise squelch [fact: dsp-chains.md] */
     fm_demod_init();
     fm_demod(&DAT_00259da0,&DAT_00259da0);
   }
@@ -1609,6 +1557,7 @@ void Thread_Rx_Audio_entry(void)
     } while (iVar1 != 0);
     rx_audio_fifo_pop(&DAT_00259e00);
     rx_audio_chain(&DAT_00259e00,&DAT_0025a280,&DAT_0025a700);
+                    /* pushes 12 blocks of 96 bytes into FIFO ch [doc] */
     rx_audio_out_fifo_push(0,&DAT_0025a280);
     rx_audio_out_fifo_push(1,&DAT_0025a700);
   } while( true );
@@ -1640,6 +1589,7 @@ void fc1_spi_dma_init(void)
   SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
   DMA_Init(&DMA0_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA0_ENABLESET0;
   memw();
   DMA0_ENABLESET0 = uVar1 | 8;
@@ -1648,10 +1598,12 @@ void fc1_spi_dma_init(void)
   memw();
   DMA0_ENABLESET0 = uVar1 | 4;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL3_CFG;
   memw();
   DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL2_CFG;
   memw();
   DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
@@ -1672,6 +1624,7 @@ void spi_fc1_dma_init(void)
   DAT_0025abb0 = 0;
   memset(&DAT_200607e0,0,&DAT_000011f8);
   memset(&DAT_200619e0,0,&DAT_000011f8);
+                    /* DMA callbacks 0x2151B8 / 0x2151F0 [doc, inference] */
   SPI_MasterTransferCreateHandleDMA
             (&SPI1_BASE,&DAT_0025abd4,spi_fc1_dma_callback,0,&DAT_0025abb4,&DAT_0025abc4);
   return;
@@ -2404,24 +2357,24 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar5;
   undefined8 uVar6;
   undefined8 uVar7;
-  int iVar8;
+  int i;
+  undefined8 uVar8;
   undefined8 uVar9;
-  undefined8 uVar10;
   
   if (DAT_0025af40 != DAT_2007800e) {
     DAT_0025af40 = DAT_2007800e;
     scl_int2float(DAT_2007800e,0xfffffff8);
     DAT_0025af44 = ae_s32_l_i((ulonglong)(uint)(in_aed0 * 7500.0 * 8.726647e-05));
   }
-  uVar10 = const_s(0);
-  iVar8 = 0;
+  uVar9 = const_s(0);
+  i = 0;
   uVar4 = 0x40c90fdb;
   do {
     uVar7 = ae_l32_i(DAT_0025af44);
-    uVar9 = ae_l32_i(*param_1);
+    uVar8 = ae_l32_i(*param_1);
     uVar6 = ae_l32_i(&DAT_40060a92);
     uVar5 = ae_l32_i(DAT_0025af48);
-    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar9 * (float)uVar7 + (float)uVar6);
+    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar8 * (float)uVar7 + (float)uVar6);
     uVar2 = olt_s(uVar4,uVar3);
     DAT_0025af48 = ae_s32_l_i(uVar3);
     if (SUB21(uVar2,0)) {
@@ -2432,11 +2385,11 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
-    uVar2 = olt_s(uVar3,uVar10);
+    uVar2 = olt_s(uVar3,uVar9);
     if (SUB21(uVar2,0)) {
       do {
         uVar3 = (ulonglong)(uint)((float)uVar3 + (float)uVar4);
-        uVar2 = olt_s(uVar3,uVar10);
+        uVar2 = olt_s(uVar3,uVar9);
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
@@ -2446,9 +2399,9 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
     param_2 = param_2 + 1;
     param_1 = param_1 + 1;
     uVar4 = ae_l32_i(0x40c90fdb);
-    iVar8 = iVar8 + 1;
-    uVar10 = ae_l32_i(0);
-  } while (iVar8 != 0x18);
+    i = i + 1;
+    uVar9 = ae_l32_i(0);
+  } while (i != 0x18);
   return;
 }
 
@@ -2745,13 +2698,15 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar4;
   undefined8 uVar5;
   undefined8 uVar6;
-  int iVar7;
-  undefined8 uVar8;
+  int i;
+  undefined8 uVar7;
   
+                    /* G1, G2 from regs 0x31/0x32, level P from 0x34 [fact: dsp-chains.md] */
   tx_alc_update();
-  iVar7 = 0;
+  i = 0;
   if (DAT_0025b5c8 == 0) {
     if (param_1 != param_2) {
+                    /* reg 0x34 bit 12 off: pass-through [fact: dsp-chains.md] */
       memcpy(param_2,param_1,0x60);
       return;
     }
@@ -2762,11 +2717,11 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar6 = ae_l32_i(DAT_0025b5e8);
       uVar2 = ole_s(uVar6,(ulonglong)(uint)ABS((float)uVar4));
       uVar5 = ae_l32_i(DAT_0025b5e4);
-      uVar8 = ae_l32_i(DAT_0025b5e0);
-      uVar5 = movt_s(uVar8,uVar5,(char)uVar2);
-      uVar8 = ae_l32_i(0x3f800000);
+      uVar7 = ae_l32_i(DAT_0025b5e0);
+      uVar5 = movt_s(uVar7,uVar5,(char)uVar2);
+      uVar7 = ae_l32_i(0x3f800000);
       uVar3 = (ulonglong)
-              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar8 - (float)uVar5)
+              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar7 - (float)uVar5)
                     );
       uVar4 = ae_l32_i(DAT_0025b5dc);
       uVar2 = ole_s(uVar4,uVar3);
@@ -2780,8 +2735,8 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * (float)uVar4));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar7 = iVar7 + 1;
-    } while (iVar7 != 0x18);
+      i = i + 1;
+    } while (i != 0x18);
     tx_alc_meter_to_reg2();
   }
   return;
@@ -2832,6 +2787,7 @@ void tx_core_init(void)
 {
   DAT_0025b600 = iir_cascade_init(&DAT_0025b610,5,&DAT_002373d0,1);
   DAT_0025b604 = iir_cascade_init(&DAT_0025b6d0,5,&DAT_002373d0,1);
+                    /* clears the TX EQ states 0x25AC00 [doc, inference] */
   tx_param_eq_init();
   peak_limiter_init(0);
   soft_knee_compressor_init();
@@ -2855,6 +2811,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   undefined8 uVar3;
   undefined8 uVar4;
   
+                    /* Decimate by 6 to 12 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b600,&DAT_0025b790,param_1,0x18);
   uVar2 = ae_l32_ip(DAT_0025b790);
   uVar1 = ae_l32_ip(DAT_0025b7a8);
@@ -2864,16 +2821,22 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7f8 = ae_s32_l_ip(uVar4);
   uVar1 = ae_l32_ip(DAT_0025b7d8);
   DAT_0025b7fc = ae_s32_l_ip(uVar1);
+                    /* 3-band parametric EQ (regs 0x25..0x2D) [fact: dsp-chains.md] */
   tx_param_eq_3band(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Speech processor = limiter instance 0 (0x2E/0x3B) [fact: dsp-chains.md] */
   peak_limiter(0,&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Soft-knee compressor (0x401A..0x401F; off) [fact: dsp-chains.md] */
   soft_knee_compressor(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* TX band-pass, one of 7 by reg 0x2F [fact: dsp-chains.md] */
   tx_bpf_select(&DAT_0025b7f0,&DAT_0025b800);
   if (DAT_2007000c == 9) {
+                    /* FM: HPF 293 Hz, gain reg 0x30, pre-emphasis [fact: dsp-chains.md] */
     fm_tx_audio(&DAT_0025b800,&DAT_0025b7f0);
   }
   else {
     memcpy(&DAT_0025b7f0,&DAT_0025b800,0x10);
   }
+                    /* Soft-knee limiter (0x4015..0x4019; off) [fact: dsp-chains.md] */
   soft_knee_limiter(&DAT_0025b7f0,&DAT_0025b7f0);
   memset(&DAT_0025b790,0,0x60);
   uVar1 = ae_l32_ip(DAT_0025b7f0);
@@ -2884,6 +2847,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7a8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar2 * 6.0));
   DAT_0025b7c0 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * 6.0));
   DAT_0025b7d8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * 6.0));
+                    /* Interpolate by 6 back to 72 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b604,param_2,&DAT_0025b790,0x18);
   return &DAT_0025b800;
 }
@@ -2958,9 +2922,9 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
   float fVar7;
   uint uVar8;
   undefined8 uVar9;
-  int iVar10;
-  undefined8 uVar11;
-  ulonglong uVar12;
+  int i;
+  undefined8 uVar10;
+  ulonglong uVar11;
   
   DAT_0025b9ca = DAT_20078034;
   uVar8 = (uint)DAT_20078036;
@@ -3039,7 +3003,7 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
     }
     DAT_0025b9e8 = ae_s32_l_i(uVar5);
   }
-  iVar10 = 4;
+  i = 4;
   if (DAT_0025b9ca == 0) {
     if (param_1 != param_2) {
       memcpy(param_2,param_1,0x10);
@@ -3055,31 +3019,33 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       fVar6 = (float)uVar5;
       scl_log10f();
       uVar9 = ae_l32_i(DAT_0025b9d4);
-      uVar11 = ae_l32_i(DAT_0025b9cc);
+      uVar10 = ae_l32_i(DAT_0025b9cc);
       uVar5 = ae_l32_i(0x41a00000);
-      fVar7 = (float)uVar11;
+      fVar7 = (float)uVar10;
       fVar6 = fVar6 * (float)uVar5;
-      uVar12 = (ulonglong)(uint)fVar6;
-      uVar4 = olt_s(uVar12,(ulonglong)(uint)(fVar7 - (float)uVar9));
+      uVar11 = (ulonglong)(uint)fVar6;
+      uVar4 = olt_s(uVar11,(ulonglong)(uint)(fVar7 - (float)uVar9));
       uVar5 = ae_l32_i(DAT_0025b9e8);
       if (SUB21(uVar4,0)) {
-        uVar5 = ae_mov(uVar12);
+        uVar5 = ae_mov(uVar11);
         fVar7 = (float)uVar5;
       }
       else {
-        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar12);
+        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar11);
         if (SUB21(uVar4,0)) {
           fVar7 = fVar7 + (float)uVar5 * (fVar6 - fVar7);
         }
         else {
           uVar2 = ae_s32_l_i(uVar5);
-          uVar1 = ae_s32_l_i(uVar12);
+          uVar1 = ae_s32_l_i(uVar11);
           uVar9 = __extendsfdf2();
           uVar3 = (undefined4)((ulonglong)uVar9 >> 0x20);
           uVar5 = ae_l32_i(uVar2);
           fVar7 = (float)uVar5;
           uVar5 = __extendsfdf2();
+                    /* XCC soft double using the HiFi4 f64 assist ops [doc, inference] */
           uVar5 = __adddf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0xbff00000);
+                    /* XCC soft double [doc, inference] */
           uVar5 = __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __truncdfsf2();
@@ -3092,10 +3058,10 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar9 = ae_l32_i(DAT_0025b9f0);
       uVar4 = ole_s((ulonglong)(uint)(fVar7 - fVar6),uVar9);
       uVar5 = ae_l32_i(DAT_0025b9e0);
-      uVar11 = ae_l32_i(DAT_0025b9dc);
-      uVar5 = movt_s(uVar5,uVar11,(char)uVar4);
-      uVar11 = ae_l32_i(0x3f800000);
-      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar11 - (float)uVar5);
+      uVar10 = ae_l32_i(DAT_0025b9dc);
+      uVar5 = movt_s(uVar5,uVar10,(char)uVar4);
+      uVar10 = ae_l32_i(0x3f800000);
+      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar10 - (float)uVar5);
       uVar5 = ae_l32_i(0x3d4ccccd);
       DAT_0025b9f0 = ae_s32_l_i((ulonglong)(uint)fVar6);
       fVar6 = fVar6 * (float)uVar5;
@@ -3105,9 +3071,31 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * fVar6));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar10 = iVar10 + -1;
-    } while (iVar10 != 0);
+      i = i + -1;
+    } while (i != 0);
   }
+  return;
+}
+
+
+// ===== ctcss_encoder_init @ 002224e0 (48 bytes)
+
+/* state 0x25B9F4; placed before ctcss_encoder [inference] */
+
+void ctcss_encoder_init(void)
+
+{
+  undefined8 uVar1;
+  
+  DAT_0025b9fe = 0;
+  DAT_0025ba08 = 0;
+  DAT_0025b9fc = 0;
+  DAT_0025b9f4 = 0;
+  uVar1 = const_s(1);
+  DAT_0025b9f8 = ae_s32_l_i(uVar1);
+  uVar1 = const_s(0);
+  DAT_0025ba00 = ae_s32_l_i(uVar1);
+  DAT_0025ba04 = ae_s32_l_i(uVar1);
   return;
 }
 

@@ -86,6 +86,8 @@ Mirrored to GitHub issues (epic #1; numbers in [issues.json](issues.json)) by `t
 | T23e | [Name the most-called functions from ranked work lists](T23-readability.md) | T23a, T23c | todo |
 | T23f | [DISPLAY/IFDSP signatures, enums, parameter names](T23-readability.md) | T23e | todo |
 | T23g | [Readable view grouped by subsystem (optional)](T23-readability.md) | T23e | todo |
+| T23h | [Variable and parameter names by rule](T23-readability.md) | T23f | done |
+| T23i | [Short inline comments in the decompiled code](T23-readability.md#t23i--inline-comments) | T23g | in progress (canonical apply open) |
 | T24 | [Recreate the source code of every image (end goal); IFDSP M33 first](T24-source-recreation.md) | T12, T21, T23 | in progress |
 
 Later (don't plan these in detail yet): the inter-CPU protocol. Custom-firmware feasibility is assessed in [docs/custom-firmware.md](../custom-firmware.md); the work items are T15 and T16.

@@ -16,10 +16,10 @@ void delay_us(int param_1)
 
 {
   int iVar1;
-  uint uVar2;
+  uint i;
   
   iVar1 = CLOCK_GetFreq(0);
-  for (uVar2 = 0; uVar2 != (uint)(param_1 * iVar1) / 1000000; uVar2 = uVar2 + 1) {
+  for (i = 0; i != (uint)(param_1 * iVar1) / 1000000; i = i + 1) {
   }
   return;
 }
@@ -38,14 +38,18 @@ void aic3204_spi_write(int param_1,uint param_2)
 
 {
   uint uVar1;
-  int iVar2;
+  int i;
   
   uVar1 = param_2 | param_1 << 9;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(1);
-  iVar2 = 0x10;
+  i = 0x10;
   do {
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     GPIO_B2_29 = 1;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     if ((int)(uVar1 << 0x10) < 0) {
       GPIO_B1_1 = 1;
     }
@@ -56,8 +60,8 @@ void aic3204_spi_write(int param_1,uint param_2)
     GPIO_B2_29 = 0;
     delay_us(1);
     uVar1 = (uVar1 & 0xffff) << 1;
-    iVar2 = iVar2 + -1;
-  } while (iVar2 != 0);
+    i = i + -1;
+  } while (i != 0);
   delay_us(1);
   GPIO_B1_7 = 1;
   delay_us(10);
@@ -76,24 +80,30 @@ void aic3204_spi_write(int param_1,uint param_2)
 void aic3204_init(void)
 
 {
-  int iVar1;
-  byte *pbVar2;
+  int i;
+  byte *pbVar1;
   
-  iVar1 = 0;
+  i = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_0 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_29 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_1 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(20000);
   GPIO_B1_0 = 1;
   delay_us(20000);
-  pbVar2 = &DAT_00087a1c;
+  pbVar1 = &DAT_00087a1c;
   do {
-    aic3204_spi_write((uint)*pbVar2,(uint)pbVar2[1]);
-    iVar1 = iVar1 + 1;
-    delay_us((uint)*(ushort *)(pbVar2 + 2));
-    pbVar2 = pbVar2 + 4;
-  } while (iVar1 != 0x43);
+                    /* 16-bit word reg<<9 | val [doc] */
+    aic3204_spi_write((uint)*pbVar1,(uint)pbVar1[1]);
+    i = i + 1;
+    delay_us((uint)*(ushort *)(pbVar1 + 2));
+    pbVar1 = pbVar1 + 4;
+  } while (i != 0x43);
   return;
 }
 
@@ -150,6 +160,7 @@ void regfile_write(int param_1,ushort param_2)
 {
   if ((&DAT_20070000 + param_1 * 2 < (ushort *)0x20080000) &&
      (*(ushort *)(&DAT_20070000 + param_1 * 2) = param_2, param_1 == 10)) {
+                    /* Page 1, R55 = 0x10 [doc] */
     aic3204_select_right_input((param_2 & 0xf) != 1);
     return;
   }
@@ -195,29 +206,30 @@ int uart0_write(int param_1,int param_2)
 {
   undefined1 *puVar1;
   int iVar2;
-  int iVar3;
+  int usart0_fifointenset;
   
   if (DAT_000886d4 < 0x400) {
     vPortEnterCritical();
-    iVar3 = 0;
+    iVar2 = 0;
     do {
-      puVar1 = (undefined1 *)(param_1 + iVar3);
-      iVar3 = iVar3 + 1;
+      puVar1 = (undefined1 *)(param_1 + iVar2);
+      iVar2 = iVar2 + 1;
       (&DAT_000882d4)[DAT_000886d8] = *puVar1;
       DAT_000886d8 = DAT_000886d8 + 1 & 0x3ff;
       DAT_000886d4 = DAT_000886d4 + 1;
-      if (param_2 == iVar3) break;
+      if (param_2 == iVar2) break;
     } while (DAT_000886d4 < 0x400);
-    iVar2 = USART0_FIFOINTENSET;
-    if (-1 < iVar2 << 0x1d) {
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
+    usart0_fifointenset = USART0_FIFOINTENSET;
+    if (-1 < usart0_fifointenset << 0x1d) {
       USART0_FIFOINTENSET = 0xf;
     }
     vPortExitCritical();
   }
   else {
-    iVar3 = 0;
+    iVar2 = 0;
   }
-  return iVar3;
+  return iVar2;
 }
 
 
@@ -233,7 +245,7 @@ int uart0_write(int param_1,int param_2)
 void uart0_init(void)
 
 {
-  uint uVar1;
+  uint CLOCK_GetFlexCommClkFreq_ret;
   byte local_20 [4];
   undefined *local_1c [2];
   undefined2 local_14;
@@ -242,15 +254,18 @@ void uart0_init(void)
   local_20[1] = 1;
   local_20[2] = 0xff;
   local_20[3] = 0;
+                    /* FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15 [doc, inference] */
   CLOCK_SetFRGClock(local_20);
   CLOCK_AttachClk(0x80004508);
   USART_GetDefaultConfig(local_1c);
   local_1c[0] = &DAT_0001c200;
   local_14 = 0x101;
-  uVar1 = CLOCK_GetFlexCommClkFreq(0);
-  USART_Init(&USART0_CFG,local_1c,uVar1);
+  CLOCK_GetFlexCommClkFreq_ret = CLOCK_GetFlexCommClkFreq(0);
+  USART_Init(&USART0_CFG,local_1c,CLOCK_GetFlexCommClkFreq_ret);
   DAT_00087ec4 = xEventGroupCreate();
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
   USART0_FIFOINTENSET = 10;
+                    /* Interrupt Set Enable [sfr] */
   NVIC_ISER0 = 0x4000;
   return;
 }
@@ -272,7 +287,7 @@ void CommandTask(void)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint xEventGroupWaitBits_ret;
   
   console_init();
   vPortEnterCritical();
@@ -286,17 +301,19 @@ void CommandTask(void)
   DAT_000886d4 = 0;
   vPortExitCritical();
   uart0_init();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_5 = 1;
   do {
     do {
-      uVar2 = xEventGroupWaitBits(DAT_00087ec4,1,1,0,-1);
-    } while (-1 < (int)(uVar2 << 0x1f));
+      xEventGroupWaitBits_ret = xEventGroupWaitBits(DAT_00087ec4,1,1,0,-1);
+    } while (-1 < (int)(xEventGroupWaitBits_ret << 0x1f));
     while ((DAT_000886d4 < 0x400 && (DAT_000882c8 != 0))) {
       vPortEnterCritical();
       bVar1 = (&DAT_00087ec8)[DAT_000882d0];
       DAT_000882d0 = DAT_000882d0 + 1 & 0x3ff;
       DAT_000882c8 = DAT_000882c8 + -1;
       vPortExitCritical();
+                    /* Line editor, tokenizer and both command interpreters [doc] */
       console_rx_char((uint)bVar1);
     }
   } while( true );
@@ -314,12 +331,13 @@ void CommandTask(void)
 void create_CommandTask(void)
 
 {
-  void *pvVar1;
-  uint uVar2;
+  void *get_task_handles_ret;
+  uint xTaskCreate_ret;
   
-  pvVar1 = get_task_handles();
-  uVar2 = xTaskCreate(0x80d79,0x87b4c,0x1800,(uint)pvVar1,1,pvVar1);
-  if (uVar2 != 1) {
+  get_task_handles_ret = get_task_handles();
+  xTaskCreate_ret =
+       xTaskCreate(0x80d79,0x87b4c,0x1800,(uint)get_task_handles_ret,1,get_task_handles_ret);
+  if (xTaskCreate_ret != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -342,34 +360,37 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
 
 {
   byte *pbVar1;
-  uint uVar2;
-  undefined4 uVar3;
-  uint uVar4;
+  undefined4 uVar2;
+  uint xEventGroupSetBitsFromISR_ret;
   uint local_14;
   undefined4 uStack_10;
+  uint usart0_fifostat;
   
-  uVar2 = USART0_FIFOSTAT;
-  if ((uVar2 & 0x42) != 0) {
-    local_14 = uVar2 & 2;
+                    /* FIFO status [sfr] */
+  usart0_fifostat = USART0_FIFOSTAT;
+  if ((usart0_fifostat & 0x42) != 0) {
+    local_14 = usart0_fifostat & 2;
     if (local_14 == 0) {
       if (DAT_000882c8 < 0x400) {
-        uVar3 = USART0_FIFORD;
+                    /* FIFO read data [sfr] */
+        uVar2 = USART0_FIFORD;
         DAT_000882c8 = DAT_000882c8 + 1;
-        (&DAT_00087ec8)[DAT_000882cc] = (char)uVar3;
+        (&DAT_00087ec8)[DAT_000882cc] = (char)uVar2;
         DAT_000882cc = DAT_000882cc + 1 & 0x3ff;
         uStack_10 = param_3;
-        uVar4 = xEventGroupSetBitsFromISR(DAT_00087ec4,1,(uint)&local_14);
-        if ((uVar4 != 0) && (local_14 != 0)) {
+        xEventGroupSetBitsFromISR_ret = xEventGroupSetBitsFromISR(DAT_00087ec4,1,(uint)&local_14);
+        if ((xEventGroupSetBitsFromISR_ret != 0) && (local_14 != 0)) {
+                    /* Interrupt Control and State [sfr] */
           SCB_ICSR = 0x10000000;
         }
       }
     }
     else {
-      uVar3 = USART0_FIFORD;
+      uVar2 = USART0_FIFORD;
       USART0_FIFOSTAT = 2;
     }
   }
-  if ((uVar2 & 0x21) != 0) {
+  if ((usart0_fifostat & 0x21) != 0) {
     if (DAT_000886d4 != 0) {
       pbVar1 = &DAT_000882d4 + DAT_000886dc;
       DAT_000886dc = DAT_000886dc + 1 & 0x3ff;
@@ -379,6 +400,7 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
         return;
       }
     }
+                    /* FIFO interrupt enable clear (disable) and read [sfr] */
     USART0_FIFOINTENCLR = 5;
   }
   return;
@@ -411,31 +433,34 @@ bool uart0_tx_pending(void)
 void sct0_pwm_callback(void)
 
 {
-  uint uVar1;
-  uint uVar2;
-  ushort uVar3;
+  ushort uVar1;
   undefined4 in_r3;
-  uint uVar4;
+  uint uVar2;
+  uint sct0_conflag;
+  uint sct0_evflag;
   
   DAT_000886f4 = DAT_000886f4 + 1;
   if (399 < DAT_000886f4) {
     DAT_000886f4 = 0;
-    uVar3 = regfile_read(0x4005);
-    if (uVar3 == 0) {
-      uVar3 = 1;
+                    /* reg < 0x8000 ? word[reg] [doc] */
+    uVar1 = regfile_read(0x4005);
+    if (uVar1 == 0) {
+      uVar1 = 1;
     }
-    if (0x62 < uVar3) {
-      uVar3 = 99;
+    if (0x62 < uVar1) {
+      uVar1 = 99;
     }
-    DAT_00088d2c = (undefined1)uVar3;
+    DAT_00088d2c = (undefined1)uVar1;
     SCTIMER_UpdatePwmDutycycle(&SCT0_CONFIG,0,DAT_00088d2c,DAT_000886f0,in_r3);
   }
-  uVar1 = SCT0_EVFLAG;
-  uVar2 = SCT0_CONFLAG;
-  uVar4 = 1 << (DAT_000886f0 & 0xff);
-  if (((uVar2 & 0xc0000000 | uVar1 & 0xffff) & uVar4) != 0) {
-    SCT0_EVFLAG = uVar4 & 0xffff;
-    SCT0_CONFLAG = uVar4 & 0xc0000000;
+                    /* SCT event flag [sfr] */
+  sct0_evflag = SCT0_EVFLAG;
+                    /* SCT conflict flag [sfr] */
+  sct0_conflag = SCT0_CONFLAG;
+  uVar2 = 1 << (DAT_000886f0 & 0xff);
+  if (((sct0_conflag & 0xc0000000 | sct0_evflag & 0xffff) & uVar2) != 0) {
+    SCT0_EVFLAG = uVar2 & 0xffff;
+    SCT0_CONFLAG = uVar2 & 0xc0000000;
   }
   return;
 }
@@ -466,9 +491,11 @@ void sct0_pwm_init(void)
   local_28[1] = 1;
   uVar1 = SCTIMER_SetupPwm(0x40146000,local_28,1,20000,uVar1,&DAT_000886f0);
   if (uVar1 != 1) {
+                    /* SCT event interrupt enable [sfr] */
     uVar1 = SCT0_EVEN;
     SCT0_EVEN = 1 << (DAT_000886f0 & 0xff) | uVar1;
     SCTIMER_SetCallback(&SCT0_CONFIG,0x81165);
+                    /* Interrupt Set Enable [sfr] */
     NVIC_ISER0 = 0x1000;
   }
   return;
@@ -519,13 +546,14 @@ void console_cmd_i(int param_1,int param_2)
 void console_cmd_w(int param_1,int param_2)
 
 {
-  ushort uVar1;
-  ushort uVar2;
+  ushort strtoul_ret;
+  ushort strtoul_ret_2;
   
   if (param_2 == 3) {
-    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar2 = strtoul(*(byte **)(param_1 + 8),(byte *)0x0,0x10);
-    regfile_write((uint)uVar1,uVar2);
+    strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+    strtoul_ret_2 = strtoul(*(byte **)(param_1 + 8),(byte *)0x0,0x10);
+                    /* Store if reg < 0x8000 [doc] */
+    regfile_write((uint)strtoul_ret,strtoul_ret_2);
     console_puts(0x87bfb);
     return;
   }
@@ -544,11 +572,11 @@ void console_cmd_w(int param_1,int param_2)
 void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  bool bVar1;
-  ushort uVar2;
+  bool uart0_tx_pending_ret;
+  ushort uVar1;
+  uint uVar2;
+  int i;
   uint uVar3;
-  int iVar4;
-  uint uVar5;
   int iStack_28;
   int iStack_24;
   undefined4 uStack_20;
@@ -559,25 +587,26 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
   uStack_20 = param_3;
   uStack_1c = param_4;
   if (param_2 == 2) {
-    uVar2 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar3 = (uint)uVar2;
-    uVar5 = uVar3 + 0x40;
+    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+    uVar2 = (uint)uVar1;
+    uVar3 = uVar2 + 0x40;
     do {
-      snprintf(&iStack_28,0x10,"\r\n %04X :",uVar3);
+      snprintf(&iStack_28,0x10,"\r\n %04X :",uVar2);
       console_puts((uint)&iStack_28);
-      iVar4 = 0;
+      i = 0;
       do {
-        uVar2 = regfile_read(uVar3 + iVar4 & 0xffff);
-        snprintf(&iStack_28,0x10," %04X",uVar2);
+                    /* reg < 0x8000 ? word[reg] [doc] */
+        uVar1 = regfile_read(uVar2 + i & 0xffff);
+        snprintf(&iStack_28,0x10," %04X",uVar1);
         console_puts((uint)&iStack_28);
-        bVar1 = uart0_tx_pending();
-        if (bVar1) {
+        uart0_tx_pending_ret = uart0_tx_pending();
+        if (uart0_tx_pending_ret) {
           vTaskDelay(1);
         }
-        iVar4 = iVar4 + 1;
-      } while (iVar4 != 8);
-      uVar3 = uVar3 + 8 & 0xffff;
-    } while ((uVar5 & 0xffff) != uVar3);
+        i = i + 1;
+      } while (i != 8);
+      uVar2 = uVar2 + 8 & 0xffff;
+    } while ((uVar3 & 0xffff) != uVar2);
     console_puts((uint)"\r\n>> ");
     return;
   }
@@ -623,13 +652,15 @@ void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
 void console_cmd_r(int param_1,int param_2)
 
 {
-  ushort uVar1;
-  ushort uVar2;
+  ushort strtoul_ret;
+  ushort regfile_read_ret;
   
   if (param_2 == 2) {
-    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar2 = regfile_read((uint)uVar1);
-    console_printf("\r\nr %04X %04X\r\n>> ",uVar1,uVar2);
+    strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+                    /* reg < 0x8000 ? word[reg] [doc] */
+    regfile_read_ret = regfile_read((uint)strtoul_ret);
+                    /* vsprintf into 0x88DF0 [doc] */
+    console_printf("\r\nr %04X %04X\r\n>> ",strtoul_ret,regfile_read_ret);
     return;
   }
   console_puts(0x87c79);
@@ -676,20 +707,20 @@ void console_rx_char(int param_1)
   byte bVar2;
   bool bVar3;
   ushort uVar4;
-  ushort uVar5;
-  char *pcVar6;
-  int iVar7;
-  byte *pbVar8;
-  int iVar9;
-  uint uVar10;
-  byte *pbVar11;
-  int iVar12;
-  uint *puVar13;
+  ushort strtoul_ret;
+  char *pcVar5;
+  int iVar6;
+  byte *pbVar7;
+  int iVar8;
+  uint uVar9;
+  byte *pbVar10;
+  int i;
+  uint *puVar11;
+  uint uVar12;
+  int iVar13;
   uint uVar14;
-  int iVar15;
-  uint uVar16;
-  int *piVar17;
-  byte *pbVar18;
+  int *piVar15;
+  byte *pbVar16;
   byte local_41;
   undefined1 auStack_40 [4];
   char local_3c;
@@ -701,102 +732,110 @@ void console_rx_char(int param_1)
   if (param_1 - 0x20U < 0x5f) {
 LAB_000814ac:
     if (DAT_00088d2e != '\0') {
+                    /* Echo the character (echo flag 0x88D2E) [fact: control-link.md] */
       uart0_write(&local_41,1);
     }
     if (DAT_00088def != '\0') {
       if (DAT_00088def != '\x01') {
         return;
       }
+                    /* CR/LF (mask 0x2401): end of line, tokenize and run [fact: control-link.md] */
       if ((local_41 < 0xe) && ((~(0x2401U >> (uint)local_41) & 1) == 0)) {
         (&DAT_00088d6f)[DAT_00088708] = 0;
         memset(&DAT_00088d2f,0,0x40);
-        iVar7 = strlen((uint *)&DAT_00088d6f);
-        pbVar8 = &DAT_00088d70 + iVar7;
-        pbVar18 = &DAT_00088d6f;
+        iVar6 = strlen((uint *)&DAT_00088d6f);
+        pbVar7 = &DAT_00088d70 + iVar6;
+        pbVar16 = &DAT_00088d6f;
         do {
-          pbVar11 = pbVar18;
-          if (pbVar11 == pbVar8) {
+          pbVar10 = pbVar16;
+          if (pbVar10 == pbVar7) {
             DAT_00088708 = 0;
             DAT_00088def = 0;
             return;
           }
-          uVar14 = ctype_table[*pbVar11] & 1;
-          pbVar18 = pbVar11 + 1;
-        } while ((ctype_table[*pbVar11] & 1) != 0);
-        uVar16 = uVar14;
-        if (pbVar11 < pbVar8) {
+                    /* Split at whitespace: up to 4 tokens of 15 chars [fact: control-link.md] */
+          uVar12 = ctype_table[*pbVar10] & 1;
+          pbVar16 = pbVar10 + 1;
+        } while ((ctype_table[*pbVar10] & 1) != 0);
+        uVar14 = uVar12;
+        if (pbVar10 < pbVar7) {
           do {
-            bVar2 = *pbVar11;
+            bVar2 = *pbVar10;
             if (((ctype_table[bVar2] & 1) != 0) || (bVar2 == 0)) {
               while( true ) {
-                if (pbVar8 == pbVar11) goto LAB_00081626;
-                uVar10 = (uint)*pbVar11;
-                pbVar18 = pbVar11 + 1;
-                uVar14 = ctype_table[uVar10] & 1;
-                if ((ctype_table[uVar10] & 1) == 0) break;
-                pbVar11 = pbVar18;
-                if ((uVar10 < 0xe) && ((int)((0x2401U >> uVar10) << 0x1f) < 0)) goto LAB_00081596;
+                if (pbVar7 == pbVar10) goto LAB_00081626;
+                uVar9 = (uint)*pbVar10;
+                pbVar16 = pbVar10 + 1;
+                uVar12 = ctype_table[uVar9] & 1;
+                if ((ctype_table[uVar9] & 1) == 0) break;
+                pbVar10 = pbVar16;
+                if ((uVar9 < 0xe) && ((int)((0x2401U >> uVar9) << 0x1f) < 0)) goto LAB_00081596;
               }
-              if (uVar10 == 0) {
+              if (uVar9 == 0) {
 LAB_00081596:
-                iVar7 = 0;
-                iVar15 = uVar16 + 1;
-                piVar17 = (int *)&DAT_000886f8;
+                iVar6 = 0;
+                iVar13 = uVar14 + 1;
+                piVar15 = (int *)&DAT_000886f8;
                 do {
-                  iVar9 = strlen((uint *)*piVar17);
+                  iVar8 = strlen((uint *)*piVar15);
                   if (DAT_00088d2d != '\0') {
-                    for (iVar12 = 0; iVar12 < iVar9; iVar12 = iVar12 + 1) {
-                      bVar2 = tolower((uint)*(byte *)(*piVar17 + iVar12));
-                      *(byte *)(*piVar17 + iVar12) = bVar2;
+                    for (i = 0; i < iVar8; i = i + 1) {
+                    /* Interactive mode: lower-case every token [fact: control-link.md] */
+                      bVar2 = tolower((uint)*(byte *)(*piVar15 + i));
+                      *(byte *)(*piVar15 + i) = bVar2;
                     }
                   }
-                  puVar13 = (uint *)*piVar17;
-                  iVar9 = strlen(puVar13);
-                  if (iVar9 != 0) {
-                    while (iVar9 = iVar9 + -1, -1 < iVar9) {
-                      if ((int)((uint)ctype_table[*(byte *)((int)puVar13 + iVar9)] << 0x1f) < 0) {
-                        *(undefined1 *)((int)puVar13 + iVar9) = 0;
+                  puVar11 = (uint *)*piVar15;
+                  iVar8 = strlen(puVar11);
+                  if (iVar8 != 0) {
+                    while (iVar8 = iVar8 + -1, -1 < iVar8) {
+                      if ((int)((uint)ctype_table[*(byte *)((int)puVar11 + iVar8)] << 0x1f) < 0) {
+                        *(undefined1 *)((int)puVar11 + iVar8) = 0;
                       }
                     }
                   }
                   cVar1 = DAT_00088d2d;
-                  puVar13 = DAT_000886f8;
-                  iVar7 = iVar7 + 1;
-                  piVar17 = piVar17 + 1;
-                } while (iVar7 != iVar15);
+                  puVar11 = DAT_000886f8;
+                  iVar6 = iVar6 + 1;
+                  piVar15 = piVar15 + 1;
+                } while (iVar6 != iVar13);
                 if (DAT_00088d2d == '\0') {
-                  pbVar18 = (byte *)((int)DAT_000886f8 + 1);
+                  pbVar16 = (byte *)((int)DAT_000886f8 + 1);
                   bVar2 = (byte)*DAT_000886f8;
-                  uVar14 = is_hex_string(pbVar18);
-                  if (uVar14 != 0) {
-                    iVar7 = strlen(puVar13);
-                    if (iVar7 == 7) {
-                      bVar3 = frame_checksum_ok((char *)puVar13,5);
+                    /* Machine mode: the rest of argv[0] must be hex [fact: control-link.md] */
+                  uVar12 = is_hex_string(pbVar16);
+                  if (uVar12 != 0) {
+                    iVar6 = strlen(puVar11);
+                    if (iVar6 == 7) {
+                    /* 7-char frame: checksum of the first 5 chars [fact: control-link.md] */
+                      bVar3 = frame_checksum_ok((char *)puVar11,5);
                       if (bVar3) {
-                        memcpy(auStack_40,pbVar18,4);
+                        memcpy(auStack_40,pbVar16,4);
                         local_3c = cVar1;
                         uVar4 = strtoul(auStack_40,(byte *)0x0,0x10);
-                        uVar14 = (uint)uVar4;
+                        uVar12 = (uint)uVar4;
                         if (bVar2 == 100) {
 LAB_00081778:
-                          uVar16 = uVar14 + 0x40;
+                          uVar14 = uVar12 + 0x40;
                           do {
-                            snprintf(local_38,0x10,"\r\n%04X :",uVar14);
+                    /* d: dump 64 words, 8 per line [fact: control-link.md] */
+                            snprintf(local_38,0x10,"\r\n%04X :",uVar12);
                             console_puts((uint)local_38);
-                            iVar7 = 0;
+                            iVar6 = 0;
                             do {
-                              uVar4 = regfile_read(uVar14 + iVar7 & 0xffff);
+                              uVar4 = regfile_read(uVar12 + iVar6 & 0xffff);
                               snprintf(local_38,0x10," %04X",uVar4);
                               console_puts((uint)local_38);
                               bVar3 = uart0_tx_pending();
                               if (bVar3) {
+                    /* Pace the dump to the UART [fact: control-link.md] */
                                 vTaskDelay(1);
                               }
-                              iVar7 = iVar7 + 1;
-                            } while (iVar7 != 8);
-                            uVar14 = uVar14 + 8 & 0xffff;
-                          } while ((uVar16 & 0xffff) != uVar14);
-                          pcVar6 = "\r\n";
+                              iVar6 = iVar6 + 1;
+                            } while (iVar6 != 8);
+                            uVar12 = uVar12 + 8 & 0xffff;
+                          } while ((uVar14 & 0xffff) != uVar12);
+                          pcVar5 = "\r\n";
                           goto LAB_00081772;
                         }
                         if (bVar2 < 0x65) {
@@ -809,26 +848,28 @@ LAB_00081778:
                         else if (bVar2 != 0x69) {
                           if (bVar2 != 0x72) goto LAB_00081716;
 LAB_0008172a:
-                          uVar4 = regfile_read(uVar14);
+                    /* r: read reply "r" + value + sum, no CR [fact: control-link.md] */
+                          uVar4 = regfile_read(uVar12);
                           local_38[0] = 0x72;
                           siprintf(local_38 + 1,"%04X",uVar4);
                           siprintf(auStack_33,"%02X",
                                    local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0])
                           ;
-                          pcVar6 = local_38;
+                          pcVar5 = local_38;
                           goto LAB_00081772;
                         }
-                        iVar7 = strncmp((uint *)auStack_40,(uint *)"db",2);
-                        if ((iVar7 == 0) ||
-                           (iVar7 = strncmp((uint *)auStack_40,(uint *)"DB",2), iVar7 == 0)) {
-                          iVar7 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c61,2);
-                          if (iVar7 == 0) {
+                    /* i DB00 / DB01: machine or interactive mode [fact: control-link.md] */
+                        iVar6 = strncmp((uint *)auStack_40,(uint *)"db",2);
+                        if ((iVar6 == 0) ||
+                           (iVar6 = strncmp((uint *)auStack_40,(uint *)"DB",2), iVar6 == 0)) {
+                          iVar6 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c61,2);
+                          if (iVar6 == 0) {
                             DAT_00088d2d = '\0';
                             DAT_00088d2e = DAT_00088d2d;
                           }
                           else {
-                            iVar7 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c66,2);
-                            if (iVar7 == 0) {
+                            iVar6 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c66,2);
+                            if (iVar6 == 0) {
                               DAT_00088d2d = '\x01';
                               DAT_00088d2e = '\x01';
                             }
@@ -837,68 +878,72 @@ LAB_0008172a:
                         goto LAB_00081716;
                       }
 LAB_00081828:
-                      pcVar6 = "?";
+                      pcVar5 = "?";
                     }
                     else {
-                      if ((iVar7 != 0xb) || (bVar3 = frame_checksum_ok((char *)puVar13,9), !bVar3))
+                    /* 11-char w frame with a good checksum, else ? [fact: control-link.md] */
+                      if ((iVar6 != 0xb) || (bVar3 = frame_checksum_ok((char *)puVar11,9), !bVar3))
                       goto LAB_00081828;
-                      memcpy(auStack_40,pbVar18,4);
+                      memcpy(auStack_40,pbVar16,4);
                       local_3c = cVar1;
                       uVar4 = strtoul(auStack_40,(byte *)0x0,0x10);
-                      memcpy(auStack_40,(void *)((int)puVar13 + 5),4);
-                      uVar5 = strtoul(auStack_40,(byte *)0x0,0x10);
+                      memcpy(auStack_40,(void *)((int)puVar11 + 5),4);
+                      strtoul_ret = strtoul(auStack_40,(byte *)0x0,0x10);
                       if ((bVar2 & 0xdf) != 0x57) goto LAB_00081716;
-                      regfile_write((uint)uVar4,uVar5);
-                      pcVar6 = "\x06";
+                    /* w: write the register, reply ACK 0x06 [fact: control-link.md] */
+                      regfile_write((uint)uVar4,strtoul_ret);
+                      pcVar5 = "\x06";
                     }
 LAB_00081772:
-                    console_puts((uint)pcVar6);
+                    console_puts((uint)pcVar5);
                   }
 LAB_00081716:
-                  if (iVar15 != 4) {
+                  if (iVar13 != 4) {
                     DAT_00088708 = 0;
                     DAT_00088def = 0;
                     return;
                   }
                 }
                 else {
-                  pcVar6 = "r";
-                  iVar7 = 0;
+                  pcVar5 = "r";
+                  iVar6 = 0;
                   do {
-                    iVar9 = strcmp(DAT_000886f8,(uint *)pcVar6);
-                    if (iVar9 == 0) {
-                      (*(code *)(&DAT_0008796c)[iVar7 * 5])(&DAT_000886f8,iVar15);
+                    /* Interactive: look argv[0] up in table 0x8795C [fact: control-link.md] */
+                    iVar8 = strcmp(DAT_000886f8,(uint *)pcVar5);
+                    if (iVar8 == 0) {
+                      (*(code *)(&DAT_0008796c)[iVar6 * 5])(&DAT_000886f8,iVar13);
                       DAT_00088708 = 0;
                       DAT_00088def = 0;
                       return;
                     }
-                    iVar7 = iVar7 + 1;
-                    pcVar6 = (char *)((int)pcVar6 + 0x14);
-                  } while (iVar7 != 4);
+                    iVar6 = iVar6 + 1;
+                    pcVar5 = (char *)((int)pcVar5 + 0x14);
+                  } while (iVar6 != 4);
                 }
                 if (DAT_00088d2d == '\0') {
                   DAT_00088708 = 0;
                   DAT_00088def = 0;
                   return;
                 }
-                pcVar6 = "\r\n?\r\n>> ";
+                    /* Unknown command or too many tokens: ? [fact: control-link.md] */
+                pcVar5 = "\r\n?\r\n>> ";
                 goto LAB_00081676;
               }
-              uVar16 = uVar16 + 1;
-              if (uVar16 != 4) goto LAB_00081584;
+              uVar14 = uVar14 + 1;
+              if (uVar14 != 4) goto LAB_00081584;
               break;
             }
-            (&DAT_00088d2f)[uVar14 + uVar16 * 0x10] = bVar2;
-            uVar14 = uVar14 + 1;
-            if (uVar14 == 0xf) break;
-            pbVar11 = pbVar11 + 1;
+            (&DAT_00088d2f)[uVar12 + uVar14 * 0x10] = bVar2;
+            uVar12 = uVar12 + 1;
+            if (uVar12 == 0xf) break;
+            pbVar10 = pbVar10 + 1;
 LAB_00081584:
-          } while (pbVar8 != pbVar11);
+          } while (pbVar7 != pbVar10);
 LAB_00081626:
           if (DAT_00088d2d != '\0') {
-            pcVar6 = "\r\n?\r\n>> ";
+            pcVar5 = "\r\n?\r\n>> ";
 LAB_00081676:
-            console_puts((uint)pcVar6);
+            console_puts((uint)pcVar5);
           }
         }
       }
@@ -935,7 +980,7 @@ LAB_00081676:
       if (DAT_00088d2e == '\0') {
         return;
       }
-      pcVar6 = "\r\nCtrl+C\r\n>> ";
+      pcVar5 = "\r\nCtrl+C\r\n>> ";
       goto LAB_0008145a;
     }
     if ((param_1 == 8) || (param_1 == 0x7f)) {
@@ -960,9 +1005,9 @@ LAB_00081676:
   if (DAT_00088d2e == '\0') {
     return;
   }
-  pcVar6 = "\r\n>> ";
+  pcVar5 = "\r\n>> ";
 LAB_0008145a:
-  console_puts((uint)pcVar6);
+  console_puts((uint)pcVar5);
   return;
 }
 
@@ -988,6 +1033,7 @@ void aic3204_select_right_input(int param_1)
   else {
     uVar1 = 0x40;
   }
+                    /* 16-bit word reg<<9 | val [doc] */
   aic3204_spi_write(0,1);
   aic3204_spi_write(0x37,uVar1);
   aic3204_spi_write(0,0);
@@ -1006,10 +1052,11 @@ void aic3204_select_right_input(int param_1)
 void console_puts(uint param_1)
 
 {
-  int iVar1;
+  int strlen_ret;
   
-  iVar1 = strlen((uint *)param_1);
-  uart0_write(param_1,iVar1);
+  strlen_ret = strlen((uint *)param_1);
+                    /* Copy bytes into the TX ring [doc] */
+  uart0_write(param_1,strlen_ret);
   return;
 }
 
@@ -1054,17 +1101,17 @@ uint is_hex_string(byte *param_1)
 bool frame_checksum_ok(char *param_1,int param_2)
 
 {
-  ushort uVar1;
-  byte *pbVar2;
-  char cVar3;
+  ushort strtoul_ret;
+  byte *pbVar1;
+  char cVar2;
   
-  cVar3 = '\0';
-  pbVar2 = (byte *)(param_1 + param_2);
-  for (; (byte *)param_1 != pbVar2; param_1 = param_1 + 1) {
-    cVar3 = cVar3 + *param_1;
+  cVar2 = '\0';
+  pbVar1 = (byte *)(param_1 + param_2);
+  for (; (byte *)param_1 != pbVar1; param_1 = param_1 + 1) {
+    cVar2 = cVar2 + *param_1;
   }
-  uVar1 = strtoul((byte *)param_1,(byte *)0x0,0x10);
-  return (char)uVar1 == cVar3;
+  strtoul_ret = strtoul((byte *)param_1,(byte *)0x0,0x10);
+  return (char)strtoul_ret == cVar2;
 }
 
 

@@ -5,17 +5,30 @@
 // TSV format: address<TAB>type<TAB>count[<TAB>name[<TAB>comment]]; '#' lines and blank lines are ignored.
 //   type   float, int32, uint32, uint16, byte, char, pointer, each optionally with dimensions (char[4]); string = a
 //          NUL-terminated C string of count bytes (NUL included); code = disassemble count bytes' worth of flow at the
-//          address without creating a function.
+//          address without creating a function; noflow = execution does not continue after the instruction at the
+//          address (e.g. an SVC whose handler never returns): its fall-through is overridden to the instruction itself,
+//          the error bookmarks in the count bytes after it are removed (the "bad instruction" where the flow ran into a
+//          literal pool; padding instructions there stay, now unreached), and the containing function's body is
+//          recomputed. Ghidra's p-code ignores a
+//          fall-through override to none (PcodeEmit only adds a branch for a non-null override), so the decompiler
+//          would still run into the cleared bytes; the self fall-through ends the flow there and decompiles as
+//          `do { insn; } while (true);`. Put a data row for the literal after the noflow row.
 //   count  number of elements (an array when > 1).
-//   name   optional label at the address (plate comment = column 5).
+//   name   optional label at the address (plate comment = column 5; for noflow a pre comment, which the decompiler
+//          prints above the loop).
 // The range is cleared of data first (instructions are left alone: a row that overlaps code fails). Arrays of a scalar
 // type are split at every address inside them that has a reference, so separate tables that sit back to back keep
 // their own start addresses. The script is idempotent.
 // @category FT710
+import ghidra.app.cmd.function.CreateFunctionCmd;
 import ghidra.app.script.GhidraScript;
 import ghidra.program.model.address.Address;
+import ghidra.program.model.address.AddressSet;
 import ghidra.program.model.data.*;
+import ghidra.program.model.listing.BookmarkType;
 import ghidra.program.model.listing.CodeUnit;
+import ghidra.program.model.listing.Function;
+import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.listing.Listing;
 import ghidra.program.model.symbol.SourceType;
 
@@ -63,6 +76,17 @@ public class ApplyData extends GhidraScript {
                 if (type.equals("code")) {
                     if (getInstructionAt(a) == null) disassemble(a);
                     if (getInstructionAt(a) == null) throw new IllegalStateException("does not disassemble");
+                } else if (type.equals("noflow")) {
+                    Instruction ins = getInstructionAt(a);
+                    if (ins == null) throw new IllegalStateException("no instruction");
+                    ins.setFallThrough(a);
+                    if (count > 0) {
+                        Address from = ins.getMaxAddress().add(1);
+                        currentProgram.getBookmarkManager().removeBookmarks(new AddressSet(from, from.add(count - 1)),
+                                BookmarkType.ERROR, monitor);
+                    }
+                    Function f = getFunctionContaining(a);
+                    if (f != null) CreateFunctionCmd.fixupFunctionBody(currentProgram, f, monitor);
                 } else if (type.equals("string")) {
                     l.clearCodeUnits(a, a.add(count - 1), false);
                     createAsciiString(a, count);
@@ -90,7 +114,8 @@ public class ApplyData extends GhidraScript {
                     }
                 }
                 if (p.length > 3 && !p[3].isBlank()) createLabel(a, p[3], true, SourceType.USER_DEFINED);
-                if (p.length > 4 && !p[4].isBlank()) l.setComment(a, CodeUnit.PLATE_COMMENT, p[4]);
+                if (p.length > 4 && !p[4].isBlank())
+                    l.setComment(a, type.equals("noflow") ? CodeUnit.PRE_COMMENT : CodeUnit.PLATE_COMMENT, p[4]);
                 ok++;
             } catch (Exception e) {
                 printerr("ApplyData: " + a + " " + type + "[" + count + "]: " + e.getMessage());

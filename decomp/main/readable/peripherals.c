@@ -20,11 +20,14 @@ void R_Systeminit(void)
 {
   byte bVar1;
   
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa50b;
   bVar1 = MPC_PWPR;
+                    /* Write-Protect [sfr] */
   MPC_PWPR = bVar1 & 0x7f;
   bVar1 = MPC_PWPR;
   MPC_PWPR = bVar1 | 0x40;
+                    /* Port Output Enable Control 2 [sfr] */
   POE3_POECR2 = 0;
   FUN_fff8f7c4();
   R_Pins_Create();
@@ -47,6 +50,7 @@ void R_Systeminit(void)
   R_SCI7_Create();
   R_TPU2_Create();
   FUN_fff8f7ca();
+                    /* Registers a group-interrupt callback by index [doc, inference] */
   R_BSP_InterruptWrite(10,-0x709a3);
   R_BSP_InterruptWrite(7,-0x6d820);
   R_BSP_InterruptWrite(0x14,-0x6cba6);
@@ -87,13 +91,17 @@ void R_Systeminit(void)
 void R_IWDT_Create(void)
 
 {
-  byte bVar1;
+  byte icu_nmier;
   
+                    /* IWDT Control [sfr] */
   IWDT_IWDTCR = 0x3350;
+                    /* IWDT Reset Control [sfr] */
   IWDT_IWDTRCR = 0;
+                    /* IWDT Count Stop Control [sfr] */
   IWDT_IWDTCSTPR = 0x80;
-  bVar1 = ICU_NMIER;
-  ICU_NMIER = bVar1 | 8;
+  icu_nmier = ICU_NMIER;
+                    /* Non-Maskable Interrupt Enable [sfr] */
+  ICU_NMIER = icu_nmier | 8;
   R_IWDT_Create_UserInit();
   return;
 }
@@ -113,6 +121,7 @@ void R_IWDT_Create(void)
 void iwdt_refresh(void)
 
 {
+                    /* IWDT Refresh [sfr] */
   IWDT_IWDTRR = 0;
   IWDT_IWDTRR = 0xff;
   return;
@@ -152,19 +161,25 @@ void R_IWDT_Create_UserInit(void)
 void R_DA_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfff7ffff;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfff7ffff;
+                    /* Data Format Select [sfr] */
   DA_DADPR = 0;
+                    /* D/A A/D Synchronous Start Control [sfr] */
   DA_DAADSCR = 0;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 & 0xf7;
-  bVar2 = PORT0_PDR;
-  PORT0_PDR = bVar2 & 0xf7;
-  bVar2 = MPC_P03PFS;
-  MPC_P03PFS = bVar2 | 0x80;
+  bVar1 = PORT0_PMR;
+                    /* Port Mode [sfr] */
+  PORT0_PMR = bVar1 & 0xf7;
+                    /* Port Direction [sfr] */
+  bVar1 = PORT0_PDR;
+  PORT0_PDR = bVar1 & 0xf7;
+  bVar1 = MPC_P03PFS;
+                    /* P03 Pin Function Control [sfr] */
+  MPC_P03PFS = bVar1 | 0x80;
   R_DA_Create_UserInit();
   return;
 }
@@ -186,6 +201,7 @@ void R_DA0_Start(void)
   byte bVar1;
   
   bVar1 = DA_DACR;
+                    /* D/A Control [sfr] */
   DA_DACR = bVar1 & 0xdf;
   bVar1 = DA_DACR;
   DA_DACR = bVar1 | 0x40;
@@ -208,10 +224,11 @@ void R_DA0_Start(void)
 void R_DA0_Stop(void)
 
 {
-  byte bVar1;
+  byte da_dacr;
   
-  bVar1 = DA_DACR;
-  DA_DACR = bVar1 & 0xbf;
+  da_dacr = DA_DACR;
+                    /* D/A Control [sfr] */
+  DA_DACR = da_dacr & 0xbf;
   return;
 }
 
@@ -230,6 +247,7 @@ void R_DA0_Stop(void)
 void dac0_write(ushort param_1)
 
 {
+                    /* D/A Data 0 [sfr] */
   DA_DADR0 = param_1 & 0xfff;
   return;
 }
@@ -269,68 +287,94 @@ void R_DA_Create_UserInit(void)
 void R_S12AD0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte bVar1;
+  ushort uVar2;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffdffff;
-  uVar3 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar3 & 0xefff;
-  uVar3 = S12AD_ADCMPCR;
-  S12AD_ADCMPCR = uVar3 & 0x7fff;
-  uVar3 = S12AD_ADCMPCR;
-  S12AD_ADCMPCR = uVar3 & 0xdfff;
-  bVar2 = ICU_IER17;
-  ICU_IER17 = bVar2 & 0xfb;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffdffff;
+                    /* A/D Control [sfr] */
+  uVar2 = S12AD_ADCSR;
+  S12AD_ADCSR = uVar2 & 0xefff;
+                    /* A/D Comparison Function Control [sfr] */
+  uVar2 = S12AD_ADCMPCR;
+  S12AD_ADCMPCR = uVar2 & 0x7fff;
+  uVar2 = S12AD_ADCMPCR;
+  S12AD_ADCMPCR = uVar2 & 0xdfff;
+  bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
+  ICU_IER17 = bVar1 & 0xfb;
   S12AD_ADCSR = 0;
+                    /* A/D Disconnection Detection Control [sfr] */
   S12AD_ADDISCR = 0;
+                    /* A/D Sampling State 1 [sfr] */
   S12AD_ADSSTR1 = 0xb;
+                    /* A/D Sampling State 2 [sfr] */
   S12AD_ADSSTR2 = 0xb;
+                    /* A/D Sampling State 3 [sfr] */
   S12AD_ADSSTR3 = 0xb;
+                    /* A/D Sampling State 5 [sfr] */
   S12AD_ADSSTR5 = 0xb;
+                    /* A/D Sampling State 6 [sfr] */
   S12AD_ADSSTR6 = 0xb;
+                    /* A/D Sampling State 7 [sfr] */
   S12AD_ADSSTR7 = 0xb;
+                    /* A/D Channel Select A0 [sfr] */
   S12AD_ADANSA0 = 0xee;
+                    /* A/D-Converted Value Addition/Average Function ... [sfr] */
   S12AD_ADADS0 = 0xe8;
+                    /* A/D Sample-and-Hold Circuit Control [sfr] */
   S12AD_ADSHCR = 0x618;
+                    /* A/D Control Extended [sfr] */
   S12AD_ADCER = 0;
-  uVar3 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar3 | 0x1000;
+  uVar2 = S12AD_ADCSR;
+  S12AD_ADCSR = uVar2 | 0x1000;
+                    /* A/D-Converted Value Addition/Average Count Select [sfr] */
   S12AD_ADADC = 0x83;
   S12AD_ADCMPCR = 0;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR186 = 0x40;
-  bVar2 = ICU_IPR186;
-  ICU_IPR186 = bVar2 & 0xf6 | 6;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xfd;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xfd;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR186;
+  ICU_IPR186 = bVar1 & 0xf6 | 6;
+  bVar1 = PORT4_PMR;
+                    /* Port Mode [sfr] */
+  PORT4_PMR = bVar1 & 0xfd;
+  bVar1 = PORT4_PDR;
+                    /* Port Direction [sfr] */
+  PORT4_PDR = bVar1 & 0xfd;
+                    /* P41 Pin Function Control [sfr] */
   MPC_P41PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xfb;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xfb;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xfb;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xfb;
+                    /* P42 Pin Function Control [sfr] */
   MPC_P42PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xf7;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xf7;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xf7;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xf7;
+                    /* P43 Pin Function Control [sfr] */
   MPC_P43PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xdf;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xdf;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xdf;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xdf;
+                    /* P45 Pin Function Control [sfr] */
   MPC_P45PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0xbf;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0xbf;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0xbf;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0xbf;
+                    /* P46 Pin Function Control [sfr] */
   MPC_P46PFS = 0x80;
-  bVar2 = PORT4_PMR;
-  PORT4_PMR = bVar2 & 0x7f;
-  bVar2 = PORT4_PDR;
-  PORT4_PDR = bVar2 & 0x7f;
+  bVar1 = PORT4_PMR;
+  PORT4_PMR = bVar1 & 0x7f;
+  bVar1 = PORT4_PDR;
+  PORT4_PDR = bVar1 & 0x7f;
+                    /* P47 Pin Function Control [sfr] */
   MPC_P47PFS = 0x80;
   R_S12AD0_Create_UserInit();
   return;
@@ -352,14 +396,17 @@ void R_S12AD0_Start(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad_adcsr;
   
   bVar1 = ICU_IR186;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR186 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER17 = bVar1 | 4;
-  uVar2 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar2 | 0x8000;
+                    /* A/D Control [sfr] */
+  s12ad_adcsr = S12AD_ADCSR;
+  S12AD_ADCSR = s12ad_adcsr | 0x8000;
   return;
 }
 
@@ -377,13 +424,16 @@ void R_S12AD0_Stop(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad_adcsr;
   
-  uVar2 = S12AD_ADCSR;
-  S12AD_ADCSR = uVar2 & 0x7fff;
+                    /* A/D Control [sfr] */
+  s12ad_adcsr = S12AD_ADCSR;
+  S12AD_ADCSR = s12ad_adcsr & 0x7fff;
   bVar1 = ICU_IR186;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR186 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER17 = bVar1 & 0xfb;
   return;
 }
@@ -407,56 +457,67 @@ void R_S12AD0_Get_ValueResult(int param_1,void *param_2)
   
   if (param_1 == 0) {
     uVar1 = S12AD_ADDR0;
+                    /* A/D Data 0 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 1) {
     uVar1 = S12AD_ADDR1;
+                    /* A/D Data 1 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 2) {
     uVar1 = S12AD_ADDR2;
+                    /* A/D Data 2 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 3) {
     uVar1 = S12AD_ADDR3;
+                    /* A/D Data 3 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 4) {
     uVar1 = S12AD_ADDR4;
+                    /* A/D Data 4 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 5) {
     uVar1 = S12AD_ADDR5;
+                    /* A/D Data 5 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 6) {
     uVar1 = S12AD_ADDR6;
+                    /* A/D Data 6 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 7) {
     uVar1 = S12AD_ADDR7;
+                    /* A/D Data 7 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 0x1a) {
     uVar1 = S12AD_ADDBLDRB;
+                    /* A/D Data Duplication B [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 0x18) {
     uVar1 = S12AD_ADDBLDR;
+                    /* A/D Data Duplication [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
   if (param_1 == 0x19) {
     uVar1 = S12AD_ADDBLDRA;
+                    /* A/D Data Duplication A [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   }
@@ -464,6 +525,7 @@ void R_S12AD0_Get_ValueResult(int param_1,void *param_2)
     return;
   }
   uVar1 = S12AD_ADRD;
+                    /* A/D Self-Diagnosis Data [sfr] */
   *(undefined2 *)param_2 = uVar1;
   return;
 }
@@ -528,55 +590,80 @@ void r_s12ad0_scan_end_isr(void)
 void R_S12AD1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte bVar1;
+  ushort uVar2;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffeffff;
-  uVar3 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar3 & 0xefff;
-  uVar3 = S12AD1_ADCMPCR;
-  S12AD1_ADCMPCR = uVar3 & 0x7fff;
-  uVar3 = S12AD1_ADCMPCR;
-  S12AD1_ADCMPCR = uVar3 & 0xdfff;
-  bVar2 = ICU_IER17;
-  ICU_IER17 = bVar2 & 0xdf;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffeffff;
+                    /* A/D Control [sfr] */
+  uVar2 = S12AD1_ADCSR;
+  S12AD1_ADCSR = uVar2 & 0xefff;
+                    /* A/D Comparison Function Control [sfr] */
+  uVar2 = S12AD1_ADCMPCR;
+  S12AD1_ADCMPCR = uVar2 & 0x7fff;
+  uVar2 = S12AD1_ADCMPCR;
+  S12AD1_ADCMPCR = uVar2 & 0xdfff;
+  bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
+  ICU_IER17 = bVar1 & 0xdf;
+                    /* A/D Disconnection Detection Control [sfr] */
   S12AD1_ADDISCR = 0;
   S12AD1_ADCSR = 0x5000;
+                    /* A/D Control Extended [sfr] */
   S12AD1_ADCER = 0;
+                    /* A/D-Converted Value Addition/Average Count Select [sfr] */
   S12AD1_ADADC = 0x83;
+                    /* A/D Channel Select A0 [sfr] */
   S12AD1_ADANSA0 = 0x8300;
+                    /* A/D Channel Select A1 [sfr] */
   S12AD1_ADANSA1 = 2;
+                    /* A/D-Converted Value Addition/Average Function ... [sfr] */
   S12AD1_ADADS0 = 0x8300;
+                    /* A/D-Converted Value Addition/Average Function ... [sfr] */
   S12AD1_ADADS1 = 2;
+                    /* A/D Sampling State 8 [sfr] */
   S12AD1_ADSSTR8 = 0xb;
+                    /* A/D Sampling State 9 [sfr] */
   S12AD1_ADSSTR9 = 0xb;
+                    /* A/D Sampling State 15 [sfr] */
   S12AD1_ADSSTR15 = 0xb;
+                    /* A/D Sampling State L [sfr] */
   S12AD1_ADSSTRL = 0xb;
   S12AD1_ADCMPCR = 0;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR189 = 0x44;
-  bVar2 = ICU_IPR189;
-  ICU_IPR189 = bVar2 & 0xf6 | 6;
-  bVar2 = PORTD_PMR;
-  PORTD_PMR = bVar2 & 0xfe;
-  bVar2 = PORTD_PDR;
-  PORTD_PDR = bVar2 & 0xfe;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR189;
+  ICU_IPR189 = bVar1 & 0xf6 | 6;
+  bVar1 = PORTD_PMR;
+                    /* Port Mode [sfr] */
+  PORTD_PMR = bVar1 & 0xfe;
+  bVar1 = PORTD_PDR;
+                    /* Port Direction [sfr] */
+  PORTD_PDR = bVar1 & 0xfe;
+                    /* PD0 Pin Function Control [sfr] */
   MPC_PD0PFS = 0x80;
-  bVar2 = PORTD_PMR;
-  PORTD_PMR = bVar2 & 0xfd;
-  bVar2 = PORTD_PDR;
-  PORTD_PDR = bVar2 & 0xfd;
+  bVar1 = PORTD_PMR;
+  PORTD_PMR = bVar1 & 0xfd;
+  bVar1 = PORTD_PDR;
+  PORTD_PDR = bVar1 & 0xfd;
+                    /* PD1 Pin Function Control [sfr] */
   MPC_PD1PFS = 0x80;
-  bVar2 = PORT9_PMR;
-  PORT9_PMR = bVar2 & 0xfd;
-  bVar2 = PORT9_PDR;
-  PORT9_PDR = bVar2 & 0xfd;
+  bVar1 = PORT9_PMR;
+                    /* Port Mode [sfr] */
+  PORT9_PMR = bVar1 & 0xfd;
+  bVar1 = PORT9_PDR;
+                    /* Port Direction [sfr] */
+  PORT9_PDR = bVar1 & 0xfd;
+                    /* P91 Pin Function Control [sfr] */
   MPC_P91PFS = 0x80;
-  bVar2 = PORT9_PMR;
-  PORT9_PMR = bVar2 & 0xf7;
-  bVar2 = PORT9_PDR;
-  PORT9_PDR = bVar2 & 0xf7;
+  bVar1 = PORT9_PMR;
+  PORT9_PMR = bVar1 & 0xf7;
+  bVar1 = PORT9_PDR;
+  PORT9_PDR = bVar1 & 0xf7;
+                    /* P93 Pin Function Control [sfr] */
   MPC_P93PFS = 0x80;
   R_S12AD1_Create_UserInit();
   return;
@@ -596,14 +683,17 @@ void R_S12AD1_Start(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad1_adcsr;
   
   bVar1 = ICU_IR189;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR189 = bVar1 & 0xfe;
   bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER17 = bVar1 | 0x20;
-  uVar2 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar2 | 0x8000;
+                    /* A/D Control [sfr] */
+  s12ad1_adcsr = S12AD1_ADCSR;
+  S12AD1_ADCSR = s12ad1_adcsr | 0x8000;
   return;
 }
 
@@ -621,13 +711,16 @@ void R_S12AD1_Stop(void)
 
 {
   byte bVar1;
-  ushort uVar2;
+  ushort s12ad1_adcsr;
   
-  uVar2 = S12AD1_ADCSR;
-  S12AD1_ADCSR = uVar2 & 0x7fff;
+                    /* A/D Control [sfr] */
+  s12ad1_adcsr = S12AD1_ADCSR;
+  S12AD1_ADCSR = s12ad1_adcsr & 0x7fff;
   bVar1 = ICU_IER17;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER17 = bVar1 & 0xdf;
   bVar1 = ICU_IR189;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR189 = bVar1 & 0xfe;
   return;
 }
@@ -652,110 +745,137 @@ void R_S12AD1_Get_ValueResult(uint param_1,void *param_2)
   switch(param_1) {
   case 0:
     uVar1 = S12AD1_ADDR0;
+                    /* A/D Data 0 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 1:
     uVar1 = S12AD1_ADDR1;
+                    /* A/D Data 1 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 2:
     uVar1 = S12AD1_ADDR2;
+                    /* A/D Data 2 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 3:
     uVar1 = S12AD1_ADDR3;
+                    /* A/D Data 3 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 4:
     uVar1 = S12AD1_ADDR4;
+                    /* A/D Data 4 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 5:
     uVar1 = S12AD1_ADDR5;
+                    /* A/D Data 5 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 6:
     uVar1 = S12AD1_ADDR6;
+                    /* A/D Data 6 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 7:
     uVar1 = S12AD1_ADDR7;
+                    /* A/D Data 7 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 8:
     uVar1 = S12AD1_ADDR8;
+                    /* A/D Data 8 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 9:
     uVar1 = S12AD1_ADDR9;
+                    /* A/D Data 9 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 10:
     uVar1 = S12AD1_ADDR10;
+                    /* A/D Data 10 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0xb:
     uVar1 = S12AD1_ADDR11;
+                    /* A/D Data 11 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0xc:
     uVar1 = S12AD1_ADDR12;
+                    /* A/D Data 12 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0xd:
     uVar1 = S12AD1_ADDR13;
+                    /* A/D Data 13 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0xe:
     uVar1 = S12AD1_ADDR14;
+                    /* A/D Data 14 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0xf:
     uVar1 = S12AD1_ADDR15;
+                    /* A/D Data 15 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x10:
     uVar1 = S12AD1_ADDR16;
+                    /* A/D Data 16 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x11:
     uVar1 = S12AD1_ADDR17;
+                    /* A/D Data 17 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x12:
     uVar1 = S12AD1_ADDR18;
+                    /* A/D Data 18 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x13:
     uVar1 = S12AD1_ADDR19;
+                    /* A/D Data 19 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x14:
     uVar1 = S12AD1_ADDR20;
+                    /* A/D Data 20 [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x15:
     uVar1 = S12AD1_ADRD;
+                    /* A/D Self-Diagnosis Data [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x16:
     uVar1 = S12AD1_ADTSDR;
+                    /* A/D Temperature Sensor Data [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x17:
     uVar1 = S12AD1_ADOCDR;
+                    /* A/D Internal Reference Voltage Data [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x18:
     uVar1 = S12AD1_ADDBLDR;
+                    /* A/D Data Duplication [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x19:
     uVar1 = S12AD1_ADDBLDRA;
+                    /* A/D Data Duplication A [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   case 0x1a:
     uVar1 = S12AD1_ADDBLDRB;
+                    /* A/D Data Duplication B [sfr] */
     *(undefined2 *)param_2 = uVar1;
     return;
   default:
@@ -822,114 +942,223 @@ void r_s12ad1_scan_end_isr(void)
 void R_Pins_Create(void)
 
 {
+                    /* Open-Drain Control 0 [sfr] */
   PORT0_ODR0 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT0_PCR = 0xa4;
+                    /* Drive Capacity Control [sfr] */
   PORT0_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT0_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT0_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT0_PDR = 0x50;
+                    /* Open-Drain Control 0 [sfr] */
   PORT1_ODR0 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT1_PCR = 0;
+                    /* Drive Capacity Control [sfr] */
   PORT1_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT1_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT1_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT1_PDR = 3;
+                    /* Port Output Data [sfr] */
   PORT2_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORT2_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT2_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT2_PCR = 3;
+                    /* Drive Capacity Control [sfr] */
   PORT2_DSCR = 0xc;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT2_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT2_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT2_PDR = 0x14;
+                    /* Open-Drain Control 0 [sfr] */
   PORT3_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT3_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT3_PCR = 0x12;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT3_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT3_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT3_PDR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORT4_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT4_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT4_PCR = 0x11;
+                    /* Port Mode [sfr] */
   PORT4_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT4_PDR = 0;
+                    /* Port Output Data [sfr] */
   PORT5_PODR = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT5_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT5_PCR = 0x1e;
+                    /* Drive Capacity Control [sfr] */
   PORT5_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT5_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT5_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT5_PDR = 0xc0;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORT6_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT6_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT6_PCR = 0x17;
+                    /* Port Mode [sfr] */
   PORT6_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT6_PDR = 0xe8;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = 0x40;
+                    /* Open-Drain Control 0 [sfr] */
   PORT7_ODR0 = 4;
+                    /* Open-Drain Control 1 [sfr] */
   PORT7_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT7_PCR = 0;
+                    /* Drive Capacity Control [sfr] */
   PORT7_DSCR = 9;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT7_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT7_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT7_PDR = 0xdf;
+                    /* Port Output Data [sfr] */
   PORT8_PODR = 0x40;
+                    /* Open-Drain Control 0 [sfr] */
   PORT8_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORT8_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORT8_PCR = 0;
+                    /* Drive Capacity Control [sfr] */
   PORT8_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT8_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORT8_PMR = 0;
+                    /* Port Direction [sfr] */
   PORT8_PDR = 0x7f;
+                    /* Open-Drain Control 0 [sfr] */
   PORT9_ODR0 = 0;
+                    /* Drive Capacity Control [sfr] */
   PORT9_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORT9_DSCR2 = 0;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORTA_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORTA_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORTA_PCR = 8;
+                    /* Drive Capacity Control [sfr] */
   PORTA_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORTA_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORTA_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTA_PDR = 0xf7;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORTB_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORTB_ODR1 = 0;
+                    /* Drive Capacity Control [sfr] */
   PORTB_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORTB_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORTB_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTB_PDR = 0xfc;
+                    /* Port Output Data [sfr] */
   PORTC_PODR = 0x10;
+                    /* Open-Drain Control 0 [sfr] */
   PORTC_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORTC_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORTC_PCR = 2;
+                    /* Drive Capacity Control [sfr] */
   PORTC_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORTC_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORTC_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTC_PDR = 0x11;
+                    /* Port Output Data [sfr] */
   PORTD_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORTD_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORTD_ODR1 = 0;
+                    /* Drive Capacity Control [sfr] */
   PORTD_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORTD_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORTD_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTD_PDR = 0xfc;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORTE_ODR0 = 0;
+                    /* Open-Drain Control 1 [sfr] */
   PORTE_ODR1 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORTE_PCR = 8;
+                    /* Drive Capacity Control [sfr] */
   PORTE_DSCR = 0;
+                    /* Drive Capacity Control 2 [sfr] */
   PORTE_DSCR2 = 0;
+                    /* Port Mode [sfr] */
   PORTE_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTE_PDR = 0x77;
+                    /* Pull-Up Resistor Control [sfr] */
   PORTF_PCR = 0x20;
+                    /* Port Mode [sfr] */
   PORTF_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTF_PDR = 0xdf;
+                    /* Port Output Data [sfr] */
   PORTJ_PODR = 0;
+                    /* Open-Drain Control 0 [sfr] */
   PORTJ_ODR0 = 0;
+                    /* Pull-Up Resistor Control [sfr] */
   PORTJ_PCR = 0x20;
+                    /* Port Mode [sfr] */
   PORTJ_PMR = 0;
+                    /* Port Direction [sfr] */
   PORTJ_PDR = 0xdf;
   FUN_fff9321e();
   return;
@@ -951,26 +1180,39 @@ void R_Pins_Create(void)
 void R_TPU0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfe;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfe;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR130 = 0xf;
-  bVar2 = ICU_IPR130;
-  ICU_IPR130 = bVar2 & 0xf4 | 4;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfe;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR130;
+  ICU_IPR130 = bVar1 & 0xf4 | 4;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfe;
+                    /* Timer Control [sfr] */
   TPU0_TCR = 0x2a;
-  bVar2 = TPU0_TIER;
-  TPU0_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU0_TIER;
+  TPU0_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control H [sfr] */
   TPU0_TIORH = 0;
+                    /* Timer I/O Control L [sfr] */
   TPU0_TIORL = 0;
+                    /* Timer General A [sfr] */
   TPU0_TGRA = 0x176;
+                    /* Timer General B [sfr] */
   TPU0_TGRB = 0x176;
+                    /* Timer General C [sfr] */
   TPU0_TGRC = 0x176;
+                    /* Timer General D [sfr] */
   TPU0_TGRD = 0x176;
   R_TPU0_Create_UserInit();
   return;
@@ -995,8 +1237,10 @@ void R_TPU0_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER10;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER10 = bVar1 | 4;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 1;
   return;
 }
@@ -1020,8 +1264,10 @@ void R_TPU0_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER10;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER10 = bVar1 & 0xfb;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfe;
   return;
 }
@@ -1084,23 +1330,33 @@ void r_tpu0_tgia_isr(void)
 void R_TPU1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfd;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfd;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR144 = 0x14;
-  bVar2 = ICU_IPR144;
-  ICU_IPR144 = bVar2 & 0xfe | 0xe;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfd;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR144;
+  ICU_IPR144 = bVar1 & 0xfe | 0xe;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfd;
+                    /* Timer Control [sfr] */
   TPU1_TCR = 0x20;
-  bVar2 = TPU1_TIER;
-  TPU1_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU1_TIER;
+  TPU1_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control [sfr] */
   TPU1_TIOR = 0;
+                    /* Timer General A [sfr] */
   TPU1_TGRA = 0x270;
+                    /* Timer General B [sfr] */
   TPU1_TGRB = 5999;
   R_TPU1_Create_UserInit();
   return;
@@ -1125,8 +1381,10 @@ void R_TPU1_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER12;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER12 = bVar1 | 1;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 2;
   return;
 }
@@ -1150,8 +1408,10 @@ void R_TPU1_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER12;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER12 = bVar1 & 0xfe;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfd;
   return;
 }
@@ -1219,27 +1479,31 @@ void r_tpu1_tgia_isr(void)
 void sci2_configure(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
   byte bStack_3;
   byte bStack_1;
+  uint system_mstpcrb;
   
-  bVar2 = tunlin_port_mode();
+  bVar1 = tunlin_port_mode();
   R_SCI2_Stop();
   do {
   } while (DAT_00011fe9 != '\0');
-  if (bVar2 != 1) {
+  if (bVar1 != 1) {
     gpo_a_set(0);
     gpo_b_set(0);
     gpo_c_set(0);
     gpo_d_set(0);
   }
-  if ((bVar2 == 3) || (bVar2 == 1)) {
-    uVar1 = SYSTEM_MSTPCRB;
-    SYSTEM_MSTPCRB = uVar1 | 0x20000000;
+  if ((bVar1 == 3) || (bVar1 == 1)) {
+                    /* Module Stop Control B [sfr] */
+    system_mstpcrb = SYSTEM_MSTPCRB;
+    SYSTEM_MSTPCRB = system_mstpcrb | 0x20000000;
+                    /* P12 Pin Function Control [sfr] */
     MPC_P12PFS = 0;
-    bVar2 = PORT1_PMR;
-    PORT1_PMR = bVar2 & 0xfb;
+    bVar1 = PORT1_PMR;
+                    /* Port Mode [sfr] */
+    PORT1_PMR = bVar1 & 0xfb;
+                    /* P13 Pin Function Control [sfr] */
     MPC_P13PFS = 0;
     gpo_a_dir_out();
     gpo_b_dir_out();
@@ -1248,23 +1512,26 @@ void sci2_configure(void)
     rem_key_sel_set(1);
     return;
   }
-  if (bVar2 == 2) {
+  if (bVar1 == 2) {
     R_SCI2_Create();
     bStack_1 = g_opstate.ex030110_cat_3_rate;
     if (4 < g_opstate.ex030110_cat_3_rate) {
       bStack_1 = 3;
     }
-    bVar2 = SCI2_SMR;
-    bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar2 & 0xf4;
+    bVar1 = SCI2_SMR;
+                    /* Serial Mode [sfr] */
+    bStack_3 = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 1] | bVar1 & 0xf4;
     if (g_opstate.ex030107_cat_1_cat_3_stop_bit != 0) {
       bStack_3 = bStack_3 | 8;
     }
     SCI2_SMR = bStack_3;
+                    /* Bit Rate [sfr] */
     SCI2_BRR = BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4 + 2];
-    bVar2 = SCI2_SEMR;
-    SCI2_SEMR = bVar2 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
-    bVar2 = SCI2_SEMR;
-    SCI2_SEMR = bVar2 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
+    bVar1 = SCI2_SEMR;
+                    /* Serial Extended Mode [sfr] */
+    SCI2_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)bStack_1 * 4 + 0x1d] & 1) << 6;
+    bVar1 = SCI2_SEMR;
+    SCI2_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)bStack_1 * 4] & 1) << 4;
     R_SCI2_Start();
     R_SCI2_Serial_Receive(0xcc70,0x29bc);
     gpo_c_dir('\x01');
@@ -1272,7 +1539,7 @@ void sci2_configure(void)
     rem_key_sel_set(0);
     return;
   }
-  if (bVar2 == 0) {
+  if (bVar1 == 0) {
     R_SCI2_Create();
     R_SCI2_Start();
     gpo_c_dir('\0');
@@ -1460,10 +1727,10 @@ void spk_softstart_isr(void)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte swtimer_expired_ret;
   
-  bVar2 = swtimer_expired(0x2d);
-  if (bVar2 != 0) {
+  swtimer_expired_ret = swtimer_expired(0x2d);
+  if (swtimer_expired_ret != 0) {
     speaker_switch_set(1);
     R_TPU2_Stop();
     DAT_0001b3df = 9;
@@ -1510,15 +1777,13 @@ void spk_softstart_isr(void)
 void slowtimer_tick(void)
 
 {
-  byte local_1;
+  byte i;
   
-  for (local_1 = 0; local_1 < 4; local_1 = local_1 + 1) {
-    if ((((&DAT_0001203a)[local_1] == '\0') && (*(short *)(&DAT_0001fa2c + (uint)local_1 * 2) != 0))
-       && (*(short *)(&DAT_0001fa24 + (uint)local_1 * 2) =
-                *(short *)(&DAT_0001fa24 + (uint)local_1 * 2) + 1,
-          *(ushort *)(&DAT_0001fa2c + (uint)local_1 * 2) <=
-          *(ushort *)(&DAT_0001fa24 + (uint)local_1 * 2))) {
-      (&DAT_0001203a)[local_1] = 1;
+  for (i = 0; i < 4; i = i + 1) {
+    if ((((&DAT_0001203a)[i] == '\0') && (*(short *)(&DAT_0001fa2c + (uint)i * 2) != 0)) &&
+       (*(short *)(&DAT_0001fa24 + (uint)i * 2) = *(short *)(&DAT_0001fa24 + (uint)i * 2) + 1,
+       *(ushort *)(&DAT_0001fa2c + (uint)i * 2) <= *(ushort *)(&DAT_0001fa24 + (uint)i * 2))) {
+      (&DAT_0001203a)[i] = 1;
     }
   }
   return;
@@ -1540,26 +1805,39 @@ void slowtimer_tick(void)
 void R_TPU3_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xf7;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xf7;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR142 = 0x1c;
-  bVar2 = ICU_IPR142;
-  ICU_IPR142 = bVar2 & 0xf2 | 2;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xf7;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR142;
+  ICU_IPR142 = bVar1 & 0xf2 | 2;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xf7;
+                    /* Timer Control [sfr] */
   TPU3_TCR = 0x2e;
-  bVar2 = TPU3_TIER;
-  TPU3_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU3_TIER;
+  TPU3_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control H [sfr] */
   TPU3_TIORH = 0;
+                    /* Timer I/O Control L [sfr] */
   TPU3_TIORL = 0;
+                    /* Timer General A [sfr] */
   TPU3_TGRA = 0x5b8d;
+                    /* Timer General B [sfr] */
   TPU3_TGRB = 0x16;
+                    /* Timer General C [sfr] */
   TPU3_TGRC = 0x16;
+                    /* Timer General D [sfr] */
   TPU3_TGRD = 0x16;
   R_TPU3_Create_UserInit();
   return;
@@ -1584,8 +1862,10 @@ void R_TPU3_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 | 0x40;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 8;
   return;
 }
@@ -1609,8 +1889,10 @@ void R_TPU3_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 & 0xbf;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xf7;
   return;
 }
@@ -1794,8 +2076,8 @@ byte adc_scan_done(void)
 void beep_task(void)
 
 {
-  byte bVar1;
-  float fVar2;
+  byte swtimer_expired_ret;
+  float fVar1;
   float fStack_4;
   
   if (DAT_00012040 == '\x01') {
@@ -1805,8 +2087,8 @@ void beep_task(void)
     return;
   }
   if (DAT_00012040 == '\x02') {
-    bVar1 = swtimer_expired(0x16);
-    if (bVar1 == 1) {
+    swtimer_expired_ret = swtimer_expired(0x16);
+    if (swtimer_expired_ret == 1) {
       switch(DAT_00012041) {
       case 1:
         if (DAT_0001b3e2 == '\0') {
@@ -1854,13 +2136,13 @@ void beep_task(void)
         DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
         break;
       case 4:
-        fVar2 = (float)g_opstate.cw_pitch * 10.0 + 300.0;
-        if (DAT_00025d40 == fVar2) {
+        fVar1 = (float)g_opstate.cw_pitch * 10.0 + 300.0;
+        if (DAT_00025d40 == fVar1) {
           swtimer_start(0x16,100);
         }
         else {
-          DAT_00025d40 = fVar2;
-          tone_set(fVar2,100);
+          DAT_00025d40 = fVar1;
+          tone_set(fVar1,100);
         }
         break;
       case 5:
@@ -2096,6 +2378,7 @@ void tone_set(float param_1,ushort param_2)
     if (bVar1) {
       return;
     }
+                    /* Timer General A [sfr] */
     TPU1_TGRA = SUB42(ROUND(1.0 / ((param_1 * 36.0) / 6e+07) + -1.0),0);
     tone_play(0x1ff1c,0x24);
   }
@@ -2119,31 +2402,31 @@ void tone_set(float param_1,ushort param_2)
 uint aess_level_ptr(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret_2;
   undefined4 uStack_c;
-  uint uVar2;
+  uint vfo_mode_ret;
   
-  bVar1 = vfo_mode(0);
-  uVar2 = (uint)bVar1;
-  if (uVar2 - 2 < 2) {
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret - 2 < 2) {
     uStack_c = 0x9c09;
   }
-  else if (uVar2 - 4 < 2) {
+  else if (vfo_mode_ret - 4 < 2) {
     uStack_c = 0x9c0e;
   }
-  else if (uVar2 - 6 < 2) {
+  else if (vfo_mode_ret - 6 < 2) {
     uStack_c = 0x9c0f;
   }
-  else if (uVar2 - 8 < 2) {
+  else if (vfo_mode_ret - 8 < 2) {
     uStack_c = 0x9c0a;
   }
-  else if (uVar2 - 10 < 2) {
+  else if (vfo_mode_ret - 10 < 2) {
     uStack_c = 0x9c0c;
   }
-  else if (uVar2 - 0xc < 2) {
+  else if (vfo_mode_ret - 0xc < 2) {
     uStack_c = 0x9c0b;
   }
-  else if (uVar2 == 0xe) {
+  else if (vfo_mode_ret == 0xe) {
     uStack_c = 0x9c0d;
   }
   else {
@@ -2168,10 +2451,11 @@ uint aess_level_ptr(void)
 bool ckey_det(void)
 
 {
-  char cVar1;
+  char port8_pidr;
   
-  cVar1 = PORT8_PIDR;
-  return -1 < cVar1;
+                    /* Port Input [sfr] */
+  port8_pidr = PORT8_PIDR;
+  return -1 < port8_pidr;
 }
 
 
@@ -2190,10 +2474,11 @@ bool ckey_det(void)
 bool ckey_dot(void)
 
 {
-  byte bVar1;
+  byte port1_pidr;
   
-  bVar1 = PORT1_PIDR;
-  return (bVar1 & 0x40) == 0;
+  port1_pidr = PORT1_PIDR;
+                    /* Port Input [sfr] */
+  return (port1_pidr & 0x40) == 0;
 }
 
 
@@ -2212,10 +2497,11 @@ bool ckey_dot(void)
 bool ckey_dash(void)
 
 {
-  char cVar1;
+  char port1_pidr;
   
-  cVar1 = PORT1_PIDR;
-  return -1 < cVar1;
+                    /* Port Input [sfr] */
+  port1_pidr = PORT1_PIDR;
+  return -1 < port1_pidr;
 }
 
 
@@ -2233,10 +2519,11 @@ bool ckey_dash(void)
 byte jp_p51_get(void)
 
 {
-  byte bVar1;
+  byte port5_pidr;
   
-  bVar1 = PORT5_PIDR;
-  return bVar1 >> 1 & 1;
+                    /* Port Input [sfr] */
+  port5_pidr = PORT5_PIDR;
+  return port5_pidr >> 1 & 1;
 }
 
 
@@ -2253,10 +2540,11 @@ byte jp_p51_get(void)
 byte FUN_fffb6f3d(void)
 
 {
-  byte bVar1;
+  byte port5_pidr;
   
-  bVar1 = PORT5_PIDR;
-  return bVar1 >> 2 & 1;
+                    /* Port Input [sfr] */
+  port5_pidr = PORT5_PIDR;
+  return port5_pidr >> 2 & 1;
 }
 
 
@@ -2273,10 +2561,11 @@ byte FUN_fffb6f3d(void)
 byte FUN_fffb6f50(void)
 
 {
-  byte bVar1;
+  byte port5_pidr;
   
-  bVar1 = PORT5_PIDR;
-  return bVar1 >> 3 & 1;
+                    /* Port Input [sfr] */
+  port5_pidr = PORT5_PIDR;
+  return port5_pidr >> 3 & 1;
 }
 
 
@@ -2293,10 +2582,11 @@ byte FUN_fffb6f50(void)
 byte FUN_fffb6f63(void)
 
 {
-  byte bVar1;
+  byte port5_pidr;
   
-  bVar1 = PORT5_PIDR;
-  return bVar1 >> 4 & 1;
+                    /* Port Input [sfr] */
+  port5_pidr = PORT5_PIDR;
+  return port5_pidr >> 4 & 1;
 }
 
 
@@ -2314,10 +2604,11 @@ byte FUN_fffb6f63(void)
 bool atas_det(void)
 
 {
-  byte bVar1;
+  byte port5_pidr;
   
-  bVar1 = PORT5_PIDR;
-  return (bVar1 >> 5 & 1) == 1;
+                    /* Port Input [sfr] */
+  port5_pidr = PORT5_PIDR;
+  return (port5_pidr >> 5 & 1) == 1;
 }
 
 
@@ -2336,10 +2627,11 @@ bool atas_det(void)
 void sdr_reset_set(char param_1)
 
 {
-  byte bVar1;
+  byte port7_podr;
   
-  bVar1 = PORT7_PODR;
-  PORT7_PODR = bVar1 & 0x7f | param_1 << 7;
+                    /* Port Output Data [sfr] */
+  port7_podr = PORT7_PODR;
+  PORT7_PODR = port7_podr & 0x7f | param_1 << 7;
   return;
 }
 
@@ -2360,10 +2652,11 @@ void sdr_reset_set(char param_1)
 void sdr_update_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port7_podr;
   
-  bVar1 = PORT7_PODR;
-  PORT7_PODR = bVar1 & 0xbf | (param_1 & 1) << 6;
+  port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
+  PORT7_PODR = port7_podr & 0xbf | (param_1 & 1) << 6;
   return;
 }
 
@@ -2384,10 +2677,11 @@ void sdr_update_set(byte param_1)
 void af_reset_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port7_podr;
   
-  bVar1 = PORT7_PODR;
-  PORT7_PODR = bVar1 & 0xef | (param_1 & 1) << 4;
+  port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
+  PORT7_PODR = port7_podr & 0xef | (param_1 & 1) << 4;
   return;
 }
 
@@ -2406,10 +2700,11 @@ void af_reset_set(byte param_1)
 void pa_pon_set(byte param_1)
 
 {
-  byte bVar1;
+  byte portc_podr;
   
-  bVar1 = PORTC_PODR;
-  PORTC_PODR = bVar1 & 0xfe | param_1 & 1;
+  portc_podr = PORTC_PODR;
+                    /* Port Output Data [sfr] */
+  PORTC_PODR = portc_podr & 0xfe | param_1 & 1;
   return;
 }
 
@@ -2430,10 +2725,11 @@ void pa_pon_set(byte param_1)
 void tun_lin_sel_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port8_podr;
   
-  bVar1 = PORT8_PODR;
-  PORT8_PODR = bVar1 & 0xf7 | (param_1 & 1) << 3;
+  port8_podr = PORT8_PODR;
+                    /* Port Output Data [sfr] */
+  PORT8_PODR = port8_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
 
@@ -2454,10 +2750,11 @@ void tun_lin_sel_set(byte param_1)
 void rem_key_sel_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port8_podr;
   
-  bVar1 = PORT8_PODR;
-  PORT8_PODR = bVar1 & 0xbf | (param_1 & 1) << 6;
+  port8_podr = PORT8_PODR;
+                    /* Port Output Data [sfr] */
+  PORT8_PODR = port8_podr & 0xbf | (param_1 & 1) << 6;
   return;
 }
 
@@ -2479,10 +2776,11 @@ void rem_key_sel_set(byte param_1)
 void gpo_a_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port1_podr;
   
-  bVar1 = PORT1_PODR;
-  PORT1_PODR = bVar1 & 0xf7 | (param_1 & 1) << 3;
+  port1_podr = PORT1_PODR;
+                    /* Port Output Data [sfr] */
+  PORT1_PODR = port1_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
 
@@ -2503,10 +2801,11 @@ void gpo_a_set(byte param_1)
 void gpo_b_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port1_podr;
   
-  bVar1 = PORT1_PODR;
-  PORT1_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
+  port1_podr = PORT1_PODR;
+                    /* Port Output Data [sfr] */
+  PORT1_PODR = port1_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
 
@@ -2527,10 +2826,11 @@ void gpo_b_set(byte param_1)
 void gpo_c_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port5_podr;
   
-  bVar1 = PORT5_PODR;
-  PORT5_PODR = bVar1 & 0xfe | param_1 & 1;
+  port5_podr = PORT5_PODR;
+                    /* Port Output Data [sfr] */
+  PORT5_PODR = port5_podr & 0xfe | param_1 & 1;
   return;
 }
 
@@ -2552,10 +2852,11 @@ void gpo_c_set(byte param_1)
 void gpo_d_set(byte param_1)
 
 {
-  byte bVar1;
+  byte port2_podr;
   
-  bVar1 = PORT2_PODR;
-  PORT2_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
+  port2_podr = PORT2_PODR;
+                    /* Port Output Data [sfr] */
+  PORT2_PODR = port2_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
 
@@ -2574,10 +2875,11 @@ void gpo_d_set(byte param_1)
 byte gpo_a_get(void)
 
 {
-  byte bVar1;
+  byte port1_podr;
   
-  bVar1 = PORT1_PODR;
-  return bVar1 >> 3 & 1;
+                    /* Port Output Data [sfr] */
+  port1_podr = PORT1_PODR;
+  return port1_podr >> 3 & 1;
 }
 
 
@@ -2594,10 +2896,11 @@ byte gpo_a_get(void)
 byte gpo_b_get(void)
 
 {
-  byte bVar1;
+  byte port1_podr;
   
-  bVar1 = PORT1_PODR;
-  return bVar1 >> 2 & 1;
+                    /* Port Output Data [sfr] */
+  port1_podr = PORT1_PODR;
+  return port1_podr >> 2 & 1;
 }
 
 
@@ -2614,10 +2917,11 @@ byte gpo_b_get(void)
 byte gpo_c_get(void)
 
 {
-  byte bVar1;
+  byte port5_podr;
   
-  bVar1 = PORT5_PODR;
-  return bVar1 & 1;
+                    /* Port Output Data [sfr] */
+  port5_podr = PORT5_PODR;
+  return port5_podr & 1;
 }
 
 
@@ -2634,10 +2938,11 @@ byte gpo_c_get(void)
 byte gpo_d_get(void)
 
 {
-  byte bVar1;
+  byte port2_podr;
   
-  bVar1 = PORT2_PODR;
-  return bVar1 >> 2 & 1;
+                    /* Port Output Data [sfr] */
+  port2_podr = PORT2_PODR;
+  return port2_podr >> 2 & 1;
 }
 
 
@@ -2682,6 +2987,7 @@ void etun_reset_set(char param_1)
     return;
   }
   bVar1 = PORT2_PODR;
+                    /* Port Output Data [sfr] */
   PORT2_PODR = bVar1 | 4;
   return;
 }
@@ -2711,6 +3017,7 @@ void speaker_switch_set(byte param_1)
   }
   if (DAT_00020fcc == 1) {
     bVar1 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
     PORT8_PODR = bVar1 & 0xfe | param_1 & 1;
     return;
   }
@@ -2718,6 +3025,7 @@ void speaker_switch_set(byte param_1)
     bVar1 = PORT7_PODR;
     PORT7_PODR = bVar1 & 0xfe | param_1 & 1;
     bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
     PORTB_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
     return;
   }
@@ -2725,6 +3033,7 @@ void speaker_switch_set(byte param_1)
     return;
   }
   bVar1 = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = bVar1 & 0xfe | param_1 & 1;
   return;
 }
@@ -2750,15 +3059,19 @@ void power_off_io(void)
   sdr_update_set(0);
   tun_lin_sel_set(0);
   bVar1 = PORTC_PODR;
+                    /* Port Output Data [sfr] */
   PORTC_PODR = bVar1 & 0xef;
   R_SCI5_Stop();
   bVar1 = PORTC_PODR;
   PORTC_PODR = bVar1 & 0xf7;
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 & 0x7f;
   bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = bVar1 & 0xdf;
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0x7f;
   return;
 }
@@ -2775,12 +3088,12 @@ void power_off_io(void)
 void adc_scan_blocking(void)
 
 {
-  byte bVar1;
+  byte adc_scan_done_ret;
   
   adc_scan_start();
   do {
-    bVar1 = adc_scan_done();
-  } while (bVar1 != 1);
+    adc_scan_done_ret = adc_scan_done();
+  } while (adc_scan_done_ret != 1);
   return;
 }
 
@@ -2801,10 +3114,11 @@ void speaker_route(void)
   char cVar1;
   bool bVar2;
   byte bVar3;
-  char *pcVar4;
+  char *aess_level_ptr_ret;
   
-  pcVar4 = (char *)aess_level_ptr();
-  cVar1 = *pcVar4;
+                    /* Pointer to the active mode's AESS level byte [doc] */
+  aess_level_ptr_ret = (char *)aess_level_ptr();
+  cVar1 = *aess_level_ptr_ret;
   if (g_ui.trx_state != 7) {
     bVar3 = PORT0_PIDR;
     if ((bVar3 >> 2 & 1) == 1) {
@@ -2865,6 +3179,7 @@ void speaker_route(void)
         bVar3 = PORT8_PODR;
         PORT8_PODR = bVar3 & 0xfe;
         bVar3 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
         PORTA_PODR = bVar3 & 0xbf;
         g_ui.spk_boost_level = 0xff;
         g_ui.spk_route_both = 0;
@@ -2930,10 +3245,13 @@ void speaker_route(void)
         return;
       }
       bVar3 = PORT7_PODR;
+                    /* Port Output Data [sfr] */
       PORT7_PODR = bVar3 & 0xfe;
       bVar3 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
       PORTB_PODR = bVar3 & 0xfb;
       bVar3 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
       PORT8_PODR = bVar3 & 0xfe;
       g_ui.spk_boost_level = 0;
       g_ui.spk_route_both = 0;
@@ -2973,12 +3291,15 @@ void linear_band_data(void)
       switch(cVar2) {
       case '\0':
         bVar1 = PORT1_PODR;
+                    /* Port Output Data [sfr] */
         PORT1_PODR = bVar1 | 8;
         bVar1 = PORT1_PODR;
         PORT1_PODR = bVar1 & 0xfb;
         bVar1 = PORT5_PODR;
+                    /* Port Output Data [sfr] */
         PORT5_PODR = bVar1 | 1;
         bVar1 = PORT2_PODR;
+                    /* Port Output Data [sfr] */
         PORT2_PODR = bVar1 | 4;
         return;
       case '\x01':
@@ -3123,24 +3444,35 @@ void linear_band_data(void)
 void R_MTU2_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xfffffdff;
-  bVar2 = MTU_TSTRA;
-  MTU_TSTRA = bVar2 & 0xfb;
-  bVar2 = MTU_TSYRA;
-  MTU_TSYRA = bVar2 & 0xfb;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xfffffdff;
+  bVar1 = MTU_TSTRA;
+                    /* Timer Start A [sfr] */
+  MTU_TSTRA = bVar1 & 0xfb;
+  bVar1 = MTU_TSYRA;
+                    /* Timer Synchronous A [sfr] */
+  MTU_TSYRA = bVar1 & 0xfb;
+                    /* Timer Control [sfr] */
   MTU2_TCR = 0x40;
+                    /* Timer Control 2 [sfr] */
   MTU2_TCR2 = 0;
+                    /* Timer Interrupt Enable [sfr] */
   MTU2_TIER = 0;
+                    /* Timer I/O Control [sfr] */
   MTU2_TIOR = 0x30;
+                    /* Timer General A [sfr] */
   MTU2_TGRA = 11999;
+                    /* Timer General B [sfr] */
   MTU2_TGRB = 0x726;
+                    /* P27 Pin Function Control [sfr] */
   MPC_P27PFS = 1;
-  bVar2 = PORT2_PMR;
-  PORT2_PMR = bVar2 | 0x80;
+                    /* Port Mode [sfr] */
+  bVar1 = PORT2_PMR;
+  PORT2_PMR = bVar1 | 0x80;
   R_MTU2_Create_UserInit();
   return;
 }
@@ -3161,10 +3493,11 @@ void R_MTU2_Create(void)
 void R_MTU2_Start(void)
 
 {
-  byte bVar1;
+  byte mtu_tstra;
   
-  bVar1 = MTU_TSTRA;
-  MTU_TSTRA = bVar1 | 4;
+  mtu_tstra = MTU_TSTRA;
+                    /* Timer Start A [sfr] */
+  MTU_TSTRA = mtu_tstra | 4;
   return;
 }
 
@@ -3183,10 +3516,11 @@ void R_MTU2_Start(void)
 void R_MTU2_Stop(void)
 
 {
-  byte bVar1;
+  byte mtu_tstra;
   
-  bVar1 = MTU_TSTRA;
-  MTU_TSTRA = bVar1 & 0xfb;
+  mtu_tstra = MTU_TSTRA;
+                    /* Timer Start A [sfr] */
+  MTU_TSTRA = mtu_tstra & 0xfb;
   return;
 }
 
@@ -3224,42 +3558,58 @@ void R_MTU2_Create_UserInit(void)
 void R_SCI6_Create_IIC(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcrb;
   
-  uVar1 = SYSTEM_MSTPCRB;
-  SYSTEM_MSTPCRB = uVar1 & 0xfdffffff;
-  bVar2 = ICU_IPR086;
-  ICU_IPR086 = bVar2 & 0xfa | 10;
-  bVar2 = ICU_IPR087;
-  ICU_IPR087 = bVar2 & 0xfa | 10;
+                    /* Module Stop Control B [sfr] */
+  system_mstpcrb = SYSTEM_MSTPCRB;
+  SYSTEM_MSTPCRB = system_mstpcrb & 0xfdffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR086;
+  ICU_IPR086 = bVar1 & 0xfa | 10;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR087;
+  ICU_IPR087 = bVar1 & 0xfa | 10;
+                    /* Serial Control [sfr] */
   SCI6_SCR = 0;
+                    /* I2C Mode 3 [sfr] */
   SCI6_SIMR3 = 0xf0;
+                    /* Serial Mode [sfr] */
   SCI6_SMR = 0;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 & 0xfe;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 & 0xfb;
-  bVar2 = SCI6_SCMR;
-  SCI6_SCMR = bVar2 | 8;
+  bVar1 = SCI6_SCMR;
+                    /* Smart Card Mode [sfr] */
+  SCI6_SCMR = bVar1 & 0xfe;
+  bVar1 = SCI6_SCMR;
+  SCI6_SCMR = bVar1 & 0xfb;
+  bVar1 = SCI6_SCMR;
+  SCI6_SCMR = bVar1 | 8;
+                    /* Bit Rate [sfr] */
   SCI6_BRR = 0x12;
+                    /* Serial Extended Mode [sfr] */
   SCI6_SEMR = 0;
-  bVar2 = SCI6_SIMR1;
-  SCI6_SIMR1 = bVar2 | 1;
-  bVar2 = SCI6_SIMR2;
-  SCI6_SIMR2 = bVar2 | 0x22;
+                    /* I2C Mode 1 [sfr] */
+  bVar1 = SCI6_SIMR1;
+  SCI6_SIMR1 = bVar1 | 1;
+                    /* I2C Mode 2 [sfr] */
+  bVar1 = SCI6_SIMR2;
+  SCI6_SIMR2 = bVar1 | 0x22;
+                    /* SPI Mode [sfr] */
   SCI6_SPMR = 0;
   SCI6_SCR = 0xf4;
+                    /* P01 Pin Function Control [sfr] */
   MPC_P01PFS = 10;
-  bVar2 = PORT0_ODR0;
-  PORT0_ODR0 = bVar2 | 4;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 | 2;
+                    /* Open-Drain Control 0 [sfr] */
+  bVar1 = PORT0_ODR0;
+  PORT0_ODR0 = bVar1 | 4;
+                    /* Port Mode [sfr] */
+  bVar1 = PORT0_PMR;
+  PORT0_PMR = bVar1 | 2;
+                    /* P00 Pin Function Control [sfr] */
   MPC_P00PFS = 10;
-  bVar2 = PORT0_ODR0;
-  PORT0_ODR0 = bVar2 | 1;
-  bVar2 = PORT0_PMR;
-  PORT0_PMR = bVar2 | 1;
+  bVar1 = PORT0_ODR0;
+  PORT0_ODR0 = bVar1 | 1;
+  bVar1 = PORT0_PMR;
+  PORT0_PMR = bVar1 | 1;
   R_SCI6_Create_UserInit();
   return;
 }
@@ -3285,11 +3635,15 @@ void R_SCI6_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR087;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR087 = bVar1 & 0xfe;
   bVar1 = ICU_IR086;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR086 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 | 0x80;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x1000;
   bVar1 = ICU_IER0A;
@@ -3318,12 +3672,16 @@ void R_SCI6_Stop(void)
   uint uVar2;
   
   bVar1 = ICU_IR087;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR087 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 & 0x7f;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffefff;
   bVar1 = ICU_IR086;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR086 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
   ICU_IER0A = bVar1 & 0xbf;
@@ -3348,6 +3706,7 @@ void R_SCI6_Stop(void)
 void R_SCI6_IIC_StartCondition(void)
 
 {
+                    /* I2C Mode 3 [sfr] */
   SCI6_SIMR3 = 0x51;
   return;
 }
@@ -3367,6 +3726,7 @@ void R_SCI6_IIC_StartCondition(void)
 void R_SCI6_IIC_StopCondition(void)
 
 {
+                    /* I2C Mode 3 [sfr] */
   SCI6_SIMR3 = 0x54;
   return;
 }
@@ -3463,13 +3823,15 @@ void R_SCI6_Create_UserInit(void)
 void r_sci6_iic_txi(void)
 
 {
-  undefined1 uVar1;
-  byte bVar2;
+  undefined1 sci6_rdr;
+  byte sci6_sisr;
   
-  bVar2 = SCI6_SISR;
-  if ((bVar2 & 1) == 1) {
-    uVar1 = SCI6_RDR;
-    *DAT_00021050 = uVar1;
+                    /* I2C Status [sfr] */
+  sci6_sisr = SCI6_SISR;
+  if ((sci6_sisr & 1) == 1) {
+    sci6_rdr = SCI6_RDR;
+                    /* Receive Data [sfr] */
+    *DAT_00021050 = sci6_rdr;
     DAT_00021050 = DAT_00021050 + 1;
     DAT_0001fa44 = DAT_0001fa44 + 1;
   }
@@ -3496,11 +3858,13 @@ void r_sci6_iic_tei(void)
   
   if (DAT_00012236 == -0x80) {
     bVar1 = SCI6_SIMR3;
+                    /* I2C Mode 3 [sfr] */
     SCI6_SIMR3 = bVar1 & 0xf7;
     bVar1 = SCI6_SIMR3;
     SCI6_SIMR3 = bVar1 & 0x3f;
     bVar1 = SCI6_SIMR3;
     SCI6_SIMR3 = bVar1 & 0xcf;
+                    /* Transmit Data [sfr] */
     SCI6_TDR = DAT_00012237;
     return;
   }
@@ -3549,6 +3913,7 @@ void r_sci6_iic_rxi(void)
   undefined1 uVar2;
   
   bVar1 = SCI6_SISR;
+                    /* I2C Status [sfr] */
   if ((bVar1 & 1) != 0) {
     DAT_00012236 = 0;
     R_SCI6_IIC_StopCondition();
@@ -3556,6 +3921,7 @@ void r_sci6_iic_rxi(void)
   }
   if (DAT_00012235 == -0x80) {
     if (DAT_0001fa42 != 0) {
+                    /* Transmit Data [sfr] */
       SCI6_TDR = *DAT_0002104c;
       DAT_0002104c = DAT_0002104c + 1;
       DAT_0001fa42 = DAT_0001fa42 + -1;
@@ -3570,6 +3936,7 @@ void r_sci6_iic_rxi(void)
     if ((bVar1 & 0x20) == 0) {
       if (DAT_0001fa44 < DAT_0001fa46) {
         uVar2 = SCI6_RDR;
+                    /* Receive Data [sfr] */
         *DAT_00021050 = uVar2;
         DAT_00021050 = DAT_00021050 + 1;
         DAT_0001fa44 = DAT_0001fa44 + 1;
@@ -3581,12 +3948,14 @@ void r_sci6_iic_rxi(void)
     if (DAT_0001fa44 == 0) {
       if (DAT_0001fa46 == 1) {
         bVar1 = SCI6_SIMR2;
+                    /* I2C Mode 2 [sfr] */
         SCI6_SIMR2 = bVar1 | 0x20;
       }
       else {
         bVar1 = SCI6_SIMR2;
         SCI6_SIMR2 = bVar1 & 0xdf;
         bVar1 = SCI6_SCR;
+                    /* Serial Control [sfr] */
         SCI6_SCR = bVar1 | 0x40;
       }
     }
@@ -3654,23 +4023,33 @@ void r_sci6_callback_receiveend(void)
 void R_TPU2_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfb;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfb;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR138 = 0x18;
-  bVar2 = ICU_IPR138;
-  ICU_IPR138 = bVar2 & 0xf2 | 2;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfb;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR138;
+  ICU_IPR138 = bVar1 & 0xf2 | 2;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfb;
+                    /* Timer Control [sfr] */
   TPU2_TCR = 0x29;
-  bVar2 = TPU2_TIER;
-  TPU2_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU2_TIER;
+  TPU2_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control [sfr] */
   TPU2_TIOR = 0;
+                    /* Timer General A [sfr] */
   TPU2_TGRA = 0x4a;
+                    /* Timer General B [sfr] */
   TPU2_TGRB = 0x5db;
   R_TPU2_Create_UserInit();
   return;
@@ -3692,8 +4071,10 @@ void R_TPU2_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 | 4;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 4;
   return;
 }
@@ -3717,8 +4098,10 @@ void R_TPU2_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 & 0xfb;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfb;
   return;
 }

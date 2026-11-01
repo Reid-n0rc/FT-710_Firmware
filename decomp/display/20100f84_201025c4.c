@@ -374,6 +374,7 @@ void backlight_enable(int param_1)
     gpio_cfg_alt(4,7,3,2);
     uVar1 = 0x100010;
   }
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar1;
   return;
 }
@@ -394,6 +395,7 @@ void gpio_p8_14(int param_1)
   else {
     uVar1 = 0x40004000;
   }
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = uVar1;
   return;
 }
@@ -426,6 +428,7 @@ void lcd_power(uint param_1)
 {
   undefined4 uVar1;
   
+                    /* P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5 [doc, inference] */
   lcd_pins_enable(param_1 & 0xff);
   if (param_1 != 0) {
     uVar1 = 0x400040;
@@ -433,6 +436,7 @@ void lcd_power(uint param_1)
   else {
     uVar1 = 0x400000;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   if (param_1 != 0) {
     uVar1 = 0x40004000;
@@ -440,6 +444,7 @@ void lcd_power(uint param_1)
   else {
     uVar1 = 0x40000000;
   }
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar1;
   return;
 }
@@ -460,6 +465,7 @@ void gpio_p4_7(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -480,6 +486,7 @@ void gpio_rx_reset(int param_1)
   else {
     uVar1 = 0x4000400;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   return;
 }
@@ -500,6 +507,7 @@ void gpio_rx_update(int param_1)
   else {
     uVar1 = 0x80008;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -520,6 +528,7 @@ void gpio_p8_5(int param_1)
   else {
     uVar1 = 0x200020;
   }
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = uVar1;
   return;
 }
@@ -540,6 +549,7 @@ void gpio_rx_update_b(int param_1)
   else {
     uVar1 = 0x80008;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -560,6 +570,7 @@ void gpio_qf_reset(int param_1)
   else {
     uVar1 = 0x40004;
   }
+                    /* Port set/reset_11 [sfr] */
   PORT_PSR11 = uVar1;
   return;
 }
@@ -586,7 +597,9 @@ void gpio_p2_4_5_select(int param_1)
   else if (param_1 == 2) {
     uVar1 = 0x10;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1 | 0x300000;
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar2 | 0x20000;
   return;
 }
@@ -599,7 +612,9 @@ void gpio_p2_4_5_select(int param_1)
 void gpio_p2_4_5_clear(void)
 
 {
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = 0x300000;
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = 0x20000;
   return;
 }
@@ -627,6 +642,7 @@ void gpio_rx_update_off(int param_1)
 void gpio_p8_6to9_3(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c000c0;
   return;
 }
@@ -639,6 +655,7 @@ void gpio_p8_6to9_3(void)
 void gpio_p8_6to9_8(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c00200;
   return;
 }
@@ -651,6 +668,7 @@ void gpio_p8_6to9_8(void)
 void gpio_p8_6to9_6(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c00180;
   return;
 }
@@ -671,6 +689,7 @@ void sd_power(int param_1)
   else {
     uVar1 = 0x10000000;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   if (param_1 == 0) {
     return;
@@ -687,10 +706,11 @@ void sd_power(int param_1)
 uint sd_card_detect(void)
 
 {
-  ushort uVar1;
+  ushort port_ppr11;
   
-  uVar1 = PORT_PPR11;
-  return (uVar1 & 0x1f) >> 4;
+  port_ppr11 = PORT_PPR11;
+                    /* Port pin read_11 [sfr] */
+  return (port_ppr11 & 0x1f) >> 4;
 }
 
 
@@ -710,6 +730,7 @@ void gpio_usb0_en(int param_1,int param_2)
     else {
       uVar1 = 0x4000400;
     }
+                    /* Port set/reset_8 [sfr] */
     PORT_PSR8 = uVar1;
   }
   return;
@@ -738,6 +759,7 @@ void gpio_dvr(int param_1,int param_2)
   else {
     uVar1 = 0x2000200;
   }
+                    /* Port set/reset_5 [sfr] */
   PORT_PSR5 = uVar1 | uVar2;
   return;
 }
@@ -840,6 +862,7 @@ void gpio_p2_15(int param_1)
   else {
     uVar1 = 0x80008000;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -860,6 +883,7 @@ void gpio_p2_7(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -880,6 +904,7 @@ void gpio_ft4222_reset(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -954,16 +979,27 @@ void led_set_mask(uint param_1)
 void cpg_set_clock_profile(int param_1)
 
 {
+                    /* Standby control 2 [sfr] */
   CPG_STBCR2 = (&DAT_2016517c)[param_1];
+                    /* Standby control 3 [sfr] */
   CPG_STBCR3 = (&DAT_2016517e)[param_1];
+                    /* Standby control 4 [sfr] */
   CPG_STBCR4 = (&DAT_20165180)[param_1];
+                    /* Standby control 5 [sfr] */
   CPG_STBCR5 = (&DAT_20165182)[param_1];
+                    /* Standby control 6 [sfr] */
   CPG_STBCR6 = (&DAT_20165184)[param_1];
+                    /* Standby control 7 [sfr] */
   CPG_STBCR7 = (&DAT_20165186)[param_1];
+                    /* Standby control 8 [sfr] */
   CPG_STBCR8 = (&DAT_20165188)[param_1];
+                    /* Standby control 9 [sfr] */
   CPG_STBCR9 = (&DAT_2016518a)[param_1];
+                    /* Standby control 10 [sfr] */
   CPG_STBCR10 = (&DAT_2016518c)[param_1];
+                    /* Standby control 11 [sfr] */
   CPG_STBCR11 = (&DAT_2016518e)[param_1];
+                    /* Standby control 12 [sfr] */
   CPG_STBCR12 = (&DAT_20165190)[param_1];
   return;
 }
@@ -1261,10 +1297,10 @@ void mouse_middle_get_event(void *param_1)
 void mouse_middle_down(void)
 
 {
-  bool bVar1;
+  bool key_func_is_held_ret;
   
   if ((((DAT_20800030 == 0 && DAT_20800034 == 0) && DAT_20800038 == 0) && DAT_20800048 == 0) &&
-     (bVar1 = key_func_is_held(), !bVar1)) {
+     (key_func_is_held_ret = key_func_is_held(), !key_func_is_held_ret)) {
     if (DAT_20800054 == 0) {
       DAT_2080005c = 1;
     }
@@ -1291,14 +1327,14 @@ void mouse_middle_up(void)
 uint mouse_middle_is_func(void)
 
 {
-  ushort uVar1;
-  uint uVar2;
+  ushort gui_middle_key_ret;
+  uint uVar1;
   
-  uVar2 = 0;
+  uVar1 = 0;
   if ((DAT_2080005c != 0 || (DAT_20800058 != 0 || DAT_20800054 != 0)) &&
-     (uVar1 = gui_middle_key(), uVar1 == 0x30f)) {
-    uVar2 = 1;
+     (gui_middle_key_ret = gui_middle_key(), gui_middle_key_ret == 0x30f)) {
+    uVar1 = 1;
   }
-  return uVar2;
+  return uVar1;
 }
 

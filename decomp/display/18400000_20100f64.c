@@ -43,6 +43,7 @@ void Reset_Handler(void)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
+                    /* DCCIMVAC per cache line over the range [doc] */
   dcache_clean_invalidate_range(0);
   FUN_20100d0c();
   cpg_early_init();
@@ -79,6 +80,7 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
+                    /* writes SPIBSC0 regs 0x3FEFA0xx [doc, inference] */
   spibsc0_init();
   boot_select_bank();
   do {
@@ -124,6 +126,7 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
     pbVar3 = pbVar3 + 0x20;
   } while ((int)pbVar3 < 0x2043ffff);
   mmu_l1_table_init();
+                    /* sets the section attributes of the range to 0xC0C [doc] */
   mmu_set_cacheable(vec_reset,0x400000);
   mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
@@ -231,11 +234,14 @@ void DAbort_Handler(void)
 void wdt_system_reset(void)
 
 {
+                    /* Watchdog reset control/status [sfr] */
   WDT_WRCSR = 0xa500;
   DataMemoryBarrier(2);
   WDT_WRCSR = 0x5a5f;
+                    /* Watchdog timer counter [sfr] */
   WDT_WTCNT = 0x5aff;
   DataMemoryBarrier(2);
+                    /* Watchdog timer control/status [sfr] */
   WDT_WTCSR = 0xa578;
   return;
 }
@@ -287,6 +293,7 @@ void system_reset_select(int param_1)
     return;
   }
   if (param_1 == 2) {
+                    /* bulk port-mode pin set-up [doc, inference] */
     gpio_cfg_mask((ushort *)0x0,0x4000,1);
     gpio_cfg_mask((ushort *)0x0,0x10,1);
     gpio_cfg_mask(&PORT_P11,0x10004,1);
@@ -368,6 +375,7 @@ void gpio_p7_9_11(int param_1)
   else {
     uVar1 = 0x8000000;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   if (param_1 != 0) {
     uVar1 = 0x2000200;
@@ -390,11 +398,16 @@ void FUN_201004a4(int param_1)
   do {
     dVar1 = SPIBSC_CMNSR_0;
   } while ((dVar1 & 1) == 0);
+                    /* Common control_0 [sfr] */
   dVar1 = SPIBSC_CMNCR_0;
   SPIBSC_CMNCR_0 = dVar1 | 0x80000000;
+                    /* SPI mode command setting_0 [sfr] */
   SPIBSC_SMCMR_0 = param_1 << 0x10;
+                    /* SPI mode address setting_0 [sfr] */
   SPIBSC_SMADR_0 = 0;
+                    /* SPI mode enable setting_0 [sfr] */
   SPIBSC_SMENR_0 = 0x4000;
+                    /* SPI mode control_0 [sfr] */
   dVar1 = SPIBSC_SMCR_0;
   SPIBSC_SMCR_0 = dVar1 | 1;
   do {
@@ -589,15 +602,21 @@ void spibsc0_pins_init(void)
 void spibsc0_init(void)
 
 {
-  uint uVar1;
+  uint spibsc_drdmcr_0;
   
+                    /* P9_2..P9_7 alt 2 [doc, inference] */
   spibsc0_pins_init();
+                    /* Bit rate_0 [sfr] */
   SPIBSC_SPBCR_0 = 1;
+                    /* Data read command setting_0 [sfr] */
   SPIBSC_DRCMR_0 = 0xeb0000;
+                    /* Data read enable setting_0 [sfr] */
   SPIBSC_DRENR_0 = 0x222c780;
+                    /* Data read option setting_0 [sfr] */
   SPIBSC_DROPR_0 = 0xff000000;
-  uVar1 = SPIBSC_DRDMCR_0;
-  SPIBSC_DRDMCR_0 = uVar1 | 3;
+                    /* Data read dummy cycle setting_0 [sfr] */
+  spibsc_drdmcr_0 = SPIBSC_DRDMCR_0;
+  SPIBSC_DRDMCR_0 = spibsc_drdmcr_0 | 3;
   return;
 }
 
@@ -647,50 +666,62 @@ uint gpio_read_bit(uint param_1,uint param_2)
   switch(param_1) {
   case 0:
     uVar1 = PORT_PPR0;
+                    /* Port pin read_0 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 1:
     uVar1 = PORT_PPR1;
+                    /* Port pin read_1 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 2:
     uVar1 = PORT_PPR2;
+                    /* Port pin read_2 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 3:
     uVar1 = PORT_PPR3;
+                    /* Port pin read_3 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 4:
     uVar1 = PORT_PPR4;
+                    /* Port pin read_4 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 5:
     uVar1 = PORT_PPR5;
+                    /* Port pin read_5 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 6:
     uVar1 = PORT_PPR6;
+                    /* Port pin read_6 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 7:
     uVar1 = PORT_PPR7;
+                    /* Port pin read_7 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 8:
     uVar1 = PORT_PPR8;
+                    /* Port pin read_8 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 9:
     uVar1 = PORT_PPR9;
+                    /* Port pin read_9 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 10:
     uVar1 = PORT_PPR10;
+                    /* Port pin read_10 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 0xb:
     uVar1 = PORT_PPR11;
+                    /* Port pin read_11 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   default:
@@ -708,25 +739,25 @@ void crc16_a001_table_init(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint j;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   do {
-    uVar2 = 0;
-    uVar1 = uVar3;
+    j = 0;
+    uVar1 = i;
     do {
-      uVar2 = uVar2 + 1;
+      j = j + 1;
       if ((uVar1 & 1) == 0) {
         uVar1 = uVar1 >> 1;
       }
       else {
         uVar1 = uVar1 >> 1 ^ 0xa001;
       }
-    } while (uVar2 < 8);
-    (&DAT_208d9560)[uVar3] = uVar1 & 0xffff;
-    uVar3 = uVar3 + 1;
-  } while (uVar3 < 0x100);
+    } while (j < 8);
+    (&DAT_208d9560)[i] = uVar1 & 0xffff;
+    i = i + 1;
+  } while (i < 0x100);
   return;
 }
 
@@ -754,13 +785,13 @@ void crc32_make_table(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  uint uVar3;
+  uint j;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   do {
-    uVar2 = 0;
-    uVar1 = uVar3;
+    j = 0;
+    uVar1 = i;
     do {
       if ((uVar1 & 1) == 0) {
         uVar1 = uVar1 >> 1;
@@ -768,11 +799,11 @@ void crc32_make_table(void)
       else {
         uVar1 = uVar1 >> 1 ^ 0xedb88320;
       }
-      uVar2 = uVar2 + 1;
-    } while (uVar2 < 8);
-    (&DAT_208d9560)[uVar3] = uVar1;
-    uVar3 = uVar3 + 1;
-  } while (uVar3 < 0x100);
+      j = j + 1;
+    } while (j < 8);
+    (&DAT_208d9560)[i] = uVar1;
+    i = i + 1;
+  } while (i < 0x100);
   return;
 }
 
@@ -804,10 +835,10 @@ uint FUN_20100a88(uint param_1)
 void FUN_20100a98(int param_1,undefined1 param_2,uint param_3)
 
 {
-  uint uVar1;
+  uint i;
   
-  for (uVar1 = 0; uVar1 < param_3; uVar1 = uVar1 + 1) {
-    *(undefined1 *)(param_1 + uVar1) = param_2;
+  for (i = 0; i < param_3; i = i + 1) {
+    *(undefined1 *)(param_1 + i) = param_2;
   }
   return;
 }
@@ -822,13 +853,14 @@ void boot_select_bank(void)
 
 {
   bool bVar1;
-  int iVar2;
-  bool bVar3;
+  bool bVar2;
+  int spibsc_dropr_1;
   
-  bVar3 = false;
+  bVar2 = false;
   bVar1 = false;
-  iVar2 = SPIBSC_DROPR_1;
-  if (iVar2 == 0) {
+                    /* Data read option setting_1 [sfr] */
+  spibsc_dropr_1 = SPIBSC_DROPR_1;
+  if (spibsc_dropr_1 == 0) {
     SPIBSC_DROPR_1 = 0x20000000;
     FUN_20100a98(0x20000000,0,0x60);
     _DAT_20000000 = 0xbbbb;
@@ -839,7 +871,7 @@ void boot_select_bank(void)
     uRam20000040 = 0x3f0000;
     uRam20000044 = 0xa00000;
     if (DAT_183e0000 == 0x11111111) {
-      bVar3 = DAT_183e0004 != 0;
+      bVar2 = DAT_183e0004 != 0;
     }
     else if (DAT_183f0000 == 0x11111111) {
       if (DAT_183f0004 == 0) {
@@ -849,16 +881,19 @@ void boot_select_bank(void)
         bVar1 = true;
       }
     }
-    if (bVar3) {
+    if (bVar2) {
       if (!bVar1) {
         _DAT_20000000 = 1;
+                    /* Bank 1 valid: jump to 0x18400000 [fact: README.md] */
         FUN_18400000();
       }
     }
     else if (bVar1) {
       _DAT_20000000 = 2;
+                    /* Bank 2 valid: jump to 0x18A00000 [fact: README.md] */
       FUN_18a00000();
     }
+                    /* No valid bank: stay in the boot loader [inference: loader strings] */
     uRam20000008 = 3;
     return;
   }
@@ -893,6 +928,7 @@ void __scatterload(void)
 {
                     /* WARNING: Could not recover jumptable at 0x20100bf2. Too many branches */
                     /* WARNING: Treating indirect jump as call */
+                    /* armcc LZ decompressor for RW regions [doc, inference] */
   __decompress(0x2042886c,0x20450000,0x290);
   return;
 }
@@ -1074,6 +1110,7 @@ undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
     puVar3 = (undefined4 *)((uint)((int)param_3 + 7) & 0xfffffff8);
     local_40 = *puVar3;
     local_3c = puVar3[1];
+                    /* class bits of a double for _printf_fp_dec [doc] */
     iVar8 = fp_classify_double();
     if (local_3c < 0) {
       local_44 = 0x2d;
@@ -1203,6 +1240,7 @@ undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
       iVar7 = 0;
       iVar8 = 0;
       while (lVar14 != 0) {
+                    /* 64-bit unsigned divide by 10 by shifts and adds [doc] */
         lVar14 = _ll_udiv10();
         *(byte *)((int)param_1 + iVar8 + 0x24) = extraout_r2 + 0x30;
         iVar8 = iVar8 + 1;
@@ -1385,11 +1423,11 @@ void mmu_l1_table_init(void)
 {
   int iVar1;
   int *piVar2;
-  int iVar3;
+  int i;
   
   iVar1 = 0x10c02;
   piVar2 = &DAT_2044c000;
-  for (iVar3 = 0x1000; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x1000; i != 0; i = i + -1) {
     *piVar2 = iVar1;
     iVar1 = iVar1 + 0x100000;
     piVar2 = piVar2 + 1;

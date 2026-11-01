@@ -9,23 +9,40 @@ void backlight_pwm_init(void)
 {
   byte bVar1;
   
+                    /* Timer control_3 [sfr] */
   MTU2_TCR_3 = 0x40;
+                    /* Timer counter_3 [sfr] */
   MTU2_TCNT_3 = 0;
+                    /* Timer counter_4 [sfr] */
   MTU2_TCNT_4 = 0;
+                    /* Timer general A_3 [sfr] */
   MTU2_TGRA_3 = 0;
+                    /* Timer general B_3 [sfr] */
   MTU2_TGRB_3 = 0x13f;
+                    /* Timer general C_3 [sfr] */
   MTU2_TGRC_3 = 0;
+                    /* Timer general D_3 [sfr] */
   MTU2_TGRD_3 = 0x13f;
+                    /* Timer general A_4 [sfr] */
   MTU2_TGRA_4 = 0;
+                    /* Timer general B_4 [sfr] */
   MTU2_TGRB_4 = 0;
+                    /* Timer general C_4 [sfr] */
   MTU2_TGRC_4 = 0;
+                    /* Timer general D_4 [sfr] */
   MTU2_TGRD_4 = 0;
+                    /* Timer output control 1 [sfr] */
   MTU2_TOCR1 = 0x47;
+                    /* Timer output control 2 [sfr] */
   MTU2_TOCR2 = 0x7f;
+                    /* Timer output level buffer [sfr] */
   MTU2_TOLBR = 0x3f;
+                    /* Timer mode_3 [sfr] */
   MTU2_TMDR_3 = 0x38;
+                    /* Timer output master enable [sfr] */
   bVar1 = MTU2_TOER;
   MTU2_TOER = bVar1 | 0x20;
+                    /* Timer start [sfr] */
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 | 0x40;
   return;
@@ -39,8 +56,8 @@ void backlight_pwm_init(void)
 void backlight_set_pct(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint div10_round_ret;
+  int iVar1;
   
   if (param_1 < 0) {
     param_1 = 0;
@@ -48,12 +65,13 @@ void backlight_set_pct(int param_1)
   else if (99 < param_1) {
     param_1 = 100;
   }
-  uVar1 = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
-  iVar2 = div10_round(uVar1,(int)uVar1 >> 0x1f);
-  if (iVar2 == 0x140) {
-    iVar2 = 0x13f;
+  div10_round_ret = div10_round(param_1 * 0x140,param_1 * 0x140 >> 0x1f);
+  iVar1 = div10_round(div10_round_ret,(int)div10_round_ret >> 0x1f);
+  if (iVar1 == 0x140) {
+    iVar1 = 0x13f;
   }
-  MTU2_TGRD_4 = (short)iVar2 + -1;
+                    /* Timer general D_4 [sfr] */
+  MTU2_TGRD_4 = (short)iVar1 + -1;
   return;
 }
 
@@ -77,6 +95,7 @@ void backlight_set(uint param_1)
 void backlight_init(void)
 
 {
+                    /* MTU2 ch3/ch4 reset-synchronised PWM [doc] */
   backlight_pwm_init();
   backlight_set_pct(0x3c,1);
   return;
@@ -90,36 +109,37 @@ void backlight_init(void)
 void touch_cal_load(int *param_1,int *param_2)
 
 {
-  uint uVar1;
+  uint crc32_update_ret;
+  int iVar1;
   int iVar2;
   int iVar3;
-  int iVar4;
   
   if ((*param_1 != -1) && (*param_1 == -0x5a3cffff)) {
+                    /* reflected poly 0xEDB88320 [doc, inference] */
     crc32_make_table();
-    uVar1 = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
-    if (param_1[0xe] == ~uVar1) {
-      iVar2 = param_1[3];
-      iVar3 = param_1[4];
-      iVar4 = param_1[5];
+    crc32_update_ret = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
+    if (param_1[0xe] == ~crc32_update_ret) {
+      iVar1 = param_1[3];
+      iVar2 = param_1[4];
+      iVar3 = param_1[5];
       *param_2 = param_1[2];
-      param_2[1] = iVar2;
-      param_2[2] = iVar3;
-      param_2[3] = iVar4;
-      iVar2 = param_1[7];
-      iVar3 = param_1[8];
-      iVar4 = param_1[9];
+      param_2[1] = iVar1;
+      param_2[2] = iVar2;
+      param_2[3] = iVar3;
+      iVar1 = param_1[7];
+      iVar2 = param_1[8];
+      iVar3 = param_1[9];
       param_2[4] = param_1[6];
-      param_2[5] = iVar2;
-      param_2[6] = iVar3;
-      param_2[7] = iVar4;
-      iVar2 = param_1[0xb];
-      iVar3 = param_1[0xc];
-      iVar4 = param_1[0xd];
+      param_2[5] = iVar1;
+      param_2[6] = iVar2;
+      param_2[7] = iVar3;
+      iVar1 = param_1[0xb];
+      iVar2 = param_1[0xc];
+      iVar3 = param_1[0xd];
       param_2[8] = param_1[10];
-      param_2[9] = iVar2;
-      param_2[10] = iVar3;
-      param_2[0xb] = iVar4;
+      param_2[9] = iVar1;
+      param_2[10] = iVar2;
+      param_2[0xb] = iVar3;
     }
   }
   return;
@@ -161,6 +181,7 @@ void touch_cal_save(void *param_1)
   uStack_24 = *(undefined4 *)((int)param_1 + 0x24);
   uStack_20 = *(undefined4 *)((int)param_1 + 0x28);
   uStack_1c = *(undefined4 *)((int)param_1 + 0x2c);
+                    /* reflected poly 0xEDB88320 [doc, inference] */
   crc32_make_table();
   local_18 = crc32_update(0xffffffff,0x30,(uint)&local_48);
   local_18 = ~local_18;
@@ -586,6 +607,7 @@ void touch_cal_apply(uint param_1,uint param_2,short *param_3,short *param_4)
                        (int)((ulonglong)uVar6 >> 0x20));
   uVar6 = __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),DAT_20808c20,DAT_20808c24);
   __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),0,0x3fe00000);
+                    /* Double to signed int, truncating with saturation [doc] */
   sVar1 = __aeabi_d2iz();
   uVar5 = __aeabi_dmul((int)uVar5,uVar3,DAT_20808c30,DAT_20808c34);
   uVar6 = __aeabi_dmul((int)uVar7,uVar4,DAT_20808c28,DAT_20808c2c);
@@ -639,9 +661,12 @@ undefined4 tsc2007_write_cmd(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
+                    /* 0 start, 1 restart, 2 stop condition [doc, inference] */
   R_RIIC_SendCond(2,0);
+                    /* riic_transmit then waits for transmit end [doc, inference] */
   iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
   if (iVar1 == 0) {
+                    /* riic_transmit per byte [doc, inference] */
     R_RIIC_Write(2,(int)&uStack_10,1);
   }
   R_RIIC_SendCond(2);
@@ -664,9 +689,12 @@ uint tsc2007_read12(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
+                    /* 0 start, 1 restart, 2 stop condition [doc, inference] */
   iVar1 = R_RIIC_SendCond(2,0);
   if (iVar1 == 0) {
+                    /* riic_transmit then waits for transmit end [doc, inference] */
     iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
+                    /* riic_transmit per byte [doc, inference] */
     if ((iVar1 == 0) && (iVar1 = R_RIIC_Write(2,(int)&uStack_10,1), iVar1 == 0)) {
       itron_dly_tsk(1);
       R_RIIC_SendCond(2,1);
@@ -718,6 +746,7 @@ uint tsc2007_pressure(short *param_1)
     uVar3 = __aeabi_dmul(0,0x40790000,(int)uVar3,(int)((ulonglong)uVar3 >> 0x20));
     __aeabi_dmul((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
                  (int)((ulonglong)uVar2 >> 0x20));
+                    /* Double to unsigned int [doc] */
     uVar1 = __aeabi_d2uiz();
   }
   return uVar1;
@@ -737,6 +766,7 @@ void tsc2007_tint_isr(void)
   DAT_20808c40 = DAT_20808c40 + 1;
   DAT_20800074 = DAT_20800074 + 1;
   itron_iwup_tsk(DAT_20800088);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 8) != 0) {
     uVar1 = INTC_IRQRR;
@@ -772,6 +802,7 @@ void task_tsc2007(void)
   iVar2 = R_RIIC_Init(2);
   if (iVar2 == 0) {
     uVar1 = INTC_ICR1;
+                    /* Interrupt control 1 [sfr] */
     INTC_ICR1 = uVar1 & 0xff3f;
     uVar1 = INTC_ICR1;
     local_28 = (uint)uVar1;
@@ -795,6 +826,7 @@ void task_tsc2007(void)
         }
         while( true ) {
           itron_dly_tsk(1);
+                    /* Port pin read_1 [sfr] */
           uVar1 = PORT_PPR1;
           if ((uVar1 & 8) != 0) break;
           DAT_20808c48 = DAT_20808c48 + 1;
@@ -803,6 +835,7 @@ void task_tsc2007(void)
         touch_set_up();
         uVar1 = INTC_IRQRR;
         if ((uVar1 & 8) != 0) {
+                    /* IRQ interrupt request [sfr] */
           uVar1 = INTC_IRQRR;
           INTC_IRQRR = uVar1 & 0xfff7;
         }
@@ -955,6 +988,7 @@ void sd_fs_init(void)
 {
   int iVar1;
   
+                    /* clears the 0x450-byte drive and 0x24C-byte file tables [doc] */
   iVar1 = fs_init(&DAT_20808c4c,2);
   if (iVar1 == 0) {
     iVar1 = sd_drive_register(&DAT_20809984,0x49,sdhi_drv_init,&DAT_208099f8,&DAT_2080cc8e,0);
@@ -976,8 +1010,10 @@ void sd_drive_flush(int param_1)
 {
   int iVar1;
   
+                    /* fs_flush with fs_set_error [doc] */
   iVar1 = fs_sync();
   if (iVar1 == 0) {
+                    /* Clears the FAT cache, the cluster bitmap [doc] */
     fs_cache_invalidate(&DAT_20809984 + param_1 * 0x74);
     return;
   }
@@ -994,6 +1030,7 @@ void FUN_20103a94(int param_1,undefined4 param_2)
   
   while( true ) {
     iVar1 = sd_card_remount(param_2);
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     fs_task_ctx_get();
     if (((param_1 != 0) && (iVar1 == 1)) || (param_1 == 0 && iVar1 == 0)) break;
     itron_tslp_tsk(10);
@@ -1015,6 +1052,7 @@ void sd_card_monitor(undefined4 param_1,undefined4 param_2)
   
   uVar1 = 0;
   do {
+                    /* card detect state machine of the card monitor [doc] */
     uVar1 = sd_card_poll(param_2,uVar1);
     if (-1 < (int)uVar1) {
       _DAT_20800094 = uVar1;
@@ -1153,15 +1191,15 @@ undefined4 FUN_20103bd4(void)
 undefined4 sflash_sst_block_size(int param_1)
 
 {
-  int iVar1;
+  int i;
   
-  iVar1 = 1;
+  i = 1;
   do {
-    if (*(short *)(&UNK_201651fc + iVar1 * 8) == param_1) {
-      return *(undefined4 *)(&UNK_20165200 + iVar1 * 8);
+    if (*(short *)(&UNK_201651fc + i * 8) == param_1) {
+      return *(undefined4 *)(&UNK_20165200 + i * 8);
     }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xb);
+    i = i + 1;
+  } while (i < 0xb);
   return 0x10000;
 }
 
@@ -1187,6 +1225,7 @@ uint sflash_cmd_bp(void)
     local_c[0] = 1;
   }
   else {
+                    /* Read side of the flash device object [doc] */
     sflash_dev_read(local_c,1);
     local_c[0] = local_c[0] & 0xff;
   }
@@ -1217,6 +1256,7 @@ uint sflash_cmd_erase(undefined4 param_1)
     local_c[0] = 1;
   }
   else {
+                    /* Read side of the flash device object [doc] */
     sflash_dev_read(local_c,1);
     local_c[0] = local_c[0] & 0xff;
   }
@@ -1230,15 +1270,15 @@ int FUN_20103cc8(int param_1,int param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
   iVar1 = 0;
-  iVar2 = 0;
+  i = 0;
   if (0 < param_2) {
     do {
-      iVar1 = iVar1 + (*(byte *)(param_1 + iVar2) + 1 & 0xff);
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < param_2);
+      iVar1 = iVar1 + (*(byte *)(param_1 + i) + 1 & 0xff);
+      i = i + 1;
+    } while (i < param_2);
   }
   return iVar1;
 }
@@ -1263,13 +1303,18 @@ undefined4 sflash_erase_chip_sst(int param_1,undefined4 param_2)
   
   iVar5 = 0;
   if (param_1 != 0) {
+                    /* maps a fraction into the range [doc, inference] */
     uVar1 = progress_scale(param_1,param_2,0,0);
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(uVar1);
   }
+                    /* Object 0x20810D90 base = SPIBSC_CMNCR_0 [doc] */
   sflash_dev_open();
+                    /* Sends the 2-byte device command "bp" [doc] */
   iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
+                    /* sends the device command "er" [doc] */
     while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
       iVar2 = sflash_sst_block_size(uVar1);
       iVar5 = iVar5 + iVar2;
@@ -1316,6 +1361,7 @@ uint spiflash_write(int param_1,uint param_2,uint param_3)
   local_2e = param_1;
   iVar2 = sflash_dev_write(&local_30,6);
   if ((-1 < iVar2) && (iVar2 = sflash_dev_write(param_2,param_3), -1 < iVar2)) {
+                    /* Read side of the flash device object [doc] */
     sflash_dev_read(local_1c,1);
     iVar2 = FUN_20103cc8(param_1 + 0x18000000,param_3);
     if (iVar2 == iVar1) {
@@ -1347,10 +1393,14 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
   
   uVar1 = param_3 + 0xffffU >> 0x10;
   if (param_1 != 0) {
+                    /* maps a fraction into the range [doc, inference] */
     uVar2 = progress_scale(param_1,param_2,0,0);
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(uVar2);
   }
+                    /* Object 0x20810D90 base = SPIBSC_CMNCR_0 [doc] */
   sflash_dev_open();
+                    /* Sends the 2-byte device command "bp" [doc] */
   iVar3 = sflash_cmd_bp();
   if (iVar3 < 0) {
     return 0xffffffff;
@@ -1358,6 +1408,7 @@ uint spiflash_erase(int param_1,int param_2,int param_3)
   uVar2 = 0;
   if (uVar1 != 0) {
     do {
+                    /* sends the device command "er" [doc] */
       iVar3 = sflash_cmd_erase(param_2);
       if (iVar3 < 0) {
         return 0xffffffff;
@@ -1400,13 +1451,18 @@ undefined4 sflash_erase_chip_uniform(int param_1)
   
   iVar5 = 0;
   if (param_1 != 0) {
+                    /* maps a fraction into the range [doc, inference] */
     uVar1 = progress_scale();
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(uVar1);
   }
+                    /* Object 0x20810D90 base = SPIBSC_CMNCR_0 [doc] */
   sflash_dev_open();
+                    /* Sends the 2-byte device command "bp" [doc] */
   iVar2 = sflash_cmd_bp();
   if (-1 < iVar2) {
     uVar1 = 0;
+                    /* sends the device command "er" [doc] */
     while (iVar2 = sflash_cmd_erase(iVar5), -1 < iVar2) {
       iVar5 = iVar5 + 0x10000;
       if (param_1 != 0) {
@@ -1439,15 +1495,17 @@ undefined4 sflash_erase_chip_uniform(int param_1)
 undefined1 sflash_read_mfr_id(void)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
+  undefined4 spibsc_drcmr_0;
+  undefined4 spibsc_drenr_0;
   
-  uVar1 = SPIBSC_DRCMR_0;
-  uVar2 = SPIBSC_DRENR_0;
+                    /* Data read command setting_0 [sfr] */
+  spibsc_drcmr_0 = SPIBSC_DRCMR_0;
+                    /* Data read enable setting_0 [sfr] */
+  spibsc_drenr_0 = SPIBSC_DRENR_0;
   SPIBSC_DRCMR_0 = 0x9f0000;
   SPIBSC_DRENR_0 = 0x4000;
-  SPIBSC_DRCMR_0 = uVar1;
-  SPIBSC_DRENR_0 = uVar2;
+  SPIBSC_DRCMR_0 = spibsc_drcmr_0;
+  SPIBSC_DRENR_0 = spibsc_drenr_0;
   return DAT_18000000;
 }
 
@@ -1462,8 +1520,10 @@ void sflash_erase_chip(undefined4 param_1)
 {
   int iVar1;
   
+                    /* Switches SPIBSC0 external reads to command 0x9F [doc] */
   iVar1 = sflash_read_mfr_id();
   if (iVar1 != 0xbf) {
+                    /* erases 256 blocks of 64 KiB [doc] */
     sflash_erase_chip_uniform();
     return;
   }
@@ -1483,6 +1543,7 @@ undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3
   undefined1 local_27;
   undefined4 local_26;
   
+                    /* Object 0x20810D90 base = SPIBSC_CMNCR_0 [doc] */
   sflash_dev_open();
   local_28 = 0x72;
   local_27 = 100;
@@ -1492,6 +1553,7 @@ undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3
     uVar2 = 1;
   }
   else {
+                    /* Read side of the flash device object [doc] */
     uVar2 = sflash_dev_read(param_3,param_2);
   }
   return uVar2;

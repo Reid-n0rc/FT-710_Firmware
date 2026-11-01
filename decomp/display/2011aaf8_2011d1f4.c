@@ -264,6 +264,7 @@ LAB_2011b23c:
   puVar6 = *(uint **)(puVar1 + param_1 * 0x68);
   *puVar6 = *puVar6 | 1;
 LAB_2011b244:
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
   iVar5 = r_vdc5_shrd_get_resource(param_1,4);
   if (iVar5 == 0 && param_2 == 0) {
     FUN_2011a800(param_1,1,0);
@@ -337,6 +338,7 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
     iVar2 = FUN_2011d5fc();
     iVar3 = FUN_2011a8cc(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,unaff_r8,
                          unaff_lr);
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
     iVar4 = r_vdc5_shrd_get_resource(param_1,3);
     if (iVar4 != 0) {
       iVar4 = param_1 * 0x210;
@@ -445,21 +447,21 @@ void vdc5_reg_start_process(int param_1,int param_2,int *param_3)
 {
   int iVar1;
   int iVar2;
-  uint uVar3;
+  uint i;
   
   if (*param_3 != 0) {
     FUN_20119cd0();
   }
   iVar1 = FUN_2011d958(param_1);
   if (param_2 == -1) {
-    uVar3 = 0;
+    i = 0;
     do {
-      iVar2 = vdc5_shrd_res_idle(param_1,(int)(char)uVar3);
+      iVar2 = vdc5_shrd_res_idle(param_1,(int)(char)i);
       if (iVar2 != 0) {
-        (*(code *)(&PTR_FUN_20165bd8)[uVar3])(param_1,1);
+        (*(code *)(&PTR_FUN_20165bd8)[i])(param_1,1);
       }
-      uVar3 = uVar3 + 1;
-    } while (uVar3 < 9);
+      i = i + 1;
+    } while (i < 9);
   }
   else {
     (*(code *)(&PTR_FUN_20165bd8)[param_2])(param_1,1);
@@ -487,18 +489,18 @@ void vdc5_reg_stop_process(int param_1,int param_2)
 {
   int iVar1;
   int iVar2;
-  uint uVar3;
+  uint i;
   
   iVar1 = FUN_2011d958();
   if (param_2 == -1) {
-    uVar3 = 0;
+    i = 0;
     do {
-      iVar2 = vdc5_shrd_res_busy(param_1,(int)(char)uVar3);
+      iVar2 = vdc5_shrd_res_busy(param_1,(int)(char)i);
       if (iVar2 != 0) {
-        (*(code *)(&PTR_FUN_20165bd8)[uVar3])(param_1,0);
+        (*(code *)(&PTR_FUN_20165bd8)[i])(param_1,0);
       }
-      uVar3 = uVar3 + 1;
-    } while (uVar3 < 9);
+      i = i + 1;
+    } while (i < 9);
   }
   else {
     (*(code *)(&PTR_FUN_20165bd8)[param_2])(param_1,0);
@@ -825,6 +827,7 @@ void FUN_2011c174(int param_1,int param_2)
   if (param_2 != iVar2) {
     FUN_2011d58c(param_1,param_2);
     iVar2 = FUN_2011d5fc(param_1);
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
     iVar3 = r_vdc5_shrd_get_resource(param_1,3);
     if ((iVar2 == 0) && (iVar3 != 0)) {
       param_1 = param_1 * 0x210;
@@ -950,7 +953,9 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
   
   switch(param_1) {
   case 0:
+                    /* 5-bit colour component scaled to 8 bits [doc] */
     uVar3 = rgb5_to_8((param_2 & 0xffff) >> 0xb);
+                    /* 6-bit colour component scaled to 8 bits [doc] */
     iVar1 = rgb6_to_8((param_2 & 0x7ff) >> 5);
     iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
@@ -963,6 +968,7 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
     iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 3:
+                    /* 4-bit colour component scaled to 8 bits [doc] */
     uVar3 = rgb4_to_8((param_2 & 0xfff) >> 8);
     iVar1 = rgb4_to_8((param_2 & 0xff) >> 4);
     iVar2 = rgb4_to_8(param_2 & 0xf);
@@ -1040,17 +1046,17 @@ void FUN_2011c5b4(uint *param_1,undefined4 *param_2)
 
 {
   undefined4 *puVar1;
-  uint uVar2;
+  uint i;
   
-  uVar2 = 0;
+  i = 0;
   puVar1 = (undefined4 *)param_1[1];
   if (*param_1 != 0) {
     do {
       *param_2 = *puVar1;
-      uVar2 = uVar2 + 1;
+      i = i + 1;
       param_2 = param_2 + 1;
       puVar1 = puVar1 + 1;
-    } while (uVar2 < *param_1);
+    } while (i < *param_1);
   }
   return;
 }
@@ -1165,21 +1171,21 @@ void FUN_2011c85c(ushort *param_1,int param_2)
 
 {
   ushort *puVar1;
-  uint uVar2;
-  uint *puVar3;
+  uint i;
+  uint *puVar2;
   
   if (param_1 == (ushort *)0x0) {
     return;
   }
-  uVar2 = 0;
+  i = 0;
   do {
     puVar1 = param_1 + 1;
-    **(int **)(param_2 + uVar2 * 4) = (uint)*param_1 << 0x10;
-    puVar3 = *(uint **)(param_2 + uVar2 * 4);
+    **(int **)(param_2 + i * 4) = (uint)*param_1 << 0x10;
+    puVar2 = *(uint **)(param_2 + i * 4);
     param_1 = param_1 + 2;
-    *puVar3 = *puVar3 | (uint)*puVar1;
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x10);
+    *puVar2 = *puVar2 | (uint)*puVar1;
+    i = i + 1;
+  } while (i < 0x10);
   return;
 }
 
@@ -1189,8 +1195,8 @@ void FUN_2011c85c(ushort *param_1,int param_2)
 void FUN_2011c8a4(byte *param_1,undefined4 *param_2)
 
 {
-  uint uVar1;
-  byte *pbVar2;
+  uint i;
+  byte *pbVar1;
   
   if (param_1 == (byte *)0x0) {
     return;
@@ -1199,16 +1205,16 @@ void FUN_2011c8a4(byte *param_1,undefined4 *param_2)
   *(uint *)*param_2 = *(uint *)*param_2 | (uint)param_1[1] << 8;
   *(uint *)*param_2 = *(uint *)*param_2 | (uint)param_1[2];
   param_1 = param_1 + 3;
-  uVar1 = 1;
+  i = 1;
   do {
-    *(uint *)param_2[uVar1] = (uint)*param_1 << 0x18;
-    *(uint *)param_2[uVar1] = *(uint *)param_2[uVar1] | (uint)param_1[1] << 0x10;
-    pbVar2 = param_1 + 3;
-    *(uint *)param_2[uVar1] = *(uint *)param_2[uVar1] | (uint)param_1[2] << 8;
+    *(uint *)param_2[i] = (uint)*param_1 << 0x18;
+    *(uint *)param_2[i] = *(uint *)param_2[i] | (uint)param_1[1] << 0x10;
+    pbVar1 = param_1 + 3;
+    *(uint *)param_2[i] = *(uint *)param_2[i] | (uint)param_1[2] << 8;
     param_1 = param_1 + 4;
-    *(uint *)param_2[uVar1] = *(uint *)param_2[uVar1] | (uint)*pbVar2;
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 8);
+    *(uint *)param_2[i] = *(uint *)param_2[i] | (uint)*pbVar1;
+    i = i + 1;
+  } while (i < 8);
   return;
 }
 

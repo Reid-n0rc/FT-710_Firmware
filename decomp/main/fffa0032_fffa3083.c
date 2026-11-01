@@ -63,7 +63,7 @@ void dsp_status1_filter(void)
 void dsp_status2_filter(void)
 
 {
-  byte local_5;
+  byte i;
   ushort local_4;
   ushort local_2;
   
@@ -74,9 +74,9 @@ void dsp_status2_filter(void)
   }
   local_4 = 0;
   local_2 = 0;
-  for (local_5 = 0; local_5 < 0x20; local_5 = local_5 + 1) {
-    local_2 = (*(ushort *)(&DAT_0001b6e6 + (uint)local_5 * 2) >> 8) + local_2;
-    local_4 = (byte)(&DAT_0001b6e6)[(uint)local_5 * 2] + local_4;
+  for (i = 0; i < 0x20; i = i + 1) {
+    local_2 = (*(ushort *)(&DAT_0001b6e6 + (uint)i * 2) >> 8) + local_2;
+    local_4 = (byte)(&DAT_0001b6e6)[(uint)i * 2] + local_4;
   }
   DAT_0001b6e2 = local_2 / 0x20 << 8 | local_4 / 0x20;
   return;
@@ -90,7 +90,7 @@ void dsp_status2_filter(void)
 void dsp_status3_filter(void)
 
 {
-  byte local_3;
+  byte i;
   ushort local_2;
   
   (&DAT_00001c6e)[DAT_00001c7e] = (char)DAT_0001b63a;
@@ -99,8 +99,8 @@ void dsp_status3_filter(void)
     DAT_00001c7e = 0;
   }
   local_2 = 0;
-  for (local_3 = 0; local_3 < 0x10; local_3 = local_3 + 1) {
-    local_2 = (byte)(&DAT_00001c6e)[local_3] + local_2;
+  for (i = 0; i < 0x10; i = i + 1) {
+    local_2 = (byte)(&DAT_00001c6e)[i] + local_2;
   }
   DAT_00001c62 = (char)(local_2 >> 4);
   return;
@@ -181,21 +181,25 @@ void dsp_shadow_store(void)
   }
   if (DAT_0001b6de == 1) {
     DAT_0001b636 = DAT_0001b6e0;
+                    /* Filters for regs 1–4 [doc] */
     dsp_status1_filter();
     return;
   }
   if (DAT_0001b6de == 2) {
     DAT_0001b638 = DAT_0001b6e0;
+                    /* 32-sample average of each byte [doc, inference] */
     dsp_status2_filter();
     return;
   }
   if (DAT_0001b6de == 3) {
     DAT_0001b63a = DAT_0001b6e0;
+                    /* 16-sample average of low byte [doc, inference] */
     dsp_status3_filter();
     return;
   }
   if (DAT_0001b6de == 4) {
     DAT_0001b63c = DAT_0001b6e0;
+                    /* most frequent of last 8 samples [doc, inference] */
     dsp_status4_filter();
     return;
   }
@@ -533,14 +537,15 @@ byte dsp_check_reply(char param_1,void *param_2)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint sci4_rx_buf_ret;
   undefined1 local_e;
   
   local_e = 0;
   bVar1 = sci4_rx_ready();
   if (bVar1 == 1) {
-    uVar2 = sci4_rx_buf();
-    *(uint *)param_2 = uVar2;
+                    /* Returns the SCI4 receive buffer [doc, inference] */
+    sci4_rx_buf_ret = sci4_rx_buf();
+    *(uint *)param_2 = sci4_rx_buf_ret;
     DAT_00001c5e = 0;
     DAT_00001c5f = 0;
     if (param_1 == 'r') {
@@ -572,7 +577,7 @@ byte dsp_check_reply(char param_1,void *param_2)
 void dsp_send_frame(char param_1)
 
 {
-  byte bVar1;
+  byte dsp_sum8_ret;
   byte local_2;
   
   DAT_00001a5e = param_1;
@@ -586,8 +591,9 @@ void dsp_send_frame(char param_1)
   else {
     DAT_00001c5f = 1;
   }
-  bVar1 = dsp_sum8(0x1a5e,local_2);
-  byte2hex(&DAT_00001a5e + local_2,bVar1);
+                    /* 8-bit sum of n bytes [doc] */
+  dsp_sum8_ret = dsp_sum8(0x1a5e,local_2);
+  byte2hex(&DAT_00001a5e + local_2,dsp_sum8_ret);
   (&DAT_00001a5e)[(byte)(local_2 + 2)] = 0xd;
   sci4_send(0x1a5e,(ushort)(byte)(local_2 + 3));
   swtimer_start(3,6);
@@ -603,11 +609,11 @@ char dsp_sum8(int param_1,byte param_2)
 
 {
   undefined1 local_8;
-  undefined1 local_7;
+  undefined1 i;
   
   local_8 = '\0';
-  for (local_7 = 0; local_7 < param_2; local_7 = local_7 + 1) {
-    local_8 = *(char *)((uint)local_7 + param_1) + local_8;
+  for (i = 0; i < param_2; i = i + 1) {
+    local_8 = *(char *)((uint)i + param_1) + local_8;
   }
   return local_8;
 }
@@ -628,6 +634,7 @@ byte dsp_reply_sum_ok(int param_1,byte param_2)
   
   local_5 = param_2;
   local_4 = param_1;
+                    /* 8-bit sum of n bytes [doc] */
   bVar1 = dsp_sum8(param_1,param_2);
   byte2hex(&cStack_8,bVar1);
   if ((cStack_8 == *(char *)((uint)local_5 + local_4)) &&
@@ -654,12 +661,12 @@ void dsp_isp_bridge(void)
 {
   bool bVar1;
   byte bVar2;
-  char cVar3;
-  ushort uVar4;
-  char *pcVar5;
-  char *pcVar6;
-  int iVar7;
-  uint uVar8;
+  char dsp_sum8_ret;
+  ushort sci4_rx_len_ret;
+  char *pcVar3;
+  char *pcVar4;
+  int i;
+  uint uVar5;
   char acStack_40c [516];
   char acStack_208 [516];
   
@@ -693,12 +700,12 @@ void dsp_isp_bridge(void)
     wdt_kick();
     bVar2 = displink_rx_ready();
     if (bVar2 == 1) {
-      pcVar5 = (char *)displink_rx_buf();
-      pcVar6 = acStack_208;
-      for (iVar7 = 0x204; iVar7 != 0; iVar7 = iVar7 + -1) {
-        *pcVar6 = *pcVar5;
-        pcVar6 = pcVar6 + 1;
-        pcVar5 = pcVar5 + 1;
+      pcVar3 = (char *)displink_rx_buf();
+      pcVar4 = acStack_208;
+      for (i = 0x204; i != 0; i = i + -1) {
+        *pcVar4 = *pcVar3;
+        pcVar4 = pcVar4 + 1;
+        pcVar3 = pcVar3 + 1;
       }
       displink_rx_rearm();
       if (acStack_208[0] != '\x06') {
@@ -722,13 +729,13 @@ void dsp_isp_bridge(void)
           } while (bVar2 == 0);
           acStack_40c[0] = '\x06';
           displink_uart_send((uint)acStack_40c,1);
-          pcVar6 = acStack_208 + 3;
-          pcVar5 = &DAT_00001a5e;
-          for (uVar8 = (uint)CONCAT11(acStack_208[2],acStack_208[1]); uVar8 != 0; uVar8 = uVar8 - 1)
+          pcVar4 = acStack_208 + 3;
+          pcVar3 = &DAT_00001a5e;
+          for (uVar5 = (uint)CONCAT11(acStack_208[2],acStack_208[1]); uVar5 != 0; uVar5 = uVar5 - 1)
           {
-            *pcVar5 = *pcVar6;
-            pcVar5 = pcVar5 + 1;
-            pcVar6 = pcVar6 + 1;
+            *pcVar3 = *pcVar4;
+            pcVar3 = pcVar3 + 1;
+            pcVar4 = pcVar4 + 1;
           }
           sci4_send(0x1a5e,CONCAT11(acStack_208[2],acStack_208[1]));
         }
@@ -736,23 +743,25 @@ void dsp_isp_bridge(void)
     }
     bVar2 = sci4_rx_ready();
     if (bVar2 == 1) {
-      pcVar5 = (char *)sci4_rx_buf();
-      uVar4 = sci4_rx_len();
+                    /* Returns the SCI4 receive buffer [doc, inference] */
+      pcVar3 = (char *)sci4_rx_buf();
+      sci4_rx_len_ret = sci4_rx_len();
       do {
         bVar2 = sci1_tx_end();
       } while (bVar2 == 0);
       acStack_40c[0] = 'Z';
-      acStack_40c[1] = (char)uVar4;
-      acStack_40c[2] = (char)(uVar4 >> 8);
-      pcVar6 = acStack_40c + 3;
-      for (uVar8 = (uint)uVar4; uVar8 != 0; uVar8 = uVar8 - 1) {
-        *pcVar6 = *pcVar5;
-        pcVar6 = pcVar6 + 1;
-        pcVar5 = pcVar5 + 1;
+      acStack_40c[1] = (char)sci4_rx_len_ret;
+      acStack_40c[2] = (char)(sci4_rx_len_ret >> 8);
+      pcVar4 = acStack_40c + 3;
+      for (uVar5 = (uint)sci4_rx_len_ret; uVar5 != 0; uVar5 = uVar5 - 1) {
+        *pcVar4 = *pcVar3;
+        pcVar4 = pcVar4 + 1;
+        pcVar3 = pcVar3 + 1;
       }
-      cVar3 = dsp_sum8((int)acStack_40c,(byte)(uVar4 + 3));
-      acStack_40c[(ushort)(uVar4 + 3)] = cVar3;
-      displink_uart_send((uint)acStack_40c,uVar4 + 4);
+                    /* 8-bit sum of n bytes [doc] */
+      dsp_sum8_ret = dsp_sum8((int)acStack_40c,(byte)(sci4_rx_len_ret + 3));
+      acStack_40c[(ushort)(sci4_rx_len_ret + 3)] = dsp_sum8_ret;
+      displink_uart_send((uint)acStack_40c,sci4_rx_len_ret + 4);
       sci4_send(0x1a5e,0);
     }
   } while( true );
@@ -768,12 +777,13 @@ ushort dsp_route_param(ushort param_1)
 
 {
   uint uVar1;
-  uint uVar2;
+  uint audio_route_state_ret;
   ushort uStack_a;
   
-  uVar2 = audio_route_state();
+                    /* Returns the audio-route state 0..14 [doc] */
+  audio_route_state_ret = audio_route_state();
   uStack_a = 0;
-  switch(uVar2) {
+  switch(audio_route_state_ret) {
   case 0:
     if (param_1 == 0x20) {
       uStack_a = 0xffff;
@@ -976,7 +986,7 @@ ushort dsp_route_param(ushort param_1)
     }
   }
   if (((param_1 == 0x25) || (param_1 == 0x28)) || (param_1 == 0x2b)) {
-    if ((int)uVar2 < 8) {
+    if ((int)audio_route_state_ret < 8) {
       uStack_a = 0;
     }
     else {
@@ -1000,7 +1010,7 @@ void sdr_init(void)
 {
   byte bVar1;
   undefined2 *puVar2;
-  int iVar3;
+  int i;
   undefined1 uStack_b;
   undefined1 uStack_a;
   undefined1 uStack_9;
@@ -1026,7 +1036,7 @@ void sdr_init(void)
     bVar1 = swtimer_expired(0x1f);
   } while (bVar1 != 1);
   puVar2 = &DAT_0001b736;
-  for (iVar3 = 0x4e; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x4e; i != 0; i = i + -1) {
     *(undefined1 *)puVar2 = 0xff;
     puVar2 = (undefined2 *)((int)puVar2 + 1);
   }
@@ -1072,6 +1082,7 @@ void sdr_task(void)
   local_1 = g_ui.transmitting;
   local_2 = g_ui.trx_state;
   if (DAT_00001c8b == '\x01') {
+                    /* Write pending: wait for the FPGA's ACK [fact: sdr-link.md] */
     bVar2 = sdr_poll_reply('w',auStack_8);
     if (bVar2 != 1) {
       return;
@@ -1079,9 +1090,11 @@ void sdr_task(void)
     sdr_shadow_update();
   }
   if (DAT_00001c8d == '\x01') {
+                    /* CAT/DISPLAY asked for the SDR update bridge [fact: sdr-link.md] */
     sdr_bridge_mode();
   }
   if (DAT_0001b3dd != local_1) {
+                    /* TX/RX change: wait until the old switching line drops [fact: sdr-link.md] */
     if ((local_1 == 1) && (bVar2 = rx_line_get(), bVar2 != 0)) {
       bVar1 = true;
     }
@@ -1102,7 +1115,19 @@ void sdr_task(void)
     }
     DAT_0001b3dd = local_1;
   }
+                    /* Reg 0x0A = mode class 0..5 [doc, inference] */
   sdr_upd_r0a_demod(local_1);
+                    /* Change detectors: the first send ends the pass [fact: sdr-link.md] */
+                    /* Reg 0x0D = 9/14/19 from setting 0x9AA1 [doc, inference] */
+                    /* Reg 0x22 = scope span in kHz [doc, inference] */
+                    /* Reg 0x23 = 0x8000/0x7000/0x5000 from scope RBW 0x9B14 [doc, inference] */
+                    /* RX-only registers, skipped while transmitting [fact: sdr-link.md] */
+                    /* Reg 0x16 = filter class by mode and width [doc, inference] */
+                    /* Reg 0x1B = table 0xFFF880B6 [doc, inference] */
+                    /* Reg 0x1C = 2/5/10 from NB REJECTION 0x9AD2 [doc, inference] */
+                    /* Reg 0x1D = notch offset/5 Hz [doc, inference] */
+                    /* Reg 0x1E = signed passband centre / 5 Hz [doc, inference] */
+                    /* Reg 0x1F = filter width in Hz [doc, inference] */
   if (((((((((DAT_00001c8b == '\0') && (sdr_upd_r0b_band(local_1), DAT_00001c8b == '\0')) &&
            (sdr_upd_r0c_rtty_shift(), DAT_00001c8b == '\0')) &&
           ((sdr_upd_r0d(), DAT_00001c8b == '\0' && (sdr_upd_r0f_band(local_1), DAT_00001c8b == '\0')
@@ -1126,6 +1151,7 @@ void sdr_task(void)
          ((sdr_upd_r1e_passband(), DAT_00001c8b == '\0' &&
           (sdr_upd_r1f_width(), DAT_00001c8b == '\0')))))))))))) {
     if (DAT_0001b3dc == '\0') {
+                    /* First full sync: reg 0x15 = 0x2000, reg 0x24 = 0x0317 [fact: sdr-link.md] */
       sdr_init_r15();
       if (DAT_00001c8b != '\0') {
         return;
@@ -1143,6 +1169,7 @@ void sdr_task(void)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* SDR settled for the TX sequencer (state 1 or 7) [inference: sdr-link.md] */
       g_ui.tx_ack_sdr = 1;
       return;
     }
@@ -1159,7 +1186,7 @@ byte sdr_reg_access(ushort param_1,void *param_2,char param_3)
 
 {
   bool bVar1;
-  byte bVar2;
+  byte sdr_wait_reply_ret;
   byte local_b;
   
   local_b = 0;
@@ -1176,8 +1203,8 @@ byte sdr_reg_access(ushort param_1,void *param_2,char param_3)
   DAT_0001b784 = param_1;
   if (param_3 == '\0') {
     sdr_send_frame('r');
-    bVar2 = sdr_wait_reply('r','\x01');
-    if (bVar2 == 1) {
+    sdr_wait_reply_ret = sdr_wait_reply('r','\x01');
+    if (sdr_wait_reply_ret == 1) {
       *(undefined2 *)param_2 = DAT_0001b782;
       local_b = 1;
     }
@@ -1196,18 +1223,18 @@ byte sdr_reg_access(ushort param_1,void *param_2,char param_3)
 /* Returns the pointer to the scope reference-level byte for a frequency and VFO side
    (FUN_fffb3480); used by SS sel 4 and SDR reg 0x27 [inference] */
 
-uint scope_level_ptr(uint param_1,byte param_2)
+uint scope_level_ptr(uint freq,byte param_2)
 
 {
-  byte bVar1;
+  byte freq_range_index_ret;
   undefined *puStack_14;
   
-  bVar1 = freq_range_index(param_1);
+  freq_range_index_ret = freq_range_index(freq);
   if (param_2 == 0) {
-    puStack_14 = (&PTR_g_opstate_scope_level_rx_0__fff88648)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_rx_0__fff88648)[freq_range_index_ret];
   }
   else {
-    puStack_14 = (&PTR_g_opstate_scope_level_tx_0__fff88680)[bVar1];
+    puStack_14 = (&PTR_g_opstate_scope_level_tx_0__fff88680)[freq_range_index_ret];
   }
   return (uint)puStack_14;
 }
@@ -1219,20 +1246,20 @@ uint scope_level_ptr(uint param_1,byte param_2)
 /* Returns the pointer to the scope span index for a frequency (FUN_fffb3480); used by SS sel 5 and
    SDR reg 0x20/0x21 [inference] */
 
-uint scope_span_ptr(uint param_1)
+uint scope_span_ptr(uint freq)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte freq_range_index_ret;
   undefined *puStack_10;
+  byte g_opstate_scope_mode_val;
   
-  bVar1 = g_opstate.scope_mode;
-  bVar2 = freq_range_index(param_1);
-  if (bVar1 == 2) {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)bVar2 * 2];
+  g_opstate_scope_mode_val = g_opstate.scope_mode;
+  freq_range_index_ret = freq_range_index(freq);
+  if (g_opstate_scope_mode_val == 2) {
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)freq_range_index_ret * 2];
   }
   else {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)bVar2 * 2];
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)freq_range_index_ret * 2];
   }
   return (uint)puStack_10;
 }
@@ -1283,11 +1310,11 @@ void sdr_req_reg1(void)
 void sdr_upd_r03(void)
 
 {
-  uint uVar1;
+  uint vfo_freq_ret;
   undefined2 uStack_6;
   
-  uVar1 = vfo_freq(1,2);
-  if (uVar1 < 0x3b9aca1) {
+  vfo_freq_ret = vfo_freq(1,2);
+  if (vfo_freq_ret < 0x3b9aca1) {
     uStack_6 = -0x19c3;
   }
   else {
@@ -1330,8 +1357,8 @@ void sdr_upd_r08_tx_freq(void)
 
 {
   byte bVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte tx_cw_keying_class_ret;
+  ushort uVar2;
   ushort uStack_6;
   undefined4 uStack_4;
   
@@ -1350,14 +1377,14 @@ void sdr_upd_r08_tx_freq(void)
     uStack_4 = g_ui.freq_tx - uStack_6;
   }
   else {
-    bVar2 = tx_cw_keying_class();
-    if (bVar2 == 3) {
-      uVar3 = (ushort)g_opstate.cw_pitch * 10 + 300;
+    tx_cw_keying_class_ret = tx_cw_keying_class();
+    if (tx_cw_keying_class_ret == 3) {
+      uVar2 = (ushort)g_opstate.cw_pitch * 10 + 300;
       if (bVar1 == 0) {
-        uStack_4 = uStack_4 - uVar3;
+        uStack_4 = uStack_4 - uVar2;
       }
       else if (bVar1 == 1) {
-        uStack_4 = uStack_4 + uVar3;
+        uStack_4 = uStack_4 + uVar2;
       }
       DAT_0001b3de = '\x01';
     }
@@ -1391,47 +1418,47 @@ void sdr_upd_r08_tx_freq(void)
 /* Reg 0x0A = mode class 0..5 (CW, AM, FM, LSB-side, USB-side, RTTY) of the RX/TX VFO; only while
    0x1204D != 0 */
 
-void sdr_upd_r0a_demod(byte param_1)
+void sdr_upd_r0a_demod(byte which)
 
 {
-  uint uVar1;
-  byte bVar2;
-  byte bVar3;
+  byte bVar1;
+  byte ptt_source_get_ret;
   sdr_mod_class sStack_4;
+  uint vfo_mode_ret;
   
-  bVar2 = vfo_mode(param_1);
-  bVar3 = ptt_source_get();
-  if (bVar3 == 0) {
+  bVar1 = vfo_mode(which);
+  ptt_source_get_ret = ptt_source_get();
+  if (ptt_source_get_ret == 0) {
     return;
   }
-  uVar1 = (uint)bVar2;
-  if (uVar1 == 0) {
+  vfo_mode_ret = (uint)bVar1;
+  if (vfo_mode_ret == 0) {
 LAB_fffa1791:
     sStack_4 = SDR_MOD_LSB;
-    bVar2 = tx_cw_keying_class();
-    if (bVar2 == 3) {
+    bVar1 = tx_cw_keying_class();
+    if (bVar1 == 3) {
       sStack_4 = SDR_MOD_CW;
     }
   }
   else {
-    if ((uVar1 == 1) || (uVar1 == 0xe)) {
+    if ((vfo_mode_ret == 1) || (vfo_mode_ret == 0xe)) {
 LAB_fffa17a1:
       sStack_4 = SDR_MOD_USB;
-      bVar2 = tx_cw_keying_class();
-      if (bVar2 == 3) {
+      bVar1 = tx_cw_keying_class();
+      if (bVar1 == 3) {
         sStack_4 = SDR_MOD_CW;
       }
       goto LAB_fffa17b2;
     }
-    if (uVar1 - 4 < 2) {
+    if (vfo_mode_ret - 4 < 2) {
       sStack_4 = SDR_MOD_AM;
       goto LAB_fffa17b2;
     }
-    if (1 < uVar1 - 6) {
-      if (uVar1 == 8) goto LAB_fffa1791;
-      if (uVar1 == 9) goto LAB_fffa17a1;
-      if (1 < uVar1 - 10) {
-        if (uVar1 == 2 || uVar1 == 3) {
+    if (1 < vfo_mode_ret - 6) {
+      if (vfo_mode_ret == 8) goto LAB_fffa1791;
+      if (vfo_mode_ret == 9) goto LAB_fffa17a1;
+      if (1 < vfo_mode_ret - 10) {
+        if (vfo_mode_ret == 2 || vfo_mode_ret == 3) {
           sStack_4 = SDR_MOD_CW;
         }
         else {
@@ -1458,21 +1485,21 @@ LAB_fffa17b2:
 /* WARNING: Removing unreachable block (ram,0xfffa17fc) */
 /* Reg 0x0B = per-band word from 0xFFF87FFA (RX) / 0xFFF87FFE (TX), 8-byte rows */
 
-void sdr_upd_r0b_band(char param_1)
+void sdr_upd_r0b_band(char which)
 
 {
-  byte bVar1;
+  byte gen_subband_of_freq_ret;
   uint freq;
   short sStack_a;
   
-  vfo_mode(param_1);
-  freq = vfo_freq(param_1,2);
-  bVar1 = gen_subband_of_freq(freq);
-  if (param_1 == '\0') {
-    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8);
+  vfo_mode(which);
+  freq = vfo_freq(which,2);
+  gen_subband_of_freq_ret = gen_subband_of_freq(freq);
+  if (which == '\0') {
+    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8);
   }
   else {
-    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 4);
+    sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 4);
   }
   if (DAT_0001b744 != sStack_a) {
     DAT_0001b784 = 0xb;
@@ -1570,25 +1597,25 @@ void sdr_upd_r0e(void)
 /* Reg 0x0F = per-band word 0xFFF87FFC/0xFFF88000, 0 when ADC 0x20B14 >= 0xE8B, unchanged between
    0x9B3..0xE8A */
 
-void sdr_upd_r0f_band(char param_1)
+void sdr_upd_r0f_band(char which)
 
 {
-  byte bVar1;
+  byte gen_subband_of_freq_ret;
   uint freq;
   short sStack_a;
   
-  vfo_mode(param_1);
+  vfo_mode(which);
   if (g_ui.adc_sdr_det < 0xe8b) {
     if (0x9b2 < g_ui.adc_sdr_det) {
       return;
     }
-    freq = vfo_freq(param_1,2);
-    bVar1 = gen_subband_of_freq(freq);
-    if (param_1 == '\0') {
-      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 2);
+    freq = vfo_freq(which,2);
+    gen_subband_of_freq_ret = gen_subband_of_freq(freq);
+    if (which == '\0') {
+      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 2);
     }
     else {
-      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 8 + 6);
+      sStack_a = *(short *)(BYTE_ARRAY_fff87ffa + (uint)gen_subband_of_freq_ret * 8 + 6);
     }
   }
   else {
@@ -1645,11 +1672,11 @@ void sdr_upd_r13(void)
 void sdr_upd_r14_mode(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret;
   short sStack_2;
   
-  bVar1 = vfo_mode(1);
-  switch(bVar1) {
+  vfo_mode_ret = vfo_mode(1);
+  switch(vfo_mode_ret) {
   case 2:
   case 3:
     sStack_2 = 0x2000;
@@ -1720,15 +1747,16 @@ void sdr_upd_r16_filter(void)
   bool bVar1;
   uint uVar2;
   ushort uVar3;
-  char *pcVar4;
+  char *aess_level_ptr_ret;
   undefined1 uStack_7;
   undefined1 uStack_6;
   byte bStack_5;
   short sStack_2;
   
   bStack_5 = vfo_mode(0);
-  pcVar4 = (char *)aess_level_ptr();
-  bVar1 = *pcVar4 == '\0';
+                    /* Pointer to the active mode's AESS level byte [doc] */
+  aess_level_ptr_ret = (char *)aess_level_ptr();
+  bVar1 = *aess_level_ptr_ret == '\0';
   vfo_filter_width_hz(&uStack_7);
   uVar3 = CONCAT11(uStack_7,uStack_6);
   uVar2 = (uint)bStack_5;
@@ -1853,6 +1881,7 @@ void sdr_upd_r18_rx_freq(void)
   pbStack_4 = vfo_rec_ptr(0);
   bStack_14 = vfo_mode(0);
   uStack_a = 0;
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   uStack_8 = vfo_freq_clar(0,2);
   sStack_10 = CONCAT11(g_opstate.ex010420_data_shift_ssb_be[0],
                        g_opstate.ex010420_data_shift_ssb_be[1]);
@@ -2003,23 +2032,23 @@ void sdr_upd_r18_rx_freq(void)
 void sdr_upd_r1a_nb_level(void)
 
 {
-  byte bVar1;
-  byte bVar2;
-  byte *pbVar3;
+  byte vfo_mode_ret;
+  byte *vfo_rec_ptr_ret;
   short sStack_6;
+  byte g_opstate_nb_level_val;
   
-  pbVar3 = vfo_rec_ptr(0);
-  bVar1 = g_opstate.nb_level;
-  if ((pbVar3[2] & 2) == 0) {
+  vfo_rec_ptr_ret = vfo_rec_ptr(0);
+  g_opstate_nb_level_val = g_opstate.nb_level;
+  if ((vfo_rec_ptr_ret[2] & 2) == 0) {
     sStack_6 = 0;
   }
   else {
-    bVar2 = vfo_mode(0);
-    if (bVar2 == 4 || bVar2 == 5) {
-      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0x90);
+    vfo_mode_ret = vfo_mode(0);
+    if (vfo_mode_ret == 4 || vfo_mode_ret == 5) {
+      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_nb_level_val * 2 + 0x90);
     }
     else {
-      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0xa6);
+      sStack_6 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_nb_level_val * 2 + 0xa6);
     }
   }
   if (DAT_0001b75c == sStack_6) {
@@ -2040,18 +2069,18 @@ void sdr_upd_r1a_nb_level(void)
 void sdr_upd_r1b(void)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte vfo_mode_ret;
   short sStack_2;
+  byte g_opstate_ex030203_nb_width_val;
   
   vfo_mode(0);
-  bVar1 = g_opstate.ex030203_nb_width;
-  bVar2 = vfo_mode(0);
-  if (bVar2 == 4 || bVar2 == 5) {
-    sStack_2 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)bVar1 * 2 + 0xbc);
+  g_opstate_ex030203_nb_width_val = g_opstate.ex030203_nb_width;
+  vfo_mode_ret = vfo_mode(0);
+  if (vfo_mode_ret == 4 || vfo_mode_ret == 5) {
+    sStack_2 = *(short *)(BYTE_ARRAY_fff87ffa + (uint)g_opstate_ex030203_nb_width_val * 2 + 0xbc);
   }
   else {
-    sStack_2 = *(short *)((int)&PTR_DAT_fff880bc + (uint)bVar1 * 2);
+    sStack_2 = *(short *)((int)&PTR_DAT_fff880bc + (uint)g_opstate_ex030203_nb_width_val * 2);
   }
   if (DAT_0001b75e == sStack_2) {
     return;
@@ -2371,31 +2400,31 @@ void sdr_upd_r1e_passband(void)
 void sdr_upd_r1f_width(void)
 
 {
-  byte bVar1;
+  byte vfo_mode_ret_2;
   undefined1 uStack_4;
   undefined1 uStack_3;
   short local_2;
-  uint uVar2;
+  uint vfo_mode_ret;
   
   local_2 = 0;
-  bVar1 = vfo_mode(0);
-  uVar2 = (uint)bVar1;
-  if (uVar2 < 4) goto LAB_fffa2703;
-  if (uVar2 != 4) {
-    if (uVar2 == 5) {
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if (vfo_mode_ret < 4) goto LAB_fffa2703;
+  if (vfo_mode_ret != 4) {
+    if (vfo_mode_ret == 5) {
       local_2 = 6000;
       goto LAB_fffa272e;
     }
-    if (uVar2 == 6) {
+    if (vfo_mode_ret == 6) {
 LAB_fffa2729:
       local_2 = 16000;
       goto LAB_fffa272e;
     }
-    if (uVar2 != 7) {
-      if (1 < uVar2 - 8) {
-        if (uVar2 == 10) goto LAB_fffa2729;
-        if (uVar2 == 0xb) goto LAB_fffa271c;
-        if (2 < uVar2 - 0xc) goto LAB_fffa272e;
+    if (vfo_mode_ret != 7) {
+      if (1 < vfo_mode_ret - 8) {
+        if (vfo_mode_ret == 10) goto LAB_fffa2729;
+        if (vfo_mode_ret == 0xb) goto LAB_fffa271c;
+        if (2 < vfo_mode_ret - 0xc) goto LAB_fffa272e;
       }
 LAB_fffa2703:
       vfo_filter_width_hz(&uStack_4);
@@ -2421,37 +2450,38 @@ LAB_fffa272e:
 /* Regs 0x20/0x21 = 32-bit scope centre frequency (centre mode: RX freq + offset; fixed/cursor:
    start + half span); TX: |f - 62.5 MHz| */
 
-void sdr_upd_r20_scope_freq(char param_1)
+void sdr_upd_r20_scope_freq(char which)
 
 {
-  byte bVar1;
-  ushort uVar2;
-  uint uVar3;
-  undefined1 *puVar4;
+  ushort vfo_display_offset_ret;
+  uint uVar1;
+  undefined1 *scope_span_ptr_ret;
   undefined4 uStack_10;
   undefined *puStack_c;
+  byte g_opstate_scope_mode_val;
   
-  uVar3 = vfo_freq(param_1,2);
-  bVar1 = g_opstate.scope_mode;
-  puVar4 = (undefined1 *)scope_span_ptr(uVar3);
-  if (param_1 == '\0') {
-    uVar2 = vfo_display_offset();
-    if (bVar1 == 0) {
-      if ((uVar2 & 0x8000) == 0) {
-        uStack_10 = (undefined *)(uVar3 + uVar2);
+  uVar1 = vfo_freq(which,2);
+  g_opstate_scope_mode_val = g_opstate.scope_mode;
+  scope_span_ptr_ret = (undefined1 *)scope_span_ptr(uVar1);
+  if (which == '\0') {
+                    /* Mode-dependent signed offset [doc, inference] */
+    vfo_display_offset_ret = vfo_display_offset();
+    if (g_opstate_scope_mode_val == 0) {
+      if ((vfo_display_offset_ret & 0x8000) == 0) {
+        uStack_10 = (undefined *)(uVar1 + vfo_display_offset_ret);
       }
       else {
-        uStack_10 = (undefined *)(uVar3 - (ushort)(~uVar2 + 1));
+        uStack_10 = (undefined *)(uVar1 - (ushort)(~vfo_display_offset_ret + 1));
       }
     }
     else {
-      if (bVar1 == 2) {
+      if (g_opstate_scope_mode_val == 2) {
         puStack_c = (undefined *)bandmem_get('\x02');
       }
       else {
         puStack_c = (undefined *)g_ui.scope_cursor_start;
       }
-      switch(*puVar4) {
+      switch(*scope_span_ptr_ret) {
       case 0:
         puStack_c = (undefined *)((int)puStack_c + 500);
         break;
@@ -2482,21 +2512,21 @@ void sdr_upd_r20_scope_freq(char param_1)
       default:
         puStack_c = (undefined *)((int)puStack_c + 500000);
       }
-      if ((uVar2 & 0x8000) == 0) {
-        uStack_10 = puStack_c + uVar2;
+      if ((vfo_display_offset_ret & 0x8000) == 0) {
+        uStack_10 = puStack_c + vfo_display_offset_ret;
       }
       else {
-        uStack_10 = puStack_c + -(uint)(ushort)(~uVar2 + 1);
+        uStack_10 = puStack_c + -(uint)(ushort)(~vfo_display_offset_ret + 1);
       }
     }
   }
   else {
-    uVar3 = tx_freq_repeater_shift(uVar3);
-    if (uVar3 < 0x3b9aca1) {
-      uStack_10 = (undefined *)(62500000 - uVar3);
+    uVar1 = tx_freq_repeater_shift(uVar1);
+    if (uVar1 < 0x3b9aca1) {
+      uStack_10 = (undefined *)(62500000 - uVar1);
     }
     else {
-      uStack_10 = (undefined *)(uVar3 + 0xfc465360);
+      uStack_10 = (undefined *)(uVar1 + 0xfc465360);
     }
   }
   if (uStack_10._2_2_ != DAT_0001b768) {
@@ -2521,24 +2551,24 @@ void sdr_upd_r20_scope_freq(char param_1)
 /* WARNING: Removing unreachable block (ram,0xfffa2913) */
 /* Reg 0x22 = scope span in kHz (1,2,5,10,20,50,100,200,500, default 1000) */
 
-void sdr_upd_r22_scope_span(byte param_1)
+void sdr_upd_r22_scope_span(byte which)
 
 {
-  byte bVar1;
-  byte bVar2;
+  byte freq_range_index_ret;
   uint freq;
   undefined1 *puStack_10;
   short sStack_a;
+  byte g_opstate_scope_mode_val;
   
-  bVar1 = g_opstate.scope_mode;
-  freq = vfo_freq(param_1,2);
-  bVar2 = freq_range_index(freq);
+  g_opstate_scope_mode_val = g_opstate.scope_mode;
+  freq = vfo_freq(which,2);
+  freq_range_index_ret = freq_range_index(freq);
   sStack_a = 1000;
-  if (bVar1 == 2) {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)bVar2 * 2];
+  if (g_opstate_scope_mode_val == 2) {
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_b_0__fff885b0)[(uint)freq_range_index_ret * 2];
   }
   else {
-    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)bVar2 * 2];
+    puStack_10 = (&PTR_g_opstate_scope_span_idx_a_0__fff885ac)[(uint)freq_range_index_ret * 2];
   }
   switch(*puStack_10) {
   case 0:
@@ -2647,6 +2677,7 @@ void sdr_upd_r25_tx_drive(byte param_1)
   iVar4 = FUN_fffb4062();
   fVar5 = (float)iVar4;
   uVar6 = uVar6 & 0xfffffff9;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   bVar2 = tx_band_of_freq(g_ui.freq_tx);
   puVar1 = (&tx_row_ptrs)[bVar2];
   if (fVar5 - 100.0 == 0.0) {
@@ -2747,42 +2778,42 @@ void sdr_upd_r26(char param_1)
 
 /* Reg 0x27 = 0x8000 | -(scope ref level byte + offset) + 0/2/4 (setting 0x9B14) [inference] */
 
-void sdr_upd_r27_scope_level(char param_1)
+void sdr_upd_r27_scope_level(char which)
 
 {
-  byte bVar1;
-  byte bVar2;
-  ushort uVar3;
-  uint uVar4;
-  char *pcVar5;
+  ushort uVar1;
+  uint vfo_freq_ret;
+  char *scope_level_ptr_ret;
   undefined1 uStack_14;
   undefined1 uStack_13;
+  byte g_cfg105_a049_rx_scope_sdr_ref_val;
+  byte g_opstate_ex040201_rbw_val;
   
-  bVar2 = g_opstate.ex040201_rbw;
-  bVar1 = g_cfg105.a049_rx_scope_sdr_ref;
-  uVar4 = vfo_freq(param_1,2);
-  pcVar5 = (char *)scope_level_ptr(uVar4,param_1);
-  if (bVar2 == 1) {
+  g_opstate_ex040201_rbw_val = g_opstate.ex040201_rbw;
+  g_cfg105_a049_rx_scope_sdr_ref_val = g_cfg105.a049_rx_scope_sdr_ref;
+  vfo_freq_ret = vfo_freq(which,2);
+  scope_level_ptr_ret = (char *)scope_level_ptr(vfo_freq_ret,which);
+  if (g_opstate_ex040201_rbw_val == 1) {
     uStack_14 = '\x02';
   }
-  else if (bVar2 == 2) {
+  else if (g_opstate_ex040201_rbw_val == 2) {
     uStack_14 = '\x04';
   }
   else {
     uStack_14 = '\0';
   }
-  if (param_1 == '\0') {
-    uStack_13 = *pcVar5 + bVar1 + 0x44;
+  if (which == '\0') {
+    uStack_13 = *scope_level_ptr_ret + g_cfg105_a049_rx_scope_sdr_ref_val + 0x44;
   }
   else {
-    uStack_13 = *pcVar5 - 0x37;
+    uStack_13 = *scope_level_ptr_ret - 0x37;
   }
-  uVar3 = (byte)(~uStack_13 + 1 + uStack_14) | 0x8000;
-  if (DAT_0001b776 == uVar3) {
+  uVar1 = (byte)(~uStack_13 + 1 + uStack_14) | 0x8000;
+  if (DAT_0001b776 == uVar1) {
     return;
   }
   DAT_0001b784 = 0x27;
-  DAT_0001b786 = uVar3;
+  DAT_0001b786 = uVar1;
   sdr_send_frame('w');
   return;
 }
@@ -2988,6 +3019,7 @@ byte sdr_wait_reply(char param_1,char param_2)
       }
     }
     if (DAT_00001c8c != '\x01') break;
+                    /* Non-blocking reply check with timeout [doc] */
     bVar1 = sdr_poll_reply('r',&iStack_8);
     if (bVar1 == 1) {
       DAT_0001b786 = hex2word((char *)(iStack_8 + 1));
@@ -3012,17 +3044,18 @@ byte sdr_poll_reply(char param_1,void *param_2)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint sdr_rx_buf_ret;
   undefined1 local_e;
   
   local_e = 0;
   bVar1 = sdr_rx_ready();
   if (bVar1 == 1) {
-    uVar2 = sdr_rx_buf();
-    *(uint *)param_2 = uVar2;
+    sdr_rx_buf_ret = sdr_rx_buf();
+    *(uint *)param_2 = sdr_rx_buf_ret;
     DAT_00001c8b = 0;
     DAT_00001c8c = 0;
     if (param_1 == 'r') {
+                    /* Reply checksum test [doc] */
       bVar1 = sdr_check_hex_sum((int)*(char **)param_2,5);
       if (bVar1 == 1) {
         local_e = 1;

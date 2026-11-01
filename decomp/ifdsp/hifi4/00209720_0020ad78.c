@@ -12,13 +12,17 @@ void CLOCK_InitSysPll(undefined4 *param_1)
   uint uVar3;
   
   memw();
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = &DAT_00060000;
   memw();
+                    /* system pll0 clock selection [sfr] */
   CLKCTL0_SYSPLL0CLKSEL = *param_1;
   memw();
+                    /* system pll0 number [sfr] */
   CLKCTL0_SYSPLL0NUM = param_1[1];
   memw();
   iVar2 = param_1[3];
+                    /* system pll0 denom [sfr] */
   CLKCTL0_SYSPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
@@ -63,12 +67,15 @@ void CLOCK_InitSysPll(undefined4 *param_1)
     CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
+                    /* system pll0 control0 [sfr] */
   uVar3 = CLKCTL0_SYSPLL0CTL0;
   memw();
   CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xfffffffd;
   memw();
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00060000;
   memw();
+                    /* system pll0 lock time [sfr] */
   uVar3 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
   memw();
@@ -103,6 +110,7 @@ void CLOCK_InitSysPfd(int param_1,uint param_2)
   
   uVar1 = param_1 << 3;
   memw();
+                    /* sys pll0 PFD [sfr] */
   uVar2 = CLKCTL0_SYSPLL0PFD;
   uVar2 = uVar2 & (0xbf << 0x20 - (0x20 - (uVar1 & 0x1f)) ^ 0xffffffffU);
   memw();
@@ -136,13 +144,17 @@ void CLOCK_InitAudioPll(undefined4 *param_1)
   uint uVar3;
   
   memw();
+                    /* Run configuration 0 set [sfr] */
   SYSCTL0_PDRUNCFG0_SET = &DAT_00180000;
   memw();
+                    /* audio pll0 clock selection [sfr] */
   CLKCTL1_AUDIOPLL0CLKSEL = *param_1;
   memw();
+                    /* audio pll0 number [sfr] */
   CLKCTL1_AUDIOPLL0NUM = param_1[1];
   memw();
   iVar2 = param_1[3];
+                    /* Audio pll0 denom [sfr] */
   CLKCTL1_AUDIOPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
@@ -187,12 +199,15 @@ void CLOCK_InitAudioPll(undefined4 *param_1)
     CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
+                    /* audio pll0 control0 [sfr] */
   uVar3 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
   CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xfffffffd;
   memw();
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00180000;
   memw();
+                    /* audio pll0 lock time [sfr] */
   uVar3 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
   SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
   memw();
@@ -227,6 +242,7 @@ void CLOCK_InitAudioPfd(int param_1,uint param_2)
   
   uVar1 = param_1 << 3;
   memw();
+                    /* audio pll0 PFD [sfr] */
   uVar2 = CLKCTL1_AUDIOPLL0PFD;
   uVar2 = uVar2 & (0xbf << 0x20 - (0x20 - (uVar1 & 0x1f)) ^ 0xffffffffU);
   memw();
@@ -257,8 +273,10 @@ void CLOCK_EnableSysOscClk(int param_1,uint param_2,undefined4 param_3)
 {
   if (param_1 != 0) {
     memw();
+                    /* system oscillator control 0 [sfr] */
     CLKCTL0_SYSOSCCTL0 = param_2;
     memw();
+                    /* system oscillator bypass [sfr] */
     CLKCTL0_SYSOSCBYPASS = 0;
     SDK_DelayAtLeastUs(param_3,600000000);
     return;
@@ -277,6 +295,7 @@ void CLOCK_EnableUsbhsDeviceClock(void)
 
 {
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL0_PSCCTL0_SET = &DAT_00100000;
   memw();
   CLKCTL0_PSCCTL0_SET = &DAT_00200000;
@@ -294,6 +313,7 @@ void CLOCK_EnableUsbhsHostClock(void)
 
 {
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL0_PSCCTL0_SET = &DAT_00100000;
   memw();
   CLKCTL0_PSCCTL0_SET = &DAT_00400000;
@@ -310,59 +330,64 @@ void CLOCK_EnableUsbhsHostClock(void)
 undefined4 CLOCK_EnableUsbhsPhyClock(undefined4 param_1,uint param_2)
 
 {
-  uint uVar1;
-  int iVar2;
-  undefined *puVar3;
+  int iVar1;
+  undefined *puVar2;
+  uint usbphy_pll_sic;
   
   memw();
+                    /* USB PHY General Control [sfr] */
   USBPHY_CTRL_CLR = 0x80000000;
   param_2 = 480000000 / param_2;
   if (param_2 == 0xd) {
-    puVar3 = (undefined *)0x0;
+    puVar2 = (undefined *)0x0;
   }
   else if (param_2 == 0xf) {
-    puVar3 = &DAT_00400000;
+    puVar2 = &DAT_00400000;
   }
   else if (param_2 == 0x10) {
-    puVar3 = (undefined *)0x800000;
+    puVar2 = (undefined *)0x800000;
   }
   else if (param_2 == 0x14) {
-    puVar3 = (undefined *)0xc00000;
+    puVar2 = (undefined *)0xc00000;
   }
   else if (param_2 == 0x16) {
-    puVar3 = (undefined *)0x1000000;
+    puVar2 = (undefined *)0x1000000;
   }
   else if (param_2 == 0x19) {
-    puVar3 = (undefined *)0x1400000;
+    puVar2 = (undefined *)0x1400000;
   }
   else if (param_2 == 0x1e) {
-    puVar3 = (undefined *)0x1800000;
+    puVar2 = (undefined *)0x1800000;
   }
   else {
     if (param_2 != 0xf0) {
       return 0;
     }
-    puVar3 = (undefined *)0x1c00000;
+    puVar2 = (undefined *)0x1c00000;
   }
   memw();
+                    /* USB PHY PLL Control/Status [sfr] */
   USBPHY_PLL_SIC_SET = FLOAT_ARRAY_00201000;
   memw();
-  uVar1 = USBPHY_PLL_SIC;
+                    /* USB PHY PLL Control/Status [sfr] */
+  usbphy_pll_sic = USBPHY_PLL_SIC;
   memw();
-  USBPHY_PLL_SIC = uVar1 & 0xfe3fffff | (uint)puVar3;
+  USBPHY_PLL_SIC = usbphy_pll_sic & 0xfe3fffff | (uint)puVar2;
   memw();
+                    /* USB PHY PLL Control/Status [sfr] */
   USBPHY_PLL_SIC_CLR = &DAT_00010000;
   memw();
   USBPHY_PLL_SIC_SET = 0x40;
   memw();
   USBPHY_CTRL_CLR = &RSTCTL0_SYSRSTSTAT;
   memw();
+                    /* USB PHY Power-Down [sfr] */
   USBPHY_PWD_SET = 0;
   memw();
-  iVar2 = USBPHY_PLL_SIC;
-  while (-1 < iVar2) {
+  iVar1 = USBPHY_PLL_SIC;
+  while (-1 < iVar1) {
     memw();
-    iVar2 = USBPHY_PLL_SIC;
+    iVar1 = USBPHY_PLL_SIC;
   }
   return 1;
 }
@@ -483,7 +508,9 @@ void CRC_Init(uint *param_1,uint *param_2)
 
 {
   memw();
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = &DAT_00010000;
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(0x410);
   memw();
   *param_1 = (*(byte *)((int)param_2 + 5) & 1) << 3 | *param_2 & 3 | ((byte)param_2[1] & 1) << 2 |
@@ -603,32 +630,39 @@ void CTIMER_Init(undefined4 *param_1,uint *param_2)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
   if (param_1 != &CTIMER0_IR) {
     iVar2 = 4;
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)((int)&PTR_DAT_00200150 + iVar2));
   memw();
   param_1[0x1c] = *param_2 & 3 | (param_2[1] & 3) << 2;
@@ -660,33 +694,39 @@ void CTIMER_Deinit(undefined4 *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 != 2) {
     if (uVar3 == 3) {
       memw();
+                    /* clock clear 0 [sfr] */
       CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
       return;
     }
     if (uVar3 != 4) {
       if (uVar3 == 5) {
         memw();
+                    /* clock clear 2 [sfr] */
         CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
         return;
       }
       return;
     }
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   return;
 }
@@ -905,31 +945,32 @@ void CTIMER_RegisterCallBack(undefined4 *param_1,undefined4 param_2,undefined4 p
 void CTIMER0_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer0_ir;
   
   memw();
-  uVar1 = CTIMER0_IR;
+                    /* Interrupt [sfr] */
+  ctimer0_ir = CTIMER0_IR;
   memw();
-  CTIMER0_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER0_IR = ctimer0_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238450 == 0) {
     if ((code *)*DAT_00238430 != (code *)0x0) {
-      (*(code *)*DAT_00238430)(uVar1);
+      (*(code *)*DAT_00238430)(ctimer0_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238430 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238430 + iVar3))(uVar1);
+      if (((ctimer0_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238430 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238430 + iVar1))(ctimer0_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -942,31 +983,32 @@ void CTIMER0_DriverIRQHandler(void)
 void CTIMER1_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer1_ir;
   
   memw();
-  uVar1 = CTIMER1_IR;
+                    /* Interrupt [sfr] */
+  ctimer1_ir = CTIMER1_IR;
   memw();
-  CTIMER1_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER1_IR = ctimer1_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238454 == 0) {
     if ((code *)*DAT_00238434 != (code *)0x0) {
-      (*(code *)*DAT_00238434)(uVar1);
+      (*(code *)*DAT_00238434)(ctimer1_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238434 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238434 + iVar3))(uVar1);
+      if (((ctimer1_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238434 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238434 + iVar1))(ctimer1_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -979,31 +1021,32 @@ void CTIMER1_DriverIRQHandler(void)
 void CTIMER2_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer2_ir;
   
   memw();
-  uVar1 = CTIMER2_IR;
+                    /* Interrupt [sfr] */
+  ctimer2_ir = CTIMER2_IR;
   memw();
-  CTIMER2_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER2_IR = ctimer2_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238458 == 0) {
     if ((code *)*DAT_00238438 != (code *)0x0) {
-      (*(code *)*DAT_00238438)(uVar1);
+      (*(code *)*DAT_00238438)(ctimer2_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238438 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238438 + iVar3))(uVar1);
+      if (((ctimer2_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238438 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238438 + iVar1))(ctimer2_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -1016,31 +1059,32 @@ void CTIMER2_DriverIRQHandler(void)
 void CTIMER3_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer3_ir;
   
   memw();
-  uVar1 = CTIMER3_IR;
+                    /* Interrupt [sfr] */
+  ctimer3_ir = CTIMER3_IR;
   memw();
-  CTIMER3_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER3_IR = ctimer3_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_0023845c == 0) {
     if ((code *)*DAT_0023843c != (code *)0x0) {
-      (*(code *)*DAT_0023843c)(uVar1);
+      (*(code *)*DAT_0023843c)(ctimer3_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_0023843c + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_0023843c + iVar3))(uVar1);
+      if (((ctimer3_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_0023843c + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_0023843c + iVar1))(ctimer3_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -1053,31 +1097,32 @@ void CTIMER3_DriverIRQHandler(void)
 void CTIMER4_DriverIRQHandler(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int i;
+  int iVar1;
+  uint ctimer4_ir;
   
   memw();
-  uVar1 = CTIMER4_IR;
+                    /* Interrupt [sfr] */
+  ctimer4_ir = CTIMER4_IR;
   memw();
-  CTIMER4_IR = uVar1;
-  iVar3 = 0;
-  iVar2 = 0;
+  CTIMER4_IR = ctimer4_ir;
+  iVar1 = 0;
+  i = 0;
   if (DAT_00238460 == 0) {
     if ((code *)*DAT_00238440 != (code *)0x0) {
-      (*(code *)*DAT_00238440)(uVar1);
+      (*(code *)*DAT_00238440)(ctimer4_ir);
       return;
     }
   }
   else {
     do {
-      if (((uVar1 & 1 << ((byte)iVar2 & 0x1f)) != 0) &&
-         (*(code **)((int)DAT_00238440 + iVar3) != (code *)0x0)) {
-        (**(code **)((int)DAT_00238440 + iVar3))(uVar1);
+      if (((ctimer4_ir & 1 << ((byte)i & 0x1f)) != 0) &&
+         (*(code **)((int)DAT_00238440 + iVar1) != (code *)0x0)) {
+        (**(code **)((int)DAT_00238440 + iVar1))(ctimer4_ir);
       }
-      iVar2 = iVar2 + 1;
-      iVar3 = iVar3 + 4;
-    } while (iVar2 != 7);
+      i = i + 1;
+      iVar1 = iVar1 + 4;
+    } while (i != 7);
   }
   return;
 }
@@ -1115,32 +1160,39 @@ void DMA_Init(dword *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
   if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
   param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
@@ -1173,33 +1225,39 @@ void DMA_Deinit(dword *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   if (uVar3 != 2) {
     if (uVar3 == 3) {
       memw();
+                    /* clock clear 0 [sfr] */
       CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
       return;
     }
     if (uVar3 != 4) {
       if (uVar3 == 5) {
         memw();
+                    /* clock clear 2 [sfr] */
         CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
         return;
       }
       return;
     }
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   return;
 }
@@ -1457,6 +1515,7 @@ void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
   param_1[3] = 0;
   *(char *)(param_1 + 3) = (char)param_3;
   (&DAT_00238470)[param_3 + iVar1] = param_1;
+                    /* fsl_dma.c static, called by DMA_CreateHandle [doc, inference] */
   DMA_GetVirtualStartChannel();
   return;
 }

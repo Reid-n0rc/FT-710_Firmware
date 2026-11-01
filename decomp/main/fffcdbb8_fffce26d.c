@@ -26,7 +26,7 @@ void FUN_fffcdbb8(void)
 void menu_ui_enter(void)
 
 {
-  char *pcVar1;
+  char *menu_cursor_of_ret;
   byte bStack_5;
   byte bStack_4;
   char cStack_3;
@@ -35,8 +35,8 @@ void menu_ui_enter(void)
   
   PTR_g_ui_00025d60->menu_state = 3;
   bStack_1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  pcVar1 = (char *)menu_cursor_of(bStack_1);
-  cStack_3 = *pcVar1 + pcVar1[1];
+  menu_cursor_of_ret = (char *)menu_cursor_of(bStack_1);
+  cStack_3 = *menu_cursor_of_ret + menu_cursor_of_ret[1];
   bStack_5 = PTR_g_ui_00025d60->menu_p1;
   bStack_4 = bStack_1;
   cStack_2 = cStack_3;
@@ -63,12 +63,12 @@ undefined1 FUN_fffcdc79(void)
 
 {
   byte bVar1;
-  char *pcVar2;
+  char *menu_cursor_of_ret;
   undefined1 uStack_9;
   
   bVar1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  pcVar2 = (char *)menu_cursor_of(bVar1);
-  if (pcVar2 == (char *)0x0) {
+  menu_cursor_of_ret = (char *)menu_cursor_of(bVar1);
+  if (menu_cursor_of_ret == (char *)0x0) {
     uStack_9 = 0;
   }
   else {
@@ -76,13 +76,13 @@ undefined1 FUN_fffcdc79(void)
     if (bVar1 < 5) {
       uStack_9 = 0;
     }
-    else if (pcVar2[1] == '\0') {
+    else if (menu_cursor_of_ret[1] == '\0') {
       uStack_9 = 0;
     }
     else {
-      pcVar2[1] = pcVar2[1] + -1;
-      if (*pcVar2 != '\x04') {
-        *pcVar2 = *pcVar2 + '\x01';
+      menu_cursor_of_ret[1] = menu_cursor_of_ret[1] + -1;
+      if (*menu_cursor_of_ret != '\x04') {
+        *menu_cursor_of_ret = *menu_cursor_of_ret + '\x01';
       }
       uStack_9 = FUN_fffcdce3();
     }
@@ -120,12 +120,12 @@ undefined1 FUN_fffcdd0f(void)
 
 {
   byte bVar1;
-  char *pcVar2;
+  char *menu_cursor_of_ret;
   undefined1 uStack_9;
   
   bVar1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  pcVar2 = (char *)menu_cursor_of(bVar1);
-  if (pcVar2 == (char *)0x0) {
+  menu_cursor_of_ret = (char *)menu_cursor_of(bVar1);
+  if (menu_cursor_of_ret == (char *)0x0) {
     uStack_9 = 0;
   }
   else {
@@ -133,10 +133,10 @@ undefined1 FUN_fffcdd0f(void)
     if (bVar1 < 5) {
       uStack_9 = 0;
     }
-    else if ((int)(uint)(byte)pcVar2[1] < (int)(bVar1 - 5)) {
-      pcVar2[1] = pcVar2[1] + '\x01';
-      if (*pcVar2 != '\0') {
-        *pcVar2 = *pcVar2 + -1;
+    else if ((int)(uint)(byte)menu_cursor_of_ret[1] < (int)(bVar1 - 5)) {
+      menu_cursor_of_ret[1] = menu_cursor_of_ret[1] + '\x01';
+      if (*menu_cursor_of_ret != '\0') {
+        *menu_cursor_of_ret = *menu_cursor_of_ret + -1;
       }
       uStack_9 = FUN_fffcdce3();
     }
@@ -155,7 +155,7 @@ undefined1 FUN_fffcdd0f(void)
 void menu_ui_step(void)
 
 {
-  char *pcVar1;
+  char *menu_cursor_of_ret;
   byte bStack_4;
   byte bStack_3;
   char cStack_2;
@@ -164,13 +164,13 @@ void menu_ui_step(void)
   FUN_fffc8f30(3000);
   PTR_g_ui_00025d60->vfo_refresh_req = 1;
   bStack_1 = menu_p2_global(PTR_g_ui_00025d60->menu_p1,PTR_g_ui_00025d60->menu_p2);
-  pcVar1 = (char *)menu_cursor_of(bStack_1);
-  if (pcVar1 == (char *)0x0) {
+  menu_cursor_of_ret = (char *)menu_cursor_of(bStack_1);
+  if (menu_cursor_of_ret == (char *)0x0) {
     return;
   }
   bStack_4 = PTR_g_ui_00025d60->menu_p1;
   bStack_3 = bStack_1;
-  cStack_2 = *pcVar1 + pcVar1[1];
+  cStack_2 = *menu_cursor_of_ret + menu_cursor_of_ret[1];
   menu_call_step((uint)&bStack_4);
   return;
 }
@@ -180,11 +180,11 @@ void menu_ui_step(void)
 
 /* Set 0x15DFC=1, menu_call_step(key), clear, set state+0x40B (0x20F0F) refresh flag */
 
-void menu_apply_from_cat(uint param_1)
+void menu_apply_from_cat(uint key)
 
 {
   DAT_00015dfc = 1;
-  menu_call_step(param_1);
+  menu_call_step(key);
   DAT_00015dfc = 0;
   PTR_g_ui_00025d60->vfo_refresh_req = 1;
   return;
@@ -444,21 +444,21 @@ void menu_ex010113_step(void)
 {
   bool bVar1;
   bool bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   bVar2 = false;
   if ((DAT_00015dfc == '\x01') ||
      (menu_step_u8(0,6,&g_opstate.ex010113_tx_bpf_sel), g_opstate.ex010113_tx_bpf_sel < 5)) {
     return;
   }
-  uVar3 = dest_code_get();
-  if ((uVar3 == 0x315b) || (uVar3 == 0x50e2)) {
+  dest_code_get_ret = dest_code_get();
+  if ((dest_code_get_ret == 0x315b) || (dest_code_get_ret == 0x50e2)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (uVar3 == 0x1cb9)) {
+  if ((bVar1) || (dest_code_get_ret == 0x1cb9)) {
     bVar1 = true;
   }
   else {

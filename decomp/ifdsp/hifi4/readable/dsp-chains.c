@@ -4,7 +4,7 @@
 // 157 functions, address order.
 
 /* -----------------------------------------------------------------------------
- * fft_cplxf_ie @ 002174b0  (2144 bytes, 2 callers, export file 00216718_0021ab3c.c)
+ * fft_cplxf_ie @ 002174b0  (2144 bytes, 2 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: fft512_cplx
  * Purpose: no direct calls; 2144 B, callers: 2 (code shape)
  * Tag: [fact]
@@ -652,13 +652,13 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
 
 
 /* -----------------------------------------------------------------------------
- * ifft_cplxf_ie @ 00217d10  (2329 bytes, 1 callers, export file 00216718_0021ab3c.c)
+ * ifft_cplxf_ie @ 00217d10  (2332 bytes, 1 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: ifft512_cplx
  * Purpose: no direct calls; 2329 B, callers: 1 (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
-// ===== ifft_cplxf_ie @ 00217d10 (2329 bytes)
+// ===== ifft_cplxf_ie @ 00217d10 (2332 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x00218042) */
 /* WARNING: Removing unreachable block (ram,0x00217ed8) */
@@ -1297,7 +1297,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
 
 
 /* -----------------------------------------------------------------------------
- * scl_antilog10f @ 00218b70  (375 bytes, 29 callers, export file 00216718_0021ab3c.c)
+ * scl_antilog10f @ 00218b70  (375 bytes, 29 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: pow10f_
  * Purpose: 10^x
  * Tag: [inference]
@@ -1424,7 +1424,7 @@ void scl_antilog10f(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_atan2f @ 00218e60  (346 bytes, 3 callers, export file 00216718_0021ab3c.c)
+ * scl_atan2f @ 00218e60  (346 bytes, 3 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: atan2f_
  * Purpose: atan2
  * Tag: [inference]
@@ -1535,7 +1535,7 @@ void scl_atan2f(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_cosinef @ 00218fc0  (299 bytes, 23 callers, export file 00216718_0021ab3c.c)
+ * scl_cosinef @ 00218fc0  (299 bytes, 23 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: cosf_
  * Purpose: cos
  * Tag: [inference]
@@ -1631,7 +1631,7 @@ void scl_cosinef(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_log10f @ 002190f0  (558 bytes, 10 callers, export file 00216718_0021ab3c.c)
+ * scl_log10f @ 002190f0  (558 bytes, 10 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: log10f_
  * Purpose: log10
  * Tag: [inference]
@@ -1795,7 +1795,7 @@ undefined4 scl_log10f(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scl_sinef @ 00219560  (291 bytes, 18 callers, export file 00216718_0021ab3c.c)
+ * scl_sinef @ 00219560  (291 bytes, 18 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: sinf_
  * Purpose: sin
  * Tag: [inference]
@@ -1891,7 +1891,7 @@ void scl_sinef(void)
 
 
 /* -----------------------------------------------------------------------------
- * scl_tanf @ 00219690  (363 bytes, 7 callers, export file 00216718_0021ab3c.c)
+ * scl_tanf @ 00219690  (363 bytes, 7 callers, export file 00216718_0021ab50.c)
  * Name on the doc page: tanf_
  * Purpose: tan (polynomial table 0x200890)
  * Tag: [inference]
@@ -2000,7 +2000,7 @@ void scl_tanf(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_config @ 0021c610  (96 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_config @ 0021c610  (96 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2049,7 +2049,7 @@ void apf_config(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_design_iir @ 0021c670  (215 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_design_iir @ 0021c670  (215 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2111,7 +2111,7 @@ void apf_design_iir(void)
 
 
 /* -----------------------------------------------------------------------------
- * apf_design_fir @ 0021c748  (207 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * apf_design_fir @ 0021c748  (207 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2181,8 +2181,9 @@ void apf_design_fir(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * apf_peak_filter @ 0021c818  (104 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * apf_peak_filter @ 0021c818  (104 bytes, 1 callers, export file 0021b544_0021c818.c)
  * What it computes: Type 1: resonator biquad, Q = 30, +60 dB peak × 0.001 (unity at the peak). Types 2–4: FIR
  *     band-pass = low-pass prototype × 2 cos(ω₀ n), prototypes of 295 / 197 / 103 taps (0x203120, 0x2035C0,
  *     0x2038E0; lengths at 0x203100), ≈ 100 / 108 / 150 Hz wide
@@ -2223,9 +2224,8 @@ void apf_peak_filter(undefined *param_1,undefined *param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * nlms_auto_notch_init @ 0021c890  (26 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * nlms_auto_notch_init @ 0021c890  (26 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ×2 to 24 kHz (96 samples), LP 0x236850; NLMS predictor, 128 taps, delay ≈ 257 samples (10.7
  *     ms); w ← leak·w + μ·e·x / max(Σx², 0.001), μ = reg 0x400C·1e-6, leak = 1 − reg 0x400E·1e-6. Outputs the error
  *     (removes steady tones), back to 12 kHz
@@ -2250,7 +2250,7 @@ void nlms_auto_notch_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * nlms_auto_notch @ 0021c8bc  (909 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * nlms_auto_notch @ 0021c8bc  (909 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ×2 to 24 kHz (96 samples), LP 0x236850; NLMS predictor, 128 taps, delay ≈ 257 samples (10.7
  *     ms); w ← leak·w + μ·e·x / max(Σx², 0.001), μ = reg 0x400C·1e-6, leak = 1 − reg 0x400E·1e-6. Outputs the error
  *     (removes steady tones), back to 12 kHz
@@ -2422,7 +2422,7 @@ undefined8 nlms_auto_notch(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * contour_init @ 0021cc50  (23 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * contour_init @ 0021cc50  (23 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: One peaking biquad (Zölzer boost/cut), K = tan(π f / 12000), V = 10^(dB/20); on boost the
  *     output is rescaled so the peak stays near unity
  * Registers: 0x42: bit 12 on + frequency; 0x43: level −40 … +20 dB; 0x44: Q 1–10 (0 → 0.5)
@@ -2448,7 +2448,7 @@ void contour_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * contour_peaking @ 0021cc68  (916 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * contour_peaking @ 0021cc68  (916 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: One peaking biquad (Zölzer boost/cut), K = tan(π f / 12000), V = 10^(dB/20); on boost the
  *     output is rescaled so the peak stays near unity
  * Registers: 0x42: bit 12 on + frequency; 0x43: level −40 … +20 dB; 0x44: Q 1–10 (0 → 0.5)
@@ -2701,7 +2701,7 @@ LAB_0021ced3:
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_reset @ 0021d0a8  (38 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_reset @ 0021d0a8  (38 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2736,7 +2736,7 @@ void zeroin_goertzel_reset(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_tune @ 0021d0d0  (112 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_tune @ 0021d0d0  (112 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2797,7 +2797,7 @@ void zeroin_goertzel_tune(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_step @ 0021d140  (80 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_step @ 0021d140  (80 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2843,7 +2843,7 @@ void zeroin_goertzel_step(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_goertzel_mag @ 0021d190  (78 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_goertzel_mag @ 0021d190  (78 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2894,7 +2894,7 @@ void zeroin_goertzel_mag(void)
 
 
 /* -----------------------------------------------------------------------------
- * zeroin_tone_gate @ 0021d1e0  (84 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * zeroin_tone_gate @ 0021d1e0  (84 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: The zero-in gate (#184). `tune`(f): three Goertzel bins at f, f − 15 Hz and f + 15 Hz (±15.0 at
  *     0x206DDC/0x206DE0), coefficient 2·cos(2π f / 12000) (`cosf` 0x2293E0, 2.0 at 0x203AC0). `step`(x): s = x +
  *     c·s₁ − s₂ per bin, run over the same 240 samples. `mag`: |X| = √(s₁² + s₂² − c·s₁·s₂). `gate`(state): closed
@@ -2942,7 +2942,7 @@ uint zeroin_tone_gate(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cw_zero_in_init @ 0021d234  (60 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * cw_zero_in_init @ 0021d234  (60 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Name on the doc page: status_reg4_update
  * What it computes: Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms)
  *     → frequency f (× 12000/2π, 0x203AC8). If f ≥ 10 Hz and the amplitude A = √2·RMS ≥ 1e-5, a 3-bin Goertzel tone
@@ -2971,6 +2971,7 @@ void cw_zero_in_init(void)
   DAT_002465e4 = 0;
   DAT_002465fc = 0;
   ae_s16i_n(&DAT_00007fff,&DAT_002465e0,0);
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_002469d0);
   DAT_002469c0 = 0;
   DAT_002469c2 = 0;
@@ -2980,7 +2981,7 @@ void cw_zero_in_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * cw_zero_in_estimator @ 0021d270  (823 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * cw_zero_in_estimator @ 0021d270  (823 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Non-FM modes. Analytic signal; sums the per-sample phase step (atan2) over 240 samples (20 ms)
  *     → frequency f (× 12000/2π, 0x203AC8). If f ≥ 10 Hz and the amplitude A = √2·RMS ≥ 1e-5, a 3-bin Goertzel tone
  *     gate checks that the 240 samples really hold one tone at f (below); while the gate is open: reg 4 =
@@ -3009,7 +3010,7 @@ void cw_zero_in_estimator(undefined4 param_1)
   undefined8 uVar10;
   undefined *puVar11;
   undefined8 uVar12;
-  int local_30;
+  int i;
   undefined4 *puStack_2c;
   
   if ((uint)DAT_002465e0 != (uint)DAT_200700c2) {
@@ -3029,9 +3030,10 @@ void cw_zero_in_estimator(undefined4 param_1)
     DAT_20070008 = 0;
   }
   if (DAT_002465e4 != 0) {
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
     hilbert_iq(&DAT_002469d0,param_1,&DAT_00246d20,&DAT_00246de0,0x30);
     puStack_2c = &DAT_00246de0;
-    local_30 = 0x30;
+    i = 0x30;
     puVar3 = &DAT_00246d20;
     do {
       uVar8 = ae_l32_i(*puVar3);
@@ -3175,16 +3177,16 @@ LAB_0021d307:
       }
 LAB_0021d315:
       puStack_2c = puStack_2c + 1;
-      local_30 = local_30 + -1;
+      i = i + -1;
       puVar3 = puVar3 + 1;
-    } while (local_30 != 0);
+    } while (i != 0);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * am_demod_init @ 0021d5b0  (23 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * am_demod_init @ 0021d5b0  (23 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal (`hilbert_iq` 0x225370: 71-tap FIR 0x205840 for Q, I = input delayed 35
  *     samples), envelope √(I² + Q²), DC blocker y = x − x₋₁ + 0.999·y₋₁
  * Registers: —
@@ -3201,13 +3203,14 @@ void am_demod_init(void)
   uVar1 = const_s(0);
   DAT_00246eb4 = ae_s32_l_i(uVar1);
   DAT_00246eb0 = ae_s32_l_i(uVar1);
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_00246eb8);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * am_demod @ 0021d5c8  (121 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * am_demod @ 0021d5c8  (121 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal (`hilbert_iq` 0x225370: 71-tap FIR 0x205840 for Q, I = input delayed 35
  *     samples), envelope √(I² + Q²), DC blocker y = x − x₋₁ + 0.999·y₋₁
  * Registers: —
@@ -3229,17 +3232,18 @@ void am_demod(undefined4 param_1,undefined4 *param_2)
   ulonglong uVar6;
   undefined8 uVar7;
   undefined8 uVar8;
-  int iVar9;
-  undefined8 uVar10;
+  int i;
+  undefined8 uVar9;
   
   puVar2 = &DAT_002471b0;
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
   hilbert_iq(&DAT_00246eb8,param_1,&DAT_002471b0,&DAT_00247210,0x18);
   puVar3 = &DAT_00247210;
-  iVar9 = 0;
+  i = 0;
   do {
     uVar8 = ae_l32_i(*puVar2);
-    uVar10 = ae_l32_i(*puVar3);
-    uVar5 = (ulonglong)(uint)((float)uVar8 * (float)uVar8 + (float)uVar10 * (float)uVar10);
+    uVar9 = ae_l32_i(*puVar3);
+    uVar5 = (ulonglong)(uint)((float)uVar8 * (float)uVar8 + (float)uVar9 * (float)uVar9);
     uVar1 = ae_s32_l_i(uVar5);
     __ieee754_sqrtf();
     uVar4 = oeq_s(uVar5,uVar5);
@@ -3247,25 +3251,25 @@ void am_demod(undefined4 param_1,undefined4 *param_2)
       uVar5 = ae_l32_i(uVar1);
       sqrtf();
     }
-    uVar10 = ae_l32_i(DAT_00246eb4);
+    uVar9 = ae_l32_i(DAT_00246eb4);
     uVar7 = ae_l32_i(0x3f7fbe77);
     uVar8 = ae_l32_i(DAT_00246eb0);
-    uVar6 = (ulonglong)(uint)(((float)uVar5 + (float)uVar10 * (float)uVar7) - (float)uVar8);
+    uVar6 = (ulonglong)(uint)(((float)uVar5 + (float)uVar9 * (float)uVar7) - (float)uVar8);
     DAT_00246eb0 = ae_s32_l_i(uVar5);
     DAT_00246eb4 = ae_s32_l_i(uVar6);
     puVar2 = puVar2 + 1;
     uVar1 = ae_s32_l_ip(uVar6);
     *param_2 = uVar1;
     param_2 = param_2 + 1;
-    iVar9 = iVar9 + 1;
+    i = i + 1;
     puVar3 = puVar3 + 1;
-  } while (iVar9 != 0x18);
+  } while (i != 0x18);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fm_demod_init @ 0021d650  (60 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * fm_demod_init @ 0021d650  (60 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal, mix by an NCO of −2π/3 per sample (−24 kHz, fs/3; 0xC0060A92), polar
  *     discriminator atan2(x·conj(x₋₁)) × 1.6225, hold on zero input. Noise squelch level: discriminator output
  *     through the 5-section BP 0x2368D0 (9–15 kHz at 72 kHz), Σ|n| over 1800 samples (25 ms), scaled into reg 1
@@ -3281,6 +3285,7 @@ void fm_demod_init(void)
 {
   undefined8 uVar1;
   
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_00247270);
   uVar1 = const_s(0);
   DAT_00247560 = ae_s32_l_i(uVar1);
@@ -3296,7 +3301,7 @@ void fm_demod_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_demod @ 0021d68c  (514 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * fm_demod @ 0021d68c  (514 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Analytic signal, mix by an NCO of −2π/3 per sample (−24 kHz, fs/3; 0xC0060A92), polar
  *     discriminator atan2(x·conj(x₋₁)) × 1.6225, hold on zero input. Noise squelch level: discriminator output
  *     through the 5-section BP 0x2368D0 (9–15 kHz at 72 kHz), Σ|n| over 1800 samples (25 ms), scaled into reg 1
@@ -3337,6 +3342,7 @@ undefined * fm_demod(undefined4 param_1,undefined4 *param_2)
   undefined8 uVar17;
   
   puVar5 = &DAT_00247640;
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
   hilbert_iq(&DAT_00247270,param_1,&DAT_00247640,&DAT_002476a0,0x18);
   puVar6 = &DAT_002476a0;
   uVar12 = 0x40c90fdb;
@@ -3444,7 +3450,7 @@ undefined * fm_demod(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ssb_weaver_init @ 0021d8a0  (159 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * ssb_weaver_init @ 0021d8a0  (159 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Weaver SSB/CW demodulator. NCO 1 at (±2000 + 18000) Hz, 2π/72000 (0x206EA8/0x206EAC), I/Q mix;
  *     ÷6 with 0x2373D0 (LP 4.9 kHz); 9-section LP 0x237440 (1.97 kHz at 12 kHz) on I and Q; NCO 2 at 2 kHz (π/3 per
  *     sample at 12 kHz) and I·cos + s·Q·sin; ×6 with gain 6 and 0x2373D0. Param 0 (CW-U, USB) sets s = −1 → NCO 1
@@ -3485,7 +3491,7 @@ void ssb_weaver_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ssb_weaver_demod @ 0021d940  (605 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * ssb_weaver_demod @ 0021d940  (605 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Weaver SSB/CW demodulator. NCO 1 at (±2000 + 18000) Hz, 2π/72000 (0x206EA8/0x206EAC), I/Q mix;
  *     ÷6 with 0x2373D0 (LP 4.9 kHz); 9-section LP 0x237440 (1.97 kHz at 12 kHz) on I and Q; NCO 2 at 2 kHz (π/3 per
  *     sample at 12 kHz) and I·cos + s·Q·sin; ×6 with gain 6 and 0x2373D0. Param 0 (CW-U, USB) sets s = −1 → NCO 1
@@ -3645,7 +3651,7 @@ undefined4 * ssb_weaver_demod(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * lms_ale_nr_init @ 0021dbb0  (32 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * lms_ale_nr_init @ 0021dbb0  (32 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LMS adaptive line enhancer (keeps the correlated part = signal). Input gain reg 0x4025, LP
  *     0x236850; 128 taps, reference delayed 33 samples; y = Σw·x, e = d − y (both clipped ±10); w ← w·(1 −
  *     1e-6·leak) + μ·e·x, μ = min(reg 0x400B / 1000, 1.8). Output y × reg 0x4026; 1 s cross-fade when switched on
@@ -3672,7 +3678,7 @@ void lms_ale_nr_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * lms_ale_nr @ 0021dbd0  (837 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * lms_ale_nr @ 0021dbd0  (837 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LMS adaptive line enhancer (keeps the correlated part = signal). Input gain reg 0x4025, LP
  *     0x236850; 128 taps, reference delayed 33 samples; y = Σw·x, e = d − y (both clipped ±10); w ← w·(1 −
  *     1e-6·leak) + μ·e·x, μ = min(reg 0x400B / 1000, 1.8). Output y × reg 0x4026; 1 s cross-fade when switched on
@@ -3857,7 +3863,7 @@ undefined8 lms_ale_nr(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_init @ 0021df20  (195 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_init @ 0021df20  (195 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -3875,12 +3881,12 @@ void spectral_nr_init(void)
 
 {
   undefined4 uVar1;
-  int iVar2;
-  undefined4 *puVar3;
-  float fVar4;
+  int i;
+  undefined4 *puVar2;
+  float fVar3;
+  undefined8 uVar4;
   undefined8 uVar5;
-  undefined8 uVar6;
-  ulonglong uVar7;
+  ulonglong uVar6;
   
   _DAT_00248720 = 0;
   _DAT_00248724 = 0;
@@ -3895,30 +3901,30 @@ void spectral_nr_init(void)
   memset(&DAT_0024a340,0,0x800);
   memset(&DAT_0024ab40,0,0x800);
   memset(&DAT_0024b340,0,0x800);
-  puVar3 = &DAT_0024c340;
-  iVar2 = 0;
-  uVar7 = const_s(1);
-  DAT_0024bb40 = ae_s32_l_ip(uVar7);
+  puVar2 = &DAT_0024c340;
+  i = 0;
+  uVar6 = const_s(1);
+  DAT_0024bb40 = ae_s32_l_ip(uVar6);
   do {
-    fVar4 = (float)uVar7;
-    scl_int2float(iVar2,0);
-    uVar6 = ae_l32_i(0x40c90fdb);
-    uVar5 = ae_l32_i(0x3b000000);
-    uVar7 = (ulonglong)(uint)(fVar4 * (float)uVar6 * (float)uVar5);
+    fVar3 = (float)uVar6;
+    scl_int2float(i,0);
+    uVar5 = ae_l32_i(0x40c90fdb);
+    uVar4 = ae_l32_i(0x3b000000);
+    uVar6 = (ulonglong)(uint)(fVar3 * (float)uVar5 * (float)uVar4);
     scl_cosinef();
-    uVar6 = ae_l32_i(0xbf000000);
-    uVar5 = ae_l32_i(0x3f000000);
-    uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar7 * (float)uVar6 + (float)uVar5));
-    *puVar3 = uVar1;
-    puVar3 = puVar3 + 1;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 != 0x200);
+    uVar5 = ae_l32_i(0xbf000000);
+    uVar4 = ae_l32_i(0x3f000000);
+    uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * (float)uVar5 + (float)uVar4));
+    *puVar2 = uVar1;
+    puVar2 = puVar2 + 1;
+    i = i + 1;
+  } while (i != 0x200);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_params @ 0021dfe4  (270 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_params @ 0021dfe4  (270 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4006,7 +4012,7 @@ void spectral_nr_params(void)
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr @ 0021e0f4  (343 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr @ 0021e0f4  (343 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4024,8 +4030,9 @@ void spectral_nr(undefined4 *param_1,undefined4 *param_2)
 
 {
   undefined4 uVar1;
-  int iVar2;
-  uint uVar3;
+  int i;
+  uint uVar2;
+  undefined8 uVar3;
   undefined8 uVar4;
   undefined8 uVar5;
   undefined8 uVar6;
@@ -4037,7 +4044,6 @@ void spectral_nr(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar12;
   undefined8 uVar13;
   undefined8 uVar14;
-  undefined8 uVar15;
   
   spectral_nr_params();
   if (DAT_00248724 == 0) {
@@ -4046,73 +4052,73 @@ void spectral_nr(undefined4 *param_1,undefined4 *param_2)
     }
   }
   else {
-    iVar2 = 0;
+    i = 0;
     do {
-      uVar3 = (uint)DAT_00248726;
-      uVar4 = ae_l32_ip(*param_1);
+      uVar2 = (uint)DAT_00248726;
+      uVar3 = ae_l32_ip(*param_1);
       param_1 = param_1 + 1;
-      uVar1 = ae_s32_l_i(uVar4);
-      (&DAT_00248740)[uVar3] = uVar1;
-      uVar4 = ae_l32_i((&DAT_00248b40)[uVar3]);
-      uVar1 = ae_s32_l_i(uVar4);
-      uVar3 = ae_zext16(uVar3 + 1);
-      DAT_00248726 = (ushort)uVar3;
-      if (0xff < uVar3) {
+      uVar1 = ae_s32_l_i(uVar3);
+      (&DAT_00248740)[uVar2] = uVar1;
+      uVar3 = ae_l32_i((&DAT_00248b40)[uVar2]);
+      uVar1 = ae_s32_l_i(uVar3);
+      uVar2 = ae_zext16(uVar2 + 1);
+      DAT_00248726 = (ushort)uVar2;
+      if (0xff < uVar2) {
         DAT_00248726 = 0;
         memcpy(&DAT_00249340,&DAT_00249740,0x400);
         memcpy(&DAT_00249740,&DAT_00248740,0x400);
         spectral_nr_frame(&DAT_00249340,&DAT_00249b40);
-        uVar11 = ae_l32_ip(DAT_00248f40);
-        uVar4 = ae_l32_ip(DAT_00249b40);
-        uVar5 = ae_l32_i(DAT_00248f44);
-        uVar12 = ae_l32_i(DAT_00248f48);
-        uVar6 = ae_l32_i(DAT_00248f4c);
-        uVar13 = ae_l32_ip(DAT_00248f50);
-        uVar7 = ae_l32_i(DAT_00249b44);
-        uVar8 = ae_l32_i(DAT_00249b4c);
-        uVar14 = ae_l32_i(DAT_00249b48);
-        uVar9 = ae_l32_i(DAT_00248f5c);
-        uVar10 = ae_l32_i(DAT_00248f58);
-        uVar15 = ae_l32_i(DAT_00248f54);
-        DAT_00248b40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar11 + (float)uVar4));
-        uVar11 = ae_l32_ip(DAT_00249b50);
-        DAT_00248b44 = ae_s32_l_i((ulonglong)(uint)((float)uVar5 + (float)uVar7));
-        uVar7 = ae_l32_i(DAT_00249b54);
-        DAT_00248b48 = ae_s32_l_i((ulonglong)(uint)((float)uVar12 + (float)uVar14));
-        uVar12 = ae_l32_i(DAT_00249b58);
-        uVar14 = ae_l32_i(DAT_00249b5c);
-        DAT_00248b4c = ae_s32_l_i((ulonglong)(uint)((float)uVar6 + (float)uVar8));
-        uVar6 = ae_l32_ip(DAT_00249b60);
-        uVar4 = ae_l32_ip(DAT_00248f60);
-        uVar8 = ae_l32_i(DAT_00248f64);
-        DAT_00248b50 = ae_s32_l_ip((ulonglong)(uint)((float)uVar13 + (float)uVar11));
-        uVar11 = ae_l32_i(DAT_00249b68);
-        uVar5 = ae_l32_i(DAT_00248f68);
-        uVar13 = ae_l32_i(DAT_00248f6c);
-        DAT_00248b54 = ae_s32_l_i((ulonglong)(uint)((float)uVar15 + (float)uVar7));
-        uVar7 = ae_l32_i(DAT_00249b64);
-        DAT_00248b58 = ae_s32_l_i((ulonglong)(uint)((float)uVar10 + (float)uVar12));
-        uVar10 = ae_l32_i(DAT_00249b6c);
-        DAT_00248b5c = ae_s32_l_i((ulonglong)(uint)((float)uVar9 + (float)uVar14));
-        DAT_00248b60 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 + (float)uVar6));
-        DAT_00248b64 = ae_s32_l_i((ulonglong)(uint)((float)uVar8 + (float)uVar7));
-        DAT_00248b68 = ae_s32_l_i((ulonglong)(uint)((float)uVar5 + (float)uVar11));
-        DAT_00248b6c = ae_s32_l_i((ulonglong)(uint)((float)uVar13 + (float)uVar10));
+        uVar10 = ae_l32_ip(DAT_00248f40);
+        uVar3 = ae_l32_ip(DAT_00249b40);
+        uVar4 = ae_l32_i(DAT_00248f44);
+        uVar11 = ae_l32_i(DAT_00248f48);
+        uVar5 = ae_l32_i(DAT_00248f4c);
+        uVar12 = ae_l32_ip(DAT_00248f50);
+        uVar6 = ae_l32_i(DAT_00249b44);
+        uVar7 = ae_l32_i(DAT_00249b4c);
+        uVar13 = ae_l32_i(DAT_00249b48);
+        uVar8 = ae_l32_i(DAT_00248f5c);
+        uVar9 = ae_l32_i(DAT_00248f58);
+        uVar14 = ae_l32_i(DAT_00248f54);
+        DAT_00248b40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar10 + (float)uVar3));
+        uVar10 = ae_l32_ip(DAT_00249b50);
+        DAT_00248b44 = ae_s32_l_i((ulonglong)(uint)((float)uVar4 + (float)uVar6));
+        uVar6 = ae_l32_i(DAT_00249b54);
+        DAT_00248b48 = ae_s32_l_i((ulonglong)(uint)((float)uVar11 + (float)uVar13));
+        uVar11 = ae_l32_i(DAT_00249b58);
+        uVar13 = ae_l32_i(DAT_00249b5c);
+        DAT_00248b4c = ae_s32_l_i((ulonglong)(uint)((float)uVar5 + (float)uVar7));
+        uVar5 = ae_l32_ip(DAT_00249b60);
+        uVar3 = ae_l32_ip(DAT_00248f60);
+        uVar7 = ae_l32_i(DAT_00248f64);
+        DAT_00248b50 = ae_s32_l_ip((ulonglong)(uint)((float)uVar12 + (float)uVar10));
+        uVar10 = ae_l32_i(DAT_00249b68);
+        uVar4 = ae_l32_i(DAT_00248f68);
+        uVar12 = ae_l32_i(DAT_00248f6c);
+        DAT_00248b54 = ae_s32_l_i((ulonglong)(uint)((float)uVar14 + (float)uVar6));
+        uVar6 = ae_l32_i(DAT_00249b64);
+        DAT_00248b58 = ae_s32_l_i((ulonglong)(uint)((float)uVar9 + (float)uVar11));
+        uVar9 = ae_l32_i(DAT_00249b6c);
+        DAT_00248b5c = ae_s32_l_i((ulonglong)(uint)((float)uVar8 + (float)uVar13));
+        DAT_00248b60 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 + (float)uVar5));
+        DAT_00248b64 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 + (float)uVar6));
+        DAT_00248b68 = ae_s32_l_i((ulonglong)(uint)((float)uVar4 + (float)uVar10));
+        DAT_00248b6c = ae_s32_l_i((ulonglong)(uint)((float)uVar12 + (float)uVar9));
         memcpy(&DAT_00248f40,&DAT_00249f40,0x400);
       }
-      uVar4 = ae_l32_i(uVar1);
-      uVar1 = ae_s32_l_ip(uVar4);
+      uVar3 = ae_l32_i(uVar1);
+      uVar1 = ae_s32_l_ip(uVar3);
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar2 = iVar2 + 1;
-    } while (iVar2 != 0x30);
+      i = i + 1;
+    } while (i != 0x30);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * spectral_nr_frame @ 0021e24c  (708 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * spectral_nr_frame @ 0021e24c  (708 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: STFT Wiener noise reduction. 512-point periodic-Hann frames, hop 256 (21.3 ms), overlap-add,
  *     complex FFT `fft_cplxf_ie` 0x2174B0 (NDSP; was `fft512_cplx`) with twiddles 0x200D00, inverse `ifft_cplxf_ie`
  *     0x217D10, magnitudes `vec_complex2mag` 0x216E00. Per bin γ = |X|² / N; decision-directed a-priori SNR ξ =
@@ -4138,135 +4144,135 @@ void spectral_nr_frame(undefined4 *param_1,undefined4 *param_2)
   undefined2 uVar10;
   ulonglong uVar11;
   float fVar12;
-  int iVar13;
+  int i;
+  undefined8 uVar13;
   undefined8 uVar14;
   undefined8 uVar15;
   undefined8 uVar16;
   undefined8 uVar17;
-  undefined8 uVar18;
   undefined4 *puVar4;
   
-  uVar14 = ae_l32_ip(*param_1);
-  uVar18 = const_s(0);
-  DAT_0024cb44 = ae_s32_l_i(uVar18);
-  uVar15 = ae_l32_ip(DAT_0024c340);
-  DAT_0024cb40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar15 * (float)uVar14));
-  uVar15 = ae_l32_ip(DAT_0024c344);
-  uVar14 = ae_l32_ip(param_1[1]);
-  DAT_0024cb4c = ae_s32_l_i(uVar18);
-  DAT_0024cb48 = ae_s32_l_ip((ulonglong)(uint)((float)uVar15 * (float)uVar14));
+  uVar13 = ae_l32_ip(*param_1);
+  uVar17 = const_s(0);
+  DAT_0024cb44 = ae_s32_l_i(uVar17);
+  uVar14 = ae_l32_ip(DAT_0024c340);
+  DAT_0024cb40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar14 * (float)uVar13));
+  uVar14 = ae_l32_ip(DAT_0024c344);
+  uVar13 = ae_l32_ip(param_1[1]);
+  DAT_0024cb4c = ae_s32_l_i(uVar17);
+  DAT_0024cb48 = ae_s32_l_ip((ulonglong)(uint)((float)uVar14 * (float)uVar13));
   fft_cplxf_ie(&DAT_0024db40,&DAT_0024cb40,FLOAT_ARRAY_00200d00,1,0x200);
   vec_complex2mag(&DAT_0024eb40,&DAT_0024db40,0x200);
-  uVar14 = ae_l32_ip(DAT_0024db40);
-  DAT_0024f340 = ae_s32_l_ip(uVar14);
-  uVar14 = ae_l32_i(DAT_0024db44);
-  DAT_0024fb40 = ae_s32_l_ip(uVar14);
-  uVar14 = ae_l32_ip(DAT_0024db48);
-  DAT_0024f344 = ae_s32_l_ip(uVar14);
-  uVar14 = ae_l32_i(DAT_0024db4c);
-  DAT_0024fb44 = ae_s32_l_ip(uVar14);
+  uVar13 = ae_l32_ip(DAT_0024db40);
+  DAT_0024f340 = ae_s32_l_ip(uVar13);
+  uVar13 = ae_l32_i(DAT_0024db44);
+  DAT_0024fb40 = ae_s32_l_ip(uVar13);
+  uVar13 = ae_l32_ip(DAT_0024db48);
+  DAT_0024f344 = ae_s32_l_ip(uVar13);
+  uVar13 = ae_l32_i(DAT_0024db4c);
+  DAT_0024fb44 = ae_s32_l_ip(uVar13);
   uVar3 = vec_atan2f(&DAT_00250340,&DAT_0024fb40,&DAT_0024f340,0x200);
   puVar4 = &DAT_00250340;
   puVar6 = &DAT_0024eb40;
   puVar8 = (undefined4 *)&DAT_0024b340;
   puVar7 = &DAT_0024a340;
   if (DAT_00248724 == 1) {
-    uVar14 = ae_l32_i(DAT_0024ab40);
-    uVar15 = ae_l32_i(DAT_0024db44);
-    DAT_0024cb44 = ae_s32_l_i(uVar15);
-    uVar15 = ae_l32_ip(DAT_0024db40);
-    DAT_0024cb40 = ae_s32_l_ip(uVar15);
-    uVar16 = ae_l32_ip(DAT_0024eb40);
-    uVar15 = ae_l32_ip(DAT_0024eb44);
-    uVar18 = ae_l32_i(DAT_0024db4c);
-    uVar17 = ae_l32_ip(DAT_0024db48);
-    DAT_0024cb4c = ae_s32_l_i(uVar18);
-    DAT_0024cb48 = ae_s32_l_ip(uVar17);
-    DAT_0024ab40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar14 + (float)uVar16 * (float)uVar16));
-    uVar14 = ae_l32_i(DAT_0024ab44);
+    uVar13 = ae_l32_i(DAT_0024ab40);
+    uVar14 = ae_l32_i(DAT_0024db44);
+    DAT_0024cb44 = ae_s32_l_i(uVar14);
+    uVar14 = ae_l32_ip(DAT_0024db40);
+    DAT_0024cb40 = ae_s32_l_ip(uVar14);
+    uVar15 = ae_l32_ip(DAT_0024eb40);
+    uVar14 = ae_l32_ip(DAT_0024eb44);
+    uVar17 = ae_l32_i(DAT_0024db4c);
+    uVar16 = ae_l32_ip(DAT_0024db48);
+    DAT_0024cb4c = ae_s32_l_i(uVar17);
+    DAT_0024cb48 = ae_s32_l_ip(uVar16);
+    DAT_0024ab40 = ae_s32_l_ip((ulonglong)(uint)((float)uVar13 + (float)uVar15 * (float)uVar15));
+    uVar13 = ae_l32_i(DAT_0024ab44);
     DAT_0024872c = DAT_0024872c + 1;
-    DAT_0024ab44 = ae_s32_l_ip((ulonglong)(uint)((float)uVar14 + (float)uVar15 * (float)uVar15));
+    DAT_0024ab44 = ae_s32_l_ip((ulonglong)(uint)((float)uVar13 + (float)uVar14 * (float)uVar14));
   }
   else {
     puVar5 = &DAT_0024bb40;
-    iVar13 = 0x200;
+    i = 0x200;
     if (DAT_00248724 == 3) {
-      uVar18 = ae_l32_ip(DAT_0024eb40);
-      uVar15 = ae_l32_i(DAT_0024a340);
+      uVar17 = ae_l32_ip(DAT_0024eb40);
+      uVar14 = ae_l32_i(DAT_0024a340);
       uVar3 = 0x1ff;
-      uVar14 = ae_l32_ip(DAT_0024eb44);
+      uVar13 = ae_l32_ip(DAT_0024eb44);
       DAT_0024a340 = ae_s32_l_ip((ulonglong)
-                                 (uint)((float)uVar15 * 0.99 + (float)uVar18 * (float)uVar18 * 0.01)
+                                 (uint)((float)uVar14 * 0.99 + (float)uVar17 * (float)uVar17 * 0.01)
                                 );
-      uVar15 = ae_l32_i(DAT_0024a344);
+      uVar14 = ae_l32_i(DAT_0024a344);
       DAT_0024a344 = ae_s32_l_ip((ulonglong)
-                                 (uint)((float)uVar15 * 0.99 + (float)uVar14 * (float)uVar14 * 0.01)
+                                 (uint)((float)uVar14 * 0.99 + (float)uVar13 * (float)uVar13 * 0.01)
                                 );
     }
-    uVar14 = const_s(0);
+    uVar13 = const_s(0);
     puVar9 = &DAT_0024cb40;
     do {
-      uVar15 = ae_l32_i(*puVar7);
-      uVar10 = oeq_s(uVar15,uVar14);
-      uVar14 = ae_l32_i(*puVar5);
-      uVar2 = ae_s32_l_i(uVar14);
-      uVar15 = ae_l32_i(*puVar6);
+      uVar14 = ae_l32_i(*puVar7);
+      uVar10 = oeq_s(uVar14,uVar13);
+      uVar13 = ae_l32_i(*puVar5);
+      uVar2 = ae_s32_l_i(uVar13);
+      uVar14 = ae_l32_i(*puVar6);
       if (!SUB21(uVar10,0)) {
-        uVar1 = ae_s32_l_i(uVar15);
-        uVar14 = ae_l32_i(uVar1);
-        uVar11 = (ulonglong)(uint)((float)uVar14 * (float)uVar14);
+        uVar1 = ae_s32_l_i(uVar14);
+        uVar13 = ae_l32_i(uVar1);
+        uVar11 = (ulonglong)(uint)((float)uVar13 * (float)uVar13);
         __divsf3(uVar3);
-        uVar14 = ae_l32_i(0xbf800000);
-        fVar12 = (float)uVar14 + (float)uVar11;
-        uVar14 = ae_l32_i(0);
-        uVar10 = olt_s((ulonglong)(uint)fVar12,uVar14);
+        uVar13 = ae_l32_i(0xbf800000);
+        fVar12 = (float)uVar13 + (float)uVar11;
+        uVar13 = ae_l32_i(0);
+        uVar10 = olt_s((ulonglong)(uint)fVar12,uVar13);
         ae_l32_i(0x3f800000);
-        uVar14 = ae_l32_i(0x3ca3d700);
+        uVar13 = ae_l32_i(0x3ca3d700);
         if (SUB21(uVar10,0)) {
-          uVar14 = ae_l32_i(0);
-          fVar12 = (float)uVar14;
+          uVar13 = ae_l32_i(0);
+          fVar12 = (float)uVar13;
         }
         else {
-          fVar12 = fVar12 * (float)uVar14;
+          fVar12 = fVar12 * (float)uVar13;
         }
-        uVar15 = ae_l32_i(*puVar8);
-        uVar18 = ae_l32_i(0x3f7ae148);
-        uVar14 = ae_l32_i(uVar2);
+        uVar14 = ae_l32_i(*puVar8);
+        uVar17 = ae_l32_i(0x3f7ae148);
+        uVar13 = ae_l32_i(uVar2);
         uVar3 = ae_s32_l_i(uVar11);
         *puVar8 = uVar3;
-        uVar14 = ae_mov((ulonglong)
-                        (uint)(fVar12 + (float)uVar14 *
-                                        (float)uVar14 * (float)uVar15 * (float)uVar18));
+        uVar13 = ae_mov((ulonglong)
+                        (uint)(fVar12 + (float)uVar13 *
+                                        (float)uVar13 * (float)uVar14 * (float)uVar17));
         __divsf3();
-        uVar18 = ae_l32_i(0x3f800000);
-        uVar10 = olt_s(uVar18,uVar14);
-        uVar15 = ae_l32_i(uVar1);
-        uVar16 = ae_l32_i(0);
-        if ((SUB21(uVar10,0)) || (uVar10 = olt_s(uVar14,uVar16), !SUB21(uVar10,0))) {
-          uVar10 = olt_s(uVar18,uVar14);
-          uVar14 = movt_s(uVar14,uVar18,(char)uVar10);
+        uVar17 = ae_l32_i(0x3f800000);
+        uVar10 = olt_s(uVar17,uVar13);
+        uVar14 = ae_l32_i(uVar1);
+        uVar15 = ae_l32_i(0);
+        if ((SUB21(uVar10,0)) || (uVar10 = olt_s(uVar13,uVar15), !SUB21(uVar10,0))) {
+          uVar10 = olt_s(uVar17,uVar13);
+          uVar13 = movt_s(uVar13,uVar17,(char)uVar10);
         }
         else {
-          uVar14 = ae_l32_i(0);
+          uVar13 = ae_l32_i(0);
         }
-        uVar3 = ae_s32_l_i(uVar14);
+        uVar3 = ae_s32_l_i(uVar13);
         *puVar5 = uVar3;
       }
-      uVar16 = ae_l32_i(DAT_00248730);
-      uVar18 = ae_l32_i(0x3f800000);
+      uVar15 = ae_l32_i(DAT_00248730);
+      uVar17 = ae_l32_i(0x3f800000);
       uVar2 = ae_s32_l_i((ulonglong)
-                         (uint)((float)uVar15 *
-                               ((float)uVar16 * (float)uVar14 + ((float)uVar18 - (float)uVar16))));
-      uVar14 = ae_l32_i(*puVar4);
+                         (uint)((float)uVar14 *
+                               ((float)uVar15 * (float)uVar13 + ((float)uVar17 - (float)uVar15))));
+      uVar13 = ae_l32_i(*puVar4);
       scl_cosinef();
-      uVar1 = ae_s32_l_i(uVar14);
-      uVar14 = ae_l32_i(*puVar4);
-      fVar12 = (float)uVar14;
+      uVar1 = ae_s32_l_i(uVar13);
+      uVar13 = ae_l32_i(*puVar4);
+      fVar12 = (float)uVar13;
       uVar3 = scl_sinef();
-      uVar15 = ae_l32_i(uVar2);
-      fVar12 = (float)uVar15 * fVar12;
-      uVar18 = ae_l32_i(uVar1);
-      uVar14 = ae_l32_i(0);
+      uVar14 = ae_l32_i(uVar2);
+      fVar12 = (float)uVar14 * fVar12;
+      uVar17 = ae_l32_i(uVar1);
+      uVar13 = ae_l32_i(0);
       puVar8 = puVar8 + 1;
       puVar4 = puVar4 + 1;
       puVar5 = puVar5 + 1;
@@ -4274,24 +4280,24 @@ void spectral_nr_frame(undefined4 *param_1,undefined4 *param_2)
       uVar2 = ae_s32_l_i((ulonglong)(uint)fVar12);
       puVar9[1] = uVar2;
       puVar7 = puVar7 + 1;
-      uVar2 = ae_s32_l_ip((ulonglong)(uint)((float)uVar15 * (float)uVar18 + fVar12 * (float)uVar14))
+      uVar2 = ae_s32_l_ip((ulonglong)(uint)((float)uVar14 * (float)uVar17 + fVar12 * (float)uVar13))
       ;
       *puVar9 = uVar2;
       puVar9 = puVar9 + 2;
-      iVar13 = iVar13 + -1;
-      uVar14 = ae_l32_i(0);
-    } while (iVar13 != 0);
+      i = i + -1;
+      uVar13 = ae_l32_i(0);
+    } while (i != 0);
   }
   ifft_cplxf_ie(&DAT_0024db40,&DAT_0024cb40,FLOAT_ARRAY_00200d00,1,0x200);
-  uVar14 = ae_l32_ip(DAT_0024db40);
-  uVar3 = ae_s32_l_ip(uVar14);
+  uVar13 = ae_l32_ip(DAT_0024db40);
+  uVar3 = ae_s32_l_ip(uVar13);
   *param_2 = uVar3;
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * manual_notch_init @ 0021e520  (15 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * manual_notch_init @ 0021e520  (15 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 +
  *     α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz)
  * Registers: 0x52: type in bits 15–12, frequency bits 11–0
@@ -4312,7 +4318,7 @@ void manual_notch_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * manual_notch @ 0021e530  (364 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * manual_notch @ 0021e530  (364 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Three identical notch biquads, b = g·[1, −2 cos ω, 1], a = [1, −2g cos ω, 2g − 1], g = 1/(1 +
  *     α), α = k·tan(ω/35). Type 1 k = 0.05 (−3 dB width ≈ 4 Hz at 700 Hz), type 2 k = 1.4705 (≈ 115 Hz at 700 Hz)
  * Registers: 0x52: type in bits 15–12, frequency bits 11–0
@@ -4422,10 +4428,11 @@ LAB_0021e59c:
 
 
 /* -----------------------------------------------------------------------------
- * branch_b_delay_init @ 0021e6b0  (17 bytes, 1 callers, export file 0021c818_0021f6d0.c)
- * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
+ * branch_b_delay_init @ 0021e6b0  (17 bytes, 1 callers, export file 0021c890_0021f7ec.c)
+ * What it computes: Delay of up to 1200 samples on branch B only, at 12 kHz (48-sample blocks, 0xC0-byte copy when
+ *     0); MAIN writes 32 = 2.67 ms, so the internal (AESS low-pass) speaker lags the SP-40 by 2.67 ms (#193, below)
  * Registers: 0x56
- * Tag: [fact]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
 // ===== branch_b_delay_init @ 0021e6b0 (17 bytes)
@@ -4442,10 +4449,11 @@ void branch_b_delay_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * branch_b_delay @ 0021e6c4  (124 bytes, 1 callers, export file 0021c818_0021f6d0.c)
- * What it computes: Delay of up to 1200 samples on branch B only; MAIN writes 32 (2.7 ms)
+ * branch_b_delay @ 0021e6c4  (124 bytes, 1 callers, export file 0021c890_0021f7ec.c)
+ * What it computes: Delay of up to 1200 samples on branch B only, at 12 kHz (48-sample blocks, 0xC0-byte copy when
+ *     0); MAIN writes 32 = 2.67 ms, so the internal (AESS low-pass) speaker lags the SP-40 by 2.67 ms (#193, below)
  * Registers: 0x56
- * Tag: [fact]
+ * Tag: [fact] [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
  */
 // ===== branch_b_delay @ 0021e6c4 (124 bytes)
@@ -4500,7 +4508,7 @@ undefined8 branch_b_delay(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * aess_lowpass_fir_init @ 0021e740  (17 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * aess_lowpass_fir_init @ 0021e740  (17 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Name on the doc page: cw_fir_lowpass
  * What it computes: AESS crossover low-pass on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle:
  *     0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four
@@ -4523,7 +4531,7 @@ void aess_lowpass_fir_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * aess_lowpass_fir @ 0021e754  (206 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * aess_lowpass_fir @ 0021e754  (206 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: AESS crossover low-pass on branch B (#184). 257-tap FIR, reg 0x4020 bits 15–12 = 1 (gentle:
  *     0x203B70 / 0x203F80) or 2 (steep: 0x204390 / 0x2047A0), bits 11–0 = 700 or 1000 Hz (−3 dB there in all four
  *     tables; steep: −12.2 dB at 1000 Hz (700) and −13.5 dB at 1500 Hz (1000), −40.7 / −31.4 dB at 3 kHz; gentle ≈
@@ -4599,7 +4607,7 @@ LAB_0021e780:
 
 
 /* -----------------------------------------------------------------------------
- * branch_a_align_delay @ 0021e82c  (91 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * branch_a_align_delay @ 0021e82c  (91 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: 128-sample delay, active only while the branch-B FIR is on: (257 − 1) / 2 = 128 = the FIR's
  *     group delay, so both branches stay time-aligned
  * Registers: (0x4020)
@@ -4646,7 +4654,7 @@ undefined8 branch_a_align_delay(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * af_locut_init @ 0021e890  (30 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * af_locut_init @ 0021e890  (30 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Same structure as high-pass
  * Registers: 0x47; 0x55
  * Tag: [fact]
@@ -4667,7 +4675,7 @@ void af_locut_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_locut @ 0021e8b0  (860 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * af_locut @ 0021e8b0  (860 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Same structure as high-pass
  * Registers: 0x47; 0x55
  * Tag: [fact]
@@ -4914,7 +4922,7 @@ LAB_0021ea5a:
 
 
 /* -----------------------------------------------------------------------------
- * af_hicut_init @ 0021ec20  (30 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * af_hicut_init @ 0021ec20  (30 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Type 1: 1st-order bilinear low-pass (6 dB/oct); type 2: 3rd-order (18 dB/oct)
  * Registers: instance 0: 0x46; instance 1: 0x54
  * Tag: [fact] [inference]
@@ -4935,7 +4943,7 @@ void af_hicut_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * af_hicut @ 0021ec40  (828 bytes, 2 callers, export file 0021c818_0021f6d0.c)
+ * af_hicut @ 0021ec40  (828 bytes, 2 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Type 1: 1st-order bilinear low-pass (6 dB/oct); type 2: 3rd-order (18 dB/oct)
  * Registers: instance 0: 0x46; instance 1: 0x54
  * Tag: [fact] [inference]
@@ -5183,7 +5191,7 @@ LAB_0021ede4:
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_init @ 0021ef90  (116 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_init @ 0021ef90  (116 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5235,7 +5243,7 @@ void if_agc_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_params @ 0021f004  (213 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_params @ 0021f004  (213 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5323,7 +5331,7 @@ bool if_agc_params(void)
 
 
 /* -----------------------------------------------------------------------------
- * if_agc_process @ 0021f0dc  (494 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_agc_process @ 0021f0dc  (494 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Feed-forward AGC, one gain per block. Level = √(Σx² / 24) (1/24 = 0x3D2AAAAB at 0x21F0F6),
  *     averaged with the previous block. Wanted gain = min(Gmax, 0.2512 / level): target 0.2512 = −12 dBFS
  *     (0x3E809BCC at 0x21F088). Attack is immediate and the gain is applied to the previous block (one block = 333
@@ -5361,6 +5369,7 @@ void if_agc_process(undefined4 param_1)
   iVar1 = if_agc_params();
   uVar7 = ae_l32_i(DAT_00252bc0);
   DAT_00252bc4 = ae_s32_l_i(uVar7);
+                    /* Level = sqrt(sum x^2 / 24), mean with last block [fact: dsp-chains.md] */
   vec_powerf(param_1,0x18);
   uVar4 = (ulonglong)(uint)((float)uVar7 * 0.041666668);
   uStack_2c = ae_s32_l_i(uVar4);
@@ -5375,7 +5384,9 @@ void if_agc_process(undefined4 param_1)
   DAT_00252bc0 = ae_s32_l_i(uVar4);
   uVar7 = ae_mov((ulonglong)(uint)(((float)uVar4 + (float)uVar6) * (float)uVar7));
   local_30 = ae_s32_l_i(uVar7);
+                    /* Every 60 blocks: S-meter regs 3 and 0x4005 [fact: 0x21F320] */
   if_meter_tick();
+                    /* Fixed input gain from reg 0x68 [fact: dsp-chains.md] */
   reg68_gain_apply(&local_30,param_1,&DAT_00252cc0);
   uVar7 = ae_l32_i(DAT_00252bb4);
   uVar6 = ae_l32_i(DAT_00252bb0);
@@ -5409,6 +5420,7 @@ void if_agc_process(undefined4 param_1)
   uVar6 = ae_l32_i(0);
   uVar4 = ae_l32_i(uStack_28);
   uVar9 = const_s(1);
+                    /* Attack: a lower wanted gain is taken at once [inference: dsp-chains.md] */
   if ((SUB21(uVar3,0)) || (iVar1 != 0)) {
     DAT_00252bd4 = ae_s32_l_i(uVar5);
     DAT_00252bd0 = ae_s32_l_i(uVar4);
@@ -5489,7 +5501,7 @@ LAB_0021f1d9:
 
 
 /* -----------------------------------------------------------------------------
- * reg68_gain_apply @ 0021f2d0  (78 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * reg68_gain_apply @ 0021f2d0  (78 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * Purpose: if_agc_process helper: when reg 0x68 changed, gain = scl_antilog10f(scl_int2float(reg, -1) * 0.05), then
  *     vec_scalef over 24 samples
  * Tag: [fact]
@@ -5528,7 +5540,7 @@ void reg68_gain_apply(undefined4 *param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * if_meter_tick @ 0021f320  (35 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * if_meter_tick @ 0021f320  (35 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5560,7 +5572,7 @@ void if_meter_tick(void)
 
 
 /* -----------------------------------------------------------------------------
- * meter_to_reg4005 @ 0021f348  (62 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * meter_to_reg4005 @ 0021f348  (62 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5604,7 +5616,7 @@ void meter_to_reg4005(void)
 
 
 /* -----------------------------------------------------------------------------
- * status_reg3_update @ 0021f388  (122 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * status_reg3_update @ 0021f388  (122 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: Every 60 blocks (20 ms): reg 0x4005 = linear RMS level before the AGC (PWM meter); reg 3 high
  *     byte = min(255, (65535·rms) >> 6); reg 3 low byte = 255 − 2·(Gmax_dB − gain_dB) = AGC gain reduction in 0.5
  *     dB steps
@@ -5649,7 +5661,7 @@ void status_reg3_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_audio_chain @ 0021f484  (582 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * rx_audio_chain @ 0021f484  (582 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: ÷6 (0x2373D0), the stages below in order, ×6 per branch. reg 6 = 9 runs `fm_audio_post`, reg 6
  *     = 10 runs neither it nor the zero-in, anything else runs `cw_zero_in_estimator`
  * Registers: 6
@@ -5673,6 +5685,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   undefined8 uVar8;
   undefined8 uVar9;
   
+                    /* Decimate by 6 to 12 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d30,&DAT_00252f80,param_1,0x120);
   uVar2 = ae_l32_ip(DAT_00252f80);
   DAT_00253400 = ae_s32_l_ip(uVar2);
@@ -5680,23 +5693,34 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253404 = ae_s32_l_ip(uVar2);
   if (DAT_2007000c != 10) {
     if (DAT_2007000c == 9) {
+                    /* reg 6 = 9 (FM): CTCSS/DCS decoders, HPF, de-emphasis [fact: dsp-chains.md] */
       fm_audio_post(&DAT_00253400,&DAT_00253400);
     }
     else {
+                    /* Other modes: CW zero-in estimate into reg 4 [fact: dsp-chains.md] */
       cw_zero_in_estimator(&DAT_00253400);
     }
   }
+                    /* Manual notch (reg 0x52) [fact: dsp-chains.md] */
   manual_notch(&DAT_00253400,&DAT_00253400);
+                    /* STFT Wiener noise reduction (regs 0x4022/0x4023) [fact: dsp-chains.md] */
   spectral_nr(&DAT_00253400,&DAT_00253400);
+                    /* LMS line enhancer NR (reg 0x40) [fact: dsp-chains.md] */
   lms_ale_nr(&DAT_00253400,&DAT_00253400);
+                    /* NLMS auto notch (reg 0x41) [fact: dsp-chains.md] */
   nlms_auto_notch(&DAT_00253400,&DAT_00253400);
+                    /* Contour peaking biquad (regs 0x42..0x44) [fact: dsp-chains.md] */
   contour_peaking(&DAT_00253400,&DAT_00253400);
+                    /* APF peak filter (reg 0x45) [fact: dsp-chains.md] */
   apf_peak_filter(&DAT_00253400,&DAT_00253400);
+                    /* AF limiter, instance 1 (regs 0x57/0x58; off) [fact: dsp-chains.md] */
   peak_limiter(1,&DAT_00253400,&DAT_00253400);
+                    /* Branch A: hi/lo-cut 0x46/0x47, RX EQ, delay [fact: dsp-chains.md] */
   af_hicut(0,&DAT_00253400,&DAT_002534c0);
   af_locut(0,&DAT_002534c0,&DAT_002534c0);
   rx_eq_3band(&DAT_002534c0,&DAT_002534c0);
   branch_a_align_delay(&DAT_002534c0,&DAT_002534c0);
+                    /* Branch B (AESS): hi/lo-cut 0x54/0x55, LPF, delay [fact: dsp-chains.md] */
   af_hicut(1,&DAT_00253400,&DAT_00253580);
   af_locut(1,&DAT_00253580,&DAT_00253580);
   aess_lowpass_fir(&DAT_00253580,&DAT_00253580);
@@ -5726,6 +5750,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253058 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * 6.0));
   DAT_00253070 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * 6.0));
   DAT_00253088 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * 6.0));
+                    /* Interpolate branch A by 6 to the RX block [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d34,param_2,&DAT_00252f80,0x120);
   memset(&DAT_00252f80,0,0x480);
   uVar2 = ae_l32_ip(DAT_00253580);
@@ -5754,13 +5779,14 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253058 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * fVar1));
   DAT_00253070 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * fVar1));
   DAT_00253088 = ae_s32_l_ip((ulonglong)(uint)((float)uVar7 * fVar1));
+                    /* Interpolate branch B by 6 [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d38,param_3,&DAT_00252f80,0x120);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_init @ 0021f6d0  (278 bytes, 1 callers, export file 0021c818_0021f6d0.c)
+ * ctcss_init @ 0021f6d0  (278 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -5852,8 +5878,9 @@ void ctcss_init(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ctcss_config @ 0021f7ec  (207 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_config @ 0021f7ec  (207 bytes, 1 callers, export file 0021c890_0021f7ec.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -5923,9 +5950,8 @@ void ctcss_config(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ctcss_goertzel_retune @ 0021f8bc  (166 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_goertzel_retune @ 0021f8bc  (166 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (f, 0 = keep): side bins 0.985 / 1.015 f while unlocked, 0.98 / 1.02 f while locked; sin and 2 cos of 2
  *     pi f / 1500 per bin (#184)
  * Tag: [inference]
@@ -5996,7 +6022,7 @@ void ctcss_goertzel_retune(void)
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_goertzel_init @ 0021f968  (221 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_goertzel_init @ 0021f968  (221 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: (f): as ctcss_goertzel_retune, then clears the 3 Goertzel states and the 200-sample window (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -6079,7 +6105,7 @@ void ctcss_goertzel_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * ctcss_detect @ 0021fa48  (715 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * ctcss_detect @ 0021fa48  (715 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: LP 0x236940, keep 1 of 8 (1.5 kHz), BP 0x236990. Sliding Goertzel over 200 samples (133 ms) at
  *     0.985 f, f, 1.015 f. Lock when the centre bin beats both sides and is > 50.1 × the window amplitude; unlock
  *     below 3.16 × (10 dB hysteresis). Result → reg 1 bit 6. The coefficients come from `ctcss_goertzel_init`
@@ -6295,7 +6321,7 @@ LAB_0021fc50:
 
 
 /* -----------------------------------------------------------------------------
- * dcs_init @ 0021fd20  (152 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_init @ 0021fd20  (152 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6350,7 +6376,7 @@ void dcs_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * dcs_config @ 0021fdbc  (1121 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_config @ 0021fdbc  (1121 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6512,7 +6538,7 @@ LAB_0021fdee:
 
 
 /* -----------------------------------------------------------------------------
- * dcs_detect @ 00220224  (495 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * dcs_detect @ 00220224  (495 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DCS decoder. Builds the 23-bit Golay word from the 9-bit code + 0x800, normal / inverted /
  *     either; LP 0x236A30 + 109-tap FIR 0x2051C0; 2136-sample buffer (23 bits at 134.4 bit/s); bit-phase search,
  *     slicing at ±0.7 × RMS. Result → reg 1 bit 7
@@ -6652,7 +6678,7 @@ void dcs_detect(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_init @ 00220420  (78 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_init @ 00220420  (78 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -6679,7 +6705,7 @@ void rx_eq_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_update @ 00220470  (792 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_update @ 00220470  (792 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -6905,7 +6931,7 @@ LAB_0022054b:
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_band_update @ 00220790  (783 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_band_update @ 00220790  (783 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -7142,7 +7168,7 @@ LAB_00220860:
 
 
 /* -----------------------------------------------------------------------------
- * rx_eq_3band @ 00220aa4  (126 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_eq_3band @ 00220aa4  (126 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads like the contour: f ≤ 5999 Hz, −40 … +20 dB, Q 1–10
  * Registers: 0x48–0x4A, 0x4B–0x4D, 0x4E–0x50
  * Tag: [fact]
@@ -7176,7 +7202,7 @@ void rx_eq_3band(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_audio_post_init @ 00220b30  (44 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_audio_post_init @ 00220b30  (44 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: FM only: CTCSS and DCS decoders, then 5-section HP 0x236AB0 (−70 dB below 200 Hz, flat above
  *     300 Hz: removes the subtone); if reg 0x3A bit 0, 8-section 0x236B20 (≈ −6 dB/octave above 400 Hz:
  *     de-emphasis)
@@ -7201,7 +7227,7 @@ void fm_audio_post_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_audio_post @ 00220b5c  (106 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_audio_post @ 00220b5c  (106 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: FM only: CTCSS and DCS decoders, then 5-section HP 0x236AB0 (−70 dB below 200 Hz, flat above
  *     300 Hz: removes the subtone); if reg 0x3A bit 0, 8-section 0x236B20 (≈ −6 dB/octave above 400 Hz:
  *     de-emphasis)
@@ -7234,7 +7260,7 @@ void fm_audio_post(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_demod_dispatch @ 00220ee0  (146 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * rx_demod_dispatch @ 00220ee0  (146 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Copies the block, runs `if_agc_process`, then by reg 6: 0, 2, 4, 6 → `ssb_weaver_init`(0) +
  *     `ssb_weaver_demod`; 1, 3, 5, 7 → (1); 8 → AM; 9 → FM; anything else passes through
  * Registers: 6
@@ -7253,12 +7279,14 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   memcpy(&DAT_00259da0,param_1,0x60);
   uVar1 = DAT_2007000c;
   DAT_002577e0 = DAT_2007000c;
+                    /* Feed-forward AGC, one gain per block [fact: dsp-chains.md] */
   if_agc_process(&DAT_00259da0);
   switch(uVar1) {
   case 0:
   case 2:
   case 4:
   case 6:
+                    /* reg 6 = 0/2/4/6: Weaver, NCO 18 kHz + 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(0);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
@@ -7266,14 +7294,17 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
   case 3:
   case 5:
   case 7:
+                    /* reg 6 = 1/3/5/7: Weaver, NCO at 18 kHz - 2 kHz [fact: dsp-chains.md] */
     ssb_weaver_init(1);
     ssb_weaver_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 8:
+                    /* reg 6 = 8: AM envelope [fact: dsp-chains.md] */
     am_demod_init();
     am_demod(&DAT_00259da0,&DAT_00259da0);
     break;
   case 9:
+                    /* reg 6 = 9: FM discriminator and noise squelch [fact: dsp-chains.md] */
     fm_demod_init();
     fm_demod(&DAT_00259da0,&DAT_00259da0);
   }
@@ -7283,7 +7314,7 @@ void rx_demod_dispatch(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_param_eq_init @ 002211d0  (78 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_param_eq_init @ 002211d0  (78 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: clears the TX EQ states 0x25AC00..; called by tx_core_init
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -7309,7 +7340,7 @@ void tx_param_eq_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_eq_band3_update @ 00221220  (792 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_eq_band3_update @ 00221220  (792 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7535,7 +7566,7 @@ LAB_002212fb:
 
 
 /* -----------------------------------------------------------------------------
- * tx_eq_band_update @ 00221540  (783 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * tx_eq_band_update @ 00221540  (783 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7769,7 +7800,7 @@ LAB_00221610:
 
 
 /* -----------------------------------------------------------------------------
- * tx_param_eq_3band @ 00221854  (126 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_param_eq_3band @ 00221854  (126 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Three peaking biquads (Zölzer), K = tan(π f / 12000), gain −40 … +20 dB, Q 1–10
  * Registers: 0x25–0x2D
  * Tag: [fact]
@@ -7803,7 +7834,7 @@ void tx_param_eq_3band(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * am_modulator_init @ 002218e0  (37 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * am_modulator_init @ 002218e0  (37 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DC blocker (0.999, 0x3F7FBE77 at 0x22190E), 0.3·(1 + m)·sin φ with φ += 2π/3 (24 kHz carrier),
  *     then the 6-section BP 0x236BD0 (≈ 21–29 kHz)
  * Registers: 6 = 8
@@ -7827,7 +7858,7 @@ void am_modulator_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * am_modulator @ 00221908  (247 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * am_modulator @ 00221908  (247 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: DC blocker (0.999, 0x3F7FBE77 at 0x22190E), 0.3·(1 + m)·sin φ with φ += 2π/3 (24 kHz carrier),
  *     then the 6-section BP 0x236BD0 (≈ 21–29 kHz)
  * Registers: 6 = 8
@@ -7910,7 +7941,7 @@ void am_modulator(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_modulator_init @ 00221a10  (30 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_modulator_init @ 00221a10  (30 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: φ += x·k + 2π/3, out = sin φ; k = (reg 0x4007 / 256)·7500·2π/72000 (7500.0 = 0x45EA6000 at
  *     0x221AED): 24 kHz centre
  * Registers: 0x4007 (default 0x3A)
@@ -7933,7 +7964,7 @@ void fm_modulator_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_modulator @ 00221a30  (206 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * fm_modulator @ 00221a30  (206 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: φ += x·k + 2π/3, out = sin φ; k = (reg 0x4007 / 256)·7500·2π/72000 (7500.0 = 0x45EA6000 at
  *     0x221AED): 24 kHz centre
  * Registers: 0x4007 (default 0x3A)
@@ -7955,24 +7986,24 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar5;
   undefined8 uVar6;
   undefined8 uVar7;
-  int iVar8;
+  int i;
+  undefined8 uVar8;
   undefined8 uVar9;
-  undefined8 uVar10;
   
   if (DAT_0025af40 != DAT_2007800e) {
     DAT_0025af40 = DAT_2007800e;
     scl_int2float(DAT_2007800e,0xfffffff8);
     DAT_0025af44 = ae_s32_l_i((ulonglong)(uint)(in_aed0 * 7500.0 * 8.726647e-05));
   }
-  uVar10 = const_s(0);
-  iVar8 = 0;
+  uVar9 = const_s(0);
+  i = 0;
   uVar4 = 0x40c90fdb;
   do {
     uVar7 = ae_l32_i(DAT_0025af44);
-    uVar9 = ae_l32_i(*param_1);
+    uVar8 = ae_l32_i(*param_1);
     uVar6 = ae_l32_i(&DAT_40060a92);
     uVar5 = ae_l32_i(DAT_0025af48);
-    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar9 * (float)uVar7 + (float)uVar6);
+    uVar3 = (ulonglong)(uint)((float)uVar5 + (float)uVar8 * (float)uVar7 + (float)uVar6);
     uVar2 = olt_s(uVar4,uVar3);
     DAT_0025af48 = ae_s32_l_i(uVar3);
     if (SUB21(uVar2,0)) {
@@ -7983,11 +8014,11 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
-    uVar2 = olt_s(uVar3,uVar10);
+    uVar2 = olt_s(uVar3,uVar9);
     if (SUB21(uVar2,0)) {
       do {
         uVar3 = (ulonglong)(uint)((float)uVar3 + (float)uVar4);
-        uVar2 = olt_s(uVar3,uVar10);
+        uVar2 = olt_s(uVar3,uVar9);
         DAT_0025af48 = ae_s32_l_i(uVar3);
       } while (SUB21(uVar2,0));
     }
@@ -7997,15 +8028,15 @@ void fm_modulator(undefined4 *param_1,undefined4 *param_2)
     param_2 = param_2 + 1;
     param_1 = param_1 + 1;
     uVar4 = ae_l32_i(0x40c90fdb);
-    iVar8 = iVar8 + 1;
-    uVar10 = ae_l32_i(0);
-  } while (iVar8 != 0x18);
+    i = i + 1;
+    uVar9 = ae_l32_i(0);
+  } while (i != 0x18);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * weaver_ssb_mod_init @ 00221b10  (165 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * weaver_ssb_mod_init @ 00221b10  (165 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Mirror of the demodulator: ÷6, 2 kHz NCO, 0x237440 LP pair, ×6, NCO at 18 ∓ 2 kHz (2π/72000,
  *     0x221D65)
  * Registers: 6
@@ -8041,7 +8072,7 @@ void weaver_ssb_mod_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * weaver_ssb_mod @ 00221bb8  (628 bytes, 2 callers, export file 0021f7ec_00222244.c)
+ * weaver_ssb_mod @ 00221bb8  (628 bytes, 2 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Mirror of the demodulator: ÷6, 2 kHz NCO, 0x237440 LP pair, ×6, NCO at 18 ∓ 2 kHz (2π/72000,
  *     0x221D65)
  * Registers: 6
@@ -8205,7 +8236,7 @@ void weaver_ssb_mod(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_init @ 00221e40  (66 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_init @ 00221e40  (66 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8242,7 +8273,7 @@ void tx_alc_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_update @ 00221e84  (266 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_update @ 00221e84  (266 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8322,7 +8353,7 @@ void tx_alc_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc @ 00221f98  (156 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc @ 00221f98  (156 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Per 72 kHz sample: envelope e ← c·|x| + (1 − c)·e with c = 0.5 (attack, `const.s 3` = 0.5) when
  *     |x| ≥ e, else c = powf(0.5, reg 0x33) (release; `powf` 0x2294E0 at 0x221F8D); gain = P·G1 / max(e, P·G2), y =
  *     x·gain (`divf_` 0x22200A); reg 2 high byte = ALC gain reduction. reg 0x34: bit 12 = on (off: pass-through),
@@ -8345,13 +8376,15 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar4;
   undefined8 uVar5;
   undefined8 uVar6;
-  int iVar7;
-  undefined8 uVar8;
+  int i;
+  undefined8 uVar7;
   
+                    /* G1, G2 from regs 0x31/0x32, level P from 0x34 [fact: dsp-chains.md] */
   tx_alc_update();
-  iVar7 = 0;
+  i = 0;
   if (DAT_0025b5c8 == 0) {
     if (param_1 != param_2) {
+                    /* reg 0x34 bit 12 off: pass-through [fact: dsp-chains.md] */
       memcpy(param_2,param_1,0x60);
       return;
     }
@@ -8362,11 +8395,11 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar6 = ae_l32_i(DAT_0025b5e8);
       uVar2 = ole_s(uVar6,(ulonglong)(uint)ABS((float)uVar4));
       uVar5 = ae_l32_i(DAT_0025b5e4);
-      uVar8 = ae_l32_i(DAT_0025b5e0);
-      uVar5 = movt_s(uVar8,uVar5,(char)uVar2);
-      uVar8 = ae_l32_i(0x3f800000);
+      uVar7 = ae_l32_i(DAT_0025b5e0);
+      uVar5 = movt_s(uVar7,uVar5,(char)uVar2);
+      uVar7 = ae_l32_i(0x3f800000);
       uVar3 = (ulonglong)
-              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar8 - (float)uVar5)
+              (uint)(ABS((float)uVar4) * (float)uVar5 + (float)uVar6 * ((float)uVar7 - (float)uVar5)
                     );
       uVar4 = ae_l32_i(DAT_0025b5dc);
       uVar2 = ole_s(uVar4,uVar3);
@@ -8380,8 +8413,8 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * (float)uVar4));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar7 = iVar7 + 1;
-    } while (iVar7 != 0x18);
+      i = i + 1;
+    } while (i != 0x18);
     tx_alc_meter_to_reg2();
   }
   return;
@@ -8389,7 +8422,7 @@ void tx_alc(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_alc_meter_to_reg2 @ 00222034  (101 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_alc_meter_to_reg2 @ 00222034  (101 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: tx_alc helper: scl_log10f of the gain, scl_float2int, high byte of reg 2 (docs: TX meters)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8429,7 +8462,7 @@ void tx_alc_meter_to_reg2(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_core_init @ 002220a0  (72 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_core_init @ 002220a0  (72 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: ÷6 (0x2373D0) → EQ → processor → compressor → BPF → FM block → limiter → ×6 (gain 6, 0x2373D0)
  * Registers: 6
  * Tag: [fact]
@@ -8445,6 +8478,7 @@ void tx_core_init(void)
 {
   DAT_0025b600 = iir_cascade_init(&DAT_0025b610,5,&DAT_002373d0,1);
   DAT_0025b604 = iir_cascade_init(&DAT_0025b6d0,5,&DAT_002373d0,1);
+                    /* clears the TX EQ states 0x25AC00 [doc, inference] */
   tx_param_eq_init();
   peak_limiter_init(0);
   soft_knee_compressor_init();
@@ -8457,7 +8491,7 @@ void tx_core_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_core_12k @ 002220e8  (216 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_core_12k @ 002220e8  (216 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: ÷6 (0x2373D0) → EQ → processor → compressor → BPF → FM block → limiter → ×6 (gain 6, 0x2373D0)
  * Registers: 6
  * Tag: [fact]
@@ -8475,6 +8509,7 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   undefined8 uVar3;
   undefined8 uVar4;
   
+                    /* Decimate by 6 to 12 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b600,&DAT_0025b790,param_1,0x18);
   uVar2 = ae_l32_ip(DAT_0025b790);
   uVar1 = ae_l32_ip(DAT_0025b7a8);
@@ -8484,16 +8519,22 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7f8 = ae_s32_l_ip(uVar4);
   uVar1 = ae_l32_ip(DAT_0025b7d8);
   DAT_0025b7fc = ae_s32_l_ip(uVar1);
+                    /* 3-band parametric EQ (regs 0x25..0x2D) [fact: dsp-chains.md] */
   tx_param_eq_3band(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Speech processor = limiter instance 0 (0x2E/0x3B) [fact: dsp-chains.md] */
   peak_limiter(0,&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* Soft-knee compressor (0x401A..0x401F; off) [fact: dsp-chains.md] */
   soft_knee_compressor(&DAT_0025b7f0,&DAT_0025b7f0);
+                    /* TX band-pass, one of 7 by reg 0x2F [fact: dsp-chains.md] */
   tx_bpf_select(&DAT_0025b7f0,&DAT_0025b800);
   if (DAT_2007000c == 9) {
+                    /* FM: HPF 293 Hz, gain reg 0x30, pre-emphasis [fact: dsp-chains.md] */
     fm_tx_audio(&DAT_0025b800,&DAT_0025b7f0);
   }
   else {
     memcpy(&DAT_0025b7f0,&DAT_0025b800,0x10);
   }
+                    /* Soft-knee limiter (0x4015..0x4019; off) [fact: dsp-chains.md] */
   soft_knee_limiter(&DAT_0025b7f0,&DAT_0025b7f0);
   memset(&DAT_0025b790,0,0x60);
   uVar1 = ae_l32_ip(DAT_0025b7f0);
@@ -8504,13 +8545,14 @@ undefined * tx_core_12k(undefined4 param_1,undefined4 param_2)
   DAT_0025b7a8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar2 * 6.0));
   DAT_0025b7c0 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * 6.0));
   DAT_0025b7d8 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * 6.0));
+                    /* Interpolate by 6 back to 72 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_0025b604,param_2,&DAT_0025b790,0x18);
   return &DAT_0025b800;
 }
 
 
 /* -----------------------------------------------------------------------------
- * tx_bpf_init @ 002221c0  (13 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_bpf_init @ 002221c0  (13 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: clears 0x25B810; placed before tx_bpf_select
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8528,7 +8570,7 @@ undefined8 tx_bpf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_bpf_select @ 002221d0  (91 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * tx_bpf_select @ 002221d0  (91 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: reg 0x2F = 1–7 picks the cascade 0x236C50[v − 1] (section counts 0x204DA0: 9, 9, 10, 11, 12, 9,
  *     8): passbands 35–3199, 70–3035, 117–2930, 246–2824, 363–2766, 23–3352, 23–4137 Hz at 12 kHz, i.e. the SSB TX
  *     BPF menu
@@ -8565,7 +8607,7 @@ void tx_bpf_select(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_compressor_init @ 00222230  (17 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * soft_knee_compressor_init @ 00222230  (17 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * Purpose: memset 0x25B9C0; placed before soft_knee_compressor
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -8583,7 +8625,7 @@ void soft_knee_compressor_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_compressor @ 00222244  (653 bytes, 1 callers, export file 0021f7ec_00222244.c)
+ * soft_knee_compressor @ 00222244  (653 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: dB-domain gain computer with soft knee (T, W, R) and attack/release smoothing α = exp(−ln 9 /
  *     (t·12000))
  * Registers: 0x401A on (default off), 0x401B T, 0x401C attack 10 ms, 0x401D release 300 ms, 0x401E knee, 0x401F
@@ -8608,9 +8650,9 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
   float fVar7;
   uint uVar8;
   undefined8 uVar9;
-  int iVar10;
-  undefined8 uVar11;
-  ulonglong uVar12;
+  int i;
+  undefined8 uVar10;
+  ulonglong uVar11;
   
   DAT_0025b9ca = DAT_20078034;
   uVar8 = (uint)DAT_20078036;
@@ -8689,7 +8731,7 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
     }
     DAT_0025b9e8 = ae_s32_l_i(uVar5);
   }
-  iVar10 = 4;
+  i = 4;
   if (DAT_0025b9ca == 0) {
     if (param_1 != param_2) {
       memcpy(param_2,param_1,0x10);
@@ -8705,31 +8747,33 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       fVar6 = (float)uVar5;
       scl_log10f();
       uVar9 = ae_l32_i(DAT_0025b9d4);
-      uVar11 = ae_l32_i(DAT_0025b9cc);
+      uVar10 = ae_l32_i(DAT_0025b9cc);
       uVar5 = ae_l32_i(0x41a00000);
-      fVar7 = (float)uVar11;
+      fVar7 = (float)uVar10;
       fVar6 = fVar6 * (float)uVar5;
-      uVar12 = (ulonglong)(uint)fVar6;
-      uVar4 = olt_s(uVar12,(ulonglong)(uint)(fVar7 - (float)uVar9));
+      uVar11 = (ulonglong)(uint)fVar6;
+      uVar4 = olt_s(uVar11,(ulonglong)(uint)(fVar7 - (float)uVar9));
       uVar5 = ae_l32_i(DAT_0025b9e8);
       if (SUB21(uVar4,0)) {
-        uVar5 = ae_mov(uVar12);
+        uVar5 = ae_mov(uVar11);
         fVar7 = (float)uVar5;
       }
       else {
-        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar12);
+        uVar4 = ole_s((ulonglong)(uint)(fVar7 + (float)uVar9),uVar11);
         if (SUB21(uVar4,0)) {
           fVar7 = fVar7 + (float)uVar5 * (fVar6 - fVar7);
         }
         else {
           uVar2 = ae_s32_l_i(uVar5);
-          uVar1 = ae_s32_l_i(uVar12);
+          uVar1 = ae_s32_l_i(uVar11);
           uVar9 = __extendsfdf2();
           uVar3 = (undefined4)((ulonglong)uVar9 >> 0x20);
           uVar5 = ae_l32_i(uVar2);
           fVar7 = (float)uVar5;
           uVar5 = __extendsfdf2();
+                    /* XCC soft double using the HiFi4 f64 assist ops [doc, inference] */
           uVar5 = __adddf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),0,0xbff00000);
+                    /* XCC soft double [doc, inference] */
           uVar5 = __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __muldf3((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar9,uVar3);
           __truncdfsf2();
@@ -8742,10 +8786,10 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar9 = ae_l32_i(DAT_0025b9f0);
       uVar4 = ole_s((ulonglong)(uint)(fVar7 - fVar6),uVar9);
       uVar5 = ae_l32_i(DAT_0025b9e0);
-      uVar11 = ae_l32_i(DAT_0025b9dc);
-      uVar5 = movt_s(uVar5,uVar11,(char)uVar4);
-      uVar11 = ae_l32_i(0x3f800000);
-      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar11 - (float)uVar5);
+      uVar10 = ae_l32_i(DAT_0025b9dc);
+      uVar5 = movt_s(uVar5,uVar10,(char)uVar4);
+      uVar10 = ae_l32_i(0x3f800000);
+      fVar6 = (float)uVar5 * (float)uVar9 + (fVar7 - fVar6) * ((float)uVar10 - (float)uVar5);
       uVar5 = ae_l32_i(0x3d4ccccd);
       DAT_0025b9f0 = ae_s32_l_i((ulonglong)(uint)fVar6);
       fVar6 = fVar6 * (float)uVar5;
@@ -8755,14 +8799,15 @@ void soft_knee_compressor(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * fVar6));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar10 = iVar10 + -1;
-    } while (iVar10 != 0);
+      i = i + -1;
+    } while (i != 0);
   }
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ctcss_encoder_init @ 002224e0  (48 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * ctcss_encoder_init @ 002224e0  (48 bytes, 1 callers, export file 0021f8bc_002224e0.c)
  * What it computes: Adds A·sin φ, φ += tone·2π/72000 (table 0x204DD0), A from reg 0x11
  * Registers: 0x35 (bit 12 + index 1–50), 0x11
  * Tag: [fact]
@@ -8789,9 +8834,8 @@ void ctcss_encoder_init(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ctcss_encoder @ 00222510  (294 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * ctcss_encoder @ 00222510  (294 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Adds A·sin φ, φ += tone·2π/72000 (table 0x204DD0), A from reg 0x11
  * Registers: 0x35 (bit 12 + index 1–50), 0x11
  * Tag: [fact]
@@ -8813,8 +8857,8 @@ void ctcss_encoder(undefined4 *param_1,undefined4 *param_2)
   undefined8 uVar6;
   undefined2 uVar7;
   undefined8 uVar8;
-  int iVar9;
-  undefined8 uVar10;
+  int i;
+  undefined8 uVar9;
   
   if ((int)(short)DAT_20070022 != (uint)DAT_0025b9f4) {
     DAT_0025b9f4 = DAT_20070022;
@@ -8842,12 +8886,12 @@ LAB_00222610:
     DAT_0025ba04 = ae_s32_l_i((ulonglong)(uint)((float)uVar5 * 8.726647e-05));
   }
   uVar6 = const_s(0);
-  iVar9 = 0;
+  i = 0;
   uVar5 = 0x40c90fdb;
   do {
     uVar8 = ae_l32_i(DAT_0025ba04);
-    uVar10 = ae_l32_i(DAT_0025ba00);
-    uVar4 = (ulonglong)(uint)((float)uVar10 + (float)uVar8);
+    uVar9 = ae_l32_i(DAT_0025ba00);
+    uVar4 = (ulonglong)(uint)((float)uVar9 + (float)uVar8);
     uVar7 = olt_s(uVar5,uVar4);
     uVar8 = ae_l32_i(*param_1);
     uVar1 = ae_s32_l_i(uVar8);
@@ -8873,19 +8917,19 @@ LAB_00222610:
     uVar6 = ae_l32_i(DAT_0025b9f8);
     uVar5 = ae_l32_i(uVar1);
     param_1 = param_1 + 1;
-    iVar9 = iVar9 + 1;
+    i = i + 1;
     uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 + (float)uVar6 * fVar3));
     *param_2 = uVar1;
     param_2 = param_2 + 1;
     uVar5 = ae_l32_i(0x40c90fdb);
     uVar6 = ae_l32_i(0);
-  } while (iVar9 != 0x18);
+  } while (i != 0x18);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * dcs_encoder_init @ 00222640  (69 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * dcs_encoder_init @ 00222640  (69 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 23-bit Golay DCS word (normal / inverted), NRZ at 24 kHz (179 samples per bit ≈ 134 bit/s),
  *     shaped by the 109-tap FIR 0x205380, ×3 to 72 kHz
  * Registers: 0x38, 0x39, 0x11
@@ -8916,7 +8960,7 @@ void dcs_encoder_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * dcs_encoder @ 00222688  (1050 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * dcs_encoder @ 00222688  (1050 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 23-bit Golay DCS word (normal / inverted), NRZ at 24 kHz (179 samples per bit ≈ 134 bit/s),
  *     shaped by the 109-tap FIR 0x205380, ×3 to 72 kHz
  * Registers: 0x38, 0x39, 0x11
@@ -9094,7 +9138,7 @@ LAB_002227f5:
 
 
 /* -----------------------------------------------------------------------------
- * two_tone_test_init @ 00222ab0  (63 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * two_tone_test_init @ 00222ab0  (63 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Two sine generators, on when reg 0x36/0x37 top nibble = 1, f = bits 11–0
  * Registers: 0x36, 0x37 (MAIN writes 0)
  * Tag: [fact] [inference]
@@ -9128,7 +9172,7 @@ void two_tone_test_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * two_tone_test_gen @ 00222af0  (519 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * two_tone_test_gen @ 00222af0  (519 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Two sine generators, on when reg 0x36/0x37 top nibble = 1, f = bits 11–0
  * Registers: 0x36, 0x37 (MAIN writes 0)
  * Tag: [fact] [inference]
@@ -9279,7 +9323,7 @@ void two_tone_test_gen(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_audio_init @ 00222d00  (52 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_audio_init @ 00222d00  (52 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: HP 0x2371F0 (293 Hz) → gain (reg 0x30 & 0xFF)/255 → if reg 0x3A bit 0, 0x237240 (+6 dB/octave
  *     200 Hz – 3 kHz): pre-emphasis
  * Registers: 0x30, 0x3A
@@ -9306,7 +9350,7 @@ void fm_tx_audio_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_audio @ 00222d34  (157 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_audio @ 00222d34  (157 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: HP 0x2371F0 (293 Hz) → gain (reg 0x30 & 0xFF)/255 → if reg 0x3A bit 0, 0x237240 (+6 dB/octave
  *     200 Hz – 3 kHz): pre-emphasis
  * Registers: 0x30, 0x3A
@@ -9323,6 +9367,7 @@ void fm_tx_audio(undefined4 param_1,undefined4 param_2)
   float fVar1;
   undefined8 uVar2;
   
+                    /* iir_cascade_process on 0x25BFF0 [doc, inference] */
   fm_tx_hpf_process(param_1,&DAT_0025c010);
   uVar2 = ae_l32_i(DAT_0025bff8);
   fVar1 = (float)uVar2;
@@ -9349,7 +9394,7 @@ void fm_tx_audio(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fm_tx_hpf_process @ 00222df0  (23 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_tx_hpf_process @ 00222df0  (23 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: iir_cascade_process on 0x25BFF0; called by fm_tx_audio (HPF 293 Hz)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -9367,7 +9412,7 @@ void fm_tx_hpf_process(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_limiter_init @ 00222e10  (31 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * soft_knee_limiter_init @ 00222e10  (31 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Same gain computer with R = ∞
  * Registers: 0x4015 on (off), 0x4016–0x4019
  * Tag: [fact]
@@ -9392,7 +9437,7 @@ void soft_knee_limiter_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * soft_knee_limiter @ 00222e30  (574 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * soft_knee_limiter @ 00222e30  (574 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Same gain computer with R = ∞
  * Registers: 0x4015 on (off), 0x4016–0x4019
  * Tag: [fact]
@@ -9414,20 +9459,20 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
   float fVar6;
   undefined8 uVar7;
   uint uVar8;
-  int iVar9;
-  uint uVar10;
-  undefined8 uVar11;
-  ulonglong uVar12;
+  int i;
+  uint uVar9;
+  undefined8 uVar10;
+  ulonglong uVar11;
   
   uVar8 = (uint)DAT_2007802a;
   if (DAT_0025c1f0 != uVar8) {
     DAT_0025c1f0 = DAT_2007802a;
     DAT_0025c1fa = DAT_2007802a >> 0xc & 1;
-    uVar10 = uVar8 & 0xfff;
+    uVar9 = uVar8 & 0xfff;
     if ((DAT_2007802a >> 0xb & 1) != 0) {
-      uVar10 = uVar8 | 0xfffff000;
+      uVar9 = uVar8 | 0xfffff000;
     }
-    scl_int2float(uVar10,0xffffffff);
+    scl_int2float(uVar9,0xffffffff);
     uVar4 = ae_l32_i(DAT_0025c200);
     DAT_0025c1fc = ae_s32_l_i(in_aed0);
     DAT_0025c204 = ae_s32_l_i((ulonglong)(uint)((float)uVar4 + (float)in_aed0));
@@ -9493,7 +9538,7 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
       DAT_0025c218 = ae_s32_l_i(uVar4);
     }
   }
-  iVar9 = 4;
+  i = 4;
   if (DAT_0025c1fa == 0) {
     if (param_1 != param_2) {
       memcpy(param_2,param_1,0x10);
@@ -9509,19 +9554,19 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
       fVar3 = (float)uVar4;
       scl_log10f();
       uVar7 = ae_l32_i(DAT_0025c20c);
-      uVar11 = ae_l32_i(DAT_0025c204);
+      uVar10 = ae_l32_i(DAT_0025c204);
       uVar4 = ae_l32_i(0x41a00000);
-      fVar5 = (float)uVar11;
+      fVar5 = (float)uVar10;
       fVar6 = (float)uVar7;
       fVar3 = fVar3 * (float)uVar4;
-      uVar12 = (ulonglong)(uint)fVar3;
-      uVar2 = olt_s(uVar12,(ulonglong)(uint)(fVar5 - fVar6));
+      uVar11 = (ulonglong)(uint)fVar3;
+      uVar2 = olt_s(uVar11,(ulonglong)(uint)(fVar5 - fVar6));
       if (SUB21(uVar2,0)) {
-        uVar4 = ae_mov(uVar12);
+        uVar4 = ae_mov(uVar11);
         fVar5 = (float)uVar4;
       }
       else {
-        uVar2 = ole_s((ulonglong)(uint)(fVar5 + fVar6),uVar12);
+        uVar2 = ole_s((ulonglong)(uint)(fVar5 + fVar6),uVar11);
         uVar4 = ae_l32_i(DAT_0025c210);
         if (!SUB21(uVar2,0)) {
           fVar6 = fVar6 + (fVar3 - fVar5);
@@ -9531,10 +9576,10 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
       uVar7 = ae_l32_i(DAT_0025c220);
       uVar2 = ole_s((ulonglong)(uint)(fVar5 - fVar3),uVar7);
       uVar4 = ae_l32_i(DAT_0025c214);
-      uVar11 = ae_l32_i(DAT_0025c218);
-      uVar4 = movt_s(uVar11,uVar4,(char)uVar2);
-      uVar11 = ae_l32_i(0x3f800000);
-      fVar3 = (float)uVar4 * (float)uVar7 + (fVar5 - fVar3) * ((float)uVar11 - (float)uVar4);
+      uVar10 = ae_l32_i(DAT_0025c218);
+      uVar4 = movt_s(uVar10,uVar4,(char)uVar2);
+      uVar10 = ae_l32_i(0x3f800000);
+      fVar3 = (float)uVar4 * (float)uVar7 + (fVar5 - fVar3) * ((float)uVar10 - (float)uVar4);
       uVar4 = ae_l32_i(0x3d4ccccd);
       DAT_0025c220 = ae_s32_l_i((ulonglong)(uint)fVar3);
       fVar3 = fVar3 * (float)uVar4;
@@ -9544,15 +9589,15 @@ void soft_knee_limiter(undefined4 *param_1,undefined4 *param_2)
       uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * fVar3));
       *param_2 = uVar1;
       param_2 = param_2 + 1;
-      iVar9 = iVar9 + -1;
-    } while (iVar9 != 0);
+      i = i + -1;
+    } while (i != 0);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fm_post_lpf_init @ 00223080  (25 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_post_lpf_init @ 00223080  (25 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: LP 0x2372E0 (3.0 kHz at 72 kHz), bypassed by reg 0xC bit 8
  * Registers: 0xC
  * Tag: [fact]
@@ -9571,7 +9616,7 @@ void fm_post_lpf_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * fm_post_lpf @ 0022309c  (45 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * fm_post_lpf @ 0022309c  (45 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: LP 0x2372E0 (3.0 kHz at 72 kHz), bypassed by reg 0xC bit 8
  * Registers: 0xC
  * Tag: [fact]
@@ -9594,7 +9639,7 @@ void fm_post_lpf(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * tx_chain_init @ 00223110  (26 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * tx_chain_init @ 00223110  (26 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: tx_core_init, tx_alc_init, fm_post_lpf_init, ctcss/dcs encoder inits, two_tone_test_init; placed before
  *     tx_chain
  * Tag: [inference]
@@ -9620,7 +9665,7 @@ void tx_chain_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * tx_chain @ 0022313c  (269 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * tx_chain @ 0022313c  (269 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: `tx_core_12k` → `tx_alc` → (FM: `fm_post_lpf`) → block 2 → `ctcss_encoder` →
  *     `two_tone_test_gen` → `dcs_encoder` → if reg 0x4006 ≠ 0: modulator by reg 6 (jump table 0x204EF0: 0/2/4/6
  *     Weaver(0), 1/3/5/7 Weaver(1), 8 AM, 9 FM, 10 none) → block 1
@@ -9639,18 +9684,23 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   int iVar2;
   
   memcpy(&DAT_0025c360,param_1,0x60);
+                    /* 12 kHz core: EQ, processor, BPF, FM, limiter [fact: 0x2220E8] */
   tx_core_12k(&DAT_0025c360,&DAT_0025c360);
+                    /* TX ALC per sample; gain reduction to reg 2 high byte [fact: dsp-chains.md] */
   tx_alc(&DAT_0025c360,&DAT_0025c3c0);
   if (DAT_2007000c == 9) {
+                    /* FM: 3 kHz low-pass [fact: dsp-chains.md] */
     fm_post_lpf(&DAT_0025c3c0,&DAT_0025c360);
   }
   else {
     memcpy(&DAT_0025c360,&DAT_0025c3c0,0x60);
   }
   memcpy(param_2,&DAT_0025c360,0x60);
+                    /* Sub-tones: CTCSS, two-tone test, DCS [fact: dsp-chains.md] */
   ctcss_encoder(&DAT_0025c360,&DAT_0025c420);
   two_tone_test_gen(&DAT_0025c420,&DAT_0025c420);
   dcs_encoder(&DAT_0025c420,&DAT_0025c420);
+                    /* reg 0x4006 = 0 (default): baseband to block 1 [fact: 0x2231BD] */
   memcpy(param_3,&DAT_0025c420,0x60);
   sVar1 = DAT_0025c350;
   if (DAT_2007800c != 0) {
@@ -9665,6 +9715,7 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
     case 4:
     case 6:
       if (iVar2 != 0) {
+                    /* reg 0x4006 set: modulator by reg 6 (Weaver, AM, FM) [fact: dsp-chains.md] */
         weaver_ssb_mod_init(0);
       }
       weaver_ssb_mod(&DAT_0025c420,&DAT_0025c420);
@@ -9697,7 +9748,7 @@ void tx_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * vox_detector_init @ 00223320  (108 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * vox_detector_init @ 00223320  (108 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9732,7 +9783,7 @@ void vox_detector_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * antivox_detector_init @ 0022338c  (109 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * antivox_detector_init @ 0022338c  (109 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9767,7 +9818,7 @@ void antivox_detector_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * vox_detector @ 002233fc  (820 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * vox_detector @ 002233fc  (820 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -9911,6 +9962,7 @@ undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
       }
       uVar5 = scl_float2int(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c484,0);
+                    /* mic and not speaker [doc, inference] */
       iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
@@ -9940,7 +9992,7 @@ undefined8 vox_detector(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * antivox_detector @ 00223734  (823 bytes, 4 callers, export file 002224e0_00224a10.c)
+ * antivox_detector @ 00223734  (823 bytes, 4 callers, export file 00222510_00224aa4.c)
  * What it computes: 3 blocks (1 ms) → LP 0x237360 → keep 1 of 9 (8 kHz). With reg 0xC bit 0, a 51-tap NLMS
  *     predictor (`nlms_51tap_update`) is used as a line enhancer first, but it is fed the wrong samples (bug, see
  *     below; MAIN keeps reg 0xC = 0). Level = 20 log10(Σ|x| / 160) over 20 ms; above the threshold → flag with 100
@@ -10083,6 +10135,7 @@ undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
       }
       uVar5 = scl_float2int(0xffffffff);
       ae_s16i_n(uVar5,DAT_0025c788,0);
+                    /* mic and not speaker [doc, inference] */
       iVar6 = vox_state();
       DAT_20078014 = DAT_0025c4a4 | DAT_0025c7a8 << 1 | (ushort)(iVar6 << 2);
       uVar7 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
@@ -10112,7 +10165,7 @@ undefined8 antivox_detector(undefined4 *param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vox_state @ 00223a74  (28 bytes, 3 callers, export file 002224e0_00224a10.c)
+ * vox_state @ 00223a74  (28 bytes, 3 callers, export file 00222510_00224aa4.c)
  * Purpose: mic and not speaker
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10132,7 +10185,7 @@ undefined4 vox_state(void)
 
 
 /* -----------------------------------------------------------------------------
- * noise_gen_seed @ 00223a90  (34 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * noise_gen_seed @ 00223a90  (34 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: srand wrapper
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10165,7 +10218,7 @@ void noise_gen_seed(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * noise_gen_set_level @ 00223ab4  (38 bytes, 0 callers, export file 002224e0_00224a10.c)
+ * noise_gen_set_level @ 00223ab4  (38 bytes, 0 callers, export file 00222510_00224aa4.c)
  * Purpose: 10^(x / 20) with powf, then noise_gen_seed
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10192,7 +10245,7 @@ void noise_gen_set_level(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * gaussian_noise_gen @ 00223adc  (263 bytes, 0 callers, export file 002224e0_00224a10.c)
+ * gaussian_noise_gen @ 00223adc  (263 bytes, 0 callers, export file 00222510_00224aa4.c)
  * Purpose: Box-Muller: rand, scl_lognf, sqrt, scl_cosinef / scl_sinef, 2*pi
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10280,7 +10333,7 @@ void gaussian_noise_gen(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * spectrum_init @ 00223bf0  (153 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * spectrum_init @ 00223bf0  (153 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: create_Thread_Spi: window with scl_cosinef, buffers 0x25D350 / 0x25DB60 / 0x25EB60
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10342,7 +10395,7 @@ void spectrum_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_init @ 002244e0  (67 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_init @ 002244e0  (67 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: resets both codec-out FIFOs and the mute ramp; placed before codec_out_sink
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10372,7 +10425,7 @@ void codec_out_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_fifo_reset_0 @ 00224524  (110 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_fifo_reset_0 @ 00224524  (110 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: clears count / read / write of the FIFO 0x2639F4 under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10427,7 +10480,7 @@ uint codec_out_fifo_reset_0(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_fifo_reset_1 @ 00224594  (110 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * codec_out_fifo_reset_1 @ 00224594  (110 bytes, 1 callers, export file 00222510_00224aa4.c)
  * Purpose: same for the FIFO 0x263B84
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10482,7 +10535,7 @@ uint codec_out_fifo_reset_1(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * codec_out_sink @ 00224604  (186 bytes, 14 callers, export file 002224e0_00224a10.c)
+ * codec_out_sink @ 00224604  (186 bytes, 14 callers, export file 00222510_00224aa4.c)
  * Purpose: per-output gain, clip, into the codec-out object
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -10550,7 +10603,7 @@ void codec_out_sink(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * codec_in_fifo_pop @ 00224798  (123 bytes, 3 callers, export file 002224e0_00224a10.c)
+ * codec_in_fifo_pop @ 00224798  (123 bytes, 3 callers, export file 00222510_00224aa4.c)
  * What it computes: Pops one block of codec-in channel *ch* (Q31 → float), zeros if empty; ch 0 = mic (block 2), ch
  *     1 = block 5
  * Registers: —
@@ -10604,7 +10657,7 @@ void codec_in_fifo_pop(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rx_out_gain_mute_update @ 00224814  (134 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * rx_out_gain_mute_update @ 00224814  (134 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Per-output gain from regs 0xE / 0xD (0.5 dB; MAIN's 0xF000 in FM = mute), applied with a ±1
  *     clip in the sink `codec_out_sink` (0x224604); reg 0x10 bit 0 or the GPIO select starts a soft mute through
  *     the 1 ms raised-cosine ramp (`mute_ramp_step`)
@@ -10666,7 +10719,7 @@ void rx_out_gain_mute_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * aux_in_lp_init @ 002248a0  (54 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * aux_in_lp_init @ 002248a0  (54 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Block 5: gain reg 0x23, LP 0x2373A0 (4.9 kHz); only when reg 6 = 10
  * Registers: 0x23
  * Tag: [fact]
@@ -10694,7 +10747,7 @@ void aux_in_lp_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * aux_in_gain_lp @ 002248d8  (133 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * aux_in_gain_lp @ 002248d8  (133 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Block 5: gain reg 0x23, LP 0x2373A0 (4.9 kHz); only when reg 6 = 10
  * Registers: 0x23
  * Tag: [fact]
@@ -10746,7 +10799,7 @@ LAB_002248f9:
 
 
 /* -----------------------------------------------------------------------------
- * rx_aux_in_gain @ 00224960  (66 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * rx_aux_in_gain @ 00224960  (66 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Gain from reg 0x60 (0.5 dB) on codec ADC channel 1 (`codec_in_fifo_pop`(1)), which then
  *     replaces the demodulator output as the Rx_Audio input; only when reg 6 = 10 and reg 10 n0 = 1
  *     (`Thread_Rx_Path_entry` 0x2262FC). MAIN never sends 10 (#184)
@@ -10783,7 +10836,7 @@ void rx_aux_in_gain(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * routing_regs_decode @ 002249d0  (61 bytes, 1 callers, export file 002224e0_00224a10.c)
+ * routing_regs_decode @ 002249d0  (61 bytes, 1 callers, export file 00222510_00224aa4.c)
  * What it computes: Splits regs 8/9/10 into the selector nibbles 0x263D50–0x263D5C
  * Registers: 8, 9, 10
  * Tag: [fact]
@@ -10808,7 +10861,7 @@ void routing_regs_decode(void)
 
 
 /* -----------------------------------------------------------------------------
- * peak_limiter_init @ 00224e80  (85 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * peak_limiter_init @ 00224e80  (85 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: 7-sample look-ahead; envelope √2·RMS over 7 samples; above the threshold gain = thr / env at
  *     once, linear release over 2·T[L] samples (T from 0x237500, 600 … 6); pre-gain 10^(0.003 L)
  * Registers: RX: 0x57 (bit 12 on, L ≤ 100), 0x58 threshold. MAIN never writes 0x57, so it is off
@@ -10843,7 +10896,7 @@ void peak_limiter_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * peak_limiter @ 00224ed8  (873 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * peak_limiter @ 00224ed8  (873 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: 7-sample look-ahead; envelope √2·RMS over 7 samples; above the threshold gain = thr / env at
  *     once, linear release over 2·T[L] samples (T from 0x237500, 600 … 6); pre-gain 10^(0.003 L)
  * Registers: RX: 0x57 (bit 12 on, L ≤ 100), 0x58 threshold. MAIN never writes 0x57, so it is off
@@ -11092,7 +11145,7 @@ LAB_00225114:
 
 
 /* -----------------------------------------------------------------------------
- * test_tone_gen @ 00225264  (213 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * test_tone_gen @ 00225264  (213 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: Sine, phase += f·2π/72000 (0x38B702D4), amplitude 10^(L/40); defaults 1000 Hz, −12 dB
  * Registers: 0x4013 f, 0x4014 L
  * Tag: [fact]
@@ -11106,15 +11159,15 @@ void test_tone_gen(undefined4 *param_1,int param_2)
 
 {
   undefined4 uVar1;
-  int iVar2;
-  undefined2 uVar3;
+  int i;
+  undefined2 uVar2;
   float in_aed0;
-  float fVar4;
-  ulonglong uVar5;
+  float fVar3;
+  ulonglong uVar4;
+  undefined8 uVar5;
   undefined8 uVar6;
   undefined8 uVar7;
   undefined8 uVar8;
-  undefined8 uVar9;
   
   if ((short)DAT_00266ea8 != DAT_20078026) {
     DAT_00266ea8._0_2_ = DAT_20078026;
@@ -11124,53 +11177,53 @@ void test_tone_gen(undefined4 *param_1,int param_2)
   if ((int)DAT_00266ea8._2_2_ != (int)DAT_20078028) {
     DAT_00266ea8._2_2_ = DAT_20078028;
     scl_int2float((int)DAT_20078028,0xffffffff);
-    uVar5 = (ulonglong)(uint)(in_aed0 * 0.05);
+    uVar4 = (ulonglong)(uint)(in_aed0 * 0.05);
     scl_antilog10f();
-    DAT_00266eb4 = ae_s32_l_i(uVar5);
+    DAT_00266eb4 = ae_s32_l_i(uVar4);
   }
   if (param_2 != 0) {
-    uVar7 = const_s(0);
-    iVar2 = 0;
-    uVar6 = 0x40c90fdb;
+    uVar6 = const_s(0);
+    i = 0;
+    uVar5 = 0x40c90fdb;
     do {
-      uVar8 = ae_l32_i(DAT_00266eb0);
-      uVar9 = ae_l32_i(DAT_00266eac);
-      uVar5 = (ulonglong)(uint)((float)uVar9 + (float)uVar8);
-      uVar3 = olt_s(uVar6,uVar5);
-      DAT_00266eac = ae_s32_l_i(uVar5);
-      if (SUB21(uVar3,0)) {
+      uVar7 = ae_l32_i(DAT_00266eb0);
+      uVar8 = ae_l32_i(DAT_00266eac);
+      uVar4 = (ulonglong)(uint)((float)uVar8 + (float)uVar7);
+      uVar2 = olt_s(uVar5,uVar4);
+      DAT_00266eac = ae_s32_l_i(uVar4);
+      if (SUB21(uVar2,0)) {
         do {
-          uVar8 = ae_l32_i(0xc0c90fdb);
-          uVar5 = (ulonglong)(uint)((float)uVar5 + (float)uVar8);
-          uVar3 = olt_s(uVar6,uVar5);
-          DAT_00266eac = ae_s32_l_i(uVar5);
-        } while (SUB21(uVar3,0));
+          uVar7 = ae_l32_i(0xc0c90fdb);
+          uVar4 = (ulonglong)(uint)((float)uVar4 + (float)uVar7);
+          uVar2 = olt_s(uVar5,uVar4);
+          DAT_00266eac = ae_s32_l_i(uVar4);
+        } while (SUB21(uVar2,0));
       }
-      uVar3 = olt_s(uVar5,uVar7);
-      if (SUB21(uVar3,0)) {
+      uVar2 = olt_s(uVar4,uVar6);
+      if (SUB21(uVar2,0)) {
         do {
-          uVar5 = (ulonglong)(uint)((float)uVar5 + (float)uVar6);
-          uVar3 = olt_s(uVar5,uVar7);
-          DAT_00266eac = ae_s32_l_i(uVar5);
-        } while (SUB21(uVar3,0));
+          uVar4 = (ulonglong)(uint)((float)uVar4 + (float)uVar5);
+          uVar2 = olt_s(uVar4,uVar6);
+          DAT_00266eac = ae_s32_l_i(uVar4);
+        } while (SUB21(uVar2,0));
       }
-      fVar4 = (float)uVar5;
+      fVar3 = (float)uVar4;
       scl_cosinef();
-      uVar6 = ae_l32_i(DAT_00266eb4);
-      iVar2 = iVar2 + 1;
-      uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * fVar4));
+      uVar5 = ae_l32_i(DAT_00266eb4);
+      i = i + 1;
+      uVar1 = ae_s32_l_ip((ulonglong)(uint)((float)uVar5 * fVar3));
       *param_1 = uVar1;
       param_1 = param_1 + 1;
-      uVar6 = ae_l32_i(0x40c90fdb);
-      uVar7 = ae_l32_i(0);
-    } while (param_2 != iVar2);
+      uVar5 = ae_l32_i(0x40c90fdb);
+      uVar6 = ae_l32_i(0);
+    } while (param_2 != i);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * hilbert_iq_init @ 00225340  (46 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * hilbert_iq_init @ 00225340  (46 bytes, 3 callers, export file 00224d40_00226a50.c)
  * Purpose: bkfiraf_init with the 71-tap Hilbert FIR 0x205840; called by cw_zero_in_init, am_demod_init,
  *     fm_demod_init
  * Tag: [fact]
@@ -11195,7 +11248,7 @@ void hilbert_iq_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * hilbert_iq @ 00225370  (119 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * hilbert_iq @ 00225370  (119 bytes, 3 callers, export file 00224d40_00226a50.c)
  * Purpose: 71-tap Hilbert FIR 0x205840, I delayed 35
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11235,7 +11288,7 @@ void hilbert_iq(int param_1,undefined4 *param_2,undefined4 *param_3,undefined4 p
 
 
 /* -----------------------------------------------------------------------------
- * mute_ramp_init @ 002253f0  (23 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * mute_ramp_init @ 002253f0  (23 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11263,7 +11316,7 @@ void mute_ramp_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mute_ramp_step @ 00225408  (111 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * mute_ramp_step @ 00225408  (111 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11322,7 +11375,7 @@ void mute_ramp_step(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_00225478 @ 00225478  (17 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * FUN_00225478 @ 00225478  (17 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11346,7 +11399,7 @@ void FUN_00225478(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_0022548c @ 0022548c  (17 bytes, 3 callers, export file 00224aa4_0022689c.c)
+ * FUN_0022548c @ 0022548c  (17 bytes, 3 callers, export file 00224d40_00226a50.c)
  * What it computes: States on / off / falling / rising, one step per sample through the 73-point raised cosine
  *     0x2375D0: 1.0 ms fades
  * Registers: —
@@ -11370,7 +11423,7 @@ void FUN_0022548c(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rec_ring_reset_0 @ 002254ec  (98 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_ring_reset_0 @ 002254ec  (98 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: clears the ring 0x268D1C indices under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11420,7 +11473,7 @@ void rec_ring_reset_0(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_ring_reset_1 @ 00225550  (98 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_ring_reset_1 @ 00225550  (98 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: same for 0x2C6928
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11470,7 +11523,7 @@ void rec_ring_reset_1(void)
 
 
 /* -----------------------------------------------------------------------------
- * rec_resample_sink @ 002255b4  (465 bytes, 5 callers, export file 00224aa4_0022689c.c)
+ * rec_resample_sink @ 002255b4  (465 bytes, 5 callers, export file 00224d40_00226a50.c)
  * Purpose: x2/9 to 16 kHz, int16 ring 0x266ED8 (#59, #154)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11631,7 +11684,7 @@ void rec_resample_sink(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * playback_ring_fill @ 00225834  (426 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * playback_ring_fill @ 00225834  (426 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: calls `FUN_00234890`, `iir_cascade_process`, `memcpy`, `memset`; 426 B, callers: 1 (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11642,78 +11695,78 @@ void playback_ring_fill(int param_1)
 
 {
   undefined6 uVar1;
-  int iVar2;
-  uint uVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  uint uVar6;
-  ushort uVar7;
-  undefined8 uVar8;
-  float fVar9;
-  undefined8 uVar10;
+  int i;
+  uint uVar2;
+  int iVar3;
+  undefined4 *puVar4;
+  uint uVar5;
+  ushort uVar6;
+  undefined8 uVar7;
+  float fVar8;
+  undefined8 uVar9;
   undefined1 in_st_PSINTLEVEL;
   undefined1 in_st_PSUM;
   undefined1 in_st_PSWOE;
   undefined1 in_st_PSEXCM;
   undefined1 in_st_PSCALLINC;
   undefined1 in_st_PSOWB;
-  short *psVar11;
+  short *psVar10;
+  undefined8 uVar11;
   undefined8 uVar12;
   undefined8 uVar13;
   undefined8 uVar14;
-  undefined8 uVar15;
-  int local_30;
+  int j;
   
-  uVar3 = ae_l16si_n(param_1,0);
-  uVar3 = uVar3 & 0xfff;
-  iVar4 = ae_zext16((uVar3 < 0x7ce) * uVar3 + (uint)(uVar3 >= 0x7ce) * 0x7ce);
-  psVar11 = (short *)(param_1 + 4);
-  if (iVar4 != 0) {
-    iVar2 = 0;
+  uVar2 = ae_l16si_n(param_1,0);
+  uVar2 = uVar2 & 0xfff;
+  iVar3 = ae_zext16((uVar2 < 0x7ce) * uVar2 + (uint)(uVar2 >= 0x7ce) * 0x7ce);
+  psVar10 = (short *)(param_1 + 4);
+  if (iVar3 != 0) {
+    i = 0;
     do {
-      (&DAT_002c7050)[DAT_002c6a28] = (int)*psVar11;
-      uVar3 = ae_zext16(DAT_002c6a28 + 1);
-      psVar11 = psVar11 + 1;
-      if (uVar3 < 0x10) {
-        DAT_002c6a28 = (ushort)uVar3;
+      (&DAT_002c7050)[DAT_002c6a28] = (int)*psVar10;
+      uVar2 = ae_zext16(DAT_002c6a28 + 1);
+      psVar10 = psVar10 + 1;
+      if (uVar2 < 0x10) {
+        DAT_002c6a28 = (ushort)uVar2;
       }
       else {
         DAT_002c6a28 = 0;
         vec_int2float(&DAT_002c7090,&DAT_002c7050,0xfffffff1,0x10);
         memset(&DAT_002c72d0,0,0x240);
-        uVar10 = ae_l32_i(0x41100000);
-        uVar8 = ae_l32_ip(DAT_002c7090);
-        fVar9 = (float)uVar10;
-        uVar10 = ae_l32_i(DAT_002c709c);
-        uVar12 = ae_l32_i(DAT_002c7094);
-        DAT_002c72d0 = ae_s32_l_i((ulonglong)(uint)((float)uVar8 * fVar9));
-        uVar13 = ae_l32_i(DAT_002c7098);
-        uVar8 = ae_l32_ip(DAT_002c70a0);
-        uVar14 = ae_l32_i(DAT_002c70a4);
-        DAT_002c72f4 = ae_s32_l_i((ulonglong)(uint)((float)uVar12 * fVar9));
-        uVar12 = ae_l32_i(DAT_002c70a8);
-        uVar15 = ae_l32_i(DAT_002c70ac);
-        DAT_002c7318 = ae_s32_l_i((ulonglong)(uint)((float)uVar13 * fVar9));
-        DAT_002c733c = ae_s32_l_i((ulonglong)(uint)((float)uVar10 * fVar9));
-        DAT_002c7360 = ae_s32_l_i((ulonglong)(uint)((float)uVar8 * fVar9));
-        DAT_002c7384 = ae_s32_l_i((ulonglong)(uint)((float)uVar14 * fVar9));
-        DAT_002c73a8 = ae_s32_l_i((ulonglong)(uint)((float)uVar12 * fVar9));
-        DAT_002c73cc = ae_s32_l_i((ulonglong)(uint)((float)uVar15 * fVar9));
+        uVar9 = ae_l32_i(0x41100000);
+        uVar7 = ae_l32_ip(DAT_002c7090);
+        fVar8 = (float)uVar9;
+        uVar9 = ae_l32_i(DAT_002c709c);
+        uVar11 = ae_l32_i(DAT_002c7094);
+        DAT_002c72d0 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * fVar8));
+        uVar12 = ae_l32_i(DAT_002c7098);
+        uVar7 = ae_l32_ip(DAT_002c70a0);
+        uVar13 = ae_l32_i(DAT_002c70a4);
+        DAT_002c72f4 = ae_s32_l_i((ulonglong)(uint)((float)uVar11 * fVar8));
+        uVar11 = ae_l32_i(DAT_002c70a8);
+        uVar14 = ae_l32_i(DAT_002c70ac);
+        DAT_002c7318 = ae_s32_l_i((ulonglong)(uint)((float)uVar12 * fVar8));
+        DAT_002c733c = ae_s32_l_i((ulonglong)(uint)((float)uVar9 * fVar8));
+        DAT_002c7360 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * fVar8));
+        DAT_002c7384 = ae_s32_l_i((ulonglong)(uint)((float)uVar13 * fVar8));
+        DAT_002c73a8 = ae_s32_l_i((ulonglong)(uint)((float)uVar11 * fVar8));
+        DAT_002c73cc = ae_s32_l_i((ulonglong)(uint)((float)uVar14 * fVar8));
         iir_cascade_process(DAT_00266ec4,&DAT_002c7090,&DAT_002c72d0,0x90);
-        puVar5 = &DAT_002c72d0;
-        uVar8 = ae_l32_ip(DAT_002c7090);
-        DAT_002c72d0 = ae_s32_l_ip(uVar8);
-        uVar8 = ae_l32_ip(DAT_002c7098);
-        DAT_002c72d4 = ae_s32_l_ip(uVar8);
-        local_30 = 0;
+        puVar4 = &DAT_002c72d0;
+        uVar7 = ae_l32_ip(DAT_002c7090);
+        DAT_002c72d0 = ae_s32_l_ip(uVar7);
+        uVar7 = ae_l32_ip(DAT_002c7098);
+        DAT_002c72d4 = ae_s32_l_ip(uVar7);
+        j = 0;
         do {
           if (3999 < DAT_002c6a20) {
             return;
           }
-          uVar3 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
+          uVar2 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
                          in_st_PSINTLEVEL);
-          if ((uVar3 & 0xf) < 2) {
-            uVar1 = wsr_ps(uVar3 & 0xfffffff0 | 2);
+          if ((uVar2 & 0xf) < 2) {
+            uVar1 = wsr_ps(uVar2 & 0xfffffff0 | 2);
             in_st_PSWOE = (undefined1)uVar1;
             in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
             in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -11722,15 +11775,15 @@ void playback_ring_fill(int param_1)
             in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
             rsync();
           }
-          memcpy(&DAT_00268e20 + (uint)DAT_002c6a22 * 0x60,puVar5,0x60);
-          uVar7 = 0;
+          memcpy(&DAT_00268e20 + (uint)DAT_002c6a22 * 0x60,puVar4,0x60);
+          uVar6 = 0;
           DAT_002c6a20 = DAT_002c6a20 + 1;
           if (DAT_002c6a22 < 3999) {
-            uVar7 = DAT_002c6a22 + 1;
+            uVar6 = DAT_002c6a22 + 1;
           }
-          uVar6 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
+          uVar5 = rsr_ps(in_st_PSWOE,in_st_PSCALLINC,in_st_PSOWB,in_st_PSUM,in_st_PSEXCM,
                          in_st_PSINTLEVEL);
-          uVar1 = wsr_ps(uVar3 & 0xf | uVar6 & 0xfffffff0);
+          uVar1 = wsr_ps(uVar2 & 0xf | uVar5 & 0xfffffff0);
           in_st_PSWOE = (undefined1)uVar1;
           in_st_PSCALLINC = (undefined1)((uint6)uVar1 >> 8);
           in_st_PSOWB = (undefined1)((uint6)uVar1 >> 0x10);
@@ -11738,20 +11791,20 @@ void playback_ring_fill(int param_1)
           in_st_PSEXCM = (undefined1)((uint6)uVar1 >> 0x20);
           in_st_PSINTLEVEL = (undefined1)((uint6)uVar1 >> 0x28);
           rsync();
-          local_30 = local_30 + 1;
-          puVar5 = puVar5 + 0x18;
-          DAT_002c6a22 = uVar7;
-        } while (local_30 != 3);
+          j = j + 1;
+          puVar4 = puVar4 + 0x18;
+          DAT_002c6a22 = uVar6;
+        } while (j != 3);
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar4 != iVar2);
+      i = i + 1;
+    } while (iVar3 != i);
   }
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * playback_ring_read @ 002259e4  (159 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * playback_ring_read @ 002259e4  (159 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: Next block from the 4000-block ring 0x268E20 (filled by `playback_ring_fill` 0x225834 from the
  *     DISPLAY PLAY stream, ÷2 + IIR), gain from reg 0x13, clip ±1
  * Registers: 0x13
@@ -11812,7 +11865,7 @@ void playback_ring_read(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rec_gain_update @ 00225a84  (46 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * rec_gain_update @ 00225a84  (46 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: Recorder gain from reg 0x12 (MAIN 8 = +4 dB) for `rec_resample_sink` (`FUN_002255B4`)
  * Registers: 0x12
  * Tag: [fact]
@@ -11841,7 +11894,7 @@ void rec_gain_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * play_gain_update @ 00225ab4  (46 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * play_gain_update @ 00225ab4  (46 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: reg 0x13 → 10^(x/40), the gain of the playback reader `playback_ring_read`
  * Registers: 0x13
  * Tag: [fact]
@@ -11870,7 +11923,7 @@ void play_gain_update(void)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_out_init @ 00225af0  (62 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_out_init @ 00225af0  (62 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: resets both TXAF FIFOs and the mute ramp; placed before txaf_out_push
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11886,6 +11939,7 @@ void txaf_out_init(void)
   
   memset(&DAT_002c7710,0,0xc0);
   memset(&DAT_002c77d0,0,0x60);
+                    /* clears the FIFO 0x2C7570 indices under PS.INTLEVEL 2 [doc] */
   txaf_fifo_reset_0();
   txaf_fifo_reset_1();
   ae_s16i_n(0,&DAT_002c7570,0);
@@ -11898,7 +11952,7 @@ void txaf_out_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_fifo_reset_0 @ 00225b30  (92 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_fifo_reset_0 @ 00225b30  (92 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: clears the FIFO 0x2C7570 indices under PS.INTLEVEL 2
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11947,7 +12001,7 @@ uint txaf_fifo_reset_0(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_fifo_reset_1 @ 00225b8c  (92 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * txaf_fifo_reset_1 @ 00225b8c  (92 bytes, 1 callers, export file 00224d40_00226a50.c)
  * Purpose: same for 0x2C768C
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -11996,7 +12050,7 @@ uint txaf_fifo_reset_1(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txaf_out_push @ 00225be8  (178 bytes, 2 callers, export file 00224aa4_0022689c.c)
+ * txaf_out_push @ 00225be8  (178 bytes, 2 callers, export file 00224d40_00226a50.c)
  * What it computes: If the FC2 FIFO has room: clip(x·g, ±1), g from reg 0xF, × mute ramp, float → Q31; source block
  *     1 (reg 9 n0 = 2) or 5 (= 1)
  * Registers: 0xF, 9
@@ -12063,7 +12117,7 @@ void txaf_out_push(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * tx_mute_ctrl @ 00225dc4  (112 bytes, 1 callers, export file 00224aa4_0022689c.c)
+ * tx_mute_ctrl @ 00225dc4  (112 bytes, 1 callers, export file 00224d40_00226a50.c)
  * What it computes: mute = reg 0x10 bit 1 or GPIO P0_4 (reg 0xC top nibble = 1); writes the VOX state to GPIO byte
  *     0x40100044
  * Registers: 0xF, 0x10, 0xC
@@ -12093,6 +12147,7 @@ void tx_mute_ctrl(void)
   }
   uVar1 = DAT_20070020 >> 1;
   uVar3 = regfile_gpio_sel();
+                    /* mic and not speaker [doc, inference] */
   uVar2 = vox_state();
   uVar3 = uVar1 & 1 | uVar3;
   uVar4 = ae_zext16(uVar3);
@@ -12101,6 +12156,7 @@ void tx_mute_ctrl(void)
     if (uVar4 != 0) {
       FUN_0022548c();
       memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
       GPIO_B2_4 = uVar2;
       return;
     }
@@ -12113,7 +12169,7 @@ void tx_mute_ctrl(void)
 
 
 /* -----------------------------------------------------------------------------
- * cosf @ 002293e0  (100 bytes, 1 callers, export file 00228564_0022b880.c)
+ * cosf @ 002293e0  (100 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib cosf: |x| <= pi/4 -> kernel 0x22A610, else rem_pio2 switch (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12161,7 +12217,7 @@ void cosf(void)
 
 
 /* -----------------------------------------------------------------------------
- * sinf @ 00229460  (105 bytes, 1 callers, export file 00228564_0022b880.c)
+ * sinf @ 00229460  (105 bytes, 1 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib sinf: |x| <= pi/4 -> kernel 0x22B420, else rem_pio2 0x22A320 switch (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12209,7 +12265,7 @@ void sinf(void)
 
 
 /* -----------------------------------------------------------------------------
- * powf @ 002294e0  (1240 bytes, 2 callers, export file 00228564_0022b880.c)
+ * powf @ 002294e0  (1240 bytes, 2 callers, export file 00228634_0022b8ac.c)
  * Purpose: newlib w_powf wrapper (matherr name string powf at 0x206414): powf(aed0, aed1); tx_alc_update powf(0.5,
  *     reg 0x33), FUN_00223AB4 10^(x/20) (#184)
  * Tag: [inference]
@@ -12531,7 +12587,7 @@ LAB_00229631:
 
 
 /* -----------------------------------------------------------------------------
- * xthal_get_cacheattr @ 00233580  (32 bytes, 1 callers, export file 002304f0_00233984.c)
+ * xthal_get_cacheattr @ 00233580  (32 bytes, 1 callers, export file 002305a0_00233cf0.c)
  * Purpose: rdtlb1 of the 8 x 512 MB regions -> 8 attribute nibbles (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12560,7 +12616,7 @@ uint xthal_get_cacheattr(void)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_set_cacheattr @ 002335a0  (83 bytes, 2 callers, export file 002304f0_00233984.c)
+ * xthal_set_cacheattr @ 002335a0  (83 bytes, 2 callers, export file 002305a0_00233cf0.c)
  * Purpose: witlb (skipping its own region) and wdtlb for each 512 MB region, 4 bits each (#184)
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/dsp-chains.md
@@ -12603,7 +12659,7 @@ void xthal_set_cacheattr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * bkfiraf_init @ 00233984  (126 bytes, 7 callers, export file 002304f0_00233984.c)
+ * bkfiraf_init @ 00233984  (126 bytes, 7 callers, export file 002305a0_00233cf0.c)
  * Name on the doc page: fir_init
  * Purpose: no direct calls; 126 B, callers: 7 (code shape)
  * Tag: [fact]
@@ -12666,8 +12722,9 @@ LAB_002339f5:
   return CONCAT44(param_2,puVar4);
 }
 
+
 /* -----------------------------------------------------------------------------
- * bkfiraf_process @ 00233a10  (731 bytes, 7 callers, export file 00233a10_00236080.c)
+ * bkfiraf_process @ 00233a10  (731 bytes, 7 callers, export file 002305a0_00233cf0.c)
  * Name on the doc page: fir_process
  * Purpose: no direct calls; 731 B, callers: 7 (code shape)
  * Tag: [fact]
@@ -12962,7 +13019,7 @@ void bkfiraf_process(int *param_1,undefined4 *param_2,undefined4 *param_3,uint p
 
 
 /* -----------------------------------------------------------------------------
- * scl_float2int @ 00234710  (31 bytes, 9 callers, export file 00233a10_00236080.c)
+ * scl_float2int @ 00234710  (31 bytes, 9 callers, export file 00233d08_00236170.c)
  * Name on the doc page: f2i_scaled
  * Purpose: trunc(x * 2^-s)
  * Tag: [inference]
@@ -12984,7 +13041,7 @@ undefined4 scl_float2int(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scl_int2float @ 00234730  (25 bytes, 77 callers, export file 00233a10_00236080.c)
+ * scl_int2float @ 00234730  (25 bytes, 77 callers, export file 00233d08_00236170.c)
  * Name on the doc page: i2f_scaled
  * Purpose: float(i) * 2^s; s = -1 turns half-dB registers into dB
  * Tag: [inference]
@@ -13003,7 +13060,7 @@ void scl_int2float(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * vec_powerf @ 00234be0  (533 bytes, 3 callers, export file 00233a10_00236080.c)
+ * vec_powerf @ 00234be0  (533 bytes, 3 callers, export file 00233d08_00236170.c)
  * Name on the doc page: vec_sum_sq
  * Purpose: sum of squares (madd.s loop)
  * Tag: [inference]
@@ -13181,7 +13238,7 @@ void vec_powerf(undefined8 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vec_scalef @ 00234f40  (568 bytes, 11 callers, export file 00233a10_00236080.c)
+ * vec_scalef @ 00234f40  (568 bytes, 11 callers, export file 00233d08_00236170.c)
  * Name on the doc page: vec_scale_f32
  * Purpose: y[i] = x[i] * scalar
  * Tag: [inference]
@@ -13445,7 +13502,7 @@ void vec_scalef(undefined4 *param_1,undefined8 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __divsf3 @ 00235ba8  (164 bytes, 86 callers, export file 00233a10_00236080.c)
+ * __divsf3 @ 00235ba8  (164 bytes, 86 callers, export file 00233d08_00236170.c)
  * Name on the doc page: divf_
  * Purpose: float divide
  * Tag: [inference]
@@ -13498,7 +13555,7 @@ void __divsf3(void)
 
 
 /* -----------------------------------------------------------------------------
- * __ieee754_sqrtf @ 00235c8c  (160 bytes, 12 callers, export file 00233a10_00236080.c)
+ * __ieee754_sqrtf @ 00235c8c  (160 bytes, 12 callers, export file 00233d08_00236170.c)
  * Name on the doc page: sqrtf_
  * Purpose: sqrt
  * Tag: [inference]

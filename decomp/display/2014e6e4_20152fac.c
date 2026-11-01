@@ -49,12 +49,12 @@ code * itron_act_tsk(uint param_1)
 
 {
   byte bVar1;
-  t_ctsk *ptVar2;
-  code *pcVar3;
-  byte *pbVar4;
+  t_ctsk *p_t_ctsk;
+  code *pcVar2;
+  byte *pbVar3;
+  uint uVar4;
+  knl_tcb *p_knl_tcb;
   uint uVar5;
-  knl_tcb *pkVar6;
-  uint uVar7;
   
   if (param_1 == 0) {
     param_1 = (uint)knl_rdq[0];
@@ -64,39 +64,39 @@ code * itron_act_tsk(uint param_1)
     return (code *)0xffffffee;
   }
   software_interrupt(0);
-  pkVar6 = knl_tsk_tab[param_1];
-  if (pkVar6 == (knl_tcb *)0x0) {
+  p_knl_tcb = knl_tsk_tab[param_1];
+  if (p_knl_tcb == (knl_tcb *)0x0) {
     software_interrupt(0);
     return (code *)0xffffffd6;
   }
-  if (pkVar6->state == 0) {
-    ptVar2 = pkVar6->ctsk;
-    uVar7 = ptVar2->task;
-    pbVar4 = pkVar6->stk + ptVar2->stksz;
-    uVar5 = ptVar2->exinf;
-    *(byte **)(pbVar4 + -0x18) = pbVar4;
-    *(uint *)(pbVar4 + -0x48) = uVar5;
-    uVar5 = knl_sys.task_cpsr;
-    if ((uVar7 & 1) != 0) {
-      uVar5 = knl_sys.task_cpsr | 0x20;
+  if (p_knl_tcb->state == 0) {
+    p_t_ctsk = p_knl_tcb->ctsk;
+    uVar5 = p_t_ctsk->task;
+    pbVar3 = p_knl_tcb->stk + p_t_ctsk->stksz;
+    uVar4 = p_t_ctsk->exinf;
+    *(byte **)(pbVar3 + -0x18) = pbVar3;
+    *(uint *)(pbVar3 + -0x48) = uVar4;
+    uVar4 = knl_sys.task_cpsr;
+    if ((uVar5 & 1) != 0) {
+      uVar4 = knl_sys.task_cpsr | 0x20;
     }
-    *(uint *)(pbVar4 + -0xc) = uVar5;
-    uVar5 = FUN_201568b8();
-    *(uint *)(pbVar4 + -0xc) = uVar5 | *(uint *)(pbVar4 + -0xc);
-    *(code **)(pbVar4 + -0x14) = itron_ext_tsk;
-    *(uint *)(pbVar4 + -4) = uVar7;
-    pkVar6->sp = (uint)(pbVar4 + -0x48);
-    pkVar6->f_0x08_u8 = 0;
-    pkVar6->f_0x09_u8 = 0;
-    pkVar6->f_0x20_u32 = 0;
-    pkVar6->state = 0x10;
-    pcVar3 = (code *)FUN_20154538(pkVar6,param_1);
-    return pcVar3;
+    *(uint *)(pbVar3 + -0xc) = uVar4;
+    uVar4 = FUN_201568b8();
+    *(uint *)(pbVar3 + -0xc) = uVar4 | *(uint *)(pbVar3 + -0xc);
+    *(code **)(pbVar3 + -0x14) = itron_ext_tsk;
+    *(uint *)(pbVar3 + -4) = uVar5;
+    p_knl_tcb->sp = (uint)(pbVar3 + -0x48);
+    p_knl_tcb->f_0x08_u8 = 0;
+    p_knl_tcb->f_0x09_u8 = 0;
+    p_knl_tcb->f_0x20_u32 = 0;
+    p_knl_tcb->state = 0x10;
+    pcVar2 = (code *)FUN_20154538(p_knl_tcb,param_1);
+    return pcVar2;
   }
-  bVar1 = pkVar6->act_cnt + 1;
-  pkVar6->act_cnt = bVar1;
+  bVar1 = p_knl_tcb->act_cnt + 1;
+  p_knl_tcb->act_cnt = bVar1;
   if (bVar1 == 0) {
-    pkVar6->act_cnt = 0xff;
+    p_knl_tcb->act_cnt = 0xff;
     software_interrupt(0);
     return (code *)0xffffffd5;
   }
@@ -119,23 +119,23 @@ code * itron_chg_pri(uint param_1,uint param_2)
   byte bVar3;
   int iVar4;
   byte bVar5;
-  t_ctsk *ptVar6;
-  uint uVar7;
-  byte *pbVar8;
+  t_ctsk *p_t_ctsk;
+  uint uVar6;
+  byte *pbVar7;
+  int iVar8;
   int iVar9;
-  int iVar10;
-  knl_mtx *pkVar11;
+  knl_mtx *p_knl_mtx;
   knl_tcb *tcb;
-  bool bVar12;
+  bool bVar10;
   
-  bVar12 = param_1 == 0;
-  if (bVar12) {
+  bVar10 = param_1 == 0;
+  if (bVar10) {
     param_1 = (uint)knl_rdq[0];
   }
   if (param_2 < 9) {
-    if ((param_1 <= DAT_201659d0) && (knl_sys.ctx_isr == 0 || !bVar12)) {
+    if ((param_1 <= DAT_201659d0) && (knl_sys.ctx_isr == 0 || !bVar10)) {
       software_interrupt(0);
-      ptVar6 = (t_ctsk *)(knl_tsk_tab + param_1 + 1);
+      p_t_ctsk = (t_ctsk *)(knl_tsk_tab + param_1 + 1);
       tcb = knl_tsk_tab[param_1];
       if (tcb == (knl_tcb *)0x0) {
         software_interrupt(0);
@@ -147,20 +147,20 @@ code * itron_chg_pri(uint param_1,uint param_2)
         return (code *)0xffffffd7;
       }
       if (param_2 == 0) {
-        ptVar6 = tcb->ctsk;
+        p_t_ctsk = tcb->ctsk;
       }
-      iVar10 = (int)tcb->mtx_held;
+      iVar9 = (int)tcb->mtx_held;
       if (param_2 == 0) {
-        param_2 = ptVar6->itskpri;
+        param_2 = p_t_ctsk->itskpri;
       }
-      if ((iVar10 == 0) && ((bVar5 & 0xfc) != 0x94)) {
-        bVar12 = true;
+      if ((iVar9 == 0) && ((bVar5 & 0xfc) != 0x94)) {
+        bVar10 = true;
       }
       else {
-        bVar12 = false;
+        bVar10 = false;
       }
       bVar3 = (byte)param_2;
-      if (bVar12) {
+      if (bVar10) {
 LAB_2014e9e4:
         tcb->bpri = bVar3;
         sVar2 = tcb->pri;
@@ -168,10 +168,10 @@ LAB_2014e9e4:
         if (bVar5 == 0x10) {
           if (tcb->f_0x09_u8 == 0) {
             knl_queue_move(knl_rdq + param_2,tcb,param_1);
-            uVar7 = (uint)knl_rdq[0];
-            if (((uVar7 != param_1) || ((int)param_2 < (int)knl_sys.run_pri)) &&
-               ((uVar7 == param_1 || ((int)knl_sys.run_pri < (int)param_2)))) {
-              if ((uVar7 == param_1) && (knl_sys.f_0x30_u8 = bVar3, (char)bVar3 != 0)) {
+            uVar6 = (uint)knl_rdq[0];
+            if (((uVar6 != param_1) || ((int)param_2 < (int)knl_sys.run_pri)) &&
+               ((uVar6 == param_1 || ((int)knl_sys.run_pri < (int)param_2)))) {
+              if ((uVar6 == param_1) && (knl_sys.f_0x30_u8 = bVar3, (char)bVar3 != 0)) {
                 knl_sys.run_pri = bVar3;
               }
               software_interrupt(0);
@@ -187,26 +187,26 @@ LAB_2014e9e4:
           }
           bVar5 = tcb->state & 0xfc;
           if (bVar5 == 0x94) {
-            pkVar11 = knl_mtx_tab[*(int *)(tcb->sp + 4)];
-            if (pkVar11->mtxatr == 2) {
-              iVar10 = 1;
-              for (pbVar8 = pkVar11->wq; *pbVar8 == 0; pbVar8 = pbVar8 + 1) {
-                iVar10 = iVar10 + 1;
+            p_knl_mtx = knl_mtx_tab[*(int *)(tcb->sp + 4)];
+            if (p_knl_mtx->mtxatr == 2) {
+              iVar9 = 1;
+              for (pbVar7 = p_knl_mtx->wq; *pbVar7 == 0; pbVar7 = pbVar7 + 1) {
+                iVar9 = iVar9 + 1;
               }
-              if (pkVar11->pri != iVar10) {
-                FUN_20153f28(pkVar11->owner);
+              if (p_knl_mtx->pri != iVar9) {
+                FUN_20153f28(p_knl_mtx->owner);
               }
             }
           }
           else if (bVar5 == 0x60) {
-            iVar10 = FUN_20153dec(*(undefined4 *)(tcb->sp + 4));
-            if (iVar10 != 0) {
+            iVar9 = FUN_20153dec(*(undefined4 *)(tcb->sp + 4));
+            if (iVar9 != 0) {
               software_interrupt(0);
               return knl_dispatch;
             }
           }
           else if (((tcb->state & 0xf0) == 0xc0) &&
-                  (iVar10 = FUN_20153b8c(*(undefined4 *)(tcb->sp + 4)), iVar10 != 0)) {
+                  (iVar9 = FUN_20153b8c(*(undefined4 *)(tcb->sp + 4)), iVar9 != 0)) {
             software_interrupt(0);
             return knl_dispatch;
           }
@@ -216,21 +216,21 @@ LAB_2014e9e4:
       }
       if ((int)param_2 < (int)tcb->pri) {
         iVar4 = 8;
-        while (iVar10 != 0) {
-          pkVar11 = knl_mtx_tab[iVar10];
-          iVar9 = (int)pkVar11->pri;
-          if ((pkVar11->mtxatr == 3) && ((int)param_2 < iVar9)) {
+        while (iVar9 != 0) {
+          p_knl_mtx = knl_mtx_tab[iVar9];
+          iVar8 = (int)p_knl_mtx->pri;
+          if ((p_knl_mtx->mtxatr == 3) && ((int)param_2 < iVar8)) {
             software_interrupt(0);
             return (code *)0xffffffe4;
           }
-          iVar10 = (int)pkVar11->prev_held;
-          bVar12 = iVar9 != 0;
+          iVar9 = (int)p_knl_mtx->prev_held;
+          bVar10 = iVar8 != 0;
           iVar1 = 0;
-          if (bVar12) {
-            iVar1 = iVar4 - iVar9;
+          if (bVar10) {
+            iVar1 = iVar4 - iVar8;
           }
-          if ((bVar12 && iVar4 != iVar9) && iVar1 < 0 == (bVar12 && SBORROW4(iVar4,iVar9))) {
-            iVar4 = iVar9;
+          if ((bVar10 && iVar4 != iVar8) && iVar1 < 0 == (bVar10 && SBORROW4(iVar4,iVar8))) {
+            iVar4 = iVar8;
           }
         }
         if ((int)param_2 <= iVar4) goto LAB_2014e9e4;
@@ -257,7 +257,7 @@ LAB_2014e9e4:
 code * itron_clr_flg(uint param_1,uint param_2)
 
 {
-  knl_flg *pkVar1;
+  knl_flg *p_knl_flg;
   
   if (param_2 == 0xffffffff) {
     knl_sys.last_ercd = 0;
@@ -265,12 +265,12 @@ code * itron_clr_flg(uint param_1,uint param_2)
   else {
     if ((param_1 != 0) && (param_1 < 0x41)) {
       software_interrupt(0);
-      pkVar1 = knl_flg_tab[param_1];
-      if (pkVar1 == (knl_flg *)0x0) {
+      p_knl_flg = knl_flg_tab[param_1];
+      if (p_knl_flg == (knl_flg *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
-      pkVar1->flgptn = pkVar1->flgptn & param_2;
+      p_knl_flg->flgptn = p_knl_flg->flgptn & param_2;
       software_interrupt(0);
       return knl_svc_return;
     }
@@ -491,14 +491,14 @@ uint itron_acre_flg(uint param_1,byte *param_2)
 {
   uint uVar1;
   int iVar2;
-  knl_flg *pkVar3;
-  int iVar4;
+  knl_flg *p_knl_flg;
+  int iVar3;
   byte extraout_r1;
   byte extraout_r1_00;
-  byte bVar5;
+  byte bVar4;
+  uint uVar5;
   uint uVar6;
   uint uVar7;
-  uint uVar8;
   
   if (knl_sys.ctx_isr != 0) {
     knl_sys.last_ercd = -0x19;
@@ -511,7 +511,7 @@ uint itron_acre_flg(uint param_1,byte *param_2)
   software_interrupt(0);
   if (param_1 == 0) {
     param_1 = 0x40;
-    while (uVar7 = param_1, knl_flg_tab[param_1] != (knl_flg *)0x0) {
+    while (uVar6 = param_1, knl_flg_tab[param_1] != (knl_flg *)0x0) {
       param_1 = param_1 - 1;
       if (param_1 == 0) {
         software_interrupt(0);
@@ -524,62 +524,62 @@ uint itron_acre_flg(uint param_1,byte *param_2)
       software_interrupt(0);
       return 0xffffffd7;
     }
-    uVar7 = 0;
-  }
-  if ((*param_2 & 1) == 0) {
     uVar6 = 0;
   }
+  if ((*param_2 & 1) == 0) {
+    uVar5 = 0;
+  }
   else {
-    uVar6 = 7;
+    uVar5 = 7;
   }
   iVar2 = knl_addr_in_image(param_2);
   if (iVar2 == 0) {
-    uVar8 = uVar6 + 0xf & 0xfffffffc;
-    uVar1 = uVar8;
+    uVar7 = uVar5 + 0xf & 0xfffffffc;
+    uVar1 = uVar7;
   }
   else {
-    uVar8 = 0;
-    uVar1 = uVar6;
+    uVar7 = 0;
+    uVar1 = uVar5;
   }
-  pkVar3 = (knl_flg *)knl_sys_alloc(uVar1 + 0xc);
-  if (pkVar3 == (knl_flg *)0x0) {
+  p_knl_flg = (knl_flg *)knl_sys_alloc(uVar1 + 0xc);
+  if (p_knl_flg == (knl_flg *)0x0) {
     software_interrupt(0);
     knl_sys.last_ercd = -5;
     return 0xfffffffb;
   }
-  knl_flg_tab[param_1] = pkVar3;
-  if (uVar8 == 0) {
-    pkVar3->cflg = (t_cflg *)param_2;
-    bVar5 = extraout_r1;
+  knl_flg_tab[param_1] = p_knl_flg;
+  if (uVar7 == 0) {
+    p_knl_flg->cflg = (t_cflg *)param_2;
+    bVar4 = extraout_r1;
   }
   else {
-    pkVar3->cflg = (t_cflg *)(pkVar3->wq + (uVar8 - 9));
-    knl_memcpy((t_cflg *)(pkVar3->wq + (uVar8 - 9)),param_2,0xc);
-    bVar5 = extraout_r1_00;
+    p_knl_flg->cflg = (t_cflg *)(p_knl_flg->wq + (uVar7 - 9));
+    knl_memcpy((t_cflg *)(p_knl_flg->wq + (uVar7 - 9)),param_2,0xc);
+    bVar4 = extraout_r1_00;
   }
-  if (-1 < (int)uVar6) {
-    bVar5 = 0;
+  if (-1 < (int)uVar5) {
+    bVar4 = 0;
   }
-  pkVar3->flgptn = *(uint *)(param_2 + 4);
-  pkVar3->flgatr = *param_2;
-  iVar4 = 0;
-  iVar2 = iVar4;
-  if (-1 < (int)uVar6) {
+  p_knl_flg->flgptn = *(uint *)(param_2 + 4);
+  p_knl_flg->flgatr = *param_2;
+  iVar3 = 0;
+  iVar2 = iVar3;
+  if (-1 < (int)uVar5) {
     do {
-      iVar4 = iVar2 + 1;
-      pkVar3->wq[iVar2] = bVar5;
-      iVar2 = iVar4;
-    } while (iVar4 <= (int)uVar6);
-    if (uVar6 == 0) {
-      bVar5 = 0xfe;
+      iVar3 = iVar2 + 1;
+      p_knl_flg->wq[iVar2] = bVar4;
+      iVar2 = iVar3;
+    } while (iVar3 <= (int)uVar5);
+    if (uVar5 == 0) {
+      bVar4 = 0xfe;
       goto LAB_2014f130;
     }
   }
-  bVar5 = 0xff;
+  bVar4 = 0xff;
 LAB_2014f130:
-  pkVar3->wq[iVar4] = bVar5;
+  p_knl_flg->wq[iVar3] = bVar4;
   software_interrupt(0);
-  return uVar7;
+  return uVar6;
 }
 
 
@@ -593,13 +593,14 @@ uint itron_acre_isr(uint param_1,int param_2)
   int iVar1;
   uint uVar2;
   undefined4 *puVar3;
-  code *pcVar4;
-  uint uVar5;
-  int iVar6;
-  int *piVar7;
+  code *gic_get_handler_ret;
+  uint uVar4;
+  int iVar5;
+  int *piVar6;
   
   if (knl_sys.ctx_isr == 0) {
     if (param_1 < 0x41) {
+                    /* intno < 0x24B, prio < 0x20 [doc, inference] */
       uVar2 = isr_desc_check(param_2);
       if (uVar2 == 0) {
         software_interrupt(0);
@@ -622,40 +623,41 @@ uint itron_acre_isr(uint param_1,int param_2)
         }
         puVar3 = (undefined4 *)knl_sys_alloc(0x14);
         if (puVar3 != (undefined4 *)0x0) {
-          pcVar4 = (code *)gic_get_handler(param_2);
-          if (pcVar4 == gic_default_handler) {
-            uVar5 = knl_sys_alloc(0x58);
-            if (uVar5 == 0) {
+          gic_get_handler_ret = (code *)gic_get_handler(param_2);
+          if (gic_get_handler_ret == gic_default_handler) {
+            uVar4 = knl_sys_alloc(0x58);
+            if (uVar4 == 0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
               knl_sys_free(puVar3,0x14);
               software_interrupt(0);
               knl_sys.last_ercd = -5;
               return 0xfffffffb;
             }
-            knl_memcpy(uVar5,gic_default_handler,0x58);
-            *(undefined4 **)(uVar5 + 0x4c) = puVar3;
-            puVar3[3] = uVar5 + 0x4c;
-            gic_install_isr_stub(uVar5,param_2);
+            knl_memcpy(uVar4,gic_default_handler,0x58);
+            *(undefined4 **)(uVar4 + 0x4c) = puVar3;
+            puVar3[3] = uVar4 + 0x4c;
+            gic_install_isr_stub(uVar4,param_2);
           }
           else {
-            uVar5 = gic_get_handler(param_2);
-            piVar7 = (int *)(uVar5 + 0x4c);
-            iVar6 = *piVar7;
-            if (iVar6 == 0) {
-              *piVar7 = (int)puVar3;
-              puVar3[3] = piVar7;
+            uVar4 = gic_get_handler(param_2);
+            piVar6 = (int *)(uVar4 + 0x4c);
+            iVar5 = *piVar6;
+            if (iVar5 == 0) {
+              *piVar6 = (int)puVar3;
+              puVar3[3] = piVar6;
             }
             else {
-              for (iVar1 = *(int *)(iVar6 + 8); iVar1 != 0; iVar1 = *(int *)(iVar1 + 8)) {
-                if (*(int *)(iVar1 + 0xc) != iVar6 + 8) {
+              for (iVar1 = *(int *)(iVar5 + 8); iVar1 != 0; iVar1 = *(int *)(iVar1 + 8)) {
+                if (*(int *)(iVar1 + 0xc) != iVar5 + 8) {
                   knl_sys_free(puVar3,0x14);
                   software_interrupt(0);
                   knl_sys.last_ercd = -0x1c;
                   return 0xffffffe4;
                 }
-                iVar6 = iVar1;
+                iVar5 = iVar1;
               }
-              *(int *)(iVar6 + 8) = (int)puVar3;
-              puVar3[3] = (int *)(iVar6 + 8);
+              *(int *)(iVar5 + 8) = (int)puVar3;
+              puVar3[3] = (int *)(iVar5 + 8);
             }
           }
           *puVar3 = *(undefined4 *)(param_2 + 0xc);
@@ -976,14 +978,14 @@ uint itron_acre_mpf(uint mpfid,t_cmpf *pk_cmpf)
   uint uVar1;
   uint uVar2;
   int iVar3;
-  knl_mpf *pkVar4;
-  int iVar5;
-  byte bVar6;
-  uint uVar7;
-  byte *pbVar8;
+  knl_mpf *p_knl_mpf;
+  int iVar4;
+  byte bVar5;
+  uint uVar6;
+  byte *pbVar7;
+  uint uVar8;
   uint uVar9;
   uint uVar10;
-  uint uVar11;
   
   if (knl_sys.ctx_isr != 0) {
     knl_sys.last_ercd = -0x19;
@@ -994,22 +996,22 @@ uint itron_acre_mpf(uint mpfid,t_cmpf *pk_cmpf)
     knl_sys.last_ercd = -0x12;
     return 0xffffffee;
   }
-  uVar7 = pk_cmpf->blksz;
-  if (uVar7 != 0) {
+  uVar6 = pk_cmpf->blksz;
+  if (uVar6 != 0) {
     uVar2 = pk_cmpf->blkcnt;
   }
-  if (uVar7 == 0 || uVar2 == 0) {
+  if (uVar6 == 0 || uVar2 == 0) {
     knl_sys.last_ercd = -0x11;
     return 0xffffffef;
   }
-  uVar7 = uVar7 + 3 & 0xfffffffc;
-  if (uVar7 < 4) {
-    uVar7 = 4;
+  uVar6 = uVar6 + 3 & 0xfffffffc;
+  if (uVar6 < 4) {
+    uVar6 = 4;
   }
   software_interrupt(0);
   if (mpfid == 0) {
     mpfid = 0x10;
-    while (uVar10 = mpfid, knl_mpf_tab[mpfid] != (knl_mpf *)0x0) {
+    while (uVar9 = mpfid, knl_mpf_tab[mpfid] != (knl_mpf *)0x0) {
       mpfid = mpfid - 1;
       if (mpfid == 0) {
         software_interrupt(0);
@@ -1022,75 +1024,75 @@ uint itron_acre_mpf(uint mpfid,t_cmpf *pk_cmpf)
       software_interrupt(0);
       return 0xffffffd7;
     }
-    uVar10 = 0;
+    uVar9 = 0;
   }
-  pbVar8 = pk_cmpf->mpf;
-  if ((pbVar8 == (byte *)0x0) &&
-     (pbVar8 = (byte *)knl_pool_alloc(uVar2 * uVar7), pbVar8 == (byte *)0x0)) {
+  pbVar7 = pk_cmpf->mpf;
+  if ((pbVar7 == (byte *)0x0) &&
+     (pbVar7 = (byte *)knl_pool_alloc(uVar2 * uVar6), pbVar7 == (byte *)0x0)) {
     software_interrupt(0);
     knl_sys.last_ercd = -0x21;
     return 0xffffffdf;
   }
   if ((pk_cmpf->mpfatr & 1) == 0) {
-    uVar9 = 0;
+    uVar8 = 0;
   }
   else {
-    uVar9 = 7;
+    uVar8 = 7;
   }
   iVar3 = knl_addr_in_image(pk_cmpf);
   if (iVar3 == 0) {
-    uVar11 = uVar9 + 0x17 & 0xfffffffc;
-    uVar1 = uVar11;
+    uVar10 = uVar8 + 0x17 & 0xfffffffc;
+    uVar1 = uVar10;
   }
   else {
-    uVar11 = 0;
-    uVar1 = uVar9;
+    uVar10 = 0;
+    uVar1 = uVar8;
   }
-  pkVar4 = (knl_mpf *)knl_sys_alloc(uVar1 + 0x14);
-  if (pkVar4 == (knl_mpf *)0x0) {
+  p_knl_mpf = (knl_mpf *)knl_sys_alloc(uVar1 + 0x14);
+  if (p_knl_mpf == (knl_mpf *)0x0) {
     software_interrupt(0);
     knl_sys.last_ercd = -5;
     return 0xfffffffb;
   }
-  knl_mpf_tab[mpfid] = pkVar4;
-  if (uVar11 == 0) {
-    pkVar4->cmpf = pk_cmpf;
+  knl_mpf_tab[mpfid] = p_knl_mpf;
+  if (uVar10 == 0) {
+    p_knl_mpf->cmpf = pk_cmpf;
   }
   else {
-    pkVar4->cmpf = (t_cmpf *)(pkVar4->wq + (uVar11 - 0x12));
-    knl_memcpy((t_cmpf *)(pkVar4->wq + (uVar11 - 0x12)),pk_cmpf,0x14);
+    p_knl_mpf->cmpf = (t_cmpf *)(p_knl_mpf->wq + (uVar10 - 0x12));
+    knl_memcpy((t_cmpf *)(p_knl_mpf->wq + (uVar10 - 0x12)),pk_cmpf,0x14);
   }
-  pkVar4->free_head = pbVar8;
-  pkVar4->pool = pbVar8;
-  pkVar4->pool_size = uVar2 * uVar7;
-  pkVar4->fblkcnt = (ushort)pk_cmpf->blkcnt;
+  p_knl_mpf->free_head = pbVar7;
+  p_knl_mpf->pool = pbVar7;
+  p_knl_mpf->pool_size = uVar2 * uVar6;
+  p_knl_mpf->fblkcnt = (ushort)pk_cmpf->blkcnt;
   uVar2 = pk_cmpf->blkcnt;
   while (uVar2 = uVar2 - 1, uVar2 != 0) {
-    *(byte **)pbVar8 = pbVar8 + uVar7;
-    pbVar8 = pbVar8 + uVar7;
+    *(byte **)pbVar7 = pbVar7 + uVar6;
+    pbVar7 = pbVar7 + uVar6;
   }
-  pbVar8[0] = 0;
-  pbVar8[1] = 0;
-  pbVar8[2] = 0;
-  pbVar8[3] = 0;
+  pbVar7[0] = 0;
+  pbVar7[1] = 0;
+  pbVar7[2] = 0;
+  pbVar7[3] = 0;
   iVar3 = 0;
-  iVar5 = 0;
-  if (-1 < (int)uVar9) {
+  iVar4 = 0;
+  if (-1 < (int)uVar8) {
     do {
-      iVar3 = iVar5 + 1;
-      pkVar4->wq[iVar5] = 0;
-      iVar5 = iVar3;
-    } while (iVar3 <= (int)uVar9);
-    if (uVar9 == 0) {
-      bVar6 = 0xfe;
+      iVar3 = iVar4 + 1;
+      p_knl_mpf->wq[iVar4] = 0;
+      iVar4 = iVar3;
+    } while (iVar3 <= (int)uVar8);
+    if (uVar8 == 0) {
+      bVar5 = 0xfe;
       goto LAB_2014faac;
     }
   }
-  bVar6 = 0xff;
+  bVar5 = 0xff;
 LAB_2014faac:
-  pkVar4->wq[iVar3] = bVar6;
+  p_knl_mpf->wq[iVar3] = bVar5;
   software_interrupt(0);
-  return uVar10;
+  return uVar9;
 }
 
 
@@ -1107,13 +1109,13 @@ uint itron_acre_mpl(uint param_1,byte *param_2)
   undefined1 extraout_r1;
   undefined1 extraout_r1_00;
   undefined1 uVar3;
-  knl_mpf *pkVar4;
+  knl_mpf *p_knl_mpf;
+  int iVar4;
   int iVar5;
-  int iVar6;
-  uint uVar7;
-  int iVar8;
-  uint uVar9;
-  int iVar10;
+  uint uVar6;
+  int iVar7;
+  uint uVar8;
+  int iVar9;
   
   if (knl_sys.ctx_isr != 0) {
     knl_sys.last_ercd = -0x19;
@@ -1129,83 +1131,83 @@ uint itron_acre_mpl(uint param_1,byte *param_2)
       software_interrupt(0);
       return 0xffffffd7;
     }
-    uVar9 = 0;
+    uVar8 = 0;
   }
   else {
     param_1 = 8;
-    pkVar4 = knl_mpf_tab[0];
-    while (uVar9 = param_1, pkVar4 != (knl_mpf *)0x0) {
+    p_knl_mpf = knl_mpf_tab[0];
+    while (uVar8 = param_1, p_knl_mpf != (knl_mpf *)0x0) {
       param_1 = param_1 - 1;
       if (param_1 == 0) {
         software_interrupt(0);
         return 0xffffffde;
       }
-      pkVar4 = *(knl_mpf **)(&DAT_208dbf04 + param_1 * 4);
+      p_knl_mpf = *(knl_mpf **)(&DAT_208dbf04 + param_1 * 4);
     }
   }
-  iVar8 = *(int *)(param_2 + 8);
-  iVar10 = *(int *)(param_2 + 4);
-  if ((iVar8 == 0) && (iVar8 = knl_pool_alloc(iVar10), iVar8 == 0)) {
+  iVar7 = *(int *)(param_2 + 8);
+  iVar9 = *(int *)(param_2 + 4);
+  if ((iVar7 == 0) && (iVar7 = knl_pool_alloc(iVar9), iVar7 == 0)) {
     software_interrupt(0);
     knl_sys.last_ercd = -0x21;
     return 0xffffffdf;
   }
   if ((*param_2 & 1) == 0) {
-    iVar6 = 0;
+    iVar5 = 0;
   }
   else {
-    iVar6 = 7;
+    iVar5 = 7;
   }
-  iVar5 = iVar6 + 0x14;
+  iVar4 = iVar5 + 0x14;
   iVar1 = knl_addr_in_image(param_2);
   if (iVar1 == 0) {
-    uVar7 = iVar6 + 0x17U & 0xfffffffc;
-    iVar5 = uVar7 + 0x10;
+    uVar6 = iVar5 + 0x17U & 0xfffffffc;
+    iVar4 = uVar6 + 0x10;
   }
   else {
-    uVar7 = 0;
+    uVar6 = 0;
   }
-  piVar2 = (int *)knl_sys_alloc(iVar5);
+  piVar2 = (int *)knl_sys_alloc(iVar4);
   if (piVar2 == (int *)0x0) {
     software_interrupt(0);
     knl_sys.last_ercd = -5;
     return 0xfffffffb;
   }
-  FUN_201530e4(iVar8,iVar10);
+  FUN_201530e4(iVar7,iVar9);
   *(int **)(&DAT_208dbf04 + param_1 * 4) = piVar2;
-  if (uVar7 == 0) {
+  if (uVar6 == 0) {
     *piVar2 = (int)param_2;
     uVar3 = extraout_r1;
   }
   else {
-    *piVar2 = (int)piVar2 + uVar7;
-    knl_memcpy((int)piVar2 + uVar7,param_2,0x10);
+    *piVar2 = (int)piVar2 + uVar6;
+    knl_memcpy((int)piVar2 + uVar6,param_2,0x10);
     uVar3 = extraout_r1_00;
   }
-  piVar2[1] = iVar8;
-  piVar2[2] = iVar8;
-  iVar8 = 0;
-  if (-1 < iVar6) {
+  piVar2[1] = iVar7;
+  piVar2[2] = iVar7;
+  iVar7 = 0;
+  if (-1 < iVar5) {
     uVar3 = 0;
   }
-  piVar2[3] = iVar10;
-  iVar10 = iVar8;
-  if (-1 < iVar6) {
+  piVar2[3] = iVar9;
+  iVar9 = iVar7;
+  if (-1 < iVar5) {
     do {
-      iVar8 = iVar10 + 1;
-      *(undefined1 *)((int)piVar2 + iVar10 + 0x10) = uVar3;
-      iVar10 = iVar8;
-    } while (iVar8 <= iVar6);
-    if (iVar6 == 0) {
+      iVar7 = iVar9 + 1;
+      *(undefined1 *)((int)piVar2 + iVar9 + 0x10) = uVar3;
+      iVar9 = iVar7;
+    } while (iVar7 <= iVar5);
+    if (iVar5 == 0) {
       uVar3 = 0xfe;
       goto LAB_2014fccc;
     }
   }
   uVar3 = 0xff;
 LAB_2014fccc:
-  *(undefined1 *)((int)piVar2 + iVar8 + 0x10) = uVar3;
+  *(undefined1 *)((int)piVar2 + iVar7 + 0x10) = uVar3;
   software_interrupt(0);
-  return uVar9;
+  return uVar8;
 }
 
 
@@ -1220,20 +1222,20 @@ uint itron_acre_mtx(uint mtxid,t_cmtx *pk_cmtx)
   sbyte sVar1;
   int iVar2;
   byte bVar3;
-  knl_mtx *pkVar4;
+  knl_mtx *p_knl_mtx;
+  int iVar4;
   int iVar5;
-  int iVar6;
+  uint uVar6;
   uint uVar7;
   uint uVar8;
   uint uVar9;
-  uint uVar10;
   
-  uVar7 = pk_cmtx->mtxatr;
-  if (uVar7 == 3) {
-    uVar8 = pk_cmtx->ceilpri;
+  uVar6 = pk_cmtx->mtxatr;
+  if (uVar6 == 3) {
+    uVar7 = pk_cmtx->ceilpri;
   }
   else {
-    uVar8 = 8;
+    uVar7 = 8;
   }
   if (knl_sys.ctx_isr != 0) {
     knl_sys.last_ercd = -0x19;
@@ -1243,25 +1245,25 @@ uint itron_acre_mtx(uint mtxid,t_cmtx *pk_cmtx)
     knl_sys.last_ercd = -0x12;
     return 0xffffffee;
   }
-  if (3 < (int)uVar7) {
+  if (3 < (int)uVar6) {
     knl_sys.last_ercd = -0xb;
     return 0xfffffff5;
   }
-  if ((uVar7 == 3) && ((uVar8 == 0 || (8 < uVar8)))) {
+  if ((uVar6 == 3) && ((uVar7 == 0 || (8 < uVar7)))) {
     knl_sys.last_ercd = -0x11;
     return 0xffffffef;
   }
   software_interrupt(0);
   if (mtxid == 0) {
     mtxid = 0x20;
-    pkVar4 = DAT_208dc044;
-    while (uVar9 = mtxid, pkVar4 != (knl_mtx *)0x0) {
+    p_knl_mtx = DAT_208dc044;
+    while (uVar8 = mtxid, p_knl_mtx != (knl_mtx *)0x0) {
       mtxid = mtxid - 1;
       if (mtxid == 0) {
         software_interrupt(0);
         return 0xffffffde;
       }
-      pkVar4 = knl_mtx_tab[mtxid];
+      p_knl_mtx = knl_mtx_tab[mtxid];
     }
   }
   else {
@@ -1269,65 +1271,65 @@ uint itron_acre_mtx(uint mtxid,t_cmtx *pk_cmtx)
       software_interrupt(0);
       return 0xffffffd7;
     }
-    uVar9 = 0;
+    uVar8 = 0;
   }
-  if (uVar7 == 0) {
-    iVar6 = 0;
+  if (uVar6 == 0) {
+    iVar5 = 0;
   }
   else {
-    iVar6 = 7;
+    iVar5 = 7;
   }
-  iVar5 = iVar6 + 0x10;
+  iVar4 = iVar5 + 0x10;
   iVar2 = knl_addr_in_image(pk_cmtx);
   if (iVar2 == 0) {
-    uVar10 = iVar6 + 0x13U & 0xfffffffc;
-    iVar5 = uVar10 + 0xc;
+    uVar9 = iVar5 + 0x13U & 0xfffffffc;
+    iVar4 = uVar9 + 0xc;
   }
   else {
-    uVar10 = 0;
+    uVar9 = 0;
   }
-  pkVar4 = (knl_mtx *)knl_sys_alloc(iVar5);
-  if (pkVar4 == (knl_mtx *)0x0) {
+  p_knl_mtx = (knl_mtx *)knl_sys_alloc(iVar4);
+  if (p_knl_mtx == (knl_mtx *)0x0) {
     software_interrupt(0);
     knl_sys.last_ercd = -5;
     return 0xfffffffb;
   }
-  knl_mtx_tab[mtxid] = pkVar4;
-  if (uVar10 == 0) {
-    pkVar4->cmtx = pk_cmtx;
+  knl_mtx_tab[mtxid] = p_knl_mtx;
+  if (uVar9 == 0) {
+    p_knl_mtx->cmtx = pk_cmtx;
   }
   else {
-    pkVar4->cmtx = (t_cmtx *)(pkVar4->wq + (uVar10 - 0xc));
-    knl_memcpy((t_cmtx *)(pkVar4->wq + (uVar10 - 0xc)),pk_cmtx,0xc);
+    p_knl_mtx->cmtx = (t_cmtx *)(p_knl_mtx->wq + (uVar9 - 0xc));
+    knl_memcpy((t_cmtx *)(p_knl_mtx->wq + (uVar9 - 0xc)),pk_cmtx,0xc);
   }
-  if ((int)uVar7 < 2) {
+  if ((int)uVar6 < 2) {
     sVar1 = 0;
   }
   else {
-    sVar1 = (sbyte)uVar8;
+    sVar1 = (sbyte)uVar7;
   }
-  pkVar4->pri = sVar1;
-  pkVar4->owner = 0;
-  iVar5 = 0;
-  pkVar4->prev_held = 0;
-  pkVar4->mtxatr = uVar7;
-  iVar2 = iVar5;
-  if (-1 < iVar6) {
+  p_knl_mtx->pri = sVar1;
+  p_knl_mtx->owner = 0;
+  iVar4 = 0;
+  p_knl_mtx->prev_held = 0;
+  p_knl_mtx->mtxatr = uVar6;
+  iVar2 = iVar4;
+  if (-1 < iVar5) {
     do {
-      iVar5 = iVar2 + 1;
-      pkVar4->wq[iVar2] = 0;
-      iVar2 = iVar5;
-    } while (iVar5 <= iVar6);
-    if (iVar6 == 0) {
+      iVar4 = iVar2 + 1;
+      p_knl_mtx->wq[iVar2] = 0;
+      iVar2 = iVar4;
+    } while (iVar4 <= iVar5);
+    if (iVar5 == 0) {
       bVar3 = 0xfe;
       goto LAB_2014fe9c;
     }
   }
   bVar3 = 0xff;
 LAB_2014fe9c:
-  pkVar4->wq[iVar5] = bVar3;
+  p_knl_mtx->wq[iVar4] = bVar3;
   software_interrupt(0);
-  return uVar9;
+  return uVar8;
 }
 
 
@@ -1337,14 +1339,14 @@ uint itron_acre_sem(uint semid,t_csem *pk_csem)
 
 {
   int iVar1;
-  knl_sem *pkVar2;
+  knl_sem *p_knl_sem;
   byte extraout_r1;
   byte extraout_r1_00;
-  byte bVar3;
+  byte bVar2;
+  int iVar3;
   int iVar4;
-  int iVar5;
+  uint uVar5;
   uint uVar6;
-  uint uVar7;
   
   if (knl_sys.ctx_isr != 0) {
     knl_sys.last_ercd = -0x19;
@@ -1361,7 +1363,7 @@ uint itron_acre_sem(uint semid,t_csem *pk_csem)
   software_interrupt(0);
   if (semid == 0) {
     semid = 0x40;
-    while (uVar6 = semid, knl_sem_tab[semid] != (knl_sem *)0x0) {
+    while (uVar5 = semid, knl_sem_tab[semid] != (knl_sem *)0x0) {
       semid = semid - 1;
       if (semid == 0) {
         software_interrupt(0);
@@ -1374,62 +1376,62 @@ uint itron_acre_sem(uint semid,t_csem *pk_csem)
       software_interrupt(0);
       return 0xffffffd7;
     }
-    uVar6 = 0;
+    uVar5 = 0;
   }
   if ((pk_csem->sematr & 1) == 0) {
-    iVar5 = 0;
+    iVar4 = 0;
   }
   else {
-    iVar5 = 7;
+    iVar4 = 7;
   }
-  iVar4 = iVar5 + 0xc;
+  iVar3 = iVar4 + 0xc;
   iVar1 = knl_addr_in_image(pk_csem);
   if (iVar1 == 0) {
-    uVar7 = iVar5 + 0xfU & 0xfffffffc;
-    iVar4 = uVar7 + 0x10;
+    uVar6 = iVar4 + 0xfU & 0xfffffffc;
+    iVar3 = uVar6 + 0x10;
   }
   else {
-    uVar7 = 0;
+    uVar6 = 0;
   }
-  pkVar2 = (knl_sem *)knl_sys_alloc(iVar4);
-  if (pkVar2 == (knl_sem *)0x0) {
+  p_knl_sem = (knl_sem *)knl_sys_alloc(iVar3);
+  if (p_knl_sem == (knl_sem *)0x0) {
     software_interrupt(0);
     knl_sys.last_ercd = -5;
     return 0xfffffffb;
   }
-  knl_sem_tab[semid] = pkVar2;
-  if (uVar7 == 0) {
-    pkVar2->csem = pk_csem;
-    bVar3 = extraout_r1;
+  knl_sem_tab[semid] = p_knl_sem;
+  if (uVar6 == 0) {
+    p_knl_sem->csem = pk_csem;
+    bVar2 = extraout_r1;
   }
   else {
-    pkVar2->csem = (t_csem *)(pkVar2->wq + (uVar7 - 8));
-    knl_memcpy((t_csem *)(pkVar2->wq + (uVar7 - 8)),pk_csem,0x10);
-    bVar3 = extraout_r1_00;
+    p_knl_sem->csem = (t_csem *)(p_knl_sem->wq + (uVar6 - 8));
+    knl_memcpy((t_csem *)(p_knl_sem->wq + (uVar6 - 8)),pk_csem,0x10);
+    bVar2 = extraout_r1_00;
   }
-  if (-1 < iVar5) {
-    bVar3 = 0;
+  if (-1 < iVar4) {
+    bVar2 = 0;
   }
-  pkVar2->semcnt = (ushort)pk_csem->isemcnt;
-  pkVar2->maxsem = (ushort)pk_csem->maxsem;
-  iVar4 = 0;
-  iVar1 = iVar4;
-  if (-1 < iVar5) {
+  p_knl_sem->semcnt = (ushort)pk_csem->isemcnt;
+  p_knl_sem->maxsem = (ushort)pk_csem->maxsem;
+  iVar3 = 0;
+  iVar1 = iVar3;
+  if (-1 < iVar4) {
     do {
-      iVar4 = iVar1 + 1;
-      pkVar2->wq[iVar1] = bVar3;
-      iVar1 = iVar4;
-    } while (iVar4 <= iVar5);
-    if (iVar5 == 0) {
-      bVar3 = 0xfe;
+      iVar3 = iVar1 + 1;
+      p_knl_sem->wq[iVar1] = bVar2;
+      iVar1 = iVar3;
+    } while (iVar3 <= iVar4);
+    if (iVar4 == 0) {
+      bVar2 = 0xfe;
       goto LAB_2015007c;
     }
   }
-  bVar3 = 0xff;
+  bVar2 = 0xff;
 LAB_2015007c:
-  pkVar2->wq[iVar4] = bVar3;
+  p_knl_sem->wq[iVar3] = bVar2;
   software_interrupt(0);
-  return uVar6;
+  return uVar5;
 }
 
 
@@ -1442,14 +1444,14 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
 {
   byte bVar1;
   int iVar2;
-  knl_tcb *pkVar3;
-  t_ctsk *ptVar4;
-  uint uVar5;
+  knl_tcb *p_knl_tcb;
+  t_ctsk *p_t_ctsk;
+  uint uVar3;
+  uint uVar4;
+  uint *puVar5;
   uint uVar6;
-  uint *puVar7;
-  uint uVar8;
-  undefined4 uVar9;
-  int iVar10;
+  undefined4 uVar7;
+  int iVar8;
   
   if (knl_sys.ctx_isr == 0) {
     if (DAT_201659d0 < param_1) {
@@ -1458,11 +1460,11 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
     else {
       if (*(int *)(param_2 + 0xc) < 9) {
         software_interrupt(0);
-        uVar6 = DAT_201659d0;
+        uVar4 = DAT_201659d0;
         if (param_1 == 0) {
-          while (uVar8 = uVar6, knl_tsk_tab[uVar6] != (knl_tcb *)0x0) {
-            uVar6 = uVar6 - 1;
-            if (uVar6 == 0) {
+          while (uVar6 = uVar4, knl_tsk_tab[uVar4] != (knl_tcb *)0x0) {
+            uVar4 = uVar4 - 1;
+            if (uVar4 == 0) {
               software_interrupt(0);
               return 0xffffffde;
             }
@@ -1473,61 +1475,63 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
             software_interrupt(0);
             return 0xffffffd7;
           }
-          uVar6 = param_1;
-          uVar8 = 0;
+          uVar4 = param_1;
+          uVar6 = 0;
         }
         iVar2 = knl_addr_in_image(param_2);
         if (iVar2 == 0) {
-          uVar9 = 0x44;
+          uVar7 = 0x44;
           iVar2 = 0x28;
         }
         else {
-          uVar9 = 0x28;
+          uVar7 = 0x28;
           iVar2 = 0;
         }
-        pkVar3 = (knl_tcb *)knl_sys_alloc(uVar9);
-        if (pkVar3 == (knl_tcb *)0x0) {
+        p_knl_tcb = (knl_tcb *)knl_sys_alloc(uVar7);
+        if (p_knl_tcb == (knl_tcb *)0x0) {
           software_interrupt(0);
           knl_sys.last_ercd = -5;
           return 0xfffffffb;
         }
-        puVar7 = *(uint **)(param_2 + 0x14);
-        iVar10 = *(int *)(param_2 + 0x10);
-        if ((puVar7 == (uint *)0x0) &&
-           (puVar7 = (uint *)knl_stack_alloc(iVar10), puVar7 == (uint *)0x0)) {
-          knl_sys_free(pkVar3,uVar9);
+        puVar5 = *(uint **)(param_2 + 0x14);
+        iVar8 = *(int *)(param_2 + 0x10);
+                    /* knl_freelist_alloc on the system pool 0x208003FC [doc] */
+        if ((puVar5 == (uint *)0x0) &&
+           (puVar5 = (uint *)knl_stack_alloc(iVar8), puVar5 == (uint *)0x0)) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
+          knl_sys_free(p_knl_tcb,uVar7);
           software_interrupt(0);
           knl_sys.last_ercd = -0x21;
           return 0xffffffdf;
         }
-        knl_tsk_tab[uVar6] = pkVar3;
-        pkVar3->state = 0;
-        pkVar3->act_cnt = 0;
-        pkVar3->mtx_held = 0;
+        knl_tsk_tab[uVar4] = p_knl_tcb;
+        p_knl_tcb->state = 0;
+        p_knl_tcb->act_cnt = 0;
+        p_knl_tcb->mtx_held = 0;
         if (iVar2 == 0) {
-          pkVar3->ctsk = (t_ctsk *)param_2;
+          p_knl_tcb->ctsk = (t_ctsk *)param_2;
         }
         else {
-          ptVar4 = (t_ctsk *)((int)&pkVar3->sp + iVar2);
-          pkVar3->ctsk = ptVar4;
-          knl_memcpy(ptVar4,param_2,0x1c);
+          p_t_ctsk = (t_ctsk *)((int)&p_knl_tcb->sp + iVar2);
+          p_knl_tcb->ctsk = p_t_ctsk;
+          knl_memcpy(p_t_ctsk,param_2,0x1c);
         }
         bVar1 = param_2[0xc];
-        pkVar3->pri = bVar1;
-        pkVar3->bpri = bVar1;
-        pkVar3->stk = (byte *)puVar7;
-        uVar5 = iVar10 - 0x48U >> 2;
-        pkVar3->f_0x1c_u32 = 0;
+        p_knl_tcb->pri = bVar1;
+        p_knl_tcb->bpri = bVar1;
+        p_knl_tcb->stk = (byte *)puVar5;
+        uVar3 = iVar8 - 0x48U >> 2;
+        p_knl_tcb->f_0x1c_u32 = 0;
         do {
-          uVar5 = uVar5 - 1;
-          *puVar7 = uVar6 << 0x18 | uVar6 << 0x10 | uVar6 << 8 | uVar6;
-          puVar7 = puVar7 + 1;
-        } while (uVar5 != 0);
+          uVar3 = uVar3 - 1;
+          *puVar5 = uVar4 << 0x18 | uVar4 << 0x10 | uVar4 << 8 | uVar4;
+          puVar5 = puVar5 + 1;
+        } while (uVar3 != 0);
         software_interrupt(0);
         if ((*param_2 & 2) != 0) {
-          itron_act_tsk(uVar6);
+          itron_act_tsk(uVar4);
         }
-        return uVar8;
+        return uVar6;
       }
       knl_sys.last_ercd = 0xffffffef;
     }
@@ -1554,25 +1558,26 @@ code * itron_del_mpf(uint param_1)
   int iVar4;
   byte *pbVar5;
   uint tskid;
-  knl_mpf *pkVar6;
+  knl_mpf *p_knl_mpf;
   
   bVar2 = false;
   if (knl_sys.ctx_isr == 0) {
     if ((param_1 != 0) && (param_1 < 0x11)) {
       software_interrupt(0);
-      pkVar6 = knl_mpf_tab[param_1];
-      if (pkVar6 == (knl_mpf *)0x0) {
+      p_knl_mpf = knl_mpf_tab[param_1];
+      if (p_knl_mpf == (knl_mpf *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
-      if (pkVar6->free_head == (byte *)0x0) {
-        pbVar5 = pkVar6->wq;
-        bVar1 = pkVar6->wq[0];
+      if (p_knl_mpf->free_head == (byte *)0x0) {
+        pbVar5 = p_knl_mpf->wq;
+        bVar1 = p_knl_mpf->wq[0];
         while (tskid = (uint)bVar1, tskid < 0xfe) {
           while (tskid != 0) {
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -1589,18 +1594,20 @@ code * itron_del_mpf(uint param_1)
           bVar1 = *pbVar5;
         }
       }
-      if (pkVar6->cmpf->mpf == (byte *)0x0) {
-        knl_pool_free(pkVar6->pool,pkVar6->pool_size);
+      if (p_knl_mpf->cmpf->mpf == (byte *)0x0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
+        knl_pool_free(p_knl_mpf->pool,p_knl_mpf->pool_size);
       }
       iVar4 = 0x14;
-      if (pkVar6->wq[1] < 0xfe) {
+      if (p_knl_mpf->wq[1] < 0xfe) {
         iVar4 = 0x1b;
       }
-      iVar3 = knl_addr_in_image(pkVar6->cmpf);
+      iVar3 = knl_addr_in_image(p_knl_mpf->cmpf);
       if (iVar3 == 0) {
         iVar4 = (iVar4 + 3U & 0xfffffffc) + 0x14;
       }
-      knl_sys_free(pkVar6,iVar4);
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
+      knl_sys_free(p_knl_mpf,iVar4);
       knl_mpf_tab[param_1] = (knl_mpf *)0x0;
       if (bVar2) {
         software_interrupt(0);
@@ -1632,25 +1639,26 @@ code * itron_del_sem(uint param_1)
   int iVar3;
   uint tskid;
   byte *pbVar4;
-  knl_sem *pkVar5;
+  knl_sem *p_knl_sem;
   
   bVar1 = false;
   if (knl_sys.ctx_isr == 0) {
     if ((param_1 != 0) && (param_1 < 0x41)) {
       software_interrupt(0);
-      pkVar5 = knl_sem_tab[param_1];
-      if (pkVar5 == (knl_sem *)0x0) {
+      p_knl_sem = knl_sem_tab[param_1];
+      if (p_knl_sem == (knl_sem *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
-      if (pkVar5->semcnt == 0) {
-        tskid = (uint)pkVar5->wq[0];
-        pbVar4 = pkVar5->wq;
+      if (p_knl_sem->semcnt == 0) {
+        tskid = (uint)p_knl_sem->wq[0];
+        pbVar4 = p_knl_sem->wq;
         do {
           while (tskid != 0) {
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -1668,14 +1676,15 @@ code * itron_del_sem(uint param_1)
         } while (tskid < 0xfe);
       }
       iVar3 = 0xc;
-      if (pkVar5->wq[1] < 0xfe) {
+      if (p_knl_sem->wq[1] < 0xfe) {
         iVar3 = 0x13;
       }
-      iVar2 = knl_addr_in_image(pkVar5->csem);
+      iVar2 = knl_addr_in_image(p_knl_sem->csem);
       if (iVar2 == 0) {
         iVar3 = (iVar3 + 3U & 0xfffffffc) + 0x10;
       }
-      knl_sys_free(pkVar5,iVar3);
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
+      knl_sys_free(p_knl_sem,iVar3);
       knl_sem_tab[param_1] = (knl_sem *)0x0;
       if (!bVar1) {
         software_interrupt(0);
@@ -1722,7 +1731,7 @@ code * itron_dis_dsp(void)
 
 // ===== itron_dly_tsk @ 20150740 (172 bytes)
 
-undefined4 itron_dly_tsk(int param_1)
+undefined4 itron_dly_tsk(int tmout)
 
 {
   undefined4 uVar1;
@@ -1734,9 +1743,10 @@ undefined4 itron_dly_tsk(int param_1)
     if (uVar2 != ((byte)DAT_201659d0 + 1 & 0xff)) {
       tcb = knl_tsk_tab[uVar2];
       software_interrupt(0);
-      if (param_1 != 0) {
-        knl_timeout_add(param_1,tcb,knl_rdq[0]);
+      if (tmout != 0) {
+        knl_timeout_add(tmout,tcb,knl_rdq[0]);
         tcb->state = 0x32;
+                    /* removes the running task from its ready queue [doc] */
         uVar1 = knl_wait_self(tcb,uVar2);
         return uVar1;
       }
@@ -1836,13 +1846,13 @@ code * itron_ext_tsk(void)
 
 // ===== FUN_201509f4 @ 201509f4 (148 bytes)
 
-code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,knl_tcb *param_3,byte param_4)
+code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,knl_tcb *tcb,byte tskid)
 
 {
   uint uVar1;
   uint uVar2;
   
-  uVar2 = param_3->ctsk->task;
+  uVar2 = tcb->ctsk->task;
   param_1[0xc] = param_1 + 0x12;
   *param_1 = param_2;
   uVar1 = knl_sys.task_cpsr;
@@ -1854,12 +1864,12 @@ code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,knl_tcb *param_3,byte
   param_1[0xf] = uVar1 | param_1[0xf];
   param_1[0xd] = itron_ext_tsk;
   param_1[0x11] = uVar2;
-  param_3->sp = (uint)param_1;
-  param_3->f_0x08_u8 = 0;
-  param_3->f_0x09_u8 = 0;
-  param_3->f_0x20_u32 = 0;
-  param_3->state = 0x10;
-  FUN_201538d4(knl_rdq + param_3->bpri,param_3,param_4);
+  tcb->sp = (uint)param_1;
+  tcb->f_0x08_u8 = 0;
+  tcb->f_0x09_u8 = 0;
+  tcb->f_0x20_u32 = 0;
+  tcb->state = 0x10;
+  FUN_201538d4(knl_rdq + tcb->bpri,tcb,tskid);
   software_interrupt(0);
   return FUN_2015677c;
 }
@@ -1873,14 +1883,14 @@ code * FUN_201509f4(undefined4 *param_1,undefined4 param_2,knl_tcb *param_3,byte
 code * itron_get_pri(uint param_1,int *param_2)
 
 {
-  knl_tcb *pkVar1;
-  bool bVar2;
+  knl_tcb *p_knl_tcb;
+  bool bVar1;
   
-  bVar2 = param_1 == 0;
-  if (bVar2) {
+  bVar1 = param_1 == 0;
+  if (bVar1) {
     param_1 = (uint)knl_rdq[0];
   }
-  if ((DAT_201659d0 < param_1) || (knl_sys.ctx_isr != 0 && bVar2)) {
+  if ((DAT_201659d0 < param_1) || (knl_sys.ctx_isr != 0 && bVar1)) {
     knl_sys.last_ercd = -0x12;
     return (code *)0xffffffee;
   }
@@ -1889,10 +1899,10 @@ code * itron_get_pri(uint param_1,int *param_2)
     return (code *)0x0;
   }
   software_interrupt(0);
-  pkVar1 = knl_tsk_tab[param_1];
-  if (pkVar1 != (knl_tcb *)0x0) {
-    if (pkVar1->state != 0) {
-      *param_2 = (int)pkVar1->pri;
+  p_knl_tcb = knl_tsk_tab[param_1];
+  if (p_knl_tcb != (knl_tcb *)0x0) {
+    if (p_knl_tcb->state != 0) {
+      *param_2 = (int)p_knl_tcb->pri;
       software_interrupt(0);
       return knl_svc_return;
     }
@@ -1978,9 +1988,9 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
 {
   byte bVar1;
   uint tskid;
-  knl_mpf *pkVar2;
-  code *pcVar3;
-  byte *pbVar4;
+  knl_mpf *p_knl_mpf;
+  code *pcVar2;
+  byte *pbVar3;
   knl_tcb *tcb;
   
   if ((param_1 == 0) || (0x10 < param_1)) {
@@ -1988,38 +1998,40 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
     return (code *)0xffffffee;
   }
   software_interrupt(0);
-  pkVar2 = knl_mpf_tab[param_1];
-  if (pkVar2 == (knl_mpf *)0x0) {
+  p_knl_mpf = knl_mpf_tab[param_1];
+  if (p_knl_mpf == (knl_mpf *)0x0) {
     software_interrupt(0);
     return (code *)0xffffffd6;
   }
-  if (((((uint)param_2 & 3) == 0) && (pkVar2->pool <= param_2)) &&
-     (param_2 < pkVar2->pool + pkVar2->pool_size)) {
-    if (pkVar2->free_head == (byte *)0x0) {
-      pbVar4 = pkVar2->wq;
-      bVar1 = pkVar2->wq[0];
+  if (((((uint)param_2 & 3) == 0) && (p_knl_mpf->pool <= param_2)) &&
+     (param_2 < p_knl_mpf->pool + p_knl_mpf->pool_size)) {
+    if (p_knl_mpf->free_head == (byte *)0x0) {
+      pbVar3 = p_knl_mpf->wq;
+      bVar1 = p_knl_mpf->wq[0];
       while (tskid = (uint)bVar1, tskid < 0xfe) {
         if (tskid != 0) {
           tcb = knl_tsk_tab[tskid];
           **(undefined4 **)(tcb->sp + 0xc) = param_2;
           if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
             knl_timeout_remove(tcb,tskid);
           }
           tcb->state = 0x10;
           if (tcb->f_0x09_u8 != 0) {
-            pcVar3 = (code *)knl_release_suspended();
-            return pcVar3;
+            pcVar2 = (code *)knl_release_suspended();
+            return pcVar2;
           }
-          pcVar3 = (code *)knl_make_ready(tcb,tskid);
-          return pcVar3;
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+          pcVar2 = (code *)knl_make_ready(tcb,tskid);
+          return pcVar2;
         }
-        pbVar4 = pbVar4 + 1;
-        bVar1 = *pbVar4;
+        pbVar3 = pbVar3 + 1;
+        bVar1 = *pbVar3;
       }
     }
-    *(byte **)param_2 = pkVar2->free_head;
-    pkVar2->free_head = param_2;
-    pkVar2->fblkcnt = pkVar2->fblkcnt + 1;
+    *(byte **)param_2 = p_knl_mpf->free_head;
+    p_knl_mpf->free_head = param_2;
+    p_knl_mpf->fblkcnt = p_knl_mpf->fblkcnt + 1;
     software_interrupt(0);
     return knl_svc_return;
   }
@@ -2037,41 +2049,41 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
 code * itron_rot_rdq(uint param_1)
 
 {
-  knl_tcb *pkVar1;
-  uint uVar2;
-  byte *pbVar3;
+  knl_tcb *p_knl_tcb;
+  uint uVar1;
+  byte *pbVar2;
   
   if (param_1 == 0) {
     if (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U)) {
       software_interrupt(0);
-      uVar2 = (uint)knl_rdq[0];
-      pkVar1 = knl_tsk_tab[uVar2];
-      if ((int)pkVar1->bpri == (int)knl_sys.run_pri) {
-        pbVar3 = pkVar1->queue;
+      uVar1 = (uint)knl_rdq[0];
+      p_knl_tcb = knl_tsk_tab[uVar1];
+      if ((int)p_knl_tcb->bpri == (int)knl_sys.run_pri) {
+        pbVar2 = p_knl_tcb->queue;
       }
       else {
-        pbVar3 = knl_rdq + pkVar1->bpri;
-        uVar2 = (uint)*pbVar3;
-        if (uVar2 == 0) {
+        pbVar2 = knl_rdq + p_knl_tcb->bpri;
+        uVar1 = (uint)*pbVar2;
+        if (uVar1 == 0) {
           software_interrupt(0);
           return knl_svc_return;
         }
-        pkVar1 = knl_tsk_tab[uVar2];
+        p_knl_tcb = knl_tsk_tab[uVar1];
       }
-      if (pkVar1->q_next == uVar2) {
+      if (p_knl_tcb->q_next == uVar1) {
         software_interrupt(0);
         return knl_svc_return;
       }
-      *pbVar3 = pkVar1->q_next;
+      *pbVar2 = p_knl_tcb->q_next;
       software_interrupt(0);
       return knl_dispatch;
     }
   }
   else if (param_1 < 9) {
     software_interrupt(0);
-    uVar2 = (uint)knl_rdq[param_1];
-    if (((uVar2 != 0) && (knl_tsk_tab[uVar2]->q_next != uVar2)) &&
-       (knl_rdq[param_1] = knl_tsk_tab[uVar2]->q_next, (int)param_1 <= (int)knl_sys.run_pri)) {
+    uVar1 = (uint)knl_rdq[param_1];
+    if (((uVar1 != 0) && (knl_tsk_tab[uVar1]->q_next != uVar1)) &&
+       (knl_rdq[param_1] = knl_tsk_tab[uVar1]->q_next, (int)param_1 <= (int)knl_sys.run_pri)) {
       software_interrupt(0);
       return knl_dispatch;
     }
@@ -2096,11 +2108,11 @@ code * itron_set_flg(uint param_1,uint param_2,undefined4 param_3,undefined4 par
   uint uVar6;
   uint *puVar7;
   uint *extraout_r2;
-  knl_tcb *pkVar8;
-  uint uVar9;
-  knl_flg *pkVar10;
-  byte *pbVar11;
-  bool bVar12;
+  knl_tcb *p_knl_tcb;
+  uint uVar8;
+  knl_flg *p_knl_flg;
+  byte *pbVar9;
+  bool bVar10;
   
   if (param_2 == 0) {
     knl_sys.last_ercd = 0;
@@ -2108,58 +2120,58 @@ code * itron_set_flg(uint param_1,uint param_2,undefined4 param_3,undefined4 par
   else {
     if ((param_1 != 0) && (param_1 < 0x41)) {
       software_interrupt(0);
-      pkVar10 = knl_flg_tab[param_1];
-      if (pkVar10 == (knl_flg *)0x0) {
+      p_knl_flg = knl_flg_tab[param_1];
+      if (p_knl_flg == (knl_flg *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
-      for (pbVar11 = pkVar10->wq; uVar9 = (uint)*pbVar11, uVar9 == 0; pbVar11 = pbVar11 + 1) {
+      for (pbVar9 = p_knl_flg->wq; uVar8 = (uint)*pbVar9, uVar8 == 0; pbVar9 = pbVar9 + 1) {
       }
-      if (0xfd < uVar9) {
-        pkVar10->flgptn = pkVar10->flgptn | param_2;
+      if (0xfd < uVar8) {
+        p_knl_flg->flgptn = p_knl_flg->flgptn | param_2;
         software_interrupt(0);
         return knl_svc_return;
       }
-      pkVar8 = knl_tsk_tab[uVar9];
-      uVar6 = (uint)pkVar8->q_prev;
-      bVar12 = uVar6 == uVar9;
-      if (bVar12) {
-        uVar6 = (uint)pkVar10->flgatr;
+      p_knl_tcb = knl_tsk_tab[uVar8];
+      uVar6 = (uint)p_knl_tcb->q_prev;
+      bVar10 = uVar6 == uVar8;
+      if (bVar10) {
+        uVar6 = (uint)p_knl_flg->flgatr;
       }
-      if (!bVar12 || (uVar6 & 2) != 0) {
-        bVar12 = false;
-        param_2 = param_2 | pkVar10->flgptn;
+      if (!bVar10 || (uVar6 & 2) != 0) {
+        bVar10 = false;
+        param_2 = param_2 | p_knl_flg->flgptn;
 LAB_20150fa4:
-        pkVar8 = knl_tsk_tab[*pbVar11];
-        bVar1 = pkVar8->q_prev;
-        uVar9 = (uint)*pbVar11;
+        p_knl_tcb = knl_tsk_tab[*pbVar9];
+        bVar1 = p_knl_tcb->q_prev;
+        uVar8 = (uint)*pbVar9;
         do {
-          bVar2 = pkVar8->state;
-          bVar3 = pkVar8->q_next;
-          uVar6 = *(uint *)(pkVar8->sp + 8);
+          bVar2 = p_knl_tcb->state;
+          bVar3 = p_knl_tcb->q_next;
+          uVar6 = *(uint *)(p_knl_tcb->sp + 8);
           if ((bVar2 & 1) == 0) {
             if ((uVar6 & ~param_2) == 0) goto LAB_2015109c;
           }
           else if ((uVar6 & param_2) != 0) {
 LAB_2015109c:
-            **(uint **)(pkVar8->sp + 0xc) = param_2;
+            **(uint **)(p_knl_tcb->sp + 0xc) = param_2;
             if ((bVar2 & 2) != 0) {
-              knl_timeout_remove(pkVar8,uVar9);
+              knl_timeout_remove(p_knl_tcb,uVar8);
             }
-            pkVar8->state = 0x10;
-            if (pkVar8->f_0x09_u8 == 0) {
-              iVar5 = (int)pkVar8->pri;
+            p_knl_tcb->state = 0x10;
+            if (p_knl_tcb->f_0x09_u8 == 0) {
+              iVar5 = (int)p_knl_tcb->pri;
               if (iVar5 < knl_sys.run_pri) {
-                bVar12 = (bool)(bVar12 | iVar5 < knl_sys.run_pri);
+                bVar10 = (bool)(bVar10 | iVar5 < knl_sys.run_pri);
               }
-              knl_queue_move(knl_rdq + iVar5,pkVar8,uVar9);
+              knl_queue_move(knl_rdq + iVar5,p_knl_tcb,uVar8);
             }
             else {
-              knl_queue_remove(pkVar8,uVar9);
+              knl_queue_remove(p_knl_tcb,uVar8);
             }
             if ((bVar2 & 4) != 0) {
-              pkVar10->flgptn = 0;
-              if (!bVar12) {
+              p_knl_flg->flgptn = 0;
+              if (!bVar10) {
                 software_interrupt(0);
                 return knl_svc_return;
               }
@@ -2167,38 +2179,40 @@ LAB_2015109c:
               return knl_dispatch;
             }
           }
-          if (bVar1 == uVar9) goto LAB_2015116c;
-          pkVar8 = knl_tsk_tab[bVar3];
-          uVar9 = (uint)bVar3;
+          if (bVar1 == uVar8) goto LAB_2015116c;
+          p_knl_tcb = knl_tsk_tab[bVar3];
+          uVar8 = (uint)bVar3;
         } while( true );
       }
-      bVar1 = pkVar8->state;
+      bVar1 = p_knl_tcb->state;
       if ((bVar1 & 1) == 0) {
-        param_2 = pkVar10->flgptn | param_2;
-        if ((*(uint *)(pkVar8->sp + 8) & ~param_2) != 0) goto LAB_20151030;
+        param_2 = p_knl_flg->flgptn | param_2;
+        if ((*(uint *)(p_knl_tcb->sp + 8) & ~param_2) != 0) goto LAB_20151030;
       }
       else {
-        param_2 = pkVar10->flgptn | param_2;
-        if ((*(uint *)(pkVar8->sp + 8) & param_2) == 0) {
+        param_2 = p_knl_flg->flgptn | param_2;
+        if ((*(uint *)(p_knl_tcb->sp + 8) & param_2) == 0) {
 LAB_20151030:
-          pkVar10->flgptn = param_2;
+          p_knl_flg->flgptn = param_2;
           software_interrupt(0);
           return knl_svc_return;
         }
       }
-      puVar7 = *(uint **)(pkVar8->sp + 0xc);
+      puVar7 = *(uint **)(p_knl_tcb->sp + 0xc);
       *puVar7 = param_2;
       if ((bVar1 & 4) != 0) {
         param_2 = 0;
       }
-      pkVar10->flgptn = param_2;
+      p_knl_flg->flgptn = param_2;
       if ((bVar1 & 2) != 0) {
-        knl_timeout_remove(pkVar8,uVar9);
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+        knl_timeout_remove(p_knl_tcb,uVar8);
         puVar7 = extraout_r2;
       }
-      pkVar8->state = 0x10;
-      if (pkVar8->f_0x09_u8 == 0) {
-        pcVar4 = (code *)knl_make_ready(pkVar8,uVar9,puVar7,param_4);
+      p_knl_tcb->state = 0x10;
+      if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+        pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar8,puVar7,param_4);
         return pcVar4;
       }
       pcVar4 = (code *)knl_release_suspended();
@@ -2209,11 +2223,11 @@ LAB_20151030:
   return (code *)knl_sys.last_ercd;
 LAB_2015116c:
   do {
-    pbVar11 = pbVar11 + 1;
-  } while (*pbVar11 == 0);
-  if (0xfd < *pbVar11) {
-    pkVar10->flgptn = param_2;
-    if (!bVar12) {
+    pbVar9 = pbVar9 + 1;
+  } while (*pbVar9 == 0);
+  if (0xfd < *pbVar9) {
+    p_knl_flg->flgptn = param_2;
+    if (!bVar10) {
       software_interrupt(0);
       return knl_svc_return;
     }
@@ -2234,9 +2248,9 @@ code * itron_sig_sem(uint param_1)
 
 {
   ushort uVar1;
-  knl_sem *pkVar2;
-  code *pcVar3;
-  byte *pbVar4;
+  knl_sem *p_knl_sem;
+  code *pcVar2;
+  byte *pbVar3;
   uint tskid;
   knl_tcb *tcb;
   
@@ -2245,35 +2259,37 @@ code * itron_sig_sem(uint param_1)
     return (code *)0xffffffee;
   }
   software_interrupt(0);
-  pkVar2 = knl_sem_tab[param_1];
-  if (pkVar2 == (knl_sem *)0x0) {
+  p_knl_sem = knl_sem_tab[param_1];
+  if (p_knl_sem == (knl_sem *)0x0) {
     software_interrupt(0);
     return (code *)0xffffffd6;
   }
-  uVar1 = pkVar2->semcnt;
+  uVar1 = p_knl_sem->semcnt;
   if (uVar1 == 0) {
-    pbVar4 = pkVar2->wq;
+    pbVar3 = p_knl_sem->wq;
     do {
-      tskid = (uint)*pbVar4;
-      pbVar4 = pbVar4 + 1;
+      tskid = (uint)*pbVar3;
+      pbVar3 = pbVar3 + 1;
     } while (tskid == 0);
     if (tskid < 0xfe) {
       tcb = knl_tsk_tab[tskid];
       if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(tcb,tskid);
       }
       tcb->state = 0x10;
       if (tcb->f_0x09_u8 != 0) {
-        pcVar3 = (code *)knl_release_suspended();
-        return pcVar3;
+        pcVar2 = (code *)knl_release_suspended();
+        return pcVar2;
       }
-      pcVar3 = (code *)knl_make_ready(tcb,tskid);
-      return pcVar3;
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+      pcVar2 = (code *)knl_make_ready(tcb,tskid);
+      return pcVar2;
     }
   }
-  pkVar2->semcnt = uVar1 + 1;
-  if (uVar1 == pkVar2->maxsem) {
-    pkVar2->semcnt = pkVar2->maxsem;
+  p_knl_sem->semcnt = uVar1 + 1;
+  if (uVar1 == p_knl_sem->maxsem) {
+    p_knl_sem->semcnt = p_knl_sem->maxsem;
     software_interrupt(0);
     return (code *)0xffffffd5;
   }
@@ -2288,7 +2304,7 @@ code * itron_sig_sem(uint param_1)
    table 0x208DBFA4, hands data to a receiver or the ring buffer, E_TMOUT on polling, waits
    otherwise [inference] */
 
-code * itron_tsnd_dtq(uint param_1,uint param_2,int param_3)
+code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
 
 {
   byte bVar1;
@@ -2296,8 +2312,8 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int param_3)
   code *pcVar3;
   uint *puVar4;
   int iVar5;
-  knl_tcb *pkVar6;
-  uint uVar7;
+  knl_tcb *p_knl_tcb;
+  uint uVar6;
   
   if ((param_1 == 0) || (8 < param_1)) {
     knl_sys.last_ercd = -0x12;
@@ -2309,18 +2325,20 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int param_3)
       software_interrupt(0);
       return (code *)0xffffffd6;
     }
-    if ((*(short *)(iVar5 + 0x16) == 0) && (uVar7 = (uint)*(byte *)(iVar5 + 0x18), uVar7 != 0)) {
-      pkVar6 = knl_tsk_tab[uVar7];
-      **(uint **)(pkVar6->sp + 0xc) = param_2;
-      if ((pkVar6->state & 2) != 0) {
-        knl_timeout_remove(pkVar6,uVar7);
+    if ((*(short *)(iVar5 + 0x16) == 0) && (uVar6 = (uint)*(byte *)(iVar5 + 0x18), uVar6 != 0)) {
+      p_knl_tcb = knl_tsk_tab[uVar6];
+      **(uint **)(p_knl_tcb->sp + 0xc) = param_2;
+      if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+        knl_timeout_remove(p_knl_tcb,uVar6);
       }
-      pkVar6->state = 0x10;
-      if (pkVar6->f_0x09_u8 != 0) {
+      p_knl_tcb->state = 0x10;
+      if (p_knl_tcb->f_0x09_u8 != 0) {
         pcVar3 = (code *)knl_release_suspended();
         return pcVar3;
       }
-      pcVar3 = (code *)knl_make_ready(pkVar6,uVar7);
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+      pcVar3 = (code *)knl_make_ready(p_knl_tcb,uVar6);
       return pcVar3;
     }
     if (*(short *)(iVar5 + 0x16) != *(short *)(iVar5 + 0x14)) {
@@ -2334,28 +2352,29 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int param_3)
       software_interrupt(0);
       return knl_svc_return;
     }
-    if (param_3 == 0) {
+    if (tmout == 0) {
       software_interrupt(0);
       return (code *)0xffffffce;
     }
     if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
-       (uVar7 = (uint)knl_rdq[0], uVar7 != ((byte)DAT_201659d0 + 1 & 0xff))) {
-      pkVar6 = knl_tsk_tab[uVar7];
-      if (param_3 == -1) {
+       (uVar6 = (uint)knl_rdq[0], uVar6 != ((byte)DAT_201659d0 + 1 & 0xff))) {
+      p_knl_tcb = knl_tsk_tab[uVar6];
+      if (tmout == -1) {
         bVar1 = 100;
       }
       else {
-        knl_timeout_add(param_3,pkVar6,knl_rdq[0]);
+        knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
         bVar1 = 0x66;
       }
-      pkVar6->state = bVar1;
+      p_knl_tcb->state = bVar1;
       iVar2 = iVar5 + 0x1a;
       if (*(byte *)(iVar5 + 0x1b) < 0xfe) {
         iVar2 = iVar2 + knl_sys.run_pri + -1;
       }
       knl_sys.wait_arg2 = param_2;
       knl_sys.wait_id = param_1;
-      pcVar3 = (code *)knl_wait_enter(iVar2,pkVar6,uVar7);
+                    /* Moves the running task into an object's wait queue [doc] */
+      pcVar3 = (code *)knl_wait_enter(iVar2,p_knl_tcb,uVar6);
       return pcVar3;
     }
     software_interrupt(0);
@@ -2439,10 +2458,12 @@ code * itron_snd_mbx(uint param_1,undefined4 *param_2)
   tcb = knl_tsk_tab[uVar8];
   **(undefined4 **)(tcb->sp + 0xc) = param_2;
   if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,uVar8);
   }
   tcb->state = 0x10;
   if (tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
     pcVar3 = (code *)knl_make_ready(tcb,uVar8);
     return pcVar3;
   }
@@ -2498,8 +2519,8 @@ uint itron_sta_tsk(uint param_1,uint param_2)
 {
   byte *pbVar1;
   uint uVar2;
-  knl_tcb *pkVar3;
-  uint uVar4;
+  knl_tcb *p_knl_tcb;
+  uint uVar3;
   
   if (param_1 == 0) {
     knl_sys.last_ercd = 0xffffffd7;
@@ -2507,31 +2528,31 @@ uint itron_sta_tsk(uint param_1,uint param_2)
   else {
     if (param_1 <= DAT_201659d0) {
       software_interrupt(0);
-      pkVar3 = knl_tsk_tab[param_1];
-      if (pkVar3 == (knl_tcb *)0x0) {
+      p_knl_tcb = knl_tsk_tab[param_1];
+      if (p_knl_tcb == (knl_tcb *)0x0) {
         software_interrupt(0);
         return 0xffffffd6;
       }
-      if (pkVar3->state == 0) {
-        uVar4 = pkVar3->ctsk->task;
-        pbVar1 = pkVar3->stk + pkVar3->ctsk->stksz;
+      if (p_knl_tcb->state == 0) {
+        uVar3 = p_knl_tcb->ctsk->task;
+        pbVar1 = p_knl_tcb->stk + p_knl_tcb->ctsk->stksz;
         *(byte **)(pbVar1 + -0x18) = pbVar1;
         *(uint *)(pbVar1 + -0x48) = param_2;
         uVar2 = knl_sys.task_cpsr;
-        if ((uVar4 & 1) != 0) {
+        if ((uVar3 & 1) != 0) {
           uVar2 = knl_sys.task_cpsr | 0x20;
         }
         *(uint *)(pbVar1 + -0xc) = uVar2;
         uVar2 = FUN_201568b8();
         *(uint *)(pbVar1 + -0xc) = uVar2 | *(uint *)(pbVar1 + -0xc);
         *(code **)(pbVar1 + -0x14) = itron_ext_tsk;
-        *(uint *)(pbVar1 + -4) = uVar4;
-        pkVar3->sp = (uint)(pbVar1 + -0x48);
-        pkVar3->f_0x08_u8 = 0;
-        pkVar3->f_0x09_u8 = 0;
-        pkVar3->f_0x20_u32 = 0;
-        pkVar3->state = 0x10;
-        uVar2 = FUN_20154538(pkVar3,param_1);
+        *(uint *)(pbVar1 + -4) = uVar3;
+        p_knl_tcb->sp = (uint)(pbVar1 + -0x48);
+        p_knl_tcb->f_0x08_u8 = 0;
+        p_knl_tcb->f_0x09_u8 = 0;
+        p_knl_tcb->f_0x20_u32 = 0;
+        p_knl_tcb->state = 0x10;
+        uVar2 = FUN_20154538(p_knl_tcb,param_1);
         return uVar2;
       }
       software_interrupt(0);
@@ -2585,9 +2606,9 @@ code * itron_stp_cyc(uint param_1)
 code * itron_sus_tsk(uint param_1)
 
 {
-  knl_tcb *pkVar1;
-  code *pcVar2;
-  byte bVar3;
+  knl_tcb *p_knl_tcb;
+  code *pcVar1;
+  byte bVar2;
   
   if ((((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
       (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U))) || (param_1 != 0)) {
@@ -2596,35 +2617,36 @@ code * itron_sus_tsk(uint param_1)
         param_1 = (uint)knl_rdq[0];
       }
       software_interrupt(0);
-      pkVar1 = knl_tsk_tab[param_1];
-      if (pkVar1 == (knl_tcb *)0x0) {
+      p_knl_tcb = knl_tsk_tab[param_1];
+      if (p_knl_tcb == (knl_tcb *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
-      if (pkVar1->state == 0) {
+      if (p_knl_tcb->state == 0) {
         software_interrupt(0);
         return (code *)0xffffffd7;
       }
-      bVar3 = pkVar1->f_0x09_u8 + 1;
-      pkVar1->f_0x09_u8 = bVar3;
-      if (bVar3 == 0) {
-        pkVar1->f_0x09_u8 = 0xff;
+      bVar2 = p_knl_tcb->f_0x09_u8 + 1;
+      p_knl_tcb->f_0x09_u8 = bVar2;
+      if (bVar2 == 0) {
+        p_knl_tcb->f_0x09_u8 = 0xff;
         software_interrupt(0);
         return (code *)0xffffffd5;
       }
-      if (bVar3 != 1 || pkVar1->state != 0x10) {
+      if (bVar2 != 1 || p_knl_tcb->state != 0x10) {
         software_interrupt(0);
         return knl_svc_return;
       }
       if ((uint)knl_rdq[0] == (param_1 & 0xff)) {
         if (knl_sys.ctx_isr == 0) {
-          pcVar2 = (code *)knl_wait_self(pkVar1,param_1);
-          return pcVar2;
+                    /* removes the running task from its ready queue [doc] */
+          pcVar1 = (code *)knl_wait_self(p_knl_tcb,param_1);
+          return pcVar1;
         }
         knl_sys.dsp_pending = 1;
       }
-      pcVar2 = (code *)knl_release_suspended(pkVar1,param_1);
-      return pcVar2;
+      pcVar1 = (code *)knl_release_suspended(p_knl_tcb,param_1);
+      return pcVar1;
     }
     knl_sys.last_ercd = -0x12;
   }
@@ -2642,57 +2664,58 @@ code * itron_sus_tsk(uint param_1)
    (uitron_api_shape 0.950): (mpfid, p_blk, tmout): mpf table 0x208DBF24, pops the free list,
    E_TMOUT polling, waits otherwise [inference] */
 
-code * itron_tget_mpf(uint param_1,undefined4 *param_2,int param_3)
+code * itron_tget_mpf(uint param_1,undefined4 *param_2,int tmout)
 
 {
   byte bVar1;
   byte *pbVar2;
   code *pcVar3;
-  knl_mpf *pkVar4;
+  knl_mpf *p_knl_mpf;
   knl_tcb *tcb;
-  uint uVar5;
+  uint uVar4;
   
   if ((param_1 == 0) || (0x10 < param_1)) {
     knl_sys.last_ercd = -0x12;
   }
   else {
     software_interrupt(0);
-    pkVar4 = knl_mpf_tab[param_1];
-    if (pkVar4 == (knl_mpf *)0x0) {
+    p_knl_mpf = knl_mpf_tab[param_1];
+    if (p_knl_mpf == (knl_mpf *)0x0) {
       software_interrupt(0);
       return (code *)0xffffffd6;
     }
-    pbVar2 = pkVar4->free_head;
+    pbVar2 = p_knl_mpf->free_head;
     if (pbVar2 != (byte *)0x0) {
       *param_2 = pbVar2;
-      pkVar4->free_head = *(byte **)pbVar2;
-      pkVar4->fblkcnt = pkVar4->fblkcnt - 1;
+      p_knl_mpf->free_head = *(byte **)pbVar2;
+      p_knl_mpf->fblkcnt = p_knl_mpf->fblkcnt - 1;
       software_interrupt(0);
       return knl_svc_return;
     }
-    if (param_3 == 0) {
+    if (tmout == 0) {
       software_interrupt(0);
       return (code *)0xffffffce;
     }
     if ((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) {
-      uVar5 = (uint)knl_rdq[0];
-      if (uVar5 != ((byte)DAT_201659d0 + 1 & 0xff)) {
-        tcb = knl_tsk_tab[uVar5];
-        if (param_3 == -1) {
+      uVar4 = (uint)knl_rdq[0];
+      if (uVar4 != ((byte)DAT_201659d0 + 1 & 0xff)) {
+        tcb = knl_tsk_tab[uVar4];
+        if (tmout == -1) {
           bVar1 = 0xd0;
         }
         else {
-          knl_timeout_add(param_3,tcb,knl_rdq[0]);
+          knl_timeout_add(tmout,tcb,knl_rdq[0]);
           bVar1 = 0xd2;
         }
         tcb->state = bVar1;
-        pbVar2 = pkVar4->wq;
-        if (pkVar4->wq[1] < 0xfe) {
+        pbVar2 = p_knl_mpf->wq;
+        if (p_knl_mpf->wq[1] < 0xfe) {
           pbVar2 = pbVar2 + knl_sys.run_pri + -1;
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
-        pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar5);
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
     }
@@ -2710,7 +2733,7 @@ code * itron_tget_mpf(uint param_1,undefined4 *param_2,int param_3)
    (mtxid, tmout): mtx table 0x208DBFC4 (32), owner +10, ceiling/inherit, E_ILUSE, E_TMOUT
    [inference] */
 
-code * itron_tloc_mtx(uint param_1,int param_2)
+code * itron_tloc_mtx(uint param_1,int tmout)
 
 {
   short sVar1;
@@ -2718,10 +2741,10 @@ code * itron_tloc_mtx(uint param_1,int param_2)
   byte bVar3;
   byte *queue;
   code *pcVar4;
-  knl_mtx *pkVar5;
+  knl_mtx *p_knl_mtx;
   knl_tcb *tcb;
+  int iVar5;
   int iVar6;
-  int iVar7;
   uint tskid;
   
   if ((param_1 == 0) || (0x20 < param_1)) {
@@ -2731,57 +2754,58 @@ code * itron_tloc_mtx(uint param_1,int param_2)
     if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
        (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U))) {
       software_interrupt(0);
-      pkVar5 = knl_mtx_tab[param_1];
-      if (pkVar5 == (knl_mtx *)0x0) {
+      p_knl_mtx = knl_mtx_tab[param_1];
+      if (p_knl_mtx == (knl_mtx *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
       tskid = (uint)knl_rdq[0];
-      if (pkVar5->owner == tskid) {
+      if (p_knl_mtx->owner == tskid) {
         software_interrupt(0);
       }
       else {
-        iVar7 = pkVar5->mtxatr;
-        sVar2 = pkVar5->pri;
-        iVar6 = (int)sVar2;
+        iVar6 = p_knl_mtx->mtxatr;
+        sVar2 = p_knl_mtx->pri;
+        iVar5 = (int)sVar2;
         tcb = knl_tsk_tab[tskid];
-        if ((iVar7 != 3) || (iVar6 <= tcb->bpri)) {
-          if (pkVar5->owner != 0) {
-            if (param_2 == 0) {
+        if ((iVar6 != 3) || (iVar5 <= tcb->bpri)) {
+          if (p_knl_mtx->owner != 0) {
+            if (tmout == 0) {
               software_interrupt(0);
               return (code *)0xffffffce;
             }
-            if (param_2 == -1) {
+            if (tmout == -1) {
               bVar3 = 0x94;
             }
             else {
-              knl_timeout_add(param_2,tcb,knl_rdq[0]);
+              knl_timeout_add(tmout,tcb,knl_rdq[0]);
               bVar3 = 0x96;
             }
             tcb->state = bVar3;
-            queue = pkVar5->wq;
-            if (pkVar5->wq[1] < 0xfe) {
+            queue = p_knl_mtx->wq;
+            if (p_knl_mtx->wq[1] < 0xfe) {
               queue = queue + knl_sys.run_pri + -1;
             }
             knl_sys.wait_id = param_1;
             knl_queue_move(queue,tcb,tskid);
-            if ((iVar7 == 2) && (knl_sys.run_pri < iVar6)) {
-              pkVar5->pri = knl_sys.run_pri;
-              FUN_20153f28(pkVar5->owner);
+            if ((iVar6 == 2) && (knl_sys.run_pri < iVar5)) {
+              p_knl_mtx->pri = knl_sys.run_pri;
+              FUN_20153f28(p_knl_mtx->owner);
             }
             software_interrupt(0);
             return knl_resched;
           }
-          pkVar5->owner = knl_rdq[0];
+          p_knl_mtx->owner = knl_rdq[0];
           sVar1 = tcb->mtx_held;
           tcb->mtx_held = (short)param_1;
-          pkVar5->prev_held = sVar1;
-          if (iVar7 == 2) {
-            pkVar5->pri = tcb->pri;
+          p_knl_mtx->prev_held = sVar1;
+          if (iVar6 == 2) {
+            p_knl_mtx->pri = tcb->pri;
           }
-          else if ((iVar7 == 3) && (iVar6 < tcb->pri)) {
+          else if ((iVar6 == 3) && (iVar5 < tcb->pri)) {
             tcb->pri = sVar2;
-            pcVar4 = (code *)knl_wait_enter(knl_rdq + iVar6,tcb,tskid);
+                    /* Moves the running task into an object's wait queue [doc] */
+            pcVar4 = (code *)knl_wait_enter(knl_rdq + iVar5,tcb,tskid);
             return pcVar4;
           }
           software_interrupt(0);
@@ -2802,7 +2826,7 @@ code * itron_tloc_mtx(uint param_1,int param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (dtqid, p_data, tmout):
    dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT [inference] */
 
-code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
+code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
 
 {
   byte bVar1;
@@ -2811,7 +2835,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
   code *pcVar4;
   int iVar5;
   uint uVar6;
-  knl_tcb *pkVar7;
+  knl_tcb *p_knl_tcb;
   
   if ((param_1 == 0) || (8 < param_1)) {
     knl_sys.last_ercd = -0x12;
@@ -2830,32 +2854,33 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
       pbVar3 = pbVar3 + 1;
     } while (uVar6 == 0);
     if (0xfd < uVar6) {
-      if (param_3 == 0) {
+      if (tmout == 0) {
         software_interrupt(0);
         return (code *)0xffffffce;
       }
       if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
          (uVar6 = (uint)knl_rdq[0], uVar6 != ((byte)DAT_201659d0 + 1 & 0xff))) {
-        pkVar7 = knl_tsk_tab[uVar6];
-        if (param_3 == -1) {
+        p_knl_tcb = knl_tsk_tab[uVar6];
+        if (tmout == -1) {
           bVar1 = 0xb4;
         }
         else {
-          knl_timeout_add(param_3,pkVar7,knl_rdq[0]);
+          knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
           bVar1 = 0xb6;
         }
-        pkVar7->state = bVar1;
+        p_knl_tcb->state = bVar1;
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
-        pcVar4 = (code *)knl_wait_enter(iVar5 + 0x18,pkVar7,uVar6);
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar4 = (code *)knl_wait_enter(iVar5 + 0x18,p_knl_tcb,uVar6);
         return pcVar4;
       }
       software_interrupt(0);
       knl_sys.last_ercd = -0x19;
       return (code *)0xffffffe7;
     }
-    pkVar7 = knl_tsk_tab[uVar6];
-    *param_2 = *(undefined4 *)(pkVar7->sp + 0xc);
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    *param_2 = *(undefined4 *)(p_knl_tcb->sp + 0xc);
   }
   else {
     puVar2 = *(undefined4 **)(iVar5 + 0xc) + 1;
@@ -2874,24 +2899,26 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int param_3)
       software_interrupt(0);
       return knl_svc_return;
     }
-    pkVar7 = knl_tsk_tab[uVar6];
+    p_knl_tcb = knl_tsk_tab[uVar6];
     puVar2 = *(undefined4 **)(iVar5 + 8) + 1;
-    **(undefined4 **)(iVar5 + 8) = *(undefined4 *)(pkVar7->sp + 0xc);
+    **(undefined4 **)(iVar5 + 8) = *(undefined4 *)(p_knl_tcb->sp + 0xc);
     *(short *)(iVar5 + 0x16) = *(short *)(iVar5 + 0x16) + 1;
     if (*(undefined4 **)(iVar5 + 0x10) <= puVar2) {
       puVar2 = *(undefined4 **)(iVar5 + 4);
     }
     *(undefined4 **)(iVar5 + 8) = puVar2;
   }
-  if ((pkVar7->state & 2) != 0) {
-    knl_timeout_remove(pkVar7,uVar6);
+  if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+    knl_timeout_remove(p_knl_tcb,uVar6);
   }
-  pkVar7->state = 0x10;
-  if (pkVar7->f_0x09_u8 != 0) {
+  p_knl_tcb->state = 0x10;
+  if (p_knl_tcb->f_0x09_u8 != 0) {
     pcVar4 = (code *)knl_release_suspended();
     return pcVar4;
   }
-  pcVar4 = (code *)knl_make_ready(pkVar7,uVar6);
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+  pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar6);
   return pcVar4;
 }
 
@@ -2966,7 +2993,7 @@ uint knl_mbf_get(int param_1,undefined1 *param_2)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): (mbfid, msg, tmout): mbf
    table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size [inference] */
 
-int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
+int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
 
 {
   sbyte sVar1;
@@ -2974,8 +3001,8 @@ int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
   byte *pbVar3;
   int iVar4;
   int iVar5;
-  knl_tcb *pkVar6;
-  uint uVar7;
+  knl_tcb *p_knl_tcb;
+  uint uVar6;
   
   if ((param_1 == 0) || (8 < param_1)) {
     knl_sys.last_ercd = -0x12;
@@ -2988,7 +3015,8 @@ int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
     return -0x2a;
   }
   if (*(short *)(iVar5 + 0xc) != *(short *)(iVar5 + 0xe)) {
-    iVar5 = knl_mbf_get(iVar5,param_2,param_3,param_4,param_1,param_2,param_3);
+                    /* copies the next message out of the message-buffer ring [doc] */
+    iVar5 = knl_mbf_get(iVar5,param_2,tmout,param_4,param_1,param_2,tmout);
     iVar4 = FUN_20153dec(param_1);
     if (iVar4 == 0) {
       software_interrupt(0);
@@ -3000,55 +3028,57 @@ int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
   }
   pbVar3 = (byte *)(iVar5 + 0x13);
   do {
-    uVar7 = (uint)*pbVar3;
+    uVar6 = (uint)*pbVar3;
     pbVar3 = pbVar3 + 1;
-  } while (uVar7 == 0);
-  if (uVar7 < 0xfe) {
-    pkVar6 = knl_tsk_tab[uVar7];
-    iVar5 = *(int *)(pkVar6->sp + 8);
+  } while (uVar6 == 0);
+  if (uVar6 < 0xfe) {
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    iVar5 = *(int *)(p_knl_tcb->sp + 8);
     if (iVar5 != 0) {
-      knl_memcpy(param_2,*(undefined4 *)(pkVar6->sp + 0xc),iVar5);
+      knl_memcpy(param_2,*(undefined4 *)(p_knl_tcb->sp + 0xc),iVar5);
     }
-    if ((pkVar6->state & 2) != 0) {
-      knl_timeout_remove(pkVar6,uVar7);
+    if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+      knl_timeout_remove(p_knl_tcb,uVar6);
     }
-    pkVar6->state = 0x10;
-    if (pkVar6->f_0x09_u8 == 0) {
-      sVar1 = pkVar6->pri;
-      knl_queue_move(knl_rdq + sVar1,pkVar6,uVar7);
+    p_knl_tcb->state = 0x10;
+    if (p_knl_tcb->f_0x09_u8 == 0) {
+      sVar1 = p_knl_tcb->pri;
+      knl_queue_move(knl_rdq + sVar1,p_knl_tcb,uVar6);
       if ((int)sVar1 < (int)knl_sys.run_pri) {
         software_interrupt(0);
         return iVar5;
       }
     }
     else {
-      knl_queue_remove(pkVar6,uVar7);
+      knl_queue_remove(p_knl_tcb,uVar6);
     }
     software_interrupt(0);
     return iVar5;
   }
-  if (param_3 == 0) {
+  if (tmout == 0) {
     software_interrupt(0);
     return -0x32;
   }
   if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
-     (uVar7 = (uint)knl_rdq[0], uVar7 != ((byte)DAT_201659d0 + 1 & 0xff))) {
-    pkVar6 = knl_tsk_tab[uVar7];
-    if (param_3 == -1) {
+     (uVar6 = (uint)knl_rdq[0], uVar6 != ((byte)DAT_201659d0 + 1 & 0xff))) {
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    if (tmout == -1) {
       bVar2 = 0xb0;
     }
     else {
-      knl_timeout_add(param_3,pkVar6,knl_rdq[0]);
+      knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
       bVar2 = 0xb2;
     }
-    pkVar6->state = bVar2;
+    p_knl_tcb->state = bVar2;
     iVar5 = (uint)*(byte *)(iVar5 + 0x12) + iVar5;
     if (*(byte *)(iVar5 + 1) < 0xfe) {
       iVar5 = iVar5 + knl_sys.run_pri + -1;
     }
     knl_sys.wait_arg2 = param_2;
     knl_sys.wait_id = param_1;
-    iVar5 = knl_wait_enter(iVar5,pkVar6,uVar7);
+                    /* Moves the running task into an object's wait queue [doc] */
+    iVar5 = knl_wait_enter(iVar5,p_knl_tcb,uVar6);
     return iVar5;
   }
   software_interrupt(0);
@@ -3062,7 +3092,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int param_3,undefined4 param_4)
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (mbxid, ppk_msg, tmout):
    mbx table 0x208DBEA4, takes the first queued message, E_TMOUT [inference] */
 
-code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
+code * itron_trcv_mbx(uint param_1,int *param_2,int tmout)
 
 {
   byte bVar1;
@@ -3104,7 +3134,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
         piVar2 = piVar2 + 2;
       } while (iVar5 < (int)(uint)*(byte *)(piVar6 + 1));
     }
-    if (param_3 == 0) {
+    if (tmout == 0) {
       software_interrupt(0);
       return (code *)0xffffffce;
     }
@@ -3112,11 +3142,11 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
       uVar7 = (uint)knl_rdq[0];
       if (uVar7 != ((byte)DAT_201659d0 + 1 & 0xff)) {
         tcb = knl_tsk_tab[uVar7];
-        if (param_3 == -1) {
+        if (tmout == -1) {
           bVar1 = 0xa0;
         }
         else {
-          knl_timeout_add(param_3,tcb,knl_rdq[0]);
+          knl_timeout_add(tmout,tcb,knl_rdq[0]);
           bVar1 = 0xa2;
         }
         tcb->state = bVar1;
@@ -3126,6 +3156,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(iVar5,tcb,uVar7);
         return pcVar3;
       }
@@ -3144,7 +3175,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int param_3)
    uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.950): (tmout): wakeup count TCB+8 -- or
    waits (state 0x20/0x22), E_TMOUT when polling, E_CTX [inference] */
 
-code * itron_tslp_tsk(int param_1)
+code * itron_tslp_tsk(int tmout)
 
 {
   byte bVar1;
@@ -3162,18 +3193,19 @@ code * itron_tslp_tsk(int param_1)
         software_interrupt(0);
         return knl_svc_return;
       }
-      if (param_1 == 0) {
+      if (tmout == 0) {
         software_interrupt(0);
         return (code *)0xffffffce;
       }
-      if (param_1 == -1) {
+      if (tmout == -1) {
         bVar1 = 0x20;
       }
       else {
-        knl_timeout_add(param_1,tcb,knl_rdq[0]);
+        knl_timeout_add(tmout,tcb,knl_rdq[0]);
         bVar1 = 0x22;
       }
       tcb->state = bVar1;
+                    /* removes the running task from its ready queue [doc] */
       pcVar2 = (code *)knl_wait_self(tcb,uVar3);
       return pcVar2;
     }
@@ -3189,7 +3221,7 @@ code * itron_tslp_tsk(int param_1)
    tmout): mbf table 0x208DBEC4, E_PAR when msgsz > maxmsz, copies to a receiver or the ring
    [inference] */
 
-code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
+code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
 
 {
   byte bVar1;
@@ -3197,8 +3229,8 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
   byte *pbVar3;
   int iVar4;
   int iVar5;
-  knl_tcb *pkVar6;
-  uint uVar7;
+  knl_tcb *p_knl_tcb;
+  uint uVar6;
   
   if ((param_1 == 0) || (8 < param_1)) {
     knl_sys.last_ercd = -0x12;
@@ -3216,36 +3248,37 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
   }
   pbVar3 = (byte *)((uint)*(byte *)(iVar5 + 0x12) + iVar5);
   do {
-    uVar7 = (uint)*pbVar3;
+    uVar6 = (uint)*pbVar3;
     pbVar3 = pbVar3 + 1;
-  } while (uVar7 == 0);
-  if (0xfd < uVar7) {
+  } while (uVar6 == 0);
+  if (0xfd < uVar6) {
     if (param_3 != 0) {
       for (pbVar3 = (byte *)(iVar5 + 0x13); *pbVar3 == 0; pbVar3 = pbVar3 + 1) {
       }
+                    /* puts a message into the message-buffer ring [doc] */
       if ((0xfd < *pbVar3) &&
-         (iVar4 = knl_mbf_put(iVar5,param_2,param_3,param_4,param_1,param_2,param_3,param_4),
-         iVar4 != 0)) {
+         (iVar4 = knl_mbf_put(iVar5,param_2,param_3,tmout,param_1,param_2,param_3,tmout), iVar4 != 0
+         )) {
         software_interrupt(0);
         return knl_svc_return;
       }
     }
-    if (param_4 == 0) {
+    if (tmout == 0) {
       software_interrupt(0);
       return (code *)0xffffffce;
     }
     if ((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) {
-      uVar7 = (uint)knl_rdq[0];
-      if (uVar7 != ((byte)DAT_201659d0 + 1 & 0xff)) {
-        pkVar6 = knl_tsk_tab[uVar7];
-        if (param_4 == -1) {
+      uVar6 = (uint)knl_rdq[0];
+      if (uVar6 != ((byte)DAT_201659d0 + 1 & 0xff)) {
+        p_knl_tcb = knl_tsk_tab[uVar6];
+        if (tmout == -1) {
           bVar1 = 0x60;
         }
         else {
-          knl_timeout_add(param_4,pkVar6,knl_rdq[0]);
+          knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
           bVar1 = 0x62;
         }
-        pkVar6->state = bVar1;
+        p_knl_tcb->state = bVar1;
         iVar4 = iVar5 + 0x13;
         if (*(byte *)(iVar5 + 0x14) < 0xfe) {
           iVar4 = iVar4 + knl_sys.run_pri + -1;
@@ -3253,7 +3286,8 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
         knl_sys.wait_arg3 = param_3;
         knl_sys.wait_arg2 = param_2;
         knl_sys.wait_id = param_1;
-        pcVar2 = (code *)knl_wait_enter(iVar4,pkVar6,uVar7);
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar2 = (code *)knl_wait_enter(iVar4,p_knl_tcb,uVar6);
         return pcVar2;
       }
     }
@@ -3261,17 +3295,19 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
     knl_sys.last_ercd = -0x19;
     return (code *)0xffffffe7;
   }
-  pkVar6 = knl_tsk_tab[uVar7];
+  p_knl_tcb = knl_tsk_tab[uVar6];
   if (param_3 != 0) {
-    knl_memcpy(*(undefined4 *)(pkVar6->sp + 0xc),param_2,param_3);
+    knl_memcpy(*(undefined4 *)(p_knl_tcb->sp + 0xc),param_2,param_3);
   }
-  *(uint *)pkVar6->sp = param_3;
-  if ((pkVar6->state & 2) != 0) {
-    knl_timeout_remove(pkVar6,uVar7);
+  *(uint *)p_knl_tcb->sp = param_3;
+  if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+    knl_timeout_remove(p_knl_tcb,uVar6);
   }
-  pkVar6->state = 0x10;
-  if (pkVar6->f_0x09_u8 == 0) {
-    pcVar2 = (code *)knl_make_ready(pkVar6,uVar7);
+  p_knl_tcb->state = 0x10;
+  if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+    pcVar2 = (code *)knl_make_ready(p_knl_tcb,uVar6);
     return pcVar2;
   }
   pcVar2 = (code *)knl_release_suspended();
@@ -3281,60 +3317,61 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int param_4)
 
 // ===== itron_twai_flg @ 20152988 (496 bytes)
 
-void * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int param_5)
+void * itron_twai_flg(uint param_1,uint param_2,uint param_3,uint *param_4,int tmout)
 
 {
   byte bVar1;
   uint uVar2;
   byte *pbVar3;
   void *pvVar4;
-  knl_flg *pkVar5;
+  knl_flg *p_knl_flg;
   knl_tcb *tcb;
-  bool bVar6;
+  bool bVar5;
   
   if ((param_1 == 0) || (0x40 < param_1)) {
     knl_sys.last_ercd = -0x12;
   }
   else {
-    if (((param_2 != 0) && ((param_3 & 0xfffffffa) == 0)) && (-3 < param_5)) {
+    if (((param_2 != 0) && ((param_3 & 0xfffffffa) == 0)) && (-3 < tmout)) {
       software_interrupt(0);
-      pkVar5 = knl_flg_tab[param_1];
-      if (pkVar5 == (knl_flg *)0x0) {
+      p_knl_flg = knl_flg_tab[param_1];
+      if (p_knl_flg == (knl_flg *)0x0) {
         software_interrupt(0);
         return (void *)0xffffffd6;
       }
-      if (((pkVar5->flgatr & 2) == 0) && (pkVar5->wq[0] != 0)) {
+      if (((p_knl_flg->flgatr & 2) == 0) && (p_knl_flg->wq[0] != 0)) {
         software_interrupt(0);
         return (void *)0xffffffe4;
       }
-      uVar2 = pkVar5->flgptn;
+      uVar2 = p_knl_flg->flgptn;
       if ((param_3 & 1) == 0) {
         if ((param_2 & ~uVar2) != 0) goto LAB_20152a7c;
       }
       else if ((uVar2 & param_2) == 0) {
 LAB_20152a7c:
-        if (param_5 == 0) {
+        if (tmout == 0) {
           software_interrupt(0);
           return (void *)0xffffffce;
         }
         if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
            (uVar2 = (uint)knl_rdq[0], uVar2 != ((byte)DAT_201659d0 + 1 & 0xff))) {
           tcb = knl_tsk_tab[uVar2];
-          if (param_5 == -1) {
-            bVar1 = pkVar5->flgatr & 4 | (byte)param_3 | 0x50;
+          if (tmout == -1) {
+            bVar1 = p_knl_flg->flgatr & 4 | (byte)param_3 | 0x50;
           }
           else {
-            knl_timeout_add(param_5,tcb,knl_rdq[0]);
-            bVar1 = pkVar5->flgatr & 4 | (byte)param_3 | 0x52;
+            knl_timeout_add(tmout,tcb,knl_rdq[0]);
+            bVar1 = p_knl_flg->flgatr & 4 | (byte)param_3 | 0x52;
           }
           tcb->state = bVar1;
-          pbVar3 = pkVar5->wq;
-          if (pkVar5->wq[1] < 0xfe) {
+          pbVar3 = p_knl_flg->wq;
+          if (p_knl_flg->wq[1] < 0xfe) {
             pbVar3 = pbVar3 + knl_sys.run_pri + -1;
           }
           knl_sys.wait_arg3 = param_2;
           knl_sys.wait_arg2 = (uint)param_4;
           knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
           pvVar4 = (void *)knl_wait_enter(pbVar3,tcb,uVar2);
           return pvVar4;
         }
@@ -3342,13 +3379,13 @@ LAB_20152a7c:
         knl_sys.last_ercd = -0x19;
         return &DAT_ffffffe7;
       }
-      bVar6 = (param_3 & 4) == 0;
+      bVar5 = (param_3 & 4) == 0;
       *param_4 = uVar2;
-      if (bVar6) {
-        uVar2 = (uint)pkVar5->flgatr;
+      if (bVar5) {
+        uVar2 = (uint)p_knl_flg->flgatr;
       }
-      if (!bVar6 || (uVar2 & 4) != 0) {
-        pkVar5->flgptn = 0;
+      if (!bVar5 || (uVar2 & 4) != 0) {
+        p_knl_flg->flgptn = 0;
       }
       software_interrupt(0);
       return knl_svc_return;
@@ -3366,53 +3403,54 @@ LAB_20152a7c:
    Version 4 (MiSPO) (uitron_api_shape 0.950): (semid, tmout): sem table 0x208DBCA4, count-- or
    waits (state 0x90/0x92), E_TMOUT [inference] */
 
-code * itron_twai_sem(uint param_1,int param_2)
+code * itron_twai_sem(uint param_1,int tmout)
 
 {
   byte bVar1;
   byte *pbVar2;
   code *pcVar3;
-  knl_sem *pkVar4;
+  knl_sem *p_knl_sem;
   knl_tcb *tcb;
-  uint uVar5;
+  uint uVar4;
   
   if ((param_1 == 0) || (0x40 < param_1)) {
     knl_sys.last_ercd = -0x12;
   }
   else {
     software_interrupt(0);
-    pkVar4 = knl_sem_tab[param_1];
-    if (pkVar4 == (knl_sem *)0x0) {
+    p_knl_sem = knl_sem_tab[param_1];
+    if (p_knl_sem == (knl_sem *)0x0) {
       software_interrupt(0);
       return (code *)0xffffffd6;
     }
-    if (pkVar4->semcnt != 0) {
-      pkVar4->semcnt = pkVar4->semcnt - 1;
+    if (p_knl_sem->semcnt != 0) {
+      p_knl_sem->semcnt = p_knl_sem->semcnt - 1;
       software_interrupt(0);
       return knl_svc_return;
     }
-    if (param_2 == 0) {
+    if (tmout == 0) {
       software_interrupt(0);
       return (code *)0xffffffce;
     }
     if ((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) {
-      uVar5 = (uint)knl_rdq[0];
-      if (uVar5 != ((byte)DAT_201659d0 + 1 & 0xff)) {
-        tcb = knl_tsk_tab[uVar5];
-        if (param_2 == -1) {
+      uVar4 = (uint)knl_rdq[0];
+      if (uVar4 != ((byte)DAT_201659d0 + 1 & 0xff)) {
+        tcb = knl_tsk_tab[uVar4];
+        if (tmout == -1) {
           bVar1 = 0x90;
         }
         else {
-          knl_timeout_add(param_2,tcb,knl_rdq[0]);
+          knl_timeout_add(tmout,tcb,knl_rdq[0]);
           bVar1 = 0x92;
         }
         tcb->state = bVar1;
-        pbVar2 = pkVar4->wq;
-        if (pkVar4->wq[1] < 0xfe) {
+        pbVar2 = p_knl_sem->wq;
+        if (p_knl_sem->wq[1] < 0xfe) {
           pbVar2 = pbVar2 + knl_sys.run_pri + -1;
         }
         knl_sys.wait_id = param_1;
-        pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar5);
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
     }
@@ -3466,7 +3504,7 @@ code * itron_unl_mtx(uint param_1)
   int iVar6;
   uint tskid;
   int iVar7;
-  knl_mtx *pkVar8;
+  knl_mtx *p_knl_mtx;
   knl_tcb *tcb;
   
   if ((param_1 == 0) || (0x20 < param_1)) {
@@ -3476,24 +3514,24 @@ code * itron_unl_mtx(uint param_1)
     if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
        (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U))) {
       software_interrupt(0);
-      pkVar8 = knl_mtx_tab[param_1];
-      if (pkVar8 == (knl_mtx *)0x0) {
+      p_knl_mtx = knl_mtx_tab[param_1];
+      if (p_knl_mtx == (knl_mtx *)0x0) {
         software_interrupt(0);
         return (code *)0xffffffd6;
       }
       tskid = (uint)knl_rdq[0];
-      if (pkVar8->owner != tskid) {
+      if (p_knl_mtx->owner != tskid) {
         software_interrupt(0);
         return (code *)0xffffffe4;
       }
-      sVar2 = pkVar8->pri;
+      sVar2 = p_knl_mtx->pri;
       tcb = knl_tsk_tab[tskid];
       psVar4 = &tcb->mtx_held;
       iVar7 = (int)tcb->bpri;
       sVar1 = tcb->mtx_held;
       while (sVar1 != 0) {
         if ((int)*psVar4 == param_1) {
-          *psVar4 = pkVar8->prev_held;
+          *psVar4 = p_knl_mtx->prev_held;
           if (sVar2 == 0) break;
         }
         else {
@@ -3523,7 +3561,7 @@ code * itron_unl_mtx(uint param_1)
           bVar3 = false;
         }
       }
-      iVar7 = FUN_201547d0(pkVar8,param_1);
+      iVar7 = FUN_201547d0(p_knl_mtx,param_1);
       if (iVar7 != 0 || bVar3) {
         software_interrupt(0);
         return knl_resched;
@@ -3564,6 +3602,7 @@ code * itron_iwup_tsk(uint param_1)
   bVar1 = tcb->state;
   if (bVar1 == 0x22) {
     tcb->state = 0x10;
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,param_1);
     if (tcb->f_0x09_u8 != 0) {
       software_interrupt(0);

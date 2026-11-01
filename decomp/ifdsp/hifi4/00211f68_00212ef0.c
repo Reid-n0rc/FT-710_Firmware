@@ -363,11 +363,13 @@ void I3C0_DriverIRQHandler(void)
   uint uVar1;
   
   memw();
+                    /* Master Configuration [sfr] */
   uVar1 = I3C_MCONFIG;
   if (((uVar1 & 3) == 1) && (DAT_00238e30 != (code *)0x0)) {
     (*DAT_00238e30)(&I3C_MCONFIG,DAT_00238e38);
   }
   memw();
+                    /* Slave Configuration [sfr] */
   uVar1 = I3C_SCONFIG;
   if (((uVar1 & 1) != 0) && (DAT_00238e34 != (code *)0x0)) {
     (*DAT_00238e34)(&I3C_MCONFIG,DAT_00238f10);
@@ -705,6 +707,7 @@ void INPUTMUX_Init(void)
 
 {
   memw();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   return;
 }
@@ -754,6 +757,7 @@ void INPUTMUX_Deinit(void)
 
 {
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL1_PSCCTL2_CLR = 0x80000000;
   return;
 }
@@ -778,6 +782,7 @@ void LPADC_Init(dword *param_1,char *param_2)
   
   if (param_1 == &ADC0_VERID) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 0x10000;
   }
   memw();
@@ -871,6 +876,7 @@ void LPADC_Deinit(dword *param_1)
     return;
   }
   memw();
+                    /* clock clear 1 [sfr] */
   CLKCTL0_PSCCTL1_CLR = 0x10000;
   return;
 }
@@ -1011,9 +1017,11 @@ void MRT_Init(dword *param_1,byte *param_2)
 
 {
   memw();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET =
        1 << 0x20 - (0x20 - ((byte)(&DAT_0020046c)[(uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4] &
                            0x1f));
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset
             (*(undefined4 *)(&DAT_00200470 + (uint)(param_1 != &MRT0_CHANNEL0_INTVAL) * 4));
   memw();
@@ -1049,6 +1057,7 @@ void MRT_Deinit(dword *param_1)
     return;
   }
   memw();
+                    /* clock clear 2 [sfr] */
   CLKCTL1_PSCCTL2_CLR = 0x100;
   return;
 }
@@ -1096,10 +1105,12 @@ void MU_Init(dword *param_1)
 {
   if (param_1 != &MUB_VER) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1;
     return;
   }
   memw();
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
@@ -1125,10 +1136,12 @@ void MU_Deinit(dword *param_1)
 {
   if (param_1 != &MUB_VER) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1;
     return;
   }
   memw();
+                    /* clock clear 1 [sfr] */
   CLKCTL1_PSCCTL1_CLR = 0x10000000;
   return;
 }

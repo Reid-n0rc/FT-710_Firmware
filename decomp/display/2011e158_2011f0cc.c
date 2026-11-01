@@ -230,6 +230,7 @@ void rspi0_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_0 [sfr] */
       RSPI_SPDR_0._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -238,6 +239,7 @@ void rspi0_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_0,0,0x3f);
     } while (uVar3 < param_1);
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
   }
   else {
@@ -266,50 +268,51 @@ void rspi1_tx_wait(void)
 void rspi1_read_burst(uint param_1,int param_2)
 
 {
-  byte bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  uint uVar1;
   
-  bVar1 = reg_read8(&RSPI_SPBFCR_1,4,0x30);
-  bVar2 = reg_read8(&RSPI_SPDCR_1,5,0x60);
-  if (bVar2 == 3) {
+  reg_read8_ret = reg_read8(&RSPI_SPBFCR_1,4,0x30);
+  reg_read8_ret_2 = reg_read8(&RSPI_SPDCR_1,5,0x60);
+  if (reg_read8_ret_2 == 3) {
     reg_rmw8(&RSPI_SPBFCR_1,2,4,0x30);
   }
-  else if (bVar2 == 2) {
+  else if (reg_read8_ret_2 == 2) {
     reg_rmw8(&RSPI_SPBFCR_1,1,4,0x30);
   }
   else {
     reg_rmw8(&RSPI_SPBFCR_1,0,4,0x30);
   }
   reg_rmw8(&RSPI_SPCR_1,1,7,0x80);
-  uVar3 = param_1;
-  while (uVar3 != 0) {
+  uVar1 = param_1;
+  while (uVar1 != 0) {
     rspi1_tx_wait();
     rspi1_clear_tx_flag();
-    if (bVar2 == 3) {
+    if (reg_read8_ret_2 == 3) {
       RSPI_SPDR_1 = 0xffffffff;
-      uVar3 = uVar3 - 4;
+      uVar1 = uVar1 - 4;
     }
-    else if (bVar2 == 2) {
+    else if (reg_read8_ret_2 == 2) {
       RSPI_SPDR_1._0_2_ = 0xffff;
-      uVar3 = uVar3 - 2;
+      uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_1 [sfr] */
       RSPI_SPDR_1._0_1_ = 0xff;
-      uVar3 = uVar3 - 1;
+      uVar1 = uVar1 - 1;
     }
   }
   if (param_2 == 1) {
     do {
-      uVar3 = reg_read16(&RSPI_SPBFDR_1,0,0x3f);
-    } while (uVar3 < param_1);
+      uVar1 = reg_read16(&RSPI_SPBFDR_1,0,0x3f);
+    } while (uVar1 < param_1);
     rspi1_rx_isr();
   }
   else {
     do {
     } while (DAT_20800419 == '\0');
   }
-  reg_rmw8(&RSPI_SPBFCR_1,bVar1,4,0x30);
+  reg_rmw8(&RSPI_SPBFCR_1,reg_read8_ret,4,0x30);
   return;
 }
 
@@ -362,6 +365,7 @@ void rspi2_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_2 [sfr] */
       RSPI_SPDR_2._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -370,6 +374,7 @@ void rspi2_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_2,0,0x3f);
     } while (uVar3 < param_1);
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
   }
   else {
@@ -398,50 +403,51 @@ void rspi3_tx_wait(void)
 void rspi3_read_burst(uint param_1,int param_2)
 
 {
-  byte bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  uint uVar1;
   
-  bVar1 = reg_read8(&RSPI_SPBFCR_3,4,0x30);
-  bVar2 = reg_read8(&RSPI_SPDCR_3,5,0x60);
-  if (bVar2 == 3) {
+  reg_read8_ret = reg_read8(&RSPI_SPBFCR_3,4,0x30);
+  reg_read8_ret_2 = reg_read8(&RSPI_SPDCR_3,5,0x60);
+  if (reg_read8_ret_2 == 3) {
     reg_rmw8(&RSPI_SPBFCR_3,2,4,0x30);
   }
-  else if (bVar2 == 2) {
+  else if (reg_read8_ret_2 == 2) {
     reg_rmw8(&RSPI_SPBFCR_3,1,4,0x30);
   }
   else {
     reg_rmw8(&RSPI_SPBFCR_3,0,4,0x30);
   }
   reg_rmw8(&RSPI_SPCR_3,1,7,0x80);
-  uVar3 = param_1;
-  while (uVar3 != 0) {
+  uVar1 = param_1;
+  while (uVar1 != 0) {
     rspi3_tx_wait();
     rspi3_clear_tx_flag();
-    if (bVar2 == 3) {
+    if (reg_read8_ret_2 == 3) {
       RSPI_SPDR_3 = 0xffffffff;
-      uVar3 = uVar3 - 4;
+      uVar1 = uVar1 - 4;
     }
-    else if (bVar2 == 2) {
+    else if (reg_read8_ret_2 == 2) {
       RSPI_SPDR_3._0_2_ = 0xffff;
-      uVar3 = uVar3 - 2;
+      uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_3 [sfr] */
       RSPI_SPDR_3._0_1_ = 0xff;
-      uVar3 = uVar3 - 1;
+      uVar1 = uVar1 - 1;
     }
   }
   if (param_2 == 1) {
     do {
-      uVar3 = reg_read16(&RSPI_SPBFDR_3,0,0x3f);
-    } while (uVar3 < param_1);
+      uVar1 = reg_read16(&RSPI_SPBFDR_3,0,0x3f);
+    } while (uVar1 < param_1);
     rspi3_rx_isr();
   }
   else {
     do {
     } while (DAT_2080041b == '\0');
   }
-  reg_rmw8(&RSPI_SPBFCR_3,bVar1,4,0x30);
+  reg_rmw8(&RSPI_SPBFCR_3,reg_read8_ret,4,0x30);
   return;
 }
 
@@ -494,6 +500,7 @@ void rspi4_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_4 [sfr] */
       RSPI_SPDR_4._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -520,11 +527,11 @@ void rspi4_read_burst(uint param_1,int param_2)
 void rspi0_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_0,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_0,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -534,11 +541,11 @@ void rspi0_wait_tend(void)
 void rspi1_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_1,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_1,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -548,11 +555,11 @@ void rspi1_wait_tend(void)
 void rspi2_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_2,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_2,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -562,11 +569,11 @@ void rspi2_wait_tend(void)
 void rspi3_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_3,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_3,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -576,11 +583,11 @@ void rspi3_wait_tend(void)
 void rspi4_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_4,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_4,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 

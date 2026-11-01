@@ -146,6 +146,7 @@ void FUN_fffe3be4(void)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return;
     }
@@ -231,8 +232,8 @@ void ladder_key_task(void)
 {
   bool bVar1;
   byte bVar2;
-  byte bVar3;
-  int iVar4;
+  byte key_event_filter_ret;
+  int iVar3;
   
   if (PTR_g_ui_00025d78->dialog_shown != 1) {
     bVar2 = remote_key_get();
@@ -244,12 +245,12 @@ void ladder_key_task(void)
         FUN_fffe4b73();
       }
       else if (bVar2 == 0xf9) {
-        iVar4 = ladder_key_delay();
-        if (iVar4 == 1) {
+        iVar3 = ladder_key_delay();
+        if (iVar3 == 1) {
           FUN_fffe4cc1();
         }
       }
-      else if ((bVar2 == 0xf7) && (iVar4 = ladder_key_delay(), iVar4 == 1)) {
+      else if ((bVar2 == 0xf7) && (iVar3 = ladder_key_delay(), iVar3 == 1)) {
         FUN_fffe4a67();
       }
     }
@@ -270,7 +271,9 @@ void ladder_key_task(void)
       else {
         bVar1 = true;
       }
-      if ((bVar1) && (bVar3 = key_event_filter(bVar2 + 0x86,1), bVar3 == 0)) {
+                    /* Checks a key code against about 20 mode locks [doc] */
+      if ((bVar1) &&
+         (key_event_filter_ret = key_event_filter(bVar2 + 0x86,1), key_event_filter_ret == 0)) {
         return;
       }
       if (DAT_0001b554 == 0xfa) {
@@ -393,6 +396,7 @@ void ladder_key_task(void)
           msg_slot_key_5();
           break;
         case 6:
+                    /* Sets UI +0x1C7 [doc, inference] */
           msg_type_select();
           break;
         case 7:
@@ -435,21 +439,21 @@ void ladder_key_task(void)
 void FUN_fffe40e5(void)
 
 {
-  uint uVar1;
-  vfo_side vVar2;
-  byte bVar3;
-  byte bVar4;
+  byte vfo_mode_ret_2;
+  byte vfo_is_memory_ret;
+  vfo_side g_opstate_active_vfo_val;
+  uint vfo_mode_ret;
   
-  vVar2 = g_opstate.active_vfo;
-  bVar3 = vfo_mode(0);
-  bVar4 = vfo_is_memory(vVar2);
-  if (bVar4 == 1) {
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
+  vfo_mode_ret_2 = vfo_mode(0);
+  vfo_is_memory_ret = vfo_is_memory(g_opstate_active_vfo_val);
+  if (vfo_is_memory_ret == 1) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,0xfa);
     return;
   }
-  uVar1 = (uint)bVar3;
-  if ((3 < uVar1 - 4) && (uVar1 != 10 && uVar1 != 0xb)) {
+  vfo_mode_ret = (uint)vfo_mode_ret_2;
+  if ((3 < vfo_mode_ret - 4) && (vfo_mode_ret != 10 && vfo_mode_ret != 0xb)) {
     PTR_g_ui_00025d78->mic_key_hold = 1;
     swtimer_start(0x38,5);
     return;
@@ -465,12 +469,12 @@ void FUN_fffe40e5(void)
 undefined1 FUN_fffe415d(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   undefined1 local_2;
   
   if (PTR_g_ui_00025d78->mic_key_hold == 1) {
-    bVar1 = swtimer_expired(0x38);
-    if (bVar1 == 1) {
+    swtimer_expired_ret = swtimer_expired(0x38);
+    if (swtimer_expired_ret == 1) {
       PTR_g_ui_00025d78->mic_key_hold = 0;
       local_2 = 1;
     }
@@ -493,7 +497,7 @@ undefined1 FUN_fffe415d(void)
 undefined1 ladder_key_delay(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   undefined1 local_2;
   
   if (DAT_00018871 == '\0') {
@@ -502,8 +506,8 @@ undefined1 ladder_key_delay(void)
     local_2 = 0;
   }
   else if (DAT_00018871 == '\x01') {
-    bVar1 = swtimer_expired(0x38);
-    if (bVar1 == 1) {
+    swtimer_expired_ret = swtimer_expired(0x38);
+    if (swtimer_expired_ret == 1) {
       DAT_00018871 = '\0';
       local_2 = 1;
     }
@@ -657,6 +661,7 @@ void msg_slot_key(byte param_1)
 void msg_cw_slot_key_1(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(1);
   return;
 }
@@ -670,6 +675,7 @@ void msg_cw_slot_key_1(void)
 void msg_cw_slot_key_2(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(2);
   return;
 }
@@ -683,6 +689,7 @@ void msg_cw_slot_key_2(void)
 void msg_cw_slot_key_3(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(3);
   return;
 }
@@ -696,6 +703,7 @@ void msg_cw_slot_key_3(void)
 void msg_cw_slot_key_4(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(4);
   return;
 }
@@ -709,6 +717,7 @@ void msg_cw_slot_key_4(void)
 void msg_cw_slot_key_5(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(5);
   return;
 }
@@ -732,6 +741,7 @@ void msg_cw_slot_key(undefined1 param_1)
   }
   if (PTR_g_ui_00025d78->msg_active != 0) {
     PTR_g_ui_00025d78->msg_active = 0;
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
     msg_cw_stop();
     return;
   }
@@ -747,25 +757,25 @@ void msg_cw_slot_key(undefined1 param_1)
 void msg_type_select(void)
 
 {
-  uint uVar1;
-  bool bVar2;
-  byte bVar3;
+  bool bVar1;
+  byte vfo_mode_ret_2;
+  uint vfo_mode_ret;
   
-  bVar3 = vfo_mode(1);
+  vfo_mode_ret_2 = vfo_mode(1);
   if (PTR_g_ui_00025d78->kbd_open == 1) {
     if ((PTR_g_ui_00025d78->kbd_target == 2) || (PTR_g_ui_00025d78->kbd_target == 3)) {
-      bVar2 = true;
+      bVar1 = true;
     }
     else {
-      bVar2 = false;
+      bVar1 = false;
     }
-    if ((bVar2) || (PTR_g_ui_00025d78->kbd_target == 4)) {
-      bVar2 = true;
+    if ((bVar1) || (PTR_g_ui_00025d78->kbd_target == 4)) {
+      bVar1 = true;
     }
     else {
-      bVar2 = false;
+      bVar1 = false;
     }
-    if (bVar2) {
+    if (bVar1) {
       beep_request(1);
       return;
     }
@@ -813,19 +823,19 @@ void msg_type_select(void)
       beep_request(1);
       return;
     }
-    uVar1 = (uint)bVar3;
-    if (uVar1 == 0xe) {
+    vfo_mode_ret = (uint)vfo_mode_ret_2;
+    if (vfo_mode_ret == 0xe) {
       PTR_g_ui_00025d78->msgmem_type = 3;
       return;
     }
-    if (uVar1 - 2 < 2) {
+    if (vfo_mode_ret - 2 < 2) {
       if ((PTR_g_ui_00025d78->ky_send_0 == 1) || (PTR_g_ui_00025d78->ky_send_1 == 1)) {
-        bVar2 = true;
+        bVar1 = true;
       }
       else {
-        bVar2 = false;
+        bVar1 = false;
       }
-      if (!bVar2) {
+      if (!bVar1) {
         if (PTR_g_ui_00025d78->msg_active != 1) {
           PTR_g_ui_00025d78->msgmem_type = 1;
           PTR_g_ui_00025d78->dvs_busy = 1;
@@ -833,17 +843,18 @@ void msg_type_select(void)
           beep_request(1);
           return;
         }
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
         msg_cw_stop();
         return;
       }
     }
     else {
-      if (3 < uVar1 - 4) {
-        if (uVar1 - 0xc < 2) {
+      if (3 < vfo_mode_ret - 4) {
+        if (vfo_mode_ret - 0xc < 2) {
           PTR_g_ui_00025d78->msgmem_type = 2;
           return;
         }
-        if (1 < uVar1) {
+        if (1 < vfo_mode_ret) {
           return;
         }
       }
@@ -878,6 +889,7 @@ void FUN_fffe46b0(void)
   if (PTR_g_ui_00025d78->kbd_target != 5) {
     return;
   }
+                    /* Keyboard target 5 [doc] */
   kbd_edit_file_name(0x84);
   return;
 }
@@ -1029,6 +1041,7 @@ void msg_cw_slot_key_latched(undefined1 param_1)
     return;
   }
   if (PTR_g_ui_00025d78->msg_active == 1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
     msg_cw_stop();
     beep_request(1);
     return;
@@ -1064,19 +1077,23 @@ void FUN_fffe47c8(void)
   uVar1 = (uint)PTR_g_ui_00025d78->kbd_target;
   if (uVar1 != 6) {
     if (uVar1 == 1) {
+                    /* Keyboard target 1 [doc] */
       kbd_edit_memory_name(0x85);
     }
     else if (uVar1 == 2) {
+                    /* Keyboard target 2 [doc] */
       kbd_edit_cw_text(0x85);
     }
     else if (1 < uVar1 - 3) {
       if (uVar1 == 5) {
+                    /* Keyboard target 5 [doc] */
         kbd_edit_file_name(0x85);
       }
       else {
         if (uVar1 != 0) {
           return;
         }
+                    /* Keyboard target 0 [doc] */
         kbd_edit_mycall(0x85);
       }
     }
@@ -1096,7 +1113,7 @@ void keyer_text_endmark(void)
 {
   byte bVar1;
   char *pcVar2;
-  int iVar3;
+  int i;
   byte bStack_a;
   byte local_9;
   byte *pbStack_8;
@@ -1159,7 +1176,7 @@ void keyer_text_endmark(void)
     pcVar2[bStack_a] = ' ';
   }
   *pbStack_8 = local_9;
-  for (iVar3 = 0x32; iVar3 != 0; iVar3 = iVar3 + -1) {
+  for (i = 0x32; i != 0; i = i + -1) {
     *pcStack_4 = *pcVar2;
     pcStack_4 = pcStack_4 + 1;
     pcVar2 = pcVar2 + 1;
@@ -1330,10 +1347,11 @@ void FUN_fffe4b73(void)
 void FUN_fffe4bb3(void)
 
 {
-  byte bVar1;
+  byte scan_allowed_ret;
   
   if ((((DAT_00018872 == '\x01') && (PTR_g_ui_00025d78->tx_lamp == 0)) &&
-      (PTR_g_ui_00025d78->ch_step_mode == 1)) && (bVar1 = scan_allowed(), bVar1 == 1)) {
+      (PTR_g_ui_00025d78->ch_step_mode == 1)) &&
+     (scan_allowed_ret = scan_allowed(), scan_allowed_ret == 1)) {
     scan_start_up();
   }
   PTR_g_ui_00025d78->ch_step_mode = 0;
@@ -1347,10 +1365,11 @@ void FUN_fffe4bb3(void)
 void FUN_fffe4c04(void)
 
 {
-  byte bVar1;
+  byte scan_allowed_ret;
   
   if ((((DAT_00018872 == '\x01') && (PTR_g_ui_00025d78->tx_lamp == 0)) &&
-      (PTR_g_ui_00025d78->ch_step_mode == 1)) && (bVar1 = scan_allowed(), bVar1 == 1)) {
+      (PTR_g_ui_00025d78->ch_step_mode == 1)) &&
+     (scan_allowed_ret = scan_allowed(), scan_allowed_ret == 1)) {
     scan_start_down();
   }
   PTR_g_ui_00025d78->ch_step_mode = 0;

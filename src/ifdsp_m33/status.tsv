@@ -22,7 +22,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00080a18	OTFAD_Init	44	OTFAD_Init	vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	44	bytes and relocations match
 00080a44	OTFAD_Deinit	14	OTFAD_Deinit	vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	14	bytes and relocations match
 00080a60	vRestoreContextOfFirstTask	30	vRestoreContextOfFirstTask	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	30	bytes and relocations match (size 36, Ghidra size 30)
-00080a90	vStartFirstTask	32	vStartFirstTask	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
+00080a90	vStartFirstTask	24	vStartFirstTask	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	24	bytes and relocations match (size 36, Ghidra size 24)
 00080ac0	PendSV_Handler	68	PendSV_Handler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	68	bytes and relocations match (size 84, Ghidra size 68)
 00080b20	SVC_Handler	18	SVC_Handler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	18	bytes and relocations match (size 36, Ghidra size 18)
 00080b44	delay_us	32	delay_us	app/codec.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)

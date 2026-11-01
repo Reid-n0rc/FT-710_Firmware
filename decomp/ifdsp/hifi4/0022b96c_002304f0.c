@@ -1,52 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== __truncdfsf2 @ 0022b8ac (188 bytes)
-
-/* double -> float (XCC soft double); used by the powf / sqrtf wrappers [inference] */
-
-uint __truncdfsf2(int param_1,uint param_2)
-
-{
-  ulonglong uVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
-  uint uVar5;
-  uint uVar6;
-  
-  uVar3 = param_2 + 0xc8000000;
-  if (((int)(param_2 ^ uVar3) < 0) || (uVar4 = uVar3 >> 0x14 & 0x7ff, uVar4 == 0)) {
-    uVar3 = 0x381 - (param_2 >> 0x14 & 0x7ff);
-    if (0x1f < uVar3) {
-      return param_2 & 0x80000000;
-    }
-    uVar1 = ((CONCAT44(param_2,param_1) | 0x70000000000000) & 0x1fffffffffffff) >> 0x1d;
-    uVar5 = uVar3 & 0x1f;
-    uVar6 = (uint)((uVar1 << 0x20 | (ulonglong)(uint)(param_1 << 3)) >> uVar5);
-    uVar4 = (uint)uVar1 >> uVar5;
-    if ((param_1 << 3) << 0x20 - uVar5 != 0) {
-      uVar6 = uVar6 | uVar3;
-    }
-  }
-  else {
-    if (0xfe < uVar4) {
-      iVar2 = 0x7ff00000;
-      if (((~param_2 & 0x7ff00000) == 0) && ((param_2 & 0xfffff) != 0 || param_1 != 0)) {
-        iVar2 = 0x3ff80000;
-      }
-      return (uint)(CONCAT44(param_2 >> 0x1f,iVar2 << 4) >> 1);
-    }
-    uVar6 = param_1 << 3;
-    uVar4 = (uint)(CONCAT44(uVar3,param_1) >> 0x1d);
-  }
-  uVar4 = param_2 & 0x80000000 | uVar4;
-  if (((int)uVar6 < 0) && (uVar4 = uVar4 + 1, (uVar6 & 0x7fffffff) == 0)) {
-    return uVar4 & 0xfffffffe;
-  }
-  return uVar4;
-}
-
-
 // ===== __extendsfdf2 @ 0022b96c (100 bytes)
 
 /* float -> double (XCC soft double); first conversion in the powf / sqrtf wrappers [inference] */
@@ -195,6 +148,7 @@ LAB_0022bad6:
       return (undefined4 *)0x0;
     }
   }
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   puVar13 = PTR_PTR_00237f30;
   if (uVar1 < 0x1f8) {
@@ -276,6 +230,7 @@ LAB_0022bad6:
     PTR_PTR_00237f30 = (undefined *)&PTR_DAT_00237f28;
     if (-1 < (int)uVar8) {
       *(uint *)(puVar13 + uVar5 + 4) = *(uint *)(puVar13 + uVar5 + 4) | 1;
+                    /* XOS clib support [doc, inference] */
       __malloc_unlock(param_1);
       return (undefined4 *)(puVar13 + 8);
     }
@@ -414,6 +369,7 @@ LAB_0022bad6:
   if ((uVar1 <= uVar4) && (puStack_34 = PTR_DAT_00237f28, 0xf < (int)uVar5)) goto LAB_0022bdf6;
   puVar11 = PTR_DAT_00237f28 + uVar4;
   uVar5 = DAT_002cd708 + uVar1 + 0x100f & 0xfffff000;
+                    /* heap break 0x2CD6D8 [doc, inference] */
   puStack_34 = (undefined *)_sbrk_r(param_1);
   puVar2 = DAT_002cd738;
   if ((puStack_34 == (undefined *)0xffffffff) ||
@@ -622,6 +578,7 @@ void _reclaim_reent(undefined *param_1)
     }
     if ((*(int *)(param_1 + 0x38) != 0) &&
        ((**(code **)(param_1 + 0x3c))(param_1), *(int *)(param_1 + 0x2e0) != 0)) {
+                    /* newlib reent.c static, recursive, frees the glue chain [doc, inference] */
       cleanup_glue(param_1);
     }
   }
@@ -3341,6 +3298,7 @@ char * _dtoa_r(int param_1,undefined4 param_2,uint param_3,uint param_4,int para
       uVar15 = uVar10 >> (iVar14 + 0x412U & 0x1f) |
                param_4 << 0x20 - (0x20 - (-iVar14 - 0x3f2U & 0x1f));
     }
+                    /* XCC soft double [doc, inference] */
     uVar19 = __floatunsidf(uVar15);
     uStack_110 = (uint)uVar19;
     uVar15 = iVar14 - 1;
@@ -3353,9 +3311,12 @@ char * _dtoa_r(int param_1,undefined4 param_2,uint param_3,uint param_4,int para
     uStack_10c = uStack_58 & (uint)&DAT_000fffff | 0x3ff00000;
     uVar15 = uVar15 - 0x3ff;
   }
+                    /* XCC soft double [doc, inference] */
   uVar19 = __floatsidf(uVar15);
+                    /* XCC soft double [doc, inference] */
   uVar19 = __muldf3((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),0x509f79fb,0x3fd34413);
   uStack_88 = (undefined4)((ulonglong)uVar19 >> 0x20);
+                    /* XCC soft double using the HiFi4 f64 assist ops [doc, inference] */
   uVar20 = __adddf3(0,0xbff80000,uStack_110,uStack_10c);
   uVar20 = __muldf3((int)uVar20,(int)((ulonglong)uVar20 >> 0x20),0x636f4361,0x3fd287a7);
   uVar20 = __adddf3((int)uVar20,(int)((ulonglong)uVar20 >> 0x20),0x8b60c8b3,0x3fc68a28);
@@ -3659,6 +3620,7 @@ LAB_0022f777:
       uStack_cc = uVar10 & 1;
       uVar10 = 1;
       do {
+                    /* newlib dtoa.c static [doc, inference] */
         iVar17 = quorem(uStack_44,iVar14);
         uStack_ec = iVar17 + 0x30;
         uStack_c4 = uStack_ec;
@@ -3828,6 +3790,7 @@ LAB_0022f739:
       iVar14 = iStack_2c;
       uStack_94 = (uint)((ulonglong)uVar20 >> 0x20);
       uStack_40 = (uint)uVar20;
+                    /* XCC soft double [doc, inference] */
       uVar19 = __divdf3(uStack_40,uStack_94,(int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
       param_5 = iStack_28;
     }
@@ -3877,6 +3840,7 @@ LAB_0022f201:
     if (uStack_50 != 0) {
       if (iStack_6c != 0) {
         uVar19 = __divdf3(0,0x3fe00000);
+                    /* XCC soft double [doc, inference] */
         uVar19 = __subdf3((int)uVar19,(int)((ulonglong)uVar19 >> 0x20),uVar8,uStack_98);
         uVar20 = CONCAT44(uStack_94,uVar16);
         iVar17 = 0;
@@ -4357,6 +4321,7 @@ void _free_r(undefined4 param_1,int param_2)
   if (param_2 == 0) {
     return;
   }
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   uVar5 = *(uint *)(param_2 + -4);
   uVar9 = uVar5 & 0xfffffffe;
@@ -4379,6 +4344,7 @@ void _free_r(undefined4 param_1,int param_2)
     if (PTR_DAT_00237f14 <= puVar11) {
       _malloc_trim_r(param_1,DAT_002cd708);
     }
+                    /* XOS clib support [doc, inference] */
     __malloc_unlock(param_1);
     return;
   }
@@ -4514,6 +4480,7 @@ undefined4 _malloc_trim_r(undefined4 param_1,int param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   uVar4 = *(uint *)(PTR_DAT_00237f28 + 4) & 0xfffffffc;
   uVar3 = (uVar4 - param_2) + 0xfef & 0xfffff000;
@@ -4521,8 +4488,10 @@ undefined4 _malloc_trim_r(undefined4 param_1,int param_2)
     __malloc_unlock(param_1);
     return 0;
   }
+                    /* heap break 0x2CD6D8 [doc, inference] */
   puVar1 = (undefined *)_sbrk_r(param_1,0);
   if (puVar1 != PTR_DAT_00237f28 + uVar4) {
+                    /* XOS clib support [doc, inference] */
     __malloc_unlock(param_1);
     return 0;
   }
@@ -4782,6 +4751,7 @@ int * _Balloc(int param_1,uint param_2)
   piVar1 = (int *)*piVar2;
   if (piVar1 == (int *)0x0) {
     iVar3 = 1 << 0x20 - (0x20 - (param_2 & 0x1f));
+                    /* _malloc_r then memset [doc, inference] */
     piVar1 = (int *)_calloc_r(param_1,1,iVar3 * 4 + 0x14);
     if (piVar1 == (int *)0x0) {
       return (int *)0x0;
@@ -4837,5 +4807,61 @@ int __multadd(undefined4 param_1,int param_2,int param_3,uint param_4)
     return param_2;
   }
   return param_2;
+}
+
+
+// ===== __s2b @ 002304f0 (159 bytes)
+
+/* newlib mprec.c: __multadd [inference] */
+
+int __s2b(undefined4 param_1,int param_2,int param_3,int param_4,undefined4 param_5)
+
+{
+  byte *pbVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  byte *pbVar5;
+  
+  iVar4 = (param_4 + 8) / 9;
+  if (iVar4 < 2) {
+    iVar3 = 0;
+  }
+  else {
+    iVar3 = 0;
+    iVar2 = 1;
+    do {
+      iVar2 = iVar2 << 1;
+      iVar3 = iVar3 + 1;
+    } while (iVar2 < iVar4);
+  }
+  iVar4 = _Balloc(param_1,iVar3);
+  *(undefined4 *)(iVar4 + 0x14) = param_5;
+  *(undefined4 *)(iVar4 + 0x10) = 1;
+  if (param_3 < 10) {
+    pbVar5 = (byte *)(param_2 + 10);
+    iVar3 = 9;
+  }
+  else {
+    iVar2 = param_3 + -9;
+    if (iVar2 < 1) {
+      iVar2 = 1;
+    }
+    iVar3 = param_2 + 0x12;
+    do {
+      iVar4 = __multadd(param_1,iVar4,10,*(byte *)(iVar3 + -9) - 0x30);
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < param_3 + param_2 + 9);
+    iVar3 = iVar2 + 9;
+    pbVar5 = (byte *)(param_2 + 9 + iVar2 + 1);
+  }
+  if (iVar3 < param_4) {
+    pbVar1 = pbVar5 + (param_4 - iVar3);
+    do {
+      iVar4 = __multadd(param_1,iVar4,10,*pbVar5 - 0x30);
+      pbVar5 = pbVar5 + 1;
+    } while (pbVar5 != pbVar1);
+  }
+  return iVar4;
 }
 

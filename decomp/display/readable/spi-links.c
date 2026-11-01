@@ -20,12 +20,15 @@ void sdr_spi_master_write(uint param_1,uint param_2)
   if (DAT_208001b4 == '\0') {
     dmac5_disable();
     rspi_stop(2);
+                    /* Programs one channel as master [doc] */
     rspi_hw_config(2,0);
     DAT_208001b4 = '\x01';
   }
   rspi_reset_buffers(2);
   rspi_start(2);
+                    /* PIO write by TX trigger level [doc] */
   rspi_write(2,param_1,param_2,0xff);
+                    /* Spins on SPSR.TEND [doc] */
   rspi_wait_tx_end(2);
   rspi_stop(2);
   return;
@@ -87,10 +90,10 @@ void pclink_tx_set_status(uint param_1)
 void pclink_tx_copy_afscope(void)
 
 {
-  uint uVar1;
+  uint afscope_buf_ptr_ret;
   
-  uVar1 = afscope_buf_ptr();
-  memcpy(&DAT_605016a4,uVar1,600);
+  afscope_buf_ptr_ret = afscope_buf_ptr();
+  memcpy(&DAT_605016a4,afscope_buf_ptr_ret,600);
   return;
 }
 
@@ -108,10 +111,10 @@ void pclink_tx_copy_afscope(void)
 void pclink_tx_copy_scope(void)
 
 {
-  void *pvVar1;
+  void *scope_frame_buf_ret;
   
-  pvVar1 = scope_frame_buf();
-  memcpy(&DAT_60501000,pvVar1,0x352);
+  scope_frame_buf_ret = scope_frame_buf();
+  memcpy(&DAT_60501000,scope_frame_buf_ret,0x352);
   return;
 }
 
@@ -150,8 +153,11 @@ void pclink_tx_trailer_init(void)
 void pclink_tx_dma_start(void)
 
 {
+                    /* Next0 Source Address 9 [sfr] */
   DMAC_N0SA_9 = &DAT_60501000;
+                    /* Next0 Destination Address 9 [sfr] */
   DMAC_N0DA_9 = 0xe800c804;
+                    /* Next0 Transaction Byte 9 [sfr] */
   DMAC_N0TB_9 = 0x1000;
   reg_rmw32(&DMAC_CHCTRL_9,1,0);
   return;
@@ -247,11 +253,11 @@ void pclink_rx_done_cb(void)
 void spi_slave_init(void)
 
 {
-  uint uVar1;
+  uint itron_acre_tsk_ret;
   
-  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_spi_slave_task);
-  if (0 < (int)uVar1) {
-    itron_sta_tsk(uVar1,0);
+  itron_acre_tsk_ret = itron_acre_tsk(0,(byte *)&ctsk_spi_slave_task);
+  if (0 < (int)itron_acre_tsk_ret) {
+    itron_sta_tsk(itron_acre_tsk_ret,0);
     return;
   }
   return;
@@ -271,22 +277,22 @@ void spi_slave_init(void)
 void pclink_stats_print(uint param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  uint gpio_read_bit_ret;
+  int iVar1;
   undefined1 auStack_a0 [128];
   
   if (DAT_20450004 != 0) {
-    iVar2 = 0x400;
-    uVar1 = gpio_read_bit(2,0xd);
-    if (DAT_20450008 != uVar1) {
+    iVar1 = 0x400;
+    gpio_read_bit_ret = gpio_read_bit(2,0xd);
+    if (DAT_20450008 != gpio_read_bit_ret) {
       DAT_2045d4b0 = DAT_2045d4b0 + 1;
     }
     if ((((DAT_2045d4a8 == 0) || (DAT_2045d4ac != 0)) || (DAT_2045d4bc == 0)) ||
        ((DAT_2045d4c0 != 0 || (DAT_2045d4b0 == 0)))) {
-      iVar2 = 0xc800;
+      iVar1 = 0xc800;
     }
-    DAT_20450008 = uVar1;
-    fb_fill_rect(param_1,iVar2,0x104,600,200,0xaf);
+    DAT_20450008 = gpio_read_bit_ret;
+    fb_fill_rect(param_1,iVar1,0x104,600,200,0xaf);
     DAT_20450010 = DAT_20450010 + 1;
     if (DAT_20450010 == 0x14) {
       DAT_20450010 = 0;
@@ -431,6 +437,7 @@ undefined4 rspi0_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(0,1);
     return uVar2;
   }
@@ -461,6 +468,7 @@ undefined4 rspi1_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(1,0);
     return uVar2;
   }
@@ -491,6 +499,7 @@ undefined4 rspi2_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(2,1);
     return uVar2;
   }
@@ -522,6 +531,7 @@ undefined4 rspi3_open(void)
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(3,1);
     return uVar2;
   }
@@ -552,6 +562,7 @@ undefined4 rspi4_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(4,1);
     return uVar2;
   }
@@ -970,6 +981,7 @@ void rspi0_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_0 [sfr] */
       RSPI_SPDR_0._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -978,6 +990,7 @@ void rspi0_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_0,0,0x3f);
     } while (uVar3 < param_1);
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
   }
   else {
@@ -1019,50 +1032,51 @@ void rspi1_tx_wait(void)
 void rspi1_read_burst(uint param_1,int param_2)
 
 {
-  byte bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  uint uVar1;
   
-  bVar1 = reg_read8(&RSPI_SPBFCR_1,4,0x30);
-  bVar2 = reg_read8(&RSPI_SPDCR_1,5,0x60);
-  if (bVar2 == 3) {
+  reg_read8_ret = reg_read8(&RSPI_SPBFCR_1,4,0x30);
+  reg_read8_ret_2 = reg_read8(&RSPI_SPDCR_1,5,0x60);
+  if (reg_read8_ret_2 == 3) {
     reg_rmw8(&RSPI_SPBFCR_1,2,4,0x30);
   }
-  else if (bVar2 == 2) {
+  else if (reg_read8_ret_2 == 2) {
     reg_rmw8(&RSPI_SPBFCR_1,1,4,0x30);
   }
   else {
     reg_rmw8(&RSPI_SPBFCR_1,0,4,0x30);
   }
   reg_rmw8(&RSPI_SPCR_1,1,7,0x80);
-  uVar3 = param_1;
-  while (uVar3 != 0) {
+  uVar1 = param_1;
+  while (uVar1 != 0) {
     rspi1_tx_wait();
     rspi1_clear_tx_flag();
-    if (bVar2 == 3) {
+    if (reg_read8_ret_2 == 3) {
       RSPI_SPDR_1 = 0xffffffff;
-      uVar3 = uVar3 - 4;
+      uVar1 = uVar1 - 4;
     }
-    else if (bVar2 == 2) {
+    else if (reg_read8_ret_2 == 2) {
       RSPI_SPDR_1._0_2_ = 0xffff;
-      uVar3 = uVar3 - 2;
+      uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_1 [sfr] */
       RSPI_SPDR_1._0_1_ = 0xff;
-      uVar3 = uVar3 - 1;
+      uVar1 = uVar1 - 1;
     }
   }
   if (param_2 == 1) {
     do {
-      uVar3 = reg_read16(&RSPI_SPBFDR_1,0,0x3f);
-    } while (uVar3 < param_1);
+      uVar1 = reg_read16(&RSPI_SPBFDR_1,0,0x3f);
+    } while (uVar1 < param_1);
     rspi1_rx_isr();
   }
   else {
     do {
     } while (DAT_20800419 == '\0');
   }
-  reg_rmw8(&RSPI_SPBFCR_1,bVar1,4,0x30);
+  reg_rmw8(&RSPI_SPBFCR_1,reg_read8_ret,4,0x30);
   return;
 }
 
@@ -1128,6 +1142,7 @@ void rspi2_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_2 [sfr] */
       RSPI_SPDR_2._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -1136,6 +1151,7 @@ void rspi2_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_2,0,0x3f);
     } while (uVar3 < param_1);
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
   }
   else {
@@ -1177,50 +1193,51 @@ void rspi3_tx_wait(void)
 void rspi3_read_burst(uint param_1,int param_2)
 
 {
-  byte bVar1;
-  byte bVar2;
-  uint uVar3;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  uint uVar1;
   
-  bVar1 = reg_read8(&RSPI_SPBFCR_3,4,0x30);
-  bVar2 = reg_read8(&RSPI_SPDCR_3,5,0x60);
-  if (bVar2 == 3) {
+  reg_read8_ret = reg_read8(&RSPI_SPBFCR_3,4,0x30);
+  reg_read8_ret_2 = reg_read8(&RSPI_SPDCR_3,5,0x60);
+  if (reg_read8_ret_2 == 3) {
     reg_rmw8(&RSPI_SPBFCR_3,2,4,0x30);
   }
-  else if (bVar2 == 2) {
+  else if (reg_read8_ret_2 == 2) {
     reg_rmw8(&RSPI_SPBFCR_3,1,4,0x30);
   }
   else {
     reg_rmw8(&RSPI_SPBFCR_3,0,4,0x30);
   }
   reg_rmw8(&RSPI_SPCR_3,1,7,0x80);
-  uVar3 = param_1;
-  while (uVar3 != 0) {
+  uVar1 = param_1;
+  while (uVar1 != 0) {
     rspi3_tx_wait();
     rspi3_clear_tx_flag();
-    if (bVar2 == 3) {
+    if (reg_read8_ret_2 == 3) {
       RSPI_SPDR_3 = 0xffffffff;
-      uVar3 = uVar3 - 4;
+      uVar1 = uVar1 - 4;
     }
-    else if (bVar2 == 2) {
+    else if (reg_read8_ret_2 == 2) {
       RSPI_SPDR_3._0_2_ = 0xffff;
-      uVar3 = uVar3 - 2;
+      uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_3 [sfr] */
       RSPI_SPDR_3._0_1_ = 0xff;
-      uVar3 = uVar3 - 1;
+      uVar1 = uVar1 - 1;
     }
   }
   if (param_2 == 1) {
     do {
-      uVar3 = reg_read16(&RSPI_SPBFDR_3,0,0x3f);
-    } while (uVar3 < param_1);
+      uVar1 = reg_read16(&RSPI_SPBFDR_3,0,0x3f);
+    } while (uVar1 < param_1);
     rspi3_rx_isr();
   }
   else {
     do {
     } while (DAT_2080041b == '\0');
   }
-  reg_rmw8(&RSPI_SPBFCR_3,bVar1,4,0x30);
+  reg_rmw8(&RSPI_SPBFCR_3,reg_read8_ret,4,0x30);
   return;
 }
 
@@ -1286,6 +1303,7 @@ void rspi4_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_4 [sfr] */
       RSPI_SPDR_4._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -1318,11 +1336,11 @@ void rspi4_read_burst(uint param_1,int param_2)
 void rspi0_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_0,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_0,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -1338,11 +1356,11 @@ void rspi0_wait_tend(void)
 void rspi1_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_1,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_1,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -1358,11 +1376,11 @@ void rspi1_wait_tend(void)
 void rspi2_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_2,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_2,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -1378,11 +1396,11 @@ void rspi2_wait_tend(void)
 void rspi3_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_3,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_3,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -1398,11 +1416,11 @@ void rspi3_wait_tend(void)
 void rspi4_wait_tend(void)
 
 {
-  byte bVar1;
+  byte reg_read8_ret;
   
   do {
-    bVar1 = reg_read8(&RSPI_SPSR_4,6,0x40);
-  } while (bVar1 == 0);
+    reg_read8_ret = reg_read8(&RSPI_SPSR_4,6,0x40);
+  } while (reg_read8_ret == 0);
   return;
 }
 
@@ -1819,88 +1837,90 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 {
   byte bVar1;
-  byte bVar2;
-  byte bVar3;
-  void *pvVar4;
-  uint uVar5;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  void *rspi_base_ret;
+  uint uVar2;
   int extraout_r1;
-  uint uVar6;
-  uint uVar7;
-  uint uVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar10;
-  undefined4 *puVar11;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  undefined4 *puVar6;
+  undefined4 *puVar7;
+  undefined4 *puVar8;
   undefined4 local_3c;
   
-  puVar10 = (undefined4 *)0x0;
-  puVar9 = (undefined4 *)0x0;
+  puVar7 = (undefined4 *)0x0;
+  puVar6 = (undefined4 *)0x0;
   bVar1 = 0;
-  pvVar4 = rspi_base(param_1);
+  rspi_base_ret = rspi_base(param_1);
   if (param_4 != 0xff) {
-    bVar1 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-    reg_rmw8((int)pvVar4 + 0x20,param_4,0,7);
+    bVar1 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+    reg_rmw8((int)rspi_base_ret + 0x20,param_4,0,7);
   }
-  bVar2 = reg_read8((byte *)((int)pvVar4 + 0xb),5,0x60);
-  if (bVar2 == 3) {
-    uVar8 = 4;
+  reg_read8_ret = reg_read8((byte *)((int)rspi_base_ret + 0xb),5,0x60);
+  if (reg_read8_ret == 3) {
+    uVar5 = 4;
   }
-  else if (bVar2 == 2) {
-    uVar8 = 2;
-    puVar10 = param_2;
+  else if (reg_read8_ret == 2) {
+    uVar5 = 2;
+    puVar7 = param_2;
     param_2 = (undefined4 *)0x0;
   }
   else {
-    uVar8 = 1;
-    puVar9 = param_2;
+    uVar5 = 1;
+    puVar6 = param_2;
     param_2 = (undefined4 *)0x0;
   }
-  bVar3 = reg_read8((byte *)((int)pvVar4 + 0x20),0,7);
-  uVar5 = *(uint *)(&DAT_20800434 + (uint)bVar3 * 4);
-  if ((uVar5 < uVar8) || (__aeabi_uidivmod(uVar5,uVar8), extraout_r1 != 0)) {
+  reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
+  uVar2 = *(uint *)(&DAT_20800434 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  if ((uVar2 < uVar5) || (__aeabi_uidivmod(uVar2,uVar5), extraout_r1 != 0)) {
     local_3c = 0xffffffff;
   }
   else {
     local_3c = 0;
     while (param_3 != 0) {
-      uVar6 = param_3 * uVar8;
-      uVar7 = uVar6;
-      if (uVar5 <= uVar6) {
-        uVar7 = uVar5;
+      uVar3 = param_3 * uVar5;
+      uVar4 = uVar3;
+      if (uVar2 <= uVar3) {
+        uVar4 = uVar2;
       }
       switch(param_1) {
       case 0:
-        rspi0_read_burst(uVar7);
+                    /* dummy 0xFF writes, wait RX [doc, inference] */
+        rspi0_read_burst(uVar4);
         break;
       case 1:
-        rspi1_read_burst(uVar7);
+        rspi1_read_burst(uVar4);
         break;
       case 2:
-        rspi2_read_burst(uVar7);
+        rspi2_read_burst(uVar4);
         break;
       case 3:
-        rspi3_read_burst(uVar7);
+        rspi3_read_burst(uVar4);
         break;
       case 4:
-        rspi4_read_burst(uVar7,uVar5 > uVar6);
+        rspi4_read_burst(uVar4,uVar2 > uVar3);
       }
-      for (; uVar8 <= uVar7; uVar7 = uVar7 - uVar8) {
-        if (bVar2 == 3) {
-          puVar11 = param_2 + 1;
-          *param_2 = *(undefined4 *)((int)pvVar4 + 4);
+      for (; uVar5 <= uVar4; uVar4 = uVar4 - uVar5) {
+        if (reg_read8_ret == 3) {
+          puVar8 = param_2 + 1;
+          *param_2 = *(undefined4 *)((int)rspi_base_ret + 4);
         }
         else {
-          puVar11 = param_2;
-          if (bVar2 == 2) {
-            *(undefined2 *)puVar10 = *(undefined2 *)((int)pvVar4 + 4);
-            puVar10 = (undefined4 *)((int)puVar10 + 2);
+          puVar8 = param_2;
+          if (reg_read8_ret == 2) {
+            *(undefined2 *)puVar7 = *(undefined2 *)((int)rspi_base_ret + 4);
+            puVar7 = (undefined4 *)((int)puVar7 + 2);
           }
           else {
-            *(undefined1 *)puVar9 = *(undefined1 *)((int)pvVar4 + 4);
-            puVar9 = (undefined4 *)((int)puVar9 + 1);
+            *(undefined1 *)puVar6 = *(undefined1 *)((int)rspi_base_ret + 4);
+            puVar6 = (undefined4 *)((int)puVar6 + 1);
           }
         }
         param_3 = param_3 + -1;
-        param_2 = puVar11;
+        param_2 = puVar8;
       }
       switch(param_1) {
       case 0:
@@ -1921,7 +1941,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
     }
   }
   if (param_4 != 0xff) {
-    reg_rmw8((int)pvVar4 + 0x20,bVar1,0,7);
+    reg_rmw8((int)rspi_base_ret + 0x20,bVar1,0,7);
   }
   return local_3c;
 }
@@ -1943,46 +1963,47 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
 {
   uint uVar1;
   byte bVar2;
-  byte bVar3;
-  byte bVar4;
-  void *pvVar5;
-  uint uVar6;
-  undefined4 uVar7;
+  byte reg_read8_ret;
+  byte reg_read8_ret_2;
+  void *rspi_base_ret;
+  uint uVar3;
+  undefined4 uVar4;
   int extraout_r1;
-  uint uVar8;
-  undefined4 *puVar9;
-  undefined4 *puVar10;
-  undefined4 *puVar11;
+  uint uVar5;
+  undefined4 *puVar6;
+  undefined4 *puVar7;
+  undefined4 *puVar8;
   undefined4 local_48;
   
-  uVar7 = 0;
+  uVar4 = 0;
   if ((param_1 < 5) && (0xfa < param_4 - 4U)) {
     if (param_3 != 0) {
-      puVar10 = (undefined4 *)0x0;
-      puVar9 = (undefined4 *)0x0;
+      puVar7 = (undefined4 *)0x0;
+      puVar6 = (undefined4 *)0x0;
       bVar2 = 0;
-      pvVar5 = rspi_base(param_1);
+      rspi_base_ret = rspi_base(param_1);
       if (param_4 != 0xff) {
-        bVar2 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
-        reg_rmw8((int)pvVar5 + 0x20,param_4,4,0x30);
+        bVar2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
+        reg_rmw8((int)rspi_base_ret + 0x20,param_4,4,0x30);
       }
-      bVar3 = reg_read8((byte *)((int)pvVar5 + 0xb),5,0x60);
-      if (bVar3 == 3) {
-        uVar8 = 4;
+      reg_read8_ret = reg_read8((byte *)((int)rspi_base_ret + 0xb),5,0x60);
+      if (reg_read8_ret == 3) {
+        uVar5 = 4;
       }
-      else if (bVar3 == 2) {
-        uVar8 = 2;
-        puVar10 = param_2;
+      else if (reg_read8_ret == 2) {
+        uVar5 = 2;
+        puVar7 = param_2;
         param_2 = (undefined4 *)0x0;
       }
       else {
-        uVar8 = 1;
-        puVar9 = param_2;
+        uVar5 = 1;
+        puVar6 = param_2;
         param_2 = (undefined4 *)0x0;
       }
-      bVar4 = reg_read8((byte *)((int)pvVar5 + 0x20),4,0x30);
-      uVar6 = *(uint *)(&DAT_20800424 + (uint)bVar4 * 4);
-      if ((uVar6 < uVar8) || (__aeabi_uidivmod(uVar6,uVar8), extraout_r1 != 0)) {
+      reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
+      uVar3 = *(uint *)(&DAT_20800424 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+      if ((uVar3 < uVar5) || (__aeabi_uidivmod(uVar3,uVar5), extraout_r1 != 0)) {
         local_48 = 0xffffffff;
       }
       else {
@@ -2004,29 +2025,29 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
           case 4:
             rspi4_tx_wait();
           }
-          uVar1 = uVar6;
-          if (param_3 * uVar8 < uVar6) {
-            uVar1 = param_3 * uVar8;
+          uVar1 = uVar3;
+          if (param_3 * uVar5 < uVar3) {
+            uVar1 = param_3 * uVar5;
           }
-          for (; uVar8 <= uVar1; uVar1 = uVar1 - uVar8) {
-            if (bVar3 == 3) {
-              puVar11 = param_2 + 1;
-              *(undefined4 *)((int)pvVar5 + 4) = *param_2;
+          for (; uVar5 <= uVar1; uVar1 = uVar1 - uVar5) {
+            if (reg_read8_ret == 3) {
+              puVar8 = param_2 + 1;
+              *(undefined4 *)((int)rspi_base_ret + 4) = *param_2;
             }
             else {
-              puVar11 = param_2;
-              if (bVar3 == 2) {
-                *(undefined2 *)((int)pvVar5 + 4) = *(undefined2 *)puVar10;
-                puVar10 = (undefined4 *)((int)puVar10 + 2);
+              puVar8 = param_2;
+              if (reg_read8_ret == 2) {
+                *(undefined2 *)((int)rspi_base_ret + 4) = *(undefined2 *)puVar7;
+                puVar7 = (undefined4 *)((int)puVar7 + 2);
               }
               else {
-                *(undefined1 *)((int)pvVar5 + 4) = *(undefined1 *)puVar9;
-                puVar9 = (undefined4 *)((int)puVar9 + 1);
+                *(undefined1 *)((int)rspi_base_ret + 4) = *(undefined1 *)puVar6;
+                puVar6 = (undefined4 *)((int)puVar6 + 1);
               }
             }
-            reg_read8((byte *)((int)pvVar5 + 3),7,0x80);
+            reg_read8((byte *)((int)rspi_base_ret + 3),7,0x80);
             param_3 = param_3 + -1;
-            param_2 = puVar11;
+            param_2 = puVar8;
           }
           switch(param_1) {
           case 0:
@@ -2047,15 +2068,15 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
         }
       }
       if (param_4 != 0xff) {
-        reg_rmw8((int)pvVar5 + 0x20,bVar2,4,0x30);
+        reg_rmw8((int)rspi_base_ret + 0x20,bVar2,4,0x30);
       }
       return local_48;
     }
   }
   else {
-    uVar7 = 0xffffffff;
+    uVar4 = 0xffffffff;
   }
-  return uVar7;
+  return uVar4;
 }
 
 
@@ -2284,16 +2305,16 @@ void sdr_rx_done_cb(void)
 
 {
   char cVar1;
-  char *pcVar2;
+  char *sdr_rx_buf_ret;
   
-  pcVar2 = sdr_rx_buf();
+  sdr_rx_buf_ret = sdr_rx_buf();
   cycle_delta_2(&DAT_208f4dc0);
   DAT_208085a4 = DAT_208085a4 + 1;
-  if ((((byte)DAT_20808a84 & 0x10) != 0) && (cVar1 = *pcVar2, cVar1 != '\0')) {
-    pcVar2[0x1a8] = cVar1;
-    pcVar2[0x1a9] = cVar1;
+  if ((((byte)DAT_20808a84 & 0x10) != 0) && (cVar1 = *sdr_rx_buf_ret, cVar1 != '\0')) {
+    sdr_rx_buf_ret[0x1a8] = cVar1;
+    sdr_rx_buf_ret[0x1a9] = cVar1;
   }
-  scope_store_frame((uint)pcVar2);
+  scope_store_frame((uint)sdr_rx_buf_ret);
   dmac5_disable();
   rspi_stop(2);
   rspi_reset_buffers(2);
@@ -2321,6 +2342,7 @@ void sdr_link_recover(void)
   rspi_stop(2);
   dmac5_enable();
   rspi_reset_buffers(2);
+                    /* Status_2 [sfr] */
   bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 1) != 0) {
     bVar1 = RSPI_SPSR_2;
@@ -2397,10 +2419,10 @@ void link_ss_irq_init(void)
 void sdr_dsp_link_init(void)
 
 {
-  void *pvVar1;
+  void *sdr_rx_buf_ret;
   
-  pvVar1 = sdr_rx_buf();
-  dmac5_rspi2_rx_setup(0xe800d804,(uint)pvVar1,0x6a4);
+  sdr_rx_buf_ret = sdr_rx_buf();
+  dmac5_rspi2_rx_setup(0xe800d804,(uint)sdr_rx_buf_ret,0x6a4);
   __aeabi_memset(&DAT_60502000,0x1450,0xf0);
   __aeabi_memset(&DAT_208f4de0,0x11f80,0xf0);
   dmac4_rspi4_rx_setup(0xe800e804,0x60502000,0x11f8);
@@ -2472,8 +2494,10 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(&DAT_20494768,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
@@ -2515,13 +2539,16 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
 {
   uint uVar1;
   
+                    /* Channel Control 3 [sfr] */
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 8;
   gic_disable_irq(0x2c);
   DAT_20808a8c = 0;
+                    /* DMA extended resource selector 1 [sfr] */
   DMAC_DMARS1 = 0x1310000;
+                    /* Channel Configuration 3 [sfr] */
   DMAC_CHCFG_3 = 0;
   reg_rmw32(&DMAC_CHCFG_3,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_3,1,0xc,0xf000);
@@ -2540,10 +2567,15 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_3,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_3,1,3,8);
   reg_rmw32(&DMAC_CHCFG_3,3,0,7);
+                    /* Channel Interval 3 [sfr] */
   DMAC_CHITVL_3 = 0;
+                    /* Channel Extension 3 [sfr] */
   DMAC_CHEXT_3 = 0;
+                    /* Next0 Source Address 3 [sfr] */
   DMAC_N0SA_3 = param_1;
+                    /* Next0 Destination Address 3 [sfr] */
   DMAC_N0DA_3 = param_2;
+                    /* Next0 Transaction Byte 3 [sfr] */
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200b0);
@@ -2572,14 +2604,17 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 5 [sfr] */
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 8;
   gic_disable_irq(0x2e);
   DAT_20808a94 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x12a0000;
+                    /* Channel Configuration 5 [sfr] */
   DMAC_CHCFG_5 = 0;
   reg_rmw32(&DMAC_CHCFG_5,0,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_5,0,0xc,0xf000);
@@ -2598,10 +2633,15 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_5,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_5,0,3,8);
   reg_rmw32(&DMAC_CHCFG_5,5,0,7);
+                    /* Channel Interval 5 [sfr] */
   DMAC_CHITVL_5 = 0;
+                    /* Channel Extension 5 [sfr] */
   DMAC_CHEXT_5 = 0;
+                    /* Next0 Source Address 5 [sfr] */
   DMAC_N0SA_5 = param_1;
+                    /* Next0 Destination Address 5 [sfr] */
   DMAC_N0DA_5 = param_2;
+                    /* Next0 Transaction Byte 5 [sfr] */
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200d8);
@@ -2631,14 +2671,17 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 4 [sfr] */
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 8;
   gic_disable_irq(0x2d);
   DAT_20808a90 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x132;
+                    /* Channel Configuration 4 [sfr] */
   DMAC_CHCFG_4 = 0;
   reg_rmw32(&DMAC_CHCFG_4,1,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_4,0,0xc,0xf000);
@@ -2657,10 +2700,15 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_4,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_4,0,3,8);
   reg_rmw32(&DMAC_CHCFG_4,4,0,7);
+                    /* Channel Interval 4 [sfr] */
   DMAC_CHITVL_4 = 0;
+                    /* Channel Extension 4 [sfr] */
   DMAC_CHEXT_4 = 0;
+                    /* Next0 Source Address 4 [sfr] */
   DMAC_N0SA_4 = param_1;
+                    /* Next0 Destination Address 4 [sfr] */
   DMAC_N0DA_4 = param_2;
+                    /* Next0 Transaction Byte 4 [sfr] */
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200c4);
@@ -2688,12 +2736,14 @@ void dmac8_m2m_init(void)
 {
   uint uVar1;
   
+                    /* Channel Control 8 [sfr] */
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 8;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 4;
+                    /* Channel Configuration 8 [sfr] */
   DMAC_CHCFG_8 = 0;
   reg_rmw32(&DMAC_CHCFG_8,7,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_8,7,0xc,0xf000);
@@ -2712,7 +2762,9 @@ void dmac8_m2m_init(void)
   reg_rmw32(&DMAC_CHCFG_8,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_8,0,3,8);
   reg_rmw32(&DMAC_CHCFG_8,0,0,7);
+                    /* Channel Interval 8 [sfr] */
   DMAC_CHITVL_8 = 0;
+                    /* Channel Extension 8 [sfr] */
   DMAC_CHEXT_8 = 0;
   reg_rmw32(&DMAC_DCTRL_8_15,1,0);
   return;
@@ -2751,12 +2803,14 @@ void dmac9_rspi_tx_setup(int param_1)
   uint uVar1;
   uint uVar2;
   
+                    /* Channel Control 9 [sfr] */
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 8;
   gic_disable_irq(0x32);
   DAT_20808a98 = 0;
+                    /* DMA extended resource selector 4 [sfr] */
   uVar1 = DMAC_DMARS4;
   DMAC_DMARS4 = uVar1 & 0xffff;
   uVar1 = DMAC_DMARS4;
@@ -2767,6 +2821,7 @@ void dmac9_rspi_tx_setup(int param_1)
     uVar2 = 0x1210000;
   }
   DMAC_DMARS4 = uVar1 | uVar2;
+                    /* Channel Configuration 9 [sfr] */
   DMAC_CHCFG_9 = 0;
   reg_rmw32(&DMAC_CHCFG_9,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_9,0,0xc,0xf000);
@@ -2785,7 +2840,9 @@ void dmac9_rspi_tx_setup(int param_1)
   reg_rmw32(&DMAC_CHCFG_9,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_9,0,3,8);
   reg_rmw32(&DMAC_CHCFG_9,1,0,7);
+                    /* Channel Interval 9 [sfr] */
   DMAC_CHITVL_9 = 0;
+                    /* Channel Extension 9 [sfr] */
   DMAC_CHEXT_9 = 0;
   gic_enable_irq(0x32);
   return;
@@ -2826,12 +2883,14 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   undefined4 uVar3;
   
   uVar3 = 0;
+                    /* Channel Control 10 [sfr] */
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 8;
   gic_disable_irq(0x33);
   DAT_20808a9c = 0;
+                    /* DMA extended resource selector 5 [sfr] */
   uVar1 = DMAC_DMARS5;
   DMAC_DMARS5 = uVar1 & 0xffff0000;
   uVar1 = DMAC_DMARS5;
@@ -2842,6 +2901,7 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
     uVar2 = 0x122;
   }
   DMAC_DMARS5 = uVar1 | uVar2;
+                    /* Channel Configuration 10 [sfr] */
   DMAC_CHCFG_10 = 0;
   reg_rmw32(&DMAC_CHCFG_10,0,0x10,0xf0000,uVar3);
   reg_rmw32(&DMAC_CHCFG_10,0,0xc,0xf000);
@@ -2860,10 +2920,15 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   reg_rmw32(&DMAC_CHCFG_10,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_10,0,3,8);
   reg_rmw32(&DMAC_CHCFG_10,2,0,7);
+                    /* Channel Interval 10 [sfr] */
   DMAC_CHITVL_10 = 0;
+                    /* Channel Extension 10 [sfr] */
   DMAC_CHEXT_10 = 0;
+                    /* Next0 Source Address 10 [sfr] */
   DMAC_N0SA_10 = param_2;
+                    /* Next0 Destination Address 10 [sfr] */
   DMAC_N0DA_10 = param_3;
+                    /* Next0 Transaction Byte 10 [sfr] */
   DMAC_N0TB_10 = param_4;
   gic_enable_irq(0x33);
   reg_rmw32(&DMAC_CHCTRL_10,1,0);

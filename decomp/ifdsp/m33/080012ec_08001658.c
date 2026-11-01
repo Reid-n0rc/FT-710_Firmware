@@ -379,16 +379,17 @@ void HASHCRYPT_IRQHandler(void)
 undefined4 getFFroFreq(void)
 
 {
-  uint uVar1;
-  undefined4 uVar2;
+  undefined4 uVar1;
+  uint clkctl0_ffroctl0;
   
-  uVar1 = CLKCTL0_FFROCTL0;
-  if ((uVar1 & 0xc0000) != 0) {
-    uVar2 = 60000000;
-    if ((uVar1 & 0xc0000) != 0xc0000) {
-      uVar2 = 0;
+                    /* FFRO control 0 [sfr] */
+  clkctl0_ffroctl0 = CLKCTL0_FFROCTL0;
+  if ((clkctl0_ffroctl0 & 0xc0000) != 0) {
+    uVar1 = 60000000;
+    if ((clkctl0_ffroctl0 & 0xc0000) != 0xc0000) {
+      uVar1 = 0;
     }
-    return uVar2;
+    return uVar1;
   }
   return 48000000;
 }
@@ -404,87 +405,96 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
   longlong lVar1;
   undefined4 uVar2;
   uint uVar3;
-  uint uVar4;
-  undefined *puVar5;
-  uint uVar6;
-  int iVar7;
-  uint uVar8;
+  undefined *puVar4;
+  uint uVar5;
+  int iVar6;
+  uint uVar7;
+  uint clkctl0_syspll0ctl0;
   
-  uVar8 = CLKCTL0_MAINCLKSELB;
-  uVar8 = uVar8 & 3;
-  if (uVar8 == 2) {
-    uVar8 = CLKCTL0_SYSPLL0CLKSEL;
-    uVar8 = uVar8 & 7;
-    if (uVar8 == 1) {
-      iVar7 = CLKCTL0_SYSOSCBYPASS;
-      if (iVar7 == 0) {
-        uVar6 = 24000000;
+                    /* main clock selection B [sfr] */
+  uVar7 = CLKCTL0_MAINCLKSELB;
+  uVar7 = uVar7 & 3;
+  if (uVar7 == 2) {
+    uVar7 = CLKCTL0_SYSPLL0CLKSEL;
+    uVar7 = uVar7 & 7;
+    if (uVar7 == 1) {
+      iVar6 = CLKCTL0_SYSOSCBYPASS;
+      if (iVar6 == 0) {
+        uVar5 = 24000000;
       }
       else {
-        uVar6 = 0;
+        uVar5 = 0;
         uVar2 = CLKCTL0_SYSOSCBYPASS;
       }
     }
-    else if (uVar8 == 2) {
-      uVar6 = getFFroFreq();
-      uVar6 = uVar6 >> 1;
+    else if (uVar7 == 2) {
+      uVar5 = getFFroFreq();
+      uVar5 = uVar5 >> 1;
     }
     else {
-      uVar6 = 16000000;
-      if (uVar8 != 0) {
-        uVar6 = 0;
+      uVar5 = 16000000;
+      if (uVar7 != 0) {
+        uVar5 = 0;
       }
     }
-    uVar8 = CLKCTL0_SYSPLL0CTL0;
-    uVar8 = uVar8 & 1;
-    if (uVar8 == 0) {
-      uVar4 = CLKCTL0_SYSPLL0NUM;
+                    /* system pll0 control0 [sfr] */
+    uVar7 = CLKCTL0_SYSPLL0CTL0;
+    uVar7 = uVar7 & 1;
+    if (uVar7 == 0) {
+                    /* system pll0 number [sfr] */
+      uVar3 = CLKCTL0_SYSPLL0NUM;
+                    /* system pll0 denom [sfr] */
       uVar2 = CLKCTL0_SYSPLL0DENOM;
-      uVar3 = CLKCTL0_SYSPLL0CTL0;
-      iVar7 = ____aeabi_uldivmod_veneer
-                        ((int)((ulonglong)uVar6 * (ulonglong)uVar4),
-                         (int)((ulonglong)uVar6 * (ulonglong)uVar4 >> 0x20),uVar2,0,param_1,0,
+      clkctl0_syspll0ctl0 = CLKCTL0_SYSPLL0CTL0;
+      iVar6 = ____aeabi_uldivmod_veneer
+                        ((int)((ulonglong)uVar5 * (ulonglong)uVar3),
+                         (int)((ulonglong)uVar5 * (ulonglong)uVar3 >> 0x20),uVar2,0,param_1,0,
                          param_3);
-      uVar4 = CLKCTL0_SYSPLL0PFD;
-      lVar1 = (ulonglong)(iVar7 + uVar6 * ((uVar3 & 0xffffff) >> 0x10)) * 0x12;
-      uVar6 = ____aeabi_uldivmod_veneer
-                        ((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar4 & 0x3f,uVar8);
+                    /* sys pll0 PFD [sfr] */
+      uVar3 = CLKCTL0_SYSPLL0PFD;
+      lVar1 = (ulonglong)(iVar6 + uVar5 * ((clkctl0_syspll0ctl0 & 0xffffff) >> 0x10)) * 0x12;
+      uVar5 = ____aeabi_uldivmod_veneer
+                        ((int)lVar1,(int)((ulonglong)lVar1 >> 0x20),uVar3 & 0x3f,uVar7);
     }
-    uVar8 = CLKCTL0_MAINPLLCLKDIV;
-    puVar5 = (undefined *)(uVar6 / ((uVar8 & 0xff) + 1));
+                    /* main pll clk divider [sfr] */
+    uVar7 = CLKCTL0_MAINPLLCLKDIV;
+    puVar4 = (undefined *)(uVar5 / ((uVar7 & 0xff) + 1));
   }
-  else if (uVar8 == 3) {
-    puVar5 = (undefined *)0x8000;
+  else if (uVar7 == 3) {
+    puVar4 = (undefined *)0x8000;
   }
-  else if (uVar8 == 1) {
-    puVar5 = (undefined *)0xf42400;
+  else if (uVar7 == 1) {
+    puVar4 = (undefined *)0xf42400;
   }
   else {
-    uVar8 = CLKCTL0_MAINCLKSELA;
-    uVar8 = uVar8 & 3;
-    if (uVar8 == 2) {
-      puVar5 = &DAT_000f4240;
+    uVar7 = CLKCTL0_MAINCLKSELA;
+    uVar7 = uVar7 & 3;
+    if (uVar7 == 2) {
+      puVar4 = &DAT_000f4240;
     }
-    else if (uVar8 == 3) {
-      puVar5 = (undefined *)getFFroFreq();
+    else if (uVar7 == 3) {
+      puVar4 = (undefined *)getFFroFreq();
     }
-    else if (uVar8 == 1) {
-      iVar7 = CLKCTL0_SYSOSCBYPASS;
-      if (iVar7 == 0) {
-        puVar5 = (undefined *)0x16e3600;
+    else if (uVar7 == 1) {
+      iVar6 = CLKCTL0_SYSOSCBYPASS;
+      if (iVar6 == 0) {
+        puVar4 = (undefined *)0x16e3600;
       }
       else {
-        puVar5 = (undefined *)0x0;
+        puVar4 = (undefined *)0x0;
+                    /* system oscillator bypass [sfr] */
         uVar2 = CLKCTL0_SYSOSCBYPASS;
       }
     }
     else {
-      uVar8 = getFFroFreq();
-      puVar5 = (undefined *)(uVar8 >> 2);
+                    /* FFROCTL0 trim range 0 [doc, inference] */
+      uVar7 = getFFroFreq();
+      puVar4 = (undefined *)(uVar7 >> 2);
     }
   }
-  uVar8 = CLKCTL0_SYSCPUAHBCLKDIV;
-  DAT_00087ec0 = (uint)puVar5 / ((uVar8 & 0xff) + 1);
+                    /* system cpu AHB clock divider [sfr] */
+  uVar7 = CLKCTL0_SYSCPUAHBCLKDIV;
+  DAT_00087ec0 = (uint)puVar4 / ((uVar7 & 0xff) + 1);
   return;
 }
 
@@ -497,15 +507,20 @@ void SystemInit(void)
   int iVar1;
   uint uVar2;
   
+                    /* Coprocessor Access Control [sfr] */
   uVar2 = SCB_CPACR;
   SCB_CPACR = uVar2 | 0xf00000;
   uVar2 = SCB_CPACR;
   SCB_CPACR = uVar2 | 0xf;
+                    /* Non-secure Access Control [sfr] */
   uVar2 = SCB_NSACR;
   SCB_NSACR = uVar2 | 0xc03;
+                    /* DSP stall [sfr] */
   SYSCTL0_DSPSTALL = 1;
+                    /* Policy Select [sfr] */
   iVar1 = CACHE64_POLSEL_POLSEL;
   if (iVar1 == 0) {
+                    /* Cache control [sfr] */
     CACHE64_CCR = 0x5000000;
     uVar2 = CACHE64_CCR;
     CACHE64_CCR = uVar2 | 0x80000000;
@@ -513,7 +528,9 @@ void SystemInit(void)
       iVar1 = CACHE64_CCR;
     } while (iVar1 < 0);
     CACHE64_CCR = 3;
+                    /* Region 0 Top Boundary [sfr] */
     CACHE64_POLSEL_REG0_TOP = 0x7fffc00;
+                    /* Region 1 Top Boundary [sfr] */
     CACHE64_POLSEL_REG1_TOP = 0;
     CACHE64_POLSEL_POLSEL = 1;
     InstructionSynchronizationBarrier(0xf);
@@ -598,10 +615,10 @@ ulonglong ____aeabi_uldivmod_veneer
                     (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  ulonglong uVar1;
+  ulonglong __aeabi_uldivmod_ret;
   
-  uVar1 = __aeabi_uldivmod(CONCAT44(param_2,param_1),CONCAT44(param_4,param_3));
-  return uVar1;
+  __aeabi_uldivmod_ret = __aeabi_uldivmod(CONCAT44(param_2,param_1),CONCAT44(param_4,param_3));
+  return __aeabi_uldivmod_ret;
 }
 
 
@@ -613,6 +630,7 @@ ulonglong ____aeabi_uldivmod_veneer
 void __HASHCRYPT_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ59, base 0x40158000 [doc] */
   HASHCRYPT_DriverIRQHandler(param_1);
   return;
 }

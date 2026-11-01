@@ -38,6 +38,7 @@ void func_color_select(void)
 
 {
   g_opstate.func_knob = 3;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xb);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 0xb;
@@ -82,34 +83,34 @@ undefined1 mic_eq_mode_ok(void)
 {
   bool bVar1;
   undefined1 uVar2;
-  byte bVar3;
+  byte vfo_mode_ret;
   
-  bVar3 = vfo_mode(0);
-  if ((bVar3 == 0) || (bVar3 == 1)) {
+  vfo_mode_ret = vfo_mode(0);
+  if ((vfo_mode_ret == 0) || (vfo_mode_ret == 1)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar3 == 4)) {
+  if ((bVar1) || (vfo_mode_ret == 4)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar3 == 5)) {
+  if ((bVar1) || (vfo_mode_ret == 5)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar3 == 6)) {
+  if ((bVar1) || (vfo_mode_ret == 6)) {
     bVar1 = true;
   }
   else {
     bVar1 = false;
   }
-  if ((bVar1) || (bVar3 == 7)) {
+  if ((bVar1) || (vfo_mode_ret == 7)) {
     uVar2 = 1;
   }
   else {
@@ -127,15 +128,16 @@ undefined1 mic_eq_mode_ok(void)
 void func_keyer_toggle(void)
 
 {
-  byte *pbVar1;
-  int iVar2;
+  byte *vfo_rec_ptr_ret;
+  int iVar1;
   
-  pbVar1 = vfo_rec_ptr(1);
-  iVar2 = keyer_mode_class(pbVar1);
-  if (iVar2 == 0) {
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  iVar1 = keyer_mode_class(vfo_rec_ptr_ret);
+  if (iVar1 == 0) {
     return;
   }
   g_opstate.keyer_on = g_opstate.keyer_on != 1;
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
   beep_request(1);
   PTR_g_ui_00025d54->key_consumed = 1;
@@ -197,12 +199,12 @@ void func_bk_in_toggle(void)
 
 {
   bool bVar1;
-  byte *pbVar2;
-  int iVar3;
+  byte *vfo_rec_ptr_ret;
+  int iVar2;
   
-  pbVar2 = vfo_rec_ptr(1);
-  iVar3 = rec_mode_is_voice(pbVar2);
-  if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pbVar2), iVar3 == 0)) {
+  vfo_rec_ptr_ret = vfo_rec_ptr(1);
+  iVar2 = rec_mode_is_voice(vfo_rec_ptr_ret);
+  if ((iVar2 == 0) && (iVar2 = keyer_mode_class(vfo_rec_ptr_ret), iVar2 == 0)) {
     bVar1 = true;
   }
   else {
@@ -213,7 +215,8 @@ void func_bk_in_toggle(void)
       PTR_g_ui_00025d54->key_consumed = 1;
       return;
     }
-    vfo_bk_in_bit_toggle(pbVar2);
+    vfo_bk_in_bit_toggle(vfo_rec_ptr_ret);
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
     keyer_init();
     beep_request(1);
     PTR_g_ui_00025d54->key_consumed = 1;
@@ -313,34 +316,34 @@ void FUN_fffc3fef(void)
 
 {
   byte *pbVar1;
-  vfo_rec *pvVar2;
-  vfo_rec *pvVar3;
-  int iVar4;
+  vfo_rec *p_vfo_rec;
+  vfo_rec *p_vfo_rec_2;
+  int iVar2;
   
   if (PTR_g_ui_00025d54->scan_running != 1) {
     menu_close_if_open();
     popup8_close();
     ui_clear_415_423();
     PTR_g_ui_00025d54->txw_swap = 1;
-    pvVar2 = &g_opstate.vfo_a;
+    p_vfo_rec = &g_opstate.vfo_a;
     pbVar1 = &DAT_000121c7;
-    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-      *pbVar1 = pvVar2->mode;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      *pbVar1 = p_vfo_rec->mode;
       pbVar1 = pbVar1 + 1;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
     }
-    pvVar3 = &g_opstate.vfo_b;
-    pvVar2 = &g_opstate.vfo_a;
-    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-      pvVar2->mode = pvVar3->mode;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
-      pvVar3 = (vfo_rec *)&pvVar3->flags1;
+    p_vfo_rec_2 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_a;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec->mode = p_vfo_rec_2->mode;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
+      p_vfo_rec_2 = (vfo_rec *)&p_vfo_rec_2->flags1;
     }
-    pvVar2 = &g_opstate.vfo_b;
+    p_vfo_rec = &g_opstate.vfo_b;
     pbVar1 = &DAT_000121c7;
-    for (iVar4 = 0x5a; iVar4 != 0; iVar4 = iVar4 + -1) {
-      pvVar2->mode = *pbVar1;
-      pvVar2 = (vfo_rec *)&pvVar2->flags1;
+    for (iVar2 = 0x5a; iVar2 != 0; iVar2 = iVar2 + -1) {
+      p_vfo_rec->mode = *pbVar1;
+      p_vfo_rec = (vfo_rec *)&p_vfo_rec->flags1;
       pbVar1 = pbVar1 + 1;
     }
     PTR_g_ui_00025d54->vfo_refresh_req = 1;
@@ -356,24 +359,24 @@ void FUN_fffc3fef(void)
 void FUN_fffc4064(void)
 
 {
-  vfo_side vVar1;
-  bool bVar2;
-  byte bVar3;
+  bool memch_valid_ret;
+  byte vfo_is_memory_ret;
   byte *pbStack_4;
+  vfo_side g_opstate_active_vfo_val;
   
-  bVar2 = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
-  vVar1 = g_opstate.active_vfo;
-  if (!bVar2) {
+  memch_valid_ret = memch_valid(PTR_g_ui_00025d54->memlist_ch,&pbStack_4);
+  g_opstate_active_vfo_val = g_opstate.active_vfo;
+  if (!memch_valid_ret) {
     beep_request(3);
     return;
   }
-  bVar3 = vfo_is_memory(g_opstate.active_vfo);
-  if (bVar3 == 0) {
+  vfo_is_memory_ret = vfo_is_memory(g_opstate.active_vfo);
+  if (vfo_is_memory_ret == 0) {
     vm_toggle_core();
   }
-  memch_current_set(vVar1,PTR_g_ui_00025d54->memlist_ch);
+  memch_current_set(g_opstate_active_vfo_val,PTR_g_ui_00025d54->memlist_ch);
   eeprom_save_memch(PTR_g_ui_00025d54->memlist_ch);
-  vfo_reload(vVar1);
+  vfo_reload(g_opstate_active_vfo_val);
   PTR_g_ui_00025d54->vfo_refresh_req = 1;
   memlist_close();
   beep_request(1);
@@ -1049,25 +1052,25 @@ void FUN_fffc4899(void)
 
 {
   bool bVar1;
-  byte bVar2;
-  int iVar3;
+  byte vfo_mode_ret;
+  int iVar2;
   
-  iVar3 = ui_close_overlays();
-  if (iVar3 != 0) {
-    bVar2 = vfo_mode(0);
-    if ((bVar2 == 6) || (bVar2 == 7)) {
+  iVar2 = ui_close_overlays();
+  if (iVar2 != 0) {
+    vfo_mode_ret = vfo_mode(0);
+    if ((vfo_mode_ret == 6) || (vfo_mode_ret == 7)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (bVar2 == 10)) {
+    if ((bVar1) || (vfo_mode_ret == 10)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) || (bVar2 == 0xb)) {
+    if ((bVar1) || (vfo_mode_ret == 0xb)) {
       bVar1 = true;
     }
     else {
@@ -1155,6 +1158,7 @@ void FUN_fffc49c1(void)
   byte *pbVar1;
   byte bVar2;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;
@@ -1187,6 +1191,7 @@ void FUN_fffc4a47(void)
 {
   byte *pbVar1;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;

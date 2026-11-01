@@ -184,9 +184,11 @@ void vdc5_module_start(char param_1)
 {
   byte bVar1;
   
+                    /* Standby control 9 [sfr] */
   bVar1 = CPG_STBCR9;
   if (param_1 != '\0') {
     CPG_STBCR9 = bVar1 & 0xfc;
+                    /* Standby request 2 [sfr] */
     bVar1 = CPG_STBREQ2;
     CPG_STBREQ2 = bVar1 & 0xef;
     do {
@@ -213,6 +215,7 @@ void vdc5_module_stop(char param_1)
 {
   byte bVar1;
   
+                    /* Standby request 2 [sfr] */
   bVar1 = CPG_STBREQ2;
   if (param_1 == '\0') {
     bVar1 = bVar1 | 0x20;
@@ -232,6 +235,7 @@ void vdc5_module_stop(char param_1)
     do {
       bVar1 = CPG_STBACK2;
     } while ((bVar1 & 0x10) == 0);
+                    /* Standby control 9 [sfr] */
     bVar1 = CPG_STBCR9;
     bVar1 = bVar1 | 1;
   }
@@ -380,6 +384,7 @@ uint vdc5_output_setup(int param_1,int param_2)
   if (param_1 == 0) {
     local_40 = 0x1fb;
     local_3e = 0;
+                    /* TCON pin table for the parallel RGB TFT [doc, inference] */
     lcd_tcon_cfg_ch0(auStack_3c);
     local_1a = 1;
   }
@@ -391,6 +396,7 @@ uint vdc5_output_setup(int param_1,int param_2)
       local_40 = 0x20f;
     }
     local_3e = 0;
+                    /* TCON pin table for the LVDS/DVI channel [doc, inference] */
     dvi_tcon_cfg_ch1(param_2,auStack_3c);
     local_1a = 0;
   }
@@ -470,12 +476,12 @@ undefined * fb_get_layer_addr(undefined4 param_1)
 uint vdc5_layers_setup(uint param_1,int param_2)
 
 {
-  byte bVar1;
-  undefined4 uVar2;
-  uint uVar3;
+  byte r_vdc5_start_process_ret;
+  undefined4 uVar1;
+  uint uVar2;
+  undefined4 uVar3;
   undefined4 uVar4;
-  undefined4 uVar5;
-  undefined8 uVar6;
+  undefined8 uVar5;
   undefined4 local_68;
   undefined4 local_64;
   undefined4 local_60;
@@ -494,68 +500,69 @@ uint vdc5_layers_setup(uint param_1,int param_2)
   int iStack_28;
   
   if (param_1 == 0) {
-    uVar4 = 0x1e00020;
-    uVar5 = 0x3200058;
+    uVar3 = 0x1e00020;
+    uVar4 = 0x3200058;
   }
   else if (param_2 == 0) {
-    uVar4 = 0x1e0001f;
-    uVar5 = 0x32000e0;
+    uVar3 = 0x1e0001f;
+    uVar4 = 0x32000e0;
   }
   else {
-    uVar4 = 0x1e00057;
-    uVar5 = 0x32000d8;
+    uVar3 = 0x1e00057;
+    uVar4 = 0x32000d8;
   }
   local_44 = 0;
   local_4c = 0;
   local_48 = 0;
   local_2c = param_1;
   iStack_28 = param_2;
-  uVar6 = fb_get_layer_addr(0);
-  local_3c = fb_get_layer_addr(1,(int)((ulonglong)uVar6 >> 0x20),(int)uVar6);
+  uVar5 = fb_get_layer_addr(0);
+  local_3c = fb_get_layer_addr(1,(int)((ulonglong)uVar5 >> 0x20),(int)uVar5);
   local_40 = fb_get_layer_addr(3);
-  uVar2 = fb_get_layer_addr(5);
+  uVar1 = fb_get_layer_addr(5);
   local_68 = 0x100;
   local_60 = 0x640;
   local_58 = 0x6000000;
   local_5c = 0;
-  local_54 = uVar4;
-  local_50 = uVar5;
-  uVar3 = r_vdc5_read_data_control(local_2c,3,(uint)&local_68);
-  if (((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,3,1,(uint)&local_4c), uVar3 == 0)) &&
-     (uVar3 = layer_alpha_rect_reapply(local_2c,3), uVar3 == 0)) {
+  local_54 = uVar3;
+  local_50 = uVar4;
+  uVar2 = r_vdc5_read_data_control(local_2c,3,(uint)&local_68);
+  if (((uVar2 == 0) && (uVar2 = r_vdc5_chromakey(local_2c,3,1,(uint)&local_4c), uVar2 == 0)) &&
+     (uVar2 = layer_alpha_rect_reapply(local_2c,3), uVar2 == 0)) {
     local_68 = 0x100;
     local_64 = local_3c;
     local_58 = 0x6000000;
     local_5c = 0;
     local_60 = 0x640;
-    local_54 = uVar4;
-    local_50 = uVar5;
-    uVar3 = r_vdc5_read_data_control(local_2c,4,(uint)&local_68);
-    if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,4,1,(uint)&local_4c), uVar3 == 0)) {
-      uVar3 = layer_alpha_rect_reapply(local_2c,4);
+    local_54 = uVar3;
+    local_50 = uVar4;
+    uVar2 = r_vdc5_read_data_control(local_2c,4,(uint)&local_68);
+    if ((uVar2 == 0) && (uVar2 = r_vdc5_chromakey(local_2c,4,1,(uint)&local_4c), uVar2 == 0)) {
+      uVar2 = layer_alpha_rect_reapply(local_2c,4);
     }
     DAT_208f4d50 = local_64;
-    if (uVar3 == 0) {
+    if (uVar2 == 0) {
       local_68 = 0x100;
       local_58 = 0x6000000;
       local_64 = local_40;
       local_5c = 0;
       local_60 = 0x640;
-      local_54 = uVar4;
-      local_50 = uVar5;
-      uVar3 = r_vdc5_read_data_control(local_2c,5,(uint)&local_68);
-      if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,5,1,(uint)&local_4c), uVar3 == 0)) {
-        uVar3 = layer_alpha_rect_reapply(local_2c,5);
+      local_54 = uVar3;
+      local_50 = uVar4;
+      uVar2 = r_vdc5_read_data_control(local_2c,5,(uint)&local_68);
+      if ((uVar2 == 0) && (uVar2 = r_vdc5_chromakey(local_2c,5,1,(uint)&local_4c), uVar2 == 0)) {
+        uVar2 = layer_alpha_rect_reapply(local_2c,5);
       }
       DAT_208f4d60 = local_64;
-      if (uVar3 == 0) {
+      if (uVar2 == 0) {
         local_68 = 0x100;
         local_60 = 0x640;
         local_58 = 0x6000000;
         local_5c = 0;
-        local_64 = uVar2;
-        local_54 = uVar4;
-        local_50 = uVar5;
+        local_64 = uVar1;
+        local_54 = uVar3;
+        local_50 = uVar4;
+                    /* 12x21 mouse-cursor window for graphics 3 [doc, inference] */
         cursor_rect_calc((short *)&local_40,local_2c,400,0xf0);
         DAT_20808584 = (short)local_40;
         DAT_20808586 = local_40._2_2_;
@@ -563,24 +570,24 @@ uint vdc5_layers_setup(uint param_1,int param_2)
         DAT_2080858a = local_3c._2_2_;
         local_54 = local_40;
         local_50 = local_3c;
-        uVar3 = r_vdc5_read_data_control(local_2c,6,(uint)&local_68);
-        if ((uVar3 == 0) && (uVar3 = r_vdc5_chromakey(local_2c,6,1,(uint)&local_4c), uVar3 == 0)) {
-          uVar3 = layer_alpha_rect_reapply(local_2c,6);
+        uVar2 = r_vdc5_read_data_control(local_2c,6,(uint)&local_68);
+        if ((uVar2 == 0) && (uVar2 = r_vdc5_chromakey(local_2c,6,1,(uint)&local_4c), uVar2 == 0)) {
+          uVar2 = layer_alpha_rect_reapply(local_2c,6);
         }
         DAT_208f4d78 = &DAT_20808584;
         DAT_208f4d74 = 0;
         DAT_208f4d7c = 0;
-        DAT_208f4d70 = uVar2;
-        if ((uVar3 == 0) && (uVar3 = vdc5_vline_cb_enable(local_2c), uVar3 == 0)) {
+        DAT_208f4d70 = uVar1;
+        if ((uVar2 == 0) && (uVar2 = vdc5_vline_cb_enable(local_2c), uVar2 == 0)) {
           local_34[0] = 2;
           local_38 = local_34;
           r_vdc5_start_process(local_2c,3,(uint)&local_38);
           local_34[0] = 3;
           local_38 = local_34;
           r_vdc5_start_process(local_2c,4,(uint)&local_38);
-          bVar1 = r_vdc5_start_process(local_2c,5,(uint)&local_38);
-          uVar3 = (uint)bVar1;
-          if (uVar3 == 0) {
+          r_vdc5_start_process_ret = r_vdc5_start_process(local_2c,5,(uint)&local_38);
+          uVar2 = (uint)r_vdc5_start_process_ret;
+          if (uVar2 == 0) {
             local_40 = 0;
             do {
               DataMemoryBarrier(2);
@@ -592,7 +599,7 @@ uint vdc5_layers_setup(uint param_1,int param_2)
       }
     }
   }
-  return uVar3;
+  return uVar2;
 }
 
 
@@ -606,22 +613,23 @@ uint vdc5_layers_setup(uint param_1,int param_2)
 int vdc5_layers_stop(uint param_1)
 
 {
-  byte bVar1;
-  uint uVar2;
+  byte r_vdc5_stop_process_ret;
+  uint uVar1;
   undefined4 extraout_r3;
   undefined4 unaff_r4;
   
-  uVar2 = vdc5_vline_cb_disable(param_1);
-  if (uVar2 == 0) {
-    bVar1 = r_vdc5_stop_process(param_1,-1);
-    uVar2 = (uint)bVar1;
-    if (uVar2 == 0) {
+  uVar1 = vdc5_vline_cb_disable(param_1);
+  if (uVar1 == 0) {
+    r_vdc5_stop_process_ret = r_vdc5_stop_process(param_1,-1);
+    uVar1 = (uint)r_vdc5_stop_process_ret;
+    if (uVar1 == 0) {
       FUN_2011ba48(param_1,0xffffffff);
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
       vdc5_shrd_set_resource(param_1,0xffffffff,0,extraout_r3,unaff_r4);
       return 0;
     }
   }
-  return uVar2;
+  return uVar1;
 }
 
 
@@ -643,6 +651,7 @@ int vdc5_channel_shutdown(uint param_1)
   FUN_2011d1e0();
   vdc5_int_callbacks_clear(param_1);
   FUN_201195e8(param_1);
+                    /* sets that state byte [doc] */
   vdc5_shrd_set_state(param_1,0,0,extraout_r3,unaff_r4);
   iVar1 = FUN_2011d5a8();
   if (iVar1 == 0) {
@@ -665,6 +674,7 @@ byte dvi_set_resolution(int param_1)
   undefined1 local_17;
   undefined4 local_14;
   
+                    /* stop layers, terminate the channel, clock off [doc, inference] */
   uVar1 = vdc5_channel_shutdown(1);
   DAT_20808574 = 0x58;
   DAT_20808578 = 0x20;
@@ -715,7 +725,9 @@ void gui_start(void)
   FUN_201340a4();
   scope_objects_init();
   afscope_init();
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
+                    /* frame-buffer copy DMA [doc, inference] */
   dmac8_m2m_init();
   sdr_dsp_link_init();
   iVar1 = vdc5_isr_create();
@@ -729,6 +741,7 @@ void gui_start(void)
       DAT_20808574 = 0x58;
       DAT_20808578 = 0x20;
       if (uVar2 == 0) {
+                    /* VLINE interrupt, no callback [doc, inference] */
         uVar2 = vdc5_vline_int_setup(0);
       }
     }
@@ -761,6 +774,7 @@ void gui_start(void)
       }
     }
   }
+                    /* stop layers, terminate the channel, clock off [doc, inference] */
   vdc5_channel_shutdown(0);
   vdc5_channel_shutdown(1);
   return;
@@ -838,6 +852,7 @@ void fb_cache_clean_buf(undefined4 param_1)
 void FUN_20132f10(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_600bb800);
   return;
 }
@@ -848,6 +863,7 @@ void FUN_20132f10(void)
 void FUN_20132f18(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_605048a0);
   return;
 }
@@ -858,6 +874,7 @@ void FUN_20132f18(void)
 void FUN_20132f20(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60177000);
   return;
 }
@@ -868,6 +885,7 @@ void FUN_20132f20(void)
 void FUN_20132f28(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(0x60000000);
   return;
 }
@@ -878,6 +896,7 @@ void FUN_20132f28(void)
 void FUN_20132f30(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60232800);
   return;
 }
@@ -888,6 +907,7 @@ void FUN_20132f30(void)
 void FUN_20132f38(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_602ee000,0x11300);
   return;
 }
@@ -1024,6 +1044,7 @@ uint vdc5_vline_int_setup(uint param_1)
   DAT_20907f58 = 3;
   DAT_20907f5c = 0;
   DAT_20907f60 = 0;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked();
   return uVar1;
 }
@@ -1039,6 +1060,7 @@ uint vdc5_vline_cb_enable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = vdc5_vline_cb;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
@@ -1052,6 +1074,7 @@ uint vdc5_vline_cb_disable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = 0;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
@@ -1095,16 +1118,16 @@ void sdr_rx_done_cb(void)
 
 {
   char cVar1;
-  char *pcVar2;
+  char *sdr_rx_buf_ret;
   
-  pcVar2 = sdr_rx_buf();
+  sdr_rx_buf_ret = sdr_rx_buf();
   cycle_delta_2(&DAT_208f4dc0);
   DAT_208085a4 = DAT_208085a4 + 1;
-  if ((((byte)DAT_20808a84 & 0x10) != 0) && (cVar1 = *pcVar2, cVar1 != '\0')) {
-    pcVar2[0x1a8] = cVar1;
-    pcVar2[0x1a9] = cVar1;
+  if ((((byte)DAT_20808a84 & 0x10) != 0) && (cVar1 = *sdr_rx_buf_ret, cVar1 != '\0')) {
+    sdr_rx_buf_ret[0x1a8] = cVar1;
+    sdr_rx_buf_ret[0x1a9] = cVar1;
   }
-  scope_store_frame((uint)pcVar2);
+  scope_store_frame((uint)sdr_rx_buf_ret);
   dmac5_disable();
   rspi_stop(2);
   rspi_reset_buffers(2);
@@ -1126,6 +1149,7 @@ void sdr_link_recover(void)
   rspi_stop(2);
   dmac5_enable();
   rspi_reset_buffers(2);
+                    /* Status_2 [sfr] */
   bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 1) != 0) {
     bVar1 = RSPI_SPSR_2;
@@ -1163,33 +1187,34 @@ void dsp_rx_done_cb(void)
 
 {
   byte bVar1;
+  undefined1 *dsp_hdr_buf_ret;
   undefined1 *puVar2;
-  undefined1 *puVar3;
   
   cycle_delta_2(&DAT_208f4dc8);
   DAT_208f4da4 = DAT_208f4da4 + 1;
   DAT_208085a0 = DAT_208085a0 + 1;
-  puVar3 = &DAT_60502000;
+  puVar2 = &DAT_60502000;
   if (DAT_2080858c == '\0') {
     afscope_store_frame(&DAT_60502000);
-    puVar2 = dsp_hdr_buf();
-    *puVar2 = DAT_60502000;
-    puVar2[1] = DAT_60502001;
-    puVar2[2] = DAT_60502002;
-    puVar2[3] = DAT_60502003;
+    dsp_hdr_buf_ret = dsp_hdr_buf();
+    *dsp_hdr_buf_ret = DAT_60502000;
+    dsp_hdr_buf_ret[1] = DAT_60502001;
+    dsp_hdr_buf_ret[2] = DAT_60502002;
+    dsp_hdr_buf_ret[3] = DAT_60502003;
   }
   else {
     afscope_store_frame(&DAT_60503450);
-    puVar3 = dsp_hdr_buf();
-    *puVar3 = DAT_60503450;
-    puVar3[1] = DAT_60503451;
-    puVar3[2] = DAT_60503452;
-    puVar3[3] = DAT_60503453;
-    puVar3 = &DAT_60503450;
+    puVar2 = dsp_hdr_buf();
+    *puVar2 = DAT_60503450;
+    puVar2[1] = DAT_60503451;
+    puVar2[2] = DAT_60503452;
+    puVar2[3] = DAT_60503453;
+    puVar2 = &DAT_60503450;
   }
-  dsp_set_audio_ptr((int)(puVar3 + 600));
+  dsp_set_audio_ptr((int)(puVar2 + 600));
   dmac4_disable();
   rspi_stop(4);
+                    /* Status_4 [sfr] */
   bVar1 = RSPI_SPSR_4;
   if ((bVar1 & 1) != 0) {
     DAT_20808594 = DAT_20808594 + 1;
@@ -1203,6 +1228,7 @@ void dsp_rx_done_cb(void)
     bVar1 = RSPI_SPSR_4;
     RSPI_SPSR_4 = bVar1 & 0xfb;
   }
+                    /* writes 0 to SETEN [doc, inference] */
   dmac3_disable();
   rspi_reset_buffers(4);
   DAT_2080858c = DAT_2080858c == '\0';
@@ -1211,7 +1237,9 @@ void dsp_rx_done_cb(void)
     DMAC_N0DA_4 = 0x60502000;
   }
   else {
+                    /* Next0 Source Address 3 [sfr] */
     DMAC_N0SA_3 = 0x60502258;
+                    /* Next0 Destination Address 4 [sfr] */
     DMAC_N0DA_4 = 0x60503450;
   }
   if (DAT_208000b2 != '\0') {
@@ -1293,10 +1321,10 @@ void link_ss_irq_init(void)
 void sdr_dsp_link_init(void)
 
 {
-  void *pvVar1;
+  void *sdr_rx_buf_ret;
   
-  pvVar1 = sdr_rx_buf();
-  dmac5_rspi2_rx_setup(0xe800d804,(uint)pvVar1,0x6a4);
+  sdr_rx_buf_ret = sdr_rx_buf();
+  dmac5_rspi2_rx_setup(0xe800d804,(uint)sdr_rx_buf_ret,0x6a4);
   __aeabi_memset(&DAT_60502000,0x1450,0xf0);
   __aeabi_memset(&DAT_208f4de0,0x11f80,0xf0);
   dmac4_rspi4_rx_setup(0xe800e804,0x60502000,0x11f8);
@@ -1322,10 +1350,10 @@ void sdr_dsp_link_init(void)
 
 /* -> scope3d_render_large (this = 0x20907F78) */
 
-void scope3d_render_large_thunk(uint param_1,uint param_2,uint param_3,uint param_4)
+void scope3d_render_large_thunk(uint n,uint param_2,uint param_3,uint param_4)
 
 {
-  scope3d_render_large(&DAT_20907f78,param_1,param_2,(ushort *)param_3,param_4);
+  scope3d_render_large(&DAT_20907f78,n,param_2,(ushort *)param_3,param_4);
   return;
 }
 
@@ -1334,10 +1362,10 @@ void scope3d_render_large_thunk(uint param_1,uint param_2,uint param_3,uint para
 
 /* -> scope3d_render_small (this = 0x20907F78) */
 
-void scope3d_render_small_thunk(uint param_1,uint param_2,uint param_3,uint param_4)
+void scope3d_render_small_thunk(uint n,uint param_2,uint param_3,uint param_4)
 
 {
-  scope3d_render_small(&DAT_20907f78,param_1,param_2,(ushort *)param_3,param_4);
+  scope3d_render_small(&DAT_20907f78,n,param_2,(ushort *)param_3,param_4);
   return;
 }
 

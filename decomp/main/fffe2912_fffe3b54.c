@@ -33,26 +33,26 @@ void kbd_edit_file_name(char param_1)
 {
   byte *pbVar1;
   byte (*pabVar2) [50];
-  int iVar3;
-  byte bStack_2;
+  int i;
+  byte j;
   
   if (DAT_0001b552 == '\x01') {
     pabVar2 = g_ui.msg_text;
     pbVar1 = &DAT_00018855;
-    for (iVar3 = 0xf; iVar3 != 0; iVar3 = iVar3 + -1) {
+    for (i = 0xf; i != 0; i = i + -1) {
       *pbVar1 = (*pabVar2)[0];
       pbVar1 = pbVar1 + 1;
       pabVar2 = (byte (*) [50])(*pabVar2 + 1);
     }
     DAT_0001b552 = '\0';
   }
+                    /* the on-screen keyboard key handler [doc] */
   kbd_edit_key(0x20bc6,param_1);
   if (param_1 != -0x7c) {
     if (param_1 == -0x7b) {
       DAT_0001b552 = 1;
-      for (bStack_2 = 0xe; (bStack_2 != 0 && (g_ui.msg_text[0][bStack_2] == 0x20));
-          bStack_2 = bStack_2 - 1) {
-        g_ui.msg_text[0][bStack_2] = 0;
+      for (j = 0xe; (j != 0 && (g_ui.msg_text[0][j] == 0x20)); j = j - 1) {
+        g_ui.msg_text[0][j] = 0;
       }
       FUN_fffd0e37();
       return;
@@ -89,10 +89,12 @@ int kbd_edit_key(int param_1,char param_2)
   int iVar2;
   
   if (param_2 == '\b') {
+                    /* deletes the character before the cursor [doc] */
     iVar2 = kbd_backspace(param_1);
     return iVar2;
   }
   if (param_2 == -0x79) {
+                    /* Moves g_ui.kbd_cursor right while below kbd_max_cursor [doc] */
     iVar2 = kbd_cursor_right();
     if (iVar2 == 0) {
       iVar2 = 3;
@@ -126,6 +128,7 @@ int kbd_edit_key(int param_1,char param_2)
       return iVar2;
     }
     if (param_2 == -0x7a) {
+                    /* Moves g_ui.kbd_cursor left while above 0 [doc] */
       iVar2 = kbd_cursor_left();
       if (iVar2 == 0) {
         iVar2 = 3;
@@ -149,6 +152,7 @@ int kbd_edit_key(int param_1,char param_2)
       beep_request(1);
       *(char *)((uint)PTR_g_ui_00025d6c->kbd_cursor + param_1) = param_2;
       bVar1 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
       iVar2 = kbd_max_cursor();
       if ((int)(uint)bVar1 < iVar2) {
         PTR_g_ui_00025d6c->kbd_cursor = PTR_g_ui_00025d6c->kbd_cursor + 1;
@@ -178,6 +182,7 @@ void kbd_backspace(int param_1)
     return;
   }
   local_5 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
   bVar1 = kbd_max_cursor();
   if ((bVar1 == PTR_g_ui_00025d6c->kbd_cursor) && (*(char *)((uint)local_5 + param_1) != ' ')) {
     *(undefined1 *)((uint)local_5 + param_1) = 0x20;
@@ -189,6 +194,7 @@ void kbd_backspace(int param_1)
     local_5 = local_5 + 1;
   }
   *(undefined1 *)(param_1 + (local_5 - 1)) = 0x20;
+                    /* Moves g_ui.kbd_cursor left while above 0 [doc] */
   iVar2 = kbd_cursor_left();
   if (iVar2 == 0) {
     beep_request(3);
@@ -266,6 +272,7 @@ bool kbd_cursor_right(void)
   int iVar3;
   
   bVar2 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
   iVar3 = kbd_max_cursor();
   bVar1 = (int)(uint)bVar2 < iVar3;
   if (bVar1) {
@@ -283,28 +290,30 @@ bool kbd_cursor_right(void)
 void kbd_edit_preset_name(char param_1)
 
 {
-  byte *pbVar1;
+  byte *menu_preset_name_ptr_ret;
   
-  pbVar1 = (byte *)menu_preset_name_ptr();
-  if (pbVar1 != (byte *)0x0) {
+                    /* Returns the RAM address of the open PRESET's name [doc] */
+  menu_preset_name_ptr_ret = (byte *)menu_preset_name_ptr();
+  if (menu_preset_name_ptr_ret != (byte *)0x0) {
     if (DAT_0001b553 == '\x01') {
-      DAT_0001886c = *(undefined4 *)(pbVar1 + 8);
-      DAT_00018868 = *(undefined4 *)(pbVar1 + 4);
-      DAT_00018864 = *(undefined4 *)pbVar1;
+      DAT_0001886c = *(undefined4 *)(menu_preset_name_ptr_ret + 8);
+      DAT_00018868 = *(undefined4 *)(menu_preset_name_ptr_ret + 4);
+      DAT_00018864 = *(undefined4 *)menu_preset_name_ptr_ret;
       DAT_0001b553 = '\0';
     }
+                    /* the on-screen keyboard key handler [doc] */
     kbd_edit_key(PTR_g_ui_00025d6c->msg_text,param_1);
     if (param_1 == -0x7c) {
-      *(undefined4 *)(pbVar1 + 8) = DAT_0001886c;
-      *(undefined4 *)(pbVar1 + 4) = DAT_00018868;
-      *(undefined4 *)pbVar1 = DAT_00018864;
+      *(undefined4 *)(menu_preset_name_ptr_ret + 8) = DAT_0001886c;
+      *(undefined4 *)(menu_preset_name_ptr_ret + 4) = DAT_00018868;
+      *(undefined4 *)menu_preset_name_ptr_ret = DAT_00018864;
       DAT_0001b553 = 1;
       return;
     }
     if (param_1 == -0x7b) {
-      *(undefined4 *)(pbVar1 + 8) = g_ui.msg_text[0]._8_4_;
-      *(undefined4 *)(pbVar1 + 4) = g_ui.msg_text[0]._4_4_;
-      *(undefined4 *)pbVar1 = g_ui.msg_text[0]._0_4_;
+      *(undefined4 *)(menu_preset_name_ptr_ret + 8) = g_ui.msg_text[0]._8_4_;
+      *(undefined4 *)(menu_preset_name_ptr_ret + 4) = g_ui.msg_text[0]._4_4_;
+      *(undefined4 *)menu_preset_name_ptr_ret = g_ui.msg_text[0]._0_4_;
       DAT_0001b553 = 1;
       return;
     }
@@ -915,15 +924,15 @@ void dispreq_e8_task(void)
 uint FUN_fffe3615(void)
 
 {
-  byte bVar1;
-  ui_state *puVar2;
-  byte bVar3;
-  uint uVar4;
+  byte vfo_mode_ret;
+  uint uVar1;
   uint uStack_c;
+  byte g_ui_keyer_state_val;
+  ui_state *p_ui_state;
   
-  bVar1 = g_ui.keyer_state;
-  bVar3 = vfo_mode(1);
-  if ((bVar3 == 3) || (bVar3 == 2)) {
+  g_ui_keyer_state_val = g_ui.keyer_state;
+  vfo_mode_ret = vfo_mode(1);
+  if ((vfo_mode_ret == 3) || (vfo_mode_ret == 2)) {
     uStack_c = 0;
   }
   else {
@@ -932,23 +941,23 @@ uint FUN_fffe3615(void)
   if (uStack_c != 0) {
     PTR_g_ui_00025d74->msg_active = 0;
   }
-  puVar2 = PTR_g_ui_00025d74;
-  if (DAT_00018870 != bVar1) {
-    DAT_00018870 = bVar1;
-    uStack_c = (uint)bVar1;
+  p_ui_state = PTR_g_ui_00025d74;
+  if (DAT_00018870 != g_ui_keyer_state_val) {
+    DAT_00018870 = g_ui_keyer_state_val;
+    uStack_c = (uint)g_ui_keyer_state_val;
     if (uStack_c == 7) {
-      uVar4 = contest_number_get();
-      puVar2->msg_timer = (ushort)uVar4;
+      uVar1 = contest_number_get();
+      p_ui_state->msg_timer = (ushort)uVar1;
       PTR_g_ui_00025d74->ky_send_0 = 0;
       PTR_g_ui_00025d74->ky_send_1 = 0;
-      return uVar4;
+      return uVar1;
     }
     if (uStack_c == 5) {
       if (PTR_g_ui_00025d74->msg_active == 1) {
-        uVar4 = FUN_fffe5544(PTR_g_ui_00025d74->msg_slot);
-        if (uVar4 != 0) {
+        uVar1 = FUN_fffe5544(PTR_g_ui_00025d74->msg_slot);
+        if (uVar1 != 0) {
           PTR_g_ui_00025d74->ky_send_1 = 1;
-          return uVar4;
+          return uVar1;
         }
         PTR_g_ui_00025d74->ky_send_0 = 1;
         return 0;
@@ -957,18 +966,18 @@ uint FUN_fffe3615(void)
     else if (uStack_c == 1) {
       if (g_ui.ky_queued == 1) {
         g_ui.ky_queued = 0;
-        uVar4 = FUN_fffe5544(PTR_g_ui_00025d74->msg_slot);
-        if (uVar4 == 0) {
+        uVar1 = FUN_fffe5544(PTR_g_ui_00025d74->msg_slot);
+        if (uVar1 == 0) {
           PTR_g_ui_00025d74->ky_send_0 = 1;
         }
         else {
           PTR_g_ui_00025d74->ky_send_1 = 1;
         }
         g_ui.keyer_state = 5;
-        return uVar4;
+        return uVar1;
       }
       uStack_c = contest_number_get();
-      puVar2->msg_timer = (ushort)uStack_c;
+      p_ui_state->msg_timer = (ushort)uStack_c;
       PTR_g_ui_00025d74->ky_send_0 = 0;
       PTR_g_ui_00025d74->ky_send_1 = 0;
       if (PTR_g_ui_00025d74->msg_rec_active == 1) {
@@ -1076,10 +1085,10 @@ int func_message_open(int param_1)
 
 {
   bool bVar1;
-  ui_state *puVar2;
-  ushort uVar3;
-  int iVar4;
+  ushort uVar2;
+  int iVar3;
   int local_8;
+  ui_state *p_ui_state;
   
   if (PTR_g_ui_00025d74->scan_running == 1) {
     scan_stop();
@@ -1117,16 +1126,16 @@ int func_message_open(int param_1)
       local_8 = 0;
     }
     if (local_8 == 0) {
-      iVar4 = vfo_mode_is_cw();
-      if ((iVar4 == 0) && (g_ui.dvs_lm1_flag == 1)) {
+      iVar3 = vfo_mode_is_cw();
+      if ((iVar3 == 0) && (g_ui.dvs_lm1_flag == 1)) {
         local_8 = 1;
       }
       else {
         local_8 = 0;
       }
       if (local_8 == 0) {
-        iVar4 = msg_voice_mode_ok();
-        if (iVar4 == 1) {
+        iVar3 = msg_voice_mode_ok();
+        if (iVar3 == 1) {
           PTR_g_ui_00025d74->msgmem_type = 0;
           PTR_g_ui_00025d74->msgmem_open = 1;
           PTR_g_ui_00025d74->msg_state_1d0 = 0;
@@ -1134,13 +1143,13 @@ int func_message_open(int param_1)
           beep_request(1);
         }
         else {
-          iVar4 = vfo_mode_is_cw();
-          if (iVar4 == 1) {
+          iVar3 = vfo_mode_is_cw();
+          if (iVar3 == 1) {
             PTR_g_ui_00025d74->msgmem_type = 1;
             PTR_g_ui_00025d74->msgmem_open = 1;
-            puVar2 = PTR_g_ui_00025d74;
-            uVar3 = contest_number_get();
-            puVar2->msg_timer = uVar3;
+            p_ui_state = PTR_g_ui_00025d74;
+            uVar2 = contest_number_get();
+            p_ui_state->msg_timer = uVar2;
             PTR_g_ui_00025d74->msg_state_1d0 = 0;
             PTR_g_ui_00025d74->msg_playing = 0;
             beep_request(1);
@@ -1149,17 +1158,17 @@ int func_message_open(int param_1)
             beep_request(3);
           }
         }
-        iVar4 = func_panel_close();
-        return iVar4;
+        iVar3 = func_panel_close();
+        return iVar3;
       }
     }
     return local_8;
   }
   PTR_g_ui_00025d74->ch_step_mode = 0;
   PTR_g_ui_00025d74->mic_key_hold = 0;
-  iVar4 = 6;
+  iVar3 = 6;
   beep_request(6);
-  return iVar4;
+  return iVar3;
 }
 
 
@@ -1218,6 +1227,7 @@ void FUN_fffe3b31(void)
 void FUN_fffe3b38(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(1);
   return;
 }
@@ -1228,6 +1238,7 @@ void FUN_fffe3b38(void)
 void FUN_fffe3b3f(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(2);
   return;
 }
@@ -1238,6 +1249,7 @@ void FUN_fffe3b3f(void)
 void FUN_fffe3b46(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(3);
   return;
 }
@@ -1248,6 +1260,7 @@ void FUN_fffe3b46(void)
 void FUN_fffe3b4d(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(4);
   return;
 }
@@ -1258,6 +1271,7 @@ void FUN_fffe3b4d(void)
 void FUN_fffe3b54(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(5);
   return;
 }

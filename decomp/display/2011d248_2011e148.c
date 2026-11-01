@@ -475,6 +475,7 @@ void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_
 {
   undefined1 *puVar1;
   
+                    /* pointer to state byte n [doc] */
   puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
   if (puVar1 != (undefined1 *)0x0) {
     *puVar1 = param_3;
@@ -491,17 +492,17 @@ void vdc5_shrd_set_state(undefined4 param_1,undefined4 param_2,undefined1 param_
 void vdc5_shrd_set_resource(int param_1,int param_2,undefined1 param_3)
 
 {
-  uint uVar1;
+  uint i;
   
   param_1 = param_1 * 9;
   if (param_2 == -1) {
-    uVar1 = 0;
+    i = 0;
     do {
-      if ((&DAT_208dce16)[uVar1 + param_1] == '\0') {
-        (&DAT_208dce04)[uVar1 + param_1] = param_3;
+      if ((&DAT_208dce16)[i + param_1] == '\0') {
+        (&DAT_208dce04)[i + param_1] = param_3;
       }
-      uVar1 = uVar1 + 1;
-    } while (uVar1 < 9);
+      i = i + 1;
+    } while (i < 9);
   }
   else {
     (&DAT_208dce04)[param_2 + param_1] = param_3;
@@ -522,6 +523,7 @@ undefined1 vdc5_shrd_get_state(void)
   undefined1 uVar2;
   
   uVar2 = 0;
+                    /* pointer to state byte n [doc] */
   puVar1 = (undefined1 *)vdc5_shrd_state_ptr();
   if (puVar1 != (undefined1 *)0x0) {
     uVar2 = *puVar1;
@@ -743,6 +745,7 @@ undefined4 rspi0_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(0,1);
     return uVar2;
   }
@@ -766,6 +769,7 @@ undefined4 rspi1_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(1,0);
     return uVar2;
   }
@@ -789,6 +793,7 @@ undefined4 rspi2_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(2,1);
     return uVar2;
   }
@@ -813,6 +818,7 @@ undefined4 rspi3_open(void)
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(3,1);
     return uVar2;
   }
@@ -836,6 +842,7 @@ undefined4 rspi4_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(4,1);
     return uVar2;
   }

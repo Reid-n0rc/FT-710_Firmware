@@ -10,6 +10,7 @@ undefined1 R_BSP_HardwareUnlock(int param_1)
 {
   undefined1 uVar1;
   
+                    /* writes 0, returns true [doc, inference] */
   uVar1 = R_BSP_SoftwareUnlock(&DAT_0001ffc4 + param_1 * 4);
   return uVar1;
 }
@@ -36,6 +37,7 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
     cStack_9 = R_BSP_HardwareLock(0x73);
   }
   else if (param_1 == 0) {
+                    /* R_BSP_SoftwareLock on the lock word 0x1FFC4 + id4 [doc, inference] */
     cStack_9 = R_BSP_HardwareLock(0x72);
   }
   else {
@@ -75,15 +77,15 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
 void R_BSP_SoftwareInterruptClose(int param_1)
 
 {
-  byte local_11;
+  byte i;
   
   if (param_1 < 2) {
     R_BSP_SoftwareInterruptControl(param_1,2,(char *)0x10000000);
     R_BSP_SoftwareInterruptControl(param_1,5,(char *)0x10000000);
-    for (local_11 = 0; local_11 < 9; local_11 = local_11 + 1) {
-      *(undefined4 *)(&DAT_00020318 + (uint)local_11 * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x2031c) = &LAB_fff910bc;
-      *(undefined4 *)(param_1 * 0x6c + (uint)local_11 * 0xc + 0x20320) = 0x10000000;
+    for (i = 0; i < 9; i = i + 1) {
+      *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c) = 0;
+      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
     (&DAT_00001430)[param_1] = 0;
@@ -93,6 +95,7 @@ void R_BSP_SoftwareInterruptClose(int param_1)
       R_BSP_HardwareUnlock(0x73);
     }
     else if (param_1 == 0) {
+                    /* R_BSP_SoftwareUnlock on 0x1FFC4 + id4 [doc, inference] */
       R_BSP_HardwareUnlock(0x72);
     }
   }
@@ -123,6 +126,7 @@ void R_BSP_SoftwareInterruptSetTask(int param_1,undefined4 param_2,int param_3,u
     local_c = param_2;
     local_8 = param_3;
     local_4 = param_4;
+                    /* Exchanges the access word 0x20310[unit] with arg [doc] */
     iVar2 = bsp_swint_get_access_control(param_1);
     if (iVar2 == 1) {
       if ((local_8 == 0x10000000) || (local_8 == 0)) {
@@ -152,6 +156,7 @@ void R_BSP_SoftwareInterruptSetTask(int param_1,undefined4 param_2,int param_3,u
       else {
         local_18 = 9;
       }
+                    /* Exchanges back into 0x20310[unit] [doc] */
       bsp_swint_release_access_control(local_10,&local_1c);
       R_BSP_SoftwareInterruptControl(local_10,4,(char *)0x10000000);
     }
@@ -175,6 +180,7 @@ void bsp_swint_get_interrupt_information(int param_1,byte *param_2)
     *param_2 = bVar1 & 0xf;
     bVar1 = ICU_IER03;
     param_2[1] = bVar1 >> 2 & 1;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
     bVar1 = ICU_IR026;
     param_2[2] = bVar1 & 1;
     param_2[3] = bRam00001433;
@@ -183,10 +189,13 @@ void bsp_swint_get_interrupt_information(int param_1,byte *param_2)
   if (param_1 != 0) {
     return;
   }
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR003;
   *param_2 = bVar1 & 0xf;
+                    /* Interrupt Request Enable 02 [sfr] */
   bVar1 = ICU_IER03;
   param_2[1] = bVar1 >> 3 & 1;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   bVar1 = ICU_IR027;
   param_2[2] = bVar1 & 1;
   param_2[3] = DAT_00001432;
@@ -263,6 +272,7 @@ uint bsp_swint_set_interrupt_priority(int param_1,byte *param_2)
       }
     }
     else if (local_4 == 0) {
+                    /* Interrupt Request Enable 02 [sfr] */
       bVar1 = ICU_IER03;
       bStack_15 = bVar1 >> 3 & 1;
       R_BSP_InterruptRequestDisable(0x1b);
@@ -293,6 +303,7 @@ void bsp_swint_set_interrupt_request(int param_1)
   
   if (param_1 == 1) {
     bVar1 = ICU_SWINT2R;
+                    /* Software Interrupt 2 Generation [sfr] */
     ICU_SWINT2R = bVar1 | 1;
     return;
   }
@@ -300,6 +311,7 @@ void bsp_swint_set_interrupt_request(int param_1)
     return;
   }
   bVar1 = ICU_SWINTR;
+                    /* Software Interrupt Generation [sfr] */
   ICU_SWINTR = bVar1 | 1;
   return;
 }
@@ -316,6 +328,7 @@ void bsp_swint_clear_interrupt_request(int param_1)
   
   if (param_1 == 1) {
     bVar1 = ICU_IR026;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
     ICU_IR026 = bVar1 & 0xfe;
     return;
   }
@@ -323,6 +336,7 @@ void bsp_swint_clear_interrupt_request(int param_1)
     return;
   }
   bVar1 = ICU_IR027;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR027 = bVar1 & 0xfe;
   return;
 }
@@ -370,6 +384,7 @@ uint bsp_swint_clear_task(int param_1,byte *param_2)
   local_18 = 0;
   local_8 = param_2;
   local_4 = param_1;
+                    /* Exchanges the access word 0x20310[unit] with arg [doc] */
   iVar1 = bsp_swint_get_access_control(param_1,&local_18);
   if (iVar1 == 1) {
     pbStack_14 = local_8;
@@ -387,6 +402,7 @@ uint bsp_swint_clear_task(int param_1,byte *param_2)
     else {
       uStack_10 = 7;
     }
+                    /* Exchanges back into 0x20310[unit] [doc] */
     bsp_swint_release_access_control(local_4,&local_18);
     R_BSP_SoftwareInterruptControl(local_4,4,(char *)0x10000000);
   }
@@ -412,6 +428,7 @@ uint bsp_swint_clear_all_task(int param_1)
   
   local_14 = 0;
   local_4 = param_1;
+                    /* Exchanges the access word 0x20310[unit] with arg [doc] */
   iVar1 = bsp_swint_get_access_control(param_1,&local_14);
   if (iVar1 == 1) {
     uStack_c = 0;
@@ -430,6 +447,7 @@ uint bsp_swint_clear_all_task(int param_1)
       (&DAT_0000142e)[local_4] = 0;
       (&DAT_00001430)[local_4] = 0;
       (&DAT_0000142c)[local_4] = 0;
+                    /* Exchanges back into 0x20310[unit] [doc] */
       bsp_swint_release_access_control(local_4,&local_14);
     }
     else {
@@ -452,13 +470,13 @@ void bsp_swint_get_all_task_status(int param_1,undefined4 *param_2)
 
 {
   undefined4 *local_10;
-  byte local_9;
+  byte i;
   
   local_10 = param_2;
-  for (local_9 = 0; local_9 < 9; local_9 = local_9 + 1) {
-    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)local_9 * 0xc + param_1 * 0x6c);
-    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x2031c);
-    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)local_9 * 0xc + 0x20320);
+  for (i = 0; i < 9; i = i + 1) {
+    *local_10 = *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c);
+    local_10[1] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c);
+    local_10[2] = *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320);
     local_10 = local_10 + 3;
   }
   return;
@@ -576,8 +594,10 @@ void bsp_swint_execute_task(int param_1)
   
   local_8 = 0;
   local_4 = param_1;
+                    /* Exchanges the access word 0x20310[unit] with arg [doc] */
   iVar2 = bsp_swint_get_access_control(param_1,&local_8);
   if (iVar2 == 1) {
+                    /* Exchanges back into 0x20310[unit] [doc] */
     bsp_swint_release_access_control(local_4,&local_8);
     if ((&DAT_00001432)[local_4] == '\x01') {
       FUN_fff8fd84();
@@ -841,6 +861,7 @@ uint get_iclk_freq_hz(void)
   local_1c[0] = 16000000;
   local_1c[1] = 18000000;
   local_1c[2] = 20000000;
+                    /* System Clock Control 3 [sfr] */
   uVar1 = SYSTEM_SCKCR3;
   bVar3 = (byte)(uVar1 >> 8) & 7;
   if (bVar3 == 4) {
@@ -853,6 +874,7 @@ uint get_iclk_freq_hz(void)
       local_1c[3] = local_1c[bVar3 & 3];
     }
     uVar1 = SYSTEM_PLLCR;
+                    /* PLL Control [sfr] */
     uVar4 = (uVar1 & 3) * 10 + 10;
     if (uVar4 != 0) {
       local_1c[3] = local_1c[3] / uVar4;
@@ -861,6 +883,7 @@ uint get_iclk_freq_hz(void)
   }
   else if (bVar3 == 1) {
     bVar3 = SYSTEM_HOCOCR2;
+                    /* High-Speed On-Chip Oscillator Control 2 [sfr] */
     local_8 = (undefined *)local_1c[bVar3 & 3];
   }
   else if (bVar3 == 2) {
@@ -875,6 +898,7 @@ uint get_iclk_freq_hz(void)
   else {
     local_8 = (undefined *)0x16e3600;
   }
+                    /* System Clock Control [sfr] */
   uVar4 = SYSTEM_SCKCR;
   return (uint)local_8 >> ((uVar4 & 0xfffffff) >> 0x18);
 }
@@ -902,22 +926,28 @@ void hw_init_clock(void)
 byte mcu_clock_setup(void)
 
 {
-  undefined4 uVar1;
-  undefined2 uVar2;
-  byte bVar3;
+  undefined2 uVar1;
+  byte R_BSP_SoftwareDelay_ret;
+  undefined4 system_sckcr;
   
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa50b;
   clock_source_select();
+                    /* System Clock Control [sfr] */
   SYSTEM_SCKCR = 0x21c21222;
-  uVar1 = SYSTEM_SCKCR;
+  system_sckcr = SYSTEM_SCKCR;
+                    /* System Clock Control 2 [sfr] */
   SYSTEM_SCKCR2 = 0x11;
-  uVar2 = SYSTEM_SCKCR2;
+  uVar1 = SYSTEM_SCKCR2;
+                    /* System Clock Control 3 [sfr] */
   SYSTEM_SCKCR3 = 0x400;
-  uVar2 = SYSTEM_SCKCR3;
+  uVar1 = SYSTEM_SCKCR3;
+                    /* Low-Speed On-Chip Oscillator Control [sfr] */
   SYSTEM_LOCOCR = 1;
-  bVar3 = R_BSP_SoftwareDelay(0x19,1000000);
+                    /* units must be 1000000 / 1000 / 1 [doc, inference] */
+  R_BSP_SoftwareDelay_ret = R_BSP_SoftwareDelay(0x19,1000000);
   SYSTEM_PRCR = 0xa500;
-  return bVar3;
+  return R_BSP_SoftwareDelay_ret;
 }
 
 
@@ -933,15 +963,18 @@ void clock_source_select(void)
   ushort uVar1;
   undefined1 uVar2;
   byte bVar3;
-  char cVar4;
   byte local_1;
+  char system_romwt;
   
   bVar3 = SYSTEM_MOFCR;
+                    /* Main Clock Oscillator Forced Oscillation Control [sfr] */
   SYSTEM_MOFCR = bVar3 & 0xfe;
   bVar3 = SYSTEM_MOFCR;
   SYSTEM_MOFCR = bVar3 & 0xbf;
+                    /* High-Speed On-Chip Oscillator Control [sfr] */
   bVar3 = SYSTEM_HOCOCR;
   if ((bVar3 & 1) == 1) {
+                    /* High-Speed On-Chip Oscillator Power Supply Control [sfr] */
     SYSTEM_HOCOPCR = 1;
   }
   else {
@@ -951,7 +984,9 @@ void clock_source_select(void)
   }
   bVar3 = SYSTEM_MOFCR;
   SYSTEM_MOFCR = bVar3 & 0xcf;
+                    /* Main Clock Oscillator Wait Control [sfr] */
   SYSTEM_MOSCWTCR = 0x53;
+                    /* Main Clock Oscillator Control [sfr] */
   SYSTEM_MOSCCR = 0;
   uVar2 = SYSTEM_MOSCCR;
   do {
@@ -960,17 +995,20 @@ void clock_source_select(void)
   bVar3 = SYSTEM_RSTSR1;
   if ((bVar3 & 1) == 0) {
     bVar3 = RTC_RCR4;
+                    /* RTC Control 4 [sfr] */
     RTC_RCR4 = bVar3 & 0xfe;
     for (local_1 = 0; local_1 < 4; local_1 = local_1 + 1) {
       uVar2 = RTC_RCR4;
     }
     uVar2 = RTC_RCR4;
     bVar3 = RTC_RCR3;
+                    /* RTC Control 3 [sfr] */
     RTC_RCR3 = bVar3 & 0xfe;
     for (local_1 = 0; local_1 < 4; local_1 = local_1 + 1) {
       uVar2 = RTC_RCR3;
     }
     uVar2 = RTC_RCR3;
+                    /* Sub-Clock Oscillator Control [sfr] */
     SYSTEM_SOSCCR = 1;
     uVar2 = SYSTEM_SOSCCR;
     do {
@@ -984,19 +1022,21 @@ void clock_source_select(void)
       bVar3 = SYSTEM_OSCOVFSR;
     } while ((bVar3 & 2) != 0);
   }
+                    /* PLL Control [sfr] */
   uVar1 = SYSTEM_PLLCR;
   SYSTEM_PLLCR = uVar1 & 0xfffc;
   uVar1 = SYSTEM_PLLCR;
   SYSTEM_PLLCR = uVar1 & 0xffef;
   uVar1 = SYSTEM_PLLCR;
   SYSTEM_PLLCR = uVar1 & 0xd3ff | 0x1300;
+                    /* PLL Control 2 [sfr] */
   SYSTEM_PLLCR2 = 0;
   do {
     bVar3 = SYSTEM_OSCOVFSR;
   } while ((bVar3 & 4) == 0);
   SYSTEM_ROMWT = 2;
-  cVar4 = SYSTEM_ROMWT;
-  if (cVar4 != '\x02') {
+  system_romwt = SYSTEM_ROMWT;
+  if (system_romwt != '\x02') {
     return;
   }
   return;
@@ -1011,41 +1051,59 @@ void FUN_fff91608(void)
   byte bVar1;
   undefined1 uVar2;
   
+                    /* Port Direction [sfr] */
   bVar1 = PORT0_PDR;
   PORT0_PDR = bVar1 | 0x50;
+                    /* Port Direction [sfr] */
   bVar1 = PORT1_PDR;
   PORT1_PDR = bVar1 | 3;
   uVar2 = PORT2_PDR;
+                    /* Port Direction [sfr] */
   PORT2_PDR = uVar2;
   uVar2 = PORT3_PDR;
+                    /* Port Direction [sfr] */
   PORT3_PDR = uVar2;
   uVar2 = PORT4_PDR;
+                    /* Port Direction [sfr] */
   PORT4_PDR = uVar2;
   bVar1 = PORT5_PDR;
+                    /* Port Direction [sfr] */
   PORT5_PDR = bVar1 | 0x80;
   uVar2 = PORT6_PDR;
+                    /* Port Direction [sfr] */
   PORT6_PDR = uVar2;
   uVar2 = PORT7_PDR;
+                    /* Port Direction [sfr] */
   PORT7_PDR = uVar2;
+                    /* Port Direction [sfr] */
   bVar1 = PORT8_PDR;
   PORT8_PDR = bVar1 | 0x30;
   bVar1 = PORT9_PDR;
+                    /* Port Direction [sfr] */
   PORT9_PDR = bVar1 | 0xf0;
   uVar2 = PORTA_PDR;
+                    /* Port Direction [sfr] */
   PORTA_PDR = uVar2;
   uVar2 = PORTB_PDR;
+                    /* Port Direction [sfr] */
   PORTB_PDR = uVar2;
   uVar2 = PORTC_PDR;
+                    /* Port Direction [sfr] */
   PORTC_PDR = uVar2;
   uVar2 = PORTD_PDR;
+                    /* Port Direction [sfr] */
   PORTD_PDR = uVar2;
   uVar2 = PORTE_PDR;
+                    /* Port Direction [sfr] */
   PORTE_PDR = uVar2;
   bVar1 = PORTF_PDR;
+                    /* Port Direction [sfr] */
   PORTF_PDR = bVar1 | 0xdf;
+                    /* Port Direction [sfr] */
   uVar2 = PORTG_PDR;
   PORTG_PDR = 0xff;
   bVar1 = PORTJ_PDR;
+                    /* Port Direction [sfr] */
   PORTJ_PDR = bVar1 | 0xd7;
   return;
 }
@@ -1063,6 +1121,7 @@ uint FUN_fff916ac(int param_1,char param_2)
   if (param_1 == 2) {
     if (param_2 == '\x01') {
       bVar1 = ICU_NMIER;
+                    /* Non-Maskable Interrupt Enable [sfr] */
       ICU_NMIER = bVar1 | 1;
     }
     else {
@@ -1073,11 +1132,14 @@ uint FUN_fff916ac(int param_1,char param_2)
     if (param_1 == 0xb) {
       if (param_2 == '\x01') {
         bVar1 = ICU_IR016;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
         ICU_IR016 = bVar1 & 0xfe;
+                    /* Interrupt Source Priority 000 [sfr] */
         bVar1 = ICU_IPR000;
         ICU_IPR000 = bVar1 | 0xf;
         R_BSP_InterruptRequestEnable(0x10);
         bVar1 = BSC_BEREN;
+                    /* Bus Error Monitoring Enable [sfr] */
         BSC_BEREN = bVar1 | 1;
         bVar1 = BSC_BEREN;
         BSC_BEREN = bVar1 | 2;
@@ -1112,6 +1174,7 @@ undefined4 vec110_GROUPBL0(undefined4 param_1)
 {
   int iVar1;
   
+                    /* Group BL0 Interrupt Request [sfr] */
   iVar1 = ICU_GRPBL0;
   if (iVar1 << 0x1e < 0) {
     R_BSP_InterruptControl(0x15,0,(void *)0x10000000);
@@ -1247,6 +1310,7 @@ undefined4 vec111_GROUPBL1(undefined4 param_1)
 {
   int iVar1;
   
+                    /* Group BL1 Interrupt Request [sfr] */
   iVar1 = ICU_GRPBL1;
   if (iVar1 << 0x1c < 0) {
     R_BSP_InterruptControl(0x32,0,(void *)0x10000000);
@@ -1360,10 +1424,11 @@ undefined4 vec111_GROUPBL1(undefined4 param_1)
 undefined4 vec107_GROUPBL2(undefined4 param_1)
 
 {
-  int iVar1;
+  int icu_grpbl2;
   
-  iVar1 = ICU_GRPBL2;
-  if (iVar1 << 0x1f < 0) {
+                    /* Group BL2 Interrupt Request [sfr] */
+  icu_grpbl2 = ICU_GRPBL2;
+  if (icu_grpbl2 << 0x1f < 0) {
     R_BSP_InterruptControl(0x4b,0,(void *)0x10000000);
     return param_1;
   }
@@ -1385,6 +1450,7 @@ undefined4 vec112_GROUPAL0(undefined4 param_1)
 {
   int iVar1;
   
+                    /* Group AL0 Interrupt Request [sfr] */
   iVar1 = ICU_GRPAL0;
   if (iVar1 << 0x16 < 0) {
     R_BSP_InterruptControl(0x4e,0,(void *)0x10000000);
@@ -1444,6 +1510,7 @@ undefined4 vec113_GROUPAL1(undefined4 param_1)
 {
   int iVar1;
   
+                    /* Group AL1 Interrupt Request [sfr] */
   iVar1 = ICU_GRPAL1;
   if (iVar1 << 0x1b < 0) {
     R_BSP_InterruptControl(0x58,0,(void *)0x10000000);
@@ -1484,8 +1551,10 @@ undefined4 vec106_GROUPBE0(undefined4 param_1)
   int iVar1;
   uint uVar2;
   
+                    /* Group BE0 Interrupt Request [sfr] */
   iVar1 = ICU_GRPBE0;
   if (iVar1 << 0x1f < 0) {
+                    /* Group BE0 Interrupt Clear [sfr] */
     uVar2 = ICU_GCRBE0;
     ICU_GCRBE0 = uVar2 | 1;
     R_BSP_InterruptControl(0x11,0,(void *)0x10000000);
@@ -1509,128 +1578,251 @@ undefined4 vec106_GROUPBE0(undefined4 param_1)
 void icu_select_init(void)
 
 {
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR128 = 1;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR129 = 2;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR146 = 3;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR147 = 4;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR148 = 5;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR149 = 6;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR150 = 7;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR151 = 8;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR152 = 9;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR153 = 10;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR154 = 0xb;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR155 = 0xc;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR156 = 0xd;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR157 = 0xe;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR130 = 0xf;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR131 = 0x10;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR132 = 0x11;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR133 = 0x12;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR134 = 0x13;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR144 = 0x14;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR135 = 0x15;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR136 = 0x16;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR137 = 0x17;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR138 = 0x18;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR139 = 0x19;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR140 = 0x1a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR141 = 0x1b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR142 = 0x1c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR143 = 0x1d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR145 = 0x1e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR158 = 0x1f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR159 = 0x20;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR160 = 0x21;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR161 = 0x22;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR162 = 0x23;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR163 = 0x24;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR164 = 0x25;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR165 = 0x26;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR166 = 0x27;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR167 = 0x28;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR168 = 0x29;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR169 = 0x2a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR170 = 0x2b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR171 = 0x2c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR172 = 0x2d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR173 = 0x2e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR174 = 0x2f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR175 = 0x30;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR176 = 0x31;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR177 = 0x32;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR178 = 0x33;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR179 = 0x34;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR180 = 0x35;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR181 = 0x36;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR182 = 0x37;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR183 = 0x38;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR184 = 0x39;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR185 = 0x3e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR186 = 0x40;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR187 = 0x41;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR188 = 0x42;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR189 = 0x44;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR190 = 0x45;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR191 = 0x46;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR192 = 0x4c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR193 = 0x4f;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR194 = 0x50;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR195 = 0x55;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR196 = 0x56;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR197 = 0x57;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR198 = 0x58;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR199 = 0x59;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR200 = 0x5a;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR201 = 0x5b;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR202 = 0x5c;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR203 = 0x5d;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR204 = 0x5e;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR205 = 0x5f;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR209 = 1;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR210 = 2;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR211 = 3;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR212 = 4;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR213 = 5;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR214 = 6;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR215 = 7;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR208 = 8;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR216 = 9;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR217 = 10;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR218 = 0xb;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR219 = 0xc;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR220 = 0xd;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR221 = 0xe;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR222 = 0xf;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR223 = 0x10;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR224 = 0x11;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR225 = 0x12;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR226 = 0x13;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR227 = 0x14;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR228 = 0x15;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR229 = 0x16;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR230 = 0x17;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR231 = 0x18;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR232 = 0x19;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR233 = 0x1b;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR234 = 0x1c;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR235 = 0x1d;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR236 = 0x1e;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR237 = 0x1f;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR238 = 0x20;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR239 = 0x21;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR240 = 0x22;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR241 = 0x23;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR242 = 0x24;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR243 = 0x25;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR244 = 0x26;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR245 = 0x27;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR246 = 0x29;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR247 = 0x2a;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR248 = 0x2b;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR249 = 0x2c;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR250 = 0x2d;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR251 = 0x58;
+                    /* Software Configurable Interrupt A Source Select ... [sfr] */
   ICU_SLIAR252 = 0x59;
   return;
 }
@@ -1648,126 +1840,179 @@ void mpc_pin_functions_init(void)
   byte bVar1;
   
   R_BSP_RegisterProtectDisable(3);
+                    /* P41 Pin Function Control [sfr] */
   MPC_P41PFS = 0x80;
   bVar1 = PORT4_PMR;
+                    /* Port Mode [sfr] */
   PORT4_PMR = bVar1 & 0xfd;
   bVar1 = PORT4_PDR;
+                    /* Port Direction [sfr] */
   PORT4_PDR = bVar1 & 0xfd;
+                    /* P42 Pin Function Control [sfr] */
   MPC_P42PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0xfb;
   bVar1 = PORT4_PDR;
   PORT4_PDR = bVar1 & 0xfb;
+                    /* P43 Pin Function Control [sfr] */
   MPC_P43PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0xf7;
   bVar1 = PORT4_PDR;
   PORT4_PDR = bVar1 & 0xf7;
+                    /* P45 Pin Function Control [sfr] */
   MPC_P45PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0xdf;
   bVar1 = PORT4_PDR;
   PORT4_PDR = bVar1 & 0xdf;
+                    /* P46 Pin Function Control [sfr] */
   MPC_P46PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0xbf;
   bVar1 = PORT4_PDR;
   PORT4_PDR = bVar1 & 0xbf;
+                    /* P47 Pin Function Control [sfr] */
   MPC_P47PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0x7f;
   bVar1 = PORT4_PDR;
   PORT4_PDR = bVar1 & 0x7f;
+                    /* PD0 Pin Function Control [sfr] */
   MPC_PD0PFS = 0x80;
   bVar1 = PORTD_PMR;
+                    /* Port Mode [sfr] */
   PORTD_PMR = bVar1 & 0xfe;
   bVar1 = PORTD_PDR;
+                    /* Port Direction [sfr] */
   PORTD_PDR = bVar1 & 0xfe;
+                    /* PD1 Pin Function Control [sfr] */
   MPC_PD1PFS = 0x80;
   bVar1 = PORTD_PMR;
   PORTD_PMR = bVar1 & 0xfd;
   bVar1 = PORTD_PDR;
   PORTD_PDR = bVar1 & 0xfd;
+                    /* P91 Pin Function Control [sfr] */
   MPC_P91PFS = 0x80;
   bVar1 = PORT9_PMR;
+                    /* Port Mode [sfr] */
   PORT9_PMR = bVar1 & 0xfd;
   bVar1 = PORT9_PDR;
+                    /* Port Direction [sfr] */
   PORT9_PDR = bVar1 & 0xfd;
+                    /* P93 Pin Function Control [sfr] */
   MPC_P93PFS = 0x80;
   bVar1 = PORT9_PMR;
   PORT9_PMR = bVar1 & 0xf7;
   bVar1 = PORT9_PDR;
   PORT9_PDR = bVar1 & 0xf7;
+                    /* P03 Pin Function Control [sfr] */
   MPC_P03PFS = 0x80;
   bVar1 = PORT0_PMR;
+                    /* Port Mode [sfr] */
   PORT0_PMR = bVar1 & 0xf7;
   bVar1 = PORT0_PDR;
+                    /* Port Direction [sfr] */
   PORT0_PDR = bVar1 & 0xf7;
+                    /* P27 Pin Function Control [sfr] */
   MPC_P27PFS = 1;
   bVar1 = PORT2_PMR;
+                    /* Port Mode [sfr] */
   PORT2_PMR = bVar1 | 0x80;
+                    /* P33 Pin Function Control [sfr] */
   MPC_P33PFS = 0xb;
+                    /* Port Mode [sfr] */
   bVar1 = PORT3_PMR;
   PORT3_PMR = bVar1 | 8;
+                    /* P30 Pin Function Control [sfr] */
   MPC_P30PFS = 10;
   bVar1 = PORT3_PMR;
   PORT3_PMR = bVar1 | 1;
+                    /* P12 Pin Function Control [sfr] */
   MPC_P12PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORT1_PMR;
   PORT1_PMR = bVar1 | 4;
+                    /* P25 Pin Function Control [sfr] */
   MPC_P25PFS = 10;
   bVar1 = PORT2_PMR;
   PORT2_PMR = bVar1 | 0x20;
+                    /* PB0 Pin Function Control [sfr] */
   MPC_PB0PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORTB_PMR;
   PORTB_PMR = bVar1 | 1;
+                    /* PC2 Pin Function Control [sfr] */
   MPC_PC2PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORTC_PMR;
   PORTC_PMR = bVar1 | 4;
+                    /* P92 Pin Function Control [sfr] */
   MPC_P92PFS = 10;
   bVar1 = PORT9_PMR;
   PORT9_PMR = bVar1 | 4;
+                    /* P01 Pin Function Control [sfr] */
   MPC_P01PFS = 10;
   bVar1 = PORT0_PMR;
   PORT0_PMR = bVar1 | 2;
+                    /* P00 Pin Function Control [sfr] */
   MPC_P00PFS = 10;
   bVar1 = PORT0_PMR;
   PORT0_PMR = bVar1 | 1;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT3_PODR;
   PORT3_PODR = bVar1 | 4;
+                    /* P32 Pin Function Control [sfr] */
   MPC_P32PFS = 0xb;
+                    /* Port Direction [sfr] */
   bVar1 = PORT3_PDR;
   PORT3_PDR = bVar1 | 4;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT2_PODR;
   PORT2_PODR = bVar1 | 0x40;
+                    /* P26 Pin Function Control [sfr] */
   MPC_P26PFS = 10;
+                    /* Port Direction [sfr] */
   bVar1 = PORT2_PDR;
   PORT2_PDR = bVar1 | 0x40;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT1_PODR;
   PORT1_PODR = bVar1 | 8;
+                    /* P13 Pin Function Control [sfr] */
   MPC_P13PFS = 10;
+                    /* Port Direction [sfr] */
   bVar1 = PORT1_PDR;
   PORT1_PDR = bVar1 | 8;
   bVar1 = PORT2_PODR;
   PORT2_PODR = bVar1 | 8;
+                    /* P23 Pin Function Control [sfr] */
   MPC_P23PFS = 10;
   bVar1 = PORT2_PDR;
   PORT2_PDR = bVar1 | 8;
+                    /* Port Output Data [sfr] */
   bVar1 = PORTB_PODR;
   PORTB_PODR = bVar1 | 2;
+                    /* PB1 Pin Function Control [sfr] */
   MPC_PB1PFS = 10;
+                    /* Port Direction [sfr] */
   bVar1 = PORTB_PDR;
   PORTB_PDR = bVar1 | 2;
+                    /* Port Output Data [sfr] */
   bVar1 = PORTC_PODR;
   PORTC_PODR = bVar1 | 8;
+                    /* PC3 Pin Function Control [sfr] */
   MPC_PC3PFS = 10;
+                    /* Port Direction [sfr] */
   bVar1 = PORTC_PDR;
   PORTC_PDR = bVar1 | 8;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT9_PODR;
   PORT9_PODR = bVar1 | 1;
+                    /* P90 Pin Function Control [sfr] */
   MPC_P90PFS = 10;
   bVar1 = PORT9_PDR;
   PORT9_PDR = bVar1 | 1;
+                    /* the counterpart of R_BSP_RegisterProtectDisable [doc, inference] */
   R_BSP_RegisterProtectEnable(3);
   return;
 }

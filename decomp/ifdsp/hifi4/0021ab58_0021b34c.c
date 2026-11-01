@@ -1,16 +1,5 @@
 // FT-710_IFDSP_V0101_hifi4.bin — Ghidra decompile, 50 functions
 
-// ===== env_mb @ 0021ab50 (7 bytes)
-
-/* rpmsg_env_bm.c [inference] */
-
-void env_mb(void)
-
-{
-  return;
-}
-
-
 // ===== env_rmb @ 0021ab58 (7 bytes)
 
 /* rpmsg_env_bm.c [inference] */
@@ -228,11 +217,13 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
+                    /* Receive [sfr] */
   uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
@@ -246,16 +237,18 @@ void MU_B_IRQHandler(void)
 undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 
 {
-  uint uVar1;
+  uint mub_cr;
   
+                    /* isr_table entry store [doc, inference] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_002390d0);
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+                    /* Control [sfr] */
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfff0fff7 | 0x4000000;
+      MUB_CR = mub_cr & 0xfff0fff7 | 0x4000000;
       xos_register_interrupt_handler(6,MU_B_IRQHandler,0);
     }
     DAT_002390d4 = DAT_002390d4 + 1;
@@ -275,18 +268,19 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 undefined4 platform_deinit_interrupt(undefined4 param_1)
 
 {
-  uint uVar1;
-  bool bVar2;
+  bool bVar1;
+  uint mub_cr;
   
   env_lock_mutex(DAT_002390d0);
-  bVar2 = 0 < DAT_002390d4;
+  bVar1 = 0 < DAT_002390d4;
   DAT_002390d4 = DAT_002390d4 + -1;
-  if (bVar2) {
+  if (bVar1) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+                    /* Control [sfr] */
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfbf0fff7;
+      MUB_CR = mub_cr & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
     env_unregister_isr(param_1);
@@ -311,12 +305,14 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
+                    /* Status [sfr] */
     uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
       uVar1 = MUB_SR;
     }
     memw();
+                    /* Transmit [sfr] */
     MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;
@@ -700,22 +696,22 @@ int * rpmsg_lite_create_ept(int param_1,int param_2,int param_3,int param_4,int 
 {
   int iVar1;
   undefined4 *puVar2;
-  int iVar3;
-  undefined4 *puVar4;
+  int i;
+  undefined4 *puVar3;
   
   if (param_1 == 0) {
     return (int *)0x0;
   }
   env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
-  puVar4 = *(undefined4 **)(param_1 + 8);
+  puVar3 = *(undefined4 **)(param_1 + 8);
   if (param_2 == -1) {
-    iVar3 = 1;
-    while (iVar1 = iVar3, puVar2 = puVar4, puVar4 != (undefined4 *)0x0) {
-      while (*(int *)*puVar2 != iVar3) {
+    i = 1;
+    while (iVar1 = i, puVar2 = puVar3, puVar3 != (undefined4 *)0x0) {
+      while (*(int *)*puVar2 != i) {
         puVar2 = (undefined4 *)puVar2[2];
         if (puVar2 == (undefined4 *)0x0) goto LAB_0021aff6;
       }
-      if ((puVar2 == (undefined4 *)0x0) || (iVar3 = iVar3 + 1, iVar1 = param_2, iVar3 == -1)) break;
+      if ((puVar2 == (undefined4 *)0x0) || (i = i + 1, iVar1 = param_2, i == -1)) break;
     }
 LAB_0021aff6:
     param_2 = iVar1;
@@ -725,9 +721,9 @@ LAB_0021aff6:
     }
   }
   else {
-    for (; puVar4 != (undefined4 *)0x0; puVar4 = (undefined4 *)puVar4[2]) {
-      if (*(int *)*puVar4 == param_2) {
-        if (puVar4 != (undefined4 *)0x0) {
+    for (; puVar3 != (undefined4 *)0x0; puVar3 = (undefined4 *)puVar3[2]) {
+      if (*(int *)*puVar3 == param_2) {
+        if (puVar3 != (undefined4 *)0x0) {
           env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
           return (int *)0x0;
         }
@@ -806,7 +802,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
 
 {
   undefined1 *puVar1;
-  uint uVar2;
+  uint i;
   undefined4 uStack_30;
   undefined2 auStack_2c [2];
   undefined4 uStack_28;
@@ -834,7 +830,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
     if (param_6 == 0) {
       return 0xffffec77;
     }
-    uVar2 = 0;
+    i = 0;
     do {
       env_sleep_msec(1);
       env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
@@ -842,9 +838,9 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
                              (*(undefined4 *)(param_1 + 4),&uStack_30,auStack_2c);
       env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
-      uVar2 = uVar2 + 1;
+      i = i + 1;
       puVar1 = puStack_24;
-      if (param_6 <= uVar2) {
+      if (param_6 <= i) {
         if (puStack_24 == (undefined1 *)0x0) {
           return 0xffffec77;
         }
@@ -882,9 +878,9 @@ int rpmsg_lite_alloc_tx_buffer(int param_1,int *param_2,uint param_3)
 
 {
   int iVar1;
-  uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
+  uint i;
+  int iVar2;
+  undefined4 uVar3;
   undefined1 auStack_30 [48];
   
   if (param_2 == (int *)0x0) {
@@ -899,14 +895,14 @@ int rpmsg_lite_alloc_tx_buffer(int param_1,int *param_2,uint param_3)
                     (*(undefined4 *)(param_1 + 4),param_2,auStack_30);
   env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
   if (iVar1 != 0) {
-    uVar4 = ae_l16ui_n(auStack_30,0);
-    iVar3 = *param_2;
-    *(char *)(iVar1 + 10) = (char)uVar4;
-    *(char *)(iVar1 + 0xb) = (char)((uint)uVar4 >> 8);
-    *param_2 = iVar3 + -0x10;
+    uVar3 = ae_l16ui_n(auStack_30,0);
+    iVar2 = *param_2;
+    *(char *)(iVar1 + 10) = (char)uVar3;
+    *(char *)(iVar1 + 0xb) = (char)((uint)uVar3 >> 8);
+    *param_2 = iVar2 + -0x10;
     return iVar1 + 0x10;
   }
-  uVar2 = 0;
+  i = 0;
   if (param_3 == 0) {
 LAB_0021b230:
     *param_2 = 0;
@@ -918,17 +914,17 @@ LAB_0021b230:
     iVar1 = (**(code **)(*(int *)(param_1 + 0x20) + 4))
                       (*(undefined4 *)(param_1 + 4),param_2,auStack_30);
     env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
-    uVar2 = uVar2 + 1;
-    if (param_3 <= uVar2) {
+    i = i + 1;
+    if (param_3 <= i) {
       if (iVar1 == 0) goto LAB_0021b230;
       break;
     }
   } while (iVar1 == 0);
-  uVar4 = ae_l16ui_n(auStack_30,0);
-  iVar3 = *param_2;
-  *(char *)(iVar1 + 10) = (char)uVar4;
-  *(char *)(iVar1 + 0xb) = (char)((uint)uVar4 >> 8);
-  *param_2 = iVar3 + -0x10;
+  uVar3 = ae_l16ui_n(auStack_30,0);
+  iVar2 = *param_2;
+  *(char *)(iVar1 + 10) = (char)uVar3;
+  *(char *)(iVar1 + 0xb) = (char)((uint)uVar3 >> 8);
+  *param_2 = iVar2 + -0x10;
   return iVar1 + 0x10;
 }
 
@@ -993,5 +989,153 @@ undefined4 rpmsg_lite_release_rx_buffer(undefined4 *param_1,int param_2)
     return 0;
   }
   return 0xffffec75;
+}
+
+
+// ===== rpmsg_lite_master_init @ 0021b34c (503 bytes)
+
+/* rpmsg_lite.c: vq names rx_vq/tx_vq 0x2062D4, callbacks 0x21AE00/0x21AED4 [inference] */
+
+int * rpmsg_lite_master_init(int param_1,int param_2,uint param_3,undefined4 param_4,int *param_5)
+
+{
+  bool bVar1;
+  int iVar2;
+  int iVar3;
+  int *piVar4;
+  code **ppcVar5;
+  int *piVar6;
+  int iVar7;
+  uint uVar8;
+  undefined4 uVar9;
+  int iVar10;
+  uint uVar11;
+  char *pcStack_60;
+  char *pcStack_5c;
+  code *apcStack_58 [2];
+  int local_50 [4];
+  undefined2 uStack_40;
+  uint uStack_3c;
+  char **ppcStack_38;
+  
+  uVar11 = param_2 - 0x800;
+  if ((uVar11 & 3) == 0) {
+    bVar1 = true;
+    if (0x7ff < uVar11) {
+      bVar1 = false;
+    }
+  }
+  else {
+    bVar1 = true;
+    if (0x7ff < (uVar11 & 0xfffffffc)) goto LAB_0021b36c;
+  }
+  if (bVar1) {
+    return (int *)0x0;
+  }
+LAB_0021b36c:
+  if (((param_3 < 2) && (param_1 != 0)) && (param_5 != (int *)0x0)) {
+    env_memset(param_5,0,0xf4);
+    iVar2 = env_init();
+    if (iVar2 == 0) {
+      uVar8 = param_1 + 0x800;
+      if ((uVar8 & 3) != 0) {
+        uVar8 = (uVar8 & 0xfffffffc) + 4;
+      }
+      param_5[5] = uVar8;
+      uStack_3c = param_3 << 1;
+      param_5[6] = uVar11 >> 9;
+      param_5[7] = uVar11 >> 9;
+      ppcStack_38 = &pcStack_60;
+      param_5[8] = (int)&PTR_vq_tx_master_002008d0;
+      pcStack_60 = "rx_vq";
+      apcStack_58[0] = rpmsg_lite_rx_callback;
+      ppcVar5 = apcStack_58;
+      pcStack_5c = "tx_vq";
+      piVar4 = local_50;
+      piVar6 = param_5 + 9;
+      apcStack_58[1] = rpmsg_lite_tx_callback;
+      uVar11 = 0;
+      do {
+        local_50[3] = 0x10;
+        local_50[2] = 0x400;
+        uStack_40 = 2;
+        if (uVar11 == 0) {
+          local_50[2] = 0;
+        }
+        local_50[2] = param_1 + local_50[2];
+        env_memset(local_50[2],0,0x4e);
+        uVar9 = ae_zext16(uStack_3c | uVar11 & 1);
+        iVar2 = virtqueue_create_static
+                          (uVar9,*ppcStack_38,local_50 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar6);
+        if (iVar2 != 0) {
+          return (int *)0x0;
+        }
+        vq_ring_init(*piVar4);
+        virtqueue_disable_cb(*piVar4);
+        ppcVar5 = ppcVar5 + 1;
+        piVar6 = piVar6 + 0x1a;
+        *(int **)(*piVar4 + 100) = param_5;
+        ppcStack_38 = ppcStack_38 + 1;
+        uVar11 = uVar11 + 1;
+        piVar4 = piVar4 + 1;
+      } while (uVar11 != 2);
+      iVar2 = env_create_mutex(param_5 + 3,1);
+      if (iVar2 == 0) {
+        param_5[1] = local_50[1];
+        piVar4 = local_50;
+        *param_5 = local_50[0];
+        iVar2 = 0;
+        do {
+          if ((*(short *)(*piVar4 + 0x52) != 0) && (uVar11 = param_5[7], uVar11 != 0)) {
+            uVar8 = 0;
+            do {
+              iVar7 = param_5[6];
+              if (iVar7 == 0) {
+LAB_0021b537:
+                do {
+                    /* WARNING: Do nothing block with infinite loop */
+                } while( true );
+              }
+              param_5[6] = iVar7 + -1;
+              iVar7 = param_5[5] + (uVar11 - iVar7) * 0x200;
+              if (iVar7 == 0) goto LAB_0021b537;
+              env_memset(iVar7,0,0x200);
+              iVar10 = *piVar4;
+              if (*param_5 == iVar10) {
+                iVar3 = virtqueue_fill_avail_buffers(iVar10,iVar7,0x200);
+                iVar2 = 0;
+              }
+              else {
+                iVar3 = iVar2;
+                if (param_5[1] == iVar10) {
+                  iVar2 = virtqueue_fill_used_buffers(iVar10,iVar7,0x200);
+                  iVar3 = iVar2;
+                }
+              }
+              if (iVar3 != 0) {
+                env_delete_mutex(param_5[3]);
+                return (int *)0x0;
+              }
+              uVar8 = uVar8 + 1;
+            } while ((uVar8 < *(ushort *)(*piVar4 + 0x52)) && (uVar11 = param_5[7], uVar8 < uVar11))
+            ;
+          }
+          piVar4 = piVar4 + 1;
+          if (piVar4 == local_50 + 2) {
+            platform_init_interrupt(*(undefined2 *)(*param_5 + 0x50));
+            platform_init_interrupt(*(undefined2 *)(param_5[1] + 0x50));
+            env_disable_interrupt(*(undefined2 *)(*param_5 + 0x50));
+            env_disable_interrupt(*(undefined2 *)(param_5[1] + 0x50));
+            param_5[4] = 1;
+            env_enable_interrupt(*(undefined2 *)(*param_5 + 0x50));
+            env_enable_interrupt(*(undefined2 *)(param_5[1] + 0x50));
+            virtqueue_kick(*param_5);
+            return param_5;
+          }
+        } while( true );
+      }
+    }
+  }
+  return (int *)0x0;
 }
 

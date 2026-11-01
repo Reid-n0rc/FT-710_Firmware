@@ -52,69 +52,69 @@ code * mainlink_ack_timeout_cyc(void)
   uint *puVar8;
   uint *extraout_r2;
   undefined4 in_r3;
-  knl_tcb *pkVar9;
-  uint uVar10;
-  knl_flg *pkVar11;
-  byte *pbVar12;
-  bool bVar13;
+  knl_tcb *p_knl_tcb;
+  uint uVar9;
+  knl_flg *p_knl_flg;
+  byte *pbVar10;
+  bool bVar11;
   
   if ((g_ml.retry_flg == 0) || (0x40 < g_ml.retry_flg)) {
     knl_sys.last_ercd = -0x12;
     return (code *)0xffffffee;
   }
   software_interrupt(0);
-  pkVar11 = knl_flg_tab[g_ml.retry_flg];
-  if (pkVar11 == (knl_flg *)0x0) {
+  p_knl_flg = knl_flg_tab[g_ml.retry_flg];
+  if (p_knl_flg == (knl_flg *)0x0) {
     software_interrupt(0);
     return (code *)0xffffffd6;
   }
-  for (pbVar12 = pkVar11->wq; uVar10 = (uint)*pbVar12, uVar10 == 0; pbVar12 = pbVar12 + 1) {
+  for (pbVar10 = p_knl_flg->wq; uVar9 = (uint)*pbVar10, uVar9 == 0; pbVar10 = pbVar10 + 1) {
   }
-  if (0xfd < uVar10) {
-    pkVar11->flgptn = pkVar11->flgptn | 1;
+  if (0xfd < uVar9) {
+    p_knl_flg->flgptn = p_knl_flg->flgptn | 1;
     software_interrupt(0);
     return knl_svc_return;
   }
-  pkVar9 = knl_tsk_tab[uVar10];
-  uVar7 = (uint)pkVar9->q_prev;
-  bVar13 = uVar7 == uVar10;
-  if (bVar13) {
-    uVar7 = (uint)pkVar11->flgatr;
+  p_knl_tcb = knl_tsk_tab[uVar9];
+  uVar7 = (uint)p_knl_tcb->q_prev;
+  bVar11 = uVar7 == uVar9;
+  if (bVar11) {
+    uVar7 = (uint)p_knl_flg->flgatr;
   }
-  if (!bVar13 || (uVar7 & 2) != 0) {
-    bVar13 = false;
-    uVar10 = pkVar11->flgptn | 1;
+  if (!bVar11 || (uVar7 & 2) != 0) {
+    bVar11 = false;
+    uVar9 = p_knl_flg->flgptn | 1;
 LAB_20150fa4:
-    pkVar9 = knl_tsk_tab[*pbVar12];
-    bVar1 = pkVar9->q_prev;
-    uVar7 = (uint)*pbVar12;
+    p_knl_tcb = knl_tsk_tab[*pbVar10];
+    bVar1 = p_knl_tcb->q_prev;
+    uVar7 = (uint)*pbVar10;
     do {
-      bVar2 = pkVar9->state;
-      bVar3 = pkVar9->q_next;
-      uVar4 = *(uint *)(pkVar9->sp + 8);
+      bVar2 = p_knl_tcb->state;
+      bVar3 = p_knl_tcb->q_next;
+      uVar4 = *(uint *)(p_knl_tcb->sp + 8);
       if ((bVar2 & 1) == 0) {
-        if ((uVar4 & ~uVar10) == 0) goto LAB_2015109c;
+        if ((uVar4 & ~uVar9) == 0) goto LAB_2015109c;
       }
-      else if ((uVar4 & uVar10) != 0) {
+      else if ((uVar4 & uVar9) != 0) {
 LAB_2015109c:
-        **(uint **)(pkVar9->sp + 0xc) = uVar10;
+        **(uint **)(p_knl_tcb->sp + 0xc) = uVar9;
         if ((bVar2 & 2) != 0) {
-          knl_timeout_remove(pkVar9,uVar7);
+          knl_timeout_remove(p_knl_tcb,uVar7);
         }
-        pkVar9->state = 0x10;
-        if (pkVar9->f_0x09_u8 == 0) {
-          iVar6 = (int)pkVar9->pri;
+        p_knl_tcb->state = 0x10;
+        if (p_knl_tcb->f_0x09_u8 == 0) {
+          iVar6 = (int)p_knl_tcb->pri;
           if (iVar6 < knl_sys.run_pri) {
-            bVar13 = (bool)(bVar13 | iVar6 < knl_sys.run_pri);
+            bVar11 = (bool)(bVar11 | iVar6 < knl_sys.run_pri);
           }
-          knl_queue_move(knl_rdq + iVar6,pkVar9,uVar7);
+          knl_queue_move(knl_rdq + iVar6,p_knl_tcb,uVar7);
         }
         else {
-          knl_queue_remove(pkVar9,uVar7);
+          knl_queue_remove(p_knl_tcb,uVar7);
         }
         if ((bVar2 & 4) != 0) {
-          pkVar11->flgptn = 0;
-          if (!bVar13) {
+          p_knl_flg->flgptn = 0;
+          if (!bVar11) {
             software_interrupt(0);
             return knl_svc_return;
           }
@@ -123,48 +123,48 @@ LAB_2015109c:
         }
       }
       if (bVar1 == uVar7) goto LAB_2015116c;
-      pkVar9 = knl_tsk_tab[bVar3];
+      p_knl_tcb = knl_tsk_tab[bVar3];
       uVar7 = (uint)bVar3;
     } while( true );
   }
-  bVar1 = pkVar9->state;
+  bVar1 = p_knl_tcb->state;
   if ((bVar1 & 1) == 0) {
-    uVar7 = pkVar11->flgptn | 1;
-    if ((*(uint *)(pkVar9->sp + 8) & ~uVar7) != 0) goto LAB_20151030;
+    uVar7 = p_knl_flg->flgptn | 1;
+    if ((*(uint *)(p_knl_tcb->sp + 8) & ~uVar7) != 0) goto LAB_20151030;
   }
   else {
-    uVar7 = pkVar11->flgptn | 1;
-    if ((*(uint *)(pkVar9->sp + 8) & uVar7) == 0) {
+    uVar7 = p_knl_flg->flgptn | 1;
+    if ((*(uint *)(p_knl_tcb->sp + 8) & uVar7) == 0) {
 LAB_20151030:
-      pkVar11->flgptn = uVar7;
+      p_knl_flg->flgptn = uVar7;
       software_interrupt(0);
       return knl_svc_return;
     }
   }
-  puVar8 = *(uint **)(pkVar9->sp + 0xc);
+  puVar8 = *(uint **)(p_knl_tcb->sp + 0xc);
   *puVar8 = uVar7;
   if ((bVar1 & 4) != 0) {
     uVar7 = 0;
   }
-  pkVar11->flgptn = uVar7;
+  p_knl_flg->flgptn = uVar7;
   if ((bVar1 & 2) != 0) {
-    knl_timeout_remove(pkVar9,uVar10);
+    knl_timeout_remove(p_knl_tcb,uVar9);
     puVar8 = extraout_r2;
   }
-  pkVar9->state = 0x10;
-  if (pkVar9->f_0x09_u8 == 0) {
-    pcVar5 = (code *)knl_make_ready(pkVar9,uVar10,puVar8,in_r3);
+  p_knl_tcb->state = 0x10;
+  if (p_knl_tcb->f_0x09_u8 == 0) {
+    pcVar5 = (code *)knl_make_ready(p_knl_tcb,uVar9,puVar8,in_r3);
     return pcVar5;
   }
   pcVar5 = (code *)knl_release_suspended();
   return pcVar5;
 LAB_2015116c:
   do {
-    pbVar12 = pbVar12 + 1;
-  } while (*pbVar12 == 0);
-  if (0xfd < *pbVar12) {
-    pkVar11->flgptn = uVar10;
-    if (!bVar13) {
+    pbVar10 = pbVar10 + 1;
+  } while (*pbVar10 == 0);
+  if (0xfd < *pbVar10) {
+    p_knl_flg->flgptn = uVar9;
+    if (!bVar11) {
       software_interrupt(0);
       return knl_svc_return;
     }
@@ -182,40 +182,42 @@ LAB_2015116c:
 void mainlink_init(void)
 
 {
-  byte *pbVar1;
-  uint uVar2;
-  uint uVar3;
-  void *pvVar4;
+  uint uVar1;
+  uint itron_acre_flg_ret;
+  void *scif5_get_ret;
+  byte *g_ml_link_obj_val;
   
-  uVar2 = os_create_sem_named(&DAT_20165860,0x201164cc);
-  if (0 < (int)uVar2) {
-    g_ml.pace_sem = uVar2;
+  uVar1 = os_create_sem_named(&DAT_20165860,0x201164cc);
+  if (0 < (int)uVar1) {
+    g_ml.pace_sem = uVar1;
     itron_sig_sem();
   }
-  uVar2 = itron_acre_tsk(0,(byte *)&ctsk_cmd_interval);
-  periodic_wakeup_register(uVar2,3);
-  if (0 < (int)uVar2) {
-    itron_sta_tsk(uVar2,0);
-    uVar2 = os_create_sem_named(&DAT_20165870,0x201164e8);
-    if (0 < (int)uVar2) {
-      g_ml.enc_sem = uVar2;
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_cmd_interval);
+  periodic_wakeup_register(uVar1,3);
+  if (0 < (int)uVar1) {
+    itron_sta_tsk(uVar1,0);
+    uVar1 = os_create_sem_named(&DAT_20165870,0x201164e8);
+    if (0 < (int)uVar1) {
+      g_ml.enc_sem = uVar1;
       itron_sig_sem();
     }
     __aeabi_memclr4(&DAT_2045fd40,0x103c0);
     g_ml.link_obj = (byte *)mainlink_obj_ctor(&DAT_2045fd40);
-    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart_5880);
-    if ((0 < (int)uVar2) && (uVar3 = itron_acre_flg(0,(byte *)&cflg_mainlink_rx), 0 < (int)uVar3)) {
-      *(uint *)(g_ml.link_obj + 0x14) = uVar3;
-      pvVar4 = scif5_get(uVar3);
-      pbVar1 = g_ml.link_obj;
-      *(void **)(g_ml.link_obj + 0x10) = pvVar4;
-      itron_sta_tsk(uVar2,(uint)pbVar1);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_uart_5880);
+    if ((0 < (int)uVar1) &&
+       (itron_acre_flg_ret = itron_acre_flg(0,(byte *)&cflg_mainlink_rx),
+       0 < (int)itron_acre_flg_ret)) {
+      *(uint *)(g_ml.link_obj + 0x14) = itron_acre_flg_ret;
+      scif5_get_ret = scif5_get(itron_acre_flg_ret);
+      g_ml_link_obj_val = g_ml.link_obj;
+      *(void **)(g_ml.link_obj + 0x10) = scif5_get_ret;
+      itron_sta_tsk(uVar1,(uint)g_ml_link_obj_val);
       g_ml.retry_flg = itron_acre_flg(0,(byte *)&cflg_mainlink_retry);
       if ((0 < (int)g_ml.retry_flg) &&
-         (((uVar2 = itron_acre_tsk(0,(byte *)&ctsk_retry), 0 < (int)uVar2 &&
-           (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) &&
-          (uVar2 = itron_acre_cyc(0,&DAT_201658c4), 0 < (int)uVar2)))) {
-        g_ml.ack_tmo_cyc = uVar2;
+         (((uVar1 = itron_acre_tsk(0,(byte *)&ctsk_retry), 0 < (int)uVar1 &&
+           (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) &&
+          (uVar1 = itron_acre_cyc(0,&DAT_201658c4), 0 < (int)uVar1)))) {
+        g_ml.ack_tmo_cyc = uVar1;
       }
     }
   }
@@ -248,25 +250,25 @@ void mainlink_rx_ctrl(int param_1)
 void mainlink_inject_rx(char *param_1)
 
 {
-  uint uVar1;
-  uint uVar2;
-  int iVar3;
+  uint mainlink_disp_alloc_ret;
+  uint i;
+  int iVar1;
   
-  uVar1 = mainlink_disp_alloc((int)(g_ml.link_obj + 0x58));
-  iVar3 = 0;
-  uVar2 = 0;
+  mainlink_disp_alloc_ret = mainlink_disp_alloc((int)(g_ml.link_obj + 0x58));
+  iVar1 = 0;
+  i = 0;
   do {
-    if (*param_1 == (&DAT_20450074)[uVar2 * 0xc]) {
-      iVar3 = (ushort)(&DAT_20450076)[uVar2 * 6] + 2;
+    if (*param_1 == (&DAT_20450074)[i * 0xc]) {
+      iVar1 = (ushort)(&DAT_20450076)[i * 6] + 2;
       break;
     }
-    uVar2 = uVar2 + 1;
-  } while (uVar2 < 0x2b);
-  if (iVar3 != 0) {
-    *(undefined2 *)(uVar1 + 4) = 0xaa;
-    *(short *)(uVar1 + 6) = (short)iVar3;
-    memcpy(uVar1 + 8,param_1);
-    mainlink_disp_post(g_ml.link_obj + 0x58,uVar1);
+    i = i + 1;
+  } while (i < 0x2b);
+  if (iVar1 != 0) {
+    *(undefined2 *)(mainlink_disp_alloc_ret + 4) = 0xaa;
+    *(short *)(mainlink_disp_alloc_ret + 6) = (short)iVar1;
+    memcpy(mainlink_disp_alloc_ret + 8,param_1);
+    mainlink_disp_post(g_ml.link_obj + 0x58,mainlink_disp_alloc_ret);
     return;
   }
   return;
@@ -455,17 +457,20 @@ int periodic_wakeup_start(void)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint itron_acre_isr_ret;
   
+                    /* OSTM1 compare [sfr] */
   OSTM_OSTM1CMP = 31999;
+                    /* OSTM1 control [sfr] */
   bVar1 = OSTM_OSTM1CTL;
   OSTM_OSTM1CTL = bVar1 & 0xfd;
   OSTM_OSTM1CTL = 1;
-  uVar2 = itron_acre_isr(0,0x20165954);
-  if ((int)uVar2 < 1) {
-    return uVar2;
+  itron_acre_isr_ret = itron_acre_isr(0,0x20165954);
+  if ((int)itron_acre_isr_ret < 1) {
+    return itron_acre_isr_ret;
   }
   gic_enable_irq(0x87);
+                    /* OSTM1 count start trigger [sfr] */
   bVar1 = OSTM_OSTM1TS;
   OSTM_OSTM1TS = bVar1 | 1;
   return 0;
@@ -487,6 +492,7 @@ void cli_exec_line(byte *param_1,undefined4 param_2,undefined4 param_3,byte *par
   
   cVar6 = false;
   local_18 = param_4;
+                    /* Word-at-a-time string length [doc] */
   uVar3 = strlen();
   bVar5 = uVar3 == 2;
   if (1 < uVar3) {
@@ -578,9 +584,11 @@ uint cli_run_file(uint param_1)
   undefined1 auStack_90 [64];
   undefined1 auStack_50 [64];
   
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen();
   if (3 < uVar2) {
     memcpy(auStack_90,param_1,0x40);
+                    /* Case-insensitive compare with tolower [doc] */
     iVar3 = strcasecmp(auStack_94 + uVar2,".txt");
     if (iVar3 == 0) {
       __aeabi_memcpy4(auStack_50,&DAT_20165984,0x40);
@@ -621,15 +629,16 @@ uint cli_run_file(uint param_1)
 void task_cli(void)
 
 {
-  void *pvVar1;
-  uint uVar2;
+  void *itron_twai_flg_ret;
+  uint cli_run_file_ret;
   uint in_r3;
   uint uStack_14;
   
   uStack_14 = in_r3;
-  while (pvVar1 = itron_twai_flg(DAT_20800394,1,5,&uStack_14,-1), pvVar1 == (void *)0x0) {
-    uVar2 = cli_run_file(0x208dbb24);
-    if (uVar2 == 0) {
+  while (itron_twai_flg_ret = itron_twai_flg(DAT_20800394,1,5,&uStack_14,-1),
+        itron_twai_flg_ret == (void *)0x0) {
+    cli_run_file_ret = cli_run_file(0x208dbb24);
+    if (cli_run_file_ret == 0) {
       cli_exec_line(&DAT_208dbb24);
     }
   }
@@ -1011,11 +1020,12 @@ undefined8 FUN_20116bfc(code *param_1,uint param_2)
 void bootinfo_load(void)
 
 {
-  int iVar1;
-  undefined4 uVar2;
+  int spibsc_dropr_1;
+  undefined4 spibsc_dropr_1_2;
   
-  iVar1 = SPIBSC_DROPR_1;
-  if (iVar1 == 0) {
+                    /* Data read option setting_1 [sfr] */
+  spibsc_dropr_1 = SPIBSC_DROPR_1;
+  if (spibsc_dropr_1 == 0) {
     g_bootinfo.bank = 0;
     g_bootinfo.bank1_flag = 0x3e0000;
     g_bootinfo.bank1_image = 0x400000;
@@ -1023,8 +1033,8 @@ void bootinfo_load(void)
     g_bootinfo.bank2_image = 0xa00000;
   }
   else {
-    uVar2 = SPIBSC_DROPR_1;
-    memcpy(&g_bootinfo,uVar2,0x60);
+    spibsc_dropr_1_2 = SPIBSC_DROPR_1;
+    memcpy(&g_bootinfo,spibsc_dropr_1_2,0x60);
   }
   DAT_20800398 = g_bootinfo.bank;
   return;
@@ -1038,20 +1048,35 @@ void bootinfo_load(void)
 void cpg_early_init(void)
 
 {
+                    /* Power Control [sfr] */
   L2C_REG15_POWER_CTRL = 1;
+                    /* Frequency control [sfr] */
   CPG_FRQCR = 0x35;
+                    /* Frequency control 2 [sfr] */
   CPG_FRQCR2 = 1;
+                    /* System control 3 [sfr] */
   CPG_SYSCR3 = 0xf;
+                    /* Standby control 2 [sfr] */
   CPG_STBCR2 = 0x6a;
+                    /* Standby control 3 [sfr] */
   CPG_STBCR3 = 0;
+                    /* Standby control 4 [sfr] */
   CPG_STBCR4 = 0;
+                    /* Standby control 5 [sfr] */
   CPG_STBCR5 = 0;
+                    /* Standby control 6 [sfr] */
   CPG_STBCR6 = 0;
+                    /* Standby control 7 [sfr] */
   CPG_STBCR7 = 0x24;
+                    /* Standby control 8 [sfr] */
   CPG_STBCR8 = 5;
+                    /* Standby control 9 [sfr] */
   CPG_STBCR9 = 0;
+                    /* Standby control 10 [sfr] */
   CPG_STBCR10 = 0;
+                    /* Standby control 11 [sfr] */
   CPG_STBCR11 = 0xc0;
+                    /* Standby control 12 [sfr] */
   CPG_STBCR12 = 0xf0;
   gpio_early_init();
   gpio_rx_reset(0);
@@ -1111,16 +1136,16 @@ undefined1 full_mode_get(void)
 void hid_chain1_dispatch(uint param_1,undefined4 param_2)
 
 {
-  int iVar1;
+  int i;
   
   kbd_set_current(param_1);
-  iVar1 = 0;
+  i = 0;
   do {
-    if ((code *)(&DAT_208dc1bc)[iVar1] != (code *)0x0) {
-      (*(code *)(&DAT_208dc1bc)[iVar1])(param_1,param_2);
+    if ((code *)(&DAT_208dc1bc)[i] != (code *)0x0) {
+      (*(code *)(&DAT_208dc1bc)[i])(param_1,param_2);
     }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 9);
+    i = i + 1;
+  } while (i < 9);
   return;
 }
 
@@ -1132,16 +1157,16 @@ void hid_chain1_dispatch(uint param_1,undefined4 param_2)
 void hid_chain0_dispatch(uint param_1,undefined4 param_2)
 
 {
-  int iVar1;
+  int i;
   
   kbd_set_current(param_1);
-  iVar1 = 0;
+  i = 0;
   do {
-    if ((code *)(&DAT_208dc198)[iVar1] != (code *)0x0) {
-      (*(code *)(&DAT_208dc198)[iVar1])(param_1,param_2);
+    if ((code *)(&DAT_208dc198)[i] != (code *)0x0) {
+      (*(code *)(&DAT_208dc198)[i])(param_1,param_2);
     }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 9);
+    i = i + 1;
+  } while (i < 9);
   return;
 }
 
@@ -1154,20 +1179,20 @@ bool gpio_p2_0_debounced(void)
 
 {
   uint uVar1;
-  uint uVar2;
-  int iVar3;
+  uint gpio_read_bit_ret;
+  int iVar2;
   
   uVar1 = gpio_read_bit(2,0);
-  iVar3 = 0;
+  iVar2 = 0;
   do {
     itron_dly_tsk(10);
-    uVar2 = gpio_read_bit(2,0);
-    if (uVar2 != uVar1) {
-      iVar3 = 0;
-      uVar1 = uVar2;
+    gpio_read_bit_ret = gpio_read_bit(2,0);
+    if (gpio_read_bit_ret != uVar1) {
+      iVar2 = 0;
+      uVar1 = gpio_read_bit_ret;
     }
-    iVar3 = iVar3 + 1;
-  } while (iVar3 < 3);
+    iVar2 = iVar2 + 1;
+  } while (iVar2 < 3);
   return uVar1 != 0;
 }
 
@@ -1179,10 +1204,10 @@ bool gpio_p2_0_debounced(void)
 byte boot_mode_full(void)
 
 {
-  byte bVar1;
+  byte key_scan_first_ret;
   
-  bVar1 = key_scan_first();
-  if (((bVar1 != 6) && (DAT_208003a4 == '\0')) && (DAT_208003a2 != '\0')) {
+  key_scan_first_ret = key_scan_first();
+  if (((key_scan_first_ret != 6) && (DAT_208003a4 == '\0')) && (DAT_208003a2 != '\0')) {
     return 0;
   }
   return 1;
@@ -1236,6 +1261,7 @@ void power_on_full_init(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -1244,6 +1270,7 @@ void power_on_full_init(void)
     DAT_208dc1d0 = keycode_init();
     DAT_208dc1dc = kbdtest_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -1273,15 +1300,15 @@ void power_on_full_init(void)
 void display_power_down(void)
 
 {
-  uint uVar1;
+  uint gpio_read_bit_ret;
   
   DAT_208003a0 = 0;
   full_mode_set();
   led_set_one(0,0);
   led_set_mask(0);
   r_vdc5_stop_process(0,-1);
-  uVar1 = gpio_read_bit(8,0xc);
-  if (uVar1 == 0) {
+  gpio_read_bit_ret = gpio_read_bit(8,0xc);
+  if (gpio_read_bit_ret == 0) {
     FUN_20116784();
     key_task_pause();
     itron_dly_tsk(100);
@@ -1314,6 +1341,7 @@ void task_root(void)
   bootinfo_load();
   fb_clear_all();
   rtc_init();
+                    /* FAT volume + SDHI driver registration [doc, inference] */
   sd_fs_init();
   DAT_208dc1bc = fwdbg_init();
   loader_selfinstall();
@@ -1323,11 +1351,13 @@ void task_root(void)
   DAT_208003a3 = uVar1 != 0;
   powon_init();
   key_init();
+                    /* Standby or full start (P2_0, key scan) [fact: README.md] */
   DAT_208003a0 = boot_mode_full();
   cpg_set_clock_profile((uint)DAT_208003a0);
   gpio_rx_reset(1);
   if (DAT_208003a0 == 0) {
     gpio_p8_14(0);
+                    /* Standby: only the MAIN link, wake-up and GUI [fact: README.md] */
     mainlink_init();
     uVar1 = knl_current_task_id();
     periodic_wakeup_register(uVar1,0);
@@ -1337,6 +1367,7 @@ void task_root(void)
     }
   }
   else {
+                    /* Full start: every driver and task [fact: README.md] */
     DAT_208003a5 = 1;
     gpio_p8_14(1);
     full_mode_set(1);
@@ -1347,6 +1378,7 @@ void task_root(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -1356,6 +1388,7 @@ void task_root(void)
     DAT_208dc1dc = kbdtest_init();
     mainlink_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -1370,6 +1403,7 @@ void task_root(void)
     touch_cal_init();
     audio_codec_init();
   }
+                    /* Ends in gui_main_loop (33 ms slot 0) [fact: mainlink.md] */
   gui_start();
   return;
 }
@@ -1410,10 +1444,10 @@ undefined1 FUN_20117254(void)
 bool gpio_p8_12_high(void)
 
 {
-  uint uVar1;
+  uint gpio_read_bit_ret;
   
-  uVar1 = gpio_read_bit(8,0xc);
-  return uVar1 != 0;
+  gpio_read_bit_ret = gpio_read_bit(8,0xc);
+  return gpio_read_bit_ret != 0;
 }
 
 
@@ -1450,10 +1484,12 @@ void main(void)
 {
   uint uVar1;
   
+                    /* MMU and caches, pin multiplexing, heap [fact: README.md] */
   mmu_cache_enable();
   pinmux_init();
   gpio_p7_9_11(1);
   kernel_heap_init();
+                    /* Create task_root (priority 8), then the OSTM0 tick [fact: README.md] */
   uVar1 = itron_acre_tsk(0,(byte *)&ctsk_root);
   if ((int)uVar1 < 1) {
     return;
@@ -1533,44 +1569,73 @@ uint gic_init(void)
 {
   int iVar1;
   
+                    /* CPU interface control [sfr] */
   INTC_ICCICR = 0;
   iVar1 = 0;
   do {
     (&INTC_ICDISR0)[iVar1] = 0;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x13);
+                    /* Interrupt configuration 0 [sfr] */
   INTC_ICDICFR0 = 0xaaaaaaaa;
+                    /* Interrupt configuration 1 [sfr] */
   INTC_ICDICFR1 = 0x55;
+                    /* Interrupt configuration 2 [sfr] */
   INTC_ICDICFR2 = 0xfffd5555;
+                    /* Interrupt configuration 3 [sfr] */
   INTC_ICDICFR3 = 0x555fffff;
+                    /* Interrupt configuration 4 [sfr] */
   INTC_ICDICFR4 = 0x55555555;
+                    /* Interrupt configuration 5 [sfr] */
   INTC_ICDICFR5 = 0x55555555;
+                    /* Interrupt configuration 6 [sfr] */
   INTC_ICDICFR6 = 0x55555555;
+                    /* Interrupt configuration 7 [sfr] */
   INTC_ICDICFR7 = 0x55555555;
+                    /* Interrupt configuration 8 [sfr] */
   INTC_ICDICFR8 = 0x5555f555;
+                    /* Interrupt configuration 9 [sfr] */
   INTC_ICDICFR9 = 0x55555555;
+                    /* Interrupt configuration 10 [sfr] */
   INTC_ICDICFR10 = 0x55555555;
+                    /* Interrupt configuration 11 [sfr] */
   INTC_ICDICFR11 = 0xf5555555;
+                    /* Interrupt configuration 12 [sfr] */
   INTC_ICDICFR12 = 0xf555f555;
+                    /* Interrupt configuration 13 [sfr] */
   INTC_ICDICFR13 = 0x5555f555;
+                    /* Interrupt configuration 14 [sfr] */
   INTC_ICDICFR14 = 0x55555555;
+                    /* Interrupt configuration 15 [sfr] */
   INTC_ICDICFR15 = 0x55555555;
+                    /* Interrupt configuration 16 [sfr] */
   INTC_ICDICFR16 = 0x55555555;
+                    /* Interrupt configuration 17 [sfr] */
   INTC_ICDICFR17 = 0xfd555555;
+                    /* Interrupt configuration 18 [sfr] */
   INTC_ICDICFR18 = 0x55555557;
+                    /* Interrupt configuration 19 [sfr] */
   INTC_ICDICFR19 = 0x55555555;
+                    /* Interrupt configuration 20 [sfr] */
   INTC_ICDICFR20 = 0x55555555;
+                    /* Interrupt configuration 21 [sfr] */
   INTC_ICDICFR21 = 0x5f555555;
+                    /* Interrupt configuration 22 [sfr] */
   INTC_ICDICFR22 = 0xfd55555f;
+                    /* Interrupt configuration 23 [sfr] */
   INTC_ICDICFR23 = 0x55555557;
   iVar1 = 0x18;
   do {
     (&INTC_ICDICFR0)[iVar1] = 0xffffffff;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x25);
+                    /* Interrupt priority 0 [sfr] */
   INTC_ICDIPR0 = 0x60687078;
+                    /* Interrupt priority 1 [sfr] */
   INTC_ICDIPR1 = 0x40485058;
+                    /* Interrupt priority 2 [sfr] */
   INTC_ICDIPR2 = 0x20283038;
+                    /* Interrupt priority 3 [sfr] */
   INTC_ICDIPR3 = 0x81018;
   iVar1 = 0x20;
   do {
@@ -1599,8 +1664,10 @@ uint gic_init(void)
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x20);
   DAT_20800404 = 0;
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = 0xf8;
   INTC_ICCICR = 3;
+                    /* Distributor control [sfr] */
   INTC_ICDDCR = 1;
   DAT_20800408 = 0;
   return 0;
@@ -1654,7 +1721,9 @@ void gic_install_isr_stub(uint param_1,int param_2)
 
 {
   FUN_20100f84(param_1,0x58);
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(param_1,0x58);
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
   gic_set_priority(*(uint *)(param_2 + 8),*(int *)(param_2 + 0x10));
   (&DAT_208dc1e0)[*(int *)(param_2 + 8)] = param_1;
   return;
@@ -1685,6 +1754,7 @@ uint gic_def_inh(uint param_1,int param_2)
   if (param_2 == 0) {
     uVar1 = knl_int_disable();
     (&DAT_208dc1e0)[param_1] = gic_default_handler;
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
     gic_set_priority(param_1,0x1f);
   }
   else {
@@ -1718,9 +1788,11 @@ undefined4 gic_dispatch(void)
     if (uVar2 < 0x24b) {
       uVar1 = (&DAT_208dc1e0)[uVar2];
       (&DAT_208dcb8c)[uVar3] = uVar2;
+                    /* Interrupt priority mask [sfr] */
       uVar2 = INTC_ICCPMR;
       (&DAT_208dcb0c)[uVar3] = uVar2 & 0xff;
       DAT_20800404 = DAT_20800404 + 1;
+                    /* Running priority [sfr] */
       uVar3 = INTC_ICCRPR;
       INTC_ICCPMR = uVar3 & 0xff;
       return uVar1;
@@ -1738,7 +1810,9 @@ void gic_irq_exit(void)
 
 {
   DAT_20800404 = DAT_20800404 - 1;
+                    /* End-of-interrupt [sfr] */
   INTC_ICCEOIR = (&DAT_208dcb8c)[DAT_20800404];
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = (&DAT_208dcb0c)[DAT_20800404];
   return;
 }

@@ -18,10 +18,10 @@ void FUN_fffed704(void)
 void FUN_fffed72b(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x24);
-  if ((bVar1 != 0) && (FUN_fffedbc9(), DAT_0001b3c7 == '\0')) {
+  swtimer_expired_ret = swtimer_expired(0x24);
+  if ((swtimer_expired_ret != 0) && (FUN_fffedbc9(), DAT_0001b3c7 == '\0')) {
     DAT_0001b3c8 = DAT_0001b3c8 + '\x01';
     return;
   }
@@ -34,10 +34,10 @@ void FUN_fffed72b(void)
 void FUN_fffed753(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(7);
-  if (bVar1 == 1) {
+  swtimer_expired_ret = swtimer_expired(7);
+  if (swtimer_expired_ret == 1) {
     DAT_0001b5aa = 0;
     DAT_0001b3c8 = 0;
     return;
@@ -57,10 +57,10 @@ void FUN_fffed753(void)
 void FUN_fffed796(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x25);
-  if (bVar1 != 0) {
+  swtimer_expired_ret = swtimer_expired(0x25);
+  if (swtimer_expired_ret != 0) {
     if (DAT_0001b5ab == '\x01') {
       FUN_fffedb87();
     }
@@ -92,7 +92,7 @@ void FUN_fffed796(void)
 void FUN_fffed7f3(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
   if (g_ui.tune_cycle_3c == 1) {
     DAT_0001b3c8 = 7;
@@ -110,8 +110,8 @@ void FUN_fffed7f3(void)
     }
   }
   else {
-    bVar1 = swtimer_expired(0x24);
-    if (bVar1 == 1) {
+    swtimer_expired_ret = swtimer_expired(0x24);
+    if (swtimer_expired_ret == 1) {
       DAT_0001b3c8 = 4;
     }
   }
@@ -128,10 +128,10 @@ void FUN_fffed7f3(void)
 void FUN_fffed8ab(void)
 
 {
-  bool bVar1;
+  bool tx_freq_allowed_ret;
   
-  bVar1 = tx_freq_allowed(g_ui.freq_tx);
-  if (!bVar1) {
+  tx_freq_allowed_ret = tx_freq_allowed(g_ui.freq_tx);
+  if (!tx_freq_allowed_ret) {
     DAT_0001b3c8 = 0xe;
     return;
   }
@@ -151,10 +151,10 @@ void FUN_fffed8ab(void)
 void FUN_fffed8fc(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(7);
-  if (bVar1 == 1) {
+  swtimer_expired_ret = swtimer_expired(7);
+  if (swtimer_expired_ret == 1) {
     DAT_0001b3c8 = 0xe;
     return;
   }
@@ -173,10 +173,10 @@ void FUN_fffed8fc(void)
 void FUN_fffed934(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x26);
-  if (bVar1 != 0) {
+  swtimer_expired_ret = swtimer_expired(0x26);
+  if (swtimer_expired_ret != 0) {
     DAT_00025d14 = FUN_fffb6e5c();
     send_a_set(0);
     send_b_set(0);
@@ -197,10 +197,10 @@ void FUN_fffed934(void)
 void FUN_fffed983(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x26);
-  if ((bVar1 != 0) && (FUN_fffedb75(), DAT_0001b3c7 == '\0')) {
+  swtimer_expired_ret = swtimer_expired(0x26);
+  if ((swtimer_expired_ret != 0) && (FUN_fffedb75(), DAT_0001b3c7 == '\0')) {
     swtimer_start(0x26,10000);
     DAT_0001b3c8 = 0xb;
     return;
@@ -214,10 +214,10 @@ void FUN_fffed983(void)
 void FUN_fffed9b3(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(0x26);
-  if (bVar1 == 1) {
+  swtimer_expired_ret = swtimer_expired(0x26);
+  if (swtimer_expired_ret == 1) {
     DAT_0001b3c8 = 0xe;
     return;
   }
@@ -249,19 +249,19 @@ void FUN_fffed9b3(void)
 void FUN_fffeda3b(void)
 
 {
-  byte bVar1;
-  float fVar2;
+  byte swtimer_expired_ret;
+  float fVar1;
   
-  bVar1 = swtimer_expired(0x26);
-  if (bVar1 == 0) {
+  swtimer_expired_ret = swtimer_expired(0x26);
+  if (swtimer_expired_ret == 0) {
     if (g_ui.transmitting != 0) {
       return;
     }
     swtimer_start(0x26,0xfa);
     return;
   }
-  fVar2 = (float)FUN_fffb6e5c();
-  if (DAT_00025d14 <= fVar2) {
+  fVar1 = (float)FUN_fffb6e5c();
+  if (DAT_00025d14 <= fVar1) {
     DAT_0001b3c8 = 0xe;
     return;
   }
@@ -314,10 +314,10 @@ void FUN_fffedac0(void)
 void FUN_fffedae4(void)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   
-  bVar1 = swtimer_expired(7);
-  if (bVar1 == 1) {
+  swtimer_expired_ret = swtimer_expired(7);
+  if (swtimer_expired_ret == 1) {
     DAT_0001b3c8 = 0xe;
     return;
   }
@@ -437,7 +437,7 @@ void FUN_fffedbea(void)
 void tuner_port_send(undefined1 param_1)
 
 {
-  byte bVar1;
+  byte swtimer_expired_ret;
   undefined1 local_2;
   undefined1 local_1;
   
@@ -449,8 +449,8 @@ void tuner_port_send(undefined1 param_1)
     swtimer_start(0x23,0x28);
     return;
   }
-  bVar1 = swtimer_expired(0x23);
-  if (bVar1 != 1) {
+  swtimer_expired_ret = swtimer_expired(0x23);
+  if (swtimer_expired_ret != 1) {
     return;
   }
   sci2_send(&DAT_0001b3c4,local_1);
@@ -506,23 +506,33 @@ void FUN_fffedcb5(void)
 void R_TPU2_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfb;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfb;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR138 = 0x18;
-  bVar2 = ICU_IPR138;
-  ICU_IPR138 = bVar2 & 0xf2 | 2;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfb;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR138;
+  ICU_IPR138 = bVar1 & 0xf2 | 2;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfb;
+                    /* Timer Control [sfr] */
   TPU2_TCR = 0x29;
-  bVar2 = TPU2_TIER;
-  TPU2_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU2_TIER;
+  TPU2_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control [sfr] */
   TPU2_TIOR = 0;
+                    /* Timer General A [sfr] */
   TPU2_TGRA = 0x4a;
+                    /* Timer General B [sfr] */
   TPU2_TGRB = 0x5db;
   R_TPU2_Create_UserInit();
   return;
@@ -537,8 +547,10 @@ void R_TPU2_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 | 4;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 4;
   return;
 }
@@ -554,8 +566,10 @@ void R_TPU2_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 & 0xfb;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfb;
   return;
 }
@@ -606,6 +620,7 @@ uint freopen(uint param_1,uint param_2,ushort *param_3)
   *(byte *)param_3 = (byte)*param_3 & 0x7f;
   fclose(param_3);
   *param_3 = uVar1 & 0x80;
+                    /* Parses the mode string [doc, inference] */
   uVar2 = _freopen_core(param_1,param_2,param_3,0xffffffff);
   return uVar2;
 }
@@ -640,6 +655,7 @@ uint fclose(ushort *param_1)
     if (iVar1 != 0) {
       uVar2 = 0xffffffff;
     }
+                    /* Resets a static FILE [doc, inference] */
     _file_release(param_1);
   }
   return uVar2;
@@ -655,17 +671,17 @@ int strncmp(char *param_1,char *param_2,uint param_3)
 {
   char cVar1;
   char cVar2;
-  uint uVar3;
+  uint i;
   
-  uVar3 = 0;
+  i = 0;
   if (param_3 == 0) {
     return 0;
   }
   do {
-    if (param_3 <= uVar3) break;
+    if (param_3 <= i) break;
     cVar1 = *param_1;
     param_1 = param_1 + 1;
-    uVar3 = uVar3 + 1;
+    i = i + 1;
     cVar2 = *param_2;
     param_2 = param_2 + 1;
   } while (cVar1 == cVar2);
@@ -823,35 +839,35 @@ uint fflush(ushort *param_1)
 
 {
   undefined4 uVar1;
-  uint uVar2;
-  void *pvVar3;
-  int iVar4;
-  undefined4 *puVar5;
-  int iVar6;
-  uint uVar7;
+  uint fflush_ret;
+  void *pvVar2;
+  int iVar3;
+  undefined4 *puVar4;
+  int iVar5;
+  uint uVar6;
   
   if (param_1 == (ushort *)0x0) {
-    puVar5 = &DAT_0001ff74;
-    uVar7 = 0;
-    for (iVar4 = 0; iVar4 < 0x14; iVar4 = iVar4 + 1) {
-      if (((ushort *)*puVar5 != (ushort *)0x0) &&
-         (uVar2 = fflush((ushort *)*puVar5), (int)uVar2 < 0)) {
-        uVar7 = 0xffffffff;
+    puVar4 = &DAT_0001ff74;
+    uVar6 = 0;
+    for (iVar3 = 0; iVar3 < 0x14; iVar3 = iVar3 + 1) {
+      if (((ushort *)*puVar4 != (ushort *)0x0) &&
+         (fflush_ret = fflush((ushort *)*puVar4), (int)fflush_ret < 0)) {
+        uVar6 = 0xffffffff;
       }
-      puVar5 = puVar5 + 1;
+      puVar4 = puVar4 + 1;
     }
   }
   else {
-    uVar7 = 0;
+    uVar6 = 0;
     if ((*param_1 & 0x2000) != 0) {
-      iVar4 = *(int *)(param_1 + 2);
-      iVar6 = 0;
+      iVar3 = *(int *)(param_1 + 2);
+      iVar5 = 0;
       while( true ) {
-        pvVar3 = (void *)(iVar6 + iVar4);
-        if (*(void **)(param_1 + 6) <= pvVar3) break;
-        uVar7 = write((int)*(char *)((int)param_1 + 3),pvVar3,
-                      (int)*(void **)(param_1 + 6) - (int)pvVar3);
-        if ((int)uVar7 < 1) {
+        pvVar2 = (void *)(iVar5 + iVar3);
+        if (*(void **)(param_1 + 6) <= pvVar2) break;
+        uVar6 = write((int)*(char *)((int)param_1 + 3),pvVar2,
+                      (int)*(void **)(param_1 + 6) - (int)pvVar2);
+        if ((int)uVar6 < 1) {
           uVar1 = *(undefined4 *)(param_1 + 2);
           *(undefined4 *)(param_1 + 6) = uVar1;
           *(undefined4 *)(param_1 + 10) = uVar1;
@@ -859,17 +875,17 @@ uint fflush(ushort *param_1)
           *(byte *)((int)param_1 + 1) = *(byte *)((int)param_1 + 1) | 2;
           return 0xffffffff;
         }
-        iVar6 = iVar6 + uVar7;
+        iVar5 = iVar5 + uVar6;
       }
       uVar1 = *(undefined4 *)(param_1 + 2);
-      uVar7 = 0;
+      uVar6 = 0;
       *(undefined4 *)(param_1 + 6) = uVar1;
       *(undefined4 *)(param_1 + 10) = uVar1;
       *(undefined4 *)(param_1 + 0x16) = uVar1;
       *(byte *)((int)param_1 + 1) = *(byte *)((int)param_1 + 1) & 0xdf;
     }
   }
-  return uVar7;
+  return uVar6;
 }
 
 
@@ -982,30 +998,30 @@ short * _file_alloc(void)
 
 {
   short *psVar1;
-  uint uVar2;
-  undefined4 *puVar3;
+  uint i;
+  undefined4 *puVar2;
   
-  puVar3 = &DAT_0001ff74;
-  uVar2 = 0;
+  puVar2 = &DAT_0001ff74;
+  i = 0;
   while( true ) {
-    if (0x13 < uVar2) {
+    if (0x13 < i) {
       return (short *)0x0;
     }
-    psVar1 = (short *)*puVar3;
+    psVar1 = (short *)*puVar2;
     if (psVar1 == (short *)0x0) break;
     if (*psVar1 == 0) {
       *psVar1 = -0x81;
       return psVar1;
     }
-    puVar3 = puVar3 + 1;
-    uVar2 = uVar2 + 1;
+    puVar2 = puVar2 + 1;
+    i = i + 1;
   }
   psVar1 = (short *)malloc(0x48);
   if (psVar1 == (short *)0x0) {
     return (short *)0x0;
   }
-  *puVar3 = psVar1;
-  *(char *)(psVar1 + 1) = (char)uVar2;
+  *puVar2 = psVar1;
+  *(char *)(psVar1 + 1) = (char)i;
   *psVar1 = 0x80;
   return psVar1;
 }
@@ -1021,7 +1037,7 @@ void _file_release(ushort *param_1)
 {
   ushort *puVar1;
   undefined4 *puVar2;
-  uint uVar3;
+  uint i;
   
   if ((*param_1 & 0x80) == 0) {
     puVar1 = param_1 + 0x22;
@@ -1037,10 +1053,10 @@ void _file_release(ushort *param_1)
     *(ushort **)(param_1 + 0xe) = param_1 + 0x12;
     return;
   }
-  uVar3 = 0;
+  i = 0;
   puVar2 = &DAT_0001ff74;
   do {
-    if (0x13 < uVar3) {
+    if (0x13 < i) {
 LAB_fffee106:
       free();
       return;
@@ -1050,7 +1066,7 @@ LAB_fffee106:
       goto LAB_fffee106;
     }
     puVar2 = puVar2 + 1;
-    uVar3 = uVar3 + 1;
+    i = i + 1;
   } while( true );
 }
 
@@ -1226,6 +1242,7 @@ uint * malloc(uint param_1)
     if (uVar3 < 8) {
       uVar3 = 8;
     }
+                    /* First-fit search of the free list at 0x25E5C [doc, inference] */
     puVar2 = (uint *)_heap_find(uVar3);
     if (puVar2 != (uint *)0x0) {
       puVar1 = (uint *)*puVar2;

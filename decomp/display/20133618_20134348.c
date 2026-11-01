@@ -98,48 +98,49 @@ undefined4 scope3d_buf_get(void)
 uint layer_alpha_rect_set(uint param_1,int param_2,uint param_3,undefined4 *param_4)
 
 {
-  uint uVar1;
-  undefined *puVar2;
-  undefined2 *puVar3;
+  uint r_vdc5_alpha_blending_rect_ret;
+  undefined *puVar1;
+  undefined2 *puVar2;
+  undefined4 uVar3;
   undefined4 uVar4;
-  undefined4 uVar5;
   
-  uVar1 = r_vdc5_alpha_blending_rect(param_1,param_2,param_3,(uint)param_4);
-  if (uVar1 == 0) {
-    puVar2 = &DAT_209080e4 + param_2 * 0x24 + param_1 * 0x144;
-    *puVar2 = (char)param_3;
+  r_vdc5_alpha_blending_rect_ret = r_vdc5_alpha_blending_rect(param_1,param_2,param_3,(uint)param_4)
+  ;
+  if (r_vdc5_alpha_blending_rect_ret == 0) {
+    puVar1 = &DAT_209080e4 + param_2 * 0x24 + param_1 * 0x144;
+    *puVar1 = (char)param_3;
     if (param_4 == (undefined4 *)0x0) {
-      *(undefined4 *)(puVar2 + 4) = 0;
+      *(undefined4 *)(puVar1 + 4) = 0;
     }
     else {
-      uVar4 = param_4[1];
-      uVar5 = param_4[2];
-      *(undefined4 *)(puVar2 + 8) = *param_4;
-      *(undefined4 *)(puVar2 + 0xc) = uVar4;
-      *(undefined4 *)(puVar2 + 0x10) = uVar5;
-      *(undefined **)(puVar2 + 4) = puVar2 + 8;
-      puVar3 = (undefined2 *)*param_4;
-      if (puVar3 != (undefined2 *)0x0) {
-        *(undefined2 *)(puVar2 + 0x14) = *puVar3;
-        *(undefined2 *)(puVar2 + 0x16) = puVar3[1];
-        *(undefined2 *)(puVar2 + 0x18) = puVar3[2];
-        *(undefined2 *)(puVar2 + 0x1a) = puVar3[3];
-        *(undefined **)(puVar2 + 8) = puVar2 + 0x14;
+      uVar3 = param_4[1];
+      uVar4 = param_4[2];
+      *(undefined4 *)(puVar1 + 8) = *param_4;
+      *(undefined4 *)(puVar1 + 0xc) = uVar3;
+      *(undefined4 *)(puVar1 + 0x10) = uVar4;
+      *(undefined **)(puVar1 + 4) = puVar1 + 8;
+      puVar2 = (undefined2 *)*param_4;
+      if (puVar2 != (undefined2 *)0x0) {
+        *(undefined2 *)(puVar1 + 0x14) = *puVar2;
+        *(undefined2 *)(puVar1 + 0x16) = puVar2[1];
+        *(undefined2 *)(puVar1 + 0x18) = puVar2[2];
+        *(undefined2 *)(puVar1 + 0x1a) = puVar2[3];
+        *(undefined **)(puVar1 + 8) = puVar1 + 0x14;
       }
-      puVar3 = (undefined2 *)param_4[1];
-      if (puVar3 != (undefined2 *)0x0) {
-        *(undefined2 *)(puVar2 + 0x1c) = *puVar3;
-        *(undefined2 *)(puVar2 + 0x1e) = puVar3[1];
-        *(undefined2 *)(puVar2 + 0x20) = puVar3[2];
-        *(undefined **)(puVar2 + 0xc) = puVar2 + 0x1c;
+      puVar2 = (undefined2 *)param_4[1];
+      if (puVar2 != (undefined2 *)0x0) {
+        *(undefined2 *)(puVar1 + 0x1c) = *puVar2;
+        *(undefined2 *)(puVar1 + 0x1e) = puVar2[1];
+        *(undefined2 *)(puVar1 + 0x20) = puVar2[2];
+        *(undefined **)(puVar1 + 0xc) = puVar1 + 0x1c;
       }
       if ((undefined1 *)param_4[2] != (undefined1 *)0x0) {
-        puVar2[0x22] = *(undefined1 *)param_4[2];
-        *(undefined **)(puVar2 + 0x10) = puVar2 + 0x22;
+        puVar1[0x22] = *(undefined1 *)param_4[2];
+        *(undefined **)(puVar1 + 0x10) = puVar1 + 0x22;
       }
     }
   }
-  return uVar1;
+  return r_vdc5_alpha_blending_rect_ret;
 }
 
 
@@ -148,12 +149,13 @@ uint layer_alpha_rect_set(uint param_1,int param_2,uint param_3,undefined4 *para
 uint layer_alpha_rect_reapply(int param_1,int param_2)
 
 {
-  uint uVar1;
+  uint r_vdc5_alpha_blending_rect_ret;
   
-  uVar1 = r_vdc5_alpha_blending_rect
-                    (param_1,param_2,(uint)(byte)(&DAT_209080e4)[param_2 * 0x24 + param_1 * 0x144],
-                     *(uint *)(&DAT_209080e4 + param_2 * 0x24 + param_1 * 0x144 + 4));
-  return uVar1;
+  r_vdc5_alpha_blending_rect_ret =
+       r_vdc5_alpha_blending_rect
+                 (param_1,param_2,(uint)(byte)(&DAT_209080e4)[param_2 * 0x24 + param_1 * 0x144],
+                  *(uint *)(&DAT_209080e4 + param_2 * 0x24 + param_1 * 0x144 + 4));
+  return r_vdc5_alpha_blending_rect_ret;
 }
 
 
@@ -501,6 +503,7 @@ void fb_layer2_restore(undefined4 param_1)
 {
   undefined4 uVar1;
   
+                    /* full-screen window, alpha 0xFF [doc, inference] */
   layer_alpha_rect_opaque(5);
   uVar1 = fb_get_layer_addr(DAT_208085bc);
   memcpy(uVar1,param_1,0xbb800);
@@ -529,19 +532,19 @@ void FUN_20133e18(int param_1,int param_2,int param_3,int param_4)
 {
   byte *pbVar1;
   int iVar2;
-  int iVar3;
+  int i;
   
-  iVar3 = 0;
+  i = 0;
   if (0 < param_4) {
     do {
-      iVar2 = iVar3 * 2;
-      pbVar1 = (byte *)(param_2 + iVar3);
-      iVar3 = iVar3 + 1;
+      iVar2 = i * 2;
+      pbVar1 = (byte *)(param_2 + i);
+      i = i + 1;
       iVar2 = (int)*(short *)(param_3 + iVar2);
       if (*(byte *)(param_1 + iVar2) < *pbVar1) {
         *(byte *)(param_1 + iVar2) = *pbVar1;
       }
-    } while (iVar3 < param_4);
+    } while (i < param_4);
     return;
   }
   return;
@@ -555,32 +558,32 @@ void FUN_20133e54(int param_1,short *param_2,int param_3,int param_4,int param_5
 {
   byte bVar1;
   byte bVar2;
+  int i;
   int iVar3;
   int iVar4;
-  int iVar5;
   
-  iVar3 = 0;
-  iVar4 = *param_2 + -1;
+  i = 0;
+  iVar3 = *param_2 + -1;
   if (0 < param_3) {
     do {
-      iVar5 = (int)param_2[iVar3];
+      iVar4 = (int)param_2[i];
       bVar1 = *(byte *)(param_4 + param_5);
-      if (iVar5 == iVar4) {
+      if (iVar4 == iVar3) {
         bVar2 = *(byte *)(param_4 + param_5 + -1);
         if (bVar1 < bVar2) {
-          *(byte *)(param_1 + iVar5) = bVar2;
+          *(byte *)(param_1 + iVar4) = bVar2;
         }
         else if (bVar1 != 0) {
-          *(byte *)(param_1 + iVar5) = bVar1;
+          *(byte *)(param_1 + iVar4) = bVar1;
         }
       }
       else {
-        *(byte *)(param_1 + iVar5) = bVar1;
+        *(byte *)(param_1 + iVar4) = bVar1;
       }
-      iVar3 = iVar3 + 1;
+      i = i + 1;
       param_5 = param_5 + 1;
-      iVar4 = iVar5;
-    } while (iVar3 < param_3);
+      iVar3 = iVar4;
+    } while (i < param_3);
   }
   return;
 }
@@ -677,22 +680,22 @@ void FUN_20133f6c(int param_1,byte *param_2,short *param_3,int param_4)
   byte bVar1;
   int iVar2;
   int iVar3;
-  int iVar4;
+  int i;
   
   bVar1 = *param_2;
-  iVar4 = 0;
+  i = 0;
   iVar3 = *param_3 + -1;
   if (0 < param_4) {
     do {
-      iVar2 = (int)param_3[iVar4];
+      iVar2 = (int)param_3[i];
       if (iVar3 + 1 < iVar2) {
-        *(char *)(iVar3 + param_1 + 1) = (char)((uint)bVar1 + (uint)param_2[iVar4] >> 1);
+        *(char *)(iVar3 + param_1 + 1) = (char)((uint)bVar1 + (uint)param_2[i] >> 1);
       }
-      bVar1 = param_2[iVar4];
-      iVar4 = iVar4 + 1;
+      bVar1 = param_2[i];
+      i = i + 1;
       *(byte *)(param_1 + iVar2) = bVar1;
       iVar3 = iVar2;
-    } while (iVar4 < param_4);
+    } while (i < param_4);
   }
   return;
 }
@@ -709,29 +712,29 @@ void FUN_20133fd0(int param_1,ushort *param_2,short *param_3,int param_4)
   int iVar4;
   ushort *puVar5;
   undefined1 *puVar6;
-  int iVar7;
+  int i;
   
   uVar2 = *param_2;
-  iVar7 = 0;
+  i = 0;
   iVar4 = *param_3 + -1;
   if (0 < param_4) {
     do {
-      iVar3 = (int)param_3[iVar7];
+      iVar3 = (int)param_3[i];
       if (iVar4 + 1 < iVar3) {
         iVar4 = param_1 + iVar4 * 2;
-        *(char *)(iVar4 + 2) = (char)((uVar2 & 0xff) + (uint)(byte)param_2[iVar7] >> 1);
+        *(char *)(iVar4 + 2) = (char)((uVar2 & 0xff) + (uint)(byte)param_2[i] >> 1);
         *(char *)(iVar4 + 3) =
-             (char)((uint)(uVar2 >> 8) + (uint)*(byte *)((int)param_2 + iVar7 * 2 + 1) >> 1);
+             (char)((uint)(uVar2 >> 8) + (uint)*(byte *)((int)param_2 + i * 2 + 1) >> 1);
       }
-      puVar5 = param_2 + iVar7;
+      puVar5 = param_2 + i;
       puVar6 = (undefined1 *)(param_1 + iVar3 * 2);
-      iVar7 = iVar7 + 1;
+      i = i + 1;
       uVar1 = *(undefined1 *)((int)puVar5 + 1);
       uVar2 = *puVar5;
       *puVar6 = (char)*puVar5;
       puVar6[1] = uVar1;
       iVar4 = iVar3;
-    } while (iVar7 < param_4);
+    } while (i < param_4);
   }
   return;
 }
@@ -766,30 +769,30 @@ void FUN_20134074(undefined4 param_1,undefined4 param_2)
 void FUN_20134084(int param_1,int param_2)
 
 {
-  int iVar1;
+  int i;
+  uint uVar1;
   uint uVar2;
-  uint uVar3;
+  int iVar3;
   int iVar4;
-  int iVar5;
   
-  uVar2 = 0xffffffff;
-  iVar1 = 0;
-  iVar4 = *DAT_2090870c + -1;
+  uVar1 = 0xffffffff;
+  i = 0;
+  iVar3 = *DAT_2090870c + -1;
   do {
-    iVar5 = (int)DAT_2090870c[iVar1];
-    if (iVar5 == iVar4) {
-      uVar3 = (uint)*(byte *)(param_2 + iVar1);
-      if ((int)uVar2 < (int)uVar3) goto LAB_20164178;
+    iVar4 = (int)DAT_2090870c[i];
+    if (iVar4 == iVar3) {
+      uVar2 = (uint)*(byte *)(param_2 + i);
+      if ((int)uVar1 < (int)uVar2) goto LAB_20164178;
     }
     else {
-      uVar3 = (uint)*(byte *)(param_2 + iVar1);
+      uVar2 = (uint)*(byte *)(param_2 + i);
 LAB_20164178:
-      *(char *)(param_1 + iVar5) = (char)uVar3;
-      uVar2 = uVar3;
+      *(char *)(param_1 + iVar4) = (char)uVar2;
+      uVar1 = uVar2;
     }
-    iVar1 = iVar1 + 1;
-    iVar4 = iVar5;
-    if (199 < iVar1) {
+    i = i + 1;
+    iVar3 = iVar4;
+    if (199 < i) {
       return;
     }
   } while( true );
@@ -830,6 +833,7 @@ void FUN_201340a4(void)
   undefined2 *puVar3;
   int iVar4;
   
+                    /* fills the 3DSS line width table 0x317 - 10i [doc] */
   scope3d_widths_init(&DAT_2090836c,&DAT_203a70ae);
   scope3d_widths_init(&DAT_209083ac,&DAT_203a70ae);
   iVar4 = 0;
@@ -852,13 +856,13 @@ void FUN_201340a4(void)
 
 // ===== FUN_201340ec @ 201340ec (56 bytes)
 
-uint FUN_201340ec(int param_1,uint param_2,int param_3)
+uint FUN_201340ec(int param_1,uint d,int param_3)
 
 {
-  ulonglong uVar1;
+  ulonglong __aeabi_idivmod_ret;
   
-  uVar1 = __aeabi_idivmod(param_1 * 10000,param_2);
-  return ((int)uVar1 * param_3 + 0x26ac) / 10000 & 0xffff;
+  __aeabi_idivmod_ret = __aeabi_idivmod(param_1 * 10000,d);
+  return ((int)__aeabi_idivmod_ret * param_3 + 0x26ac) / 10000 & 0xffff;
 }
 
 
@@ -869,27 +873,27 @@ void FUN_20134124(int param_1,int param_2,ushort *param_3,int param_4,ushort *pa
 {
   ushort uVar1;
   int iVar2;
-  int iVar3;
+  int i;
+  uint uVar3;
   uint uVar4;
-  uint uVar5;
   
-  iVar3 = 0;
+  i = 0;
   if (0 < param_1) {
     do {
-      uVar4 = 0;
-      uVar5 = (uint)param_5[iVar3];
-      if (uVar5 != 0) {
+      uVar3 = 0;
+      uVar4 = (uint)param_5[i];
+      if (uVar4 != 0) {
         do {
           uVar1 = *param_5;
-          iVar2 = FUN_201340ec(param_3[iVar3],uVar5,uVar4);
-          *(undefined2 *)(*(int *)(param_4 + 4) + (((uVar1 - uVar4) + -1) * param_1 + iVar3) * 2) =
+          iVar2 = FUN_201340ec(param_3[i],uVar4,uVar3);
+          *(undefined2 *)(*(int *)(param_4 + 4) + (((uVar1 - uVar3) + -1) * param_1 + i) * 2) =
                *(undefined2 *)
-                (*(int *)(param_2 + 4) + ((((uint)*param_3 - iVar2) + -1) * param_1 + iVar3) * 2);
-          uVar4 = uVar4 + 1 & 0xffff;
-        } while (uVar4 < uVar5);
+                (*(int *)(param_2 + 4) + ((((uint)*param_3 - iVar2) + -1) * param_1 + i) * 2);
+          uVar3 = uVar3 + 1 & 0xffff;
+        } while (uVar3 < uVar4);
       }
-      iVar3 = iVar3 + 1;
-    } while (iVar3 < param_1);
+      i = i + 1;
+    } while (i < param_1);
   }
   return;
 }
@@ -937,15 +941,15 @@ void FUN_201341e8(undefined4 param_1,undefined2 param_2,undefined2 param_3,undef
 void FUN_20134204(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  int iVar1;
+  int i;
   undefined4 uStack_10;
   
-  iVar1 = 1;
+  i = 1;
   uStack_10 = param_4;
   do {
-    FUN_20133f44(iVar1,param_1,&uStack_10);
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0x1e);
+    FUN_20133f44(i,param_1,&uStack_10);
+    i = i + 1;
+  } while (i < 0x1e);
   return;
 }
 
@@ -996,6 +1000,7 @@ void scope_objects_init(void)
   FUN_20163f80(&DAT_2047f400,0,0xf,&DAT_203d9a9e);
   FUN_20164018(&DAT_2047c848,&DAT_203b6704);
   FUN_20163f44(&DAT_2047f400,&DAT_203daf14);
+                    /* resets the three sub-objects [doc] */
   scope3d_obj_init(&DAT_20470294);
   uVar1 = FUN_20164680(&DAT_2047f400);
   uVar2 = FUN_2016469c(&DAT_2047c848);
@@ -1011,6 +1016,7 @@ void scope_objects_init(void)
   FUN_20158544(&DAT_2047963c,0);
   FUN_20162c28(&DAT_2047c442,DAT_2047032c);
   FUN_20162c28(&DAT_2047c644,DAT_20474d00);
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(&DAT_2047963c,2);
   scope_obj_history_clear(&DAT_2047963c);
   return;
@@ -1025,6 +1031,7 @@ void scope_objects_init(void)
 void scope_obj_bank_reset(undefined4 param_1)
 
 {
+                    /* 0 clears waterfall bank 0 [doc] */
   scope_wf_bank_set(&DAT_2047963c,param_1);
   return;
 }
@@ -1137,11 +1144,13 @@ void scope3d_redraw_history(int param_1,int param_2)
   int *piVar5;
   
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring30_advance();
     iVar2 = 0x1d;
     do {
       iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       iVar4 = iVar2 * 800 + 0x2048395f;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
       __aeabi_memclr(iVar4,800);
       if (param_1 == 8) {
         if (param_2 == 0) {
@@ -1233,6 +1242,7 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
       } while (iVar2 < DAT_20494714);
     }
     *(int *)(&DAT_2048feb8 + iVar1 * 0x54) = DAT_20494714;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
     __aeabi_memclr(&DAT_20483c7f,800);
     if (param_1 == 8) {
       if (param_3 == 0) {
@@ -1296,8 +1306,10 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(&DAT_20494768,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);

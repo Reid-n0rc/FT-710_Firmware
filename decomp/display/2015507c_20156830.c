@@ -1873,6 +1873,7 @@ LAB_20155cee:
     }
     while (uVar9 = uVar9 - 1, -1 < (int)uVar9) {
       local_60 = uVar12;
+                    /* 64-bit unsigned divide by 10 by shifts and adds [doc] */
       lVar13 = _ll_udiv10();
       param_2[uVar9] = extraout_r2 + '0';
       uVar12 = local_60;
@@ -1928,6 +1929,7 @@ void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
   local_3c = param_4;
   uStack_38 = param_2;
   uStack_30 = param_1;
+                    /* Format loop called by the sprintf family [doc, inference] */
   _printf_core(auStack_40,param_3);
   return;
 }
@@ -2036,10 +2038,10 @@ void _printf_infnan(uint *param_1,undefined4 param_2,int param_3,int param_4)
 {
   uint uVar1;
   char *pcVar2;
-  int iVar3;
-  bool bVar4;
+  int i;
+  bool bVar3;
   
-  iVar3 = 3;
+  i = 3;
   uVar1 = *param_1 & 0x800;
   if (param_3 < 7) {
     if (uVar1 == 0) {
@@ -2071,7 +2073,7 @@ void _printf_infnan(uint *param_1,undefined4 param_2,int param_3,int param_4)
     param_1[8] = uVar1;
   }
   param_1[8] = uVar1 + 3;
-  while (bVar4 = iVar3 != 0, iVar3 = iVar3 + -1, bVar4) {
+  while (bVar3 = i != 0, i = i + -1, bVar3) {
     (*(code *)param_1[1])(*pcVar2,param_1[2]);
     pcVar2 = pcVar2 + 1;
   }
@@ -2095,9 +2097,9 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
   uint uVar4;
   int iVar5;
   bool bVar6;
-  ulonglong uVar7;
+  ulonglong __aeabi_idivmod_ret;
+  undefined8 uVar7;
   undefined8 uVar8;
-  undefined8 uVar9;
   undefined8 local_48;
   undefined4 uStack_40;
   undefined8 local_3c;
@@ -2112,26 +2114,26 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
   local_3c._0_4_ = 0x3fff;
   local_3c._4_4_ = 0x80000000;
   uStack_34 = 0;
-  uVar7 = __aeabi_idivmod(param_2 + 0x1b9b,0x37);
-  uVar9 = CONCAT44(local_48._4_4_,(undefined4)local_48);
-  uVar3 = (int)(uVar7 >> 0x20) - 0x1b;
+  __aeabi_idivmod_ret = __aeabi_idivmod(param_2 + 0x1b9b,0x37);
+  uVar8 = CONCAT44(local_48._4_4_,(undefined4)local_48);
+  uVar3 = (int)(__aeabi_idivmod_ret >> 0x20) - 0x1b;
   bVar6 = -1 < (int)uVar3;
-  uVar4 = (int)uVar7 - 0x80;
+  uVar4 = (int)__aeabi_idivmod_ret - 0x80;
   if (!bVar6) {
     uVar3 = -uVar3;
   }
   iVar5 = 0;
-  for (; uVar8 = CONCAT44(local_3c._4_4_,(undefined4)local_3c), uVar3 != 0; uVar3 = (int)uVar3 >> 1)
+  for (; uVar7 = CONCAT44(local_3c._4_4_,(undefined4)local_3c), uVar3 != 0; uVar3 = (int)uVar3 >> 1)
   {
     if ((uVar3 & 1) != 0) {
-      local_48 = uVar9;
-      uVar9 = FUN_20156eca(&local_48,&DAT_20427f10 + iVar5 * 0xc,param_3);
+      local_48 = uVar8;
+      uVar8 = FUN_20156eca(&local_48,&DAT_20427f10 + iVar5 * 0xc,param_3);
       uStack_40 = extraout_r2;
     }
     iVar5 = iVar5 + 1;
   }
   iVar5 = 0;
-  for (; local_48 = uVar9, local_3c = uVar8, uVar4 != 0; uVar4 = (int)uVar4 >> 1) {
+  for (; local_48 = uVar8, local_3c = uVar7, uVar4 != 0; uVar4 = (int)uVar4 >> 1) {
     if ((uVar4 & 1) != 0) {
       iVar1 = iVar5 * 0x10;
       local_30 = *(undefined4 *)(&DAT_20427f4c + iVar1);
@@ -2140,21 +2142,21 @@ void FUN_201560a0(undefined8 *param_1,int param_2,int param_3)
       if (*(int *)(&DAT_20427f58 + iVar1) + param_3 == 0) {
         local_28 = local_28 + param_3;
       }
-      uVar8 = FUN_20156eca(&local_3c,&local_30,param_3);
+      uVar7 = FUN_20156eca(&local_3c,&local_30,param_3);
       uStack_34 = extraout_r2_00;
-      uVar9 = local_48;
+      uVar8 = local_48;
     }
     iVar5 = iVar5 + 1;
   }
   if (bVar6) {
-    uVar9 = FUN_20156eca(&local_3c,&local_48,param_3);
+    uVar8 = FUN_20156eca(&local_3c,&local_48,param_3);
     uVar2 = extraout_r2_02;
   }
   else {
-    uVar9 = FUN_20156ea2();
+    uVar8 = FUN_20156ea2();
     uVar2 = extraout_r2_01;
   }
-  *param_1 = uVar9;
+  *param_1 = uVar8;
   *(undefined4 *)(param_1 + 1) = uVar2;
   return;
 }
@@ -2422,12 +2424,13 @@ LAB_2015550c:
 void kernel_heap_init(void)
 
 {
-  uint uVar1;
+  uint gic_init_ret;
   
-  uVar1 = gic_init();
-  if (uVar1 == 0) {
+  gic_init_ret = gic_init();
+  if (gic_init_ret == 0) {
     knl_sys.task_cpsr = 0;
     knl_sys.f_0x00_u32 = 0;
+                    /* Kernel start-up called by kernel_heap_init [doc] */
     knl_sys_init(&DAT_20980000,&stack0xfffffff8);
   }
   return;
@@ -2491,8 +2494,8 @@ undefined8 knl_irq_exit(void)
 
 {
   uint uVar1;
-  knl_tcb *pkVar2;
-  byte *pbVar3;
+  knl_tcb *p_knl_tcb;
+  byte *pbVar2;
   undefined4 unaff_r4;
   undefined4 unaff_r5;
   undefined4 unaff_r6;
@@ -2501,17 +2504,18 @@ undefined8 knl_irq_exit(void)
   undefined4 unaff_r9;
   undefined4 unaff_r10;
   undefined4 unaff_r11;
-  uint uVar4;
+  uint uVar3;
   int in_stack_00000010;
   uint in_stack_00000014;
   
   software_interrupt(0);
+                    /* pops nesting stack, EOIR + PMR restore [doc, inference] */
   gic_irq_exit();
   knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
   if (knl_sys.ctx_isr != 0) {
     return *(undefined8 *)(in_stack_00000010 + 8);
   }
-  pbVar3 = knl_rdq;
+  pbVar2 = knl_rdq;
   uVar1 = (uint)knl_sys.f_0x30_u8;
   if ((uVar1 != 0) && (-1 < (int)(8 - uVar1))) {
     knl_sys.f_0x36_u8 = knl_rdq[0];
@@ -2522,33 +2526,33 @@ undefined8 knl_irq_exit(void)
       if ((knl_sys.dsp_state != 0) || (knl_sys.dsp_pending == 0)) goto LAB_201564f8;
       knl_sys.dsp_pending = 0;
       do {
-        pbVar3 = pbVar3 + 1;
-        uVar1 = (uint)*pbVar3;
+        pbVar2 = pbVar2 + 1;
+        uVar1 = (uint)*pbVar2;
       } while (uVar1 == 0);
     }
     if (uVar1 != knl_rdq[0]) {
-      uVar4 = knl_tsk_tab[knl_rdq[0]]->sp;
-      *(undefined4 *)(uVar4 + 0x2c) = unaff_r11;
-      *(undefined4 *)(uVar4 + 0x28) = unaff_r10;
-      *(undefined4 *)(uVar4 + 0x24) = unaff_r9;
-      *(undefined4 *)(uVar4 + 0x20) = unaff_r8;
-      *(undefined4 *)(uVar4 + 0x1c) = unaff_r7;
-      *(undefined4 *)(uVar4 + 0x18) = unaff_r6;
-      *(undefined4 *)(uVar4 + 0x14) = unaff_r5;
-      *(undefined4 *)(uVar4 + 0x10) = unaff_r4;
+      uVar3 = knl_tsk_tab[knl_rdq[0]]->sp;
+      *(undefined4 *)(uVar3 + 0x2c) = unaff_r11;
+      *(undefined4 *)(uVar3 + 0x28) = unaff_r10;
+      *(undefined4 *)(uVar3 + 0x24) = unaff_r9;
+      *(undefined4 *)(uVar3 + 0x20) = unaff_r8;
+      *(undefined4 *)(uVar3 + 0x1c) = unaff_r7;
+      *(undefined4 *)(uVar3 + 0x18) = unaff_r6;
+      *(undefined4 *)(uVar3 + 0x14) = unaff_r5;
+      *(undefined4 *)(uVar3 + 0x10) = unaff_r4;
       knl_rdq[0] = (byte)uVar1;
-      pkVar2 = knl_tsk_tab[uVar1];
+      p_knl_tcb = knl_tsk_tab[uVar1];
       goto LAB_2015650c;
     }
   }
 LAB_201564f8:
-  pkVar2 = knl_tsk_tab[knl_rdq[0]];
+  p_knl_tcb = knl_tsk_tab[knl_rdq[0]];
 LAB_2015650c:
-  knl_sys.f_0x30_u8 = pkVar2->pri;
+  knl_sys.f_0x30_u8 = p_knl_tcb->pri;
   if (knl_sys.f_0x30_u8 != 0) {
     knl_sys.run_pri = knl_sys.f_0x30_u8;
   }
-  return *(undefined8 *)pkVar2->sp;
+  return *(undefined8 *)p_knl_tcb->sp;
 }
 
 

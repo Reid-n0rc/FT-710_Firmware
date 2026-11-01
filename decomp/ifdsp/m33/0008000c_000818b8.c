@@ -38,10 +38,12 @@ void POWER_SetBiasConfig(void)
 {
   int iVar1;
   
+                    /* body-bias (RBB/FBB) voltage level and RBB ... [sfr] */
   iVar1 = PMC_BIASCFG;
   if (iVar1 != 0x4040808) {
     PMC_BIASCFG = 0x4040808;
   }
+                    /* PMC controls used during deep sleep mode [sfr] */
   iVar1 = PMC_SLEEPCTRL;
   if (iVar1 != 10) {
     PMC_SLEEPCTRL = 10;
@@ -57,9 +59,9 @@ void POWER_SetBiasConfig(void)
 void delay(int param_1)
 
 {
-  int iVar1;
+  int i;
   
-  for (iVar1 = 0; iVar1 != param_1; iVar1 = iVar1 + 1) {
+  for (i = 0; i != param_1; i = i + 1) {
   }
   return;
 }
@@ -94,13 +96,17 @@ bool countPartitionSwitches(void)
   uint uVar1;
   uint uVar2;
   
+                    /* Run configuration 1 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   uVar1 = SYSCTL0_PDSLEEPCFG1;
   if (((uVar2 ^ 0x1f000fff) & uVar1 & 0x1f000fff) == 0) {
     uVar2 = SYSCTL0_PDRUNCFG2;
     uVar1 = SYSCTL0_PDSLEEPCFG2;
     if (((uVar2 ^ 0x3fffffff) & uVar1 & 0x3fffffff) == 0) {
+                    /* Run configuration 3 [sfr] */
       uVar2 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
       uVar1 = SYSCTL0_PDSLEEPCFG3;
       return ((uVar2 ^ 0x3fffffff) & uVar1 & 0x3fffffff) != 0;
     }
@@ -123,117 +129,123 @@ uint POWER_CalculateSafetyCount(int param_1)
 {
   uint uVar1;
   int iVar2;
-  uint uVar3;
+  undefined *puVar3;
   int iVar4;
   undefined *puVar5;
   int iVar6;
-  undefined *puVar7;
+  int iVar7;
   int iVar8;
-  int iVar9;
+  uint uVar9;
   int iVar10;
-  uint uVar11;
-  int iVar12;
-  int iVar13;
-  bool bVar14;
+  int iVar11;
+  bool bVar12;
+  uint pmc_sleepctrl;
+  int sysctl0_pdruncfg0;
   
-  uVar11 = SYSCTL0_PDSLEEPCFG0;
-  bVar14 = (uVar11 & 0x10017d0) == 0x10017d0;
-  if (bVar14) {
+                    /* Sleep configuration 0 [sfr] */
+  uVar9 = SYSCTL0_PDSLEEPCFG0;
+  bVar12 = (uVar9 & 0x10017d0) == 0x10017d0;
+  if (bVar12) {
     param_1 = 0x21a;
   }
-  iVar8 = 9000;
-  if (!bVar14) {
+  iVar6 = 9000;
+  if (!bVar12) {
     param_1 = 0x4c;
-    iVar8 = 0;
+    iVar6 = 0;
   }
-  uVar11 = SYSCTL0_PDSLEEPCFG0;
+  uVar9 = SYSCTL0_PDSLEEPCFG0;
+                    /* PMC controls used during run mode [sfr] */
   uVar1 = PMC_RUNCTRL;
-  uVar3 = PMC_SLEEPCTRL;
-  iVar9 = (uVar1 & 0x3f) - (uVar3 & 0x3f);
+                    /* PMC controls used during deep sleep mode [sfr] */
+  pmc_sleepctrl = PMC_SLEEPCTRL;
+  iVar7 = (uVar1 & 0x3f) - (pmc_sleepctrl & 0x3f);
+                    /* Run configuration 0 [sfr] */
   uVar1 = SYSCTL0_PDRUNCFG0;
-  if ((uVar11 & 0x10) == 0) {
-    iVar4 = 0x4c;
-    iVar12 = 0;
-  }
-  else {
-    iVar12 = 1000;
-    iVar4 = 0xe1f;
-  }
-  iVar6 = 0xceb;
-  if ((uVar1 & 0x10) == 0) {
-    iVar6 = 0x4c;
-  }
-  iVar13 = SYSCTL0_PDSLEEPCFG0;
-  if (iVar13 << 0x14 < 0) {
-    uVar11 = SYSCTL0_PDSLEEPCFG0;
-    if ((uVar11 & 0x1000) == 0) {
-      iVar13 = 0x1a71;
-      puVar7 = (undefined *)0x0;
-    }
-    else {
-      iVar13 = 0x4c;
-      puVar7 = (undefined *)0x0;
-    }
-  }
-  else {
-    iVar13 = 0x1cd;
-    puVar7 = &DAT_00006590;
-  }
-  bVar14 = countPartitionSwitches();
-  iVar10 = SYSCTL0_PDSLEEPCFG1;
-  if (iVar10 < 0) {
-    iVar10 = 8000;
+  if ((uVar9 & 0x10) == 0) {
+    iVar2 = 0x4c;
+    iVar10 = 0;
   }
   else {
     iVar10 = 1000;
+    iVar2 = 0xe1f;
   }
-  iVar2 = SYSCTL0_PDRUNCFG0;
-  iVar8 = (iVar10 * (1 - (uint)bVar14) + (uint)bVar14 * 47000 + 1000) / 0xd +
-          iVar13 + iVar9 * 600 + (iVar9 * 32000 + 1000U) / 0xd + iVar8 + param_1 + iVar12 + iVar4 +
-                   iVar6 + 0x1f9;
-  puVar5 = puVar7 + iVar8 + 0x4c;
-  if ((iVar2 << 0x14 < 0) &&
-     ((iVar9 = SYSCTL0_PDSLEEPCFG0, iVar9 << 0x14 < 0 ||
-      (iVar9 = SYSCTL0_PDWAKECFG, -1 < iVar9 << 0x1f)))) {
-    iVar8 = SYSCTL0_PDRUNCFG0;
-    if (iVar8 << 0x13 < 0) {
-      iVar8 = SYSCTL0_PDSLEEPCFG0;
-      if (iVar8 << 0x13 < 0) {
-        uVar11 = 1000;
+  iVar4 = 0xceb;
+  if ((uVar1 & 0x10) == 0) {
+    iVar4 = 0x4c;
+  }
+  iVar11 = SYSCTL0_PDSLEEPCFG0;
+  if (iVar11 << 0x14 < 0) {
+    uVar9 = SYSCTL0_PDSLEEPCFG0;
+    if ((uVar9 & 0x1000) == 0) {
+      iVar11 = 0x1a71;
+      puVar5 = (undefined *)0x0;
+    }
+    else {
+      iVar11 = 0x4c;
+      puVar5 = (undefined *)0x0;
+    }
+  }
+  else {
+    iVar11 = 0x1cd;
+    puVar5 = &DAT_00006590;
+  }
+  bVar12 = countPartitionSwitches();
+                    /* Sleep configuration 1 [sfr] */
+  iVar8 = SYSCTL0_PDSLEEPCFG1;
+  if (iVar8 < 0) {
+    iVar8 = 8000;
+  }
+  else {
+    iVar8 = 1000;
+  }
+  sysctl0_pdruncfg0 = SYSCTL0_PDRUNCFG0;
+  iVar6 = (iVar8 * (1 - (uint)bVar12) + (uint)bVar12 * 47000 + 1000) / 0xd +
+          iVar11 + iVar7 * 600 + (iVar7 * 32000 + 1000U) / 0xd + iVar6 + param_1 + iVar10 + iVar2 +
+                   iVar4 + 0x1f9;
+  puVar3 = puVar5 + iVar6 + 0x4c;
+  if ((sysctl0_pdruncfg0 << 0x14 < 0) &&
+     ((iVar7 = SYSCTL0_PDSLEEPCFG0, iVar7 << 0x14 < 0 ||
+      (iVar7 = SYSCTL0_PDWAKECFG, -1 < iVar7 << 0x1f)))) {
+    iVar6 = SYSCTL0_PDRUNCFG0;
+    if (iVar6 << 0x13 < 0) {
+      iVar6 = SYSCTL0_PDSLEEPCFG0;
+      if (iVar6 << 0x13 < 0) {
+        uVar9 = 1000;
       }
       else {
         uVar1 = SYSCTL0_PDWAKECFG;
-        uVar11 = 0x4c2c0;
+        uVar9 = 0x4c2c0;
         if ((uVar1 & 2) == 0) {
-          uVar11 = 1000;
+          uVar9 = 1000;
         }
       }
     }
     else {
-      uVar11 = 0x4c2c0;
+      uVar9 = 0x4c2c0;
     }
   }
   else {
-    uVar11 = 5000;
-    puVar5 = puVar7 + iVar8 + 0x3d4c4;
+    uVar9 = 5000;
+    puVar3 = puVar5 + iVar6 + 0x3d4c4;
   }
   uVar1 = SYSCTL0_PDRUNCFG0;
   if (((~uVar1 & 0x10017d0) == 0) &&
-     ((iVar8 = SYSCTL0_PDSLEEPCFG0, iVar8 << 0x13 < 0 ||
-      (iVar8 = SYSCTL0_PDWAKECFG, -1 < iVar8 << 0x1e)))) {
-    iVar8 = uVar11 / 0xd + 0x298;
+     ((iVar6 = SYSCTL0_PDSLEEPCFG0, iVar6 << 0x13 < 0 ||
+      (iVar6 = SYSCTL0_PDWAKECFG, -1 < iVar6 << 0x1e)))) {
+    iVar6 = uVar9 / 0xd + 0x298;
   }
   else {
-    iVar8 = uVar11 / 0xd + 0x98;
+    iVar6 = uVar9 / 0xd + 0x98;
   }
-  uVar11 = CLKCTL0_FFROCTL0;
-  if ((uVar11 & 0xc0000) == 0) {
-    iVar9 = 0xc;
+                    /* FFRO control 0 [sfr] */
+  uVar9 = CLKCTL0_FFROCTL0;
+  if ((uVar9 & 0xc0000) == 0) {
+    iVar7 = 0xc;
   }
   else {
-    iVar9 = 0xf;
+    iVar7 = 0xf;
   }
-  return (iVar9 * (int)(puVar5 + iVar8) + 999U) / 1000;
+  return (iVar7 * (int)(puVar3 + iVar6) + 999U) / 1000;
 }
 
 
@@ -265,6 +277,7 @@ void initFlexSPI(void)
     else {
       uVar4 = 3;
     }
+                    /* Flash Control 0 [sfr] */
     uVar1 = FLEXSPI_FLSHB1CR0;
     if (((uVar1 & 0x7fffff) != 0) || (uVar1 = FLEXSPI_FLSHB2CR0, (uVar1 & 0x7fffff) != 0)) {
       uVar4 = uVar4 | 0x30000;
@@ -272,6 +285,7 @@ void initFlexSPI(void)
     iVar3 = 10;
     do {
       while( true ) {
+                    /* Status 2 [sfr] */
         uVar1 = FLEXSPI_STS2;
         if ((uVar4 & ~uVar1) == 0) {
           iVar3 = 100;
@@ -330,43 +344,61 @@ void POWER_EnterSleep_mode1(void)
 {
   bool bVar1;
   uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
-  uint uVar5;
+  undefined4 uVar3;
+  uint uVar4;
+  int nvic_iser1;
   
-  uVar4 = 0;
+  uVar3 = 0;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    uVar4 = isIRQinterruptsEnabled();
+    uVar3 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = POWER_SetBiasConfig(uVar4);
+  uVar4 = POWER_SetBiasConfig(uVar3);
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
-  iVar3 = NVIC_ISER1;
+                    /* Interrupt Set Enable [sfr] */
+  nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 & 0xfffff7fe | 1;
-  uVar4 = SYSCTL0_PDRUNCFG1;
-  SYSCTL0_PDSLEEPCFG1 = uVar4;
-  uVar4 = SYSCTL0_PDRUNCFG2;
-  SYSCTL0_PDSLEEPCFG2 = uVar4;
-  uVar4 = SYSCTL0_PDRUNCFG3;
-  SYSCTL0_PDSLEEPCFG3 = uVar4;
+                    /* Run configuration 1 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
+  SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
+  SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
+  SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 1;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
-  if (-1 < iVar3 << 5) {
+  if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
-  if (-1 < iVar3 << 5) {
+  if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -375,7 +407,7 @@ void POWER_EnterSleep_mode1(void)
   SCB_SCR = uVar2 & 0xfffffffb;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    enableIRQinterrupts((uVar5 & 1) == 1);
+    enableIRQinterrupts((uVar4 & 1) == 1);
   }
   return;
 }
@@ -388,43 +420,61 @@ void POWER_EnterSleep_mode2(void)
 {
   bool bVar1;
   uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
-  uint uVar5;
+  undefined4 uVar3;
+  uint uVar4;
+  int nvic_iser1;
   
-  uVar4 = 0;
+  uVar3 = 0;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    uVar4 = isIRQinterruptsEnabled();
+    uVar3 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  uVar5 = POWER_SetBiasConfig(uVar4);
+  uVar4 = POWER_SetBiasConfig(uVar3);
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
-  iVar3 = NVIC_ISER1;
+                    /* Interrupt Set Enable [sfr] */
+  nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 & 0xffffeffe | 1;
-  uVar4 = SYSCTL0_PDRUNCFG1;
-  SYSCTL0_PDSLEEPCFG1 = uVar4;
-  uVar4 = SYSCTL0_PDRUNCFG2;
-  SYSCTL0_PDSLEEPCFG2 = uVar4;
-  uVar4 = SYSCTL0_PDRUNCFG3;
-  SYSCTL0_PDSLEEPCFG3 = uVar4;
+                    /* Run configuration 1 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
+  SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
+  SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
+  SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 2;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
-  if (-1 < iVar3 << 5) {
+  if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
-  if (-1 < iVar3 << 5) {
+  if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -433,7 +483,7 @@ void POWER_EnterSleep_mode2(void)
   SCB_SCR = uVar2 & 0xfffffffb;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    enableIRQinterrupts((uVar5 & 1) == 1);
+    enableIRQinterrupts((uVar4 & 1) == 1);
   }
   return;
 }
@@ -447,41 +497,59 @@ uint POWER_EnterSleep_mode3(void)
   bool bVar1;
   uint uVar2;
   undefined4 uVar3;
-  int iVar4;
-  uint uVar5;
+  uint uVar4;
+  int nvic_iser1;
   
-  uVar5 = 0;
+  uVar4 = 0;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    uVar5 = isIRQinterruptsEnabled();
+    uVar4 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
+                    /* The SCR controls features of entry [sfr] */
   uVar2 = SCB_SCR;
   SCB_SCR = uVar2 | 4;
-  iVar4 = NVIC_ISER1;
+                    /* Interrupt Set Enable [sfr] */
+  nvic_iser1 = NVIC_ISER1;
+                    /* Run configuration 0 [sfr] */
   uVar2 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
   SYSCTL0_PDSLEEPCFG0 = uVar2 | 0x1801;
+                    /* Run configuration 1 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
   SYSCTL0_PDSLEEPCFG1 = uVar3;
+                    /* Run configuration 2 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
   SYSCTL0_PDSLEEPCFG2 = uVar3;
+                    /* Run configuration 3 [sfr] */
   uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
   SYSCTL0_PDSLEEPCFG3 = uVar3;
+                    /* PD Wake Configuration [sfr] */
   SYSCTL0_PDWAKECFG = 3;
+                    /* Automatic wakeup from deepsleep / deep powerdown ... [sfr] */
   PMC_AUTOWKUP = 0x800;
+                    /* PMC control [sfr] */
   uVar2 = PMC_CTRL;
   PMC_CTRL = uVar2 & 0xefcfffff | 0x10000000;
+                    /* Start enable 1 set [sfr] */
   SYSCTL0_STARTEN1_SET = 0x4000000;
-  if (-1 < iVar4 << 5) {
+  if (-1 < nvic_iser1 << 5) {
     NVIC_ISER1 = 0x4000000;
   }
   WaitForInterrupt();
   PMC_CTRL = uVar2;
+                    /* Wakeup, interrupt, and reset flags [sfr] */
   PMC_FLAGS = 0x10000000;
+                    /* Start enable 1 clear [sfr] */
   SYSCTL0_STARTEN1_CLR = 0x4000000;
   SYSCTL0_PDWAKECFG = 0;
+                    /* Interrupt Clear Pending [sfr] */
   NVIC_ICPR1 = 0x4000000;
-  if (-1 < iVar4 << 5) {
+  if (-1 < nvic_iser1 << 5) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 0x4000000;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -490,9 +558,9 @@ uint POWER_EnterSleep_mode3(void)
   SCB_SCR = uVar2 & 0xfffffffb;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
-    enableIRQinterrupts((uVar5 & 1) == 1);
+    enableIRQinterrupts((uVar4 & 1) == 1);
   }
-  return uVar5;
+  return uVar4;
 }
 
 
@@ -502,85 +570,107 @@ void POWER_EnterDeepSleep(void)
 
 {
   uint uVar1;
-  undefined4 uVar2;
+  uint uVar2;
   uint uVar3;
-  uint uVar4;
-  uint uVar5;
-  uint uVar6;
+  uint *puVar4;
+  undefined4 uVar5;
+  int iVar6;
   uint uVar7;
-  uint *puVar8;
-  undefined4 uVar9;
-  int iVar10;
-  uint uVar11;
   uint extraout_r1;
   int extraout_r1_00;
   int extraout_r1_01;
   int extraout_r1_02;
-  uint uVar12;
+  uint uVar8;
   uint extraout_r2;
+  uint uVar9;
+  uint uVar10;
+  bool bVar11;
+  uint uVar12;
   uint uVar13;
-  uint uVar14;
-  bool bVar15;
-  uint uVar16;
-  uint uVar17;
-  bool bVar18;
+  bool bVar14;
+  uint clkctl0_mainclkselb;
+  undefined4 clkctl0_syscpuahbclkdiv;
+  uint clkctl1_dspcpuclksela;
+  uint clkctl1_dspcpuclkselb;
   
-  uVar13 = 0;
-  bVar15 = (bool)isCurrentModePrivileged();
-  if (bVar15) {
-    uVar13 = isIRQinterruptsEnabled();
+  uVar9 = 0;
+  bVar11 = (bool)isCurrentModePrivileged();
+  if (bVar11) {
+    uVar9 = isIRQinterruptsEnabled();
   }
   disableIRQinterrupts();
-  puVar8 = (uint *)POWER_SetBiasConfig();
-  uVar3 = SCB_SCR;
-  SCB_SCR = uVar3 | 4;
-  uVar3 = CLKCTL0_MAINCLKSELA;
-  uVar4 = CLKCTL0_MAINCLKSELB;
-  uVar6 = CLKCTL1_DSPCPUCLKSELA;
-  uVar7 = CLKCTL1_DSPCPUCLKSELB;
-  uVar2 = CLKCTL0_SYSCPUAHBCLKDIV;
-  uVar5 = SYSCTL0_PDRUNCFG0;
-  SYSCTL0_PDSLEEPCFG0 = uVar5 & ~*puVar8 & 0xfffffff9 | ~*puVar8 & 0x3effffd1;
-  uVar5 = SYSCTL0_PDRUNCFG1;
-  SYSCTL0_PDSLEEPCFG1 = (uVar5 | 0x9f000fff) & ~puVar8[1];
-  uVar5 = SYSCTL0_PDRUNCFG2;
-  SYSCTL0_PDSLEEPCFG2 = (uVar5 | 0x3fffffff) & ~puVar8[2];
-  uVar5 = SYSCTL0_PDRUNCFG3;
-  SYSCTL0_PDSLEEPCFG3 = (uVar5 | 0x3fffffff) & ~puVar8[3];
+  puVar4 = (uint *)POWER_SetBiasConfig();
+                    /* The SCR controls features of entry [sfr] */
+  uVar2 = SCB_SCR;
+  SCB_SCR = uVar2 | 4;
+                    /* main clock selection A [sfr] */
+  uVar2 = CLKCTL0_MAINCLKSELA;
+                    /* main clock selection B [sfr] */
+  clkctl0_mainclkselb = CLKCTL0_MAINCLKSELB;
+                    /* DSP clock selection A [sfr] */
+  clkctl1_dspcpuclksela = CLKCTL1_DSPCPUCLKSELA;
+                    /* DSP clock selection B [sfr] */
+  clkctl1_dspcpuclkselb = CLKCTL1_DSPCPUCLKSELB;
+                    /* system cpu AHB clock divider [sfr] */
+  clkctl0_syscpuahbclkdiv = CLKCTL0_SYSCPUAHBCLKDIV;
+                    /* Run configuration 0 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG0;
+                    /* Sleep configuration 0 [sfr] */
+  SYSCTL0_PDSLEEPCFG0 = uVar3 & ~*puVar4 & 0xfffffff9 | ~*puVar4 & 0x3effffd1;
+                    /* Run configuration 1 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG1;
+                    /* Sleep configuration 1 [sfr] */
+  SYSCTL0_PDSLEEPCFG1 = (uVar3 | 0x9f000fff) & ~puVar4[1];
+                    /* Run configuration 2 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG2;
+                    /* Sleep configuration 2 [sfr] */
+  SYSCTL0_PDSLEEPCFG2 = (uVar3 | 0x3fffffff) & ~puVar4[2];
+                    /* Run configuration 3 [sfr] */
+  uVar3 = SYSCTL0_PDRUNCFG3;
+                    /* Sleep configuration 3 [sfr] */
+  SYSCTL0_PDSLEEPCFG3 = (uVar3 | 0x3fffffff) & ~puVar4[3];
+                    /* PMIC power mode select control configuration [sfr] */
   PMC_PMICCFG = 0x73;
-  uVar5 = SYSCTL0_PDSLEEPCFG0;
-  SYSCTL0_PDSLEEPCFG0 = uVar5 | 2;
-  uVar5 = SYSCTL0_PDSLEEPCFG0;
-  bVar15 = false;
-  if ((uVar5 & 1) != 0) {
-    iVar10 = SYSCTL0_DSPSTALL;
-    if (iVar10 == 0) {
-      bVar15 = true;
+  uVar3 = SYSCTL0_PDSLEEPCFG0;
+  SYSCTL0_PDSLEEPCFG0 = uVar3 | 2;
+  uVar3 = SYSCTL0_PDSLEEPCFG0;
+  bVar11 = false;
+  if ((uVar3 & 1) != 0) {
+    iVar6 = SYSCTL0_DSPSTALL;
+    if (iVar6 == 0) {
+      bVar11 = true;
+                    /* DSP stall [sfr] */
       SYSCTL0_DSPSTALL = 1;
     }
     else {
-      bVar15 = false;
+      bVar11 = false;
     }
   }
-  uVar9 = PMC_FLAGS;
-  PMC_FLAGS = uVar9;
-  uVar5 = PMC_MEMSEQCTRL;
-  PMC_MEMSEQCTRL = uVar5 | 0x3f;
-  uVar5 = PMC_CTRL;
-  PMC_CTRL = uVar5 & 0xffcfffff;
-  iVar10 = SYSCTL0_PDRUNCFG0;
-  bVar18 = iVar10 << 0xf < 0;
-  if (bVar18) {
+                    /* Wakeup, interrupt, and reset flags [sfr] */
+  uVar5 = PMC_FLAGS;
+  PMC_FLAGS = uVar5;
+                    /* Memory Sequencer Control [sfr] */
+  uVar3 = PMC_MEMSEQCTRL;
+  PMC_MEMSEQCTRL = uVar3 | 0x3f;
+                    /* PMC control [sfr] */
+  uVar3 = PMC_CTRL;
+  PMC_CTRL = uVar3 & 0xffcfffff;
+  iVar6 = SYSCTL0_PDRUNCFG0;
+  bVar14 = iVar6 << 0xf < 0;
+  if (bVar14) {
+                    /* Run configuration 0 clear [sfr] */
     SYSCTL0_PDRUNCFG0_CLR = 0x10000;
+                    /* fsl_power.c busy loop [doc, inference] */
     delay(0x960);
   }
-  iVar10 = SYSCTL0_PDSLEEPCFG0;
-  if (iVar10 << 0xf < 0) {
+  iVar6 = SYSCTL0_PDSLEEPCFG0;
+  if (iVar6 << 0xf < 0) {
     SYSCTL0_MAINCLKSAFETY = 0;
   }
   else {
-    uVar9 = POWER_CalculateSafetyCount();
-    SYSCTL0_MAINCLKSAFETY = uVar9;
+    uVar5 = POWER_CalculateSafetyCount();
+                    /* Main Clock Safety [sfr] */
+    SYSCTL0_MAINCLKSAFETY = uVar5;
   }
   deinitXip();
   CLKCTL0_MAINCLKSELA = 0;
@@ -589,126 +679,132 @@ void POWER_EnterDeepSleep(void)
   CLKCTL1_DSPCPUCLKSELB = 0;
   CLKCTL0_SYSCPUAHBCLKDIV = 0;
   do {
-    iVar10 = CLKCTL0_SYSCPUAHBCLKDIV;
-  } while (iVar10 < 0);
-  uVar16 = 0x2002;
-  uVar14 = SYSCTL0_PDRUNCFG0;
-  uVar12 = SYSCTL0_PDSLEEPCFG0;
-  uVar14 = uVar14 ^ uVar12;
-  uVar12 = uVar14 & 0x60000;
-  if (uVar12 == 0) {
-    uVar17 = 0;
+    iVar6 = CLKCTL0_SYSCPUAHBCLKDIV;
+  } while (iVar6 < 0);
+  uVar12 = 0x2002;
+  uVar10 = SYSCTL0_PDRUNCFG0;
+  uVar8 = SYSCTL0_PDSLEEPCFG0;
+  uVar10 = uVar10 ^ uVar8;
+  uVar8 = uVar10 & 0x60000;
+  if (uVar8 == 0) {
+    uVar13 = 0;
   }
   else {
-    uVar17 = 0x2002;
+    uVar13 = 0x2002;
   }
-  uVar11 = uVar14 & 0x1e0000;
-  if ((uVar14 & 0x180000) == 0) {
-    if (uVar12 == 0) {
-      uVar14 = 0;
-      uVar16 = 0;
+  uVar7 = uVar10 & 0x1e0000;
+  if ((uVar10 & 0x180000) == 0) {
+    if (uVar8 == 0) {
+      uVar10 = 0;
+      uVar12 = 0;
       goto LAB_00080716;
     }
-    uVar16 = 0;
+    uVar12 = 0;
 LAB_000806f8:
-    uVar12 = CLKCTL0_SYSPLL0PFD;
-    uVar12 = ~uVar12 & 0x80808080;
-    if ((uVar14 & 0x180000) == 0) {
-      uVar14 = 0;
+                    /* sys pll0 PFD [sfr] */
+    uVar8 = CLKCTL0_SYSPLL0PFD;
+    uVar8 = ~uVar8 & 0x80808080;
+    if ((uVar10 & 0x180000) == 0) {
+      uVar10 = 0;
       goto LAB_00080716;
     }
   }
-  else if (uVar12 != 0) goto LAB_000806f8;
-  uVar14 = CLKCTL1_AUDIOPLL0PFD;
-  uVar14 = ~uVar14 & 0x80808080;
+  else if (uVar8 != 0) goto LAB_000806f8;
+                    /* audio pll0 PFD [sfr] */
+  uVar10 = CLKCTL1_AUDIOPLL0PFD;
+  uVar10 = ~uVar10 & 0x80808080;
 LAB_00080716:
   uVar1 = CLKCTL0_SYSPLL0PFD;
-  CLKCTL0_SYSPLL0PFD = uVar1 | uVar12;
+  CLKCTL0_SYSPLL0PFD = uVar1 | uVar8;
   uVar1 = CLKCTL1_AUDIOPLL0PFD;
-  CLKCTL1_AUDIOPLL0PFD = uVar1 | uVar14;
-  uVar14 = CLKCTL0_SYSPLL0CTL0;
-  CLKCTL0_SYSPLL0CTL0 = uVar14 | uVar17;
-  uVar14 = CLKCTL1_AUDIOPLL0CTL0;
-  CLKCTL1_AUDIOPLL0CTL0 = uVar14 | uVar16;
-  SYSCTL0_PDRUNCFG0_SET = uVar11;
+  CLKCTL1_AUDIOPLL0PFD = uVar1 | uVar10;
+                    /* system pll0 control0 [sfr] */
+  uVar10 = CLKCTL0_SYSPLL0CTL0;
+  CLKCTL0_SYSPLL0CTL0 = uVar10 | uVar13;
+                    /* audio pll0 control0 [sfr] */
+  uVar10 = CLKCTL1_AUDIOPLL0CTL0;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar10 | uVar12;
+                    /* Run configuration 0 set [sfr] */
+  SYSCTL0_PDRUNCFG0_SET = uVar7;
   WaitForInterrupt();
   uVar1 = SYSCTL0_PDRUNCFG0;
-  uVar14 = SYSCTL0_PDSLEEPCFG0;
-  if (((uVar1 ^ uVar14) & 0x2000) != 0) {
-    uVar14 = CLKCTL0_FFROCTL0;
-    if ((uVar14 & 0xc0000) == 0) {
-      iVar10 = 3;
+  uVar10 = SYSCTL0_PDSLEEPCFG0;
+  if (((uVar1 ^ uVar10) & 0x2000) != 0) {
+    uVar10 = CLKCTL0_FFROCTL0;
+    if ((uVar10 & 0xc0000) == 0) {
+      iVar6 = 3;
     }
     else {
-      iVar10 = 4;
+      iVar6 = 4;
     }
-    delay(DAT_00080a58 * iVar10);
-    uVar11 = extraout_r1;
+    delay(DAT_00080a58 * iVar6);
+    uVar7 = extraout_r1;
   }
-  if (uVar11 != 0) {
-    SYSCTL0_PDRUNCFG0_CLR = uVar11;
-    uVar11 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
-    uVar14 = CLKCTL0_FFROCTL0;
-    if ((uVar14 & 0xc0000) == 0) {
-      iVar10 = 3;
+  if (uVar7 != 0) {
+    SYSCTL0_PDRUNCFG0_CLR = uVar7;
+    uVar7 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
+    uVar10 = CLKCTL0_FFROCTL0;
+    if ((uVar10 & 0xc0000) == 0) {
+      iVar6 = 3;
     }
     else {
-      iVar10 = 4;
+      iVar6 = 4;
     }
-    delay(iVar10 * ((uVar11 & 0xffff) >> 1));
-    *(uint *)(extraout_r1_00 + 0x204) = *(uint *)(extraout_r1_00 + 0x204) & ~(uVar17 & 2);
-    uVar14 = CLKCTL1_AUDIOPLL0CTL0;
-    CLKCTL1_AUDIOPLL0CTL0 = uVar14 & ~(uVar16 & 2);
+    delay(iVar6 * ((uVar7 & 0xffff) >> 1));
+    *(uint *)(extraout_r1_00 + 0x204) = *(uint *)(extraout_r1_00 + 0x204) & ~(uVar13 & 2);
+    uVar10 = CLKCTL1_AUDIOPLL0CTL0;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar10 & ~(uVar12 & 2);
     if ((*(uint *)(extraout_r1_00 + 0x100) & 0xc0000) == 0) {
-      iVar10 = 3;
+      iVar6 = 3;
     }
     else {
-      iVar10 = 4;
+      iVar6 = 4;
     }
-    delay(iVar10 * ((*(uint *)(extraout_r1_00 + 0x20c) & 0xffff) / 6));
-    iVar10 = 3;
-    *(uint *)(extraout_r1_01 + 0x204) = *(uint *)(extraout_r1_01 + 0x204) & ~(uVar17 & 0x2000);
-    uVar14 = CLKCTL1_AUDIOPLL0CTL0;
-    CLKCTL1_AUDIOPLL0CTL0 = uVar14 & ~(uVar16 & 0x2000);
+    delay(iVar6 * ((*(uint *)(extraout_r1_00 + 0x20c) & 0xffff) / 6));
+    iVar6 = 3;
+    *(uint *)(extraout_r1_01 + 0x204) = *(uint *)(extraout_r1_01 + 0x204) & ~(uVar13 & 0x2000);
+    uVar10 = CLKCTL1_AUDIOPLL0CTL0;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar10 & ~(uVar12 & 0x2000);
     if ((*(uint *)(extraout_r1_01 + 0x100) & 0xc0000) != 0) {
-      iVar10 = 4;
+      iVar6 = 4;
     }
-    delay(iVar10 * ((*(uint *)(extraout_r1_01 + 0x20c) & 0xffff) / 3));
-    if (uVar12 != 0) {
-      *(uint *)(extraout_r1_02 + 0x218) = *(uint *)(extraout_r1_02 + 0x218) & ~uVar12;
+    delay(iVar6 * ((*(uint *)(extraout_r1_01 + 0x20c) & 0xffff) / 3));
+    if (uVar8 != 0) {
+      *(uint *)(extraout_r1_02 + 0x218) = *(uint *)(extraout_r1_02 + 0x218) & ~uVar8;
       do {
-      } while ((*(uint *)(extraout_r1_02 + 0x218) & 0x40404040) != uVar12 >> 1);
+      } while ((*(uint *)(extraout_r1_02 + 0x218) & 0x40404040) != uVar8 >> 1);
     }
     if (extraout_r2 != 0) {
-      uVar12 = CLKCTL1_AUDIOPLL0PFD;
-      CLKCTL1_AUDIOPLL0PFD = uVar12 & ~extraout_r2;
+      uVar8 = CLKCTL1_AUDIOPLL0PFD;
+      CLKCTL1_AUDIOPLL0PFD = uVar8 & ~extraout_r2;
       do {
-        uVar12 = CLKCTL1_AUDIOPLL0PFD;
-      } while ((uVar12 & 0x40404040) != extraout_r2 >> 1);
+        uVar8 = CLKCTL1_AUDIOPLL0PFD;
+      } while ((uVar8 & 0x40404040) != extraout_r2 >> 1);
     }
   }
-  CLKCTL0_SYSCPUAHBCLKDIV = uVar2;
+  CLKCTL0_SYSCPUAHBCLKDIV = clkctl0_syscpuahbclkdiv;
   do {
-    iVar10 = CLKCTL0_SYSCPUAHBCLKDIV;
-  } while (iVar10 < 0);
-  CLKCTL0_MAINCLKSELA = uVar3 & 3;
-  CLKCTL0_MAINCLKSELB = uVar4 & 3;
-  CLKCTL1_DSPCPUCLKSELA = uVar6 & 3;
-  CLKCTL1_DSPCPUCLKSELB = uVar7 & 3;
-  if (bVar18) {
+    iVar6 = CLKCTL0_SYSCPUAHBCLKDIV;
+  } while (iVar6 < 0);
+  CLKCTL0_MAINCLKSELA = uVar2 & 3;
+  CLKCTL0_MAINCLKSELB = clkctl0_mainclkselb & 3;
+  CLKCTL1_DSPCPUCLKSELA = clkctl1_dspcpuclksela & 3;
+  CLKCTL1_DSPCPUCLKSELB = clkctl1_dspcpuclkselb & 3;
+  if (bVar14) {
     SYSCTL0_PDRUNCFG0_SET = 0x10000;
   }
+                    /* re-enable FlexSPI clock and initFlexSPI after deep sleep [doc, inference] */
   initXip();
-  PMC_CTRL = uVar5;
-  if (bVar15) {
-    uVar3 = SYSCTL0_DSPSTALL;
-    SYSCTL0_DSPSTALL = uVar3 & 0xfffffffe;
+  PMC_CTRL = uVar3;
+  if (bVar11) {
+    uVar2 = SYSCTL0_DSPSTALL;
+    SYSCTL0_DSPSTALL = uVar2 & 0xfffffffe;
   }
-  uVar3 = SCB_SCR;
-  SCB_SCR = uVar3 & 0xfffffffb;
-  bVar15 = (bool)isCurrentModePrivileged();
-  if (bVar15) {
-    enableIRQinterrupts((uVar13 & 1) == 1);
+  uVar2 = SCB_SCR;
+  SCB_SCR = uVar2 & 0xfffffffb;
+  bVar11 = (bool)isCurrentModePrivileged();
+  if (bVar11) {
+    enableIRQinterrupts((uVar9 & 1) == 1);
   }
   return;
 }
@@ -796,19 +892,23 @@ void BOARD_SetFlexspiClock(uint param_1,int param_2)
 
 {
   uint uVar1;
-  int iVar2;
+  int clkctl0_flexspifclkdiv;
   
+                    /* FlexSPI FCLK selection [sfr] */
   uVar1 = CLKCTL0_FLEXSPIFCLKSEL;
   if ((uVar1 != (param_1 & 7)) || (uVar1 = CLKCTL0_FLEXSPIFCLKDIV, (uVar1 & 0xff) != param_2 - 1U))
   {
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 0x10000;
     CLKCTL0_FLEXSPIFCLKSEL = param_1 & 7;
+                    /* FlexSPI FCLK divider [sfr] */
     uVar1 = CLKCTL0_FLEXSPIFCLKDIV;
     CLKCTL0_FLEXSPIFCLKDIV = uVar1 | 0x20000000;
     CLKCTL0_FLEXSPIFCLKDIV = param_2 - 1U & 0xff;
     do {
-      iVar2 = CLKCTL0_FLEXSPIFCLKDIV;
-    } while (iVar2 < 0);
+      clkctl0_flexspifclkdiv = CLKCTL0_FLEXSPIFCLKDIV;
+    } while (clkctl0_flexspifclkdiv < 0);
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 0x10000;
   }
   return;
@@ -884,9 +984,7 @@ void vRestoreContextOfFirstTask(void)
 }
 
 
-// ===== vStartFirstTask @ 00080a90 (32 bytes)
-
-/* WARNING: Control flow encountered bad instruction data */
+// ===== vStartFirstTask @ 00080a90 (24 bytes)
 
 void vStartFirstTask(void)
 
@@ -894,6 +992,7 @@ void vStartFirstTask(void)
   bool bVar1;
   undefined4 *puVar2;
   
+                    /* Vector Table Offset [sfr] */
   puVar2 = (undefined4 *)SCB_VTOR;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {
@@ -903,9 +1002,12 @@ void vStartFirstTask(void)
   enableFIQinterrupts();
   DataSynchronizationBarrier(0xf);
   InstructionSynchronizationBarrier(0xf);
-  software_interrupt(2);
-                    /* WARNING: Bad instruction - Truncating control flow here */
-  halt_baddata();
+  do {
+                    /* svc 2 does not return: SVC_Handler -> vPortSVCHandler_C ->
+                       vRestoreContextOfFirstTask starts the first task (data_m33.tsv noflow; the
+                       loop only marks the end of the flow) */
+    software_interrupt(2);
+  } while( true );
 }
 
 
@@ -990,10 +1092,10 @@ void delay_us(int param_1)
 
 {
   int iVar1;
-  uint uVar2;
+  uint i;
   
   iVar1 = CLOCK_GetFreq(0);
-  for (uVar2 = 0; uVar2 != (uint)(param_1 * iVar1) / 1000000; uVar2 = uVar2 + 1) {
+  for (i = 0; i != (uint)(param_1 * iVar1) / 1000000; i = i + 1) {
   }
   return;
 }
@@ -1005,14 +1107,18 @@ void aic3204_spi_write(int param_1,uint param_2)
 
 {
   uint uVar1;
-  int iVar2;
+  int i;
   
   uVar1 = param_2 | param_1 << 9;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(1);
-  iVar2 = 0x10;
+  i = 0x10;
   do {
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     GPIO_B2_29 = 1;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     if ((int)(uVar1 << 0x10) < 0) {
       GPIO_B1_1 = 1;
     }
@@ -1023,8 +1129,8 @@ void aic3204_spi_write(int param_1,uint param_2)
     GPIO_B2_29 = 0;
     delay_us(1);
     uVar1 = (uVar1 & 0xffff) << 1;
-    iVar2 = iVar2 + -1;
-  } while (iVar2 != 0);
+    i = i + -1;
+  } while (i != 0);
   delay_us(1);
   GPIO_B1_7 = 1;
   delay_us(10);
@@ -1037,24 +1143,30 @@ void aic3204_spi_write(int param_1,uint param_2)
 void aic3204_init(void)
 
 {
-  int iVar1;
-  byte *pbVar2;
+  int i;
+  byte *pbVar1;
   
-  iVar1 = 0;
+  i = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_0 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_7 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_29 = 0;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B1_1 = 0;
+                    /* Busy loop of n × core_clock / 1e6 iterations [doc, inference] */
   delay_us(20000);
   GPIO_B1_0 = 1;
   delay_us(20000);
-  pbVar2 = &DAT_00087a1c;
+  pbVar1 = &DAT_00087a1c;
   do {
-    aic3204_spi_write((uint)*pbVar2,(uint)pbVar2[1]);
-    iVar1 = iVar1 + 1;
-    delay_us((uint)*(ushort *)(pbVar2 + 2));
-    pbVar2 = pbVar2 + 4;
-  } while (iVar1 != 0x43);
+                    /* 16-bit word reg<<9 | val [doc] */
+    aic3204_spi_write((uint)*pbVar1,(uint)pbVar1[1]);
+    i = i + 1;
+    delay_us((uint)*(ushort *)(pbVar1 + 2));
+    pbVar1 = pbVar1 + 4;
+  } while (i != 0x43);
   return;
 }
 
@@ -1093,6 +1205,7 @@ void regfile_write(int param_1,ushort param_2)
 {
   if ((&DAT_20070000 + param_1 * 2 < (ushort *)0x20080000) &&
      (*(ushort *)(&DAT_20070000 + param_1 * 2) = param_2, param_1 == 10)) {
+                    /* Page 1, R55 = 0x10 [doc] */
     aic3204_select_right_input((param_2 & 0xf) != 1);
     return;
   }
@@ -1125,29 +1238,30 @@ int uart0_write(int param_1,int param_2)
 {
   undefined1 *puVar1;
   int iVar2;
-  int iVar3;
+  int usart0_fifointenset;
   
   if (DAT_000886d4 < 0x400) {
     vPortEnterCritical();
-    iVar3 = 0;
+    iVar2 = 0;
     do {
-      puVar1 = (undefined1 *)(param_1 + iVar3);
-      iVar3 = iVar3 + 1;
+      puVar1 = (undefined1 *)(param_1 + iVar2);
+      iVar2 = iVar2 + 1;
       (&DAT_000882d4)[DAT_000886d8] = *puVar1;
       DAT_000886d8 = DAT_000886d8 + 1 & 0x3ff;
       DAT_000886d4 = DAT_000886d4 + 1;
-      if (param_2 == iVar3) break;
+      if (param_2 == iVar2) break;
     } while (DAT_000886d4 < 0x400);
-    iVar2 = USART0_FIFOINTENSET;
-    if (-1 < iVar2 << 0x1d) {
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
+    usart0_fifointenset = USART0_FIFOINTENSET;
+    if (-1 < usart0_fifointenset << 0x1d) {
       USART0_FIFOINTENSET = 0xf;
     }
     vPortExitCritical();
   }
   else {
-    iVar3 = 0;
+    iVar2 = 0;
   }
-  return iVar3;
+  return iVar2;
 }
 
 
@@ -1156,7 +1270,7 @@ int uart0_write(int param_1,int param_2)
 void uart0_init(void)
 
 {
-  uint uVar1;
+  uint CLOCK_GetFlexCommClkFreq_ret;
   byte local_20 [4];
   undefined *local_1c [2];
   undefined2 local_14;
@@ -1165,15 +1279,18 @@ void uart0_init(void)
   local_20[1] = 1;
   local_20[2] = 0xff;
   local_20[3] = 0;
+                    /* FRGnCLKSEL/FRGnCTL for FC0..7, 14, 15 [doc, inference] */
   CLOCK_SetFRGClock(local_20);
   CLOCK_AttachClk(0x80004508);
   USART_GetDefaultConfig(local_1c);
   local_1c[0] = &DAT_0001c200;
   local_14 = 0x101;
-  uVar1 = CLOCK_GetFlexCommClkFreq(0);
-  USART_Init(&USART0_CFG,local_1c,uVar1);
+  CLOCK_GetFlexCommClkFreq_ret = CLOCK_GetFlexCommClkFreq(0);
+  USART_Init(&USART0_CFG,local_1c,CLOCK_GetFlexCommClkFreq_ret);
   DAT_00087ec4 = xEventGroupCreate();
+                    /* FIFO interrupt enable set (enable) and read [sfr] */
   USART0_FIFOINTENSET = 10;
+                    /* Interrupt Set Enable [sfr] */
   NVIC_ISER0 = 0x4000;
   return;
 }
@@ -1185,7 +1302,7 @@ void CommandTask(void)
 
 {
   byte bVar1;
-  uint uVar2;
+  uint xEventGroupWaitBits_ret;
   
   console_init();
   vPortEnterCritical();
@@ -1199,17 +1316,19 @@ void CommandTask(void)
   DAT_000886d4 = 0;
   vPortExitCritical();
   uart0_init();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   GPIO_B2_5 = 1;
   do {
     do {
-      uVar2 = xEventGroupWaitBits(DAT_00087ec4,1,1,0,-1);
-    } while (-1 < (int)(uVar2 << 0x1f));
+      xEventGroupWaitBits_ret = xEventGroupWaitBits(DAT_00087ec4,1,1,0,-1);
+    } while (-1 < (int)(xEventGroupWaitBits_ret << 0x1f));
     while ((DAT_000886d4 < 0x400 && (DAT_000882c8 != 0))) {
       vPortEnterCritical();
       bVar1 = (&DAT_00087ec8)[DAT_000882d0];
       DAT_000882d0 = DAT_000882d0 + 1 & 0x3ff;
       DAT_000882c8 = DAT_000882c8 + -1;
       vPortExitCritical();
+                    /* Line editor, tokenizer and both command interpreters [doc] */
       console_rx_char((uint)bVar1);
     }
   } while( true );
@@ -1221,12 +1340,13 @@ void CommandTask(void)
 void create_CommandTask(void)
 
 {
-  void *pvVar1;
-  uint uVar2;
+  void *get_task_handles_ret;
+  uint xTaskCreate_ret;
   
-  pvVar1 = get_task_handles();
-  uVar2 = xTaskCreate(0x80d79,0x87b4c,0x1800,(uint)pvVar1,1,pvVar1);
-  if (uVar2 != 1) {
+  get_task_handles_ret = get_task_handles();
+  xTaskCreate_ret =
+       xTaskCreate(0x80d79,0x87b4c,0x1800,(uint)get_task_handles_ret,1,get_task_handles_ret);
+  if (xTaskCreate_ret != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -1241,34 +1361,37 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
 
 {
   byte *pbVar1;
-  uint uVar2;
-  undefined4 uVar3;
-  uint uVar4;
+  undefined4 uVar2;
+  uint xEventGroupSetBitsFromISR_ret;
   uint local_14;
   undefined4 uStack_10;
+  uint usart0_fifostat;
   
-  uVar2 = USART0_FIFOSTAT;
-  if ((uVar2 & 0x42) != 0) {
-    local_14 = uVar2 & 2;
+                    /* FIFO status [sfr] */
+  usart0_fifostat = USART0_FIFOSTAT;
+  if ((usart0_fifostat & 0x42) != 0) {
+    local_14 = usart0_fifostat & 2;
     if (local_14 == 0) {
       if (DAT_000882c8 < 0x400) {
-        uVar3 = USART0_FIFORD;
+                    /* FIFO read data [sfr] */
+        uVar2 = USART0_FIFORD;
         DAT_000882c8 = DAT_000882c8 + 1;
-        (&DAT_00087ec8)[DAT_000882cc] = (char)uVar3;
+        (&DAT_00087ec8)[DAT_000882cc] = (char)uVar2;
         DAT_000882cc = DAT_000882cc + 1 & 0x3ff;
         uStack_10 = param_3;
-        uVar4 = xEventGroupSetBitsFromISR(DAT_00087ec4,1,(uint)&local_14);
-        if ((uVar4 != 0) && (local_14 != 0)) {
+        xEventGroupSetBitsFromISR_ret = xEventGroupSetBitsFromISR(DAT_00087ec4,1,(uint)&local_14);
+        if ((xEventGroupSetBitsFromISR_ret != 0) && (local_14 != 0)) {
+                    /* Interrupt Control and State [sfr] */
           SCB_ICSR = 0x10000000;
         }
       }
     }
     else {
-      uVar3 = USART0_FIFORD;
+      uVar2 = USART0_FIFORD;
       USART0_FIFOSTAT = 2;
     }
   }
-  if ((uVar2 & 0x21) != 0) {
+  if ((usart0_fifostat & 0x21) != 0) {
     if (DAT_000886d4 != 0) {
       pbVar1 = &DAT_000882d4 + DAT_000886dc;
       DAT_000886dc = DAT_000886dc + 1 & 0x3ff;
@@ -1278,6 +1401,7 @@ void FLEXCOMM0_IRQHandler(undefined4 param_1,undefined4 param_2,undefined4 param
         return;
       }
     }
+                    /* FIFO interrupt enable clear (disable) and read [sfr] */
     USART0_FIFOINTENCLR = 5;
   }
   return;
@@ -1316,19 +1440,21 @@ void IpcSendTask(void)
 void create_IpcTasks(void)
 
 {
-  void *pvVar1;
-  uint uVar2;
+  void *get_task_handles_ret;
+  uint uVar1;
   
   DAT_000886e0 = xQueueGenericCreate(8,0x98,0);
-  pvVar1 = get_task_handles();
-  uVar2 = xTaskCreate(0x85fc7,0x87b5d,0x1800,(uint)pvVar1,2,(int *)((int)pvVar1 + 8));
-  if (uVar2 != 1) {
+  get_task_handles_ret = get_task_handles();
+  uVar1 = xTaskCreate(0x85fc7,0x87b5d,0x1800,(uint)get_task_handles_ret,2,
+                      (int *)((int)get_task_handles_ret + 8));
+  if (uVar1 != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
   }
-  uVar2 = xTaskCreate(0x80f51,0x87b69,0x1800,(uint)pvVar1,2,(int *)((int)pvVar1 + 4));
-  if (uVar2 != 1) {
+  uVar1 = xTaskCreate(0x80f51,0x87b69,0x1800,(uint)get_task_handles_ret,2,
+                      (int *)((int)get_task_handles_ret + 4));
+  if (uVar1 != 1) {
     do {
                     /* WARNING: Do nothing block with infinite loop */
     } while( true );
@@ -1342,8 +1468,8 @@ void create_IpcTasks(void)
 void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint param_4)
 
 {
-  int iVar1;
-  char *pcVar2;
+  int strlen_ret;
+  char *pcVar1;
   uint uStack_c;
   uint uStack_8;
   uint uStack_4;
@@ -1357,34 +1483,34 @@ void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint 
       if (uStack_c == 0) {
         param_4 = *(uint *)(param_1 + 0x18);
         if (param_4 == 0) {
-          pcVar2 = "\r\nMute off\r\n>> ";
+          pcVar1 = "\r\nMute off\r\n>> ";
         }
         else {
-          pcVar2 = "\r\nMute on\r\n>> ";
+          pcVar1 = "\r\nMute on\r\n>> ";
         }
       }
       else {
-        pcVar2 = "\r\nMute error (%d)\r\n>> ";
+        pcVar1 = "\r\nMute error (%d)\r\n>> ";
       }
     }
     else {
-      pcVar2 = "\r\nIncoming unknown message category %d\r\n>> ";
+      pcVar1 = "\r\nIncoming unknown message category %d\r\n>> ";
     }
   }
   else if (uStack_8 == 3) {
     param_4 = (uint)*(byte *)(param_1 + 0xc);
     if (param_4 == 0) {
       if (*(uint *)(param_1 + 0x14) == 0) {
-        pcVar2 = "DSP Version %04X\r\n>> ";
+        pcVar1 = "DSP Version %04X\r\n>> ";
         uStack_c = *(uint *)(param_1 + 0x18);
       }
       else {
-        pcVar2 = "DSP Version error (%d)\r\n>> ";
+        pcVar1 = "DSP Version error (%d)\r\n>> ";
         uStack_c = *(uint *)(param_1 + 0x14);
       }
     }
     else {
-      pcVar2 = "Incoming unknown message category %d\r\n>> ";
+      pcVar1 = "Incoming unknown message category %d\r\n>> ";
     }
   }
   else {
@@ -1393,16 +1519,17 @@ void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint 
     }
     uStack_c = (uint)*(byte *)(param_1 + 0xc);
     if (uStack_c == 0) {
-      pcVar2 = "Component versions from DSP:\r\n";
+      pcVar1 = "Component versions from DSP:\r\n";
     }
     else {
-      pcVar2 = "Incoming unknown message command %d from category %d\r\n";
+      pcVar1 = "Incoming unknown message command %d from category %d\r\n";
     }
   }
   uStack_4 = param_4;
-  sprintf(&DAT_00088c2c,pcVar2,&uStack_c,param_4,pcVar2,&uStack_c);
-  iVar1 = strlen((uint *)&DAT_00088c2c);
-  uart0_write(&DAT_00088c2c,iVar1);
+  sprintf(&DAT_00088c2c,pcVar1,&uStack_c,param_4,pcVar1,&uStack_c);
+  strlen_ret = strlen((uint *)&DAT_00088c2c);
+                    /* Copy bytes into the TX ring [doc] */
+  uart0_write(&DAT_00088c2c,strlen_ret);
   return;
 }
 
@@ -1431,13 +1558,16 @@ undefined4 app_main(void)
   BOARD_BootClockRUN();
   app_init_nop();
   regfile_clear();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);
   RESET_ClearPeripheralReset(0x41d);
   RESET_ClearPeripheralReset(0x41c);
+                    /* Reset P1_0 low 20 ms, high 20 ms [doc] */
   aic3204_init();
   sct0_pwm_init();
   ipc_init();
+                    /* DSP clocks, DSP_Init, image copy, DSPSTALL = 0 [doc] */
   BOARD_DSP_Init();
   SEMA42_Init();
   SEMA42_ResetAllGates(&SEMA42_GATE3,0x40);
@@ -1447,12 +1577,15 @@ undefined4 app_main(void)
   } while ((uVar1 & 7) != 1);
   SEMA42_Lock(0x40112000,0,'\x01');
   MU_SetFlags(0x40110000,2);
+                    /* Semphores2 Gate n [sfr] */
   SEMA42_GATE0 = 0;
   do {
     uVar1 = MUA_SR;
   } while ((uVar1 & 7) != 3);
+                    /* Store if reg < 0x8000 [doc] */
   regfile_write(0,0x101);
   regfile_write(0x4000,1);
+                    /* word[reg] |= v in a critical section [doc] */
   regfile_set_bits(1,1);
   create_IpcTasks();
   SCTIMER_StartTimer();
@@ -1467,31 +1600,34 @@ undefined4 app_main(void)
 void sct0_pwm_callback(void)
 
 {
-  uint uVar1;
-  uint uVar2;
-  ushort uVar3;
+  ushort uVar1;
   undefined4 in_r3;
-  uint uVar4;
+  uint uVar2;
+  uint sct0_conflag;
+  uint sct0_evflag;
   
   DAT_000886f4 = DAT_000886f4 + 1;
   if (399 < DAT_000886f4) {
     DAT_000886f4 = 0;
-    uVar3 = regfile_read(0x4005);
-    if (uVar3 == 0) {
-      uVar3 = 1;
+                    /* reg < 0x8000 ? word[reg] [doc] */
+    uVar1 = regfile_read(0x4005);
+    if (uVar1 == 0) {
+      uVar1 = 1;
     }
-    if (0x62 < uVar3) {
-      uVar3 = 99;
+    if (0x62 < uVar1) {
+      uVar1 = 99;
     }
-    DAT_00088d2c = (undefined1)uVar3;
+    DAT_00088d2c = (undefined1)uVar1;
     SCTIMER_UpdatePwmDutycycle(&SCT0_CONFIG,0,DAT_00088d2c,DAT_000886f0,in_r3);
   }
-  uVar1 = SCT0_EVFLAG;
-  uVar2 = SCT0_CONFLAG;
-  uVar4 = 1 << (DAT_000886f0 & 0xff);
-  if (((uVar2 & 0xc0000000 | uVar1 & 0xffff) & uVar4) != 0) {
-    SCT0_EVFLAG = uVar4 & 0xffff;
-    SCT0_CONFLAG = uVar4 & 0xc0000000;
+                    /* SCT event flag [sfr] */
+  sct0_evflag = SCT0_EVFLAG;
+                    /* SCT conflict flag [sfr] */
+  sct0_conflag = SCT0_CONFLAG;
+  uVar2 = 1 << (DAT_000886f0 & 0xff);
+  if (((sct0_conflag & 0xc0000000 | sct0_evflag & 0xffff) & uVar2) != 0) {
+    SCT0_EVFLAG = uVar2 & 0xffff;
+    SCT0_CONFLAG = uVar2 & 0xc0000000;
   }
   return;
 }
@@ -1516,9 +1652,11 @@ void sct0_pwm_init(void)
   local_28[1] = 1;
   uVar1 = SCTIMER_SetupPwm(0x40146000,local_28,1,20000,uVar1,&DAT_000886f0);
   if (uVar1 != 1) {
+                    /* SCT event interrupt enable [sfr] */
     uVar1 = SCT0_EVEN;
     SCT0_EVEN = 1 << (DAT_000886f0 & 0xff) | uVar1;
     SCTIMER_SetCallback(&SCT0_CONFIG,0x81165);
+                    /* Interrupt Set Enable [sfr] */
     NVIC_ISER0 = 0x1000;
   }
   return;
@@ -1530,10 +1668,11 @@ void sct0_pwm_init(void)
 void SCTIMER_StartTimer(void)
 
 {
-  uint uVar1;
+  uint sct0_ctrl;
   
-  uVar1 = SCT0_CTRL;
-  SCT0_CTRL = uVar1 & 0xfffffffb;
+                    /* SCT control [sfr] */
+  sct0_ctrl = SCT0_CTRL;
+  SCT0_CTRL = sct0_ctrl & 0xfffffffb;
   return;
 }
 
@@ -1570,13 +1709,14 @@ void console_cmd_i(int param_1,int param_2)
 void console_cmd_w(int param_1,int param_2)
 
 {
-  ushort uVar1;
-  ushort uVar2;
+  ushort strtoul_ret;
+  ushort strtoul_ret_2;
   
   if (param_2 == 3) {
-    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar2 = strtoul(*(byte **)(param_1 + 8),(byte *)0x0,0x10);
-    regfile_write((uint)uVar1,uVar2);
+    strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+    strtoul_ret_2 = strtoul(*(byte **)(param_1 + 8),(byte *)0x0,0x10);
+                    /* Store if reg < 0x8000 [doc] */
+    regfile_write((uint)strtoul_ret,strtoul_ret_2);
     console_puts(0x87bfb);
     return;
   }
@@ -1589,11 +1729,11 @@ void console_cmd_w(int param_1,int param_2)
 void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  bool bVar1;
-  ushort uVar2;
+  bool uart0_tx_pending_ret;
+  ushort uVar1;
+  uint uVar2;
+  int i;
   uint uVar3;
-  int iVar4;
-  uint uVar5;
   int iStack_28;
   int iStack_24;
   undefined4 uStack_20;
@@ -1604,25 +1744,26 @@ void console_cmd_d(int param_1,int param_2,undefined4 param_3,undefined4 param_4
   uStack_20 = param_3;
   uStack_1c = param_4;
   if (param_2 == 2) {
-    uVar2 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar3 = (uint)uVar2;
-    uVar5 = uVar3 + 0x40;
+    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+    uVar2 = (uint)uVar1;
+    uVar3 = uVar2 + 0x40;
     do {
-      snprintf(&iStack_28,0x10,"\r\n %04X :",uVar3);
+      snprintf(&iStack_28,0x10,"\r\n %04X :",uVar2);
       console_puts((uint)&iStack_28);
-      iVar4 = 0;
+      i = 0;
       do {
-        uVar2 = regfile_read(uVar3 + iVar4 & 0xffff);
-        snprintf(&iStack_28,0x10," %04X",uVar2);
+                    /* reg < 0x8000 ? word[reg] [doc] */
+        uVar1 = regfile_read(uVar2 + i & 0xffff);
+        snprintf(&iStack_28,0x10," %04X",uVar1);
         console_puts((uint)&iStack_28);
-        bVar1 = uart0_tx_pending();
-        if (bVar1) {
+        uart0_tx_pending_ret = uart0_tx_pending();
+        if (uart0_tx_pending_ret) {
           vTaskDelay(1);
         }
-        iVar4 = iVar4 + 1;
-      } while (iVar4 != 8);
-      uVar3 = uVar3 + 8 & 0xffff;
-    } while ((uVar5 & 0xffff) != uVar3);
+        i = i + 1;
+      } while (i != 8);
+      uVar2 = uVar2 + 8 & 0xffff;
+    } while ((uVar3 & 0xffff) != uVar2);
     console_puts((uint)"\r\n>> ");
     return;
   }
@@ -1656,13 +1797,15 @@ void console_printf(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
 void console_cmd_r(int param_1,int param_2)
 
 {
-  ushort uVar1;
-  ushort uVar2;
+  ushort strtoul_ret;
+  ushort regfile_read_ret;
   
   if (param_2 == 2) {
-    uVar1 = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
-    uVar2 = regfile_read((uint)uVar1);
-    console_printf("\r\nr %04X %04X\r\n>> ",uVar1,uVar2);
+    strtoul_ret = strtoul(*(byte **)(param_1 + 4),(byte *)0x0,0x10);
+                    /* reg < 0x8000 ? word[reg] [doc] */
+    regfile_read_ret = regfile_read((uint)strtoul_ret);
+                    /* vsprintf into 0x88DF0 [doc] */
+    console_printf("\r\nr %04X %04X\r\n>> ",strtoul_ret,regfile_read_ret);
     return;
   }
   console_puts(0x87c79);
@@ -1696,20 +1839,20 @@ void console_rx_char(int param_1)
   byte bVar2;
   bool bVar3;
   ushort uVar4;
-  ushort uVar5;
-  char *pcVar6;
-  int iVar7;
-  byte *pbVar8;
-  int iVar9;
-  uint uVar10;
-  byte *pbVar11;
-  int iVar12;
-  uint *puVar13;
+  ushort strtoul_ret;
+  char *pcVar5;
+  int iVar6;
+  byte *pbVar7;
+  int iVar8;
+  uint uVar9;
+  byte *pbVar10;
+  int i;
+  uint *puVar11;
+  uint uVar12;
+  int iVar13;
   uint uVar14;
-  int iVar15;
-  uint uVar16;
-  int *piVar17;
-  byte *pbVar18;
+  int *piVar15;
+  byte *pbVar16;
   byte local_41;
   undefined1 auStack_40 [4];
   char local_3c;
@@ -1721,102 +1864,110 @@ void console_rx_char(int param_1)
   if (param_1 - 0x20U < 0x5f) {
 LAB_000814ac:
     if (DAT_00088d2e != '\0') {
+                    /* Echo the character (echo flag 0x88D2E) [fact: control-link.md] */
       uart0_write(&local_41,1);
     }
     if (DAT_00088def != '\0') {
       if (DAT_00088def != '\x01') {
         return;
       }
+                    /* CR/LF (mask 0x2401): end of line, tokenize and run [fact: control-link.md] */
       if ((local_41 < 0xe) && ((~(0x2401U >> (uint)local_41) & 1) == 0)) {
         (&DAT_00088d6f)[DAT_00088708] = 0;
         memset(&DAT_00088d2f,0,0x40);
-        iVar7 = strlen((uint *)&DAT_00088d6f);
-        pbVar8 = &DAT_00088d70 + iVar7;
-        pbVar18 = &DAT_00088d6f;
+        iVar6 = strlen((uint *)&DAT_00088d6f);
+        pbVar7 = &DAT_00088d70 + iVar6;
+        pbVar16 = &DAT_00088d6f;
         do {
-          pbVar11 = pbVar18;
-          if (pbVar11 == pbVar8) {
+          pbVar10 = pbVar16;
+          if (pbVar10 == pbVar7) {
             DAT_00088708 = 0;
             DAT_00088def = 0;
             return;
           }
-          uVar14 = ctype_table[*pbVar11] & 1;
-          pbVar18 = pbVar11 + 1;
-        } while ((ctype_table[*pbVar11] & 1) != 0);
-        uVar16 = uVar14;
-        if (pbVar11 < pbVar8) {
+                    /* Split at whitespace: up to 4 tokens of 15 chars [fact: control-link.md] */
+          uVar12 = ctype_table[*pbVar10] & 1;
+          pbVar16 = pbVar10 + 1;
+        } while ((ctype_table[*pbVar10] & 1) != 0);
+        uVar14 = uVar12;
+        if (pbVar10 < pbVar7) {
           do {
-            bVar2 = *pbVar11;
+            bVar2 = *pbVar10;
             if (((ctype_table[bVar2] & 1) != 0) || (bVar2 == 0)) {
               while( true ) {
-                if (pbVar8 == pbVar11) goto LAB_00081626;
-                uVar10 = (uint)*pbVar11;
-                pbVar18 = pbVar11 + 1;
-                uVar14 = ctype_table[uVar10] & 1;
-                if ((ctype_table[uVar10] & 1) == 0) break;
-                pbVar11 = pbVar18;
-                if ((uVar10 < 0xe) && ((int)((0x2401U >> uVar10) << 0x1f) < 0)) goto LAB_00081596;
+                if (pbVar7 == pbVar10) goto LAB_00081626;
+                uVar9 = (uint)*pbVar10;
+                pbVar16 = pbVar10 + 1;
+                uVar12 = ctype_table[uVar9] & 1;
+                if ((ctype_table[uVar9] & 1) == 0) break;
+                pbVar10 = pbVar16;
+                if ((uVar9 < 0xe) && ((int)((0x2401U >> uVar9) << 0x1f) < 0)) goto LAB_00081596;
               }
-              if (uVar10 == 0) {
+              if (uVar9 == 0) {
 LAB_00081596:
-                iVar7 = 0;
-                iVar15 = uVar16 + 1;
-                piVar17 = (int *)&DAT_000886f8;
+                iVar6 = 0;
+                iVar13 = uVar14 + 1;
+                piVar15 = (int *)&DAT_000886f8;
                 do {
-                  iVar9 = strlen((uint *)*piVar17);
+                  iVar8 = strlen((uint *)*piVar15);
                   if (DAT_00088d2d != '\0') {
-                    for (iVar12 = 0; iVar12 < iVar9; iVar12 = iVar12 + 1) {
-                      bVar2 = tolower((uint)*(byte *)(*piVar17 + iVar12));
-                      *(byte *)(*piVar17 + iVar12) = bVar2;
+                    for (i = 0; i < iVar8; i = i + 1) {
+                    /* Interactive mode: lower-case every token [fact: control-link.md] */
+                      bVar2 = tolower((uint)*(byte *)(*piVar15 + i));
+                      *(byte *)(*piVar15 + i) = bVar2;
                     }
                   }
-                  puVar13 = (uint *)*piVar17;
-                  iVar9 = strlen(puVar13);
-                  if (iVar9 != 0) {
-                    while (iVar9 = iVar9 + -1, -1 < iVar9) {
-                      if ((int)((uint)ctype_table[*(byte *)((int)puVar13 + iVar9)] << 0x1f) < 0) {
-                        *(undefined1 *)((int)puVar13 + iVar9) = 0;
+                  puVar11 = (uint *)*piVar15;
+                  iVar8 = strlen(puVar11);
+                  if (iVar8 != 0) {
+                    while (iVar8 = iVar8 + -1, -1 < iVar8) {
+                      if ((int)((uint)ctype_table[*(byte *)((int)puVar11 + iVar8)] << 0x1f) < 0) {
+                        *(undefined1 *)((int)puVar11 + iVar8) = 0;
                       }
                     }
                   }
                   cVar1 = DAT_00088d2d;
-                  puVar13 = DAT_000886f8;
-                  iVar7 = iVar7 + 1;
-                  piVar17 = piVar17 + 1;
-                } while (iVar7 != iVar15);
+                  puVar11 = DAT_000886f8;
+                  iVar6 = iVar6 + 1;
+                  piVar15 = piVar15 + 1;
+                } while (iVar6 != iVar13);
                 if (DAT_00088d2d == '\0') {
-                  pbVar18 = (byte *)((int)DAT_000886f8 + 1);
+                  pbVar16 = (byte *)((int)DAT_000886f8 + 1);
                   bVar2 = (byte)*DAT_000886f8;
-                  uVar14 = is_hex_string(pbVar18);
-                  if (uVar14 != 0) {
-                    iVar7 = strlen(puVar13);
-                    if (iVar7 == 7) {
-                      bVar3 = frame_checksum_ok((char *)puVar13,5);
+                    /* Machine mode: the rest of argv[0] must be hex [fact: control-link.md] */
+                  uVar12 = is_hex_string(pbVar16);
+                  if (uVar12 != 0) {
+                    iVar6 = strlen(puVar11);
+                    if (iVar6 == 7) {
+                    /* 7-char frame: checksum of the first 5 chars [fact: control-link.md] */
+                      bVar3 = frame_checksum_ok((char *)puVar11,5);
                       if (bVar3) {
-                        memcpy(auStack_40,pbVar18,4);
+                        memcpy(auStack_40,pbVar16,4);
                         local_3c = cVar1;
                         uVar4 = strtoul(auStack_40,(byte *)0x0,0x10);
-                        uVar14 = (uint)uVar4;
+                        uVar12 = (uint)uVar4;
                         if (bVar2 == 100) {
 LAB_00081778:
-                          uVar16 = uVar14 + 0x40;
+                          uVar14 = uVar12 + 0x40;
                           do {
-                            snprintf(local_38,0x10,"\r\n%04X :",uVar14);
+                    /* d: dump 64 words, 8 per line [fact: control-link.md] */
+                            snprintf(local_38,0x10,"\r\n%04X :",uVar12);
                             console_puts((uint)local_38);
-                            iVar7 = 0;
+                            iVar6 = 0;
                             do {
-                              uVar4 = regfile_read(uVar14 + iVar7 & 0xffff);
+                              uVar4 = regfile_read(uVar12 + iVar6 & 0xffff);
                               snprintf(local_38,0x10," %04X",uVar4);
                               console_puts((uint)local_38);
                               bVar3 = uart0_tx_pending();
                               if (bVar3) {
+                    /* Pace the dump to the UART [fact: control-link.md] */
                                 vTaskDelay(1);
                               }
-                              iVar7 = iVar7 + 1;
-                            } while (iVar7 != 8);
-                            uVar14 = uVar14 + 8 & 0xffff;
-                          } while ((uVar16 & 0xffff) != uVar14);
-                          pcVar6 = "\r\n";
+                              iVar6 = iVar6 + 1;
+                            } while (iVar6 != 8);
+                            uVar12 = uVar12 + 8 & 0xffff;
+                          } while ((uVar14 & 0xffff) != uVar12);
+                          pcVar5 = "\r\n";
                           goto LAB_00081772;
                         }
                         if (bVar2 < 0x65) {
@@ -1829,26 +1980,28 @@ LAB_00081778:
                         else if (bVar2 != 0x69) {
                           if (bVar2 != 0x72) goto LAB_00081716;
 LAB_0008172a:
-                          uVar4 = regfile_read(uVar14);
+                    /* r: read reply "r" + value + sum, no CR [fact: control-link.md] */
+                          uVar4 = regfile_read(uVar12);
                           local_38[0] = 0x72;
                           siprintf(local_38 + 1,"%04X",uVar4);
                           siprintf(auStack_33,"%02X",
                                    local_34 + local_38[3] + local_38[2] + local_38[1] + local_38[0])
                           ;
-                          pcVar6 = local_38;
+                          pcVar5 = local_38;
                           goto LAB_00081772;
                         }
-                        iVar7 = strncmp((uint *)auStack_40,(uint *)"db",2);
-                        if ((iVar7 == 0) ||
-                           (iVar7 = strncmp((uint *)auStack_40,(uint *)"DB",2), iVar7 == 0)) {
-                          iVar7 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c61,2);
-                          if (iVar7 == 0) {
+                    /* i DB00 / DB01: machine or interactive mode [fact: control-link.md] */
+                        iVar6 = strncmp((uint *)auStack_40,(uint *)"db",2);
+                        if ((iVar6 == 0) ||
+                           (iVar6 = strncmp((uint *)auStack_40,(uint *)"DB",2), iVar6 == 0)) {
+                          iVar6 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c61,2);
+                          if (iVar6 == 0) {
                             DAT_00088d2d = '\0';
                             DAT_00088d2e = DAT_00088d2d;
                           }
                           else {
-                            iVar7 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c66,2);
-                            if (iVar7 == 0) {
+                            iVar6 = strncmp((uint *)(auStack_40 + 2),(uint *)0x87c66,2);
+                            if (iVar6 == 0) {
                               DAT_00088d2d = '\x01';
                               DAT_00088d2e = '\x01';
                             }
@@ -1857,68 +2010,72 @@ LAB_0008172a:
                         goto LAB_00081716;
                       }
 LAB_00081828:
-                      pcVar6 = "?";
+                      pcVar5 = "?";
                     }
                     else {
-                      if ((iVar7 != 0xb) || (bVar3 = frame_checksum_ok((char *)puVar13,9), !bVar3))
+                    /* 11-char w frame with a good checksum, else ? [fact: control-link.md] */
+                      if ((iVar6 != 0xb) || (bVar3 = frame_checksum_ok((char *)puVar11,9), !bVar3))
                       goto LAB_00081828;
-                      memcpy(auStack_40,pbVar18,4);
+                      memcpy(auStack_40,pbVar16,4);
                       local_3c = cVar1;
                       uVar4 = strtoul(auStack_40,(byte *)0x0,0x10);
-                      memcpy(auStack_40,(void *)((int)puVar13 + 5),4);
-                      uVar5 = strtoul(auStack_40,(byte *)0x0,0x10);
+                      memcpy(auStack_40,(void *)((int)puVar11 + 5),4);
+                      strtoul_ret = strtoul(auStack_40,(byte *)0x0,0x10);
                       if ((bVar2 & 0xdf) != 0x57) goto LAB_00081716;
-                      regfile_write((uint)uVar4,uVar5);
-                      pcVar6 = "\x06";
+                    /* w: write the register, reply ACK 0x06 [fact: control-link.md] */
+                      regfile_write((uint)uVar4,strtoul_ret);
+                      pcVar5 = "\x06";
                     }
 LAB_00081772:
-                    console_puts((uint)pcVar6);
+                    console_puts((uint)pcVar5);
                   }
 LAB_00081716:
-                  if (iVar15 != 4) {
+                  if (iVar13 != 4) {
                     DAT_00088708 = 0;
                     DAT_00088def = 0;
                     return;
                   }
                 }
                 else {
-                  pcVar6 = "r";
-                  iVar7 = 0;
+                  pcVar5 = "r";
+                  iVar6 = 0;
                   do {
-                    iVar9 = strcmp(DAT_000886f8,(uint *)pcVar6);
-                    if (iVar9 == 0) {
-                      (*(code *)(&DAT_0008796c)[iVar7 * 5])(&DAT_000886f8,iVar15);
+                    /* Interactive: look argv[0] up in table 0x8795C [fact: control-link.md] */
+                    iVar8 = strcmp(DAT_000886f8,(uint *)pcVar5);
+                    if (iVar8 == 0) {
+                      (*(code *)(&DAT_0008796c)[iVar6 * 5])(&DAT_000886f8,iVar13);
                       DAT_00088708 = 0;
                       DAT_00088def = 0;
                       return;
                     }
-                    iVar7 = iVar7 + 1;
-                    pcVar6 = (char *)((int)pcVar6 + 0x14);
-                  } while (iVar7 != 4);
+                    iVar6 = iVar6 + 1;
+                    pcVar5 = (char *)((int)pcVar5 + 0x14);
+                  } while (iVar6 != 4);
                 }
                 if (DAT_00088d2d == '\0') {
                   DAT_00088708 = 0;
                   DAT_00088def = 0;
                   return;
                 }
-                pcVar6 = "\r\n?\r\n>> ";
+                    /* Unknown command or too many tokens: ? [fact: control-link.md] */
+                pcVar5 = "\r\n?\r\n>> ";
                 goto LAB_00081676;
               }
-              uVar16 = uVar16 + 1;
-              if (uVar16 != 4) goto LAB_00081584;
+              uVar14 = uVar14 + 1;
+              if (uVar14 != 4) goto LAB_00081584;
               break;
             }
-            (&DAT_00088d2f)[uVar14 + uVar16 * 0x10] = bVar2;
-            uVar14 = uVar14 + 1;
-            if (uVar14 == 0xf) break;
-            pbVar11 = pbVar11 + 1;
+            (&DAT_00088d2f)[uVar12 + uVar14 * 0x10] = bVar2;
+            uVar12 = uVar12 + 1;
+            if (uVar12 == 0xf) break;
+            pbVar10 = pbVar10 + 1;
 LAB_00081584:
-          } while (pbVar8 != pbVar11);
+          } while (pbVar7 != pbVar10);
 LAB_00081626:
           if (DAT_00088d2d != '\0') {
-            pcVar6 = "\r\n?\r\n>> ";
+            pcVar5 = "\r\n?\r\n>> ";
 LAB_00081676:
-            console_puts((uint)pcVar6);
+            console_puts((uint)pcVar5);
           }
         }
       }
@@ -1955,7 +2112,7 @@ LAB_00081676:
       if (DAT_00088d2e == '\0') {
         return;
       }
-      pcVar6 = "\r\nCtrl+C\r\n>> ";
+      pcVar5 = "\r\nCtrl+C\r\n>> ";
       goto LAB_0008145a;
     }
     if ((param_1 == 8) || (param_1 == 0x7f)) {
@@ -1980,9 +2137,9 @@ LAB_00081676:
   if (DAT_00088d2e == '\0') {
     return;
   }
-  pcVar6 = "\r\n>> ";
+  pcVar5 = "\r\n>> ";
 LAB_0008145a:
-  console_puts((uint)pcVar6);
+  console_puts((uint)pcVar5);
   return;
 }
 
@@ -1995,6 +2152,7 @@ void MU_A_IRQHandler(void)
   int iVar1;
   code *UNRECOVERED_JUMPTABLE;
   
+                    /* Status [sfr] */
   iVar1 = MUA_SR;
   if (-1 < iVar1 << 5) {
     return;

@@ -29,10 +29,12 @@ void MU_Init(dword *param_1)
 {
   if (param_1 != &MUB_VER) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1;
     return;
   }
   memw();
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
@@ -130,22 +132,26 @@ void SEMA42_Init(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock set 1 [sfr] */
       CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -153,10 +159,12 @@ void SEMA42_Init(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -184,22 +192,26 @@ void SEMA42_Deinit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -207,10 +219,12 @@ void SEMA42_Deinit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -270,7 +284,7 @@ undefined4 SEMA42_ResetGate(int param_1,ushort param_2)
 
 
 /* -----------------------------------------------------------------------------
- * env_lock_mutex @ 0021ab94  (5 bytes, 12 callers, export file 0021ab50_0021b2f8.c)
+ * env_lock_mutex @ 0021ab94  (5 bytes, 12 callers, export file 0021ab58_0021b34c.c)
  * Purpose: no direct calls; 5 B, callers: 12 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -287,7 +301,7 @@ void env_lock_mutex(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_unlock_mutex @ 0021ab9c  (5 bytes, 16 callers, export file 0021ab50_0021b2f8.c)
+ * env_unlock_mutex @ 0021ab9c  (5 bytes, 16 callers, export file 0021ab58_0021b34c.c)
  * Purpose: no direct calls; 5 B, callers: 16 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -304,7 +318,7 @@ void env_unlock_mutex(void)
 
 
 /* -----------------------------------------------------------------------------
- * env_register_isr @ 0021abb0  (19 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * env_register_isr @ 0021abb0  (19 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: isr_table entry store [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -327,7 +341,7 @@ void env_register_isr(uint param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * env_isr @ 0021ac14  (22 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * env_isr @ 0021ac14  (22 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -350,7 +364,7 @@ void env_isr(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * MU_B_IRQHandler @ 0021ac30  (37 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * MU_B_IRQHandler @ 0021ac30  (37 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: SR bit 26 → RR1 → `env_isr` [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -365,11 +379,13 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
+                    /* Receive [sfr] */
   uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
@@ -377,7 +393,7 @@ void MU_B_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * platform_init_interrupt @ 0021ac58  (89 bytes, 4 callers, export file 0021ab50_0021b2f8.c)
+ * platform_init_interrupt @ 0021ac58  (89 bytes, 4 callers, export file 0021ab58_0021b34c.c)
  * Purpose: MU-B CR RIE1 set/clear, XOS interrupt handler [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -389,16 +405,18 @@ void MU_B_IRQHandler(void)
 undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 
 {
-  uint uVar1;
+  uint mub_cr;
   
+                    /* isr_table entry store [doc, inference] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_002390d0);
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+                    /* Control [sfr] */
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfff0fff7 | 0x4000000;
+      MUB_CR = mub_cr & 0xfff0fff7 | 0x4000000;
       xos_register_interrupt_handler(6,MU_B_IRQHandler,0);
     }
     DAT_002390d4 = DAT_002390d4 + 1;
@@ -412,7 +430,7 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * platform_deinit_interrupt @ 0021acb4  (79 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * platform_deinit_interrupt @ 0021acb4  (79 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: MU-B CR RIE1 set/clear, XOS interrupt handler [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -424,18 +442,19 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 undefined4 platform_deinit_interrupt(undefined4 param_1)
 
 {
-  uint uVar1;
-  bool bVar2;
+  bool bVar1;
+  uint mub_cr;
   
   env_lock_mutex(DAT_002390d0);
-  bVar2 = 0 < DAT_002390d4;
+  bVar1 = 0 < DAT_002390d4;
   DAT_002390d4 = DAT_002390d4 + -1;
-  if (bVar2) {
+  if (bVar1) {
     if (DAT_002390d4 == 0) {
       memw();
-      uVar1 = MUB_CR;
+                    /* Control [sfr] */
+      mub_cr = MUB_CR;
       memw();
-      MUB_CR = uVar1 & 0xfbf0fff7;
+      MUB_CR = mub_cr & 0xfbf0fff7;
       xos_register_interrupt_handler(6,0,0);
     }
     env_unregister_isr(param_1);
@@ -449,7 +468,7 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * platform_notify @ 0021ad04  (60 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_notify @ 0021ad04  (60 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: wait TE1 (bit 22), TR1 = vector << 16 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -466,12 +485,14 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
+                    /* Status [sfr] */
     uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
       uVar1 = MUB_SR;
     }
     memw();
+                    /* Transmit [sfr] */
     MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;
@@ -481,7 +502,7 @@ void platform_notify(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * platform_time_delay @ 0021ad44  (32 bytes, 1 callers, export file 0021ab50_0021b2f8.c)
+ * platform_time_delay @ 0021ad44  (32 bytes, 1 callers, export file 0021ab58_0021b34c.c)
  * Purpose: [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -508,7 +529,7 @@ void platform_time_delay(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_send @ 0021b088  (259 bytes, 2 callers, export file 0021ab50_0021b2f8.c)
+ * rpmsg_lite_send @ 0021b088  (259 bytes, 2 callers, export file 0021ab58_0021b34c.c)
  * Purpose: [fact: link_state +0x10; inference others]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -523,7 +544,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
 
 {
   undefined1 *puVar1;
-  uint uVar2;
+  uint i;
   undefined4 uStack_30;
   undefined2 auStack_2c [2];
   undefined4 uStack_28;
@@ -551,7 +572,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
     if (param_6 == 0) {
       return 0xffffec77;
     }
-    uVar2 = 0;
+    i = 0;
     do {
       env_sleep_msec(1);
       env_lock_mutex(*(undefined4 *)(param_1 + 0xc));
@@ -559,9 +580,9 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
                    (**(code **)(*(int *)(param_1 + 0x20) + 4))
                              (*(undefined4 *)(param_1 + 4),&uStack_30,auStack_2c);
       env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
-      uVar2 = uVar2 + 1;
+      i = i + 1;
       puVar1 = puStack_24;
-      if (param_6 <= uVar2) {
+      if (param_6 <= i) {
         if (puStack_24 == (undefined1 *)0x0) {
           return 0xffffec77;
         }
@@ -592,7 +613,7 @@ rpmsg_lite_send(int param_1,undefined4 *param_2,undefined4 param_3,int param_4,u
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_lite_master_init @ 0021b34c  (503 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_lite_master_init @ 0021b34c  (503 bytes, 0 callers, export file 0021ab58_0021b34c.c)
  * Purpose: names `"rx_vq"` then `"tx_vq"` with `rpmsg_lite_rx_callback` then `rpmsg_lite_tx_callback` and the
  *     `vq_tx_master` ops table (0x002008D0): the master-side order of `rpmsg_lite_master_init` in rpmsg-lite
  *     `lib/rpmsg_lite/rpmsg_lite.c` (nxp-mcuxpresso/rpmsg-lite@251ab927; the remote init swaps both) [inference].
@@ -747,9 +768,8 @@ LAB_0021b537:
   return (int *)0x0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * rpmsg_ns_bind @ 0021b734  (46 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_ns_bind @ 0021b734  (46 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: no callers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -776,7 +796,7 @@ int rpmsg_ns_bind(undefined4 param_1,int param_2,undefined4 param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * rpmsg_ns_announce @ 0021b778  (57 bytes, 0 callers, export file 0021b34c_0021c748.c)
+ * rpmsg_ns_announce @ 0021b778  (57 bytes, 0 callers, export file 0021b544_0021c818.c)
  * Purpose: no callers [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -805,7 +825,7 @@ undefined4 rpmsg_ns_announce(undefined4 param_1,undefined4 *param_2,int param_3,
 
 
 /* -----------------------------------------------------------------------------
- * handle_msg_general @ 0021bdcc  (81 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * handle_msg_general @ 0021bdcc  (81 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Inferred name: same
  * Purpose: category 0 / 1 / 3 [fact, #184]
  * Tag: [fact]
@@ -839,7 +859,7 @@ undefined4 handle_msg_general(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * handle_msg_audio @ 0021be20  (51 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * handle_msg_audio @ 0021be20  (51 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Inferred name: same
  * Purpose: category 0 / 1 / 3 [fact, #184]
  * Tag: [fact]
@@ -869,7 +889,7 @@ undefined4 handle_msg_audio(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * handle_msg_version @ 0021be54  (37 bytes, 1 callers, export file 0021b34c_0021c748.c)
+ * handle_msg_version @ 0021be54  (37 bytes, 1 callers, export file 0021b544_0021c818.c)
  * Inferred name: same
  * Purpose: category 0 / 1 / 3 [fact, #184]
  * Tag: [fact]
@@ -895,7 +915,7 @@ undefined4 handle_msg_version(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_lock @ 002270d4  (143 bytes, 3 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_lock @ 002270d4  (143 bytes, 3 callers, export file 00226aa4_00228564.c)
  * Purpose: [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -957,7 +977,7 @@ int xos_mutex_lock(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xos_mutex_unlock @ 00227230  (95 bytes, 3 callers, export file 00226a50_002284e8.c)
+ * xos_mutex_unlock @ 00227230  (95 bytes, 3 callers, export file 00226aa4_00228564.c)
  * Purpose: [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/ipc.md
@@ -1013,7 +1033,7 @@ undefined4 xos_mutex_unlock(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * xthal_set_region_attribute @ 00233410  (360 bytes, 3 callers, export file 002304f0_00233984.c)
+ * xthal_set_region_attribute @ 00233410  (360 bytes, 3 callers, export file 002305a0_00233cf0.c)
  * Purpose: (vaddr, size, cattr, flags): Cadence HAL region-protection variant, 8 x 512 MB regions via
  *     xthal_get/set_cacheattr; flag bits 9-12 EXACT, NO_PARTIAL, NO_AUTO_WB, NO_AUTO_INV; returns 0, -2 (inexact),
  *     -3 (bad range). DSP main … [inference]
@@ -1069,6 +1089,7 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
     else if (((param_1 & 0x1fffffff) != 0) || ((uVar5 + 1 & 0x1fffffff) != 0)) {
       return 0xfffffffe;
     }
+                    /* rdtlb1 of the 8 x 512 MB regions [doc, inference] */
     uVar2 = xthal_get_cacheattr();
     uVar5 = uVar2;
     if (uVar7 < uVar6) {

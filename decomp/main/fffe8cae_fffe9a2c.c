@@ -65,6 +65,7 @@ void ai_ex020203(void)
     return;
   }
   DAT_0001b30c = g_opstate.ex020203_cw_weight;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020203_cw_weight,0,0);
   return;
 }
@@ -103,6 +104,7 @@ void ai_ex020205(void)
     return;
   }
   DAT_0001ff18 = sVar1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u16_4(sVar1);
   return;
 }
@@ -209,6 +211,7 @@ void ai_ex020211(void)
     return;
   }
   DAT_0001b313 = g_opstate.ex020211_repeat_interval;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex020211_repeat_interval,0,0);
   return;
 }
@@ -225,6 +228,7 @@ void ai_ex030101(void)
     return;
   }
   DAT_0001b314 = g_opstate.ex030101_beep_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030101_beep_level,1,0);
   return;
 }
@@ -475,6 +479,7 @@ void ai_ex030115(void)
     return;
   }
   DAT_0001b322 = g_opstate.ex030115_tx_time_out_timer;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030115_tx_time_out_timer,0,0);
   return;
 }
@@ -527,6 +532,7 @@ void ai_ex030118(void)
     return;
   }
   DAT_0001b325 = g_opstate.ex030118_ref_freq_fine_adj;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030118_ref_freq_fine_adj,0,1);
   return;
 }
@@ -543,6 +549,7 @@ void ai_ex030119(void)
     return;
   }
   DAT_0001b326 = g_opstate.ex030119_keyboard_language;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030119_keyboard_language,0,0);
   return;
 }
@@ -559,6 +566,7 @@ void ai_ex030120(void)
     return;
   }
   DAT_0001b327 = g_opstate.ex030120_mic_p1;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030120_mic_p1,0,0);
   return;
 }
@@ -575,6 +583,7 @@ void ai_ex030121(void)
     return;
   }
   DAT_0001b328 = g_opstate.ex030121_mic_p2;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030121_mic_p2,0,0);
   return;
 }
@@ -591,6 +600,7 @@ void ai_ex030122(void)
     return;
   }
   DAT_0001b329 = g_opstate.ex030122_mic_p3;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030122_mic_p3,0,0);
   return;
 }
@@ -607,6 +617,7 @@ void ai_ex030123(void)
     return;
   }
   DAT_0001b32a = g_opstate.ex030123_mic_p4;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030123_mic_p4,0,0);
   return;
 }
@@ -623,6 +634,7 @@ void ai_ex030124(void)
     return;
   }
   DAT_0001b32b = g_opstate.ex030124_mic_up;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030124_mic_up,0,0);
   return;
 }
@@ -639,6 +651,7 @@ void ai_ex030125(void)
     return;
   }
   DAT_0001b32c = g_opstate.ex030125_mic_down;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030125_mic_down,0,0);
   return;
 }
@@ -745,6 +758,7 @@ void ai_ex030205(void)
     return;
   }
   DAT_0001b332 = g_opstate.ex030205_contour_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030205_contour_level,0,1);
   return;
 }
@@ -761,6 +775,7 @@ void ai_ex030206(void)
     return;
   }
   DAT_0001b333 = g_opstate.ex030206_contour_width;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030206_contour_width,0,0);
   return;
 }
@@ -795,6 +810,7 @@ void ai_ex030302(void)
     return;
   }
   DAT_0001b335 = g_opstate.ex030302_prmtrc_eq1_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030302_prmtrc_eq1_freq,0,0);
   return;
 }
@@ -811,6 +827,7 @@ void ai_ex030303(void)
     return;
   }
   DAT_0001b336 = g_opstate.ex030303_prmtrc_eq1_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030303_prmtrc_eq1_level,0,1);
   return;
 }
@@ -827,6 +844,7 @@ void ai_ex030304(void)
     return;
   }
   DAT_0001b337 = g_opstate.ex030304_prmtrc_eq1_bwth;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030304_prmtrc_eq1_bwth,0,0);
   return;
 }
@@ -843,6 +861,7 @@ void ai_ex030305(void)
     return;
   }
   DAT_0001b338 = g_opstate.ex030305_prmtrc_eq2_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030305_prmtrc_eq2_freq,0,0);
   return;
 }
@@ -859,6 +878,7 @@ void ai_ex030306(void)
     return;
   }
   DAT_0001b339 = g_opstate.ex030306_prmtrc_eq2_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
   DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.ex030306_prmtrc_eq2_level,0,1);
   return;
 }

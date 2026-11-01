@@ -13,11 +13,13 @@ void r_sci5_transmit_interrupt(void)
   
   if (DAT_0001b622 == 0) {
     bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
     SCI5_SCR = bVar1 & 0x7f;
     bVar1 = SCI5_SCR;
     SCI5_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI5_TDR = *DAT_0002081c;
   DAT_0002081c = DAT_0002081c + 1;
   DAT_0001b622 = DAT_0001b622 + -1;
@@ -35,8 +37,10 @@ void r_sci5_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORTC_PMR;
+                    /* Port Mode [sfr] */
   PORTC_PMR = bVar1 & 0xf7;
   bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
   SCI5_SCR = bVar1 & 0x7f;
   bVar1 = SCI5_SCR;
   SCI5_SCR = bVar1 & 0xdf;
@@ -60,17 +64,19 @@ void r_sci5_receive_interrupt(void)
 
 {
   byte bVar1;
-  undefined1 uVar2;
+  undefined1 sci5_rdr;
   
   if (DAT_0001b624 < DAT_0001b626) {
-    uVar2 = SCI5_RDR;
-    *DAT_00020820 = uVar2;
+    sci5_rdr = SCI5_RDR;
+                    /* Receive Data [sfr] */
+    *DAT_00020820 = sci5_rdr;
     sci5_rx_byte_hook();
     DAT_00020820 = DAT_00020820 + 1;
     DAT_0001b624 = DAT_0001b624 + 1;
   }
   if (DAT_0001b626 <= DAT_0001b624) {
     bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
     SCI5_SCR = bVar1 & 0xbf;
     bVar1 = SCI5_SCR;
     SCI5_SCR = bVar1 & 0xef;
@@ -88,11 +94,12 @@ void r_sci5_receive_interrupt(void)
 void r_sci5_receiveerror_interrupt(void)
 
 {
-  byte bVar1;
+  byte sci5_ssr;
   
   r_sci5_callback_receiveerror();
-  bVar1 = SCI5_SSR;
-  SCI5_SSR = bVar1 & 199 | 0xc0;
+                    /* Serial Status [sfr] */
+  sci5_ssr = SCI5_SSR;
+  SCI5_SSR = sci5_ssr & 199 | 0xc0;
   return;
 }
 
@@ -165,26 +172,39 @@ void sci5_rx_byte_hook(void)
 void R_TPU0_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfe;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfe;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR130 = 0xf;
-  bVar2 = ICU_IPR130;
-  ICU_IPR130 = bVar2 & 0xf4 | 4;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfe;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR130;
+  ICU_IPR130 = bVar1 & 0xf4 | 4;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfe;
+                    /* Timer Control [sfr] */
   TPU0_TCR = 0x2a;
-  bVar2 = TPU0_TIER;
-  TPU0_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU0_TIER;
+  TPU0_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control H [sfr] */
   TPU0_TIORH = 0;
+                    /* Timer I/O Control L [sfr] */
   TPU0_TIORL = 0;
+                    /* Timer General A [sfr] */
   TPU0_TGRA = 0x176;
+                    /* Timer General B [sfr] */
   TPU0_TGRB = 0x176;
+                    /* Timer General C [sfr] */
   TPU0_TGRC = 0x176;
+                    /* Timer General D [sfr] */
   TPU0_TGRD = 0x176;
   R_TPU0_Create_UserInit();
   return;
@@ -201,8 +221,10 @@ void R_TPU0_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER10;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER10 = bVar1 | 4;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 1;
   return;
 }
@@ -219,8 +241,10 @@ void R_TPU0_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER10;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER10 = bVar1 & 0xfb;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfe;
   return;
 }
@@ -261,23 +285,33 @@ void r_tpu0_tgia_isr(void)
 void R_TPU1_Create(void)
 
 {
-  uint uVar1;
-  byte bVar2;
+  byte bVar1;
+  uint system_mstpcra;
   
-  uVar1 = SYSTEM_MSTPCRA;
-  SYSTEM_MSTPCRA = uVar1 & 0xffffdfff;
-  bVar2 = TPUA_TSTR;
-  TPUA_TSTR = bVar2 & 0xfd;
+                    /* Module Stop Control A [sfr] */
+  system_mstpcra = SYSTEM_MSTPCRA;
+  SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
+  bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
+  TPUA_TSTR = bVar1 & 0xfd;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBR144 = 0x14;
-  bVar2 = ICU_IPR144;
-  ICU_IPR144 = bVar2 & 0xfe | 0xe;
-  bVar2 = TPUA_TSYR;
-  TPUA_TSYR = bVar2 & 0xfd;
+                    /* Interrupt Source Priority 000 [sfr] */
+  bVar1 = ICU_IPR144;
+  ICU_IPR144 = bVar1 & 0xfe | 0xe;
+  bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
+  TPUA_TSYR = bVar1 & 0xfd;
+                    /* Timer Control [sfr] */
   TPU1_TCR = 0x20;
-  bVar2 = TPU1_TIER;
-  TPU1_TIER = bVar2 | 0x41;
+                    /* Timer Interrupt Enable [sfr] */
+  bVar1 = TPU1_TIER;
+  TPU1_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control [sfr] */
   TPU1_TIOR = 0;
+                    /* Timer General A [sfr] */
   TPU1_TGRA = 0x270;
+                    /* Timer General B [sfr] */
   TPU1_TGRB = 5999;
   R_TPU1_Create_UserInit();
   return;
@@ -294,8 +328,10 @@ void R_TPU1_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER12;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER12 = bVar1 | 1;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 2;
   return;
 }
@@ -311,8 +347,10 @@ void R_TPU1_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER12;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER12 = bVar1 & 0xfe;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfd;
   return;
 }
@@ -357,11 +395,14 @@ void app_main(void)
   wdt_kick();
   timers_init();
   FUN_fffb27df();
+                    /* Port setup and WRSR 0x80 [doc] */
   eeprom_init();
+                    /* Load the settings, or defaults on a blank EEPROM [fact: README.md] */
   eeprom_load_all();
   key_task_init();
   sci_start_all();
   qmb_boot_init();
+                    /* Power-off loop: only the DISPLAY link and CAT (PS1) run [fact: README.md] */
   while (g_ui.radio_on == 0) {
     displink_task();
     cat_parse();
@@ -369,20 +410,29 @@ void app_main(void)
   }
   if (g_ui.defaults_loaded == 1) {
     g_ui.defaults_loaded = 0;
+                    /* Defaults loaded: write the RAM image to EEPROM [fact: 0xFFFB02AF] */
     eeprom_save_all();
     g_ui.freq_refresh_req = 1;
     wdt_kick();
   }
+                    /* Radio on: drive the port outputs for the on state [fact: README.md] */
   shreg_bus_init();
   trx_init();
+                    /* SDR FPGA handshake on SCI5 [fact: sdr-link.md] */
   sdr_init();
+                    /* DSP handshake on SCI4 ("i DB00", read reg 0/1) [fact: dsp-link.md] */
   dsp_link_init();
   portctl_init();
+                    /* DAC output = 0x1FF1C, R_DA0_Start [doc] */
   dac_init_idle();
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
+                    /* One tuner_task pass [doc] */
   tuner_init();
   menu_subsys_init();
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
   screensaver_timer_restart();
+                    /* Never returns: the 16-task round-robin loop [fact: 0xFFF94B8B] */
   main_loop();
   return;
 }
@@ -397,19 +447,28 @@ void main_loop(void)
 {
   do {
     wdt_kick();
+                    /* Task 2: TX/RX and power supervisor [fact: README.md] */
     io_task();
+                    /* Task 3: push changed radio state to the SDR FPGA [fact: sdr-link.md] */
     sdr_task();
+                    /* Task 4: DSP register writes and status reads [fact: dsp-link.md] */
     dsp_link_poll();
+                    /* Task 5: shift registers and DACs on P6/P7/PA/PB [fact: README.md] */
     rf_ctrl_task();
     beep_task();
+                    /* Task 7: one CAT command per pass [fact: cat.md] */
     cat_parse();
+                    /* Task 8: FH-2 remote keypad on the resistor ladder [fact: ui-keys.md] */
     ladder_key_task();
     scan_task();
     dispreq_e8_task();
     dispreq_e7_task();
     keyer_task();
+                    /* Task 13: SD CARD menu load/save steps [fact: README.md] */
     sd_menu_task();
+                    /* Task 14: DISPLAY link receive, ACK/NAK, next frame [fact: display-link.md] */
     displink_task();
+                    /* Task 15: key events through the key handler tables [fact: ui-keys.md] */
     key_task();
     tuner_task();
   } while( true );
@@ -584,6 +643,7 @@ void qmb_boot_init(void)
   FUN_fffc3501();
   if (g_opstate.vfo_state_a == VFO_STATE_QMB) {
     bVar2 = true;
+                    /* boot check of a VFO left in QMB state [doc] */
     iVar3 = qmb_side_revalidate(0);
     if (iVar3 == 0) {
       bVar1 = true;
@@ -625,47 +685,50 @@ void displink_task(void)
   byte bVar2;
   bool bVar3;
   char cVar4;
-  ushort uVar5;
-  char *pcVar6;
+  ushort displink_rx_len_of_ret;
+  char *displink_rx_buf_ret;
+  char *pcVar5;
+  int iVar6;
   char *pcVar7;
-  int iVar8;
-  char *pcVar9;
-  uint uVar10;
+  uint uVar8;
   
   freq_cache_update();
   FUN_fffc8b55();
   FUN_fffcf45c();
   FUN_fff9513c();
+                    /* A complete frame from the DISPLAY? [fact: display-link.md] */
   bVar2 = displink_rx_ready();
   if (bVar2 == 1) {
     bVar1 = false;
-    pcVar6 = (char *)displink_rx_buf();
-    uVar5 = displink_rx_len_of(*pcVar6);
-    pcVar7 = &DAT_0000198f;
-    pcVar9 = pcVar6;
-    for (uVar10 = (uint)uVar5; uVar10 != 0; uVar10 = uVar10 - 1) {
-      *pcVar7 = *pcVar9;
+    displink_rx_buf_ret = (char *)displink_rx_buf();
+    displink_rx_len_of_ret = displink_rx_len_of(*displink_rx_buf_ret);
+    pcVar5 = &DAT_0000198f;
+    pcVar7 = displink_rx_buf_ret;
+    for (uVar8 = (uint)displink_rx_len_of_ret; uVar8 != 0; uVar8 = uVar8 - 1) {
+      *pcVar5 = *pcVar7;
+      pcVar5 = pcVar5 + 1;
       pcVar7 = pcVar7 + 1;
-      pcVar9 = pcVar9 + 1;
     }
     displink_rx_rearm();
-    if (uVar5 == 0) {
+    if (displink_rx_len_of_ret == 0) {
       DAT_0001b3cd = '\x01';
       bVar1 = true;
     }
     else {
-      if ((*pcVar6 == '\x06') || (*pcVar6 == '\x15')) {
+      if ((*displink_rx_buf_ret == '\x06') || (*displink_rx_buf_ret == '\x15')) {
         bVar3 = false;
       }
       else {
         bVar3 = true;
       }
-      if ((bVar3) && (bVar3 = displink_check_sum(0x198f,uVar5), !bVar3)) {
+                    /* Bad checksum: answer NAK [fact: display-link.md] */
+      if ((bVar3) && (bVar3 = displink_check_sum(0x198f,displink_rx_len_of_ret), !bVar3)) {
         DAT_0001b3cd = '\x01';
         bVar1 = true;
       }
     }
     if (!bVar1) {
+                    /* Dispatch by the frame's type byte [fact: 0xFFF95331] */
       displink_rx_dispatch(&DAT_0000198f);
     }
   }
@@ -686,6 +749,7 @@ void displink_task(void)
     }
     DAT_0001b3d2 = '\0';
     DAT_0001b3d3 = '\x01';
+                    /* Retry timer 0x3B for the frame just sent [fact: display-link.md] */
     swtimer_start(0x3b,2);
   }
   if ((DAT_0001b3d3 == '\x01') && (bVar2 = swtimer_expired(0x3b), bVar2 == 1)) {
@@ -707,6 +771,7 @@ void displink_task(void)
         displink_send_nak();
       }
       else {
+                    /* Send the next queued frame [fact: display-link.md] */
         displink_tx_poll();
         if (DAT_0001b3d2 == '\x01') {
           DAT_0001b3d5 = '\x01';
@@ -731,8 +796,8 @@ void displink_task(void)
         displink_send_nak();
       }
     }
-    iVar8 = FUN_fffc911e();
-    if (iVar8 == 0) {
+    iVar6 = FUN_fffc911e();
+    if (iVar6 == 0) {
       cVar4 = FUN_fff9ccd3();
       if (cVar4 == '\0') {
         PTR_g_ui_00025d38->freq_settled_a = 1;
@@ -960,6 +1025,7 @@ void displink_rx_dispatch(char *param_1)
   
   cVar1 = *param_1;
   if (cVar1 == -0xf) {
+                    /* 0xF1: SDR bridge, DSP ISP tunnel or CAT disable [fact: display-link.md] */
     displink_rx_F1_sys((int)param_1);
   }
   else if (cVar1 == '\x15') {
@@ -969,6 +1035,7 @@ void displink_rx_dispatch(char *param_1)
     FUN_fff95ec9();
   }
   else if (cVar1 == -0x3d) {
+                    /* 0xC3: answer to an SD CARD command (0x43) [fact: display-link.md] */
     displink_rx_C3((int)param_1);
   }
   else if (cVar1 == -0x3c) {
@@ -978,34 +1045,43 @@ void displink_rx_dispatch(char *param_1)
     displink_rx_C4_C5((int)param_1);
   }
   else if (cVar1 == -0x20) {
+                    /* 0xE0: key or touch event [fact: display-link.md] */
     displink_rx_E0_key((int)param_1);
   }
   else if (cVar1 == -0x1f) {
+                    /* 0xE1: encoder step [fact: display-link.md] */
     displink_rx_E1_encoder((int)param_1);
   }
   else if (cVar1 == -0x1e) {
+                    /* 0xE2: SD-card state [inference: display-link.md] */
     displink_rx_E2((int)param_1);
   }
   else if (cVar1 == -0x1d) {
+                    /* 0xE3: date/time from the DISPLAY RTC [inference: display-link.md] */
     displink_rx_E3_clock((int)param_1);
   }
   else if (cVar1 == -0x1c) {
     displink_rx_E4();
+                    /* 0xE4: the DISPLAY woke up, screen saver off [fact: display-link.md] */
     PTR_g_ui_00025d38->screensaver_on = 0;
   }
   else if (cVar1 == -0x1b) {
     displink_rx_E5();
   }
   else if (cVar1 == -0x1a) {
+                    /* 0xE6: beep request [fact: display-link.md] */
     displink_rx_E6_beep((int)param_1);
   }
   else if (cVar1 == -0x19) {
+                    /* 0xE7: PlayList recorder/player status [fact: display-link.md] */
     displink_rx_E7((int)param_1);
   }
   else if (cVar1 == -0x18) {
+                    /* result code in +0x48C [doc, inference] */
     displink_rx_E8((int)param_1);
   }
   else if (cVar1 == -0x10) {
+                    /* 0xF0: hello with version, date and boot code [fact: display-link.md] */
     displink_rx_F0_hello((int)param_1);
   }
   else if (cVar1 == '\x06') {
@@ -1013,6 +1089,7 @@ void displink_rx_dispatch(char *param_1)
   }
   cVar1 = *param_1;
   if (((cVar1 != '\x06') && (cVar1 != '\x15')) && (cVar1 != -0x1d)) {
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
     screensaver_timer_restart();
     return;
   }
@@ -1062,7 +1139,7 @@ void displink_rx_F0_hello(int param_1)
 {
   bool bVar1;
   byte bVar2;
-  ushort uVar3;
+  ushort dest_code_get_ret;
   
   DAT_000019bb = 0;
   DAT_000019b7 = 0;
@@ -1073,6 +1150,7 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3 = 0;
   DAT_0000199f = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
+                    /* b1, b2: DISPLAY version string "Vxx-yy" [fact: display-link.md] */
   DAT_0000199f._0_1_ = 0x56;
   bVar2 = *(byte *)(param_1 + 1) >> 4;
   if ((bVar2 < 10) || (0xf < bVar2)) {
@@ -1120,6 +1198,7 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3 = 0;
   DAT_0000199f = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
+                    /* b4..b6: DISPLAY date "yy-mm-dd" [fact: display-link.md] */
   DAT_0000199f._0_1_ = *(byte *)(param_1 + 4) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_0000199f._1_1_ = *(byte *)(param_1 + 4) & 0x3f | 0x30;
@@ -1135,11 +1214,14 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019a3._2_1_ = *(byte *)(param_1 + 6) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._3_1_ = *(byte *)(param_1 + 6) & 0x3f | 0x30;
+                    /* Stores the 8-char DISPLAY date "yy-mm-dd" [doc] */
   ver_display_date_set(&DAT_0000199f);
+                    /* b7: boot code (key held at the DISPLAY's power-on) [fact: display-link.md] */
   PTR_g_ui_00025d38->power_on_reason = *(byte *)(param_1 + 7);
   PTR_g_ui_00025d38->link_tx_enabled = 1;
   DAT_0001b3cc = 1;
   DAT_0001b3d0 = 1;
+                    /* Power on: link up, hello reply pending [fact: display-link.md] */
   PTR_g_ui_00025d38->radio_on = 1;
   bVar2 = PTR_g_ui_00025d38->power_on_reason;
   if (bVar2 == 0x10) {
@@ -1150,11 +1232,13 @@ void displink_rx_F0_hello(int param_1)
   }
   else {
     if (bVar2 == 2) {
+                    /* Boot code 2: factory alignment mode [fact: display-link.md] */
       PTR_g_ui_00025d38->zz_align_mode = 1;
       align_load_preset();
       return;
     }
     if (bVar2 == 4) {
+                    /* Boot code 4: numeric-entry/adjust mode [fact: display-link.md] */
       PTR_g_ui_00025d38->numentry_mode = 1;
       PTR_g_ui_00025d38->lamp_map = 0;
       return;
@@ -1166,19 +1250,22 @@ void displink_rx_F0_hello(int param_1)
       }
       dest_code[2] = 0;
       if (4 < g_opstate.ex010113_tx_bpf_sel) {
+                    /* TTBF unlock off: TX BPF SEL above 4 back to 1 [fact: display-link.md] */
         g_opstate.ex010113_tx_bpf_sel = 1;
         return;
       }
     }
     else {
       if (bVar2 == 6) {
+                    /* Boot code 6: DISPLAY loader screen, link down [fact: display-link.md] */
         PTR_g_ui_00025d38->link_tx_enabled = 0;
         DAT_0001b3d0 = 0;
         return;
       }
       if (bVar2 == 7) {
-        uVar3 = dest_code_get();
-        if ((uVar3 == 0xa983) || (uVar3 == 0xb5a7)) {
+                    /* Boot code 7: swap the region (destination code) [fact: display-link.md] */
+        dest_code_get_ret = dest_code_get();
+        if ((dest_code_get_ret == 0xa983) || (dest_code_get_ret == 0xb5a7)) {
           bVar1 = true;
         }
         else {
@@ -1188,7 +1275,7 @@ void displink_rx_F0_hello(int param_1)
           dest_code_set(0xd950);
         }
         else {
-          if ((uVar3 == 0xd950) || (uVar3 == 0xa4c5)) {
+          if ((dest_code_get_ret == 0xd950) || (dest_code_get_ret == 0xa4c5)) {
             bVar1 = true;
           }
           else {
@@ -1202,8 +1289,10 @@ void displink_rx_F0_hello(int param_1)
         return;
       }
       if (bVar2 == 1) {
+                    /* Boot code 1: full reset of the settings [fact: display-link.md] */
         settings_defaults(0);
         g_ui.defaults_loaded = 1;
+                    /* Swaps between paired destination codes [doc] */
         dest_jumper_apply();
         return;
       }
@@ -1252,17 +1341,18 @@ void displink_rx_E0_key(int param_1)
 
 {
   byte bVar1;
-  byte bVar2;
-  ushort uVar3;
+  byte key_event_filter_ret;
+  ushort uVar2;
   
-  uVar3 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
+  uVar2 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
   bVar1 = *(byte *)(param_1 + 1);
   DAT_0001b3cc = 1;
-  bVar2 = key_event_filter(uVar3,bVar1);
-  if (bVar2 != 0) {
+                    /* Checks a key code against about 20 mode locks [doc] */
+  key_event_filter_ret = key_event_filter(uVar2,bVar1);
+  if (key_event_filter_ret != 0) {
     PTR_g_ui_00025d38->key_ev_src = bVar1 >> 4;
     PTR_g_ui_00025d38->key_ev_type = bVar1 & 0xf;
-    PTR_g_ui_00025d38->key_ev_code = uVar3;
+    PTR_g_ui_00025d38->key_ev_code = uVar2;
     PTR_g_ui_00025d38->key_ev_flag = 1;
     return;
   }
@@ -1366,6 +1456,7 @@ void displink_rx_E1_encoder(int param_1)
       return;
     }
   }
+                    /* Checks a key code against about 20 mode locks [doc] */
   bVar2 = key_event_filter(0xff0,0);
   if (bVar2 != 0) {
     PTR_g_ui_00025d38->enc_ev_steps = *(byte *)(param_1 + 2);

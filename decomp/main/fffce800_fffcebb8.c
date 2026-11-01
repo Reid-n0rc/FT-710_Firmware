@@ -416,6 +416,7 @@ void menu_ex020201_step(void)
 
 {
   menu_step_u8(0,5,&g_opstate.ex020201_keyer_type);
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
   return;
 }
@@ -467,6 +468,7 @@ void menu_ex020205_step(void)
   undefined2 uStack_2;
   
   uStack_2 = contest_number_get();
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(1,&DAT_0000270f,&uStack_2);
   contest_number_set(uStack_2);
   return;
@@ -589,15 +591,16 @@ void menu_ex030103_step(void)
 void menu_ex030104_step(void)
 
 {
-  byte bVar1;
+  byte g_opstate_ex030104_tuner_type_select_val;
   
-  bVar1 = g_opstate.ex030104_tuner_type_select;
+  g_opstate_ex030104_tuner_type_select_val = g_opstate.ex030104_tuner_type_select;
   menu_step_u8(0,3,&g_opstate.ex030104_tuner_type_select);
-  if (bVar1 == g_opstate.ex030104_tuner_type_select) {
+  if (g_opstate_ex030104_tuner_type_select_val == g_opstate.ex030104_tuner_type_select) {
     return;
   }
   g_ui.tuner_indicator = 0;
   vfo_tuner_bit_set(0);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }

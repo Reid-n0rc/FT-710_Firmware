@@ -46,6 +46,7 @@ void menu_m4_17_1_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -100,6 +101,7 @@ void menu_m4_17_2_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -132,6 +134,7 @@ void menu_m4_17_3_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -164,10 +167,12 @@ void menu_m4_17_4_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* mode 3, op 5, first frame 0x43 [doc, inference] */
   sd_info_start();
   return;
 }
@@ -205,6 +210,7 @@ void menu_m4_17_5_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(1);
   if (iVar1 != 1) {
     return;
@@ -236,10 +242,12 @@ void menu_m4_17_6_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* mode 4, op 8, first frame 0x43 [doc, inference] */
   sd_format_start();
   return;
 }
@@ -277,6 +285,7 @@ void menu_m4_19_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -297,6 +306,7 @@ void menu_m4_20_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -339,6 +349,7 @@ void menu_m4_20_1_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -357,6 +368,7 @@ void menu_m4_20_2_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -415,6 +427,7 @@ undefined1 FUN_fffcfaff(int param_1)
   
   if (param_1 == 0x166) {
     PTR_g_ui_00025d60->dl_40_force = 1;
+                    /* dialog_close_to_menu, returns 1 [doc] */
     local_4 = dialog_close_to_menu_ok();
   }
   else {
@@ -473,6 +486,7 @@ undefined1 FUN_fffcfb9a(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == 0xff) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else if ((uint)DAT_00015de6 < DAT_00015de8 + 1) {
@@ -652,6 +666,7 @@ undefined1 FUN_fffcfdca(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == 0xff) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else if (DAT_00015de8 == 0xfe) {
@@ -713,6 +728,7 @@ undefined1 FUN_fffcfe63(void)
 undefined1 dialog_close_to_menu_ok(void)
 
 {
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return 1;
 }
@@ -818,6 +834,7 @@ undefined1 FUN_fffcffb4(void)
   undefined1 local_2;
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
     local_2 = dialog_close_to_menu_ok();
   }
   else {
@@ -857,6 +874,7 @@ undefined1 FUN_fffd000d(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == -1) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else {
@@ -957,6 +975,7 @@ void FUN_fffd00fa(undefined1 param_1)
       return;
     }
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }
@@ -989,6 +1008,7 @@ void FUN_fffd016f(char param_1)
     FUN_fffd04a6();
     return;
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }

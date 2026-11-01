@@ -65,22 +65,22 @@ void FUN_20162d48(int param_1,undefined1 param_2)
 void scif_rxi_isr(scif_uart *uart)
 
 {
-  scif_regs *psVar1;
+  scif_regs *p_scif_regs;
   
   uart->rxi_count = uart->rxi_count + 1;
-  psVar1 = uart->regs;
-  if ((psVar1->scfsr & 0xff9d) != 0) {
+  p_scif_regs = uart->regs;
+  if ((p_scif_regs->scfsr & 0xff9d) != 0) {
     uart->rx_errors = uart->rx_errors + 1;
   }
-  if ((psVar1->scfsr & 2) != 0) {
+  if ((p_scif_regs->scfsr & 2) != 0) {
     if (((uart->rx_wr < uart->rx_rd) || (0x3fe < (int)((uint)uart->rx_wr - (uint)uart->rx_rd))) &&
        ((uart->rx_rd <= uart->rx_wr || ((int)((uint)uart->rx_rd - (uint)uart->rx_wr) < 2)))) {
-      psVar1->scfsr = psVar1->scfsr & 0xfffd;
+      p_scif_regs->scfsr = p_scif_regs->scfsr & 0xfffd;
       uart->rx_count = uart->rx_count + 1;
       uart->rx_overflow = uart->rx_overflow + 1;
       return;
     }
-    uart->rx_buf[uart->rx_wr] = psVar1->scfrdr;
+    uart->rx_buf[uart->rx_wr] = p_scif_regs->scfrdr;
     DataMemoryBarrier(2);
     uart->rx_wr = uart->rx_wr + 1 & 0x3ff;
     uart->regs->scfsr = uart->regs->scfsr & 0xfffd;
@@ -104,16 +104,16 @@ void scif_rxi_isr(scif_uart *uart)
 void scif_txi_isr(scif_uart *uart)
 
 {
-  scif_regs *psVar1;
+  scif_regs *p_scif_regs;
   
   uart->txi_count = uart->txi_count + 1;
-  psVar1 = uart->regs;
-  if ((psVar1->scfsr & 0x20) == 0) {
+  p_scif_regs = uart->regs;
+  if ((p_scif_regs->scfsr & 0x20) == 0) {
     uart->txi_not_ready = uart->txi_not_ready + 1;
     return;
   }
   if (uart->tx_rd != uart->tx_wr) {
-    psVar1->scftdr = uart->tx_buf[uart->tx_rd];
+    p_scif_regs->scftdr = uart->tx_buf[uart->tx_rd];
     DataMemoryBarrier(2);
     uart->tx_rd = uart->tx_rd + 1 & 0x3ff;
     uart->regs->scfsr = uart->regs->scfsr & 0xff9f;
@@ -121,7 +121,7 @@ void scif_txi_isr(scif_uart *uart)
     thunk_FUN_20114850(&uart->tx_time);
     return;
   }
-  psVar1->scscr = psVar1->scscr & 0xff7f;
+  p_scif_regs->scscr = p_scif_regs->scscr & 0xff7f;
   return;
 }
 
@@ -224,6 +224,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
     uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
     cVar1 = cVar1 + -1;
   }
@@ -272,18 +273,18 @@ int scif_read_timeout(int *param_1,int param_2,int param_3,int param_4)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
+  int i;
   
   iVar2 = 0;
-  iVar3 = 0;
+  i = 0;
   while( true ) {
-    iVar3 = iVar3 + 1;
+    i = i + 1;
     iVar1 = (**(code **)(*param_1 + 0x10))(param_1,param_2 + iVar2,param_3 - iVar2);
     iVar2 = iVar2 + iVar1;
     if (iVar2 == param_3) {
       return param_3;
     }
-    if (param_4 < iVar3) break;
+    if (param_4 < i) break;
     itron_dly_tsk(1);
   }
   return -1;
@@ -725,10 +726,10 @@ undefined4 is_decimal_digit(int param_1)
 undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
 
 {
-  uint uVar1;
+  uint strcmp_ret;
   
   if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
-     (uVar1 = strcmp((uint *)(BYTE_ARRAY_204286f8 + 4),param_2), uVar1 != 0)) {
+     (strcmp_ret = strcmp((uint *)(BYTE_ARRAY_204286f8 + 4),param_2), strcmp_ret != 0)) {
     return 0;
   }
   return 0x20428704;
@@ -740,10 +741,10 @@ undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
 undefined4 FUN_201638a0(undefined4 param_1,uint *param_2)
 
 {
-  uint uVar1;
+  uint strcmp_ret;
   
   if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
-     (uVar1 = strcmp((uint *)(BYTE_ARRAY_204286f8 + 0x114),param_2), uVar1 != 0)) {
+     (strcmp_ret = strcmp((uint *)(BYTE_ARRAY_204286f8 + 0x114),param_2), strcmp_ret != 0)) {
     return 0;
   }
   return 0x20428814;
@@ -767,14 +768,14 @@ void FUN_201638d8(int param_1,undefined2 param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
+    iVar1 = i * 2;
+    i = i + 1;
     *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
-  } while (iVar2 < 0x4b0);
+  } while (i < 0x4b0);
   *(int *)(param_1 + 4) = param_1 + 8;
   *(int *)(param_1 + 0x968) = param_1;
   return;
@@ -788,15 +789,15 @@ void FUN_20163900(undefined4 *param_1,undefined4 *param_2)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
+  int i;
   
-  iVar3 = 0;
+  i = 0;
   do {
-    iVar1 = iVar3 * 2;
-    iVar2 = iVar3 * 2;
-    iVar3 = iVar3 + 1;
+    iVar1 = i * 2;
+    iVar2 = i * 2;
+    i = i + 1;
     *(undefined2 *)((int)param_1 + iVar2 + 8) = *(undefined2 *)((int)param_2 + iVar1 + 8);
-  } while (iVar3 < 0x4b0);
+  } while (i < 0x4b0);
   *param_1 = *param_2;
   param_1[1] = param_1 + 2;
   param_1[0x25a] = param_1;
@@ -823,6 +824,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
@@ -867,26 +869,26 @@ void FUN_20163a40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
                  ushort *param_5)
 
 {
-  int iVar1;
-  int iVar2;
-  uint uVar3;
+  int j;
+  int i;
+  uint uVar1;
   
-  iVar2 = 0;
+  i = 0;
   if (*param_5 != 0) {
     do {
-      uVar3 = (uint)param_5[1];
-      iVar1 = 0;
-      if (uVar3 != 0) {
+      uVar1 = (uint)param_5[1];
+      j = 0;
+      if (uVar1 != 0) {
         do {
-          if (*(short *)(*(int *)(param_5 + 2) + iVar2 * 2 + (uint)*param_5 * iVar1 * 2) != 0) {
-            FUN_20163938(param_1,iVar1,param_3,param_4,param_5,uVar3 - iVar1,iVar2);
+          if (*(short *)(*(int *)(param_5 + 2) + i * 2 + (uint)*param_5 * j * 2) != 0) {
+            FUN_20163938(param_1,j,param_3,param_4,param_5,uVar1 - j,i);
             break;
           }
-          iVar1 = iVar1 + 1;
-        } while (iVar1 < (int)uVar3);
+          j = j + 1;
+        } while (j < (int)uVar1);
       }
-      iVar2 = iVar2 + 1;
-    } while (iVar2 < (int)(uint)*param_5);
+      i = i + 1;
+    } while (i < (int)(uint)*param_5);
   }
   return;
 }
@@ -898,14 +900,14 @@ void FUN_20163ae0(int param_1,undefined2 param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
+    iVar1 = i * 2;
+    i = i + 1;
     *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
-  } while (iVar2 < 0x870);
+  } while (i < 0x870);
   *(int *)(param_1 + 4) = param_1 + 8;
   *(int *)(param_1 + 0x10e8) = param_1;
   return;
@@ -929,14 +931,14 @@ void FUN_20163b18(int param_1,undefined2 param_2)
 
 {
   int iVar1;
-  int iVar2;
+  int i;
   
-  iVar2 = 0;
+  i = 0;
   do {
-    iVar1 = iVar2 * 2;
-    iVar2 = iVar2 + 1;
+    iVar1 = i * 2;
+    i = i + 1;
     *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
-  } while (iVar2 < 0x15cc);
+  } while (i < 0x15cc);
   *(int *)(param_1 + 4) = param_1 + 8;
   *(int *)(param_1 + 0x2ba0) = param_1;
   return;
@@ -959,15 +961,15 @@ void FUN_20163b54(undefined4 *param_1,undefined4 *param_2)
 {
   int iVar1;
   int iVar2;
-  int iVar3;
+  int i;
   
-  iVar3 = 0;
+  i = 0;
   do {
-    iVar1 = iVar3 * 2;
-    iVar2 = iVar3 * 2;
-    iVar3 = iVar3 + 1;
+    iVar1 = i * 2;
+    iVar2 = i * 2;
+    i = i + 1;
     *(undefined2 *)((int)param_1 + iVar2 + 8) = *(undefined2 *)((int)param_2 + iVar1 + 8);
-  } while (iVar3 < 0x15cc);
+  } while (i < 0x15cc);
   *param_1 = *param_2;
   param_1[1] = param_1 + 2;
   param_1[0xae8] = param_1;
@@ -994,6 +996,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
