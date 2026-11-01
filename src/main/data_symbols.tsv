@@ -114,3 +114,6 @@ keyer_elem_end	1fa3c	keyer_task 0xFFFBA015 (u16): the length of the message bein
 keyer_msg_mem	93a7	keyer_task 0xFFFB9C46 / 0xFFFB9D34: 5 x 0x98 = {u16 length big-endian, 150 element bytes} (eeprom.md "Message memory", type 0)
 keyer_text_mem	969f	keyer_task 0xFFFB9D84: 5 x 0x33 = {length, 50 characters} (eeprom.md, type 1: cat_KM)
 morse_table	fff815c3	keyer_task 0xFFFB9DBC: 2 bytes per character {element count, elements from bit 7, 1 = dash}
+cat_mode_codes	fff806d0	cat_IF_OI 0xFFFAA631: the CAT mode character of mode index n (Ghidra label @cat_mode_codes)
+cat_vfo_state_codes	fff806df	cat_IF_OI 0xFFFAA648: the CAT P7 character of a VFO state (Ghidra label @cat_vfo_state_codes)
+cat_pms_names	fff806e9	cat_IF_OI 0xFFFAA461: 3-character names of the channels from 99 on (P1L..), 3 bytes each (Ghidra label @cat_pms_names)

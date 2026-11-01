@@ -215,6 +215,50 @@ void cat_SH(const uint8_t *text, uint8_t set)
     vfo_store_back(g_opstate.active_vfo);
 }
 
+/* cat_GT 0xFFFA9F23: GT0 P2 = AGC of VFO 0's mode block (flags2 bit 6 on, bits 4..5 speed): 0 OFF, 1 FAST, 2 MID,
+ * 3 SLOW, 4 AUTO (a set stores AUTO as on with speed 0). A read of AUTO answers what AUTO means in the mode: 4 in CW
+ * and FM, 5 in RTTY and DATA/PSK, 6 in SSB and AM (dsp_set_agc: FAST, MID, SLOW) [fact: 0xFFFA9F23..0xFFFAA12F] */
+void cat_GT(const uint8_t *text, uint8_t set)
+{
+    struct vfo_rec *r = (struct vfo_rec *)vfo_rec_ptr(0);
+    uint8_t m = vfo_mode(0);
+    uint8_t bi = mode_blk_index(m);
+    uint8_t *f2 = &r->blk[bi].flags2;
+    uint8_t v;
+
+    if (text[2] != '0') {
+        cat_error = 1;
+        return;
+    }
+    if (!set) {
+        if (m > MODE_PSK) {
+            v = 0;          /* mode code 15: the image prints an uninitialised stack byte (as cat_SH) */
+        } else if ((*f2 & 0x40u) == 0) {
+            v = 0;
+        } else {
+            v = (uint8_t)((*f2 & 0x30u) >> 4);
+            if (v == 0)
+                v = (bi == 1 || bi == 5) ? 4 : (bi == 2 || bi == 3) ? 5 : 6;
+        }
+        cat_reply[3] = (uint8_t)nib2hex(v);
+        reply_done(4);
+        return;
+    }
+    v = (uint8_t)hex2nib(text[3]);
+    if (v > 4u) {
+        cat_error = 1;
+        return;
+    }
+    *f2 &= 0x8Fu;
+    if (v == 4u)
+        *f2 |= 0x40u;
+    else if (v != 0)
+        *f2 |= (uint8_t)(0x40u | v << 4);
+    g_ui.freq_refresh_req = 1;
+    vfo_mark_edited(g_opstate.active_vfo);
+    vfo_store_back(g_opstate.active_vfo);
+}
+
 /* cat_BP 0xFFFA7A71: BP0 P2 P3..P5 = manual NOTCH of VFO 0's mode block: P2 = 0 on/off (flags bit 7; P3 P4 must be
  * "00", else the command is ignored without an error [fact: 0xFFFA7CA6]), 1 the frequency 001..320 (x 10 Hz). A
  * set marks the active VFO edited and stores it back. */
