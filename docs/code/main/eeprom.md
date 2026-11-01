@@ -237,7 +237,7 @@ MAIN holds the menu labels itself: a table of 261 × 25 characters at **ROM 0xFF
 | 017..019 (0x4669..) | `[MT] SWR 1.5 / 2.0 / 3.0 MTR POS` | `swr_meter_protect` | 60 90 128 | same |
 | 020..022 | `[MT] --RESERVED--` | none | 0xFF | 0xFF |
 | 023..027 (0x466F..) | `[RX] RF-AGC 7 / 14 / 21 / 28 / 50` | `main_dac_update`: Q1005 ch5 by RX band (manual: set to 255) | 255 | 255 × 5 |
-| 028..032 (0x4674..) | `[RX] IF-AGC 7 / 14 / 21 / 28 / 50` | `dsp_set_freq_range_param` → IFDSP reg 0x63, the IF AGC gain ceiling ([dsp-chains.md](../ifdsp/dsp-chains.md)); manual: −2.0 dB ± 0.5 dB of AF at 10 dBµV | **0** | 190 190 189 188 199 |
+| 028..032 (0x4674..) | `[RX] IF-AGC 7 / 14 / 21 / 28 / 50` | `dsp_set_freq_range_param` → IFDSP reg 0x63, the IF AGC gain ceiling ([dsp-chains.md](../ifdsp/dsp-chains.md)); manual: −2.0 dB ± 0.5 dB of AF at 10 dBµV | **0** | 190 190 189 188 199 (both reads; ceiling +20.5 / +20.5 / +21.0 / +21.5 / +16.0 dB above g67, #193) |
 | 033..043 (0x4679..) | `[RX] S-MTR 0, 2, 5, 7, 9, +10 … +60` | only 041 (`S-MTR +40`, 0x4681) is read: `meter_s` and `FUN_fffb7e61`; the other ten are never read (#205 disassembly scan, notes): `meter_s` uses a fixed ROM curve whose breakpoints are these ten defaults; all 11 are stored from `dsp_signal_level` | 8 33 74 101 125 140 158 177 198 216 255 | 255 247 74 101 125 140 158 177 **127** 216 87 |
 | 044, 045 | `[RX] --RESERVED--` | none | 0xFF | 0xFF |
 | 046..048 (0x4686..) | `[RX] FM SQL THW / THN / TI` | `FUN_fffb7cec` (FM squelch); stored from a DSP status read (`align_store_dsp_async`) | 127 37 46 | 126 34 80 |
