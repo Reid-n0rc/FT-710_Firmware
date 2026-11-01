@@ -648,6 +648,7 @@ void main_loop(void)
     scan_task();
     dispreq_e8_task();
     dispreq_e7_task();
+                    /* CW keyer and message memories [doc] */
     keyer_task();
                     /* Task 13: SD CARD menu load/save steps [fact: README.md] */
     sd_menu_task();
@@ -756,7 +757,7 @@ void displink_rx_F0_hello(int param_1)
                     /* b7: boot code (key held at the DISPLAY's power-on) [fact: display-link.md] */
   PTR_g_ui_00025d38->power_on_reason = *(byte *)(param_1 + 7);
   PTR_g_ui_00025d38->link_tx_enabled = 1;
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   DAT_0001b3d0 = 1;
                     /* Power on: link up, hello reply pending [fact: display-link.md] */
   PTR_g_ui_00025d38->radio_on = 1;
@@ -993,8 +994,8 @@ void keyer_init(void)
   int i;
   
   g_ui.keyer_state = 0;
-  DAT_0001215f = 0;
-  puVar1 = &DAT_000120bc;
+  keyer_type = 0;
+  puVar1 = &keyer_elem_buf;
   for (i = 0xa0; i != 0; i = i + -1) {
     *puVar1 = 0;
     puVar1 = puVar1 + 1;
@@ -1005,9 +1006,14 @@ void keyer_init(void)
 
 /* -----------------------------------------------------------------------------
  * keyer_task @ fffb98e9  (2120 bytes, 1 callers, export file fffb9422_fffbc38e.c)
- * Role: CW keyer: uses key speed 0x9C03 (also `cat_KS`), 0x20B97 (also `cat_KY`), timer 0x13 [inference]
+ * Role: CW keyer and message memories: runs when soft timer 19 has expired, the mode keys CW (`tx_cw_keying_class`)
+ *     and the PlayList (0x20B97) is closed; takes the key speed 0x9C03 when the paddles allow it (dot time
+ *     1,200,000 / speed, dash time (weight + 25) x dot / 10), then eight states: keying (straight/bug or electronic
+ *     keyer), recording a message into 0x93A7, sending a recorded message or a keyer text 0x969F (`#` contest
+ *     number, `<`/`>` step it, `[`..`]` joined, `^0n` another text), repeat [fact: keyer_task 0xFFFB98E9, recreated
+ *     in src/main/app/keyer.c, T24 round 4]
  * Page: tx-protection.md
- * Tag: [inference]
+ * Tag: [fact]
  * Doc: ../../../docs/code/main/README.md
  */
 // ===== keyer_task @ fffb98e9 (2120 bytes)
@@ -1071,7 +1077,7 @@ void keyer_task(void)
   if ((bVar3 != 1) || (g_ui.tune_cycle != 0)) {
     return;
   }
-  if (DAT_0001b4d5 != g_opstate.key_speed) {
+  if (keyer_speed_cur != g_opstate.key_speed) {
     bVar1 = false;
     if (DAT_00012164 == '\0') {
       keyer_paddles_read(&cStack_18,&cStack_19);
@@ -1091,110 +1097,110 @@ void keyer_task(void)
       }
     }
     if (bVar1) {
-      DAT_0001b4d5 = g_opstate.key_speed;
+      keyer_speed_cur = g_opstate.key_speed;
       keyer_init();
     }
   }
   if (g_opstate.keyer_on == 0) {
-    DAT_0001215f = 0;
+    keyer_type = 0;
   }
   else {
-    DAT_0001215f = g_opstate.ex020201_keyer_type;
+    keyer_type = g_opstate.ex020201_keyer_type;
   }
-  DAT_00021014 = 1200000;
-  if (DAT_0001b4d5 != 0) {
-    DAT_00021014 = 1200000 / DAT_0001b4d5;
+  keyer_dot_time = 1200000;
+  if (keyer_speed_cur != 0) {
+    keyer_dot_time = 1200000 / keyer_speed_cur;
   }
-  DAT_00021010 = ((local_1 + 0x19) * DAT_00021014) / 10;
+  keyer_dash_time = ((local_1 + 0x19) * keyer_dot_time) / 10;
                     /* Returns EX020119 QSK DELAY TIME x 5 + 15 [doc] */
-  DAT_0001215c = qsk_delay_ticks();
-  if (DAT_0001215f == 0) {
-    DAT_0001215c = 0xf;
+  keyer_qsk_ticks = qsk_delay_ticks();
+  if (keyer_type == 0) {
+    keyer_qsk_ticks = 0xf;
   }
   else {
-    if ((DAT_0001b4d5 < 0x29) || (DAT_0001215c < 0x10)) {
+    if ((keyer_speed_cur < 0x29) || (keyer_qsk_ticks < 0x10)) {
       bVar1 = false;
     }
     else {
       bVar1 = true;
     }
     if (bVar1) {
-      DAT_0001215c = 0xf;
+      keyer_qsk_ticks = 0xf;
     }
     else {
-      if ((DAT_0001b4d5 < 0x24) || (DAT_0001215c < 0x15)) {
+      if ((keyer_speed_cur < 0x24) || (keyer_qsk_ticks < 0x15)) {
         bVar1 = false;
       }
       else {
         bVar1 = true;
       }
       if (bVar1) {
-        DAT_0001215c = 0x14;
+        keyer_qsk_ticks = 0x14;
       }
       else {
-        if ((DAT_0001b4d5 < 0x1f) || (DAT_0001215c < 0x1a)) {
+        if ((keyer_speed_cur < 0x1f) || (keyer_qsk_ticks < 0x1a)) {
           bVar1 = false;
         }
         else {
           bVar1 = true;
         }
         if (bVar1) {
-          DAT_0001215c = 0x19;
+          keyer_qsk_ticks = 0x19;
         }
       }
     }
   }
   switch(g_ui.keyer_state) {
   case 0:
-    DAT_0001fa3a = 0;
-    DAT_0001fa38 = 0;
+    keyer_elem_rd = 0;
+    keyer_elem_wr = 0;
     g_ui.keyer_state = 1;
-    swtimer_start(0x19,(ushort)DAT_0001215c);
+    swtimer_start(0x19,(ushort)keyer_qsk_ticks);
     keyer_state_clear();
   case 1:
-    if (DAT_0001215f < 2) {
-      keyer_straight_bug(DAT_0001215f);
+    if (keyer_type < 2) {
+      keyer_straight_bug(keyer_type);
     }
-    else if (DAT_0001215f - 2 < 4) {
-      keyer_elekey(DAT_0001215f,'\0');
+    else if (keyer_type - 2 < 4) {
+      keyer_elekey(keyer_type,'\0');
     }
     break;
   case 2:
-    if (DAT_0001215d != '\x01') {
+    if (tx_keying_kind != '\x01') {
       return;
     }
-    puVar4 = &DAT_000120bc;
+    puVar4 = &keyer_elem_buf;
     for (iVar6 = 0xa0; iVar6 != 0; iVar6 = iVar6 + -1) {
       *puVar4 = 0;
       puVar4 = puVar4 + 1;
     }
-    DAT_0001fa3a = 0;
-    DAT_0001fa38 = 0;
+    keyer_elem_rd = 0;
+    keyer_elem_wr = 0;
     g_ui.keyer_state = 3;
-    swtimer_start(0x19,(ushort)DAT_0001215c);
+    swtimer_start(0x19,(ushort)keyer_qsk_ticks);
     swtimer_start(0x1b,10000);
     keyer_state_clear();
-    DAT_00021040 = vfo_rec_ptr(1);
+    keyer_rec_vfob = vfo_rec_ptr(1);
     iVar6 = tx_breakin_on();
     if (iVar6 == 1) {
-      DAT_00012166 = '\x01';
-      DAT_00021040[0x14] = DAT_00021040[0x14] & 0xfd;
+      keyer_breakin_saved = '\x01';
+      keyer_rec_vfob[0x14] = keyer_rec_vfob[0x14] & 0xfd;
     }
     else {
-      DAT_00012166 = '\0';
+      keyer_breakin_saved = '\0';
     }
   case 3:
-    if (DAT_0001215f - 2 < 4) {
-      keyer_elekey(DAT_0001215f,'\x01');
+    if (keyer_type - 2 < 4) {
+      keyer_elekey(keyer_type,'\x01');
     }
     break;
   case 4:
-    if (DAT_00012166 == '\x01') {
-      DAT_00012166 = '\0';
-      DAT_00021040[0x14] = DAT_00021040[0x14] | 2;
+    if (keyer_breakin_saved == '\x01') {
+      keyer_breakin_saved = '\0';
+      keyer_rec_vfob[0x14] = keyer_rec_vfob[0x14] | 2;
     }
-    DAT_0001fa3a = DAT_0001fa38;
-    if (DAT_0001fa38 != 0) {
+    keyer_elem_rd = keyer_elem_wr;
+    if (keyer_elem_wr != 0) {
       bStack_9 = g_ui.msg_slot;
       if ((g_ui.msg_slot == 0) || (5 < g_ui.msg_slot)) {
         bVar1 = true;
@@ -1206,10 +1212,10 @@ void keyer_task(void)
         bStack_9 = 1;
       }
       iVar6 = (uint)bStack_9 * 0x98;
-      *(char *)((int)qmb + iVar6 + 0x2ec) = (char)(DAT_0001fa38 >> 8);
-      *(char *)((int)qmb + iVar6 + 0x2ed) = (char)DAT_0001fa3a;
+      *(char *)((int)qmb + iVar6 + 0x2ec) = (char)(keyer_elem_wr >> 8);
+      *(char *)((int)qmb + iVar6 + 0x2ed) = (char)keyer_elem_rd;
       puStack_8 = (undefined *)((int)qmb + iVar6 + 0x2ee);
-      puVar4 = &DAT_000120bc;
+      puVar4 = &keyer_elem_buf;
       puVar7 = puStack_8;
       for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
         *puVar7 = *puVar4;
@@ -1218,14 +1224,14 @@ void keyer_task(void)
       }
       eeprom_save_msg(0,(uint)bStack_9);
     }
-    DAT_0001fa38 = 0;
-    DAT_0001fa3a = 0;
+    keyer_elem_wr = 0;
+    keyer_elem_rd = 0;
     g_ui.keyer_state = 0;
     break;
   case 5:
-    DAT_00012165 = '\0';
-    if (DAT_0001215d != '\x01') {
-      DAT_00012165 = 0;
+    keyer_has_number = '\0';
+    if (tx_keying_kind != '\x01') {
+      keyer_has_number = 0;
       return;
     }
     bVar3 = FUN_fffb2dfe();
@@ -1243,13 +1249,13 @@ void keyer_task(void)
       bStack_9 = 1;
     }
     bStack_9 = bStack_9 - 1;
-    DAT_0001fa38 = 0;
-    DAT_0001fa3a = 0;
+    keyer_elem_wr = 0;
+    keyer_elem_rd = 0;
     if (g_opstate.ex020205_contest_number_be[bStack_9 + 2] == 1) {
       iVar6 = (uint)bStack_9 * 0x98;
-      DAT_0001fa38 = CONCAT11((&DAT_000093a7)[iVar6],(&DAT_000093a8)[iVar6]);
+      keyer_elem_wr = CONCAT11((&keyer_msg_mem)[iVar6],(&DAT_000093a8)[iVar6]);
       puStack_8 = &DAT_000093a9 + iVar6;
-      puVar4 = &DAT_000120bc;
+      puVar4 = &keyer_elem_buf;
       puVar7 = puStack_8;
       for (iVar6 = 0x96; iVar6 != 0; iVar6 = iVar6 + -1) {
         *puVar4 = *puVar7;
@@ -1258,15 +1264,15 @@ void keyer_task(void)
       }
     }
     else {
-      bStack_f = (&DAT_0000969f)[(uint)bStack_9 * 0x33];
+      bStack_f = (&keyer_text_mem)[(uint)bStack_9 * 0x33];
       puStack_8 = &DAT_000096a0 + (uint)bStack_9 * 0x33;
       cStack_17 = '\0';
       for (bStack_13 = 0; bStack_13 < bStack_f; bStack_13 = bStack_13 + 1) {
         bStack_14 = puStack_8[bStack_13];
-        bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
-        bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
+        bStack_16 = morse_table[(uint)bStack_14 * 2];
+        bStack_15 = morse_table[(uint)bStack_14 * 2 + 1];
         if (bStack_14 == 0x23) {
-          DAT_00012165 = '\x01';
+          keyer_has_number = '\x01';
           uStack_e = contest_number_get();
           uStack_c = 1000;
           for (bStack_11 = 0; bStack_11 < 4; bStack_11 = bStack_11 + 1) {
@@ -1291,8 +1297,8 @@ void keyer_task(void)
             if (!bVar1) {
                     /* Cut-number substitution by EX020204 NUMBER STYLE [doc] */
               bStack_14 = contest_cut_digit(bStack_14);
-              bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
-              bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
+              bStack_16 = morse_table[(uint)bStack_14 * 2];
+              bStack_15 = morse_table[(uint)bStack_14 * 2 + 1];
               for (bStack_10 = 0; bStack_10 < bStack_16; bStack_10 = bStack_10 + 1) {
                 if ((bStack_15 & 0x80) == 0) {
                   keyer_elem_put(1);
@@ -1376,21 +1382,21 @@ void keyer_task(void)
             }
           }
         }
-        if (0x4b0 < DAT_0001fa38) break;
+        if (0x4b0 < keyer_elem_wr) break;
       }
     }
-    DAT_0001fa3c = DAT_0001fa38;
-    DAT_0001fa38 = 0;
-    swtimer_start(0x19,(ushort)DAT_0001215c);
+    keyer_elem_end = keyer_elem_wr;
+    keyer_elem_wr = 0;
+    swtimer_start(0x19,(ushort)keyer_qsk_ticks);
     g_ui.keyer_state = 6;
     keyer_state_clear();
   case 6:
-    if (DAT_0001fa3a == DAT_0001fa3c) {
+    if (keyer_elem_rd == keyer_elem_end) {
       g_ui.keyer_state = 7;
       if (g_ui.msg_active == 1) {
         swtimer_start(0x1c,(ushort)g_opstate.ex020211_repeat_interval * 1000);
       }
-      if ((DAT_00012165 == '\x01') && (uStack_e = contest_number_get(), uStack_e < 9999)) {
+      if ((keyer_has_number == '\x01') && (uStack_e = contest_number_get(), uStack_e < 9999)) {
         uStack_e = uStack_e + 1;
         contest_number_set(uStack_e);
       }
@@ -1418,13 +1424,13 @@ void keyer_task(void)
       }
     }
     else {
-      DAT_0001fa38 = 0;
-      DAT_0001fa3a = 0;
+      keyer_elem_wr = 0;
+      keyer_elem_rd = 0;
       keyer_sidetone_off();
       g_ui.keyer_state = 0;
     }
   }
-  keyer_output_step(DAT_0001215f);
+  keyer_output_step(keyer_type);
   return;
 }
 

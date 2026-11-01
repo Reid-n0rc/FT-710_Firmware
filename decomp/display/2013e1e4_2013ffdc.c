@@ -1,5 +1,135 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== sd_scr_bus_width @ 2013e1e4 (76 bytes)
+
+/* Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit)
+   [fact] */
+
+int sd_scr_bus_width(int *param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = sd_acmd51_read_scr();
+  if (iVar1 == 0) {
+    iVar1 = *param_1;
+    if ((*(byte *)(iVar1 + 0x222) & 4) == 0) {
+      *(undefined2 *)(iVar1 + 0x2ac) = 0;
+      return 0;
+    }
+    *(undefined2 *)(iVar1 + 0x2ac) = 2;
+    iVar1 = 0;
+  }
+  return iVar1;
+}
+
+
+// ===== sd_read_sectors @ 2013e230 (132 bytes)
+
+/* driver op +0x58 */
+
+uint sd_read_sectors(int param_1,uint param_2,uint param_3,int *param_4)
+
+{
+  uint uVar1;
+  
+  if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
+    param_1 = param_1 << 9;
+  }
+                    /* makes sure the card is selected [doc] */
+  uVar1 = sd_select_card(param_4);
+  if ((uVar1 == 0) &&
+     ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
+      (uVar1 = (**(code **)(param_4[1] + 0x40))(), uVar1 == 0)))) {
+                    /* WARNING: Could not recover jumptable at 0x2013e2ac. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+    uVar1 = (**(code **)(param_4[1] + 0x58))(param_1,param_2,param_3,*param_4);
+    return uVar1;
+  }
+  return uVar1;
+}
+
+
+// ===== sd_write_sectors @ 2013e2b4 (156 bytes)
+
+/* driver op +0x60; -7 = write-protected */
+
+int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
+
+{
+  int iVar1;
+  
+  iVar1 = (**(code **)(param_4[1] + 0xc))();
+  if (iVar1 == 0) {
+    if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
+      param_1 = param_1 << 9;
+    }
+                    /* makes sure the card is selected [doc] */
+    iVar1 = sd_select_card(param_4);
+    if ((iVar1 == 0) &&
+       ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
+        (iVar1 = (**(code **)(param_4[1] + 0x40))(), iVar1 == 0)))) {
+                    /* WARNING: Could not recover jumptable at 0x2013e348. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+      iVar1 = (**(code **)(param_4[1] + 0x60))(param_1,param_2,param_3,*param_4);
+      return iVar1;
+    }
+  }
+  else {
+    iVar1 = -7;
+  }
+  return iVar1;
+}
+
+
+// ===== sd_check_card @ 2013e350 (12 bytes)
+
+/* [fact] slot 2 (card check) of the handle's operation table; driver op 9; new entry (T24 round 8)
+    */
+
+void sd_check_card(int param_1)
+
+{
+                    /* WARNING: Could not recover jumptable at 0x2013e358. Too many branches */
+                    /* WARNING: Treating indirect jump as call */
+  (**(code **)(*(int *)(param_1 + 4) + 8))();
+  return;
+}
+
+
+// ===== sd_vol_read @ 2013e35c (112 bytes)
+
+/* (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3
+   tries of sd_read_sectors [fact] */
+
+uint sd_vol_read(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
+
+{
+  uint uVar1;
+  int i;
+  
+  if (param_2 < *(uint *)(param_1 + 0x14)) {
+    i = 0;
+    do {
+      uVar1 = (**(code **)(param_5[1] + 8))();
+      if (uVar1 != 0) {
+        return uVar1;
+      }
+                    /* driver op +0x58 [doc, inference] */
+      uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
+      if (uVar1 == 0) {
+        return 0;
+      }
+      i = i + 1;
+    } while (i < 3);
+  }
+  else {
+    uVar1 = 0xfffffffe;
+  }
+  return uVar1;
+}
+
+
 // ===== sd_vol_write @ 2013e3cc (112 bytes)
 
 /* (vol, sector, buf, n, ctx): partition write, bounds check, one sd_write_sectors try [fact] */
@@ -72,99 +202,140 @@ uint sd_mount_volume(int param_1,int *param_2)
 }
 
 
-// ===== sd_driver_op @ 2013e71c (700 bytes)
+// ===== sd_drive_mount @ 2013e50c (400 bytes)
 
-/* Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount
-   (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume
-   mount), 8 unmount, others through a table; registered by sdhi_drv_init [fact] */
+/* [fact] driver op 7: power on, identify, CSD/CID, select, bus width, speed, SD status, clock,
+   sd_mount_volume, flags +0x68 bits 7 and 5 under itron_loc_cpu; new entry (T24 round 8,
+   drivers/sd_drive.c) */
 
-int sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-                undefined4 param_5,int *param_6)
+int sd_drive_mount(int param_1,int *param_2)
 
 {
   byte bVar1;
   int iVar2;
   int i;
   
+  iVar2 = (**(code **)(param_2[1] + 0x24))();
+  if (iVar2 == 0) {
+    i = 0;
+    do {
+      iVar2 = (**(code **)(param_2[1] + 0x20))(2);
+                    /* card reset/identify, card-type flags at +0x2C0/+0x2C2 [doc, inference] */
+                    /* CMD9 with sd_csd_check / mmc_csd_check [doc] */
+                    /* Reads sector 0 [doc] */
+      if (((((iVar2 == 0) && (iVar2 = sd_card_identify(param_2), iVar2 == 0)) &&
+           (iVar2 = sd_read_csd_cid(param_2), iVar2 == 0)) &&
+          ((((iVar2 = sd_selected_op(*(undefined2 *)(*param_2 + 0x2aa),0x200,1,param_2), iVar2 == 0
+             && (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_2 + 0x2aa),param_2), iVar2 == 0)) &&
+            ((*(short *)(*param_2 + 0x2c6) == 1 ||
+             (((iVar2 = sd_scr_bus_width(param_2), iVar2 == 0 &&
+               (iVar2 = sd_acmd6_set_bus_width(param_2), iVar2 == 0)) &&
+              ((iVar2 = sd_select_bus_speed(param_2), iVar2 == 0 &&
+               (iVar2 = sd_acmd13_read_status(param_2), iVar2 == 0)))))))) &&
+           (iVar2 = sd_card_clock(1,param_2), iVar2 == 0)))) &&
+         (((*(short *)(*param_2 + 0x2c2) != 2 && *(short *)(*param_2 + 0x2c2) != 3 ||
+           (iVar2 = (**(code **)(param_2[1] + 0x40))(), iVar2 == 0)) &&
+          (iVar2 = sd_mount_volume(param_1,param_2), iVar2 == 0)))) {
+        sd_lock();
+        *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) | 0x80;
+        iVar2 = (**(code **)(param_2[1] + 0xc))();
+        if (iVar2 == 0) {
+          bVar1 = *(byte *)(param_1 + 0x68) & 0xdf;
+        }
+        else {
+          bVar1 = *(byte *)(param_1 + 0x68) | 0x20;
+        }
+        *(byte *)(param_1 + 0x68) = bVar1;
+        sd_unlock();
+        return 0;
+      }
+      i = i + 1;
+    } while (i < 3);
+  }
+  return iVar2;
+}
+
+
+// ===== sd_drive_unmount @ 2013e6a0 (48 bytes)
+
+/* [fact] driver op 8: slot 10, then +0x68 &= 0x7F under the CPU lock; new entry (T24 round 8) */
+
+undefined4 sd_drive_unmount(int param_1,int param_2)
+
+{
+  (**(code **)(*(int *)(param_2 + 4) + 0x28))();
+  sd_lock();
+  *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) & 0x7f;
+  sd_unlock();
+  return 0;
+}
+
+
+// ===== sd_drive_attach @ 2013e6d0 (76 bytes)
+
+/* [fact] driver op 5: slot 25 (open), sd_card_task_start, the handle into the drive +0x24; new
+   entry (T24 round 8) */
+
+undefined4 sd_drive_attach(int param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = (**(code **)(param_2[1] + 100))();
+  if ((iVar1 == 0) && (iVar1 = sd_card_task_start(param_1,*(undefined1 *)*param_2), iVar1 == 0)) {
+    *(undefined4 **)(param_1 + 0x24) = param_2;
+    return 0;
+  }
+  return 0xfffffff8;
+}
+
+
+// ===== sd_driver_op @ 2013e71c (164 bytes)
+
+/* Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount
+   (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume
+   mount), 8 unmount, others through a table; registered by sdhi_drv_init [fact] */
+
+undefined4
+sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5
+            ,undefined4 param_6)
+
+{
+  undefined4 uVar1;
+  
   switch(param_2) {
   default:
-    return -3;
+    return 0xfffffffd;
   case 1:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = sd_vol_read(param_1,param_3,param_4,param_5,param_6);
-      return iVar2;
+      uVar1 = sd_vol_read(param_1,param_3,param_4,param_5,param_6);
+      return uVar1;
     }
     break;
   case 2:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
                     /* partition write, bounds check, one sd_write_sectors try [doc] */
-      iVar2 = sd_vol_write(param_1,param_3,param_4,param_5,param_6);
-      return iVar2;
+      uVar1 = sd_vol_write(param_1,param_3,param_4,param_5,param_6);
+      return uVar1;
     }
     break;
   case 5:
-    iVar2 = (**(code **)(param_6[1] + 100))();
-    if ((iVar2 == 0) && (iVar2 = sd_card_task_start(param_1,*(undefined1 *)*param_6), iVar2 == 0)) {
-      *(int **)(param_1 + 0x24) = param_6;
-      return 0;
-    }
-    return -8;
+    uVar1 = sd_drive_attach();
+    return uVar1;
   case 7:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
-      iVar2 = (**(code **)(param_6[1] + 0x24))();
-      if (iVar2 == 0) {
-        i = 0;
-        do {
-          iVar2 = (**(code **)(param_6[1] + 0x20))(2);
-                    /* card reset/identify, card-type flags at +0x2C0/+0x2C2 [doc, inference] */
-                    /* CMD9 with sd_csd_check / mmc_csd_check [doc] */
-                    /* Reads sector 0 [doc] */
-          if ((((((iVar2 == 0) && (iVar2 = sd_card_identify(param_6), iVar2 == 0)) &&
-                (iVar2 = sd_read_csd_cid(param_6), iVar2 == 0)) &&
-               ((iVar2 = sd_selected_op(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6),
-                iVar2 == 0 &&
-                (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_6 + 0x2aa),param_6), iVar2 == 0))))
-              && ((*(short *)(*param_6 + 0x2c6) == 1 ||
-                  (((iVar2 = sd_scr_bus_width(param_6), iVar2 == 0 &&
-                    (iVar2 = sd_acmd6_set_bus_width(param_6), iVar2 == 0)) &&
-                   ((iVar2 = sd_select_bus_speed(param_6), iVar2 == 0 &&
-                    (iVar2 = sd_acmd13_read_status(param_6), iVar2 == 0)))))))) &&
-             ((iVar2 = FUN_2013c928(1,param_6), iVar2 == 0 &&
-              (((*(short *)(*param_6 + 0x2c2) != 2 && *(short *)(*param_6 + 0x2c2) != 3 ||
-                (iVar2 = (**(code **)(param_6[1] + 0x40))(), iVar2 == 0)) &&
-               (iVar2 = sd_mount_volume(param_1,param_6), iVar2 == 0)))))) {
-            itron_loc_cpu();
-            *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) | 0x80;
-            iVar2 = (**(code **)(param_6[1] + 0xc))();
-            if (iVar2 == 0) {
-              bVar1 = *(byte *)(param_1 + 0x68) & 0xdf;
-            }
-            else {
-              bVar1 = *(byte *)(param_1 + 0x68) | 0x20;
-            }
-            *(byte *)(param_1 + 0x68) = bVar1;
-            itron_unl_cpu();
-            return 0;
-          }
-          i = i + 1;
-        } while (i < 3);
-      }
-      return iVar2;
+      uVar1 = sd_drive_mount();
+      return uVar1;
     }
     break;
   case 8:
-    (**(code **)(param_6[1] + 0x28))();
-    itron_loc_cpu();
-    *(byte *)(param_1 + 0x68) = *(byte *)(param_1 + 0x68) & 0x7f;
-    itron_unl_cpu();
-    return 0;
+    uVar1 = sd_drive_unmount();
+    return uVar1;
   case 9:
-                    /* WARNING: Could not recover jumptable at 0x2013e358. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    iVar2 = (**(code **)(param_6[1] + 8))();
-    return iVar2;
+    uVar1 = sd_check_card(param_6,param_6,param_2,param_4);
+    return uVar1;
   }
-  return -6;
+  return 0xfffffffa;
 }
 
 
@@ -192,6 +363,54 @@ void sd_format_progress_set(undefined4 param_1,int param_2)
   *(undefined4 *)(param_2 + 0x2f4) = param_1;
   *(undefined4 *)(param_2 + 0x2f8) = param_1;
   return;
+}
+
+
+// ===== fat_format_clear_root @ 2013e80c (196 bytes)
+
+/* [fact] zeroes 32 sectors (FAT12/16) or one cluster (FAT32) after the FATs with progress; tail
+   call of fat_format_volume 0x2013F834; new entry (T24 round 8, app/fat_format.c) */
+
+int fat_format_clear_root(int *param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  int sd_write_sectors_ret;
+  uint i;
+  uint uVar3;
+  
+  iVar2 = *param_1;
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
+  fs_memset(iVar2 + 1,0,0x200,0);
+  cVar1 = *(char *)(iVar2 + 0x2dc);
+  if (cVar1 == '\f' || cVar1 == '\x10') {
+    uVar3 = 0x20;
+    iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) + *(int *)(iVar2 + 0x2e0) * 2
+    ;
+  }
+  else {
+    if (cVar1 != ' ') {
+      return -2;
+    }
+    uVar3 = (uint)*(ushort *)(iVar2 + 0x2d8);
+    iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) + *(int *)(iVar2 + 0x2e0) * 2
+    ;
+  }
+  i = 0;
+  if (uVar3 != 0) {
+    do {
+                    /* driver op +0x60 [doc, inference] */
+      sd_write_sectors_ret = sd_write_sectors(iVar2,*param_1 + 1,1,param_1);
+      if (sd_write_sectors_ret != 0) {
+        return sd_write_sectors_ret;
+      }
+      sd_format_progress_dec(*param_1);
+      i = i + 1;
+      iVar2 = iVar2 + 1;
+    } while (i < uVar3);
+  }
+  return 0;
 }
 
 
@@ -923,62 +1142,31 @@ undefined4 fat_format_layout(int *param_1)
 }
 
 
-// ===== fat_clear_root_dir @ 2013f79c (356 bytes)
+// ===== fat_format_volume @ 2013f79c (160 bytes)
 
-/* zero the root-directory sectors (FAT12/16: 32, FAT32: 1 cluster) */
+/* [fact] parameters cleared, fat_format_layout, the MBR, boot sector, FSInfo (FAT32) and FATs, then
+   the tail call of fat_format_clear_root; the whole volume format; was fat_clear_root_dir (T24
+   round 8) */
 
-int fat_clear_root_dir(int *param_1)
+void fat_format_volume(int *param_1)
 
 {
-  char cVar1;
-  int sd_write_sectors_ret;
-  int iVar2;
-  uint i;
-  undefined4 unaff_r4;
-  uint uVar3;
+  int iVar1;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(*param_1 + 0x2c8,0,0x2c);
                     /* Computes the format layout from the CSD capacity [doc] */
-  iVar2 = fat_format_layout(param_1);
-  if ((((iVar2 == 0) && (iVar2 = fat_format_write_mbr(param_1), iVar2 == 0)) &&
+  iVar1 = fat_format_layout(param_1);
+  if ((((iVar1 == 0) && (iVar1 = fat_format_write_mbr(param_1), iVar1 == 0)) &&
       ((*(char *)(*param_1 + 0x2dc) == '@' ||
-       ((iVar2 = fat_format_write_boot(param_1), iVar2 == 0 &&
+       ((iVar1 = fat_format_write_boot(param_1), iVar1 == 0 &&
         ((*(char *)(*param_1 + 0x2dc) != ' ' ||
-         (iVar2 = fat32_format_write_fsinfo(param_1), iVar2 == 0)))))))) &&
-     (iVar2 = fat_format_write_fats(param_1), iVar2 == 0)) {
-    iVar2 = *param_1;
-                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
-    fs_memset(iVar2 + 1,0,0x200,0,unaff_r4);
-    cVar1 = *(char *)(iVar2 + 0x2dc);
-    if (cVar1 == '\f' || cVar1 == '\x10') {
-      uVar3 = 0x20;
-      iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) +
-              *(int *)(iVar2 + 0x2e0) * 2;
-    }
-    else {
-      if (cVar1 != ' ') {
-        return -2;
-      }
-      uVar3 = (uint)*(ushort *)(iVar2 + 0x2d8);
-      iVar2 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4) +
-              *(int *)(iVar2 + 0x2e0) * 2;
-    }
-    i = 0;
-    if (uVar3 != 0) {
-      do {
-                    /* driver op +0x60 [doc, inference] */
-        sd_write_sectors_ret = sd_write_sectors(iVar2,*param_1 + 1,1,param_1);
-        if (sd_write_sectors_ret != 0) {
-          return sd_write_sectors_ret;
-        }
-        sd_format_progress_dec(*param_1);
-        i = i + 1;
-        iVar2 = iVar2 + 1;
-      } while (i < uVar3);
-    }
-    return 0;
+         (iVar1 = fat32_format_write_fsinfo(param_1), iVar1 == 0)))))))) &&
+     (iVar1 = fat_format_write_fats(param_1), iVar1 == 0)) {
+    fat_format_clear_root(param_1);
+    return;
   }
-  return iVar2;
+  return;
 }
 
 
@@ -1006,17 +1194,16 @@ int sd_fat_format(int *param_1)
       }
                     /* CMD9 with sd_csd_check / mmc_csd_check [doc] */
       iVar2 = sd_read_csd_cid(param_1);
-                    /* zero the root-directory sectors [doc, inference] */
       if ((((((iVar2 == 0) &&
              (iVar2 = sd_selected_op(*(undefined2 *)(*param_1 + 0x2aa),0x200,1,param_1), iVar2 == 0)
              ) && (iVar2 = sd_cmd7_select(*(undefined2 *)(*param_1 + 0x2aa),param_1), iVar2 == 0))
            && ((iVar2 = sd_scr_bus_width(param_1), iVar2 == 0 &&
                (iVar2 = sd_acmd6_set_bus_width(param_1), iVar2 == 0)))) &&
           ((iVar2 = sd_select_bus_speed(param_1), iVar2 == 0 &&
-           (iVar2 = FUN_2013c928(1,param_1), iVar2 == 0)))) &&
+           (iVar2 = sd_card_clock(1,param_1), iVar2 == 0)))) &&
          (((*(short *)(*param_1 + 0x2c2) != 2 && *(short *)(*param_1 + 0x2c2) != 3 ||
            (iVar2 = (**(code **)(param_1[1] + 0x40))(), iVar2 == 0)) &&
-          (iVar2 = fat_clear_root_dir(param_1), iVar2 == 0)))) {
+          (iVar2 = fat_format_volume(param_1), iVar2 == 0)))) {
         return 0;
       }
     }
@@ -1336,6 +1523,26 @@ void sd_card_unmount(int param_1)
 }
 
 
+// ===== sd_card_write_protected @ 2013fd70 (32 bytes)
+
+/* [fact] (index): bit 5 of +0x68 of the drive 0x20808B60[index], 0 without a handle; called from
+   0x20103BC4; new entry (T24 round 8) */
+
+uint sd_card_write_protected(int param_1)
+
+{
+  uint uVar1;
+  
+  if (*(int *)((&DAT_20808b60)[param_1] + 0x24) == 0) {
+    uVar1 = 0;
+  }
+  else {
+    uVar1 = (*(byte *)((&DAT_20808b60)[param_1] + 0x68) & 0x3f) >> 5;
+  }
+  return uVar1;
+}
+
+
 // ===== sdhi_drv_init @ 2013fd98 (60 bytes)
 
 /* Driver init callback of drive I:: clears 0x2091CBA8, links the SDHI op table 0x20420564 and calls
@@ -1476,244 +1683,5 @@ void sdhi_stub_2013ffdc(void)
 
 {
   return;
-}
-
-
-// ===== sdhi_dma_read_start @ 2013ffec (68 bytes)
-
-/* (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start [fact] */
-
-void sdhi_dma_read_start(undefined4 param_1,undefined4 param_2)
-
-{
-  uint uVar1;
-  
-                    /* Next0 Source Address 0 [sfr] */
-  DMAC_N0SA_0 = param_2;
-                    /* Next0 Destination Address 0 [sfr] */
-  DMAC_N0DA_0 = param_1;
-                    /* Next0 Transaction Byte 0 [sfr] */
-  DMAC_N0TB_0 = 0x200;
-                    /* Channel Configuration 0 [sfr] */
-  DMAC_CHCFG_0 = 0x126260;
-                    /* Channel Interval 0 [sfr] */
-  DMAC_CHITVL_0 = 0;
-                    /* Channel Extension 0 [sfr] */
-  DMAC_CHEXT_0 = 0;
-                    /* Channel Control 0 [sfr] */
-  uVar1 = DMAC_CHCTRL_0;
-  DMAC_CHCTRL_0 = uVar1 | 8;
-  uVar1 = DMAC_CHCTRL_0;
-  DMAC_CHCTRL_0 = uVar1 | 1;
-  return;
-}
-
-
-// ===== sdhi_dma_read_wait @ 20140030 (48 bytes)
-
-/* Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear [fact] */
-
-void sdhi_dma_read_wait(void)
-
-{
-  uint uVar1;
-  uint dmac_chstat_0;
-  
-  uVar1 = 0;
-  do {
-                    /* Channel Status 0 [sfr] */
-    dmac_chstat_0 = DMAC_CHSTAT_0;
-    if ((dmac_chstat_0 & 5) == 0) break;
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 0x900000);
-                    /* Channel Control 0 [sfr] */
-  uVar1 = DMAC_CHCTRL_0;
-  DMAC_CHCTRL_0 = uVar1 | 8;
-  return;
-}
-
-
-// ===== sdhi_dma_write_start @ 20140060 (68 bytes)
-
-/* (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start [fact] */
-
-void sdhi_dma_write_start(undefined4 param_1,undefined4 param_2)
-
-{
-  uint uVar1;
-  
-                    /* Next0 Source Address 1 [sfr] */
-  DMAC_N0SA_1 = param_2;
-                    /* Next0 Destination Address 1 [sfr] */
-  DMAC_N0DA_1 = param_1;
-                    /* Next0 Transaction Byte 1 [sfr] */
-  DMAC_N0TB_1 = 0x200;
-                    /* Channel Configuration 1 [sfr] */
-  DMAC_CHCFG_1 = 0x262269;
-                    /* Channel Interval 1 [sfr] */
-  DMAC_CHITVL_1 = 0;
-                    /* Channel Extension 1 [sfr] */
-  DMAC_CHEXT_1 = 0;
-                    /* Channel Control 1 [sfr] */
-  uVar1 = DMAC_CHCTRL_1;
-  DMAC_CHCTRL_1 = uVar1 | 8;
-  uVar1 = DMAC_CHCTRL_1;
-  DMAC_CHCTRL_1 = uVar1 | 1;
-  return;
-}
-
-
-// ===== sdhi_dma_write_wait @ 201400a4 (48 bytes)
-
-/* Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear [fact] */
-
-void sdhi_dma_write_wait(void)
-
-{
-  uint uVar1;
-  uint dmac_chstat_1;
-  
-  uVar1 = 0;
-  do {
-                    /* Channel Status 1 [sfr] */
-    dmac_chstat_1 = DMAC_CHSTAT_1;
-    if ((dmac_chstat_1 & 5) == 0) break;
-    uVar1 = uVar1 + 1;
-  } while (uVar1 < 0x900000);
-                    /* Channel Control 1 [sfr] */
-  uVar1 = DMAC_CHCTRL_1;
-  DMAC_CHCTRL_1 = uVar1 | 8;
-  return;
-}
-
-
-// ===== sdhi_init @ 201400d4 (60 bytes)
-
-/* SDINT_INI */
-
-uint sdhi_init(void)
-
-{
-  int iVar1;
-  
-  iVar1 = DAT_20808b74;
-  if ((DAT_20808b74 == 0) && (iVar1 = os_create_flg_named(&DAT_204205d8,"SDINT_INI"), iVar1 < 1)) {
-    return 0xffffffff;
-  }
-  DAT_20808b74 = iVar1;
-  return 0;
-}
-
-
-// ===== sdhi_flag_set @ 20140148 (16 bytes)
-
-/* itron_set_flg on the SDHI event flag 0x20808B74 [fact] */
-
-void sdhi_flag_set(undefined4 param_1)
-
-{
-  itron_set_flg(DAT_20808b74,param_1);
-  return;
-}
-
-
-// ===== sdhi_flag_wait @ 20140158 (84 bytes)
-
-/* (pattern, ms): itron_twai_flg on 0x20808B74 for ms/10 ticks, then clears the pattern [fact] */
-
-void * sdhi_flag_wait(uint param_1,int param_2)
-
-{
-  void *itron_twai_flg_ret;
-  uint uStack_14;
-  
-  itron_twai_flg_ret = itron_twai_flg(DAT_20808b74,param_1,0,&uStack_14,param_2 / 10);
-  itron_clr_flg(DAT_20808b74,~param_1);
-  return itron_twai_flg_ret;
-}
-
-
-// ===== sdhi_card_absent @ 201401ac (48 bytes)
-
-/* Samples sd_card_detect (P11_4 SD_CD) 32 times; true when any sample is high [fact] */
-
-bool sdhi_card_absent(void)
-
-{
-  uint uVar1;
-  uint sd_card_detect_ret;
-  uint i;
-  
-  i = 0;
-  uVar1 = 0;
-  do {
-    sd_card_detect_ret = sd_card_detect();
-    i = i + 1;
-    uVar1 = sd_card_detect_ret | uVar1 << 1;
-  } while (i < 0x20);
-  return uVar1 != 0;
-}
-
-
-// ===== sdhi_write_protected @ 201401dc (44 bytes)
-
-/* SD_INFO1 bit 7 (WP) clear [fact for the register]; -7 = write-protected in 0x2014040C [inference]
-    */
-
-bool sdhi_write_protected(void)
-
-{
-  ushort sdhi_sd_info1_0;
-  
-                    /* SD card interrupt flag 1_0 [sfr] */
-  sdhi_sd_info1_0 = SDHI_SD_INFO1_0;
-  return (sdhi_sd_info1_0 & 0x80) == 0;
-}
-
-
-// ===== sdhi_read_block @ 20140210 (136 bytes)
-
-/* Reads one 512-byte block through a 32-byte aligned bounce buffer 0x2091CEC0 (cache maintenance
-   around the transfer), waits for access end [fact] */
-
-undefined4 sdhi_read_block(undefined1 *param_1)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  undefined1 *puVar3;
-  bool bVar4;
-  
-                    /* Swap control_0 [sfr] */
-  SDHI_EXT_SWAP_0 = 0x100;
-  puVar3 = param_1;
-  if (((uint)param_1 & 0x1f) != 0) {
-    puVar3 = &DAT_2091cec0;
-  }
-  dcache_invalidate_range(puVar3,0x200);
-                    /* DMAC channel 0 for one 512-byte block [doc] */
-  sdhi_dma_read_start(puVar3,&SDHI_SD_CMD_0);
-                    /* itron_twai_flg on 0x20808B74 for ms/10 ticks [doc] */
-  iVar1 = sdhi_flag_wait(4,500);
-                    /* Polls DMAC channel 0 CHSTAT until idle [doc] */
-  sdhi_dma_read_wait();
-  dcache_invalidate_range(puVar3,0x200);
-  if (iVar1 == 0) {
-    if (((uint)param_1 & 0x1f) != 0) {
-      iVar1 = 0x1ff;
-      do {
-        bVar4 = iVar1 != 0;
-        iVar1 = iVar1 + -1;
-        *param_1 = *puVar3;
-        param_1 = param_1 + 1;
-        puVar3 = puVar3 + 1;
-      } while (bVar4);
-    }
-    uVar2 = 0;
-  }
-  else {
-    uVar2 = 0xfffffff1;
-  }
-  return uVar2;
 }
 

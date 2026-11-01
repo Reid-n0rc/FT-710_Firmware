@@ -2754,8 +2754,9 @@ void sdr_upd_r25_tx_drive(byte param_1)
     fStack_28 = 10.0;
     fStack_1c = (float)(byte)puVar1[0xb];
   }
-  sVar3 = SUB42(ROUND(((fVar5 - fStack_24) * (fStack_1c - fStack_18)) / (fStack_28 - fStack_24) +
-                      fStack_18),0) << 4;
+  sVar3 = (short)(longlong)
+                 (((fVar5 - fStack_24) * (fStack_1c - fStack_18)) / (fStack_28 - fStack_24) +
+                 fStack_18) << 4;
   if (DAT_0001b772 == sVar3) {
     return;
   }

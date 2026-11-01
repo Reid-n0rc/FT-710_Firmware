@@ -364,14 +364,14 @@ void eeprom_save_msg(int param_1,int param_2)
       eeprom_hdr_update(0);
       if (param_1 == 0) {
                     /* Page-split write with WIP poll and WREN [doc] */
-        eeprom_write(sVar1 * 0x98 + 0x4d58,&DAT_000093a7 + (ushort)(sVar1 * 0x98),0x98);
+        eeprom_write(sVar1 * 0x98 + 0x4d58,&keyer_msg_mem + (ushort)(sVar1 * 0x98),0x98);
       }
       else if (param_1 == 1) {
-        eeprom_write(sVar1 * 0x33 + 0x5050,&DAT_0000969f + (ushort)(sVar1 * 0x33),0x33);
+        eeprom_write(sVar1 * 0x33 + 0x5050,&keyer_text_mem + (ushort)(sVar1 * 0x33),0x33);
       }
       else {
         eeprom_write(sVar1 * 0x32 + 0x514f,
-                     (byte *)((int)&DAT_0000979e + (uint)(ushort)(sVar1 * 0x32)),0x32);
+                     (byte *)((int)&em_text_mem + (uint)(ushort)(sVar1 * 0x32)),0x32);
       }
       eeprom_hdr_update(1);
       return;
@@ -1296,12 +1296,12 @@ void defaults_msg(void)
   undefined1 *puVar3;
   int iVar4;
   
-  puVar1 = &DAT_000093a7;
+  puVar1 = &keyer_msg_mem;
   for (iVar4 = 0x4f1; iVar4 != 0; iVar4 = iVar4 + -1) {
     *puVar1 = 0;
     puVar1 = puVar1 + 1;
   }
-  puVar1 = &DAT_0000969f;
+  puVar1 = &keyer_text_mem;
   puVar3 = &DAT_fff80c53;
   for (iVar4 = 0x33; iVar4 != 0; iVar4 = iVar4 + -1) {
     *puVar1 = *puVar3;
@@ -1336,7 +1336,7 @@ void defaults_msg(void)
     puVar1 = puVar1 + 1;
     puVar3 = puVar3 + 1;
   }
-  puVar2 = &DAT_0000979e;
+  puVar2 = &em_text_mem;
   puVar1 = &DAT_fff80cec;
   for (iVar4 = 0x32; iVar4 != 0; iVar4 = iVar4 + -1) {
     *(undefined1 *)puVar2 = *puVar1;
@@ -1946,8 +1946,9 @@ void align_store_ui8_scaled(void)
 
 {
   (&PTR_g_cfg105_00025d50->a001_gn_vdd_mtr)[PTR_g_ui_00025d4c->align_item] =
-       SUB41(ROUND((float)((uint)(byte)(g_ui.adc_alcm >> 4) * (uint)g_cfg105.a014_mt_alc_mtr_pos) /
-                   137.0 + 0.5),0);
+       (byte)(longlong)
+             ((float)((uint)(byte)(g_ui.adc_alcm >> 4) * (uint)g_cfg105.a014_mt_alc_mtr_pos) / 137.0
+             + 0.5);
   return;
 }
 

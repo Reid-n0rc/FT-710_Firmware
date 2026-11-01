@@ -1,5 +1,422 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== exit @ 2015620a (18 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): called by __rt_entry with main()s result
+   (blx main; bl exit) [inference] */
+
+uint exit(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  uint uVar2;
+  int extraout_r3;
+  
+  __rt_lib_shutdown();
+  iVar1 = _sys_exit(param_1,param_2);
+  *(short *)(iVar1 + 0x1c) = (short)iVar1;
+  *(short *)(extraout_r3 + 0x20) = (short)iVar1;
+  coproc_moveto_Invalidate_unified_TLB_unlocked(0);
+  DataSynchronizationBarrier(0xf);
+  coproc_moveto_Invalidate_Entire_Instruction(0);
+  coproc_moveto_Instruction_cache(0,6);
+  InstructionSynchronizationBarrier(0xf);
+  uVar2 = coproc_movefrom_Auxiliary_Control();
+  coproc_moveto_Auxiliary_Control(uVar2 & 0xfffffffd);
+  uVar2 = coproc_movefrom_Control();
+  coproc_moveto_Control(uVar2 & 0xffffeffa);
+  return uVar2 & 0xffffeffa;
+}
+
+
+// ===== __default_signal_display @ 2015621c (50 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): writes a newline, the message and the
+   extra string with _ttywrch [inference] */
+
+undefined8 __default_signal_display(char *param_1,char *param_2)
+
+{
+  char cVar1;
+  
+  cVar1 = '\n';
+  for (; (_ttywrch(cVar1), param_1 != (char *)0x0 && (cVar1 = *param_1, cVar1 != '\0'));
+      param_1 = param_1 + 1) {
+  }
+  for (; (param_2 != (char *)0x0 && (*param_2 != '\0')); param_2 = param_2 + 1) {
+    _ttywrch();
+  }
+  software_interrupt(0xab);
+  return CONCAT44(&stack0xfffffff8,3);
+}
+
+
+// ===== _ttywrch @ 2015624e (14 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): semihosting SYS_WRITEC (r0=3, svc 0xAB)
+   of one character [inference] */
+
+undefined8 _ttywrch(void)
+
+{
+  undefined1 local_8 [4];
+  
+  software_interrupt(0xab);
+  return CONCAT44(local_8,3);
+}
+
+
+// ===== __aeabi_uidivmod @ 20156260 (48 bytes)
+
+/* Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the
+   shared loop at 0x201554DC [fact]; the 71-caller divide [fact]; T23d armcc C library RVCT/ARM
+   Compiler 5 (idiom 0.950): movs r2,#0 then the rsbs r3,r1,r0,lsr #n ladder jumping into the shared
+   unsigned body of 0x20155480; alias __aeabi_uidiv [inference] */
+
+longlong __aeabi_uidivmod(uint param_1,uint param_2)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  bool bVar4;
+  bool bVar5;
+  bool bVar6;
+  bool bVar7;
+  
+  iVar3 = 0;
+  uVar1 = param_2;
+  if (param_2 <= param_1 >> 2) {
+    if (param_2 <= param_1 >> 5) {
+      if (param_2 <= param_1 >> 8) {
+        if (param_1 >> 0xc < param_2) goto LAB_2015550c;
+        if (param_1 >> 0x10 < param_2) goto LAB_201554dc;
+        uVar1 = param_2 << 8;
+        iVar3 = -0x1000000;
+        if (uVar1 <= param_1 >> 0x10) {
+          iVar3 = -0x10000;
+          uVar1 = param_2 << 0x10;
+        }
+        if (param_1 >> 0xc < uVar1) goto LAB_2015550c;
+        bVar4 = false;
+        if (uVar1 == 0) {
+          return (ulonglong)param_1 << 0x20;
+        }
+        do {
+          if (bVar4) {
+            uVar1 = uVar1 >> 8;
+          }
+LAB_201554dc:
+          bVar4 = uVar1 <= param_1 >> 0xf;
+          if (bVar4) {
+            param_1 = param_1 + uVar1 * -0x8000;
+          }
+          bVar5 = uVar1 <= param_1 >> 0xe;
+          if (bVar5) {
+            param_1 = param_1 + uVar1 * -0x4000;
+          }
+          bVar6 = uVar1 <= param_1 >> 0xd;
+          if (bVar6) {
+            param_1 = param_1 + uVar1 * -0x2000;
+          }
+          bVar7 = uVar1 <= param_1 >> 0xc;
+          if (bVar7) {
+            param_1 = param_1 + uVar1 * -0x1000;
+          }
+          iVar3 = (((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6) * 2 +
+                  (uint)bVar7;
+LAB_2015550c:
+          bVar4 = uVar1 <= param_1 >> 0xb;
+          if (bVar4) {
+            param_1 = param_1 + uVar1 * -0x800;
+          }
+          bVar5 = uVar1 <= param_1 >> 10;
+          if (bVar5) {
+            param_1 = param_1 + uVar1 * -0x400;
+          }
+          bVar6 = uVar1 <= param_1 >> 9;
+          if (bVar6) {
+            param_1 = param_1 + uVar1 * -0x200;
+          }
+          uVar2 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
+          bVar5 = uVar1 <= param_1 >> 8;
+          if (bVar5) {
+            param_1 = param_1 + uVar1 * -0x100;
+          }
+          iVar3 = uVar2 * 2 + (uint)bVar5;
+          bVar4 = true;
+        } while (CARRY4(uVar2,uVar2) || CARRY4(uVar2 * 2,(uint)bVar5));
+      }
+      bVar4 = uVar1 <= param_1 >> 7;
+      if (bVar4) {
+        param_1 = param_1 + uVar1 * -0x80;
+      }
+      bVar5 = uVar1 <= param_1 >> 6;
+      if (bVar5) {
+        param_1 = param_1 + uVar1 * -0x40;
+      }
+      bVar6 = uVar1 <= param_1 >> 5;
+      if (bVar6) {
+        param_1 = param_1 + uVar1 * -0x20;
+      }
+      iVar3 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
+    }
+    bVar4 = uVar1 <= param_1 >> 4;
+    if (bVar4) {
+      param_1 = param_1 + uVar1 * -0x10;
+    }
+    bVar5 = uVar1 <= param_1 >> 3;
+    if (bVar5) {
+      param_1 = param_1 + uVar1 * -8;
+    }
+    bVar6 = uVar1 <= param_1 >> 2;
+    if (bVar6) {
+      param_1 = param_1 + uVar1 * -4;
+    }
+    iVar3 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
+  }
+  bVar4 = uVar1 <= param_1 >> 1;
+  if (bVar4) {
+    param_1 = param_1 + uVar1 * -2;
+  }
+  uVar2 = param_1 - uVar1;
+  if (uVar1 > param_1) {
+    uVar2 = param_1;
+  }
+  return CONCAT44(uVar2,(iVar3 * 2 + (uint)bVar4) * 2 + (uint)(uVar1 <= param_1));
+}
+
+
+// ===== kernel_heap_init @ 201562b4 (92 bytes)
+
+/* heap/kernel memory up to 0x20980000 */
+
+void kernel_heap_init(void)
+
+{
+  uint gic_init_ret;
+  
+  gic_init_ret = gic_init();
+  if (gic_init_ret == 0) {
+    knl_sys.task_cpsr = 0;
+    knl_sys.f_0x00_u32 = 0;
+                    /* Kernel start-up called by kernel_heap_init [doc] */
+    knl_sys_init(&DAT_20980000,&stack0xfffffff8);
+  }
+  return;
+}
+
+
+// ===== FUN_20156310 @ 20156310 (28 bytes)
+
+ulonglong FUN_20156310(void)
+
+{
+  byte *pbVar1;
+  bool bVar2;
+  undefined4 in_stack_00000000;
+  undefined1 auStack_60 [52];
+  undefined1 auStack_10 [4];
+  
+  pbVar1 = auStack_10;
+  bVar2 = knl_sys.ctx_isr == 0;
+  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
+  if (bVar2) {
+    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_60;
+    pbVar1 = knl_sys.isr_area;
+  }
+  return CONCAT44(pbVar1,in_stack_00000000) & 0xfffffff8ffffffff;
+}
+
+
+// ===== knl_irq_enter @ 2015632c (192 bytes)
+
+/* IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the
+   outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack
+   knl_sys.isr_area [fact] */
+
+ulonglong knl_irq_enter(undefined4 param_1)
+
+{
+  byte *pbVar1;
+  bool bVar2;
+  undefined1 auStack_58 [52];
+  undefined1 auStack_8 [4];
+  
+  pbVar1 = auStack_8;
+  bVar2 = knl_sys.ctx_isr == 0;
+  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
+  if (bVar2) {
+    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_58;
+    pbVar1 = knl_sys.isr_area;
+  }
+  return CONCAT44(pbVar1,param_1) & 0xfffffff8ffffffff;
+}
+
+
+// ===== knl_irq_exit @ 201563ec (368 bytes)
+
+/* Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with
+   dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns
+   the new task's context, else the old one [fact] */
+
+undefined8 knl_irq_exit(void)
+
+{
+  uint uVar1;
+  knl_tcb *p_knl_tcb;
+  byte *pbVar2;
+  undefined4 unaff_r4;
+  undefined4 unaff_r5;
+  undefined4 unaff_r6;
+  undefined4 unaff_r7;
+  undefined4 unaff_r8;
+  undefined4 unaff_r9;
+  undefined4 unaff_r10;
+  undefined4 unaff_r11;
+  uint uVar3;
+  int in_stack_00000010;
+  uint in_stack_00000014;
+  
+  software_interrupt(0);
+                    /* pops nesting stack, EOIR + PMR restore [doc, inference] */
+  gic_irq_exit();
+  knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
+  if (knl_sys.ctx_isr != 0) {
+    return *(undefined8 *)(in_stack_00000010 + 8);
+  }
+  pbVar2 = knl_rdq;
+  uVar1 = (uint)knl_sys.f_0x30_u8;
+  if ((uVar1 != 0) && (-1 < (int)(8 - uVar1))) {
+    knl_sys.f_0x36_u8 = knl_rdq[0];
+  }
+  if (((in_stack_00000014 & 0xc0) == 0) && (uVar1 != 0)) {
+    uVar1 = (uint)knl_sys.f_0x34_u8;
+    if (uVar1 == 0) {
+      if ((knl_sys.dsp_state != 0) || (knl_sys.dsp_pending == 0)) goto LAB_201564f8;
+      knl_sys.dsp_pending = 0;
+      do {
+        pbVar2 = pbVar2 + 1;
+        uVar1 = (uint)*pbVar2;
+      } while (uVar1 == 0);
+    }
+    if (uVar1 != knl_rdq[0]) {
+      uVar3 = knl_tsk_tab[knl_rdq[0]]->sp;
+      *(undefined4 *)(uVar3 + 0x2c) = unaff_r11;
+      *(undefined4 *)(uVar3 + 0x28) = unaff_r10;
+      *(undefined4 *)(uVar3 + 0x24) = unaff_r9;
+      *(undefined4 *)(uVar3 + 0x20) = unaff_r8;
+      *(undefined4 *)(uVar3 + 0x1c) = unaff_r7;
+      *(undefined4 *)(uVar3 + 0x18) = unaff_r6;
+      *(undefined4 *)(uVar3 + 0x14) = unaff_r5;
+      *(undefined4 *)(uVar3 + 0x10) = unaff_r4;
+      knl_rdq[0] = (byte)uVar1;
+      p_knl_tcb = knl_tsk_tab[uVar1];
+      goto LAB_2015650c;
+    }
+  }
+LAB_201564f8:
+  p_knl_tcb = knl_tsk_tab[knl_rdq[0]];
+LAB_2015650c:
+  knl_sys.f_0x30_u8 = p_knl_tcb->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
+  }
+  return *(undefined8 *)p_knl_tcb->sp;
+}
+
+
+// ===== knl_dispatch @ 2015655c (404 bytes)
+
+/* Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first
+   non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs [fact] */
+
+longlong knl_dispatch(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  byte *pbVar3;
+  uint in_stack_00000004;
+  undefined1 auStack_38 [16];
+  
+  knl_sys.dsp_pending = 1;
+  if (((((knl_sys.f_0x24_u32 & 0x80) == 0) && (knl_sys.ctx_isr == 0)) && (knl_sys.dsp_state == 0))
+     && (knl_sys.f_0x30_u8 != 0)) {
+    uVar2 = (uint)knl_sys.f_0x34_u8;
+    pbVar3 = knl_rdq;
+    knl_sys.f_0x34_u8 = 0;
+    uVar1 = (uint)knl_rdq[0];
+    if (uVar2 == 0) {
+      knl_sys.dsp_pending = 0;
+      do {
+        pbVar3 = pbVar3 + 1;
+        uVar2 = (uint)*pbVar3;
+      } while (uVar2 == 0);
+    }
+    knl_rdq[0] = (byte)uVar2;
+    if (uVar1 != uVar2) {
+      knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
+      knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+      if (knl_sys.f_0x30_u8 != 0) {
+        knl_sys.run_pri = knl_sys.f_0x30_u8;
+      }
+      return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
+    }
+    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
+    if (knl_sys.f_0x30_u8 != 0) {
+      knl_sys.run_pri = knl_sys.f_0x30_u8;
+    }
+  }
+  return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
+}
+
+
+// ===== knl_resched @ 201566f0 (88 bytes)
+
+/* Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
+   running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
+    */
+
+longlong knl_resched(void)
+
+{
+  uint uVar1;
+  uint uVar2;
+  byte *pbVar3;
+  uint in_stack_00000004;
+  undefined1 auStack_38 [16];
+  
+  knl_sys.dsp_pending = 1;
+  uVar2 = (uint)knl_sys.f_0x34_u8;
+  pbVar3 = knl_rdq;
+  knl_sys.f_0x34_u8 = 0;
+  uVar1 = (uint)knl_rdq[0];
+  if (uVar2 == 0) {
+    knl_sys.dsp_pending = 0;
+    do {
+      pbVar3 = pbVar3 + 1;
+      uVar2 = (uint)*pbVar3;
+    } while (uVar2 == 0);
+  }
+  knl_rdq[0] = (byte)uVar2;
+  if (uVar1 == uVar2) {
+    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
+    if (knl_sys.f_0x30_u8 != 0) {
+      knl_sys.run_pri = knl_sys.f_0x30_u8;
+    }
+    knl_sys.f_0x34_u8 = 0;
+    return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
+  }
+  knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
+  knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
+  if (knl_sys.f_0x30_u8 != 0) {
+    knl_sys.run_pri = knl_sys.f_0x30_u8;
+  }
+  return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
+}
+
+
 // ===== FUN_20156748 @ 20156748 (52 bytes)
 
 longlong FUN_20156748(void)
@@ -1085,299 +1502,6 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
       uVar2 = uVar2 + 1;
     } while ((int)uVar2 < 0x100);
   }
-  return;
-}
-
-
-// ===== scope_wf_bank_set @ 201576f4 (108 bytes)
-
-/* (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 =
-   0), 1 selects bank 1, 2 clears both banks [fact] */
-
-void scope_wf_bank_set(int param_1,int param_2)
-
-{
-  if (param_2 == 0) {
-    __aeabi_memclr4(param_1 + 0x1b130,0x33f40);
-    ring133_reset(param_1 + 0x82fb4);
-    DAT_20450280 = 0;
-  }
-  else {
-    if (param_2 != 1) {
-      __aeabi_memclr4(param_1 + 0x1b130,0x67e80);
-      ring133_reset(param_1 + 0x82fb4);
-      ring133_reset(param_1 + 0x82fb0);
-      return;
-    }
-    DAT_20450280 = 1;
-  }
-  return;
-}
-
-
-// ===== scope_obj_history_clear @ 20157778 (116 bytes)
-
-/* (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope
-   object [fact] */
-
-void scope_obj_history_clear(int param_1)
-
-{
-  __aeabi_memset(param_1 + 0x9c7f,0x352,0xff);
-  __aeabi_memset(param_1 + 0x9fd1,0x352,0xff);
-  __aeabi_memclr4(param_1 + 0x10abc,0x6798);
-                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
-  __aeabi_memclr(param_1 + 0xa323,24000);
-  __aeabi_memclr4(param_1 + 0x17258,0x3ed4);
-  __aeabi_memclr4_veneer(param_1 + 0x100e4,0x9d8);
-  return;
-}
-
-
-// ===== copy_inverted_words_b @ 201577f8 (36 bytes)
-
-/* (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words);
-   scope_history_push uses it [fact] */
-
-void copy_inverted_words_b(undefined4 param_1,uint *param_2,uint *param_3,uint param_4)
-
-{
-  for (param_4 = param_4 >> 2; param_4 != 0; param_4 = param_4 - 1) {
-    *param_2 = ~*param_3;
-    param_3 = param_3 + 1;
-    param_2 = param_2 + 1;
-  }
-  return;
-}
-
-
-// ===== scope_obj_reset_bank0 @ 201578c8 (40 bytes)
-
-/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact] */
-
-void scope_obj_reset_bank0(int param_1)
-
-{
-  *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  scope_obj_history_clear();
-                    /* 0 clears waterfall bank 0 [doc] */
-  scope_wf_bank_set(param_1,0);
-  return;
-}
-
-
-// ===== scope_obj_levels_get @ 20157c50 (224 bytes)
-
-/* (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while
-   SPEED STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method
-   behind scope_levels_get) [fact] */
-
-void scope_obj_levels_get(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  int iVar1;
-  
-  iVar1 = param_1 + 0x9c98;
-  if (DAT_20800498 == '\0') {
-    memcpy(param_1 + 0x9fd1,param_1 + 0x9c7f,0x352,param_4,param_4);
-  }
-  else {
-    if (param_2 != 8 && param_2 != 9) goto LAB_20157cc4;
-    iVar1 = param_1 + 0x9fea;
-  }
-  if (param_2 == 8) {
-    FUN_201633a0(param_1,param_3,iVar1,param_4);
-    FUN_20164674(0x20470330);
-    return;
-  }
-  if (param_2 == 9) {
-    FUN_201633a0(param_1 + 0x1e00,param_3,iVar1,param_4);
-    FUN_20164654(0x20473b7c);
-    return;
-  }
-LAB_20157cc4:
-  FUN_201633a0(param_1 + 0x2d00,param_3,iVar1,param_4);
-  FUN_2016466c(0x204702a4);
-  return;
-}
-
-
-// ===== scope_obj_wf_add_row @ 20157d3c (552 bytes)
-
-/* (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index
-   obj+0x17254), adds the level offset to each point (clamp_add_u8, 0..255) into the current
-   waterfall bank (gui.md: scope_wf_add_row) [fact for the calls] */
-
-void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
-
-{
-  int iVar1;
-  byte *pbVar2;
-  byte bVar3;
-  int iVar4;
-  int iVar5;
-  int iVar6;
-  int iVar7;
-  uint uVar8;
-  int iVar9;
-  undefined4 *puVar10;
-  int *piVar11;
-  
-  if ((((DAT_20800498 == '\0') && (*(char *)(param_1 + 0x9c7c) == '\0')) &&
-      (*(char *)(param_1 + 0x9c7d) == '\0')) && (*(char *)(param_1 + 0x9c7e) == '\0')) {
-    iVar4 = ring30_offset(param_1 + 0x17254,0xffffffff);
-    iVar9 = param_1 + iVar4 * 800 + 0x10abc;
-    iVar4 = param_1 + 0x1b12c;
-    iVar5 = ring20_offset(iVar4,0);
-    memcpy(iVar9,param_1 + iVar5 * 800 + 0x17258,800);
-    iVar5 = 1;
-    if (1 < param_2) {
-      do {
-        iVar6 = ring20_offset(iVar4,-iVar5);
-        iVar7 = 0;
-        do {
-          bVar3 = *(byte *)(param_1 + iVar6 * 800 + 0x17258 + iVar7);
-          if (*(byte *)(iVar9 + iVar7) < bVar3) {
-            *(byte *)(iVar9 + iVar7) = bVar3;
-          }
-          iVar7 = iVar7 + 1;
-        } while (iVar7 < 800);
-        iVar5 = iVar5 + 1;
-      } while (iVar5 < param_2);
-    }
-                    /* returns idx and advances it [doc] */
-    iVar5 = ring133_advance(param_1 + 0x82fb4);
-    puVar10 = &DAT_20450278;
-    if (DAT_20450280 == 1) {
-      iVar5 = ring133_advance(param_1 + 0x82fb0);
-    }
-    if (param_3 != 0) {
-      puVar10 = (undefined4 *)0x0;
-    }
-    iVar5 = param_1 + DAT_20450280 * 0x33f40 + iVar5 * 0x640 + 0x1b130;
-    if (param_3 != 0) {
-      do {
-        iVar7 = clamp_add_u8(*(undefined1 *)(iVar9 + (int)puVar10),param_3);
-        iVar6 = (int)puVar10 * 2;
-        puVar10 = (undefined4 *)((int)puVar10 + 1);
-        *(undefined2 *)(iVar5 + iVar6) = *(undefined2 *)(param_1 + iVar7 * 2 + 0x2e06);
-      } while ((int)puVar10 < 800);
-    }
-    else {
-      iVar6 = 0;
-      do {
-        pbVar2 = (byte *)(iVar9 + iVar6);
-        iVar7 = iVar6 * 2;
-        iVar6 = iVar6 + 1;
-        *(undefined2 *)(iVar5 + iVar7) = *(undefined2 *)(param_1 + (uint)*pbVar2 * 2 + 0x2e06);
-      } while (iVar6 < 800);
-    }
-    iVar6 = 0;
-    piVar11 = (int *)(param_1 + 0x1b0d8);
-    if (0 < *piVar11) {
-      do {
-        iVar7 = ring20_offset(iVar4,-iVar6);
-        uVar8 = (uint)*(ushort *)(piVar11 + iVar7 + 1);
-        if (uVar8 < *(ushort *)((int)piVar11 + iVar7 * 4 + 6) + uVar8) {
-          do {
-            iVar1 = uVar8 * 2;
-            pbVar2 = (byte *)(iVar9 + uVar8);
-            uVar8 = uVar8 + 1;
-            *(undefined2 *)(iVar5 + iVar1) = *(undefined2 *)(param_1 + (uint)*pbVar2 * 2 + 0x3008);
-          } while ((int)uVar8 <
-                   (int)((uint)*(ushort *)(piVar11 + iVar7 + 1) +
-                        (uint)*(ushort *)((int)piVar11 + iVar7 * 4 + 6)));
-        }
-        iVar6 = iVar6 + 1;
-      } while (iVar6 < *piVar11);
-    }
-  }
-  return;
-}
-
-
-// ===== FUN_20157f8c @ 20157f8c (124 bytes)
-
-void FUN_20157f8c(int param_1)
-
-{
-  int iVar1;
-  
-  if (((*(char *)(param_1 + 0x9c7c) == '\0') && (*(char *)(param_1 + 0x9c7d) == '\0')) &&
-     (*(char *)(param_1 + 0x9c7e) == '\0')) {
-                    /* returns idx and advances it [doc] */
-    ring20_advance();
-    iVar1 = ring20_offset(param_1 + 0x1b12c,0);
-                    /* n/4 words dst = ~src [doc] */
-    copy_inverted_words_b(param_1,param_1 + iVar1 * 800 + 0x17258,param_1 + 0x9c98,800);
-    return;
-  }
-  return;
-}
-
-
-// ===== FUN_201584f8 @ 201584f8 (88 bytes)
-
-void FUN_201584f8(int param_1,int param_2)
-
-{
-  if (param_2 == 0) {
-    *(undefined2 *)(param_1 + 0x2e00) = 0xff38;
-    *(undefined2 *)(param_1 + 0x3006) = 0xff38;
-    *(undefined2 *)(param_1 + 0x3208) = 0xff38;
-  }
-  else {
-    *(undefined2 *)(param_1 + 0x2e00) = 0xaf4c;
-    *(undefined2 *)(param_1 + 0x3006) = 0xaf4c;
-    *(undefined2 *)(param_1 + 0x3208) = 0xaf4c;
-  }
-  FUN_20157634(param_1 + 0x2d00,*(undefined1 *)(param_1 + 0x2e04),param_1 + 0x2e00);
-  return;
-}
-
-
-// ===== FUN_20158544 @ 20158544 (136 bytes)
-
-void FUN_20158544(int param_1,int param_2)
-
-{
-  undefined2 *puVar1;
-  int iVar2;
-  
-  if (param_2 == 0) {
-    puVar1 = &DAT_204282a0;
-  }
-  else {
-    puVar1 = &DAT_2042829c;
-  }
-  *(undefined2 *)(param_1 + 0x2e02) = *puVar1;
-  iVar2 = 0;
-  do {
-    FUN_20157634(param_1 + iVar2 * 0x100,*(undefined2 *)(DAT_20450278 + iVar2 * 2),param_1 + 0x2e02)
-    ;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 0x1e);
-  iVar2 = 0;
-  do {
-    FUN_20157634(param_1 + iVar2 * 0x100 + 0x1e00,*(undefined2 *)(DAT_2045027c + iVar2 * 2),
-                 param_1 + 0x2e02);
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 0xf);
-  return;
-}
-
-
-// ===== scope_obj_reset_bank1 @ 20158568 (40 bytes)
-
-/* (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact] */
-
-void scope_obj_reset_bank1(int param_1)
-
-{
-  *(undefined1 *)(param_1 + 0x9c7e) = 0;
-  scope_obj_history_clear();
-                    /* 0 clears waterfall bank 0 [doc] */
-  scope_wf_bank_set(param_1,1);
   return;
 }
 

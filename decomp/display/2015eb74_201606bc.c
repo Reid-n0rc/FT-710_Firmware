@@ -1,5 +1,291 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== mainlink_rx_bind @ 2015eb74 (12 bytes)
+
+/* (uart, tx, dispatcher) */
+
+void mainlink_rx_bind(int param_1,uint param_2,uint param_3,uint param_4)
+
+{
+  *(uint *)(param_1 + 0x10) = param_2;
+  *(uint *)(param_1 + 0x14) = param_3;
+  *(uint *)(param_1 + 0x18) = param_4;
+  return;
+}
+
+
+// ===== mainlink_rx_clear_stats @ 2015eb80 (16 bytes)
+
+void mainlink_rx_clear_stats(int param_1)
+
+{
+  *(undefined4 *)(param_1 + 0x1c) = 0;
+  *(undefined4 *)(param_1 + 0x20) = 0;
+  return;
+}
+
+
+// ===== mainlink_rx_parse @ 2015eb90 (168 bytes)
+
+/* first byte: 06/15/1B single byte; else table lookup 0x20450074 */
+
+int mainlink_rx_parse(uint param_1,char *param_2,int param_3,void *param_4)
+
+{
+  char cVar1;
+  uint i;
+  int mainlink_rx_frame_ret;
+  
+  cVar1 = *param_2;
+  if (cVar1 == '\x06') {
+    if (g_ml.hello_acked == 0) {
+                    /* 0x06 from MAIN: the hello was acknowledged [fact: mainlink.md] */
+      g_ml.hello_acked = 1;
+    }
+  }
+  else if (cVar1 != '\x15' && cVar1 != '\x1b') {
+    i = 0;
+    do {
+      if ((&DAT_20450074)[i * 0xc] == cVar1) {
+        mainlink_rx_frame_ret =
+             mainlink_rx_frame(param_1,(int)(&DAT_20450074 + i * 0xc),(uint)param_2,param_3);
+        if (mainlink_rx_frame_ret == 0) {
+          *(undefined1 **)param_4 = &DAT_20450074 + i * 0xc;
+        }
+        return mainlink_rx_frame_ret;
+      }
+      i = i + 1;
+    } while (i < 0x2b);
+    return param_3;
+  }
+  mainlink_rx_deliver(param_1,param_2,1);
+  return 1;
+}
+
+
+// ===== task_mainlink_rx @ 2015ec40 (512 bytes)
+
+/* task "uart" pri 3: reads SCIF5, re-assembles frames, NAK after 3 empty reads */
+
+void task_mainlink_rx(uint param_1)
+
+{
+  void *itron_twai_flg_ret;
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  int tmout;
+  uint uVar5;
+  bool bVar6;
+  int local_534;
+  char acStack_530 [1024];
+  undefined1 auStack_130 [256];
+  uint local_30 [2];
+  
+  __aeabi_memclr4(auStack_130,0x100);
+  __aeabi_memclr4(acStack_530,0x400);
+  uVar3 = 0;
+  tmout = -1;
+  local_534 = 0;
+  mainlink_rx_clear_stats(param_1);
+  uVar4 = 0;
+LAB_2015ec90:
+                    /* Wait for RX data (2 ms while a frame is partial) [fact: mainlink.md] */
+  while (itron_twai_flg_ret = itron_twai_flg(*(uint *)(param_1 + 0x34),0xc001,5,local_30,tmout),
+        itron_twai_flg_ret != (void *)0xffffffce) {
+    if (itron_twai_flg_ret != (void *)0x0) {
+      return;
+    }
+    if ((local_30[0] & 0xc000) == 0) goto LAB_2015ed10;
+    tmout = -1;
+    uVar3 = 0;
+    local_534 = 0;
+  }
+  goto joined_r0x2015ece4;
+LAB_2015ed10:
+  if ((local_30[0] & 1) != 0) {
+    *(int *)(param_1 + 0x1c) = *(int *)(param_1 + 0x1c) + 1;
+    iVar1 = (**(code **)(**(int **)(param_1 + 0x10) + 0x10))
+                      (*(int **)(param_1 + 0x10),auStack_130,0x100);
+    if (iVar1 == 0) {
+joined_r0x2015ece4:
+      bVar6 = 2 < (int)uVar4;
+      uVar4 = uVar4 + 1;
+      if (bVar6) {
+                    /* 3 timeouts with a partial frame: NAK and resync [fact: mainlink.md] */
+        mainlink_send_nak(param_1);
+        local_534 = 0;
+        uVar3 = 0;
+        tmout = -1;
+        uVar4 = 0;
+        *(int *)(param_1 + 0x20) = *(int *)(param_1 + 0x20) + 1;
+      }
+      itron_dly_tsk(1);
+    }
+    else {
+      uVar5 = uVar3 + iVar1;
+      if (0x3ff < uVar5) {
+        *(uint *)(param_1 + 0x38) = uVar5;
+      }
+      memcpy(acStack_530 + uVar3,auStack_130);
+      if (local_534 == 0) {
+        uVar2 = mainlink_rx_parse(param_1,acStack_530,uVar5,&local_534);
+        uVar3 = uVar5;
+      }
+      else {
+                    /* Table command: wait for n + 2 bytes, check, ACK [fact: 0x2015EEC8] */
+        uVar2 = mainlink_rx_frame(param_1,local_534,(uint)acStack_530,uVar5);
+        if (600 < uVar2) {
+          mainlink_send_nak(param_1);
+          uVar5 = 0;
+          local_534 = 0;
+          uVar4 = 0;
+        }
+        for (; uVar3 = uVar5, 0 < (int)uVar2;
+            uVar2 = mainlink_rx_parse(param_1,acStack_530 + uVar2,uVar5,&local_534)) {
+          if ((int)uVar5 <= (int)uVar2) goto LAB_2015edf4;
+          uVar5 = uVar5 - uVar2;
+        }
+      }
+      if (uVar2 == 0) {
+        tmout = 2;
+      }
+      else {
+LAB_2015edf4:
+        bVar6 = uVar2 == uVar3;
+        uVar4 = uVar2 - uVar3;
+        if (!bVar6) {
+          uVar4 = uVar2;
+        }
+        if ((!bVar6 && uVar2 != 0) && (int)uVar4 < 0 == (bVar6 && SBORROW4(uVar2,uVar3))) {
+          mainlink_send_nak(param_1);
+        }
+        uVar3 = 0;
+        tmout = -1;
+        local_534 = 0;
+        uVar4 = uVar3;
+      }
+    }
+  }
+  goto LAB_2015ec90;
+}
+
+
+// ===== mainlink_send_ack @ 2015ee40 (68 bytes)
+
+/* 1-byte 0x06 frame */
+
+void mainlink_send_ack(int param_1)
+
+{
+  uint mainlink_tx_alloc_ret;
+  
+  *(int *)(param_1 + 0x2c) = *(int *)(param_1 + 0x2c) + 1;
+  mainlink_tx_alloc_ret = mainlink_tx_alloc(*(int *)(param_1 + 0x14));
+  *(undefined2 *)(mainlink_tx_alloc_ret + 4) = 0xaa;
+  *(undefined2 *)(mainlink_tx_alloc_ret + 6) = 1;
+  *(undefined1 *)(mainlink_tx_alloc_ret + 8) = 6;
+  mainlink_tx_post(*(int *)(param_1 + 0x14),mainlink_tx_alloc_ret);
+  return;
+}
+
+
+// ===== mainlink_send_nak @ 2015ee84 (68 bytes)
+
+/* 1-byte 0x15 frame */
+
+void mainlink_send_nak(int param_1)
+
+{
+  uint mainlink_tx_alloc_ret;
+  
+  *(int *)(param_1 + 0x30) = *(int *)(param_1 + 0x30) + 1;
+  mainlink_tx_alloc_ret = mainlink_tx_alloc(*(int *)(param_1 + 0x14));
+  *(undefined2 *)(mainlink_tx_alloc_ret + 4) = 0xaa;
+  *(undefined2 *)(mainlink_tx_alloc_ret + 6) = 1;
+  *(undefined1 *)(mainlink_tx_alloc_ret + 8) = 0x15;
+  mainlink_tx_post(*(int *)(param_1 + 0x14),mainlink_tx_alloc_ret);
+  return;
+}
+
+
+// ===== mainlink_rx_frame @ 2015eec8 (116 bytes)
+
+/* waits for len+2 bytes, validates, ACKs, delivers */
+
+int mainlink_rx_frame(uint param_1,int param_2,uint param_3,int param_4)
+
+{
+  bool mainlink_rx_validate_ret;
+  uint uVar1;
+  
+  uVar1 = *(ushort *)(param_2 + 2) + 2;
+  if (param_4 < (int)uVar1) {
+    uVar1 = 0;
+  }
+  else {
+    mainlink_rx_validate_ret = mainlink_rx_validate(param_1,(byte *)param_3);
+    if (mainlink_rx_validate_ret) {
+      *(int *)(param_2 + 8) = *(int *)(param_2 + 8) + 1;
+      if (*(char *)(param_2 + 4) == '\0') {
+        mainlink_send_ack(param_1);
+      }
+      mainlink_rx_deliver(param_1,(char *)param_3,uVar1);
+    }
+    else {
+      uVar1 = 0xffffffff;
+    }
+  }
+  return uVar1;
+}
+
+
+// ===== mainlink_rx_ctor @ 2015efe4 (12 bytes)
+
+/* vtbl 0x20427FF8 */
+
+void mainlink_rx_ctor(undefined4 *param_1)
+
+{
+  *param_1 = &DAT_20427ff8;
+  return;
+}
+
+
+// ===== mouse_cursor_task_create @ 2015eff4 (72 bytes)
+
+void mouse_cursor_task_create(int param_1)
+
+{
+  uint uVar1;
+  
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_5700);
+  if (0 < (int)uVar1) {
+    mouse_cursor_obj_init(param_1 + 4);
+    uVar1 = itron_sta_tsk(uVar1,param_1 + 4);
+    if (uVar1 == 0) {
+      itron_tslp_tsk(0xffffffff);
+      return;
+    }
+  }
+  return;
+}
+
+
+// ===== FUN_2015f040 @ 2015f040 (24 bytes)
+
+int FUN_2015f040(undefined4 *param_1)
+
+{
+  int iVar1;
+  
+  *param_1 = &DAT_20428004;
+  iVar1 = FUN_2015ff70(param_1 + 1);
+  return iVar1 + -4;
+}
+
+
 // ===== FUN_2015f05c @ 2015f05c (60 bytes)
 
 void FUN_2015f05c(int param_1)
@@ -1328,423 +1614,5 @@ undefined4 fwobj_ifdsp_run(int param_1,uint param_2,int param_3)
     uVar1 = 0;
   }
   return uVar1;
-}
-
-
-// ===== fwobj_ifdsp_ctor @ 201607c8 (28 bytes)
-
-/* IFDSP object, vtable 0x20428094, +0xAB flag */
-
-uint fwobj_ifdsp_ctor(uint param_1,byte param_2)
-
-{
-  undefined4 *fwobj_base_ctor_ret;
-  
-                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
-  fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
-  *fwobj_base_ctor_ret = &DAT_20428094;
-  *(byte *)((int)fwobj_base_ctor_ret + 0xab) = param_2;
-  return (uint)fwobj_base_ctor_ret;
-}
-
-
-// ===== fwobj_display_run @ 201607e8 (1032 bytes)
-
-/* vtbl[0]: CRC check, then decoded write to the other bank (or loader) + flag */
-
-undefined4 fwobj_display_run(int param_1,uint param_2,int param_3)
-
-{
-  bool bVar1;
-  uint uVar2;
-  int iVar3;
-  int iVar4;
-  undefined4 uVar5;
-  uint uVar6;
-  uint spiflash_write_ret;
-  uint *puVar7;
-  uint uVar8;
-  uint *unaff_r10;
-  undefined8 uVar9;
-  undefined8 uVar10;
-  undefined1 auStack_d0 [68];
-  undefined4 local_8c;
-  int local_88;
-  undefined4 local_84;
-  undefined4 local_80;
-  uint local_7c;
-  uint local_78;
-  int local_74;
-  undefined1 auStack_70 [4];
-  uint local_6c;
-  undefined1 auStack_68 [24];
-  uint local_50;
-  uint local_4c;
-  undefined1 auStack_48 [8];
-  uint local_40;
-  undefined1 auStack_3c [12];
-  undefined1 auStack_30 [12];
-  
-  bVar1 = false;
-  __aeabi_memclr4(auStack_d0,0x44);
-  if (param_2 == 0) {
-    param_2 = param_1 + 0x58;
-  }
-  local_78 = fs_fopen(param_2,0x20428200);
-  if (local_78 == 0) {
-    return 1;
-  }
-  itron_get_pri(0,&local_74);
-  local_74 = local_74 + -1;
-  itron_chg_pri(0);
-  uVar2 = sfl_read_header(local_78,(int)auStack_d0);
-  itron_chg_pri(0);
-  if (DAT_20800181 == ':') {
-    unaff_r10 = (uint *)&DAT_20428203;
-    iVar3 = strstr(auStack_d0,&DAT_20428203);
-    if (iVar3 != 0) {
-                    /* Word-at-a-time string length [doc] */
-      iVar4 = strlen(&DAT_20428203);
-      iVar3 = iVar3 + iVar4;
-      *(undefined1 *)(iVar3 + 8) = 0;
-      iVar4 = memcmp("#UP0    ",iVar3,8);
-      if (iVar4 == 0) {
-                    /* memcpy of 10 bytes, returns dst [doc] */
-        uVar5 = copy10(auStack_3c,iVar3);
-        memcpy(param_1 + 4,uVar5,10);
-        uVar5 = copy10(auStack_30,&DAT_20428210);
-        memcpy(param_1 + 0x2c,uVar5,10);
-        bVar1 = true;
-      }
-    }
-  }
-  if (param_3 == 0) {
-    fs_fclose(local_78);
-    if (uVar2 == 0) {
-      return 0;
-    }
-    return 2;
-  }
-  uVar2 = mainlink_fw_mode_cmd('\x03');
-  if (uVar2 == 0) {
-    return 3;
-  }
-  gpio_p7_9_11(1);
-  gpio_rx_reset(1);
-  gpio_rx_update_off(1);
-  local_50 = work_buf_get(0x100);
-  progress_range_init(auStack_70,5,0x1e);
-  uVar2 = 0;
-  iVar3 = 0;
-  fs_fsize(local_78,&local_40);
-  if (local_40 < 0x242) {
-    return 3;
-  }
-  local_8c = 0;
-  local_88 = 0;
-  local_84 = 0;
-  local_80 = 0;
-  local_7c = 0;
-  local_74 = local_40 - 0x240;
-  if (g_bootinfo.bank == 1) {
-    puVar7 = &g_bootinfo.bank2_flag;
-    unaff_r10 = &g_bootinfo.bank1_flag;
-  }
-  else {
-    puVar7 = &g_bootinfo.bank1_flag;
-  }
-  uVar8 = puVar7[1];
-  if (g_bootinfo.bank != 1) {
-    unaff_r10 = &g_bootinfo.bank2_flag;
-  }
-  sfl_stream_init(auStack_68,local_78,0,1);
-                    /* maps a fraction into the range [doc, inference] */
-  uVar6 = progress_scale(auStack_70);
-                    /* progress percent 0x20800364 [doc, inference] */
-  progress_set(uVar6);
-  if (g_bootinfo.mode == 2) {
-    bVar1 = true;
-LAB_201609ec:
-    uVar8 = 0;
-    uVar6 = spiflash_erase(0,0x3c0000,0x14);
-    if (uVar6 != 0) goto LAB_20160ac8;
-    uVar6 = spiflash_erase((int)auStack_70,0,local_74);
-  }
-  else {
-    if (bVar1) goto LAB_201609ec;
-    uVar6 = spiflash_erase(0,*puVar7,0x14);
-    if (uVar6 != 0) goto LAB_20160ac8;
-    uVar6 = spiflash_erase((int)auStack_70,puVar7[1],local_74);
-  }
-  if (uVar6 == 0) {
-    progress_range_init(auStack_48,local_6c,99);
-    local_4c = 0xffffffff;
-                    /* reflected poly 0xEDB88320 [doc, inference] */
-    crc32_make_table();
-    while( true ) {
-      uVar6 = sfl_stream_read(local_50,1,0x100,(int)auStack_68);
-      if (uVar6 == 0) {
-        progress_set(100);
-        fs_fclose(local_78);
-        if (local_74 != iVar3) {
-          return 3;
-        }
-        local_8c = 0x11111111;
-        local_7c = ~local_4c;
-        local_88 = local_74;
-        if (bVar1) {
-          uVar2 = spiflash_write(0x3c0000,(uint)&local_8c,0x14);
-        }
-        else {
-          uVar2 = spiflash_write(*puVar7,(uint)&local_8c,0x14);
-          if (uVar2 != 0) {
-            return 3;
-          }
-          uVar2 = spiflash_erase(0,*unaff_r10,0x14);
-        }
-        if (uVar2 == 0) {
-          uVar2 = mainlink_fw_mode_cmd(-0x7d);
-          if (uVar2 != 0) {
-            return 0;
-          }
-          return 3;
-        }
-        return 3;
-      }
-      spiflash_write_ret = spiflash_write(uVar8,local_50,uVar6);
-      if (spiflash_write_ret != 0) break;
-      local_4c = crc32_update(local_4c,uVar6,local_50);
-      iVar3 = iVar3 + uVar6;
-      uVar8 = uVar8 + 0x100;
-      uVar9 = __aeabi_ui2d(local_74);
-      uVar10 = __aeabi_ui2d(iVar3);
-      uVar9 = __aeabi_ddiv((int)uVar10,(int)((ulonglong)uVar10 >> 0x20),(int)uVar9,
-                           (int)((ulonglong)uVar9 >> 0x20));
-      uVar5 = (undefined4)((ulonglong)uVar9 >> 0x20);
-      uVar6 = progress_scale(auStack_48,uVar5,(int)uVar9,uVar5);
-      progress_set(uVar6);
-      if ((uVar2 & 0xf) == 0) {
-        itron_rot_rdq(0);
-      }
-      uVar2 = uVar2 + 1;
-    }
-  }
-LAB_20160ac8:
-  fs_fclose(local_78);
-  return 3;
-}
-
-
-// ===== fwobj_display_ctor @ 20160c10 (20 bytes)
-
-/* DISPLAY object, vtable 0x204280A0 */
-
-uint fwobj_display_ctor(uint param_1)
-
-{
-  undefined4 *fwobj_base_ctor_ret;
-  
-                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
-  fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
-  *fwobj_base_ctor_ret = &DAT_204280a0;
-  return (uint)fwobj_base_ctor_ret;
-}
-
-
-// ===== FUN_20160c28 @ 20160c28 (52 bytes)
-
-void FUN_20160c28(undefined1 *param_1,undefined1 *param_2)
-
-{
-  *param_1 = *param_2;
-  param_1[1] = param_2[1];
-  param_1[2] = 0x2d;
-  param_1[3] = param_2[2];
-  param_1[4] = param_2[3];
-  param_1[5] = 0;
-  return;
-}
-
-
-// ===== FUN_20160c5c @ 20160c5c (20 bytes)
-
-undefined4 FUN_20160c5c(undefined4 param_1)
-
-{
-  FUN_20160c28();
-  return param_1;
-}
-
-
-// ===== afscope_map0_init @ 20160c70 (124 bytes)
-
-/* Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on
-   0x27 (39, the AF-FFT spectrum height of gui.md) [fact] */
-
-void afscope_map0_init(int param_1)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  iVar1 = 0;
-  do {
-    *(undefined1 *)(param_1 + iVar1) = 0;
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0x100);
-  iVar1 = 0x81;
-  do {
-    if (iVar1 + -0x81 < 1) {
-      *(undefined1 *)(param_1 + iVar1) = 0;
-    }
-    else {
-      iVar2 = (iVar1 + -0x81) * 0xc97 + 0x26ac;
-      *(char *)(param_1 + iVar1) =
-           ((char)(iVar2 / 10000) + (char)(iVar2 >> 0x1f)) -
-           (char)((longlong)iVar2 * 0x68db8bad >> 0x3f);
-    }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xfb);
-  iVar1 = 0xfb;
-  do {
-    *(undefined1 *)(param_1 + iVar1) = 0x27;
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0x100);
-  return;
-}
-
-
-// ===== afscope_map2_init @ 20160cf0 (92 bytes)
-
-/* Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact] */
-
-void afscope_map2_init(int param_1)
-
-{
-  int i;
-  int iVar1;
-  
-  i = 0;
-  do {
-    *(undefined1 *)(param_1 + i + 0x200) = 0;
-    while( true ) {
-      i = i + 1;
-      if (0xff < i) {
-        return;
-      }
-      if (i < 1) break;
-      iVar1 = i * 0xc1a + 0x2134;
-      *(char *)(param_1 + i + 0x200) =
-           ((char)(iVar1 / 10000) + (char)(iVar1 >> 0x1f)) -
-           (char)((longlong)iVar1 * 0x68db8bad >> 0x3f);
-    }
-  } while( true );
-}
-
-
-// ===== afscope_map1_init @ 20160d50 (144 bytes)
-
-/* Map 1 (obj +0x100): the same curve as map 0 [fact] */
-
-void afscope_map1_init(int param_1)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  iVar1 = 0;
-  do {
-    iVar2 = param_1 + iVar1;
-    iVar1 = iVar1 + 1;
-    *(undefined1 *)(iVar2 + 0x100) = 0;
-  } while (iVar1 < 0x100);
-  iVar1 = 0x81;
-  do {
-    if (iVar1 + -0x81 < 1) {
-      *(undefined1 *)(param_1 + iVar1 + 0x100) = 0;
-    }
-    else {
-      iVar2 = (iVar1 + -0x81) * 0xc97 + 0x26ac;
-      *(char *)(param_1 + iVar1 + 0x100) =
-           ((char)(iVar2 / 10000) + (char)(iVar2 >> 0x1f)) -
-           (char)((longlong)iVar2 * 0x68db8bad >> 0x3f);
-    }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xfb);
-  iVar1 = 0xfb;
-  do {
-    iVar2 = param_1 + iVar1;
-    iVar1 = iVar1 + 1;
-    *(undefined1 *)(iVar2 + 0x100) = 0x27;
-  } while (iVar1 < 0x100);
-  return;
-}
-
-
-// ===== afscope_map3_init @ 20160de4 (92 bytes)
-
-/* Map 3 (obj +0x300): the same curve as map 2 [fact] */
-
-void afscope_map3_init(int param_1)
-
-{
-  int i;
-  int iVar1;
-  
-  i = 0;
-  do {
-    *(undefined1 *)(param_1 + i + 0x300) = 0;
-    while( true ) {
-      i = i + 1;
-      if (0xff < i) {
-        return;
-      }
-      if (i < 1) break;
-      iVar1 = i * 0xc1a + 0x2134;
-      *(char *)(param_1 + i + 0x300) =
-           ((char)(iVar1 / 10000) + (char)(iVar1 >> 0x1f)) -
-           (char)((longlong)iVar1 * 0x68db8bad >> 0x3f);
-    }
-  } while( true );
-}
-
-
-// ===== afscope_map4_init @ 20160e44 (144 bytes)
-
-/* Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the
-   bar height affft_bins_get returns) [fact] */
-
-void afscope_map4_init(int param_1)
-
-{
-  int iVar1;
-  int iVar2;
-  
-  iVar1 = 0;
-  do {
-    iVar2 = param_1 + iVar1;
-    iVar1 = iVar1 + 1;
-    *(undefined1 *)(iVar2 + 0x400) = 0;
-  } while (iVar1 < 0x100);
-  iVar1 = 0x81;
-  do {
-    if (iVar1 + -0x81 < 1) {
-      *(undefined1 *)(param_1 + iVar1 + 0x400) = 0;
-    }
-    else {
-      iVar2 = (iVar1 + -0x81) * 0xe34 + 0x26ac;
-      *(char *)(param_1 + iVar1 + 0x400) =
-           ((char)(iVar2 / 10000) + (char)(iVar2 >> 0x1f)) -
-           (char)((longlong)iVar2 * 0x68db8bad >> 0x3f);
-    }
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 0xfb);
-  iVar1 = 0xfb;
-  do {
-    iVar2 = param_1 + iVar1;
-    iVar1 = iVar1 + 1;
-    *(undefined1 *)(iVar2 + 0x400) = 0x2c;
-  } while (iVar1 < 0x100);
-  return;
 }
 

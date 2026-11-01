@@ -154,6 +154,7 @@ fffb54a0	aess_level_ptr	Pointer to the active mode's AESS level byte	fact	periph
 fffb552c	aess_mode_ptr	Pointer to the active mode's AESS on/off byte	fact	radio-control.md
 fffb5d68	audio_level_update	rf_ctrl_task's sixth sub-task	fact	tx-protection.md
 fffb98c8	keyer_init	Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC	fact	README.md
+fffb98e9	keyer_task	CW keyer and message memories	fact	README.md
 fffbb024	keyer_elem_put	Appends to the keyer element ring 0x120BC	fact	tx-protection.md
 fffbb10b	keyer_ring_limit	Helper of keyer_elekey	fact	tx-protection.md
 fffbb16b	keyer_ring_next	Ring index + 1, wraps to 0 above 0x4FF	fact	tx-protection.md

@@ -43,11 +43,14 @@ project, and opens that read-only), GHIDRA_JAVA_HOME, RX_BINUTILS (prefix, defau
 The image is read from build/FT-710_MAIN_V0112.bin; it is never written anywhere.
 """
 import argparse
+import atexit
 import glob
 import json
 import os
 import random
 import re
+import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -58,6 +61,8 @@ FUNCS_TSV = os.path.join(ROOT, 'decomp/main/functions.tsv')
 DATA_TSV = os.path.join(SRC, 'data_symbols.tsv')
 ALIAS_TSV = os.path.join(SRC, 'aliases.tsv')
 STATUS_TSV = os.path.join(SRC, 'status.tsv')
+# the objects checked (EQUIV_MAIN_OBJDIR: another build, e.g. make OUT=out2, checked while a status run reads out/obj)
+OBJDIR = os.environ.get('EQUIV_MAIN_OBJDIR') or os.path.join(SRC, 'out', 'obj')
 HOME = os.path.expanduser('~')
 
 ROM = 0xFFF80000
@@ -87,6 +92,88 @@ STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
 STUB_DATA = {'eeprom_write': (1, 2)}
 STUB_BUF = {'eeprom_read': 1, 'eeprom_write': 1}     # the buffer argument, compared as 'stack' when on the stack
 STACK_TOP = 0x1004
+# RAM words that keep a pointer the function passed to a driver; when both runs leave a stack address there, it is
+# compared as 'stack' (T24 MAIN round 4: displink_task -> displink_send_ack hands R_SCI1_Serial_Send a one-byte
+# buffer on the stack, and the address follows the caller's frame, 12 bytes under CC-RX, 28 + 4 under GCC; the
+# byte itself is compared through the SCI accesses). gp_sci1_tx_address (src/main/data_symbols.tsv).
+STACK_PTR_SLOTS = (0x207FC,)
+# Extra stubs per checked function: callee -> (number of arguments recorded, the values it returns, drawn per call). For tasks whose gates are
+# functions of the whole radio state (T24 MAIN round 4: keyer_task runs only when tx_cw_keying_class() is not 0 and
+# soft timer 19 has expired); the calls are compared like the other stubs. A stubbed callee has no side effects, so
+# only callees whose effects the function does not read back are stubbed.
+# Trials per function as a multiple of --trials, where the cases to reach outnumber the default (round 4: cat_dispatch
+# has about 500 (index, length) pairs)
+FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2}
+FUNC_STUBS = {
+    'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
+    # scan_task: the predicates are functions of the receiver state; stubbed with 0 / 1
+    'scan_task': {n: (0, [0, 1]) for n in ('FUN_fffe5ee3', 'FUN_fffe5ab2', 'FUN_fffe5acf', 'FUN_fffe5fdd',
+                                           'FUN_fffe600f', 'FUN_fffe5ae7', 'FUN_fffe5f18', 'FUN_fffe5f4d')},
+    # io_task: the power-off path ends in sw_reset, which does not return
+    'io_task': {'swtimer_expired': (1, [0, 1, 1]), 'sw_reset': (0, [0]), 'supply_undervolt_check': (0, [0, 0, 1])},
+    # sdr_task: the first updater that writes ends the pass, and sdr_bridge_mode relays until the DISPLAY ends it;
+    # the bridge and the first group of updaters are stubbed so that the pass reaches the rest (their calls and the
+    # TX argument are compared)
+    'sdr_task': {'sdr_bridge_mode': (0, [0]), 'sdr_poll_reply': (1, [0, 1, 1]), 'sdr_upd_r0a_demod': (1, [0]),
+                 'sdr_upd_r0b_band': (1, [0]), 'sdr_upd_r0c_rtty_shift': (0, [0]), 'sdr_upd_r0d': (0, [0]),
+                 'sdr_upd_r0f_band': (1, [0]), 'sdr_upd_r20_scope_freq': (1, [0]), 'sdr_upd_r22_scope_span': (1, [0]),
+                 'sdr_upd_r23': (0, [0]), 'sdr_upd_r25_tx_drive': (1, [0]), 'sdr_upd_r26': (1, [0]),
+                 'sdr_upd_r27_scope_level': (1, [0])},
+    'displink_task': {'swtimer_expired': (1, [0, 1, 1]), 'FUN_fffc911e': (0, [0, 1])},
+    'tuner_rearm': {'FUN_fffed6f5': (0, [0, 1, 1]), 'vfo_tuner_bit_get': (0, [0, 1])},
+    # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
+    'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
+    'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
+                   'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
+}
+
+
+_SCRATCH = None
+
+
+def _pid_alive(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    return True
+
+
+def scratch_root():
+    """The one temporary directory of this run (EQUIV_MAIN_SCRATCH, default the system's temporary directory):
+    the link scripts, the per-worker Ghidra project copies and the Ghidra logs all go below it, and the process that
+    made it removes it on exit, also on SIGTERM/SIGHUP/SIGINT (T24 MAIN round 4: killed workers used to leave
+    /tmp/equiv_main_* behind). A root left by a run that was killed with SIGKILL is removed by the next run (its
+    owner's pid, in the file `pid`, no longer exists)."""
+    global _SCRATCH
+    if _SCRATCH is None:
+        base = os.environ.get('EQUIV_MAIN_SCRATCH') or tempfile.gettempdir()
+        os.makedirs(base, exist_ok=True)
+        for d in glob.glob(os.path.join(base, 'equiv_main_run_*')):
+            try:
+                with open(os.path.join(d, 'pid')) as f:
+                    pid = int(f.read().strip() or 0)
+            except (OSError, ValueError):
+                pid = 0
+            if not pid or not _pid_alive(pid):
+                shutil.rmtree(d, ignore_errors=True)
+        _SCRATCH = tempfile.mkdtemp(prefix='equiv_main_run_', dir=base)
+        owner = os.getpid()
+        with open(os.path.join(_SCRATCH, 'pid'), 'w') as f:
+            f.write(str(owner))
+
+        def cleanup(root=_SCRATCH):
+            if os.getpid() == owner:          # forked pool workers inherit this; only the owner removes the root
+                shutil.rmtree(root, ignore_errors=True)
+        atexit.register(cleanup)
+
+        def on_signal(signum, frame):
+            sys.exit(128 + signum)            # SystemExit: run_jobs terminates the pool, atexit removes the root
+        for sg in (signal.SIGTERM, signal.SIGHUP, signal.SIGINT):
+            signal.signal(sg, on_signal)
+    return _SCRATCH
 
 
 def read_tsv(path):
@@ -181,7 +268,7 @@ def main_forms(img):
     global _MAIN_FORMS
     if _MAIN_FORMS is None:
         od = tool('RX_BINUTILS', os.path.join(HOME, 'opt/rx-binutils-2.42/bin/rx-elf-'), 'objdump')
-        with tempfile.NamedTemporaryFile(suffix='.bin') as f:
+        with tempfile.NamedTemporaryFile(suffix='.bin', dir=scratch_root()) as f:
             f.write(img.rom)
             f.flush()
             dis = subprocess.run([od, '-D', '-b', 'binary', '-m', 'rx', f'--adjust-vma=0x{ROM:08X}',
@@ -206,7 +293,7 @@ def libgcc():
 
 
 def objects():
-    return sorted(glob.glob(os.path.join(SRC, 'out', 'obj', '**', '*.o'), recursive=True))
+    return sorted(glob.glob(os.path.join(OBJDIR, '**', '*.o'), recursive=True))
 
 
 def recreated():
@@ -321,8 +408,7 @@ class Engine:
     def __init__(self, img):
         # each engine opens its own copy: Ghidra locks a project while it is open, also read-only
         src = os.environ.get('FT710_MAIN_PROJECT', '/home/user/ghidra_tasks/t24main/proj')
-        import shutil
-        self.tmp = tempfile.mkdtemp(prefix='equiv_main_proj_')
+        self.tmp = tempfile.mkdtemp(prefix='proj_', dir=scratch_root())
         proj = os.path.join(self.tmp, 'proj')
         os.mkdir(proj)
         shutil.copy(os.path.join(src, 'FT710_MAIN.gpr'), proj)
@@ -331,11 +417,14 @@ class Engine:
         env = dict(os.environ)
         env.setdefault('GHIDRA_JAVA_HOME', '/usr/lib/jvm/java-21-openjdk-amd64')
         env.setdefault('MAXMEM', '1500M')
-        self.log = tempfile.NamedTemporaryFile('w+', prefix='equiv_main_emu_', suffix='.log', delete=False)
+        self.log = tempfile.NamedTemporaryFile('w+', prefix='ghidra_', suffix='.log', delete=False,
+                                               dir=os.environ.get('EQUIV_MAIN_KEEP_LOG') and tempfile.gettempdir()
+                                               or self.tmp)
         self.p = subprocess.Popen([os.path.join(ROOT, 'tools/ghidra-headless.sh'), proj, 'FT710_MAIN', '-process',
                                    'FT-710_MAIN_V0112.bin', '-noanalysis', '-readOnly',
                                    '-scriptPath', os.path.join(ROOT, 'tools/ghidra'), '-postScript', 'EquivMainEmu.java'],
-                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True, env=env)
+                                  stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=self.log, text=True, env=env,
+                                  start_new_session=True)     # its own process group: close() kills the JVM too
         self.recv()
         self.send({'op': 'base', 'name': 'image', 'segs': [[ROM, img.rom.hex()]]})
         self.send({'op': 'base', 'name': 'ram', 'segs': [[0, bytes(img.ram).hex()]]})
@@ -359,13 +448,16 @@ class Engine:
         try:
             self.p.stdin.write('{"op":"quit"}\n')
             self.p.stdin.flush()
-            self.p.wait(timeout=60)
+            self.p.wait(timeout=10)       # an idle engine quits at once; one still starting or running is killed
         except Exception:
-            self.p.kill()
+            try:
+                os.killpg(self.p.pid, signal.SIGKILL)     # the launcher scripts and the JVM below them
+            except OSError:
+                pass
+            self.p.wait()
         self.log.close()
         if os.path.exists(self.log.name) and not os.environ.get('EQUIV_MAIN_KEEP_LOG'):
             os.unlink(self.log.name)
-        import shutil
         shutil.rmtree(self.tmp, ignore_errors=True)
 
 
@@ -546,14 +638,22 @@ def cat_mnemonic(rng, img, ext=False):
     return mn
 
 
+_TRIAL = 0          # the number of the running trial (Checker.check), for presets that enumerate cases
+
+
 def cat_dispatch_args(rng, regs):
     """cat_dispatch (slot, index, len): every index of the table with the lengths its case tests (T24 MAIN round 3;
-    random indexes and lengths reach only the error path)."""
+    random indexes and lengths reach only the error path). Round 4: the first trials go through every (index,
+    length) pair in turn (random draws gave each index about two trials: 55 % of the blocks), the rest are random."""
     lens = cat_lens()
-    idx = rng.randrange(104) if rng.random() < 0.95 else rng.randrange(104, 256)
+    pairs = [(i, n) for i in range(104) for n in lens.get(i, [3])]
     regs[0] = ARGBUF
+    if _TRIAL < len(pairs):
+        idx, regs[2] = pairs[_TRIAL]
+    else:
+        idx = rng.randrange(104) if rng.random() < 0.95 else rng.randrange(104, 256)
+        regs[2] = rng.choice(lens.get(idx, [3])) if rng.random() < 0.9 else rng.randrange(0, 0x40)
     regs[1] = idx
-    regs[2] = rng.choice(lens.get(idx, [3])) if rng.random() < 0.9 else rng.randrange(0, 0x40)
     slot = bytes([rng.randrange(1, 4), 0]) + regs[2].to_bytes(2, 'little') + cat_text(rng, b'XX')
     return [(ARGBUF, slot)], None
 
@@ -646,7 +746,148 @@ def cat_handler_args(rng, regs):
         regs[1] = rng.choice([0, 1, 1])
     if len(regs) > 2 and rng.random() < 0.8:
         regs[2] = rng.randrange(3, 0x40)
-    return [(ARGBUF, cat_text(rng, b'XX'))], None
+    t = bytearray(cat_text(rng, b'XX'))
+    for k in (2, 3):                 # P1 / P2 = '0' half the time: most handlers refuse anything else there (round 4)
+        if rng.random() < 0.5:
+            t[k] = ord('0')
+    return [(ARGBUF, bytes(t))], None
+
+
+def cat_ss_args(rng, regs):
+    """cat_SS (text, set): "SS0", the item 0..8 (and a bad one), a value digit, P4..P6 mostly '0'; item 4 with a
+    sign, two digits, '.', '0'/'5'; item 7 with the four digits 0..2 / 0..5 (T24 MAIN round 4: random digits reach a
+    third of the blocks)."""
+    item = rng.choice(b'0123456789A')
+    t = bytearray(cat_text(rng, b'SS'))
+    t[2] = ord('0') if rng.random() < 0.9 else ord('1')
+    t[3] = item
+    t[4] = rng.choice(b'0123456789AB')
+    for k in (5, 6, 7, 8):
+        t[k] = ord('0') if rng.random() < 0.85 else rng.choice(b'123.5')
+    if item == ord('4'):
+        t[4] = rng.choice(b'+-+-0')
+        t[5], t[6] = rng.choice(b'0123'), rng.choice(b'0123456789')
+        t[7] = ord('.') if rng.random() < 0.9 else ord('0')
+        t[8] = rng.choice(b'0505X')
+    elif item == ord('7'):
+        t[4:8] = bytes(rng.choice(b'0122223') for _ in range(4))
+        t[6] = rng.choice(b'0123456')
+        t[8] = ord('0') if rng.random() < 0.9 else ord('1')
+    regs[0] = ARGBUF
+    regs[1] = rng.choice([0, 1, 1])
+    return [(ARGBUF, bytes(t))], None
+
+
+G_UI, G_OP = 0x20B04, 0x9A2A           # g_ui, g_opstate (tools/main_structs.py --globals)
+
+
+def keyer_task_args(rng, regs):
+    """keyer_task: its state 0..7 (and one beyond), the speed in use and the menu speed (often equal), the keyer
+    type and on/off, the message slot and CW MEMORY n, a keyer text of the characters it treats specially, element
+    counts that are sometimes equal (the end of a send)."""
+    sp = rng.choice([0, 4, 20, 31, 36, 41, 60])
+    loads = [(G_UI + 0x2B, bytes([rng.choice(range(9))])), (0x1B4D5, bytes([sp if rng.random() < 0.6 else rng.choice([4, 20, 45])])),
+             (G_OP + 0x1D9, bytes([sp])), (G_OP + 0x1D8, bytes([rng.choice([0, 1, 1])])),
+             (G_OP + 0x7D, bytes([rng.choice(range(7))])), (G_OP + 0x7F, bytes([rng.randrange(21)])),
+             (G_UI + 0x93, bytes([rng.choice([0, 0, 0, 1])])), (G_UI + 0x408, bytes([rng.choice([0, 0, 0, 1])])),
+             (G_UI + 0x1C8, bytes([rng.choice(range(7))])), (G_UI + 0x1D1, bytes([rng.choice([0, 1])])),
+             (0x1215D, bytes([rng.choice([0, 1, 1, 2])])), (0x12166, bytes([rng.choice([0, 1])])),
+             (0x12160, bytes(rng.choice([0, 0, 1, 2]) for _ in range(5))),
+             (G_OP + 0x83, bytes(rng.choice([0, 1]) for _ in range(5))), (G_OP + 0x88, bytes([rng.randrange(1, 61)])),
+             (0x21040, (ARGBUF + 0x400).to_bytes(4, 'little'))]
+    n = rng.randrange(0, 0x800)
+    loads.append((0x1FA38, rng.randrange(0, 0x600).to_bytes(2, 'little')))
+    loads.append((0x1FA3A, n.to_bytes(2, 'little')))
+    loads.append((0x1FA3C, (n if rng.random() < 0.5 else rng.randrange(0, 0x800)).to_bytes(2, 'little')))
+    for k in range(5):
+        text = bytes(rng.choice(b'CQ TEST#<>[]^0123ABK ?') for _ in range(50))
+        loads.append((0x969F + 0x33 * k, bytes([rng.randrange(0, 51)]) + text))
+        loads.append((0x93A7 + 0x98 * k, rng.randrange(0, 0x500).to_bytes(2, 'big') + bytes(rng.getrandbits(8) for _ in range(150))))
+    return loads, None
+
+
+def memch_text_args(rng, regs):
+    """The memory-channel commands (MR, ...): "XX" + a channel 000..120 as three digits or one of the 34 names from
+    channel 99 on (cat_pms_names 0xFFF806E9, sometimes lower case), the channel-used flags 0x60CB.. mostly 1."""
+    cat_handler_args(rng, regs)                  # the set flag and length as for the other handlers
+    t = bytearray(cat_text(rng, b'XX'))
+    if rng.random() < 0.6:
+        t[2:5] = b'%03d' % rng.choice([0, 1, 2, 50, 98, 99, 100, 117, 120, rng.randrange(1, 100)])
+    else:
+        nm = _IMG.read(0xFFF806E9 + 3 * rng.randrange(0x23), 3)
+        t[2:5] = bytes(c | 0x20 if rng.random() < 0.3 and 0x41 <= c <= 0x5A else c for c in nm)
+    used = bytes(1 if rng.random() < 0.8 else rng.choice([0, 2]) for _ in range(117))
+    return [(ARGBUF, bytes(t)), (0x60CB, used)], None
+
+
+def cat_mw_args(rng, regs):
+    """cat_MW: memch_text_args, then IF's layout with each field valid most of the time: a frequency in or out of
+    the bands, sign and clarifier digits, P4 P5, a mode character (cat_mode_codes 0xFFF806D0), '1', tone, "00",
+    shift."""
+    loads, _ = memch_text_args(rng, regs)
+    t = bytearray(loads[0][1])
+    ok = lambda p: rng.random() < p
+    t[5:14] = b'%09d' % rng.choice([7074000, 14074000, 50313000, 144000000, 0, 999999999, rng.randrange(10 ** 9)])
+    t[14] = rng.choice(b'+-') if ok(0.9) else ord('0')
+    t[15:19] = b'%04d' % rng.randrange(10000) if ok(0.9) else b'12A4'
+    t[19], t[20] = rng.choice(b'01') if ok(0.95) else ord('2'), rng.choice(b'01') if ok(0.95) else ord('X')
+    t[21] = _IMG.read(0xFFF806D0 + rng.randrange(16), 1)[0] if ok(0.9) else ord('Z')
+    t[22] = ord('1') if ok(0.9) else ord('0')
+    t[23] = rng.choice(b'012') if ok(0.9) else ord('3')
+    t[24:26] = b'00' if ok(0.9) else b'01'
+    t[26] = rng.choice(b'012') if ok(0.9) else ord('3')
+    return [(ARGBUF, bytes(t))] + loads[1:], None
+
+
+def cat_sf_args(rng, regs):
+    """cat_SF: P1 0/1, P2 one of its characters, the FUNC knob and the DSP knob item among the values it maps."""
+    loads, _ = cat_handler_args(rng, regs)
+    t = bytearray(loads[0][1])
+    t[2] = rng.choice(b'0011X')
+    t[3] = rng.choice(b'0123456789ABCDEFGHI')
+    return [(ARGBUF, bytes(t)), (G_OP + 0x39F, bytes([rng.choice([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0x12, 0x13, 0x14, 0x15])])),
+            (G_UI + 0x7A, bytes([rng.choice(range(0x1C, 0x23))]))], None
+
+
+def cat_dt_args(rng, regs):
+    """cat_DT: DT0 with 20yy and month / day around the limits (February in leap and other years), DT1 with hours
+    and minutes around 23 / 59."""
+    loads, _ = cat_handler_args(rng, regs)
+    t = bytearray(loads[0][1])
+    t[2] = rng.choice(b'0011X')
+    if t[2] == ord('0'):
+        t[3:11] = b'%02d%02d%02d%02d' % (rng.choice([20, 20, 20, 19, 21]), rng.randrange(100), rng.choice(range(14)),
+                                         rng.choice([0, 1, 28, 29, 30, 31, 32, rng.randrange(40)]))
+    else:
+        t[3:9] = b'%02d%02d%02d' % (rng.choice([0, 12, 23, 24, rng.randrange(30)]), rng.choice([0, 59, 60, rng.randrange(70)]),
+                                    rng.randrange(60))
+    if rng.random() < 0.1:
+        t[rng.randrange(3, 11)] = ord('X')
+    return [(ARGBUF, bytes(t))], None
+
+
+def displink_task_args(rng, regs):
+    """displink_task: a received frame (ACK, NAK, a DISPLAY frame type or junk) half the time, the link flags
+    0x1B3CC..0x1B3D5 and the delayed-0x24 request in all their combinations."""
+    t = rng.choice([0x06, 0x15] + list(range(0xE0, 0xF3)) + [rng.getrandbits(8)])
+    frame = bytes([t]) + bytes(rng.getrandbits(8) for _ in range(0x40))
+    return [(0x25D38, G_UI.to_bytes(4, 'little')), (0xA08A, bytes([rng.choice([0, 1])])), (0x9E86, frame),
+            (0x1B3CC, bytes(rng.choice([0, 0, 1]) for _ in range(10))), (G_UI + 0x401, bytes([rng.choice([0, 1])]))], None
+
+
+def displink_e1_frame(rng, regs):
+    """An 0xE1 frame {0xE1, encoder id 0..7, steps} in the argument buffer."""
+    regs[0] = ARGBUF
+    return [(ARGBUF, bytes([0xE1, rng.randrange(8), rng.getrandbits(8)]))], None
+
+
+def g_ui_ptr_ok(pre=None):
+    """The DISPLAY frame builders read g_ui through the pointer at 0x25D38 (= 0x20B04 after _INITSCT); the RAM fill
+    would replace it with a random word, so it is set back (and pre's loads added)."""
+    def f(rng, regs):
+        loads = pre(rng, regs)[0] if pre else []
+        return loads + [(0x25D38, G_UI.to_bytes(4, 'little'))], None
+    return f
 
 
 def both(a, b):
@@ -665,6 +906,37 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
+           'tuner_int_task': ram_bytes({0x1B3AC: range(0x17), G_UI + 0x3B: range(7), G_UI + 0x3D: range(3)}),
+           'tuner_ext_task': ram_bytes({0x1B3C8: range(0x12), G_UI + 0x3B: range(7), G_UI + 0x3C: range(3),
+                                        G_OP + 0x8D: range(4)}),
+           'tuner_atas_task': ram_bytes({0x1B3C3: (0, 1), G_UI + 0x408: range(4)}),
+           'tuner_rearm': ram_bytes({G_OP + 0x8E: range(5), G_UI + 0x3B: range(8)}),
+           'displink_build_30': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C2: list(range(15)) + [0xFF], G_OP + 0x393: (0, 1)})),
+           'displink_build_41': g_ui_ptr_ok(ram_bytes({G_UI + 0x439: [0, 1, 50, 98, 99, 110, 116, 117, 125, 131, 132],
+                                                     G_UI + 0x1DB: range(5), G_OP + 0x98: (0, 1)})),
+           'sdr_task': ram_bytes({0x1C8B: (0, 0, 0, 1), 0x1C8D: (0, 0, 0, 0, 0, 1), 0x1B3DD: (0, 1), 0x1B3DC: (0, 1),
+                                  G_UI + 0x67: (0, 1), G_UI + 0x14: range(9)}),
+           'dispreq_e7_task': both(ram_bytes({G_UI + 0x488: range(7), G_UI + 0x3F9: range(5), G_UI + 0x3FC: (0, 1, 2),
+                                             G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(4), G_UI + 0xAC: range(10)}),
+                                  lambda rng, regs: ([(0x25D70, G_UI.to_bytes(4, 'little')),
+                                                      (G_UI + 0x489, b'\0\0\0')], None)),
+           'io_task': ram_bytes({G_UI + 0x2C: (0, 0, 1, 2), G_UI + 0x82: (0, 1), G_UI + 0xBA: (0, 1),
+                                 G_UI + 0x40: (0, 1), G_UI + 0x14: (8, 8, 1, 3)}),
+           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}),
+           'scan_task': both(ram_bytes({0x18877: range(9), G_UI + 0x418: (0, 1, 1, 1), G_UI + 0xBA: (0, 0, 0, 1)}),
+                             lambda rng, regs: ([(0x25D7C, G_UI.to_bytes(4, 'little'))], None)),
+           'displink_build_37': g_ui_ptr_ok(), 'displink_task': displink_task_args, 'displink_build_60': g_ui_ptr_ok(),
+           'displink_rx_E1_encoder': g_ui_ptr_ok(both(displink_e1_frame, ram_bytes({G_UI + 0x80: (0, 0, 0, 1), G_UI + 0x70: (0, 1), G_UI + 0x74: (0, 1), G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(5), G_UI + 0x437: (0, 0, 1)}))),
+           'displink_build_status': g_ui_ptr_ok(ram_bytes({G_OP + 0x393: (0, 1), G_OP + 0x234: (0, 1), G_UI + 0x437: (0, 0, 1),
+                                                         G_UI + 0x483: (0, 1), G_UI + 0x405: (0, 1)})),
+           'displink_build_31': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C2: [0x1E, 0x1F, 0x20, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+                                                                  0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33,
+                                                                  0x38, 0x39, 0x3A, 0x43, 0x44, 0x45, 0x46, 0x55, 0x58, 0x5E, 0x60]})),
+           'displink_build_70': g_ui_ptr_ok(ram_bytes({G_UI + 0xBB: list(range(28)) + [0xFF]})),
+           'displink_build_39': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C7: (0, 1, 2, 3), G_UI + 0x78: range(4),
+                                                     G_UI + 0x1D1: (0, 1), G_UI + 0x1CE: range(10)})),
+           'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args, 'cat_MR': memch_text_args, 'cat_MW': cat_mw_args,
+           'cat_MC': memch_text_args, 'cat_SF': cat_sf_args, 'cat_DT': cat_dt_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
@@ -674,17 +946,34 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
 
 
-def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False):
+def norm_stack_ptrs(a, h):
+    """A changed-RAM run [addr, hex] with each STACK_PTR_SLOTS word that holds a stack address replaced by a
+    marker."""
+    b = bytearray.fromhex(h)
+    for slot in STACK_PTR_SLOTS:
+        k = slot - a                     # the run holds only the changed bytes: often the low half of the word
+        if 0 <= k < len(b):
+            n = min(4, len(b) - k)
+            if int.from_bytes(b[k:k + n], 'little') < STACK_TOP:
+                b[k:k + n] = b'\xee' * n
+    return [a, b.hex()]
+
+
+def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False, rets=None):
     q = {'op': 'run', 'bases': bases, 'entry': entry, 'sp': STACK, 'seed': seed, 'budget': budget,
          'regs': {f'R{k + 1}': v for k, v in enumerate(regs[:NREG])},
          'stack': ([0x00030000] if isr else []) + list(regs[NREG:]),
          'loads': [[a, d.hex()] for a, d in loads], 'snap': SNAP, 'track': TRACK,
-         'stubs': {str(a): [n, STUBS[n], *STUB_DATA.get(n, ())] for a, n in stubs.items()}, 'cover': sorted(cover)}
+         'stubs': {str(a): [n, STUBS[n] if n in STUBS else rets[a][0], *STUB_DATA.get(n, ())] for a, n in stubs.items()},
+         'cover': sorted(cover)}
+    if rets:
+        q['stub_rets'] = {str(a): v[1] for a, v in rets.items()}
     if trace:
         q['trace'] = True
     if mmio_fixed:
         q['mmio_fixed'] = {str(a): v for a, v in mmio_fixed.items()}
     r = eng.send(q)
+    r['diff'] = [norm_stack_ptrs(a, h) for a, h in r.get('diff', [])]
     for c in r.get('calls', []):
         for i, w in enumerate(STUB_WIDTHS.get(c[0], ())):
             if 1 + i < len(c) and isinstance(c[1 + i], int):
@@ -733,7 +1022,7 @@ class Checker:
         self.img = _IMG = Image()
         self.orig = Originals()
         self.eng = None
-        self.work = tempfile.mkdtemp(prefix='equiv_main_')
+        self.work = tempfile.mkdtemp(prefix='work_', dir=scratch_root())
         self.meta = {}
 
     def engine(self):
@@ -773,7 +1062,8 @@ class Checker:
         lk = Linked(path, fname)
         if lk.rw:
             return oaddr, 'not yet', f'the recreated code has {lk.rw} bytes of .data/.bss (must use the image\'s RAM)'
-        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r'})
+        # JMP, FTOI, ROUND and FTOU are executed by EquivMainEmu.java itself (rounds 1 and 4)
+        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r', 'ftoi r, r', 'round r, r', 'ftou r, r'})
         note = f'; instruction forms the MAIN image does not use (semantics not checked by T22a): {", ".join(unverified)}' \
             if unverified else ''
         eng = self.engine()
@@ -781,10 +1071,14 @@ class Checker:
         meta = self.blocks([oaddr])[oaddr]
         lead, isr = set(meta['blocks']), meta['isr']
         stubs = {self.orig.addr(n): n for n in STUBS if self.orig.addr(n) and n != fname}
+        rets = {self.orig.addr(n): v for n, v in FUNC_STUBS.get(fname, {}).items() if self.orig.addr(n)}
+        stubs.update({a: n for n, a in ((n, self.orig.addr(n)) for n in FUNC_STUBS.get(fname, {})) if a})
         rng = random.Random(seed)
         seen_reads = set()
         reached, ok, inconclusive = set(), 0, 0
-        for t in range(trials):
+        global _TRIAL
+        for t in range(trials * FUNC_TRIALS.get(fname, 1)):
+            _TRIAL = t
             regs, loads = draw_args(rng, lk.params)
             fill = fill_globals(rng, seen_reads)
             pre = PRESETS.get(fname) or (cat_handler_args if CAT_HANDLER.match(fname) else None)
@@ -795,8 +1089,8 @@ class Checker:
             loads = fill + loads
             s = rng.getrandbits(31)
             for budget in (BUDGET, 8 * BUDGET):
-                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix)
-                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix)
+                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix, rets=rets)
+                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix, rets=rets)
                 if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                     break
             seen_reads |= set(r1['reads']) | set(r2['reads'])
@@ -818,6 +1112,7 @@ class Checker:
                 return oaddr, 'differs', (f'emulation trial {t}: {d} differs{extra} '
                                           f'(orig ended {r1["end"]}, new {r2["end"]})')[:600]
             ok += r1['end'] == 'return'
+        trials *= FUNC_TRIALS.get(fname, 1)
         cov = len(reached & lead) / max(1, len(lead))
         covtxt = f'{cov:.0%} of {len(lead)} blocks reached' + (f', {inconclusive} trials inconclusive' if inconclusive else '')
         if ok == 0:
@@ -830,7 +1125,6 @@ class Checker:
         if self.eng:
             self.eng.close()
             self.eng = None
-        import shutil
         shutil.rmtree(self.work, ignore_errors=True)
 
 
@@ -840,7 +1134,6 @@ _CHK = None
 def _init_worker():
     global _CHK
     _CHK = Checker()
-    import atexit
     import multiprocessing.util
     atexit.register(_CHK.close)
     # pool workers leave through os._exit, which skips atexit; multiprocessing runs its own finalizers first
@@ -866,6 +1159,7 @@ def require_objects():
 
 def run_jobs(jobs, n):
     import multiprocessing
+    scratch_root()            # made before the pool forks, so the workers share it and the owner removes it
     if n <= 1:
         _init_worker()
         for j in jobs:
@@ -900,11 +1194,26 @@ RANK = {'identical': -1, 'equivalent': 0, 'differs': 1, 'not yet': 2}
 def cmd_status(args):
     require_objects()
     orig = Originals()
-    jobs = [(p, f, args.seed, args.trials) for p, f in recreated()]
+    allf = recreated()
+    want = set(args.functions or ())
+    part = bool(want or args.object)
+    jobs = [(p, f, args.seed, args.trials) for p, f in allf
+            if not part or f in want or any(p.endswith(o) for o in args.object or ())]
     results = {}
+    if part:
+        # a partial run (T24 MAIN round 4: a full run takes about an hour): the other rows of status.tsv stay, as long
+        # as their function is still defined in the same object
+        rerun = {f for _, f, _, _ in jobs}
+        have = {(os.path.relpath(p, OBJDIR), f) for p, f in allf}
+        for r in read_tsv(STATUS_TSV)[1:] if os.path.exists(STATUS_TSV) else ():
+            a, g, _, src, rel, v, _, d = (r + [''] * 8)[:8]
+            if not src or src in rerun or (rel, src) not in have:
+                continue
+            key = ('-', src) if g == '-' and int(a, 16) == 0 else int(a, 16)
+            results[key] = (src, rel, v, d)
     for path, fname, a, v, d in sorted(run_jobs(jobs, args.jobs or 2), key=lambda x: (x[0], x[1])):
         print(f'equiv_main_emu: {fname:32s} {v}: {d}', file=sys.stderr)
-        rel = os.path.relpath(path, os.path.join(SRC, 'out', 'obj'))
+        rel = os.path.relpath(path, OBJDIR)
         key = a if a is not None else ('-', fname)
         cur = results.get(key)
         if cur is None or RANK[v] < RANK[cur[2]]:
@@ -950,7 +1259,10 @@ def main():
     c = sub.add_parser('check')
     c.add_argument('functions', nargs='*')
     c.add_argument('--object', action='append', help='every function of this object (e.g. drivers/eeprom.o)')
-    st = sub.add_parser('status')
+    st = sub.add_parser('status', help='every recreated function -> status.tsv; with FUNCTION... or --object only '
+                                       'those are rerun and the other rows are kept')
+    st.add_argument('functions', nargs='*')
+    st.add_argument('--object', action='append', help='rerun every function of this object (e.g. app/keyer.o)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)

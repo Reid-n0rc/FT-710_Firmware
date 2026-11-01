@@ -96,7 +96,7 @@ void displink_rx_E0_key(int param_1)
   
   uVar2 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
   bVar1 = *(byte *)(param_1 + 1);
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
                     /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(uVar2,bVar1);
   if (key_event_filter_ret != 0) {
@@ -128,7 +128,7 @@ void displink_rx_E1_encoder(int param_1)
   int iVar3;
   
   if (PTR_g_ui_00025d38->enc_blocked == 1) {
-    DAT_0001b3cc = 1;
+    displink_ack_req = 1;
     return;
   }
   PTR_g_ui_00025d38->enc_ev_id = *(byte *)(param_1 + 1);
@@ -146,21 +146,21 @@ void displink_rx_E1_encoder(int param_1)
     if (bVar2 == 2) {
       bVar2 = key_event_filter(0xff1,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc2_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 3) {
       bVar2 = key_event_filter(0xff2,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc3_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 4) {
@@ -178,37 +178,37 @@ void displink_rx_E1_encoder(int param_1)
           bVar1 = false;
         }
         if (bVar1) {
-          DAT_0001b3cc = 1;
+          displink_ack_req = 1;
           return;
         }
       }
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc89ef(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       FUN_fffc523a(0,0);
       iVar3 = key_dest_allowed(0,1);
       if (iVar3 != 1) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->rf_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 5) {
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc8a90(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->af_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 != 6) {
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
   }
@@ -223,7 +223,7 @@ void displink_rx_E1_encoder(int param_1)
       ui_numentry_step(PTR_g_ui_00025d38->enc_ev_steps);
     }
   }
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   return;
 }
 

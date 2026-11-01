@@ -474,6 +474,7 @@ void main_loop(void)
     scan_task();
     dispreq_e8_task();
     dispreq_e7_task();
+                    /* CW keyer and message memories [doc] */
     keyer_task();
                     /* Task 13: SD CARD menu load/save steps [fact: README.md] */
     sd_menu_task();
@@ -713,7 +714,7 @@ void displink_task(void)
     bVar1 = false;
     displink_rx_buf_ret = (char *)displink_rx_buf();
     displink_rx_len_of_ret = displink_rx_len_of(*displink_rx_buf_ret);
-    pcVar5 = &DAT_0000198f;
+    pcVar5 = &displink_rx_copy;
     pcVar7 = displink_rx_buf_ret;
     for (uVar8 = (uint)displink_rx_len_of_ret; uVar8 != 0; uVar8 = uVar8 - 1) {
       *pcVar5 = *pcVar7;
@@ -722,7 +723,7 @@ void displink_task(void)
     }
     displink_rx_rearm();
     if (displink_rx_len_of_ret == 0) {
-      DAT_0001b3cd = '\x01';
+      displink_nak_req = '\x01';
       bVar1 = true;
     }
     else {
@@ -734,13 +735,13 @@ void displink_task(void)
       }
                     /* Bad checksum: answer NAK [fact: display-link.md] */
       if ((bVar3) && (bVar3 = displink_check_sum(0x198f,displink_rx_len_of_ret), !bVar3)) {
-        DAT_0001b3cd = '\x01';
+        displink_nak_req = '\x01';
         bVar1 = true;
       }
     }
     if (!bVar1) {
                     /* Dispatch by the frame's type byte [fact: 0xFFF95331] */
-      displink_rx_dispatch(&DAT_0000198f);
+      displink_rx_dispatch(&displink_rx_copy);
     }
   }
   if ((PTR_g_ui_00025d38->dl_req_24_later == 1) && (bVar2 = swtimer_expired(0x2b), bVar2 == 1)) {
@@ -759,51 +760,51 @@ void displink_task(void)
       return;
     }
     DAT_0001b3d2 = '\0';
-    DAT_0001b3d3 = '\x01';
+    displink_gap = '\x01';
                     /* Retry timer 0x3B for the frame just sent [fact: display-link.md] */
     swtimer_start(0x3b,2);
   }
-  if ((DAT_0001b3d3 == '\x01') && (bVar2 = swtimer_expired(0x3b), bVar2 == 1)) {
-    DAT_0001b3d3 = '\0';
+  if ((displink_gap == '\x01') && (bVar2 = swtimer_expired(0x3b), bVar2 == 1)) {
+    displink_gap = '\0';
   }
-  if (DAT_0001b3d5 == '\x01') {
-    DAT_0001b3d5 = '\0';
-    DAT_0001b3d4 = '\x01';
+  if (displink_ack_wait_start == '\x01') {
+    displink_ack_wait_start = '\0';
+    displink_ack_wait = '\x01';
     swtimer_start(0x3c,0x1e);
   }
-  if (DAT_0001b3d3 != '\x01') {
-    if (DAT_0001b3d4 == '\0') {
-      if (DAT_0001b3cc == '\x01') {
-        DAT_0001b3cc = '\0';
+  if (displink_gap != '\x01') {
+    if (displink_ack_wait == '\0') {
+      if (displink_ack_req == '\x01') {
+        displink_ack_req = '\0';
         displink_send_ack();
       }
-      else if (DAT_0001b3cd == '\x01') {
-        DAT_0001b3cd = '\0';
+      else if (displink_nak_req == '\x01') {
+        displink_nak_req = '\0';
         displink_send_nak();
       }
       else {
                     /* Send the next queued frame [fact: display-link.md] */
         displink_tx_poll();
         if (DAT_0001b3d2 == '\x01') {
-          DAT_0001b3d5 = '\x01';
+          displink_ack_wait_start = '\x01';
         }
       }
     }
     else {
       bVar2 = swtimer_expired(0x3c);
       if (bVar2 == 1) {
-        DAT_0001b3d4 = '\0';
+        displink_ack_wait = '\0';
         displink_tx_poll();
         if (DAT_0001b3d2 == '\x01') {
-          DAT_0001b3d5 = '\x01';
+          displink_ack_wait_start = '\x01';
         }
       }
-      else if (DAT_0001b3cc == '\x01') {
-        DAT_0001b3cc = '\0';
+      else if (displink_ack_req == '\x01') {
+        displink_ack_req = '\0';
         displink_send_ack();
       }
-      else if (DAT_0001b3cd == '\x01') {
-        DAT_0001b3cd = '\0';
+      else if (displink_nak_req == '\x01') {
+        displink_nak_req = '\0';
         displink_send_nak();
       }
     }
@@ -1230,7 +1231,7 @@ void displink_rx_F0_hello(int param_1)
                     /* b7: boot code (key held at the DISPLAY's power-on) [fact: display-link.md] */
   PTR_g_ui_00025d38->power_on_reason = *(byte *)(param_1 + 7);
   PTR_g_ui_00025d38->link_tx_enabled = 1;
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   DAT_0001b3d0 = 1;
                     /* Power on: link up, hello reply pending [fact: display-link.md] */
   PTR_g_ui_00025d38->radio_on = 1;
@@ -1333,12 +1334,12 @@ void displink_rx_F1_sys(int param_1)
         sdr_bridge_request();
         return;
       }
-      DAT_0001b3cd = 1;
+      displink_nak_req = 1;
       return;
     }
     g_ui.cat_disabled = 1;
   }
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   return;
 }
 
@@ -1357,7 +1358,7 @@ void displink_rx_E0_key(int param_1)
   
   uVar2 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
   bVar1 = *(byte *)(param_1 + 1);
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
                     /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(uVar2,bVar1);
   if (key_event_filter_ret != 0) {
@@ -1383,7 +1384,7 @@ void displink_rx_E1_encoder(int param_1)
   int iVar3;
   
   if (PTR_g_ui_00025d38->enc_blocked == 1) {
-    DAT_0001b3cc = 1;
+    displink_ack_req = 1;
     return;
   }
   PTR_g_ui_00025d38->enc_ev_id = *(byte *)(param_1 + 1);
@@ -1401,21 +1402,21 @@ void displink_rx_E1_encoder(int param_1)
     if (bVar2 == 2) {
       bVar2 = key_event_filter(0xff1,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc2_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 3) {
       bVar2 = key_event_filter(0xff2,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc3_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 4) {
@@ -1433,37 +1434,37 @@ void displink_rx_E1_encoder(int param_1)
           bVar1 = false;
         }
         if (bVar1) {
-          DAT_0001b3cc = 1;
+          displink_ack_req = 1;
           return;
         }
       }
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc89ef(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       FUN_fffc523a(0,0);
       iVar3 = key_dest_allowed(0,1);
       if (iVar3 != 1) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->rf_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 5) {
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc8a90(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->af_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 != 6) {
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
   }
@@ -1478,7 +1479,7 @@ void displink_rx_E1_encoder(int param_1)
       ui_numentry_step(PTR_g_ui_00025d38->enc_ev_steps);
     }
   }
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   return;
 }
 

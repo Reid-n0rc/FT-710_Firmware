@@ -947,8 +947,9 @@ void pa_dac_update(void)
   }
   bVar4 = FUN_fffb4062();
   sVar5 = pa_falc_interp(uVar3,bVar4);
-  sVar5 = SUB42(ROUND((float)(((int)sVar5 & 0x3fffU) << 2) *
-                      *(float *)(BYTE_ARRAY_fff88a14 + (uint)bVar4 * 4 + 0x54) + 0.5),0);
+  sVar5 = (short)(longlong)
+                 ((float)(((int)sVar5 & 0x3fffU) << 2) *
+                  *(float *)(BYTE_ARRAY_fff88a14 + (uint)bVar4 * 4 + 0x54) + 0.5);
   if ((DAT_00020faa == sVar5) && (DAT_00012042 != '\0')) {
     bVar1 = false;
   }

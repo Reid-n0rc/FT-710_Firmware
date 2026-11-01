@@ -1302,9 +1302,13 @@ int usbhid_class_attach(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2013c928 @ 2013c928 (56 bytes)
+// ===== sd_card_clock @ 2013c928 (56 bytes)
 
-undefined4 FUN_2013c928(int param_1,int *param_2)
+/* [fact] (on, handle): on = 1 tail-calls slot 0 of the SDHI operation table (the clock by mode)
+   with the signed halfword +0x2C4, else slot 1 (clock stop) and 0; Ghidra FUN_2013c928 (T24 round
+   8, drivers/sd_setup.c) */
+
+undefined4 sd_card_clock(int param_1,int *param_2)
 
 {
   undefined4 uVar1;
@@ -1499,9 +1503,13 @@ int sd_init_v2(int *param_1)
 }
 
 
-// ===== FUN_2013cde8 @ 2013cde8 (256 bytes)
+// ===== sd_cmd11_voltage_switch @ 2013cde8 (256 bytes)
 
-int FUN_2013cde8(int *param_1)
+/* [fact] CMD11 (three tries), R1 error bits 0x2C80008 (-23), clock off, slots 4/14/5 (host level 2
+   then 3), clock on; called by sd_card_identify when flags +0x2C0 bit 2 (S18A) is set; Ghidra
+   FUN_2013cde8 (T24 round 8) */
+
+int sd_cmd11_voltage_switch(int *param_1)
 
 {
   int iVar1;
@@ -1521,7 +1529,7 @@ int FUN_2013cde8(int *param_1)
   if ((*(uint *)(*param_1 + 0x2b0) & 0x2c80008) != 0) {
     return -0x17;
   }
-  iVar2 = FUN_2013c928(0,param_1);
+  iVar2 = sd_card_clock(0,param_1);
   if (iVar2 != 0) {
     return iVar2;
   }
@@ -1535,7 +1543,7 @@ int FUN_2013cde8(int *param_1)
   if (iVar2 != 0) {
     return iVar2;
   }
-  iVar2 = FUN_2013c928(1,param_1);
+  iVar2 = sd_card_clock(1,param_1);
   if (iVar2 == 0) {
     sd_delay_ms(1);
     iVar2 = (**(code **)(param_1[1] + 0x10))();
@@ -1576,6 +1584,61 @@ undefined4 sd_cmd2_all_send_cid(int *param_1)
     }
     i = i + 1;
   } while (i < 3);
+  return 0xfffffff7;
+}
+
+
+// ===== sd_cmd3_relative_addr @ 2013cf80 (316 bytes)
+
+/* [fact] CMD3: RCA from R6 into +0x2AA (SD), RCA 1 for an MMC; tail call of sd_card_identify; new
+   entry (T24 round 8) */
+
+undefined4 sd_cmd3_relative_addr(int *param_1)
+
+{
+  int iVar1;
+  uint uVar2;
+  int iVar3;
+  
+  iVar3 = 0;
+  if (*(short *)(*param_1 + 0x2c6) == 1) {
+    do {
+      iVar1 = (**(code **)(param_1[1] + 0x48))(3,0,0x10000,*param_1);
+      if (iVar1 == 0) {
+        if (2 < iVar3) {
+          return 0xfffffff7;
+        }
+        (**(code **)(param_1[1] + 0x4c))(1,*param_1);
+        *(undefined2 *)(*param_1 + 0x2aa) = 1;
+        uVar2 = *(uint *)(*param_1 + 0x2b0);
+        if ((uVar2 & 0xd80000) != 0) {
+          if (((uVar2 & 0xd80000) == 0x400000) && ((uVar2 & 0x1e00) == 0x400)) {
+            return 0;
+          }
+          return 0xffffffe9;
+        }
+        return 0;
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < 3);
+  }
+  else {
+    do {
+      iVar1 = (**(code **)(param_1[1] + 0x48))(3,0,0,*param_1);
+      if (iVar1 == 0) {
+        if (2 < iVar3) {
+          return 0xfffffff7;
+        }
+        (**(code **)(param_1[1] + 0x4c))(6,*param_1);
+        *(short *)(*param_1 + 0x2aa) = (short)((uint)*(undefined4 *)(*param_1 + 0x2b0) >> 0x10);
+        if ((*(uint *)(*param_1 + 0x2b0) & 0xe000) == 0) {
+          return 0;
+        }
+        return 0xfffffff8;
+      }
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < 3);
+  }
   return 0xfffffff7;
 }
 
@@ -1688,6 +1751,26 @@ undefined4 sd_cmd10_send_cid(int *param_1)
     iVar2 = iVar2 + 1;
   } while (iVar2 < 3);
   return 0xfffffff7;
+}
+
+
+// ===== sd_cid_check @ 2013d2d4 (196 bytes)
+
+/* [fact] CID bytes 0..2 and 3..14 not all zero, else -5; tail call of sd_read_csd_cid; new entry
+   (T24 round 8) */
+
+undefined4 sd_cid_check(char *param_1)
+
+{
+  if ((((*param_1 != '\0') || (param_1[1] != '\0')) || (param_1[2] != '\0')) &&
+     ((((param_1[3] != '\0' || (param_1[4] != '\0')) ||
+       ((param_1[5] != '\0' || ((param_1[6] != '\0' || (param_1[7] != '\0')))))) ||
+      ((param_1[8] != '\0' ||
+       (((((param_1[9] != '\0' || (param_1[10] != '\0')) || (param_1[0xb] != '\0')) ||
+         ((param_1[0xc] != '\0' || (param_1[0xd] != '\0')))) || (param_1[0xe] != '\0')))))))) {
+    return 0;
+  }
+  return 0xfffffffb;
 }
 
 
@@ -2020,12 +2103,199 @@ int sd_cmd6_switch_func(undefined4 param_1,int *param_2)
 }
 
 
-// ===== sd_switch_status_check @ 2013de60 (296 bytes)
+// ===== sd_switch_high_speed @ 2013da6c (264 bytes)
 
-/* Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a
-   speed switch [fact for the fields] */
+/* [fact] CMD6 group 1 function 1 (0x00FFFFF1, switch 0x80FFFFF1), slot 12 (1), clock mode +0x2C4 =
+   2; tail call of sd_select_bus_speed; new entry (T24 round 8) */
 
-uint sd_switch_status_check(int *param_1)
+uint sd_switch_high_speed(int *param_1)
+
+{
+  uint uVar1;
+  int iVar2;
+  uint i;
+  
+  uVar1 = sd_cmd6_switch_func(0xffffff,param_1);
+  if ((uVar1 == 0) &&
+     (uVar1 = *(byte *)(*param_1 + 0x276) & 2, (*(byte *)(*param_1 + 0x276) & 2) != 0)) {
+    i = 0;
+    while (uVar1 = sd_cmd6_switch_func(0xfffff1,param_1), uVar1 == 0) {
+      iVar2 = *param_1;
+      if (800 < CONCAT11(*(undefined1 *)(iVar2 + 0x269),*(undefined1 *)(iVar2 + 0x26a))) {
+        return 0;
+      }
+      if ((*(char *)(iVar2 + 0x27a) != '\x01') || ((*(byte *)(iVar2 + 0x286) & 2) == 0)) {
+        if ((~*(byte *)(iVar2 + 0x279) & 0xf) == 0) {
+          return 0;
+        }
+        uVar1 = sd_cmd6_switch_func(0x80fffff1,param_1);
+        if (uVar1 != 0) {
+          return uVar1;
+        }
+        if ((*(byte *)(*param_1 + 0x279) & 0xf) == 1) {
+          (**(code **)(param_1[1] + 0x30))(1);
+          *(undefined2 *)(*param_1 + 0x2c4) = 2;
+          return 0;
+        }
+        uVar1 = (**(code **)(param_1[1] + 8))();
+        if (uVar1 != 0) {
+          return uVar1;
+        }
+      }
+      i = i + 1;
+      if (0x1ffff < i) {
+        return 0xffffffff;
+      }
+    }
+  }
+  return uVar1;
+}
+
+
+// ===== sd_switch_uhs_speed @ 2013db74 (716 bytes)
+
+/* [fact] CMD6 group 1 functions SDR104/DDR50/SDR50/high speed with the current limit (0xFF3FF2..4),
+   stepping down when slot 7 refuses or above 800 mA; speed +0x2C2 and clock mode +0x2C4 by
+   function; tail call of sd_select_bus_speed; new entry (T24 round 8) */
+
+uint sd_switch_uhs_speed(int *param_1)
+
+{
+  byte bVar1;
+  ushort uVar2;
+  uint uVar3;
+  uint uVar4;
+  int iVar5;
+  int iVar6;
+  uint uVar7;
+  uint uVar8;
+  uint i;
+  bool bVar9;
+  
+  (**(code **)(param_1[1] + 0x3c))(0);
+  uVar3 = sd_cmd6_switch_func(0xffffff,param_1);
+  if (uVar3 == 0) {
+    uVar3 = 0xfffff1;
+    bVar1 = *(byte *)(*param_1 + 0x276);
+    if ((bVar1 & 8) == 0) {
+      if ((bVar1 & 0x10) == 0) {
+        if ((bVar1 & 4) == 0) {
+          if ((bVar1 & 2) == 0) {
+            return bVar1 & 2;
+          }
+          uVar8 = 2;
+        }
+        else {
+          uVar8 = 4;
+          uVar3 = 0xff3ff2;
+        }
+      }
+      else {
+        uVar8 = 0x10;
+        uVar3 = 0xff3ff4;
+      }
+    }
+    else {
+      uVar8 = 8;
+      uVar3 = 0xff3ff3;
+    }
+    i = 0;
+    do {
+      uVar4 = (**(code **)(param_1[1] + 8))();
+      if (uVar4 != 0) {
+        return uVar4;
+      }
+      uVar4 = sd_cmd6_switch_func(uVar3,param_1);
+      if (uVar4 != 0) {
+        return uVar4;
+      }
+      uVar4 = uVar3 & 0xf;
+      iVar5 = (**(code **)(param_1[1] + 0x1c))(uVar4);
+      iVar6 = *param_1;
+      uVar2 = CONCAT11(*(undefined1 *)(iVar6 + 0x269),*(undefined1 *)(iVar6 + 0x26a));
+      bVar9 = uVar2 == 800;
+      if (uVar2 < 0x321) {
+        bVar9 = iVar5 == 0;
+      }
+      if (bVar9) {
+        if (((*(char *)(iVar6 + 0x27a) != '\x01') || ((*(byte *)(iVar6 + 0x286) & uVar8) == 0)) &&
+           ((uVar3 == 0xfffff1 ||
+            ((*(char *)(iVar6 + 0x27a) != '\x01' || ((*(byte *)(iVar6 + 0x280) & 8) == 0)))))) {
+          if ((~*(byte *)(iVar6 + 0x279) & 0xf) == 0) {
+            return 0;
+          }
+          if ((~(*(byte *)(iVar6 + 0x278) >> 4) & 0xf) == 0) {
+            return 0;
+          }
+          uVar7 = sd_cmd6_switch_func(uVar3 | 0x80000000,param_1);
+          if (uVar7 != 0) {
+            return uVar7;
+          }
+          uVar7 = (uint)*(byte *)(*param_1 + 0x279);
+          if (((uVar7 & 0xf) == uVar4) &&
+             ((uVar3 == 0xfffff1 ||
+              ((uVar3 & 0xffff) >> 0xc == (uint)(*(byte *)(*param_1 + 0x278) >> 4))))) {
+            uVar7 = uVar7 & 0xf;
+            if (uVar7 == 1) {
+              (**(code **)(param_1[1] + 0x3c))(1);
+              *(undefined2 *)(*param_1 + 0x2c2) = 1;
+              *(undefined2 *)(*param_1 + 0x2c4) = 2;
+              return 0;
+            }
+            if (uVar7 == 2) {
+              (**(code **)(param_1[1] + 0x3c))(2);
+              *(undefined2 *)(*param_1 + 0x2c2) = 2;
+              *(undefined2 *)(*param_1 + 0x2c4) = 3;
+              return 0;
+            }
+            if (uVar7 == 3) {
+              (**(code **)(param_1[1] + 0x3c))(3);
+              *(undefined2 *)(*param_1 + 0x2c2) = 3;
+              *(undefined2 *)(*param_1 + 0x2c4) = 4;
+              return 0;
+            }
+            if (uVar7 == 4) {
+              (**(code **)(param_1[1] + 0x3c))(4);
+              *(undefined2 *)(*param_1 + 0x2c2) = 4;
+              *(undefined2 *)(*param_1 + 0x2c4) = 2;
+              return 0;
+            }
+          }
+        }
+      }
+      else {
+        if (uVar4 == 1) {
+          return 0;
+        }
+        if (uVar4 == 3) {
+          if ((*(byte *)(iVar6 + 0x276) & 0x10) == 0) goto LAB_2013dca4;
+          uVar3 = uVar3 + 1;
+          uVar8 = (uVar8 & 0x7f) << 1;
+        }
+        else if (uVar4 == 4) {
+          uVar8 = uVar8 >> 2;
+          uVar3 = uVar3 - 2;
+        }
+        else {
+LAB_2013dca4:
+          uVar8 = uVar8 >> 1;
+          uVar3 = uVar3 - 1;
+        }
+      }
+      i = i + 1;
+    } while (i < 0x20000);
+    uVar3 = 0xffffffff;
+  }
+  return uVar3;
+}
+
+
+// ===== sd_set_driver_strength @ 2013de60 (296 bytes)
+
+/* [fact] CMD6 group 3 (driver strength) function 0: inquiry 0x00FFF0FF, switch 0x80FFF0FF, gated by
+   the support bit +0x272 and slot 6; was sd_switch_status_check (T24 round 8) */
+
+uint sd_set_driver_strength(int *param_1)
 
 {
   uint uVar1;
@@ -2072,297 +2342,100 @@ LAB_2013df04:
 }
 
 
-// ===== sd_select_bus_speed @ 2013df88 (1084 bytes)
+// ===== sd_select_bus_speed @ 2013df88 (104 bytes)
 
 /* For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants
    0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 [fact]
     */
 
-uint sd_select_bus_speed(int *param_1)
+void sd_select_bus_speed(int *param_1)
 
 {
-  byte bVar1;
-  ushort uVar2;
-  uint uVar3;
-  int iVar4;
-  uint uVar5;
-  uint uVar6;
-  int iVar7;
-  uint uVar8;
-  uint i;
-  bool bVar9;
+  int iVar1;
   
   *(undefined2 *)(*param_1 + 0x2c4) = 1;
-  iVar7 = *param_1;
-  uVar6 = *(byte *)(iVar7 + 0x221) & 0xf;
-  if (((*(byte *)(iVar7 + 0x221) & 0xf) != 0) &&
-     (uVar6 = *(byte *)(iVar7 + 0x205) & 0x40, (*(byte *)(iVar7 + 0x205) & 0x40) != 0)) {
-    if ((*(byte *)(iVar7 + 0x2c0) & 4) == 0) {
-      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
-      if ((uVar6 == 0) &&
-         (uVar6 = *(byte *)(*param_1 + 0x276) & 2, (*(byte *)(*param_1 + 0x276) & 2) != 0)) {
-        uVar8 = 0;
-        while (uVar6 = sd_cmd6_switch_func(0xfffff1,param_1), uVar6 == 0) {
-          iVar7 = *param_1;
-          if (800 < CONCAT11(*(undefined1 *)(iVar7 + 0x269),*(undefined1 *)(iVar7 + 0x26a))) {
-            return 0;
-          }
-          if ((*(char *)(iVar7 + 0x27a) != '\x01') || ((*(byte *)(iVar7 + 0x286) & 2) == 0)) {
-            if ((~*(byte *)(iVar7 + 0x279) & 0xf) == 0) {
-              return 0;
-            }
-            uVar6 = sd_cmd6_switch_func(0x80fffff1,param_1);
-            if (uVar6 != 0) {
-              return uVar6;
-            }
-            if ((*(byte *)(*param_1 + 0x279) & 0xf) == 1) {
-              (**(code **)(param_1[1] + 0x30))(1);
-              *(undefined2 *)(*param_1 + 0x2c4) = 2;
-              return 0;
-            }
-            uVar6 = (**(code **)(param_1[1] + 8))();
-            if (uVar6 != 0) {
-              return uVar6;
-            }
-          }
-          uVar8 = uVar8 + 1;
-          if (0x1ffff < uVar8) {
-            return 0xffffffff;
-          }
-        }
-      }
-      return uVar6;
+  iVar1 = *param_1;
+  if (((*(byte *)(iVar1 + 0x221) & 0xf) != 0) && ((*(byte *)(iVar1 + 0x205) & 0x40) != 0)) {
+    if ((*(byte *)(iVar1 + 0x2c0) & 4) == 0) {
+      sd_switch_high_speed(param_1);
+      return;
     }
-    uVar6 = sd_switch_status_check();
-    if (uVar6 == 0) {
-      (**(code **)(param_1[1] + 0x3c))(0);
-      uVar6 = sd_cmd6_switch_func(0xffffff,param_1);
-      if (uVar6 == 0) {
-        uVar6 = 0xfffff1;
-        bVar1 = *(byte *)(*param_1 + 0x276);
-        if ((bVar1 & 8) == 0) {
-          if ((bVar1 & 0x10) == 0) {
-            if ((bVar1 & 4) == 0) {
-              if ((bVar1 & 2) == 0) {
-                return bVar1 & 2;
-              }
-              uVar8 = 2;
-            }
-            else {
-              uVar8 = 4;
-              uVar6 = 0xff3ff2;
-            }
-          }
-          else {
-            uVar8 = 0x10;
-            uVar6 = 0xff3ff4;
-          }
-        }
-        else {
-          uVar8 = 8;
-          uVar6 = 0xff3ff3;
-        }
-        i = 0;
-        do {
-          uVar3 = (**(code **)(param_1[1] + 8))();
-          if (uVar3 != 0) {
-            return uVar3;
-          }
-          uVar3 = sd_cmd6_switch_func(uVar6,param_1);
-          if (uVar3 != 0) {
-            return uVar3;
-          }
-          uVar3 = uVar6 & 0xf;
-          iVar7 = (**(code **)(param_1[1] + 0x1c))(uVar3);
-          iVar4 = *param_1;
-          uVar2 = CONCAT11(*(undefined1 *)(iVar4 + 0x269),*(undefined1 *)(iVar4 + 0x26a));
-          bVar9 = uVar2 == 800;
-          if (uVar2 < 0x321) {
-            bVar9 = iVar7 == 0;
-          }
-          if (bVar9) {
-            if (((*(char *)(iVar4 + 0x27a) != '\x01') || ((*(byte *)(iVar4 + 0x286) & uVar8) == 0))
-               && ((uVar6 == 0xfffff1 ||
-                   ((*(char *)(iVar4 + 0x27a) != '\x01' || ((*(byte *)(iVar4 + 0x280) & 8) == 0)))))
-               ) {
-              if ((~*(byte *)(iVar4 + 0x279) & 0xf) == 0) {
-                return 0;
-              }
-              if ((~(*(byte *)(iVar4 + 0x278) >> 4) & 0xf) == 0) {
-                return 0;
-              }
-              uVar5 = sd_cmd6_switch_func(uVar6 | 0x80000000,param_1);
-              if (uVar5 != 0) {
-                return uVar5;
-              }
-              uVar5 = (uint)*(byte *)(*param_1 + 0x279);
-              if (((uVar5 & 0xf) == uVar3) &&
-                 ((uVar6 == 0xfffff1 ||
-                  ((uVar6 & 0xffff) >> 0xc == (uint)(*(byte *)(*param_1 + 0x278) >> 4))))) {
-                uVar5 = uVar5 & 0xf;
-                if (uVar5 == 1) {
-                  (**(code **)(param_1[1] + 0x3c))(1);
-                  *(undefined2 *)(*param_1 + 0x2c2) = 1;
-                  *(undefined2 *)(*param_1 + 0x2c4) = 2;
-                  return 0;
-                }
-                if (uVar5 == 2) {
-                  (**(code **)(param_1[1] + 0x3c))(2);
-                  *(undefined2 *)(*param_1 + 0x2c2) = 2;
-                  *(undefined2 *)(*param_1 + 0x2c4) = 3;
-                  return 0;
-                }
-                if (uVar5 == 3) {
-                  (**(code **)(param_1[1] + 0x3c))(3);
-                  *(undefined2 *)(*param_1 + 0x2c2) = 3;
-                  *(undefined2 *)(*param_1 + 0x2c4) = 4;
-                  return 0;
-                }
-                if (uVar5 == 4) {
-                  (**(code **)(param_1[1] + 0x3c))(4);
-                  *(undefined2 *)(*param_1 + 0x2c2) = 4;
-                  *(undefined2 *)(*param_1 + 0x2c4) = 2;
-                  return 0;
-                }
-              }
-            }
-          }
-          else {
-            if (uVar3 == 1) {
-              return 0;
-            }
-            if (uVar3 == 3) {
-              if ((*(byte *)(iVar4 + 0x276) & 0x10) == 0) goto LAB_2013dca4;
-              uVar6 = uVar6 + 1;
-              uVar8 = (uVar8 & 0x7f) << 1;
-            }
-            else if (uVar3 == 4) {
-              uVar8 = uVar8 >> 2;
-              uVar6 = uVar6 - 2;
-            }
-            else {
-LAB_2013dca4:
-              uVar8 = uVar8 >> 1;
-              uVar6 = uVar6 - 1;
-            }
-          }
-          i = i + 1;
-        } while (i < 0x20000);
-        uVar6 = 0xffffffff;
-      }
-      return uVar6;
+                    /* CMD6 group 3 [doc] */
+    iVar1 = sd_set_driver_strength();
+    if (iVar1 == 0) {
+      sd_switch_uhs_speed(param_1);
+      return;
     }
   }
-  return uVar6;
+  return;
 }
 
 
-// ===== sd_card_identify @ 2013dff0 (624 bytes)
+// ===== sd_card_identify @ 2013dff0 (308 bytes)
 
 /* card reset/identify, card-type flags at +0x2C0/+0x2C2 */
 
-int sd_card_identify(int *param_1)
+void sd_card_identify(int *param_1)
 
 {
   ushort uVar1;
   int iVar2;
-  uint uVar3;
-  int iVar4;
-  undefined4 unaff_r4;
   
-  iVar4 = (**(code **)(param_1[1] + 8))();
-  if (iVar4 != 0) {
-    return iVar4;
+  iVar2 = (**(code **)(param_1[1] + 8))();
+  if (iVar2 != 0) {
+    return;
   }
   *(undefined2 *)(*param_1 + 0x2c0) = 0;
   *(undefined2 *)(*param_1 + 0x2c2) = 0;
   *(undefined2 *)(*param_1 + 0x2c4) = 0;
   *(undefined2 *)(*param_1 + 0x2c6) = 0;
   (**(code **)(param_1[1] + 0x30))(0);
-  iVar4 = FUN_2013c928(1,param_1);
-  if (iVar4 != 0) {
-    return iVar4;
+  iVar2 = sd_card_clock(1,param_1);
+  if (iVar2 != 0) {
+    return;
   }
   sd_delay_ms(1);
-  iVar4 = sd_cmd0_go_idle(param_1);
-  if (iVar4 != 0) {
-    return iVar4;
+  iVar2 = sd_cmd0_go_idle(param_1);
+  if (iVar2 != 0) {
+    return;
   }
-  iVar4 = sd_init_v2(param_1);
-  if (iVar4 == 0) {
+  iVar2 = sd_init_v2(param_1);
+  if (iVar2 == 0) {
     uVar1 = *(ushort *)(*param_1 + 0x2c0);
     *(ushort *)(*param_1 + 0x2c0) = uVar1 | 2;
     if ((uVar1 & 4) == 0) goto LAB_2013e0c0;
-    iVar4 = FUN_2013cde8(param_1);
+    iVar2 = sd_cmd11_voltage_switch(param_1);
   }
   else {
-    if (iVar4 == 1) {
+    if (iVar2 == 1) {
       *(ushort *)(*param_1 + 0x2c0) = *(ushort *)(*param_1 + 0x2c0) | 1;
       goto LAB_2013e0c0;
     }
-    if (iVar4 != -9) {
-      return iVar4;
+    if (iVar2 != -9) {
+      return;
     }
     *(ushort *)(*param_1 + 0x2c0) = *(ushort *)(*param_1 + 0x2c0) | 1;
                     /* Initialisation without a CMD8 answer [doc] */
-    iVar4 = sd_init_v1_or_mmc(param_1);
+    iVar2 = sd_init_v1_or_mmc(param_1);
   }
-  if (iVar4 != 0) {
-    return iVar4;
+  if (iVar2 != 0) {
+    return;
   }
 LAB_2013e0c0:
-  iVar4 = sd_cmd2_all_send_cid(param_1);
-  if (iVar4 != 0) {
-    return iVar4;
+  iVar2 = sd_cmd2_all_send_cid(param_1);
+  if (iVar2 != 0) {
+    return;
   }
-  iVar4 = 0;
-  if (*(short *)(*param_1 + 0x2c6) == 1) {
-    do {
-      iVar2 = (**(code **)(param_1[1] + 0x48))(3,0,0x10000,*param_1,unaff_r4);
-      if (iVar2 == 0) {
-        if (2 < iVar4) {
-          return -9;
-        }
-        (**(code **)(param_1[1] + 0x4c))(1,*param_1);
-        *(undefined2 *)(*param_1 + 0x2aa) = 1;
-        uVar3 = *(uint *)(*param_1 + 0x2b0);
-        if ((uVar3 & 0xd80000) != 0) {
-          if (((uVar3 & 0xd80000) == 0x400000) && ((uVar3 & 0x1e00) == 0x400)) {
-            return 0;
-          }
-          return -0x17;
-        }
-        return 0;
-      }
-      iVar4 = iVar4 + 1;
-    } while (iVar4 < 3);
-  }
-  else {
-    do {
-      iVar2 = (**(code **)(param_1[1] + 0x48))(3,0,0,*param_1);
-      if (iVar2 == 0) {
-        if (2 < iVar4) {
-          return -9;
-        }
-        (**(code **)(param_1[1] + 0x4c))(6,*param_1);
-        *(short *)(*param_1 + 0x2aa) = (short)((uint)*(undefined4 *)(*param_1 + 0x2b0) >> 0x10);
-        if ((*(uint *)(*param_1 + 0x2b0) & 0xe000) == 0) {
-          return 0;
-        }
-        return -8;
-      }
-      iVar4 = iVar4 + 1;
-    } while (iVar4 < 3);
-  }
-  return -9;
+  sd_cmd3_relative_addr(param_1);
+  return;
 }
 
 
-// ===== sd_read_csd_cid @ 2013e124 (304 bytes)
+// ===== sd_read_csd_cid @ 2013e124 (108 bytes)
 
 /* CMD9 with sd_csd_check / mmc_csd_check, then CMD10; -5 when the CID is all zero [fact] */
 
-int sd_read_csd_cid(int *param_1)
+void sd_read_csd_cid(int *param_1)
 
 {
   int iVar1;
@@ -2376,23 +2449,11 @@ int sd_read_csd_cid(int *param_1)
       iVar1 = sd_csd_check();
     }
     if ((iVar1 == 0) && (iVar1 = sd_cmd10_send_cid(param_1), iVar1 == 0)) {
-      iVar1 = *param_1;
-      if ((((*(char *)(iVar1 + 0x211) != '\0') || (*(char *)(iVar1 + 0x212) != '\0')) ||
-          (*(char *)(iVar1 + 0x213) != '\0')) &&
-         ((((*(char *)(iVar1 + 0x214) != '\0' || (*(char *)(iVar1 + 0x215) != '\0')) ||
-           ((*(char *)(iVar1 + 0x216) != '\0' ||
-            ((*(char *)(iVar1 + 0x217) != '\0' || (*(char *)(iVar1 + 0x218) != '\0')))))) ||
-          ((*(char *)(iVar1 + 0x219) != '\0' ||
-           (((((*(char *)(iVar1 + 0x21a) != '\0' || (*(char *)(iVar1 + 0x21b) != '\0')) ||
-              (*(char *)(iVar1 + 0x21c) != '\0')) ||
-             ((*(char *)(iVar1 + 0x21d) != '\0' || (*(char *)(iVar1 + 0x21e) != '\0')))) ||
-            (*(char *)(iVar1 + 0x21f) != '\0')))))))) {
-        return 0;
-      }
-      return -5;
+      sd_cid_check(*param_1 + 0x211);
+      return;
     }
   }
-  return iVar1;
+  return;
 }
 
 
@@ -2413,120 +2474,5 @@ void sd_selected_op(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
     return;
   }
   return;
-}
-
-
-// ===== sd_scr_bus_width @ 2013e1e4 (76 bytes)
-
-/* Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit)
-   [fact] */
-
-int sd_scr_bus_width(int *param_1)
-
-{
-  int iVar1;
-  
-  iVar1 = sd_acmd51_read_scr();
-  if (iVar1 == 0) {
-    iVar1 = *param_1;
-    if ((*(byte *)(iVar1 + 0x222) & 4) == 0) {
-      *(undefined2 *)(iVar1 + 0x2ac) = 0;
-      return 0;
-    }
-    *(undefined2 *)(iVar1 + 0x2ac) = 2;
-    iVar1 = 0;
-  }
-  return iVar1;
-}
-
-
-// ===== sd_read_sectors @ 2013e230 (132 bytes)
-
-/* driver op +0x58 */
-
-uint sd_read_sectors(int param_1,uint param_2,uint param_3,int *param_4)
-
-{
-  uint uVar1;
-  
-  if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
-    param_1 = param_1 << 9;
-  }
-                    /* makes sure the card is selected [doc] */
-  uVar1 = sd_select_card(param_4);
-  if ((uVar1 == 0) &&
-     ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
-      (uVar1 = (**(code **)(param_4[1] + 0x40))(), uVar1 == 0)))) {
-                    /* WARNING: Could not recover jumptable at 0x2013e2ac. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-    uVar1 = (**(code **)(param_4[1] + 0x58))(param_1,param_2,param_3,*param_4);
-    return uVar1;
-  }
-  return uVar1;
-}
-
-
-// ===== sd_write_sectors @ 2013e2b4 (156 bytes)
-
-/* driver op +0x60; -7 = write-protected */
-
-int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
-
-{
-  int iVar1;
-  
-  iVar1 = (**(code **)(param_4[1] + 0xc))();
-  if (iVar1 == 0) {
-    if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
-      param_1 = param_1 << 9;
-    }
-                    /* makes sure the card is selected [doc] */
-    iVar1 = sd_select_card(param_4);
-    if ((iVar1 == 0) &&
-       ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
-        (iVar1 = (**(code **)(param_4[1] + 0x40))(), iVar1 == 0)))) {
-                    /* WARNING: Could not recover jumptable at 0x2013e348. Too many branches */
-                    /* WARNING: Treating indirect jump as call */
-      iVar1 = (**(code **)(param_4[1] + 0x60))(param_1,param_2,param_3,*param_4);
-      return iVar1;
-    }
-  }
-  else {
-    iVar1 = -7;
-  }
-  return iVar1;
-}
-
-
-// ===== sd_vol_read @ 2013e35c (112 bytes)
-
-/* (vol, sector, buf, n, ctx): partition read: bounds check against vol +0x14, offset vol +0x30, 3
-   tries of sd_read_sectors [fact] */
-
-uint sd_vol_read(int param_1,uint param_2,uint param_3,uint param_4,int *param_5)
-
-{
-  uint uVar1;
-  int i;
-  
-  if (param_2 < *(uint *)(param_1 + 0x14)) {
-    i = 0;
-    do {
-      uVar1 = (**(code **)(param_5[1] + 8))();
-      if (uVar1 != 0) {
-        return uVar1;
-      }
-                    /* driver op +0x58 [doc, inference] */
-      uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
-      if (uVar1 == 0) {
-        return 0;
-      }
-      i = i + 1;
-    } while (i < 3);
-  }
-  else {
-    uVar1 = 0xfffffffe;
-  }
-  return uVar1;
 }
 
