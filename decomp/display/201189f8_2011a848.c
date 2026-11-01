@@ -1431,18 +1431,23 @@ void vdc5_set_input_cntrl_color_mtx(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011a288 @ 2011a288 (8 bytes)
+// ===== vdc5_ratio_one @ 2011a288 (8 bytes)
 
-undefined4 FUN_2011a288(void)
+/* [fact] mov r0, #0x1000; bx lr; no caller; Ghidra FUN_2011a288 (T24 round 6) */
+
+undefined4 vdc5_ratio_one(void)
 
 {
   return 0x1000;
 }
 
 
-// ===== FUN_2011a290 @ 2011a290 (260 bytes)
+// ===== vdc5_set_scaling_down @ 2011a290 (260 bytes)
 
-void FUN_2011a290(int param_1,int param_2,int param_3)
+/* [fact] SCL0_DS1/DS4/DS5/DS6 and US1/US6 from the scaling block; called by 0x2011A394 and
+   0x2011A6C8 (0x2011A574, 0x2011A78C); Ghidra FUN_2011a290 (T24 round 6) */
+
+void vdc5_set_scaling_down(int param_1,int param_2,int param_3)
 
 {
   ushort uVar1;
@@ -1481,11 +1486,13 @@ void FUN_2011a290(int param_1,int param_2,int param_3)
 }
 
 
-// ===== vdc5_config @ 2011a394 (820 bytes)
+// ===== vdc5_reg_write_data_control @ 2011a394 (820 bytes)
 
-/* writes VDC5 ch0 registers 0xFCFF7400+ */
+/* [fact] the register part of R_VDC5_WriteDataControl: called by r_vdc5_write_data_control after
+   the shared-parameter calls, programs SCL0_DS2/3 and SCL1_WR1..10 of the scaler table 0x20165CE0;
+   was vdc5_config (T24 round 6) */
 
-void vdc5_config(int param_1,int param_2,ushort *param_3)
+void vdc5_reg_write_data_control(int param_1,int param_2,ushort *param_3)
 
 {
   uint *puVar1;
@@ -1553,7 +1560,7 @@ void vdc5_config(int param_1,int param_2,ushort *param_3)
     *(uint *)puVar3[0xe] = uVar2;
     *(uint *)puVar3[0x11] = (uint)param_3[5] << 0x10;
     *(uint *)puVar3[0x11] = (uint)param_3[6] | *(uint *)puVar3[0x11];
-    FUN_2011a290(param_3,*(undefined1 *)((int)param_3 + 0x13),puVar3);
+    vdc5_set_scaling_down(param_3,*(undefined1 *)((int)param_3 + 0x13),puVar3);
     *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] & 0xffffff8f;
     *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
     uVar2 = *(uint *)puVar3[0x20];
@@ -1634,7 +1641,7 @@ void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
     *(uint *)puVar4[0x11] = (uint)param_3[5] << 0x10;
     *(uint *)puVar4[0x11] = *(uint *)puVar4[0x11] | (uint)param_3[6];
     uVar1 = vdc5_shrd_get_interlace();
-    FUN_2011a290(param_3,uVar1,puVar4);
+    vdc5_set_scaling_down(param_3,uVar1,puVar4);
     *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] & 0xffffff8f;
     *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
     puVar2 = (uint *)puVar4[0x1b];
@@ -1676,9 +1683,12 @@ void vdc5_set_img_qa_improver_color_mtx(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2011a848 @ 2011a848 (132 bytes)
+// ===== vdc5_set_scaler_background_color @ 2011a848 (132 bytes)
 
-void FUN_2011a848(int param_1,int param_2,undefined4 param_3)
+/* [fact] SCL0_OVR1 and GRx_BASE from vdc5_shrd_get_bg_color, for scaler 0 or 1; called from
+   0x2011B2CC; Ghidra FUN_2011a848 (T24 round 6) */
+
+void vdc5_set_scaler_background_color(int param_1,int param_2,undefined4 param_3)
 
 {
   int iVar1;

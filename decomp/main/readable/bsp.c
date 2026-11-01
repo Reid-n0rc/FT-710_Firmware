@@ -2881,8 +2881,10 @@ uint fclose(ushort *param_1)
 
 /* -----------------------------------------------------------------------------
  * strncmp @ fffede1d  (36 bytes, 18 callers, export file fffed704_fffee29c.c)
- * Purpose: strncmp(a, b, n), byte compare up to n [inference]
- * Tag: [inference]
+ * Purpose: strncmp(a, b, n), byte compare up to n [inference]; unlike ISO C it does not stop at a NUL both strings
+ *     share: it compares until the first difference or n bytes (`"ab\0x"` vs `"ab\0y"`, n = 4, differ) [fact: the
+ *     loop 0xFFFEDE25..0xFFFEDE33 tests only the count and equality; T24 recreation, checked by emulation]
+ * Tag: [inference] [fact]
  * Doc: ../../../docs/code/main/bsp.md
  */
 // ===== strncmp @ fffede1d (36 bytes)
@@ -3506,8 +3508,9 @@ uint * malloc(uint param_1)
 
 /* -----------------------------------------------------------------------------
  * heap_getmem @ fffee29c  (27 bytes, 1 callers, export file fffed704_fffee29c.c)
- * Purpose: sbrk wrapper: returns 0 for size < 1 or when sbrk fails [inference]
- * Tag: [inference]
+ * Purpose: sbrk wrapper: returns 0 for size < 1 or when sbrk fails, else sbrk's pointer (`stz #0, r1` keeps R1 =
+ *     sbrk's result, 0xFFFEE2B2) [fact; T24 recreation]
+ * Tag: [fact]
  * Doc: ../../../docs/code/main/bsp.md
  */
 // ===== heap_getmem @ fffee29c (27 bytes)

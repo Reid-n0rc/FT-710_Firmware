@@ -329,7 +329,7 @@ undefined4 r_vdc5_write_data_control(int param_1,int param_2,undefined4 param_3)
 LAB_20117cf4:
                     /* Shared-parameter update of r_vdc5_write_data_control [doc, inference] */
   vdc5_shrd_set_write_param(param_1,uVar1,param_3);
-  vdc5_config(param_1,uVar1,param_3);
+  vdc5_reg_write_data_control(param_1,uVar1,param_3);
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
   vdc5_shrd_set_resource(param_1,param_2,1);
   return 0;
@@ -2980,16 +2980,19 @@ void vdc5_reg_display_output(int param_1,ushort *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * vdc5_config @ 2011a394  (820 bytes, 1 callers, export file 201189f8_2011a848.c)
+ * vdc5_reg_write_data_control @ 2011a394  (820 bytes, 1 callers, export file 201189f8_2011a848.c)
+ * Name on the doc page: vdc5_config
  * Purpose: driver-internal register writer for ch0 (T06 name)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
  */
-// ===== vdc5_config @ 2011a394 (820 bytes)
+// ===== vdc5_reg_write_data_control @ 2011a394 (820 bytes)
 
-/* writes VDC5 ch0 registers 0xFCFF7400+ */
+/* [fact] the register part of R_VDC5_WriteDataControl: called by r_vdc5_write_data_control after
+   the shared-parameter calls, programs SCL0_DS2/3 and SCL1_WR1..10 of the scaler table 0x20165CE0;
+   was vdc5_config (T24 round 6) */
 
-void vdc5_config(int param_1,int param_2,ushort *param_3)
+void vdc5_reg_write_data_control(int param_1,int param_2,ushort *param_3)
 
 {
   uint *puVar1;
@@ -3057,7 +3060,7 @@ void vdc5_config(int param_1,int param_2,ushort *param_3)
     *(uint *)puVar3[0xe] = uVar2;
     *(uint *)puVar3[0x11] = (uint)param_3[5] << 0x10;
     *(uint *)puVar3[0x11] = (uint)param_3[6] | *(uint *)puVar3[0x11];
-    FUN_2011a290(param_3,*(undefined1 *)((int)param_3 + 0x13),puVar3);
+    vdc5_set_scaling_down(param_3,*(undefined1 *)((int)param_3 + 0x13),puVar3);
     *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] & 0xffffff8f;
     *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
     uVar2 = *(uint *)puVar3[0x20];
@@ -3146,7 +3149,7 @@ void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
     *(uint *)puVar4[0x11] = (uint)param_3[5] << 0x10;
     *(uint *)puVar4[0x11] = *(uint *)puVar4[0x11] | (uint)param_3[6];
     uVar1 = vdc5_shrd_get_interlace();
-    FUN_2011a290(param_3,uVar1,puVar4);
+    vdc5_set_scaling_down(param_3,uVar1,puVar4);
     *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] & 0xffffff8f;
     *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
     puVar2 = (uint *)puVar4[0x1b];
@@ -3185,9 +3188,9 @@ void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
   undefined4 *puVar7;
   
   puVar2 = (ushort *)vdc5_shrd_get_fr_buff_width_rd();
-  uVar3 = FUN_2011aecc(param_2,param_3[1],puVar2,param_3 + 0x14);
+  uVar3 = vdc5_confirm_graphics_enlargement(param_2,param_3[1],puVar2,param_3 + 0x14);
   if (param_2 < 2 || param_2 == 5) {
-    FUN_2011acd8(param_1,param_2,puVar2,param_3 + 0x14,param_3[1],uVar3);
+    vdc5_set_scaler_graphics(param_1,param_2,puVar2,param_3 + 0x14,param_3[1],uVar3);
   }
   puVar7 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
   *(uint *)puVar7[2] = *(uint *)puVar7[2] & 0xfffefcfe;
@@ -3218,7 +3221,7 @@ void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
   *(uint *)puVar7[7] = (uint)puVar2[1] * 0x10000 - 0x10000 | *(uint *)puVar7[7];
   *(uint *)puVar7[7] = *(uint *)puVar7[7] | (uint)(byte)param_3[0x13] << 10;
   if ((byte)param_3[1] < 2) {
-    uVar4 = FUN_2011aad8(*(undefined4 *)(param_3 + 4),param_3[0x11]);
+    uVar4 = vdc5_display_start_pixel(*(undefined4 *)(param_3 + 4),param_3[0x11]);
     *(uint *)puVar7[7] = uVar4 | *(uint *)puVar7[7];
   }
   *(uint *)puVar7[8] = *(uint *)puVar7[8] & 0xfffffffc;
@@ -3257,9 +3260,9 @@ LAB_2011b23c:
     uVar4 = *puVar6 | 0x100;
   }
   *puVar6 = uVar4;
-  FUN_2011a9e0(param_1,param_2,param_3[1],uVar3);
+  vdc5_setup_graphics_vin(param_1,param_2,param_3[1],uVar3);
   iVar5 = vdc5_shrd_get_color_space_fb_rd(param_1,param_2);
-  FUN_2011a848(param_1,param_2,iVar5);
+  vdc5_set_scaler_background_color(param_1,param_2,iVar5);
   vdc5_set_img_qa_improver_color_mtx(param_1,param_2,iVar5);
   puVar1 = &DAT_20166130;
   if (param_2 != 0) {
@@ -3326,15 +3329,15 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
   uVar6 = vdc5_shrd_get_sel_fb_addr_sig();
   uVar7 = vdc5_shrd_get_display_area(param_1,param_2);
   uVar8 = vdc5_shrd_get_fr_buff_width_rd(param_1,param_2);
-  uVar9 = FUN_2011aecc(param_2,uVar6,uVar8,uVar7);
+  uVar9 = vdc5_confirm_graphics_enlargement(param_2,uVar6,uVar8,uVar7);
   if (param_2 < 2 || param_2 == 5) {
-    FUN_2011acd8(param_1,param_2,uVar8,uVar7,uVar6,uVar9);
+    vdc5_set_scaler_graphics(param_1,param_2,uVar8,uVar7,uVar6,uVar9);
   }
   puVar11 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
   if ((*param_3 != 0) && (*(uint *)puVar11[3] = *param_3 & 0xfffffff8, uVar6 < 2)) {
     uVar7 = vdc5_shrd_get_graphics_format(param_1,param_2);
     *(uint *)puVar11[7] = *(uint *)puVar11[7] & 0xffffffc0;
-    uVar10 = FUN_2011aad8(*param_3,uVar7);
+    uVar10 = vdc5_display_start_pixel(*param_3,uVar7);
     *(uint *)puVar11[7] = uVar10 | *(uint *)puVar11[7];
   }
   if (param_3[1] != 0) {
@@ -3357,8 +3360,8 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
   *(uint *)*puVar11 = *(uint *)*puVar11 | 0x11;
   if (param_2 < 2) {
     iVar2 = vdc5_shrd_get_cascade();
-    iVar3 = FUN_2011a8cc(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,unaff_r8,
-                         unaff_lr);
+    iVar3 = vdc5_set_cascade(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,
+                             unaff_r8,unaff_lr);
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
     iVar4 = r_vdc5_shrd_get_resource(param_1,3);
     if (iVar4 != 0) {
@@ -3590,8 +3593,8 @@ void vdc5_reg_image_enhancement
   undefined4 *puVar1;
   
   puVar1 = (undefined4 *)(&DAT_20166130 + param_2 * 0x34 + param_1 * 0x68);
-  FUN_2011bd8c(param_3,param_4,puVar1);
-  FUN_2011bcb0(param_5,param_6,puVar1);
+  vdc5_set_enhancement_sharpness(param_3,param_4,puVar1);
+  vdc5_set_enhancement_lti(param_5,param_6,puVar1);
   if (param_7 != (ushort *)0x0) {
     *(uint *)puVar1[3] = (uint)*param_7 << 0x10;
     *(uint *)puVar1[3] = *(uint *)puVar1[3] | (uint)param_7[1];
@@ -3720,9 +3723,9 @@ void vdc5_reg_alpha_blending_rect(int param_1,int param_2,int param_3,undefined4
   **(uint **)(&DAT_201662e0 + param_1 * 0x210 + param_2 * 0x58) = uVar3;
   if (param_4 != (undefined4 *)0x0) {
     if ((undefined1 *)param_4[2] != (undefined1 *)0x0) {
-      FUN_2011c174(param_1,*(undefined1 *)param_4[2]);
+      vdc5_set_und_sel(param_1,*(undefined1 *)param_4[2]);
     }
-    FUN_2011c118(*param_4,puVar4);
+    vdc5_set_alpha_rect_area(*param_4,puVar4);
     psVar1 = (short *)param_4[1];
     if (psVar1 != (short *)0x0) {
       if (param_2 != 4) {
@@ -3836,9 +3839,9 @@ void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
       *(undefined4 *)puVar4[0x10] = uVar2;
     }
     else {
-      uVar2 = FUN_2011c3a4(iVar1,*(undefined4 *)param_4);
+      uVar2 = vdc5_color_conversion(iVar1,*(undefined4 *)param_4);
       *(undefined4 *)puVar4[0xf] = uVar2;
-      uVar2 = FUN_2011c3a4(iVar1,*(undefined4 *)(param_4 + 4));
+      uVar2 = vdc5_color_conversion(iVar1,*(undefined4 *)(param_4 + 4));
       *(undefined4 *)puVar4[0x10] = uVar2;
     }
     uVar3 = *(uint *)puVar4[0x10];
@@ -3907,7 +3910,7 @@ void vdc5_reg_clut(int param_1,int param_2,int *param_3)
     uVar4 = *puVar2 | 0xff000000;
   }
   else {
-    FUN_2011c5b4(param_3,(&PTR_DAT_201666e0)[param_1 * 6 + param_2]);
+    vdc5_set_clut(param_3,(&PTR_DAT_201666e0)[param_1 * 6 + param_2]);
     puVar2 = (uint *)puVar5[0x14];
     uVar4 = *puVar2 ^ 0x10000;
   }
@@ -4002,16 +4005,16 @@ void vdc5_reg_gamma_correction(int param_1,int param_2,undefined4 *param_3)
 {
   **(uint **)(&DAT_201667d0 + param_1 * 0x130) = (uint)(param_2 != 0);
   if (param_3 != (undefined4 *)0x0) {
-    FUN_2011c8a4(param_3[1],&PTR_VDC50_GAM_G_AREA1_20166818 + param_1 * 0x4c);
-    FUN_2011c85c(*param_3,&PTR_VDC50_GAM_G_LUT1_201667d8 + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[1],&PTR_VDC50_GAM_G_AREA1_20166818 + param_1 * 0x4c);
+    vdc5_set_gamma_gain(*param_3,&PTR_VDC50_GAM_G_LUT1_201667d8 + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_G_UPDATE_201667d4)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_G_UPDATE_201667d4)[param_1 * 0x4c] | 1;
-    FUN_2011c8a4(param_3[3],&PTR_VDC50_GAM_B_AREA1_2016687c + param_1 * 0x4c);
-    FUN_2011c85c(param_3[2],&PTR_VDC50_GAM_B_LUT1_2016683c + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[3],&PTR_VDC50_GAM_B_AREA1_2016687c + param_1 * 0x4c);
+    vdc5_set_gamma_gain(param_3[2],&PTR_VDC50_GAM_B_LUT1_2016683c + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_B_UPDATE_20166838)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_B_UPDATE_20166838)[param_1 * 0x4c] | 1;
-    FUN_2011c8a4(param_3[5],&PTR_VDC50_GAM_R_AREA1_201668e0 + param_1 * 0x4c);
-    FUN_2011c85c(param_3[4],&PTR_VDC50_GAM_R_LUT1_201668a0 + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[5],&PTR_VDC50_GAM_R_AREA1_201668e0 + param_1 * 0x4c);
+    vdc5_set_gamma_gain(param_3[4],&PTR_VDC50_GAM_R_LUT1_201668a0 + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_R_UPDATE_2016689c)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_R_UPDATE_2016689c)[param_1 * 0x4c] | 1;
   }
