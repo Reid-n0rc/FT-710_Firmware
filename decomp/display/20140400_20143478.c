@@ -33,36 +33,44 @@ undefined4 sdhi_check_wp(void)
 }
 
 
-// ===== FUN_20140420 @ 20140420 (8 bytes)
+// ===== sdhi_op4 @ 20140420 (8 bytes)
 
-undefined4 FUN_20140420(void)
+/* slot 4 of the SDHI operation table 0x20420564: returns -9 [fact] (T24 round 4) */
+
+undefined4 sdhi_op4(void)
 
 {
   return 0xfffffff7;
 }
 
 
-// ===== FUN_20140428 @ 20140428 (8 bytes)
+// ===== sdhi_op5 @ 20140428 (8 bytes)
 
-undefined4 FUN_20140428(void)
+/* slot 5 of the SDHI operation table: returns -10 [fact] (T24 round 4) */
+
+undefined4 sdhi_op5(void)
 
 {
   return 0xfffffff6;
 }
 
 
-// ===== FUN_20140430 @ 20140430 (8 bytes)
+// ===== sdhi_op6 @ 20140430 (8 bytes)
 
-undefined4 FUN_20140430(void)
+/* slot 6 of the SDHI operation table: returns 4 [fact] (T24 round 4) */
+
+undefined4 sdhi_op6(void)
 
 {
   return 4;
 }
 
 
-// ===== FUN_20140438 @ 20140438 (8 bytes)
+// ===== sdhi_op7 @ 20140438 (8 bytes)
 
-undefined4 FUN_20140438(void)
+/* slot 7 of the SDHI operation table: returns 5 [fact] (T24 round 4) */
+
+undefined4 sdhi_op7(void)
 
 {
   return 5;
@@ -117,45 +125,55 @@ void sdhi_set_bus_width(int param_1)
 }
 
 
-// ===== FUN_2014048c @ 2014048c (4 bytes)
+// ===== sdhi_op12 @ 2014048c (4 bytes)
 
-void FUN_2014048c(void)
+/* slot 12 of the SDHI operation table: empty [fact] (T24 round 4) */
 
-{
-  return;
-}
-
-
-// ===== FUN_20140490 @ 20140490 (4 bytes)
-
-void FUN_20140490(void)
+void sdhi_op12(void)
 
 {
   return;
 }
 
 
-// ===== FUN_20140494 @ 20140494 (4 bytes)
+// ===== sdhi_op13 @ 20140490 (4 bytes)
 
-void FUN_20140494(void)
+/* slot 13 of the SDHI operation table: empty [fact] (T24 round 4) */
 
-{
-  return;
-}
-
-
-// ===== FUN_20140498 @ 20140498 (4 bytes)
-
-void FUN_20140498(void)
+void sdhi_op13(void)
 
 {
   return;
 }
 
 
-// ===== FUN_2014049c @ 2014049c (8 bytes)
+// ===== sdhi_op14 @ 20140494 (4 bytes)
 
-undefined4 FUN_2014049c(void)
+/* slot 14 of the SDHI operation table: empty [fact] (T24 round 4) */
+
+void sdhi_op14(void)
+
+{
+  return;
+}
+
+
+// ===== sdhi_op15 @ 20140498 (4 bytes)
+
+/* slot 15 of the SDHI operation table: empty [fact] (T24 round 4) */
+
+void sdhi_op15(void)
+
+{
+  return;
+}
+
+
+// ===== sdhi_op16 @ 2014049c (8 bytes)
+
+/* slot 16 of the SDHI operation table: returns -9 [fact] (T24 round 4) */
+
+undefined4 sdhi_op16(void)
 
 {
   return 0xfffffff7;

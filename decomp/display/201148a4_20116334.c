@@ -28,7 +28,7 @@ void scif5_rxi_isr(void)
     }
     itron_set_flg(scif5_uart.rx_flg,1);
     scif5_uart.rx_count = scif5_uart.rx_count + 1;
-    thunk_FUN_20114850(0x208dbac0);
+    pmu_cycle_stamp(0x208dbac0);
     return;
   }
   scif5_uart.rxi_no_data = scif5_uart.rxi_no_data + 1;

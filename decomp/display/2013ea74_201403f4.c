@@ -1087,9 +1087,11 @@ void sdhi_drv_init(void)
 }
 
 
-// ===== FUN_2013fde4 @ 2013fde4 (4 bytes)
+// ===== sdhi_stub_2013fde4 @ 2013fde4 (4 bytes)
 
-void FUN_2013fde4(void)
+/* empty (bx lr); no caller found [fact] (T24 round 4) */
+
+void sdhi_stub_2013fde4(void)
 
 {
   return;
@@ -1141,9 +1143,11 @@ void sdhi0_clock_on(void)
 }
 
 
-// ===== FUN_2013ffdc @ 2013ffdc (4 bytes)
+// ===== sdhi_stub_2013ffdc @ 2013ffdc (4 bytes)
 
-void FUN_2013ffdc(void)
+/* empty (bx lr); no caller found [fact] (T24 round 4) */
+
+void sdhi_stub_2013ffdc(void)
 
 {
   return;
