@@ -1018,7 +1018,7 @@ def _link_one(job):
         args = draw_args(rng)
         fill = PRESETS[fname](rng, args) if fname in PRESETS else []
         sd = rng.getrandbits(32)
-        size = RET_SIZE.get(fname, 4)
+        size = RET_SIZE.get(fname, _ret_sizes().get(fname, 4))
         for budget in (BUDGET, 8 * BUDGET):
             r1 = Run(res.img, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
             r2 = Run(_HYB, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
@@ -1035,6 +1035,17 @@ def _link_one(job):
 
 
 _HYB = None
+_RETS = None
+
+
+def _ret_sizes():
+    """Return size (DWARF) of every recreated function, so that linkcheck compares r0 only where there is a result."""
+    global _RETS
+    if _RETS is None:
+        _RETS = {}
+        for obj, fname, shndx, off in recreated():
+            _RETS[fname] = returns_value(obj, fname)
+    return _RETS
 
 
 def cmd_linkcheck(args):
