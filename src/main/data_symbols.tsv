@@ -118,3 +118,33 @@ cat_mode_codes	fff806d0	cat_IF_OI 0xFFFAA631: the CAT mode character of mode ind
 cat_vfo_state_codes	fff806df	cat_IF_OI 0xFFFAA648: the CAT P7 character of a VFO state (Ghidra label @cat_vfo_state_codes)
 cat_pms_names	fff806e9	cat_IF_OI 0xFFFAA461: 3-character names of the channels from 99 on (P1L..), 3 bytes each (Ghidra label @cat_pms_names)
 em_text_mem	979e	cat_EM 0xFFFA9648: 5 x 0x32 text slots, each ended by 0xFE (eeprom.md "Text slots (EM)")
+int_tuner_step	1b3ac	tuner_int_task 0xFFFEC6A0: the internal-tuner step, the switch at 0xFFFEC6B8 (cases 1..0x10, 0x14, 0x15)
+ext_tuner_step	1b3c8	tuner_ext_task 0xFFFED68F: the external-tuner step, the switch at 0xFFFED6A6 (cases 1..0x10)
+tuner_result_hold	1b3c3	tuner_result_set 0xFFFED252 sets 1 with timer 0x22 = 50; tuner_atas_task 0xFFFED167 / 0xFFFED17F clears it and the result when the timer expires
+dl39_type_rows	fff802c0	displink_build_39 0xFFF9B701: 25 bytes per message-memory type copied to frame 0x39 bytes 0x98..0xB0
+dialog_texts	fff80000	displink_build_70 0xFFF98992: the dialog lines, 22 bytes each, passed to displink_70_msg / _msg2 / _query by offset
+displink_ack_req	1b3cc	displink_task 0xFFF94ED6: 1 = send an ACK on the next pass (displink_send_ack)
+displink_nak_req	1b3cd	displink_task 0xFFF94DB1 (empty or bad frame), 0xFFF94EF1: 1 = send a NAK on the next pass
+displink_gap	1b3d3	displink_task 0xFFF94E64: 1 while the inter-frame gap (soft timer 0x3B, 2 units) runs after a frame left SCI1
+displink_ack_wait	1b3d4	displink_task 0xFFF94EAA: 1 while the ACK window (soft timer 0x3C, 30 units) of a data frame runs
+displink_ack_wait_start	1b3d5	displink_task 0xFFF94F1A: a data frame was handed to SCI1; the next pass opens the ACK window
+displink_rx_copy	198f	displink_task 0xFFF94D9B..0xFFF94DA5: the received frame copied out of the SCI1 buffer (SMOVF) before dispatch
+dlstat_rec	20874	displink_build_status 0xFFF96474 / 0xFFF96498: the active VFO record, kept for the dlstat_* helpers
+dlstat_pos_a	1b62a	displink_build_status 0xFFF9681C (u16): offset of the VFO-A section of the status block
+dlstat_pos_b	1b62c	displink_build_status 0xFFF96981 (u16): offset of the VFO-B section
+dlstat_pos_state_a	1b62e	displink_build_status 0xFFF96842 (u16): offset of the VFO-A state code (9 in SPLIT)
+dlstat_pos_state_b	1b630	displink_build_status 0xFFF969A7 (u16): offset of the VFO-B state code (10 in SPLIT)
+dlstat_swap_a	20878	displink_build_status: pointer into the VFO-A section while the sections are swapped (active VFO-B)
+dlstat_swap_b	2087c	displink_build_status: pointer into the VFO-B section while the sections are swapped
+dlstat_freq5	19c5	displink_build_status 0xFFF9689D..0xFFF968D4: 5 bytes cleared, filled by FUN_fff982aa and copied into the block
+dl60_ver_tmp	19bf	displink_build_60 0xFFF9625C..0xFFF96266: each 6-byte version string is copied here before its digits are packed
+dl41_pos	1b632	displink_build_41 0xFFF9BBDD.. (u16): the write offset in frame 0x41 while it is built
+dl41_used_ptr	20880	displink_build_41 0xFFF9BBBD: memch_valid's second argument (the channel-used byte of the channel)
+dl41_rec	20884	displink_build_41 0xFFF9BD93: the channel record of the row being built
+dl41_header	fff804c4	displink_build_41 0xFFF9BC53: the 15 header bytes of frame 0x41
+dl41_group_names	fff80370	displink_build_41 0xFFF9BD2A: 4-character names of the memory groups from 6 on
+dl41_mode_names	fff8037c	displink_build_41 0xFFF9BE41: 8-character mode names, mode 14 for codes above 13
+sdr_bridge_req	1c8d	sdr_task 0xFFFA1220: 1 = run sdr_bridge_mode (displink_rx_F1_sys sub 1, display-link.md)
+sdr_last_tx	1b3dd	sdr_task 0xFFFA122E / 0xFFFA1271: the transmitting state the SDR registers were last updated for
+sdr_synced	1b3dc	sdr_task 0xFFFA142E / 0xFFFA1458: 1 after the first full pass wrote regs 0x15 and 0x24
+g_ui_ptr2	25d70	dispreq_e7_task 0xFFFE2CD0: a second pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d70)

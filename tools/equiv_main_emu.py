@@ -61,6 +61,8 @@ FUNCS_TSV = os.path.join(ROOT, 'decomp/main/functions.tsv')
 DATA_TSV = os.path.join(SRC, 'data_symbols.tsv')
 ALIAS_TSV = os.path.join(SRC, 'aliases.tsv')
 STATUS_TSV = os.path.join(SRC, 'status.tsv')
+# the objects checked (EQUIV_MAIN_OBJDIR: another build, e.g. make OUT=out2, checked while a status run reads out/obj)
+OBJDIR = os.environ.get('EQUIV_MAIN_OBJDIR') or os.path.join(SRC, 'out', 'obj')
 HOME = os.path.expanduser('~')
 
 ROM = 0xFFF80000
@@ -90,6 +92,11 @@ STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
 STUB_DATA = {'eeprom_write': (1, 2)}
 STUB_BUF = {'eeprom_read': 1, 'eeprom_write': 1}     # the buffer argument, compared as 'stack' when on the stack
 STACK_TOP = 0x1004
+# RAM words that keep a pointer the function passed to a driver; when both runs leave a stack address there, it is
+# compared as 'stack' (T24 MAIN round 4: displink_task -> displink_send_ack hands R_SCI1_Serial_Send a one-byte
+# buffer on the stack, and the address follows the caller's frame, 12 bytes under CC-RX, 28 + 4 under GCC; the
+# byte itself is compared through the SCI accesses). gp_sci1_tx_address (src/main/data_symbols.tsv).
+STACK_PTR_SLOTS = (0x207FC,)
 # Extra stubs per checked function: callee -> (number of arguments recorded, the values it returns, drawn per call). For tasks whose gates are
 # functions of the whole radio state (T24 MAIN round 4: keyer_task runs only when tx_cw_keying_class() is not 0 and
 # soft timer 19 has expired); the calls are compared like the other stubs. A stubbed callee has no side effects, so
@@ -98,6 +105,17 @@ STACK_TOP = 0x1004
 # has about 500 (index, length) pairs)
 FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2}
 FUNC_STUBS = {
+    'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
+    # sdr_task: the first updater that writes ends the pass, and sdr_bridge_mode relays until the DISPLAY ends it;
+    # the bridge and the first group of updaters are stubbed so that the pass reaches the rest (their calls and the
+    # TX argument are compared)
+    'sdr_task': {'sdr_bridge_mode': (0, [0]), 'sdr_poll_reply': (1, [0, 1, 1]), 'sdr_upd_r0a_demod': (1, [0]),
+                 'sdr_upd_r0b_band': (1, [0]), 'sdr_upd_r0c_rtty_shift': (0, [0]), 'sdr_upd_r0d': (0, [0]),
+                 'sdr_upd_r0f_band': (1, [0]), 'sdr_upd_r20_scope_freq': (1, [0]), 'sdr_upd_r22_scope_span': (1, [0]),
+                 'sdr_upd_r23': (0, [0]), 'sdr_upd_r25_tx_drive': (1, [0]), 'sdr_upd_r26': (1, [0]),
+                 'sdr_upd_r27_scope_level': (1, [0])},
+    'displink_task': {'swtimer_expired': (1, [0, 1, 1]), 'FUN_fffc911e': (0, [0, 1])},
+    'tuner_rearm': {'FUN_fffed6f5': (0, [0, 1, 1]), 'vfo_tuner_bit_get': (0, [0, 1])},
     # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
     'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
     'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
@@ -270,7 +288,7 @@ def libgcc():
 
 
 def objects():
-    return sorted(glob.glob(os.path.join(SRC, 'out', 'obj', '**', '*.o'), recursive=True))
+    return sorted(glob.glob(os.path.join(OBJDIR, '**', '*.o'), recursive=True))
 
 
 def recreated():
@@ -843,6 +861,30 @@ def cat_dt_args(rng, regs):
     return [(ARGBUF, bytes(t))], None
 
 
+def displink_task_args(rng, regs):
+    """displink_task: a received frame (ACK, NAK, a DISPLAY frame type or junk) half the time, the link flags
+    0x1B3CC..0x1B3D5 and the delayed-0x24 request in all their combinations."""
+    t = rng.choice([0x06, 0x15] + list(range(0xE0, 0xF3)) + [rng.getrandbits(8)])
+    frame = bytes([t]) + bytes(rng.getrandbits(8) for _ in range(0x40))
+    return [(0x25D38, G_UI.to_bytes(4, 'little')), (0xA08A, bytes([rng.choice([0, 1])])), (0x9E86, frame),
+            (0x1B3CC, bytes(rng.choice([0, 0, 1]) for _ in range(10))), (G_UI + 0x401, bytes([rng.choice([0, 1])]))], None
+
+
+def displink_e1_frame(rng, regs):
+    """An 0xE1 frame {0xE1, encoder id 0..7, steps} in the argument buffer."""
+    regs[0] = ARGBUF
+    return [(ARGBUF, bytes([0xE1, rng.randrange(8), rng.getrandbits(8)]))], None
+
+
+def g_ui_ptr_ok(pre=None):
+    """The DISPLAY frame builders read g_ui through the pointer at 0x25D38 (= 0x20B04 after _INITSCT); the RAM fill
+    would replace it with a random word, so it is set back (and pre's loads added)."""
+    def f(rng, regs):
+        loads = pre(rng, regs)[0] if pre else []
+        return loads + [(0x25D38, G_UI.to_bytes(4, 'little'))], None
+    return f
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -859,6 +901,30 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
+           'tuner_int_task': ram_bytes({0x1B3AC: range(0x17), G_UI + 0x3B: range(7), G_UI + 0x3D: range(3)}),
+           'tuner_ext_task': ram_bytes({0x1B3C8: range(0x12), G_UI + 0x3B: range(7), G_UI + 0x3C: range(3),
+                                        G_OP + 0x8D: range(4)}),
+           'tuner_atas_task': ram_bytes({0x1B3C3: (0, 1), G_UI + 0x408: range(4)}),
+           'tuner_rearm': ram_bytes({G_OP + 0x8E: range(5), G_UI + 0x3B: range(8)}),
+           'displink_build_30': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C2: list(range(15)) + [0xFF], G_OP + 0x393: (0, 1)})),
+           'displink_build_41': g_ui_ptr_ok(ram_bytes({G_UI + 0x439: [0, 1, 50, 98, 99, 110, 116, 117, 125, 131, 132],
+                                                     G_UI + 0x1DB: range(5), G_OP + 0x98: (0, 1)})),
+           'sdr_task': ram_bytes({0x1C8B: (0, 0, 0, 1), 0x1C8D: (0, 0, 0, 0, 0, 1), 0x1B3DD: (0, 1), 0x1B3DC: (0, 1),
+                                  G_UI + 0x67: (0, 1), G_UI + 0x14: range(9)}),
+           'dispreq_e7_task': both(ram_bytes({G_UI + 0x488: range(7), G_UI + 0x3F9: range(5), G_UI + 0x3FC: (0, 1, 2),
+                                             G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(4), G_UI + 0xAC: range(10)}),
+                                  lambda rng, regs: ([(0x25D70, G_UI.to_bytes(4, 'little')),
+                                                      (G_UI + 0x489, b'\0\0\0')], None)),
+           'displink_build_37': g_ui_ptr_ok(), 'displink_task': displink_task_args, 'displink_build_60': g_ui_ptr_ok(),
+           'displink_rx_E1_encoder': g_ui_ptr_ok(both(displink_e1_frame, ram_bytes({G_UI + 0x80: (0, 0, 0, 1), G_UI + 0x70: (0, 1), G_UI + 0x74: (0, 1), G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(5), G_UI + 0x437: (0, 0, 1)}))),
+           'displink_build_status': g_ui_ptr_ok(ram_bytes({G_OP + 0x393: (0, 1), G_OP + 0x234: (0, 1), G_UI + 0x437: (0, 0, 1),
+                                                         G_UI + 0x483: (0, 1), G_UI + 0x405: (0, 1)})),
+           'displink_build_31': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C2: [0x1E, 0x1F, 0x20, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+                                                                  0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33,
+                                                                  0x38, 0x39, 0x3A, 0x43, 0x44, 0x45, 0x46, 0x55, 0x58, 0x5E, 0x60]})),
+           'displink_build_70': g_ui_ptr_ok(ram_bytes({G_UI + 0xBB: list(range(28)) + [0xFF]})),
+           'displink_build_39': g_ui_ptr_ok(ram_bytes({G_UI + 0x1C7: (0, 1, 2, 3), G_UI + 0x78: range(4),
+                                                     G_UI + 0x1D1: (0, 1), G_UI + 0x1CE: range(10)})),
            'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args, 'cat_MR': memch_text_args, 'cat_MW': cat_mw_args,
            'cat_MC': memch_text_args, 'cat_SF': cat_sf_args, 'cat_DT': cat_dt_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
@@ -868,6 +934,19 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
            '__udiv64': udiv64_args, 'eeprom_read': eeprom_args, 'eeprom_write': eeprom_args,
            'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
+
+
+def norm_stack_ptrs(a, h):
+    """A changed-RAM run [addr, hex] with each STACK_PTR_SLOTS word that holds a stack address replaced by a
+    marker."""
+    b = bytearray.fromhex(h)
+    for slot in STACK_PTR_SLOTS:
+        k = slot - a                     # the run holds only the changed bytes: often the low half of the word
+        if 0 <= k < len(b):
+            n = min(4, len(b) - k)
+            if int.from_bytes(b[k:k + n], 'little') < STACK_TOP:
+                b[k:k + n] = b'\xee' * n
+    return [a, b.hex()]
 
 
 def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False, rets=None):
@@ -884,6 +963,7 @@ def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fi
     if mmio_fixed:
         q['mmio_fixed'] = {str(a): v for a, v in mmio_fixed.items()}
     r = eng.send(q)
+    r['diff'] = [norm_stack_ptrs(a, h) for a, h in r.get('diff', [])]
     for c in r.get('calls', []):
         for i, w in enumerate(STUB_WIDTHS.get(c[0], ())):
             if 1 + i < len(c) and isinstance(c[1 + i], int):
@@ -1114,7 +1194,7 @@ def cmd_status(args):
         # a partial run (T24 MAIN round 4: a full run takes about an hour): the other rows of status.tsv stay, as long
         # as their function is still defined in the same object
         rerun = {f for _, f, _, _ in jobs}
-        have = {(os.path.relpath(p, os.path.join(SRC, 'out', 'obj')), f) for p, f in allf}
+        have = {(os.path.relpath(p, OBJDIR), f) for p, f in allf}
         for r in read_tsv(STATUS_TSV)[1:] if os.path.exists(STATUS_TSV) else ():
             a, g, _, src, rel, v, _, d = (r + [''] * 8)[:8]
             if not src or src in rerun or (rel, src) not in have:
@@ -1123,7 +1203,7 @@ def cmd_status(args):
             results[key] = (src, rel, v, d)
     for path, fname, a, v, d in sorted(run_jobs(jobs, args.jobs or 2), key=lambda x: (x[0], x[1])):
         print(f'equiv_main_emu: {fname:32s} {v}: {d}', file=sys.stderr)
-        rel = os.path.relpath(path, os.path.join(SRC, 'out', 'obj'))
+        rel = os.path.relpath(path, OBJDIR)
         key = a if a is not None else ('-', fname)
         cur = results.get(key)
         if cur is None or RANK[v] < RANK[cur[2]]:

@@ -355,3 +355,96 @@ void sdr_upd_r1d_notch(void)
         v |= width == 0 ? 0x2000u : 0x1000u;
     sdr_write_if_changed(0x1Du, SH_R1D, v);
 }
+
+/* --- the SDR task (round 4) --- */
+
+void sdr_bridge_mode(void);
+uint8_t rx_line_get(void);
+uint8_t tx_line_get(void);
+void sdr_upd_r0a_demod(uint8_t tx);
+void sdr_upd_r0b_band(uint8_t tx);
+void sdr_upd_r0c_rtty_shift(void);
+void sdr_upd_r0f_band(uint8_t tx);
+void sdr_upd_r20_scope_freq(uint8_t tx);
+void sdr_upd_r22_scope_span(uint8_t tx);
+void sdr_upd_r25_tx_drive(uint8_t tx);
+void sdr_upd_r26(uint8_t tx);
+void sdr_upd_r27_scope_level(uint8_t tx);
+void sdr_upd_r08_tx_freq(void);
+void sdr_upd_r14_mode(void);
+void sdr_upd_r16_filter(void);
+void sdr_upd_r1a_nb_level(void);
+void sdr_upd_r1b(void);
+void sdr_upd_r1f_width(void);
+
+/* one register updater; the pass ends at the first one that sends a write (sdr_busy_write) */
+#define SDR_STEP(call)                  \
+    do {                                \
+        call;                           \
+        if (sdr_busy_write != 0)        \
+            return;                     \
+    } while (0)
+
+/* sdr_task 0xFFFA11ED: main-loop task 3. A pending write waits for its reply (and updates the shadow), the bridge
+ * mode runs on request, a TX/RX change waits until the old switching line has dropped, then the register updaters
+ * run in order until one writes (one write per pass; the RX-only registers are skipped while transmitting). After
+ * the first full pass regs 0x15 and 0x24 are written once; a full pass in sequencer state 1 or 7 acknowledges the
+ * TX/RX change to the sequencer (sdr-link.md). */
+void sdr_task(void)
+{
+    uint8_t tx = g_ui.transmitting;
+    uint8_t state = g_ui.trx_state;
+    uint8_t *reply[2];
+
+    if (sdr_busy_write == 1) {
+        if (sdr_poll_reply('w', (uint8_t **)reply) != 1)
+            return;
+        sdr_shadow_update();
+    }
+    if (sdr_bridge_req == 1)
+        sdr_bridge_mode();
+    if (sdr_last_tx != tx) {
+        if (tx == 1 && rx_line_get() != 0)
+            return;
+        if (tx == 0 && tx_line_get() != 0)
+            return;
+        sdr_last_tx = tx;
+    }
+    sdr_upd_r0a_demod(tx);
+    if (sdr_busy_write != 0)
+        return;
+    SDR_STEP(sdr_upd_r0b_band(tx));
+    SDR_STEP(sdr_upd_r0c_rtty_shift());
+    SDR_STEP(sdr_upd_r0d());
+    SDR_STEP(sdr_upd_r0f_band(tx));
+    SDR_STEP(sdr_upd_r20_scope_freq(tx));
+    SDR_STEP(sdr_upd_r22_scope_span(tx));
+    SDR_STEP(sdr_upd_r23());
+    SDR_STEP(sdr_upd_r25_tx_drive(tx));
+    SDR_STEP(sdr_upd_r26(tx));
+    SDR_STEP(sdr_upd_r27_scope_level(tx));
+    SDR_STEP(sdr_upd_r03());
+    SDR_STEP(sdr_upd_r08_tx_freq());
+    SDR_STEP(sdr_upd_r0e());
+    SDR_STEP(sdr_upd_r14_mode());
+    if (tx == 0) {                          /* the RX-only registers */
+        SDR_STEP(sdr_upd_r04());
+        SDR_STEP(sdr_upd_r12());
+        SDR_STEP(sdr_upd_r13());
+        SDR_STEP(sdr_upd_r16_filter());
+        SDR_STEP(sdr_upd_r18_rx_freq());
+        SDR_STEP(sdr_upd_r1a_nb_level());
+        SDR_STEP(sdr_upd_r1b());
+        SDR_STEP(sdr_upd_r1c());
+        SDR_STEP(sdr_upd_r1d_notch());
+        SDR_STEP(sdr_upd_r1e_passband());
+        SDR_STEP(sdr_upd_r1f_width());
+    }
+    if (sdr_synced == 0) {
+        SDR_STEP(sdr_init_r15());
+        SDR_STEP(sdr_init_r24());
+        sdr_synced = 1;
+    }
+    if (state == 1 || state == 7)
+        g_ui.tx_ack_sdr = 1;
+}

@@ -184,7 +184,8 @@ void displink_put_sum(uint8_t *frame, uint16_t len);
 void displink_tx_start(uint16_t len);
 void mem_zero(uint16_t n, uint8_t *p);
 uint8_t displink_copy_if_changed(const uint8_t *src, uint8_t *dst, uint16_t n);
-void displink_build_status(void);
+uint16_t displink_build_status(void);    /* the status block; returns its length + 1 (152) */
+void displink_copy_status(void);           /* the common status bytes into the frame being built */
 void displink_build_20(void);
 void displink_build_23(void);
 void displink_build_24(void);

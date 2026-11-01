@@ -169,6 +169,26 @@ Binary SP checksum (corrected in T10e/T17) **[fact]** (disassembly at 0xFFFA3867
 
 Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (extended). Their addresses are in [cat-commands.md](../../cat-commands.md) and `decomp/main/cat_dispatch.tsv`.
 
+## Handler behaviour found by the source recreation (T24 MAIN round 4)
+
+Each row was recreated in `src/main/app/` and checked against the image by differential emulation
+(`src/main/status.tsv`); the facts are from the disassembly at the cited addresses.
+
+| Command | Behaviour **[fact]** |
+|---|---|
+| `SQ` (`cat_SQ` 0xFFFAE6CC) | 000..100 is stored as 0..255 by `(unsigned)(v * 255.0f / 100.0f + 0.5f)`; the image's conversion is RXv2 FTOU after FADD #0.5 (0xFFFAE717, 0xFFFAE806), which rounds towards 0, so the + 0.5 rounds half up. The decompile's `ROUND()` came from the RX module's p-code for FTOU (fixed by `tools/ghidra/rx62t-fpconv-fix.patch`). P1 is not checked. The value is kept in `cat_sq_level` 0x464E and, when EX030102 RF/SQL VR is not 0, also in `g_ui.rf_gain` |
+| `SS` (`cat_SS` 0xFFFAE850) | SS04 (scope level) is a sign, two digits, '.', 0 or 5: the byte is 60 + 2 x dB (0.5 dB steps, 0..120 = -30.0..+30.0 dB); SS06 is one number 0..11 for 3DSS / scope mode / waterfall size, 5, 8 and 11 are refused (the switch 0xFFFAF083..0xFFFAF093) |
+| `CO` (`cat_CO` 0xFFFA8698) | P1 is not checked; APF on/off (P2 = 2) only in the CW, RTTY and DATA/PSK blocks: elsewhere the pointer is a local 0xFF (0xFFFA86B2) and the set is refused, and a real flags byte of 0xFF is refused too (0xFFFA8A81). An unknown P2 reads only the ';' (0xFFFA88C6) |
+| `BP` (`cat_BP` 0xFFFA7A71) | BP00 with P3P4 not "00" is ignored without an error (0xFFFA7CA2..0xFFFA7CAC) |
+| `SH`, `GT` (0xFFFAE2CA, 0xFFFA9F23) | for mode code 15 the read prints an uninitialised stack byte (no case stores the local). GT reads AUTO as 4 (CW, FM), 5 (RTTY, DATA/PSK) or 6 (SSB, AM) |
+| `FA`/`FB` (0xFFFA99BD) | in SPLIT both VFO states are set from the saved VFO-A state for the tune and restored afterwards (0xFFFA9B0C..0xFFFA9C8F) |
+| `MR` (0xFFFABEA5) | a channel number 000 or above 099 leaves the channel to an uninitialised stack byte (no error) |
+| `MW` (0xFFFAC534) | the channel becomes the active VFO's memory channel before the frequency and the rest are checked (0xFFFAC68A); the clarifier field is checked as digits but not stored: the offset and both clarifier flags are cleared |
+| `MC` (0xFFFAB4F3) | saves channel 1 whatever the channel (`eeprom_save_memch(1)`, 0xFFFAB7BD..0xFFFAB7BF); the 60 m channels need the destination, EMG needs EX030406 |
+| `KM` (0xFFFAA905) | a set stores len - 4 characters with no limit at 50 and adds `}` unless the text has one; a command of more than 54 bytes would write into the next slot **[inference: the byte loop over len - 4 from the slot start]** |
+| `EM` (0xFFFA9648) | the five text slots 0x979E.. are RAM only (no EEPROM save) and end with 0xFE |
+| `DT` (0xFFFA9281) | the year must be 20yy; leap years by yy & 3; the seconds of DT1 are checked as digits and read back as "00" |
+
 ## Data structures and globals
 
 | Address | Size | Name | Meaning |

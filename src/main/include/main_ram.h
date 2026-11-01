@@ -54,6 +54,9 @@ extern uint16_t sdr_tx_reg;
 extern uint16_t sdr_tx_data;
 extern uint8_t sdr_tx_frame[];
 extern uint8_t sdr_busy_write;
+extern uint8_t sdr_bridge_req;            /* 0x1C8D: run sdr_bridge_mode */
+extern uint8_t sdr_last_tx;               /* 0x1B3DD */
+extern uint8_t sdr_synced;                /* 0x1B3DC */
 extern uint8_t sdr_busy_read;
 extern uint8_t sdr_rx_frame[];            /* reply buffer, 7 bytes */
 extern uint8_t sdr_rx_done;               /* 1 = a reply is in */
@@ -87,10 +90,26 @@ extern uint8_t displink_hello_sent;
 extern uint8_t displink_stage[];          /* staging buffer of most frames */
 extern uint8_t displink_stage_status[];   /* staging buffer of frame 0x20 */
 extern uint8_t *g_ui_ptr;                 /* pointer to the UI state (0x20B04) */
+extern uint8_t *g_ui_ptr2;                /* 0x25D70: the same, used by dispreq_e7_task */
+extern uint8_t displink_ack_req, displink_nak_req, displink_gap, displink_ack_wait, displink_ack_wait_start;
+extern uint8_t displink_rx_copy[];        /* 0x198F: the frame being dispatched */
+struct vfo_rec;
+extern struct vfo_rec *dlstat_rec;        /* 0x20874: the active VFO record of the status block */
+extern uint16_t dlstat_pos_a, dlstat_pos_b, dlstat_pos_state_a, dlstat_pos_state_b;
+extern uint8_t *dlstat_swap_a, *dlstat_swap_b;
+extern uint8_t dlstat_freq5[5];           /* 0x19C5 */
+extern uint8_t dl60_ver_tmp[6];           /* 0x19BF: a version string being packed (displink_build_60) */
+extern uint16_t dl41_pos;                 /* 0x1B632: write offset in frame 0x41 */
+extern uint8_t *dl41_used_ptr;            /* 0x20880 */
+extern struct vfo_rec *dl41_rec;          /* 0x20884 */
+extern const uint8_t dl41_header[15], dl41_group_names[][4], dl41_mode_names[][8];
 
 /* keyer and tuner [fact: app/keyer.c, app/tuner.c] */
 extern uint8_t g_ui_keyer_state;          /* UI +0x2B */
 extern uint8_t keyer_type;                /* 0x1215F: 0 = KEYER off, else EX020201 KEYER TYPE */
+extern uint8_t int_tuner_step;            /* 0x1B3AC: internal-tuner step (tuner_int_task) */
+extern uint8_t ext_tuner_step;            /* 0x1B3C8: external-tuner step (tuner_ext_task) */
+extern uint8_t tuner_result_hold;         /* 0x1B3C3: 1 while the tune result is shown (tuner_result_set) */
 extern uint8_t keyer_elem_buf[];          /* 0x120BC, 0xA0 bytes: the element bits */
 extern uint8_t keyer_flags[5];            /* 0x12160..0x12164 */
 extern uint8_t keyer_sidetone_on;         /* 0x1215E */

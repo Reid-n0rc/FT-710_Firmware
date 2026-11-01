@@ -1452,6 +1452,146 @@ entries (the round-2 NULL-buffer case); fixed before the run above.
 - Coverage: `cat_dispatch` reaches 55 % of its 598 blocks and `trx_sequencer` 60 % of 173 with 200 trials; more
   trials or presets that drive the handlers' own state would raise both.
 
+## MAIN, round 4 (2026-11-01)
+
+### Plan (MAIN round 4)
+
+1. Harness housekeeping: every temporary file of a run under one scratch root that the run removes, also when it is
+   killed; partial `status` runs (a full one takes about an hour on the shared container).
+2. `cat_SQ`: whether a `lrintf` that GCC for RX inlines as ROUND matches the image's rounding.
+3. Code, biggest first: the large CAT handlers (SS, CO, MW, SF, MR, CF, DT, SH, IF/OI, BP, KM, GT, VM, EM, MC,
+   FA/FB), `keyer_task`, the tuner tasks, the DISPLAY frame builders and receive handlers, the main loop and tasks.
+4. Coverage presets for `cat_dispatch` (55 %) and `trx_sequencer` (60 %).
+5. `status.tsv`, the README progress block, Ghidra rows with the apply commands.
+
+### MAIN: harness changes (round 4)
+
+- **Temporary files.** Everything a run writes (link scripts, the workers' project copies, the Ghidra logs) is under
+  one `equiv_main_run_*` directory (`EQUIV_MAIN_SCRATCH`, default the system temp directory). The owning process
+  removes it on exit and on SIGTERM/SIGHUP/SIGINT (pool workers inherit the handler and close their engines); a
+  directory whose owner pid is gone (SIGKILL) is removed by the next run. Ghidra runs in its own process group, so
+  `close()` kills the JVM, not only the launcher script [fact: a SIGTERM during a two-worker check left no process
+  and no directory]. The `/tmp/equiv_main_*` left by rounds 1..3 were removed.
+- **Partial status runs.** `status FUNCTION... / --object O` reruns those and keeps the other rows of status.tsv.
+- **FTOI, ROUND, FTOU.** The module's p-code for all three was `Rd = round(src)`, a float result: FTOU of 50.7 gave
+  0x424C0000 (the float 51.0) and 0.5 gave 0x3F800000 [fact: `tools/rx_fpconv_check.py module`]. T22a had modelled
+  no FPU instruction but ITOF. `EquivMainEmu.java` now steps the instruction (so its load is seen) and then sets Rd
+  and Z/S after the RXv2 manual: FTOI p. 103 and FTOU p. 106 round towards 0 whatever FPSW.RM says, ROUND p. 171 by
+  RM (MAIN sets FPSW = 0x100, RM = 0, at 0xFFF8FBFF), NaN and out of range per Table 1.5 (p. 26) with
+  the flags unchanged. `tools/rx_fpconv_check.py`: **84 / 84 agree** with the manual (21 values each: ties, limits
+  around 2^31 and 2^32, infinities, NaN; FTOU also from memory). No function checked before round 4 contains one of
+  the three [fact: MAIN's 12 FPU conversions are all FTOU, in functions not yet recreated; the GCC objects had no
+  FPU instruction]. `tools/ghidra/rx62t-fpconv-fix.patch` (ninth `--only rx` stage, `8451ead0…8ed7` →
+  `f4688bc6…f403`) fixes the module for the decompiler: FTOI `trunc`, FTOU `trunc` through 64 bits, ROUND to nearest
+  even from `trunc`; checked on a private Ghidra copy (in-range values all agree; NaN, range and FTOU of values
+  <= -1 left to the engine) and the decompile of `cat_SQ` then reads `(byte)(longlong)(x * 100.0 / 255.0 + 0.5)`.
+  **Not installed in the container's shared Ghidra** (docs/tooling.md "Float to integer").
+- **Per-function stubs with chosen returns** (`FUNC_STUBS`; `EquivMainEmu.java` `stub_rets`): a task's gate callees
+  are stubbed with return values drawn from a list, and the calls are compared like the EEPROM stubs. Used for
+  `keyer_task` (`tx_cw_keying_class`, `swtimer_expired`, `FUN_fffb2dfe`, `tx_breakin_on`) and `trx_sequencer`
+  (`swtimer_expired`). Only callees whose side effects the caller does not read back are stubbed.
+- **More trials and enumerated presets** (`FUNC_TRIALS`, `_TRIAL`): `cat_dispatch` 800 trials whose preset goes
+  through every (index, length) pair of `decomp/main/cat_dispatch.tsv` before random ones; `trx_sequencer` 400.
+- **Presets**: `cat_SS`, `keyer_task` (state, speeds, keyer type, message slot and CW MEMORY n, texts of the special
+  characters, element counts), the memory-channel commands (MR, MC: a channel as three digits or a name, the
+  channel-used flags; MW: IF's layout with each field valid most of the time), `cat_SF`, `cat_DT`; the generic CAT
+  preset puts '0' in P1/P2 half the time.
+
+### MAIN: `cat_SQ` and `lrintf` (round 4)
+
+The question of round 3 was whether a `lrintf` that GCC for RX inlines as ROUND matches the image's rounding. Answer
+**[fact]**: (1) GCC 13.3.0 for RX never inlines `lrintf`: `__builtin_lrintf` and `lrintf` compile to a call of
+`_lrintf` at -O0 and -Os, also with `-ffast-math`, `-fno-math-errno`, `-funsafe-math-optimizations`; only the target
+builtin `__builtin_rx_round` emits `ROUND` (test compile, `-mcpu=rx600`). (2) The image does not round with ROUND:
+`cat_SQ` converts with **FTOU** after `FADD #0x3F000000` (0xFFFAE717 / 0xFFFAE71E, 0xFFFAE806 / 0xFFFAE80D), a C cast
+to unsigned of `x + 0.5f`; the `ROUND()` in decomp/main is the module's p-code for FTOU (above). So the recreation
+is `(uint8_t)(int)(v * mul / div + 0.5f)` (GCC's FTOI; in range 0.5..255.5 the two casts agree, and an unsigned
+cast would call libgcc's `__fixunssfsi`), **equivalent**, and a mutation without the `+ 0.5f` differs (trial 22).
+With the old FTOU p-code the original's reply was the low byte of a float's bits, so no recreation could have
+matched it.
+
+### MAIN: recreated (src/main, round 4)
+
+- `app/cat_scope.c`: `cat_SS` (2,917 bytes). `app/cat_dsp.c`: `cat_CO`, `cat_BP`, `cat_SH`, `cat_GT` on the per-mode
+  block. `app/cat_vfo.c`: `cat_FA_FB`, `cat_IF_OI`, `cat_CF`, `cat_MR`, `cat_MW`, `cat_MC`, `cat_VM` over shared IF
+  layout helpers (channel, clarifier offset, mode/state/tone/shift). `app/cat_handlers.c`: `cat_SQ`, `cat_SF`,
+  `cat_DT`, `cat_EM`, `cat_KM`. `app/cat_util.h`: the helpers these files share (moved out of cat_handlers.c; the
+  41 handlers of round 3 still pass).
+- `app/keyer.c`: `keyer_task` (2,120 bytes) with named states and soft timers; the message memories as
+  `struct keyer_msg` / `struct keyer_text` (main_ram.h); RAM names for the speed, dot/dash times, QSK delay, element
+  counts (data_symbols.tsv, and as Ghidra labels below); `keyer_msg_active` and `keyer_state` of round 2 are
+  renamed `keyer_type` and `keyer_elem_buf` after what keyer_task does with them.
+- Behaviour found on the way, each **[fact]** with its address in docs/code/main/cat.md "Handler behaviour found by
+  the source recreation": BP00 with P3P4 not 00 is ignored without an error; CO refuses an APF set outside the CW,
+  RTTY and DATA/PSK blocks and when the flags byte is 0xFF; SH and GT print an uninitialised stack byte for mode
+  code 15, MR uses one as the channel for 000 or > 099 (the recreation answers 0, which is what the check's zeroed
+  stack gives the original; on the radio the byte is whatever the stack held); MW sets the memory channel before it
+  checks the rest and does not store the clarifier; MC always saves channel 1; KM does not limit the count to 50.
+- **Round-3 bug found by the new coverage:** `spk_route` (0x20FCC) is a 32-bit word in every access (MOV.L at
+  0xFFFB732C, 0xFFFB8280, 0xFFFB853E, 0xFFFB8AC5, 0xFFFB8B71, 0xFFFB8BAF) **[fact]**; round 3 declared it `uint8_t`
+  and `trx_sequencer` compared a byte. With the timers stubbed, trial 115 differed (a peripheral read of PORTB_PODR
+  where the original called `ear_det`); fixed in main_ram.h.
+- **GCC and byte arguments:** GCC passes a `uint8_t` argument loaded with the sign-extending `MOV.B`; an image callee
+  that uses the whole register (`bcd_to_ascii2`, signature `uint`) printed a byte >= 0x80 differently (cat_DT, trial
+  17) **[fact]**, so such callees are declared with `uint32_t`.
+- Every image address cited in the new files was checked to be an instruction of what it is cited for (a
+  disassembly lookup over the files); eight citations taken from the decompile were wrong and were corrected.
+- `app/tuner.c`: `tuner_int_task`, `tuner_ext_task`, `tuner_atas_task` (the step switches and the indicator blink)
+  and `tuner_rearm`. `app/display_link.c`: `displink_task` (receive, NAK for an unknown type or a bad sum, the gap and
+  ACK window, ACK/NAK first), `displink_rx_E1_encoder`, `displink_build_status` (the 0x97-byte status block: fixed
+  offsets, the VFO sections swapped in place when VFO-B is active) and the frame builders 0x30, 0x31, 0x37, 0x39,
+  0x41, 0x60, 0x70 (0x31, 0x37 and 0x70 table-driven). Found **[fact]**: `displink_rx_E1_encoder` calls
+  `FUN_fffc523a(0, 0)` with R3 still holding the step byte (0xFFF95A02), and the callee stores its third argument, so
+  the step reaches 0x1B4E3 (the recreation passes it explicitly); `displink_build_41` keeps its write offset in RAM
+  (0x1B632) and the row's record in 0x20884 (docs/code/main/display-link.md "Found by the source recreation").
+- Not recreated: `main_loop` never returns, so both runs exhaust the budget and the check cannot decide (*Open: a
+  check mode for endless loops; would be settled by comparing the call sequence of the first N iterations*);
+  `cat_OS` (round 3: an uninitialised record pointer).
+
+### MAIN: harness, more (round 4)
+
+- `EQUIV_MAIN_OBJDIR`: the objects to check (e.g. a `make OUT=out2` build), so new code can be checked while a status
+  run reads `out/obj`.
+- `STACK_PTR_SLOTS`: `displink_send_ack` hands `R_SCI1_Serial_Send` a one-byte buffer on its stack, which the driver
+  keeps in `gp_sci1_tx_address` (0x207FC); its value follows the caller's frame depth (12 bytes under CC-RX in
+  `displink_task`, 28 under GCC). A stack address left there is compared as "stack" (the byte itself goes out through
+  the compared SCI accesses), as round 3 did for the EEPROM stub buffers.
+
+### MAIN: Ghidra (round 4)
+
+- `tools/ghidra/names_main.tsv`: 44 labels with their evidence (the keyer, tuner and DISPLAY-link RAM of this round,
+  `cat_sq_level`, the message memories, `morse_table`, the frame-0x41/0x39/0x70 ROM tables, the status-block
+  globals), and the `@spk_route` comment now says 32 bits. `tools/ghidra/signatures_main.tsv`: `mem_find_byte`
+  returns `uint8 *` (the decompile showed void and lost the result in `cat_EM` / `cat_KM`).
+- `tools/ghidra/rx62t-fpconv-fix.patch`: FTOI / FTOU / ROUND for the decompiler (the ninth `bootstrap.sh --only rx`
+  stage, above). After it the FTOU sites decompile as casts instead of `ROUND()` (checked for `cat_SQ`).
+- Proved on a copy of `/home/user/ghidra_tasks/t24main/proj` [fact: the script log]: ApplyNames **2,854 applied,
+  0 failed** (2,810 + 44), ApplySignatures **1,231 applied, 0 failed** (1,230 + 1); the decompile of `cat_EM` then
+  reads `pbVar3 = mem_find_byte((byte *)&em_text_mem,-2,0x32)`. The patch: on a private Ghidra copy (above).
+
+Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+tools/bootstrap.sh --only rx                                   # applies rx62t-fpconv-fix.patch and recompiles rx62t.sla
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv \
+  -postScript ApplySignatures.java tools/ghidra/signatures_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/rx_fpconv_check.py module   # the patched module: every in-range value agrees (NaN / range are the engine's)
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+`bootstrap.sh --only rx` changes the shared Ghidra's `rx62t.sinc` hash (`RX_SINC_FIXED` becomes `f4688bc6…f403`), so
+a branch without this patch then refuses to bootstrap that Ghidra, as with round 2's patch.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -1472,8 +1612,9 @@ entries (the round-2 NULL-buffer case); fixed before the run above.
    MOVW/MOVT references to linked functions from data stores to their original entries.*
 6. HiFi4 (Ghidra p-code): `tools/ghidra/EquivMainEmu.java` is the model (a headless p-code emulator server).
 7. MAIN: apply the round-2 Ghidra entries and names (command block in "MAIN: Ghidra (round 2)"), install
-   `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), the round-3 names ("MAIN: Ghidra (round 3)"), then the
-   next functions ("MAIN: blockers and next steps (round 3)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
+   `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), the round-3 names ("MAIN: Ghidra (round 3)") and the
+   round-4 names, signature and `rx62t-fpconv-fix.patch` ("MAIN: Ghidra (round 4)"), then the next functions ("MAIN:
+   blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
 
 5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation;
    `abicheck` covers calls through a register (round 7). Open: the functions the emulated boot does not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the

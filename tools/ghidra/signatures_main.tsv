@@ -1234,3 +1234,4 @@ fffc0d33	FUN_fffc0d33	void	uint8 mode	doc	MOV.B R1 spill; mode goes to FUN_fffc0
 fffc0eb8	vfo_mode_set	void	uint8 mode	doc	MOV.B R1 spill; *rec = *rec & 0xF0 | mode on the active record (T23f) [fact, 0xFFFC0EBA]
 fffc0f10	FUN_fffc0f10	void	uint8 old_mode, uint8 new_mode, uint8 * rec	doc	MOV.B R1, MOV.B R2, MOV.L R3 spills; called by FUN_fffc0eb8 with (old mode, new mode, record) (T23f) [fact, 0xFFFC0F12]
 fffc4bd5	FUN_fffc4bd5	void	uint8 mode	doc	MOV.B R1 spill; CMP #15 and a switch to the mode setters (T23f) [fact, 0xFFFC4BD7]
+fffb012c	mem_find_byte	uint8 *	uint8 * buf, char c, uint16 n	doc	the first byte == c in buf[0..n), else buf, in R1 [fact: 0xFFFB012C; cat_EM 0xFFFA984C and cat_KM compare R1 with the buffer]
