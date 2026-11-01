@@ -1,0 +1,11 @@
+# Where a recreated DISPLAY function is in the original image when tools/equiv_display_emu.py cannot take it from
+# decomp/display/functions.tsv by name. Columns: source name, Ghidra name or 0x address or '-', evidence.
+source	original	evidence
+__aeabi_memcpy	memcpy	[fact] 0x20155180 returns with r0 at the end of the destination (its exits), the contract of the void AEABI entry, not of C memcpy (lib/memory.c)
+mmu_disable	0x20100d0c	[inference] TLBIALL, ICIALLU, BPIALL, ACTLR bit 1 off, SCTLR I/C/M off (drivers/cp15.c); Ghidra FUN_20100d0c
+mmu_enable	0x20100d6c	[inference] TTBR0 = 0x2044C000 | 1, TTBCR 0, DACR 0x55555555, SCTLR M/Z/I/C on; Ghidra FUN_20100d6c
+mmu_set_cacheable_ro	0x20100dc0	[inference] like mmu_set_cacheable with AP[2] = 1 (orr 0x8C00); Ghidra FUN_20100dc0
+icache_invalidate_range	0x20100f84	[inference] ICIMVAU per line or ICIALLU, then BPIALL; Ghidra FUN_20100f84
+dcache_clean_invalidate_range	0x20100fd8	[fact] its loop issues DCCIMVAC (mcr c7,c14,1 at 0x20101004); Ghidra calls it dcache_invalidate_range
+dcache_clean_invalidate_all	0x2010101c	[fact] dcache_setway_all(2) = DCCISW; Ghidra calls it dcache_invalidate_all
+dcache_invalidate_range	0x20101088	[fact] its loop issues DCIMVAC (mcr c7,c6,1 at 0x201010B4); Ghidra calls it dcache_clean_invalidate_range

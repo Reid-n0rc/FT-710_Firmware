@@ -1741,14 +1741,14 @@
 20120de4	usbkbd_screen_settings	Every GUI frame (gui_input_poll): on the keyboard screen 0x50 with a 0x24 settings frame, sets the layout from settings byte 1 (usbkbd_set_layout) and CapsLock by the text mode of payload byte 0 (table 0x20801D44, usbkbd_capslock_for_mode); on other screens usbkbd_reset [fact]
 20107d8c	usbkbd_leds_refresh	scr_keyboard: sends the lock-LED state 0x2080010C to the attached keyboard (usbkbd_get_device, usbkbd_set_leds) [fact]
 20117030	display_power_down	Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off, stops the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and QF lines, else switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low [fact]
-201010e0	dcache_setway_all	(op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations]
-20100fd8	dcache_invalidate_range	(addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2)) when addr or size is 0 [fact]
-20101088	dcache_clean_invalidate_range	(addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and sdhi_read_block use it [fact]
+201010e0	dcache_setway_all	(op): walks every set and way of the data and unified cache levels in CLIDR up to the level of coherence: op 0 (and below) invalidate (DCISW), 1 clean (DCCSW), 2 (and above) clean and invalidate (DCCISW) [fact: cmp op, #1; mcrlt c7,c6,2 / mcreq c7,c10,2 / mcrgt c7,c14,2] (T24 round 3: 0 and 2 were the other way round)
+20100fd8	dcache_clean_invalidate_range	(addr, size): DCCIMVAC (mcr c7,c14,1) per cache line over the range, or clean and invalidate the whole cache by set/way (dcache_setway_all(2)) when addr or size is 0 [fact]. Was dcache_invalidate_range (T24 round 3: the CP15 operation is clean and invalidate)
+20101088	dcache_invalidate_range	(addr, size): DCIMVAC (mcr c7,c6,1) per cache line over the range, or invalidate the whole cache by set/way (dcache_setway_all(0)) when addr or size is 0; Reset_Handler, task_audio_codec and sdhi_read_block use it [fact]. Was dcache_clean_invalidate_range (T24 round 3: the CP15 operation is invalidate)
 20100efc	icache_disable	SCTLR: clears the I bit (12) when it is set [fact]
 20100f20	dcache_disable	SCTLR: clears the C bit (2) when it is set [fact]
 20100f44	icache_enable	SCTLR: sets the I bit (12) [fact]
 20100f64	dcache_enable	SCTLR: sets the C bit (2) [fact]
-2010101c	dcache_invalidate_all	dcache_setway_all(2) (invalidate by set/way) [fact]
+2010101c	dcache_clean_invalidate_all	dcache_setway_all(2): clean and invalidate by set/way (DCCISW) [fact]. Was dcache_invalidate_all (T24 round 3)
 201341cc	clamp_add_u8	(a, b): a + b clamped to 0..255 [fact]
 20135448	xorshift32_step	(x): x ^= x << 13; x ^= x >> 17; x ^= x << 15 [fact]
 20135488	be16_store	(v, dst): stores v big-endian (high byte first) [fact]
@@ -1845,3 +1845,8 @@
 2015f0cc	kbdobj_ctor	(obj): constructs the key ring at +0x88 (ring16_ctor) [fact]
 20163360	uart_obj_ctor	(obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) [fact]
 20114938	scif_uarts_ctor	Static constructor: uart_obj_ctor for scif3_uart, scif4_uart and scif5_uart; no direct caller (run from the init table) [fact for the calls]
+# T24 round 3: MMU and cache functions named by their CP15 operations (src/display/drivers/cp15.c)
+20100d0c	mmu_disable	TLBIALL, ICIALLU, BPIALL, ACTLR bit 1 off, SCTLR I, C and M off [fact for the CP15 operations; name: inference] (T24 round 3, src/display/drivers/cp15.c)
+20100d6c	mmu_enable	TTBR0 = 0x2044C000 | 1, TTBCR = 0, DACR = 0x55555555 (all client), SCTLR M, Z, I, C on, ACTLR bit 1 on [fact for the CP15 operations; name: inference] (T24 round 3)
+20100dc0	mmu_set_cacheable_ro	(addr, size): like mmu_set_cacheable, with AP[2] = 1 (orr 0x8C00): cacheable read-only sections, then TLBIALL and BPIALL [fact for the stores; read-only: inference from the AP encoding] (T24 round 3)
+20100f84	icache_invalidate_range	(addr, size): ICIMVAU per cache line over the range, or ICIALLU when addr or size is 0; then BPIALL [fact for the CP15 operations; name: inference] (T24 round 3)

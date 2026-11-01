@@ -9,12 +9,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 0008005e	deinitXip	48	deinitXip	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	48	bytes and relocations match (size 62, Ghidra size 48)
 0008009c	countPartitionSwitches	68	countPartitionSwitches.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	68	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
 000800e8	POWER_CalculateSafetyCount	424	POWER_CalculateSafetyCount	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	424	bytes and relocations match (size 448, Ghidra size 424)
-000802a8	-	132	initFlexSPI.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000802aa	initFlexSPI	124	initFlexSPI.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	124	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-0008032c	initXip	26	initXip	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	26	bytes and relocations match (size 32, Ghidra size 26)
-0008034c	POWER_EnterSleep_mode1	182	POWER_EnterRbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00080414	POWER_EnterSleep_mode2	182	POWER_EnterFbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000804dc	POWER_EnterSleep_mode3	174	POWER_EnterNbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	174	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+000802a8	initFlexSPI	126	initFlexSPI.constprop.0	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	126	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+0008032c	initXip	24	initXip	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	24	bytes and relocations match (size 32, Ghidra size 24)
+0008034c	POWER_EnterRbb	182	POWER_EnterRbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (size 200, Ghidra size 182)
+00080414	POWER_EnterFbb	182	POWER_EnterFbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (size 200, Ghidra size 182)
+000804dc	POWER_EnterNbb	174	POWER_EnterNbb	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	174	bytes and relocations match (size 192, Ghidra size 174)
 0008059c	POWER_EnterDeepSleep	852	POWER_EnterDeepSleep	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	852	bytes and relocations match (size 888, Ghidra size 852)
 00080914	BOARD_DeinitXip	26	BOARD_DeinitXip	board/board.o	identical	26	bytes and relocations match
 0008092e	BOARD_InitXip	114	BOARD_InitXip	board/board.o	identical	114	bytes and relocations match
@@ -37,36 +36,36 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00080d78	CommandTask	152	CommandTask	app/uart.o	identical	152	bytes and relocations match (size 168, Ghidra size 152)
 00080e20	create_CommandTask	38	create_CommandTask	app/uart.o	identical	38	bytes and relocations match (size 48, Ghidra size 38)
 00080e50	FLEXCOMM0_IRQHandler	172	FLEXCOMM0_IRQHandler	app/uart.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 77% of 13 blocks reached); bytes: 149 bytes differ, first at +0x0; +0x68 not a branch in the original; +0xac literal 0x40106000, uart.o:.bss.s_tx is at 0x882d4+0x0
-00080f0c	-	48	uart0_printf	app/uart.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00080f0c	uart0_printf	44	uart0_printf	app/uart.o	identical	44	bytes and relocations match (size 48, Ghidra size 44)
 00080f3c	uart0_tx_pending	14	uart0_tx_pending	app/uart.o	identical	14	bytes and relocations match (size 20, Ghidra size 14)
 00080f50	IpcSendTask	42	IpcSendTask	app/ipc.o	identical	42	bytes and relocations match (size 48, Ghidra size 42)
 00080f80	create_IpcTasks	82	create_IpcTasks	app/ipc.o	equivalent	82	differential emulation: 200 trials agree (30 returned normally, 100% of 5 blocks reached); bytes: 59 bytes differ, first at +0xc; +0x24 not a branch in the original; +0x40 not a branch in the original; +0x50 literal 0xbf00bd30, ipc.o:.bss.s_ipcSendQueue is at 0x886e0+0x0
-00080fe8	ipc_print_dsp_reply	130	ipc_print_dsp_reply,get_task_handles	app/ipc.o	equivalent	130	differential emulation: 200 trials agree (200 returned normally, 100% of 21 blocks reached); bytes: 36 bytes differ, first at +0x1e; +0x58 literal 0x87b75: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x0; +0x5c literal 0x87b94: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x1f; +0x6
+00080fe8	ipc_print_dsp_reply	86	ipc_print_dsp_reply	app/ipc.o	equivalent	86	differential emulation: 200 trials agree (200 returned normally, 100% of 21 blocks reached); bytes: 36 bytes differ, first at +0x1e; +0x58 literal 0x87b75: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x0; +0x5c literal 0x87b94: bytes differ from .rodata.ipc_print_dsp_reply.str1.1+0x1f; +0x6
 00081064	get_task_handles	4	get_task_handles	app/ipc.o	identical	4	bytes and relocations match (size 8, Ghidra size 4)
-0008106c	app_main	218	main	app/main.o	identical	218	bytes and relocations match (size 248, Ghidra size 218)
+0008106c	main	218	main	app/main.o	identical	218	bytes and relocations match (size 248, Ghidra size 218)
 00081164	sct0_pwm_callback	108	sct0_pwm_callback	app/pwm.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached); bytes: 92 bytes differ, first at +0x0; +0x48 not a branch in the original; +0x68 not a branch in the original; +0x70 literal 0x886f0, pwm.o:.bss.s_pwmTicks is at 0x886f4+0x0
 000811e0	sct0_pwm_init	110	sct0_pwm_init	app/pwm.o	identical	110	bytes and relocations match (size 132, Ghidra size 110)
-00081264	SCTIMER_StartTimer	12	sct0_pwm_start	app/pwm.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
+00081264	sct0_pwm_start	12	sct0_pwm_start	app/pwm.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
 00081274	console_cmd_i	60	console_cmd_i	app/console.o	equivalent	60	differential emulation: 200 trials agree (199 returned normally, 67% of 6 blocks reached); bytes: 14 bytes differ, first at +0x28; +0x3c literal 0x87c5f: bytes differ from .rodata.console_cmd_i.str1.1+0x0; +0x48 literal 0x87c64: bytes differ from .rodata.console_cmd_i.str1.1+0x5
 000812c4	console_cmd_w	50	console_cmd_w	app/console.o	identical	50	bytes and relocations match (size 56, Ghidra size 50)
-000812fc	console_cmd_d	128	console_cmd_d	app/console.o	equivalent	128	differential emulation: 200 trials agree (197 returned normally, 100% of 9 blocks reached); bytes: 74 bytes differ, first at +0x6; +0x1a not a branch in the original; +0x34 not a branch in the original; +0x3a not a branch in the original
+000812fc	console_cmd_d	128	console_cmd_d	app/console.o	identical	128	bytes and relocations match (size 144, Ghidra size 128)
 0008138c	console_printf	36	console_printf	app/console.o	identical	36	bytes and relocations match (size 40, Ghidra size 36)
-000813b4	console_cmd_r	48	console_cmd_r	app/console.o	equivalent	48	differential emulation: 200 trials agree (197 returned normally, 100% of 3 blocks reached); bytes: 36 bytes differ, first at +0x2; +0x18 not a branch in the original; +0x22 calls 0x8138c, regfile_read is at 0x80c30; +0x38 literal 0x4a0b4b0a: bytes differ from .rodata.console_cmd_d.str1.1+0x0
+000813b4	console_cmd_r	48	console_cmd_r	app/console.o	equivalent	48	differential emulation: 200 trials agree (197 returned normally, 100% of 3 blocks reached); bytes: 36 bytes differ, first at +0x2; +0x18 not a branch in the original; +0x22 calls 0x8138c, regfile_read is at 0x80c30; +0x38 literal 0x4a0b4b0a: bytes differ from .rodata.console_cmd_d.str1.1+0x10
 000813ec	console_init	44	console_init	app/console.o	identical	44	bytes and relocations match (size 68, Ghidra size 44)
-00081430	console_rx_char	1058	console_rx_char	app/console.o	differs	0	0 of 1058 bytes covered; emulation trial 0: end differs (orig ended return, new fault); bytes: 793 bytes differ, first at +0x10; +0x2c not a branch in the original; +0x78 not a branch in the original; +0x8c calls 0x85fc2, console_puts is at 0x85fae
-000818b8	MU_A_IRQHandler	46	MU_A_IRQHandler,platform_init_interrupt	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	46	bytes and relocations match (size 24, Ghidra size 46); bytes and relocations match (size 68, Ghidra size 54)
+00081430	console_rx_char	1058	console_rx_char	app/console.o	equivalent	1058	differential emulation: 200 trials agree (200 returned normally, 95% of 102 blocks reached); bytes: 841 bytes differ, first at +0x10; +0x30 not a branch in the original; +0x7c not a branch in the original; +0x90 not a branch in the original
+000818b8	MU_A_IRQHandler	20	MU_A_IRQHandler	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	20	bytes and relocations match (size 24, Ghidra size 20)
 000818d0	platform_init_interrupt	54	platform_init_interrupt	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	54	bytes and relocations match (size 68, Ghidra size 54)
 00081914	platform_notify	38	platform_notify	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	38	bytes and relocations match (size 48, Ghidra size 38)
-00081944	xPortIsInsideInterrupt	16	platform_in_isr	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
+00081944	platform_in_isr	16	platform_in_isr	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
 00081958	platform_interrupt_enable	30	platform_interrupt_enable	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	30	bytes and relocations match (size 40, Ghidra size 30)
 00081980	platform_interrupt_disable	42	platform_interrupt_disable	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	42	bytes and relocations match (size 52, Ghidra size 42)
 000819b4	platform_init	38	platform_init	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	38	bytes and relocations match (size 52, Ghidra size 38)
 000819e8	env_init	106	env_init	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	106	bytes and relocations match (size 120, Ghidra size 106)
 00081a60	env_register_isr	14	env_register_isr	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	14	bytes and relocations match (size 20, Ghidra size 14)
-00081a74	-	20	env_isr	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00081a74	env_isr	16	env_isr	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
 00081a88	rpmsg_queue_recv	104	rpmsg_queue_recv	vendor/rpmsg-lite/lib/rpmsg_lite/rpmsg_queue.o	identical	104	bytes and relocations match (size 116, Ghidra size 104)
 00081afc	rpmsg_lite_send	218	rpmsg_lite_send	vendor/rpmsg-lite/lib/rpmsg_lite/rpmsg_lite.o	identical	218	bytes and relocations match (size 236, Ghidra size 218)
-00081be8	rpmsg_queue_nocopy_free	60	rpmsg_lite_release_rx_buffer	vendor/rpmsg-lite/lib/rpmsg_lite/rpmsg_lite.o	identical	60	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00081be8	rpmsg_lite_release_rx_buffer	60	rpmsg_lite_release_rx_buffer	vendor/rpmsg-lite/lib/rpmsg_lite/rpmsg_lite.o	identical	60	bytes and relocations match (size 64, Ghidra size 60)
 00081c28	rpmsg_lite_master_init	428	rpmsg_lite_master_init	vendor/rpmsg-lite/lib/rpmsg_lite/rpmsg_lite.o	identical	428	bytes and relocations match (size 452, Ghidra size 428)
 00081dec	virtqueue_create	142	virtqueue_create	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	142	bytes and relocations match (size 148, Ghidra size 142)
 00081e80	prvInsertBlockIntoFreeList	62	prvInsertBlockIntoFreeList	vendor/FreeRTOS-Kernel/portable/MemMang/heap_4.o	identical	62	bytes and relocations match (size 72, Ghidra size 62)
@@ -77,15 +76,15 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00082084	vPortEnterCritical	24	vPortEnterCritical	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	24	bytes and relocations match (size 28, Ghidra size 24)
 000820a0	vPortExitCritical	34	vPortExitCritical	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	34	bytes and relocations match (size 40, Ghidra size 34)
 000820c8	pxPortInitialiseStack	106	pxPortInitialiseStack	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	106	bytes and relocations match (size 112, Ghidra size 106)
-00082138	-	60	xPortStartScheduler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00082174	xEventGroupSetBitsFromISR	46	xEventGroupSetBitsFromISR,vQueueAddToRegistry	vendor/FreeRTOS-Kernel/event_groups.o,vendor/FreeRTOS-Kernel/queue.o	identical	46	bytes and relocations match (size 16, Ghidra size 46); bytes and relocations match (size 36, Ghidra size 32)
+00082138	xPortStartScheduler	56	xPortStartScheduler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	56	bytes and relocations match (size 60, Ghidra size 56)
+00082174	xEventGroupSetBitsFromISR	12	xEventGroupSetBitsFromISR	vendor/FreeRTOS-Kernel/event_groups.o	identical	12	bytes and relocations match (size 16, Ghidra size 12)
 00082184	vQueueAddToRegistry	32	vQueueAddToRegistry	vendor/FreeRTOS-Kernel/queue.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
 000821a8	vQueueUnregisterQueue	34	vQueueUnregisterQueue	vendor/FreeRTOS-Kernel/queue.o	identical	34	bytes and relocations match (size 40, Ghidra size 34)
 000821d0	prvIdleTask	16	prvIdleTask	vendor/FreeRTOS-Kernel/tasks.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
 000821e4	prvAddCurrentTaskToDelayedList	88	prvAddCurrentTaskToDelayedList	vendor/FreeRTOS-Kernel/tasks.o	identical	88	bytes and relocations match (size 112, Ghidra size 88)
 00082254	prvResetNextTaskUnblockTime	28	prvResetNextTaskUnblockTime	vendor/FreeRTOS-Kernel/tasks.o	identical	28	bytes and relocations match (size 36, Ghidra size 28)
 00082278	xTaskCreate	366	xTaskCreate	vendor/FreeRTOS-Kernel/tasks.o	identical	366	bytes and relocations match (size 416, Ghidra size 366)
-00082418	vTaskStartScheduler	138	vTaskStartScheduler,vTaskSuspendAll,xTaskGetTickCount,xTaskIncrementTick	vendor/FreeRTOS-Kernel/tasks.o	identical	138	bytes and relocations match (size 108, Ghidra size 138); bytes and relocations match (size 16, Ghidra size 10); bytes and relocations match (size 12, Ghidra size 6); bytes and relocations match (size 248, Ghidra size 202)
+00082418	vTaskStartScheduler	82	vTaskStartScheduler	vendor/FreeRTOS-Kernel/tasks.o	identical	82	bytes and relocations match (size 108, Ghidra size 82)
 00082484	vTaskSuspendAll	10	vTaskSuspendAll	vendor/FreeRTOS-Kernel/tasks.o	identical	10	bytes and relocations match (size 16, Ghidra size 10)
 00082494	xTaskGetTickCount	6	xTaskGetTickCount	vendor/FreeRTOS-Kernel/tasks.o	identical	6	bytes and relocations match (size 12, Ghidra size 6)
 000824a0	xTaskIncrementTick	202	xTaskIncrementTick	vendor/FreeRTOS-Kernel/tasks.o	identical	202	bytes and relocations match (size 248, Ghidra size 202)
@@ -114,7 +113,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00082cc4	xTimerGenericCommand	70	xTimerGenericCommand	vendor/FreeRTOS-Kernel/timers.o	identical	70	bytes and relocations match (size 76, Ghidra size 70)
 00082d10	prvSampleTimeNow	146	prvSampleTimeNow	vendor/FreeRTOS-Kernel/timers.o	identical	146	bytes and relocations match (size 160, Ghidra size 146)
 00082db0	prvTimerTask	384	prvTimerTask	vendor/FreeRTOS-Kernel/timers.o	identical	384	bytes and relocations match (size 408, Ghidra size 384)
-00082f48	-	40	xTimerPendFunctionCallFromISR	vendor/FreeRTOS-Kernel/timers.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00082f48	xTimerPendFunctionCallFromISR	34	xTimerPendFunctionCallFromISR	vendor/FreeRTOS-Kernel/timers.o	identical	34	bytes and relocations match (size 40, Ghidra size 34)
 00082f70	CLOCK_GetOsc32KFreq	18	CLOCK_GetOsc32KFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	18	bytes and relocations match (size 24, Ghidra size 18)
 00082f88	CLOCK_GetXtalInClkFreq	30	CLOCK_GetXtalInClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	30	bytes and relocations match (size 44, Ghidra size 30)
 00082fb4	CLOCK_GetFFroFreq	28	CLOCK_GetFFroFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	28	bytes and relocations match (size 40, Ghidra size 28)
@@ -128,18 +127,20 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 000831a8	CLOCK_GetAudioPllClkFreq	24	CLOCK_GetAudioPllClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	24	bytes and relocations match (size 28, Ghidra size 24)
 000831c4	CLOCK_GetMainClkFreq	92	CLOCK_GetMainClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	92	bytes and relocations match (size 104, Ghidra size 92)
 0008322c	CLOCK_GetDspMainClkFreq	106	CLOCK_GetDspMainClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	106	bytes and relocations match (size 124, Ghidra size 106)
-000832a8	-	112	CLOCK_GetAdcClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083318	-	168	CLOCK_GetClockOutClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000833c0	-	176	CLOCK_GetFRGClock	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083470	CLOCK_GetFlexCommClkFreq	238	CLOCK_GetFlexCommClkFreq,CLOCK_GetFlexspiClkFreq,CLOCK_GetSctClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	238	bytes and relocations match (size 96, Ghidra size 238); bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv); bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083570	-	52	CLOCK_GetMclkClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000835a4	-	40	CLOCK_GetWdtClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000835cc	-	72	CLOCK_GetSystickClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083614	-	100	CLOCK_GetSdioClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083678	-	52	CLOCK_GetI3cClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000836ac	-	52	CLOCK_GetUsbClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-000836e0	-	120	CLOCK_GetDmicClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-00083758	-	80	CLOCK_GetAcmpClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+000832a8	CLOCK_GetAdcClkFreq	90	CLOCK_GetAdcClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	90	bytes and relocations match (size 112, Ghidra size 90)
+00083318	CLOCK_GetClockOutClkFreq	136	CLOCK_GetClockOutClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	136	bytes and relocations match (size 168, Ghidra size 136)
+000833c0	CLOCK_GetFRGClock	162	CLOCK_GetFRGClock	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	162	bytes and relocations match (size 176, Ghidra size 162)
+00083470	CLOCK_GetFlexCommClkFreq	76	CLOCK_GetFlexCommClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	76	bytes and relocations match (size 96, Ghidra size 76)
+000834d0	CLOCK_GetFlexspiClkFreq	66	CLOCK_GetFlexspiClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	66	bytes and relocations match (size 76, Ghidra size 66)
+0008351c	CLOCK_GetSctClkFreq	72	CLOCK_GetSctClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	72	bytes and relocations match (size 84, Ghidra size 72)
+00083570	CLOCK_GetMclkClkFreq	46	CLOCK_GetMclkClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	46	bytes and relocations match (size 52, Ghidra size 46)
+000835a4	CLOCK_GetWdtClkFreq	28	CLOCK_GetWdtClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	28	bytes and relocations match (size 40, Ghidra size 28)
+000835cc	CLOCK_GetSystickClkFreq	54	CLOCK_GetSystickClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	54	bytes and relocations match (size 72, Ghidra size 54)
+00083614	CLOCK_GetSdioClkFreq	80	CLOCK_GetSdioClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	80	bytes and relocations match (size 100, Ghidra size 80)
+00083678	CLOCK_GetI3cClkFreq	46	CLOCK_GetI3cClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	46	bytes and relocations match (size 52, Ghidra size 46)
+000836ac	CLOCK_GetUsbClkFreq	46	CLOCK_GetUsbClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	46	bytes and relocations match (size 52, Ghidra size 46)
+000836e0	CLOCK_GetDmicClkFreq	94	CLOCK_GetDmicClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	94	bytes and relocations match (size 120, Ghidra size 94)
+00083758	CLOCK_GetAcmpClkFreq	64	CLOCK_GetAcmpClkFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	64	bytes and relocations match (size 80, Ghidra size 64)
 000837a8	CLOCK_GetFreq	214	CLOCK_GetFreq	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	214	bytes and relocations match (size 256, Ghidra size 214)
 000838a8	CLOCK_SetFRGClock	70	CLOCK_SetFRGClock	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	70	bytes and relocations match (size 76, Ghidra size 70)
 000838f4	CLOCK_EnableFfroClk	170	CLOCK_EnableFfroClk	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	170	bytes and relocations match (size 192, Ghidra size 170)
@@ -150,14 +151,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00083c54	CLOCK_InitAudioPfd	66	CLOCK_InitAudioPfd	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	66	bytes and relocations match (size 72, Ghidra size 66)
 00083c9c	CLOCK_EnableSysOscClk	32	CLOCK_EnableSysOscClk	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	32	bytes and relocations match (size 40, Ghidra size 32)
 00083cc4	SDK_DelayAtLeastUs	28	SDK_DelayAtLeastUs	vendor/mcux-sdk/drivers/common/fsl_common_arm.o	identical	28	bytes and relocations match (size 32, Ghidra size 28)
-00083ce4	-	92	CTIMER_GenericIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00083ce4	CTIMER_GenericIRQHandler	80	CTIMER_GenericIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	80	bytes and relocations match (size 92, Ghidra size 80)
 00083d40	DMA_GetInstance	24	DMA_GetInstance	vendor/mcux-sdk/drivers/lpc_dma/fsl_dma.o	identical	24	bytes and relocations match (size 28, Ghidra size 24)
 00083d5c	DMA_IRQHandle	176	DMA_IRQHandle	vendor/mcux-sdk/drivers/lpc_dma/fsl_dma.o	identical	176	bytes and relocations match (size 180, Ghidra size 176)
 00083e10	DMA0_DriverIRQHandler	6	DMA0_DriverIRQHandler	vendor/mcux-sdk/drivers/lpc_dma/fsl_dma.o	identical	6	bytes and relocations match (size 12, Ghidra size 6)
 00083e1c	DMA1_DriverIRQHandler	6	DMA1_DriverIRQHandler	vendor/mcux-sdk/drivers/lpc_dma/fsl_dma.o	identical	6	bytes and relocations match (size 12, Ghidra size 6)
 00083e28	DMIC0_DriverIRQHandler	10	DMIC0_DriverIRQHandler	vendor/mcux-sdk/drivers/dmic/fsl_dmic.o	identical	10	bytes and relocations match (size 16, Ghidra size 10)
 00083e38	HWVAD0_DriverIRQHandler	10	HWVAD0_DriverIRQHandler	vendor/mcux-sdk/drivers/dmic/fsl_dmic.o	identical	10	bytes and relocations match (size 16, Ghidra size 10)
-00083e48	DSP_Init	190	DSP_Init,FLEXCOMM_GetInstance,FLEXCOMM_Init	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_dsp.o,vendor/mcux-sdk/drivers/flexcomm/fsl_flexcomm.o	identical	190	bytes and relocations match (size 88, Ghidra size 190); bytes and relocations match (size 28, Ghidra size 22); bytes and relocations match (size 204, Ghidra size 180)
+00083e48	DSP_Init	82	DSP_Init	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_dsp.o	identical	82	bytes and relocations match (size 88, Ghidra size 82)
 00083ea0	FLEXCOMM_GetInstance	22	FLEXCOMM_GetInstance	vendor/mcux-sdk/drivers/flexcomm/fsl_flexcomm.o	identical	22	bytes and relocations match (size 28, Ghidra size 22)
 00083ebc	FLEXCOMM_Init	180	FLEXCOMM_Init	vendor/mcux-sdk/drivers/flexcomm/fsl_flexcomm.o	identical	180	bytes and relocations match (size 204, Ghidra size 180)
 00083f88	FLEXCOMM1_DriverIRQHandler	32	FLEXCOMM1_DriverIRQHandler	vendor/mcux-sdk/drivers/flexcomm/fsl_flexcomm.o	identical	32	bytes and relocations match (size 48, Ghidra size 32)
@@ -188,8 +189,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00084470	POWER_ApplyPD	24	POWER_ApplyPD	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	24	bytes and relocations match (size 28, Ghidra size 24)
 0008448c	POWER_UpdateOscSettlingTime	6	POWER_UpdateOscSettlingTime	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	6	bytes and relocations match (size 12, Ghidra size 6)
 00084498	RESET_SetPeripheralReset	96	RESET_SetPeripheralReset	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_reset.o	identical	96	bytes and relocations match (size 108, Ghidra size 96)
-00084504	-	120	RESET_ClearPeripheralReset	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_reset.o	identical	0	bytes and relocations match
-0008457c	-	56	SCTIMER_EventHandleIRQ	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00084504	RESET_ClearPeripheralReset	108	RESET_ClearPeripheralReset	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_reset.o	identical	108	bytes and relocations match (size 120, Ghidra size 108)
+0008457c	SCTIMER_EventHandleIRQ	48	SCTIMER_EventHandleIRQ	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	48	bytes and relocations match (size 56, Ghidra size 48)
 000845b4	SCTIMER_Init	154	SCTIMER_Init	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	154	bytes and relocations match (size 188, Ghidra size 154)
 00084670	SCTIMER_CreateAndScheduleEvent	250	SCTIMER_CreateAndScheduleEvent	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	250	bytes and relocations match (size 268, Ghidra size 250)
 0008477c	SCTIMER_SetupPwm	344	SCTIMER_SetupPwm	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	344	bytes and relocations match (size 348, Ghidra size 344)
@@ -211,10 +212,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00084e04	_Csys_alloc	26	_Csys_alloc	libc/redlib/csys_alloc.o	identical	26	bytes and relocations match (size 32, Ghidra size 26)
 00084e24	tolower	16	tolower	libc/ctype.o	identical	16	bytes and relocations match (size 20, Ghidra size 16)
 00084e38	stdio_init	94	stdio_init	libc/redlib/stdio_init.o	equivalent	94	differential emulation: 200 trials agree (163 returned normally, 67% of 3 blocks reached); bytes: 63 bytes differ, first at +0x0; +0xc not a branch in the original; +0x20 not a branch in the original; +0x2a not a branch in the original
-00084eb0	vsnprintf_core	2778	vsnprintf_core	libc/redlib/vsnprintf_core.o	differs	0	0 of 2778 bytes covered; emulation trial 1: ret differs (orig ended return, new return); bytes: 326 bytes differ, first at +0x4; +0x28 not a branch in the original; +0x9e not a branch in the original; +0xdc not a branch in the original
-00085a9c	siprintf	102	sprintf	libc/redlib/printf.o	equivalent	102	differential emulation: 200 trials agree (173 returned normally, 50% of 4 blocks reached); bytes: 31 bytes differ, first at +0x1a; +0x4e not a branch in the original
+00084eb0	vsnprintf_core	2778	vsnprintf_core	libc/redlib/vsnprintf_core.o	equivalent	2778	differential emulation: 200 trials agree (200 returned normally, 94% of 218 blocks reached); bytes: 2569 bytes differ, first at +0x4; +0x3e not a branch in the original; +0x1e6 not a branch in the original; +0x230 literal 0x465b0940, expected 0x854b9 (same section)
+00085a9c	sprintf	102	sprintf	libc/redlib/printf.o	equivalent	102	differential emulation: 200 trials agree (173 returned normally, 50% of 4 blocks reached); bytes: 31 bytes differ, first at +0x1a; +0x4e not a branch in the original
 00085b08	snprintf	114	snprintf	libc/redlib/printf.o	equivalent	114	differential emulation: 200 trials agree (167 returned normally, 75% of 8 blocks reached); bytes: 24 bytes differ, first at +0x50; +0x56 not a branch in the original
-00085b80	sprintf	88	vsprintf	libc/redlib/printf.o	equivalent	88	differential emulation: 200 trials agree (174 returned normally, 50% of 4 blocks reached); bytes: 25 bytes differ, first at +0x14; +0x46 not a branch in the original
+00085b80	vsprintf	88	vsprintf	libc/redlib/printf.o	equivalent	88	differential emulation: 200 trials agree (174 returned normally, 50% of 4 blocks reached); bytes: 25 bytes differ, first at +0x14; +0x46 not a branch in the original
 00085bdc	_Cdigit_value	44	_Cdigit_value	libc/redlib/cdigit_value.o	equivalent	44	differential emulation: 200 trials agree (193 returned normally, 83% of 6 blocks reached); bytes: 39 bytes differ, first at +0x0; +0x28 literal 0xe7f03837, redlib_ctype is at 0x87d04+0x80
 00085c0c	_strtoul_core	172	_strtoul_core	libc/redlib/strtoul_core.o	equivalent	172	differential emulation: 200 trials agree (170 returned normally, 82% of 22 blocks reached); bytes: 140 bytes differ, first at +0x4; +0x42 not a branch in the original; +0xa8 literal 0xe7d4400a, redlib_ctype is at 0x87d04+0x80; +0xac literal 0x87d04, errno is at 0x88b74+0x0
 00085cc0	strtoul	128	strtoul	libc/redlib/strtoul.o	equivalent	128	differential emulation: 200 trials agree (170 returned normally, 92% of 13 blocks reached); bytes: 108 bytes differ, first at +0x4; +0x3a not a branch in the original; +0x78 literal 0xe7de460c, errno is at 0x88b74+0x0; +0x7c literal 0xe7dc461e, redlib_ctype is at 0x87d04+0x80
@@ -230,8 +231,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00085fea	HardFault_Handler	42	HardFault_Handler	app/semihost_hardfault.o	identical	42	bytes and relocations match
 00086014	is_hex_string	48	is_hex_string	app/console_frame.o	identical	48	bytes and relocations match
 00086044	frame_checksum_ok	38	frame_checksum_ok	app/console_frame.o	identical	38	bytes and relocations match
-0008606a	env_map_vatopa	2	platform_vatopa	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	2	bytes and relocations match
-0008606c	-	2	platform_patova	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	0	bytes and relocations match
+0008606a	platform_vatopa	2	platform_vatopa	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	2	bytes and relocations match
+0008606c	platform_patova	2	platform_patova	vendor/rpmsg-lite/lib/rpmsg_lite/porting/platform/imxrt600_m33/rpmsg_platform.o	identical	2	bytes and relocations match
 0008606e	-	4	env_allocate_memory	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	0	bytes and relocations match
 00086072	env_free_memory	8	env_free_memory	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	8	bytes and relocations match
 0008607a	-	4	env_memset	vendor/rpmsg-lite/lib/rpmsg_lite/porting/environment/rpmsg_env_freertos.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
@@ -268,13 +269,13 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00086370	vq_ring_update_used	38	vq_ring_update_used	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	38	bytes and relocations match
 00086396	virtqueue_add_buffer	22	virtqueue_add_buffer	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	22	bytes and relocations match
 000863ac	virtqueue_fill_avail_buffers	82	virtqueue_fill_avail_buffers	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	82	bytes and relocations match
-000863fe	virtqueue_get_buffer	94	virtqueue_get_buffer,virtqueue_get_buffer_length	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	94	bytes and relocations match (size 88, Ghidra size 94); bytes and relocations match
+000863fe	virtqueue_get_buffer	88	virtqueue_get_buffer	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	88	bytes and relocations match
 00086456	virtqueue_get_buffer_length	10	virtqueue_get_buffer_length	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	10	bytes and relocations match
 00086460	virtqueue_fill_used_buffers	74	virtqueue_fill_used_buffers	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	74	bytes and relocations match
 000864aa	virtqueue_disable_cb	40	virtqueue_disable_cb	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	40	bytes and relocations match
 000864d2	virtqueue_kick	70	virtqueue_kick	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	70	bytes and relocations match
 00086518	vq_ring_init	32	vq_ring_init	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	32	bytes and relocations match
-00086538	-	10	virtqueue_notification	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00086538	virtqueue_notification	10	virtqueue_notification	vendor/rpmsg-lite/lib/virtio/virtqueue.o	identical	10	bytes and relocations match
 00086542	vPortYield	22	vPortYield	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	22	bytes and relocations match
 00086558	SysTick_Handler	36	SysTick_Handler	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	36	bytes and relocations match
 0008657c	vPortSVCHandler_C	26	vPortSVCHandler_C	vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/port.o	identical	26	bytes and relocations match
@@ -305,7 +306,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00086dd6	vQueueWaitForMessageRestricted	70	vQueueWaitForMessageRestricted	vendor/FreeRTOS-Kernel/queue.o	identical	70	bytes and relocations match
 00086e1c	CLOCK_AttachClk	60	CLOCK_AttachClk	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	60	bytes and relocations match
 00086e58	CLOCK_SetClkDiv	52	CLOCK_SetClkDiv	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_clock.o	identical	52	bytes and relocations match
-00086e8c	CTIMER0_DriverIRQHandler	86	CTIMER0_DriverIRQHandler,CTIMER1_DriverIRQHandler,CTIMER2_DriverIRQHandler,CTIMER3_DriverIRQHandler,CTIMER4_DriverIRQHandler,DSP_CopyImage,hashcrypt_save_running_hash	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_dsp.o,vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o,vendor/mcux-sdk/drivers/hashcrypt/fsl_hashcrypt.o	identical	86	bytes and relocations match (size 6, Ghidra size 86); bytes and relocations match; bytes and relocations match; bytes and relocations match; bytes and relocations match; bytes and relocations match; bytes and relocations match
+00086e8c	CTIMER0_DriverIRQHandler	6	CTIMER0_DriverIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	6	bytes and relocations match
 00086e92	CTIMER1_DriverIRQHandler	6	CTIMER1_DriverIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	6	bytes and relocations match
 00086e98	CTIMER2_DriverIRQHandler	6	CTIMER2_DriverIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	6	bytes and relocations match
 00086e9e	CTIMER3_DriverIRQHandler	6	CTIMER3_DriverIRQHandler	vendor/mcux-sdk/drivers/ctimer/fsl_ctimer.o	identical	6	bytes and relocations match
@@ -317,22 +318,22 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00086f14	MU_SetFlags	26	MU_SetFlags	vendor/mcux-sdk/drivers/mu/fsl_mu.o	identical	26	bytes and relocations match
 00086f2e	PINT_PatternMatchResetDetectLogic	14	PINT_PatternMatchResetDetectLogic	vendor/mcux-sdk/drivers/pint/fsl_pint.o	identical	14	bytes and relocations match
 00086f3c	PINT_PinInterruptClrStatus	22	PINT_PinInterruptClrStatus	vendor/mcux-sdk/drivers/pint/fsl_pint.o	identical	22	bytes and relocations match
-00086f52	RESET_ClearPeripheralReset	18	RESET_PeripheralReset	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_reset.o	identical	18	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00086f52	RESET_PeripheralReset	18	RESET_PeripheralReset	vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_reset.o	identical	18	bytes and relocations match
 00086f64	SCTIMER_GetDefaultConfig	38	SCTIMER_GetDefaultConfig	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	38	bytes and relocations match
 00086f8a	SCTIMER_UpdatePwmDutycycle	98	SCTIMER_UpdatePwmDutycycle	vendor/mcux-sdk/drivers/sctimer/fsl_sctimer.o	identical	98	bytes and relocations match
 00086fec	SEMA42_Lock	28	SEMA42_Lock	vendor/mcux-sdk/drivers/sema42/fsl_sema42.o	identical	28	bytes and relocations match
-00087008	SEMA42_ResetAllGates	36	SEMA42_ResetGate	vendor/mcux-sdk/drivers/sema42/fsl_sema42.o	identical	36	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+00087008	SEMA42_ResetGate	36	SEMA42_ResetGate	vendor/mcux-sdk/drivers/sema42/fsl_sema42.o	identical	36	bytes and relocations match
 0008702c	USART_GetDefaultConfig	34	USART_GetDefaultConfig	vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	34	bytes and relocations match
 0008704e	USART_SetBaudRate	178	USART_SetBaudRate	vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	178	bytes and relocations match
 00087100	USART_Init	306	USART_Init	vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	306	bytes and relocations match
 00087232	BOARD_InitDebugConsole	2	BOARD_InitDebugConsole	board/board.o	identical	2	bytes and relocations match
 00087234	BOARD_FlexspiClockSafeConfig	8	BOARD_FlexspiClockSafeConfig	board/board.o	identical	8	bytes and relocations match
 0008723c	-	4	BOARD_InitBootClocks	board/clock_config.o	identical	0	bytes and relocations match
-00087240	app_init_nop	2	BOARD_InitBootPeripherals	board/peripherals.o	identical	2	bytes and relocations match
+00087240	BOARD_InitBootPeripherals	2	BOARD_InitBootPeripherals	board/peripherals.o	identical	2	bytes and relocations match
 00087242	BOARD_InitPins_flexcomm	42	BOARD_InitPins_flexcomm	board/pin_mux.o	identical	42	bytes and relocations match
 0008726c	BOARD_InitPins_i2s	40	BOARD_InitPins_i2s	board/pin_mux.o	identical	40	bytes and relocations match
-00087294	BOARD_InitPins	26	BOARD_InitBootPins	board/pin_mux.o	identical	26	bytes and relocations match
-000872ae	main	14	__main	libc/crt.o	identical	14	bytes and relocations match
+00087294	BOARD_InitBootPins	26	BOARD_InitBootPins	board/pin_mux.o	identical	26	bytes and relocations match
+000872ae	__main	14	__main	libc/crt.o	identical	14	bytes and relocations match
 000872bc	-	4	memcpy	libc/redlib/memcpy.o	identical	0	bytes and relocations match
 000872c0	-	4	memset	libc/redlib/memset.o	identical	0	bytes and relocations match
 000872c4	free	48	free	libc/redlib/heap.o	identical	48	bytes and relocations match
@@ -351,8 +352,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00087716	_Cfflush1	64	_Cfflush1	libc/redlib/cfflush1.o	equivalent	64	differential emulation: 200 trials agree (193 returned normally, 100% of 6 blocks reached); bytes: 8 bytes differ, first at +0x7
 00087756	__aeabi_uldivmod	252	__aeabi_uldivmod,udiv64by32_helper	libc/redlib/uldivmod.o	identical	252	bytes and relocations match (size 250, Ghidra size 252); bytes and relocations match (size 124, Ghidra size 122)
 00087850	udiv64by32_helper	122	udiv64by32_helper	libc/redlib/uldivmod.o	identical	122	bytes and relocations match (size 124, Ghidra size 122)
-000878cc	memcpy	52	memcpy_body	libc/redlib/memcpy_body.o	identical	52	bytes and relocations match (size 52, Ghidra size 0)
-00087900	memset	50	memset_body	libc/redlib/memcpy_body.o	identical	50	bytes and relocations match (size 50, Ghidra size 0)
+000878cc	memcpy_body	52	memcpy_body	libc/redlib/memcpy_body.o	identical	52	bytes and relocations match
+00087900	memset_body	50	memset_body	libc/redlib/memcpy_body.o	identical	50	bytes and relocations match
 00087932	__sys_appexit	2	__sys_appexit	libc/redlib/sys.o	identical	2	bytes and relocations match
 00087934	__sys_close	6	__sys_close	libc/redlib/sys.o	identical	6	bytes and relocations match
 0008793a	__sys_flen	6	__sys_flen	libc/redlib/sys.o	identical	6	bytes and relocations match
@@ -368,7 +369,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 08001214	UsageFault_Handler	2	UsageFault_Handler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
 08001216	SecureFault_Handler	2	SecureFault_Handler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 4, Ghidra size 2)
 0800121a	DebugMon_Handler	2	DebugMon_Handler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 6, Ghidra size 2)
-08001220	DefaultHandler	2	IntDefaultHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
+08001220	IntDefaultHandler	2	IntDefaultHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
 08001222	data_init	18	data_init	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	18	bytes and relocations match
 08001234	bss_init	16	bss_init	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	16	bytes and relocations match
 08001244	WDT0_IRQHandler	8	WDT0_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
@@ -398,12 +399,12 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 08001304	DMIC0_IRQHandler	8	DMIC0_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800130c	Reserved42_IRQHandler	8	Reserved42_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001314	HYPERVISOR_IRQHandler	8	HYPERVISOR_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-0800131c	SECURE_VIOLATION_IRQHandler	8	SECUREVIOLATION_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+0800131c	SECUREVIOLATION_IRQHandler	8	SECUREVIOLATION_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001324	HWVAD0_IRQHandler	8	HWVAD0_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800132c	Reserved46_IRQHandler	8	Reserved46_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001334	RNG_IRQHandler	8	RNG_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800133c	RTC_IRQHandler	8	RTC_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-08001344	DSP_TIE_EXPSTATE1_IRQHandler	8	DSPWAKE_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+08001344	DSPWAKE_IRQHandler	8	DSPWAKE_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800134c	PIN_INT4_IRQHandler	8	PIN_INT4_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001354	PIN_INT5_IRQHandler	8	PIN_INT5_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800135c	PIN_INT6_IRQHandler	8	PIN_INT6_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
@@ -419,10 +420,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 080013ac	SGPIO_INTA_IRQHandler	8	SGPIO_INTA_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013b4	SGPIO_INTB_IRQHandler	8	SGPIO_INTB_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013bc	I3C0_IRQHandler	8	I3C0_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-080013c4	USB0_IRQHandler	8	USB_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-080013cc	USB0_NEEDCLK_IRQHandler	8	USB_WAKEUP_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+080013c4	USB_IRQHandler	8	USB_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+080013cc	USB_WAKEUP_IRQHandler	8	USB_WAKEUP_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013d4	WDT1_IRQHandler	8	WDT1_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-080013dc	USB_PHYDCD_IRQHandler	8	USBPHY_DCD_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+080013dc	USBPHY_DCD_IRQHandler	8	USBPHY_DCD_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013e4	DMA1_IRQHandler	8	DMA1_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013ec	PUF_IRQHandler	8	PUF_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013f4	POWERQUAD_IRQHandler	8	POWERQUAD_IRQHandler	vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match

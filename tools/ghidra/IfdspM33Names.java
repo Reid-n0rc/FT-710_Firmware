@@ -449,6 +449,7 @@ public class IfdspM33Names extends GhidraScript {
         {0x0008723CL, "BOARD_InitBootClocks", "NEW (entries_m33.tsv): byte-identical to BOARD_InitBootClocks of src/ifdsp_m33/board/clock_config.c (recreated) [fact: T24 (src/ifdsp_m33/status.tsv, aliases.tsv)]; b.w BOARD_BootClockRUN [fact: 0x8723C] (T24 round 2)"},
         {0x000872BCL, "memcpy", "NEW (entries_m33.tsv): b.w memcpy_body 0x878CC; every compiler-generated memcpy call (prvCopyDataToQueue, env_memcpy) reaches this address, so it carries the linked symbol memcpy [fact: 0x872BC, src/ifdsp_m33/aliases.tsv] (T24 round 2)"},
         {0x000872C0L, "memset", "NEW (entries_m33.tsv): b.w memset_body 0x87900; every memset call (xTaskCreate, USART_GetDefaultConfig) reaches this address [fact: 0x872C0, src/ifdsp_m33/aliases.tsv] (T24 round 2)"},
+        {0x000872F4L, "printf_float_none", "NEW (entries_m33.tsv): the hook sprintf, snprintf and vsprintf pass to the printf core vsnprintf_core (literal 0x872F5 in their pools 0x85B04, 0x85B7C, 0x85BD8) [fact]; movs r0, #0; bx lr [fact: 0x872F4]. The core calls it for the floating-point conversions a A e E f g G as hook(conv, &arg, buf, flags, &prefix, &zeros, &lead, &trail) and prints the characters it returns [fact: 0x85806..0x85822]; returning 0 prints none, so this printf has no floating point [inference: from the call site; the name is this project's] (T24 round 3)"},
     };
 
     @Override

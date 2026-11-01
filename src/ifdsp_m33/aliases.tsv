@@ -3,14 +3,12 @@
 # function is not in the image at all ('-'). Columns: source name, Ghidra name or 0x address or '-', evidence.
 # Functions that Ghidra's list lacks are found by the tool itself (byte search, then neighbours in link order) and
 # need no row here.
+# Since the re-export after T24 round 2 (449 functions) Ghidra carries the corrected names (main, __main, vsprintf,
+# sprintf, the SDK 2.9 vector names, ...), so those rows are gone; left are what Ghidra's list still lacks.
 source	original	evidence
-IntDefaultHandler	DefaultHandler	MCUXpresso startup's weak default handler (b .); T23d named it DefaultHandler
 memcpy	0x872bc	[fact] compiler-generated memcpy calls (prvCopyDataToQueue, env_memcpy) reach 0x872BC, a b.w to 0x878CC
 memset	0x872c0	[fact] compiler-generated memset calls (xTaskCreate, USART_GetDefaultConfig) reach 0x872C0, a b.w to 0x87900
-RESET_ClearPeripheralReset	0x84504	[fact] DSP_Init and RESET_PeripheralReset call 0x84504 where SDK 2.11 calls RESET_ClearPeripheralReset; Ghidra put that name on 0x86F52, which is RESET_PeripheralReset (bytes)
 xPortIsInsideInterrupt	-	[fact] FreeRTOS's version (mrs ipsr) is not in the image; 0x81944, which Ghidra calls xPortIsInsideInterrupt, is rpmsg-lite's platform_in_isr (SCB->ICSR VECTACTIVE)
-platform_in_isr	xPortIsInsideInterrupt	[fact] same bytes as platform_in_isr in rpmsg-lite v3.1.0 imxrt600_m33/rpmsg_platform.c
-platform_vatopa	0x8606a	[fact] env_map_vatopa (0x86098) is b.w 0x8606A, a bx lr; Ghidra calls 0x8606A env_map_vatopa
 platform_patova	0x8606c	[fact] env_map_patova (0x8609C) is b.w 0x8606C, a bx lr
 env_map_vatopa	0x86098	[fact] virtqueue_fill_avail_buffers calls 0x86098 where virtqueue.c calls env_map_vatopa
 env_map_patova	0x8609c	[fact] virtqueue_get_buffer calls 0x8609C where virtqueue.c calls env_map_patova
@@ -19,20 +17,6 @@ env_free_memory	0x86072	[fact] if (p) b.w vPortFree; Ghidra name matches but the
 env_mb	0x86086	[fact] dsb sy; bx lr (three identical bodies env_mb/env_rmb/env_wmb in file order)
 env_rmb	0x8608c	[fact] see env_mb
 env_wmb	0x86092	[fact] see env_mb
-__main	main	[fact] ResetISR (MCUXpresso startup) calls __main through the veneer call_main; the 14-byte function at 0x872AE that Ghidra calls main is Redlib's __main: stdio init, then the application main
-main	app_main	[fact] __main (0x872AE) tail-calls 0x8106C after stdio_init; that is the application main, which Ghidra calls app_main
-SECUREVIOLATION_IRQHandler	SECURE_VIOLATION_IRQHandler	[fact] same vector slot; SDK 2.9 startup name, Ghidra took the later SDK name
-USB_IRQHandler	USB0_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
-USB_WAKEUP_IRQHandler	USB0_NEEDCLK_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
-USBPHY_DCD_IRQHandler	USB_PHYDCD_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
-DSPWAKE_IRQHandler	DSP_TIE_EXPSTATE1_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
 BOARD_InitBootClocks	0x8723c	[fact] b.w BOARD_BootClockRUN at 0x8723C, right after BOARD_FlexspiClockSafeConfig (Ghidra merged it into that function)
-BOARD_InitBootPeripherals	app_init_nop	[inference] the empty function between clock_config.c and pin_mux.c in link order, see board/peripherals.c
-BOARD_InitBootPins	BOARD_InitPins	[inference] 0x87294 calls the five pin groups; main calls it right before BOARD_InitBootClocks and BOARD_InitBootPeripherals, the MCUXpresso Config Tools sequence
-vsprintf	sprintf	[fact] 0x85B80 takes (buffer, format, va_list): console_printf and uart0_printf pass the address of their variadic arguments
-sprintf	siprintf	[fact] 0x85A9C is variadic (push {r1-r3}) with (buffer, format, ...) and no length
-sct0_pwm_start	SCTIMER_StartTimer	[fact] 12 bytes: SCT0->CTRL &= ~HALT_L, no arguments; an application wrapper of the SDK inline SCTIMER_StartTimer
 rpmsg_queue_nocopy_free	-	[fact] not in the image: 0x81BE8, which Ghidra called rpmsg_queue_nocopy_free, is byte-identical to rpmsg_lite_release_rx_buffer (T24 round 2)
-memcpy_body	0x878cc	[fact] the loop memcpy 0x872BC branches to (Ghidra: memcpy; IfdspM33Names.java renames it memcpy_body, T24 round 2)
-memset_body	0x87900	[fact] the loop memset 0x872C0 branches to (Ghidra: memset; renamed memset_body, T24 round 2)
 printf_float_none	0x872f4	[fact] the hook sprintf/snprintf/vsprintf pass to the printf core (literal 0x872F5 in their pools); not a Ghidra function

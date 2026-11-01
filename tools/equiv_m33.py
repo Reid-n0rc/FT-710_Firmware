@@ -18,6 +18,8 @@ Usage:
   python3 -I tools/equiv_m33.py bytes OBJ...                  byte check of every function in the objects
   python3 -I tools/equiv_m33.py status [--build DIR] [--emu]  run both checks over src/ifdsp_m33 (built by its Makefile)
                                                               and write src/ifdsp_m33/status.tsv
+  python3 -I tools/equiv_m33.py layout [-v]                   compare the linked out/ifdsp_m33.elf with the original
+                                                              addresses in status.tsv (functions in place, spacing, order)
 The image is read from build/FT-710_IFDSP_V0101.bin (or $FT710_BUILD/...); it is never written anywhere.
 """
 import argparse
@@ -639,6 +641,37 @@ def cmd_status(args):
           f're-implemented {cov} of {tot} bytes ({100.0 * cov / tot:.1f} %); wrote {os.path.relpath(STATUS_TSV, ROOT)}')
 
 
+def cmd_layout(args):
+    """Compare the linked ELF with the image: every function of status.tsv whose recreated source is linked, at its
+    original address or not; consecutive pairs (in original order) with the original spacing; order kept."""
+    with open(args.elf, 'rb') as fh:
+        elf = ELFFile(fh)
+        syms = {}
+        for s in elf.get_section_by_name('.symtab').iter_symbols():
+            if s['st_info']['type'] == 'STT_FUNC' and s['st_shndx'] != 'SHN_UNDEF':
+                syms.setdefault(s.name, s['st_value'] & ~1)
+    hdr, *rows = read_tsv(os.path.join(SRC, 'status.tsv'))
+    col = {h: i for i, h in enumerate(hdr)}
+    pairs = sorted((int(r[col['address']], 16), r[col['source']]) for r in rows
+                   if r[col['source']] and r[col['source']] in syms and r[col['file']] != 'linker')
+    seen, uniq = set(), []
+    for a, n in pairs:
+        if n not in seen:
+            seen.add(n)
+            uniq.append((a, n, syms[n]))
+    at = sum(o == b for o, _, b in uniq)
+    spacing = sum(1 for (o1, _, b1), (o2, _, b2) in zip(uniq, uniq[1:]) if o2 - o1 == b2 - b1)
+    order = sum(1 for (_, _, b1), (_, _, b2) in zip(uniq, uniq[1:]) if b2 > b1)
+    print(f'equiv_m33 layout: {at} of {len(uniq)} functions at their original address; {spacing} of {len(uniq) - 1} '
+          f'consecutive pairs with the original spacing; {order} in the original order')
+    if args.verbose:
+        for (o1, n1, b1), (o2, n2, b2) in zip(uniq, uniq[1:]):
+            if b2 <= b1:
+                print(f'  order: {n1} {o1:#x} -> {b1:#x}, then {n2} {o2:#x} -> {b2:#x}')
+            elif o2 - o1 != b2 - b1:
+                print(f'  spacing: {n1} {o1:#x}: original {o2 - o1}, linked {b2 - b1}')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -653,8 +686,13 @@ def main():
     st.add_argument('--emu', action='store_true', help='run the differential emulation on functions that differ')
     st.add_argument('--seed', type=int, default=1)
     st.add_argument('--trials', type=int, default=200)
+    ly = sub.add_parser('layout')
+    ly.add_argument('--elf', default=os.path.join(SRC, 'out', 'ifdsp_m33.elf'))
+    ly.add_argument('-v', '--verbose', action='store_true', help='list the pairs whose order or spacing differ')
     args = ap.parse_args()
-    if args.cmd == 'status':
+    if args.cmd == 'layout':
+        cmd_layout(args)
+    elif args.cmd == 'status':
         cmd_status(args)
     elif args.cmd == 'bytes':
         cmd_bytes(args)
