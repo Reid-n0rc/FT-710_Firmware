@@ -814,6 +814,79 @@ def sflash_args(rng, args, kind):
     return fill
 
 
+VDC5_STUB_FN = 0x2013FDE4      # sdhi_stub_2013fde4: an empty A32 function (bx lr), a harmless callback
+
+
+def vdc5_param(rng, a, b):
+    """A VDC5 parameter block at a (0x80 bytes): bytes 0..3 (the enum fields stay in range: the driver indexes tables
+    with them, and an out-of-range index reads whatever lies next to the table, which differs between the two builds), each aligned word of the first 0x30
+    bytes NULL or a pointer to the second block b (itself bytes 0..3 in its lower half, NULL or pointers back into it in its upper half), so that the nested parameter pointers of the r_vdc5 structures (lvds, dly, ext_sig, outctrl[], width_read_fb,
+    gr_grc, alpha and calibration blocks) are valid or NULL."""
+    p = bytearray(rng.choice([0, 0, 1, 1, 2, 3]) for _ in range(0x80))
+    for o in range(0, 0x30, 4):
+        k = rng.random()
+        if k < 0.4:
+            struct.pack_into('<I', p, o, 0)
+        else:
+            struct.pack_into('<I', p, o, b + rng.choice([0, 0, 0x10, 0x20, 0x40]))
+    q = bytearray(rng.choice([0, 0, 1, 1, 2, 3]) for _ in range(0x100))
+    for o in range(0x80, 0x100, 4):     # second-level pointers only in the upper half: the blocks the first level
+        if rng.random() < 0.4:          # points at (b + 0..0x7F) keep small bytes in their fields
+            struct.pack_into('<I', q, o, rng.choice([0, b + 0x40, b + 0x60]))
+    return [(a, bytes(p)), (b, bytes(q))]
+
+
+def vdc5_args(rng, args):
+    """The VDC5 driver (src/display/drivers/vdc5_*.c): r0 a channel 0/1, r1..r3 and two stack words each a small value
+    (layer ids -1..9, types 0..22, on/off) or a parameter block (vdc5_param); the shared resource and layer states 0
+    or 1 (the API checks them against 1), the callbacks NULL or an empty function."""
+    regs = args['regs']
+    regs[0] = rng.choice([0, 1])
+    bufs = []
+    for k in range(1, 6):
+        if rng.random() < 0.45:
+            regs[k] = rng.choice([0xFFFFFFFF, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 19, 22])
+        else:
+            a = SCRATCH_ARGS + 0x2000 * k
+            bufs += vdc5_param(rng, a, a + 0x1000)
+    args['buffers'] = bufs
+    bit = lambda n: bytes(rng.choice([0, 1, 1]) for _ in range(n))
+    cbs = b''.join(struct.pack('<I', rng.choice([0, VDC5_STUB_FN])) for _ in range(46))
+    return [(0x2080040C, bit(12)), (0x208DCE04, bit(36)), (0x208DCC0C, cbs)]
+
+
+def vdc5_regs_args(rng, args, table, stride):
+    """(parameter block, register-address block of channel 0 or 1): the TCON helpers (output control 0x20166710) and
+    the external-input helper (input control 0x20165CA0) take the driver's register table as second argument."""
+    fill = vdc5_args(rng, args)
+    args['regs'][0] = SCRATCH_ARGS + 0x2000
+    args['buffers'] += vdc5_param(rng, SCRATCH_ARGS + 0x2000, SCRATCH_ARGS + 0x3000)
+    args['regs'][1] = table + stride * rng.choice([0, 1])
+    return fill
+
+
+def preset_for(fname):
+    if fname in PRESETS:
+        return PRESETS[fname]
+    if fname.startswith('vdc5_tcon_'):
+        return lambda rng, args: vdc5_regs_args(rng, args, 0x20166710, 0x60)
+    if fname == 'vdc5_set_color_matrix':      # (mode, offsets, gains, matrix registers 0x20166200 [ch][module])
+        def f(rng, args):
+            fill = vdc5_args(rng, args)
+            for k, at in ((1, SCRATCH_ARGS + 0x2000), (2, SCRATCH_ARGS + 0x4000)):
+                args['buffers'] += vdc5_param(rng, at, at + 0x1000)
+                args['regs'][k] = at
+            args['regs'][0] = rng.randrange(4)
+            args['regs'][3] = 0x20166200 + 0x60 * rng.randrange(2) + 0x20 * rng.randrange(3)
+            return fill
+        return f
+    if fname == 'vdc5_set_video_external_input':
+        return lambda rng, args: vdc5_regs_args(rng, args, 0x20165CA0, 0x20)
+    if fname.startswith(('vdc5_', 'r_vdc5_')):
+        return vdc5_args
+    return None
+
+
 # return registers the DWARF cannot tell (assembly): the 64-bit divisions return quotient r0:r1 and remainder r2:r3
 RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16}
 
@@ -929,8 +1002,9 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
     for t in range(trials):
         args = draw_args(rng)
         fill = [(a, bytes(rng.getrandbits(8) for _ in range(64))) for a in sorted(refs)]
-        if fname in PRESETS:
-            fill += PRESETS[fname](rng, args)
+        pre = preset_for(fname)
+        if pre:
+            fill += pre(rng, args)
         s = rng.getrandbits(32)
         for budget in (BUDGET, 8 * BUDGET):
             run1 = Run(img, [], stub_addrs, s, fill, args, cover=lead)
@@ -1016,7 +1090,8 @@ def _link_one(job):
     ok = inconclusive = 0
     for t in range(trials):
         args = draw_args(rng)
-        fill = PRESETS[fname](rng, args) if fname in PRESETS else []
+        pre = preset_for(fname)
+        fill = pre(rng, args) if pre else []
         sd = rng.getrandbits(32)
         size = RET_SIZE.get(fname, _ret_sizes().get(fname, 4))
         for budget in (BUDGET, 8 * BUDGET):

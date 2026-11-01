@@ -27,3 +27,61 @@ sdhi_op13	0x20140490	[fact] slot 13: empty; Ghidra FUN_20140490
 sdhi_op14	0x20140494	[fact] slot 14: empty; Ghidra FUN_20140494
 sdhi_op15	0x20140498	[fact] slot 15: empty; Ghidra FUN_20140498
 sdhi_op16	0x2014049c	[fact] slot 16: returns -9; Ghidra FUN_2014049c
+r_vdc5_terminate	0x20117a68	[fact] R_VDC5_Terminate shape: vdc5_shrd_set_terminate, interrupts off, vdc5_reg_terminate, panel clock (and LVDS) resource 0, then the quit function; not in Ghidra's function list (drivers/vdc5_api.c)
+r_vdc5_video_input	0x20117ad4	[fact] stores the input parameters (0x2011D1F4), programs them (0x201197C0) and sets resource 1 (video in); Ghidra calls it r_vdc5_terminate
+r_vdc5_release_data_control	0x20117f3c	[fact] needs an idle layer, calls 0x2011BA48 and clears the layer resource; not in Ghidra's function list
+vdc5_shrd_set_terminate	0x2011d1e0	[fact] clears lvds_ref (+1) of the channel's common block; Ghidra FUN_2011d1e0
+vdc5_shrd_set_input_param	0x2011d1f4	[fact] sets the video-input flag and the input colour space and select; Ghidra calls it vdc5_shrd_terminate
+vdc5_reg_terminate	0x201195e8	[inference] called by the terminate 0x20117A68 between the interrupt and resource steps, the place of the driver's register terminate; Ghidra FUN_201195e8
+vdc5_reg_video_input	0x201197c0	[inference] called by the video-input call 0x20117AD4 with its parameters; Ghidra calls it vdc5_reg_terminate
+vdc5_reg_release_data_control	0x2011ba48	[inference] called by the release call 0x20117F3C; Ghidra FUN_2011ba48
+vdc5_sum_product	0x2011d25c	[fact] 11-bit signed coefficients, sum / 256 + offset, clamped 0..255; Ghidra FUN_2011d25c
+vdc5_shrd_set_cascade	0x2011d57c	[fact] stores r1 at common + 5; Ghidra FUN_2011d57c
+vdc5_shrd_set_und_sel	0x2011d58c	[fact] stores r1 at common + 6; Ghidra FUN_2011d58c
+vdc5_shrd_get_panel_clksel	0x2011d59c	[fact] common + 0; Ghidra FUN_2011d59c
+vdc5_shrd_get_lvds_clk_ref	0x2011d5a8	[fact] lvds_ref of channel 0 or 1; Ghidra FUN_2011d5a8
+vdc5_shrd_get_color_space	0x2011d5cc	[fact] common + 2; Ghidra FUN_2011d5cc
+vdc5_shrd_get_input_select	0x2011d5dc	[fact] common + 3; Ghidra FUN_2011d5dc
+vdc5_shrd_get_vs_in_sel	0x2011d5ec	[fact] common + 4; Ghidra FUN_2011d5ec
+vdc5_shrd_get_cascade	0x2011d5fc	[fact] common + 5; Ghidra FUN_2011d5fc
+vdc5_shrd_get_und_sel	0x2011d60c	[fact] common + 6; Ghidra FUN_2011d60c
+vdc5_shrd_get_bg_color	0x2011d61c	[fact] common + 8 (RGB) or + 0xC; Ghidra FUN_2011d61c
+vdc5_shrd_get_writing_mode	0x2011d634	[fact] scaler block + 0; Ghidra FUN_2011d634
+vdc5_shrd_get_interlace	0x2011d64c	[fact] scaler block + 1; Ghidra FUN_2011d64c
+vdc5_shrd_get_color_space_fb_wr	0x2011d668	[fact] scaler block + 2; Ghidra FUN_2011d668
+vdc5_shrd_get_fr_buff_btm	0x2011d684	[fact] scaler block + 4; Ghidra FUN_2011d684
+vdc5_shrd_get_ln_off_dir	0x2011d6a0	[fact] graphics block + 0; Ghidra FUN_2011d6a0
+vdc5_shrd_get_sel_fb_addr_sig	0x2011d6bc	[fact] graphics block + 1; Ghidra FUN_2011d6bc
+vdc5_shrd_get_graphics_format	0x2011d6dc	[fact] graphics block + 2; Ghidra FUN_2011d6dc
+vdc5_shrd_get_color_space_fb_rd	0x2011d6fc	[fact] graphics block + 3; Ghidra FUN_2011d6fc
+vdc5_shrd_get_measure_folding	0x2011d71c	[fact] graphics block + 4; Ghidra FUN_2011d71c
+vdc5_shrd_get_display_area	0x2011d73c	[fact] address of graphics block + 6; Ghidra FUN_2011d73c
+vdc5_shrd_get_fr_buff_width_rd	0x2011d75c	[fact] address of graphics block + 0xE; Ghidra FUN_2011d75c
+vdc5_shrd_get_lvds_ch	0x2011d77c	[fact] byte 0x2080040D; Ghidra FUN_2011d77c
+vdc5_wait_200us	0x201193c0	[fact] counts a stack word to 0x3458; called after the LVDS PLL power-up in vdc5_reg_initialize; Ghidra FUN_201193c0
+vdc5_set_video_external_input	0x20119668	[fact] INP_SEL_CNT &= ~0x7111 and INP_EXT_SYNC_CNT &= 0xEEEEFEEC, then the bits of the 11 signal bytes; called by 0x201197C0; Ghidra FUN_20119668
+vdc5_set_initial_connection	0x201198dc	[fact] GR1_AB1 bit 28, cascade on (0x2011D57C), the VIN layer's AB1/AB6/AB7; called at the end of vdc5_reg_sync_control; Ghidra FUN_201198dc
+vdc5_set_graphics_display_mode	0x20119cd0	[fact] GRx_AB1 bits 1..0 from a table of signed bytes (-1 skipped), one layer or all but VIN; Ghidra FUN_20119cd0
+vdc5_color_to_agbr	0x20119db8	[fact] (c << 8 & 0xFFFF00) | (c & 0xFF000000) | (c >> 16 & 0xFF); Ghidra FUN_20119db8
+vdc5_set_graphics_background_color	0x20119dd4	[fact] the RGB background colour into GR_BASE of graphics 2..5 and SCL0_OVR1 of the OIR; Ghidra FUN_20119dd4
+vdc5_tcon_stva	0x2011ca00	[fact] entry 0 of the TCON function table 0x20165C24 (TCON_TIM_STVA1/2); Ghidra FUN_2011ca00
+vdc5_tcon_stvb	0x2011ca44	[fact] entry 1 of 0x20165C24 (STVB); Ghidra FUN_2011ca44
+vdc5_tcon_sth	0x2011ca88	[fact] entry 2 of 0x20165C24 (STH); Ghidra FUN_2011ca88
+vdc5_tcon_stb	0x2011caf8	[fact] entry 3 of 0x20165C24 (STB); Ghidra FUN_2011caf8
+vdc5_tcon_cpv	0x2011cb68	[fact] entry 4 of 0x20165C24 (CPV); Ghidra FUN_2011cb68
+vdc5_tcon_pola	0x2011cbd8	[fact] entry 5 of 0x20165C24 (POLA); Ghidra FUN_2011cbd8
+vdc5_tcon_polb	0x2011cc60	[fact] entry 6 of 0x20165C24 (POLB); Ghidra FUN_2011cc60
+vdc5_tcon_de	0x2011ccf8	[fact] entry 7 of 0x20165C24 (TCON_TIM_DE = polarity); Ghidra FUN_2011ccf8
+vdc5_set_color_matrix	0x2011a110	[fact] stores r0 in MTX_MODE and the offset/gain halfwords into MTX_YG/CBB/CRR_ADJ0/1, then MTX_UPDATE |= 1; Ghidra FUN_2011a110
+vdc5_set_input_cntrl_color_mtx	0x2011a20c	[fact] mode from the input's and the written frame buffer's colour spaces (0x2011D5CC, 0x2011D668), tail call of 0x2011A110; not in Ghidra's function list
+vdc5_set_img_qa_improver_color_mtx	0x2011a800	[fact] mode 0 or 2 by colour space, matrix module 1 or 2 by graphics, tail call of 0x2011A110; Ghidra FUN_2011a800
+vdc5_rw_write_0	0x2011cd10	[fact] entry 0 of 0x20165BD8: SCL1_WR5 bit 0 and the SCL1_PBUF_CNT bit 16 pulse of scaler 0; Ghidra FUN_2011cd10
+vdc5_rw_write_1	0x2011cd9c	[fact] entry 1 of 0x20165BD8 (scaler 1); Ghidra FUN_2011cd9c
+vdc5_rw_write_oir	0x2011ce2c	[fact] entry 2 of 0x20165BD8 (OIR, no buffer pulse); Ghidra FUN_2011ce2c
+vdc5_rw_read_0	0x2011ce6c	[fact] entry 3 of 0x20165BD8: GR0_FLM_RD bit 0, background when stopped; Ghidra FUN_2011ce6c
+vdc5_rw_read_1	0x2011ced0	[fact] entry 4 of 0x20165BD8 (graphics 1, lower layer when stopped); Ghidra FUN_2011ced0
+vdc5_rw_read_2	0x2011cf3c	[fact] entry 5 of 0x20165BD8 (graphics 2); Ghidra FUN_2011cf3c
+vdc5_rw_read_3	0x2011cfa8	[fact] entry 6 of 0x20165BD8 (graphics 3); Ghidra FUN_2011cfa8
+vdc5_rw_read_oir	0x2011d014	[fact] entry 8 of 0x20165BD8 (OIR read, background when stopped); Ghidra FUN_2011d014
+vdc5_shrd_get_oir_rw_proc_enabled	0x2011d958	[fact] 1 if layer 2 or 8 has its resource and runs (0x208DCE04/0x208DCE16 + 2, + 8); Ghidra FUN_2011d958
+vdc5_set_reg_update_rw_enable	0x2011b6d8	[fact] the SCL1_UPDATE / GRx_UPDATE bits by layer id; called by start and stop with their layer; Ghidra FUN_2011b6d8

@@ -761,7 +761,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): VDC
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x20117AD4 | `r_vdc5_terminate` | (ch, quit_func): driver shutdown of a channel, then state 0 = 1 again **[inference]** |
+| 0x20117AD4 | `r_vdc5_video_input` | (ch, vdc5_input_t): R_VDC5_VideoInput: records the input (0x2011D1F4), programs it (0x201197C0), sets resource 1 "video in" **[fact]**. Was `r_vdc5_terminate` (T24 round 5: the real terminate is the unlisted function 0x20117A68, now `r_vdc5_terminate`) |
 | 0x20117C14 | `r_vdc5_callback_isr_checked` | Checks channel states 0 and 2 (errors 9/10) and calls r_vdc5_callback_isr; the public R_VDC5_CallbackISR **[fact]** |
 | 0x20117C64 | `vdc5_layer_to_wr` | Layer id 0/1/2 (write layers) unchanged, other ids to 3 **[fact]** |
 | 0x20117C7C | `r_vdc5_write_data_control` | (ch, layer 0..2, param): checks resources (error 14/11), writes the scaler write registers (vdc5_config) and marks the resource **[inference]** |
@@ -941,7 +941,7 @@ Each `r_vdc5_*` API function calls exactly one function of the block 0x201193EC.
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x201193EC | `vdc5_reg_initialize` | Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR, peripherals.md) **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Initialize **[inference: one register function per API, same order as the API functions]** |
-| 0x201197C0 | `vdc5_reg_terminate` | Register part of r_vdc5_terminate: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_Terminate **[inference: one register function per API, same order as the API functions]** |
+| 0x201197C0 | `vdc5_reg_video_input` | Register part of r_vdc5_video_input: INP_SEL_CNT, field frequencies, sync delays, noise-reducer bypass, the external-signal set-up 0x20119668, INP_UPDATE/IMGCNT_UPDATE **[fact]** (src/display/drivers/vdc5_reg.c). Was `vdc5_reg_terminate` (T24 round 5); the register terminate is 0x201195E8 |
 | 0x20119990 | `vdc5_reg_sync_control` | Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_SyncControl **[inference: one register function per API, same order as the API functions]** |
 | 0x20119E60 | `vdc5_reg_display_output` | Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_DisplayOutput **[inference: one register function per API, same order as the API functions]** |
 | 0x2011A6C8 | `vdc5_reg_change_write_process` | Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_ChangeWriteProcess **[inference: one register function per API, same order as the API functions]** |
@@ -961,7 +961,7 @@ Each `r_vdc5_*` API function calls exactly one function of the block 0x201193EC.
 | 0x2011C950 | `vdc5_reg_gamma_correction` | Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block, called after the shared-parameter checks **[fact for the call]**; Renesas r_vdc5_register.c VDC5_GammaCorrection **[inference: one register function per API, same order as the API functions]** |
 | 0x2011D080 | `vdc5_shrd_init` | Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states 0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4 and the read records 0x208DCD2C **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
 | 0x2011D19C | `vdc5_shrd_set_init_param` | Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param byte 0; 5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
-| 0x2011D1F4 | `vdc5_shrd_terminate` | Shared-parameter update of r_vdc5_terminate (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
+| 0x2011D1F4 | `vdc5_shrd_set_input_param` | Shared-parameter part of r_vdc5_video_input: video-input flag 0x2080040E[ch], input colour space (YCbCr for the decoder and external YCbCr) and select **[fact]**. Was `vdc5_shrd_terminate` (T24 round 5) |
 | 0x2011D248 | `vdc5_shrd_set_sync_param` | Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 + 0x10*ch **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
 | 0x2011D2B4 | `vdc5_shrd_set_output_param` | Shared-parameter update of r_vdc5_display_output (its caller) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
 | 0x2011D374 | `vdc5_shrd_set_write_param` | Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record 0x208DCCE4[ch][layer] (format, swap, frame buffer, size) **[fact]**; Renesas r_vdc5_shared_param.c **[inference: writes only the shared tables 0x208DCxxx]** |
@@ -1105,3 +1105,46 @@ Each `r_vdc5_*` API function calls exactly one function of the block 0x201193EC.
 |---|---|---|
 | 0x2012D8BC | `main_left_boxes_draw` | scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte entry of 0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when ATT/IPO/DNF (+0x0C), the CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change **[fact for the table and fields]** |
 | 0x2012DBF8 | `main_bottom_row_draw` | scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of 0x2016E304, the touch table of keys 0x1000..0x1009 (input.md) **[fact for the table]** |
+
+### VDC5 driver structure, recreated (T24 round 5)
+
+The driver at 0x201179C0..0x2011D9A7 is the Renesas r_vdc5 sample driver built without its parameter checks, in
+four layers; `src/display/drivers/vdc5_*.c` recreates them and `tools/equiv_display_emu.py` checks each function
+against the image **[fact for the call structure; inference for the origin: the API order, argument shapes, error
+codes and shared tables match the public driver]**. armcc stores the driver's enums in one byte, so the parameter
+structures have the public driver's field order with byte-sized enum fields **[fact: the ldrb/strb offsets]**.
+
+```mermaid
+flowchart TD
+  GUI["gui_start, layer code<br/>(app/gui_vdc5.c)"] --> API["API r_vdc5_*<br/>0x201179C0..0x2011834B"]
+  API --> SHRD["shared parameters vdc5_shrd_*<br/>0x2011D080..0x2011D9A7"]
+  API --> REG["register layer vdc5_reg_*<br/>0x201193C0..0x2011D07F"]
+  API --> INT["interrupts<br/>0x2011834C..0x201193EB"]
+  REG --> TBL["register-address tables (.rodata)<br/>0x20165CA0..0x20166A83"]
+  INT --> TBL
+  TBL --> HW["VDC5 ch0 0xFCFF7400 / ch1 0xFCFF9400"]
+  SHRD --> RAM["0x2080040C.., 0x208DCC0C..0x208DCE27"]
+```
+
+Findings **[fact]**:
+
+- **0x20117AD4 is R_VDC5_VideoInput**, not terminate: it records the input (0x2011D1F4), programs it (0x201197C0) and
+  marks resource 1 "video in". The real terminate (R_VDC5_Terminate) is the function at **0x20117A68**, and
+  R_VDC5_ReleaseDataControl is at **0x20117F3C**; both are missing from Ghidra's function list, as is
+  SetInputCntrlColorMtx at **0x2011A20C** (`tools/ghidra/entries_display.T24r5.tsv`). The register terminate is
+  0x201195E8.
+- The 46 interrupt handlers follow one pattern: type t uses SYSCNT_INT(1 + t / 8) (status) and INT(4 + t / 8)
+  (enable), bit 1 << 4 (t % 8), callback slot 0x208DCC0C[ch * 23 + t]; the status bit is cleared while the callback
+  runs and restored afterwards.
+- `vdc5_isr_create` returns 0, or the kernel's error code if `itron_acre_isr` fails (its `ble` skips the `mov r0, #0`).
+- The image's `vdc5_sync_delay_t` begins with a byte (`inp_vs_dly_l`; the public driver has a halfword), so the
+  image's driver is an older version.
+- `vdc5_module_start` for channel 1 clears both STBCR9 bits 1..0 (both channels' clocks), for channel 0 only bit 1.
+
+| Range | Recreated in | Contents |
+|---|---|---|
+| 0x201179C0..0x2011834B | `drivers/vdc5_api.c` | the 23 API calls and the two layer-id maps |
+| 0x2011834C..0x201193EB | `drivers/vdc5_int.c` | `r_vdc5_get_isr`, `vdc5_int_callbacks_clear`, `r_vdc5_callback_isr`, 46 handlers |
+| 0x201193C0..0x2011D07F | `drivers/vdc5_reg.c` (part) | initialize, terminate, video input, sync, display output with the TCON helpers, colour matrices, start/stop/release with the per-layer table 0x20165BD8, noise reduction, black stretch, alpha, calibration. Not yet: write/read data control and their changes (scaling, cascade, VIN), image enhancement, alpha rectangle, chroma key, CLUT, gamma |
+| 0x2011D080..0x2011D9A7 | `drivers/vdc5_shrd.c` | every shared-parameter function |
+| 0x20132320..0x201330D3 | `app/gui_vdc5.c` (part) | module clock, TCON tables, LVDS PLL block, sync and output set-up, the line interrupt; not yet `vdc5_layers_setup`, `vdc5_layers_stop`, `vdc5_channel_shutdown` |

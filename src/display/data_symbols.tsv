@@ -37,3 +37,34 @@ sdhi_irq_def	204205cc	[fact] the handler descriptor sdhi0_irq_enable passes to g
 sdhi_bounce	2091cec0	[fact] the 512-byte bounce buffer of sdhi_read_block / sdhi_write_block (32-byte aligned)
 sdhi_cmd_codes	204205fc	[fact] sdhi_send_cmd: SD_CMD = halfword[cmd] for normal commands
 sdhi_acmd_codes	2042067c	[fact] sdhi_send_cmd: SD_CMD = halfword[cmd] for application commands (app != 0)
+vdc5_shrd_common	208dccc4	[fact] VDC5 shared parameters, common block per channel (16 bytes): vdc5_shrd_init stores panel_icksel 4 at +0, cascade 1 at +5 (literal 0x208DCCC4 at 0x2011D0B8)
+vdc5_shrd_scaling	208dcce4	[fact] VDC5 shared parameters, 3 scaler blocks of 12 bytes per channel (ch * 36): vdc5_shrd_set_write_param 0x2011D374
+vdc5_shrd_graphics	208dcd2c	[fact] VDC5 shared parameters, 6 graphics blocks of 18 bytes per channel (ch * 108): vdc5_shrd_set_read_param 0x2011D438
+vdc5_layer_resource	208dce04	[fact] VDC5 layer resource state [ch * 9 + layer]: r_vdc5_shrd_get_resource 0x2011D84C
+vdc5_rw_proc_state	208dce16	[fact] VDC5 layer running flag [ch * 9 + layer]: r_vdc5_shrd_rw_enable 0x2011D860
+vdc5_lvds_resource	2080040c	[fact] VDC5 LVDS PLL resource state (type 4 of vdc5_shrd_state_ptr 0x2011D7C8)
+vdc5_lvds_vdc_sel_ch	2080040d	[fact] VDC5 channel output through LVDS: vdc5_shrd_init stores 2 (none), vdc5_shrd_set_init_param the LVDS block's +5
+vdc5_video_input_flag	2080040e	[fact] VDC5 video input set [ch]: 0x2011D1F4 stores 1, vdc5_shrd_init tests it
+vdc5_resource	20800410	[fact] VDC5 resource states [ch][4] (panel clock, video in, vsync, LCD panel): vdc5_shrd_state_ptr 0x2011D788
+vdc5_int_callback	208dcc0c	[fact] VDC5 interrupt callbacks [ch * 23 + type]: r_vdc5_callback_isr stores param->callback there, the handlers call it
+vdc5_isr_table	20165a74	[fact] VDC5 interrupt handlers [ch * 23 + type] (.rodata): r_vdc5_get_isr 0x2011834C
+vdc5_int_bit_table	20165b2c	[fact] VDC5 interrupt enable bit per type (.rodata): r_vdc5_callback_isr 0x201183D4
+vdc5_regaddr_scaler	20165ce0	[fact] VDC5 scaler register addresses [ch][3] of 0xB8 bytes (.rodata): r_vdc5_callback_isr 0x20118438
+vdc5_regaddr_img_synthesizer	201662c0	[fact] VDC5 graphics register addresses [ch][6] of 0x58 bytes (.rodata): r_vdc5_callback_isr 0x20118424
+vdc5_regaddr_system_ctrl	20166a30	[fact] VDC5 SYSCNT register addresses [ch] of 0x20 bytes (.rodata; first word 0xFCFF7A80): the interrupt handlers
+vdc5_regaddr_input_ctrl	20165ca0	[fact] VDC5 input-controller register addresses [ch] of 0x20 bytes (.rodata): vdc5_reg_initialize 0x20119590 (INP_SEL_CNT at +4)
+vdc5_regaddr_lvds	20166a70	[fact] VDC5 LVDS register addresses (LCLKSELR +8, LPLLSETR +0xC) (.rodata): vdc5_reg_initialize 0x2011941C
+vdc5_panel_dcdr_tbl	20165bfc	[fact] SYSCNT_PANEL_CLK divider bits per panel_dcdr (.rodata halfwords): vdc5_reg_initialize 0x201195B8
+vdc5_panel_icksel_tbl	20165c16	[fact] SYSCNT_PANEL_CLK clock-select bits per panel_icksel (.rodata halfwords): vdc5_reg_initialize 0x201195BC
+vdc5_regaddr_output_ctrl	20166710	[fact] VDC5 TCON and output register addresses [ch] of 0x60 bytes (.rodata): vdc5_reg_display_output 0x20119EBC
+vdc5_regaddr_color_matrix	20166200	[fact] VDC5 colour-matrix register addresses [ch][3] of 0x20 bytes (.rodata): 0x2011A260
+vdc5_colormtx_offset_adj	20165b88	[fact] VDC5 colour-matrix offsets (3 halfwords) followed by the gains of 4 modes (9 halfwords each) (.rodata): 0x2011A258 adds 6 + 18 mode
+vdc5_rw_proc_function_tbl	20165bd8	[fact] VDC5 per-layer start/stop functions [9] (.rodata; entry 7 NULL): vdc5_reg_start_process 0x2011B8DC
+vdc5_regaddr_img_qlty_imp	20166130	[fact] VDC5 image-quality improver register addresses [ch][2] of 0x34 bytes (.rodata): vdc5_reg_image_black_stretch 0x2011BFD0
+lcd_tcon_ch0	203a6fd4	[fact] TFT TCON timings, 5 x 10 bytes (.rodata): lcd_tcon_cfg_ch0 stores 0x203A6FD4, +0x14, +0xA, +0x1E and 0x203A6FFC into outctrl[0..3, 7]
+dvi_tcon_ch1	203a7006	[fact] DVI TCON timings [5 signals][2 modes] of 10 bytes (.rodata): dvi_tcon_cfg_ch1 0x20132440 adds 10 * mode to 0x203A7006, 0x203A702E, 0x203A701A, 0x203A7042, 0x203A7056
+gui_lvds	208f4d44	[fact] the LVDS PLL parameter block lvds_pll_cfg fills and returns (.bss2)
+gui_frame_stamp	208f4db8	[fact] PMCCNTR stamp {delta, last} of vdc5_vline_cb (cycle_delta_2 through the thunk 0x20133010)
+gui_vsync	2080858c	[fact] frame pacing: +0x10 frames to wait (vdc5_wait_frames), +0x18 frame count (vdc5_vline_cb)
+gui_vline_int	20907f58	[fact] the vdc5_int_t {type 3, callback, line 0} of vdc5_vline_int_setup / _cb_enable / _cb_disable
+vdc5_vline_cisr	203a706c	[fact] T_CISR of the graphics-3 line interrupt passed to itron_acre_isr by vdc5_isr_create (gui.md: GIC 78, handler 0x20118638)
