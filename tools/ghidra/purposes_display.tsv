@@ -268,6 +268,7 @@
 2013c860	usbhid_class_attach	Class attach/detach callback	fact	input.md
 2013c9d0	sd_init_v1_or_mmc	Initialisation without a CMD8 answer	fact	filesystem.md
 2013d4fc	sd_select_card	makes sure the card is selected	fact	filesystem.md
+2013de60	sd_set_driver_strength	CMD6 group 3	fact	filesystem.md
 2013dff0	sd_card_identify	card reset/identify, card-type flags at +0x2C0/+0x2C2	inference	filesystem.md
 2013e124	sd_read_csd_cid	CMD9 with sd_csd_check / mmc_csd_check	fact	filesystem.md
 2013e230	sd_read_sectors	driver op +0x58	inference	filesystem.md
@@ -279,7 +280,6 @@
 2013eebc	mbr_chs_sector_cyl	CHS sector/cylinder bytes of the partition start	fact	filesystem.md
 2013f180	csd_c_size	the 12-bit C_SIZE field of a version-1 CSD	fact	filesystem.md
 2013f340	fat_format_layout	Computes the format layout from the CSD capacity	fact	filesystem.md
-2013f79c	fat_clear_root_dir	zero the root-directory sectors	inference	filesystem.md
 2013fba0	sd_clmap_prepare	Once per mount	fact	filesystem.md
 2013fc68	sd_card_poll	card detect state machine of the card monitor	fact	filesystem.md
 2013fd98	sdhi_drv_init	Driver init callback of drive I	fact	filesystem.md

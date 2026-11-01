@@ -1,5 +1,399 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fs_stat @ 2014aec8 (76 bytes)
+
+/* (path, *entry): directory entry of a path, 0 when it exists; sdmenu_load_file checks a size there
+   before fs_fopen, update_display_self waits for the loader file with it [fact for callers] */
+
+undefined4 fs_stat(undefined4 param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
+  iVar1 = fs_work_alloc();
+  if (iVar1 != 0) {
+                    /* fs_stat with a caller work buffer [doc] */
+    uVar2 = fs_stat_work(param_1,param_2,iVar1);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
+    fs_work_free(iVar1);
+    return uVar2;
+  }
+  uVar2 = fs_set_error(0xffffffe1,0);
+  return uVar2;
+}
+
+
+// ===== fs_get_attr @ 2014af14 (48 bytes)
+
+/* Attribute byte (entry byte 11) of a path from fs_stat; sdmenu_file_exists [fact] */
+
+int fs_get_attr(undefined4 param_1)
+
+{
+  int iVar1;
+  undefined1 auStack_40 [11];
+  char local_35;
+  
+                    /* directory entry of a path, 0 when it exists [doc] */
+  iVar1 = fs_stat(param_1,auStack_40);
+  if (iVar1 == 0) {
+    fs_set_error(0);
+    iVar1 = (int)local_35;
+  }
+  return iVar1;
+}
+
+
+// ===== fs_file_size_copy @ 2014af44 (32 bytes)
+
+/* Copies the 4-byte size at file +0x2C [fact] */
+
+undefined4 fs_file_size_copy(int param_1,undefined4 param_2)
+
+{
+  fs_memcpy(param_2,param_1 + 0x2c,4);
+  return 0;
+}
+
+
+// ===== fs_fsize @ 2014af64 (100 bytes)
+
+/* (fd, *size): file size; the firmware loaders compare it with image sizes (0x43075A in
+   fwobj_sdr_run, < 0x242 in fwobj_display_run) [fact] */
+
+void fs_fsize(undefined4 param_1,int param_2)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  iVar1 = fs_check_ready();
+  if ((iVar1 == 0) && (iVar1 = fs_file_check(param_1), iVar1 == 0)) {
+    if (param_2 != 0) {
+                    /* Copies the 4-byte size at file +0x2C [doc] */
+      uVar2 = fs_file_size_copy(param_1,param_2);
+      fs_set_error(uVar2,param_1);
+      return;
+    }
+    fs_set_error(0xfffffff3,param_1);
+    return;
+  }
+  fs_set_error(iVar1,0);
+  return;
+}
+
+
+// ===== fs_split_sectors @ 2014afcc (84 bytes)
+
+/* Splits a sector count into whole 8 MB units and a byte remainder for a sector size [fact for the
+   arithmetic] */
+
+void fs_split_sectors(uint param_1,undefined4 *param_2,int *param_3,uint param_4)
+
+{
+  uint uVar1;
+  undefined8 uVar2;
+  
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  uVar1 = __aeabi_uidivmod(0x800000,param_4 >> 9);
+  if (param_1 < uVar1) {
+    *param_2 = 0;
+  }
+  else {
+    uVar2 = __aeabi_uidivmod(param_1,uVar1);
+    param_1 = (uint)((ulonglong)uVar2 >> 0x20);
+    *param_2 = (int)uVar2;
+  }
+  *param_3 = param_1 * param_4;
+  return;
+}
+
+
+// ===== fs_disk_total_calc @ 2014b020 (288 bytes)
+
+/* Total data size of a drive: (clusters - 2) * sectors per cluster, split by fs_split_sectors; -17
+   for an unknown drive [fact] */
+
+undefined4 fs_disk_total_calc(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  ushort uVar1;
+  char cVar2;
+  int iVar3;
+  int iVar4;
+  int *piVar5;
+  uint uVar6;
+  
+  piVar5 = DAT_20808ba0;
+  iVar3 = fs_toupper(param_1);
+  if (iVar3 != *(char *)((int)piVar5 + 0x11)) {
+    do {
+      piVar5 = (int *)*piVar5;
+      if (piVar5 == (int *)0x0) {
+        return 0xffffffef;
+      }
+      iVar3 = fs_toupper(param_1);
+    } while (iVar3 != *(char *)((int)piVar5 + 0x11));
+  }
+  cVar2 = (char)piVar5[4];
+  if (cVar2 == '\f') {
+    uVar6 = (uint)(piVar5[0x1b] * piVar5[3] * 2) / 3;
+  }
+  else if (cVar2 == '\x10') {
+    uVar6 = ((uint)piVar5[0x1b] >> 1) * piVar5[3];
+  }
+  else {
+    if (cVar2 != ' ') {
+      return 0xfffffff3;
+    }
+    uVar6 = ((uint)piVar5[0x1b] >> 2) * piVar5[3];
+  }
+  iVar4 = piVar5[0x1b];
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar3 = __aeabi_uidivmod((uint)*(ushort *)((int)piVar5 + 10) << 5);
+  uVar1 = *(ushort *)(piVar5 + 1);
+  iVar3 = __aeabi_uidivmod(piVar5[5] -
+                           (iVar3 + piVar5[3] * (uint)*(ushort *)(piVar5 + 2) +
+                                    (uint)*(ushort *)((int)piVar5 + 6)));
+  if (iVar3 + 2U < uVar6) {
+    uVar6 = iVar3 + 2U;
+  }
+  fs_split_sectors((uint)uVar1 * (uVar6 - 2),param_2,param_3,iVar4);
+  return 0;
+}
+
+
+// ===== fs_disk_size @ 2014b140 (156 bytes)
+
+/* (letter, *hi, *lo): checked wrapper of fs_disk_total_calc; sd_info_screen [fact] */
+
+void fs_disk_size(undefined4 param_1,int param_2,int param_3)
+
+{
+  undefined1 uVar1;
+  int iVar2;
+  undefined4 uVar3;
+  undefined4 local_18;
+  
+  local_18 = DAT_20808ba0;
+  iVar2 = fs_check_ready();
+  if (iVar2 == 0) {
+    if (param_2 == 0 || param_3 == 0) {
+      uVar3 = 0xfffffff3;
+    }
+    else {
+      uVar1 = fs_toupper(param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
+      iVar2 = fs_find_drive(uVar1,&local_18);
+      if ((iVar2 != 0) || (iVar2 = fs_drive_check_mounted(local_18), iVar2 != 0)) goto LAB_2014b1b0;
+      uVar3 = fs_toupper(param_1);
+                    /* Total data size of a drive [doc] */
+      uVar3 = fs_disk_total_calc(uVar3,param_2,param_3);
+    }
+    fs_set_error(uVar3,0);
+    return;
+  }
+LAB_2014b1b0:
+  fs_set_error(iVar2,0);
+  return;
+}
+
+
+// ===== fat32_count_free @ 2014b1e0 (436 bytes)
+
+/* Counts the zero FAT32 entries (free clusters) [inference: same loop as fat16_count_free] */
+
+int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                    int param_5)
+
+{
+  ushort uVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  uint i;
+  uint uVar5;
+  int iVar6;
+  uint uVar7;
+  uint uVar8;
+  bool bVar9;
+  undefined8 uVar10;
+  uint local_48;
+  int local_44;
+  int local_40;
+  int local_3c;
+  int iStack_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  
+  iVar6 = 0;
+  uVar3 = 0;
+  uVar8 = 0;
+  local_48 = 0;
+  uVar5 = 0;
+  local_44 = 0;
+  uVar1 = *(ushort *)(param_1 + 4);
+  iStack_34 = param_1;
+  local_30 = param_2;
+  local_2c = param_3;
+  local_28 = param_4;
+  if ((param_5 != 0) && (*(int *)(param_1 + 0x3c) != -1)) {
+    fs_split_sectors(*(int *)(param_1 + 0x3c) * (uint)uVar1,param_2,param_3,
+                     *(uint *)(param_1 + 0x6c));
+    return 0;
+  }
+  iVar4 = *(int *)(param_1 + 0xc);
+  uVar7 = (*(uint *)(param_1 + 0x6c) >> 2) * iVar4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
+  iVar2 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
+                           (iVar2 + iVar4 * (uint)*(ushort *)(param_1 + 8) +
+                                    (uint)*(ushort *)(param_1 + 6)),(uint)uVar1);
+  i = 2;
+  if (iVar2 + 2U < uVar7) {
+    uVar7 = iVar2 + 2U;
+  }
+  local_40 = -1;
+  if (2 < uVar7) {
+    do {
+      uVar10 = __aeabi_uidivmod(i,*(uint *)(param_1 + 0x6c) >> 2);
+      iVar2 = (int)uVar10;
+      local_3c = (int)((ulonglong)uVar10 >> 0x20) << 2;
+      if ((local_40 != iVar2) &&
+         (iVar4 = fat_table_sector_get(param_1,iVar2,&local_44,local_28), local_40 = iVar2,
+         iVar4 != 0)) {
+        return iVar4;
+      }
+      if (local_44 == 0) {
+        return -0xd;
+      }
+                    /* 32-bit field read from an on-disk structure [doc] */
+      iVar2 = fat_ld_dword(local_44 + local_3c);
+      if (iVar2 == 0) {
+        bVar9 = uVar3 == 0;
+        uVar3 = uVar3 + 1;
+        if (bVar9) {
+          uVar5 = i;
+        }
+        iVar6 = iVar6 + 1;
+      }
+      else {
+        if (uVar8 < uVar3) {
+          uVar8 = uVar3;
+          local_48 = uVar5;
+        }
+        uVar3 = 0;
+      }
+      i = i + 1;
+    } while (i < uVar7);
+    if (uVar3 < uVar8) {
+      *(uint *)(param_1 + 0x40) = local_48;
+      *(uint *)(param_1 + 0x28) = local_48;
+      goto LAB_2014b36c;
+    }
+  }
+  *(uint *)(param_1 + 0x40) = uVar5;
+  *(uint *)(param_1 + 0x28) = uVar5;
+LAB_2014b36c:
+  *(int *)(param_1 + 0x3c) = iVar6;
+  fs_split_sectors((uint)*(ushort *)(param_1 + 4) * iVar6,local_30,local_2c,
+                   *(undefined4 *)(param_1 + 0x6c));
+  return 0;
+}
+
+
+// ===== fat32_count_free_locked @ 2014b394 (84 bytes)
+
+/* fat32_count_free under fs_lock_b [fact] */
+
+undefined4
+fat32_count_free_locked
+          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+          undefined4 param_5)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  
+  iVar1 = fs_lock_b();
+  if (iVar1 == 0) {
+    uVar2 = fat32_count_free(param_1,param_2,param_3,param_4,param_5);
+    fs_unlock_b(param_1);
+  }
+  else {
+    uVar2 = 0xffffffde;
+  }
+  return uVar2;
+}
+
+
+// ===== fat16_count_free @ 2014b3e8 (272 bytes)
+
+/* Counts the zero FAT16 entries over the FAT sectors, split into size units [fact] */
+
+int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  uint i;
+  uint uVar4;
+  int iVar5;
+  undefined8 uVar6;
+  int local_38;
+  int iStack_34;
+  undefined4 *local_30;
+  int *local_2c;
+  undefined4 local_28;
+  
+  iVar5 = 0;
+  local_38 = 0;
+  iVar3 = *(int *)(param_1 + 0xc);
+  uVar4 = (*(uint *)(param_1 + 0x6c) >> 1) * iVar3;
+  iStack_34 = param_1;
+  local_30 = param_2;
+  local_2c = param_3;
+  local_28 = param_4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
+  iVar3 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
+                           (iVar1 + iVar3 * (uint)*(ushort *)(param_1 + 8) +
+                                    (uint)*(ushort *)(param_1 + 6)),*(undefined2 *)(param_1 + 4));
+  i = 2;
+  iVar1 = -1;
+  if (iVar3 + 2U < uVar4) {
+    uVar4 = iVar3 + 2U;
+  }
+  if (2 < uVar4) {
+    do {
+      uVar6 = __aeabi_uidivmod(i,*(uint *)(param_1 + 0x6c) >> 1);
+      iVar3 = (int)uVar6;
+      if ((iVar1 != iVar3) &&
+         (iVar2 = fat_table_sector_get(param_1,iVar3,&local_38,local_28), iVar1 = iVar3, iVar2 != 0)
+         ) {
+        return iVar2;
+      }
+      if (local_38 == 0) {
+        return -0xd;
+      }
+                    /* 16-bit field read from an on-disk structure [doc] */
+      iVar3 = fat_ld_word(local_38 + (int)((ulonglong)uVar6 >> 0x20) * 2);
+      i = i + 1;
+      if (iVar3 == 0) {
+        iVar5 = iVar5 + 1;
+      }
+    } while (i < uVar4);
+  }
+  *local_30 = 0;
+  *local_2c = (uint)*(ushort *)(param_1 + 4) * *(int *)(param_1 + 0x6c) * iVar5;
+  return 0;
+}
+
+
 // ===== fat16_count_free_locked @ 2014b500 (76 bytes)
 
 /* fat16_count_free under fs_lock_b [fact] */
@@ -1738,410 +2132,5 @@ int fs_stricmp(byte *param_1,byte *param_2)
     param_1 = extraout_r3;
   } while ((char)(cVar2 - cVar3) == 0);
   return (int)(char)(cVar2 - cVar3);
-}
-
-
-// ===== fs_wstricmp @ 2014d3f8 (148 bytes)
-
-/* Case-insensitive compare of UTF-16 strings (folds only characters < 0x100) [fact] */
-
-int fs_wstricmp(ushort *param_1,ushort *param_2)
-
-{
-  char *pcVar1;
-  char *pcVar2;
-  ushort uVar3;
-  ushort uVar4;
-  ushort uVar5;
-  ushort uVar6;
-  int iVar7;
-  int extraout_r2;
-  ushort *puVar8;
-  ushort *puVar9;
-  ushort *puVar10;
-  ushort *extraout_r12;
-  undefined8 uVar11;
-  
-  puVar8 = param_1;
-  puVar9 = param_2;
-  do {
-    uVar3 = *puVar8;
-    puVar10 = puVar9 + 1;
-    uVar4 = *puVar9;
-    if (uVar3 == 0 && uVar4 == 0) {
-      return 0;
-    }
-    if (uVar3 == 0) {
-      return -1;
-    }
-    if (uVar4 == 0) {
-      return 1;
-    }
-    pcVar1 = (char *)((int)param_1 + 1);
-    pcVar2 = (char *)((int)param_2 + 1);
-    uVar5 = *param_1;
-    param_1 = param_1 + 1;
-    uVar6 = *param_2;
-    param_2 = param_2 + 1;
-    if (*pcVar1 == '\0' && *pcVar2 == '\0') {
-      uVar11 = fs_toupper((int)(char)uVar5);
-      iVar7 = fs_toupper((int)(char)uVar6,(int)((ulonglong)uVar11 >> 0x20),(int)uVar11);
-      iVar7 = extraout_r2 - iVar7;
-      puVar10 = extraout_r12;
-    }
-    else {
-      iVar7 = (uint)uVar3 - (uint)uVar4;
-    }
-    puVar8 = puVar8 + 1;
-    puVar9 = puVar10;
-  } while (iVar7 == 0);
-  return iVar7;
-}
-
-
-// ===== fs_strnicmp @ 2014d48c (124 bytes)
-
-/* Case-insensitive compare of at most n bytes [fact] */
-
-int fs_strnicmp(char *param_1,char *param_2,int param_3)
-
-{
-  char cVar1;
-  char cVar2;
-  uint extraout_r2;
-  int extraout_r3;
-  char *extraout_r12;
-  
-  if (param_3 != 0) {
-    do {
-      cVar2 = *param_2;
-      if (*param_1 == '\0' && cVar2 == '\0') {
-        return 0;
-      }
-      if (*param_1 == '\0') {
-        return -1;
-      }
-      if (cVar2 == 0) {
-        return 1;
-      }
-      cVar1 = fs_toupper();
-      cVar2 = fs_toupper((int)cVar2);
-      if ((char)(cVar1 - cVar2) != 0) {
-        return (int)(char)(cVar1 - cVar2);
-      }
-      param_1 = param_1 + 1;
-      param_2 = extraout_r12;
-    } while (extraout_r3 + 1U < extraout_r2);
-  }
-  return 0;
-}
-
-
-// ===== fs_wstrnicmp @ 2014d508 (172 bytes)
-
-/* UTF-16 version of fs_strnicmp [fact] */
-
-int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
-
-{
-  char *pcVar1;
-  char *pcVar2;
-  ushort uVar3;
-  ushort uVar4;
-  ushort uVar5;
-  ushort uVar6;
-  int iVar7;
-  uint extraout_r2;
-  int extraout_r3;
-  ushort *puVar8;
-  ushort *puVar9;
-  uint i;
-  
-  i = 0;
-  puVar8 = param_2;
-  puVar9 = param_1;
-  if (param_3 != 0) {
-    while( true ) {
-      uVar3 = *puVar9;
-      uVar4 = *puVar8;
-      if (uVar3 == 0 && uVar4 == 0) break;
-      if (uVar3 == 0) {
-        return -1;
-      }
-      if (uVar4 == 0) {
-        return 1;
-      }
-      pcVar1 = (char *)((int)param_1 + 1);
-      pcVar2 = (char *)((int)param_2 + 1);
-      uVar5 = *param_1;
-      param_1 = param_1 + 1;
-      uVar6 = *param_2;
-      param_2 = param_2 + 1;
-      if (*pcVar1 == '\0' && *pcVar2 == '\0') {
-        fs_toupper((int)(char)uVar5);
-        iVar7 = fs_toupper((int)(char)uVar6);
-        iVar7 = extraout_r3 - iVar7;
-        param_3 = extraout_r2;
-      }
-      else {
-        iVar7 = (uint)uVar3 - (uint)uVar4;
-      }
-      if (iVar7 != 0) {
-        return iVar7;
-      }
-      i = i + 1;
-      puVar8 = puVar8 + 1;
-      puVar9 = puVar9 + 1;
-      if (param_3 <= i) {
-        return 0;
-      }
-    }
-  }
-  return 0;
-}
-
-
-// ===== fs_strlwr_sjis @ 2014d5b4 (76 bytes)
-
-/* Lower-cases a string in place, skipping Shift-JIS pairs [fact] */
-
-byte * fs_strlwr_sjis(byte *param_1)
-
-{
-  int iVar1;
-  byte *pbVar2;
-  
-  pbVar2 = param_1;
-  do {
-    iVar1 = sjis_is_lead(*pbVar2);
-    if (iVar1 == 0) {
-      if (*pbVar2 - 0x41 < 0x1a) {
-        *pbVar2 = *pbVar2 + 0x20;
-      }
-    }
-    else {
-      pbVar2 = pbVar2 + 1;
-    }
-    pbVar2 = pbVar2 + 1;
-  } while (*pbVar2 != 0);
-  return param_1;
-}
-
-
-// ===== fs_atoi @ 2014d600 (48 bytes)
-
-/* Decimal digits to int (no sign, no checks) [fact] */
-
-int fs_atoi(char *param_1)
-
-{
-  char cVar1;
-  int iVar2;
-  
-  iVar2 = 0;
-  cVar1 = *param_1;
-  while (cVar1 != 0) {
-    param_1 = param_1 + 1;
-    iVar2 = (int)cVar1 + iVar2 * 10 + -0x30;
-    cVar1 = *param_1;
-  }
-  return iVar2;
-}
-
-
-// ===== fs_utoa_digits @ 2014d630 (72 bytes)
-
-/* Recursive digit writer for radix 2..36 ('a'.. for 10+), returns the end pointer [fact] */
-
-char * fs_utoa_digits(uint param_1,char *param_2,uint param_3)
-
-{
-  char cVar1;
-  uint uVar2;
-  char extraout_r1;
-  
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-  uVar2 = __aeabi_uidivmod(param_1,param_3);
-  if (uVar2 != 0) {
-    param_2 = fs_utoa_digits(uVar2,param_2,param_3);
-  }
-  if (extraout_r1 < '\n') {
-    cVar1 = extraout_r1 + '0';
-  }
-  else {
-    cVar1 = extraout_r1 + 'W';
-  }
-  *param_2 = cVar1;
-  return param_2 + 1;
-}
-
-
-// ===== fs_itoa @ 2014d678 (80 bytes)
-
-/* (value, buf, radix 2..36): '-' for negative decimal, 0-terminated; empty for a bad radix [fact]
-    */
-
-char * fs_itoa(uint param_1,char *param_2,uint param_3)
-
-{
-  char *pcVar1;
-  
-  if (param_3 - 2 < 0x23) {
-    pcVar1 = param_2;
-    if ((param_3 == 10) && ((int)param_1 < 0)) {
-      *param_2 = '-';
-      pcVar1 = param_2 + 1;
-      param_1 = -param_1;
-    }
-                    /* Recursive digit writer for radix 2..36 [doc] */
-    pcVar1 = fs_utoa_digits(param_1,pcVar1,param_3);
-    *pcVar1 = '\0';
-  }
-  else {
-    *param_2 = '\0';
-  }
-  return param_2;
-}
-
-
-// ===== fs_stricmp_sjis @ 2014d6c8 (168 bytes)
-
-/* Case-insensitive compare that compares the trail byte of a Shift-JIS pair exactly (sjis_is_lead)
-   [fact] */
-
-int fs_stricmp_sjis(char *param_1,char *param_2)
-
-{
-  bool bVar1;
-  char cVar2;
-  int iVar3;
-  char extraout_r2;
-  int iVar4;
-  int iVar5;
-  char *pcVar6;
-  char *pcVar7;
-  undefined8 uVar8;
-  
-  bVar1 = false;
-  while( true ) {
-    pcVar7 = param_1 + 1;
-    iVar5 = (int)*param_1;
-    pcVar6 = param_2 + 1;
-    cVar2 = *param_2;
-    iVar4 = (int)cVar2;
-    if (*param_1 == '\0' && cVar2 == '\0') {
-      return 0;
-    }
-    if (iVar5 == 0) break;
-    if (iVar4 == 0) {
-      return 1;
-    }
-    param_2 = pcVar6;
-    param_1 = pcVar7;
-    if (bVar1) {
-      bVar1 = false;
-      if (iVar5 != iVar4) {
-        return -1;
-      }
-    }
-    else {
-      iVar3 = sjis_is_lead(cVar2);
-      if (iVar3 == 0) {
-        uVar8 = fs_toupper(iVar5);
-        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar8 >> 0x20),(int)uVar8);
-        if ((char)(extraout_r2 - cVar2) != 0) {
-          return (int)(char)(extraout_r2 - cVar2);
-        }
-      }
-      else {
-        bVar1 = true;
-        if (iVar5 != iVar4) {
-          return -1;
-        }
-      }
-    }
-  }
-  return -1;
-}
-
-
-// ===== fs_strnicmp_sjis @ 2014d770 (196 bytes)
-
-/* Length-limited version of fs_stricmp_sjis [fact] */
-
-int fs_strnicmp_sjis(char *param_1,char *param_2,uint param_3)
-
-{
-  bool bVar1;
-  char cVar2;
-  int iVar3;
-  char extraout_r2;
-  int iVar4;
-  int iVar5;
-  uint i;
-  undefined8 uVar6;
-  
-  bVar1 = false;
-  i = 0;
-  if (param_3 != 0) {
-    do {
-      iVar5 = (int)*param_1;
-      cVar2 = *param_2;
-      iVar4 = (int)cVar2;
-      if (*param_1 == '\0' && cVar2 == '\0') {
-        return 0;
-      }
-      if (iVar5 == 0) {
-        return -1;
-      }
-      if (iVar4 == 0) {
-        return 1;
-      }
-      if (bVar1) {
-        bVar1 = false;
-joined_r0x2014d7ec:
-        if (iVar5 != iVar4) {
-          return -1;
-        }
-      }
-      else {
-        iVar3 = sjis_is_lead(cVar2);
-        if (iVar3 != 0) {
-          bVar1 = true;
-          goto joined_r0x2014d7ec;
-        }
-        uVar6 = fs_toupper(iVar5);
-        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar6 >> 0x20),(int)uVar6);
-        if ((char)(extraout_r2 - cVar2) != 0) {
-          return (int)(char)(extraout_r2 - cVar2);
-        }
-      }
-      i = i + 1;
-      param_2 = param_2 + 1;
-      param_1 = param_1 + 1;
-    } while (i < param_3);
-  }
-  return 0;
-}
-
-
-// ===== fs_atoi_2 @ 2014d834 (48 bytes)
-
-/* Second identical copy of fs_atoi [fact] */
-
-int fs_atoi_2(char *param_1)
-
-{
-  char cVar1;
-  int iVar2;
-  
-  iVar2 = 0;
-  cVar1 = *param_1;
-  while (cVar1 != 0) {
-    param_1 = param_1 + 1;
-    iVar2 = (int)cVar1 + iVar2 * 10 + -0x30;
-    cVar1 = *param_1;
-  }
-  return iVar2;
 }
 

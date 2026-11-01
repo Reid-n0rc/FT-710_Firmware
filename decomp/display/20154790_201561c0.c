@@ -1,5 +1,281 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== knl_sys_free @ 20154790 (40 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x201547a8) */
+/* knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf
+   and del_sem free control blocks with it [fact] */
+
+void knl_sys_free(undefined4 param_1,undefined4 param_2)
+
+{
+  knl_freelist_free(0x208003fc,param_1,param_2);
+  return;
+}
+
+
+// ===== FUN_201547d0 @ 201547d0 (352 bytes)
+
+byte FUN_201547d0(int param_1,short param_2)
+
+{
+  short sVar1;
+  sbyte sVar2;
+  byte tskid;
+  knl_tcb *tcb;
+  uint tskid_00;
+  byte *pbVar3;
+  byte bVar4;
+  int iVar5;
+  
+  bVar4 = 0;
+  *(undefined1 *)(param_1 + 10) = 0;
+  iVar5 = *(int *)(param_1 + 4);
+  pbVar3 = (byte *)(param_1 + 0xc);
+  sVar2 = *(sbyte *)(param_1 + 0xb);
+  do {
+    tskid_00 = (uint)*pbVar3;
+    if (0xfd < tskid_00) {
+      return bVar4;
+    }
+    while (tskid_00 != 0) {
+      tcb = knl_tsk_tab[tskid_00];
+      if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+        knl_timeout_remove(tcb,tskid_00);
+      }
+      knl_queue_remove(tcb,tskid_00);
+      tcb->state = 0x10;
+      tskid = (byte)tskid_00;
+      if (iVar5 != 3) {
+LAB_201548b0:
+        if (sVar2 != 0) {
+          *(sbyte *)(param_1 + 0xb) = tcb->pri;
+        }
+LAB_201548bc:
+        *(byte *)(param_1 + 10) = tskid;
+        sVar1 = tcb->mtx_held;
+        tcb->mtx_held = param_2;
+        *(short *)(param_1 + 8) = sVar1;
+        if (tcb->f_0x09_u8 == 0) {
+          FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
+        }
+        if ((bVar4 == 0) && (knl_sys.run_pri <= tcb->pri)) {
+          bVar4 = 0;
+        }
+        else {
+          bVar4 = 1;
+        }
+        return bVar4;
+      }
+      if (sVar2 <= tcb->bpri) {
+        if (sVar2 <= tcb->pri) {
+          tcb->pri = sVar2;
+          goto LAB_201548bc;
+        }
+        goto LAB_201548b0;
+      }
+      *(undefined4 *)tcb->sp = 0xffffffe4;
+      if (tcb->f_0x09_u8 == 0) {
+        FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
+      }
+      bVar4 = bVar4 | tcb->pri < knl_sys.run_pri;
+      tskid_00 = (uint)*pbVar3;
+    }
+    pbVar3 = pbVar3 + 1;
+  } while( true );
+}
+
+
+// ===== FUN_20154930 @ 20154930 (52 bytes)
+
+void FUN_20154930(int param_1)
+
+{
+  short sVar1;
+  knl_mtx *p_knl_mtx;
+  
+  do {
+    p_knl_mtx = knl_mtx_tab[param_1];
+    sVar1 = p_knl_mtx->prev_held;
+    p_knl_mtx->prev_held = 0;
+    FUN_201547d0(p_knl_mtx,param_1);
+    param_1 = (int)sVar1;
+  } while (sVar1 != 0);
+  return;
+}
+
+
+// ===== __rt_ctype_table @ 20154974 (10 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): returns __rt_locale()+4; tolower indexes
+   the table it points to [inference] */
+
+int __rt_ctype_table(void)
+
+{
+  int iVar1;
+  
+  iVar1 = __rt_locale();
+  return iVar1 + 4;
+}
+
+
+// ===== __aeabi_ldivmod @ 20154984 (96 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): A32: takes signs of r1/r3, negates 64-bit
+   pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs [inference] */
+
+int __aeabi_ldivmod(int param_1,int param_2,int param_3,uint param_4)
+
+{
+  uint uVar1;
+  uint uVar2;
+  int iVar3;
+  bool bVar4;
+  
+  uVar2 = param_2 >> 1;
+  uVar1 = param_4 >> 1;
+  if ((int)uVar2 < 0) {
+    bVar4 = param_1 != 0;
+    param_1 = -param_1;
+    param_2 = -param_2;
+    if (bVar4) {
+      param_2 = param_2 + -1;
+    }
+  }
+  if ((int)param_4 < 0) {
+    bVar4 = param_3 != 0;
+    param_3 = -param_3;
+    param_4 = -param_4;
+    if (bVar4) {
+      param_4 = param_4 - 1;
+    }
+  }
+  iVar3 = __aeabi_uldivmod(param_1,param_2,param_3,param_4);
+  if (((uVar2 ^ uVar1) & 0x40000000) != 0) {
+    iVar3 = -iVar3;
+  }
+  return iVar3;
+}
+
+
+// ===== tolower @ 201549e4 (26 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): ctype bit 0x10 (upper) -> c+32
+   [inference] */
+
+int tolower(int param_1)
+
+{
+  int *piVar1;
+  
+  piVar1 = (int *)__rt_ctype_table();
+  if ((int)((uint)*(byte *)(*piVar1 + param_1) << 0x1b) < 0) {
+    return param_1 + 0x20;
+  }
+  return param_1;
+}
+
+
+// ===== sprintf_veneer @ 20154a00 (8 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
+   sprintf 0x20154A08 [fact] */
+
+void sprintf_veneer(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 uStack_20;
+  undefined4 uStack_1c;
+  undefined4 uStack_8;
+  undefined4 uStack_4;
+  
+  uStack_20 = param_1;
+  uStack_1c = param_4;
+  uStack_8 = param_3;
+  uStack_4 = param_4;
+  _sprintf_body(param_2,&uStack_20,&uStack_8,0x20155f99);
+  _sputc(0,&uStack_20);
+  return;
+}
+
+
+// ===== sprintf @ 20154a08 (34 bytes)
+
+void sprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  undefined4 local_20;
+  undefined4 uStack_1c;
+  undefined4 uStack_8;
+  undefined4 uStack_4;
+  
+  local_20 = param_1;
+  uStack_1c = param_4;
+  uStack_8 = param_3;
+  uStack_4 = param_4;
+  _sprintf_body(param_2,&local_20,&uStack_8,0x20155f99);
+  _sputc(0,&local_20);
+  return;
+}
+
+
+// ===== snprintf @ 20154a30 (48 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): (buf, n, fmt, ...): end = buf+n-1, output
+   fn _snputc 0x20155FA3, NUL-terminates when n != 0 [inference] */
+
+void snprintf(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int local_20;
+  int local_1c;
+  undefined4 uStack_4;
+  
+  local_1c = param_1;
+  if (param_2 != 0) {
+    local_1c = param_1 + param_2 + -1;
+  }
+  local_20 = param_1;
+  uStack_4 = param_4;
+  _sprintf_body(param_3,&local_20,&uStack_4,0x20155fa3);
+  if (param_2 != 0) {
+    _sputc(0,&local_20);
+  }
+  return;
+}
+
+
+// ===== _printf_pre_padding @ 20154a64 (44 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): emits width-1.. pad chars (0x30 if the 0
+   flag, else 0x20) unless the - flag (bit 0), counts in +0x20 [inference] */
+
+void _printf_pre_padding(uint *param_1)
+
+{
+  uint uVar1;
+  undefined4 uVar2;
+  
+  uVar1 = param_1[6];
+  if ((int)(*param_1 << 0x1b) < 0) {
+    uVar2 = 0x30;
+  }
+  else {
+    uVar2 = 0x20;
+  }
+  if ((*param_1 & 1) != 0) {
+    return;
+  }
+  while (uVar1 = uVar1 - 1, -1 < (int)uVar1) {
+    (*(code *)param_1[1])(uVar2,param_1[2]);
+    param_1[8] = param_1[8] + 1;
+  }
+  return;
+}
+
+
 // ===== _printf_post_padding @ 20154a90 (34 bytes)
 
 /* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): emits trailing spaces when the - flag
@@ -2769,422 +3045,5 @@ void __user_setup_stackheap(void)
   puVar2[0xe] = 0;
   puVar2[0xf] = 0;
   return;
-}
-
-
-// ===== exit @ 2015620a (18 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): called by __rt_entry with main()s result
-   (blx main; bl exit) [inference] */
-
-uint exit(undefined4 param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  uint uVar2;
-  int extraout_r3;
-  
-  __rt_lib_shutdown();
-  iVar1 = _sys_exit(param_1,param_2);
-  *(short *)(iVar1 + 0x1c) = (short)iVar1;
-  *(short *)(extraout_r3 + 0x20) = (short)iVar1;
-  coproc_moveto_Invalidate_unified_TLB_unlocked(0);
-  DataSynchronizationBarrier(0xf);
-  coproc_moveto_Invalidate_Entire_Instruction(0);
-  coproc_moveto_Instruction_cache(0,6);
-  InstructionSynchronizationBarrier(0xf);
-  uVar2 = coproc_movefrom_Auxiliary_Control();
-  coproc_moveto_Auxiliary_Control(uVar2 & 0xfffffffd);
-  uVar2 = coproc_movefrom_Control();
-  coproc_moveto_Control(uVar2 & 0xffffeffa);
-  return uVar2 & 0xffffeffa;
-}
-
-
-// ===== __default_signal_display @ 2015621c (50 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): writes a newline, the message and the
-   extra string with _ttywrch [inference] */
-
-undefined8 __default_signal_display(char *param_1,char *param_2)
-
-{
-  char cVar1;
-  
-  cVar1 = '\n';
-  for (; (_ttywrch(cVar1), param_1 != (char *)0x0 && (cVar1 = *param_1, cVar1 != '\0'));
-      param_1 = param_1 + 1) {
-  }
-  for (; (param_2 != (char *)0x0 && (*param_2 != '\0')); param_2 = param_2 + 1) {
-    _ttywrch();
-  }
-  software_interrupt(0xab);
-  return CONCAT44(&stack0xfffffff8,3);
-}
-
-
-// ===== _ttywrch @ 2015624e (14 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): semihosting SYS_WRITEC (r0=3, svc 0xAB)
-   of one character [inference] */
-
-undefined8 _ttywrch(void)
-
-{
-  undefined1 local_8 [4];
-  
-  software_interrupt(0xab);
-  return CONCAT44(local_8,3);
-}
-
-
-// ===== __aeabi_uidivmod @ 20156260 (48 bytes)
-
-/* Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the
-   shared loop at 0x201554DC [fact]; the 71-caller divide [fact]; T23d armcc C library RVCT/ARM
-   Compiler 5 (idiom 0.950): movs r2,#0 then the rsbs r3,r1,r0,lsr #n ladder jumping into the shared
-   unsigned body of 0x20155480; alias __aeabi_uidiv [inference] */
-
-longlong __aeabi_uidivmod(uint param_1,uint param_2)
-
-{
-  uint uVar1;
-  uint uVar2;
-  int iVar3;
-  bool bVar4;
-  bool bVar5;
-  bool bVar6;
-  bool bVar7;
-  
-  iVar3 = 0;
-  uVar1 = param_2;
-  if (param_2 <= param_1 >> 2) {
-    if (param_2 <= param_1 >> 5) {
-      if (param_2 <= param_1 >> 8) {
-        if (param_1 >> 0xc < param_2) goto LAB_2015550c;
-        if (param_1 >> 0x10 < param_2) goto LAB_201554dc;
-        uVar1 = param_2 << 8;
-        iVar3 = -0x1000000;
-        if (uVar1 <= param_1 >> 0x10) {
-          iVar3 = -0x10000;
-          uVar1 = param_2 << 0x10;
-        }
-        if (param_1 >> 0xc < uVar1) goto LAB_2015550c;
-        bVar4 = false;
-        if (uVar1 == 0) {
-          return (ulonglong)param_1 << 0x20;
-        }
-        do {
-          if (bVar4) {
-            uVar1 = uVar1 >> 8;
-          }
-LAB_201554dc:
-          bVar4 = uVar1 <= param_1 >> 0xf;
-          if (bVar4) {
-            param_1 = param_1 + uVar1 * -0x8000;
-          }
-          bVar5 = uVar1 <= param_1 >> 0xe;
-          if (bVar5) {
-            param_1 = param_1 + uVar1 * -0x4000;
-          }
-          bVar6 = uVar1 <= param_1 >> 0xd;
-          if (bVar6) {
-            param_1 = param_1 + uVar1 * -0x2000;
-          }
-          bVar7 = uVar1 <= param_1 >> 0xc;
-          if (bVar7) {
-            param_1 = param_1 + uVar1 * -0x1000;
-          }
-          iVar3 = (((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6) * 2 +
-                  (uint)bVar7;
-LAB_2015550c:
-          bVar4 = uVar1 <= param_1 >> 0xb;
-          if (bVar4) {
-            param_1 = param_1 + uVar1 * -0x800;
-          }
-          bVar5 = uVar1 <= param_1 >> 10;
-          if (bVar5) {
-            param_1 = param_1 + uVar1 * -0x400;
-          }
-          bVar6 = uVar1 <= param_1 >> 9;
-          if (bVar6) {
-            param_1 = param_1 + uVar1 * -0x200;
-          }
-          uVar2 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
-          bVar5 = uVar1 <= param_1 >> 8;
-          if (bVar5) {
-            param_1 = param_1 + uVar1 * -0x100;
-          }
-          iVar3 = uVar2 * 2 + (uint)bVar5;
-          bVar4 = true;
-        } while (CARRY4(uVar2,uVar2) || CARRY4(uVar2 * 2,(uint)bVar5));
-      }
-      bVar4 = uVar1 <= param_1 >> 7;
-      if (bVar4) {
-        param_1 = param_1 + uVar1 * -0x80;
-      }
-      bVar5 = uVar1 <= param_1 >> 6;
-      if (bVar5) {
-        param_1 = param_1 + uVar1 * -0x40;
-      }
-      bVar6 = uVar1 <= param_1 >> 5;
-      if (bVar6) {
-        param_1 = param_1 + uVar1 * -0x20;
-      }
-      iVar3 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
-    }
-    bVar4 = uVar1 <= param_1 >> 4;
-    if (bVar4) {
-      param_1 = param_1 + uVar1 * -0x10;
-    }
-    bVar5 = uVar1 <= param_1 >> 3;
-    if (bVar5) {
-      param_1 = param_1 + uVar1 * -8;
-    }
-    bVar6 = uVar1 <= param_1 >> 2;
-    if (bVar6) {
-      param_1 = param_1 + uVar1 * -4;
-    }
-    iVar3 = ((iVar3 * 2 + (uint)bVar4) * 2 + (uint)bVar5) * 2 + (uint)bVar6;
-  }
-  bVar4 = uVar1 <= param_1 >> 1;
-  if (bVar4) {
-    param_1 = param_1 + uVar1 * -2;
-  }
-  uVar2 = param_1 - uVar1;
-  if (uVar1 > param_1) {
-    uVar2 = param_1;
-  }
-  return CONCAT44(uVar2,(iVar3 * 2 + (uint)bVar4) * 2 + (uint)(uVar1 <= param_1));
-}
-
-
-// ===== kernel_heap_init @ 201562b4 (92 bytes)
-
-/* heap/kernel memory up to 0x20980000 */
-
-void kernel_heap_init(void)
-
-{
-  uint gic_init_ret;
-  
-  gic_init_ret = gic_init();
-  if (gic_init_ret == 0) {
-    knl_sys.task_cpsr = 0;
-    knl_sys.f_0x00_u32 = 0;
-                    /* Kernel start-up called by kernel_heap_init [doc] */
-    knl_sys_init(&DAT_20980000,&stack0xfffffff8);
-  }
-  return;
-}
-
-
-// ===== FUN_20156310 @ 20156310 (28 bytes)
-
-ulonglong FUN_20156310(void)
-
-{
-  byte *pbVar1;
-  bool bVar2;
-  undefined4 in_stack_00000000;
-  undefined1 auStack_60 [52];
-  undefined1 auStack_10 [4];
-  
-  pbVar1 = auStack_10;
-  bVar2 = knl_sys.ctx_isr == 0;
-  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
-  if (bVar2) {
-    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_60;
-    pbVar1 = knl_sys.isr_area;
-  }
-  return CONCAT44(pbVar1,in_stack_00000000) & 0xfffffff8ffffffff;
-}
-
-
-// ===== knl_irq_enter @ 2015632c (192 bytes)
-
-/* IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the
-   outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack
-   knl_sys.isr_area [fact] */
-
-ulonglong knl_irq_enter(undefined4 param_1)
-
-{
-  byte *pbVar1;
-  bool bVar2;
-  undefined1 auStack_58 [52];
-  undefined1 auStack_8 [4];
-  
-  pbVar1 = auStack_8;
-  bVar2 = knl_sys.ctx_isr == 0;
-  knl_sys.ctx_isr = knl_sys.ctx_isr - 1;
-  if (bVar2) {
-    knl_tsk_tab[knl_rdq[0]]->sp = (uint)auStack_58;
-    pbVar1 = knl_sys.isr_area;
-  }
-  return CONCAT44(pbVar1,param_1) & 0xfffffff8ffffffff;
-}
-
-
-// ===== knl_irq_exit @ 201563ec (368 bytes)
-
-/* Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with
-   dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns
-   the new task's context, else the old one [fact] */
-
-undefined8 knl_irq_exit(void)
-
-{
-  uint uVar1;
-  knl_tcb *p_knl_tcb;
-  byte *pbVar2;
-  undefined4 unaff_r4;
-  undefined4 unaff_r5;
-  undefined4 unaff_r6;
-  undefined4 unaff_r7;
-  undefined4 unaff_r8;
-  undefined4 unaff_r9;
-  undefined4 unaff_r10;
-  undefined4 unaff_r11;
-  uint uVar3;
-  int in_stack_00000010;
-  uint in_stack_00000014;
-  
-  software_interrupt(0);
-                    /* pops nesting stack, EOIR + PMR restore [doc, inference] */
-  gic_irq_exit();
-  knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
-  if (knl_sys.ctx_isr != 0) {
-    return *(undefined8 *)(in_stack_00000010 + 8);
-  }
-  pbVar2 = knl_rdq;
-  uVar1 = (uint)knl_sys.f_0x30_u8;
-  if ((uVar1 != 0) && (-1 < (int)(8 - uVar1))) {
-    knl_sys.f_0x36_u8 = knl_rdq[0];
-  }
-  if (((in_stack_00000014 & 0xc0) == 0) && (uVar1 != 0)) {
-    uVar1 = (uint)knl_sys.f_0x34_u8;
-    if (uVar1 == 0) {
-      if ((knl_sys.dsp_state != 0) || (knl_sys.dsp_pending == 0)) goto LAB_201564f8;
-      knl_sys.dsp_pending = 0;
-      do {
-        pbVar2 = pbVar2 + 1;
-        uVar1 = (uint)*pbVar2;
-      } while (uVar1 == 0);
-    }
-    if (uVar1 != knl_rdq[0]) {
-      uVar3 = knl_tsk_tab[knl_rdq[0]]->sp;
-      *(undefined4 *)(uVar3 + 0x2c) = unaff_r11;
-      *(undefined4 *)(uVar3 + 0x28) = unaff_r10;
-      *(undefined4 *)(uVar3 + 0x24) = unaff_r9;
-      *(undefined4 *)(uVar3 + 0x20) = unaff_r8;
-      *(undefined4 *)(uVar3 + 0x1c) = unaff_r7;
-      *(undefined4 *)(uVar3 + 0x18) = unaff_r6;
-      *(undefined4 *)(uVar3 + 0x14) = unaff_r5;
-      *(undefined4 *)(uVar3 + 0x10) = unaff_r4;
-      knl_rdq[0] = (byte)uVar1;
-      p_knl_tcb = knl_tsk_tab[uVar1];
-      goto LAB_2015650c;
-    }
-  }
-LAB_201564f8:
-  p_knl_tcb = knl_tsk_tab[knl_rdq[0]];
-LAB_2015650c:
-  knl_sys.f_0x30_u8 = p_knl_tcb->pri;
-  if (knl_sys.f_0x30_u8 != 0) {
-    knl_sys.run_pri = knl_sys.f_0x30_u8;
-  }
-  return *(undefined8 *)p_knl_tcb->sp;
-}
-
-
-// ===== knl_dispatch @ 2015655c (404 bytes)
-
-/* Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first
-   non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs [fact] */
-
-longlong knl_dispatch(void)
-
-{
-  uint uVar1;
-  uint uVar2;
-  byte *pbVar3;
-  uint in_stack_00000004;
-  undefined1 auStack_38 [16];
-  
-  knl_sys.dsp_pending = 1;
-  if (((((knl_sys.f_0x24_u32 & 0x80) == 0) && (knl_sys.ctx_isr == 0)) && (knl_sys.dsp_state == 0))
-     && (knl_sys.f_0x30_u8 != 0)) {
-    uVar2 = (uint)knl_sys.f_0x34_u8;
-    pbVar3 = knl_rdq;
-    knl_sys.f_0x34_u8 = 0;
-    uVar1 = (uint)knl_rdq[0];
-    if (uVar2 == 0) {
-      knl_sys.dsp_pending = 0;
-      do {
-        pbVar3 = pbVar3 + 1;
-        uVar2 = (uint)*pbVar3;
-      } while (uVar2 == 0);
-    }
-    knl_rdq[0] = (byte)uVar2;
-    if (uVar1 != uVar2) {
-      knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
-      knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
-      if (knl_sys.f_0x30_u8 != 0) {
-        knl_sys.run_pri = knl_sys.f_0x30_u8;
-      }
-      return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
-    }
-    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
-    if (knl_sys.f_0x30_u8 != 0) {
-      knl_sys.run_pri = knl_sys.f_0x30_u8;
-    }
-  }
-  return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
-}
-
-
-// ===== knl_resched @ 201566f0 (88 bytes)
-
-/* Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
-   running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
-    */
-
-longlong knl_resched(void)
-
-{
-  uint uVar1;
-  uint uVar2;
-  byte *pbVar3;
-  uint in_stack_00000004;
-  undefined1 auStack_38 [16];
-  
-  knl_sys.dsp_pending = 1;
-  uVar2 = (uint)knl_sys.f_0x34_u8;
-  pbVar3 = knl_rdq;
-  knl_sys.f_0x34_u8 = 0;
-  uVar1 = (uint)knl_rdq[0];
-  if (uVar2 == 0) {
-    knl_sys.dsp_pending = 0;
-    do {
-      pbVar3 = pbVar3 + 1;
-      uVar2 = (uint)*pbVar3;
-    } while (uVar2 == 0);
-  }
-  knl_rdq[0] = (byte)uVar2;
-  if (uVar1 == uVar2) {
-    knl_sys.f_0x30_u8 = knl_tsk_tab[uVar1]->pri;
-    if (knl_sys.f_0x30_u8 != 0) {
-      knl_sys.run_pri = knl_sys.f_0x30_u8;
-    }
-    knl_sys.f_0x34_u8 = 0;
-    return (ulonglong)(in_stack_00000004 & 0xffffff3f | knl_sys.f_0x24_u32) << 0x20;
-  }
-  knl_tsk_tab[uVar1]->sp = (uint)auStack_38;
-  knl_sys.f_0x30_u8 = knl_tsk_tab[knl_rdq[0]]->pri;
-  if (knl_sys.f_0x30_u8 != 0) {
-    knl_sys.run_pri = knl_sys.f_0x30_u8;
-  }
-  return *(longlong *)knl_tsk_tab[knl_rdq[0]]->sp;
 }
 

@@ -1,5 +1,410 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fs_wstricmp @ 2014d3f8 (148 bytes)
+
+/* Case-insensitive compare of UTF-16 strings (folds only characters < 0x100) [fact] */
+
+int fs_wstricmp(ushort *param_1,ushort *param_2)
+
+{
+  char *pcVar1;
+  char *pcVar2;
+  ushort uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  ushort uVar6;
+  int iVar7;
+  int extraout_r2;
+  ushort *puVar8;
+  ushort *puVar9;
+  ushort *puVar10;
+  ushort *extraout_r12;
+  undefined8 uVar11;
+  
+  puVar8 = param_1;
+  puVar9 = param_2;
+  do {
+    uVar3 = *puVar8;
+    puVar10 = puVar9 + 1;
+    uVar4 = *puVar9;
+    if (uVar3 == 0 && uVar4 == 0) {
+      return 0;
+    }
+    if (uVar3 == 0) {
+      return -1;
+    }
+    if (uVar4 == 0) {
+      return 1;
+    }
+    pcVar1 = (char *)((int)param_1 + 1);
+    pcVar2 = (char *)((int)param_2 + 1);
+    uVar5 = *param_1;
+    param_1 = param_1 + 1;
+    uVar6 = *param_2;
+    param_2 = param_2 + 1;
+    if (*pcVar1 == '\0' && *pcVar2 == '\0') {
+      uVar11 = fs_toupper((int)(char)uVar5);
+      iVar7 = fs_toupper((int)(char)uVar6,(int)((ulonglong)uVar11 >> 0x20),(int)uVar11);
+      iVar7 = extraout_r2 - iVar7;
+      puVar10 = extraout_r12;
+    }
+    else {
+      iVar7 = (uint)uVar3 - (uint)uVar4;
+    }
+    puVar8 = puVar8 + 1;
+    puVar9 = puVar10;
+  } while (iVar7 == 0);
+  return iVar7;
+}
+
+
+// ===== fs_strnicmp @ 2014d48c (124 bytes)
+
+/* Case-insensitive compare of at most n bytes [fact] */
+
+int fs_strnicmp(char *param_1,char *param_2,int param_3)
+
+{
+  char cVar1;
+  char cVar2;
+  uint extraout_r2;
+  int extraout_r3;
+  char *extraout_r12;
+  
+  if (param_3 != 0) {
+    do {
+      cVar2 = *param_2;
+      if (*param_1 == '\0' && cVar2 == '\0') {
+        return 0;
+      }
+      if (*param_1 == '\0') {
+        return -1;
+      }
+      if (cVar2 == 0) {
+        return 1;
+      }
+      cVar1 = fs_toupper();
+      cVar2 = fs_toupper((int)cVar2);
+      if ((char)(cVar1 - cVar2) != 0) {
+        return (int)(char)(cVar1 - cVar2);
+      }
+      param_1 = param_1 + 1;
+      param_2 = extraout_r12;
+    } while (extraout_r3 + 1U < extraout_r2);
+  }
+  return 0;
+}
+
+
+// ===== fs_wstrnicmp @ 2014d508 (172 bytes)
+
+/* UTF-16 version of fs_strnicmp [fact] */
+
+int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
+
+{
+  char *pcVar1;
+  char *pcVar2;
+  ushort uVar3;
+  ushort uVar4;
+  ushort uVar5;
+  ushort uVar6;
+  int iVar7;
+  uint extraout_r2;
+  int extraout_r3;
+  ushort *puVar8;
+  ushort *puVar9;
+  uint i;
+  
+  i = 0;
+  puVar8 = param_2;
+  puVar9 = param_1;
+  if (param_3 != 0) {
+    while( true ) {
+      uVar3 = *puVar9;
+      uVar4 = *puVar8;
+      if (uVar3 == 0 && uVar4 == 0) break;
+      if (uVar3 == 0) {
+        return -1;
+      }
+      if (uVar4 == 0) {
+        return 1;
+      }
+      pcVar1 = (char *)((int)param_1 + 1);
+      pcVar2 = (char *)((int)param_2 + 1);
+      uVar5 = *param_1;
+      param_1 = param_1 + 1;
+      uVar6 = *param_2;
+      param_2 = param_2 + 1;
+      if (*pcVar1 == '\0' && *pcVar2 == '\0') {
+        fs_toupper((int)(char)uVar5);
+        iVar7 = fs_toupper((int)(char)uVar6);
+        iVar7 = extraout_r3 - iVar7;
+        param_3 = extraout_r2;
+      }
+      else {
+        iVar7 = (uint)uVar3 - (uint)uVar4;
+      }
+      if (iVar7 != 0) {
+        return iVar7;
+      }
+      i = i + 1;
+      puVar8 = puVar8 + 1;
+      puVar9 = puVar9 + 1;
+      if (param_3 <= i) {
+        return 0;
+      }
+    }
+  }
+  return 0;
+}
+
+
+// ===== fs_strlwr_sjis @ 2014d5b4 (76 bytes)
+
+/* Lower-cases a string in place, skipping Shift-JIS pairs [fact] */
+
+byte * fs_strlwr_sjis(byte *param_1)
+
+{
+  int iVar1;
+  byte *pbVar2;
+  
+  pbVar2 = param_1;
+  do {
+    iVar1 = sjis_is_lead(*pbVar2);
+    if (iVar1 == 0) {
+      if (*pbVar2 - 0x41 < 0x1a) {
+        *pbVar2 = *pbVar2 + 0x20;
+      }
+    }
+    else {
+      pbVar2 = pbVar2 + 1;
+    }
+    pbVar2 = pbVar2 + 1;
+  } while (*pbVar2 != 0);
+  return param_1;
+}
+
+
+// ===== fs_atoi @ 2014d600 (48 bytes)
+
+/* Decimal digits to int (no sign, no checks) [fact] */
+
+int fs_atoi(char *param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  cVar1 = *param_1;
+  while (cVar1 != 0) {
+    param_1 = param_1 + 1;
+    iVar2 = (int)cVar1 + iVar2 * 10 + -0x30;
+    cVar1 = *param_1;
+  }
+  return iVar2;
+}
+
+
+// ===== fs_utoa_digits @ 2014d630 (72 bytes)
+
+/* Recursive digit writer for radix 2..36 ('a'.. for 10+), returns the end pointer [fact] */
+
+char * fs_utoa_digits(uint param_1,char *param_2,uint param_3)
+
+{
+  char cVar1;
+  uint uVar2;
+  char extraout_r1;
+  
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  uVar2 = __aeabi_uidivmod(param_1,param_3);
+  if (uVar2 != 0) {
+    param_2 = fs_utoa_digits(uVar2,param_2,param_3);
+  }
+  if (extraout_r1 < '\n') {
+    cVar1 = extraout_r1 + '0';
+  }
+  else {
+    cVar1 = extraout_r1 + 'W';
+  }
+  *param_2 = cVar1;
+  return param_2 + 1;
+}
+
+
+// ===== fs_itoa @ 2014d678 (80 bytes)
+
+/* (value, buf, radix 2..36): '-' for negative decimal, 0-terminated; empty for a bad radix [fact]
+    */
+
+char * fs_itoa(uint param_1,char *param_2,uint param_3)
+
+{
+  char *pcVar1;
+  
+  if (param_3 - 2 < 0x23) {
+    pcVar1 = param_2;
+    if ((param_3 == 10) && ((int)param_1 < 0)) {
+      *param_2 = '-';
+      pcVar1 = param_2 + 1;
+      param_1 = -param_1;
+    }
+                    /* Recursive digit writer for radix 2..36 [doc] */
+    pcVar1 = fs_utoa_digits(param_1,pcVar1,param_3);
+    *pcVar1 = '\0';
+  }
+  else {
+    *param_2 = '\0';
+  }
+  return param_2;
+}
+
+
+// ===== fs_stricmp_sjis @ 2014d6c8 (168 bytes)
+
+/* Case-insensitive compare that compares the trail byte of a Shift-JIS pair exactly (sjis_is_lead)
+   [fact] */
+
+int fs_stricmp_sjis(char *param_1,char *param_2)
+
+{
+  bool bVar1;
+  char cVar2;
+  int iVar3;
+  char extraout_r2;
+  int iVar4;
+  int iVar5;
+  char *pcVar6;
+  char *pcVar7;
+  undefined8 uVar8;
+  
+  bVar1 = false;
+  while( true ) {
+    pcVar7 = param_1 + 1;
+    iVar5 = (int)*param_1;
+    pcVar6 = param_2 + 1;
+    cVar2 = *param_2;
+    iVar4 = (int)cVar2;
+    if (*param_1 == '\0' && cVar2 == '\0') {
+      return 0;
+    }
+    if (iVar5 == 0) break;
+    if (iVar4 == 0) {
+      return 1;
+    }
+    param_2 = pcVar6;
+    param_1 = pcVar7;
+    if (bVar1) {
+      bVar1 = false;
+      if (iVar5 != iVar4) {
+        return -1;
+      }
+    }
+    else {
+      iVar3 = sjis_is_lead(cVar2);
+      if (iVar3 == 0) {
+        uVar8 = fs_toupper(iVar5);
+        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar8 >> 0x20),(int)uVar8);
+        if ((char)(extraout_r2 - cVar2) != 0) {
+          return (int)(char)(extraout_r2 - cVar2);
+        }
+      }
+      else {
+        bVar1 = true;
+        if (iVar5 != iVar4) {
+          return -1;
+        }
+      }
+    }
+  }
+  return -1;
+}
+
+
+// ===== fs_strnicmp_sjis @ 2014d770 (196 bytes)
+
+/* Length-limited version of fs_stricmp_sjis [fact] */
+
+int fs_strnicmp_sjis(char *param_1,char *param_2,uint param_3)
+
+{
+  bool bVar1;
+  char cVar2;
+  int iVar3;
+  char extraout_r2;
+  int iVar4;
+  int iVar5;
+  uint i;
+  undefined8 uVar6;
+  
+  bVar1 = false;
+  i = 0;
+  if (param_3 != 0) {
+    do {
+      iVar5 = (int)*param_1;
+      cVar2 = *param_2;
+      iVar4 = (int)cVar2;
+      if (*param_1 == '\0' && cVar2 == '\0') {
+        return 0;
+      }
+      if (iVar5 == 0) {
+        return -1;
+      }
+      if (iVar4 == 0) {
+        return 1;
+      }
+      if (bVar1) {
+        bVar1 = false;
+joined_r0x2014d7ec:
+        if (iVar5 != iVar4) {
+          return -1;
+        }
+      }
+      else {
+        iVar3 = sjis_is_lead(cVar2);
+        if (iVar3 != 0) {
+          bVar1 = true;
+          goto joined_r0x2014d7ec;
+        }
+        uVar6 = fs_toupper(iVar5);
+        cVar2 = fs_toupper(iVar4,(int)((ulonglong)uVar6 >> 0x20),(int)uVar6);
+        if ((char)(extraout_r2 - cVar2) != 0) {
+          return (int)(char)(extraout_r2 - cVar2);
+        }
+      }
+      i = i + 1;
+      param_2 = param_2 + 1;
+      param_1 = param_1 + 1;
+    } while (i < param_3);
+  }
+  return 0;
+}
+
+
+// ===== fs_atoi_2 @ 2014d834 (48 bytes)
+
+/* Second identical copy of fs_atoi [fact] */
+
+int fs_atoi_2(char *param_1)
+
+{
+  char cVar1;
+  int iVar2;
+  
+  iVar2 = 0;
+  cVar1 = *param_1;
+  while (cVar1 != 0) {
+    param_1 = param_1 + 1;
+    iVar2 = (int)cVar1 + iVar2 * 10 + -0x30;
+    cVar1 = *param_1;
+  }
+  return iVar2;
+}
+
+
 // ===== fs_itoa_2 @ 2014d864 (80 bytes)
 
 /* Second identical copy of fs_itoa [fact] */
@@ -811,374 +1216,5 @@ int fs_work_pool_create(void)
     DAT_20808bc8 = iVar1;
   }
   return iVar1;
-}
-
-
-// ===== fs_work_pool_delete @ 2014e1b4 (40 bytes)
-
-/* itron_del_mpf of pool 0x20808BC8 [fact] */
-
-undefined4 fs_work_pool_delete(void)
-
-{
-  undefined4 uVar1;
-  
-  uVar1 = 0;
-  if (0 < DAT_20808bc8) {
-    uVar1 = itron_del_mpf();
-  }
-  return uVar1;
-}
-
-
-// ===== fs_get_time_tm @ 2014e1dc (16 bytes)
-
-/* rtc_get_tm into the caller's struct tm, returns 1 (time stamps of FAT entries) [fact] */
-
-undefined4 fs_get_time_tm(int *param_1)
-
-{
-  rtc_get_tm(param_1);
-  return 1;
-}
-
-
-// ===== fs_get_tick @ 2014e1ec (28 bytes)
-
-/* Low word of itron_get_tim [fact] */
-
-undefined4 fs_get_tick(void)
-
-{
-  undefined1 auStack_10 [4];
-  undefined4 local_c;
-  
-  itron_get_tim(auStack_10);
-  return local_c;
-}
-
-
-// ===== strcasecmp @ 2014e208 (72 bytes)
-
-/* Case-insensitive compare with tolower; cli_run_file, wav_list_dir [fact] */
-
-int strcasecmp(undefined1 *param_1,undefined1 *param_2)
-
-{
-  undefined1 uVar1;
-  uint uVar2;
-  uint uVar3;
-  
-  do {
-    uVar1 = *param_2;
-    uVar2 = tolower(*param_1);
-    uVar2 = uVar2 & 0xff;
-    uVar3 = tolower(uVar1);
-    if (uVar2 != (uVar3 & 0xff)) {
-      return uVar2 - (uVar3 & 0xff);
-    }
-    param_2 = param_2 + 1;
-    param_1 = param_1 + 1;
-  } while (uVar2 != 0);
-  return 0;
-}
-
-
-// ===== strncasecmp @ 2014e250 (84 bytes)
-
-/* Length-limited strcasecmp; fwname_pattern_match [fact] */
-
-int strncasecmp(undefined1 *param_1,undefined1 *param_2,int param_3)
-
-{
-  undefined1 uVar1;
-  uint uVar2;
-  uint uVar3;
-  bool bVar4;
-  
-  while( true ) {
-    bVar4 = param_3 == 0;
-    param_3 = param_3 + -1;
-    if (bVar4) {
-      return 0;
-    }
-    uVar1 = *param_2;
-    uVar2 = tolower(*param_1);
-    uVar2 = uVar2 & 0xff;
-    uVar3 = tolower(uVar1);
-    if (uVar2 != (uVar3 & 0xff)) break;
-    param_2 = param_2 + 1;
-    param_1 = param_1 + 1;
-    if (uVar2 == 0) {
-      return 0;
-    }
-  }
-  return uVar2 - (uVar3 & 0xff);
-}
-
-
-// ===== strncmp @ 2014e2a4 (64 bytes)
-
-int strncmp(byte *param_1,byte *param_2,int param_3)
-
-{
-  uint uVar1;
-  bool bVar2;
-  
-  while( true ) {
-    bVar2 = param_3 == 0;
-    param_3 = param_3 + -1;
-    if (bVar2) {
-      return 0;
-    }
-    uVar1 = (uint)*param_1;
-    if (*param_2 != uVar1) break;
-    if (uVar1 == 0) {
-      return 0;
-    }
-    param_1 = param_1 + 1;
-    param_2 = param_2 + 1;
-  }
-  return uVar1 - *param_2;
-}
-
-
-// ===== strncpy @ 2014e2e4 (60 bytes)
-
-/* Copies up to n bytes and pads with 0 [fact] */
-
-char * strncpy(char *param_1,char *param_2,int param_3)
-
-{
-  char cVar1;
-  int iVar2;
-  int iVar3;
-  char *pcVar4;
-  char *pcVar5;
-  int iVar6;
-  
-  pcVar4 = param_1;
-  do {
-    iVar6 = param_3;
-    if (iVar6 == 0) {
-      return param_1;
-    }
-    cVar1 = *param_2;
-    pcVar5 = pcVar4 + 1;
-    *pcVar4 = cVar1;
-    pcVar4 = pcVar5;
-    param_2 = param_2 + 1;
-    param_3 = iVar6 + -1;
-  } while (cVar1 != '\0');
-  iVar3 = iVar6 + -2;
-  iVar6 = iVar6 + -1;
-  while (iVar2 = iVar3, iVar6 != 0) {
-    *pcVar5 = '\0';
-    pcVar5 = pcVar5 + 1;
-    iVar3 = iVar2 + -1;
-    iVar6 = iVar2;
-  }
-  return param_1;
-}
-
-
-// ===== strtok_r @ 2014e320 (164 bytes)
-
-/* (s, delims, &save): next token, 0 at the end; sfl_read_header, sdmenu_load_file, task_keycode
-   [fact] */
-
-char * strtok_r(char *param_1,char *param_2,undefined4 *param_3)
-
-{
-  char cVar1;
-  char *pcVar2;
-  char *pcVar3;
-  char *pcVar4;
-  char cVar5;
-  
-  if ((param_1 != (char *)0x0) || (param_1 = (char *)*param_3, param_1 != (char *)0x0)) {
-    for (; cVar5 = *param_1, cVar5 != '\0'; param_1 = param_1 + 1) {
-      cVar1 = *param_2;
-      pcVar4 = param_2;
-      while( true ) {
-        pcVar3 = param_2;
-        pcVar2 = param_1;
-        if (cVar1 == '\0') {
-          while( true ) {
-            cVar1 = *pcVar3;
-            if (cVar5 == cVar1) break;
-            pcVar3 = pcVar3 + 1;
-            if (cVar1 == '\0') {
-              cVar5 = pcVar2[1];
-              pcVar3 = param_2;
-              pcVar2 = pcVar2 + 1;
-            }
-          }
-          if (cVar5 == '\0') {
-            *param_3 = 0;
-          }
-          else {
-            *pcVar2 = '\0';
-            *param_3 = pcVar2 + 1;
-          }
-          return param_1;
-        }
-        if (cVar5 == cVar1) break;
-        pcVar4 = pcVar4 + 1;
-        cVar1 = *pcVar4;
-      }
-    }
-    *param_3 = 0;
-  }
-  return (char *)0x0;
-}
-
-
-// ===== str_to_long @ 2014e3c4 (448 bytes)
-
-/* WARNING: Removing unreachable block (ram,0x2014e53c) */
-/* strtol/strtoul body: skips ctype spaces (__rt_ctype_table), sign, base 0 or 2..36 [fact for the
-   code; which of the two is open] */
-
-uint str_to_long(byte *param_1,undefined4 *param_2,uint param_3)
-
-{
-  byte bVar1;
-  bool bVar2;
-  bool bVar3;
-  byte *pbVar4;
-  byte *pbVar5;
-  int *piVar6;
-  uint uVar7;
-  uint uVar8;
-  byte *pbVar9;
-  uint uVar10;
-  int iVar11;
-  bool bVar12;
-  bool bVar13;
-  ulonglong uVar14;
-  
-  bVar3 = false;
-  pbVar9 = param_1;
-  if (((-1 < (int)param_3) && (param_3 != 1)) && ((int)param_3 < 0x25)) {
-    uVar8 = (uint)*param_1;
-    piVar6 = (int *)__rt_ctype_table();
-    iVar11 = *piVar6;
-    bVar1 = *(byte *)(iVar11 + uVar8);
-    pbVar5 = param_1;
-    while (pbVar4 = pbVar5 + 1, (bVar1 & 1) != 0) {
-      uVar8 = (uint)*pbVar4;
-      pbVar5 = pbVar4;
-      bVar1 = *(byte *)(iVar11 + uVar8);
-    }
-    bVar12 = false;
-    if ((uVar8 == 0x2b) || (bVar12 = uVar8 == 0x2d, pbVar9 = pbVar4, bVar12)) {
-      pbVar9 = pbVar5 + 2;
-      uVar8 = (uint)*pbVar4;
-    }
-    if (uVar8 != 0) {
-      if (param_3 == 0 || param_3 == 0x10) {
-        if ((uVar8 == 0x30) && (*pbVar9 == 0x78 || *pbVar9 == 0x58)) {
-          param_3 = 0x10;
-          uVar8 = (uint)pbVar9[1];
-          pbVar9 = pbVar9 + 2;
-        }
-        else if (param_3 == 0) {
-          if (uVar8 == 0x30) {
-            param_3 = 8;
-          }
-          else {
-            param_3 = 10;
-          }
-        }
-      }
-      uVar10 = 0;
-      bVar2 = false;
-      if (bVar12) {
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-        uVar14 = __aeabi_uidivmod(0x80000000);
-      }
-      else {
-        uVar14 = __aeabi_idivmod(0x7fffffff,param_3);
-      }
-      do {
-        if (*(byte *)(iVar11 + uVar8) == 0x20) {
-          uVar8 = uVar8 - 0x30;
-        }
-        else {
-          if ((*(byte *)(iVar11 + uVar8) & 0x98) == 0) goto LAB_2014e52c;
-          if (uVar8 < 0x61) {
-            uVar8 = uVar8 - 0x37;
-          }
-          else {
-            uVar8 = uVar8 - 0x57;
-          }
-        }
-        uVar7 = uVar8 & 0xff;
-        if ((int)param_3 <= (int)uVar7) goto LAB_2014e52c;
-        if (!bVar2) {
-          bVar13 = (uint)uVar14 <= uVar10;
-          if (uVar10 == (uint)uVar14) {
-            bVar13 = (uint)(uVar14 >> 0x20) <= uVar7;
-          }
-          bVar3 = true;
-          if (bVar13 && uVar14 != (CONCAT44(uVar8,uVar10) & 0xffffffffff)) {
-            if (bVar12) {
-              uVar10 = 0x80000000;
-            }
-            else {
-              uVar10 = 0x7fffffff;
-            }
-            bVar2 = true;
-            bVar12 = false;
-          }
-          else {
-            uVar10 = uVar10 * param_3 + uVar7;
-          }
-        }
-        uVar8 = (uint)*pbVar9;
-        pbVar9 = pbVar9 + 1;
-      } while( true );
-    }
-  }
-LAB_2014e540:
-  uVar10 = 0;
-LAB_2014e558:
-  if (param_2 != (undefined4 *)0x0) {
-    if (bVar3) {
-      *param_2 = pbVar9 + -1;
-    }
-    else {
-      *param_2 = param_1;
-    }
-  }
-  return uVar10;
-LAB_2014e52c:
-  if (bVar3) {
-    if ((bVar12) && (!bVar2)) {
-      uVar10 = -uVar10;
-    }
-    goto LAB_2014e558;
-  }
-  goto LAB_2014e540;
-}
-
-
-// ===== os_create_sem_named @ 2014e584 (44 bytes)
-
-/* wrapper around itron_acre_sem with a name string */
-
-uint os_create_sem_named(void *param_1,uint param_2)
-
-{
-  uint itron_acre_sem_ret;
-  t_csem local_18;
-  
-  local_18.sematr = *(uint *)param_1;
-  local_18.isemcnt = *(uint *)((int)param_1 + 4);
-  local_18.maxsem = *(uint *)((int)param_1 + 8);
-  local_18.name = (char *)param_2;
-  itron_acre_sem_ret = itron_acre_sem(0,&local_18);
-  return itron_acre_sem_ret;
 }
 

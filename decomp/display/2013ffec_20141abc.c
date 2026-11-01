@@ -1,5 +1,244 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== sdhi_dma_read_start @ 2013ffec (68 bytes)
+
+/* (dst, src): DMAC channel 0 for one 512-byte block (CHCFG 0x126260) and start [fact] */
+
+void sdhi_dma_read_start(undefined4 param_1,undefined4 param_2)
+
+{
+  uint uVar1;
+  
+                    /* Next0 Source Address 0 [sfr] */
+  DMAC_N0SA_0 = param_2;
+                    /* Next0 Destination Address 0 [sfr] */
+  DMAC_N0DA_0 = param_1;
+                    /* Next0 Transaction Byte 0 [sfr] */
+  DMAC_N0TB_0 = 0x200;
+                    /* Channel Configuration 0 [sfr] */
+  DMAC_CHCFG_0 = 0x126260;
+                    /* Channel Interval 0 [sfr] */
+  DMAC_CHITVL_0 = 0;
+                    /* Channel Extension 0 [sfr] */
+  DMAC_CHEXT_0 = 0;
+                    /* Channel Control 0 [sfr] */
+  uVar1 = DMAC_CHCTRL_0;
+  DMAC_CHCTRL_0 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_0;
+  DMAC_CHCTRL_0 = uVar1 | 1;
+  return;
+}
+
+
+// ===== sdhi_dma_read_wait @ 20140030 (48 bytes)
+
+/* Polls DMAC channel 0 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_read_wait(void)
+
+{
+  uint uVar1;
+  uint dmac_chstat_0;
+  
+  uVar1 = 0;
+  do {
+                    /* Channel Status 0 [sfr] */
+    dmac_chstat_0 = DMAC_CHSTAT_0;
+    if ((dmac_chstat_0 & 5) == 0) break;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 0x900000);
+                    /* Channel Control 0 [sfr] */
+  uVar1 = DMAC_CHCTRL_0;
+  DMAC_CHCTRL_0 = uVar1 | 8;
+  return;
+}
+
+
+// ===== sdhi_dma_write_start @ 20140060 (68 bytes)
+
+/* (dst, src): DMAC channel 1 for one 512-byte block (CHCFG 0x262269) and start [fact] */
+
+void sdhi_dma_write_start(undefined4 param_1,undefined4 param_2)
+
+{
+  uint uVar1;
+  
+                    /* Next0 Source Address 1 [sfr] */
+  DMAC_N0SA_1 = param_2;
+                    /* Next0 Destination Address 1 [sfr] */
+  DMAC_N0DA_1 = param_1;
+                    /* Next0 Transaction Byte 1 [sfr] */
+  DMAC_N0TB_1 = 0x200;
+                    /* Channel Configuration 1 [sfr] */
+  DMAC_CHCFG_1 = 0x262269;
+                    /* Channel Interval 1 [sfr] */
+  DMAC_CHITVL_1 = 0;
+                    /* Channel Extension 1 [sfr] */
+  DMAC_CHEXT_1 = 0;
+                    /* Channel Control 1 [sfr] */
+  uVar1 = DMAC_CHCTRL_1;
+  DMAC_CHCTRL_1 = uVar1 | 8;
+  uVar1 = DMAC_CHCTRL_1;
+  DMAC_CHCTRL_1 = uVar1 | 1;
+  return;
+}
+
+
+// ===== sdhi_dma_write_wait @ 201400a4 (48 bytes)
+
+/* Polls DMAC channel 1 CHSTAT until idle, then CHCTRL clear [fact] */
+
+void sdhi_dma_write_wait(void)
+
+{
+  uint uVar1;
+  uint dmac_chstat_1;
+  
+  uVar1 = 0;
+  do {
+                    /* Channel Status 1 [sfr] */
+    dmac_chstat_1 = DMAC_CHSTAT_1;
+    if ((dmac_chstat_1 & 5) == 0) break;
+    uVar1 = uVar1 + 1;
+  } while (uVar1 < 0x900000);
+                    /* Channel Control 1 [sfr] */
+  uVar1 = DMAC_CHCTRL_1;
+  DMAC_CHCTRL_1 = uVar1 | 8;
+  return;
+}
+
+
+// ===== sdhi_init @ 201400d4 (60 bytes)
+
+/* SDINT_INI */
+
+uint sdhi_init(void)
+
+{
+  int iVar1;
+  
+  iVar1 = DAT_20808b74;
+  if ((DAT_20808b74 == 0) && (iVar1 = os_create_flg_named(&DAT_204205d8,"SDINT_INI"), iVar1 < 1)) {
+    return 0xffffffff;
+  }
+  DAT_20808b74 = iVar1;
+  return 0;
+}
+
+
+// ===== sdhi_flag_set @ 20140148 (16 bytes)
+
+/* itron_set_flg on the SDHI event flag 0x20808B74 [fact] */
+
+void sdhi_flag_set(undefined4 param_1)
+
+{
+  itron_set_flg(DAT_20808b74,param_1);
+  return;
+}
+
+
+// ===== sdhi_flag_wait @ 20140158 (84 bytes)
+
+/* (pattern, ms): itron_twai_flg on 0x20808B74 for ms/10 ticks, then clears the pattern [fact] */
+
+void * sdhi_flag_wait(uint param_1,int param_2)
+
+{
+  void *itron_twai_flg_ret;
+  uint uStack_14;
+  
+  itron_twai_flg_ret = itron_twai_flg(DAT_20808b74,param_1,0,&uStack_14,param_2 / 10);
+  itron_clr_flg(DAT_20808b74,~param_1);
+  return itron_twai_flg_ret;
+}
+
+
+// ===== sdhi_card_absent @ 201401ac (48 bytes)
+
+/* Samples sd_card_detect (P11_4 SD_CD) 32 times; true when any sample is high [fact] */
+
+bool sdhi_card_absent(void)
+
+{
+  uint uVar1;
+  uint sd_card_detect_ret;
+  uint i;
+  
+  i = 0;
+  uVar1 = 0;
+  do {
+    sd_card_detect_ret = sd_card_detect();
+    i = i + 1;
+    uVar1 = sd_card_detect_ret | uVar1 << 1;
+  } while (i < 0x20);
+  return uVar1 != 0;
+}
+
+
+// ===== sdhi_write_protected @ 201401dc (44 bytes)
+
+/* SD_INFO1 bit 7 (WP) clear [fact for the register]; -7 = write-protected in 0x2014040C [inference]
+    */
+
+bool sdhi_write_protected(void)
+
+{
+  ushort sdhi_sd_info1_0;
+  
+                    /* SD card interrupt flag 1_0 [sfr] */
+  sdhi_sd_info1_0 = SDHI_SD_INFO1_0;
+  return (sdhi_sd_info1_0 & 0x80) == 0;
+}
+
+
+// ===== sdhi_read_block @ 20140210 (136 bytes)
+
+/* Reads one 512-byte block through a 32-byte aligned bounce buffer 0x2091CEC0 (cache maintenance
+   around the transfer), waits for access end [fact] */
+
+undefined4 sdhi_read_block(undefined1 *param_1)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined1 *puVar3;
+  bool bVar4;
+  
+                    /* Swap control_0 [sfr] */
+  SDHI_EXT_SWAP_0 = 0x100;
+  puVar3 = param_1;
+  if (((uint)param_1 & 0x1f) != 0) {
+    puVar3 = &DAT_2091cec0;
+  }
+  dcache_invalidate_range(puVar3,0x200);
+                    /* DMAC channel 0 for one 512-byte block [doc] */
+  sdhi_dma_read_start(puVar3,&SDHI_SD_CMD_0);
+                    /* itron_twai_flg on 0x20808B74 for ms/10 ticks [doc] */
+  iVar1 = sdhi_flag_wait(4,500);
+                    /* Polls DMAC channel 0 CHSTAT until idle [doc] */
+  sdhi_dma_read_wait();
+  dcache_invalidate_range(puVar3,0x200);
+  if (iVar1 == 0) {
+    if (((uint)param_1 & 0x1f) != 0) {
+      iVar1 = 0x1ff;
+      do {
+        bVar4 = iVar1 != 0;
+        iVar1 = iVar1 + -1;
+        *param_1 = *puVar3;
+        param_1 = param_1 + 1;
+        puVar3 = puVar3 + 1;
+      } while (bVar4);
+    }
+    uVar2 = 0;
+  }
+  else {
+    uVar2 = 0xfffffff1;
+  }
+  return uVar2;
+}
+
+
 // ===== sdhi_write_block @ 20140298 (116 bytes)
 
 /* Writes one 512-byte block through the bounce buffer (dcache_clean_range first), -16 on timeout
@@ -1571,420 +1810,5 @@ uint fs_fopen(uint param_1,uint param_2)
                     /* last error 0x20808BA4 = err, returns ret [doc] */
   uVar2 = fs_set_error_ret(0xffffffe1,0);
   return uVar2;
-}
-
-
-// ===== file_sync_shared @ 20141b08 (356 bytes)
-
-/* When a file is open more than once, copies the first cluster and dirty state of this handle to
-   the other open handles of the same entry [fact] */
-
-undefined4 file_sync_shared(undefined4 *param_1)
-
-{
-  short sVar1;
-  int iVar2;
-  undefined4 uVar3;
-  undefined4 *puVar4;
-  int i;
-  
-  if (*(char *)((int)param_1 + 0x442) != '\x01') {
-    i = 0;
-    puVar4 = DAT_20808b90;
-    if (0 < DAT_20808b94) {
-      do {
-        if (*(char *)((int)param_1 + 0x44d) == '\x01') {
-          if ((((*(short *)(puVar4 + 0x8f) != 0) &&
-               (iVar2 = fs_wstricmp_ucs2(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
-              (param_1 != puVar4)) && (*(char *)((int)puVar4 + 0x442) == '\x01')) {
-            if (puVar4[7] != param_1[7]) {
-              puVar4[7] = param_1[7];
-              uVar3 = fat_clust2sect(*puVar4);
-              puVar4[8] = uVar3;
-              *(undefined2 *)((int)puVar4 + 0x44e) = 1;
-            }
-            if (*(short *)((int)param_1 + 0x44e) != 0) {
-              *(undefined2 *)((int)puVar4 + 0x44e) = 1;
-            }
-            sVar1 = *(short *)((int)puVar4 + 0x44e);
-            goto joined_r0x20141be8;
-          }
-        }
-        else if (((*(char *)(puVar4 + 0x8f) != '\0') &&
-                 (iVar2 = fs_stricmp_sjis_fold(param_1 + 0x8f,puVar4 + 0x8f), iVar2 == 0)) &&
-                ((param_1 != puVar4 && (*(char *)((int)puVar4 + 0x442) == '\x01')))) {
-          if (puVar4[7] != param_1[7]) {
-            puVar4[7] = param_1[7];
-            uVar3 = fat_clust2sect(*puVar4);
-            puVar4[8] = uVar3;
-            *(undefined2 *)((int)puVar4 + 0x44e) = 1;
-          }
-          if (*(short *)((int)param_1 + 0x44e) != 0) {
-            *(undefined2 *)((int)puVar4 + 0x44e) = 1;
-          }
-          sVar1 = *(short *)((int)puVar4 + 0x44e);
-joined_r0x20141be8:
-          if (sVar1 != 0) {
-            puVar4[0xb] = param_1[0xb];
-          }
-        }
-        i = i + 1;
-        puVar4 = puVar4 + 0x114;
-      } while (i < DAT_20808b94);
-    }
-    *(undefined2 *)((int)param_1 + 0x44e) = 0;
-  }
-  return 0;
-}
-
-
-// ===== file_dirent_update @ 20141c6c (396 bytes)
-
-/* Writes size, attribute, write time and first cluster of an open file back to its directory entry
-   (root or subdirectory sector) and marks it dirty [fact] */
-
-void file_dirent_update(int *param_1,int param_2)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  int extraout_r1;
-  int extraout_r1_00;
-  int local_20;
-  
-  local_20 = param_2 + 0xe0c;
-  if ((char)param_1[0x111] == '\0') {
-    iVar1 = *param_1;
-    uVar2 = __aeabi_uidivmod(param_1[6],*(uint *)(iVar1 + 0x6c) >> 5);
-                    /* sector n of the fixed FAT12/16 root directory [doc] */
-    iVar1 = root_sector_get(iVar1,uVar2,&local_20);
-    if (iVar1 == 0) {
-      __aeabi_uidivmod(param_1[6],*(uint *)(*param_1 + 0x6c) >> 5);
-      iVar1 = local_20 + extraout_r1_00 * 0x20;
-      fat_st_dword(iVar1 + 0x1c,param_1[0xb]);
-      *(undefined1 *)(iVar1 + 0xb) = *(undefined1 *)((int)param_1 + 0x443);
-      if ((char)param_1[0x113] == '\x01') {
-        dirent_set_time(iVar1,param_1,6);
-      }
-      fat_st_word(iVar1 + 0x16,(short)param_1[0x8d]);
-      fat_st_word(iVar1 + 0x18,*(undefined2 *)((int)param_1 + 0x236));
-                    /* Stores the first cluster in an entry [doc] */
-      dirent_set_cluster(iVar1,param_1[7],(int)*(char *)(*param_1 + 0x10));
-      root_sector_dirty(*param_1,uVar2,local_20);
-    }
-  }
-  else {
-    iVar1 = dir_sector_get(*param_1,param_1[9],&local_20);
-    if (iVar1 == 0) {
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-      __aeabi_uidivmod(param_1[6],*(uint *)(*param_1 + 0x6c) >> 5);
-      iVar1 = local_20 + extraout_r1 * 0x20;
-      fat_st_dword(iVar1 + 0x1c,param_1[0xb]);
-      *(undefined1 *)(iVar1 + 0xb) = *(undefined1 *)((int)param_1 + 0x443);
-      if ((char)param_1[0x113] == '\x01') {
-        dirent_set_time(iVar1,param_1,6);
-      }
-      fat_st_word(iVar1 + 0x16,(short)param_1[0x8d]);
-      fat_st_word(iVar1 + 0x18,*(undefined2 *)((int)param_1 + 0x236));
-      dirent_set_cluster(iVar1,param_1[7],(int)*(char *)(*param_1 + 0x10));
-      dir_sector_dirty(*param_1,param_1[9],local_20);
-      return;
-    }
-  }
-  return;
-}
-
-
-// ===== file_dirent_update_locked @ 20141df8 (64 bytes)
-
-/* file_dirent_update under fs_lock_a [fact] */
-
-undefined4 file_dirent_update_locked(undefined4 *param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  
-                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
-  iVar1 = fs_lock_a(*param_1);
-  if (iVar1 == 0) {
-    uVar2 = file_dirent_update(param_1,param_2);
-    fs_unlock_a(*param_1);
-  }
-  else {
-    uVar2 = 0xffffffdb;
-  }
-  return uVar2;
-}
-
-
-// ===== file_flush @ 20141e38 (268 bytes)
-
-/* Writes the file's dirty sector buffer (fs_dev_op2), updates the directory entry for write modes
-   and the other handles (file_sync_shared) [fact] */
-
-int file_flush(int *param_1,undefined4 param_2)
-
-{
-  char cVar1;
-  undefined2 uVar2;
-  int iVar3;
-  
-  iVar3 = fs_drive_check_mounted(*param_1);
-  if (iVar3 != 0) {
-    return iVar3;
-  }
-  iVar3 = *param_1;
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-  uVar2 = __aeabi_uidivmod(param_1[0x8e],*(undefined4 *)(iVar3 + 0x6c));
-  if ((param_1[2] != 0) && (param_1[8] != 0)) {
-    iVar3 = fs_dev_op2(iVar3,param_1[8],param_1[1],uVar2);
-    if (iVar3 != 0) {
-                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
-      fs_memset(param_1 + 0x8f,0,0x206,*(undefined4 *)(*param_1 + 0x6c));
-      return iVar3;
-    }
-    *(undefined1 *)(param_1 + 0x113) = 1;
-  }
-  cVar1 = *(char *)((int)param_1 + 0x442);
-  if ((cVar1 == '\x10' || cVar1 == '\x11') || (cVar1 == ' ' || cVar1 == '!')) {
-                    /* file_dirent_update under fs_lock_a [doc] */
-    iVar3 = file_dirent_update_locked(param_1,param_2);
-    if (iVar3 != 0) {
-      fs_memset(param_1 + 0x8f,0,0x206,*(undefined4 *)(*param_1 + 0x6c));
-      return iVar3;
-    }
-    *(undefined1 *)(param_1 + 0x113) = 0;
-  }
-  file_sync_shared(param_1);
-  param_1[2] = 0;
-  fs_memset(param_1 + 0x8f,0,0x206,*(undefined4 *)(*param_1 + 0x6c));
-  return 0;
-}
-
-
-// ===== fs_fclose_work @ 20141f44 (172 bytes)
-
-/* fs_fclose body: file_flush, FAT32 FSInfo update and fs_flush for write modes, frees the buffer,
-   clears the open mode [fact] */
-
-void fs_fclose_work(undefined4 *param_1,undefined4 param_2)
-
-{
-  char cVar1;
-  int iVar2;
-  
-  iVar2 = fs_check_ready();
-  if ((iVar2 == 0) && (iVar2 = fs_file_check(param_1), iVar2 == 0)) {
-    cVar1 = *(char *)((int)param_1 + 0x442);
-                    /* Writes the file's dirty sector buffer [doc] */
-    iVar2 = file_flush(param_1,param_2);
-    if ((iVar2 == 0) && (cVar1 != '\x01')) {
-                    /* fat32_fsinfo_write under fs_lock_b [doc] */
-      iVar2 = fat32_fsinfo_write_locked(*param_1,param_2);
-    }
-                    /* itron_rel_mpf to pool 0x20808BC4 [doc] */
-    if ((undefined4 *)param_1[1] != param_1 + 0xd) {
-      fs_mpf_free();
-    }
-    if ((iVar2 == 0) && (cVar1 != '\x01')) {
-      iVar2 = fs_flush(*param_1);
-    }
-    *(undefined1 *)((int)param_1 + 0x442) = 0;
-    fs_set_error(iVar2,0);
-    return;
-  }
-  fs_set_error(iVar2,0);
-  return;
-}
-
-
-// ===== fs_fclose @ 20141ff0 (68 bytes)
-
-/* (fd): work buffer, FUN_20141f44(fd, buf), free; error -31 without a buffer [fact]; close
-   (update.md) [fact] */
-
-undefined4 fs_fclose(undefined4 param_1)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  
-                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
-  iVar1 = fs_work_alloc();
-  if (iVar1 != 0) {
-    uVar2 = fs_fclose_work(param_1,iVar1);
-                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
-    fs_work_free(iVar1);
-    return uVar2;
-  }
-  uVar2 = fs_set_error(0xffffffe1,0);
-  return uVar2;
-}
-
-
-// ===== file_getc @ 20142034 (396 bytes)
-
-/* Next byte of a file, reloading the sector buffer and following the cluster chain
-   (fat_next_sector); -1 at the end [fact] */
-
-uint file_getc(int *param_1,undefined4 param_2,undefined4 param_3,int param_4)
-
-{
-  byte bVar1;
-  uint uVar2;
-  int iVar3;
-  int local_20;
-  
-  iVar3 = *param_1;
-  local_20 = param_4;
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-  uVar2 = __aeabi_uidivmod(param_1[0x8e],*(undefined4 *)(iVar3 + 0x6c));
-  iVar3 = fs_drive_check_mounted(iVar3);
-  if (iVar3 != 0) {
-LAB_201420d4:
-    uVar2 = fs_set_error(iVar3,param_1);
-    return uVar2;
-  }
-  if (((param_1[8] != 0) && (*(short *)((int)param_1 + 0x44e) != 0)) &&
-     (*(char *)((int)param_1 + 0x442) == '\x01')) {
-    iVar3 = fs_dev_op1(*param_1,param_1[8],param_1[1],uVar2 & 0xffff);
-    if (iVar3 != 0) goto LAB_201420d4;
-    *(undefined2 *)((int)param_1 + 0x44e) = 0;
-  }
-  if ((uint)param_1[0x8e] <= (uint)param_1[5]) {
-    if (param_1[7] != 0) {
-      if (param_1[2] != 0) {
-        iVar3 = fs_dev_op2(*param_1,param_1[8],param_1[1],uVar2 & 0xffff);
-        if (iVar3 != 0) goto LAB_201420d4;
-        param_1[2] = 0;
-        *(undefined1 *)(param_1 + 0x113) = 1;
-      }
-      iVar3 = fat_next_sector(*param_1,(uVar2 - 1) + param_1[8],&local_20,param_2);
-      if (iVar3 != 0) goto LAB_20142164;
-      if (local_20 == 0) {
-        iVar3 = -0x3d;
-        goto LAB_20142164;
-      }
-      iVar3 = fs_dev_op1(*param_1,local_20,param_1[1],uVar2 & 0xffff);
-      if (iVar3 != 0) goto LAB_20142164;
-      param_1[8] = local_20;
-    }
-    param_1[5] = 0;
-  }
-  if ((uint)param_1[10] < (uint)param_1[0xb]) {
-    param_1[10] = param_1[10] + 1;
-    iVar3 = param_1[5];
-    param_1[5] = iVar3 + 1;
-    bVar1 = *(byte *)(param_1[1] + iVar3);
-    fs_set_error(0,param_1);
-    return (uint)bVar1;
-  }
-  iVar3 = -0xe;
-LAB_20142164:
-  uVar2 = fs_set_error(iVar3,param_1);
-  return uVar2;
-}
-
-
-// ===== fs_fgetc_work @ 201421c0 (104 bytes)
-
-/* Checked file_getc (-5 for a write-only handle) [fact] */
-
-void fs_fgetc_work(int param_1,undefined4 param_2)
-
-{
-  int iVar1;
-  
-  iVar1 = fs_check_ready();
-  if ((iVar1 == 0) && (iVar1 = fs_file_check(param_1), iVar1 == 0)) {
-    if (*(char *)(param_1 + 0x442) != '\x10' && *(char *)(param_1 + 0x442) != ' ') {
-      file_getc(param_1,param_2);
-      return;
-    }
-    fs_set_error(0xfffffffb,param_1);
-    return;
-  }
-  fs_set_error(iVar1,0);
-  return;
-}
-
-
-// ===== fs_fgetc @ 20142228 (68 bytes)
-
-/* fs_fgetc_work with a work buffer [fact] */
-
-undefined4 fs_fgetc(undefined4 param_1)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  
-                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
-  iVar1 = fs_work_alloc();
-  if (iVar1 != 0) {
-    uVar2 = fs_fgetc_work(param_1,iVar1);
-                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
-    fs_work_free(iVar1);
-    return uVar2;
-  }
-  uVar2 = fs_set_error(0xffffffe1,0);
-  return uVar2;
-}
-
-
-// ===== fs_fgets_work @ 20142300 (292 bytes)
-
-/* Reads up to n-1 bytes or through '\\n' with file_getc and 0-terminates [fact] */
-
-int fs_fgets_work(int param_1,int param_2,int param_3,undefined4 param_4)
-
-{
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  bool bVar5;
-  
-  iVar3 = fs_check_ready();
-  if ((iVar3 != 0) || (iVar3 = fs_file_check(param_3), iVar3 != 0)) {
-    iVar3 = fs_set_error_ret(iVar3,0);
-    return iVar3;
-  }
-  if (param_1 == 0) {
-    iVar3 = fs_set_error_ret(0xfffffff3,0);
-    return iVar3;
-  }
-  if (*(char *)(param_3 + 0x442) == '\x10' || *(char *)(param_3 + 0x442) == ' ') {
-    iVar3 = fs_set_error_ret(0xfffffffb,0);
-    return iVar3;
-  }
-  if (param_2 < 1) {
-                    /* last error 0x20808BA4 = err, returns ret [doc] */
-    iVar3 = fs_set_error_ret(0);
-    return iVar3;
-  }
-  iVar4 = param_2 + -1;
-  iVar3 = 0;
-  if (0 < iVar4) {
-    do {
-      iVar2 = file_getc(param_3,param_4);
-      if (iVar2 == -1) break;
-      bVar5 = SBORROW4(iVar2,10);
-      iVar1 = iVar2 + -10;
-      *(char *)(param_1 + iVar3) = (char)iVar2;
-      iVar3 = iVar3 + 1;
-      if (iVar2 != 10) {
-        bVar5 = SBORROW4(iVar3,iVar4);
-        iVar1 = iVar3 - iVar4;
-      }
-    } while (iVar1 < 0 != bVar5);
-  }
-  *(undefined1 *)(param_1 + iVar3) = 0;
-  if ((iVar3 == 0) && (1 < param_2)) {
-    iVar3 = fs_set_error_ret(0xfffffff2,0);
-    return iVar3;
-  }
-  return param_1;
 }
 

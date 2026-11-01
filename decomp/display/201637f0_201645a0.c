@@ -1,5 +1,215 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fill8 @ 201637f0 (24 bytes)
+
+/* (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact] */
+
+void fill8(uint *param_1,uint param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = param_2 & 0xff | (param_2 & 0xff) << 8;
+  uVar1 = uVar1 | uVar1 << 0x10;
+  *param_1 = uVar1;
+  param_1[1] = uVar1;
+  return;
+}
+
+
+// ===== fp_classify_double @ 20163808 (40 bytes)
+
+/* (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the
+   exponent 0 / 0x7FF and the mantissa) [fact for the tests] */
+
+uint fp_classify_double(int param_1,uint param_2)
+
+{
+  uint uVar1;
+  
+  uVar1 = 0;
+  if (param_1 != 0 || (param_2 & 0xfffff) != 0) {
+    uVar1 = 4;
+  }
+  if ((param_2 & 0x7fffffff) >> 0x14 != 0) {
+    uVar1 = uVar1 | 1;
+  }
+  if ((param_2 & 0x7fffffff) >> 0x14 == 0x7ff) {
+    uVar1 = uVar1 | 2;
+  }
+  if (uVar1 == 1) {
+    uVar1 = 5;
+  }
+  return uVar1;
+}
+
+
+// ===== FUN_2016385a @ 2016385a (10 bytes)
+
+void FUN_2016385a(void)
+
+{
+  __cxa_pure_virtual(0);
+  return;
+}
+
+
+// ===== is_decimal_digit @ 20163864 (14 bytes)
+
+/* (c): 1 for '0'..'9'; _printf_core uses it for widths [fact] */
+
+undefined4 is_decimal_digit(int param_1)
+
+{
+  if (param_1 - 0x30U < 10) {
+    return 1;
+  }
+  return 0;
+}
+
+
+// ===== FUN_20163874 @ 20163874 (34 bytes)
+
+undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
+
+{
+  uint strcmp_ret;
+  
+  if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
+     (strcmp_ret = strcmp((uint *)(BYTE_ARRAY_204286f8 + 4),param_2), strcmp_ret != 0)) {
+    return 0;
+  }
+  return 0x20428704;
+}
+
+
+// ===== FUN_201638a0 @ 201638a0 (34 bytes)
+
+undefined4 FUN_201638a0(undefined4 param_1,uint *param_2)
+
+{
+  uint strcmp_ret;
+  
+  if (((param_2 != (uint *)0x0) && ((char)*param_2 != '\0')) &&
+     (strcmp_ret = strcmp((uint *)(BYTE_ARRAY_204286f8 + 0x114),param_2), strcmp_ret != 0)) {
+    return 0;
+  }
+  return 0x20428814;
+}
+
+
+// ===== FUN_201638cc @ 201638cc (12 bytes)
+
+void FUN_201638cc(undefined2 *param_1,undefined2 param_2,undefined2 param_3)
+
+{
+  *param_1 = param_2;
+  param_1[1] = param_3;
+  return;
+}
+
+
+// ===== FUN_201638d8 @ 201638d8 (40 bytes)
+
+void FUN_201638d8(int param_1,undefined2 param_2)
+
+{
+  int iVar1;
+  int i;
+  
+  i = 0;
+  do {
+    iVar1 = i * 2;
+    i = i + 1;
+    *(undefined2 *)(param_1 + iVar1 + 8) = param_2;
+  } while (i < 0x4b0);
+  *(int *)(param_1 + 4) = param_1 + 8;
+  *(int *)(param_1 + 0x968) = param_1;
+  return;
+}
+
+
+// ===== FUN_20163900 @ 20163900 (56 bytes)
+
+void FUN_20163900(undefined4 *param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  int i;
+  
+  i = 0;
+  do {
+    iVar1 = i * 2;
+    iVar2 = i * 2;
+    i = i + 1;
+    *(undefined2 *)((int)param_1 + iVar2 + 8) = *(undefined2 *)((int)param_2 + iVar1 + 8);
+  } while (i < 0x4b0);
+  *param_1 = *param_2;
+  param_1[1] = param_1 + 2;
+  param_1[0x25a] = param_1;
+  return;
+}
+
+
+// ===== FUN_20163938 @ 20163938 (264 bytes)
+
+void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
+                 ushort *param_5,int param_6,int param_7)
+
+{
+  int iVar1;
+  int iVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  uint uVar6;
+  int iVar7;
+  undefined8 uVar8;
+  undefined4 uVar9;
+  
+  uVar9 = param_4;
+  uVar8 = __aeabi_i2d(param_6);
+  __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
+  iVar2 = __aeabi_d2iz();
+  uVar6 = (uint)*param_5;
+  *param_1 = *(undefined4 *)param_5;
+  iVar3 = (param_5[1] - 1) * uVar6;
+  iVar7 = *(int *)(param_5 + 2) + iVar3 * 2;
+  iVar3 = iVar3 * 2 + 8;
+  iVar4 = 0;
+  if (0 < param_6) {
+    do {
+      iVar1 = iVar4 * uVar6;
+      iVar4 = iVar4 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar1) * 2 + iVar3) = 0;
+    } while (iVar4 < param_6);
+  }
+  iVar4 = 0;
+  if (0 < param_6) {
+    do {
+      uVar8 = __aeabi_i2d(iVar4);
+      __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4);
+      iVar5 = __aeabi_d2iz();
+      iVar1 = iVar4 * uVar6;
+      iVar4 = iVar4 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar5 * uVar6) * 2 + iVar3) =
+           *(undefined2 *)(iVar7 + (param_7 - iVar1) * 2);
+    } while (iVar4 < param_6);
+  }
+  if (iVar2 < param_6) {
+    do {
+      iVar4 = iVar2 * uVar6;
+      iVar2 = iVar2 + 1;
+      *(undefined2 *)((int)param_1 + (param_7 - iVar4) * 2 + iVar3) =
+           *(undefined2 *)(iVar7 + (param_7 - (param_6 + -1) * uVar6) * 2);
+    } while (iVar2 < param_6);
+  }
+  return;
+}
+
+
 // ===== FUN_20163a40 @ 20163a40 (160 bytes)
 
 void FUN_20163a40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -790,140 +1000,6 @@ void ring16_push(ushort *param_1,undefined4 *param_2)
     param_1[2] = uVar1 + 1 & 0xf;
     *param_1 = *param_1 + 1;
   }
-  return;
-}
-
-
-// ===== ring16_reset @ 201645e4 (20 bytes)
-
-/* Clears count, head and tail of a 16-entry ring {count, head, tail, slots} [fact] */
-
-void ring16_reset(undefined2 *param_1)
-
-{
-  *param_1 = 0;
-  param_1[1] = 0;
-  param_1[2] = 0;
-  return;
-}
-
-
-// ===== ring16_set_slot @ 201645f8 (12 bytes)
-
-/* ring->slot[n] (obj+8+4n) = pointer [fact] */
-
-void ring16_set_slot(int param_1,int param_2,undefined4 param_3)
-
-{
-  *(undefined4 *)(param_1 + param_2 * 4 + 8) = param_3;
-  return;
-}
-
-
-// ===== ring16_pop @ 20164604 (52 bytes)
-
-/* Returns the slot at the head and advances it (mod 16), 0 when empty [fact]; usbkbd_pop_key [fact]
-    */
-
-undefined4 ring16_pop(short *param_1)
-
-{
-  ushort uVar1;
-  undefined4 uVar2;
-  
-  if (*param_1 == 0) {
-    uVar2 = 0;
-  }
-  else {
-    *param_1 = *param_1 + -1;
-    uVar1 = param_1[1];
-    param_1[1] = uVar1 + 1 & 0xf;
-    uVar2 = *(undefined4 *)(param_1 + (uint)uVar1 * 2 + 4);
-  }
-  return uVar2;
-}
-
-
-// ===== ring16_ctor @ 20164638 (20 bytes)
-
-/* ring16_reset, returns this [fact] */
-
-undefined4 ring16_ctor(undefined4 param_1)
-
-{
-  ring16_reset();
-  return param_1;
-}
-
-
-// ===== FUN_20164654 @ 20164654 (12 bytes)
-
-undefined4 FUN_20164654(int param_1)
-
-{
-  return *(undefined4 *)(param_1 + 0x10e8);
-}
-
-
-// ===== FUN_2016466c @ 2016466c (8 bytes)
-
-undefined4 FUN_2016466c(int param_1)
-
-{
-  return *(undefined4 *)(param_1 + 0x88);
-}
-
-
-// ===== FUN_20164674 @ 20164674 (12 bytes)
-
-undefined4 FUN_20164674(int param_1)
-
-{
-  return *(undefined4 *)(param_1 + 0x3848);
-}
-
-
-// ===== FUN_20164680 @ 20164680 (36 bytes)
-
-undefined4 FUN_20164680(char *param_1)
-
-{
-  if (*param_1 == '\0') {
-    return *(undefined4 *)(param_1 + 0x97c);
-  }
-  return *(undefined4 *)(param_1 + 4);
-}
-
-
-// ===== FUN_2016469c @ 2016469c (40 bytes)
-
-undefined4 FUN_2016469c(char *param_1)
-
-{
-  if (*param_1 == '\0') {
-    return *(undefined4 *)(param_1 + 0x2bb4);
-  }
-  return *(undefined4 *)(param_1 + 4);
-}
-
-
-// ===== FUN_201646bc @ 201646bc (84 bytes)
-
-void FUN_201646bc(int param_1,int param_2,int param_3,int param_4)
-
-{
-  int iVar1;
-  
-  iVar1 = 0;
-  do {
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 800);
-  FUN_20133e54(param_3 + 399,*(int *)(param_1 + 0x3c) + param_2 * 0x62e,0x317,param_4 + 399,
-               0xfffffe75);
-  iVar1 = 0;
-  do {
-    iVar1 = iVar1 + 1;
-  } while (iVar1 < 800);
   return;
 }
 

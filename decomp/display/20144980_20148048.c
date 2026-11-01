@@ -1,5 +1,318 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fat_clust2sect @ 20144980 (76 bytes)
+
+/* (vol, cluster): 0 for cluster < 2, else data start + (cluster - 2) * sectors per cluster [fact]
+    */
+
+int fat_clust2sect(int param_1,uint param_2)
+
+{
+  int iVar1;
+  
+  if (1 < param_2) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+    iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
+    return *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) + iVar1 +
+           (param_2 - 2) * (uint)*(ushort *)(param_1 + 4) + (uint)*(ushort *)(param_1 + 6);
+  }
+  return 0;
+}
+
+
+// ===== fat_sect2clust @ 201449cc (68 bytes)
+
+/* Cluster number of a data sector: (sector - data start) / sectors per cluster + 2 (inverse of
+   fat_clust2sect) [fact] */
+
+int fat_sect2clust(int param_1,int param_2)
+
+{
+  int iVar1;
+  
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
+  iVar1 = __aeabi_uidivmod(param_2 - (iVar1 + *(int *)(param_1 + 0xc) *
+                                              (uint)*(ushort *)(param_1 + 8) +
+                                              (uint)*(ushort *)(param_1 + 6)),
+                           *(undefined2 *)(param_1 + 4));
+  return iVar1 + 2;
+}
+
+
+// ===== fs_dev_op1 @ 20144a10 (176 bytes)
+
+/* (drv, ...): device op +0x18 with command 1 between the device locks of drv+0x70; -46 / -47 on
+   lock errors [fact] */
+
+undefined4 fs_dev_op1(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (param_1 != 0) {
+    iVar1 = fs_sem_wait_1s(*(undefined4 *)(param_1 + 0x70));
+    if (iVar1 != 0) {
+      fs_set_error(0xffffffd2,0);
+      return 0xffffffd2;
+    }
+    iVar1 = (**(code **)(param_1 + 0x18))(param_1,1,param_2,param_3,param_4);
+    iVar2 = fs_sem_signal(*(undefined4 *)(param_1 + 0x70));
+    if (iVar2 != 0) {
+      fs_set_error(0xffffffd1,0);
+      return 0xffffffd1;
+    }
+    if (iVar1 == 0) {
+      fs_set_error(0);
+      return 0;
+    }
+  }
+  fs_set_error(0xfffffff8,0);
+  return 0xfffffff8;
+}
+
+
+// ===== fs_dev_op2 @ 20144ac0 (176 bytes)
+
+/* Same with command 2 [fact] */
+
+undefined4 fs_dev_op2(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (param_1 != 0) {
+    iVar1 = fs_sem_wait_1s(*(undefined4 *)(param_1 + 0x70));
+    if (iVar1 != 0) {
+      fs_set_error(0xffffffd2,0);
+      return 0xffffffd2;
+    }
+    iVar1 = (**(code **)(param_1 + 0x18))(param_1,2,param_2,param_3,param_4);
+    iVar2 = fs_sem_signal(*(undefined4 *)(param_1 + 0x70));
+    if (iVar2 != 0) {
+      fs_set_error(0xffffffd1,0);
+      return 0xffffffd1;
+    }
+    if (iVar1 == 0) {
+      fs_set_error(0);
+      return 0;
+    }
+  }
+  fs_set_error(0xfffffff7,0);
+  return 0xfffffff7;
+}
+
+
+// ===== dir_sector_dirty @ 20144b74 (144 bytes)
+
+/* Marks a directory/data sector dirty in the directory cache, or writes it (fs_dev_op2) when there
+   is none; -0x45 when not cached [fact] */
+
+undefined4 dir_sector_dirty(int param_1,undefined4 param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  ulonglong __aeabi_idivmod_ret;
+  
+  if (*(int *)(param_1 + 0x4c) == 0) {
+    uVar2 = fs_dev_op2(param_1,param_2,param_3,1);
+    return uVar2;
+  }
+  iVar1 = dircache_lookup(param_1);
+  if (iVar1 == 0) {
+    uVar2 = 0xffffffbb;
+  }
+  else {
+    __aeabi_idivmod_ret = __aeabi_idivmod(iVar1 - 1,(uint)*(ushort *)(param_1 + 0x52));
+    uVar3 = (int)__aeabi_idivmod_ret + 1U & 0xffff;
+    dircache_touch(param_1,uVar3);
+    iVar1 = (*(int *)(param_1 + 0x6c) * (uint)*(ushort *)(param_1 + 0x52) + 6) *
+            (uint)*(ushort *)(param_1 + 0x50) + *(int *)(param_1 + 0x4c) + uVar3 * 2;
+    *(ushort *)(iVar1 + -2) = *(ushort *)(iVar1 + -2) | 0x8000;
+    uVar2 = 0;
+  }
+  return uVar2;
+}
+
+
+// ===== root_sector_dirty @ 20144c04 (88 bytes)
+
+/* dir_sector_dirty for sector n of the FAT12/16 root directory, -11 past its end [fact] */
+
+undefined4 root_sector_dirty(int param_1,int param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int iVar3;
+  uint uVar4;
+  
+  iVar3 = *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) + (uint)*(ushort *)(param_1 + 6);
+  uVar4 = iVar3 + param_2;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
+  if (uVar4 < (uint)(iVar1 + iVar3)) {
+    uVar2 = dir_sector_dirty(param_1,uVar4,param_3);
+    return uVar2;
+  }
+  return 0xfffffff5;
+}
+
+
+// ===== dir_sector_get @ 20144c5c (168 bytes)
+
+/* (vol, sector, *ptr): pointer to a directory/data sector through the directory cache, direct read
+   when there is none [fact] */
+
+int dir_sector_get(int param_1,undefined4 param_2,int *param_3,uint param_4)
+
+{
+  int iVar1;
+  ulonglong __aeabi_idivmod_ret;
+  uint local_18;
+  
+  local_18 = param_4;
+  if (*(int *)(param_1 + 0x4c) == 0) {
+    iVar1 = fs_dev_op1(param_1,param_2,*param_3,1);
+    return iVar1;
+  }
+  iVar1 = dircache_lookup(param_1);
+  if (iVar1 == 0) {
+                    /* Evicts the oldest directory cache slot [doc] */
+    iVar1 = dircache_load(param_1,param_2,&local_18);
+    if (iVar1 != 0) {
+      return iVar1;
+    }
+  }
+  else {
+    local_18 = CONCAT22(local_18._2_2_,(short)iVar1);
+  }
+  *param_3 = ((local_18 & 0xffff) - 1) * *(int *)(param_1 + 0x6c) + *(int *)(param_1 + 0x4c) +
+             (uint)*(ushort *)(param_1 + 0x50) * 4;
+  __aeabi_idivmod_ret = __aeabi_idivmod((local_18 & 0xffff) - 1,(uint)*(ushort *)(param_1 + 0x52));
+  local_18 = CONCAT22(local_18._2_2_,(short)__aeabi_idivmod_ret + 1);
+  dircache_touch(param_1);
+  return 0;
+}
+
+
+// ===== root_sector_get @ 20144d04 (88 bytes)
+
+/* (vol, n, *ptr): sector n of the fixed FAT12/16 root directory (after reserved + FATs), -11 past
+   its end [fact] */
+
+undefined4 root_sector_get(int param_1,int param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  int iVar3;
+  uint uVar4;
+  
+  iVar3 = *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) + (uint)*(ushort *)(param_1 + 6);
+  uVar4 = iVar3 + param_2;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
+  if (uVar4 < (uint)(iVar1 + iVar3)) {
+    uVar2 = dir_sector_get(param_1,uVar4,param_3);
+    return uVar2;
+  }
+  return 0xfffffff5;
+}
+
+
+// ===== lfn_entry_fill @ 20144d5c (348 bytes)
+
+/* (entry, name part, vol): fills one 32-byte long-name directory entry: zeroed, 0xFF padding in the
+   three name fields, then the UCS-2 characters [fact for the fills] */
+
+int lfn_entry_fill(int param_1,char *param_2,int param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  char *pcVar3;
+  
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
+  fs_memset(param_1,0,0x20,*(undefined4 *)(param_3 + 0x6c));
+  fs_memset(param_1 + 1,0xffffffff,10,*(undefined4 *)(param_3 + 0x6c));
+  fs_memset(param_1 + 0xe,0xffffffff,0xc,*(undefined4 *)(param_3 + 0x6c));
+  fs_memset(param_1 + 0x1c,0xffffffff,4,*(undefined4 *)(param_3 + 0x6c));
+  iVar2 = 0;
+  pcVar3 = (char *)(param_1 + 1);
+  iVar1 = 0;
+  do {
+    if ((*param_2 == '\0') && (param_2[1] == '\0')) {
+      *pcVar3 = '\0';
+      pcVar3[1] = '\0';
+      return iVar1;
+    }
+    iVar2 = iVar2 + 1;
+    *pcVar3 = *param_2;
+    iVar1 = iVar1 + 1;
+    pcVar3[1] = param_2[1];
+    param_2 = param_2 + 2;
+    pcVar3 = pcVar3 + 2;
+  } while (iVar2 < 5);
+  pcVar3 = (char *)(param_1 + 0xe);
+  iVar2 = 0;
+  do {
+    if ((*param_2 == '\0') && (param_2[1] == '\0')) goto LAB_20144eac;
+    iVar2 = iVar2 + 1;
+    *pcVar3 = *param_2;
+    iVar1 = iVar1 + 1;
+    pcVar3[1] = param_2[1];
+    param_2 = param_2 + 2;
+    pcVar3 = pcVar3 + 2;
+  } while (iVar2 < 6);
+  pcVar3 = (char *)(param_1 + 0x1c);
+  iVar2 = 0;
+  while ((*param_2 != '\0' || (param_2[1] != '\0'))) {
+    iVar2 = iVar2 + 1;
+    *pcVar3 = *param_2;
+    iVar1 = iVar1 + 1;
+    pcVar3[1] = param_2[1];
+    param_2 = param_2 + 2;
+    pcVar3 = pcVar3 + 2;
+    if (1 < iVar2) {
+      return iVar1;
+    }
+  }
+LAB_20144eac:
+  *pcVar3 = '\0';
+  pcVar3[1] = '\0';
+  return iVar1;
+}
+
+
+// ===== lfn_checksum @ 20144eb8 (60 bytes)
+
+/* Checksum of an 11-byte 8.3 name (rotate right and add), the value long-name entries carry [fact]
+    */
+
+uint lfn_checksum(int param_1)
+
+{
+  byte *pbVar1;
+  int i;
+  uint uVar2;
+  
+  uVar2 = 0;
+  i = 0;
+  do {
+    pbVar1 = (byte *)(param_1 + i);
+    i = i + 1;
+    uVar2 = uVar2 + *pbVar1;
+    uVar2 = (uVar2 & 1) << 7 | (uVar2 & 0xff) >> 1;
+  } while (i < 10);
+  return *(byte *)(param_1 + i) + uVar2 & 0xff;
+}
+
+
 // ===== root_dir_write_lfn @ 20144ef4 (432 bytes)
 
 /* (vol, slot, sfn entry, long name, n, ...): writes the 8.3 entry and the n long-name entries
@@ -2643,651 +2956,5 @@ root_dir_add_entry_locked
     uVar2 = 0xffffffdb;
   }
   return uVar2;
-}
-
-
-// ===== FUN_201480b4 @ 201480b4 (156 bytes)
-
-int FUN_201480b4(char *param_1)
-
-{
-  int iVar1;
-  char *pcVar2;
-  char *pcVar3;
-  char *pcVar4;
-  char local_18 [12];
-  
-  pcVar3 = local_18;
-                    /* 11-byte space-padded 8.3 form of a name [doc] */
-  iVar1 = sfn_pack(local_18);
-  if (iVar1 != 0) {
-    return iVar1;
-  }
-  if (local_18[0] == '\0') {
-    return -99;
-  }
-  if (local_18[0] == -0x1b) {
-    local_18[0] = '\x05';
-  }
-  else {
-    pcVar3 = local_18;
-    if (local_18[0] == '\0') {
-      return 0;
-    }
-  }
-  while( true ) {
-    iVar1 = sjis_is_lead(*pcVar3);
-    pcVar2 = pcVar3;
-    pcVar4 = param_1;
-    if (iVar1 != 0) {
-      pcVar2 = pcVar3 + 1;
-      pcVar4 = param_1 + 1;
-      if (*pcVar3 != *param_1) {
-        return -99;
-      }
-    }
-    pcVar3 = pcVar2 + 1;
-    param_1 = pcVar4 + 1;
-    if (*pcVar2 != *pcVar4) break;
-    if (*pcVar3 == '\0') {
-      return 0;
-    }
-  }
-  return -99;
-}
-
-
-// ===== subdir_add_entry @ 20148150 (2048 bytes)
-
-/* WARNING: Type propagation algorithm not settling */
-/* Sub-directory counterpart of root_dir_add_entry: checks the '.' entry, then scans the cluster
-   chain for a run of free entries (0xE5 / end) for the long-name count, allocates a cluster if
-   needed (dir_cluster_alloc_zeroed) and writes the entries (subdir_write_lfn) [inference: the calls
-   and the free-slot scan] */
-
-uint subdir_add_entry(int param_1,int param_2,undefined4 param_3,undefined4 param_4,int param_5,
-                     undefined4 param_6,uint *param_7,int *param_8,int param_9)
-
-{
-  byte bVar1;
-  char *pcVar2;
-  uint uVar3;
-  int iVar4;
-  int iVar5;
-  undefined4 uVar6;
-  uint uVar7;
-  short sVar8;
-  char *pcVar9;
-  uint uVar10;
-  uint uVar11;
-  char *pcVar12;
-  int iVar13;
-  uint uVar14;
-  undefined6 uVar15;
-  int local_b4 [4];
-  int local_a4;
-  char *local_a0 [4];
-  undefined *puStack_90;
-  undefined4 uStack_8c;
-  undefined4 uStack_88;
-  int local_84;
-  undefined1 auStack_80 [12];
-  int local_74;
-  int local_70;
-  undefined1 local_6c [12];
-  undefined1 auStack_60 [16];
-  int local_50;
-  int local_4c;
-  int local_48;
-  int local_44;
-  int local_40;
-  undefined1 local_3c [4];
-  int local_38;
-  int iStack_34;
-  int local_30;
-  undefined4 uStack_2c;
-  undefined4 local_28;
-  
-  local_a0[3] = &DAT_20202020;
-  puStack_90 = &DAT_20202020;
-  uStack_8c = 0x4e4543;
-  uStack_88 = 0x87900000;
-  local_a4 = 1;
-  iStack_34 = param_1;
-  local_30 = param_2;
-  uStack_2c = param_3;
-  local_28 = param_4;
-                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
-  fs_memset(local_6c,0x20,0xb,*(undefined4 *)(param_1 + 0x6c));
-  local_6c[0] = 0x2e;
-  local_a0[0] = (char *)(param_9 + 0x60c);
-  local_a0[1] = (char *)(param_9 + 0x80c);
-  local_a0[2] = (char *)(param_9 + 0xa0c);
-  fs_memset(local_a0[1],0,0x200,*(undefined4 *)(param_1 + 0x6c));
-  fs_memset((char *)(param_9 + 0xa0c),0,0x200,*(undefined4 *)(param_1 + 0x6c));
-  fs_memset(local_b4,0,0xc,*(undefined4 *)(param_1 + 0x6c));
-  fs_memset(auStack_80,0,0xc,*(undefined4 *)(param_1 + 0x6c));
-  iVar13 = 0;
-  local_44 = 0;
-  local_3c[0] = 0;
-  uVar14 = 0xffffffff;
-  uVar10 = 0;
-  uVar11 = 0;
-  local_50 = 0;
-                    /* fat_entry_rw under fs_lock_b, result to out [doc] */
-  uVar3 = fat_entry_rw_locked(param_1,&local_40,local_30,0,0x72,param_9);
-  if (uVar3 == 0) {
-    if (local_40 == 0) {
-LAB_2014836c:
-      uVar3 = 0xffffffb9;
-    }
-    else {
-      local_70 = param_9 + 0x40c;
-      iVar4 = fs_wstrcpy_len(param_3,local_70,local_3c);
-      if (iVar4 != -99) {
-        local_38 = 1;
-        uVar3 = 0;
-        local_b4[3] = (iVar4 + -1) / 0xd + 2U & 0xffff;
-        local_48 = param_9 + 0x1624;
-        local_74 = param_9 + 0x1600;
-        do {
-          iVar4 = fat_clust2sect(param_1,local_30);
-          local_84 = 0;
-          if (*(short *)(param_1 + 4) != 0) {
-            do {
-              uVar3 = dir_sector_get(param_1,iVar4,local_a0);
-              pcVar12 = local_a0[0];
-              if (uVar3 != 0) {
-                return uVar3;
-              }
-              local_b4[0] = iVar4;
-              if (local_a4 == 1) {
-                    /* Case-insensitive compare of at most n bytes [doc] */
-                    /* First cluster of an entry [doc] */
-                if ((*(int *)(param_1 + 0x34) != local_30) &&
-                   ((iVar5 = fs_strnicmp(local_a0[0],local_6c,0xb), iVar5 != 0 ||
-                    (iVar5 = dirent_get_cluster(pcVar12,(int)*(char *)(param_1 + 0x10)),
-                    iVar5 != local_30)))) goto LAB_2014836c;
-                local_a4 = 0;
-              }
-              uVar3 = 0;
-              if (*(uint *)(param_1 + 0x6c) >> 5 != 0) {
-                do {
-                  if (*pcVar12 == '\0') {
-                    if (param_5 == 0 || param_5 == 2) {
-                      return 0xfffffffc;
-                    }
-                    goto LAB_201483cc;
-                  }
-                  if ((*pcVar12 == -0x1b) && (param_5 == 1 || param_5 == 3)) {
-                    if ((local_b4[3] == iVar13 + 1U) && ((int)uVar14 < 0)) {
-                      uVar14 = (uint)(short)uVar3;
-                      fs_memcpy(auStack_80,local_b4,0xc);
-                      *param_8 = iVar4;
-                      *param_7 = uVar14;
-                      local_44 = local_50;
-                    }
-                    iVar13 = iVar13 + 1;
-                  }
-                  else {
-                    iVar13 = 0;
-                    bVar1 = pcVar12[0xb];
-                    if (((bVar1 & 0x30) == 0) && ((~bVar1 & 0xf) == 0)) {
-                      if (uVar11 == 0) {
-                        uVar10 = 1;
-                        uVar11 = uVar10;
-                      }
-                      else {
-                        uVar10 = uVar10 + 1 & 0xffff;
-                      }
-                    }
-                    else if (uVar11 == 0) {
-                      uVar10 = 1;
-                    }
-                    else {
-                      uVar10 = uVar10 + 1 & 0xffff;
-                      uVar11 = 0;
-                    }
-                    if (((bVar1 & 8) == 0) && (param_5 != 3)) {
-                      iVar5 = subdir_lfn_match(local_a0,pcVar12,local_70,param_1);
-                      if (iVar5 == 0) {
-LAB_20148840:
-                        fs_memcpy(local_28,pcVar12,0x20);
-                        if (param_5 == 0) {
-                          *param_8 = iVar4;
-                          *param_7 = uVar3;
-                          *(short *)(local_74 + 0x20) = (short)uVar3;
-                          *(short *)(local_74 + 0x22) = (short)local_b4[3];
-                          fs_memcpy(local_48,local_b4,0xc);
-                          return 0;
-                        }
-                        if (param_5 != 2) {
-                          return 0xfffffff3;
-                        }
-                        uVar11 = dir_entries_mark_deleted(pcVar12,local_a0,uVar10,param_1);
-                        if (uVar11 != 0) {
-                          return uVar11;
-                        }
-                        iVar13 = (uVar10 - uVar3) + -1;
-                        iVar4 = 1;
-                        if (0 < iVar13) {
-                          do {
-                            iVar4 = iVar4 + 1;
-                            iVar13 = iVar13 - (*(uint *)(param_1 + 0x6c) >> 5);
-                          } while (0 < iVar13);
-                        }
-                        iVar13 = 0;
-                        if (0 < iVar4) {
-                          while( true ) {
-                            if (local_b4[iVar13] == 0) {
-                              return 0;
-                            }
-                            uVar11 = dir_sector_dirty(param_1,local_b4[iVar13],local_a0[iVar13]);
-                            if (uVar11 != 0) break;
-                            iVar13 = iVar13 + 1;
-                            if (iVar4 <= iVar13) {
-                              return 0;
-                            }
-                          }
-                          return uVar11;
-                        }
-                        return 0;
-                      }
-                    /* Length of a UTF-16 string in bytes [doc] */
-                      uVar7 = fs_wstrlen_bytes(local_70);
-                      if (uVar7 < 0x19) {
-                    /* UTF-16 name to 8-bit upper case [doc] */
-                        fs_ucs2_to_ascii_upper(auStack_60,local_70);
-                        iVar5 = FUN_201480b4(pcVar12,auStack_60,param_1);
-                        if (iVar5 == 0) goto LAB_20148840;
-                      }
-                    }
-                  }
-                  uVar3 = uVar3 + 1;
-                  pcVar12 = pcVar12 + 0x20;
-                } while (uVar3 < *(uint *)(param_1 + 0x6c) >> 5);
-              }
-              pcVar2 = local_a0[1];
-              pcVar12 = local_a0[0];
-              pcVar9 = local_a0[2];
-              iVar4 = iVar4 + 1;
-              local_a0[0] = local_a0[2];
-              local_a0[2] = local_a0[1];
-              local_a0[1] = pcVar12;
-              local_b4[2] = local_b4[1];
-              local_b4[1] = local_b4[0];
-              local_84 = local_84 + 1;
-              local_50 = local_50 + 1;
-            } while (local_84 < (int)(uint)*(ushort *)(param_1 + 4));
-          }
-          fat_entry_rw_locked(param_1,&local_4c,local_30,0,0x72,param_9);
-          if (local_4c == 0xffffff7) {
-            return 0xffffffc3;
-          }
-          if (local_4c + 0xf0000008U < 8) {
-            if (param_5 == 0 || param_5 == 2) {
-              return 0xfffffffc;
-            }
-            if (-1 < (int)uVar14) {
-LAB_201483cc:
-              if (-1 < (int)uVar14) {
-                *(short *)(local_74 + 0x20) = (short)uVar14;
-                *(short *)(local_74 + 0x22) = (short)local_b4[3];
-                fs_memcpy(local_48,auStack_80,0xc);
-                if (param_5 == 3) {
-                  return 0;
-                }
-                    /* decimal digits of value, zero-padded to width [doc] */
-                fs_utoa_zeropad(local_44 * (*(uint *)(param_1 + 0x6c) >> 5) + uVar14,local_a0 + 3,8)
-                ;
-                fs_memcpy(local_28,local_a0 + 3,0xb);
-                uVar11 = subdir_write_lfn(param_1,auStack_80,uVar14 & 0xffff,local_28,local_70,
-                                          local_b4[3],param_9);
-                return uVar11;
-              }
-              iVar13 = (local_b4[3] + uVar3) - iVar13;
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-              uVar15 = __aeabi_uidivmod(iVar13 + -1,*(uint *)(param_1 + 0x6c) >> 5);
-              sVar8 = (short)((uint6)uVar15 >> 0x20);
-              iVar5 = 0;
-              if ((int)uVar15 < 1) goto LAB_20148520;
-              goto LAB_20148488;
-            }
-            local_4c = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
-            uVar7 = fs_task_ctx_get();
-            if (uVar7 != 0) {
-              return uVar7;
-            }
-          }
-          local_30 = local_4c;
-        } while( true );
-      }
-      uVar3 = 0xffffffba;
-    }
-  }
-  return uVar3;
-LAB_20148488:
-  iVar4 = iVar4 + 1;
-  uVar11 = (uint)*(ushort *)(param_1 + 4);
-  if (uVar11 == 1) {
-    iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
-    local_30 = iVar4;
-    uVar11 = fs_task_ctx_get();
-    if (uVar11 != 0) {
-      return uVar11;
-    }
-LAB_20148620:
-    iVar4 = fat_clust2sect(param_1,iVar4);
-  }
-  else if (uVar11 == 2) {
-    if (local_84 == 1) {
-      iVar4 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
-      uVar11 = fs_task_ctx_get();
-      if (uVar11 != 0) {
-        return uVar11;
-      }
-      goto LAB_20148620;
-    }
-  }
-  else if (uVar11 - 1 == local_84) {
-    uVar6 = dir_cluster_alloc_zeroed(param_1,local_30,param_9);
-                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
-    uVar11 = fs_task_ctx_get();
-    if (uVar11 != 0) {
-      return uVar11;
-    }
-    iVar4 = fat_clust2sect(param_1,uVar6);
-    local_84 = 0;
-  }
-  iVar5 = iVar5 + 1;
-  local_b4[2] = local_b4[1];
-  local_b4[1] = local_b4[0];
-  local_84 = local_84 + 1;
-  local_b4[0] = iVar4;
-  if ((int)uVar15 <= iVar5) {
-LAB_20148520:
-    *param_8 = iVar4;
-    *param_7 = (int)sVar8;
-    *(short *)(local_74 + 0x20) = sVar8;
-    *(short *)(local_74 + 0x22) = (short)local_b4[3];
-    fs_memcpy(local_48,local_b4,0xc);
-    if (param_5 == 3) {
-      return 0;
-    }
-    fs_utoa_zeropad(local_50 * (*(uint *)(param_1 + 0x6c) >> 5) + iVar13 + -1,local_a0 + 3,8);
-    fs_memcpy(local_28,local_a0 + 3,0xb);
-    if (local_38 == 0) {
-      uVar11 = subdir_write_lfn(param_1,local_b4,sVar8,local_28,0,local_b4[3],param_9);
-      return uVar11;
-    }
-    uVar11 = subdir_write_lfn(param_1,local_b4,sVar8,local_28,local_70,local_b4[3],param_9);
-    return uVar11;
-  }
-  goto LAB_20148488;
-}
-
-
-// ===== subdir_add_entry_locked @ 20148990 (124 bytes)
-
-/* fs_lock_a, subdir_add_entry, fs_unlock_a [fact] */
-
-undefined4
-subdir_add_entry_locked
-          (undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
-          undefined4 param_5,undefined4 param_6,undefined4 param_7,undefined4 param_8,
-          undefined4 param_9)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  undefined4 uVar3;
-  undefined4 uVar4;
-  
-  uVar2 = param_2;
-  uVar3 = param_3;
-  uVar4 = param_4;
-                    /* Locks the per-drive semaphore of table 0x2091D4C0 [doc] */
-  iVar1 = fs_lock_a(param_1);
-  if (iVar1 == 0) {
-                    /* Sub-directory counterpart of root_dir_add_entry [doc, inference] */
-    uVar2 = subdir_add_entry(param_1,param_2,param_3,param_4,param_5,param_6,param_7,param_8,param_9
-                             ,param_1,uVar2,uVar3,uVar4);
-    fs_unlock_a(param_1);
-  }
-  else {
-    uVar2 = 0xffffffdb;
-  }
-  return uVar2;
-}
-
-
-// ===== wpath_next_component @ 20148a0c (124 bytes)
-
-/* (path, out): copies the next UCS-2 path component up to '\' or the end [fact] */
-
-void wpath_next_component(char *param_1,char *param_2)
-
-{
-  char cVar1;
-  char cVar2;
-  
-  if ((*param_1 != '\\') && (param_1[1] != '\0')) {
-    return;
-  }
-  do {
-    cVar2 = param_1[2];
-    if (cVar2 == '\0') {
-      cVar1 = param_1[3];
-joined_r0x20148a4c:
-      if (cVar1 == '\0') {
-        *param_2 = '\0';
-        param_2[1] = '\0';
-        return;
-      }
-    }
-    else if (cVar2 == '\\') {
-      cVar1 = param_1[3];
-      goto joined_r0x20148a4c;
-    }
-    *param_2 = cVar2;
-    param_2[1] = param_1[3];
-    param_2 = param_2 + 2;
-    param_1 = param_1 + 2;
-  } while( true );
-}
-
-
-// ===== wpath_dir_len @ 20148a88 (136 bytes)
-
-/* (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the
-   last, with separators) plus 6 [fact for the loop] */
-
-int wpath_dir_len(int param_1)
-
-{
-  int iVar1;
-  char *pcVar2;
-  int iVar3;
-  char local_218;
-  char local_217;
-  
-  iVar3 = 0;
-  pcVar2 = (char *)(param_1 + 4);
-  while ((((*pcVar2 != '\0' || (pcVar2[1] != '\0')) &&
-          ((pcVar2 = (char *)wpath_next_component(pcVar2,&local_218), local_218 != '\0' ||
-           (local_217 != '\0')))) && ((*pcVar2 != '\0' || (pcVar2[1] != '\0'))))) {
-                    /* Length of a UTF-16 string in bytes [doc] */
-    iVar1 = fs_wstrlen_bytes(&local_218);
-    iVar3 = iVar1 + iVar3 + 2;
-  }
-  return iVar3 + 6;
-}
-
-
-// ===== lfn_name_valid @ 20148b10 (160 bytes)
-
-/* (UCS-2 name): rejects characters of the invalid set *0x20808BA8 and a trailing '.' or ' ' [fact
-   for the checks] */
-
-undefined4 lfn_name_valid(char *param_1)
-
-{
-  char cVar1;
-  char *pcVar2;
-  
-  for (; (*param_1 != '\0' || (param_1[1] != '\0')); param_1 = param_1 + 2) {
-    cVar1 = *DAT_20808ba8;
-    pcVar2 = DAT_20808ba8;
-    while (cVar1 != '\0') {
-      if ((*pcVar2 == *param_1) && (param_1[1] == '\0')) {
-        return 0xffffffff;
-      }
-      pcVar2 = pcVar2 + 1;
-      cVar1 = *pcVar2;
-    }
-  }
-  if (param_1[-2] == '.') {
-    cVar1 = param_1[-1];
-  }
-  else {
-    if (param_1[-2] != ' ') {
-      return 0;
-    }
-    cVar1 = param_1[-1];
-  }
-  if (cVar1 != '\0') {
-    return 0;
-  }
-  return 0xffffffff;
-}
-
-
-// ===== FUN_20148bb0 @ 20148bb0 (64 bytes)
-
-int FUN_20148bb0(char *param_1)
-
-{
-  int iVar1;
-  char cStack_210;
-  char cStack_20f;
-  
-  if ((0x19 < (int)*param_1 - 0x41U) && (0x19 < (int)*param_1 - 0x61U)) {
-    return -0xc;
-  }
-  if ((param_1[2] == ':') && (param_1[4] == '\\')) {
-    param_1 = param_1 + 4;
-    while (((*param_1 != '\0' || (param_1[1] != '\0')) &&
-           ((param_1 = (char *)wpath_next_component(param_1,&cStack_210), cStack_210 != '\0' ||
-            (cStack_20f != '\0'))))) {
-      iVar1 = lfn_name_valid(&cStack_210);
-      if (iVar1 != 0) {
-        return iVar1;
-      }
-    }
-    return 0;
-  }
-  return -1;
-}
-
-
-// ===== FUN_20148bf0 @ 20148bf0 (108 bytes)
-
-int FUN_20148bf0(int param_1)
-
-{
-  int iVar1;
-  char *pcVar2;
-  char local_210;
-  char local_20f;
-  
-  pcVar2 = (char *)(param_1 + 4);
-  while (((*pcVar2 != '\0' || (pcVar2[1] != '\0')) &&
-         ((pcVar2 = (char *)wpath_next_component(pcVar2,&local_210), local_210 != '\0' ||
-          (local_20f != '\0'))))) {
-    iVar1 = lfn_name_valid(&local_210);
-    if (iVar1 != 0) {
-      return iVar1;
-    }
-  }
-  return 0;
-}
-
-
-// ===== fs_wstrlen_max @ 20148c5c (56 bytes)
-
-/* (UCS-2 string): length in bytes, at most 0x204 [fact] */
-
-undefined4 fs_wstrlen_max(short *param_1)
-
-{
-  short sVar1;
-  int iVar2;
-  
-  sVar1 = *param_1;
-  iVar2 = 0;
-  while( true ) {
-    if (sVar1 == 0) {
-      return 0;
-    }
-    iVar2 = iVar2 + 2;
-    if (0x204 < iVar2) break;
-    param_1 = param_1 + 1;
-    sVar1 = *param_1;
-  }
-  return 0xffffffff;
-}
-
-
-// ===== ucs2_to_upper @ 20148c94 (224 bytes)
-
-/* (code): upper-case of a UCS-2 code for ASCII, full-width, Greek and Cyrillic letters (the pages
-   of ucs2_eq_nocase) [fact] */
-
-uint ucs2_to_upper(uint param_1)
-
-{
-  uint uVar1;
-  
-  if ((param_1 & 0xff) == 0) {
-    if (0x1900 < param_1 - 0x6100) {
-      return param_1;
-    }
-  }
-  else if ((~param_1 & 0xff) == 0) {
-    if (0x1900 < param_1 - 0x41ff) {
-      return param_1;
-    }
-  }
-  else {
-    uVar1 = param_1 & 0xff;
-    if (uVar1 == 3) {
-      if ((0x1000 < param_1 - 0xb103) && (0x600 < param_1 - 0xc303)) {
-        return param_1;
-      }
-    }
-    else {
-      if (uVar1 != 4) {
-        if (uVar1 != 0x21) {
-          return param_1;
-        }
-        if (0x900 < param_1 - 0x7021) {
-          return param_1;
-        }
-        param_1 = param_1 - 0x1000;
-LAB_20148cdc:
-        return param_1 & 0xffff;
-      }
-      if (0x500 < param_1 - 0x3004) {
-        if (param_1 == 0x5104) {
-          param_1 = 0x104;
-          goto LAB_20148cdc;
-        }
-        if ((0x700 < param_1 - 0x3604) && (0x1100 < param_1 - 0x3e04)) {
-          return param_1;
-        }
-      }
-    }
-  }
-  return param_1 - 0x2000 & 0xffff;
 }
 

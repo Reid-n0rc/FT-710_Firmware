@@ -1,4 +1,138 @@
-// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 20 functions
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 30 functions
+
+// ===== ring16_reset @ 201645e4 (20 bytes)
+
+/* Clears count, head and tail of a 16-entry ring {count, head, tail, slots} [fact] */
+
+void ring16_reset(undefined2 *param_1)
+
+{
+  *param_1 = 0;
+  param_1[1] = 0;
+  param_1[2] = 0;
+  return;
+}
+
+
+// ===== ring16_set_slot @ 201645f8 (12 bytes)
+
+/* ring->slot[n] (obj+8+4n) = pointer [fact] */
+
+void ring16_set_slot(int param_1,int param_2,undefined4 param_3)
+
+{
+  *(undefined4 *)(param_1 + param_2 * 4 + 8) = param_3;
+  return;
+}
+
+
+// ===== ring16_pop @ 20164604 (52 bytes)
+
+/* Returns the slot at the head and advances it (mod 16), 0 when empty [fact]; usbkbd_pop_key [fact]
+    */
+
+undefined4 ring16_pop(short *param_1)
+
+{
+  ushort uVar1;
+  undefined4 uVar2;
+  
+  if (*param_1 == 0) {
+    uVar2 = 0;
+  }
+  else {
+    *param_1 = *param_1 + -1;
+    uVar1 = param_1[1];
+    param_1[1] = uVar1 + 1 & 0xf;
+    uVar2 = *(undefined4 *)(param_1 + (uint)uVar1 * 2 + 4);
+  }
+  return uVar2;
+}
+
+
+// ===== ring16_ctor @ 20164638 (20 bytes)
+
+/* ring16_reset, returns this [fact] */
+
+undefined4 ring16_ctor(undefined4 param_1)
+
+{
+  ring16_reset();
+  return param_1;
+}
+
+
+// ===== FUN_20164654 @ 20164654 (12 bytes)
+
+undefined4 FUN_20164654(int param_1)
+
+{
+  return *(undefined4 *)(param_1 + 0x10e8);
+}
+
+
+// ===== FUN_2016466c @ 2016466c (8 bytes)
+
+undefined4 FUN_2016466c(int param_1)
+
+{
+  return *(undefined4 *)(param_1 + 0x88);
+}
+
+
+// ===== FUN_20164674 @ 20164674 (12 bytes)
+
+undefined4 FUN_20164674(int param_1)
+
+{
+  return *(undefined4 *)(param_1 + 0x3848);
+}
+
+
+// ===== FUN_20164680 @ 20164680 (36 bytes)
+
+undefined4 FUN_20164680(char *param_1)
+
+{
+  if (*param_1 == '\0') {
+    return *(undefined4 *)(param_1 + 0x97c);
+  }
+  return *(undefined4 *)(param_1 + 4);
+}
+
+
+// ===== FUN_2016469c @ 2016469c (40 bytes)
+
+undefined4 FUN_2016469c(char *param_1)
+
+{
+  if (*param_1 == '\0') {
+    return *(undefined4 *)(param_1 + 0x2bb4);
+  }
+  return *(undefined4 *)(param_1 + 4);
+}
+
+
+// ===== FUN_201646bc @ 201646bc (84 bytes)
+
+void FUN_201646bc(int param_1,int param_2,int param_3,int param_4)
+
+{
+  int iVar1;
+  
+  iVar1 = 0;
+  do {
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 800);
+  FUN_20133e54(param_3 + 399,*(int *)(param_1 + 0x3c) + param_2 * 0x62e,0x317,param_4 + 399,
+               0xfffffe75);
+  iVar1 = 0;
+  do {
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 800);
+  return;
+}
+
 
 // ===== FUN_20164714 @ 20164714 (68 bytes)
 

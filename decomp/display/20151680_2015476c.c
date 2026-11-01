@@ -1,5 +1,701 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== itron_sta_cyc @ 20151680 (204 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): cyc table 0x208DBF64:
+   (re)inserts the handler into timer queue 0x208003C4, sets TCYC_STA [inference] */
+
+code * itron_sta_cyc(uint param_1)
+
+{
+  uint uVar1;
+  int iVar2;
+  
+  if ((param_1 != 0) && (param_1 < 9)) {
+    software_interrupt(0);
+    iVar2 = *(int *)(&DAT_208dbf64 + param_1 * 4);
+    if (iVar2 == 0) {
+      software_interrupt(0);
+      return (code *)0xffffffd6;
+    }
+    uVar1 = *(uint *)(iVar2 + 0xc);
+    if ((uVar1 & 4) == 0) {
+      if ((uVar1 & 1) != 0) {
+        FUN_201535b4(&DAT_208dbf64,iVar2,param_1);
+        *(undefined1 *)(iVar2 + 8) = 0;
+        *(undefined1 *)(iVar2 + 9) = 0;
+      }
+      FUN_201543e4(iVar2 + 0x10,0x208003c4,iVar2);
+      FUN_20153720(&DAT_208dbf64,iVar2,param_1);
+      *(uint *)(iVar2 + 0xc) = *(uint *)(iVar2 + 0xc) | 1;
+    }
+    else {
+      *(uint *)(iVar2 + 0xc) = uVar1 | 1;
+    }
+    software_interrupt(0);
+    return knl_svc_return;
+  }
+  knl_sys.last_ercd = -0x12;
+  return (code *)0xffffffee;
+}
+
+
+// ===== itron_sta_tsk @ 20151768 (244 bytes)
+
+uint itron_sta_tsk(uint param_1,uint param_2)
+
+{
+  byte *pbVar1;
+  uint uVar2;
+  knl_tcb *p_knl_tcb;
+  uint uVar3;
+  
+  if (param_1 == 0) {
+    knl_sys.last_ercd = 0xffffffd7;
+  }
+  else {
+    if (param_1 <= DAT_201659d0) {
+      software_interrupt(0);
+      p_knl_tcb = knl_tsk_tab[param_1];
+      if (p_knl_tcb == (knl_tcb *)0x0) {
+        software_interrupt(0);
+        return 0xffffffd6;
+      }
+      if (p_knl_tcb->state == 0) {
+        uVar3 = p_knl_tcb->ctsk->task;
+        pbVar1 = p_knl_tcb->stk + p_knl_tcb->ctsk->stksz;
+        *(byte **)(pbVar1 + -0x18) = pbVar1;
+        *(uint *)(pbVar1 + -0x48) = param_2;
+        uVar2 = knl_sys.task_cpsr;
+        if ((uVar3 & 1) != 0) {
+          uVar2 = knl_sys.task_cpsr | 0x20;
+        }
+        *(uint *)(pbVar1 + -0xc) = uVar2;
+        uVar2 = FUN_201568b8();
+        *(uint *)(pbVar1 + -0xc) = uVar2 | *(uint *)(pbVar1 + -0xc);
+        *(code **)(pbVar1 + -0x14) = itron_ext_tsk;
+        *(uint *)(pbVar1 + -4) = uVar3;
+        p_knl_tcb->sp = (uint)(pbVar1 + -0x48);
+        p_knl_tcb->f_0x08_u8 = 0;
+        p_knl_tcb->f_0x09_u8 = 0;
+        p_knl_tcb->f_0x20_u32 = 0;
+        p_knl_tcb->state = 0x10;
+        uVar2 = FUN_20154538(p_knl_tcb,param_1);
+        return uVar2;
+      }
+      software_interrupt(0);
+      return 0xffffffd7;
+    }
+    knl_sys.last_ercd = 0xffffffee;
+  }
+  return knl_sys.last_ercd;
+}
+
+
+// ===== itron_stp_cyc @ 20151878 (164 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): cyc table 0x208DBF64:
+   removes it from the timer queue, clears TCYC_STA [inference] */
+
+code * itron_stp_cyc(uint param_1)
+
+{
+  int iVar1;
+  
+  if ((param_1 != 0) && (param_1 < 9)) {
+    software_interrupt(0);
+    iVar1 = *(int *)(&DAT_208dbf64 + param_1 * 4);
+    if (iVar1 == 0) {
+      software_interrupt(0);
+      return (code *)0xffffffd6;
+    }
+    if ((*(uint *)(iVar1 + 0xc) & 1) != 0) {
+      if ((*(uint *)(iVar1 + 0xc) & 4) == 0) {
+        FUN_201535b4(&DAT_208dbf64,iVar1,param_1);
+        *(undefined1 *)(iVar1 + 8) = 0;
+        *(undefined1 *)(iVar1 + 9) = 0;
+      }
+      *(uint *)(iVar1 + 0xc) = *(uint *)(iVar1 + 0xc) & 0xfffffffe;
+    }
+    software_interrupt(0);
+    return knl_svc_return;
+  }
+  knl_sys.last_ercd = -0x11;
+  return (code *)0xffffffef;
+}
+
+
+// ===== itron_sus_tsk @ 20151934 (328 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): id 0 = self, E_OBJ
+   dormant, suspend count TCB+9 ++ (E_QOVR at 255), E_CTX for self with dispatch disabled
+   [inference] */
+
+code * itron_sus_tsk(uint param_1)
+
+{
+  knl_tcb *p_knl_tcb;
+  code *pcVar1;
+  byte bVar2;
+  
+  if ((((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
+      (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U))) || (param_1 != 0)) {
+    if (param_1 <= DAT_201659d0) {
+      if (param_1 == 0) {
+        param_1 = (uint)knl_rdq[0];
+      }
+      software_interrupt(0);
+      p_knl_tcb = knl_tsk_tab[param_1];
+      if (p_knl_tcb == (knl_tcb *)0x0) {
+        software_interrupt(0);
+        return (code *)0xffffffd6;
+      }
+      if (p_knl_tcb->state == 0) {
+        software_interrupt(0);
+        return (code *)0xffffffd7;
+      }
+      bVar2 = p_knl_tcb->f_0x09_u8 + 1;
+      p_knl_tcb->f_0x09_u8 = bVar2;
+      if (bVar2 == 0) {
+        p_knl_tcb->f_0x09_u8 = 0xff;
+        software_interrupt(0);
+        return (code *)0xffffffd5;
+      }
+      if (bVar2 != 1 || p_knl_tcb->state != 0x10) {
+        software_interrupt(0);
+        return knl_svc_return;
+      }
+      if ((uint)knl_rdq[0] == (param_1 & 0xff)) {
+        if (knl_sys.ctx_isr == 0) {
+                    /* removes the running task from its ready queue [doc] */
+          pcVar1 = (code *)knl_wait_self(p_knl_tcb,param_1);
+          return pcVar1;
+        }
+        knl_sys.dsp_pending = 1;
+      }
+      pcVar1 = (code *)knl_release_suspended(p_knl_tcb,param_1);
+      return pcVar1;
+    }
+    knl_sys.last_ercd = -0x12;
+  }
+  else {
+    knl_sys.last_ercd = -0x19;
+  }
+  return (code *)knl_sys.last_ercd;
+}
+
+
+// ===== itron_tget_mpf @ 20151aa4 (356 bytes)
+
+/* (mpfid 1..0x10, *p_blk, tmout): takes a block from the free list of pool table 0x208DBF24 or
+   waits; E_TMOUT for tmout 0 [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO)
+   (uitron_api_shape 0.950): (mpfid, p_blk, tmout): mpf table 0x208DBF24, pops the free list,
+   E_TMOUT polling, waits otherwise [inference] */
+
+code * itron_tget_mpf(uint param_1,undefined4 *param_2,int tmout)
+
+{
+  byte bVar1;
+  byte *pbVar2;
+  code *pcVar3;
+  knl_mpf *p_knl_mpf;
+  knl_tcb *tcb;
+  uint uVar4;
+  
+  if ((param_1 == 0) || (0x10 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+  }
+  else {
+    software_interrupt(0);
+    p_knl_mpf = knl_mpf_tab[param_1];
+    if (p_knl_mpf == (knl_mpf *)0x0) {
+      software_interrupt(0);
+      return (code *)0xffffffd6;
+    }
+    pbVar2 = p_knl_mpf->free_head;
+    if (pbVar2 != (byte *)0x0) {
+      *param_2 = pbVar2;
+      p_knl_mpf->free_head = *(byte **)pbVar2;
+      p_knl_mpf->fblkcnt = p_knl_mpf->fblkcnt - 1;
+      software_interrupt(0);
+      return knl_svc_return;
+    }
+    if (tmout == 0) {
+      software_interrupt(0);
+      return (code *)0xffffffce;
+    }
+    if ((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) {
+      uVar4 = (uint)knl_rdq[0];
+      if (uVar4 != ((byte)DAT_201659d0 + 1 & 0xff)) {
+        tcb = knl_tsk_tab[uVar4];
+        if (tmout == -1) {
+          bVar1 = 0xd0;
+        }
+        else {
+          knl_timeout_add(tmout,tcb,knl_rdq[0]);
+          bVar1 = 0xd2;
+        }
+        tcb->state = bVar1;
+        pbVar2 = p_knl_mpf->wq;
+        if (p_knl_mpf->wq[1] < 0xfe) {
+          pbVar2 = pbVar2 + knl_sys.run_pri + -1;
+        }
+        knl_sys.wait_arg2 = (uint)param_2;
+        knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
+        return pcVar3;
+      }
+    }
+    software_interrupt(0);
+    knl_sys.last_ercd = -0x19;
+  }
+  return (code *)knl_sys.last_ercd;
+}
+
+
+// ===== itron_tloc_mtx @ 20151c3c (504 bytes)
+
+/* (mtxid 1..0x20, tmout): table 0x208DBFC4, E_ILUSE, E_TMOUT [fact]; the RTC I2C lock (rtc_read_* /
+   rtc_write_*) [fact]; T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900):
+   (mtxid, tmout): mtx table 0x208DBFC4 (32), owner +10, ceiling/inherit, E_ILUSE, E_TMOUT
+   [inference] */
+
+code * itron_tloc_mtx(uint param_1,int tmout)
+
+{
+  short sVar1;
+  sbyte sVar2;
+  byte bVar3;
+  byte *queue;
+  code *pcVar4;
+  knl_mtx *p_knl_mtx;
+  knl_tcb *tcb;
+  int iVar5;
+  int iVar6;
+  uint tskid;
+  
+  if ((param_1 == 0) || (0x20 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+  }
+  else {
+    if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
+       (knl_rdq[0] != (byte)((char)DAT_201659d0 + 1U))) {
+      software_interrupt(0);
+      p_knl_mtx = knl_mtx_tab[param_1];
+      if (p_knl_mtx == (knl_mtx *)0x0) {
+        software_interrupt(0);
+        return (code *)0xffffffd6;
+      }
+      tskid = (uint)knl_rdq[0];
+      if (p_knl_mtx->owner == tskid) {
+        software_interrupt(0);
+      }
+      else {
+        iVar6 = p_knl_mtx->mtxatr;
+        sVar2 = p_knl_mtx->pri;
+        iVar5 = (int)sVar2;
+        tcb = knl_tsk_tab[tskid];
+        if ((iVar6 != 3) || (iVar5 <= tcb->bpri)) {
+          if (p_knl_mtx->owner != 0) {
+            if (tmout == 0) {
+              software_interrupt(0);
+              return (code *)0xffffffce;
+            }
+            if (tmout == -1) {
+              bVar3 = 0x94;
+            }
+            else {
+              knl_timeout_add(tmout,tcb,knl_rdq[0]);
+              bVar3 = 0x96;
+            }
+            tcb->state = bVar3;
+            queue = p_knl_mtx->wq;
+            if (p_knl_mtx->wq[1] < 0xfe) {
+              queue = queue + knl_sys.run_pri + -1;
+            }
+            knl_sys.wait_id = param_1;
+            knl_queue_move(queue,tcb,tskid);
+            if ((iVar6 == 2) && (knl_sys.run_pri < iVar5)) {
+              p_knl_mtx->pri = knl_sys.run_pri;
+              FUN_20153f28(p_knl_mtx->owner);
+            }
+            software_interrupt(0);
+            return knl_resched;
+          }
+          p_knl_mtx->owner = knl_rdq[0];
+          sVar1 = tcb->mtx_held;
+          tcb->mtx_held = (short)param_1;
+          p_knl_mtx->prev_held = sVar1;
+          if (iVar6 == 2) {
+            p_knl_mtx->pri = tcb->pri;
+          }
+          else if ((iVar6 == 3) && (iVar5 < tcb->pri)) {
+            tcb->pri = sVar2;
+                    /* Moves the running task into an object's wait queue [doc] */
+            pcVar4 = (code *)knl_wait_enter(knl_rdq + iVar5,tcb,tskid);
+            return pcVar4;
+          }
+          software_interrupt(0);
+          return knl_svc_return;
+        }
+        software_interrupt(0);
+      }
+      return (code *)0xffffffe4;
+    }
+    knl_sys.last_ercd = -0x19;
+  }
+  return (code *)knl_sys.last_ercd;
+}
+
+
+// ===== itron_trcv_dtq @ 20151e68 (536 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (dtqid, p_data, tmout):
+   dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT [inference] */
+
+code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
+
+{
+  byte bVar1;
+  undefined4 *puVar2;
+  byte *pbVar3;
+  code *pcVar4;
+  int iVar5;
+  uint uVar6;
+  knl_tcb *p_knl_tcb;
+  
+  if ((param_1 == 0) || (8 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+    return (code *)0xffffffee;
+  }
+  software_interrupt(0);
+  iVar5 = *(int *)(&DAT_208dbfa4 + param_1 * 4);
+  if (iVar5 == 0) {
+    software_interrupt(0);
+    return (code *)0xffffffd6;
+  }
+  if (*(short *)(iVar5 + 0x16) == 0) {
+    pbVar3 = (byte *)(iVar5 + 0x1a);
+    do {
+      uVar6 = (uint)*pbVar3;
+      pbVar3 = pbVar3 + 1;
+    } while (uVar6 == 0);
+    if (0xfd < uVar6) {
+      if (tmout == 0) {
+        software_interrupt(0);
+        return (code *)0xffffffce;
+      }
+      if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
+         (uVar6 = (uint)knl_rdq[0], uVar6 != ((byte)DAT_201659d0 + 1 & 0xff))) {
+        p_knl_tcb = knl_tsk_tab[uVar6];
+        if (tmout == -1) {
+          bVar1 = 0xb4;
+        }
+        else {
+          knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
+          bVar1 = 0xb6;
+        }
+        p_knl_tcb->state = bVar1;
+        knl_sys.wait_arg2 = (uint)param_2;
+        knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar4 = (code *)knl_wait_enter(iVar5 + 0x18,p_knl_tcb,uVar6);
+        return pcVar4;
+      }
+      software_interrupt(0);
+      knl_sys.last_ercd = -0x19;
+      return (code *)0xffffffe7;
+    }
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    *param_2 = *(undefined4 *)(p_knl_tcb->sp + 0xc);
+  }
+  else {
+    puVar2 = *(undefined4 **)(iVar5 + 0xc) + 1;
+    *param_2 = **(undefined4 **)(iVar5 + 0xc);
+    *(short *)(iVar5 + 0x16) = *(short *)(iVar5 + 0x16) + -1;
+    if (*(undefined4 **)(iVar5 + 0x10) <= puVar2) {
+      puVar2 = *(undefined4 **)(iVar5 + 4);
+    }
+    *(undefined4 **)(iVar5 + 0xc) = puVar2;
+    pbVar3 = (byte *)(iVar5 + 0x1a);
+    do {
+      uVar6 = (uint)*pbVar3;
+      pbVar3 = pbVar3 + 1;
+    } while (uVar6 == 0);
+    if (0xfd < uVar6) {
+      software_interrupt(0);
+      return knl_svc_return;
+    }
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    puVar2 = *(undefined4 **)(iVar5 + 8) + 1;
+    **(undefined4 **)(iVar5 + 8) = *(undefined4 *)(p_knl_tcb->sp + 0xc);
+    *(short *)(iVar5 + 0x16) = *(short *)(iVar5 + 0x16) + 1;
+    if (*(undefined4 **)(iVar5 + 0x10) <= puVar2) {
+      puVar2 = *(undefined4 **)(iVar5 + 4);
+    }
+    *(undefined4 **)(iVar5 + 8) = puVar2;
+  }
+  if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+    knl_timeout_remove(p_knl_tcb,uVar6);
+  }
+  p_knl_tcb->state = 0x10;
+  if (p_knl_tcb->f_0x09_u8 != 0) {
+    pcVar4 = (code *)knl_release_suspended();
+    return pcVar4;
+  }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+  pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar6);
+  return pcVar4;
+}
+
+
+// ===== knl_mbf_get @ 201520b0 (248 bytes)
+
+/* (mbf, buf): copies the next message out of the message-buffer ring (16-bit length prefix, wrap at
+   the ring size) and returns its size; itron_trcv_mbf calls it (boot-rtos.md) [fact] */
+
+uint knl_mbf_get(int param_1,undefined1 *param_2)
+
+{
+  ushort uVar1;
+  undefined1 *puVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  int iVar6;
+  int iVar7;
+  uint uVar8;
+  uint uVar9;
+  
+  uVar3 = (uint)*(ushort *)(param_1 + 10);
+  iVar7 = *(int *)(param_1 + 4);
+  if (*(short *)(param_1 + 0x10) == 1) {
+    *param_2 = *(undefined1 *)(iVar7 + uVar3);
+    *(short *)(param_1 + 0xe) = *(short *)(param_1 + 0xe) + 1;
+    uVar3 = uVar3 + 1;
+    if (uVar3 == *(ushort *)(param_1 + 0xc)) {
+      uVar3 = 0;
+    }
+    *(short *)(param_1 + 10) = (short)uVar3;
+    return 1;
+  }
+  uVar4 = uVar3 + 1;
+  uVar9 = (uint)*(ushort *)(param_1 + 0xc);
+  if (uVar9 == uVar4) {
+    uVar4 = 0;
+  }
+  uVar5 = uVar4 + 1;
+  if (uVar9 == uVar5) {
+    uVar5 = 0;
+  }
+  uVar1 = CONCAT11(*(undefined1 *)(iVar7 + uVar4),*(undefined1 *)(iVar7 + uVar3));
+  uVar8 = (uint)uVar1;
+  uVar3 = (uint)CONCAT11(*(undefined1 *)(iVar7 + uVar4),*(undefined1 *)(iVar7 + uVar3));
+  *(ushort *)(param_1 + 0xe) = *(short *)(param_1 + 0xe) + uVar1 + 2;
+  if (uVar9 <= uVar3 + uVar5) {
+    iVar6 = uVar9 - uVar5;
+    uVar8 = uVar3 - iVar6 & 0xffff;
+    puVar2 = (undefined1 *)(iVar7 + uVar5);
+    for (; iVar6 != 0; iVar6 = iVar6 + -1) {
+      *param_2 = *puVar2;
+      puVar2 = puVar2 + 1;
+      param_2 = param_2 + 1;
+    }
+    uVar5 = 0;
+  }
+  *(short *)(param_1 + 10) = (short)uVar5 + (short)uVar8;
+  puVar2 = (undefined1 *)(*(int *)(param_1 + 4) + uVar5);
+  for (; uVar8 != 0; uVar8 = uVar8 - 1) {
+    *param_2 = *puVar2;
+    puVar2 = puVar2 + 1;
+    param_2 = param_2 + 1;
+  }
+  return uVar3;
+}
+
+
+// ===== itron_trcv_mbf @ 201521a8 (600 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.850): (mbfid, msg, tmout): mbf
+   table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size [inference] */
+
+int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
+
+{
+  sbyte sVar1;
+  byte bVar2;
+  byte *pbVar3;
+  int iVar4;
+  int iVar5;
+  knl_tcb *p_knl_tcb;
+  uint uVar6;
+  
+  if ((param_1 == 0) || (8 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+    return -0x12;
+  }
+  software_interrupt(0);
+  iVar5 = *(int *)(&DAT_208dbec4 + param_1 * 4);
+  if (iVar5 == 0) {
+    software_interrupt(0);
+    return -0x2a;
+  }
+  if (*(short *)(iVar5 + 0xc) != *(short *)(iVar5 + 0xe)) {
+                    /* copies the next message out of the message-buffer ring [doc] */
+    iVar5 = knl_mbf_get(iVar5,param_2,tmout,param_4,param_1,param_2,tmout);
+    iVar4 = FUN_20153dec(param_1);
+    if (iVar4 == 0) {
+      software_interrupt(0);
+    }
+    else {
+      software_interrupt(0);
+    }
+    return iVar5;
+  }
+  pbVar3 = (byte *)(iVar5 + 0x13);
+  do {
+    uVar6 = (uint)*pbVar3;
+    pbVar3 = pbVar3 + 1;
+  } while (uVar6 == 0);
+  if (uVar6 < 0xfe) {
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    iVar5 = *(int *)(p_knl_tcb->sp + 8);
+    if (iVar5 != 0) {
+      knl_memcpy(param_2,*(undefined4 *)(p_knl_tcb->sp + 0xc),iVar5);
+    }
+    if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+      knl_timeout_remove(p_knl_tcb,uVar6);
+    }
+    p_knl_tcb->state = 0x10;
+    if (p_knl_tcb->f_0x09_u8 == 0) {
+      sVar1 = p_knl_tcb->pri;
+      knl_queue_move(knl_rdq + sVar1,p_knl_tcb,uVar6);
+      if ((int)sVar1 < (int)knl_sys.run_pri) {
+        software_interrupt(0);
+        return iVar5;
+      }
+    }
+    else {
+      knl_queue_remove(p_knl_tcb,uVar6);
+    }
+    software_interrupt(0);
+    return iVar5;
+  }
+  if (tmout == 0) {
+    software_interrupt(0);
+    return -0x32;
+  }
+  if (((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) &&
+     (uVar6 = (uint)knl_rdq[0], uVar6 != ((byte)DAT_201659d0 + 1 & 0xff))) {
+    p_knl_tcb = knl_tsk_tab[uVar6];
+    if (tmout == -1) {
+      bVar2 = 0xb0;
+    }
+    else {
+      knl_timeout_add(tmout,p_knl_tcb,knl_rdq[0]);
+      bVar2 = 0xb2;
+    }
+    p_knl_tcb->state = bVar2;
+    iVar5 = (uint)*(byte *)(iVar5 + 0x12) + iVar5;
+    if (*(byte *)(iVar5 + 1) < 0xfe) {
+      iVar5 = iVar5 + knl_sys.run_pri + -1;
+    }
+    knl_sys.wait_arg2 = param_2;
+    knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
+    iVar5 = knl_wait_enter(iVar5,p_knl_tcb,uVar6);
+    return iVar5;
+  }
+  software_interrupt(0);
+  knl_sys.last_ercd = -0x19;
+  return -0x19;
+}
+
+
+// ===== itron_trcv_mbx @ 20152434 (400 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (mbxid, ppk_msg, tmout):
+   mbx table 0x208DBEA4, takes the first queued message, E_TMOUT [inference] */
+
+code * itron_trcv_mbx(uint param_1,int *param_2,int tmout)
+
+{
+  byte bVar1;
+  int *piVar2;
+  code *pcVar3;
+  int *piVar4;
+  int iVar5;
+  int *piVar6;
+  knl_tcb *tcb;
+  uint uVar7;
+  
+  if ((param_1 == 0) || (8 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+  }
+  else {
+    software_interrupt(0);
+    piVar6 = *(int **)(&DAT_208dbea4 + param_1 * 4);
+    if (piVar6 == (int *)0x0) {
+      software_interrupt(0);
+      return (code *)0xffffffd6;
+    }
+    iVar5 = 0;
+    if (*(byte *)((int)piVar6 + 6) == 0) {
+      piVar2 = *(int **)(*piVar6 + 8);
+    }
+    else {
+      piVar2 = (int *)((uint)*(byte *)((int)piVar6 + 6) + (int)piVar6);
+    }
+    if (*(byte *)(piVar6 + 1) != 0) {
+      do {
+        piVar4 = (int *)*piVar2;
+        if (piVar4 != (int *)0x0) {
+          *piVar2 = *piVar4;
+          *param_2 = (int)piVar4;
+          software_interrupt(0);
+          return knl_svc_return;
+        }
+        iVar5 = iVar5 + 1;
+        piVar2 = piVar2 + 2;
+      } while (iVar5 < (int)(uint)*(byte *)(piVar6 + 1));
+    }
+    if (tmout == 0) {
+      software_interrupt(0);
+      return (code *)0xffffffce;
+    }
+    if ((knl_sys.ctx_isr == 0) && (knl_sys.dsp_state == 0)) {
+      uVar7 = (uint)knl_rdq[0];
+      if (uVar7 != ((byte)DAT_201659d0 + 1 & 0xff)) {
+        tcb = knl_tsk_tab[uVar7];
+        if (tmout == -1) {
+          bVar1 = 0xa0;
+        }
+        else {
+          knl_timeout_add(tmout,tcb,knl_rdq[0]);
+          bVar1 = 0xa2;
+        }
+        tcb->state = bVar1;
+        iVar5 = (int)piVar6 + 7;
+        if (*(byte *)(piVar6 + 2) < 0xfe) {
+          iVar5 = iVar5 + knl_sys.run_pri + -1;
+        }
+        knl_sys.wait_arg2 = (uint)param_2;
+        knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
+        pcVar3 = (code *)knl_wait_enter(iVar5,tcb,uVar7);
+        return pcVar3;
+      }
+    }
+    software_interrupt(0);
+    knl_sys.last_ercd = -0x19;
+  }
+  return (code *)knl_sys.last_ercd;
+}
+
+
 // ===== itron_tslp_tsk @ 201525f8 (216 bytes)
 
 /* (tmout): E_CTX in a non-task context; consumes a wake-up count or waits (TMO_FEVR -1 at 40 call
@@ -1787,282 +2483,6 @@ void knl_sys_alloc(undefined4 param_1)
 {
                     /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
-  return;
-}
-
-
-// ===== knl_sys_free @ 20154790 (40 bytes)
-
-/* WARNING: Removing unreachable block (ram,0x201547a8) */
-/* knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf
-   and del_sem free control blocks with it [fact] */
-
-void knl_sys_free(undefined4 param_1,undefined4 param_2)
-
-{
-  knl_freelist_free(0x208003fc,param_1,param_2);
-  return;
-}
-
-
-// ===== FUN_201547d0 @ 201547d0 (352 bytes)
-
-byte FUN_201547d0(int param_1,short param_2)
-
-{
-  short sVar1;
-  sbyte sVar2;
-  byte tskid;
-  knl_tcb *tcb;
-  uint tskid_00;
-  byte *pbVar3;
-  byte bVar4;
-  int iVar5;
-  
-  bVar4 = 0;
-  *(undefined1 *)(param_1 + 10) = 0;
-  iVar5 = *(int *)(param_1 + 4);
-  pbVar3 = (byte *)(param_1 + 0xc);
-  sVar2 = *(sbyte *)(param_1 + 0xb);
-  do {
-    tskid_00 = (uint)*pbVar3;
-    if (0xfd < tskid_00) {
-      return bVar4;
-    }
-    while (tskid_00 != 0) {
-      tcb = knl_tsk_tab[tskid_00];
-      if ((tcb->state & 2) != 0) {
-                    /* unlinks the TCB from its timer-wheel slot [doc] */
-        knl_timeout_remove(tcb,tskid_00);
-      }
-      knl_queue_remove(tcb,tskid_00);
-      tcb->state = 0x10;
-      tskid = (byte)tskid_00;
-      if (iVar5 != 3) {
-LAB_201548b0:
-        if (sVar2 != 0) {
-          *(sbyte *)(param_1 + 0xb) = tcb->pri;
-        }
-LAB_201548bc:
-        *(byte *)(param_1 + 10) = tskid;
-        sVar1 = tcb->mtx_held;
-        tcb->mtx_held = param_2;
-        *(short *)(param_1 + 8) = sVar1;
-        if (tcb->f_0x09_u8 == 0) {
-          FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
-        }
-        if ((bVar4 == 0) && (knl_sys.run_pri <= tcb->pri)) {
-          bVar4 = 0;
-        }
-        else {
-          bVar4 = 1;
-        }
-        return bVar4;
-      }
-      if (sVar2 <= tcb->bpri) {
-        if (sVar2 <= tcb->pri) {
-          tcb->pri = sVar2;
-          goto LAB_201548bc;
-        }
-        goto LAB_201548b0;
-      }
-      *(undefined4 *)tcb->sp = 0xffffffe4;
-      if (tcb->f_0x09_u8 == 0) {
-        FUN_201538d4(knl_rdq + tcb->pri,tcb,tskid);
-      }
-      bVar4 = bVar4 | tcb->pri < knl_sys.run_pri;
-      tskid_00 = (uint)*pbVar3;
-    }
-    pbVar3 = pbVar3 + 1;
-  } while( true );
-}
-
-
-// ===== FUN_20154930 @ 20154930 (52 bytes)
-
-void FUN_20154930(int param_1)
-
-{
-  short sVar1;
-  knl_mtx *p_knl_mtx;
-  
-  do {
-    p_knl_mtx = knl_mtx_tab[param_1];
-    sVar1 = p_knl_mtx->prev_held;
-    p_knl_mtx->prev_held = 0;
-    FUN_201547d0(p_knl_mtx,param_1);
-    param_1 = (int)sVar1;
-  } while (sVar1 != 0);
-  return;
-}
-
-
-// ===== __rt_ctype_table @ 20154974 (10 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.850): returns __rt_locale()+4; tolower indexes
-   the table it points to [inference] */
-
-int __rt_ctype_table(void)
-
-{
-  int iVar1;
-  
-  iVar1 = __rt_locale();
-  return iVar1 + 4;
-}
-
-
-// ===== __aeabi_ldivmod @ 20154984 (96 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): A32: takes signs of r1/r3, negates 64-bit
-   pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs [inference] */
-
-int __aeabi_ldivmod(int param_1,int param_2,int param_3,uint param_4)
-
-{
-  uint uVar1;
-  uint uVar2;
-  int iVar3;
-  bool bVar4;
-  
-  uVar2 = param_2 >> 1;
-  uVar1 = param_4 >> 1;
-  if ((int)uVar2 < 0) {
-    bVar4 = param_1 != 0;
-    param_1 = -param_1;
-    param_2 = -param_2;
-    if (bVar4) {
-      param_2 = param_2 + -1;
-    }
-  }
-  if ((int)param_4 < 0) {
-    bVar4 = param_3 != 0;
-    param_3 = -param_3;
-    param_4 = -param_4;
-    if (bVar4) {
-      param_4 = param_4 - 1;
-    }
-  }
-  iVar3 = __aeabi_uldivmod(param_1,param_2,param_3,param_4);
-  if (((uVar2 ^ uVar1) & 0x40000000) != 0) {
-    iVar3 = -iVar3;
-  }
-  return iVar3;
-}
-
-
-// ===== tolower @ 201549e4 (26 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): ctype bit 0x10 (upper) -> c+32
-   [inference] */
-
-int tolower(int param_1)
-
-{
-  int *piVar1;
-  
-  piVar1 = (int *)__rt_ctype_table();
-  if ((int)((uint)*(byte *)(*piVar1 + param_1) << 0x1b) < 0) {
-    return param_1 + 0x20;
-  }
-  return param_1;
-}
-
-
-// ===== sprintf_veneer @ 20154a00 (8 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (veneer_pattern 1.000): A32 add ip,pc,#1; bx ip -> Thumb
-   sprintf 0x20154A08 [fact] */
-
-void sprintf_veneer(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  undefined4 uStack_20;
-  undefined4 uStack_1c;
-  undefined4 uStack_8;
-  undefined4 uStack_4;
-  
-  uStack_20 = param_1;
-  uStack_1c = param_4;
-  uStack_8 = param_3;
-  uStack_4 = param_4;
-  _sprintf_body(param_2,&uStack_20,&uStack_8,0x20155f99);
-  _sputc(0,&uStack_20);
-  return;
-}
-
-
-// ===== sprintf @ 20154a08 (34 bytes)
-
-void sprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  undefined4 local_20;
-  undefined4 uStack_1c;
-  undefined4 uStack_8;
-  undefined4 uStack_4;
-  
-  local_20 = param_1;
-  uStack_1c = param_4;
-  uStack_8 = param_3;
-  uStack_4 = param_4;
-  _sprintf_body(param_2,&local_20,&uStack_8,0x20155f99);
-  _sputc(0,&local_20);
-  return;
-}
-
-
-// ===== snprintf @ 20154a30 (48 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): (buf, n, fmt, ...): end = buf+n-1, output
-   fn _snputc 0x20155FA3, NUL-terminates when n != 0 [inference] */
-
-void snprintf(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  int local_20;
-  int local_1c;
-  undefined4 uStack_4;
-  
-  local_1c = param_1;
-  if (param_2 != 0) {
-    local_1c = param_1 + param_2 + -1;
-  }
-  local_20 = param_1;
-  uStack_4 = param_4;
-  _sprintf_body(param_3,&local_20,&uStack_4,0x20155fa3);
-  if (param_2 != 0) {
-    _sputc(0,&local_20);
-  }
-  return;
-}
-
-
-// ===== _printf_pre_padding @ 20154a64 (44 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): emits width-1.. pad chars (0x30 if the 0
-   flag, else 0x20) unless the - flag (bit 0), counts in +0x20 [inference] */
-
-void _printf_pre_padding(uint *param_1)
-
-{
-  uint uVar1;
-  undefined4 uVar2;
-  
-  uVar1 = param_1[6];
-  if ((int)(*param_1 << 0x1b) < 0) {
-    uVar2 = 0x30;
-  }
-  else {
-    uVar2 = 0x20;
-  }
-  if ((*param_1 & 1) != 0) {
-    return;
-  }
-  while (uVar1 = uVar1 - 1, -1 < (int)uVar1) {
-    (*(code *)param_1[1])(uVar2,param_1[2]);
-    param_1[8] = param_1[8] + 1;
-  }
   return;
 }
 
