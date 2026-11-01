@@ -130,7 +130,10 @@ sequenceDiagram
 ## Main loop
 
 `main_loop` @ 0xFFF94B8B is a `do { … } while (true)` that calls these 16 functions in order and has no other logic
-**[fact]**. Every task is non-blocking by design: it checks flags and soft timers and returns **[inference]**. The
+**[fact]**. Recreated and checked so far (T24, `src/main/status.tsv`): tasks 1 `wdt_kick` (byte-identical), 2 `io_task`,
+3 `sdr_task`, 5 `rf_ctrl_task`, 7 `cat_parse`, 9 `scan_task`, 10 `dispreq_e8_task`, 11 `dispreq_e7_task`,
+12 `keyer_task`, 14 `displink_task`, 16 `tuner_task` (`src/main/app/tasks.c`, `sdr_link.c`, `cat_parse.c`, `keyer.c`,
+`display_link.c`, `tuner.c`). Every task is non-blocking by design: it checks flags and soft timers and returns **[inference]**. The
 exceptions are the power-off path (busy-waits on `sci1_tx_end`) and the EEPROM writes (busy-wait on WIP) **[fact]**.
 
 ```mermaid

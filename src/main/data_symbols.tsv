@@ -148,3 +148,8 @@ sdr_bridge_req	1c8d	sdr_task 0xFFFA1220: 1 = run sdr_bridge_mode (displink_rx_F1
 sdr_last_tx	1b3dd	sdr_task 0xFFFA122E / 0xFFFA1271: the transmitting state the SDR registers were last updated for
 sdr_synced	1b3dc	sdr_task 0xFFFA142E / 0xFFFA1458: 1 after the first full pass wrote regs 0x15 and 0x24
 g_ui_ptr2	25d70	dispreq_e7_task 0xFFFE2CD0: a second pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d70)
+rf_ctrl_ready	12042	portctl_init 0xFFFB55B8 clears it; rf_ctrl_task 0xFFFB55E6 sets it after its first pass over the shift registers and DACs
+scan_state	18877	scan_task 0xFFFE58B0 (the switch): the scan state 0..7
+scan_busy_wait	18873	scan_task: 1 with soft timer 0x33 = 500 when the scan stops on a busy channel (state 2 -> 3)
+scan_resume_wait	18874	scan_task: 1 with soft timer 0x34 = 1500 (states 4 -> 5, 6 -> 7)
+g_ui_ptr3	25d7c	scan_task 0xFFFE5884: a third pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d7c)

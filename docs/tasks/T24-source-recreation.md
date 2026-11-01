@@ -1557,6 +1557,28 @@ matched it.
   `displink_task`, 28 under GCC). A stack address left there is compared as "stack" (the byte itself goes out through
   the compared SCI accesses), as round 3 did for the EEPROM stub buffers.
 
+### MAIN: results (status.tsv, round 4)
+
+`equiv_main_emu.py status --trials 200 --jobs 2` (about 45 minutes with the container shared), then
+`status --object app/tuner.o --object app/display_link.o --object app/sdr_link.o --object app/tasks.o` for the code
+written while the first run read `out/obj` (about 35 minutes):
+
+| Verdict | Ghidra functions | Bytes (of 387,059) |
+|---|---:|---:|
+| identical | 44 | 264 |
+| equivalent | 341 | 77,076 |
+| differs | 0 | 0 |
+| not yet | 3,409 | 309,719 |
+
+**Re-implemented: 19.98 %** (12.32 % after round 3). Round 4 added 39 functions (29,635 bytes counted): DISPLAY link
+11 (8,645: the status block, seven frame builders, `displink_task`, `displink_rx_E1_encoder`, `dispreq_e7_task`),
+VFO / memory CAT handlers 7 (6,157), the other CAT handlers 5 (3,952), the per-mode-block handlers 4 (3,777), `cat_SS`
+(2,917), `keyer_task` (2,120), the tuner tasks 4 (766), `sdr_task` (664) and the small tasks 5 (637; `wdt_kick` is
+byte-identical). The 346 functions of rounds 1..3 still pass, among them `cat_dispatch` with 99 % of its blocks
+(was 55 %) and `trx_sequencer` with 90 % (was 60 %; 400 trials) after the `spk_route` fix. Lowest coverage of the new ones:
+`sdr_task` 52 %, `cat_EM` 66 %, `cat_GT` 68 %; `io_task` has 137 of 200 trials inconclusive (both runs exhaust the
+budget in its callees).
+
 ### MAIN: Ghidra (round 4)
 
 - `tools/ghidra/names_main.tsv`: 44 labels with their evidence (the keyer, tuner and DISPLAY-link RAM of this round,
@@ -1591,6 +1613,24 @@ python3 -I tools/readability_stats.py readme
 
 `bootstrap.sh --only rx` changes the shared Ghidra's `rx62t.sinc` hash (`RX_SINC_FIXED` becomes `f4688bc6…f403`), so
 a branch without this patch then refuses to bootstrap that Ghidra, as with round 2's patch.
+
+### MAIN: blockers and next steps (round 4)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- **FPU instructions other than the conversions are unverified.** T22a modelled only ITOF; FADD, FSUB, FMUL, FDIV,
+  FCMP (MAIN: 31, 18, 28, 25, 40 sites) run on the module's p-code, which uses the host's IEEE single precision
+  (round to nearest). *Open: whether the module's FCMP flags and the FPSW.DN = 1 flush of denormals match the RX
+  FPU; would be settled by `rx_semcheck.py` cases for the FPU forms with denormal and NaN operands.* `beep_task`
+  (bit-exact float constants and FCMP) waits for that.
+- **Endless functions:** `main_loop` (and the power-off loop) cannot be decided by a check that needs a return.
+- **Coverage still below 90 %:** `sdr_task` 52 % (each updater that writes ends the pass; the per-step returns are
+  reached only when that updater writes), `cat_GT` 68 %, `cat_EM` 66 %.
+- **Shared Ghidra:** the round-2 and round-4 SLEIGH patches are not installed in the container's Ghidra; the harness
+  does not depend on them (EquivMainEmu executes JMP and the conversions itself).
+- Next, by size: `displink_rx_F0_hello` (892), `displink_tx_schedule` (689), `ladder_key_task` (699), `key_task`
+  (939), `dsp_link_poll` (1,591), `beep_task` (1,220, after the FPU check), the `cat_ai_*` change detectors
+  (`cat_ai_IF_OI` 1,333, `cat_ai_SS` 1,121, `cat_ai_poll` 979), the extended CAT commands (`cat_ext_PE` 1,166,
+  `cat_ext_EO` 847, `cat_ext_JP` 822), `keyer_output_step` (1,397) and `keyer_elekey` (1,225).
 
 ## Open steps
 

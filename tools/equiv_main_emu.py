@@ -106,6 +106,11 @@ STACK_PTR_SLOTS = (0x207FC,)
 FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2}
 FUNC_STUBS = {
     'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
+    # scan_task: the predicates are functions of the receiver state; stubbed with 0 / 1
+    'scan_task': {n: (0, [0, 1]) for n in ('FUN_fffe5ee3', 'FUN_fffe5ab2', 'FUN_fffe5acf', 'FUN_fffe5fdd',
+                                           'FUN_fffe600f', 'FUN_fffe5ae7', 'FUN_fffe5f18', 'FUN_fffe5f4d')},
+    # io_task: the power-off path ends in sw_reset, which does not return
+    'io_task': {'swtimer_expired': (1, [0, 1, 1]), 'sw_reset': (0, [0]), 'supply_undervolt_check': (0, [0, 0, 1])},
     # sdr_task: the first updater that writes ends the pass, and sdr_bridge_mode relays until the DISPLAY ends it;
     # the bridge and the first group of updaters are stubbed so that the pass reaches the rest (their calls and the
     # TX argument are compared)
@@ -915,6 +920,11 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
                                              G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(4), G_UI + 0xAC: range(10)}),
                                   lambda rng, regs: ([(0x25D70, G_UI.to_bytes(4, 'little')),
                                                       (G_UI + 0x489, b'\0\0\0')], None)),
+           'io_task': ram_bytes({G_UI + 0x2C: (0, 0, 1, 2), G_UI + 0x82: (0, 1), G_UI + 0xBA: (0, 1),
+                                 G_UI + 0x40: (0, 1), G_UI + 0x14: (8, 8, 1, 3)}),
+           'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}),
+           'scan_task': both(ram_bytes({0x18877: range(9), G_UI + 0x418: (0, 1, 1, 1), G_UI + 0xBA: (0, 0, 0, 1)}),
+                             lambda rng, regs: ([(0x25D7C, G_UI.to_bytes(4, 'little'))], None)),
            'displink_build_37': g_ui_ptr_ok(), 'displink_task': displink_task_args, 'displink_build_60': g_ui_ptr_ok(),
            'displink_rx_E1_encoder': g_ui_ptr_ok(both(displink_e1_frame, ram_bytes({G_UI + 0x80: (0, 0, 0, 1), G_UI + 0x70: (0, 1), G_UI + 0x74: (0, 1), G_UI + 0x93: (0, 1), G_UI + 0x3FD: range(5), G_UI + 0x437: (0, 0, 1)}))),
            'displink_build_status': g_ui_ptr_ok(ram_bytes({G_OP + 0x393: (0, 1), G_OP + 0x234: (0, 1), G_UI + 0x437: (0, 0, 1),

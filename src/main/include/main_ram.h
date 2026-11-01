@@ -57,6 +57,7 @@ extern uint8_t sdr_busy_write;
 extern uint8_t sdr_bridge_req;            /* 0x1C8D: run sdr_bridge_mode */
 extern uint8_t sdr_last_tx;               /* 0x1B3DD */
 extern uint8_t sdr_synced;                /* 0x1B3DC */
+extern uint8_t rf_ctrl_ready;             /* 0x12042: 1 after rf_ctrl_task's first pass */
 extern uint8_t sdr_busy_read;
 extern uint8_t sdr_rx_frame[];            /* reply buffer, 7 bytes */
 extern uint8_t sdr_rx_done;               /* 1 = a reply is in */
@@ -91,6 +92,8 @@ extern uint8_t displink_stage[];          /* staging buffer of most frames */
 extern uint8_t displink_stage_status[];   /* staging buffer of frame 0x20 */
 extern uint8_t *g_ui_ptr;                 /* pointer to the UI state (0x20B04) */
 extern uint8_t *g_ui_ptr2;                /* 0x25D70: the same, used by dispreq_e7_task */
+extern uint8_t *g_ui_ptr3;                /* 0x25D7C: the same, used by scan_task */
+extern uint8_t scan_state, scan_busy_wait, scan_resume_wait;   /* 0x18877, 0x18873, 0x18874 */
 extern uint8_t displink_ack_req, displink_nak_req, displink_gap, displink_ack_wait, displink_ack_wait_start;
 extern uint8_t displink_rx_copy[];        /* 0x198F: the frame being dispatched */
 struct vfo_rec;
