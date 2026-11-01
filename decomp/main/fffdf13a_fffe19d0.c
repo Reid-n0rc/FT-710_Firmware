@@ -1,14 +1,18 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffdf13a @ fffdf13a (1333 bytes)
+// ===== cat_ai_IF_OI @ fffdf13a (1333 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdf66c) */
 /* WARNING: Removing unreachable block (ram,0xfffdf22c) */
 /* WARNING: Removing unreachable block (ram,0xfffdf368) */
 /* WARNING: Removing unreachable block (ram,0xfffdf3ab) */
 /* WARNING: Removing unreachable block (ram,0xfffdf438) */
+/* AI change detector for IF/OI (called from cat_ai_poll): compares with its shadow, on a change
+   builds the IF/OI answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0
+   builds 'I','F' (IF), arg 1 'O','I' (OI) from the template "IF0000000000000000000000000;" [fact:
+   fffdf13a] */
 
-ushort FUN_fffdf13a(byte param_1)
+ushort cat_ai_IF_OI(byte param_1)
 
 {
   bool bVar1;
@@ -311,12 +315,15 @@ ushort FUN_fffdf13a(byte param_1)
 }
 
 
-// ===== FUN_fffdf66f @ fffdf66f (324 bytes)
+// ===== cat_ai_IS @ fffdf66f (324 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdf7b0) */
 /* WARNING: Removing unreachable block (ram,0xfffdf777) */
+/* AI change detector for IS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the IS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: constant "IS" (IF
+   shift) [fact: fffdf66f] */
 
-ushort FUN_fffdf66f(void)
+ushort cat_ai_IS(void)
 
 {
   byte bVar1;
@@ -411,13 +418,16 @@ LAB_fffdf6fd:
 }
 
 
-// ===== FUN_fffdf7b3 @ fffdf7b3 (169 bytes)
+// ===== cat_ai_KP @ fffdf7b3 (169 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdf859) */
 /* WARNING: Removing unreachable block (ram,0xfffdf81e) */
 /* WARNING: Removing unreachable block (ram,0xfffdf842) */
+/* AI change detector for KP (called from cat_ai_poll): compares with its shadow, on a change builds
+   the KP answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.cw_pitch
+   [fact: fffdf7b3] */
 
-undefined2 FUN_fffdf7b3(void)
+undefined2 cat_ai_KP(void)
 
 {
   char cVar1;
@@ -462,11 +472,14 @@ undefined2 FUN_fffdf7b3(void)
 }
 
 
-// ===== FUN_fffdf85c @ fffdf85c (120 bytes)
+// ===== cat_ai_KR @ fffdf85c (120 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdf8b3) */
+/* AI change detector for KR (called from cat_ai_poll): compares with its shadow, on a change builds
+   the KR answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.keyer_on
+   [fact: fffdf85c] */
 
-ushort FUN_fffdf85c(void)
+ushort cat_ai_KR(void)
 
 {
   char *pcVar1;
@@ -495,13 +508,16 @@ ushort FUN_fffdf85c(void)
 }
 
 
-// ===== FUN_fffdf8d4 @ fffdf8d4 (173 bytes)
+// ===== cat_ai_KS @ fffdf8d4 (173 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdf97e) */
 /* WARNING: Removing unreachable block (ram,0xfffdf943) */
 /* WARNING: Removing unreachable block (ram,0xfffdf967) */
+/* AI change detector for KS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the KS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.key_speed
+   [fact: fffdf8d4] */
 
-undefined2 FUN_fffdf8d4(void)
+undefined2 cat_ai_KS(void)
 
 {
   char cVar1;
@@ -546,9 +562,13 @@ undefined2 FUN_fffdf8d4(void)
 }
 
 
-// ===== FUN_fffdf981 @ fffdf981 (107 bytes)
+// ===== cat_ai_LK @ fffdf981 (107 bytes)
 
-ushort FUN_fffdf981(void)
+/* AI change detector for LK (called from cat_ai_poll): compares with its shadow, on a change builds
+   the LK answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.lock_on
+   [fact: fffdf981] */
+
+ushort cat_ai_LK(void)
 
 {
   char *pcVar1;
@@ -577,9 +597,13 @@ ushort FUN_fffdf981(void)
 }
 
 
-// ===== FUN_fffdf9ec @ fffdf9ec (248 bytes)
+// ===== cat_ai_MD @ fffdf9ec (248 bytes)
 
-ushort FUN_fffdf9ec(char param_1)
+/* AI change detector for MD (called from cat_ai_poll): compares with its shadow, on a change builds
+   the MD answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1 = VFO side
+   ('M','D') [fact: fffdf9ec] */
+
+ushort cat_ai_MD(char param_1)
 
 {
   char *pcVar1;
@@ -643,13 +667,16 @@ ushort FUN_fffdf9ec(char param_1)
 }
 
 
-// ===== FUN_fffdfae4 @ fffdfae4 (256 bytes)
+// ===== cat_ai_MG @ fffdfae4 (256 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdfbe1) */
 /* WARNING: Removing unreachable block (ram,0xfffdfba4) */
 /* WARNING: Removing unreachable block (ram,0xfffdfbc8) */
+/* AI change detector for MG (called from cat_ai_poll): compares with its shadow, on a change builds
+   the MG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.mic_gain
+   [fact: fffdfae4] */
 
-undefined2 FUN_fffdfae4(void)
+undefined2 cat_ai_MG(void)
 
 {
   uint uVar1;
@@ -719,13 +746,16 @@ LAB_fffdfb64:
 }
 
 
-// ===== FUN_fffdfbe4 @ fffdfbe4 (338 bytes)
+// ===== cat_ai_ML @ fffdfbe4 (338 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdfd33) */
 /* WARNING: Removing unreachable block (ram,0xfffdfcef) */
 /* WARNING: Removing unreachable block (ram,0xfffdfd1c) */
+/* AI change detector for ML (called from cat_ai_poll): compares with its shadow, on a change builds
+   the ML answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'M','L' (monitor
+   level) [fact: fffdfbe4] */
 
-ushort FUN_fffdfbe4(void)
+ushort cat_ai_ML(void)
 
 {
   bool n;
@@ -815,11 +845,14 @@ LAB_fffdfc82:
 }
 
 
-// ===== FUN_fffdfd36 @ fffdfd36 (110 bytes)
+// ===== cat_ai_MS @ fffdfd36 (110 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdfd86) */
+/* AI change detector for MS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the MS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.meter_sel
+   [fact: fffdfd36] */
 
-ushort FUN_fffdfd36(void)
+ushort cat_ai_MS(void)
 
 {
   char *pcVar1;
@@ -849,11 +882,14 @@ ushort FUN_fffdfd36(void)
 }
 
 
-// ===== FUN_fffdfda4 @ fffdfda4 (102 bytes)
+// ===== cat_ai_MX @ fffdfda4 (102 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdfdec) */
+/* AI change detector for MX (called from cat_ai_poll): compares with its shadow, on a change builds
+   the MX answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.ptt_mox [fact:
+   fffdfda4] */
 
-ushort FUN_fffdfda4(void)
+ushort cat_ai_MX(void)
 
 {
   char *pcVar1;
@@ -884,9 +920,13 @@ ushort FUN_fffdfda4(void)
 }
 
 
-// ===== FUN_fffdfe0a @ fffdfe0a (112 bytes)
+// ===== cat_ai_NA @ fffdfe0a (112 bytes)
 
-ushort FUN_fffdfe0a(void)
+/* AI change detector for NA (called from cat_ai_poll): compares with its shadow, on a change builds
+   the NA answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.na_ai_value
+   [fact: fffdfe0a] */
+
+ushort cat_ai_NA(void)
 
 {
   char *pcVar1;
@@ -915,9 +955,13 @@ ushort FUN_fffdfe0a(void)
 }
 
 
-// ===== FUN_fffdfe7a @ fffdfe7a (108 bytes)
+// ===== cat_ai_NB @ fffdfe7a (108 bytes)
 
-ushort FUN_fffdfe7a(void)
+/* AI change detector for NB (called from cat_ai_poll): compares with its shadow, on a change builds
+   the NB answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "NB00;" [fact:
+   fffdfe7a] */
+
+ushort cat_ai_NB(void)
 
 {
   char *pcVar1;
@@ -949,13 +993,16 @@ ushort FUN_fffdfe7a(void)
 }
 
 
-// ===== FUN_fffdfee6 @ fffdfee6 (182 bytes)
+// ===== cat_ai_NL @ fffdfee6 (182 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdff99) */
 /* WARNING: Removing unreachable block (ram,0xfffdff51) */
 /* WARNING: Removing unreachable block (ram,0xfffdff7a) */
+/* AI change detector for NL (called from cat_ai_poll): compares with its shadow, on a change builds
+   the NL answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.nb_level
+   [fact: fffdfee6] */
 
-undefined2 FUN_fffdfee6(void)
+undefined2 cat_ai_NL(void)
 
 {
   uint uVar1;
@@ -1001,11 +1048,14 @@ undefined2 FUN_fffdfee6(void)
 }
 
 
-// ===== FUN_fffdff9c @ fffdff9c (122 bytes)
+// ===== cat_ai_NR @ fffdff9c (122 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdfff5) */
+/* AI change detector for NR (called from cat_ai_poll): compares with its shadow, on a change builds
+   the NR answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "NR00;" [fact:
+   fffdff9c] */
 
-ushort FUN_fffdff9c(void)
+ushort cat_ai_NR(void)
 
 {
   char *pcVar1;
@@ -1037,11 +1087,14 @@ ushort FUN_fffdff9c(void)
 }
 
 
-// ===== FUN_fffe0016 @ fffe0016 (168 bytes)
+// ===== cat_ai_OS @ fffe0016 (168 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe009d) */
+/* AI change detector for OS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the OS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'O','S' repeater
+   shift of VFO A/B [fact: fffe0016] */
 
-undefined2 FUN_fffe0016(void)
+undefined2 cat_ai_OS(void)
 
 {
   char *pcVar1;
@@ -1089,11 +1142,14 @@ undefined2 FUN_fffe0016(void)
 }
 
 
-// ===== FUN_fffe00be @ fffe00be (133 bytes)
+// ===== cat_ai_PA @ fffe00be (133 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0122) */
+/* AI change detector for PA (called from cat_ai_poll): compares with its shadow, on a change builds
+   the PA answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'P','A' pre-amp
+   [fact: fffe00be] */
 
-undefined2 FUN_fffe00be(void)
+undefined2 cat_ai_PA(void)
 
 {
   char *pcVar1;
@@ -1136,13 +1192,16 @@ undefined2 FUN_fffe00be(void)
 }
 
 
-// ===== FUN_fffe0143 @ fffe0143 (264 bytes)
+// ===== cat_ai_PC @ fffe0143 (264 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0248) */
 /* WARNING: Removing unreachable block (ram,0xfffe0200) */
 /* WARNING: Removing unreachable block (ram,0xfffe0229) */
+/* AI change detector for PC (called from cat_ai_poll): compares with its shadow, on a change builds
+   the PC answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "PC000;" power by
+   tx_band_of_freq [fact: fffe0143] */
 
-undefined2 FUN_fffe0143(void)
+undefined2 cat_ai_PC(void)
 
 {
   uint uVar1;
@@ -1214,12 +1273,15 @@ undefined2 FUN_fffe0143(void)
 }
 
 
-// ===== FUN_fffe024b @ fffe024b (169 bytes)
+// ===== cat_ai_PL @ fffe024b (169 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe02f1) */
 /* WARNING: Removing unreachable block (ram,0xfffe02b2) */
+/* AI change detector for PL (called from cat_ai_poll): compares with its shadow, on a change builds
+   the PL answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.proc_level
+   [fact: fffe024b] */
 
-ushort FUN_fffe024b(void)
+ushort cat_ai_PL(void)
 
 {
   char cVar1;
@@ -1265,9 +1327,13 @@ ushort FUN_fffe024b(void)
 }
 
 
-// ===== FUN_fffe02f4 @ fffe02f4 (160 bytes)
+// ===== cat_ai_PR @ fffe02f4 (160 bytes)
 
-ushort FUN_fffe02f4(void)
+/* AI change detector for PR (called from cat_ai_poll): compares with its shadow, on a change builds
+   the PR answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.proc_on /
+   proc_level [fact: fffe02f4] */
+
+ushort cat_ai_PR(void)
 
 {
   char *pcVar1;
@@ -1308,11 +1374,14 @@ ushort FUN_fffe02f4(void)
 }
 
 
-// ===== FUN_fffe0394 @ fffe0394 (119 bytes)
+// ===== cat_ai_RA @ fffe0394 (119 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe03ea) */
+/* AI change detector for RA (called from cat_ai_poll): compares with its shadow, on a change builds
+   the RA answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RA00;" attenuator
+   [fact: fffe0394] */
 
-ushort FUN_fffe0394(void)
+ushort cat_ai_RA(void)
 
 {
   char *pcVar1;
@@ -1344,13 +1413,16 @@ ushort FUN_fffe0394(void)
 }
 
 
-// ===== FUN_fffe040b @ fffe040b (368 bytes)
+// ===== cat_ai_RG @ fffe040b (368 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0578) */
 /* WARNING: Removing unreachable block (ram,0xfffe0531) */
 /* WARNING: Removing unreachable block (ram,0xfffe055a) */
+/* AI change detector for RG (called from cat_ai_poll): compares with its shadow, on a change builds
+   the RG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.rf_gain and
+   EX030102 (RF/SQL VR), with the same jitter filter as AG [fact: fffe040b] */
 
-undefined2 FUN_fffe040b(void)
+undefined2 cat_ai_RG(void)
 
 {
   uint uVar1;
@@ -1398,8 +1470,8 @@ undefined2 FUN_fffe040b(void)
         if (bVar2) {
           return 0;
         }
-        bVar3 = FUN_fffe1805(&DAT_0001b542);
-        bVar4 = FUN_fffe1839(&DAT_0001b542);
+        bVar3 = max4_u8(&DAT_0001b542);
+        bVar4 = min4_u8(&DAT_0001b542);
         if ((int)((uint)bVar3 - (uint)bVar4) < 3) {
           return 0;
         }
@@ -1434,9 +1506,13 @@ undefined2 FUN_fffe040b(void)
 }
 
 
-// ===== FUN_fffe057b @ fffe057b (474 bytes)
+// ===== cat_ai_RI @ fffe057b (474 bytes)
 
-ushort FUN_fffe057b(void)
+/* AI change detector for RI (called from cat_ai_poll): compares with its shadow, on a change builds
+   the RI answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RI00000000;":
+   hi_swr, msg_rec_play_state, tx_lamp, scan, tuner digits [fact: fffe057b] */
+
+ushort cat_ai_RI(void)
 
 {
   byte bVar1;
@@ -1470,7 +1546,7 @@ ushort FUN_fffe057b(void)
     s_RI00000000__0001b51f[0xb] = bVar2;
   }
   acStack_d[3] = nib2hex(bVar2);
-  bVar1 = FUN_fffe0755();
+  bVar1 = msg_rec_play_state();
   if (DAT_0001b52b != bVar1) {
     local_12 = 0xb;
     DAT_0001b52b = bVar1;
@@ -1554,9 +1630,13 @@ ushort FUN_fffe057b(void)
 }
 
 
-// ===== FUN_fffe0755 @ fffe0755 (228 bytes)
+// ===== msg_rec_play_state @ fffe0755 (228 bytes)
 
-undefined1 FUN_fffe0755(void)
+/* Returns 1 while a message/DVS recording runs (msg_rec_active, dvs_state 2, dvs_lm1_flag), 2 while
+   keyer/PlayList/DVS playback runs (ky_send_0/1, playlist_cmd 1..3, dvs_state 1), else 0 [fact:
+   fffe0755]; callers cat_RI and cat_ai_RI use it as an RI digit */
+
+undefined1 msg_rec_play_state(void)
 
 {
   bool bVar1;
@@ -1619,13 +1699,16 @@ undefined1 FUN_fffe0755(void)
 }
 
 
-// ===== FUN_fffe0839 @ fffe0839 (142 bytes)
+// ===== cat_ai_RL @ fffe0839 (142 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0884) */
 /* WARNING: Removing unreachable block (ram,0xfffe0892) */
 /* WARNING: Removing unreachable block (ram,0xfffe08a9) */
+/* AI change detector for RL (called from cat_ai_poll): compares with its shadow, on a change builds
+   the RL answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "RL000;" [fact:
+   fffe0839] */
 
-ushort FUN_fffe0839(void)
+ushort cat_ai_RL(void)
 
 {
   char *pcVar1;
@@ -1658,12 +1741,15 @@ ushort FUN_fffe0839(void)
 }
 
 
-// ===== FUN_fffe08c7 @ fffe08c7 (409 bytes)
+// ===== cat_ai_RM @ fffe08c7 (409 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0a5d) */
 /* WARNING: Removing unreachable block (ram,0xfffe0a1d) */
+/* AI change detector for RM (called from cat_ai_poll): compares with its shadow, on a change builds
+   the RM answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'R','M' meter reading
+   of the selected meter (meter_get_*) [fact: fffe08c7] */
 
-ushort FUN_fffe08c7(void)
+ushort cat_ai_RM(void)
 
 {
   bool bVar1;
@@ -1772,9 +1858,13 @@ ushort FUN_fffe08c7(void)
 }
 
 
-// ===== FUN_fffe0a60 @ fffe0a60 (159 bytes)
+// ===== cat_ai_SC @ fffe0a60 (159 bytes)
 
-ushort FUN_fffe0a60(void)
+/* AI change detector for SC (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SC answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.scan_running
+   [fact: fffe0a60] */
+
+ushort cat_ai_SC(void)
 
 {
   bool bVar1;
@@ -1826,12 +1916,15 @@ ushort FUN_fffe0a60(void)
 }
 
 
-// ===== FUN_fffe0aff @ fffe0aff (162 bytes)
+// ===== cat_ai_SD @ fffe0aff (162 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0b9e) */
 /* WARNING: Removing unreachable block (ram,0xfffe0b62) */
+/* AI change detector for SD (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SD answer in cat_ai_buf 0x15E06 and returns its length, else 0; source:
+   g_opstate.cw_bkin_delay [fact: fffe0aff] */
 
-ushort FUN_fffe0aff(void)
+ushort cat_ai_SD(void)
 
 {
   char cVar1;
@@ -1876,9 +1969,13 @@ ushort FUN_fffe0aff(void)
 }
 
 
-// ===== FUN_fffe0ba1 @ fffe0ba1 (357 bytes)
+// ===== cat_ai_SF @ fffe0ba1 (357 bytes)
 
-ushort FUN_fffe0ba1(char param_1)
+/* AI change detector for SF (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SF answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1;
+   g_opstate.func_knob / g_ui.func_knob_item [fact: fffe0ba1] */
+
+ushort cat_ai_SF(char param_1)
 
 {
   char *pcVar1;
@@ -1991,7 +2088,7 @@ ushort FUN_fffe0ba1(char param_1)
 }
 
 
-// ===== FUN_fffe0d06 @ fffe0d06 (403 bytes)
+// ===== cat_ai_SH @ fffe0d06 (403 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0e96) */
 /* WARNING: Removing unreachable block (ram,0xfffe0e5b) */
@@ -1999,8 +2096,11 @@ ushort FUN_fffe0ba1(char param_1)
 /* WARNING: Removing unreachable block (ram,0xfffe0df2) */
 /* WARNING: Removing unreachable block (ram,0xfffe0d61) */
 /* WARNING: Removing unreachable block (ram,0xfffe0dc2) */
+/* AI change detector for SH (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SH answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "SH0000;" width
+   [fact: fffe0d06] */
 
-ushort FUN_fffe0d06(void)
+ushort cat_ai_SH(void)
 
 {
   char cVar1;
@@ -2022,7 +2122,7 @@ ushort FUN_fffe0d06(void)
   case 0:
   case 1:
     uStack_e = CONCAT11(pbStack_c[0x10],pbStack_c[0x11]);
-    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
+    cVar1 = width_index_of_hz(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x17 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -2031,7 +2131,7 @@ ushort FUN_fffe0d06(void)
   case 2:
   case 3:
     uStack_e = CONCAT11(pbStack_c[0x1a],pbStack_c[0x1b]);
-    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
+    cVar1 = width_index_of_hz(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -2053,7 +2153,7 @@ ushort FUN_fffe0d06(void)
   case 9:
   case 0xe:
     uStack_e = CONCAT11(pbStack_c[0x2e],pbStack_c[0x2f]);
-    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
+    cVar1 = width_index_of_hz(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -2062,7 +2162,7 @@ ushort FUN_fffe0d06(void)
   case 0xc:
   case 0xd:
     uStack_e = CONCAT11(pbStack_c[0x24],pbStack_c[0x25]);
-    cVar1 = FUN_fffb36ff(bStack_f,uStack_e);
+    cVar1 = width_index_of_hz(bStack_f,uStack_e);
     acStack_1a[7] = cVar1 + 1U;
     if (0x15 < (byte)(cVar1 + 1U)) {
       acStack_1a[7] = 0;
@@ -2097,13 +2197,16 @@ ushort FUN_fffe0d06(void)
 }
 
 
-// ===== FUN_fffe0e99 @ fffe0e99 (333 bytes)
+// ===== cat_ai_SQ @ fffe0e99 (333 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe0fe3) */
 /* WARNING: Removing unreachable block (ram,0xfffe0fa4) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* AI change detector for SQ (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SQ answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: constant "SQ"; reads
+   g_ui.rf_gain and EX030102 (RF/SQL VR) [fact: fffe0e99] */
 
-undefined2 FUN_fffe0e99(void)
+undefined2 cat_ai_SQ(void)
 
 {
   uint uVar1;
@@ -2173,12 +2276,15 @@ undefined2 FUN_fffe0e99(void)
 }
 
 
-// ===== FUN_fffe0fe6 @ fffe0fe6 (1121 bytes)
+// ===== cat_ai_SS @ fffe0fe6 (1121 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe1444) */
 /* WARNING: Removing unreachable block (ram,0xfffe11d5) */
+/* AI change detector for SS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the SS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0..8 = the SS
+   item (scope settings: span, level, 3DSS, mode, marker, OSC levels/time) [fact: fffe0fe6] */
 
-ushort FUN_fffe0fe6(char param_1)
+ushort cat_ai_SS(char param_1)
 
 {
   char cVar1;
@@ -2419,11 +2525,14 @@ ushort FUN_fffe0fe6(char param_1)
 }
 
 
-// ===== FUN_fffe1447 @ fffe1447 (109 bytes)
+// ===== cat_ai_ST @ fffe1447 (109 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe149b) */
+/* AI change detector for ST (called from cat_ai_poll): compares with its shadow, on a change builds
+   the ST answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'S','T' split
+   (g_opstate.split_on) [fact: fffe1447] */
 
-undefined2 FUN_fffe1447(void)
+undefined2 cat_ai_ST(void)
 
 {
   char *pcVar1;
@@ -2463,9 +2572,13 @@ undefined2 FUN_fffe1447(void)
 }
 
 
-// ===== FUN_fffe14b4 @ fffe14b4 (111 bytes)
+// ===== cat_ai_TS @ fffe14b4 (111 bytes)
 
-ushort FUN_fffe14b4(void)
+/* AI change detector for TS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the TS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.txw_swap [fact:
+   fffe14b4] */
+
+ushort cat_ai_TS(void)
 
 {
   char *pcVar1;
@@ -2499,11 +2612,14 @@ ushort FUN_fffe14b4(void)
 }
 
 
-// ===== FUN_fffe1523 @ fffe1523 (115 bytes)
+// ===== cat_ai_TX @ fffe1523 (115 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe157d) */
+/* AI change detector for TX (called from cat_ai_poll): compares with its shadow, on a change builds
+   the TX answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'T','X' [fact:
+   fffe1523] */
 
-undefined2 FUN_fffe1523(void)
+undefined2 cat_ai_TX(void)
 
 {
   char *pcVar1;
@@ -2543,13 +2659,16 @@ undefined2 FUN_fffe1523(void)
 }
 
 
-// ===== FUN_fffe1596 @ fffe1596 (199 bytes)
+// ===== cat_ai_VD @ fffe1596 (199 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe165a) */
 /* WARNING: Removing unreachable block (ram,0xfffe161f) */
 /* WARNING: Removing unreachable block (ram,0xfffe1643) */
+/* AI change detector for VD (called from cat_ai_poll): compares with its shadow, on a change builds
+   the VD answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_delay
+   of the VOX source selected by EX030405 [fact: fffe1596] */
 
-undefined2 FUN_fffe1596(void)
+undefined2 cat_ai_VD(void)
 
 {
   uint uVar1;
@@ -2602,13 +2721,16 @@ undefined2 FUN_fffe1596(void)
 }
 
 
-// ===== FUN_fffe165d @ fffe165d (173 bytes)
+// ===== cat_ai_VG @ fffe165d (173 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe1707) */
 /* WARNING: Removing unreachable block (ram,0xfffe16cc) */
 /* WARNING: Removing unreachable block (ram,0xfffe16f0) */
+/* AI change detector for VG (called from cat_ai_poll): compares with its shadow, on a change builds
+   the VG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_gain
+   [fact: fffe165d] */
 
-undefined2 FUN_fffe165d(void)
+undefined2 cat_ai_VG(void)
 
 {
   uint uVar1;
@@ -2654,11 +2776,14 @@ undefined2 FUN_fffe165d(void)
 }
 
 
-// ===== FUN_fffe170a @ fffe170a (106 bytes)
+// ===== cat_ai_VS @ fffe170a (106 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe1756) */
+/* AI change detector for VS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the VS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.active_vfo
+   [fact: fffe170a] */
 
-ushort FUN_fffe170a(void)
+ushort cat_ai_VS(void)
 
 {
   char *pcVar1;
@@ -2688,11 +2813,14 @@ ushort FUN_fffe170a(void)
 }
 
 
-// ===== FUN_fffe1774 @ fffe1774 (145 bytes)
+// ===== cat_ai_VX @ fffe1774 (145 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe17e5) */
+/* AI change detector for VX (called from cat_ai_poll): compares with its shadow, on a change builds
+   the VX answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.vox_on
+   [fact: fffe1774] */
 
-ushort FUN_fffe1774(void)
+ushort cat_ai_VX(void)
 
 {
   uint uVar1;
@@ -2732,9 +2860,11 @@ ushort FUN_fffe1774(void)
 }
 
 
-// ===== FUN_fffe1805 @ fffe1805 (52 bytes)
+// ===== max4_u8 @ fffe1805 (52 bytes)
 
-byte FUN_fffe1805(byte *param_1)
+/* Largest of 4 bytes at *p [fact: fffe1805]; used by cat_ai_AG / cat_ai_RG on the last-4 history */
+
+byte max4_u8(byte *param_1)
 
 {
   byte local_7;
@@ -2750,9 +2880,11 @@ byte FUN_fffe1805(byte *param_1)
 }
 
 
-// ===== FUN_fffe1839 @ fffe1839 (52 bytes)
+// ===== min4_u8 @ fffe1839 (52 bytes)
 
-byte FUN_fffe1839(byte *param_1)
+/* Smallest of 4 bytes at *p [fact: fffe1839]; used by cat_ai_AG / cat_ai_RG */
+
+byte min4_u8(byte *param_1)
 
 {
   byte local_7;

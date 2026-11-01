@@ -7,7 +7,7 @@
 void menu_ex060213_step(void)
 
 {
-  FUN_fffd38fe(2);
+  menu_step_preset_rear_out_level(2);
   return;
 }
 
@@ -19,7 +19,7 @@ void menu_ex060213_step(void)
 void menu_ex060313_step(void)
 
 {
-  FUN_fffd38fe(3);
+  menu_step_preset_rear_out_level(3);
   return;
 }
 
@@ -31,7 +31,7 @@ void menu_ex060313_step(void)
 void menu_ex060413_step(void)
 
 {
-  FUN_fffd38fe(4);
+  menu_step_preset_rear_out_level(4);
   return;
 }
 
@@ -43,14 +43,17 @@ void menu_ex060413_step(void)
 void menu_ex060513_step(void)
 
 {
-  FUN_fffd38fe(5);
+  menu_step_preset_rear_out_level(5);
   return;
 }
 
 
-// ===== FUN_fffd38fe @ fffd38fe (133 bytes)
+// ===== menu_step_preset_rear_out_level @ fffd38fe (133 bytes)
 
-void FUN_fffd38fe(byte param_1)
+/* PRESET n rear_out_level on_step (EX060n13): called by menu_ex06{01..05}13_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].rear_out_level [fact: fffd38fe] */
+
+void menu_step_preset_rear_out_level(byte param_1)
 
 {
   bool bVar1;
@@ -95,7 +98,7 @@ void FUN_fffd38fe(byte param_1)
 void menu_ex060114_step(void)
 
 {
-  FUN_fffd39a1(1);
+  menu_step_preset_tx_bpf_sel(1);
   return;
 }
 
@@ -107,7 +110,7 @@ void menu_ex060114_step(void)
 void menu_ex060214_step(void)
 
 {
-  FUN_fffd39a1(2);
+  menu_step_preset_tx_bpf_sel(2);
   return;
 }
 
@@ -119,7 +122,7 @@ void menu_ex060214_step(void)
 void menu_ex060314_step(void)
 
 {
-  FUN_fffd39a1(3);
+  menu_step_preset_tx_bpf_sel(3);
   return;
 }
 
@@ -131,7 +134,7 @@ void menu_ex060314_step(void)
 void menu_ex060414_step(void)
 
 {
-  FUN_fffd39a1(4);
+  menu_step_preset_tx_bpf_sel(4);
   return;
 }
 
@@ -143,14 +146,17 @@ void menu_ex060414_step(void)
 void menu_ex060514_step(void)
 
 {
-  FUN_fffd39a1(5);
+  menu_step_preset_tx_bpf_sel(5);
   return;
 }
 
 
-// ===== FUN_fffd39a1 @ fffd39a1 (132 bytes)
+// ===== menu_step_preset_tx_bpf_sel @ fffd39a1 (132 bytes)
 
-void FUN_fffd39a1(byte param_1)
+/* PRESET n tx_bpf_sel on_step (EX060n14): called by menu_ex06{01..05}14_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].tx_bpf_sel [fact: fffd39a1] */
+
+void menu_step_preset_tx_bpf_sel(byte param_1)
 
 {
   bool bVar1;
@@ -195,7 +201,7 @@ void FUN_fffd39a1(byte param_1)
 void menu_ex060115_step(void)
 
 {
-  FUN_fffd3a43(1);
+  menu_step_preset_mod_source(1);
   return;
 }
 
@@ -207,7 +213,7 @@ void menu_ex060115_step(void)
 void menu_ex060215_step(void)
 
 {
-  FUN_fffd3a43(2);
+  menu_step_preset_mod_source(2);
   return;
 }
 
@@ -219,7 +225,7 @@ void menu_ex060215_step(void)
 void menu_ex060315_step(void)
 
 {
-  FUN_fffd3a43(3);
+  menu_step_preset_mod_source(3);
   return;
 }
 
@@ -231,7 +237,7 @@ void menu_ex060315_step(void)
 void menu_ex060415_step(void)
 
 {
-  FUN_fffd3a43(4);
+  menu_step_preset_mod_source(4);
   return;
 }
 
@@ -243,14 +249,17 @@ void menu_ex060415_step(void)
 void menu_ex060515_step(void)
 
 {
-  FUN_fffd3a43(5);
+  menu_step_preset_mod_source(5);
   return;
 }
 
 
-// ===== FUN_fffd3a43 @ fffd3a43 (132 bytes)
+// ===== menu_step_preset_mod_source @ fffd3a43 (132 bytes)
 
-void FUN_fffd3a43(byte param_1)
+/* PRESET n mod_source on_step (EX060n15): called by menu_ex06{01..05}15_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].mod_source [fact: fffd3a43] */
+
+void menu_step_preset_mod_source(byte param_1)
 
 {
   bool bVar1;
@@ -295,7 +304,7 @@ void FUN_fffd3a43(byte param_1)
 void menu_ex060116_step(void)
 
 {
-  FUN_fffd3ae5(1);
+  menu_step_preset_usb_mod_gain(1);
   return;
 }
 
@@ -307,7 +316,7 @@ void menu_ex060116_step(void)
 void menu_ex060216_step(void)
 
 {
-  FUN_fffd3ae5(2);
+  menu_step_preset_usb_mod_gain(2);
   return;
 }
 
@@ -319,7 +328,7 @@ void menu_ex060216_step(void)
 void menu_ex060316_step(void)
 
 {
-  FUN_fffd3ae5(3);
+  menu_step_preset_usb_mod_gain(3);
   return;
 }
 
@@ -331,7 +340,7 @@ void menu_ex060316_step(void)
 void menu_ex060416_step(void)
 
 {
-  FUN_fffd3ae5(4);
+  menu_step_preset_usb_mod_gain(4);
   return;
 }
 
@@ -343,14 +352,17 @@ void menu_ex060416_step(void)
 void menu_ex060516_step(void)
 
 {
-  FUN_fffd3ae5(5);
+  menu_step_preset_usb_mod_gain(5);
   return;
 }
 
 
-// ===== FUN_fffd3ae5 @ fffd3ae5 (133 bytes)
+// ===== menu_step_preset_usb_mod_gain @ fffd3ae5 (133 bytes)
 
-void FUN_fffd3ae5(byte param_1)
+/* PRESET n usb_mod_gain on_step (EX060n16): called by menu_ex06{01..05}16_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].usb_mod_gain [fact: fffd3ae5] */
+
+void menu_step_preset_usb_mod_gain(byte param_1)
 
 {
   bool bVar1;
@@ -395,7 +407,7 @@ void FUN_fffd3ae5(byte param_1)
 void menu_ex060117_step(void)
 
 {
-  FUN_fffd3b88(1);
+  menu_step_preset_rear_mod_gain(1);
   return;
 }
 
@@ -407,7 +419,7 @@ void menu_ex060117_step(void)
 void menu_ex060217_step(void)
 
 {
-  FUN_fffd3b88(2);
+  menu_step_preset_rear_mod_gain(2);
   return;
 }
 
@@ -419,7 +431,7 @@ void menu_ex060217_step(void)
 void menu_ex060317_step(void)
 
 {
-  FUN_fffd3b88(3);
+  menu_step_preset_rear_mod_gain(3);
   return;
 }
 
@@ -431,7 +443,7 @@ void menu_ex060317_step(void)
 void menu_ex060417_step(void)
 
 {
-  FUN_fffd3b88(4);
+  menu_step_preset_rear_mod_gain(4);
   return;
 }
 
@@ -443,14 +455,17 @@ void menu_ex060417_step(void)
 void menu_ex060517_step(void)
 
 {
-  FUN_fffd3b88(5);
+  menu_step_preset_rear_mod_gain(5);
   return;
 }
 
 
-// ===== FUN_fffd3b88 @ fffd3b88 (133 bytes)
+// ===== menu_step_preset_rear_mod_gain @ fffd3b88 (133 bytes)
 
-void FUN_fffd3b88(byte param_1)
+/* PRESET n rear_mod_gain on_step (EX060n17): called by menu_ex06{01..05}17_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].rear_mod_gain [fact: fffd3b88] */
+
+void menu_step_preset_rear_mod_gain(byte param_1)
 
 {
   bool bVar1;
@@ -495,7 +510,7 @@ void FUN_fffd3b88(byte param_1)
 void menu_ex060118_step(void)
 
 {
-  FUN_fffd3c2b(1);
+  menu_step_preset_rptt_select(1);
   return;
 }
 
@@ -507,7 +522,7 @@ void menu_ex060118_step(void)
 void menu_ex060218_step(void)
 
 {
-  FUN_fffd3c2b(2);
+  menu_step_preset_rptt_select(2);
   return;
 }
 
@@ -519,7 +534,7 @@ void menu_ex060218_step(void)
 void menu_ex060318_step(void)
 
 {
-  FUN_fffd3c2b(3);
+  menu_step_preset_rptt_select(3);
   return;
 }
 
@@ -531,7 +546,7 @@ void menu_ex060318_step(void)
 void menu_ex060418_step(void)
 
 {
-  FUN_fffd3c2b(4);
+  menu_step_preset_rptt_select(4);
   return;
 }
 
@@ -543,14 +558,17 @@ void menu_ex060418_step(void)
 void menu_ex060518_step(void)
 
 {
-  FUN_fffd3c2b(5);
+  menu_step_preset_rptt_select(5);
   return;
 }
 
 
-// ===== FUN_fffd3c2b @ fffd3c2b (132 bytes)
+// ===== menu_step_preset_rptt_select @ fffd3c2b (132 bytes)
 
-void FUN_fffd3c2b(byte param_1)
+/* PRESET n rptt_select on_step (EX060n18): called by menu_ex06{01..05}18_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].rptt_select [fact: fffd3c2b] */
+
+void menu_step_preset_rptt_select(byte param_1)
 
 {
   bool bVar1;
@@ -616,9 +634,12 @@ void menu_m4_21_0_enter(void)
 }
 
 
-// ===== FUN_fffd3d03 @ fffd3d03 (859 bytes)
+// ===== menu_cursors_save @ fffd3d03 (859 bytes)
 
-void FUN_fffd3d03(void)
+/* Copies the RAM menu cursors 0x12238..0x1226D back into g_opstate before the power-off save [fact:
+   fffd3d03]; callers io_task, supply_undervolt_check (eeprom.md "Menu cursors") */
+
+void menu_cursors_save(void)
 
 {
   g_opstate.menu_cursor_9a3d[0] = DAT_00012238;
@@ -677,9 +698,13 @@ void FUN_fffd3d03(void)
 }
 
 
-// ===== FUN_fffd405e @ fffd405e (859 bytes)
+// ===== menu_cursors_load @ fffd405e (859 bytes)
 
-void FUN_fffd405e(void)
+/* Copies the per-group menu {top,row} cursors from g_opstate (0x9A3D .. presets[n].menu_cursor)
+   into the RAM copy 0x12238..0x1226D [fact: fffd405e]; only caller menu_subsys_init (eeprom.md
+   "Menu cursors") */
+
+void menu_cursors_load(void)
 
 {
   DAT_00012238 = g_opstate.menu_cursor_9a3d[0];

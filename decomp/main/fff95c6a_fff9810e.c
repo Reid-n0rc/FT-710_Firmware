@@ -563,63 +563,63 @@ ushort displink_build_status(void)
   local_a = !local_a;
   DAT_000016a1 = g_opstate.scope_flag_37;
   local_6 = 2;
-  DAT_000016a2 = FUN_fff96dde();
+  DAT_000016a2 = dlstat_scope_mode();
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff96f3e();
+  uVar3 = dlstat_vfo_side_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff96fb7();
+  uVar3 = dlstat_screen_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff9700b();
+  uVar3 = dlstat_split_expand();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97049();
+  uVar3 = dlstat_disp_sensitivity();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97075();
+  uVar3 = dlstat_swr_tx_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff970b8();
+  uVar3 = dlstat_led_mask();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97105();
+  uVar3 = dlstat_affft_overlay();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff9716f(DAT_00020874);
+  uVar3 = dlstat_tx_bpf(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   (&DAT_000016a0)[(ushort)(local_6 + 1)] = g_opstate.meter_sel & 7;
   local_6 = local_6 + 2;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff971fc(DAT_00020874);
+  uVar3 = dlstat_att_ipo_dnf(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff9728c(DAT_00020874);
+  uVar3 = dlstat_dsp_flags_agc(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97430();
+  uVar3 = dlstat_tx_vfo_flags();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97567();
+  uVar3 = dlstat_tone_tuner();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff976d2();
+  uVar3 = dlstat_peak();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff9770b(local_a);
+  uVar3 = dlstat_span_center(local_a);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   iVar6 = FUN_fffc4f8f();
@@ -630,7 +630,7 @@ ushort displink_build_status(void)
     (&DAT_000016a0)[local_6] = g_opstate.ss03_value & 0x5f | 0x50;
   }
   local_6 = local_6 + 1;
-  FUN_fff977b3(&DAT_000016a0 + local_6,DAT_00020874);
+  dlstat_default_width(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
   local_9 = DAT_00020874->mode & 0xf;
   if ((local_9 == 3) || (local_9 == 2)) {
@@ -640,31 +640,31 @@ ushort displink_build_status(void)
     bVar2 = false;
   }
   if (bVar2) {
-    FUN_fff9782b(&DAT_000016a0 + local_6);
+    dlstat_zero_in(&DAT_000016a0 + local_6);
   }
   local_6 = local_6 + 4;
-  FUN_fff978eb(&DAT_000016a0 + local_6,DAT_00020874);
+  dlstat_contour(&DAT_000016a0 + local_6,DAT_00020874);
   if (g_opstate.ex030205_contour_level < 0) {
     (&DAT_000016a0)[local_6] = (&DAT_000016a0)[local_6] | 0x80;
   }
   local_6 = local_6 + 2;
-  FUN_fff9795f(&DAT_000016a0 + local_6,DAT_00020874);
+  dlstat_notch(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
-  FUN_fff979d3(&DAT_000016a0 + local_6,DAT_00020874);
+  dlstat_width(&DAT_000016a0 + local_6,DAT_00020874);
   local_6 = local_6 + 2;
-  FUN_fff97a44(&DAT_000016a0 + local_6,DAT_00020874);
+  dlstat_shift(&DAT_000016a0 + local_6,DAT_00020874);
   (&DAT_000016a0)[(ushort)(local_6 + 2)] = g_opstate.apf_freq;
   (&DAT_000016a0)[(ushort)(local_6 + 3)] = g_opstate.cw_pitch + 0x1e;
   local_6 = local_6 + 4;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97abc(DAT_00020874);
+  uVar3 = dlstat_dsp_knob_flags(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97b7b();
+  uVar3 = dlstat_voice_mem();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
-  FUN_fff97ba6(&DAT_000016a0 + local_6);
+  dlstat_scope_settings(&DAT_000016a0 + local_6);
   (&DAT_000016a0)[(ushort)(local_6 + 6)] = 0xff;
   uVar5 = local_6 + 7;
   if (PTR_g_ui_00025d38->txw_on == 1) {
@@ -673,7 +673,7 @@ ushort displink_build_status(void)
   }
   else {
     local_6 = uVar5;
-    uVar3 = FUN_fff97c74();
+    uVar3 = dlstat_func_knob();
     (&DAT_000016a0)[uVar5] = uVar3;
     local_6 = local_6 + 1;
   }
@@ -682,12 +682,12 @@ ushort displink_build_status(void)
   DAT_0001b62e = local_6 + 1;
   uVar1 = (uint)DAT_0001b62e;
   local_6 = DAT_0001b62e;
-  bVar4 = FUN_fff97cf7('\0',&local_9);
+  bVar4 = dlstat_vfo_state_code('\0',&local_9);
   (&DAT_000016a0)[uVar1] = bVar4;
   (&DAT_000016a0)[(ushort)(local_6 + 1)] = local_9;
   local_6 = local_6 + 2;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97e1d(0);
+  uVar3 = dlstat_vfo_flags48(0);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   if (PTR_g_ui_00025d38->numentry_mode == 0) {
@@ -722,12 +722,12 @@ ushort displink_build_status(void)
   DAT_0001b630 = uVar5 + 0x16;
   uVar1 = (uint)DAT_0001b630;
   local_6 = DAT_0001b630;
-  bVar4 = FUN_fff97cf7('\x01',&local_9);
+  bVar4 = dlstat_vfo_state_code('\x01',&local_9);
   (&DAT_000016a0)[uVar1] = bVar4;
   (&DAT_000016a0)[(ushort)(local_6 + 1)] = local_9;
   local_6 = local_6 + 2;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff97e1d(1);
+  uVar3 = dlstat_vfo_flags48(1);
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   DAT_000019c9 = 0;
@@ -759,11 +759,11 @@ ushort displink_build_status(void)
     (&DAT_000016a0)[DAT_0001b630] = 10;
   }
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff9849e();
+  uVar3 = dlstat_meter();
   (&DAT_000016a0)[uVar1] = uVar3;
   local_6 = local_6 + 1;
   uVar1 = (uint)local_6;
-  uVar3 = FUN_fff98526(DAT_00020874);
+  uVar3 = dlstat_tuning_flags(DAT_00020874);
   (&DAT_000016a0)[uVar1] = uVar3;
   (&DAT_000016a0)[(ushort)(local_6 + 7)] = 0;
   (&DAT_000016a0)[(ushort)(local_6 + 8)] =
@@ -819,9 +819,12 @@ char FUN_fff96d94(byte param_1)
 }
 
 
-// ===== FUN_fff96dde @ fff96dde (352 bytes)
+// ===== dlstat_scope_mode @ fff96dde (352 bytes)
 
-undefined1 FUN_fff96dde(void)
+/* Status-block byte 2 of displink_build_status (0xFFF96455): scope mode 0..0xB (the SS sel-6
+   coding) [fact: display-link.md "0x97-byte radio status block" table, row 2] */
+
+undefined1 dlstat_scope_mode(void)
 
 {
   bool bVar1;
@@ -909,11 +912,13 @@ undefined1 FUN_fff96dde(void)
 }
 
 
-// ===== FUN_fff96f3e @ fff96f3e (121 bytes)
+// ===== dlstat_vfo_side_flags @ fff96f3e (121 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff96f69) */
+/* Status-block byte 3 of displink_build_status (0xFFF96455): bit 7 active VFO is B, bit 5 split,
+   bits 4/6 side flags [fact: display-link.md "0x97-byte radio status block" table, row 3] */
 
-byte FUN_fff96f3e(void)
+byte dlstat_vfo_side_flags(void)
 
 {
   byte bVar1;
@@ -949,9 +954,12 @@ byte FUN_fff96f3e(void)
 }
 
 
-// ===== FUN_fff96fb7 @ fff96fb7 (84 bytes)
+// ===== dlstat_screen_flags @ fff96fb7 (84 bytes)
 
-undefined1 FUN_fff96fb7(void)
+/* Status-block byte 4 of displink_build_status (0xFFF96455): bit 5 when UI +0x95/+0x96/+0x97 is set
+   [fact: display-link.md "0x97-byte radio status block" table, row 4] */
+
+undefined1 dlstat_screen_flags(void)
 
 {
   bool bVar1;
@@ -977,24 +985,28 @@ undefined1 FUN_fff96fb7(void)
 }
 
 
-// ===== FUN_fff9700b @ fff9700b (62 bytes)
+// ===== dlstat_split_expand @ fff9700b (62 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97017) */
 /* WARNING: Removing unreachable block (ram,0xfff97028) */
+/* Status-block byte 5 of displink_build_status (0xFFF96455): split / waterfall EXPAND << 5 / 0x9DC6
+   << 6 [fact: display-link.md "0x97-byte radio status block" table, row 5] */
 
-byte FUN_fff9700b(void)
+byte dlstat_split_expand(void)
 
 {
   return g_opstate.split_on | (g_opstate.scope_expand & 1) << 5 | (g_opstate.preset_on & 1) << 6;
 }
 
 
-// ===== FUN_fff97049 @ fff97049 (44 bytes)
+// ===== dlstat_disp_sensitivity @ fff97049 (44 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97055) */
 /* WARNING: Removing unreachable block (ram,0xfff97063) */
+/* Status-block byte 6 of displink_build_status (0xFFF96455): 3DSS and 2D DISP SENSITIVITY bits
+   [fact: display-link.md "0x97-byte radio status block" table, row 6] */
 
-byte FUN_fff97049(void)
+byte dlstat_disp_sensitivity(void)
 
 {
   return (g_opstate.ex040204_3dss_disp_sensitivity & 1) << 6 |
@@ -1002,13 +1014,15 @@ byte FUN_fff97049(void)
 }
 
 
-// ===== FUN_fff97075 @ fff97075 (67 bytes)
+// ===== dlstat_swr_tx_flags @ fff97075 (67 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97082) */
 /* WARNING: Removing unreachable block (ram,0xfff97091) */
 /* WARNING: Removing unreachable block (ram,0xfff970a6) */
+/* Status-block byte 7 of displink_build_status (0xFFF96455): HI-SWR warning bits and TX [fact:
+   display-link.md "0x97-byte radio status block" table, row 7] */
 
-byte FUN_fff97075(void)
+byte dlstat_swr_tx_flags(void)
 
 {
   return (PTR_g_ui_00025d38->hi_swr & 3) << 4 |
@@ -1016,9 +1030,13 @@ byte FUN_fff97075(void)
 }
 
 
-// ===== FUN_fff970b8 @ fff970b8 (77 bytes)
+// ===== dlstat_led_mask @ fff970b8 (77 bytes)
 
-byte FUN_fff970b8(void)
+/* Status-block byte 8 of displink_build_status (0xFFF96455): the front-panel lamp map UI +0x34,
+   high nibble masked by LED DIMMER [fact: display-link.md "0x97-byte radio status block" table, row
+   8] */
+
+byte dlstat_led_mask(void)
 
 {
   byte local_3;
@@ -1038,15 +1056,17 @@ byte FUN_fff970b8(void)
 }
 
 
-// ===== FUN_fff97105 @ fff97105 (106 bytes)
+// ===== dlstat_affft_overlay @ fff97105 (106 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97135) */
 /* WARNING: Removing unreachable block (ram,0xfff97111) */
 /* WARNING: Removing unreachable block (ram,0xfff97120) */
 /* WARNING: Removing unreachable block (ram,0xfff9714a) */
 /* WARNING: Removing unreachable block (ram,0xfff9715e) */
+/* Status-block byte 9 of displink_build_status (0xFFF96455): 0x9C5C << 3 (filter-graph AF-FFT
+   overlay toggle) [fact: display-link.md "0x97-byte radio status block" table, row 9] */
 
-byte FUN_fff97105(void)
+byte dlstat_affft_overlay(void)
 
 {
   return (g_opstate.toggle_9c5c & 1) << 3 |
@@ -1056,9 +1076,12 @@ byte FUN_fff97105(void)
 }
 
 
-// ===== FUN_fff9716f @ fff9716f (141 bytes)
+// ===== dlstat_tx_bpf @ fff9716f (141 bytes)
 
-byte FUN_fff9716f(byte *param_1)
+/* Status-block byte 10 of displink_build_status (0xFFF96455): TX BPF SEL of the mode | 0x80 [fact:
+   display-link.md "0x97-byte radio status block" table, row 10] */
+
+byte dlstat_tx_bpf(byte *param_1)
 
 {
   uint uVar1;
@@ -1089,12 +1112,14 @@ LAB_fff971e9:
 }
 
 
-// ===== FUN_fff971fc @ fff971fc (144 bytes)
+// ===== dlstat_att_ipo_dnf @ fff971fc (144 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97257) */
 /* WARNING: Removing unreachable block (ram,0xfff97270) */
+/* Status-block byte 12 of displink_build_status (0xFFF96455): ATT, IPO/AMP and DNF/FM bits [fact:
+   display-link.md "0x97-byte radio status block" table, row 12] */
 
-byte FUN_fff971fc(byte *param_1)
+byte dlstat_att_ipo_dnf(byte *param_1)
 
 {
   bool bVar1;
@@ -1142,9 +1167,12 @@ byte FUN_fff971fc(byte *param_1)
 }
 
 
-// ===== FUN_fff9728c @ fff9728c (304 bytes)
+// ===== dlstat_dsp_flags_agc @ fff9728c (304 bytes)
 
-byte FUN_fff9728c(byte *param_1)
+/* Status-block byte 13 of displink_build_status (0xFFF96455): CW indicator, APF, CONTOUR, NOTCH
+   flags and AGC [fact: display-link.md "0x97-byte radio status block" table, row 13] */
+
+byte dlstat_dsp_flags_agc(byte *param_1)
 
 {
   bool bVar1;
@@ -1281,14 +1309,16 @@ LAB_fff97422:
 }
 
 
-// ===== FUN_fff97430 @ fff97430 (251 bytes)
+// ===== dlstat_tx_vfo_flags @ fff97430 (251 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97487) */
 /* WARNING: Removing unreachable block (ram,0xfff97454) */
 /* WARNING: Removing unreachable block (ram,0xfff974b0) */
 /* WARNING: Removing unreachable block (ram,0xfff974ce) */
+/* Status-block byte 14 of displink_build_status (0xFFF96455): TX-VFO flags: keyer, monitor,
+   BK-IN/VOX [fact: display-link.md "0x97-byte radio status block" table, row 14] */
 
-byte FUN_fff97430(void)
+byte dlstat_tx_vfo_flags(void)
 
 {
   bool bVar1;
@@ -1312,7 +1342,7 @@ byte FUN_fff97430(void)
   else {
     cVar2 = '\x01';
   }
-  pcVar8 = (char *)FUN_fff99669();
+  pcVar8 = (char *)moni_level_ptr();
   if (pcVar8 == (char *)0x0) {
     cStack_9 = '\0';
   }
@@ -1371,12 +1401,14 @@ undefined1 FUN_fff9752b(byte *param_1)
 }
 
 
-// ===== FUN_fff97567 @ fff97567 (363 bytes)
+// ===== dlstat_tone_tuner @ fff97567 (363 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff9769f) */
 /* WARNING: Removing unreachable block (ram,0xfff976ae) */
+/* Status-block byte 15 of displink_build_status (0xFFF96455): FM tone mode and tuner indicator
+   [fact: display-link.md "0x97-byte radio status block" table, row 15] */
 
-byte FUN_fff97567(void)
+byte dlstat_tone_tuner(void)
 
 {
   bool bVar1;
@@ -1450,11 +1482,13 @@ byte FUN_fff97567(void)
 }
 
 
-// ===== FUN_fff976d2 @ fff976d2 (57 bytes)
+// ===== dlstat_peak @ fff976d2 (57 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff976ee) */
+/* Status-block byte 16 of displink_build_status (0xFFF96455): PEAK & 7 and the +0x6F / timer 0x2A
+   bits [fact: display-link.md "0x97-byte radio status block" table, row 16] */
 
-byte FUN_fff976d2(void)
+byte dlstat_peak(void)
 
 {
   byte bVar1;
@@ -1471,11 +1505,13 @@ byte FUN_fff976d2(void)
 }
 
 
-// ===== FUN_fff9770b @ fff9770b (36 bytes)
+// ===== dlstat_span_center @ fff9770b (36 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97719) */
+/* Status-block byte 17 of displink_build_status (0xFFF96455): span index and CENTER/CURSOR/FIX << 6
+   [fact: display-link.md "0x97-byte radio status block" table, row 17] */
 
-byte FUN_fff9770b(byte param_1)
+byte dlstat_span_center(byte param_1)
 
 {
   byte bVar1;
@@ -1535,9 +1571,12 @@ byte range_cmp3(uint *v,uint *range)
 }
 
 
-// ===== FUN_fff977b3 @ fff977b3 (120 bytes)
+// ===== dlstat_default_width @ fff977b3 (120 bytes)
 
-void FUN_fff977b3(undefined1 *param_1,byte *param_2)
+/* Status-block byte 19 of displink_build_status (0xFFF96455): default WIDTH of the mode (bytes
+   19-20) [fact: display-link.md "0x97-byte radio status block" table, row 19] */
+
+void dlstat_default_width(undefined1 *param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1579,9 +1618,13 @@ LAB_fff9781b:
 }
 
 
-// ===== FUN_fff9782b @ fff9782b (192 bytes)
+// ===== dlstat_zero_in @ fff9782b (192 bytes)
 
-void FUN_fff9782b(void *param_1)
+/* Status-block byte 21 of displink_build_status (0xFFF96455): CW zero-in indicator from
+   dsp_tune_offset (bytes 21-24) [fact: display-link.md "0x97-byte radio status block" table, row
+   21] */
+
+void dlstat_zero_in(void *param_1)
 
 {
   byte bVar1;
@@ -1616,9 +1659,12 @@ void FUN_fff9782b(void *param_1)
 }
 
 
-// ===== FUN_fff978eb @ fff978eb (116 bytes)
+// ===== dlstat_contour @ fff978eb (116 bytes)
 
-void FUN_fff978eb(undefined2 *param_1,byte *param_2)
+/* Status-block byte 25 of displink_build_status (0xFFF96455): CONTOUR frequency / 10 and CONTOUR
+   LEVEL sign (bytes 25-26) [fact: display-link.md "0x97-byte radio status block" table, row 25] */
+
+void dlstat_contour(undefined2 *param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1656,9 +1702,12 @@ LAB_fff97954:
 }
 
 
-// ===== FUN_fff9795f @ fff9795f (116 bytes)
+// ===== dlstat_notch @ fff9795f (116 bytes)
 
-void FUN_fff9795f(undefined2 *param_1,byte *param_2)
+/* Status-block byte 27 of displink_build_status (0xFFF96455): NOTCH frequency / 10 (bytes 27-28)
+   [fact: display-link.md "0x97-byte radio status block" table, row 27] */
+
+void dlstat_notch(undefined2 *param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1696,9 +1745,12 @@ LAB_fff979c8:
 }
 
 
-// ===== FUN_fff979d3 @ fff979d3 (113 bytes)
+// ===== dlstat_width @ fff979d3 (113 bytes)
 
-void FUN_fff979d3(undefined2 *param_1,byte *param_2)
+/* Status-block byte 29 of displink_build_status (0xFFF96455): WIDTH (bytes 29-30) [fact:
+   display-link.md "0x97-byte radio status block" table, row 29] */
+
+void dlstat_width(undefined2 *param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1744,9 +1796,12 @@ LAB_fff97a36:
 }
 
 
-// ===== FUN_fff97a44 @ fff97a44 (120 bytes)
+// ===== dlstat_shift @ fff97a44 (120 bytes)
 
-void FUN_fff97a44(undefined2 *param_1,byte *param_2)
+/* Status-block byte 31 of displink_build_status (0xFFF96455): IF SHIFT (bytes 31-32) [fact:
+   display-link.md "0x97-byte radio status block" table, row 31] */
+
+void dlstat_shift(undefined2 *param_1,byte *param_2)
 
 {
   uint uVar1;
@@ -1784,12 +1839,15 @@ LAB_fff97ab1:
 }
 
 
-// ===== FUN_fff97abc @ fff97abc (191 bytes)
+// ===== dlstat_dsp_knob_flags @ fff97abc (191 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97af2) */
 /* WARNING: Removing unreachable block (ram,0xfff97b1d) */
+/* Status-block byte 35 of displink_build_status (0xFFF96455): FUNC panel open, shift/width changed,
+   APF, DSP-knob function bits [fact: display-link.md "0x97-byte radio status block" table, row 35]
+    */
 
-byte FUN_fff97abc(undefined4 param_1)
+byte dlstat_dsp_knob_flags(undefined4 param_1)
 
 {
   int iVar1;
@@ -1808,13 +1866,13 @@ byte FUN_fff97abc(undefined4 param_1)
   }
   local_6 = PTR_g_ui_00025d38->dsp_knob_func | PTR_g_ui_00025d38->dsp_knob_apf << 2 | local_6;
   local_4 = param_1;
-  FUN_fff979d3(auStack_8,param_1);
-  FUN_fff977b3(&uStack_a,local_4);
+  dlstat_width(auStack_8,param_1);
+  dlstat_default_width(&uStack_a,local_4);
   iVar1 = strncmp(auStack_8,&uStack_a,2);
   if (iVar1 != 0) {
     local_6 = local_6 | 0x10;
   }
-  FUN_fff97a44(auStack_8,local_4);
+  dlstat_shift(auStack_8,local_4);
   uStack_a = 0;
   iVar1 = strncmp(auStack_8,&uStack_a,2);
   if (iVar1 != 0) {
@@ -1824,20 +1882,25 @@ byte FUN_fff97abc(undefined4 param_1)
 }
 
 
-// ===== FUN_fff97b7b @ fff97b7b (43 bytes)
+// ===== dlstat_voice_mem @ fff97b7b (43 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97b88) */
+/* Status-block byte 36 of displink_build_status (0xFFF96455): voice-memory channel and DVS state
+   [fact: display-link.md "0x97-byte radio status block" table, row 36] */
 
-byte FUN_fff97b7b(void)
+byte dlstat_voice_mem(void)
 
 {
   return PTR_g_ui_00025d38->dvs_slot & 0xf | PTR_g_ui_00025d38->dvs_state << 4;
 }
 
 
-// ===== FUN_fff97ba6 @ fff97ba6 (206 bytes)
+// ===== dlstat_scope_settings @ fff97ba6 (206 bytes)
 
-void FUN_fff97ba6(void *param_1)
+/* Status-block byte 37 of displink_build_status (0xFFF96455): scope CENTER/CURSOR/FIX, 3DSS, EXPAND
+   and the bytes 37-42 [fact: display-link.md "0x97-byte radio status block" table, row 37] */
+
+void dlstat_scope_settings(void *param_1)
 
 {
   if (PTR_g_ui_00025d38->scope_skip != 1) {
@@ -1881,9 +1944,12 @@ void FUN_fff97ba6(void *param_1)
 }
 
 
-// ===== FUN_fff97c74 @ fff97c74 (131 bytes)
+// ===== dlstat_func_knob @ fff97c74 (131 bytes)
 
-byte FUN_fff97c74(void)
+/* Status-block byte 44 of displink_build_status (0xFFF96455): FUNC-knob function, or the code of
+   the open setting pop-up [fact: display-link.md "0x97-byte radio status block" table, row 44] */
+
+byte dlstat_func_knob(void)
 
 {
   byte bVar1;
@@ -1923,11 +1989,14 @@ byte FUN_fff97c74(void)
 }
 
 
-// ===== FUN_fff97cf7 @ fff97cf7 (294 bytes)
+// ===== dlstat_vfo_state_code @ fff97cf7 (294 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff97e1a) */
+/* Status-block byte 46 of displink_build_status (0xFFF96455): VFO state code (1 VFO, 2 memory, 3
+   memory tune, 4 PMS, 5 QMB, 7 60 m, 8 EMG, 9/10 split) [fact: display-link.md "0x97-byte radio
+   status block" table, row 46] */
 
-byte FUN_fff97cf7(char param_1,byte *param_2)
+byte dlstat_vfo_state_code(char param_1,byte *param_2)
 
 {
   char cVar1;
@@ -1995,9 +2064,12 @@ byte FUN_fff97cf7(char param_1,byte *param_2)
 }
 
 
-// ===== FUN_fff97e1d @ fff97e1d (162 bytes)
+// ===== dlstat_vfo_flags48 @ fff97e1d (162 bytes)
 
-byte FUN_fff97e1d(vfo_side param_1)
+/* Status-block byte 48 of displink_build_status (0xFFF96455): VFO-block flags byte 48 [fact:
+   display-link.md "0x97-byte radio status block" table, row 48] */
+
+byte dlstat_vfo_flags48(vfo_side param_1)
 
 {
   int iVar1;

@@ -113,9 +113,12 @@ byte displink_copy_if_changed(int param_1,int param_2,ushort param_3)
 }
 
 
-// ===== FUN_fff9c6ab @ fff9c6ab (69 bytes)
+// ===== scope_level_cur_ptr @ fff9c6ab (69 bytes)
 
-uint FUN_fff9c6ab(void)
+/* Returns the scope level byte for the RX dial frequency: 0x9BCA (RX) or 0x9BD8 (while
+   transmitting) + freq_range_index [fact: fff9c6ab]; the same tables as scope_level_ptr */
+
+uint scope_level_cur_ptr(void)
 
 {
   byte bVar1;
@@ -169,12 +172,14 @@ char dec_to_str_u8(byte param_1,byte *param_2)
 }
 
 
-// ===== FUN_fff9c787 @ fff9c787 (188 bytes)
+// ===== dec_to_str_s8 @ fff9c787 (188 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff9c7bb) */
 /* WARNING: Removing unreachable block (ram,0xfff9c7e9) */
+/* Signed byte to decimal text: '-' for negatives, then up to 3 digits without leading zeros;
+   returns the length [fact: fff9c787] */
 
-char FUN_fff9c787(byte param_1,undefined1 *param_2)
+char dec_to_str_s8(byte param_1,undefined1 *param_2)
 
 {
   bool bVar1;

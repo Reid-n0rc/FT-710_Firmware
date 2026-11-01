@@ -629,3 +629,55 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFD249D | `menu_draw_preset_lcut_freq` |  | PRESET n LCUT FREQ row: OFF / 100Hz / 150Hz.. (ROM 0xFFF8509B) **[fact]** |
 | 0xFFFD31E3 | `menu_step_nop` |  | Empty menu on_step (RTS), shared by 18 items (#74) **[inference]** |
 | 0xFFFD43B9 | `sd_menu_enter_check` |  | SD CARD action on_enter guard: refuses while +0x93 / +0x92 (PlayList, recording); with no card (+0xA6 != 1) shows dialog 2 (arg 1) or 3 and returns 0 with an error beep **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF9C787 | `dec_to_str_s8` |  | Signed byte to decimal text: '-' for negatives, then up to 3 digits without leading zeros; returns the length **[fact: fff9c787]** |
+| 0xFFFCA06D | `menu_draw_tx_bpf_sel` |  | (row, value, default) TX BPF SEL row: 10 chars from the menu text table, " 50-3050Hz".." 50-4000Hz" (0xFFF83715) or "TTBF".."400-2600Hz" (0xFFF83793) when 0x12272 != 0; callers menu_ex010113/010213/010413_draw **[fact: fffca06d]** |
+| 0xFFFCA125 | `menu_draw_mod_source` |  | (row, value, default) MOD SOURCE row: MIC/USB/REAR/AUTO from 0xFFF837FC; callers menu_ex010114/010214/010313/010414_draw **[fact: fffca125]** |
+| 0xFFFCA1B2 | `menu_draw_usb_mod_gain` |  | (row, value, default) USB MOD GAIN row: 3 digits by dec_to_str_u8; callers menu_ex010115/010215/010314/010415_draw **[fact: fffca1b2]** |
+| 0xFFFCA22A | `menu_draw_rear_mod_gain` |  | (row, value, default) REAR MOD GAIN row: 3 digits by dec_to_str_u8; callers menu_ex010116/010216/010315/010416_draw **[fact: fffca22a]** |
+| 0xFFFCA3AB | `menu_draw_cw_auto_mode` |  | (row, value, default) CW AUTO MODE row: OFF/50M/ON from 0xFFF83C40; only caller menu_ex010119_draw **[fact: fffca3ab]** |
+| 0xFFFCABC2 | `menu_draw_nar_width` |  | (row, value, default) NAR WIDTH row: 50Hz..4000Hz (21 entries) from 0xFFF83A87; callers menu_ex010418/010514/020114_draw **[fact: fffcabc2]** |
+| 0xFFFCB9BA | `menu_draw_cat_rate` |  | (row, value, default) CAT RATE row: 4800..115200bps from 0xFFF8455B; callers menu_ex030105/030108/030110_draw **[fact: fffcb9ba]** |
+| 0xFFFCBA46 | `menu_draw_cat_tot` |  | (row, value, default) CAT TIME OUT TIMER row: 10/100/1000/3000msec from 0xFFF845C4; callers menu_ex030106/030109/030111_draw **[fact: fffcba46]** |
+| 0xFFFCC7DC | `menu_draw_max_power` |  | (row, value, default) MAX POWER row: dec_to_str_u8 then 'W'; callers menu_ex030401..030404_draw (HF/50M/70M/AM MAX POWER) **[fact: fffcc7dc]** |
+| 0xFFFCE495 | `menu_step_u16` |  | (min, max, *u16): +1/-1 by the step direction g_ui.menu_step_dir, clamped; no-op when 0x15DFC = 1 (CAT apply), the 16-bit twin of menu_step_u8 **[fact: fffce495]** |
+| 0xFFFD25C9 | `menu_draw_preset_lcut_slope` |  | PRESET n lcut_slope row (EX060n09): called by menu_ex06{01..05}09_draw with n = 1..5, reads g_opstate.presets[n-1].lcut_slope, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd25c9]** |
+| 0xFFFD26F4 | `menu_draw_preset_hcut_freq` |  | PRESET n hcut_freq row (EX060n10): called by menu_ex06{01..05}10_draw with n = 1..5, reads g_opstate.presets[n-1].hcut_freq, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd26f4]** |
+| 0xFFFD2821 | `menu_draw_preset_hcut_slope` |  | PRESET n hcut_slope row (EX060n11): called by menu_ex06{01..05}11_draw with n = 1..5, reads g_opstate.presets[n-1].hcut_slope, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2821]** |
+| 0xFFFD294C | `menu_draw_preset_usb_out_level` |  | PRESET n usb_out_level row (EX060n12): called by menu_ex06{01..05}12_draw with n = 1..5, reads g_opstate.presets[n-1].usb_out_level, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd294c]** |
+| 0xFFFD2A63 | `menu_draw_preset_rear_out_level` |  | PRESET n rear_out_level row (EX060n13): called by menu_ex06{01..05}13_draw with n = 1..5, reads g_opstate.presets[n-1].rear_out_level, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2a63]** |
+| 0xFFFD2B7A | `menu_draw_preset_tx_bpf_sel` |  | PRESET n tx_bpf_sel row (EX060n14): called by menu_ex06{01..05}14_draw with n = 1..5, reads g_opstate.presets[n-1].tx_bpf_sel, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2b7a]** |
+| 0xFFFD2CA5 | `menu_draw_preset_mod_source` |  | PRESET n mod_source row (EX060n15): called by menu_ex06{01..05}15_draw with n = 1..5, reads g_opstate.presets[n-1].mod_source, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2ca5]** |
+| 0xFFFD2DD0 | `menu_draw_preset_usb_mod_gain` |  | PRESET n usb_mod_gain row (EX060n16): called by menu_ex06{01..05}16_draw with n = 1..5, reads g_opstate.presets[n-1].usb_mod_gain, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2dd0]** |
+| 0xFFFD2EE7 | `menu_draw_preset_rear_mod_gain` |  | PRESET n rear_mod_gain row (EX060n17): called by menu_ex06{01..05}17_draw with n = 1..5, reads g_opstate.presets[n-1].rear_mod_gain, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2ee7]** |
+| 0xFFFD2FFE | `menu_draw_preset_rptt_select` |  | PRESET n rptt_select row (EX060n18): called by menu_ex06{01..05}18_draw with n = 1..5, reads g_opstate.presets[n-1].rptt_select, sets the default flag 0x80, writes the value text at +0x18 **[fact: fffd2ffe]** |
+| 0xFFFD30E8 | `menu_preset_name_ptr` |  | Returns the RAM address of the open PRESET's name: menu_p2_global 0x16..0x1A (PRESET1..5) -> 0x9B2E/0x9B4D/0x9B6C/0x9B8B/0x9BAA, default 0x9B2E **[fact: fffd30e8]**; 0x9B2E is presets[0].name (ai_ex_preset_name compares it) |
+| 0xFFFD3202 | `menu_step_preset_cat1_rate` |  | PRESET n cat1_rate on_step (EX060n02): called by menu_ex06{01..05}02_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].cat1_rate **[fact: fffd3202]** |
+| 0xFFFD32A4 | `menu_step_preset_cat1_tot` |  | PRESET n cat1_tot on_step (EX060n03): called by menu_ex06{01..05}03_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].cat1_tot **[fact: fffd32a4]** |
+| 0xFFFD3346 | `menu_step_preset_cat1_cat3_stop_bit` |  | PRESET n cat1_cat3_stop_bit on_step (EX060n04): called by menu_ex06{01..05}04_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].cat1_cat3_stop_bit **[fact: fffd3346]** |
+| 0xFFFD33E8 | `menu_step_preset_agc_fast_delay` |  | PRESET n agc_fast_delay on_step (EX060n05): called by menu_ex06{01..05}05_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].agc_fast_delay **[fact: fffd33e8]** |
+| 0xFFFD348B | `menu_step_preset_agc_mid_delay` |  | PRESET n agc_mid_delay on_step (EX060n06): called by menu_ex06{01..05}06_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].agc_mid_delay **[fact: fffd348b]** |
+| 0xFFFD352E | `menu_step_preset_agc_slow_delay` |  | PRESET n agc_slow_delay on_step (EX060n07): called by menu_ex06{01..05}07_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].agc_slow_delay **[fact: fffd352e]** |
+| 0xFFFD35D1 | `menu_step_preset_lcut_freq` |  | PRESET n lcut_freq on_step (EX060n08): called by menu_ex06{01..05}08_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].lcut_freq **[fact: fffd35d1]** |
+| 0xFFFD3674 | `menu_step_preset_lcut_slope` |  | PRESET n lcut_slope on_step (EX060n09): called by menu_ex06{01..05}09_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].lcut_slope **[fact: fffd3674]** |
+| 0xFFFD3716 | `menu_step_preset_hcut_freq` |  | PRESET n hcut_freq on_step (EX060n10): called by menu_ex06{01..05}10_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].hcut_freq **[fact: fffd3716]** |
+| 0xFFFD37B9 | `menu_step_preset_hcut_slope` |  | PRESET n hcut_slope on_step (EX060n11): called by menu_ex06{01..05}11_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].hcut_slope **[fact: fffd37b9]** |
+| 0xFFFD385B | `menu_step_preset_usb_out_level` |  | PRESET n usb_out_level on_step (EX060n12): called by menu_ex06{01..05}12_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].usb_out_level **[fact: fffd385b]** |
+| 0xFFFD38FE | `menu_step_preset_rear_out_level` |  | PRESET n rear_out_level on_step (EX060n13): called by menu_ex06{01..05}13_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].rear_out_level **[fact: fffd38fe]** |
+| 0xFFFD39A1 | `menu_step_preset_tx_bpf_sel` |  | PRESET n tx_bpf_sel on_step (EX060n14): called by menu_ex06{01..05}14_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].tx_bpf_sel **[fact: fffd39a1]** |
+| 0xFFFD3A43 | `menu_step_preset_mod_source` |  | PRESET n mod_source on_step (EX060n15): called by menu_ex06{01..05}15_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].mod_source **[fact: fffd3a43]** |
+| 0xFFFD3AE5 | `menu_step_preset_usb_mod_gain` |  | PRESET n usb_mod_gain on_step (EX060n16): called by menu_ex06{01..05}16_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].usb_mod_gain **[fact: fffd3ae5]** |
+| 0xFFFD3B88 | `menu_step_preset_rear_mod_gain` |  | PRESET n rear_mod_gain on_step (EX060n17): called by menu_ex06{01..05}17_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].rear_mod_gain **[fact: fffd3b88]** |
+| 0xFFFD3C2B | `menu_step_preset_rptt_select` |  | PRESET n rptt_select on_step (EX060n18): called by menu_ex06{01..05}18_step with n = 1..5, menu_step_u8 on &g_opstate.presets[n-1].rptt_select **[fact: fffd3c2b]** |
+| 0xFFFD3D03 | `menu_cursors_save` |  | Copies the RAM menu cursors 0x12238..0x1226D back into g_opstate before the power-off save **[fact: fffd3d03]**; callers io_task, supply_undervolt_check (eeprom.md "Menu cursors") |
+| 0xFFFD405E | `menu_cursors_load` |  | Copies the per-group menu {top,row} cursors from g_opstate (0x9A3D .. presets[n].menu_cursor) into the RAM copy 0x12238..0x1226D **[fact: fffd405e]**; only caller menu_subsys_init (eeprom.md "Menu cursors") |
+
+<!-- T23e3:end -->

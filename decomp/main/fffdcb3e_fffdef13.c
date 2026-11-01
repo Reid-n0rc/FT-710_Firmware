@@ -1593,224 +1593,224 @@ void cat_ai_poll(void)
     bVar1 = false;
   }
   if (bVar1) {
-    iVar3 = FUN_fffb1d79(1);
-    if ((iVar3 == 0) && (iVar3 = FUN_fffb1d79(2), iVar3 == 0)) {
+    iVar3 = cat_tx_busy(1);
+    if ((iVar3 == 0) && (iVar3 = cat_tx_busy(2), iVar3 == 0)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
-    if ((bVar1) && (iVar3 = FUN_fffb1d79(3), iVar3 == 0)) {
+    if ((bVar1) && (iVar3 = cat_tx_busy(3), iVar3 == 0)) {
       bVar1 = true;
     }
     else {
       bVar1 = false;
     }
     if (bVar1) {
-      local_2 = FUN_fffddcb5();
+      local_2 = cat_ai_AC();
       if (local_2 == 0) {
-        local_2 = FUN_fffdde79();
+        local_2 = cat_ai_AG();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffddfc3();
+        local_2 = cat_ai_AO();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde064(1);
+        local_2 = cat_ai_AS(1);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde064(2);
+        local_2 = cat_ai_AS(2);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde180();
+        local_2 = cat_ai_AV();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde263();
+        local_2 = cat_ai_BC();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde332();
+        local_2 = cat_ai_BI();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde3f1();
+        local_2 = cat_ai_BP();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde58a(0);
+        local_2 = cat_ai_CF(0);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde58a(1);
+        local_2 = cat_ai_CF(1);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde887();
+        local_2 = cat_ai_CN();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffde9a8();
+        local_2 = cat_ai_CO();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdebd1();
+        local_2 = cat_ai_CS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdec32();
+        local_2 = cat_ai_CT();
       }
       if (local_2 == 0) {
         local_2 = cat_ai_ex();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffded19();
+        local_2 = cat_ai_FA_FB();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdee2c();
+        local_2 = cat_ai_FN();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdee96();
+        local_2 = cat_ai_FT();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdef13();
+        local_2 = cat_ai_GT();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf13a(0);
+        local_2 = cat_ai_IF_OI(0);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf13a(1);
+        local_2 = cat_ai_IF_OI(1);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf66f();
+        local_2 = cat_ai_IS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf7b3();
+        local_2 = cat_ai_KP();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf85c();
+        local_2 = cat_ai_KR();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf8d4();
+        local_2 = cat_ai_KS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf981();
+        local_2 = cat_ai_LK();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf9ec(0);
+        local_2 = cat_ai_MD(0);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdf9ec(1);
+        local_2 = cat_ai_MD(1);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfae4();
+        local_2 = cat_ai_MG();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfbe4();
+        local_2 = cat_ai_ML();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfd36();
+        local_2 = cat_ai_MS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfda4();
+        local_2 = cat_ai_MX();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfe0a();
+        local_2 = cat_ai_NA();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfe7a();
+        local_2 = cat_ai_NB();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdfee6();
+        local_2 = cat_ai_NL();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffdff9c();
+        local_2 = cat_ai_NR();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0016();
+        local_2 = cat_ai_OS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe00be();
+        local_2 = cat_ai_PA();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0143();
+        local_2 = cat_ai_PC();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe024b();
+        local_2 = cat_ai_PL();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe02f4();
+        local_2 = cat_ai_PR();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0394();
+        local_2 = cat_ai_RA();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe040b();
+        local_2 = cat_ai_RG();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe057b();
+        local_2 = cat_ai_RI();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0839();
+        local_2 = cat_ai_RL();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe08c7();
+        local_2 = cat_ai_RM();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0a60();
+        local_2 = cat_ai_SC();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0aff();
+        local_2 = cat_ai_SD();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0ba1(0);
+        local_2 = cat_ai_SF(0);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0ba1(1);
+        local_2 = cat_ai_SF(1);
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0d06();
+        local_2 = cat_ai_SH();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0e99();
+        local_2 = cat_ai_SQ();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\0');
+        local_2 = cat_ai_SS('\0');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x01');
+        local_2 = cat_ai_SS('\x01');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x02');
+        local_2 = cat_ai_SS('\x02');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x03');
+        local_2 = cat_ai_SS('\x03');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x04');
+        local_2 = cat_ai_SS('\x04');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x05');
+        local_2 = cat_ai_SS('\x05');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\x06');
+        local_2 = cat_ai_SS('\x06');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\a');
+        local_2 = cat_ai_SS('\a');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe0fe6('\b');
+        local_2 = cat_ai_SS('\b');
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe1447();
+        local_2 = cat_ai_ST();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe14b4();
+        local_2 = cat_ai_TS();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe1523();
+        local_2 = cat_ai_TX();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe1596();
+        local_2 = cat_ai_VD();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe165d();
+        local_2 = cat_ai_VG();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe1774();
+        local_2 = cat_ai_VX();
       }
       if (local_2 == 0) {
-        local_2 = FUN_fffe170a();
+        local_2 = cat_ai_VS();
       }
       if (local_2 == 0) {
         local_2 = cat_ai_FD();
@@ -1945,9 +1945,13 @@ ushort cat_ai_FD(void)
 }
 
 
-// ===== FUN_fffddcb5 @ fffddcb5 (452 bytes)
+// ===== cat_ai_AC @ fffddcb5 (452 bytes)
 
-undefined2 FUN_fffddcb5(void)
+/* AI change detector for AC (called from cat_ai_poll): compares with its shadow, on a change builds
+   the AC answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: tuner type, tune
+   cycle and result (frame built from 'A','C' chars) [fact: fffddcb5] */
+
+undefined2 cat_ai_AC(void)
 
 {
   bool bVar1;
@@ -2046,7 +2050,7 @@ undefined2 FUN_fffddcb5(void)
         local_f[4] = 0x33;
       }
       else {
-        iVar2 = FUN_fffec55a();
+        iVar2 = vfo_tuner_bit_get();
         if (iVar2 == 1) {
           local_f[4] = 0x31;
         }
@@ -2079,12 +2083,16 @@ undefined2 FUN_fffddcb5(void)
 }
 
 
-// ===== FUN_fffdde79 @ fffdde79 (330 bytes)
+// ===== cat_ai_AG @ fffdde79 (330 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffddfc0) */
 /* WARNING: Removing unreachable block (ram,0xfffddf89) */
+/* AI change detector for AG (called from cat_ai_poll): compares with its shadow, on a change builds
+   the AG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.af_gain; ignores
+   jitter: keeps the last 4 values and needs a spread of 3 (max4_u8/min4_u8) between 3 and 252
+   [fact: fffdde79] */
 
-undefined2 FUN_fffdde79(void)
+undefined2 cat_ai_AG(void)
 
 {
   uint uVar1;
@@ -2128,8 +2136,8 @@ undefined2 FUN_fffdde79(void)
     if (bVar2) {
       return 0;
     }
-    bVar3 = FUN_fffe1805(&DAT_0001b53e);
-    bVar4 = FUN_fffe1839(&DAT_0001b53e);
+    bVar3 = max4_u8(&DAT_0001b53e);
+    bVar4 = min4_u8(&DAT_0001b53e);
     if ((int)((uint)bVar3 - (uint)bVar4) < 3) {
       return 0;
     }
@@ -2157,13 +2165,16 @@ undefined2 FUN_fffdde79(void)
 }
 
 
-// ===== FUN_fffddfc3 @ fffddfc3 (161 bytes)
+// ===== cat_ai_AO @ fffddfc3 (161 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde061) */
 /* WARNING: Removing unreachable block (ram,0xfffde02b) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* AI change detector for AO (called from cat_ai_poll): compares with its shadow, on a change builds
+   the AO answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.amc_level
+   (constant "AO00") [fact: fffddfc3] */
 
-undefined2 FUN_fffddfc3(void)
+undefined2 cat_ai_AO(void)
 
 {
   uint uVar1;
@@ -2204,12 +2215,15 @@ undefined2 FUN_fffddfc3(void)
 }
 
 
-// ===== FUN_fffde064 @ fffde064 (284 bytes)
+// ===== cat_ai_AS @ fffde064 (284 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde17d) */
 /* WARNING: Removing unreachable block (ram,0xfffde0e7) */
+/* AI change detector for AS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the AS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 1 = AESS level
+   (aess_level_ptr, x5), arg 2 = AESS mode (aess_mode_ptr) [fact: fffde064] */
 
-ushort FUN_fffde064(char param_1)
+ushort cat_ai_AS(char param_1)
 
 {
   char cVar1;
@@ -2281,13 +2295,16 @@ ushort FUN_fffde064(char param_1)
 }
 
 
-// ===== FUN_fffde180 @ fffde180 (227 bytes)
+// ===== cat_ai_AV @ fffde180 (227 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde260) */
 /* WARNING: Removing unreachable block (ram,0xfffde226) */
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* AI change detector for AV (called from cat_ai_poll): compares with its shadow, on a change builds
+   the AV answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: ANTI VOX of the VOX
+   source selected by EX030405 [fact: fffde180] */
 
-undefined2 FUN_fffde180(void)
+undefined2 cat_ai_AV(void)
 
 {
   uint uVar1;
@@ -2345,11 +2362,14 @@ undefined2 FUN_fffde180(void)
 }
 
 
-// ===== FUN_fffde263 @ fffde263 (207 bytes)
+// ===== cat_ai_BC @ fffde263 (207 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* AI change detector for BC (called from cat_ai_poll): compares with its shadow, on a change builds
+   the BC answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: bit 0x80 of the RX
+   VFO record's per-mode flags2 (auto notch) [fact: fffde263] */
 
-undefined2 FUN_fffde263(void)
+undefined2 cat_ai_BC(void)
 
 {
   uint uVar1;
@@ -2408,11 +2428,14 @@ LAB_fffde2eb:
 }
 
 
-// ===== FUN_fffde332 @ fffde332 (191 bytes)
+// ===== cat_ai_BI @ fffde332 (191 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* AI change detector for BI (called from cat_ai_poll): compares with its shadow, on a change builds
+   the BI answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: bit 1 of the RX VFO
+   record's per-mode flags (break-in) [fact: fffde332] */
 
-undefined2 FUN_fffde332(void)
+undefined2 cat_ai_BI(void)
 
 {
   uint uVar1;
@@ -2470,13 +2493,16 @@ LAB_fffde3b1:
 }
 
 
-// ===== FUN_fffde3f1 @ fffde3f1 (409 bytes)
+// ===== cat_ai_BP @ fffde3f1 (409 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde587) */
 /* WARNING: Removing unreachable block (ram,0xfffde4d5) */
 /* WARNING: Removing unreachable block (ram,0xfffde54d) */
+/* AI change detector for BP (called from cat_ai_poll): compares with its shadow, on a change builds
+   the BP answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "BP00000;" manual
+   notch [fact: fffde3f1] */
 
-ushort FUN_fffde3f1(void)
+ushort cat_ai_BP(void)
 
 {
   char cVar1;
@@ -2590,7 +2616,7 @@ LAB_fffde4d3:
 }
 
 
-// ===== FUN_fffde58a @ fffde58a (765 bytes)
+// ===== cat_ai_CF @ fffde58a (765 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde884) */
 /* WARNING: Removing unreachable block (ram,0xfffde5f1) */
@@ -2599,8 +2625,11 @@ LAB_fffde4d3:
 /* WARNING: Removing unreachable block (ram,0xfffde637) */
 /* WARNING: Removing unreachable block (ram,0xfffde848) */
 /* WARNING: Removing unreachable block (ram,0xfffde77b) */
+/* AI change detector for CF (called from cat_ai_poll): compares with its shadow, on a change builds
+   the CF answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1 = VFO side;
+   clarifier frame from the template "CF00000000;" [fact: fffde58a] */
 
-short FUN_fffde58a(char param_1)
+short cat_ai_CF(char param_1)
 
 {
   bool bVar1;
@@ -2776,13 +2805,16 @@ short FUN_fffde58a(char param_1)
 }
 
 
-// ===== FUN_fffde887 @ fffde887 (289 bytes)
+// ===== cat_ai_CN @ fffde887 (289 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffde9a5) */
 /* WARNING: Removing unreachable block (ram,0xfffde969) */
 /* WARNING: Removing unreachable block (ram,0xfffde907) */
+/* AI change detector for CN (called from cat_ai_poll): compares with its shadow, on a change builds
+   the CN answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "CN00000;" CTCSS
+   number of VFO A/B [fact: fffde887] */
 
-ushort FUN_fffde887(void)
+ushort cat_ai_CN(void)
 
 {
   char cVar1;
@@ -2852,7 +2884,7 @@ ushort FUN_fffde887(void)
 }
 
 
-// ===== FUN_fffde9a8 @ fffde9a8 (553 bytes)
+// ===== cat_ai_CO @ fffde9a8 (553 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdebce) */
 /* WARNING: Removing unreachable block (ram,0xfffdea0f) */
@@ -2863,8 +2895,11 @@ ushort FUN_fffde887(void)
 /* WARNING: Removing unreachable block (ram,0xfffdea36) */
 /* WARNING: Removing unreachable block (ram,0xfffdeb92) */
 /* WARNING: Removing unreachable block (ram,0xfffdeafe) */
+/* AI change detector for CO (called from cat_ai_poll): compares with its shadow, on a change builds
+   the CO answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: contour / APF
+   (g_opstate.apf_freq; constant "CO") [fact: fffde9a8] */
 
-ushort FUN_fffde9a8(void)
+ushort cat_ai_CO(void)
 
 {
   char cVar1;
@@ -3006,9 +3041,13 @@ LAB_fffdea79:
 }
 
 
-// ===== FUN_fffdebd1 @ fffdebd1 (97 bytes)
+// ===== cat_ai_CS @ fffdebd1 (97 bytes)
 
-ushort FUN_fffdebd1(void)
+/* AI change detector for CS (called from cat_ai_poll): compares with its shadow, on a change builds
+   the CS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.cw_spot_on
+   [fact: fffdebd1] */
+
+ushort cat_ai_CS(void)
 
 {
   char *pcVar1;
@@ -3037,9 +3076,13 @@ ushort FUN_fffdebd1(void)
 }
 
 
-// ===== FUN_fffdec32 @ fffdec32 (186 bytes)
+// ===== cat_ai_CT @ fffdec32 (186 bytes)
 
-undefined2 FUN_fffdec32(void)
+/* AI change detector for CT (called from cat_ai_poll): compares with its shadow, on a change builds
+   the CT answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "CT00;" CTCSS mode of
+   VFO A/B [fact: fffdec32] */
+
+undefined2 cat_ai_CT(void)
 
 {
   byte bVar1;
@@ -3115,12 +3158,16 @@ ushort cat_ai_ex(void)
 }
 
 
-// ===== FUN_fffded19 @ fffded19 (275 bytes)
+// ===== cat_ai_FA_FB @ fffded19 (275 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdee29) */
 /* WARNING: Removing unreachable block (ram,0xfffdedec) */
+/* AI change detector for FA/FB (called from cat_ai_poll): compares with its shadow, on a change
+   builds the FA/FB answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: FA
+   (constant 0x4146) when VFO A's frequency (or the TX frequency while transmitting) changed, else
+   FB; shadows 0x25CF4/0x25CF8 [fact: fffded19] */
 
-ushort FUN_fffded19(void)
+ushort cat_ai_FA_FB(void)
 
 {
   char cVar1;
@@ -3197,11 +3244,14 @@ ushort FUN_fffded19(void)
 }
 
 
-// ===== FUN_fffdee2c @ fffdee2c (106 bytes)
+// ===== cat_ai_FN @ fffdee2c (106 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdee78) */
+/* AI change detector for FN (called from cat_ai_poll): compares with its shadow, on a change builds
+   the FN answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.fn_select
+   [fact: fffdee2c] */
 
-ushort FUN_fffdee2c(void)
+ushort cat_ai_FN(void)
 
 {
   char *pcVar1;
@@ -3230,11 +3280,14 @@ ushort FUN_fffdee2c(void)
 }
 
 
-// ===== FUN_fffdee96 @ fffdee96 (125 bytes)
+// ===== cat_ai_FT @ fffdee96 (125 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffdeefa) */
+/* AI change detector for FT (called from cat_ai_poll): compares with its shadow, on a change builds
+   the FT answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.split_on
+   [fact: fffdee96] */
 
-undefined2 FUN_fffdee96(void)
+undefined2 cat_ai_FT(void)
 
 {
   char *pcVar1;
@@ -3275,9 +3328,13 @@ undefined2 FUN_fffdee96(void)
 }
 
 
-// ===== FUN_fffdef13 @ fffdef13 (551 bytes)
+// ===== cat_ai_GT @ fffdef13 (551 bytes)
 
-ushort FUN_fffdef13(void)
+/* AI change detector for GT (called from cat_ai_poll): compares with its shadow, on a change builds
+   the GT answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "GT00;" AGC of the RX
+   VFO [fact: fffdef13] */
+
+ushort cat_ai_GT(void)
 
 {
   byte bVar1;

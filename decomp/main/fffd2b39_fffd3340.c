@@ -7,7 +7,7 @@
 void menu_ex060114_draw(void)
 
 {
-  FUN_fffd2b7a(1);
+  menu_draw_preset_tx_bpf_sel(1);
   return;
 }
 
@@ -19,7 +19,7 @@ void menu_ex060114_draw(void)
 void menu_ex060214_draw(void)
 
 {
-  FUN_fffd2b7a(2);
+  menu_draw_preset_tx_bpf_sel(2);
   return;
 }
 
@@ -31,7 +31,7 @@ void menu_ex060214_draw(void)
 void menu_ex060314_draw(void)
 
 {
-  FUN_fffd2b7a(3);
+  menu_draw_preset_tx_bpf_sel(3);
   return;
 }
 
@@ -43,7 +43,7 @@ void menu_ex060314_draw(void)
 void menu_ex060414_draw(void)
 
 {
-  FUN_fffd2b7a(4);
+  menu_draw_preset_tx_bpf_sel(4);
   return;
 }
 
@@ -55,14 +55,18 @@ void menu_ex060414_draw(void)
 void menu_ex060514_draw(void)
 
 {
-  FUN_fffd2b7a(5);
+  menu_draw_preset_tx_bpf_sel(5);
   return;
 }
 
 
-// ===== FUN_fffd2b7a @ fffd2b7a (234 bytes)
+// ===== menu_draw_preset_tx_bpf_sel @ fffd2b7a (234 bytes)
 
-void FUN_fffd2b7a(byte param_1,byte *param_2)
+/* PRESET n tx_bpf_sel row (EX060n14): called by menu_ex06{01..05}14_draw with n = 1..5, reads
+   g_opstate.presets[n-1].tx_bpf_sel, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2b7a] */
+
+void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -128,7 +132,7 @@ void FUN_fffd2b7a(byte param_1,byte *param_2)
 void menu_ex060115_draw(void)
 
 {
-  FUN_fffd2ca5(1);
+  menu_draw_preset_mod_source(1);
   return;
 }
 
@@ -140,7 +144,7 @@ void menu_ex060115_draw(void)
 void menu_ex060215_draw(void)
 
 {
-  FUN_fffd2ca5(2);
+  menu_draw_preset_mod_source(2);
   return;
 }
 
@@ -152,7 +156,7 @@ void menu_ex060215_draw(void)
 void menu_ex060315_draw(void)
 
 {
-  FUN_fffd2ca5(3);
+  menu_draw_preset_mod_source(3);
   return;
 }
 
@@ -164,7 +168,7 @@ void menu_ex060315_draw(void)
 void menu_ex060415_draw(void)
 
 {
-  FUN_fffd2ca5(4);
+  menu_draw_preset_mod_source(4);
   return;
 }
 
@@ -176,14 +180,18 @@ void menu_ex060415_draw(void)
 void menu_ex060515_draw(void)
 
 {
-  FUN_fffd2ca5(5);
+  menu_draw_preset_mod_source(5);
   return;
 }
 
 
-// ===== FUN_fffd2ca5 @ fffd2ca5 (234 bytes)
+// ===== menu_draw_preset_mod_source @ fffd2ca5 (234 bytes)
 
-void FUN_fffd2ca5(byte param_1,byte *param_2)
+/* PRESET n mod_source row (EX060n15): called by menu_ex06{01..05}15_draw with n = 1..5, reads
+   g_opstate.presets[n-1].mod_source, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2ca5] */
+
+void menu_draw_preset_mod_source(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -249,7 +257,7 @@ void FUN_fffd2ca5(byte param_1,byte *param_2)
 void menu_ex060116_draw(void)
 
 {
-  FUN_fffd2dd0(1);
+  menu_draw_preset_usb_mod_gain(1);
   return;
 }
 
@@ -261,7 +269,7 @@ void menu_ex060116_draw(void)
 void menu_ex060216_draw(void)
 
 {
-  FUN_fffd2dd0(2);
+  menu_draw_preset_usb_mod_gain(2);
   return;
 }
 
@@ -273,7 +281,7 @@ void menu_ex060216_draw(void)
 void menu_ex060316_draw(void)
 
 {
-  FUN_fffd2dd0(3);
+  menu_draw_preset_usb_mod_gain(3);
   return;
 }
 
@@ -285,7 +293,7 @@ void menu_ex060316_draw(void)
 void menu_ex060416_draw(void)
 
 {
-  FUN_fffd2dd0(4);
+  menu_draw_preset_usb_mod_gain(4);
   return;
 }
 
@@ -297,14 +305,18 @@ void menu_ex060416_draw(void)
 void menu_ex060516_draw(void)
 
 {
-  FUN_fffd2dd0(5);
+  menu_draw_preset_usb_mod_gain(5);
   return;
 }
 
 
-// ===== FUN_fffd2dd0 @ fffd2dd0 (214 bytes)
+// ===== menu_draw_preset_usb_mod_gain @ fffd2dd0 (214 bytes)
 
-void FUN_fffd2dd0(byte param_1,byte *param_2)
+/* PRESET n usb_mod_gain row (EX060n16): called by menu_ex06{01..05}16_draw with n = 1..5, reads
+   g_opstate.presets[n-1].usb_mod_gain, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2dd0] */
+
+void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -357,7 +369,7 @@ void FUN_fffd2dd0(byte param_1,byte *param_2)
 void menu_ex060117_draw(void)
 
 {
-  FUN_fffd2ee7(1);
+  menu_draw_preset_rear_mod_gain(1);
   return;
 }
 
@@ -369,7 +381,7 @@ void menu_ex060117_draw(void)
 void menu_ex060217_draw(void)
 
 {
-  FUN_fffd2ee7(2);
+  menu_draw_preset_rear_mod_gain(2);
   return;
 }
 
@@ -381,7 +393,7 @@ void menu_ex060217_draw(void)
 void menu_ex060317_draw(void)
 
 {
-  FUN_fffd2ee7(3);
+  menu_draw_preset_rear_mod_gain(3);
   return;
 }
 
@@ -393,7 +405,7 @@ void menu_ex060317_draw(void)
 void menu_ex060417_draw(void)
 
 {
-  FUN_fffd2ee7(4);
+  menu_draw_preset_rear_mod_gain(4);
   return;
 }
 
@@ -405,14 +417,18 @@ void menu_ex060417_draw(void)
 void menu_ex060517_draw(void)
 
 {
-  FUN_fffd2ee7(5);
+  menu_draw_preset_rear_mod_gain(5);
   return;
 }
 
 
-// ===== FUN_fffd2ee7 @ fffd2ee7 (214 bytes)
+// ===== menu_draw_preset_rear_mod_gain @ fffd2ee7 (214 bytes)
 
-void FUN_fffd2ee7(byte param_1,byte *param_2)
+/* PRESET n rear_mod_gain row (EX060n17): called by menu_ex06{01..05}17_draw with n = 1..5, reads
+   g_opstate.presets[n-1].rear_mod_gain, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2ee7] */
+
+void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -465,7 +481,7 @@ void FUN_fffd2ee7(byte param_1,byte *param_2)
 void menu_ex060118_draw(void)
 
 {
-  FUN_fffd2ffe(1);
+  menu_draw_preset_rptt_select(1);
   return;
 }
 
@@ -477,7 +493,7 @@ void menu_ex060118_draw(void)
 void menu_ex060218_draw(void)
 
 {
-  FUN_fffd2ffe(2);
+  menu_draw_preset_rptt_select(2);
   return;
 }
 
@@ -489,7 +505,7 @@ void menu_ex060218_draw(void)
 void menu_ex060318_draw(void)
 
 {
-  FUN_fffd2ffe(3);
+  menu_draw_preset_rptt_select(3);
   return;
 }
 
@@ -501,7 +517,7 @@ void menu_ex060318_draw(void)
 void menu_ex060418_draw(void)
 
 {
-  FUN_fffd2ffe(4);
+  menu_draw_preset_rptt_select(4);
   return;
 }
 
@@ -513,14 +529,18 @@ void menu_ex060418_draw(void)
 void menu_ex060518_draw(void)
 
 {
-  FUN_fffd2ffe(5);
+  menu_draw_preset_rptt_select(5);
   return;
 }
 
 
-// ===== FUN_fffd2ffe @ fffd2ffe (234 bytes)
+// ===== menu_draw_preset_rptt_select @ fffd2ffe (234 bytes)
 
-void FUN_fffd2ffe(byte param_1,byte *param_2)
+/* PRESET n rptt_select row (EX060n18): called by menu_ex06{01..05}18_draw with n = 1..5, reads
+   g_opstate.presets[n-1].rptt_select, sets the default flag 0x80, writes the value text at +0x18
+   [fact: fffd2ffe] */
+
+void menu_draw_preset_rptt_select(byte param_1,byte *param_2)
 
 {
   bool bVar1;
@@ -579,9 +599,13 @@ void FUN_fffd2ffe(byte param_1,byte *param_2)
 }
 
 
-// ===== FUN_fffd30e8 @ fffd30e8 (138 bytes)
+// ===== menu_preset_name_ptr @ fffd30e8 (138 bytes)
 
-uint FUN_fffd30e8(void)
+/* Returns the RAM address of the open PRESET's name: menu_p2_global 0x16..0x1A (PRESET1..5) ->
+   0x9B2E/0x9B4D/0x9B6C/0x9B8B/0x9BAA, default 0x9B2E [fact: fffd30e8]; 0x9B2E is presets[0].name
+   (ai_ex_preset_name compares it) */
+
+uint menu_preset_name_ptr(void)
 
 {
   char cVar1;
@@ -621,7 +645,7 @@ void menu_ex060101_enter(void)
   ui_state *puVar2;
   undefined4 *puVar3;
   
-  puVar3 = (undefined4 *)FUN_fffd30e8();
+  puVar3 = (undefined4 *)menu_preset_name_ptr();
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 6;
   PTR_g_ui_00025d60->kbd_cursor = 0;
@@ -665,7 +689,7 @@ void menu_step_nop(void)
 void menu_ex060102_step(void)
 
 {
-  FUN_fffd3202(1);
+  menu_step_preset_cat1_rate(1);
   return;
 }
 
@@ -677,7 +701,7 @@ void menu_ex060102_step(void)
 void menu_ex060202_step(void)
 
 {
-  FUN_fffd3202(2);
+  menu_step_preset_cat1_rate(2);
   return;
 }
 
@@ -689,7 +713,7 @@ void menu_ex060202_step(void)
 void menu_ex060302_step(void)
 
 {
-  FUN_fffd3202(3);
+  menu_step_preset_cat1_rate(3);
   return;
 }
 
@@ -701,7 +725,7 @@ void menu_ex060302_step(void)
 void menu_ex060402_step(void)
 
 {
-  FUN_fffd3202(4);
+  menu_step_preset_cat1_rate(4);
   return;
 }
 
@@ -713,14 +737,17 @@ void menu_ex060402_step(void)
 void menu_ex060502_step(void)
 
 {
-  FUN_fffd3202(5);
+  menu_step_preset_cat1_rate(5);
   return;
 }
 
 
-// ===== FUN_fffd3202 @ fffd3202 (132 bytes)
+// ===== menu_step_preset_cat1_rate @ fffd3202 (132 bytes)
 
-void FUN_fffd3202(byte param_1)
+/* PRESET n cat1_rate on_step (EX060n02): called by menu_ex06{01..05}02_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].cat1_rate [fact: fffd3202] */
+
+void menu_step_preset_cat1_rate(byte param_1)
 
 {
   bool bVar1;
@@ -765,7 +792,7 @@ void FUN_fffd3202(byte param_1)
 void menu_ex060103_step(void)
 
 {
-  FUN_fffd32a4(1);
+  menu_step_preset_cat1_tot(1);
   return;
 }
 
@@ -777,7 +804,7 @@ void menu_ex060103_step(void)
 void menu_ex060203_step(void)
 
 {
-  FUN_fffd32a4(2);
+  menu_step_preset_cat1_tot(2);
   return;
 }
 
@@ -789,7 +816,7 @@ void menu_ex060203_step(void)
 void menu_ex060303_step(void)
 
 {
-  FUN_fffd32a4(3);
+  menu_step_preset_cat1_tot(3);
   return;
 }
 
@@ -801,7 +828,7 @@ void menu_ex060303_step(void)
 void menu_ex060403_step(void)
 
 {
-  FUN_fffd32a4(4);
+  menu_step_preset_cat1_tot(4);
   return;
 }
 
@@ -813,14 +840,17 @@ void menu_ex060403_step(void)
 void menu_ex060503_step(void)
 
 {
-  FUN_fffd32a4(5);
+  menu_step_preset_cat1_tot(5);
   return;
 }
 
 
-// ===== FUN_fffd32a4 @ fffd32a4 (132 bytes)
+// ===== menu_step_preset_cat1_tot @ fffd32a4 (132 bytes)
 
-void FUN_fffd32a4(byte param_1)
+/* PRESET n cat1_tot on_step (EX060n03): called by menu_ex06{01..05}03_step with n = 1..5,
+   menu_step_u8 on &g_opstate.presets[n-1].cat1_tot [fact: fffd32a4] */
+
+void menu_step_preset_cat1_tot(byte param_1)
 
 {
   bool bVar1;
@@ -865,7 +895,7 @@ void FUN_fffd32a4(byte param_1)
 void menu_ex060104_step(void)
 
 {
-  FUN_fffd3346(1);
+  menu_step_preset_cat1_cat3_stop_bit(1);
   return;
 }
 
@@ -877,7 +907,7 @@ void menu_ex060104_step(void)
 void menu_ex060204_step(void)
 
 {
-  FUN_fffd3346(2);
+  menu_step_preset_cat1_cat3_stop_bit(2);
   return;
 }
 
@@ -889,7 +919,7 @@ void menu_ex060204_step(void)
 void menu_ex060304_step(void)
 
 {
-  FUN_fffd3346(3);
+  menu_step_preset_cat1_cat3_stop_bit(3);
   return;
 }
 
@@ -901,7 +931,7 @@ void menu_ex060304_step(void)
 void menu_ex060404_step(void)
 
 {
-  FUN_fffd3346(4);
+  menu_step_preset_cat1_cat3_stop_bit(4);
   return;
 }
 
@@ -913,7 +943,7 @@ void menu_ex060404_step(void)
 void menu_ex060504_step(void)
 
 {
-  FUN_fffd3346(5);
+  menu_step_preset_cat1_cat3_stop_bit(5);
   return;
 }
 

@@ -485,40 +485,44 @@ void kbd_key_dispatch(undefined1 param_1)
   
   bVar1 = PTR_g_ui_00025d6c->kbd_target;
   if (bVar1 == 6) {
-    FUN_fffe2c33(param_1);
+    kbd_edit_preset_name(param_1);
     return;
   }
   if (bVar1 == 1) {
-    FUN_fffe273a(param_1);
+    kbd_edit_memory_name(param_1);
     return;
   }
   if (bVar1 == 2) {
-    FUN_fffe2811(param_1);
+    kbd_edit_cw_text(param_1);
     return;
   }
   if (bVar1 == 3) {
-    FUN_fffe2912(param_1);
+    kbd_edit_rtty_text(param_1);
     return;
   }
   if (bVar1 == 4) {
-    FUN_fffe2918(param_1);
+    kbd_edit_psk_text(param_1);
     return;
   }
   if (bVar1 == 5) {
-    FUN_fffe291e(param_1);
+    kbd_edit_file_name(param_1);
     return;
   }
   if (bVar1 != 0) {
     return;
   }
-  FUN_fffe2680(param_1);
+  kbd_edit_mycall(param_1);
   return;
 }
 
 
-// ===== FUN_fffe2680 @ fffe2680 (186 bytes)
+// ===== kbd_edit_mycall @ fffe2680 (186 bytes)
 
-void FUN_fffe2680(char param_1)
+/* Keyboard target 0 (MY CALL) editor: keeps a copy of EX040101 MY CALL, kbd_edit_key on the text,
+   key 0x84 restores the copy, 0x85 stores the edited text [fact: fffe2680]; callers
+   kbd_key_dispatch (target 0), FUN_fffe47c8 */
+
+void kbd_edit_mycall(char param_1)
 
 {
   if (DAT_0001b54f == '\x01') {
@@ -527,7 +531,7 @@ void FUN_fffe2680(char param_1)
     DAT_0001880b = g_opstate.ex040101_my_call._0_4_;
     DAT_0001b54f = '\0';
   }
-  FUN_fffe29b7(PTR_g_ui_00025d6c->msg_text,param_1);
+  kbd_edit_key(PTR_g_ui_00025d6c->msg_text,param_1);
   if (param_1 == -0x7c) {
     g_opstate.ex040101_my_call[8] = (char)DAT_00018813;
     g_opstate.ex040101_my_call[9] = DAT_00018813._1_1_;
@@ -564,9 +568,12 @@ void FUN_fffe2680(char param_1)
 }
 
 
-// ===== FUN_fffe273a @ fffe273a (215 bytes)
+// ===== kbd_edit_memory_name @ fffe273a (215 bytes)
 
-void FUN_fffe273a(char param_1)
+/* Keyboard target 1 (MEMORY NAME) editor [fact: kbd_key_dispatch target 1; title per
+   display-link.md frame 0x50] */
+
+void kbd_edit_memory_name(char param_1)
 
 {
   byte bVar1;
@@ -577,7 +584,7 @@ void FUN_fffe273a(char param_1)
     DAT_00018817 = g_ui.msg_text[0]._0_4_;
     DAT_0001b550 = '\0';
   }
-  FUN_fffe29b7(0x20bc6,param_1);
+  kbd_edit_key(0x20bc6,param_1);
   if (param_1 == -0x7c) {
     g_ui.msg_text[0][8] = (byte)DAT_0001881f;
     g_ui.msg_text[0][9] = DAT_0001881f._1_1_;
@@ -607,9 +614,12 @@ void FUN_fffe273a(char param_1)
 }
 
 
-// ===== FUN_fffe2811 @ fffe2811 (257 bytes)
+// ===== kbd_edit_cw_text @ fffe2811 (257 bytes)
 
-void FUN_fffe2811(char param_1)
+/* Keyboard target 2 (CW TEXT) editor; calls kbd_edit_key and keyer_text_endmark [fact:
+   kbd_key_dispatch target 2] */
+
+void kbd_edit_cw_text(char param_1)
 
 {
   byte bVar1;
@@ -630,7 +640,7 @@ void FUN_fffe2811(char param_1)
     }
     DAT_0001b551 = '\0';
   }
-  FUN_fffe29b7(g_ui.msg_text + bVar1,param_1);
+  kbd_edit_key(g_ui.msg_text + bVar1,param_1);
   if (param_1 == -0x7c) {
     if (PTR_g_ui_00025d6c->msg_slot_idx == 0) {
       puStack_c = &DAT_000096a0;

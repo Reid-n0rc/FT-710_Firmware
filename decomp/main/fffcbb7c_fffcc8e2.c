@@ -8,7 +8,7 @@ void menu_ex030111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,g_opstate.ex030111_cat_3_time_out_timer,0,param_4,param_5,param_1);
+  menu_draw_cat_tot(param_1,g_opstate.ex030111_cat_3_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
@@ -266,7 +266,7 @@ void menu_ex030118_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)sVar1,param_1 + 0x18);
+  dec_to_str_s8((int)sVar1,param_1 + 0x18);
   return;
 }
 
@@ -636,7 +636,7 @@ void menu_ex030205_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)sVar1,param_1 + 0x18);
+  dec_to_str_s8((int)sVar1,param_1 + 0x18);
   return;
 }
 
@@ -779,7 +779,7 @@ void menu_draw_eq_level(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)param_2,param_1 + 0x18);
+  dec_to_str_s8((int)param_2,param_1 + 0x18);
   return;
 }
 
@@ -1032,7 +1032,7 @@ undefined4 menu_ex030401_draw(undefined4 param_1)
   
   bVar1 = g_opstate.ex030401_hf_max_power;
   uVar2 = max_power_limit(0);
-  FUN_fffcc7dc(param_1,bVar1,uVar2);
+  menu_draw_max_power(param_1,bVar1,uVar2);
   if (g_opstate.rf_power[0] <= g_opstate.ex030401_hf_max_power) {
     return 0x9aee;
   }
@@ -1041,9 +1041,12 @@ undefined4 menu_ex030401_draw(undefined4 param_1)
 }
 
 
-// ===== FUN_fffcc7dc @ fffcc7dc (116 bytes)
+// ===== menu_draw_max_power @ fffcc7dc (116 bytes)
 
-void FUN_fffcc7dc(byte *param_1,char param_2,char param_3)
+/* (row, value, default) MAX POWER row: dec_to_str_u8 then 'W'; callers menu_ex030401..030404_draw
+   (HF/50M/70M/AM MAX POWER) [fact: fffcc7dc] */
+
+void menu_draw_max_power(byte *param_1,char param_2,char param_3)
 
 {
   byte bVar1;
@@ -1077,7 +1080,7 @@ undefined4 menu_ex030402_draw(undefined4 param_1)
   
   bVar1 = g_opstate.ex030402_50m_max_power;
   uVar2 = max_power_limit(1);
-  FUN_fffcc7dc(param_1,bVar1,uVar2);
+  menu_draw_max_power(param_1,bVar1,uVar2);
   if (g_opstate.rf_power[1] <= g_opstate.ex030402_50m_max_power) {
     return 0x9aef;
   }
@@ -1101,7 +1104,7 @@ undefined4 menu_ex030403_draw(undefined4 param_1)
   
   bVar1 = g_opstate.ex030403_70m_max_power;
   uVar2 = max_power_limit(2);
-  FUN_fffcc7dc(param_1,bVar1,uVar2);
+  menu_draw_max_power(param_1,bVar1,uVar2);
   if (g_opstate.rf_power[2] <= g_opstate.ex030403_70m_max_power) {
     return 0x9af0;
   }
@@ -1134,7 +1137,7 @@ undefined4 menu_ex030404_draw(undefined4 param_1)
     uStack_11 = 3;
   }
   uVar3 = max_power_limit(uStack_11);
-  FUN_fffcc7dc(param_1,bVar1,uVar3);
+  menu_draw_max_power(param_1,bVar1,uVar3);
   if (g_opstate.rf_power[3] <= g_opstate.ex030404_am_max_power) {
     return 0x9af1;
   }

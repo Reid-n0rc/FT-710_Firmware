@@ -131,3 +131,29 @@ The boot-chain functions (`PowerON_Reset`, `_INITSCT`, `_INIT_IOLIB`, `bsp_callb
 
 - `R_BSP_SoftwareInterruptSetTask` has no caller in V01-12 **[fact]**, so the software-interrupt queue is probably never filled and
   `vec026` / `vec027` only run empty slots **[inference]**; whether SWINT is ever requested was not traced.
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF8FC4D | `R_BSP_GetIClkFreqHz` |  | Returns get_iclk_freq_hz() **[fact: fff8fc4d]**; Renesas BSP API name **[inference]** |
+| 0xFFF8FC57 | `R_BSP_SoftwareDelay` |  | (delay, units): units must be 1000000 / 1000 / 1 (us / ms / s); cycles = ICLK * delay / units, minus overhead, / 4, then a spin loop **[fact: fff8fc57]**; Renesas BSP API **[inference]** |
+| 0xFFF8FE3C | `R_BSP_RegisterProtectEnable` |  | (region): the counterpart of R_BSP_RegisterProtectDisable (counter 0x1B5FC, PWPR / PRCR) **[fact: fff8fe3c]**; BSP name **[inference]** |
+| 0xFFF8FEC0 | `R_BSP_RegisterProtectDisable` |  | (region): counter 0x1B5FC[region]; on the first disable clears MPC PWPR.B0WI and sets PFSWE (region 3) or ORs the PRCR bit with key 0xA5 (others), inside R_BSP_InterruptControl(0x5E, 6/5) **[fact: fff8fec0]**; Renesas BSP API **[inference]** |
+| 0xFFF901F8 | `bsp_interrupt_group_enable_disable` |  | (vector, enable, ipl) of R_BSP_InterruptControl: for the group vectors sets/clears ICU IPR106 (GROUPBE0, checking GENBE0) / IPR110 (GROUPBL0) etc. with R_BSP_InterruptRequestDisable/Enable around it; ipl 1..15 checked **[fact: fff901f8]**; matches the Renesas BSP static function of that name **[inference]** |
+| 0xFFF90837 | `R_BSP_SoftwareLock` |  | (*lock): exchanges 1 into the lock word, returns true when it was 0 **[fact: fff90837]**; Renesas BSP name **[inference]** |
+| 0xFFF9085E | `R_BSP_SoftwareUnlock` |  | (*lock): writes 0, returns true **[fact: fff9085e]**; Renesas BSP name **[inference]** |
+| 0xFFF9086C | `R_BSP_HardwareLock` |  | (lock id): R_BSP_SoftwareLock on the lock word 0x1FFC4 + id*4 **[fact: fff9086c]**; Renesas BSP name **[inference]** |
+| 0xFFF90885 | `R_BSP_HardwareUnlock` |  | (lock id): R_BSP_SoftwareUnlock on 0x1FFC4 + id*4 **[fact: fff90885]**; Renesas BSP name **[inference]** |
+| 0xFFF9089E | `R_BSP_SoftwareInterruptOpen` |  | (unit 0/1): takes hardware lock 0x72/0x73, clears and disables the software interrupt, empties its 9-entry task table 0x20318 + unit*0x6C, then enables it via R_BSP_SoftwareInterruptControl **[fact: fff9089e]**; Renesas BSP API name **[inference]** |
+| 0xFFF909AF | `R_BSP_SoftwareInterruptClose` |  | (unit): disables the software interrupt, empties the task table, releases hardware lock 0x72/0x73 **[fact: fff909af]**; no caller in the export; Renesas BSP API name **[inference]** |
+| 0xFFF91303 | `get_iclk_freq_hz` |  | ICLK in Hz from SCKCR3 CKSEL (PLL: HOCO 16/18/20 MHz or 24 MHz main, PLLCR divider and multiplier; HOCO; LOCO 240 kHz; sub 32768 Hz; main 24 MHz) >> SCKCR.ICK **[fact: fff91303]** |
+| 0xFFF913DB | `mcu_clock_setup` |  | PRCR unlock, clock_source_select, SCKCR = 0x21C21222, SCKCR2 = 0x11, SCKCR3 = 0x400 (PLL), LOCO off, R_BSP_SoftwareDelay(25 us), PRCR lock **[fact: fff913db]**; only caller hw_init_clock; BSP name **[inference]** |
+| 0xFFF91495 | `clock_source_select` |  | Oscillator set-up: MOFCR, HOCO power, main oscillator wait MOSCWTCR = 0x53 and start, sub-clock / RTC RCR3/RCR4 on cold reset, PLLCR = 0x1300 class and PLL start, ROMWT = 2 **[fact: fff91495]**; matches the Renesas BSP mcu_clocks.c function **[inference]** |
+| 0xFFF92475 | `mpc_pin_functions_init` |  | MPC pin functions inside RegisterProtectDisable/Enable(3): ASEL (PFS = 0x80, input) for P41..P43, P45..P47, PD0, PD1, P91, P93, P03; PSEL 0x0A/0x0B (SCI) for P00, P01, P12, P13, P23, P25..P27, P30, P32, P33, P90, P92, PB0, PB1, PC2, PC3 **[fact: fff92475]**; no caller in the export |
+
+<!-- T23e3:end -->

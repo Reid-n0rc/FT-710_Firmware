@@ -259,16 +259,19 @@ void menu_ex010319_step(void)
   
   local_2 = g_opstate.ex010319_rpt_shift_50mhz_be[1];
   bStack_1 = g_opstate.ex010319_rpt_shift_50mhz_be[0];
-  FUN_fffce495(0,400,&local_2);
+  menu_step_u16(0,400,&local_2);
   g_opstate.ex010319_rpt_shift_50mhz_be[0] = bStack_1;
   g_opstate.ex010319_rpt_shift_50mhz_be[1] = local_2;
   return;
 }
 
 
-// ===== FUN_fffce495 @ fffce495 (74 bytes)
+// ===== menu_step_u16 @ fffce495 (74 bytes)
 
-void FUN_fffce495(ushort param_1,ushort param_2,ushort *param_3)
+/* (min, max, *u16): +1/-1 by the step direction g_ui.menu_step_dir, clamped; no-op when 0x15DFC = 1
+   (CAT apply), the 16-bit twin of menu_step_u8 [fact: fffce495] */
+
+void menu_step_u16(ushort param_1,ushort param_2,ushort *param_3)
 
 {
   if (DAT_00015dfc != '\x01') {
@@ -647,7 +650,7 @@ void menu_ex010420_step(void)
   
   local_2 = g_opstate.ex010420_data_shift_ssb_be[1];
   bStack_1 = g_opstate.ex010420_data_shift_ssb_be[0];
-  FUN_fffce495(0,300,&local_2);
+  menu_step_u16(0,300,&local_2);
   g_opstate.ex010420_data_shift_ssb_be[0] = bStack_1;
   g_opstate.ex010420_data_shift_ssb_be[1] = local_2;
   return;

@@ -1,20 +1,27 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fff90885 @ fff90885 (25 bytes)
+// ===== R_BSP_HardwareUnlock @ fff90885 (25 bytes)
 
-undefined1 FUN_fff90885(int param_1)
+/* (lock id): R_BSP_SoftwareUnlock on 0x1FFC4 + id*4 [fact: fff90885]; Renesas BSP name [inference]
+    */
+
+undefined1 R_BSP_HardwareUnlock(int param_1)
 
 {
   undefined1 uVar1;
   
-  uVar1 = FUN_fff9085e(&DAT_0001ffc4 + param_1 * 4);
+  uVar1 = R_BSP_SoftwareUnlock(&DAT_0001ffc4 + param_1 * 4);
   return uVar1;
 }
 
 
-// ===== FUN_fff9089e @ fff9089e (273 bytes)
+// ===== R_BSP_SoftwareInterruptOpen @ fff9089e (273 bytes)
 
-uint FUN_fff9089e(int param_1)
+/* (unit 0/1): takes hardware lock 0x72/0x73, clears and disables the software interrupt, empties
+   its 9-entry task table 0x20318 + unit*0x6C, then enables it via R_BSP_SoftwareInterruptControl
+   [fact: fff9089e]; Renesas BSP API name [inference] */
+
+uint R_BSP_SoftwareInterruptOpen(int param_1)
 
 {
   char cStack_12;
@@ -26,10 +33,10 @@ uint FUN_fff9089e(int param_1)
   local_10 = 0;
   local_4 = param_1;
   if (param_1 == 1) {
-    cStack_9 = FUN_fff9086c(0x73);
+    cStack_9 = R_BSP_HardwareLock(0x73);
   }
   else if (param_1 == 0) {
-    cStack_9 = FUN_fff9086c(0x72);
+    cStack_9 = R_BSP_HardwareLock(0x72);
   }
   else {
     local_10 = 3;
@@ -60,9 +67,12 @@ uint FUN_fff9089e(int param_1)
 }
 
 
-// ===== FUN_fff909af @ fff909af (231 bytes)
+// ===== R_BSP_SoftwareInterruptClose @ fff909af (231 bytes)
 
-void FUN_fff909af(int param_1)
+/* (unit): disables the software interrupt, empties the task table, releases hardware lock 0x72/0x73
+   [fact: fff909af]; no caller in the export; Renesas BSP API name [inference] */
+
+void R_BSP_SoftwareInterruptClose(int param_1)
 
 {
   byte local_11;
@@ -80,10 +90,10 @@ void FUN_fff909af(int param_1)
     (&DAT_0000142c)[param_1] = 0;
     (&DAT_00001432)[param_1] = 0;
     if (param_1 == 1) {
-      FUN_fff90885(0x73);
+      R_BSP_HardwareUnlock(0x73);
     }
     else if (param_1 == 0) {
-      FUN_fff90885(0x72);
+      R_BSP_HardwareUnlock(0x72);
     }
   }
   return;
@@ -813,9 +823,12 @@ void sbrk(int param_1)
 }
 
 
-// ===== FUN_fff91303 @ fff91303 (212 bytes)
+// ===== get_iclk_freq_hz @ fff91303 (212 bytes)
 
-uint FUN_fff91303(void)
+/* ICLK in Hz from SCKCR3 CKSEL (PLL: HOCO 16/18/20 MHz or 24 MHz main, PLLCR divider and
+   multiplier; HOCO; LOCO 240 kHz; sub 32768 Hz; main 24 MHz) >> SCKCR.ICK [fact: fff91303] */
+
+uint get_iclk_freq_hz(void)
 
 {
   ushort uVar1;
@@ -875,14 +888,18 @@ uint FUN_fff91303(void)
 void hw_init_clock(void)
 
 {
-  FUN_fff913db();
+  mcu_clock_setup();
   return;
 }
 
 
-// ===== FUN_fff913db @ fff913db (186 bytes)
+// ===== mcu_clock_setup @ fff913db (186 bytes)
 
-byte FUN_fff913db(void)
+/* PRCR unlock, clock_source_select, SCKCR = 0x21C21222, SCKCR2 = 0x11, SCKCR3 = 0x400 (PLL), LOCO
+   off, R_BSP_SoftwareDelay(25 us), PRCR lock [fact: fff913db]; only caller hw_init_clock; BSP name
+   [inference] */
+
+byte mcu_clock_setup(void)
 
 {
   undefined4 uVar1;
@@ -890,7 +907,7 @@ byte FUN_fff913db(void)
   byte bVar3;
   
   SYSTEM_PRCR = 0xa50b;
-  FUN_fff91495();
+  clock_source_select();
   SYSTEM_SCKCR = 0x21c21222;
   uVar1 = SYSTEM_SCKCR;
   SYSTEM_SCKCR2 = 0x11;
@@ -898,15 +915,19 @@ byte FUN_fff913db(void)
   SYSTEM_SCKCR3 = 0x400;
   uVar2 = SYSTEM_SCKCR3;
   SYSTEM_LOCOCR = 1;
-  bVar3 = FUN_fff8fc57(0x19,1000000);
+  bVar3 = R_BSP_SoftwareDelay(0x19,1000000);
   SYSTEM_PRCR = 0xa500;
   return bVar3;
 }
 
 
-// ===== FUN_fff91495 @ fff91495 (371 bytes)
+// ===== clock_source_select @ fff91495 (371 bytes)
 
-void FUN_fff91495(void)
+/* Oscillator set-up: MOFCR, HOCO power, main oscillator wait MOSCWTCR = 0x53 and start, sub-clock /
+   RTC RCR3/RCR4 on cold reset, PLLCR = 0x1300 class and PLL start, ROMWT = 2 [fact: fff91495];
+   matches the Renesas BSP mcu_clocks.c function [inference] */
+
+void clock_source_select(void)
 
 {
   ushort uVar1;
@@ -1615,14 +1636,18 @@ void icu_select_init(void)
 }
 
 
-// ===== FUN_fff92475 @ fff92475 (820 bytes)
+// ===== mpc_pin_functions_init @ fff92475 (820 bytes)
 
-void FUN_fff92475(void)
+/* MPC pin functions inside RegisterProtectDisable/Enable(3): ASEL (PFS = 0x80, input) for P41..P43,
+   P45..P47, PD0, PD1, P91, P93, P03; PSEL 0x0A/0x0B (SCI) for P00, P01, P12, P13, P23, P25..P27,
+   P30, P32, P33, P90, P92, PB0, PB1, PC2, PC3 [fact: fff92475]; no caller in the export */
+
+void mpc_pin_functions_init(void)
 
 {
   byte bVar1;
   
-  FUN_fff8fec0(3);
+  R_BSP_RegisterProtectDisable(3);
   MPC_P41PFS = 0x80;
   bVar1 = PORT4_PMR;
   PORT4_PMR = bVar1 & 0xfd;
@@ -1743,7 +1768,7 @@ void FUN_fff92475(void)
   MPC_P90PFS = 10;
   bVar1 = PORT9_PDR;
   PORT9_PDR = bVar1 | 1;
-  FUN_fff8fe3c(3);
+  R_BSP_RegisterProtectEnable(3);
   return;
 }
 

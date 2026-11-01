@@ -43,7 +43,7 @@ void cat_SH(int param_1,char param_2)
     switch(bVar3) {
     case 0:
     case 1:
-      cVar4 = FUN_fffb36ff(bVar3,CONCAT11(pbStack_1c[0x10],pbStack_1c[0x11]));
+      cVar4 = width_index_of_hz(bVar3,CONCAT11(pbStack_1c[0x10],pbStack_1c[0x11]));
       bStack_17 = cVar4 + 1;
       if (0x17 < bStack_17) {
         bStack_17 = 0;
@@ -51,7 +51,7 @@ void cat_SH(int param_1,char param_2)
       break;
     case 2:
     case 3:
-      cVar4 = FUN_fffb36ff(bVar3,CONCAT11(pbStack_1c[0x1a],pbStack_1c[0x1b]));
+      cVar4 = width_index_of_hz(bVar3,CONCAT11(pbStack_1c[0x1a],pbStack_1c[0x1b]));
       bStack_17 = cVar4 + 1;
       if (0x15 < bStack_17) {
         bStack_17 = 0;
@@ -72,7 +72,7 @@ void cat_SH(int param_1,char param_2)
     case 8:
     case 9:
     case 0xe:
-      cVar4 = FUN_fffb36ff(bVar3,CONCAT11(pbStack_1c[0x2e],pbStack_1c[0x2f]));
+      cVar4 = width_index_of_hz(bVar3,CONCAT11(pbStack_1c[0x2e],pbStack_1c[0x2f]));
       bStack_17 = cVar4 + 1;
       if (0x15 < bStack_17) {
         bStack_17 = 0;
@@ -80,7 +80,7 @@ void cat_SH(int param_1,char param_2)
       break;
     case 0xc:
     case 0xd:
-      cVar4 = FUN_fffb36ff(bVar3,CONCAT11(pbStack_1c[0x24],pbStack_1c[0x25]));
+      cVar4 = width_index_of_hz(bVar3,CONCAT11(pbStack_1c[0x24],pbStack_1c[0x25]));
       bStack_17 = cVar4 + 1;
       if (0x15 < bStack_17) {
         bStack_17 = 0;
@@ -136,7 +136,7 @@ void cat_SH(int param_1,char param_2)
           cat_error = 1;
           return;
         }
-        uStack_12 = FUN_fffb3775(bVar3,bStack_17 - 1);
+        uStack_12 = width_hz_of_index(bVar3,bStack_17 - 1);
       }
       goto LAB_fffae5cf;
     }
@@ -151,7 +151,7 @@ void cat_SH(int param_1,char param_2)
             cat_error = 1;
             return;
           }
-          uStack_12 = FUN_fffb3775(bVar3,bStack_17 - 1);
+          uStack_12 = width_hz_of_index(bVar3,bStack_17 - 1);
         }
       }
       else {
@@ -168,7 +168,7 @@ void cat_SH(int param_1,char param_2)
             cat_error = 1;
             return;
           }
-          uStack_12 = FUN_fffb3775(bVar3,bStack_17 - 1);
+          uStack_12 = width_hz_of_index(bVar3,bStack_17 - 1);
         }
       }
       goto LAB_fffae5cf;
@@ -183,7 +183,7 @@ void cat_SH(int param_1,char param_2)
       cat_error = 1;
       return;
     }
-    uStack_12 = FUN_fffb3775(bVar3,bStack_17 - 1);
+    uStack_12 = width_hz_of_index(bVar3,bStack_17 - 1);
   }
 LAB_fffae5cf:
   if (uStack_12 == 0xffff) {
@@ -1821,9 +1821,11 @@ char sum8(int param_1,ushort param_2)
 }
 
 
-// ===== FUN_fffb01df @ fffb01df (20 bytes)
+// ===== memch_mark_used @ fffb01df (20 bytes)
 
-void FUN_fffb01df(byte param_1)
+/* (ch): g_mem_hdr.chan_used[ch] = 1 [fact: fffb01df]; only caller cat_MW */
+
+void memch_mark_used(byte param_1)
 
 {
   g_mem_hdr.chan_used[param_1] = 1;
@@ -2241,9 +2243,12 @@ void eeprom_write_raw(ushort param_1,uint param_2,ushort param_3)
 }
 
 
-// ===== FUN_fffb0664 @ fffb0664 (129 bytes)
+// ===== vfo_rec_mode_defaults @ fffb0664 (129 bytes)
 
-void FUN_fffb0664(int param_1)
+/* Writes the per-mode block defaults of one VFO / memory record (radio-control.md "Defaults")
+   [fact: fffb0664]; callers defaults_vfo, defaults_memch, defaults_bandstack_set */
+
+void vfo_rec_mode_defaults(int param_1)
 
 {
   *(undefined2 *)(param_1 + 0x12) = 0;
@@ -2295,7 +2300,7 @@ void defaults_vfo(void)
     pbVar2 = pbVar2 + 1;
     pbVar3 = pbVar3 + 1;
   }
-  FUN_fffb0664(0x9d09);
+  vfo_rec_mode_defaults(0x9d09);
   g_opstate.vfo_b.reserved_07[1] = 0;
   g_opstate.vfo_b.reserved_07[2] = 0;
   g_opstate.vfo_b._4_4_ = &DAT_00010200;
@@ -2310,7 +2315,7 @@ void defaults_vfo(void)
     pbVar2 = pbVar2 + 1;
     pbVar3 = pbVar3 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   g_opstate.active_vfo = VFO_A;
   if (((uVar1 != 0x20b) && (uVar1 != 0x4380)) && (uVar1 != 0x60e6)) {
     return;
@@ -2321,9 +2326,13 @@ void defaults_vfo(void)
 }
 
 
-// ===== FUN_fffb0779 @ fffb0779 (687 bytes)
+// ===== defaults_bandstack_set @ fffb0779 (687 bytes)
 
-void FUN_fffb0779(undefined4 *param_1)
+/* Fills one band-stack set: per band record writes 0x800400mm (mode 0x40/0x42/0xC1 ...), 0x10200, a
+   20-byte ROM template (0xFFF8090B, +0x14 per band) and vfo_rec_mode_defaults, picks the region
+   variant with dest_code_get [fact: fffb0779]; only caller defaults_bandstack */
+
+void defaults_bandstack_set(undefined4 *param_1)
 
 {
   ushort uVar1;
@@ -2343,7 +2352,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664(param_1);
+  vfo_rec_mode_defaults(param_1);
   *(undefined2 *)((int)param_1 + 0x62) = 0;
   *(undefined **)((int)param_1 + 0x5e) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x5a) = 0x80040040;
@@ -2354,7 +2363,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)(param_1 + 0x2f) = 0;
   param_1[0x2e] = &DAT_00010200;
   param_1[0x2d] = 0x800400c1;
@@ -2365,7 +2374,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)((int)param_1 + 0x116) = 0;
   *(undefined **)((int)param_1 + 0x112) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x10e) = 0x80040040;
@@ -2376,7 +2385,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)(param_1 + 0x5c) = 0;
   param_1[0x5b] = &DAT_00010200;
   param_1[0x5a] = 0x80040042;
@@ -2387,7 +2396,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)((int)param_1 + 0x1ca) = 0;
   *(undefined **)((int)param_1 + 0x1c6) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x1c2) = 0x800400c1;
@@ -2398,7 +2407,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)(param_1 + 0x89) = 0;
   param_1[0x88] = &DAT_00010200;
   param_1[0x87] = 0x800400c1;
@@ -2409,7 +2418,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)((int)param_1 + 0x27e) = 0;
   *(undefined **)((int)param_1 + 0x27a) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x276) = 0x800400c1;
@@ -2420,7 +2429,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)(param_1 + 0xb6) = 0;
   param_1[0xb5] = &DAT_00010200;
   param_1[0xb4] = 0x800400c1;
@@ -2431,7 +2440,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)((int)param_1 + 0x332) = 0;
   *(undefined **)((int)param_1 + 0x32e) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x32a) = 0x800400c1;
@@ -2442,7 +2451,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)(param_1 + 0xe3) = 1;
   param_1[0xe2] = &DAT_00010200;
   param_1[0xe1] = 0x800400c1;
@@ -2453,7 +2462,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar2 = puVar2 + 1;
     puVar4 = puVar4 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   *(undefined2 *)((int)param_1 + 0x3e6) = 0;
   *(undefined **)((int)param_1 + 0x3e2) = &DAT_00010200;
   *(undefined4 *)((int)param_1 + 0x3de) = 0x800400c1;
@@ -2464,7 +2473,7 @@ void FUN_fffb0779(undefined4 *param_1)
     puVar3 = (undefined4 *)((int)puVar3 + 1);
     puVar2 = puVar2 + 1;
   }
-  FUN_fffb0664();
+  vfo_rec_mode_defaults();
   if (((uVar1 != 0x20b) && (uVar1 != 0x4380)) && (uVar1 != 0x60e6)) {
     return;
   }
@@ -2499,12 +2508,12 @@ void defaults_bandstack(void)
     *(byte *)pavVar1 = 0;
     pavVar1 = (vfo_rec (*) [12])((int)pavVar1 + 1);
   }
-  FUN_fffb0779(bandstack_a);
-  FUN_fffb0779(0x4b99);
-  FUN_fffb0779(0x4fd1);
-  FUN_fffb0779(bandstack_b);
-  FUN_fffb0779(0x5841);
-  FUN_fffb0779(0x5c79);
+  defaults_bandstack_set(bandstack_a);
+  defaults_bandstack_set(0x4b99);
+  defaults_bandstack_set(0x4fd1);
+  defaults_bandstack_set(bandstack_b);
+  defaults_bandstack_set(0x5841);
+  defaults_bandstack_set(0x5c79);
   return;
 }
 
@@ -2574,7 +2583,7 @@ void defaults_memch(void)
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(pvVar4);
+    vfo_rec_mode_defaults(pvVar4);
   }
   if (uVar2 == 0xd950) {
 LAB_fffb0e99:
@@ -2592,7 +2601,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8a72);
+    vfo_rec_mode_defaults(0x8a72);
     memch[0x76].reserved_07[1] = 0;
     memch[0x76].reserved_07[2] = 0;
     memch[0x76]._4_4_ = &DAT_00030200;
@@ -2607,7 +2616,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8acc);
+    vfo_rec_mode_defaults(0x8acc);
     memch[0x77].reserved_07[1] = 0;
     memch[0x77].reserved_07[2] = 0;
     memch[0x77]._4_4_ = &DAT_00030200;
@@ -2622,7 +2631,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8b26);
+    vfo_rec_mode_defaults(0x8b26);
     memch[0x78].reserved_07[1] = 0;
     memch[0x78].reserved_07[2] = 0;
     memch[0x78]._4_4_ = &DAT_00030200;
@@ -2637,7 +2646,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8b80);
+    vfo_rec_mode_defaults(0x8b80);
     memch[0x79].reserved_07[1] = 0;
     memch[0x79].reserved_07[2] = 0;
     memch[0x79]._4_4_ = &DAT_00030200;
@@ -2652,7 +2661,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8bda);
+    vfo_rec_mode_defaults(0x8bda);
     memch[0x7a].reserved_07[1] = 0;
     memch[0x7a].reserved_07[2] = 0;
     memch[0x7a]._4_4_ = &DAT_00030200;
@@ -2667,7 +2676,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8c34);
+    vfo_rec_mode_defaults(0x8c34);
     memch[0x7b].reserved_07[1] = 0;
     memch[0x7b].reserved_07[2] = 0;
     memch[0x7b]._4_4_ = &DAT_00030200;
@@ -2682,7 +2691,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8c8e);
+    vfo_rec_mode_defaults(0x8c8e);
     memch[0x7c].reserved_07[1] = 0;
     memch[0x7c].reserved_07[2] = 0;
     memch[0x7c]._4_4_ = &DAT_00030200;
@@ -2697,7 +2706,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8ce8);
+    vfo_rec_mode_defaults(0x8ce8);
     memch[0x7d].reserved_07[1] = 0;
     memch[0x7d].reserved_07[2] = 0;
     memch[0x7d]._4_4_ = &DAT_00030200;
@@ -2712,7 +2721,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8d42);
+    vfo_rec_mode_defaults(0x8d42);
     memch[0x7e].reserved_07[1] = 0;
     memch[0x7e].reserved_07[2] = 0;
     memch[0x7e]._4_4_ = &DAT_00030200;
@@ -2727,7 +2736,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8d9c);
+    vfo_rec_mode_defaults(0x8d9c);
     return;
   }
   if (uVar2 == 0x1cb9) {
@@ -2745,7 +2754,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8fb8);
+    vfo_rec_mode_defaults(0x8fb8);
     return;
   }
   if (uVar2 != 0x315b) {
@@ -2773,7 +2782,7 @@ LAB_fffb0e99:
       pbVar5 = pbVar5 + 1;
       pbVar6 = pbVar6 + 1;
     }
-    FUN_fffb0664(0x8fb8);
+    vfo_rec_mode_defaults(0x8fb8);
     return;
   }
 LAB_fffb0b88:
@@ -2794,7 +2803,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8a72);
+  vfo_rec_mode_defaults(0x8a72);
   memch[0x76].reserved_07[1] = 0;
   memch[0x76].reserved_07[2] = 0;
   memch[0x76]._4_4_ = &DAT_00030200;
@@ -2809,7 +2818,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8acc);
+  vfo_rec_mode_defaults(0x8acc);
   memch[0x77].reserved_07[1] = 0;
   memch[0x77].reserved_07[2] = 0;
   memch[0x77]._4_4_ = &DAT_00030200;
@@ -2824,7 +2833,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8b26);
+  vfo_rec_mode_defaults(0x8b26);
   memch[0x78].reserved_07[1] = 0;
   memch[0x78].reserved_07[2] = 0;
   memch[0x78]._4_4_ = &DAT_00030200;
@@ -2839,7 +2848,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8b80);
+  vfo_rec_mode_defaults(0x8b80);
   memch[0x79].reserved_07[1] = 0;
   memch[0x79].reserved_07[2] = 0;
   memch[0x79]._4_4_ = &DAT_00030200;
@@ -2854,7 +2863,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8bda);
+  vfo_rec_mode_defaults(0x8bda);
   memch[0x7a].reserved_07[1] = 0;
   memch[0x7a].reserved_07[2] = 0;
   memch[0x7a]._4_4_ = &DAT_00030200;
@@ -2869,7 +2878,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8c34);
+  vfo_rec_mode_defaults(0x8c34);
   memch[0x7b].reserved_07[1] = 0;
   memch[0x7b].reserved_07[2] = 0;
   memch[0x7b]._4_4_ = &DAT_00030200;
@@ -2884,7 +2893,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8c8e);
+  vfo_rec_mode_defaults(0x8c8e);
   memch[0x7c].reserved_07[1] = 0;
   memch[0x7c].reserved_07[2] = 0;
   memch[0x7c]._4_4_ = &DAT_00030200;
@@ -2899,7 +2908,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8ce8);
+  vfo_rec_mode_defaults(0x8ce8);
   memch[0x7d].reserved_07[1] = 0;
   memch[0x7d].reserved_07[2] = 0;
   memch[0x7d]._4_4_ = &DAT_00030200;
@@ -2914,7 +2923,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8d42);
+  vfo_rec_mode_defaults(0x8d42);
   memch[0x7e].reserved_07[1] = 0;
   memch[0x7e].reserved_07[2] = 0;
   memch[0x7e]._4_4_ = &DAT_00030200;
@@ -2929,7 +2938,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8d9c);
+  vfo_rec_mode_defaults(0x8d9c);
   memch[0x7f].reserved_07[1] = 0;
   memch[0x7f].reserved_07[2] = 0;
   memch[0x7f]._4_4_ = &DAT_00030200;
@@ -2944,7 +2953,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8df6);
+  vfo_rec_mode_defaults(0x8df6);
   memch[0x80].reserved_07[1] = 0;
   memch[0x80].reserved_07[2] = 0;
   memch[0x80]._4_4_ = &DAT_00030200;
@@ -2959,7 +2968,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8e50);
+  vfo_rec_mode_defaults(0x8e50);
   memch[0x81].reserved_07[1] = 0;
   memch[0x81].reserved_07[2] = 0;
   memch[0x81]._4_4_ = &DAT_00030200;
@@ -2974,7 +2983,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8eaa);
+  vfo_rec_mode_defaults(0x8eaa);
   memch[0x82].reserved_07[1] = 0;
   memch[0x82].reserved_07[2] = 0;
   memch[0x82]._4_4_ = &DAT_00030200;
@@ -2989,7 +2998,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8f04);
+  vfo_rec_mode_defaults(0x8f04);
   memch[0x83].reserved_07[1] = 0;
   memch[0x83].reserved_07[2] = 0;
   memch[0x83]._4_4_ = &DAT_00030200;
@@ -3004,7 +3013,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8f5e);
+  vfo_rec_mode_defaults(0x8f5e);
   memch[0x84].reserved_07[1] = 0;
   memch[0x84].reserved_07[2] = 0;
   memch[0x84]._4_4_ = &DAT_00030200;
@@ -3019,7 +3028,7 @@ LAB_fffb0b88:
     pbVar5 = pbVar5 + 1;
     pbVar6 = pbVar6 + 1;
   }
-  FUN_fffb0664(0x8fb8);
+  vfo_rec_mode_defaults(0x8fb8);
   return;
 }
 

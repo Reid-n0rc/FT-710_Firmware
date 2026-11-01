@@ -14,9 +14,12 @@ void func_panel_close(void)
 }
 
 
-// ===== FUN_fffc3c9f @ fffc3c9f (58 bytes)
+// ===== func_marker_toggle @ fffc3c9f (58 bytes)
 
-void FUN_fffc3c9f(void)
+/* FUNC menu slot 2 (MARKER): toggles g_opstate.ss02_marker, beep [fact: fffc3c9f]; case 2 of
+   func_menu_select (slot order of frame 0x37) */
+
+void func_marker_toggle(void)
 
 {
   g_opstate.ss02_marker = g_opstate.ss02_marker != 1;
@@ -26,9 +29,12 @@ void FUN_fffc3c9f(void)
 }
 
 
-// ===== FUN_fffc3cd9 @ fffc3cd9 (77 bytes)
+// ===== func_color_select @ fffc3cd9 (77 bytes)
 
-void FUN_fffc3cd9(void)
+/* FUNC menu slot 3 (COLOR): assigns the FUNC knob to function 3, opens pop-up 0xB with cursor
+   g_opstate.ss03_value, closes the FUNC panel [fact: fffc3cd9] */
+
+void func_color_select(void)
 
 {
   g_opstate.func_knob = 3;
@@ -43,14 +49,18 @@ void FUN_fffc3cd9(void)
 }
 
 
-// ===== FUN_fffc3d26 @ fffc3d26 (79 bytes)
+// ===== func_mic_eq_toggle @ fffc3d26 (79 bytes)
 
-void FUN_fffc3d26(void)
+/* FUNC menu item 8 (MIC EQ): if mic_eq_mode_ok, toggles 0x9BF0 (struct field proc_on; the
+   parametric-EQ flag per display gui.md), VFO refresh, beep [fact: fffc3d26]; case 8 of
+   func_menu_select */
+
+void func_mic_eq_toggle(void)
 
 {
   int iVar1;
   
-  iVar1 = FUN_fffc3d75();
+  iVar1 = mic_eq_mode_ok();
   if (iVar1 == 0) {
     return;
   }
@@ -62,9 +72,12 @@ void FUN_fffc3d26(void)
 }
 
 
-// ===== FUN_fffc3d75 @ fffc3d75 (115 bytes)
+// ===== mic_eq_mode_ok @ fffc3d75 (115 bytes)
 
-undefined1 FUN_fffc3d75(void)
+/* Returns 1 when the RX mode is LSB, USB, AM, AM-N, FM or FM-N [fact: fffc3d75]; callers
+   dl37_slot_mic_eq (grey flag), func_mic_eq_toggle */
+
+undefined1 mic_eq_mode_ok(void)
 
 {
   bool bVar1;
@@ -106,9 +119,12 @@ undefined1 FUN_fffc3d75(void)
 }
 
 
-// ===== FUN_fffc3de8 @ fffc3de8 (84 bytes)
+// ===== func_keyer_toggle @ fffc3de8 (84 bytes)
 
-void FUN_fffc3de8(void)
+/* FUNC menu slot 16 (KEYER): in a keyer TX mode toggles g_opstate.keyer_on, keyer_init, beep [fact:
+   fffc3de8] */
+
+void func_keyer_toggle(void)
 
 {
   byte *pbVar1;
@@ -172,9 +188,12 @@ undefined1 keyer_mode_class(byte *param_1)
 }
 
 
-// ===== FUN_fffc3eaa @ fffc3eaa (113 bytes)
+// ===== func_bk_in_toggle @ fffc3eaa (113 bytes)
 
-void FUN_fffc3eaa(void)
+/* FUNC menu item 0x11 (BK-IN): for a voice or keyer TX mode and not transmitting, toggles the BI
+   bit (FUN_fffc3f40), keyer_init, beep [fact: fffc3eaa]; case 0x11 of func_menu_select */
+
+void func_bk_in_toggle(void)
 
 {
   bool bVar1;
@@ -182,7 +201,7 @@ void FUN_fffc3eaa(void)
   int iVar3;
   
   pbVar2 = vfo_rec_ptr(1);
-  iVar3 = FUN_fffc3f1b(pbVar2);
+  iVar3 = rec_mode_is_voice(pbVar2);
   if ((iVar3 == 0) && (iVar3 = keyer_mode_class(pbVar2), iVar3 == 0)) {
     bVar1 = true;
   }
@@ -194,7 +213,7 @@ void FUN_fffc3eaa(void)
       PTR_g_ui_00025d54->key_consumed = 1;
       return;
     }
-    FUN_fffc3f40(pbVar2);
+    vfo_bk_in_bit_toggle(pbVar2);
     keyer_init();
     beep_request(1);
     PTR_g_ui_00025d54->key_consumed = 1;
@@ -205,9 +224,12 @@ void FUN_fffc3eaa(void)
 }
 
 
-// ===== FUN_fffc3f1b @ fffc3f1b (37 bytes)
+// ===== rec_mode_is_voice @ fffc3f1b (37 bytes)
 
-undefined1 FUN_fffc3f1b(byte *param_1)
+/* (*rec): 1 when the record's mode nibble is LSB/USB or AM..FM-N (0, 1, 4..7) [fact: fffc3f1b];
+   callers dl37_slot_bk_in, func_bk_in_toggle */
+
+undefined1 rec_mode_is_voice(byte *param_1)
 
 {
   undefined1 local_7;
@@ -222,9 +244,12 @@ undefined1 FUN_fffc3f1b(byte *param_1)
 }
 
 
-// ===== FUN_fffc3f40 @ fffc3f40 (92 bytes)
+// ===== vfo_bk_in_bit_toggle @ fffc3f40 (92 bytes)
 
-void FUN_fffc3f40(byte *param_1)
+/* (*rec): toggles bit 1 (BI) of the record's mode block for its mode (SSB +10, CW +0x14, AM +0x32,
+   FM +0x3C) [fact: fffc3f40]; only caller func_bk_in_toggle */
+
+void vfo_bk_in_bit_toggle(byte *param_1)
 
 {
   byte bVar1;
@@ -257,9 +282,12 @@ void FUN_fffc3f40(byte *param_1)
 }
 
 
-// ===== FUN_fffc3f9c @ fffc3f9c (83 bytes)
+// ===== func_txw_toggle @ fffc3f9c (83 bytes)
 
-void FUN_fffc3f9c(void)
+/* FUNC menu slot 24 (TXW): in split toggles g_ui.txw_on (on: func_assigned = 1, FUN_fffc8e0e(500)),
+   beep [fact: fffc3f9c] */
+
+void func_txw_toggle(void)
 
 {
   if (g_opstate.split_on != 1) {

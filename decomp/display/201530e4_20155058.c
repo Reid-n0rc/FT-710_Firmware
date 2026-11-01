@@ -11,13 +11,15 @@ undefined4 FUN_201530e4(undefined4 *param_1,uint param_2)
 }
 
 
-// ===== FUN_201530fc @ 201530fc (1208 bytes)
+// ===== knl_sys_init @ 201530fc (1208 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20153124) */
 /* WARNING: Removing unreachable block (ram,0x20153188) */
 /* WARNING: Removing unreachable block (ram,0x201531b0) */
+/* Kernel start-up called by kernel_heap_init: sets the NORTi system variables 0x208003A8..
+   (structs_display.h knl_sys: all set by knl_sys_init) and ends with svc 0 [fact] */
 
-undefined4 FUN_201530fc(uint *param_1,int param_2)
+undefined4 knl_sys_init(uint *param_1,int param_2)
 
 {
   int iVar1;
@@ -217,12 +219,15 @@ void FUN_201535b4(undefined *param_1,int param_2,uint param_3)
 }
 
 
-// ===== FUN_20153620 @ 20153620 (256 bytes)
+// ===== knl_tick_table_dbf84 @ 20153620 (256 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20153688) */
 /* WARNING: Removing unreachable block (ram,0x2015369c) */
+/* Per tick: the same wheel walk for the objects of table 0x208DBF84 (wheel slots 0x20800402, mask
+   tmo_mask_2) [fact]; which uITRON object kind the table holds is open (it sits between the cyc
+   table 0x208DBF64 and the dtq table 0x208DBFA4) */
 
-void FUN_20153620(void)
+void knl_tick_table_dbf84(void)
 
 {
   byte bVar1;
@@ -321,9 +326,13 @@ void FUN_20153720(undefined *param_1,int param_2,byte param_3)
 }
 
 
-// ===== FUN_20153788 @ 20153788 (332 bytes)
+// ===== knl_tick_cyclic @ 20153788 (332 bytes)
 
-void FUN_20153788(void)
+/* Per tick: walks the cyclic-handler wheel slot 0x20800401[tick_lo & tmo_mask_1] of the cyc table
+   0x208DBF64 (itron_acre_cyc), re-arms each due handler by its period and runs it [fact for the
+   wheel walk and the re-arm] */
+
+void knl_tick_cyclic(void)
 
 {
   byte bVar1;
@@ -639,9 +648,12 @@ byte FUN_20153b8c(int param_1)
 }
 
 
-// ===== FUN_20153cd4 @ 20153cd4 (280 bytes)
+// ===== knl_mbf_put @ 20153cd4 (280 bytes)
 
-undefined4 FUN_20153cd4(int param_1,undefined1 *param_2,uint param_3)
+/* (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message
+   size is 1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room [fact] */
+
+undefined4 knl_mbf_put(int param_1,undefined1 *param_2,uint param_3)
 
 {
   ushort uVar1;
@@ -734,7 +746,7 @@ byte FUN_20153dec(int param_1)
         if (*(int *)(tcb->sp + 8) == 0) {
           return bVar7;
         }
-        iVar4 = FUN_20153cd4(iVar3,*(undefined4 *)(tcb->sp + 0xc));
+        iVar4 = knl_mbf_put(iVar3,*(undefined4 *)(tcb->sp + 0xc));
         if (iVar4 == 0) {
           return bVar7;
         }
@@ -850,9 +862,13 @@ void FUN_20153f28(uint param_1)
 }
 
 
-// ===== FUN_201540c4 @ 201540c4 (492 bytes)
+// ===== knl_tick_task_timeouts @ 201540c4 (492 bytes)
 
-code * FUN_201540c4(void)
+/* Per tick: walks the task time-out wheel slot 0x20800400[tick_lo & tmo_mask], unlinks every TCB
+   whose tmo_due is now and releases it (with E_TMOUT; mutex waits adjust the owner's priority)
+   [fact for the wheel walk] */
+
+code * knl_tick_task_timeouts(void)
 
 {
   byte bVar1;
@@ -1037,9 +1053,12 @@ void knl_timeout_add(int tmout,knl_tcb *tcb,byte tskid)
 }
 
 
-// ===== FUN_20154508 @ 20154508 (28 bytes)
+// ===== knl_ready_requeue @ 20154508 (28 bytes)
 
-void FUN_20154508(knl_tcb *param_1,uint param_2)
+/* (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem
+   use it for released waiters [fact] */
+
+void knl_ready_requeue(knl_tcb *param_1,uint param_2)
 
 {
   knl_queue_move(knl_rdq + param_1->pri,param_1,param_2);
@@ -1101,14 +1120,17 @@ code * knl_make_ready(knl_tcb *param_1,uint param_2)
 }
 
 
-// ===== FUN_201545c8 @ 201545c8 (20 bytes)
+// ===== knl_wait_self @ 201545c8 (20 bytes)
 
-code * FUN_201545c8(knl_tcb *param_1,uint param_2)
+/* (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues
+   at knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk [fact] */
+
+code * knl_wait_self(knl_tcb *param_1,uint param_2)
 
 {
   knl_queue_remove(param_1,param_2);
   software_interrupt(0);
-  return FUN_201566f0;
+  return knl_resched;
 }
 
 
@@ -1123,7 +1145,7 @@ code * knl_wait_enter(byte *param_1,knl_tcb *param_2,uint param_3)
 {
   knl_queue_move(param_1,param_2,param_3);
   software_interrupt(0);
-  return FUN_201566f0;
+  return knl_resched;
 }
 
 
@@ -1143,9 +1165,13 @@ void knl_memcpy(undefined1 *param_1,undefined1 *param_2,int param_3)
 }
 
 
-// ===== FUN_2015460c @ 2015460c (176 bytes)
+// ===== knl_freelist_free @ 2015460c (176 bytes)
 
-undefined4 FUN_2015460c(undefined4 *param_1,undefined4 *param_2,int param_3)
+/* (list, block, size): returns a block to an address-ordered free list {next, size}, merging with
+   the neighbours; -17 when it overlaps a free block [fact]; the counterpart of knl_freelist_alloc
+    */
+
+undefined4 knl_freelist_free(undefined4 *param_1,undefined4 *param_2,int param_3)
 
 {
   undefined4 *puVar1;
@@ -1225,9 +1251,12 @@ uint FUN_201546bc(uint *param_1,int *param_2)
 }
 
 
-// ===== FUN_20154704 @ 20154704 (12 bytes)
+// ===== knl_stack_alloc @ 20154704 (12 bytes)
 
-void FUN_20154704(undefined4 param_1)
+/* knl_freelist_alloc on the system pool 0x208003FC; itron_acre_tsk takes the task stack with it
+   [fact] */
+
+void knl_stack_alloc(undefined4 param_1)
 
 {
   knl_freelist_alloc(0x208003fc,param_1);
@@ -1235,21 +1264,25 @@ void FUN_20154704(undefined4 param_1)
 }
 
 
-// ===== FUN_20154710 @ 20154710 (16 bytes)
+// ===== knl_sys_free_a @ 20154710 (16 bytes)
 
-void FUN_20154710(undefined4 param_1,undefined4 param_2)
+/* knl_freelist_free on the system pool 0x208003FC (no caller in the image) [fact] */
+
+void knl_sys_free_a(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
 
-// ===== FUN_20154720 @ 20154720 (36 bytes)
+// ===== knl_pool_alloc @ 20154720 (36 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20154734) */
+/* knl_freelist_alloc on the system pool 0x208003FC for the buffers of itron_acre_mbf / acre_mpf /
+   acre_mpl [fact] */
 
-void FUN_20154720(undefined4 param_1)
+void knl_pool_alloc(undefined4 param_1)
 
 {
   knl_freelist_alloc(0x208003fc,param_1);
@@ -1257,14 +1290,16 @@ void FUN_20154720(undefined4 param_1)
 }
 
 
-// ===== FUN_20154744 @ 20154744 (40 bytes)
+// ===== knl_pool_free @ 20154744 (40 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x2015475c) */
+/* knl_freelist_free on the system pool 0x208003FC; itron_del_mpf frees the pool memory with it
+   [fact] */
 
-void FUN_20154744(undefined4 param_1,undefined4 param_2)
+void knl_pool_free(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
@@ -1283,14 +1318,16 @@ void knl_sys_alloc(undefined4 param_1)
 }
 
 
-// ===== FUN_20154790 @ 20154790 (40 bytes)
+// ===== knl_sys_free @ 20154790 (40 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x201547a8) */
+/* knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf
+   and del_sem free control blocks with it [fact] */
 
-void FUN_20154790(undefined4 param_1,undefined4 param_2)
+void knl_sys_free(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_2015460c(0x208003fc,param_1,param_2);
+  knl_freelist_free(0x208003fc,param_1,param_2);
   return;
 }
 
@@ -1475,7 +1512,7 @@ void sprintf_veneer(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
   uStack_1c = param_4;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  FUN_20155f72(param_2,&uStack_20,&uStack_8,0x20155f99);
+  _sprintf_body(param_2,&uStack_20,&uStack_8,0x20155f99);
   _sputc(0,&uStack_20);
   return;
 }
@@ -1495,7 +1532,7 @@ void sprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
   uStack_1c = param_4;
   uStack_8 = param_3;
   uStack_4 = param_4;
-  FUN_20155f72(param_2,&local_20,&uStack_8,0x20155f99);
+  _sprintf_body(param_2,&local_20,&uStack_8,0x20155f99);
   _sputc(0,&local_20);
   return;
 }
@@ -1519,7 +1556,7 @@ void snprintf(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
   }
   local_20 = param_1;
   uStack_4 = param_4;
-  FUN_20155f72(param_3,&local_20,&uStack_4,0x20155fa3);
+  _sprintf_body(param_3,&local_20,&uStack_4,0x20155fa3);
   if (param_2 != 0) {
     _sputc(0,&local_20);
   }
@@ -1608,9 +1645,13 @@ void FUN_20154ab2(byte *param_1,undefined1 *param_2,uint param_3)
 }
 
 
-// ===== FUN_20154c48 @ 20154c48 (388 bytes)
+// ===== _printf_core @ 20154c48 (388 bytes)
 
-uint FUN_20154c48(uint *param_1,uint *param_2)
+/* Format loop called by the sprintf family (through 0x20155F72): reads the format string and
+   dispatches conversions, floating point through _printf_fp_dec [inference: armcc C library
+   __printf] */
+
+uint _printf_core(uint *param_1,uint *param_2)
 
 {
   uint uVar1;
@@ -1648,12 +1689,12 @@ uint FUN_20154c48(uint *param_1,uint *param_2)
           }
         }
         else {
-          iVar2 = FUN_20163864(uVar1);
+          iVar2 = is_decimal_digit(uVar1);
           if (iVar2 != 0) {
             param_1[iVar5 + 6] = uVar1 - 0x30;
             while( true ) {
               uVar1 = (*(code *)param_1[3])(param_1);
-              iVar2 = FUN_20163864();
+              iVar2 = is_decimal_digit();
               if (iVar2 == 0) break;
               param_1[iVar5 + 6] = (uVar1 + param_1[iVar5 + 6] * 10) - 0x30;
             }
@@ -1711,7 +1752,7 @@ LAB_20154d80:
         uVar4 = uVar4 | 0x800;
       }
       *param_1 = uVar4;
-      iVar5 = FUN_20100c7c(param_1,uVar1,param_2);
+      iVar5 = _printf_fp_dec(param_1,uVar1,param_2);
       if (iVar5 == 0) goto LAB_20154c6c;
       if (iVar5 == 1) {
         param_2 = param_2 + 1;
@@ -1746,9 +1787,12 @@ void FUN_20154dd0(undefined4 param_1)
 }
 
 
-// ===== FUN_20154dea @ 20154dea (480 bytes)
+// ===== qsort_partition @ 20154dea (480 bytes)
 
-void FUN_20154dea(undefined4 param_1,uint param_2,uint param_3,code *param_4)
+/* (base, n, size, cmp): the quicksort stage of qsort for n > 10 [inference: only caller qsort,
+   swaps elements by size around a pivot] */
+
+void qsort_partition(undefined4 param_1,uint param_2,uint param_3,code *param_4)
 
 {
   undefined1 uVar1;
@@ -1994,9 +2038,13 @@ LAB_20154fbc:
 }
 
 
-// ===== FUN_20154fca @ 20154fca (134 bytes)
+// ===== qsort @ 20154fca (134 bytes)
 
-void FUN_20154fca(uint param_1,uint param_2,uint param_3,code *param_4)
+/* (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10;
+   wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it [fact for the code;
+   the C library name is an inference from the signature] */
+
+void qsort(uint param_1,uint param_2,uint param_3,code *param_4)
 
 {
   undefined1 uVar1;
@@ -2010,7 +2058,7 @@ void FUN_20154fca(uint param_1,uint param_2,uint param_3,code *param_4)
   
   if ((param_3 != 0) && (param_2 != 0)) {
     if (10 < param_2) {
-      FUN_20154dea();
+      qsort_partition();
     }
     uVar7 = param_1;
     while (uVar7 < (param_2 - 1) * param_3 + param_1) {

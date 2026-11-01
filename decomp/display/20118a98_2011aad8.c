@@ -711,9 +711,14 @@ void FUN_201193c0(void)
 }
 
 
-// ===== FUN_201193ec @ 201193ec (508 bytes)
+// ===== vdc5_reg_initialize @ 201193ec (508 bytes)
 
-void FUN_201193ec(int param_1,byte *param_2)
+/* Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR,
+   peripherals.md) [fact for the call]; Renesas r_vdc5_register.c VDC5_Initialize [inference: one
+   register function per API, same order as the API functions] */
+
+void vdc5_reg_initialize(int param_1,byte *param_2)
 
 {
   ushort uVar1;
@@ -863,9 +868,13 @@ void FUN_20119668(byte *param_1,int param_2)
 }
 
 
-// ===== FUN_201197c0 @ 201197c0 (284 bytes)
+// ===== vdc5_reg_terminate @ 201197c0 (284 bytes)
 
-void FUN_201197c0(int param_1,char *param_2)
+/* Register part of r_vdc5_terminate: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Terminate
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_terminate(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -929,9 +938,13 @@ void FUN_201198dc(int param_1)
 }
 
 
-// ===== FUN_20119990 @ 20119990 (784 bytes)
+// ===== vdc5_reg_sync_control @ 20119990 (784 bytes)
 
-void FUN_20119990(int param_1,char *param_2)
+/* Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_SyncControl
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_sync_control(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -1082,9 +1095,13 @@ void FUN_20119dd4(int param_1)
 }
 
 
-// ===== FUN_20119e60 @ 20119e60 (660 bytes)
+// ===== vdc5_reg_display_output @ 20119e60 (660 bytes)
 
-void FUN_20119e60(int param_1,ushort *param_2)
+/* Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_DisplayOutput [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_display_output(int param_1,ushort *param_2)
 
 {
   int iVar1;
@@ -1394,9 +1411,14 @@ LAB_2011a684:
 }
 
 
-// ===== FUN_2011a6c8 @ 2011a6c8 (312 bytes)
+// ===== vdc5_reg_change_write_process @ 2011a6c8 (312 bytes)
 
-void FUN_2011a6c8(int param_1,int param_2,ushort *param_3)
+/* Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00
+   block, called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ChangeWriteProcess [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
 
 {
   undefined4 uVar1;

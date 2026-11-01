@@ -1,8 +1,11 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fff9ad7e @ fff9ad7e (96 bytes)
+// ===== dl37_slot_marker @ fff9ad7e (96 bytes)
 
-void FUN_fff9ad7e(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 2 (MARKER)
+   [fact: fff9ad7e]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_marker(ushort param_1)
 
 {
   int iVar1;
@@ -18,11 +21,13 @@ void FUN_fff9ad7e(ushort param_1)
 }
 
 
-// ===== FUN_fff9adde @ fff9adde (83 bytes)
+// ===== dl37_slot_color @ fff9adde (83 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff9ae15) */
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 3 (COLOR)
+   [fact: fff9adde]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" */
 
-void FUN_fff9adde(ushort param_1)
+void dl37_slot_color(ushort param_1)
 
 {
   uint uVar1;
@@ -38,9 +43,13 @@ void FUN_fff9adde(ushort param_1)
 }
 
 
-// ===== FUN_fff9ae31 @ fff9ae31 (69 bytes)
+// ===== dl37_slot_contrast @ fff9ae31 (69 bytes)
 
-void FUN_fff9ae31(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 4
+   (CONTRAST), value text by popup_fmt_contrast [fact: fff9ae31]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_contrast(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -48,14 +57,18 @@ void FUN_fff9ae31(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99e15(param_1);
+  popup_fmt_contrast(param_1);
   return;
 }
 
 
-// ===== FUN_fff9ae76 @ fff9ae76 (69 bytes)
+// ===== dl37_slot_dimmer @ fff9ae76 (69 bytes)
 
-void FUN_fff9ae76(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 5
+   (DIMMER), value text by popup_fmt_dimmer [fact: fff9ae76]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_dimmer(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -63,14 +76,18 @@ void FUN_fff9ae76(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff9a00f(param_1);
+  popup_fmt_dimmer(param_1);
   return;
 }
 
 
-// ===== FUN_fff9aebb @ fff9aebb (64 bytes)
+// ===== dl37_slot_mgroup @ fff9aebb (64 bytes)
 
-void FUN_fff9aebb(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 6 (M
+   GROUP) [fact: fff9aebb]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
+    */
+
+void dl37_slot_mgroup(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -81,9 +98,13 @@ void FUN_fff9aebb(ushort param_1)
 }
 
 
-// ===== FUN_fff9aefb @ fff9aefb (69 bytes)
+// ===== dl37_slot_mic_gain @ fff9aefb (69 bytes)
 
-void FUN_fff9aefb(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 7 (MIC
+   GAIN), value text by popup_fmt_mic_gain [fact: fff9aefb]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_mic_gain(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -91,21 +112,24 @@ void FUN_fff9aefb(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99837(param_1);
+  popup_fmt_mic_gain(param_1);
   return;
 }
 
 
-// ===== FUN_fff9af40 @ fff9af40 (114 bytes)
+// ===== dl37_slot_mic_eq @ fff9af40 (114 bytes)
 
-void FUN_fff9af40(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 8 (MIC EQ)
+   [fact: fff9af40]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_mic_eq(ushort param_1)
 
 {
   int iVar1;
   byte bStack_4;
   undefined1 uStack_3;
   
-  iVar1 = FUN_fffc3d75();
+  iVar1 = mic_eq_mode_ok();
   if (iVar1 == 0) {
     uStack_3 = 0x80;
     bStack_4 = 0;
@@ -129,9 +153,13 @@ void FUN_fff9af40(ushort param_1)
 }
 
 
-// ===== FUN_fff9afb2 @ fff9afb2 (69 bytes)
+// ===== dl37_slot_proc_level @ fff9afb2 (69 bytes)
 
-void FUN_fff9afb2(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 9 (PROC
+   LEVEL), value text by popup_fmt_proc_level [fact: fff9afb2]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_proc_level(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -139,14 +167,18 @@ void FUN_fff9afb2(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff997df(param_1);
+  popup_fmt_proc_level(param_1);
   return;
 }
 
 
-// ===== FUN_fff9aff7 @ fff9aff7 (69 bytes)
+// ===== dl37_slot_amc_level @ fff9aff7 (69 bytes)
 
-void FUN_fff9aff7(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0A (AMC
+   LEVEL), value text by popup_fmt_amc_level [fact: fff9aff7]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_amc_level(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -154,14 +186,18 @@ void FUN_fff9aff7(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99a8a(param_1);
+  popup_fmt_amc_level(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b03c @ fff9b03c (69 bytes)
+// ===== dl37_slot_vox_gain @ fff9b03c (69 bytes)
 
-void FUN_fff9b03c(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0B (VOX
+   GAIN), value text by popup_fmt_vox_gain [fact: fff9b03c]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_vox_gain(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -169,14 +205,18 @@ void FUN_fff9b03c(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff996e2(param_1);
+  popup_fmt_vox_gain(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b081 @ fff9b081 (69 bytes)
+// ===== dl37_slot_vox_delay @ fff9b081 (69 bytes)
 
-void FUN_fff9b081(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0C (VOX
+   DELAY), value text by popup_fmt_vox_delay [fact: fff9b081]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_vox_delay(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -184,14 +224,18 @@ void FUN_fff9b081(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99717(param_1);
+  popup_fmt_vox_delay(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b0c6 @ fff9b0c6 (69 bytes)
+// ===== dl37_slot_anti_vox @ fff9b0c6 (69 bytes)
 
-void FUN_fff9b0c6(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0D (ANTI
+   VOX), value text by popup_fmt_anti_vox [fact: fff9b0c6]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_anti_vox(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -199,14 +243,18 @@ void FUN_fff9b0c6(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff9978c(param_1);
+  popup_fmt_anti_vox(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b10b @ fff9b10b (69 bytes)
+// ===== dl37_slot_rf_power @ fff9b10b (69 bytes)
 
-void FUN_fff9b10b(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0E (RF
+   POWER), value text by popup_fmt_rf_power [fact: fff9b10b]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_rf_power(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -214,14 +262,18 @@ void FUN_fff9b10b(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff995cc(param_1);
+  popup_fmt_rf_power(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b150 @ fff9b150 (69 bytes)
+// ===== dl37_slot_moni_level @ fff9b150 (69 bytes)
 
-void FUN_fff9b150(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0F (MONI
+   LEVEL), value text by popup_fmt_moni_level [fact: fff9b150]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_moni_level(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -229,14 +281,18 @@ void FUN_fff9b150(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff9960e(param_1);
+  popup_fmt_moni_level(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b195 @ fff9b195 (125 bytes)
+// ===== dl37_slot_keyer @ fff9b195 (125 bytes)
 
-void FUN_fff9b195(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x10
+   (KEYER) [fact: fff9b195]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
+   panel" */
+
+void dl37_slot_keyer(ushort param_1)
 
 {
   byte *pbVar1;
@@ -269,9 +325,12 @@ void FUN_fff9b195(ushort param_1)
 }
 
 
-// ===== FUN_fff9b212 @ fff9b212 (143 bytes)
+// ===== dl37_slot_bk_in @ fff9b212 (143 bytes)
 
-void FUN_fff9b212(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x11 (BK
+   IN) [fact: fff9b212]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_bk_in(ushort param_1)
 
 {
   bool bVar1;
@@ -281,7 +340,7 @@ void FUN_fff9b212(ushort param_1)
   undefined1 uStack_9;
   
   pbVar2 = vfo_rec_ptr(1);
-  iVar3 = FUN_fffc3f1b(pbVar2);
+  iVar3 = rec_mode_is_voice(pbVar2);
   if ((iVar3 == 1) || (iVar3 = keyer_mode_class(pbVar2), iVar3 != 0)) {
     bVar1 = true;
   }
@@ -290,7 +349,7 @@ void FUN_fff9b212(ushort param_1)
   }
   if (bVar1) {
     uStack_9 = 0;
-    iVar3 = FUN_fff99dbf(pbVar2);
+    iVar3 = bk_in_bit_get(pbVar2);
     if (iVar3 == 0) {
       bStack_a = 0;
     }
@@ -312,9 +371,13 @@ void FUN_fff9b212(ushort param_1)
 }
 
 
-// ===== FUN_fff9b2a1 @ fff9b2a1 (70 bytes)
+// ===== dl37_slot_cw_speed @ fff9b2a1 (70 bytes)
 
-void FUN_fff9b2a1(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x12 (CW
+   SPEED), value text by popup_fmt_cw_speed [fact: fff9b2a1]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_cw_speed(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -322,14 +385,18 @@ void FUN_fff9b2a1(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff998e2(param_1);
+  popup_fmt_cw_speed(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b2e7 @ fff9b2e7 (70 bytes)
+// ===== dl37_slot_cw_pitch @ fff9b2e7 (70 bytes)
 
-void FUN_fff9b2e7(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x13 (CW
+   PITCH), value text by popup_fmt_cw_pitch [fact: fff9b2e7]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_cw_pitch(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -337,14 +404,18 @@ void FUN_fff9b2e7(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff9992a(param_1);
+  popup_fmt_cw_pitch(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b32d @ fff9b32d (70 bytes)
+// ===== dl37_slot_bk_delay @ fff9b32d (70 bytes)
 
-void FUN_fff9b32d(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x14 (BK
+   DELAY), value text by popup_fmt_bk_delay [fact: fff9b32d]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_bk_delay(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -352,14 +423,18 @@ void FUN_fff9b32d(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99989(param_1);
+  popup_fmt_bk_delay(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b373 @ fff9b373 (91 bytes)
+// ===== dl37_slot_message @ fff9b373 (91 bytes)
 
-void FUN_fff9b373(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x16
+   (MESSAGE) [fact: fff9b373]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
+   panel" */
+
+void dl37_slot_message(ushort param_1)
 
 {
   byte *pbVar1;
@@ -378,9 +453,13 @@ void FUN_fff9b373(ushort param_1)
 }
 
 
-// ===== FUN_fff9b3ce @ fff9b3ce (80 bytes)
+// ===== dl37_slot_record @ fff9b3ce (80 bytes)
 
-void FUN_fff9b3ce(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x17/0x35
+   (RECORD/STOP) [fact: fff9b3ce]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
+   panel" */
+
+void dl37_slot_record(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -393,9 +472,13 @@ void FUN_fff9b3ce(ushort param_1)
 }
 
 
-// ===== FUN_fff9b41e @ fff9b41e (65 bytes)
+// ===== dl37_slot_play @ fff9b41e (65 bytes)
 
-void FUN_fff9b41e(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x18
+   (PLAY) [fact: fff9b41e]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel"
+    */
+
+void dl37_slot_play(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -406,9 +489,12 @@ void FUN_fff9b41e(ushort param_1)
 }
 
 
-// ===== FUN_fff9b45f @ fff9b45f (45 bytes)
+// ===== dl37_slot_txw @ fff9b45f (45 bytes)
 
-void FUN_fff9b45f(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x2D (TXW)
+   [fact: fff9b45f]; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_txw(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -417,9 +503,13 @@ void FUN_fff9b45f(ushort param_1)
 }
 
 
-// ===== FUN_fff9b48c @ fff9b48c (70 bytes)
+// ===== dl37_slot_aess @ fff9b48c (70 bytes)
 
-void FUN_fff9b48c(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x15
+   (AESS), value text by popup_fmt_aess_level [fact: fff9b48c]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_aess(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -427,14 +517,18 @@ void FUN_fff9b48c(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff999e3(param_1);
+  popup_fmt_aess_level(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b4d2 @ fff9b4d2 (70 bytes)
+// ===== dl37_slot_aess_cf @ fff9b4d2 (70 bytes)
 
-void FUN_fff9b4d2(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x3A (AESS
+   CF), value text by popup_fmt_aess_cf [fact: fff9b4d2]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_aess_cf(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -442,14 +536,18 @@ void FUN_fff9b4d2(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99a29(param_1);
+  popup_fmt_aess_cf(param_1);
   return;
 }
 
 
-// ===== FUN_fff9b518 @ fff9b518 (65 bytes)
+// ===== dl37_slot_radio_setting @ fff9b518 (65 bytes)
 
-void FUN_fff9b518(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x30
+   (RADIO SETTING) [fact: fff9b518]; only caller displink_build_37; ids per display-link.md "0x37
+   FUNC panel" */
+
+void dl37_slot_radio_setting(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -460,9 +558,13 @@ void FUN_fff9b518(ushort param_1)
 }
 
 
-// ===== FUN_fff9b559 @ fff9b559 (65 bytes)
+// ===== dl37_slot_cw_setting @ fff9b559 (65 bytes)
 
-void FUN_fff9b559(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x31 (CW
+   SETTING) [fact: fff9b559]; only caller displink_build_37; ids per display-link.md "0x37 FUNC
+   panel" */
+
+void dl37_slot_cw_setting(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -473,9 +575,13 @@ void FUN_fff9b559(ushort param_1)
 }
 
 
-// ===== FUN_fff9b59a @ fff9b59a (65 bytes)
+// ===== dl37_slot_operation_setting @ fff9b59a (65 bytes)
 
-void FUN_fff9b59a(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x32
+   (OPERATION SETTING) [fact: fff9b59a]; only caller displink_build_37; ids per display-link.md
+   "0x37 FUNC panel" */
+
+void dl37_slot_operation_setting(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -486,9 +592,13 @@ void FUN_fff9b59a(ushort param_1)
 }
 
 
-// ===== FUN_fff9b5db @ fff9b5db (65 bytes)
+// ===== dl37_slot_display_setting @ fff9b5db (65 bytes)
 
-void FUN_fff9b5db(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x33
+   (DISPLAY SETTING) [fact: fff9b5db]; only caller displink_build_37; ids per display-link.md "0x37
+   FUNC panel" */
+
+void dl37_slot_display_setting(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -499,9 +609,13 @@ void FUN_fff9b5db(ushort param_1)
 }
 
 
-// ===== FUN_fff9b61c @ fff9b61c (65 bytes)
+// ===== dl37_slot_extension_setting @ fff9b61c (65 bytes)
 
-void FUN_fff9b61c(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x34
+   (EXTENSION SETTING) [fact: fff9b61c]; only caller displink_build_37; ids per display-link.md
+   "0x37 FUNC panel" */
+
+void dl37_slot_extension_setting(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -512,9 +626,12 @@ void FUN_fff9b61c(ushort param_1)
 }
 
 
-// ===== FUN_fff9b65d @ fff9b65d (65 bytes)
+// ===== dl37_slot_empty @ fff9b65d (65 bytes)
 
-void FUN_fff9b65d(ushort param_1)
+/* (offset): writes an empty FUNC-panel slot of frame 0x37: flag 0, function id 0xFF, 8 spaces
+   [fact: fff9b65d]; displink_build_37 uses it for slot 25 and slots 33..40 */
+
+void dl37_slot_empty(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -807,7 +924,7 @@ void displink_build_41(void)
   DAT_00001741 = 0x41;
   displink_copy_status();
   bStack_1 = FUN_fffc2b2e(PTR_g_ui_00025d38->memlist_first,PTR_g_ui_00025d38->memlist_row);
-  bStack_2 = FUN_fff9c04a();
+  bStack_2 = memch_special_limit();
   if ((bStack_2 == 0) || (bStack_1 < bStack_2)) {
     bVar3 = false;
   }
@@ -839,7 +956,7 @@ void displink_build_41(void)
   uVar8 = DAT_0001b632 + 0xf;
   DAT_0001b632 = uVar8;
   if (g_opstate.ex030114_mem_group == 1) {
-    bStack_1 = FUN_fff9bfe1(bStack_1);
+    bStack_1 = memch_group_of(bStack_1);
     uVar1 = (uint)DAT_0001b632;
     *(undefined2 *)(&DAT_00001745 + uVar1) = 0x2050;
     *(undefined4 *)(&DAT_00001741 + uVar1) = 0x554f5247;
@@ -875,7 +992,7 @@ void displink_build_41(void)
       bStack_1 = DAT_00020884->flags5 >> 7 | DAT_00020884->flags1 >> 6 & 2;
       (&DAT_00001741)[DAT_0001b632] = bStack_1;
       DAT_0001b632 = DAT_0001b632 + 1;
-      FUN_fff9c089(&DAT_00001741 + DAT_0001b632,bStack_4);
+      memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
       DAT_0001b632 = DAT_0001b632 + 5;
       FUN_fff9c2f9(&DAT_00001741 + DAT_0001b632,bStack_4);
       DAT_0001b632 = DAT_0001b632 + 10;
@@ -898,7 +1015,7 @@ void displink_build_41(void)
     else {
       (&DAT_00001741)[DAT_0001b632] = 0;
       DAT_0001b632 = DAT_0001b632 + 1;
-      FUN_fff9c089(&DAT_00001741 + DAT_0001b632,bStack_4);
+      memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
       uVar8 = DAT_0001b632 + 5;
       DAT_0001b632 = uVar8;
       *(undefined4 *)(&DAT_00001745 + uVar8) = 0x2d2e2d2d;
@@ -947,14 +1064,17 @@ undefined1 FUN_fff9bfb8(void)
   undefined1 uVar2;
   
   bVar1 = memch_current(g_opstate.active_vfo != VFO_A);
-  uVar2 = FUN_fff9bfe1(bVar1);
+  uVar2 = memch_group_of(bVar1);
   return uVar2;
 }
 
 
-// ===== FUN_fff9bfe1 @ fff9bfe1 (105 bytes)
+// ===== memch_group_of @ fff9bfe1 (105 bytes)
 
-char FUN_fff9bfe1(byte param_1)
+/* (ch): memory group 1..5 from the group sizes at ROM 0xFFF804D3, 6 PMS (99..0x74), 7 60 m
+   (0x75..0x83), 8 EMG [fact: fff9bfe1] */
+
+char memch_group_of(byte param_1)
 
 {
   byte local_5;
@@ -990,9 +1110,12 @@ char FUN_fff9bfe1(byte param_1)
 }
 
 
-// ===== FUN_fff9c04a @ fff9c04a (63 bytes)
+// ===== memch_special_limit @ fff9c04a (63 bytes)
 
-undefined1 FUN_fff9c04a(void)
+/* Upper channel limit of the region's 60 m / EMG channels: 0x75 for dest 0x020B / 0x1CB9 / 0x4380 /
+   0x60E6, 0x84 for 0x315B / 0x50E2, 0 otherwise [fact: fff9c04a] */
+
+undefined1 memch_special_limit(void)
 
 {
   ushort uVar1;
@@ -1015,7 +1138,7 @@ undefined1 FUN_fff9c04a(void)
 }
 
 
-// ===== FUN_fff9c089 @ fff9c089 (217 bytes)
+// ===== memch_label_fmt @ fff9c089 (217 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff9c0ec) */
 /* WARNING: Removing unreachable block (ram,0xfff9c0a3) */
@@ -1023,8 +1146,10 @@ undefined1 FUN_fff9c04a(void)
 /* WARNING: Removing unreachable block (ram,0xfff9c0cf) */
 /* WARNING: Removing unreachable block (ram,0xfff9c12f) */
 /* WARNING: Removing unreachable block (ram,0xfff9c15f) */
+/* (buf, ch): channel label text: 'M-nn' for 1..99, 'M-PL'/'M-PU' n for the PMS pairs 0x63..0x74,
+   '5-nn' for 60 m 0x75..0x83, 'EMG' above [fact: fff9c089; display-link.md frame 0x41] */
 
-undefined4 * FUN_fff9c089(undefined4 *param_1,byte param_2)
+undefined4 * memch_label_fmt(undefined4 *param_1,byte param_2)
 
 {
   byte n;

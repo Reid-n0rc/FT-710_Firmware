@@ -249,7 +249,7 @@ void spi_slave_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_spi_slave_task);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_spi_slave_task);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,0);
     return;
@@ -427,8 +427,8 @@ undefined4 rspi0_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi0_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi0_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     uVar2 = rspi_hw_config(0,1);
@@ -457,8 +457,8 @@ undefined4 rspi1_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi1_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi1_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     uVar2 = rspi_hw_config(1,0);
@@ -487,8 +487,8 @@ undefined4 rspi2_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi2_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi2_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166ad4);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
     uVar2 = rspi_hw_config(2,1);
@@ -517,8 +517,8 @@ undefined4 rspi3_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi3_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi3_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166afc);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
@@ -548,8 +548,8 @@ undefined4 rspi4_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi4_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi4_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166b24);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
     uVar2 = rspi_hw_config(4,1);
@@ -1591,8 +1591,8 @@ undefined4 rspi0_open_irq_only(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi0_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi0_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     return 0;
@@ -1618,8 +1618,8 @@ undefined4 rspi1_open_irq_only(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi1_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi1_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     return 0;
@@ -2371,10 +2371,10 @@ void link_ss_irq_init(void)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_isr(0,&cisr_sdr_ss_isr);
+  uVar1 = itron_acre_isr(0,0x203a7080);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x217);
-    uVar1 = itron_acre_isr(0,&cisr_dsp_ss_isr);
+    uVar1 = itron_acre_isr(0,0x203a7094);
     if (0 < (int)uVar1) {
       gic_enable_irq(0x1c1);
       return;
@@ -2472,9 +2472,9 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
-    FUN_201643b0();
-    iVar1 = FUN_201647e4(&DAT_20494768,0);
-    FUN_201577f8(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
+    ring20_advance();
+    iVar1 = ring20_offset(&DAT_20494768,0);
+    copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
     DAT_20494714 = DAT_20494714 + 1;
@@ -2546,7 +2546,7 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_3 = param_2;
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac3_isr);
+  uVar1 = itron_acre_isr(0,0x204200b0);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2c);
     return;
@@ -2604,7 +2604,7 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_5 = param_2;
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac5_isr);
+  uVar1 = itron_acre_isr(0,0x204200d8);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2e);
     reg_rmw32(&DMAC_CHCTRL_5,1,0);
@@ -2663,7 +2663,7 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   DMAC_N0DA_4 = param_2;
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
-  uVar1 = itron_acre_isr(0,&cisr_dmac4_isr);
+  uVar1 = itron_acre_isr(0,0x204200c4);
   if (0 < (int)uVar1) {
     gic_enable_irq(0x2d);
     reg_rmw32(&DMAC_CHCTRL_4,1,0);
@@ -2730,7 +2730,7 @@ void dmac8_m2m_init(void)
 void dmac9_register_isr(void)
 
 {
-  itron_acre_isr(0,&cisr_dmac9_isr);
+  itron_acre_isr(0,0x204200ec);
   return;
 }
 
@@ -2803,7 +2803,7 @@ void dmac9_rspi_tx_setup(int param_1)
 void dmac10_register_isr(void)
 
 {
-  itron_acre_isr(0,&cisr_dmac10_isr);
+  itron_acre_isr(0,0x20420100);
   return;
 }
 

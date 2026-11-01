@@ -753,9 +753,13 @@ void ai_ex040402(void)
 }
 
 
-// ===== FUN_fffea63a @ fffea63a (594 bytes)
+// ===== ai_ex_preset_name @ fffea63a (594 bytes)
 
-void FUN_fffea63a(char param_1)
+/* Shared AI detector for EX060n01 (PRESET n name): called by ai_ex06{01..05}01 with n = 1..5;
+   compares g_opstate.presets[n-1].name with its shadow, strncmp on the 12-char name, copies it to
+   its shadow, length 0x15 [fact: fffea63a] */
+
+void ai_ex_preset_name(char param_1)
 
 {
   int iVar1;
@@ -924,9 +928,13 @@ void FUN_fffea63a(char param_1)
 }
 
 
-// ===== FUN_fffea88c @ fffea88c (380 bytes)
+// ===== ai_ex_preset_cat1_rate @ fffea88c (380 bytes)
 
-void FUN_fffea88c(char param_1)
+/* Shared AI detector for EX060n02 (PRESET n cat1_rate): called by ai_ex06{01..05}02 with n = 1..5;
+   compares g_opstate.presets[n-1].cat1_rate with its shadow, formats with nib2hex [fact: fffea88c]
+    */
+
+void ai_ex_preset_cat1_rate(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -967,9 +975,13 @@ void FUN_fffea88c(char param_1)
 }
 
 
-// ===== FUN_fffeaa08 @ fffeaa08 (380 bytes)
+// ===== ai_ex_preset_cat1_tot @ fffeaa08 (380 bytes)
 
-void FUN_fffeaa08(char param_1)
+/* Shared AI detector for EX060n03 (PRESET n cat1_tot): called by ai_ex06{01..05}03 with n = 1..5;
+   compares g_opstate.presets[n-1].cat1_tot with its shadow, formats with nib2hex [fact: fffeaa08]
+    */
+
+void ai_ex_preset_cat1_tot(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -1010,9 +1022,13 @@ void FUN_fffeaa08(char param_1)
 }
 
 
-// ===== FUN_fffeab84 @ fffeab84 (380 bytes)
+// ===== ai_ex_preset_cat1_cat3_stop_bit @ fffeab84 (380 bytes)
 
-void FUN_fffeab84(char param_1)
+/* Shared AI detector for EX060n04 (PRESET n cat1_cat3_stop_bit): called by ai_ex06{01..05}04 with n
+   = 1..5; compares g_opstate.presets[n-1].cat1_cat3_stop_bit with its shadow, formats with nib2hex
+   [fact: fffeab84] */
+
+void ai_ex_preset_cat1_cat3_stop_bit(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -1053,9 +1069,13 @@ void FUN_fffeab84(char param_1)
 }
 
 
-// ===== FUN_fffead00 @ fffead00 (375 bytes)
+// ===== ai_ex_preset_agc_fast_delay @ fffead00 (375 bytes)
 
-void FUN_fffead00(char param_1)
+/* Shared AI detector for EX060n05 (PRESET n agc_fast_delay): called by ai_ex06{01..05}05 with n =
+   1..5; compares g_opstate.presets[n-1].agc_fast_delay with its shadow, formats with
+   ai_ex_fmt_u16_4 [fact: fffead00] */
+
+void ai_ex_preset_agc_fast_delay(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -1095,9 +1115,13 @@ void FUN_fffead00(char param_1)
 }
 
 
-// ===== FUN_fffeae77 @ fffeae77 (375 bytes)
+// ===== ai_ex_preset_agc_mid_delay @ fffeae77 (375 bytes)
 
-void FUN_fffeae77(char param_1)
+/* Shared AI detector for EX060n06 (PRESET n agc_mid_delay): called by ai_ex06{01..05}06 with n =
+   1..5; compares g_opstate.presets[n-1].agc_mid_delay with its shadow, formats with ai_ex_fmt_u16_4
+   [fact: fffeae77] */
+
+void ai_ex_preset_agc_mid_delay(char param_1)
 
 {
   if (param_1 == '\x05') {
@@ -1137,9 +1161,13 @@ void FUN_fffeae77(char param_1)
 }
 
 
-// ===== FUN_fffeafee @ fffeafee (375 bytes)
+// ===== ai_ex_preset_agc_slow_delay @ fffeafee (375 bytes)
 
-void FUN_fffeafee(char param_1)
+/* Shared AI detector for EX060n07 (PRESET n agc_slow_delay): called by ai_ex06{01..05}07 with n =
+   1..5; compares g_opstate.presets[n-1].agc_slow_delay with its shadow, formats with
+   ai_ex_fmt_u16_4 [fact: fffeafee] */
+
+void ai_ex_preset_agc_slow_delay(char param_1)
 
 {
   if (param_1 == '\x05') {

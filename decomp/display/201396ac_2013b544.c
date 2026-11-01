@@ -9,9 +9,13 @@ void FUN_201396ac(void)
 }
 
 
-// ===== FUN_201396b0 @ 201396b0 (488 bytes)
+// ===== usbh_port_isr @ 201396b0 (488 bytes)
 
-void FUN_201396b0(int param_1,int param_2)
+/* (port): USB interrupt body behind usbh0_isr / usbh1_isr (peripherals.md: GIC 73/74 ->
+   usbh_port_isr(port)): reads and clears the status, marks pipe 0 done and sets the port event
+   flags 0x2090B674 / 680 / 67C [fact] */
+
+void usbh_port_isr(int param_1,int param_2)
 
 {
   int iVar1;
@@ -346,9 +350,13 @@ void FUN_20139d10(int param_1,int param_2)
 }
 
 
-// ===== FUN_20139d78 @ 20139d78 (396 bytes)
+// ===== usbh_port_task @ 20139d78 (396 bytes)
 
-void FUN_20139d78(int param_1)
+/* (port): port task: waits on the port event flag, handles attach (200-tick debounce, bus reset,
+   enumeration events) and detach, then the pipe, control and class events (FUN_201398a0,
+   FUN_20139c68, FUN_20139970) [fact for the calls] */
+
+void usbh_port_task(int param_1)
 
 {
   void *pvVar1;
@@ -437,9 +445,13 @@ undefined4 FUN_20139f04(int param_1,undefined2 *param_2,uint param_3)
 }
 
 
-// ===== FUN_20139f6c @ 20139f6c (548 bytes)
+// ===== usbh_brdy_pipe_read @ 20139f6c (548 bytes)
 
-undefined4 FUN_20139f6c(int param_1,int param_2)
+/* (port, pipe): BRDY on a receive pipe: reads the FIFO into the pipe buffer under the port
+   semaphore, completes the transfer on a short packet and sets the pipe's event bit [fact for the
+   calls] */
+
+undefined4 usbh_brdy_pipe_read(int param_1,int param_2)
 
 {
   bool bVar1;
@@ -539,9 +551,12 @@ LAB_2013a160:
 }
 
 
-// ===== FUN_2013a198 @ 2013a198 (508 bytes)
+// ===== usbh_brdy_pipe_write @ 2013a198 (508 bytes)
 
-undefined4 FUN_2013a198(int param_1,int param_2)
+/* (port, pipe): BRDY on a send pipe: writes the next packet from the pipe buffer into the FIFO
+   under the port semaphore [fact for the calls] */
+
+undefined4 usbh_brdy_pipe_write(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -630,9 +645,12 @@ LAB_2013a368:
 }
 
 
-// ===== FUN_2013a394 @ 2013a394 (176 bytes)
+// ===== usbh_brdy_handler @ 2013a394 (176 bytes)
 
-undefined4 FUN_2013a394(int param_1)
+/* (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to usbh_brdy_pipe_read (read) or
+   usbh_brdy_pipe_write (write); then re-enables BRDYE in INTENB0 [fact] */
+
+undefined4 usbh_brdy_handler(int param_1)
 
 {
   ushort uVar1;
@@ -655,10 +673,10 @@ undefined4 FUN_2013a394(int param_1)
           bVar2 = true;
           if (*(int *)(iVar4 + 0x94) == 0) {
             *(undefined4 *)(iVar4 + 0x84) = 0;
-            FUN_20139f6c(param_1,iVar5);
+            usbh_brdy_pipe_read(param_1,iVar5);
           }
           else {
-            FUN_2013a198(param_1,iVar5);
+            usbh_brdy_pipe_write(param_1,iVar5);
           }
         }
       }
@@ -673,9 +691,11 @@ undefined4 FUN_2013a394(int param_1)
 }
 
 
-// ===== FUN_2013a444 @ 2013a444 (120 bytes)
+// ===== usbh_brdy_task @ 2013a444 (120 bytes)
 
-void FUN_2013a444(int param_1)
+/* (port): waits on the BRDY event flag and runs usbh_brdy_handler for the port [fact] */
+
+void usbh_brdy_task(int param_1)
 
 {
   void *pvVar1;
@@ -695,7 +715,7 @@ void FUN_2013a444(int param_1)
       itron_dly_tsk(200);
     }
     if ((local_4 & 1) != 0) {
-      FUN_2013a394(&DAT_2090b660 + param_1 * 0x4d8);
+      usbh_brdy_handler(&DAT_2090b660 + param_1 * 0x4d8);
     }
   } while( true );
 }
@@ -914,9 +934,13 @@ LAB_2013a85c:
 }
 
 
-// ===== FUN_2013a90c @ 2013a90c (120 bytes)
+// ===== usbh_open_endpoint_pipes @ 2013a90c (120 bytes)
 
-int FUN_2013a90c(int param_1,int param_2)
+/* (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and
+   sets it up (FUN_2013a690) [fact for the ranges]; on the RZ/A1H USB controller pipes 6..9 are the
+   interrupt pipes [inference] */
+
+int usbh_open_endpoint_pipes(int param_1,int param_2)
 
 {
   int iVar1;
@@ -981,9 +1005,11 @@ undefined4 FUN_2013a93c(int param_1)
 }
 
 
-// ===== FUN_2013a9d4 @ 2013a9d4 (20 bytes)
+// ===== usbh_port_ctx @ 2013a9d4 (20 bytes)
 
-undefined * FUN_2013a9d4(int param_1)
+/* (port): 0x2090B660 + 0x4D8 * port, the port context [fact] */
+
+undefined * usbh_port_ctx(int param_1)
 
 {
   return &DAT_2090b660 + param_1 * 0x4d8;
@@ -1085,9 +1111,12 @@ undefined4 FUN_2013ab7c(int param_1,uint param_2)
 }
 
 
-// ===== FUN_2013ab9c @ 2013ab9c (104 bytes)
+// ===== usbh_port_open @ 2013ab9c (104 bytes)
 
-undefined4 FUN_2013ab9c(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the
+   controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 [fact for the calls] */
+
+undefined4 usbh_port_open(uint param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -1263,9 +1292,13 @@ int FUN_2013af30(int *param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2013afa4 @ 2013afa4 (660 bytes)
+// ===== usbh_enumerate_device @ 2013afa4 (660 bytes)
 
-undefined4 FUN_2013afa4(undefined4 param_1,uint param_2)
+/* (task ctx, event): device attach: bus reset (FUN_2013a4bc), GET_DESCRIPTOR device (8 bytes),
+   SET_ADDRESS, GET_DESCRIPTOR device (18 bytes) and configuration, then usbh_enumerate_config [fact
+   for the request sequence] */
+
+undefined4 usbh_enumerate_device(undefined4 param_1,uint param_2)
 
 {
   byte bVar1;
@@ -1301,7 +1334,7 @@ undefined4 FUN_2013afa4(undefined4 param_1,uint param_2)
   uVar12 = (param_2 & 0xffff) >> 0xc;
   uVar11 = (param_2 & 0xfff) >> 8;
   uVar9 = (param_2 & 0xff) >> 4;
-  uVar4 = FUN_2013a9d4();
+  uVar4 = usbh_port_ctx();
   iVar7 = 0;
   do {
     iVar8 = local_30 * 0x34 + 0x2091c220 + iVar7 * 0x34;
@@ -1371,7 +1404,7 @@ LAB_2013b114:
                 iVar8 = iVar8 - (uint)bVar1;
                 pbVar6 = pbVar6 + bVar1;
               } while (0 < iVar8);
-              iVar8 = FUN_20137fac(local_30,uVar4,iVar7);
+              iVar8 = usbh_enumerate_config(local_30,uVar4,iVar7);
               if (iVar8 == 0) {
                 *(code **)(iVar7 + 0x28) = FUN_20138410;
               }
@@ -1393,9 +1426,12 @@ LAB_2013b114:
 }
 
 
-// ===== FUN_2013b238 @ 2013b238 (124 bytes)
+// ===== usbh_enum_task @ 2013b238 (124 bytes)
 
-void FUN_2013b238(int param_1)
+/* (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs
+   usbh_enumerate_device for each; 500-tick retry on a queue error [fact] */
+
+void usbh_enum_task(int param_1)
 
 {
   uint uVar1;
@@ -1415,9 +1451,9 @@ void FUN_2013b238(int param_1)
     uVar1 = auStack_8[0] & 0xffff;
     uVar2 = auStack_8[0] & 0xfff;
     uVar6 = auStack_8[0] & 0xf;
-    uVar5 = FUN_2013a9d4(auStack_8[0] >> 0x18);
+    uVar5 = usbh_port_ctx(auStack_8[0] >> 0x18);
     if (uVar6 == 6) {
-      FUN_2013afa4(param_1 * 8 + 0x2091c210,uVar3);
+      usbh_enumerate_device(param_1 * 8 + 0x2091c210,uVar3);
     }
     else if (uVar6 == 7) {
       FUN_2013aea4(uVar5,uVar1 >> 0xc,uVar2 >> 8);
@@ -1594,17 +1630,20 @@ void usbh_get_hub_descriptor(undefined4 param_1,undefined4 param_2,undefined4 pa
 }
 
 
-// ===== FUN_2013b4cc @ 2013b4cc (88 bytes)
+// ===== usbh_hw_init @ 2013b4cc (88 bytes)
 
-void FUN_2013b4cc(void)
+/* Registers the USBI0/USBI1 handlers (GIC 73/74) and calls usbh_port_open for USB0 (SYSCFG0
+   0xE8010000) and USB1 (peripherals.md: host mode on both ports) [fact] */
+
+void usbh_hw_init(void)
 
 {
   gic_def_inh(0x49,0x204201b8);
   gic_enable_irq(0x49);
-  FUN_2013ab9c(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
+  usbh_port_open(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
   gic_def_inh(0x4a,0x204201c4);
   gic_enable_irq(0x4a);
-  FUN_2013ab9c(1,&USB_SYSCFG0_1,2,&DAT_20808ac0);
+  usbh_port_open(1,&USB_SYSCFG0_1,2,&DAT_20808ac0);
   return;
 }
 

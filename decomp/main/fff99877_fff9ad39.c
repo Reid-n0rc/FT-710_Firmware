@@ -1,8 +1,12 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fff99877 @ fff99877 (107 bytes)
+// ===== mic_gain_ptr @ fff99877 (107 bytes)
 
-uint FUN_fff99877(void)
+/* Returns the address of the MIC GAIN byte for the TX mode: 0x9BEC (LSB/USB), 0x9BED (DATA-L/U,
+   PSK), 0x9BEE (AM), 0x9BEF (FM, DATA-FM), 0 for CW and RTTY [fact: fff99877]; callers
+   popup_fmt_mic_gain, funcknob_mic_gain_step */
+
+uint mic_gain_ptr(void)
 
 {
   byte bVar1;
@@ -34,9 +38,12 @@ LAB_fff998d0:
 }
 
 
-// ===== FUN_fff998e2 @ fff998e2 (72 bytes)
+// ===== popup_fmt_cw_speed @ fff998e2 (72 bytes)
 
-void FUN_fff998e2(ushort param_1)
+/* Value text of the CW SPEED pop-up (id 0x30) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_cw_speed(ushort param_1)
 
 {
   byte bVar1;
@@ -59,9 +66,12 @@ void FUN_fff998e2(ushort param_1)
 }
 
 
-// ===== FUN_fff9992a @ fff9992a (95 bytes)
+// ===== popup_fmt_cw_pitch @ fff9992a (95 bytes)
 
-void FUN_fff9992a(ushort param_1)
+/* Value text of the CW PITCH pop-up (id 0x31) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_cw_pitch(ushort param_1)
 
 {
   byte bVar1;
@@ -84,9 +94,12 @@ void FUN_fff9992a(ushort param_1)
 }
 
 
-// ===== FUN_fff99989 @ fff99989 (90 bytes)
+// ===== popup_fmt_bk_delay @ fff99989 (90 bytes)
 
-void FUN_fff99989(ushort param_1)
+/* Value text of the BK DELAY pop-up (id 0x32) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_bk_delay(ushort param_1)
 
 {
   byte bVar1;
@@ -114,9 +127,12 @@ void FUN_fff99989(ushort param_1)
 }
 
 
-// ===== FUN_fff999e3 @ fff999e3 (70 bytes)
+// ===== popup_fmt_aess_level @ fff999e3 (70 bytes)
 
-void FUN_fff999e3(ushort param_1)
+/* Value text of the AESS pop-up (id 0x33) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_aess_level(ushort param_1)
 
 {
   byte bVar1;
@@ -140,9 +156,12 @@ void FUN_fff999e3(ushort param_1)
 }
 
 
-// ===== FUN_fff99a29 @ fff99a29 (97 bytes)
+// ===== popup_fmt_aess_cf @ fff99a29 (97 bytes)
 
-void FUN_fff99a29(ushort param_1)
+/* Value text of the AESS CF pop-up (id 0x58) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_aess_cf(ushort param_1)
 
 {
   byte bVar1;
@@ -174,9 +193,12 @@ void FUN_fff99a29(ushort param_1)
 }
 
 
-// ===== FUN_fff99a8a @ fff99a8a (53 bytes)
+// ===== popup_fmt_amc_level @ fff99a8a (53 bytes)
 
-void FUN_fff99a8a(ushort param_1)
+/* Value text of the AMC LEVEL pop-up (id 0x28) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_amc_level(ushort param_1)
 
 {
   byte bVar1;
@@ -197,9 +219,12 @@ void FUN_fff99a8a(ushort param_1)
 }
 
 
-// ===== FUN_fff99abf @ fff99abf (177 bytes)
+// ===== popup_fmt_mgroup @ fff99abf (177 bytes)
 
-void FUN_fff99abf(ushort param_1)
+/* Value text of the M GROUP pop-up (id 0x24) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_mgroup(ushort param_1)
 
 {
   byte bVar1;
@@ -224,9 +249,12 @@ void FUN_fff99abf(ushort param_1)
 }
 
 
-// ===== FUN_fff99b70 @ fff99b70 (53 bytes)
+// ===== popup_fmt_nb_level @ fff99b70 (53 bytes)
 
-void FUN_fff99b70(ushort param_1)
+/* Value text of the NB LEVEL pop-up (id 0x38) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_nb_level(ushort param_1)
 
 {
   byte bVar1;
@@ -247,9 +275,12 @@ void FUN_fff99b70(ushort param_1)
 }
 
 
-// ===== FUN_fff99ba5 @ fff99ba5 (89 bytes)
+// ===== popup_fmt_dnr_level @ fff99ba5 (89 bytes)
 
-void FUN_fff99ba5(ushort param_1)
+/* Value text of the DNR LEVEL pop-up (id 0x39) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_dnr_level(ushort param_1)
 
 {
   byte bVar1;
@@ -276,9 +307,12 @@ void FUN_fff99ba5(ushort param_1)
 }
 
 
-// ===== FUN_fff99bfe @ fff99bfe (90 bytes)
+// ===== popup_fmt_qmb @ fff99bfe (90 bytes)
 
-void FUN_fff99bfe(ushort param_1)
+/* Value text of the QMB pop-up (id 0x43) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_qmb(ushort param_1)
 
 {
   undefined1 uVar1;
@@ -308,11 +342,13 @@ void FUN_fff99bfe(ushort param_1)
 }
 
 
-// ===== FUN_fff99c58 @ fff99c58 (74 bytes)
+// ===== popup_fmt_mem_mode @ fff99c58 (74 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfff99c86) */
+/* Value text of the MODE pop-up (id 0x55) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
 
-void FUN_fff99c58(ushort param_1)
+void popup_fmt_mem_mode(ushort param_1)
 
 {
   byte local_3;
@@ -329,9 +365,12 @@ void FUN_fff99c58(ushort param_1)
 }
 
 
-// ===== FUN_fff99ca2 @ fff99ca2 (80 bytes)
+// ===== popup_fmt_mem_scan @ fff99ca2 (80 bytes)
 
-void FUN_fff99ca2(ushort param_1)
+/* Value text of the SCAN pop-up (id 0x44) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_mem_scan(ushort param_1)
 
 {
   if ((memch[PTR_g_ui_00025d38->memlist_ch].flags1 & 0x80) != 0) {
@@ -345,9 +384,12 @@ void FUN_fff99ca2(ushort param_1)
 }
 
 
-// ===== FUN_fff99cf2 @ fff99cf2 (80 bytes)
+// ===== popup_fmt_mem_type @ fff99cf2 (80 bytes)
 
-void FUN_fff99cf2(ushort param_1)
+/* Value text of the TYPE pop-up (id 0x45) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_mem_type(ushort param_1)
 
 {
   if ((memch[PTR_g_ui_00025d38->memlist_ch].flags5 & 0x80) != 0) {
@@ -361,18 +403,24 @@ void FUN_fff99cf2(ushort param_1)
 }
 
 
-// ===== FUN_fff99d42 @ fff99d42 (6 bytes)
+// ===== popup_fmt_dec_level @ fff99d42 (6 bytes)
 
-void FUN_fff99d42(void)
+/* Value text of the DEC LVL pop-up (id 0x3A) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_dec_level(void)
 
 {
   return;
 }
 
 
-// ===== FUN_fff99d48 @ fff99d48 (58 bytes)
+// ===== popup_fmt_keyer @ fff99d48 (58 bytes)
 
-void FUN_fff99d48(ushort param_1)
+/* Value text of the KEYER pop-up (id 0x46) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_keyer(ushort param_1)
 
 {
   int iVar1;
@@ -385,16 +433,19 @@ void FUN_fff99d48(ushort param_1)
 }
 
 
-// ===== FUN_fff99d82 @ fff99d82 (61 bytes)
+// ===== popup_fmt_bk_in @ fff99d82 (61 bytes)
 
-void FUN_fff99d82(ushort param_1)
+/* Value text of the BK IN pop-up (id 0x2F) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_bk_in(ushort param_1)
 
 {
   byte *pbVar1;
   int iVar2;
   
   pbVar1 = vfo_rec_ptr(1);
-  iVar2 = FUN_fff99dbf(pbVar1);
+  iVar2 = bk_in_bit_get(pbVar1);
   iVar2 = (uint)(iVar2 != 0) * 9;
   (&DAT_00001749)[param_1] = BYTE_ARRAY_fff800f3[iVar2 + 0x261];
   *(undefined4 *)(&DAT_00001745 + param_1) = *(undefined4 *)(BYTE_ARRAY_fff800f3 + iVar2 + 0x25d);
@@ -403,9 +454,12 @@ void FUN_fff99d82(ushort param_1)
 }
 
 
-// ===== FUN_fff99dbf @ fff99dbf (28 bytes)
+// ===== bk_in_bit_get @ fff99dbf (28 bytes)
 
-bool FUN_fff99dbf(void)
+/* Returns bit 1 of mode_block_byte0() (the BI / break-in bit of the TX mode block) [fact:
+   fff99dbf]; callers popup_fmt_bk_in, dl37_slot_bk_in */
+
+bool bk_in_bit_get(void)
 
 {
   byte bVar1;
@@ -415,9 +469,12 @@ bool FUN_fff99dbf(void)
 }
 
 
-// ===== FUN_fff99ddb @ fff99ddb (58 bytes)
+// ===== popup_fmt_mic_eq @ fff99ddb (58 bytes)
 
-void FUN_fff99ddb(ushort param_1)
+/* Value text of the MIC EQ pop-up (id 0x26) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_mic_eq(ushort param_1)
 
 {
   int iVar1;
@@ -430,9 +487,12 @@ void FUN_fff99ddb(ushort param_1)
 }
 
 
-// ===== FUN_fff99e15 @ fff99e15 (53 bytes)
+// ===== popup_fmt_contrast @ fff99e15 (53 bytes)
 
-void FUN_fff99e15(ushort param_1)
+/* Value text of the CONTRAST pop-up (id 0x22) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_contrast(ushort param_1)
 
 {
   byte bVar1;
@@ -542,9 +602,12 @@ char dec_to_str_n(ushort param_1,char param_2,char *param_3)
 }
 
 
-// ===== FUN_fff9a00f @ fff9a00f (53 bytes)
+// ===== popup_fmt_dimmer @ fff9a00f (53 bytes)
 
-void FUN_fff9a00f(ushort param_1)
+/* Value text of the DIMMER pop-up (id 0x23) for displink_build_31 frame 0x31 [fact: display gui.md
+   popup-slot table (#178)] */
+
+void popup_fmt_dimmer(ushort param_1)
 
 {
   byte bVar1;
@@ -565,9 +628,12 @@ void FUN_fff9a00f(ushort param_1)
 }
 
 
-// ===== FUN_fff9a044 @ fff9a044 (42 bytes)
+// ===== popup_fmt_free_text @ fff9a044 (42 bytes)
 
-void FUN_fff9a044(ushort param_1)
+/* Value text of the free text pop-up (id 0x5E) for displink_build_31 frame 0x31 [fact: display
+   gui.md popup-slot table (#178)] */
+
+void popup_fmt_free_text(ushort param_1)
 
 {
   ui_state *puVar1;
@@ -734,40 +800,43 @@ void displink_build_50(void)
   displink_copy_status();
   bVar1 = PTR_g_ui_00025d38->kbd_target;
   if (bVar1 == 6) {
-    FUN_fff9a6f9();
+    dl50_preset_name();
     return;
   }
   if (bVar1 == 1) {
-    FUN_fff9a42f();
+    dl50_memory_name();
     return;
   }
   if (bVar1 == 2) {
-    FUN_fff9a4f4();
+    dl50_cw_text();
     return;
   }
   if (bVar1 == 3) {
-    FUN_fff9a55e();
+    dl50_rtty_text();
     return;
   }
   if (bVar1 == 4) {
-    FUN_fff9a5c8();
+    dl50_psk_text();
     return;
   }
   if (bVar1 == 5) {
-    FUN_fff9a64f();
+    dl50_file_name();
     return;
   }
   if (bVar1 != 0) {
     return;
   }
-  FUN_fff9a364();
+  dl50_mycall();
   return;
 }
 
 
-// ===== FUN_fff9a364 @ fff9a364 (203 bytes)
+// ===== dl50_mycall @ fff9a364 (203 bytes)
 
-void FUN_fff9a364(void)
+/* Frame 0x50 payload for target 0: layout byte, cursor, title "MY CALL", char position, the 12-char
+   text [fact: fff9a364; display-link.md frame 0x50] */
+
+void dl50_mycall(void)
 
 {
   if (PTR_g_ui_00025d38->kbd_layout == 0) {
@@ -793,9 +862,12 @@ void FUN_fff9a364(void)
 }
 
 
-// ===== FUN_fff9a42f @ fff9a42f (197 bytes)
+// ===== dl50_memory_name @ fff9a42f (197 bytes)
 
-void FUN_fff9a42f(void)
+/* Frame 0x50 payload for target 1: channel label (memch_label_fmt), title "MEMORY NAME", the
+   12-char tag [fact: fff9a42f] */
+
+void dl50_memory_name(void)
 
 {
   char *pcVar1;
@@ -812,7 +884,7 @@ void FUN_fff9a42f(void)
     DAT_000017d9 = 2;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
-  FUN_fff9c089(&DAT_000017db,PTR_g_ui_00025d38->memlist_ch);
+  memch_label_fmt(&DAT_000017db,PTR_g_ui_00025d38->memlist_ch);
   iVar3 = suntil(0xfff8f350,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
   pcVar2 = "MEMORY NAME";
@@ -827,9 +899,12 @@ void FUN_fff9a42f(void)
 }
 
 
-// ===== FUN_fff9a4f4 @ fff9a4f4 (106 bytes)
+// ===== dl50_cw_text @ fff9a4f4 (106 bytes)
 
-void FUN_fff9a4f4(void)
+/* Frame 0x50 payload for target 2: layout + 0x10, title "CW TEXT", dl50_slot_label, dl50_msg_text
+   [fact: fff9a4f4] */
+
+void dl50_cw_text(void)
 
 {
   char *pcVar1;
@@ -843,7 +918,7 @@ void FUN_fff9a4f4(void)
     DAT_000017d9 = 0x12;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
-  FUN_fff9a83b();
+  dl50_slot_label();
   iVar3 = suntil(0xfff8f35c,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
   pcVar2 = "CW TEXT";
@@ -852,14 +927,17 @@ void FUN_fff9a4f4(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
-  FUN_fff9a869();
+  dl50_msg_text();
   return;
 }
 
 
-// ===== FUN_fff9a55e @ fff9a55e (106 bytes)
+// ===== dl50_rtty_text @ fff9a55e (106 bytes)
 
-void FUN_fff9a55e(void)
+/* Frame 0x50 payload for target 3: title "RTTY TEXT", slot label and 50-char text [fact: fff9a55e]
+    */
+
+void dl50_rtty_text(void)
 
 {
   char *pcVar1;
@@ -873,7 +951,7 @@ void FUN_fff9a55e(void)
     DAT_000017d9 = 0x32;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
-  FUN_fff9a83b();
+  dl50_slot_label();
   iVar3 = suntil(0xfff8f364,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
   pcVar2 = "RTTY TEXT";
@@ -882,14 +960,17 @@ void FUN_fff9a55e(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
-  FUN_fff9a869();
+  dl50_msg_text();
   return;
 }
 
 
-// ===== FUN_fff9a5c8 @ fff9a5c8 (135 bytes)
+// ===== dl50_psk_text @ fff9a5c8 (135 bytes)
 
-void FUN_fff9a5c8(void)
+/* Frame 0x50 payload for target 4: title "PSK TEXT", slot label and 50-char text [fact: fff9a5c8]
+    */
+
+void dl50_psk_text(void)
 
 {
   char *pcVar1;
@@ -906,7 +987,7 @@ void FUN_fff9a5c8(void)
     DAT_000017d9 = 0x22;
   }
   DAT_000017da = PTR_g_ui_00025d38->kbd_cursor;
-  FUN_fff9a83b();
+  dl50_slot_label();
   iVar3 = suntil(0xfff8f36e,0,0xffffffff,1);
   pcVar1 = &DAT_000017e5;
   pcVar2 = "PSK TEXT";
@@ -915,14 +996,17 @@ void FUN_fff9a5c8(void)
     pcVar1 = pcVar1 + 1;
     pcVar2 = pcVar2 + 1;
   }
-  FUN_fff9a869();
+  dl50_msg_text();
   return;
 }
 
 
-// ===== FUN_fff9a64f @ fff9a64f (170 bytes)
+// ===== dl50_file_name @ fff9a64f (170 bytes)
 
-void FUN_fff9a64f(void)
+/* Frame 0x50 payload for target 5: layout + 0x40, title "FILE NAME", 20-char text [fact: fff9a64f]
+    */
+
+void dl50_file_name(void)
 
 {
   char *pcVar1;
@@ -953,9 +1037,11 @@ void FUN_fff9a64f(void)
 }
 
 
-// ===== FUN_fff9a6f9 @ fff9a6f9 (169 bytes)
+// ===== dl50_preset_name @ fff9a6f9 (169 bytes)
 
-void FUN_fff9a6f9(void)
+/* Frame 0x50 payload for target 6: title "PRESET NAME", 12-char text [fact: fff9a6f9] */
+
+void dl50_preset_name(void)
 
 {
   char *pcVar1;
@@ -1037,9 +1123,11 @@ void kbd_copy_text(undefined1 *param_1,undefined1 *param_2,byte param_3)
 }
 
 
-// ===== FUN_fff9a83b @ fff9a83b (46 bytes)
+// ===== dl50_slot_label @ fff9a83b (46 bytes)
 
-void FUN_fff9a83b(void)
+/* Frame 0x50 bytes 0x9A..0x9C = 'c', 'h', '1' + g_ui.msg_slot_idx [fact: fff9a83b] */
+
+void dl50_slot_label(void)
 
 {
   DAT_000017db = 99;
@@ -1049,9 +1137,12 @@ void FUN_fff9a83b(void)
 }
 
 
-// ===== FUN_fff9a869 @ fff9a869 (50 bytes)
+// ===== dl50_msg_text @ fff9a869 (50 bytes)
 
-void FUN_fff9a869(void)
+/* Frame 0x50: kbd_fmt_char_pos and the 50-char text of slot msg_slot_idx (UI msg_text) at byte 0xC2
+   [fact: fff9a869] */
+
+void dl50_msg_text(void)
 
 {
   kbd_fmt_char_pos(&DAT_000017f9);
@@ -1231,55 +1322,59 @@ void displink_build_37(void)
                  PTR_g_ui_00025d38->dl37_bit5 << 5;
   DAT_000017da = g_opstate.func_knob_sf;
   DAT_000017db = 0;
-  FUN_fff9acf4(0x9b);
-  FUN_fff9ad39(0xa5);
-  FUN_fff9ad7e(0xaf);
-  FUN_fff9adde(0xb9);
-  FUN_fff9ae31(0xc3);
-  FUN_fff9ae76(0xcd);
-  FUN_fff9aebb(0xd7);
-  FUN_fff9aefb(0xe1);
-  FUN_fff9af40(0xeb);
-  FUN_fff9afb2(0xf5);
-  FUN_fff9aff7(0xff);
-  FUN_fff9b03c(0x109);
-  FUN_fff9b081(0x113);
-  FUN_fff9b0c6(0x11d);
-  FUN_fff9b10b(0x127);
-  FUN_fff9b150(0x131);
-  FUN_fff9b195(0x13b);
-  FUN_fff9b212(0x145);
-  FUN_fff9b2a1(0x14f);
-  FUN_fff9b2e7(0x159);
-  FUN_fff9b32d(0x163);
-  FUN_fff9b373(0x16d);
-  FUN_fff9b3ce(0x177);
-  FUN_fff9b41e(0x181);
-  FUN_fff9b45f(0x18b);
-  FUN_fff9b65d(0x195);
-  FUN_fff9b48c(0x19f);
-  FUN_fff9b4d2(0x1a9);
-  FUN_fff9b518(0x1b3);
-  FUN_fff9b559(0x1bd);
-  FUN_fff9b59a(0x1c7);
-  FUN_fff9b5db(0x1d1);
-  FUN_fff9b61c(0x1db);
-  FUN_fff9b65d(0x1e5);
-  FUN_fff9b65d(0x1ef);
-  FUN_fff9b65d(0x1f9);
-  FUN_fff9b65d(0x203);
-  FUN_fff9b65d(0x20d);
-  FUN_fff9b65d(0x217);
-  FUN_fff9b65d(0x221);
-  FUN_fff9b65d(0x22b);
-  FUN_fff9b65d(0x235);
+  dl37_slot_scope_level(0x9b);
+  dl37_slot_peak(0xa5);
+  dl37_slot_marker(0xaf);
+  dl37_slot_color(0xb9);
+  dl37_slot_contrast(0xc3);
+  dl37_slot_dimmer(0xcd);
+  dl37_slot_mgroup(0xd7);
+  dl37_slot_mic_gain(0xe1);
+  dl37_slot_mic_eq(0xeb);
+  dl37_slot_proc_level(0xf5);
+  dl37_slot_amc_level(0xff);
+  dl37_slot_vox_gain(0x109);
+  dl37_slot_vox_delay(0x113);
+  dl37_slot_anti_vox(0x11d);
+  dl37_slot_rf_power(0x127);
+  dl37_slot_moni_level(0x131);
+  dl37_slot_keyer(0x13b);
+  dl37_slot_bk_in(0x145);
+  dl37_slot_cw_speed(0x14f);
+  dl37_slot_cw_pitch(0x159);
+  dl37_slot_bk_delay(0x163);
+  dl37_slot_message(0x16d);
+  dl37_slot_record(0x177);
+  dl37_slot_play(0x181);
+  dl37_slot_txw(0x18b);
+  dl37_slot_empty(0x195);
+  dl37_slot_aess(0x19f);
+  dl37_slot_aess_cf(0x1a9);
+  dl37_slot_radio_setting(0x1b3);
+  dl37_slot_cw_setting(0x1bd);
+  dl37_slot_operation_setting(0x1c7);
+  dl37_slot_display_setting(0x1d1);
+  dl37_slot_extension_setting(0x1db);
+  dl37_slot_empty(0x1e5);
+  dl37_slot_empty(0x1ef);
+  dl37_slot_empty(0x1f9);
+  dl37_slot_empty(0x203);
+  dl37_slot_empty(0x20d);
+  dl37_slot_empty(0x217);
+  dl37_slot_empty(0x221);
+  dl37_slot_empty(0x22b);
+  dl37_slot_empty(0x235);
   return;
 }
 
 
-// ===== FUN_fff9acf4 @ fff9acf4 (69 bytes)
+// ===== dl37_slot_scope_level @ fff9acf4 (69 bytes)
 
-void FUN_fff9acf4(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0 (SCOPE
+   LEVEL), value text by popup_fmt_scope_level [fact: fff9acf4]; only caller displink_build_37; ids
+   per display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_scope_level(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -1287,14 +1382,18 @@ void FUN_fff9acf4(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff99475(param_1);
+  popup_fmt_scope_level(param_1);
   return;
 }
 
 
-// ===== FUN_fff9ad39 @ fff9ad39 (69 bytes)
+// ===== dl37_slot_peak @ fff9ad39 (69 bytes)
 
-void FUN_fff9ad39(ushort param_1)
+/* (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 1 (PEAK),
+   value text by popup_fmt_peak [fact: fff9ad39]; only caller displink_build_37; ids per
+   display-link.md "0x37 FUNC panel" */
+
+void dl37_slot_peak(ushort param_1)
 
 {
   (&DAT_00001741)[param_1] = 0;
@@ -1302,7 +1401,7 @@ void FUN_fff9ad39(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
-  FUN_fff9959f(param_1);
+  popup_fmt_peak(param_1);
   return;
 }
 

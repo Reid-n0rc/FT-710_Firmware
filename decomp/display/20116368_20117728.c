@@ -185,14 +185,14 @@ void mainlink_init(void)
   byte *pbVar1;
   uint uVar2;
   uint uVar3;
-  scif_uart *psVar4;
+  void *pvVar4;
   
   uVar2 = os_create_sem_named(&DAT_20165860,0x201164cc);
   if (0 < (int)uVar2) {
     g_ml.pace_sem = uVar2;
     itron_sig_sem();
   }
-  uVar2 = itron_acre_tsk(0,&ctsk_cmd_interval);
+  uVar2 = itron_acre_tsk(0,(byte *)&ctsk_cmd_interval);
   periodic_wakeup_register(uVar2,3);
   if (0 < (int)uVar2) {
     itron_sta_tsk(uVar2,0);
@@ -203,16 +203,16 @@ void mainlink_init(void)
     }
     __aeabi_memclr4(&DAT_2045fd40,0x103c0);
     g_ml.link_obj = (byte *)mainlink_obj_ctor(&DAT_2045fd40);
-    uVar2 = itron_acre_tsk(0,&ctsk_uart_5880);
-    if ((0 < (int)uVar2) && (uVar3 = itron_acre_flg(0,&cflg_mainlink_rx), 0 < (int)uVar3)) {
+    uVar2 = itron_acre_tsk(0,(byte *)&ctsk_uart_5880);
+    if ((0 < (int)uVar2) && (uVar3 = itron_acre_flg(0,(byte *)&cflg_mainlink_rx), 0 < (int)uVar3)) {
       *(uint *)(g_ml.link_obj + 0x14) = uVar3;
-      psVar4 = scif5_get(uVar3);
+      pvVar4 = scif5_get(uVar3);
       pbVar1 = g_ml.link_obj;
-      *(scif_uart **)(g_ml.link_obj + 0x10) = psVar4;
+      *(void **)(g_ml.link_obj + 0x10) = pvVar4;
       itron_sta_tsk(uVar2,(uint)pbVar1);
-      g_ml.retry_flg = itron_acre_flg(0,&cflg_mainlink_retry);
+      g_ml.retry_flg = itron_acre_flg(0,(byte *)&cflg_mainlink_retry);
       if ((0 < (int)g_ml.retry_flg) &&
-         (((uVar2 = itron_acre_tsk(0,&ctsk_retry), 0 < (int)uVar2 &&
+         (((uVar2 = itron_acre_tsk(0,(byte *)&ctsk_retry), 0 < (int)uVar2 &&
            (uVar2 = itron_sta_tsk(uVar2,0), uVar2 == 0)) &&
           (uVar2 = itron_acre_cyc(0,&DAT_201658c4), 0 < (int)uVar2)))) {
         g_ml.ack_tmo_cyc = uVar2;
@@ -245,7 +245,7 @@ void mainlink_rx_ctrl(int param_1)
 /* rename (was mainlink_send_cmd): builds a frame from the 0x2B-entry table length and posts it to
    the RX dispatcher mailbox, i.e. replays a frame locally; it does not transmit */
 
-void mainlink_inject_rx(ml_frame *frame)
+void mainlink_inject_rx(char *param_1)
 
 {
   uint uVar1;
@@ -256,7 +256,7 @@ void mainlink_inject_rx(ml_frame *frame)
   iVar3 = 0;
   uVar2 = 0;
   do {
-    if (frame->cmd == (&DAT_20450074)[uVar2 * 0xc]) {
+    if (*param_1 == (&DAT_20450074)[uVar2 * 0xc]) {
       iVar3 = (ushort)(&DAT_20450076)[uVar2 * 6] + 2;
       break;
     }
@@ -265,7 +265,7 @@ void mainlink_inject_rx(ml_frame *frame)
   if (iVar3 != 0) {
     *(undefined2 *)(uVar1 + 4) = 0xaa;
     *(short *)(uVar1 + 6) = (short)iVar3;
-    memcpy(uVar1 + 8,frame);
+    memcpy(uVar1 + 8,param_1);
     mainlink_disp_post(g_ml.link_obj + 0x58,uVar1);
     return;
   }
@@ -461,7 +461,7 @@ int periodic_wakeup_start(void)
   bVar1 = OSTM_OSTM1CTL;
   OSTM_OSTM1CTL = bVar1 & 0xfd;
   OSTM_OSTM1CTL = 1;
-  uVar2 = itron_acre_isr(0,&cisr_periodic_wakeup_isr);
+  uVar2 = itron_acre_isr(0,0x20165954);
   if ((int)uVar2 < 1) {
     return uVar2;
   }
@@ -661,14 +661,16 @@ uint cli_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (((0 < (int)uVar1) &&
-      (DAT_20800394 = uVar1, uVar1 = itron_acre_tsk(0,&ctsk_cli), 0 < (int)uVar1)) &&
+      (DAT_20800394 = uVar1, uVar1 = itron_acre_tsk(0,(byte *)&ctsk_cli), 0 < (int)uVar1)) &&
      (uVar1 = itron_sta_tsk(uVar1,0), uVar1 == 0)) {
     return 0x20116b00;
   }
@@ -1078,9 +1080,11 @@ undefined4 mmu_cache_enable(void)
 }
 
 
-// ===== FUN_20116da0 @ 20116da0 (12 bytes)
+// ===== full_mode_set @ 20116da0 (12 bytes)
 
-void FUN_20116da0(undefined1 param_1)
+/* (v): 0x208003A4 = v (boot-rtos.md: force flag) [fact] */
+
+void full_mode_set(undefined1 param_1)
 
 {
   DAT_208003a4 = param_1;
@@ -1088,9 +1092,12 @@ void FUN_20116da0(undefined1 param_1)
 }
 
 
-// ===== FUN_20116dac @ 20116dac (12 bytes)
+// ===== full_mode_get @ 20116dac (12 bytes)
 
-undefined1 FUN_20116dac(void)
+/* Returns the full-mode flag 0x208003A4 (input.md: matrix and ADC keys scanned only while set)
+   [fact] */
+
+undefined1 full_mode_get(void)
 
 {
   return DAT_208003a4;
@@ -1215,7 +1222,7 @@ void power_on_full_init(void)
   r_vdc5_start_process(0,4,(uint)&local_20);
   r_vdc5_start_process(0,5,(uint)&local_20);
   DAT_208003a0 = 1;
-  FUN_20116da0(1);
+  full_mode_set(1);
   key_matrix_press_check();
   if (DAT_208003a5 == '\0') {
     gpio_p7_9_11(1);
@@ -1225,11 +1232,11 @@ void power_on_full_init(void)
     dimmer_init();
     backlight_enable(0);
     backlight_init();
-    FUN_20107e9c();
+    usbkbd_init();
     mouse_cursor_init();
-    FUN_201385b4();
-    FUN_2013b97c();
-    FUN_2013b4cc();
+    usbh_ports_init();
+    usbh_hid_class_init();
+    usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
     DAT_208dc1c8 = cli_init();
@@ -1256,15 +1263,20 @@ void power_on_full_init(void)
 }
 
 
-// ===== FUN_20117030 @ 20117030 (152 bytes)
+// ===== display_power_down @ 20117030 (152 bytes)
 
-void FUN_20117030(void)
+/* Radio off from the GUI side: clears the radio-on flag 0x208003A0, calls full_mode_set, LEDs off,
+   stops the VDC5 layers; with P8_12 low it also pauses the key task and resets the FT4222, RX and
+   QF lines, else switches the backlight and LCD power off; finally P7_9/P7_11 and P8_14 low [fact]
+    */
+
+void display_power_down(void)
 
 {
   uint uVar1;
   
   DAT_208003a0 = 0;
-  FUN_20116da0();
+  full_mode_set();
   led_set_one(0,0);
   led_set_mask(0);
   r_vdc5_stop_process(0,-1);
@@ -1327,15 +1339,15 @@ void task_root(void)
   else {
     DAT_208003a5 = 1;
     gpio_p8_14(1);
-    FUN_20116da0(1);
+    full_mode_set(1);
     dimmer_init();
     backlight_enable(0);
     backlight_init();
-    FUN_20107e9c();
+    usbkbd_init();
     mouse_cursor_init();
-    FUN_201385b4();
-    FUN_2013b97c();
-    FUN_2013b4cc();
+    usbh_ports_init();
+    usbh_hid_class_init();
+    usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
     DAT_208dc1c8 = cli_init();
@@ -1363,9 +1375,12 @@ void task_root(void)
 }
 
 
-// ===== FUN_2011722c @ 2011722c (56 bytes)
+// ===== power_key_on @ 2011722c (56 bytes)
 
-void FUN_2011722c(void)
+/* Power key: in standby sets 0x208003A0 = 1 (full mode) and clears 0x208003A1, else sets 0x20800493
+   (input.md) [fact] */
+
+void power_key_on(void)
 
 {
   if (DAT_208003a0 != '\0') {
@@ -1387,9 +1402,12 @@ undefined1 FUN_20117254(void)
 }
 
 
-// ===== FUN_20117260 @ 20117260 (28 bytes)
+// ===== gpio_p8_12_high @ 20117260 (28 bytes)
 
-bool FUN_20117260(void)
+/* Returns 1 when P8_12 reads high (gpio_read_bit(8, 12)); display_power_down branches on the same
+   pin [fact] */
+
+bool gpio_p8_12_high(void)
 
 {
   uint uVar1;
@@ -1399,18 +1417,23 @@ bool FUN_20117260(void)
 }
 
 
-// ===== FUN_2011727c @ 2011727c (12 bytes)
+// ===== radio_on_flag_get @ 2011727c (12 bytes)
 
-undefined1 FUN_2011727c(void)
+/* Returns the radio-on flag 0x208003A0 (radio_on_flag_set); mainlink_wait_status, gui_main_loop and
+   task_mainlink_dispatch read it [fact] */
+
+undefined1 radio_on_flag_get(void)
 
 {
   return DAT_208003a0;
 }
 
 
-// ===== FUN_20117288 @ 20117288 (12 bytes)
+// ===== radio_on_flag_set @ 20117288 (12 bytes)
 
-void FUN_20117288(undefined1 param_1)
+/* (v): 0x208003A0 = v; task_mainlink_dispatch sets 1 for CAT PS1 (mainlink.md 0x60) [fact] */
+
+void radio_on_flag_set(undefined1 param_1)
 
 {
   DAT_208003a0 = param_1;
@@ -1431,7 +1454,7 @@ void main(void)
   pinmux_init();
   gpio_p7_9_11(1);
   kernel_heap_init();
-  uVar1 = itron_acre_tsk(0,&ctsk_root);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_root);
   if ((int)uVar1 < 1) {
     return;
   }
@@ -1466,9 +1489,9 @@ void main(void)
       if (knl_sys.tick_lo == 0) {
         knl_sys.tick_hi = knl_sys.tick_hi + 1;
       }
-      FUN_201540c4();
-      FUN_20153788();
-      FUN_20153620();
+      knl_tick_task_timeouts();
+      knl_tick_cyclic();
+      knl_tick_table_dbf84();
       knl_sys.tick_pending = knl_sys.tick_pending - 1;
     } while (knl_sys.tick_pending != 0);
   } while( true );

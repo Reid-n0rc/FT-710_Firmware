@@ -210,7 +210,7 @@ Sources are **[fact]**; names in *italics* are **[inference]**.
 | 6 | `FUN_fff97049` | 3DSS DISP SENSITIVITY 0x9B17 (bit 0) << 6 \| 2D DISP SENSITIVITY 0x9B16 << 7 (`EX040204` / `EX040203`, [menu.md](menu.md)) |
 | 7 | `FUN_fff97075` | *HI-SWR warning* UI +0x69 (0x20B6D, 2 bits: `swr_meter_protect` sets 1 or 2 by blink phase while the TX SWR is outside 1..5, 0 when it is back) << 4 \| +0x68 << 6 (no writer in MAIN, so always 0) \| **TX** (+0x67 = 0x20B6B) << 7 |
 | 8 | `FUN_fff970b8` | UI +0x34, high nibble masked off when LED DIMMER 0x9B10 (or +0x480 in numeric-entry mode) is 0. +0x34 is an 8-bit lamp map: `FUN_fff98727`(n, on) sets bit 0x80, 0x40, 0x10, 8, 4, 2, 1, 0x20 for n = 1..8; its callers are the encoder-2 step sequence `FUN_fffc670d` (each lamp on and off in turn, 100-unit timer 0x47) and the timed `FUN_fffc9046`; boot code 4 clears it. **DISPLAY reader** **[fact]** (#179): `gui_screen_update` (0x2012EBB8) calls `led_set_mask(frame[8])` for each status-carrying frame, just before copying it to 0x208F0B2A (and `led_set_mask(0)` on power-off), so the byte drives the front-panel LEDs on P6, bit 0..7 = D_RED, D_GREEN, D_WHITE, D_BLUE, RXBUSY, TX, STEPCH, VOX ([display/peripherals.md](../display/peripherals.md)). So `ui_lamp_set` n = 1..8 is VOX, STEPCH, RXBUSY, D_BLUE, D_WHITE, D_GREEN, D_RED, TX, and LED DIMMER = 0 turns off RXBUSY, TX, STEPCH and VOX **[fact for the bits; the LED names are the schematic's]** |
-| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011**, a touch on the filter graph (#212) (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`FUN_201233d4`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
+| 9 | `FUN_fff97105` | 0x9C5C << 3: a toggle flipped only by `key_011_long` (0xFFFBCBBD, beep 2), the **long-press handler of soft key 0x011**, a touch on the filter graph (#212) (`key_long_table` entry 0xFFF8B8D0; the same key's short handler `key_011_short` 0xFFFBCB77 toggles UI +0x70) **[fact]** (#179). On the DISPLAY, bit 3 of this byte (0x208F0B33) makes both filter-graph drawers (`filter_graph_small`, `main_filter_graph`) call `filter_graph_affft_overlay` (0x20121AF0), which draws the 200 AF-FFT bins (0x208DD73C, `affft_bins_get` 0x20120D84) as 44-pixel bars into the empty pixels at row 129, x 521..720 **[fact]**: 0x9C5C is an *AF-FFT overlay on/off* switch **[inference]** \| UI +0x6C/+0x6B/+0x6A << 4/5/6 (+0x6A/+0x6B = *frequency settled*, `FUN_fff9ccd3`) \| marker 0x9BE7 << 7 |
 | 10 | `FUN_fff9716f` | TX BPF SEL of the mode (0x9A36 SSB, 0x9A4B AM, 0x9A73 DATA/PSK) \| 0x80; 0 in other modes; value 6 without bit 7 |
 | 11 | 0x9C5B & 7 | meter selection (0 PO, 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR; see byte 95) |
 | 12 | `FUN_fff971fc` | ATT (rec+3 bits 0–1, `RA`) \| IPO/AMP1/AMP2 (rec+5 bits 0–1, minus 1, `PA`) << 2 \| {2 in FM modes, else DNF on = block+1 bit 7, `BC`} << 4 |
@@ -421,10 +421,10 @@ earlier unsupported reading "five message memories" is withdrawn.
 
 | +0x3F9 | 0x9B..0x9C | 0x9D | 0x9E | DISPLAY action **[fact, DISPLAY]** |
 |---|---|---|---|---|
-| 0 open | 0x9B = 0x9DC1 (volume) | | | lists the `.wav` files (`FUN_20124bc0` → `wav_list_dir`) and answers E7 b1 = 0 with the count |
+| 0 open | 0x9B = 0x9DC1 (volume) | | | lists the `.wav` files (`playlist_list_files` → `wav_list_dir`) and answers E7 b1 = 0 with the count |
 | 1 list | UI +0x3FA (u16 BE): first file shown | cursor row +0x3FC (0..4) | 0 | redraws the list |
 | 2 command | as 1 | as 1 | +0x3FD: 0 stop/pause, 1 play, 2 and 3 the wind keys (3 = `play_ffwd`) | starts or stops playback and answers E7 b1 = 1 |
-| 3 delete | as 1 | as 1 | | `FUN_20124adc` deletes the selected file (`wav_delete`) and answers E7 b1 = 0 with the new count **[inference for the call path]** |
+| 3 delete | as 1 | as 1 | | `playlist_delete_file` deletes the selected file (`wav_delete`) and answers E7 b1 = 0 with the new count **[inference for the call path]** |
 | 4 volume | 0x9B = +0x3FE & 1 (playing), 0x9C = 0x9DC1 (volume) | | | redraws the volume |
 
 #### `0x40` menu page (0x1FB bytes; DISPLAY main screen, `scr_text_list`)
@@ -540,7 +540,7 @@ dialogs (names from T23e).
 `displink_rx_E7` and `displink_rx_E8` turn the DISPLAY's audio status into a code in UI +0x488 / +0x48C. `dispreq_e7_task` (task 11) and
 `dispreq_e8_task` (task 10, through `dispreq_e8_result` 0xFFFE376A) act on the code and clear it **[fact]**. On the DISPLAY, E7 comes from the
 PlayList (0x2080048E = 1) and E8 from the voice-message (`MSG_CH%d`) screens. The senders are `FUN_20124744` (b1 = 0xFF, error),
-`FUN_20124848` / `FUN_201248a4` (b1 = 1, state) and `FUN_20124adc` / `FUN_20124bc0` (b1 = 0, file count) **[fact, DISPLAY]**.
+`mainlink_send_e7_state` / `mainlink_send_e8_state` (b1 = 1, state) and `playlist_delete_file` / `playlist_list_files` (b1 = 0, file count) **[fact, DISPLAY]**.
 
 ```mermaid
 sequenceDiagram
@@ -562,7 +562,7 @@ sequenceDiagram
 
 The DISPLAY's error index **[fact, DISPLAY `FUN_20124744`]**: the argument −1..−6, −8, −9 maps to 0..7 (−7 has no slot and sends 0xFF).
 The callers pass −1 when `FUN_20103ba0` (bit 6 of the SD-card status 0x20800094) is 0, which reads as *no SD card* **[inference]**; −3 when
-`FUN_20103bc0` (bit 5 of the card's +0x68 byte) is set (once read as *write-protected* without evidence, but see below); −4 when the `MSG_CHn` file is missing; −6 when
+`sd_drive_flag5` (bit 5 of the card's +0x68 byte) is set (once read as *write-protected* without evidence, but see below); −4 when the `MSG_CHn` file is missing; −6 when
 there is nothing to delete; −8 / −7 when a file cannot be opened to play or wind; −9 when the matching `MSG_CHn` directory entry has a
 non-zero field +0x30 (meaning open). With the [0x70 texts](#0x70-dialog-0xe3-bytes-display-scr_confirm--confirm_dialog_draw) the
 error index i gives **[fact for the mapping]**: 0 (−1) `INSERT SD CARD`, 1 (−2) `SD CARD FULL`, 2 (−3) `SD CARD ERROR`, 3 (−4) `NO FILE`,
@@ -591,8 +591,8 @@ each `0x60` **[fact]** (#60):
   DISPLAY's own default **[fact]**.
 - **0x4660** is the RAM copy of EEPROM byte 0x0011 (RAM = EEPROM + 0x464F), alignment item 008 `DBG MODE ENABLE`; only `SPN`, the
   alignment menu and the defaults write it. When it is set, the SOFT VERSION rows (`menu_m4_18_0_draw`) also show `-` + 4 + 8
-  characters from ROM 0xFFFFFF10/0xFFFFFF20 after the MAIN version and the DISPLAY's hello date (`yy-mm-dd`) after the DISPLAY
-  version (#205, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)). A factory/debug display flag **[inference]**.
+  characters from ROM 0xFFFFFF10/0xFFFFFF20 (`2101`, `24-02-16`) after the MAIN version and the DISPLAY's hello date (`yy-mm-dd`,
+  `23-06-29`) after the DISPLAY version (#205, [eeprom.md](eeprom.md#cfg105-the-alignment-table-fact)). A factory/debug display flag **[inference]**.
 
 ## SD CARD transfers (0x43 / 0x44 / 0x45)
 
@@ -788,3 +788,118 @@ Named functions of this subsystem that the tables above did not list yet, one ro
 | 0xFFFCF6AC | `dialog_open` |  | UI +0x86 = 1 (frame 0x70 due), selected button +0xBD = 0, clears +0x70 **[fact]** |
 | 0xFFFCFE77 | `dialog_close_to_menu_ok` |  | dialog_close_to_menu, returns 1; the SD-card dialog key handlers call it at step +0x3F7 = 2 **[fact]** |
 | 0xFFFD0149 | `dialog_close_to_menu` |  | Clears UI +0x88 (keyboard) and +0x86 (dialog), +0x3FF = 2 (the value menu_select_group also sets); back to the menu page **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFF96DDE | `dlstat_scope_mode` |  | Status-block byte 2 of displink_build_status (0xFFF96455): scope mode 0..0xB (the SS sel-6 coding) **[fact: display-link.md "0x97-byte radio status block" table, row 2]** |
+| 0xFFF96F3E | `dlstat_vfo_side_flags` |  | Status-block byte 3 of displink_build_status (0xFFF96455): bit 7 active VFO is B, bit 5 split, bits 4/6 side flags **[fact: display-link.md "0x97-byte radio status block" table, row 3]** |
+| 0xFFF96FB7 | `dlstat_screen_flags` |  | Status-block byte 4 of displink_build_status (0xFFF96455): bit 5 when UI +0x95/+0x96/+0x97 is set **[fact: display-link.md "0x97-byte radio status block" table, row 4]** |
+| 0xFFF9700B | `dlstat_split_expand` |  | Status-block byte 5 of displink_build_status (0xFFF96455): split / waterfall EXPAND << 5 / 0x9DC6 << 6 **[fact: display-link.md "0x97-byte radio status block" table, row 5]** |
+| 0xFFF97049 | `dlstat_disp_sensitivity` |  | Status-block byte 6 of displink_build_status (0xFFF96455): 3DSS and 2D DISP SENSITIVITY bits **[fact: display-link.md "0x97-byte radio status block" table, row 6]** |
+| 0xFFF97075 | `dlstat_swr_tx_flags` |  | Status-block byte 7 of displink_build_status (0xFFF96455): HI-SWR warning bits and TX **[fact: display-link.md "0x97-byte radio status block" table, row 7]** |
+| 0xFFF970B8 | `dlstat_led_mask` |  | Status-block byte 8 of displink_build_status (0xFFF96455): the front-panel lamp map UI +0x34, high nibble masked by LED DIMMER **[fact: display-link.md "0x97-byte radio status block" table, row 8]** |
+| 0xFFF97105 | `dlstat_affft_overlay` |  | Status-block byte 9 of displink_build_status (0xFFF96455): 0x9C5C << 3 (filter-graph AF-FFT overlay toggle) **[fact: display-link.md "0x97-byte radio status block" table, row 9]** |
+| 0xFFF9716F | `dlstat_tx_bpf` |  | Status-block byte 10 of displink_build_status (0xFFF96455): TX BPF SEL of the mode / 0x80 **[fact: display-link.md "0x97-byte radio status block" table, row 10]** |
+| 0xFFF971FC | `dlstat_att_ipo_dnf` |  | Status-block byte 12 of displink_build_status (0xFFF96455): ATT, IPO/AMP and DNF/FM bits **[fact: display-link.md "0x97-byte radio status block" table, row 12]** |
+| 0xFFF9728C | `dlstat_dsp_flags_agc` |  | Status-block byte 13 of displink_build_status (0xFFF96455): CW indicator, APF, CONTOUR, NOTCH flags and AGC **[fact: display-link.md "0x97-byte radio status block" table, row 13]** |
+| 0xFFF97430 | `dlstat_tx_vfo_flags` |  | Status-block byte 14 of displink_build_status (0xFFF96455): TX-VFO flags: keyer, monitor, BK-IN/VOX **[fact: display-link.md "0x97-byte radio status block" table, row 14]** |
+| 0xFFF97567 | `dlstat_tone_tuner` |  | Status-block byte 15 of displink_build_status (0xFFF96455): FM tone mode and tuner indicator **[fact: display-link.md "0x97-byte radio status block" table, row 15]** |
+| 0xFFF976D2 | `dlstat_peak` |  | Status-block byte 16 of displink_build_status (0xFFF96455): PEAK & 7 and the +0x6F / timer 0x2A bits **[fact: display-link.md "0x97-byte radio status block" table, row 16]** |
+| 0xFFF9770B | `dlstat_span_center` |  | Status-block byte 17 of displink_build_status (0xFFF96455): span index and CENTER/CURSOR/FIX << 6 **[fact: display-link.md "0x97-byte radio status block" table, row 17]** |
+| 0xFFF977B3 | `dlstat_default_width` |  | Status-block byte 19 of displink_build_status (0xFFF96455): default WIDTH of the mode (bytes 19-20) **[fact: display-link.md "0x97-byte radio status block" table, row 19]** |
+| 0xFFF9782B | `dlstat_zero_in` |  | Status-block byte 21 of displink_build_status (0xFFF96455): CW zero-in indicator from dsp_tune_offset (bytes 21-24) **[fact: display-link.md "0x97-byte radio status block" table, row 21]** |
+| 0xFFF978EB | `dlstat_contour` |  | Status-block byte 25 of displink_build_status (0xFFF96455): CONTOUR frequency / 10 and CONTOUR LEVEL sign (bytes 25-26) **[fact: display-link.md "0x97-byte radio status block" table, row 25]** |
+| 0xFFF9795F | `dlstat_notch` |  | Status-block byte 27 of displink_build_status (0xFFF96455): NOTCH frequency / 10 (bytes 27-28) **[fact: display-link.md "0x97-byte radio status block" table, row 27]** |
+| 0xFFF979D3 | `dlstat_width` |  | Status-block byte 29 of displink_build_status (0xFFF96455): WIDTH (bytes 29-30) **[fact: display-link.md "0x97-byte radio status block" table, row 29]** |
+| 0xFFF97A44 | `dlstat_shift` |  | Status-block byte 31 of displink_build_status (0xFFF96455): IF SHIFT (bytes 31-32) **[fact: display-link.md "0x97-byte radio status block" table, row 31]** |
+| 0xFFF97ABC | `dlstat_dsp_knob_flags` |  | Status-block byte 35 of displink_build_status (0xFFF96455): FUNC panel open, shift/width changed, APF, DSP-knob function bits **[fact: display-link.md "0x97-byte radio status block" table, row 35]** |
+| 0xFFF97B7B | `dlstat_voice_mem` |  | Status-block byte 36 of displink_build_status (0xFFF96455): voice-memory channel and DVS state **[fact: display-link.md "0x97-byte radio status block" table, row 36]** |
+| 0xFFF97BA6 | `dlstat_scope_settings` |  | Status-block byte 37 of displink_build_status (0xFFF96455): scope CENTER/CURSOR/FIX, 3DSS, EXPAND and the bytes 37-42 **[fact: display-link.md "0x97-byte radio status block" table, row 37]** |
+| 0xFFF97C74 | `dlstat_func_knob` |  | Status-block byte 44 of displink_build_status (0xFFF96455): FUNC-knob function, or the code of the open setting pop-up **[fact: display-link.md "0x97-byte radio status block" table, row 44]** |
+| 0xFFF97CF7 | `dlstat_vfo_state_code` |  | Status-block byte 46 of displink_build_status (0xFFF96455): VFO state code (1 VFO, 2 memory, 3 memory tune, 4 PMS, 5 QMB, 7 60 m, 8 EMG, 9/10 split) **[fact: display-link.md "0x97-byte radio status block" table, row 46]** |
+| 0xFFF97E1D | `dlstat_vfo_flags48` |  | Status-block byte 48 of displink_build_status (0xFFF96455): VFO-block flags byte 48 **[fact: display-link.md "0x97-byte radio status block" table, row 48]** |
+| 0xFFF9849E | `dlstat_meter` |  | Status-block byte 95 of displink_build_status (0xFFF96455): meter value: S-meter in RX, else the selected TX meter **[fact: display-link.md "0x97-byte radio status block" table, row 95]** |
+| 0xFFF98526 | `dlstat_tuning_flags` |  | Status-block byte 96 of displink_build_status (0xFFF96455): FINE/FAST, dial LOCK, DNR and rec+2 bit 1 **[fact: display-link.md "0x97-byte radio status block" table, row 96]** |
+| 0xFFF99475 | `popup_fmt_scope_level` |  | Value text of the SCOPE LEVEL pop-up (id 0x1E) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9959F | `popup_fmt_peak` |  | Value text of the PEAK pop-up (id 0x1F) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF995CC | `popup_fmt_rf_power` |  | Value text of the RF POWER pop-up (id 0x2C) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9960E | `popup_fmt_moni_level` |  | Value text of the MONI LEVEL pop-up (id 0x2D) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF996E2 | `popup_fmt_vox_gain` |  | Value text of the VOX GAIN pop-up (id 0x29) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99717 | `popup_fmt_vox_delay` |  | Value text of the VOX DELAY pop-up (id 0x2A) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9978C | `popup_fmt_anti_vox` |  | Value text of the ANTI VOX pop-up (id 0x2B) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF997DF | `popup_fmt_proc_level` |  | Value text of the PROC LEVEL pop-up (id 0x27) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99837 | `popup_fmt_mic_gain` |  | Value text of the MIC GAIN pop-up (id 0x25) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF998E2 | `popup_fmt_cw_speed` |  | Value text of the CW SPEED pop-up (id 0x30) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9992A | `popup_fmt_cw_pitch` |  | Value text of the CW PITCH pop-up (id 0x31) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99989 | `popup_fmt_bk_delay` |  | Value text of the BK DELAY pop-up (id 0x32) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF999E3 | `popup_fmt_aess_level` |  | Value text of the AESS pop-up (id 0x33) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99A29 | `popup_fmt_aess_cf` |  | Value text of the AESS CF pop-up (id 0x58) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99A8A | `popup_fmt_amc_level` |  | Value text of the AMC LEVEL pop-up (id 0x28) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99ABF | `popup_fmt_mgroup` |  | Value text of the M GROUP pop-up (id 0x24) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99B70 | `popup_fmt_nb_level` |  | Value text of the NB LEVEL pop-up (id 0x38) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99BA5 | `popup_fmt_dnr_level` |  | Value text of the DNR LEVEL pop-up (id 0x39) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99BFE | `popup_fmt_qmb` |  | Value text of the QMB pop-up (id 0x43) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99C58 | `popup_fmt_mem_mode` |  | Value text of the MODE pop-up (id 0x55) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99CA2 | `popup_fmt_mem_scan` |  | Value text of the SCAN pop-up (id 0x44) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99CF2 | `popup_fmt_mem_type` |  | Value text of the TYPE pop-up (id 0x45) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D42 | `popup_fmt_dec_level` |  | Value text of the DEC LVL pop-up (id 0x3A) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D48 | `popup_fmt_keyer` |  | Value text of the KEYER pop-up (id 0x46) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99D82 | `popup_fmt_bk_in` |  | Value text of the BK IN pop-up (id 0x2F) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99DDB | `popup_fmt_mic_eq` |  | Value text of the MIC EQ pop-up (id 0x26) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF99E15 | `popup_fmt_contrast` |  | Value text of the CONTRAST pop-up (id 0x22) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9A00F | `popup_fmt_dimmer` |  | Value text of the DIMMER pop-up (id 0x23) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9A044 | `popup_fmt_free_text` |  | Value text of the free text pop-up (id 0x5E) for displink_build_31 frame 0x31 **[fact: display gui.md popup-slot table (#178)]** |
+| 0xFFF9A364 | `dl50_mycall` |  | Frame 0x50 payload for target 0: layout byte, cursor, title "MY CALL", char position, the 12-char text **[fact: fff9a364; display-link.md frame 0x50]** |
+| 0xFFF9A42F | `dl50_memory_name` |  | Frame 0x50 payload for target 1: channel label (memch_label_fmt), title "MEMORY NAME", the 12-char tag **[fact: fff9a42f]** |
+| 0xFFF9A4F4 | `dl50_cw_text` |  | Frame 0x50 payload for target 2: layout + 0x10, title "CW TEXT", dl50_slot_label, dl50_msg_text **[fact: fff9a4f4]** |
+| 0xFFF9A55E | `dl50_rtty_text` |  | Frame 0x50 payload for target 3: title "RTTY TEXT", slot label and 50-char text **[fact: fff9a55e]** |
+| 0xFFF9A5C8 | `dl50_psk_text` |  | Frame 0x50 payload for target 4: title "PSK TEXT", slot label and 50-char text **[fact: fff9a5c8]** |
+| 0xFFF9A64F | `dl50_file_name` |  | Frame 0x50 payload for target 5: layout + 0x40, title "FILE NAME", 20-char text **[fact: fff9a64f]** |
+| 0xFFF9A6F9 | `dl50_preset_name` |  | Frame 0x50 payload for target 6: title "PRESET NAME", 12-char text **[fact: fff9a6f9]** |
+| 0xFFF9A83B | `dl50_slot_label` |  | Frame 0x50 bytes 0x9A..0x9C = 'c', 'h', '1' + g_ui.msg_slot_idx **[fact: fff9a83b]** |
+| 0xFFF9A869 | `dl50_msg_text` |  | Frame 0x50: kbd_fmt_char_pos and the 50-char text of slot msg_slot_idx (UI msg_text) at byte 0xC2 **[fact: fff9a869]** |
+| 0xFFF9ACF4 | `dl37_slot_scope_level` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0 (SCOPE LEVEL), value text by popup_fmt_scope_level **[fact: fff9acf4]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AD39 | `dl37_slot_peak` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 1 (PEAK), value text by popup_fmt_peak **[fact: fff9ad39]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AD7E | `dl37_slot_marker` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 2 (MARKER) **[fact: fff9ad7e]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9ADDE | `dl37_slot_color` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 3 (COLOR) **[fact: fff9adde]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AE31 | `dl37_slot_contrast` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 4 (CONTRAST), value text by popup_fmt_contrast **[fact: fff9ae31]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AE76 | `dl37_slot_dimmer` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 5 (DIMMER), value text by popup_fmt_dimmer **[fact: fff9ae76]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AEBB | `dl37_slot_mgroup` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 6 (M GROUP) **[fact: fff9aebb]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AEFB | `dl37_slot_mic_gain` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 7 (MIC GAIN), value text by popup_fmt_mic_gain **[fact: fff9aefb]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AF40 | `dl37_slot_mic_eq` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 8 (MIC EQ) **[fact: fff9af40]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AFB2 | `dl37_slot_proc_level` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 9 (PROC LEVEL), value text by popup_fmt_proc_level **[fact: fff9afb2]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9AFF7 | `dl37_slot_amc_level` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0A (AMC LEVEL), value text by popup_fmt_amc_level **[fact: fff9aff7]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B03C | `dl37_slot_vox_gain` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0B (VOX GAIN), value text by popup_fmt_vox_gain **[fact: fff9b03c]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B081 | `dl37_slot_vox_delay` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0C (VOX DELAY), value text by popup_fmt_vox_delay **[fact: fff9b081]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B0C6 | `dl37_slot_anti_vox` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0D (ANTI VOX), value text by popup_fmt_anti_vox **[fact: fff9b0c6]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B10B | `dl37_slot_rf_power` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0E (RF POWER), value text by popup_fmt_rf_power **[fact: fff9b10b]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B150 | `dl37_slot_moni_level` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x0F (MONI LEVEL), value text by popup_fmt_moni_level **[fact: fff9b150]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B195 | `dl37_slot_keyer` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x10 (KEYER) **[fact: fff9b195]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B212 | `dl37_slot_bk_in` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x11 (BK IN) **[fact: fff9b212]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B2A1 | `dl37_slot_cw_speed` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x12 (CW SPEED), value text by popup_fmt_cw_speed **[fact: fff9b2a1]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B2E7 | `dl37_slot_cw_pitch` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x13 (CW PITCH), value text by popup_fmt_cw_pitch **[fact: fff9b2e7]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B32D | `dl37_slot_bk_delay` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x14 (BK DELAY), value text by popup_fmt_bk_delay **[fact: fff9b32d]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B373 | `dl37_slot_message` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x16 (MESSAGE) **[fact: fff9b373]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B3CE | `dl37_slot_record` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x17/0x35 (RECORD/STOP) **[fact: fff9b3ce]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B41E | `dl37_slot_play` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x18 (PLAY) **[fact: fff9b41e]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B45F | `dl37_slot_txw` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x2D (TXW) **[fact: fff9b45f]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B48C | `dl37_slot_aess` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x15 (AESS), value text by popup_fmt_aess_level **[fact: fff9b48c]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B4D2 | `dl37_slot_aess_cf` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x3A (AESS CF), value text by popup_fmt_aess_cf **[fact: fff9b4d2]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B518 | `dl37_slot_radio_setting` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x30 (RADIO SETTING) **[fact: fff9b518]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B559 | `dl37_slot_cw_setting` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x31 (CW SETTING) **[fact: fff9b559]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B59A | `dl37_slot_operation_setting` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x32 (OPERATION SETTING) **[fact: fff9b59a]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B5DB | `dl37_slot_display_setting` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x33 (DISPLAY SETTING) **[fact: fff9b5db]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B61C | `dl37_slot_extension_setting` |  | (offset): writes FUNC-panel slot {flag, id, 8-char text} of frame 0x37 for function id 0x34 (EXTENSION SETTING) **[fact: fff9b61c]**; only caller displink_build_37; ids per display-link.md "0x37 FUNC panel" |
+| 0xFFF9B65D | `dl37_slot_empty` |  | (offset): writes an empty FUNC-panel slot of frame 0x37: flag 0, function id 0xFF, 8 spaces **[fact: fff9b65d]**; displink_build_37 uses it for slot 25 and slots 33..40 |
+| 0xFFF9BFE1 | `memch_group_of` |  | (ch): memory group 1..5 from the group sizes at ROM 0xFFF804D3, 6 PMS (99..0x74), 7 60 m (0x75..0x83), 8 EMG **[fact: fff9bfe1]** |
+| 0xFFF9C04A | `memch_special_limit` |  | Upper channel limit of the region's 60 m / EMG channels: 0x75 for dest 0x020B / 0x1CB9 / 0x4380 / 0x60E6, 0x84 for 0x315B / 0x50E2, 0 otherwise **[fact: fff9c04a]** |
+| 0xFFF9C089 | `memch_label_fmt` |  | (buf, ch): channel label text: 'M-nn' for 1..99, 'M-PL'/'M-PU' n for the PMS pairs 0x63..0x74, '5-nn' for 60 m 0x75..0x83, 'EMG' above **[fact: fff9c089; display-link.md frame 0x41]** |
+| 0xFFFD077E | `sd_load_block_answer` |  | SD load step: when the DISPLAY's answer (g_ui.sd_answer) matches the expected offset/length (0x1FF02 / 0x1FF04), stores the block, advances; after the last block checks the region code and copies the loaded image into the memory / QMB headers, else requests the next block (sd_step = 6) **[fact: fffd077e]**; only caller sd_load_step |
+
+<!-- T23e3:end -->

@@ -1,8 +1,10 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_20133618 @ 20133618 (8 bytes)
+// ===== scope3d_history_clear_thunk @ 20133618 (8 bytes)
 
-void FUN_20133618(void)
+/* scope3d_history_clear(0x20907F78); scope_area_setup calls it [fact] */
+
+void scope3d_history_clear_thunk(void)
 
 {
   scope3d_history_clear(&DAT_20907f78);
@@ -77,9 +79,12 @@ void scope3d_tables_init(void)
 }
 
 
-// ===== FUN_20133640 @ 20133640 (12 bytes)
+// ===== scope3d_buf_get @ 20133640 (12 bytes)
 
-undefined4 FUN_20133640(void)
+/* Returns the 3D work buffer pointer *0x208085B4 (gui.md); the filter graphs and the MULTI labels
+   use it as a back buffer [fact] */
+
+undefined4 scope3d_buf_get(void)
 
 {
   return DAT_208085b4;
@@ -471,9 +476,11 @@ void gui_flip_one(int param_1)
 }
 
 
-// ===== FUN_20133d7c @ 20133d7c (44 bytes)
+// ===== fb_layer2_save @ 20133d7c (44 bytes)
 
-void FUN_20133d7c(undefined4 param_1)
+/* (buf): gui_update_layers, then copies graphics layer *0x208085BC (0xBB800 bytes) to buf [fact] */
+
+void fb_layer2_save(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -485,9 +492,11 @@ void FUN_20133d7c(undefined4 param_1)
 }
 
 
-// ===== FUN_20133da8 @ 20133da8 (44 bytes)
+// ===== fb_layer2_restore @ 20133da8 (44 bytes)
 
-void FUN_20133da8(undefined4 param_1)
+/* (buf): layer_alpha_rect_opaque(5), then copies buf back into layer *0x208085BC [fact] */
+
+void fb_layer2_restore(undefined4 param_1)
 
 {
   undefined4 uVar1;
@@ -499,9 +508,12 @@ void FUN_20133da8(undefined4 param_1)
 }
 
 
-// ===== FUN_20133dec @ 20133dec (36 bytes)
+// ===== scope_peak_set @ 20133dec (36 bytes)
 
-void FUN_20133dec(undefined4 param_1)
+/* (level): passes the PEAK level to both 3D objects 0x20470294 / 0x20474C68 (gui.md: packet 0x20
+   byte 0x10) [fact] */
+
+void scope_peak_set(undefined4 param_1)
 
 {
   FUN_20158848(&DAT_20470294,param_1);
@@ -818,8 +830,8 @@ void FUN_201340a4(void)
   undefined2 *puVar3;
   int iVar4;
   
-  FUN_20164334(&DAT_2090836c,&DAT_203a70ae);
-  FUN_20164334(&DAT_209083ac,&DAT_203a70ae);
+  scope3d_widths_init(&DAT_2090836c,&DAT_203a70ae);
+  scope3d_widths_init(&DAT_209083ac,&DAT_203a70ae);
   iVar4 = 0;
   do {
     puVar2 = &DAT_203b2a12 + iVar4;
@@ -883,9 +895,11 @@ void FUN_20134124(int param_1,int param_2,ushort *param_3,int param_4,ushort *pa
 }
 
 
-// ===== FUN_201341cc @ 201341cc (28 bytes)
+// ===== clamp_add_u8 @ 201341cc (28 bytes)
 
-uint FUN_201341cc(int param_1,int param_2)
+/* (a, b): a + b clamped to 0..255 [fact] */
+
+uint clamp_add_u8(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -959,9 +973,13 @@ void FUN_20134230(void)
 }
 
 
-// ===== FUN_201342b4 @ 201342b4 (448 bytes)
+// ===== scope_objects_init @ 201342b4 (448 bytes)
 
-void FUN_201342b4(void)
+/* gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and
+   its hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default
+   ramps and resets the waterfall banks [fact] */
+
+void scope_objects_init(void)
 
 {
   undefined4 uVar1;
@@ -978,13 +996,13 @@ void FUN_201342b4(void)
   FUN_20163f80(&DAT_2047f400,0,0xf,&DAT_203d9a9e);
   FUN_20164018(&DAT_2047c848,&DAT_203b6704);
   FUN_20163f44(&DAT_2047f400,&DAT_203daf14);
-  FUN_201587fc(&DAT_20470294);
+  scope3d_obj_init(&DAT_20470294);
   uVar1 = FUN_20164680(&DAT_2047f400);
   uVar2 = FUN_2016469c(&DAT_2047c848);
   FUN_20158838(&DAT_20470294,&DAT_203e58ac,uVar2,uVar1);
   FUN_201640a4(&DAT_2047fd80,&DAT_2047c848);
   FUN_20163fd0(&DAT_20482938,&DAT_2047f400);
-  FUN_201587fc(&DAT_20474c68);
+  scope3d_obj_init(&DAT_20474c68);
   uVar1 = FUN_20164680(&DAT_20482938);
   uVar2 = FUN_2016469c(&DAT_2047fd80);
   FUN_20158838(&DAT_20474c68,&DAT_203e58ac,uVar2,uVar1);
@@ -993,25 +1011,32 @@ void FUN_201342b4(void)
   FUN_20158544(&DAT_2047963c,0);
   FUN_20162c28(&DAT_2047c442,DAT_2047032c);
   FUN_20162c28(&DAT_2047c644,DAT_20474d00);
-  FUN_201576f4(&DAT_2047963c,2);
-  FUN_20157778(&DAT_2047963c);
+  scope_wf_bank_set(&DAT_2047963c,2);
+  scope_obj_history_clear(&DAT_2047963c);
   return;
 }
 
 
-// ===== FUN_201342d0 @ 201342d0 (12 bytes)
+// ===== scope_obj_bank_reset @ 201342d0 (12 bytes)
 
-void FUN_201342d0(undefined4 param_1)
+/* (mode): scope_wf_bank_set(0x2047963C, mode); packet 0x20 byte 7 bit 7 calls it with 0 (gui.md
+   "resets the 3D engine object") [fact] */
+
+void scope_obj_bank_reset(undefined4 param_1)
 
 {
-  FUN_201576f4(&DAT_2047963c,param_1);
+  scope_wf_bank_set(&DAT_2047963c,param_1);
   return;
 }
 
 
-// ===== FUN_201342dc @ 201342dc (256 bytes)
+// ===== scope_palette_set @ 201342dc (256 bytes)
 
-void FUN_201342dc(int param_1,int param_2)
+/* (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68
+   from the ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12
+   bits 0-3) [fact] */
+
+void scope_palette_set(int param_1,int param_2)
 
 {
   undefined4 uVar1;
@@ -1060,9 +1085,12 @@ void scope_store_frame(uint param_1)
 }
 
 
-// ===== FUN_201342f8 @ 201342f8 (24 bytes)
+// ===== scope_freeze_a_set @ 201342f8 (24 bytes)
 
-void FUN_201342f8(undefined1 param_1)
+/* (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md);
+   gui_screen_update sets it [fact] */
+
+void scope_freeze_a_set(undefined1 param_1)
 
 {
   DAT_204832b8 = param_1;
@@ -1070,9 +1098,11 @@ void FUN_201342f8(undefined1 param_1)
 }
 
 
-// ===== FUN_20134304 @ 20134304 (24 bytes)
+// ===== scope_freeze_b_set @ 20134304 (24 bytes)
 
-void FUN_20134304(undefined1 param_1)
+/* (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it [fact] */
+
+void scope_freeze_b_set(undefined1 param_1)
 
 {
   DAT_204832b9 = param_1;
@@ -1080,12 +1110,15 @@ void FUN_20134304(undefined1 param_1)
 }
 
 
-// ===== FUN_20134310 @ 20134310 (8 bytes)
+// ===== scope_history_reset @ 20134310 (8 bytes)
 
-void FUN_20134310(void)
+/* Calls scope_obj_history_clear on the scope object 0x2047963C; scope3d_history_clear uses it
+   (gui.md) [fact] */
+
+void scope_history_reset(void)
 
 {
-  FUN_20157778(&DAT_2047963c);
+  scope_obj_history_clear(&DAT_2047963c);
   return;
 }
 
@@ -1104,10 +1137,10 @@ void scope3d_redraw_history(int param_1,int param_2)
   int *piVar5;
   
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    FUN_201643cc();
+    ring30_advance();
     iVar2 = 0x1d;
     do {
-      iVar1 = FUN_20164828(&DAT_20490890,-iVar2);
+      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       iVar4 = iVar2 * 800 + 0x2048395f;
       __aeabi_memclr(iVar4,800);
       if (param_1 == 8) {
@@ -1125,7 +1158,7 @@ void scope3d_redraw_history(int param_1,int param_2)
     } while (1 < iVar2);
     iVar2 = 0x1d;
     do {
-      iVar1 = FUN_20164828(&DAT_20490890,-iVar2);
+      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
       piVar3 = (int *)(&DAT_2048feb8 + iVar1 * 0x54);
       piVar5 = (int *)(iVar2 * 0x54 + 0x20489720);
       if ((param_1 == 8) || ((param_1 == 9 && (iVar2 < 0xf)))) {
@@ -1171,14 +1204,14 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
   
   iVar1 = DAT_20489774;
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    iVar1 = FUN_20164828(&DAT_20490890,0xffffffff,param_2,param_3,param_3);
+    iVar1 = ring30_offset(&DAT_20490890,0xffffffff,param_2,param_3,param_3);
     puVar7 = &DAT_2048a0f8 + iVar1 * 800;
-    iVar2 = FUN_201647e4(&DAT_20494768,0);
+    iVar2 = ring20_offset(&DAT_20494768,0);
     memcpy(puVar7,&DAT_20490894 + iVar2 * 800,800);
     iVar2 = 1;
     if (1 < param_2) {
       do {
-        iVar3 = FUN_201647e4(&DAT_20494768,-iVar2);
+        iVar3 = ring20_offset(&DAT_20494768,-iVar2);
         iVar4 = 0;
         do {
           if ((byte)puVar7[iVar4] < (byte)(&DAT_20490894)[iVar4 + iVar3 * 800]) {
@@ -1193,7 +1226,7 @@ void scope3d_add_line(int param_1,int param_2,int param_3)
     if (0 < DAT_20494714) {
       puVar5 = &DAT_2047963c + iVar1 * 0x54;
       do {
-        iVar4 = FUN_201647e4(&DAT_20494768,-iVar2);
+        iVar4 = ring20_offset(&DAT_20494768,-iVar2);
         iVar3 = iVar2 * 4;
         iVar2 = iVar2 + 1;
         *(undefined4 *)(puVar5 + iVar3 + 0x16880) = *(undefined4 *)(&DAT_20494718 + iVar4 * 4);
@@ -1243,9 +1276,9 @@ void FUN_2013433c(void)
   int iVar1;
   
   if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    FUN_201643b0();
-    iVar1 = FUN_201647e4(&DAT_20494768,0);
-    FUN_201577f8(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
+    ring20_advance();
+    iVar1 = ring20_offset(&DAT_20494768,0);
+    copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     return;
   }
   return;
@@ -1263,9 +1296,9 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
-    FUN_201643b0();
-    iVar1 = FUN_201647e4(&DAT_20494768,0);
-    FUN_201577f8(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
+    ring20_advance();
+    iVar1 = ring20_offset(&DAT_20494768,0);
+    copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
     DAT_20494714 = DAT_20494714 + 1;

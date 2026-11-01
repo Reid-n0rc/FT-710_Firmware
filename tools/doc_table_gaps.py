@@ -48,7 +48,7 @@ NAME_FILES = {
              'names_main.T10h.tsv', 'names_main.T23e.tsv', 'names_main.T23d.tsv', 'names_main.lib.tsv'],
     'display': ['names_display.tsv', 'names_display.T11b.tsv', 'names_display.T11c.tsv', 'names_display.T11d.tsv',
                 'names_display.T11e.tsv', 'names_display.T11f.tsv', 'names_display.T11g.tsv',
-                'names_display.T23e.tsv', 'names_display.T23e2.tsv', 'names_display.T23d.tsv', 'names_display.lib.tsv'],
+                'names_display.T23e.tsv', 'names_display.T23e2.tsv', 'names_display.T23e3.tsv', 'names_display.T23d.tsv', 'names_display.lib.tsv'],
     'ifdsp/m33': ['IfdspM33Names.java', 'names_ifdsp.T12b.tsv', 'names_ifdsp.T12c.tsv', 'names_ifdsp.T12d.tsv',
                   'names_ifdsp.T23d.tsv', 'names_ifdsp.lib.tsv'],
     'ifdsp/hifi4': ['IfdspHifi4Names.java', 'names_hifi4.T23.tsv', 'names_ifdsp.T12b.tsv', 'names_ifdsp.T12c.tsv'],

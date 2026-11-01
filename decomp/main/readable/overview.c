@@ -180,8 +180,8 @@ void bsp_interrupt_open(void)
     *(undefined4 *)(&DAT_00020194 + local_4 * 4) = 0x10000000;
   }
   icu_select_init();
-  FUN_fff9089e(0);
-  FUN_fff9089e(1);
+  R_BSP_SoftwareInterruptOpen(0);
+  R_BSP_SoftwareInterruptOpen(1);
   return;
 }
 
@@ -229,14 +229,14 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
       bVar1 = true;
     }
     if (bVar1) {
-      local_14 = FUN_fff901f8(param_1,'\x01',*(uint *)param_3);
+      local_14 = bsp_interrupt_group_enable_disable(param_1,'\x01',*(uint *)param_3);
     }
     else {
       local_14 = 2;
     }
   }
   else if (param_2 == 4) {
-    local_14 = FUN_fff901f8(param_1,'\0',0);
+    local_14 = bsp_interrupt_group_enable_disable(param_1,'\0',0);
   }
   else if (param_2 == 5) {
     local_14 = FUN_fff90181('\x01',param_3);
@@ -281,7 +281,7 @@ uint R_BSP_InterruptControl(uint param_1,int param_2,void *param_3)
 void hw_init_clock(void)
 
 {
-  FUN_fff913db();
+  mcu_clock_setup();
   return;
 }
 
@@ -902,7 +902,7 @@ void keyer_task(void)
   }
   if (bVar1) {
     keyer_init();
-    FUN_fffbb1c2();
+    keyer_sidetone_off();
     g_ui.ptt_keyer = 0;
     return;
   }
@@ -913,7 +913,7 @@ void keyer_task(void)
   if (DAT_0001b4d5 != g_opstate.key_speed) {
     bVar1 = false;
     if (DAT_00012164 == '\0') {
-      FUN_fffbb283(&cStack_18,&cStack_19);
+      keyer_paddles_read(&cStack_18,&cStack_19);
       if ((cStack_18 == '\x01') && (cStack_19 == '\x01')) {
         bVar2 = true;
       }
@@ -945,7 +945,7 @@ void keyer_task(void)
     DAT_00021014 = 1200000 / DAT_0001b4d5;
   }
   DAT_00021010 = ((local_1 + 0x19) * DAT_00021014) / 10;
-  DAT_0001215c = FUN_fffb548a();
+  DAT_0001215c = qsk_delay_ticks();
   if (DAT_0001215f == 0) {
     DAT_0001215c = 0xf;
   }
@@ -988,13 +988,13 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     g_ui.keyer_state = 1;
     swtimer_start(0x19,(ushort)DAT_0001215c);
-    FUN_fffbaff6();
+    keyer_state_clear();
   case 1:
     if (DAT_0001215f < 2) {
-      FUN_fffba840(DAT_0001215f);
+      keyer_straight_bug(DAT_0001215f);
     }
     else if (DAT_0001215f - 2 < 4) {
-      FUN_fffba377(DAT_0001215f,'\0');
+      keyer_elekey(DAT_0001215f,'\0');
     }
     break;
   case 2:
@@ -1011,7 +1011,7 @@ void keyer_task(void)
     g_ui.keyer_state = 3;
     swtimer_start(0x19,(ushort)DAT_0001215c);
     swtimer_start(0x1b,10000);
-    FUN_fffbaff6();
+    keyer_state_clear();
     DAT_00021040 = vfo_rec_ptr(1);
     iVar7 = tx_breakin_on();
     if (iVar7 == 1) {
@@ -1023,7 +1023,7 @@ void keyer_task(void)
     }
   case 3:
     if (DAT_0001215f - 2 < 4) {
-      FUN_fffba377(DAT_0001215f,'\x01');
+      keyer_elekey(DAT_0001215f,'\x01');
     }
     break;
   case 4:
@@ -1127,21 +1127,21 @@ void keyer_task(void)
               bVar1 = false;
             }
             if (!bVar1) {
-              bStack_14 = FUN_fffbb2bf(bStack_14);
+              bStack_14 = contest_cut_digit(bStack_14);
               bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
               bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
               for (bStack_10 = 0; bStack_10 < bStack_16; bStack_10 = bStack_10 + 1) {
                 if ((bStack_15 & 0x80) == 0) {
-                  FUN_fffbb024(1);
+                  keyer_elem_put(1);
                 }
                 else {
-                  FUN_fffbb024(2);
+                  keyer_elem_put(2);
                 }
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
                 bStack_15 = bStack_15 << 1;
               }
               for (bStack_10 = 0; bStack_10 < 2; bStack_10 = bStack_10 + 1) {
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
               }
             }
           }
@@ -1150,14 +1150,14 @@ void keyer_task(void)
           iVar7 = tx_breakin_on();
           if ((iVar7 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
             uStack_e = uStack_e + 1;
-            FUN_fffba336(uStack_e);
+            contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x3e) {
           iVar7 = tx_breakin_on();
           if ((iVar7 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
             uStack_e = uStack_e - 1;
-            FUN_fffba336(uStack_e);
+            contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x5b) {
@@ -1181,7 +1181,7 @@ void keyer_task(void)
               cVar4 = hex2nib(bStack_14);
               bStack_14 = cVar4 - 1;
               if (bStack_9 != bStack_14) {
-                FUN_fffbb338(bStack_14);
+                keyer_text_msg_encode(bStack_14);
               }
             }
           }
@@ -1190,23 +1190,23 @@ void keyer_task(void)
           bStack_10 = 0;
           if (bStack_16 == 0) {
             for (; bStack_10 < 4; bStack_10 = bStack_10 + 1) {
-              FUN_fffbb024(0);
+              keyer_elem_put(0);
             }
           }
           else {
             for (; bStack_10 < bStack_16; bStack_10 = bStack_10 + 1) {
               if ((bStack_15 & 0x80) == 0) {
-                FUN_fffbb024(1);
+                keyer_elem_put(1);
               }
               else {
-                FUN_fffbb024(2);
+                keyer_elem_put(2);
               }
-              FUN_fffbb024(0);
+              keyer_elem_put(0);
               bStack_15 = bStack_15 << 1;
             }
             if (cStack_17 == '\0') {
               for (bStack_10 = 0; bStack_10 < 2; bStack_10 = bStack_10 + 1) {
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
               }
             }
           }
@@ -1218,7 +1218,7 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     swtimer_start(0x19,(ushort)DAT_0001215c);
     g_ui.keyer_state = 6;
-    FUN_fffbaff6();
+    keyer_state_clear();
   case 6:
     if (DAT_0001fa3a == DAT_0001fa3c) {
       g_ui.keyer_state = 7;
@@ -1227,11 +1227,11 @@ void keyer_task(void)
       }
       if ((DAT_00012165 == '\x01') && (uStack_e = contest_number_get(), uStack_e < 9999)) {
         uStack_e = uStack_e + 1;
-        FUN_fffba336(uStack_e);
+        contest_number_set(uStack_e);
       }
     }
     else {
-      FUN_fffbb283(&cStack_18,&cStack_19);
+      keyer_paddles_read(&cStack_18,&cStack_19);
       if ((cStack_18 == '\x01') || (cStack_19 == '\x01')) {
         bVar1 = true;
       }
@@ -1255,11 +1255,11 @@ void keyer_task(void)
     else {
       DAT_0001fa38 = 0;
       DAT_0001fa3a = 0;
-      FUN_fffbb1c2();
+      keyer_sidetone_off();
       g_ui.keyer_state = 0;
     }
   }
-  FUN_fffbaa81(DAT_0001215f);
+  keyer_output_step(DAT_0001215f);
   return;
 }
 
@@ -1500,42 +1500,42 @@ void ladder_key_task(void)
       }
       else if (DAT_0001b554 == 1) {
         if (bVar2 == 0xf1) {
-          FUN_fffe46f3();
+          msg_cw_slot_key_latched_1();
         }
         else {
-          FUN_fffe435a();
+          msg_cw_slot_key_1();
         }
       }
       else if (DAT_0001b554 == 2) {
         if (bVar2 == 0xf2) {
-          FUN_fffe46f9();
+          msg_cw_slot_key_latched_2();
         }
         else {
-          FUN_fffe4360();
+          msg_cw_slot_key_2();
         }
       }
       else if (DAT_0001b554 == 3) {
         if (bVar2 == 0xf3) {
-          FUN_fffe46ff();
+          msg_cw_slot_key_latched_3();
         }
         else {
-          FUN_fffe4366();
+          msg_cw_slot_key_3();
         }
       }
       else if (DAT_0001b554 == 4) {
         if (bVar2 == 0xf4) {
-          FUN_fffe4705();
+          msg_cw_slot_key_latched_4();
         }
         else {
-          FUN_fffe436c();
+          msg_cw_slot_key_4();
         }
       }
       else if (DAT_0001b554 == 5) {
         if (bVar2 == 0xf5) {
-          FUN_fffe470b();
+          msg_cw_slot_key_latched_5();
         }
         else {
-          FUN_fffe4372();
+          msg_cw_slot_key_5();
         }
       }
       else if (DAT_0001b554 == 6) {
@@ -1600,19 +1600,19 @@ void ladder_key_task(void)
       else if (DAT_0001b554 == 0) {
         switch(bVar2) {
         case 1:
-          FUN_fffe41f3();
+          msg_slot_key_1();
           break;
         case 2:
-          FUN_fffe41f9();
+          msg_slot_key_2();
           break;
         case 3:
-          FUN_fffe41ff();
+          msg_slot_key_3();
           break;
         case 4:
-          FUN_fffe4205();
+          msg_slot_key_4();
           break;
         case 5:
-          FUN_fffe420b();
+          msg_slot_key_5();
           break;
         case 6:
           msg_type_select();
@@ -1688,14 +1688,14 @@ void tuner_task(void)
 
 {
   if (g_opstate.ex030104_tuner_type_select == 3) {
-    FUN_fffed165();
+    tuner_atas_task();
     return;
   }
   if (1 < g_opstate.ex030104_tuner_type_select) {
-    FUN_fffed62a();
+    tuner_ext_task();
     return;
   }
-  FUN_fffec62b();
+  tuner_int_task();
   return;
 }
 

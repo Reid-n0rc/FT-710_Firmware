@@ -1,8 +1,12 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2011d248 @ 2011d248 (20 bytes)
+// ===== vdc5_shrd_set_sync_param @ 2011d248 (20 bytes)
 
-void FUN_2011d248(int param_1,int param_2)
+/* Shared-parameter update of r_vdc5_sync_control (its caller): stores param byte 1 in 0x208DCCC8 +
+   0x10*ch [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the shared tables
+   0x208DCxxx] */
+
+void vdc5_shrd_set_sync_param(int param_1,int param_2)
 
 {
   (&DAT_208dccc8)[param_1 * 0x10] = *(undefined1 *)(param_2 + 1);
@@ -39,9 +43,12 @@ int FUN_2011d25c(int param_1,int param_2,int param_3,int param_4,int param_5,int
 }
 
 
-// ===== FUN_2011d2b4 @ 2011d2b4 (192 bytes)
+// ===== vdc5_shrd_set_output_param @ 2011d2b4 (192 bytes)
 
-void FUN_2011d2b4(int param_1,int param_2)
+/* Shared-parameter update of r_vdc5_display_output (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_output_param(int param_1,int param_2)
 
 {
   uint uVar1;
@@ -64,9 +71,13 @@ void FUN_2011d2b4(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011d374 @ 2011d374 (124 bytes)
+// ===== vdc5_shrd_set_write_param @ 2011d374 (124 bytes)
 
-void FUN_2011d374(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_write_data_control (its caller): fills the 12-byte write record
+   0x208DCCE4[ch][layer] (format, swap, frame buffer, size) [fact]; Renesas r_vdc5_shared_param.c
+   [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_write_param(int param_1,int param_2,int param_3)
 
 {
   undefined1 *puVar1;
@@ -106,9 +117,12 @@ void FUN_2011d374(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2011d3f0 @ 2011d3f0 (72 bytes)
+// ===== vdc5_shrd_set_chg_write_param @ 2011d3f0 (72 bytes)
 
-void FUN_2011d3f0(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_change_write_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_write_param(int param_1,int param_2,int param_3)
 
 {
   undefined *puVar1;
@@ -129,9 +143,12 @@ void FUN_2011d3f0(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2011d438 @ 2011d438 (220 bytes)
+// ===== vdc5_shrd_set_read_param @ 2011d438 (220 bytes)
 
-void FUN_2011d438(int param_1,int param_2,undefined1 *param_3)
+/* Shared-parameter update of r_vdc5_read_data_control (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_read_param(int param_1,int param_2,undefined1 *param_3)
 
 {
   undefined2 uVar1;
@@ -178,9 +195,12 @@ void FUN_2011d438(int param_1,int param_2,undefined1 *param_3)
 }
 
 
-// ===== FUN_2011d514 @ 2011d514 (104 bytes)
+// ===== vdc5_shrd_set_chg_read_param @ 2011d514 (104 bytes)
 
-void FUN_2011d514(int param_1,int param_2,int param_3)
+/* Shared-parameter update of r_vdc5_change_read_process (its caller) [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_chg_read_param(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -719,8 +739,8 @@ undefined4 rspi0_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,7,0x80,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi0_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi0_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166a84);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
     uVar2 = rspi_hw_config(0,1);
@@ -742,8 +762,8 @@ undefined4 rspi1_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,6,0x40,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi1_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi1_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166aac);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
     uVar2 = rspi_hw_config(1,0);
@@ -765,8 +785,8 @@ undefined4 rspi2_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,5,0x20,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi2_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi2_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166ad4);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
     uVar2 = rspi_hw_config(2,1);
@@ -788,8 +808,8 @@ undefined4 rspi3_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,4,0x10,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi3_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi3_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166afc);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b10), 0 < (int)uVar1)) {
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
@@ -812,8 +832,8 @@ undefined4 rspi4_open(void)
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR10,0,3,8,in_r3);
-  uVar1 = itron_acre_isr(0,&cisr_rspi4_spti_isr);
-  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_rspi4_spri_isr), 0 < (int)uVar1)) {
+  uVar1 = itron_acre_isr(0,0x20166b24);
+  if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
     uVar2 = rspi_hw_config(4,1);

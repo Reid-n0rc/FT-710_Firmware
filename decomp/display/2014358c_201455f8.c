@@ -78,7 +78,7 @@ void fs_fseek_work(undefined4 param_1,undefined4 param_2,uint param_3,undefined4
       fs_set_error(0xfffffff3,param_1);
       return;
     }
-    uVar2 = FUN_20140be8(param_1,param_2,param_3,param_4);
+    uVar2 = file_buf_sync(param_1,param_2,param_3,param_4);
     fs_set_error(uVar2,param_1);
     return;
   }
@@ -1422,9 +1422,12 @@ undefined4 root_sector_get(int param_1,int param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_20144d5c @ 20144d5c (348 bytes)
+// ===== lfn_entry_fill @ 20144d5c (348 bytes)
 
-int FUN_20144d5c(int param_1,char *param_2,int param_3)
+/* (entry, name part, vol): fills one 32-byte long-name directory entry: zeroed, 0xFF padding in the
+   three name fields, then the UCS-2 characters [fact for the fills] */
+
+int lfn_entry_fill(int param_1,char *param_2,int param_3)
 
 {
   int iVar1;
@@ -1506,9 +1509,14 @@ uint lfn_checksum(int param_1)
 }
 
 
-// ===== FUN_20144ef4 @ 20144ef4 (432 bytes)
+// ===== root_dir_write_lfn @ 20144ef4 (432 bytes)
 
-int FUN_20144ef4(int param_1,undefined4 param_2,int param_3,int param_4,uint param_5,int param_6)
+/* (vol, slot, sfn entry, long name, n, ...): writes the 8.3 entry and the n long-name entries
+   before it (lfn_checksum, lfn_entry_fill) into the root directory sectors, marking each sector
+   dirty [fact] */
+
+int root_dir_write_lfn(int param_1,undefined4 param_2,int param_3,int param_4,uint param_5,
+                      int param_6)
 
 {
   byte bVar1;
@@ -1551,7 +1559,7 @@ int FUN_20144ef4(int param_1,undefined4 param_2,int param_3,int param_4,uint par
     iVar3 = iVar2;
     do {
       pbVar5 = pbVar4 + -0x20;
-      iVar2 = FUN_20144d5c(pbVar5,param_4,param_1);
+      iVar2 = lfn_entry_fill(pbVar5,param_4,param_1);
       *pbVar5 = (byte)uVar6;
       param_4 = param_4 + iVar2 * 2;
       pbVar4[-0x15] = 0xf;
@@ -1684,9 +1692,12 @@ void sjis_fold_case_pair(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_20145254 @ 20145254 (804 bytes)
+// ===== sfn_matches_long @ 20145254 (804 bytes)
 
-undefined4 FUN_20145254(char *param_1,char *param_2,char *param_3)
+/* (long name, entry, ...): compares a dotted 8.3 candidate with a name using Shift-JIS lead bytes
+   and case folding (fs_char_lfn_only, sjis_fold_case_pair) [fact for the calls] */
+
+undefined4 sfn_matches_long(char *param_1,char *param_2,char *param_3)
 
 {
   char cVar1;

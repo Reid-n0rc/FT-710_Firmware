@@ -965,9 +965,12 @@ void cat_tx_done_sci3(void)
 }
 
 
-// ===== FUN_fffb1d79 @ fffb1d79 (52 bytes)
+// ===== cat_tx_busy @ fffb1d79 (52 bytes)
 
-undefined1 FUN_fffb1d79(int param_1)
+/* Returns the CAT TX busy flag of a port: 1 -> 0x11FEA (SCI3), 2 -> 0x11FE8 (SCI0), else 0x11FE9
+   (SCI2) [fact: fffb1d79]; cat_ai_poll sends only when all three are 0 */
+
+undefined1 cat_tx_busy(int param_1)
 
 {
   undefined1 local_6;

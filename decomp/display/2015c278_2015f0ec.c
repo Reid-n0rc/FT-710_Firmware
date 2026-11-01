@@ -40,9 +40,12 @@ bool FUN_2015c2d4(int param_1)
 }
 
 
-// ===== FUN_2015c34c @ 2015c34c (224 bytes)
+// ===== touch_hit_text_list @ 2015c34c (224 bytes)
 
-int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
+/* touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through
+   touch_hit_text_list_rows) [fact for the dispatch] */
+
+int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -55,7 +58,7 @@ int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
   if (iVar1 == 0x1ff) {
     iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
   }
-  if ((((iVar1 == 0x1ff) && (iVar1 = FUN_2015cdd4(param_1,param_2), iVar1 != 0x1ff)) &&
+  if ((((iVar1 == 0x1ff) && (iVar1 = touch_hit_text_list_rows(param_1,param_2), iVar1 != 0x1ff)) &&
       (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
      ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
     DAT_20800494 = 1;
@@ -70,9 +73,12 @@ int FUN_2015c34c(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2015c43c @ 2015c43c (376 bytes)
+// ===== touch_hit_select_popup @ 2015c43c (376 bytes)
 
-undefined4 FUN_2015c43c(undefined4 param_1,undefined4 param_2,int param_3)
+/* touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) [fact for the
+   dispatch] */
+
+undefined4 touch_hit_select_popup(undefined4 param_1,undefined4 param_2,int param_3)
 
 {
   undefined4 uVar1;
@@ -138,9 +144,12 @@ undefined4 FUN_2015c43c(undefined4 param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_2015c558 @ 2015c558 (304 bytes)
+// ===== touch_hit_scope @ 2015c558 (304 bytes)
 
-undefined4 FUN_2015c558(undefined4 param_1,undefined4 param_2)
+/* Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2),
+   expanded flag; input.md lists it for soft keys 0x1016..0x1019 [fact] */
+
+undefined4 touch_hit_scope(undefined4 param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -207,7 +216,7 @@ undefined4 FUN_2015c558(undefined4 param_1,undefined4 param_2)
       }
     }
   }
-  uVar2 = FUN_2015c81c(param_1,param_2,&DAT_203a53d4,2);
+  uVar2 = touch_hit_scope_drag(param_1,param_2,&DAT_203a53d4,2);
   return uVar2;
 }
 
@@ -249,9 +258,11 @@ ushort touch_hit_rect(uint param_1,uint param_2,ushort *param_3,int param_4)
 }
 
 
-// ===== FUN_2015c750 @ 2015c750 (500 bytes)
+// ===== touch_hit_sd_menu @ 2015c750 (500 bytes)
 
-int FUN_2015c750(uint param_1,uint param_2)
+/* touch_hit_test for screen 0x43 (SD-card menu) [fact for the dispatch] */
+
+int touch_hit_sd_menu(uint param_1,uint param_2)
 
 {
   uint uVar1;
@@ -367,11 +378,13 @@ LAB_2015d19c:
 }
 
 
-// ===== FUN_2015c81c @ 2015c81c (344 bytes)
+// ===== touch_hit_scope_drag @ 2015c81c (344 bytes)
 
 /* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 /
+   step) while the finger moves; called by touch_hit_scope [fact for the calls] */
 
-undefined4 FUN_2015c81c(uint param_1,uint param_2,int param_3,int param_4)
+undefined4 touch_hit_scope_drag(uint param_1,uint param_2,int param_3,int param_4)
 
 {
   uint uVar1;
@@ -490,9 +503,11 @@ undefined2 FUN_2015c978(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_2015ca14 @ 2015ca14 (244 bytes)
+// ===== touch_hit_dialog @ 2015ca14 (244 bytes)
 
-int FUN_2015ca14(uint param_1,uint param_2)
+/* touch_hit_test for screen 0x70 (dialog / confirm screen) [fact for the dispatch] */
+
+int touch_hit_dialog(uint param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -592,9 +607,12 @@ ushort FUN_2015ccf8(uint param_1,uint param_2,ushort *param_3,int param_4)
 }
 
 
-// ===== FUN_2015cdd4 @ 2015cdd4 (244 bytes)
+// ===== touch_hit_text_list_rows @ 2015cdd4 (244 bytes)
 
-int FUN_2015cdd4(uint param_1,uint param_2)
+/* (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row
+   (0x208F0C5B + 0x2D*row) gives its own code [fact] */
+
+int touch_hit_text_list_rows(uint param_1,uint param_2)
 
 {
   ushort uVar1;
@@ -790,7 +808,7 @@ void multi_panel_draw(undefined4 param_1)
   
   uVar1 = fb_get_layer_addr(DAT_208085b8);
   affft_spectrum_draw(uVar1,0x145,0x195,0x187,param_1);
-  FUN_20120d90();
+  affft_wf_add_row();
   affft_waterfall_blit(uVar1,0x16d,0x195,0x187,0x27);
   osc_draw(uVar1,0x145,4,0,0x4f,param_1);
   return;
@@ -823,7 +841,7 @@ void scope2d_draw_normal(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -883,7 +901,7 @@ void scope2d_draw_multi(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -931,7 +949,7 @@ void osc_draw(int param_1,int param_2,int param_3,undefined4 param_4,int param_5
   byte local_338 [788];
   
   iVar3 = 0;
-  FUN_20120da4(param_6,local_338);
+  osc_column_pairs(param_6,local_338);
   iVar4 = param_3 + 0x187;
   for (; param_3 < iVar4; param_3 = param_3 + 1) {
     iVar1 = 1;
@@ -977,8 +995,8 @@ void scope_front_trace_draw
   undefined2 local_3e8 [240];
   undefined2 local_208 [242];
   
-  iVar2 = FUN_2013437c(param_6,abStack_708);
-  iVar3 = FUN_20134398(param_6);
+  iVar2 = scope_levels_get(param_6,abStack_708);
+  iVar3 = scope_ramp_get(param_6);
   iVar8 = *(int *)(iVar2 + 4);
   iVar4 = *(int *)(iVar3 + 4);
   iVar3 = (uint)*param_7 - param_3;
@@ -1061,7 +1079,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -1096,7 +1114,7 @@ void scope2d_draw_expand(int param_1,void *param_2)
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
   scope_history_push((uint)DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    FUN_20134414(DAT_208084d2);
+    scope_wf_add_row(DAT_208084d2);
   }
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
@@ -1115,7 +1133,7 @@ void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int pa
   int iVar1;
   
   while (param_5 = param_5 + -1, -1 < param_5) {
-    iVar1 = FUN_20120d98(param_5);
+    iVar1 = affft_wf_row_addr(param_5);
     fb_blit_raw(param_1,param_2 + param_5 & 0xffff,param_3,iVar1,param_4,1);
   }
   return;
@@ -1133,14 +1151,14 @@ void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,u
   uint uVar2;
   
   if ((param_5 & 1) != 0) {
-    iVar1 = FUN_20134434(param_5 >> 1);
+    iVar1 = scope_wf_row_addr(param_5 >> 1);
     fb_blit_raw(param_1,param_2 + (param_5 >> 1) * 2 & 0xffff,param_3,iVar1 + param_3 * 2,param_4,1)
     ;
   }
   param_5 = param_5 >> 1;
   fb_fill_box(param_1,param_2 - 1U & 0xffff,param_3,param_4,1,0);
   while (param_5 = param_5 - 1, -1 < (int)param_5) {
-    iVar1 = FUN_20134434(param_5);
+    iVar1 = scope_wf_row_addr(param_5);
     uVar2 = param_2 + param_5 * 2;
     iVar1 = iVar1 + param_3 * 2;
     fb_blit_raw(param_1,uVar2 & 0xffff,param_3,iVar1,param_4,1);
@@ -1171,7 +1189,7 @@ void scope2d_spectrum_fill
   byte abStack_348 [800];
   int local_28;
   
-  FUN_2013437c(param_6,abStack_348);
+  scope_levels_get(param_6,abStack_348);
   uVar2 = DAT_208084cc;
   param_4 = param_4 + param_3;
   iVar1 = param_3 + -0x348;
@@ -1242,7 +1260,7 @@ void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefin
   undefined2 *puVar7;
   byte local_1b0 [396];
   
-  iVar2 = FUN_20120d60(param_5,local_1b0);
+  iVar2 = affft_spectrum_columns(param_5,local_1b0);
   param_2 = param_2 * 800;
   iVar5 = 0;
   if (0 < iVar2) {
@@ -2116,7 +2134,7 @@ void mouse_cursor_task_create(int param_1)
 {
   uint uVar1;
   
-  uVar1 = itron_acre_tsk(0,&ctsk_mouse_cursor_5700);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_5700);
   if (0 < (int)uVar1) {
     mouse_cursor_obj_init(param_1 + 4);
     uVar1 = itron_sta_tsk(uVar1,param_1 + 4);
@@ -2160,9 +2178,12 @@ void FUN_2015f05c(int param_1)
 }
 
 
-// ===== FUN_2015f098 @ 2015f098 (28 bytes)
+// ===== kbdobj_set_device @ 2015f098 (28 bytes)
 
-void FUN_2015f098(int param_1,undefined4 param_2,int param_3)
+/* (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active
+   flag +0x80 when not present; usbkbd_attach / usbkbd_detach [fact] */
+
+void kbdobj_set_device(int param_1,undefined4 param_2,int param_3)
 
 {
   *(char *)(param_1 + 0x81) = (char)param_3;
@@ -2174,9 +2195,11 @@ void FUN_2015f098(int param_1,undefined4 param_2,int param_3)
 }
 
 
-// ===== FUN_2015f0b4 @ 2015f0b4 (16 bytes)
+// ===== kbdobj_activate @ 2015f0b4 (16 bytes)
 
-void FUN_2015f0b4(int param_1)
+/* (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) [fact] */
+
+void kbdobj_activate(int param_1)
 
 {
   *(undefined1 *)(param_1 + 0x80) = 1;
@@ -2185,9 +2208,11 @@ void FUN_2015f0b4(int param_1)
 }
 
 
-// ===== FUN_2015f0c4 @ 2015f0c4 (8 bytes)
+// ===== kbdobj_flush @ 2015f0c4 (8 bytes)
 
-void FUN_2015f0c4(int param_1)
+/* (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all [fact] */
+
+void kbdobj_flush(int param_1)
 
 {
   ring16_reset(param_1 + 0x88);
@@ -2195,9 +2220,11 @@ void FUN_2015f0c4(int param_1)
 }
 
 
-// ===== FUN_2015f0cc @ 2015f0cc (20 bytes)
+// ===== kbdobj_ctor @ 2015f0cc (20 bytes)
 
-int FUN_2015f0cc(int param_1)
+/* (obj): constructs the key ring at +0x88 (ring16_ctor) [fact] */
+
+int kbdobj_ctor(int param_1)
 
 {
   int iVar1;

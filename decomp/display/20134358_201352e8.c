@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_20134358 @ 20134358 (68 bytes)
+// ===== scope3d_vscale @ 20134358 (68 bytes)
 
-undefined2 FUN_20134358(int param_1,int param_2)
+/* (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9)
+   (gui.md 3DSS step 4) [fact] */
+
+undefined2 scope3d_vscale(int param_1,int param_2)
 
 {
   undefined2 uVar1;
@@ -56,19 +59,25 @@ undefined2 scope3d_line_offset(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2013437c @ 2013437c (20 bytes)
+// ===== scope_levels_get @ 2013437c (20 bytes)
 
-void FUN_2013437c(undefined4 param_1,undefined4 param_2)
+/* (index, out): per-column levels of the scope object for layout index / mode (method 0x20157C50,
+   gui.md) [fact] */
+
+void scope_levels_get(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_20157c50(&DAT_2047963c,param_1,param_2,0);
+  scope_obj_levels_get(&DAT_2047963c,param_1,param_2,0);
   return;
 }
 
 
-// ===== FUN_20134390 @ 20134390 (8 bytes)
+// ===== scope_record_hold_copy @ 20134390 (8 bytes)
 
-void FUN_20134390(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* Copies the 850-byte scope record to the hold copy 0x2048360D (spi-links.md) [fact for the doc;
+   the 8-byte body tail-calls into 0x20157C50] */
+
+void scope_record_hold_copy(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined *puVar1;
@@ -98,9 +107,12 @@ LAB_20157cc4:
 }
 
 
-// ===== FUN_20134398 @ 20134398 (44 bytes)
+// ===== scope_ramp_get @ 20134398 (44 bytes)
 
-void FUN_20134398(int param_1)
+/* (mode 8/9/other): second colour ramp from the objects 0x20474D04 / 0x20478550 / 0x20474C78
+   (gui.md 3DSS front trace) [fact] */
+
+void scope_ramp_get(int param_1)
 
 {
   if (param_1 == 8) {
@@ -137,45 +149,57 @@ void FUN_201343ec(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== FUN_20134408 @ 20134408 (36 bytes)
+// ===== scope3d_line_markers @ 20134408 (36 bytes)
 
-int FUN_20134408(int param_1)
+/* (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line)
+   [fact] */
+
+int scope3d_line_markers(int param_1)
 
 {
   return param_1 * 0x54 + 0x20489720;
 }
 
 
-// ===== FUN_20134414 @ 20134414 (16 bytes)
+// ===== scope_wf_add_row @ 20134414 (16 bytes)
 
-void FUN_20134414(undefined4 param_1)
+/* (record): adds a waterfall row to the scope object (method 0x20157D3C, gui.md 2D renderer step 2)
+   [fact] */
+
+void scope_wf_add_row(undefined4 param_1)
 
 {
-  FUN_20157d3c(&DAT_2047963c,param_1,0);
+  scope_obj_wf_add_row(&DAT_2047963c,param_1,0);
   return;
 }
 
 
-// ===== FUN_20134424 @ 20134424 (16 bytes)
+// ===== scope_wf_add_row_mode @ 20134424 (16 bytes)
 
-void FUN_20134424(undefined4 param_1,undefined4 param_2)
+/* (record, mode): scope_obj_wf_add_row(0x2047963C, record, mode); scope_wf_add_row passes mode 0
+   [fact] */
+
+void scope_wf_add_row_mode(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_20157d3c(&DAT_2047963c,param_1,param_2);
+  scope_obj_wf_add_row(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
-// ===== FUN_20134434 @ 20134434 (116 bytes)
+// ===== scope_wf_row_addr @ 20134434 (116 bytes)
 
-int FUN_20134434(uint param_1,undefined4 param_2)
+/* (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row
+   (gui.md) [fact] */
+
+int scope_wf_row_addr(uint param_1,undefined4 param_2)
 
 {
   int iVar1;
   
-  iVar1 = FUN_2016479c(&DAT_204fc5f0,~param_1,param_2);
+  iVar1 = ring133_offset(&DAT_204fc5f0,~param_1,param_2);
   if (DAT_20450280 == 1) {
-    iVar1 = FUN_2016479c(&DAT_204fc5ec,~param_1);
+    iVar1 = ring133_offset(&DAT_204fc5ec,~param_1);
   }
   return DAT_20450280 * 0x33f40 + iVar1 * 0x640 + 0x2049476c;
 }
@@ -212,9 +236,12 @@ void FUN_20134474(undefined4 param_1)
 }
 
 
-// ===== FUN_20134480 @ 20134480 (120 bytes)
+// ===== scope3d_layout_set @ 20134480 (120 bytes)
 
-void FUN_20134480(int param_1)
+/* (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables
+   0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) [fact] */
+
+void scope3d_layout_set(int param_1)
 
 {
   DAT_2047c848 = (undefined1)param_1;
@@ -237,22 +264,26 @@ void FUN_20134480(int param_1)
 }
 
 
-// ===== FUN_2013448c @ 2013448c (12 bytes)
+// ===== scope_reset_bank0 @ 2013448c (12 bytes)
 
-void FUN_2013448c(undefined4 param_1)
+/* scope_obj_reset_bank0(0x2047963C) [fact] */
+
+void scope_reset_bank0(undefined4 param_1)
 
 {
-  FUN_201578c8(&DAT_2047963c,param_1);
+  scope_obj_reset_bank0(&DAT_2047963c,param_1);
   return;
 }
 
 
-// ===== FUN_20134498 @ 20134498 (8 bytes)
+// ===== scope_reset_bank1 @ 20134498 (8 bytes)
 
-void FUN_20134498(void)
+/* scope_obj_reset_bank1(0x2047963C) [fact] */
+
+void scope_reset_bank1(void)
 
 {
-  FUN_20158568(&DAT_2047963c);
+  scope_obj_reset_bank1(&DAT_2047963c);
   return;
 }
 
@@ -266,12 +297,14 @@ void * scope_frame_buf(void)
 }
 
 
-// ===== FUN_201344a8 @ 201344a8 (8 bytes)
+// ===== scope_indices_clear @ 201344a8 (8 bytes)
 
-void FUN_201344a8(void)
+/* scope_obj_indices_clear(0x2047963C) [fact] */
+
+void scope_indices_clear(void)
 
 {
-  FUN_20158590(&DAT_2047963c);
+  scope_obj_indices_clear(&DAT_2047963c);
   return;
 }
 
@@ -469,9 +502,13 @@ void debug_screenshot_root(void)
 }
 
 
-// ===== FUN_20134978 @ 20134978 (860 bytes)
+// ===== sdmenu_scr_search_files @ 20134978 (860 bytes)
 
-void FUN_20134978(int param_1)
+/* scr_sd_menu byte 1 = 1..4: title from 0x208085FC, "Searching files...", builds the file list
+   (sdmenu_list_files -> 0x209096B0, count 0x20909CF0) and answers 0xC3 (byte 1 + 0x40);
+   mainlink_send_sd_absent without a card [fact] */
+
+void sdmenu_scr_search_files(int param_1)
 
 {
   byte bVar1;
@@ -501,7 +538,7 @@ void FUN_20134978(int param_1)
   fb_fill_rect(uVar3,0x4a69,0x1e,3,0x31a,0x1c0);
   gui_draw_runs32(uVar3,0x1e,3,&DAT_203e5e2c);
   gui_draw_text_centered(uVar3,0x2042824e,0xdc,400,0xc,0x20803bc0);
-  FUN_201363c0(uVar3,0x60,700,0x5e,0x13b,0,0,5,0x821);
+  gui_scrollbar_draw(uVar3,0x60,700,0x5e,0x13b,0,0,5,0x821);
   fb_fill_rect(uVar3,0x821,0x1f,0x2ba,0x62,0x3c);
   gui_draw_runs(uVar3,0x1f,0x2ba,&DAT_2016dc48);
   gui_draw_runs(uVar3,0x37,0x2dd,&DAT_2016dc58);
@@ -543,7 +580,7 @@ void FUN_20134978(int param_1)
     mainlink_queue_frame(&local_64,0x22);
     return;
   }
-  DAT_20909cf0 = FUN_2010ef88(uVar5 != 1 && uVar5 != 2,&DAT_209096b0,100);
+  DAT_20909cf0 = sdmenu_list_files(uVar5 != 1 && uVar5 != 2,&DAT_209096b0,100);
   iVar4 = sd_state_bit7();
   if (iVar4 == 0) {
     mainlink_send_sd_absent();
@@ -567,9 +604,12 @@ void FUN_20134978(int param_1)
 }
 
 
-// ===== FUN_20134984 @ 20134984 (944 bytes)
+// ===== sdmenu_scr_file_list @ 20134984 (944 bytes)
 
-void FUN_20134984(int param_1)
+/* scr_sd_menu 0x41..0x44 step 1: draws the file rows (75-px pitch, highlight frame 0xF980 for the
+   selected row, scroll bar gui_scrollbar_draw with count 0x20909CF0) [fact] */
+
+void sdmenu_scr_file_list(int param_1)
 
 {
   byte bVar1;
@@ -623,7 +663,7 @@ void FUN_20134984(int param_1)
     fb_draw_round_frame(uVar2,uVar6 * 0x4b + 0x1e,3,0x2b2,0x4f,3,0xf980);
   }
 LAB_20161e8c:
-  FUN_201363c0(uVar2,0x60,700,0x5e,0x13b,(uint)bVar1,DAT_20909cf0,5,0x821);
+  gui_scrollbar_draw(uVar2,0x60,700,0x5e,0x13b,(uint)bVar1,DAT_20909cf0,5,0x821);
   fb_fill_rect(uVar2,0x821,0x1f,0x2ba,0x62,0x3c);
   gui_draw_runs(uVar2,0x1f,0x2ba,&DAT_2016dc48);
   gui_draw_runs(uVar2,0x37,0x2dd,&DAT_2016dc58);
@@ -634,9 +674,12 @@ LAB_20161e8c:
 }
 
 
-// ===== FUN_20134990 @ 20134990 (692 bytes)
+// ===== sdmenu_scr_loading @ 20134990 (692 bytes)
 
-bool FUN_20134990(int param_1)
+/* scr_sd_menu 0x41/0x43 step 0x10: "LOADING", sdmenu_select_load + sdmenu_request loop with
+   progress bar, then sdmenu_req_save; returns non-zero when the transfer to MAIN follows [fact] */
+
+bool sdmenu_scr_loading(int param_1)
 
 {
   byte bVar1;
@@ -711,7 +754,7 @@ bool FUN_20134990(int param_1)
   local_60 = 0;
   if (cVar4 == '\x01') {
     local_80 = (uint)(ushort)local_80;
-    FUN_20135488(32000,(int)&local_80 + 3);
+    be16_store(32000,(int)&local_80 + 3);
 LAB_201615c8:
     if (local_34 == 0) {
       sdmenu_req_save((uint)(uVar7 != 0x41),32000);
@@ -740,9 +783,12 @@ LAB_201615c8:
 }
 
 
-// ===== FUN_2013499c @ 2013499c (408 bytes)
+// ===== sdmenu_scr_load_wait @ 2013499c (408 bytes)
 
-void FUN_2013499c(int param_1)
+/* scr_sd_menu step 0x10 after sdmenu_scr_loading: "PROCESSING", progress bar from sdmenu_xfer_len
+   until all bytes went or MAIN's frame changes [fact] */
+
+void sdmenu_scr_load_wait(int param_1)
 
 {
   byte bVar1;
@@ -771,8 +817,7 @@ void FUN_2013499c(int param_1)
     iVar4 = sdmenu_xfer_len();
     uVar5 = __aeabi_idivmod(iVar4 * 100,d);
     gui_draw_progress_bar(uVar3,0xf0,0x129,(uint)uVar5 & 0xffff);
-    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs((ml_frame *)param_1), bVar2))
-    break;
+    if (((int)d <= iVar4) || (bVar2 = mainlink_last_frame_differs(param_1), bVar2)) break;
     vdc5_wait_frames(1);
     gui_update_layers();
     itron_tslp_tsk(0xffffffff);
@@ -782,9 +827,12 @@ void FUN_2013499c(int param_1)
 }
 
 
-// ===== FUN_201349a8 @ 201349a8 (232 bytes)
+// ===== sdmenu_scr_name_check @ 201349a8 (232 bytes)
 
-void FUN_201349a8(int param_1)
+/* scr_sd_menu 0x42/0x44 step 2: default file name (sdmenu_default_name) or sdmenu_file_exists for
+   the chosen row, answer in a 0xC3 frame [fact] */
+
+void sdmenu_scr_name_check(int param_1)
 
 {
   char cVar1;
@@ -846,9 +894,12 @@ void FUN_201349a8(int param_1)
 }
 
 
-// ===== FUN_201349b4 @ 201349b4 (236 bytes)
+// ===== sdmenu_scr_name_lookup @ 201349b4 (236 bytes)
 
-void FUN_201349b4(int param_1)
+/* scr_sd_menu 0x42/0x44 step 3: finds the typed name (strcasecmp over the 16-byte list 0x209096B0)
+   and checks sdmenu_file_exists, answer in 0xC3 [fact] */
+
+void sdmenu_scr_name_lookup(int param_1)
 
 {
   char cVar1;
@@ -908,9 +959,12 @@ void FUN_201349b4(int param_1)
 }
 
 
-// ===== FUN_201349c0 @ 201349c0 (584 bytes)
+// ===== sdmenu_scr_save_xfer @ 201349c0 (584 bytes)
 
-void FUN_201349c0(ml_frame *param_1)
+/* scr_sd_menu 0x42/0x44 step 4: "PROCESSING", sdmenu_req_load, progress from sdmenu_xfer_len until
+   done or MAIN's frame changes [fact] */
+
+void sdmenu_scr_save_xfer(uint param_1)
 
 {
   byte bVar1;
@@ -934,8 +988,8 @@ void FUN_201349c0(ml_frame *param_1)
   undefined1 auStack_4b [39];
   
   uVar4 = fb_get_layer_addr(DAT_208085bc);
-  bVar1 = param_1->byte1;
-  uVar3 = be16_load(&param_1->vfo_flags);
+  bVar1 = *(byte *)(param_1 + 1);
+  uVar3 = be16_load((byte *)(param_1 + 3));
   fb_clear_rect(uVar4,0,0,800,0x1e0);
   fb_fill_rect(uVar4,0x3186,3,3,0x31a,0x18);
   gui_draw_runs(uVar4,3,3,&DAT_2016dc08);
@@ -986,9 +1040,12 @@ void FUN_201349c0(ml_frame *param_1)
 }
 
 
-// ===== FUN_201349cc @ 201349cc (708 bytes)
+// ===== sdmenu_scr_saving @ 201349cc (708 bytes)
 
-void FUN_201349cc(int param_1)
+/* scr_sd_menu 0x42/0x44 step 0x10: "SAVING", blank name -> sdmenu_default_name, sdmenu_select +
+   sdmenu_request loop with progress bar, answer 0xC3 [fact] */
+
+void sdmenu_scr_saving(int param_1)
 
 {
   byte bVar1;
@@ -1095,9 +1152,11 @@ void FUN_201349cc(int param_1)
 }
 
 
-// ===== FUN_201349d8 @ 201349d8 (424 bytes)
+// ===== sdmenu_scr_info @ 201349d8 (424 bytes)
 
-void FUN_201349d8(int param_1)
+/* scr_sd_menu byte 1 = 5: sd_info_screen(0x20909CF4) and a 0xC3 answer [fact] */
+
+void sdmenu_scr_info(int param_1)
 
 {
   byte bVar1;
@@ -1163,9 +1222,12 @@ void FUN_201349d8(int param_1)
 }
 
 
-// ===== FUN_201349e4 @ 201349e4 (524 bytes)
+// ===== sdmenu_scr_info_text @ 201349e4 (524 bytes)
 
-void FUN_201349e4(int param_1)
+/* scr_sd_menu 0x45: draws the two text lines 0x20909CF4 / 0x20909D34 that sd_info_screen filled,
+   with separators [fact] */
+
+void sdmenu_scr_info_text(int param_1)
 
 {
   byte bVar1;
@@ -1195,9 +1257,11 @@ void FUN_201349e4(int param_1)
 }
 
 
-// ===== FUN_201349f0 @ 201349f0 (348 bytes)
+// ===== sdmenu_scr_card_check @ 201349f0 (348 bytes)
 
-void FUN_201349f0(int param_1)
+/* scr_sd_menu byte 1 = 8: sd_present -> 0xC3 answer with status 1 (card) or 0 [fact] */
+
+void sdmenu_scr_card_check(int param_1)
 
 {
   byte bVar1;
@@ -1259,9 +1323,11 @@ void FUN_201349f0(int param_1)
 }
 
 
-// ===== FUN_201349fc @ 201349fc (560 bytes)
+// ===== sdmenu_scr_format_confirm @ 201349fc (560 bytes)
 
-void FUN_201349fc(int param_1)
+/* scr_sd_menu 0x48 step 1: "FORMAT SD CARD" confirmation screen [fact] */
+
+void sdmenu_scr_format_confirm(int param_1)
 
 {
   byte bVar1;
@@ -1295,9 +1361,12 @@ void FUN_201349fc(int param_1)
 }
 
 
-// ===== FUN_20134a08 @ 20134a08 (496 bytes)
+// ===== sdmenu_scr_format_run @ 20134a08 (496 bytes)
 
-void FUN_20134a08(int param_1)
+/* scr_sd_menu 0x48 step 0x10: "Now format in progress...", sd_format_request loop with progress
+   bar, sd_format_done, answer 0xC3 [fact] */
+
+void sdmenu_scr_format_run(int param_1)
 
 {
   byte bVar1;
@@ -1527,15 +1596,15 @@ LAB_20134cec:
 
 /* meter scale + type label on graphics 0 */
 
-void meter_draw_scale(ml_frame *frame,ml_frame *old,int param_3)
+void meter_draw_scale(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
   uint uVar2;
   
   iVar1 = fb_get_layer_addr(0);
-  uVar2 = frame->meter_sel & 7;
-  if (param_3 != 0 || uVar2 != (old->meter_sel & 7)) {
+  uVar2 = *(byte *)(param_1 + 0xb) & 7;
+  if (param_3 != 0 || uVar2 != (*(byte *)(param_2 + 0xb) & 7)) {
     if (5 < uVar2) {
       uVar2 = 5;
     }
@@ -1557,15 +1626,17 @@ void test_disp_init(void)
 
 {
   uint uVar1;
-  t_cflg local_18;
+  undefined4 local_18;
+  undefined4 uStack_14;
+  undefined4 local_10;
   
-  local_18.flgatr = 2;
-  local_18.iflgptn = 0;
-  local_18.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_18);
+  local_18 = 2;
+  uStack_14 = 0;
+  local_10 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_18);
   if (0 < (int)uVar1) {
     DAT_20808934 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_test_disp);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_test_disp);
     if (0 < (int)uVar1) {
       DAT_20808938 = uVar1;
       itron_sta_tsk(uVar1,0);
@@ -1663,7 +1734,7 @@ undefined4 debug_replay_send_cmd(void)
   ushort local_e5c;
   undefined2 local_e5a;
   char local_e58 [3000];
-  ml_frame local_2a0;
+  char local_2a0 [576];
   undefined1 auStack_60 [64];
   
   iVar2 = sd_state_bit6();
@@ -1679,17 +1750,17 @@ undefined4 debug_replay_send_cmd(void)
         cVar1 = local_e58[0];
         if (uVar4 == 0xffffffff) break;
         if (uVar4 == 1) {
-          __aeabi_memclr4(&local_2a0,0x240);
+          __aeabi_memclr4(local_2a0,0x240);
           uVar4 = 0;
           do {
             if ((&DAT_2080893c)[uVar4 * 0xc] == cVar1) {
-              __aeabi_memcpy4(&local_2a0,local_e58,local_e5a);
+              __aeabi_memcpy4(local_2a0,local_e58,local_e5a);
               break;
             }
             uVar4 = uVar4 + 1;
           } while (uVar4 < 0x1a);
-          if (local_2a0.cmd != 0) {
-            mainlink_set_last_frame(&local_2a0);
+          if (local_2a0[0] != '\0') {
+            mainlink_set_last_frame((uint)local_2a0);
           }
           itron_dly_tsk(local_e5c / 10);
         }

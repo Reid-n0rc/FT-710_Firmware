@@ -40,7 +40,7 @@ bool sd_present(void)
 {
   int iVar1;
   
-  iVar1 = FUN_20103bc0();
+  iVar1 = sd_drive_flag5();
   return iVar1 != 0;
 }
 
@@ -179,7 +179,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
   
   progress_range_init(&local_28,1,5);
   progress_set(local_28);
-  iVar1 = FUN_2013fba0();
+  iVar1 = sd_clmap_prepare();
   if (iVar1 != 0) {
     return iVar1;
   }
@@ -226,9 +226,9 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
     scope3d_tables_init();
     gui_scope_draw_hold_set(0);
     if (iVar1 == 0) {
-      FUN_2013fc4c(1);
+      sd_mutex_lock(1);
       uVar3 = fs_fclose(uVar2);
-      FUN_2013fc4c(0);
+      sd_mutex_lock(0);
       progress_set(100);
     }
     else {
@@ -386,14 +386,14 @@ byte sd_make_dirs(void)
   uint uVar2;
   int iVar3;
   
-  FUN_20103bc8(1);
+  sd_monitor_request(1);
   itron_dly_tsk(0x14);
   uVar1 = sd_format('I');
   if ((uVar1 != 0) && (uVar2 = sd_card_detect(), uVar2 != 0)) {
     uVar1 = 0xffffffff;
     DAT_208001a2 = 5;
   }
-  FUN_20103bc8(0);
+  sd_monitor_request(0);
   itron_dly_tsk(0x14);
   if (uVar1 == 0) {
     iVar3 = fs_mkdir("I:\\FT-710");
@@ -702,15 +702,17 @@ void sdmenu_init(void)
 
 {
   uint uVar1;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 local_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  local_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if (0 < (int)uVar1) {
     DAT_208001a8 = uVar1;
-    uVar1 = itron_acre_tsk(0,&ctsk_sdmenu);
+    uVar1 = itron_acre_tsk(0,(byte *)&ctsk_sdmenu);
     if (0 < (int)uVar1) {
       itron_sta_tsk(uVar1,0);
     }
@@ -1068,7 +1070,7 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
 
 {
   uint uVar1;
-  scif_uart *psVar2;
+  int *piVar2;
   uint uVar3;
   int iVar4;
   undefined4 uVar5;
@@ -1082,9 +1084,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
   progress_set(uVar1);
   sfl_stream_init(auStack_3c,param_1,0,param_2);
   mainlink_rx_ctrl(1);
-  psVar2 = scif5_get(0);
-  (*(code *)psVar2->vtbl[1])(psVar2,0x54600,8,0,2);
-  uVar3 = sdr_relay_mode_cmd((int *)psVar2,'\x01');
+  piVar2 = scif5_get(0);
+  (**(code **)(*piVar2 + 4))(piVar2,0x54600,8,0,2);
+  uVar3 = sdr_relay_mode_cmd(piVar2,'\x01');
   uVar1 = 0;
   if (uVar3 != 0) {
     if (param_3 == 0) {
@@ -1105,7 +1107,7 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
         uVar5 = (undefined4)((ulonglong)uVar7 >> 0x20);
         uVar1 = progress_scale(auStack_24,uVar5,(int)uVar7,uVar5);
         progress_set(uVar1);
-        uVar1 = sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,iVar4,uVar6);
+        uVar1 = sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,iVar4,uVar6);
         if (uVar1 == 0) {
           return 0;
         }
@@ -1121,9 +1123,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
       if (uVar1 == 0) {
         progress_set(100);
         sfl_stream_init(auStack_3c,param_1,0,param_2);
-        sdr_spi_xfer_block((uint)psVar2,(uint)auStack_3c,0x240,uVar6);
+        sdr_spi_xfer_block((uint)piVar2,(uint)auStack_3c,0x240,uVar6);
       }
-      uVar1 = sdr_relay_mode_cmd((int *)psVar2,-0x7f);
+      uVar1 = sdr_relay_mode_cmd(piVar2,-0x7f);
     }
   }
   return uVar1;
@@ -1181,12 +1183,14 @@ uint sdr_debug_init(void)
 {
   uint uVar1;
   code *pcVar2;
-  t_cflg local_10;
+  undefined4 local_10;
+  undefined4 uStack_c;
+  undefined4 uStack_8;
   
-  local_10.flgatr = 2;
-  local_10.iflgptn = 0;
-  local_10.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_10);
+  local_10 = 2;
+  uStack_c = 0;
+  uStack_8 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_10);
   if ((int)uVar1 < 1) {
     pcVar2 = (code *)0x0;
   }

@@ -153,9 +153,14 @@ undefined4 FUN_2011aecc(uint param_1,int param_2,ushort *param_3,int param_4)
 }
 
 
-// ===== FUN_2011af34 @ 2011af34 (1052 bytes)
+// ===== vdc5_reg_read_data_control @ 2011af34 (1052 bytes)
 
-void FUN_2011af34(int param_1,uint param_2,char *param_3)
+/* Register part of r_vdc5_read_data_control: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ReadDataControl [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
 
 {
   undefined *puVar1;
@@ -268,9 +273,14 @@ LAB_2011b244:
 }
 
 
-// ===== FUN_2011b498 @ 2011b498 (868 bytes)
+// ===== vdc5_reg_change_read_process @ 2011b498 (868 bytes)
 
-void FUN_2011b498(int param_1,uint param_2,uint *param_3)
+/* Register part of r_vdc5_change_read_process: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ChangeReadProcess [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
 
 {
   undefined *puVar1;
@@ -424,9 +434,13 @@ void FUN_2011b6d8(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2011b8b8 @ 2011b8b8 (208 bytes)
+// ===== vdc5_reg_start_process @ 2011b8b8 (208 bytes)
 
-void FUN_2011b8b8(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_start_process: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_StartProcess [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_start_process(int param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -462,9 +476,13 @@ void FUN_2011b8b8(int param_1,int param_2,int *param_3)
 }
 
 
-// ===== FUN_2011b988 @ 2011b988 (192 bytes)
+// ===== vdc5_reg_stop_process @ 2011b988 (192 bytes)
 
-void FUN_2011b988(int param_1,int param_2)
+/* Register part of r_vdc5_stop_process: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_StopProcess
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_stop_process(int param_1,int param_2)
 
 {
   int iVar1;
@@ -529,9 +547,14 @@ void FUN_2011ba48(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011bb84 @ 2011bb84 (264 bytes)
+// ===== vdc5_reg_video_noise_reduction @ 2011bb84 (264 bytes)
 
-void FUN_2011bb84(int param_1,int param_2,byte *param_3)
+/* Register part of r_vdc5_video_noise_reduction: its only callee in the 0x201193EC..0x2011CA00
+   block, called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_VideoNoiseReduction [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_video_noise_reduction(int param_1,int param_2,byte *param_3)
 
 {
   int iVar1;
@@ -569,9 +592,14 @@ void FUN_2011bb84(int param_1,int param_2,byte *param_3)
 }
 
 
-// ===== FUN_2011bc8c @ 2011bc8c (36 bytes)
+// ===== vdc5_reg_image_color_matrix @ 2011bc8c (36 bytes)
 
-void FUN_2011bc8c(int param_1,byte *param_2)
+/* Register part of r_vdc5_image_color_matrix: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageColorMatrix [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_image_color_matrix(int param_1,byte *param_2)
 
 {
   FUN_2011a110(param_2[1],param_2 + 2,param_2 + 8,
@@ -664,10 +692,16 @@ void FUN_2011bd8c(int param_1,char *param_2,int param_3)
 }
 
 
-// ===== FUN_2011bf00 @ 2011bf00 (180 bytes)
+// ===== vdc5_reg_image_enhancement @ 2011bf00 (180 bytes)
 
-void FUN_2011bf00(int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
-                 undefined4 param_6,ushort *param_7)
+/* Register part of r_vdc5_image_enhancement: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageEnhancement [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_image_enhancement
+               (int param_1,int param_2,undefined4 param_3,undefined4 param_4,undefined4 param_5,
+               undefined4 param_6,ushort *param_7)
 
 {
   undefined4 *puVar1;
@@ -686,9 +720,14 @@ void FUN_2011bf00(int param_1,int param_2,undefined4 param_3,undefined4 param_4,
 }
 
 
-// ===== FUN_2011bfc4 @ 2011bfc4 (164 bytes)
+// ===== vdc5_reg_image_black_stretch @ 2011bfc4 (164 bytes)
 
-void FUN_2011bfc4(int param_1,int param_2,int param_3,ushort *param_4)
+/* Register part of r_vdc5_image_black_stretch: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ImageBlackStretch [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_image_black_stretch(int param_1,int param_2,int param_3,ushort *param_4)
 
 {
   undefined4 *puVar1;
@@ -714,9 +753,13 @@ void FUN_2011bfc4(int param_1,int param_2,int param_3,ushort *param_4)
 }
 
 
-// ===== FUN_2011c068 @ 2011c068 (176 bytes)
+// ===== vdc5_reg_alpha_blending @ 2011c068 (176 bytes)
 
-void FUN_2011c068(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_alpha_blending: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_AlphaBlending [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_alpha_blending(int param_1,int param_2,int *param_3)
 
 {
   undefined4 *puVar1;
@@ -803,9 +846,14 @@ void FUN_2011c174(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011c22c @ 2011c22c (308 bytes)
+// ===== vdc5_reg_alpha_blending_rect @ 2011c22c (308 bytes)
 
-void FUN_2011c22c(int param_1,int param_2,int param_3,undefined4 *param_4)
+/* Register part of r_vdc5_alpha_blending_rect: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_AlphaBlendingRect [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_alpha_blending_rect(int param_1,int param_2,int param_3,undefined4 *param_4)
 
 {
   short *psVar1;
@@ -858,27 +906,33 @@ void FUN_2011c22c(int param_1,int param_2,int param_3,undefined4 *param_4)
 }
 
 
-// ===== FUN_2011c360 @ 2011c360 (28 bytes)
+// ===== rgb5_to_8 @ 2011c360 (28 bytes)
 
-uint FUN_2011c360(ushort param_1)
+/* (v): 5-bit colour component scaled to 8 bits (v * 0x20E >> 5, rounded) [fact] */
+
+uint rgb5_to_8(ushort param_1)
 
 {
   return ((uint)((short)(param_1 & 0x1f) * 0x20e) >> 5) + 1 >> 1;
 }
 
 
-// ===== FUN_2011c37c @ 2011c37c (12 bytes)
+// ===== rgb4_to_8 @ 2011c37c (12 bytes)
 
-int FUN_2011c37c(uint param_1)
+/* (v): 4-bit colour component scaled to 8 bits (v * 0x11) [fact] */
+
+int rgb4_to_8(uint param_1)
 
 {
   return (param_1 & 0xf) * 0x11;
 }
 
 
-// ===== FUN_2011c388 @ 2011c388 (28 bytes)
+// ===== rgb6_to_8 @ 2011c388 (28 bytes)
 
-uint FUN_2011c388(ushort param_1)
+/* (v): 6-bit colour component scaled to 8 bits (v * 0x206 >> 6, rounded) [fact] */
+
+uint rgb6_to_8(ushort param_1)
 
 {
   return ((uint)((short)(param_1 & 0x3f) * 0x206) >> 6) + 1 >> 1;
@@ -896,22 +950,22 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
   
   switch(param_1) {
   case 0:
-    uVar3 = FUN_2011c360((param_2 & 0xffff) >> 0xb);
-    iVar1 = FUN_2011c388((param_2 & 0x7ff) >> 5);
-    iVar2 = FUN_2011c360(param_2 & 0x1f);
+    uVar3 = rgb5_to_8((param_2 & 0xffff) >> 0xb);
+    iVar1 = rgb6_to_8((param_2 & 0x7ff) >> 5);
+    iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 1:
     uVar3 = FUN_20119db8(param_2);
     return uVar3;
   case 2:
-    uVar3 = FUN_2011c360((param_2 & 0x7fff) >> 10);
-    iVar1 = FUN_2011c360((param_2 & 0x3ff) >> 5);
-    iVar2 = FUN_2011c360(param_2 & 0x1f);
+    uVar3 = rgb5_to_8((param_2 & 0x7fff) >> 10);
+    iVar1 = rgb5_to_8((param_2 & 0x3ff) >> 5);
+    iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 3:
-    uVar3 = FUN_2011c37c((param_2 & 0xfff) >> 8);
-    iVar1 = FUN_2011c37c((param_2 & 0xff) >> 4);
-    iVar2 = FUN_2011c37c(param_2 & 0xf);
+    uVar3 = rgb4_to_8((param_2 & 0xfff) >> 8);
+    iVar1 = rgb4_to_8((param_2 & 0xff) >> 4);
+    iVar2 = rgb4_to_8(param_2 & 0xf);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 4:
     uVar3 = FUN_20119db8(param_2 & 0xffffff);
@@ -919,9 +973,9 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
   default:
     return 0;
   case 10:
-    uVar3 = FUN_2011c360((param_2 & 0xffff) >> 0xb);
-    iVar1 = FUN_2011c360((param_2 & 0x7ff) >> 6);
-    iVar2 = FUN_2011c360((param_2 & 0x3f) >> 1);
+    uVar3 = rgb5_to_8((param_2 & 0xffff) >> 0xb);
+    iVar1 = rgb5_to_8((param_2 & 0x7ff) >> 6);
+    iVar2 = rgb5_to_8((param_2 & 0x3f) >> 1);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 0xb:
     uVar3 = FUN_20119db8(param_2 >> 8);
@@ -930,9 +984,13 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
 }
 
 
-// ===== FUN_2011c4d4 @ 2011c4d4 (224 bytes)
+// ===== vdc5_reg_chromakey @ 2011c4d4 (224 bytes)
 
-void FUN_2011c4d4(int param_1,int param_2,int param_3,byte *param_4)
+/* Register part of r_vdc5_chromakey: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Chromakey
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
 
 {
   int iVar1;
@@ -998,9 +1056,13 @@ void FUN_2011c5b4(uint *param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_2011c5e4 @ 2011c5e4 (264 bytes)
+// ===== vdc5_reg_clut @ 2011c5e4 (264 bytes)
 
-void FUN_2011c5e4(int param_1,int param_2,int *param_3)
+/* Register part of r_vdc5_clut: its only callee in the 0x201193EC..0x2011CA00 block, called after
+   the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_Clut [inference:
+   one register function per API, same order as the API functions] */
+
+void vdc5_reg_clut(int param_1,int param_2,int *param_3)
 
 {
   int iVar1;
@@ -1041,9 +1103,14 @@ LAB_2011c6d8:
 }
 
 
-// ===== FUN_2011c6ec @ 2011c6ec (368 bytes)
+// ===== vdc5_reg_display_calibration @ 2011c6ec (368 bytes)
 
-void FUN_2011c6ec(int param_1,char *param_2)
+/* Register part of r_vdc5_display_calibration: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_DisplayCalibration [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_display_calibration(int param_1,char *param_2)
 
 {
   int iVar1;
@@ -1146,9 +1213,14 @@ void FUN_2011c8a4(byte *param_1,undefined4 *param_2)
 }
 
 
-// ===== FUN_2011c950 @ 2011c950 (176 bytes)
+// ===== vdc5_reg_gamma_correction @ 2011c950 (176 bytes)
 
-void FUN_2011c950(int param_1,int param_2,undefined4 *param_3)
+/* Register part of r_vdc5_gamma_correction: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_GammaCorrection [inference: one register function per API, same order as the API functions]
+    */
+
+void vdc5_reg_gamma_correction(int param_1,int param_2,undefined4 *param_3)
 
 {
   **(uint **)(&DAT_201667d0 + param_1 * 0x130) = (uint)(param_2 != 0);
@@ -1493,9 +1565,14 @@ void FUN_2011d014(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011d080 @ 2011d080 (284 bytes)
+// ===== vdc5_shrd_init @ 2011d080 (284 bytes)
 
-void FUN_2011d080(int param_1)
+/* Shared-parameter update of r_vdc5_initialize (its caller): clears the per-channel resource states
+   0x208DCE04/0x208DCE16 and the channel record 0x208DCCC4 + 0x10*ch, the write records 0x208DCCE4
+   and the read records 0x208DCD2C [fact]; Renesas r_vdc5_shared_param.c [inference: writes only the
+   shared tables 0x208DCxxx] */
+
+void vdc5_shrd_init(int param_1)
 
 {
   int iVar1;
@@ -1552,9 +1629,13 @@ void FUN_2011d080(int param_1)
 }
 
 
-// ===== FUN_2011d19c @ 2011d19c (68 bytes)
+// ===== vdc5_shrd_set_init_param @ 2011d19c (68 bytes)
 
-void FUN_2011d19c(int param_1,char *param_2)
+/* Shared-parameter update of r_vdc5_initialize (its caller): stores the panel clock source (param
+   byte 0; 5/6 set +1) in 0x208DCCC4 + 0x10*ch and the LVDS byte in 0x2080040D [fact]; Renesas
+   r_vdc5_shared_param.c [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_set_init_param(int param_1,char *param_2)
 
 {
   (&DAT_208dccc4)[param_1 * 0x10] = *param_2;
@@ -1578,9 +1659,12 @@ void FUN_2011d1e0(int param_1)
 }
 
 
-// ===== FUN_2011d1f4 @ 2011d1f4 (84 bytes)
+// ===== vdc5_shrd_terminate @ 2011d1f4 (84 bytes)
 
-void FUN_2011d1f4(int param_1,char *param_2)
+/* Shared-parameter update of r_vdc5_terminate (its caller) [fact]; Renesas r_vdc5_shared_param.c
+   [inference: writes only the shared tables 0x208DCxxx] */
+
+void vdc5_shrd_terminate(int param_1,char *param_2)
 
 {
   (&DAT_2080040e)[param_1] = 1;

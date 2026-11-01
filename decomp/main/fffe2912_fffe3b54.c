@@ -1,26 +1,34 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffe2912 @ fffe2912 (6 bytes)
+// ===== kbd_edit_rtty_text @ fffe2912 (6 bytes)
 
-void FUN_fffe2912(void)
+/* Keyboard target 3 (RTTY TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 [fact:
+   fffe2912] */
 
-{
-  return;
-}
-
-
-// ===== FUN_fffe2918 @ fffe2918 (6 bytes)
-
-void FUN_fffe2918(void)
+void kbd_edit_rtty_text(void)
 
 {
   return;
 }
 
 
-// ===== FUN_fffe291e @ fffe291e (153 bytes)
+// ===== kbd_edit_psk_text @ fffe2918 (6 bytes)
 
-void FUN_fffe291e(char param_1)
+/* Keyboard target 4 (PSK TEXT) entry of kbd_key_dispatch: an empty function (RTS) in V01-12 [fact:
+   fffe2918] */
+
+void kbd_edit_psk_text(void)
+
+{
+  return;
+}
+
+
+// ===== kbd_edit_file_name @ fffe291e (153 bytes)
+
+/* Keyboard target 5 (FILE NAME) editor [fact: kbd_key_dispatch target 5] */
+
+void kbd_edit_file_name(char param_1)
 
 {
   byte *pbVar1;
@@ -38,7 +46,7 @@ void FUN_fffe291e(char param_1)
     }
     DAT_0001b552 = '\0';
   }
-  FUN_fffe29b7(0x20bc6,param_1);
+  kbd_edit_key(0x20bc6,param_1);
   if (param_1 != -0x7c) {
     if (param_1 == -0x7b) {
       DAT_0001b552 = 1;
@@ -57,7 +65,7 @@ void FUN_fffe291e(char param_1)
 }
 
 
-// ===== FUN_fffe29b7 @ fffe29b7 (294 bytes)
+// ===== kbd_edit_key @ fffe29b7 (294 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe2a1e) */
 /* WARNING: Removing unreachable block (ram,0xfffe2a9a) */
@@ -70,19 +78,22 @@ void FUN_fffe291e(char param_1)
 /* WARNING: Removing unreachable block (ram,0xfffe2a82) */
 /* WARNING: Removing unreachable block (ram,0xfffe2ad7) */
 /* WARNING: Removing unreachable block (ram,0xfffe2a07) */
+/* (text, key): the on-screen keyboard key handler: 0x08 backspace, 0x81 toggles layout 0/1, 0x82
+   layout 0, 0x83 layout 2, 0x84/0x85 close (cancel / ENT), 0x86/0x87 cursor left/right, else stores
+   the character at the cursor [fact: fffe29b7; display-link.md frame 0x50] */
 
-int FUN_fffe29b7(int param_1,char param_2)
+int kbd_edit_key(int param_1,char param_2)
 
 {
   byte bVar1;
   int iVar2;
   
   if (param_2 == '\b') {
-    iVar2 = FUN_fffe2add(param_1);
+    iVar2 = kbd_backspace(param_1);
     return iVar2;
   }
   if (param_2 == -0x79) {
-    iVar2 = FUN_fffe2bfd();
+    iVar2 = kbd_cursor_right();
     if (iVar2 == 0) {
       iVar2 = 3;
       beep_request(3);
@@ -115,7 +126,7 @@ int FUN_fffe29b7(int param_1,char param_2)
       return iVar2;
     }
     if (param_2 == -0x7a) {
-      iVar2 = FUN_fffe2bcd();
+      iVar2 = kbd_cursor_left();
       if (iVar2 == 0) {
         iVar2 = 3;
         beep_request(3);
@@ -138,7 +149,7 @@ int FUN_fffe29b7(int param_1,char param_2)
       beep_request(1);
       *(char *)((uint)PTR_g_ui_00025d6c->kbd_cursor + param_1) = param_2;
       bVar1 = PTR_g_ui_00025d6c->kbd_cursor;
-      iVar2 = FUN_fffe2b7a();
+      iVar2 = kbd_max_cursor();
       if ((int)(uint)bVar1 < iVar2) {
         PTR_g_ui_00025d6c->kbd_cursor = PTR_g_ui_00025d6c->kbd_cursor + 1;
         return iVar2;
@@ -149,9 +160,12 @@ int FUN_fffe29b7(int param_1,char param_2)
 }
 
 
-// ===== FUN_fffe2add @ fffe2add (157 bytes)
+// ===== kbd_backspace @ fffe2add (157 bytes)
 
-void FUN_fffe2add(int param_1)
+/* (text): deletes the character before the cursor (shifts the rest left, pads with a space; at the
+   last position clears it), beep 3 at position 0 [fact: fffe2add] */
+
+void kbd_backspace(int param_1)
 
 {
   byte bVar1;
@@ -164,7 +178,7 @@ void FUN_fffe2add(int param_1)
     return;
   }
   local_5 = PTR_g_ui_00025d6c->kbd_cursor;
-  bVar1 = FUN_fffe2b7a();
+  bVar1 = kbd_max_cursor();
   if ((bVar1 == PTR_g_ui_00025d6c->kbd_cursor) && (*(char *)((uint)local_5 + param_1) != ' ')) {
     *(undefined1 *)((uint)local_5 + param_1) = 0x20;
     return;
@@ -175,7 +189,7 @@ void FUN_fffe2add(int param_1)
     local_5 = local_5 + 1;
   }
   *(undefined1 *)(param_1 + (local_5 - 1)) = 0x20;
-  iVar2 = FUN_fffe2bcd();
+  iVar2 = kbd_cursor_left();
   if (iVar2 == 0) {
     beep_request(3);
     return;
@@ -184,9 +198,12 @@ void FUN_fffe2add(int param_1)
 }
 
 
-// ===== FUN_fffe2b7a @ fffe2b7a (83 bytes)
+// ===== kbd_max_cursor @ fffe2b7a (83 bytes)
 
-undefined1 FUN_fffe2b7a(void)
+/* Last cursor position for the keyboard target: 0xB (12 chars) for targets 0, 1, 6, 0x31 (50) for
+   CW TEXT, 0xE (15) for the others [fact: fffe2b7a] */
+
+undefined1 kbd_max_cursor(void)
 
 {
   uint uVar1;
@@ -218,9 +235,11 @@ undefined1 FUN_fffe2b7a(void)
 }
 
 
-// ===== FUN_fffe2bcd @ fffe2bcd (48 bytes)
+// ===== kbd_cursor_left @ fffe2bcd (48 bytes)
 
-bool FUN_fffe2bcd(void)
+/* Moves g_ui.kbd_cursor left while above 0; returns whether it moved [fact: fffe2bcd] */
+
+bool kbd_cursor_left(void)
 
 {
   bool bVar1;
@@ -233,11 +252,13 @@ bool FUN_fffe2bcd(void)
 }
 
 
-// ===== FUN_fffe2bfd @ fffe2bfd (54 bytes)
+// ===== kbd_cursor_right @ fffe2bfd (54 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe2c30) */
+/* Moves g_ui.kbd_cursor right while below kbd_max_cursor; returns whether it moved [fact: fffe2bfd]
+    */
 
-bool FUN_fffe2bfd(void)
+bool kbd_cursor_right(void)
 
 {
   bool bVar1;
@@ -245,7 +266,7 @@ bool FUN_fffe2bfd(void)
   int iVar3;
   
   bVar2 = PTR_g_ui_00025d6c->kbd_cursor;
-  iVar3 = FUN_fffe2b7a();
+  iVar3 = kbd_max_cursor();
   bVar1 = (int)(uint)bVar2 < iVar3;
   if (bVar1) {
     PTR_g_ui_00025d6c->kbd_cursor = PTR_g_ui_00025d6c->kbd_cursor + 1;
@@ -254,14 +275,17 @@ bool FUN_fffe2bfd(void)
 }
 
 
-// ===== FUN_fffe2c33 @ fffe2c33 (157 bytes)
+// ===== kbd_edit_preset_name @ fffe2c33 (157 bytes)
 
-void FUN_fffe2c33(char param_1)
+/* Keyboard target 6 (PRESET NAME) editor; uses menu_preset_name_ptr [fact: kbd_key_dispatch target
+   6] */
+
+void kbd_edit_preset_name(char param_1)
 
 {
   byte *pbVar1;
   
-  pbVar1 = (byte *)FUN_fffd30e8();
+  pbVar1 = (byte *)menu_preset_name_ptr();
   if (pbVar1 != (byte *)0x0) {
     if (DAT_0001b553 == '\x01') {
       DAT_0001886c = *(undefined4 *)(pbVar1 + 8);
@@ -269,7 +293,7 @@ void FUN_fffe2c33(char param_1)
       DAT_00018864 = *(undefined4 *)pbVar1;
       DAT_0001b553 = '\0';
     }
-    FUN_fffe29b7(PTR_g_ui_00025d6c->msg_text,param_1);
+    kbd_edit_key(PTR_g_ui_00025d6c->msg_text,param_1);
     if (param_1 == -0x7c) {
       *(undefined4 *)(pbVar1 + 8) = DAT_0001886c;
       *(undefined4 *)(pbVar1 + 4) = DAT_00018868;
@@ -374,9 +398,12 @@ void dispreq_e7_task(void)
 }
 
 
-// ===== FUN_fffe2ee4 @ fffe2ee4 (196 bytes)
+// ===== func_record_toggle @ fffe2ee4 (196 bytes)
 
-void FUN_fffe2ee4(void)
+/* FUNC menu slot 22 (RECORD/STOP): stops a scan; unless DVS is busy toggles g_ui.dvs_lm1_flag
+   (which dl37_slot_record shows as id 0x35 STOP) [fact: fffe2ee4] */
+
+void func_record_toggle(void)
 
 {
   bool bVar1;
@@ -419,9 +446,13 @@ void FUN_fffe2ee4(void)
 }
 
 
-// ===== FUN_fffe2fa8 @ fffe2fa8 (283 bytes)
+// ===== func_play_open @ fffe2fa8 (283 bytes)
 
-void FUN_fffe2fa8(void)
+/* FUNC menu slot 23 (PLAY): stops a scan; unless recording / DVS / keyer send runs, opens the
+   PlayList (playlist_open = playlist_req = 1, sub-state and row 0) and closes the FUNC panel [fact:
+   fffe2fa8] */
+
+void func_play_open(void)
 
 {
   bool bVar1;
@@ -597,9 +628,12 @@ void FUN_fffe3120(void)
 }
 
 
-// ===== FUN_fffe3121 @ fffe3121 (202 bytes)
+// ===== playlist_cursor_up @ fffe3121 (202 bytes)
 
-void FUN_fffe3121(void)
+/* Moves the PlayList cursor up one file (playlist_row, scrolling playlist_first when the list holds
+   more than 4 WAV files), requests a redraw (playlist_req, sub-state 1) [fact: fffe3121] */
+
+void playlist_cursor_up(void)
 
 {
   byte bVar1;
@@ -690,9 +724,12 @@ void FUN_fffe32b2(void)
 }
 
 
-// ===== FUN_fffe32fd @ fffe32fd (211 bytes)
+// ===== playlist_cursor_down @ fffe32fd (211 bytes)
 
-void FUN_fffe32fd(void)
+/* Moves the PlayList cursor down one file, scrolling while wav_count > 4, requests a redraw [fact:
+   fffe32fd] */
+
+void playlist_cursor_down(void)
 
 {
   ushort local_4;
@@ -1024,14 +1061,18 @@ void dispreq_e8_result(void)
 }
 
 
-// ===== FUN_fffe3979 @ fffe3979 (412 bytes)
+// ===== func_message_open @ fffe3979 (412 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffe3990) */
 /* WARNING: Removing unreachable block (ram,0xfffe3b12) */
 /* WARNING: Removing unreachable block (ram,0xfffe3b0f) */
 /* WARNING: Removing unreachable block (ram,0xfffe39bb) */
+/* FUNC menu item 0x15 (case 0x15 of func_menu_select): stops a scan, refuses while DVS / keyer send
+   / recording / PlayList run; otherwise opens the message-memory screen (g_ui.msgmem_open = 1,
+   msgmem_type 0 voice by msg_voice_mode_ok or 1 CW with the contest number) and closes the FUNC
+   panel; beep 3 when neither [fact: fffe3979] */
 
-int FUN_fffe3979(int param_1)
+int func_message_open(int param_1)
 
 {
   bool bVar1;

@@ -21,7 +21,7 @@ void menu_ex010514_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcabc2(param_1,g_opstate.ex010514_nar_width,5,param_4,param_5,param_1);
+  menu_draw_nar_width(param_1,g_opstate.ex010514_nar_width,5,param_4,param_5,param_1);
   return;
 }
 
@@ -314,7 +314,7 @@ void menu_ex020114_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcabc2(param_1,g_opstate.ex020114_nar_width,4,param_4,param_5,param_1);
+  menu_draw_nar_width(param_1,g_opstate.ex020114_nar_width,4,param_4,param_5,param_1);
   return;
 }
 
@@ -992,14 +992,17 @@ void menu_ex030105_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,g_opstate.ex030105_cat_1_rate,3,param_4,param_5,param_1);
+  menu_draw_cat_rate(param_1,g_opstate.ex030105_cat_1_rate,3,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcb9ba @ fffcb9ba (119 bytes)
+// ===== menu_draw_cat_rate @ fffcb9ba (119 bytes)
 
-void FUN_fffcb9ba(byte *param_1,byte param_2,byte param_3)
+/* (row, value, default) CAT RATE row: 4800..115200bps from 0xFFF8455B; callers
+   menu_ex030105/030108/030110_draw [fact: fffcb9ba] */
+
+void menu_draw_cat_rate(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -1039,14 +1042,17 @@ void menu_ex030106_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,g_opstate.ex030106_cat_1_time_out_timer,0,param_4,param_5,param_1);
+  menu_draw_cat_tot(param_1,g_opstate.ex030106_cat_1_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
 
-// ===== FUN_fffcba46 @ fffcba46 (119 bytes)
+// ===== menu_draw_cat_tot @ fffcba46 (119 bytes)
 
-void FUN_fffcba46(byte *param_1,byte param_2,byte param_3)
+/* (row, value, default) CAT TIME OUT TIMER row: 10/100/1000/3000msec from 0xFFF845C4; callers
+   menu_ex030106/030109/030111_draw [fact: fffcba46] */
+
+void menu_draw_cat_tot(byte *param_1,byte param_2,byte param_3)
 
 {
   byte *pbVar1;
@@ -1124,7 +1130,7 @@ void menu_ex030108_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,g_opstate.ex030108_cat_2_rate,0,param_4,param_5,param_1);
+  menu_draw_cat_rate(param_1,g_opstate.ex030108_cat_2_rate,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1137,7 +1143,7 @@ void menu_ex030109_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcba46(param_1,g_opstate.ex030109_cat_2_time_out_timer,0,param_4,param_5,param_1);
+  menu_draw_cat_tot(param_1,g_opstate.ex030109_cat_2_time_out_timer,0,param_4,param_5,param_1);
   return;
 }
 
@@ -1150,7 +1156,7 @@ void menu_ex030110_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
-  FUN_fffcb9ba(param_1,g_opstate.ex030110_cat_3_rate,3,param_4,param_5,param_1);
+  menu_draw_cat_rate(param_1,g_opstate.ex030110_cat_3_rate,3,param_4,param_5,param_1);
   return;
 }
 

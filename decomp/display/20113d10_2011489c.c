@@ -106,7 +106,7 @@ void mouse_cursor_init(void)
   
   __aeabi_memclr4(&DAT_208d9c40,0x5a0);
   DAT_20800330 = FUN_2015f040(&DAT_208d9c40);
-  uVar1 = itron_acre_tsk(0,&ctsk_mouse_cursor_56e4);
+  uVar1 = itron_acre_tsk(0,(byte *)&ctsk_mouse_cursor_56e4);
   if (0 < (int)uVar1) {
     itron_sta_tsk(uVar1,DAT_20800330);
     return;
@@ -299,11 +299,11 @@ void powon_init(void)
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 | 0xc00;
-  DAT_20800358 = itron_acre_flg(0,&cflg_powon);
+  DAT_20800358 = itron_acre_flg(0,(byte *)&cflg_powon);
   if (0 < (int)DAT_20800358) {
-    DAT_2080035c = itron_acre_tsk(0,&ctsk_powon);
+    DAT_2080035c = itron_acre_tsk(0,(byte *)&ctsk_powon);
     if (((0 < (int)DAT_2080035c) && (uVar2 = itron_sta_tsk(DAT_2080035c,0), uVar2 == 0)) &&
-       (uVar2 = itron_acre_isr(0,&cisr_powon_isr), 0 < (int)uVar2)) {
+       (uVar2 = itron_acre_isr(0,0x20165744), 0 < (int)uVar2)) {
       gic_enable_irq(0x25);
       return;
     }

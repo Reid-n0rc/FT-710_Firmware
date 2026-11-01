@@ -69,59 +69,63 @@ void vfo_filter_byte_ptr(void)
 }
 
 
-// ===== FUN_fffc4bd5 @ fffc4bd5 (121 bytes)
+// ===== vfo_mode_select @ fffc4bd5 (121 bytes)
 
-void FUN_fffc4bd5(byte mode)
+/* (mode): per-mode switch used by cat_MD and cat_NA: LSB/USB/CW/DATA/RTTY/PSK ->
+   mode_select_simple(mode); AM, AM-N, FM, FM-N, DATA-FM, DATA-FM-N -> their mode_popup_select
+   wrappers; 15 -> preset_toggle [fact: fffc4bd5] */
+
+void vfo_mode_select(byte mode)
 
 {
   switch(mode) {
   case 0:
-    FUN_fffc0d33(0);
+    mode_select_simple(0);
     return;
   case 1:
-    FUN_fffc0d33(1);
+    mode_select_simple(1);
     return;
   case 2:
-    FUN_fffc0d33(2);
+    mode_select_simple(2);
     return;
   case 3:
-    FUN_fffc0d33(3);
+    mode_select_simple(3);
     return;
   case 4:
-    FUN_fffc0e31();
+    mode_select_am();
     return;
   case 5:
-    FUN_fffc0e3e();
+    mode_select_am_n();
     return;
   case 6:
-    FUN_fffc0e4b();
+    mode_select_fm();
     return;
   case 7:
-    FUN_fffc0e58();
+    mode_select_fm_n();
     return;
   case 8:
-    FUN_fffc0d33(8);
+    mode_select_simple(8);
     return;
   case 9:
-    FUN_fffc0d33(9);
+    mode_select_simple(9);
     return;
   case 10:
-    FUN_fffc0e65();
+    mode_select_data_fm();
     return;
   case 0xb:
-    FUN_fffc0e72();
+    mode_select_data_fm_n();
     return;
   case 0xc:
-    FUN_fffc0d33(0xc);
+    mode_select_simple(0xc);
     return;
   case 0xd:
-    FUN_fffc0d33(0xd);
+    mode_select_simple(0xd);
     return;
   case 0xe:
-    FUN_fffc0d33(0xe);
+    mode_select_simple(0xe);
     return;
   case 0xf:
-    FUN_fffc0e7f();
+    preset_toggle();
     return;
   default:
     return;
@@ -153,7 +157,7 @@ void band_select_on(byte param_1,byte param_2)
 void FUN_fffc4c8b(undefined1 param_1)
 
 {
-  FUN_fffc1f2a(param_1);
+  func_menu_group_open(param_1);
   return;
 }
 
@@ -257,9 +261,13 @@ void FUN_fffc4d93(void)
 }
 
 
-// ===== FUN_fffc4dec @ fffc4dec (99 bytes)
+// ===== dsp_knob_reset @ fffc4dec (99 bytes)
 
-void FUN_fffc4dec(void)
+/* DSP key long press in the FUNC panel: resets the value of the current DSP-knob function: 0 shift,
+   1 width, 2 notch, 3 contour (or APF when dsp_knob_apf) of the active VFO [fact: fffc4dec]; only
+   caller key_dsp_release */
+
+void dsp_knob_reset(void)
 
 {
   bool bVar1;
@@ -269,24 +277,24 @@ void FUN_fffc4dec(void)
   bVar2 = PTR_g_ui_00025d54->dsp_knob_func;
   if (bVar2 == 3) {
     if (PTR_g_ui_00025d54->dsp_knob_apf != 0) {
-      FUN_fffc388d();
+      vfo_apf_reset();
       return;
     }
-    FUN_fffc3773(bVar1);
+    vfo_contour_reset(bVar1);
     return;
   }
   if (bVar2 == 1) {
-    FUN_fffc3582(bVar1);
+    vfo_width_reset(bVar1);
     return;
   }
   if (bVar2 == 2) {
-    FUN_fffc3659(bVar1);
+    vfo_notch_reset(bVar1);
     return;
   }
   if (bVar2 != 0) {
     return;
   }
-  FUN_fffc3503(bVar1);
+  vfo_shift_reset(bVar1);
   return;
 }
 
@@ -365,7 +373,7 @@ ushort vfo_filter_width_hz(void *param_1)
   }
 LAB_fffc4f4c:
   if (bVar2) {
-    local_c = FUN_fffb3775(local_7,local_9);
+    local_c = width_hz_of_index(local_7,local_9);
     if (param_1 != (void *)0x0) {
       *(char *)param_1 = (char)(local_c >> 8);
       *(char *)((int)param_1 + 1) = (char)local_c;
@@ -728,7 +736,7 @@ void enc_main_dial(byte param_1)
     FUN_fffc53dc(local_6,(int)(short)local_4);
     return;
   }
-  FUN_fffc5a84(local_6,(int)(short)local_4);
+  dial_steps_scale(local_6,(int)(short)local_4);
   return;
 }
 
@@ -1288,9 +1296,13 @@ undefined1 FUN_fffc59de(void)
 }
 
 
-// ===== FUN_fffc5a84 @ fffc5a84 (309 bytes)
+// ===== dial_steps_scale @ fffc5a84 (309 bytes)
 
-void FUN_fffc5a84(undefined1 param_1,ushort param_2)
+/* (dir, counts): divides the main-dial encoder counts by 4 / 2 / 1 for EX030506 MAIN STEPS PER REV
+   0 / 1 / 2 (digit-step mode: by 4), keeps the remainder in 0x1FF6A, then calls vfo_dial_tune with
+   the step count [fact: fffc5a84]; only caller enc_main_dial */
+
+void dial_steps_scale(undefined1 param_1,ushort param_2)
 
 {
   undefined1 local_1;
@@ -1336,16 +1348,21 @@ void FUN_fffc5a84(undefined1 param_1,ushort param_2)
     DAT_0001ff6a = 0;
     local_1 = param_1;
 LAB_fffc5bb0:
-    FUN_fffc5bb9(local_1);
+    vfo_dial_tune(local_1);
     return;
   }
   return;
 }
 
 
-// ===== FUN_fffc5bb9 @ fffc5bb9 (214 bytes)
+// ===== vfo_dial_tune @ fffc5bb9 (214 bytes)
 
-void FUN_fffc5bb9(undefined1 param_1)
+/* (steps): tunes the operating VFO (the other one with TXW swap): during a scan hands the steps to
+   the scan, refuses while transmitting without split; a memory channel first becomes memory tune
+   (vfo_mem_to_memtune), then FUN_fffc5e0a(side, steps) [fact: fffc5bb9]; callers dial_steps_scale,
+   FUN_fffc7eeb (enc3_step) */
+
+void vfo_dial_tune(undefined1 param_1)
 
 {
   bool bVar1;
@@ -1580,7 +1597,7 @@ uint FUN_fffc5ec4(byte param_1,uint param_2)
     uVar3 = local_10[0];
   }
   local_10[0] = uVar3;
-  uVar3 = FUN_fffc616e(local_1);
+  uVar3 = dial_step_hz(local_1);
   local_10[0] = uVar3 + local_10[0];
   bVar2 = FUN_fffc5f2c(local_1,local_10);
   if (bVar2 == 1) {
@@ -1714,7 +1731,7 @@ uint FUN_fffc6073(byte param_1,uint param_2)
   local_8 = param_2;
   local_1 = param_1;
   if ((!bVar1) || (bVar1 = FUN_fffc6103(param_1,&local_8,(int *)local_10), bVar1)) {
-    uVar3 = FUN_fffc616e(local_1);
+    uVar3 = dial_step_hz(local_1);
     if (local_10[0] < uVar3) {
       local_10[0] = 0;
     }

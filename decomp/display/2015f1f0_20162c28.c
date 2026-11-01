@@ -165,26 +165,34 @@ undefined4 fwdbg_task_create(uint *param_1)
 {
   uint uVar1;
   undefined4 uVar2;
-  t_cflg local_38;
-  t_ctsk local_2c;
+  undefined4 local_38;
+  undefined4 local_34;
+  undefined4 local_30;
+  undefined4 local_2c;
+  undefined4 local_28;
+  code *local_24;
+  undefined4 local_20;
+  undefined4 local_1c;
+  undefined4 local_18;
+  undefined4 local_14;
   
-  local_2c.tskatr = 0;
-  local_2c.exinf = 0;
-  local_2c.task = (uint)task_fwdbg;
-  local_2c.itskpri = 5;
-  local_2c.stksz = 0x2000;
-  local_2c.stk = (byte *)0x0;
-  local_2c.name = (char *)0x0;
-  local_38.flgatr = 2;
-  local_38.iflgptn = 0;
-  local_38.name = (char *)0x0;
-  uVar1 = itron_acre_flg(0,&local_38);
+  local_2c = 0;
+  local_28 = 0;
+  local_24 = task_fwdbg;
+  local_20 = 5;
+  local_1c = 0x2000;
+  local_18 = 0;
+  local_14 = 0;
+  local_38 = 2;
+  local_34 = 0;
+  local_30 = 0;
+  uVar1 = itron_acre_flg(0,(byte *)&local_38);
   *param_1 = uVar1;
   if ((int)*param_1 < 1) {
     uVar2 = 0xffffffff;
   }
   else {
-    uVar1 = itron_acre_tsk(0,&local_2c);
+    uVar1 = itron_acre_tsk(0,(byte *)&local_2c);
     if ((int)uVar1 < 1) {
       uVar2 = 0xffffffff;
     }
@@ -478,7 +486,7 @@ void mouse_cursor_obj_init(int param_1)
     FUN_20164524(param_1 + 0x504,uVar2 & 0xffff,iVar3 + 4);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x58c) = uVar1;
   *(undefined1 *)(param_1 + 0x590) = 0;
   *(undefined2 *)(param_1 + 0x592) = 400;
@@ -589,7 +597,7 @@ void mouse_cursor_run(int param_1)
 void FUN_2015ff64(int param_1,undefined4 param_2)
 
 {
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x58c),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x58c),param_2);
   return;
 }
 
@@ -621,11 +629,11 @@ void FUN_2015ff94(int param_1,undefined4 param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x88;
-    FUN_20158618(iVar3 + 0x14);
+    msgbuf_init(iVar3 + 0x14);
     FUN_20164454(param_1 + 0x894,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x10);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x8dc) = uVar1;
   return;
 }
@@ -688,11 +696,11 @@ void mainlink_disp_init(int param_1,uint param_2)
   uVar2 = 0;
   do {
     iVar3 = param_1 + uVar2 * 0x408;
-    FUN_20158618(iVar3 + 0x14);
+    msgbuf_init(iVar3 + 0x14);
     txpool_set_slot(param_1 + 0x8114,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
-  uVar1 = FUN_20162d10(param_1);
+  uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x819c) = uVar1;
   return;
 }
@@ -721,7 +729,7 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 < 0x22) {
       if (bVar1 == 6) {
         *(int *)(param_1 + 0x81a4) = *(int *)(param_1 + 0x81a4) + 1;
-        FUN_20130968();
+        mainlink_audio_ack();
         mainlink_on_ack();
       }
       else if (bVar1 == 0x15) {
@@ -749,9 +757,9 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 == 0x60) {
       g_ml.got60 = 1;
       __aeabi_memcpy4(&DAT_2045fb00,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
-      iVar2 = FUN_2011727c();
+      iVar2 = radio_on_flag_get();
       if (((iVar2 == 0) && (*(int *)(param_1 + 0x81b0) != 0)) && (DAT_2045fbb3 == '\x01')) {
-        FUN_20117288(1);
+        radio_on_flag_set(1);
       }
       *(int *)(param_1 + 0x81b0) = *(int *)(param_1 + 0x81b0) + 1;
     }
@@ -769,7 +777,7 @@ void task_mainlink_dispatch(int param_1)
 void mainlink_disp_post(int param_1,undefined4 param_2)
 
 {
-  FUN_20162d3c(param_1,*(undefined4 *)(param_1 + 0x819c),param_2);
+  os_mbx_send(param_1,*(undefined4 *)(param_1 + 0x819c),param_2);
   return;
 }
 
@@ -897,7 +905,7 @@ uint fwobj_match_name(int param_1,uint param_2,uint param_3)
   uVar1 = fwname_pattern_match((int *)(param_1 + 0x14),param_2,param_3);
   uVar3 = 0;
   if (uVar1 != 0) {
-    FUN_20164104(auStack_30,param_2);
+    copy32(auStack_30,param_2);
     if (*(char *)(param_1 + 0x57) == '\0') {
       memcpy(param_1 + 0x37,auStack_30,0x20);
       *(undefined1 *)(param_1 + 0x57) = 1;
@@ -924,7 +932,7 @@ void fwobj_set_status(int param_1,uint param_2)
   undefined4 uVar1;
   undefined1 auStack_28 [32];
   
-  uVar1 = FUN_20164104(auStack_28);
+  uVar1 = copy32(auStack_28);
   memcpy(param_1 + 0x89,uVar1,0x20);
   return;
 }
@@ -966,12 +974,12 @@ int fwobj_base_ctor(void *param_1)
   int iVar1;
   
   *(undefined **)param_1 = &DAT_2042807c;
-  iVar1 = FUN_201640ec((int)param_1 + 4,&DAT_20428430);
+  iVar1 = copy10((int)param_1 + 4,&DAT_20428430);
   iVar1 = FUN_20160c5c(iVar1 + 10,"-----");
-  iVar1 = FUN_201640ec(iVar1 + 0x1e,&DAT_20428430);
-  iVar1 = FUN_20164104(iVar1 + 0xb,&DAT_20428430);
-  iVar1 = FUN_2016411c(iVar1 + 0x21,&DAT_20428430);
-  iVar1 = FUN_20164104(iVar1 + 0x31,&DAT_20428430);
+  iVar1 = copy10(iVar1 + 0x1e,&DAT_20428430);
+  iVar1 = copy32(iVar1 + 0xb,&DAT_20428430);
+  iVar1 = copy48(iVar1 + 0x21,&DAT_20428430);
+  iVar1 = copy32(iVar1 + 0x31,&DAT_20428430);
   return iVar1 + -0x89;
 }
 
@@ -1189,9 +1197,9 @@ undefined4 fwobj_display_run(int param_1,uint param_2,int param_3)
       *(undefined1 *)(iVar3 + 8) = 0;
       iVar4 = memcmp("#UP0    ",iVar3,8);
       if (iVar4 == 0) {
-        uVar5 = FUN_201640ec(auStack_3c,iVar3);
+        uVar5 = copy10(auStack_3c,iVar3);
         memcpy(param_1 + 4,uVar5,10);
-        uVar5 = FUN_201640ec(auStack_30,&DAT_20428210);
+        uVar5 = copy10(auStack_30,&DAT_20428210);
         memcpy(param_1 + 0x2c,uVar5,10);
         bVar1 = true;
       }
@@ -1351,9 +1359,12 @@ undefined4 FUN_20160c5c(undefined4 param_1)
 }
 
 
-// ===== FUN_20160c70 @ 20160c70 (124 bytes)
+// ===== afscope_map0_init @ 20160c70 (124 bytes)
 
-void FUN_20160c70(int param_1)
+/* Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on
+   0x27 (39, the AF-FFT spectrum height of gui.md) [fact] */
+
+void afscope_map0_init(int param_1)
 
 {
   int iVar1;
@@ -1386,9 +1397,11 @@ void FUN_20160c70(int param_1)
 }
 
 
-// ===== FUN_20160cf0 @ 20160cf0 (92 bytes)
+// ===== afscope_map2_init @ 20160cf0 (92 bytes)
 
-void FUN_20160cf0(int param_1)
+/* Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact] */
+
+void afscope_map2_init(int param_1)
 
 {
   int iVar1;
@@ -1412,9 +1425,11 @@ void FUN_20160cf0(int param_1)
 }
 
 
-// ===== FUN_20160d50 @ 20160d50 (144 bytes)
+// ===== afscope_map1_init @ 20160d50 (144 bytes)
 
-void FUN_20160d50(int param_1)
+/* Map 1 (obj +0x100): the same curve as map 0 [fact] */
+
+void afscope_map1_init(int param_1)
 
 {
   int iVar1;
@@ -1449,9 +1464,11 @@ void FUN_20160d50(int param_1)
 }
 
 
-// ===== FUN_20160de4 @ 20160de4 (92 bytes)
+// ===== afscope_map3_init @ 20160de4 (92 bytes)
 
-void FUN_20160de4(int param_1)
+/* Map 3 (obj +0x300): the same curve as map 2 [fact] */
+
+void afscope_map3_init(int param_1)
 
 {
   int iVar1;
@@ -1475,9 +1492,12 @@ void FUN_20160de4(int param_1)
 }
 
 
-// ===== FUN_20160e44 @ 20160e44 (144 bytes)
+// ===== afscope_map4_init @ 20160e44 (144 bytes)
 
-void FUN_20160e44(int param_1)
+/* Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the
+   bar height affft_bins_get returns) [fact] */
+
+void afscope_map4_init(int param_1)
 
 {
   int iVar1;

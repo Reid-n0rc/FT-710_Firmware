@@ -7,7 +7,7 @@
 void ai_ex060304(void)
 
 {
-  FUN_fffeab84(3);
+  ai_ex_preset_cat1_cat3_stop_bit(3);
   return;
 }
 
@@ -19,7 +19,7 @@ void ai_ex060304(void)
 void ai_ex060305(void)
 
 {
-  FUN_fffead00(3);
+  ai_ex_preset_agc_fast_delay(3);
   return;
 }
 
@@ -31,7 +31,7 @@ void ai_ex060305(void)
 void ai_ex060306(void)
 
 {
-  FUN_fffeae77(3);
+  ai_ex_preset_agc_mid_delay(3);
   return;
 }
 
@@ -43,7 +43,7 @@ void ai_ex060306(void)
 void ai_ex060307(void)
 
 {
-  FUN_fffeafee(3);
+  ai_ex_preset_agc_slow_delay(3);
   return;
 }
 
@@ -55,7 +55,7 @@ void ai_ex060307(void)
 void ai_ex060308(void)
 
 {
-  FUN_fffeb165(3);
+  ai_ex_preset_lcut_freq(3);
   return;
 }
 
@@ -67,7 +67,7 @@ void ai_ex060308(void)
 void ai_ex060309(void)
 
 {
-  FUN_fffeb2b9(3);
+  ai_ex_preset_lcut_slope(3);
   return;
 }
 
@@ -79,7 +79,7 @@ void ai_ex060309(void)
 void ai_ex060310(void)
 
 {
-  FUN_fffeb435(3);
+  ai_ex_preset_hcut_freq(3);
   return;
 }
 
@@ -91,7 +91,7 @@ void ai_ex060310(void)
 void ai_ex060311(void)
 
 {
-  FUN_fffeb589(3);
+  ai_ex_preset_hcut_slope(3);
   return;
 }
 
@@ -103,7 +103,7 @@ void ai_ex060311(void)
 void ai_ex060312(void)
 
 {
-  FUN_fffeb705(3);
+  ai_ex_preset_usb_out_level(3);
   return;
 }
 
@@ -115,7 +115,7 @@ void ai_ex060312(void)
 void ai_ex060313(void)
 
 {
-  FUN_fffeb859(3);
+  ai_ex_preset_rear_out_level(3);
   return;
 }
 
@@ -127,7 +127,7 @@ void ai_ex060313(void)
 void ai_ex060314(void)
 
 {
-  FUN_fffeb9ad(3);
+  ai_ex_preset_tx_bpf_sel(3);
   return;
 }
 
@@ -139,7 +139,7 @@ void ai_ex060314(void)
 void ai_ex060315(void)
 
 {
-  FUN_fffebb29(3);
+  ai_ex_preset_mod_source(3);
   return;
 }
 
@@ -151,7 +151,7 @@ void ai_ex060315(void)
 void ai_ex060316(void)
 
 {
-  FUN_fffebca5(3);
+  ai_ex_preset_usb_mod_gain(3);
   return;
 }
 
@@ -163,7 +163,7 @@ void ai_ex060316(void)
 void ai_ex060317(void)
 
 {
-  FUN_fffebdf9(3);
+  ai_ex_preset_rear_mod_gain(3);
   return;
 }
 
@@ -175,7 +175,7 @@ void ai_ex060317(void)
 void ai_ex060318(void)
 
 {
-  FUN_fffebf4d(3);
+  ai_ex_preset_rptt_select(3);
   return;
 }
 
@@ -187,7 +187,7 @@ void ai_ex060318(void)
 void ai_ex060401(void)
 
 {
-  FUN_fffea63a(4);
+  ai_ex_preset_name(4);
   return;
 }
 
@@ -199,7 +199,7 @@ void ai_ex060401(void)
 void ai_ex060402(void)
 
 {
-  FUN_fffea88c(4);
+  ai_ex_preset_cat1_rate(4);
   return;
 }
 
@@ -211,7 +211,7 @@ void ai_ex060402(void)
 void ai_ex060403(void)
 
 {
-  FUN_fffeaa08(4);
+  ai_ex_preset_cat1_tot(4);
   return;
 }
 
@@ -223,7 +223,7 @@ void ai_ex060403(void)
 void ai_ex060404(void)
 
 {
-  FUN_fffeab84(4);
+  ai_ex_preset_cat1_cat3_stop_bit(4);
   return;
 }
 
@@ -235,7 +235,7 @@ void ai_ex060404(void)
 void ai_ex060405(void)
 
 {
-  FUN_fffead00(4);
+  ai_ex_preset_agc_fast_delay(4);
   return;
 }
 
@@ -247,7 +247,7 @@ void ai_ex060405(void)
 void ai_ex060406(void)
 
 {
-  FUN_fffeae77(4);
+  ai_ex_preset_agc_mid_delay(4);
   return;
 }
 
@@ -259,7 +259,7 @@ void ai_ex060406(void)
 void ai_ex060407(void)
 
 {
-  FUN_fffeafee(4);
+  ai_ex_preset_agc_slow_delay(4);
   return;
 }
 
@@ -271,7 +271,7 @@ void ai_ex060407(void)
 void ai_ex060408(void)
 
 {
-  FUN_fffeb165(4);
+  ai_ex_preset_lcut_freq(4);
   return;
 }
 
@@ -283,7 +283,7 @@ void ai_ex060408(void)
 void ai_ex060409(void)
 
 {
-  FUN_fffeb2b9(4);
+  ai_ex_preset_lcut_slope(4);
   return;
 }
 
@@ -295,7 +295,7 @@ void ai_ex060409(void)
 void ai_ex060410(void)
 
 {
-  FUN_fffeb435(4);
+  ai_ex_preset_hcut_freq(4);
   return;
 }
 
@@ -307,7 +307,7 @@ void ai_ex060410(void)
 void ai_ex060411(void)
 
 {
-  FUN_fffeb589(4);
+  ai_ex_preset_hcut_slope(4);
   return;
 }
 
@@ -319,7 +319,7 @@ void ai_ex060411(void)
 void ai_ex060412(void)
 
 {
-  FUN_fffeb705(4);
+  ai_ex_preset_usb_out_level(4);
   return;
 }
 
@@ -331,7 +331,7 @@ void ai_ex060412(void)
 void ai_ex060413(void)
 
 {
-  FUN_fffeb859(4);
+  ai_ex_preset_rear_out_level(4);
   return;
 }
 
@@ -343,7 +343,7 @@ void ai_ex060413(void)
 void ai_ex060414(void)
 
 {
-  FUN_fffeb9ad(4);
+  ai_ex_preset_tx_bpf_sel(4);
   return;
 }
 
@@ -355,7 +355,7 @@ void ai_ex060414(void)
 void ai_ex060415(void)
 
 {
-  FUN_fffebb29(4);
+  ai_ex_preset_mod_source(4);
   return;
 }
 
@@ -367,7 +367,7 @@ void ai_ex060415(void)
 void ai_ex060416(void)
 
 {
-  FUN_fffebca5(4);
+  ai_ex_preset_usb_mod_gain(4);
   return;
 }
 
@@ -379,7 +379,7 @@ void ai_ex060416(void)
 void ai_ex060417(void)
 
 {
-  FUN_fffebdf9(4);
+  ai_ex_preset_rear_mod_gain(4);
   return;
 }
 
@@ -391,7 +391,7 @@ void ai_ex060417(void)
 void ai_ex060418(void)
 
 {
-  FUN_fffebf4d(4);
+  ai_ex_preset_rptt_select(4);
   return;
 }
 
@@ -403,7 +403,7 @@ void ai_ex060418(void)
 void ai_ex060501(void)
 
 {
-  FUN_fffea63a(5);
+  ai_ex_preset_name(5);
   return;
 }
 
@@ -415,7 +415,7 @@ void ai_ex060501(void)
 void ai_ex060502(void)
 
 {
-  FUN_fffea88c(5);
+  ai_ex_preset_cat1_rate(5);
   return;
 }
 
@@ -427,7 +427,7 @@ void ai_ex060502(void)
 void ai_ex060503(void)
 
 {
-  FUN_fffeaa08(5);
+  ai_ex_preset_cat1_tot(5);
   return;
 }
 
@@ -439,7 +439,7 @@ void ai_ex060503(void)
 void ai_ex060504(void)
 
 {
-  FUN_fffeab84(5);
+  ai_ex_preset_cat1_cat3_stop_bit(5);
   return;
 }
 
@@ -451,7 +451,7 @@ void ai_ex060504(void)
 void ai_ex060505(void)
 
 {
-  FUN_fffead00(5);
+  ai_ex_preset_agc_fast_delay(5);
   return;
 }
 
@@ -463,7 +463,7 @@ void ai_ex060505(void)
 void ai_ex060506(void)
 
 {
-  FUN_fffeae77(5);
+  ai_ex_preset_agc_mid_delay(5);
   return;
 }
 
@@ -475,7 +475,7 @@ void ai_ex060506(void)
 void ai_ex060507(void)
 
 {
-  FUN_fffeafee(5);
+  ai_ex_preset_agc_slow_delay(5);
   return;
 }
 
@@ -487,7 +487,7 @@ void ai_ex060507(void)
 void ai_ex060508(void)
 
 {
-  FUN_fffeb165(5);
+  ai_ex_preset_lcut_freq(5);
   return;
 }
 
@@ -499,7 +499,7 @@ void ai_ex060508(void)
 void ai_ex060509(void)
 
 {
-  FUN_fffeb2b9(5);
+  ai_ex_preset_lcut_slope(5);
   return;
 }
 
@@ -511,7 +511,7 @@ void ai_ex060509(void)
 void ai_ex060510(void)
 
 {
-  FUN_fffeb435(5);
+  ai_ex_preset_hcut_freq(5);
   return;
 }
 
@@ -523,7 +523,7 @@ void ai_ex060510(void)
 void ai_ex060511(void)
 
 {
-  FUN_fffeb589(5);
+  ai_ex_preset_hcut_slope(5);
   return;
 }
 
@@ -535,7 +535,7 @@ void ai_ex060511(void)
 void ai_ex060512(void)
 
 {
-  FUN_fffeb705(5);
+  ai_ex_preset_usb_out_level(5);
   return;
 }
 
@@ -547,7 +547,7 @@ void ai_ex060512(void)
 void ai_ex060513(void)
 
 {
-  FUN_fffeb859(5);
+  ai_ex_preset_rear_out_level(5);
   return;
 }
 
@@ -559,7 +559,7 @@ void ai_ex060513(void)
 void ai_ex060514(void)
 
 {
-  FUN_fffeb9ad(5);
+  ai_ex_preset_tx_bpf_sel(5);
   return;
 }
 
@@ -571,7 +571,7 @@ void ai_ex060514(void)
 void ai_ex060515(void)
 
 {
-  FUN_fffebb29(5);
+  ai_ex_preset_mod_source(5);
   return;
 }
 
@@ -583,7 +583,7 @@ void ai_ex060515(void)
 void ai_ex060516(void)
 
 {
-  FUN_fffebca5(5);
+  ai_ex_preset_usb_mod_gain(5);
   return;
 }
 
@@ -595,7 +595,7 @@ void ai_ex060516(void)
 void ai_ex060517(void)
 
 {
-  FUN_fffebdf9(5);
+  ai_ex_preset_rear_mod_gain(5);
   return;
 }
 

@@ -1,8 +1,12 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2012cf30 @ 2012cf30 (900 bytes)
+// ===== scope_freq_scale_draw @ 2012cf30 (900 bytes)
 
-void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: frequency scale of the scope area from op_freq_be, dial_freq_be,
+   scope_start_be and span_ccf (redrawn on change): numbers with gui_draw_number_runs at the span
+   step table 0x2016D6E8 [fact for the fields] */
+
+void scope_freq_scale_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   char cVar1;
@@ -49,7 +53,7 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
   }
   local_30 = fb_get_layer_addr(0);
   if (DAT_20800480 == '\0') {
-    iVar6 = FUN_20133640();
+    iVar6 = scope3d_buf_get();
   }
   else {
     iVar6 = 0;
@@ -82,7 +86,7 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
     local_3c = frame->dial_freq_be[0] & 0xf;
     local_39 = frame->dial_freq_be[3];
     uVar3 = be32_load(&local_3c);
-    FUN_2012cb60(local_40,puVar9[1],*puVar9 + DAT_20800758,uVar3);
+    gui_draw_number_runs(local_40,puVar9[1],*puVar9 + DAT_20800758,uVar3);
     iVar8 = 0;
     local_2c = uVar11 * 0x10 + 0x20802dd0;
     iVar4 = uVar11 * 0x18 + 0x20802e70;
@@ -113,7 +117,8 @@ void FUN_2012cf30(ml_frame *frame,ml_frame *old,int flag)
     iVar4 = __aeabi_uidivmod((*(int *)(&UNK_2016d6e8 + uVar11 * 4) + uVar3) - uVar3,5);
     iVar8 = 0;
     do {
-      FUN_2012cb60(local_40,puVar9[1],*puVar9 + (&DAT_20802db8)[iVar8 * 2],iVar4 * iVar8 + uVar3);
+      gui_draw_number_runs
+                (local_40,puVar9[1],*puVar9 + (&DAT_20802db8)[iVar8 * 2],iVar4 * iVar8 + uVar3);
       iVar8 = iVar8 + 1;
     } while (iVar8 < 6);
   }
@@ -247,9 +252,13 @@ void scope_area_frame_draw(uint param_1)
 }
 
 
-// ===== FUN_2012d318 @ 2012d318 (132 bytes)
+// ===== scope2d_spectrum_height @ 2012d318 (132 bytes)
 
-undefined4 FUN_2012d318(int param_1)
+/* (expanded): 2D spectrum height for the current layout (0x208004D0, MULTI 0x20800482, waterfall
+   size 0x208004D2): 100 / 140 / 60 / 210 / 40 / 80, the values of the spectrum height table in
+   gui.md [fact] */
+
+undefined4 scope2d_spectrum_height(int param_1)
 
 {
   undefined4 uVar1;
@@ -388,7 +397,7 @@ void scope_mode_decode(int param_1)
 
 /* packet 0x20 scope bytes changed: clear area, decode mode, reset history */
 
-void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
+void scope_area_setup(int param_1,int param_2,int param_3)
 
 {
   byte bVar1;
@@ -405,14 +414,15 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
   
   iVar2 = fb_get_layer_addr(0);
   iVar3 = fb_get_layer_addr(DAT_208085b8);
-  uVar4 = frame->disp_sens & 0x80;
-  iVar8 = -((int)((uint)frame->scope_flags << 0x1a) >> 0x1f);
+  uVar4 = *(byte *)(param_1 + 6) & 0x80;
+  iVar8 = -((int)((uint)*(byte *)(param_1 + 5) << 0x1a) >> 0x1f);
   bVar1 = DAT_208f463a | DAT_208f463d;
-  if ((((param_3 == 0) && (frame->byte1 == old->byte1)) && (frame->scope_mode == old->scope_mode))
-     && ((frame->vfo_flags & 7) == (old->vfo_flags & 7))) {
+  if ((((param_3 == 0) && (*(char *)(param_1 + 1) == *(char *)(param_2 + 1))) &&
+      (*(char *)(param_1 + 2) == *(char *)(param_2 + 2))) &&
+     ((*(byte *)(param_1 + 3) & 7) == (*(byte *)(param_2 + 3) & 7))) {
     return;
   }
-  scope_mode_decode((int)frame);
+  scope_mode_decode(param_1);
   if (iVar8 == 0) {
     local_2c = &DAT_2016d2d0;
     if (DAT_208004d0 == 0) {
@@ -440,13 +450,13 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
     }
   }
   DAT_20800489 = 3;
-  FUN_20134304(1);
-  if ((frame->tx_swr & 0x80) != 0) {
-    FUN_201342d0(0);
+  scope_freeze_b_set(1);
+  if ((*(byte *)(param_1 + 7) & 0x80) != 0) {
+    scope_obj_bank_reset(0);
   }
-  FUN_20120d58();
+  afscope_clear();
   if (DAT_20800480 == '\0') {
-    FUN_20133618();
+    scope3d_history_clear_thunk();
   }
   DAT_208007c8 = 0;
   if (DAT_20800482 == '\0') {
@@ -460,10 +470,10 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
         DAT_208007c8 = 0;
         return;
       }
-      FUN_20131f74(0,0xb8,1,iVar8,bVar1,old);
+      textterm_view_frame(0,0xb8,1,iVar8,bVar1,param_2);
       return;
     }
-    uVar5 = FUN_2012d318(iVar8);
+    uVar5 = scope2d_spectrum_height(iVar8);
     FUN_20134444(uVar5,uVar4);
     scope_area_frame_draw(0);
     uVar6 = 1;
@@ -480,7 +490,7 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
       gui_draw_runs32(iVar2,iVar10,4,local_2c + 0x10);
     }
     else if (DAT_208004d0 == 1) {
-      uVar5 = FUN_2012d318(iVar8);
+      uVar5 = scope2d_spectrum_height(iVar8);
       FUN_20134444(uVar5,uVar4);
       scope_area_frame_draw(1);
       FUN_2012d000(1,iVar10,1,1,iVar8);
@@ -490,7 +500,7 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
         DAT_208007c8 = 0;
         return;
       }
-      FUN_20131f74(0,0xb8,1,iVar8,bVar1,old);
+      textterm_view_frame(0,0xb8,1,iVar8,bVar1,param_2);
     }
     if (1 < DAT_208004d0) {
       return;
@@ -510,9 +520,14 @@ void scope_area_setup(ml_frame *frame,ml_frame *old,int param_3)
 }
 
 
-// ===== FUN_2012d8bc @ 2012d8bc (828 bytes)
+// ===== main_left_boxes_draw @ 2012d8bc (828 bytes)
 
-void FUN_2012d8bc(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: the four boxes left of the filter graph at y 0x6D (109), one per 10-byte
+   entry of 0x2016E15C, the touch table of soft keys 0x101A..0x101D (input.md); redrawn when
+   ATT/IPO/DNF (+0x0C), the CW/APF/CONTOUR/NOTCH/AGC byte (+0x0D) or the scope flags change [fact
+   for the table and fields] */
+
+void main_left_boxes_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   uint uVar1;
@@ -635,9 +650,12 @@ void FUN_2012d8bc(ml_frame *frame,ml_frame *old,int flag)
 }
 
 
-// ===== FUN_2012dbf8 @ 2012dbf8 (460 bytes)
+// ===== main_bottom_row_draw @ 2012dbf8 (460 bytes)
 
-void FUN_2012dbf8(int param_1,int param_2,int param_3)
+/* scr_main_layout part: the bottom row of six soft keys at y 0x1A4 (420), one per entry of
+   0x2016E304, the touch table of keys 0x1000..0x1009 (input.md) [fact for the table] */
+
+void main_bottom_row_draw(int param_1,int param_2,int param_3)
 
 {
   uint uVar1;
@@ -693,9 +711,13 @@ void FUN_2012dbf8(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_2012ddc4 @ 2012ddc4 (828 bytes)
+// ===== vfo_state_label_draw @ 2012ddc4 (828 bytes)
 
-void FUN_2012ddc4(int param_1,uint param_2,int param_3)
+/* (state, channel, flag): VFO-state indicator next to the mode label: sprite by state 1..10 (VFO,
+   memory, memory tune, PMS, QMB, 60 m, EMG, split RX/TX per ml_vfo.state) with the channel number
+   [fact for the state switch] */
+
+void vfo_state_label_draw(int param_1,uint param_2,int param_3)
 
 {
   undefined *puVar1;
@@ -803,9 +825,13 @@ void FUN_2012ddc4(int param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_2012e1a4 @ 2012e1a4 (216 bytes)
+// ===== vfo_mode_state_draw @ 2012e1a4 (216 bytes)
 
-void FUN_2012e1a4(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: draws the mode label (table 0x20802FF4 by main_vfo.mode) and the VFO-state
+   / channel indicator (vfo_state_label_draw) when main_vfo mode/state/channel or vfo_flags bit 7
+   change [fact] */
+
+void vfo_mode_state_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   int iVar1;
@@ -834,16 +860,20 @@ void FUN_2012e1a4(ml_frame *frame,ml_frame *old,int flag)
     bVar4 = 0xd1;
   }
   gui_draw_runs(iVar1,10,0x11a,&DAT_2016e714);
-  FUN_2012ddc4(bVar5,bVar4,bVar2);
+  vfo_state_label_draw(bVar5,bVar4,bVar2);
   gui_draw_runs(iVar1,DAT_20800776 + 10 & 0xffff,DAT_20800774 + 0x11a & 0xffff,
                 (&PTR_DAT_20802ff4)[uVar3]);
   return;
 }
 
 
-// ===== FUN_2012e27c @ 2012e27c (332 bytes)
+// ===== cw_zero_in_draw @ 2012e27c (332 bytes)
 
-void FUN_2012e27c(ml_frame *frame,ml_frame *old,int flag)
+/* scr_main_layout part: when the CW indicator (frame +0x0D bit 7) or the 4-byte zero_in field
+   (+0x15) changes, draws the CW sprite and one white cell per set bit of the 25-bit zero-in bar at
+   the layout words 0x20800508..0x2080051A (gui.md "main screen parts") [fact] */
+
+void cw_zero_in_draw(ml_frame *frame,ml_frame *old,int flag)
 
 {
   int iVar1;
@@ -875,9 +905,12 @@ void FUN_2012e27c(ml_frame *frame,ml_frame *old,int flag)
 }
 
 
-// ===== FUN_2012e3c8 @ 2012e3c8 (24 bytes)
+// ===== scope_color_decode @ 2012e3c8 (24 bytes)
 
-void FUN_2012e3c8(byte param_1,byte *param_2,byte *param_3)
+/* (byte, *a, *b): low nibble clamped to 10 into both outputs; the COLOR field of packet 0x20 byte
+   0x12 (gui.md) [fact] */
+
+void scope_color_decode(byte param_1,byte *param_2,byte *param_3)
 
 {
   param_1 = param_1 & 0xf;
@@ -894,7 +927,7 @@ void FUN_2012e3c8(byte param_1,byte *param_2,byte *param_3)
 
 /* main screen static parts (scope frame, mode/filter labels) */
 
-void scr_main_layout(ml_frame *frame,ml_frame *old,int param_3)
+void scr_main_layout(int param_1,int param_2,int param_3)
 
 {
   bool bVar1;
@@ -917,23 +950,23 @@ void scr_main_layout(ml_frame *frame,ml_frame *old,int param_3)
   bVar2 = false;
   bVar1 = false;
   bVar7 = DAT_208f4638 != '\0';
-  local_38 = frame->speed_color & 0xf;
-  local_34 = old->speed_color & 0xf;
-  bVar3 = frame->peak >> 4;
+  local_38 = *(byte *)(param_1 + 0x12) & 0xf;
+  local_34 = *(byte *)(param_2 + 0x12) & 0xf;
+  bVar3 = *(byte *)(param_1 + 0x10) >> 4;
   FUN_2012616c(2);
   if (param_3 != 0 || bVar7) {
-    FUN_20134480((frame->scope_flags & 0x3f) >> 5);
+    scope3d_layout_set((*(byte *)(param_1 + 5) & 0x3f) >> 5);
   }
-  uVar6 = frame->disp_sens & 0x80;
-  uVar5 = frame->disp_sens & 0x40;
-  if ((param_3 != 0 || bVar7) || ((old->disp_sens & 0x80) != uVar6)) {
+  uVar6 = *(byte *)(param_1 + 6) & 0x80;
+  uVar5 = *(byte *)(param_1 + 6) & 0x40;
+  if ((param_3 != 0 || bVar7) || ((*(byte *)(param_2 + 6) & 0x80) != uVar6)) {
     FUN_20134468(uVar6);
     bVar2 = true;
     if (param_3 == 0 && !bVar7) goto LAB_2012e4b4;
   }
   else {
 LAB_2012e4b4:
-    if ((old->disp_sens & 0x40) == uVar5) goto LAB_2012e4d4;
+    if ((*(byte *)(param_2 + 6) & 0x40) == uVar5) goto LAB_2012e4d4;
   }
   FUN_20134474(uVar5);
   bVar2 = true;
@@ -941,24 +974,25 @@ LAB_2012e4d4:
   if (bVar3 != 0) {
     DAT_208004a0 = bVar3 * '\x03';
   }
-  if ((param_3 != 0 || bVar7) || ((frame->peak & 7) != (old->peak & 7))) {
-    bVar3 = frame->peak & 7;
+  if ((param_3 != 0 || bVar7) ||
+     ((*(byte *)(param_1 + 0x10) & 7) != (*(byte *)(param_2 + 0x10) & 7))) {
+    bVar3 = *(byte *)(param_1 + 0x10) & 7;
     if (4 < bVar3) {
       bVar3 = 4;
     }
-    FUN_20133dec(bVar3);
+    scope_peak_set(bVar3);
     bVar1 = true;
   }
   if ((bVar7) || ((local_38 != local_34 || bVar1) || bVar2)) {
-    FUN_2012e3c8(local_38,local_3c,&stack0xffffffc0);
-    FUN_201342dc(local_3c[0],uVar5 & 0xff);
+    scope_color_decode(local_38,local_3c,&stack0xffffffc0);
+    scope_palette_set(local_3c[0],uVar5 & 0xff);
     scope2d_set_color(local_3c[0]);
   }
-  meter_draw_scale(frame,old,param_3);
-  FUN_2012e27c(frame,old,param_3);
-  FUN_2012e1a4(frame,old,param_3);
-  scr_vfo(frame,old,param_3);
-  FUN_2012dbf8(frame,old,param_3);
+  meter_draw_scale(param_1,param_2,param_3);
+  cw_zero_in_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  vfo_mode_state_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scr_vfo((char *)param_1,(char *)param_2,param_3);
+  main_bottom_row_draw(param_1,param_2,param_3);
   if (bVar7) {
     fb_clear_rect(local_28,0x6d,0,800,0x137);
     gui_area_dirty_set(0);
@@ -966,14 +1000,14 @@ LAB_2012e4d4:
     fb_clear_rect(local_30,0x6d,0,800,0x137);
     param_3 = 1;
   }
-  FUN_2012d8bc(frame,old,param_3);
-  scope_area_setup(frame,old,param_3);
-  FUN_2012cf30(frame,old,param_3);
-  FUN_2012caac(frame,old,param_3);
-  FUN_2012c6c4(frame,old,param_3);
+  main_left_boxes_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scope_area_setup(param_1,param_2,param_3);
+  scope_freq_scale_draw((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  multi_panel_labels_update((ml_frame *)param_1,(ml_frame *)param_2,param_3);
+  scope_speed_update((ml_frame *)param_1,(ml_frame *)param_2,param_3);
   iVar4 = fb_get_layer_addr(DAT_208085b8);
-  uVar5 = (uint)frame->func_knob;
-  bVar3 = old->func_knob;
+  uVar5 = (uint)*(byte *)(param_1 + 0x2c);
+  bVar3 = *(byte *)(param_2 + 0x2c);
   if (param_3 != 0) {
     fb_fill_rect(iVar4,0x821,(uint)DAT_208007be,(uint)DAT_208007bc,(uint)DAT_208007c0,
                  (uint)DAT_208007c2);
@@ -1014,16 +1048,19 @@ LAB_2012e4d4:
 }
 
 
-// ===== FUN_2012e678 @ 2012e678 (80 bytes)
+// ===== textterm_frame_update @ 2012e678 (80 bytes)
 
-void FUN_2012e678(ml_frame *frame,ml_frame *old)
+/* (frame, old): P2_15 = 1, resets the terminal TX line when the text view or the VFO bits change,
+   then textterm_send_all [fact] */
+
+void textterm_frame_update(ml_frame *frame,ml_frame *old)
 
 {
   gpio_p2_15(1);
   if (((frame->vfo_flags & 4) != 0) || ((frame->vfo_flags & 3) != (old->vfo_flags & 3))) {
     DAT_208f4897 = 0;
   }
-  FUN_201310ec(frame,1);
+  textterm_send_all(frame,1);
   return;
 }
 
@@ -1109,12 +1146,12 @@ LAB_2012e7f0:
       return;
     }
     if (cVar1 == '\x01') {
-      iVar2 = FUN_20103bc0(iVar2);
+      iVar2 = sd_drive_flag5(iVar2);
       if (iVar2 != 0) {
         uVar3 = 0xfffffffd;
         goto LAB_2012e7f0;
       }
-      iVar2 = FUN_20124848(2,1);
+      iVar2 = mainlink_send_e7_state(2,1);
       if (iVar2 != 0) {
         rtc_get_date(local_5c,local_18,local_1c);
         rtc_get_time(local_20,local_24,local_28);
@@ -1128,7 +1165,7 @@ LAB_2012e7f0:
       }
     }
     else if (cVar1 == '\0') {
-      iVar2 = FUN_20124848(0);
+      iVar2 = mainlink_send_e7_state(0);
       if (iVar2 != 0) {
         rec_stop();
       }
@@ -1191,9 +1228,13 @@ void rtc_set_from_main(int param_1)
 }
 
 
-// ===== FUN_2012e9a8 @ 2012e9a8 (204 bytes)
+// ===== gui_change_flags_update @ 2012e9a8 (204 bytes)
 
-void FUN_2012e9a8(int param_1,int param_2)
+/* (frame, old): sets the change flags 0x208F4638..0x208F463D (expanded area, two settings bytes,
+   filter-graph switch, screens 0x40/0x43/0x3A, popup 0x30 with payload 0xFF, ...) from the saved
+   copy 0x208F0B18 [fact] */
+
+void gui_change_flags_update(int param_1,int param_2)
 
 {
   DAT_208f4638 = 0;
@@ -1221,9 +1262,12 @@ void FUN_2012e9a8(int param_1,int param_2)
 }
 
 
-// ===== FUN_2012ea74 @ 2012ea74 (324 bytes)
+// ===== gui_frame_save @ 2012ea74 (324 bytes)
 
-void FUN_2012ea74(ml_frame *frame,ml_frame *old)
+/* gui_screen_update: copies the frame into gui_frame_saved (0x240 bytes), runs
+   gui_change_flags_update and copies 0x12 bytes 0x208F462C -> 0x208F0B18 [fact] */
+
+void gui_frame_save(ml_frame *frame,ml_frame *old)
 
 {
   byte bVar1;
@@ -1273,7 +1317,7 @@ LAB_2012eb68:
   DAT_208f4637 = 0;
 LAB_2012eb7c:
   DAT_208f462c = bVar1;
-  FUN_2012e9a8(frame,old);
+  gui_change_flags_update(frame,old);
   __aeabi_memcpy4(&DAT_208f0b18,&DAT_208f462c,0x12);
   return;
 }
@@ -1303,11 +1347,11 @@ void gui_screen_update(void)
   old = (ml_frame *)0x0;
   uVar4 = 0;
   if (DAT_20800488 == '\x01') {
-    mainlink_inject_rx(&gui_frame_saved);
+    mainlink_inject_rx((char *)&gui_frame_saved);
     DAT_20800488 = '\0';
   }
-  mainlink_get_last_frame(&local_270);
-  FUN_2012ea74(&local_270,&gui_frame);
+  mainlink_get_last_frame((uint)&local_270);
+  gui_frame_save(&local_270,&gui_frame);
   iVar2 = memcmp(&local_270,&gui_frame,0x240);
   if (iVar2 == 0) goto LAB_2012f698;
   if ((local_270.cmd == 0x39 || local_270.cmd == 0x3a) || local_270.cmd == 0x3f) {
@@ -1418,24 +1462,24 @@ LAB_2012efbc:
       bVar1 = ~DAT_2080048a;
       DAT_2080048a = bVar5;
       if ((bVar5 & bVar1) != 0) {
-        FUN_2013448c();
+        scope_reset_bank0();
         FUN_20120db4();
       }
       if ((DAT_2080048b & ~DAT_2080048a) != 0) {
-        FUN_20134498();
+        scope_reset_bank1();
         FUN_20120dc0();
       }
       if ((local_270.peak & 0xf0) != (gui_frame.peak & 0xf0)) {
         bVar5 = (local_270.peak & 0xf0) == 0;
         if (bVar5) {
-          FUN_201342f8(0);
+          scope_freeze_a_set(0);
         }
         else {
-          FUN_201342f8(1);
+          scope_freeze_a_set(1);
         }
-        FUN_20120d4c(!bVar5);
+        affft_wf_freeze_set(!bVar5);
       }
-      FUN_2012e678(&local_270,&gui_frame);
+      textterm_frame_update(&local_270,&gui_frame);
       if (local_270.cmd != 0x3a) {
         if ((DAT_208f4632 == '\0') && (DAT_208f4636 == '\0')) {
           if (((DAT_20800483 != '\0') || ((local_270.cmd == 0x39 && (gui_frame.cmd != 0x39)))) ||
@@ -1477,7 +1521,7 @@ LAB_2012f09c:
 LAB_2012f188:
           if ((DAT_208f4636 != '\0') || (local_270.cmd == 0x3a)) goto LAB_2012f1c0;
         }
-        scr_main_layout(&local_270,&gui_frame,(uint)DAT_20800485);
+        scr_main_layout((int)&local_270,0x208f0b2a,(uint)DAT_20800485);
         DAT_20800485 = 0;
       }
 LAB_2012f1c0:
@@ -1498,7 +1542,7 @@ LAB_2012f2d8:
 LAB_2012f2f8:
         if (((local_270.cmd == 0x20 || local_270.cmd == 0x39) || local_270.cmd == 0x37) &&
            (gui_frame.cmd != 0x70)) {
-          audio_error_check(&local_270);
+          audio_error_check((int)&local_270);
         }
       }
       else {
@@ -1529,15 +1573,15 @@ LAB_2012f26c:
         else if (local_270.cmd != 0x24) goto LAB_2012f26c;
       }
 LAB_2012f320:
-      uVar3 = FUN_2012c2d8(&local_270,old);
+      uVar3 = gui_payload_changed(&local_270,old);
       if (uVar3 != 0) {
         if (local_270.cmd == 0x39) {
-          scr_vfo(&local_270,old,uVar4);
-          vfo_audio_status_draw(&local_270,uVar4);
+          scr_vfo((char *)&local_270,(char *)old,uVar4);
+          vfo_audio_status_draw((int)&local_270,uVar4);
         }
         else if (local_270.cmd < 0x3a) {
           if (local_270.cmd == 0x31) {
-            scr_value_popup(&local_270);
+            scr_value_popup((int)&local_270);
           }
           else if (local_270.cmd < 0x32) {
             if (local_270.cmd != 0x20) {
@@ -1568,43 +1612,44 @@ LAB_2012f534:
                 DAT_208007ec._1_1_ = local_270.payload[5];
               }
               else if (local_270.cmd == 0x30) {
-                scr_select_popup(&local_270,old,uVar4);
+                scr_select_popup((int)&local_270,(int)old,uVar4);
               }
             }
           }
           else if (local_270.cmd == 0x34) {
-            scr_info(&local_270);
+            scr_info((int)&local_270);
           }
           else if (local_270.cmd == 0x37) {
-            scr_func_panel(&local_270,uVar4);
+            scr_func_panel((int)&local_270,uVar4);
           }
         }
         else if (local_270.cmd == 0x50) {
           if (DAT_208f463b != '\0') {
             uVar4 = 1;
           }
-          scr_keyboard(&local_270,old,uVar4);
+          scr_keyboard((int)&local_270,(int)old,uVar4);
         }
         else if (local_270.cmd < 0x51) {
           if (local_270.cmd == 0x3a) {
-            scr_playlist(&local_270,&gui_frame);
+            scr_playlist((int)&local_270,(char *)&gui_frame);
             FUN_2012616c(1);
           }
           else if (local_270.cmd == 0x40) {
-            scr_text_list(&local_270,old,uVar4);
+            scr_text_list((int)&local_270,(int)old,uVar4);
           }
           else if (local_270.cmd == 0x41) {
-            scr_memory_list(&local_270,uVar4);
+            scr_memory_list((int)&local_270,uVar4);
           }
         }
         else if (local_270.cmd == 0x62) {
           if (DAT_208f463b != '\0') {
             uVar4 = 1;
           }
-          scr_setup_menu(&local_270,old,uVar4);
+          scr_setup_menu((int)&local_270,(int)old,uVar4);
           rtc_int_setup();
         }
-        else if ((local_270.cmd == 0x70) && (scr_confirm(&local_270,uVar4), DAT_208f4636 != '\0')) {
+        else if ((local_270.cmd == 0x70) &&
+                (scr_confirm((int)&local_270,uVar4), DAT_208f4636 != '\0')) {
           FUN_2012616c(1);
         }
       }
@@ -1660,17 +1705,17 @@ LAB_2012f534:
   }
   gui_frame.cmd = local_270.cmd;
 LAB_2012f698:
-  iVar2 = FUN_20125d8c();
+  iVar2 = playlist_play_poll();
   if (iVar2 != 0) {
-    scr_playlist(&local_270,&gui_frame);
+    scr_playlist((int)&local_270,(char *)&gui_frame);
     DAT_2080049e = gui_frame.cmd;
     memcpy(&gui_frame,&local_270,0x240);
   }
-  FUN_201248f8();
+  audio_screen_poll();
   if (DAT_20800491 != '\0') {
     uVar4 = audio_state();
     if (uVar4 == 0) {
-      FUN_20124848(0);
+      mainlink_send_e7_state(0);
       DAT_20800491 = '\0';
     }
     iVar2 = sd_state_bit6();
@@ -1721,7 +1766,7 @@ uint opening_check_main(void)
       uVar1 = fb_get_layer_addr(DAT_208085b8);
       __aeabi_memclr(uVar1,0xbb800);
       gui_update_layers();
-      FUN_201322f0();
+      fwupdate_title_screen_thunk();
       while (DAT_20800493 == '\0') {
         gui_update_layers();
         itron_tslp_tsk(0xffffffff);
@@ -1732,28 +1777,28 @@ uint opening_check_main(void)
       if (4 < local_242) {
         local_242 = 4;
       }
-      FUN_20133dec(local_242);
+      scope_peak_set(local_242);
       DAT_2080048a = (local_24b & 0x80) != 0;
       if ((DAT_2080048a & ~DAT_2080048b) != 0) {
-        FUN_2013448c();
+        scope_reset_bank0();
         FUN_20120db4();
       }
       if ((DAT_2080048b & ~DAT_2080048a) != 0) {
-        FUN_20134498();
+        scope_reset_bank1();
         FUN_20120dc0();
       }
-      FUN_20134480((local_24d & 0x3f) >> 5);
-      uVar1 = FUN_2012d318(local_24d & 0x20);
+      scope3d_layout_set((local_24d & 0x3f) >> 5);
+      uVar1 = scope2d_spectrum_height(local_24d & 0x20);
       FUN_20134444(uVar1,local_24c & 0x80);
       FUN_20134474(local_24c & 0x40);
-      FUN_2012e3c8(local_240,local_20,local_1c);
-      FUN_201342dc(local_20[0],local_1c[0]);
+      scope_color_decode(local_240,local_20,local_1c);
+      scope_palette_set(local_20[0],local_1c[0]);
       scope2d_set_color(local_20[0]);
       fw_installed_versions_set_thunk((uint)local_25f);
       DAT_20800481 = local_1ba & 0xf;
       gui_frame.cmd = 0x20;
       memcpy(0x208f0b2b,auStack_251,0x97);
-      FUN_201310ec(&local_260,0);
+      textterm_send_all(&local_260,0);
       uVar3 = 1;
     }
   }
@@ -1913,10 +1958,10 @@ void opening_screen(void)
       dimmer_set((byte)local_4d4 & 0x7f);
       memcpy(&mStack_4c8.byte1,0x208f0b2b,0x97);
       pclink_tx_set_status(0x208f0b2b);
-      FUN_2012e678(&mStack_4c8,(ml_frame *)0x0);
+      textterm_frame_update(&mStack_4c8,(ml_frame *)0x0);
       gui_apply_display_cfg((byte *)&local_4d8,(byte *)&local_4d8,1);
       gpio_ft4222_reset((byte)local_4d8 & 4);
-      scr_main_layout(&gui_frame,(ml_frame *)0x0,1);
+      scr_main_layout(0x208f0b2a,0,1);
       gui_update_layers();
       return;
     }
@@ -2027,7 +2072,7 @@ void power_on_request(void)
   }
   g_bootinfo.mode = 2;
   logo_fade_in();
-  FUN_201322e4(&g_bootinfo);
+  bootloader_entry_screen_thunk(&g_bootinfo);
   return;
 }
 
@@ -2090,7 +2135,7 @@ bool mainlink_wait_status(void)
      ) {
     return false;
   }
-  iVar3 = FUN_2011727c();
+  iVar3 = radio_on_flag_get();
   return iVar3 != 0;
 }
 
@@ -2118,16 +2163,16 @@ void gui_main_loop(void)
   if (bVar1 == 6) {
     g_bootinfo.mode = 2;
     logo_fade_in();
-    FUN_201322e4(&g_bootinfo);
+    bootloader_entry_screen_thunk(&g_bootinfo);
     do {
       if (DAT_20800493 != '\0') {
-        FUN_20117030();
+        display_power_down();
       }
       gui_update_layers();
       itron_tslp_tsk(0xffffffff);
     } while( true );
   }
-  iVar4 = FUN_2011727c();
+  iVar4 = radio_on_flag_get();
   if (iVar4 == 0) {
     bVar2 = mainlink_wait_status();
     if (!bVar2) {
@@ -2156,7 +2201,7 @@ LAB_20130238:
       iVar3 = sd_state_bit7();
       if (iVar3 != 0) {
         DAT_20800495 = 0;
-        FUN_201322f0();
+        fwupdate_title_screen_thunk();
         __aeabi_memclr(&gui_frame,0x240);
         if (DAT_20800493 == '\0') {
           DAT_20800495 = 1;
@@ -2185,17 +2230,17 @@ LAB_201303a8:
     DAT_20800493 = '\0';
     g_ml.fwupdate_armed = 0;
     DAT_2080049a = '\0';
-    FUN_20117030();
+    display_power_down();
     pclink_set_testmode(0);
     bVar1 = mainlink_get_settings24((uint)abStack_8);
     if (bVar1 != 0) {
       DAT_208007e8._0_1_ = (byte)DAT_208007e8 & 0xfe;
       gui_apply_display_cfg((byte *)&DAT_208007e8,abStack_8,0);
     }
-    iVar3 = FUN_2011727c();
+    iVar3 = radio_on_flag_get();
     while (iVar3 == 0) {
       itron_tslp_tsk(0xffffffff);
-      iVar3 = FUN_2011727c();
+      iVar3 = radio_on_flag_get();
     }
     DAT_20800496 = 0;
     power_on_request();
@@ -2213,7 +2258,7 @@ LAB_20130450:
       }
       if (DAT_20800484 == '\0') {
         if (DAT_208f4633 == '\0') {
-          FUN_201233d4();
+          filter_graph_small();
         }
         else {
           main_filter_graph();
@@ -2226,14 +2271,14 @@ LAB_20130450:
       meter_draw();
       mainlink_send_rtc();
       mainlink_send_sd_state();
-      FUN_201217b0();
+      gui_input_poll();
       if ((gui_frame.cmd == 0x7b) && (gui_frame.byte1 != 0)) {
         scr_screen_saver();
       }
       else {
         cursor_window_update();
       }
-      FUN_20131638();
+      textterm_tx_poll();
       FUN_20121988(&DAT_20800838);
       iVar6 = iVar6 + DAT_20800838;
       if (DAT_208004a2 == 4) {
@@ -2262,7 +2307,7 @@ LAB_20130450:
       DAT_2080048f = 0;
     }
     DAT_20800495 = 0;
-    FUN_20116da0(0);
+    full_mode_set(0);
     led_set_one(0,0);
     led_set_mask(0);
     backlight_enable(0);
@@ -2417,9 +2462,12 @@ void touch_cal_step(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_20130968 @ 20130968 (48 bytes)
+// ===== mainlink_audio_ack @ 20130968 (48 bytes)
 
-void FUN_20130968(void)
+/* On ACK/NAK (mainlink.md): copies the E7/E8 send state 0x208F1220 (1 or 0xFF) into 0x208F1221,
+   else clears it [fact] */
+
+void mainlink_audio_ack(void)
 
 {
   if (DAT_208f1220 != '\0') {
@@ -2442,9 +2490,12 @@ undefined1 FUN_20130998(void)
 }
 
 
-// ===== FUN_201309b4 @ 201309b4 (12 bytes)
+// ===== power_key_flag_get @ 201309b4 (12 bytes)
 
-undefined1 FUN_201309b4(void)
+/* Returns 0x20800493, which power_key_on sets while the radio is on; pot_resend_all reads it [fact]
+    */
+
+undefined1 power_key_flag_get(void)
 
 {
   return DAT_20800493;
@@ -2521,9 +2572,12 @@ void mainlink_set_power_cmd(byte param_1)
 }
 
 
-// ===== FUN_20130c70 @ 20130c70 (32 bytes)
+// ===== textterm_clear @ 20130c70 (32 bytes)
 
-void FUN_20130c70(void)
+/* Clears the text-terminal block 0x208F4896 (0x35E bytes) keeping 0x208F4BAA (gui.md "third view")
+   [fact] */
+
+void textterm_clear(void)
 
 {
   undefined1 uVar1;
@@ -2535,9 +2589,13 @@ void FUN_20130c70(void)
 }
 
 
-// ===== FUN_20130c90 @ 20130c90 (1052 bytes)
+// ===== textterm_send_setting @ 20130c90 (1052 bytes)
 
-void FUN_20130c90(uint item,ml_frame *frame,int flag)
+/* (item 0..15, frame, force): sends one terminal setting as a 3-byte frame (item + 0x11, value)
+   over uart4_send when the frame field changed (text sets, osc +0x71, RTTY/PSK bytes +0x67..+0x6F)
+   [fact] */
+
+void textterm_send_setting(uint item,ml_frame *frame,int flag)
 
 {
   ushort uVar1;
@@ -2727,16 +2785,18 @@ switchD_20130ca0_caseD_b:
 }
 
 
-// ===== FUN_201310ec @ 201310ec (68 bytes)
+// ===== textterm_send_all @ 201310ec (68 bytes)
 
-void FUN_201310ec(ml_frame *param_1,int param_2)
+/* Sends settings 0..15 except 11 and 12 with textterm_send_setting [fact] */
+
+void textterm_send_all(ml_frame *param_1,int param_2)
 
 {
   uint item;
   
   item = 0;
   do {
-    FUN_20130c90(item,param_1,param_2);
+    textterm_send_setting(item,param_1,param_2);
     do {
       item = item + 1 & 0xff;
       if (0xf < item) {
@@ -2747,9 +2807,12 @@ void FUN_201310ec(ml_frame *param_1,int param_2)
 }
 
 
-// ===== FUN_20131130 @ 20131130 (36 bytes)
+// ===== textterm_rx_push @ 20131130 (36 bytes)
 
-void FUN_20131130(undefined1 param_1)
+/* (byte): appends a byte to the 64-byte answer ring 0x208F4BAC (write index 0x208F4BEC);
+   decode_text_rx feeds it [fact] */
+
+void textterm_rx_push(undefined1 param_1)
 
 {
   (&DAT_208f4bac)[DAT_208f4bec] = param_1;
@@ -2777,7 +2840,7 @@ void decode_text_rx(byte *param_1,int param_2)
       bVar4 = *param_1;
       if (bVar4 == 0x10) {
 LAB_20131230:
-        FUN_20131130(bVar4);
+        textterm_rx_push(bVar4);
 LAB_20131238:
         if (bVar4 == 0x20) goto LAB_2013129c;
       }
@@ -3007,9 +3070,11 @@ switchD_201313b0_caseD_0:
 }
 
 
-// ===== FUN_201315a4 @ 201315a4 (28 bytes)
+// ===== textterm_rx_clear @ 201315a4 (28 bytes)
 
-void FUN_201315a4(void)
+/* Clears the 64-byte answer ring 0x208F4BAC and its indices 0x208F4BEC/ED [fact] */
+
+void textterm_rx_clear(void)
 
 {
   DAT_208f4bed = 0;
@@ -3019,9 +3084,11 @@ void FUN_201315a4(void)
 }
 
 
-// ===== FUN_201315c0 @ 201315c0 (120 bytes)
+// ===== textterm_rx_expect @ 201315c0 (120 bytes)
 
-undefined4 FUN_201315c0(uint param_1)
+/* (byte): pops the next byte of the answer ring; 1 when it equals byte [fact] */
+
+undefined4 textterm_rx_expect(uint param_1)
 
 {
   uint uVar1;
@@ -3043,9 +3110,14 @@ undefined4 FUN_201315c0(uint param_1)
 }
 
 
-// ===== FUN_20131638 @ 20131638 (1204 bytes)
+// ===== textterm_tx_poll @ 20131638 (1204 bytes)
 
-void FUN_20131638(void)
+/* gui_main_loop: state machine 0x208F4BAA of the text terminal on the SCIF4 link: ESC (0x1B)
+   setting frames with the text sets (frame +0x70), 0x10 / 0x110 commands and the TX text one
+   character at a time (0x1D + character from 0x208F489F), waiting for the answer bytes
+   (textterm_rx_expect) [fact] */
+
+void textterm_tx_poll(void)
 
 {
   byte bVar1;
@@ -3074,7 +3146,7 @@ void FUN_20131638(void)
     DAT_208084d7 = 99;
   }
   if (DAT_208f4baa == 0x65) {
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
     goto joined_r0x2013199c;
   }
   uVar2 = local_28._1_3_;
@@ -3084,7 +3156,7 @@ void FUN_20131638(void)
       local_28 = CONCAT13(local_28._3_1_,0x10);
       uart4_send((uint)&local_28,3);
 LAB_20131940:
-      FUN_201315a4();
+      textterm_rx_clear();
     }
     else {
       if (DAT_208f4baa < 0xb) {
@@ -3106,7 +3178,7 @@ LAB_20131940:
                          0xffff0fff;
             }
             uart4_send((uint)&local_28,3);
-            FUN_201315a4();
+            textterm_rx_clear();
             DAT_208f4baa = DAT_208f4baa + 1;
             DAT_208084d8 = 1;
             return;
@@ -3114,12 +3186,12 @@ LAB_20131940:
           DAT_208f4baa = 3;
           return;
         case 2:
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           break;
         case 3:
           goto switchD_2013170c_caseD_3;
         case 4:
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           break;
         case 5:
           if ((DAT_208084d6 != '\0') && (DAT_208084d5 == '\0')) {
@@ -3142,12 +3214,12 @@ LAB_20131940:
       if (DAT_208f4baa == 0xe) {
 LAB_20131904:
         DAT_208f4baa = 0;
-        FUN_201315a4();
+        textterm_rx_clear();
         return;
       }
       if (DAT_208f4baa < 0xf) {
         if (DAT_208f4baa == 0xb) {
-          iVar6 = FUN_201315c0(0x10);
+          iVar6 = textterm_rx_expect(0x10);
           if (iVar6 == 0) {
             return;
           }
@@ -3167,7 +3239,7 @@ LAB_20131904:
             goto LAB_20131940;
           }
           if (DAT_208f4baa != 0xd) goto switchD_2013170c_default;
-          iVar6 = FUN_201315c0(6);
+          iVar6 = textterm_rx_expect(6);
           if (iVar6 == 0) {
             return;
           }
@@ -3194,10 +3266,10 @@ LAB_20131904:
 switchD_2013170c_caseD_3:
     local_28 = CONCAT13(local_28._3_1_,0x110);
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     goto LAB_201319a0;
   case 0x67:
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
     if (iVar6 == 0) {
       return;
     }
@@ -3217,11 +3289,11 @@ LAB_20131a8c:
     local_28._0_2_ = CONCAT11((&DAT_208f489f)[uVar7],0x1d);
     local_28._0_3_ = (uint3)(ushort)local_28;
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     DAT_208f4baa = DAT_208f4baa + 1;
     break;
   case 0x6a:
-    iVar6 = FUN_201315c0(0x1d);
+    iVar6 = textterm_rx_expect(0x1d);
     if (iVar6 == 0) {
       return;
     }
@@ -3248,10 +3320,10 @@ LAB_201319d8:
   case 0x6d:
     local_28 = CONCAT13(local_28._3_1_,0x10);
     uart4_send((uint)&local_28,3);
-    FUN_201315a4();
+    textterm_rx_clear();
     goto LAB_201319a0;
   case 0x6e:
-    iVar6 = FUN_201315c0(0x10);
+    iVar6 = textterm_rx_expect(0x10);
     goto joined_r0x2013199c;
   case 0x6f:
     local_28 = CONCAT13(local_28._3_1_,0x1b);
@@ -3259,7 +3331,7 @@ LAB_201319d8:
     DAT_208f4baa = DAT_208f4baa + 1;
     goto LAB_20131af4;
   case 0x70:
-    iVar6 = FUN_201315c0(6);
+    iVar6 = textterm_rx_expect(6);
 joined_r0x2013199c:
     if (iVar6 == 0) {
       return;
@@ -3279,24 +3351,28 @@ LAB_201319a0:
 switchD_2013170c_default:
     DAT_208f4baa = '\0';
 LAB_20131af4:
-    FUN_201315a4();
+    textterm_rx_clear();
     return;
   }
   return;
 }
 
 
-// ===== FUN_20131f74 @ 20131f74 (768 bytes)
+// ===== textterm_view_frame @ 20131f74 (768 bytes)
 
-void FUN_20131f74(undefined1 param_1,uint param_2,uint param_3,undefined4 param_4,int param_5,
-                 char *param_6)
+/* scope_area_setup: frame of the text-terminal view (RX area, TX area, two buttons) from the layout
+   words 0x208084DC.. / 0x20808500.. (gui.md "third view"); clears the terminal state first [fact]
+    */
+
+void textterm_view_frame(undefined1 param_1,uint param_2,uint param_3,undefined4 param_4,int param_5
+                        ,char *param_6)
 
 {
   uint uVar1;
   
   uVar1 = fb_get_layer_addr(0);
   if (*param_6 != '{' && param_5 != 0) {
-    FUN_20130c70();
+    textterm_clear();
   }
   DAT_2080850e = (ushort)param_2;
   DAT_2080850c = (ushort)param_3;

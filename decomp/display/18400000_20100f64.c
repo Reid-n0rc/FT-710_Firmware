@@ -43,12 +43,12 @@ void Reset_Handler(void)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
-  FUN_20101088(0);
+  dcache_clean_invalidate_range(0);
   FUN_20100d0c();
   cpg_early_init();
-  FUN_20100d48();
-  FUN_20100e24(vec_reset,0x400000);
-  FUN_20100e24(&PTR_DAT_20800000,0x200000);
+  mmu_l1_table_init();
+  mmu_set_cacheable(vec_reset,0x400000);
+  mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
@@ -123,9 +123,9 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
     *(undefined4 *)(pbVar3 + 0x1c) = uVar11;
     pbVar3 = pbVar3 + 0x20;
   } while ((int)pbVar3 < 0x2043ffff);
-  FUN_20100d48();
-  FUN_20100e24(vec_reset,0x400000);
-  FUN_20100e24(&PTR_DAT_20800000,0x200000);
+  mmu_l1_table_init();
+  mmu_set_cacheable(vec_reset,0x400000);
+  mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
   coprocessor_moveto(0xf,0,0,0x20100000,in_cr12,in_cr0);
   uVar1 = coproc_movefrom_Control();
@@ -169,7 +169,7 @@ void IRQ_Handler(void)
   
   uVar2 = gic_dispatch();
   if ((int)uVar2 != 0) {
-    pcVar1 = (code *)FUN_2015632c((int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
+    pcVar1 = (code *)knl_irq_enter((int)uVar2,(int)((ulonglong)uVar2 >> 0x20));
     (*pcVar1)();
     software_interrupt(0);
     do {
@@ -995,7 +995,7 @@ void __scatterload_zeroinit(undefined4 param_1,undefined4 *param_2,uint param_3)
 }
 
 
-// ===== FUN_20100c7c @ 20100c7c (1176 bytes)
+// ===== _printf_fp_dec @ 20100c7c (1176 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20155d76) */
 /* WARNING: Removing unreachable block (ram,0x20155dd4) */
@@ -1039,8 +1039,11 @@ void __scatterload_zeroinit(undefined4 param_1,undefined4 *param_2,uint param_3)
 /* WARNING: Removing unreachable block (ram,0x20155eaa) */
 /* WARNING: Removing unreachable block (ram,0x20155ea6) */
 /* WARNING: Removing unreachable block (ram,0x20155eac) */
+/* %e/%f/%g conversion of the armcc printf core: inf/nan (_printf_infnan), decimal digits
+   (_fp_digits, __rt_udiv10), padding (_printf_pre_padding / _printf_post_padding), locale point
+   (__rt_locale) [inference: armcc C library _printf_fp_dec_real, from these callees] */
 
-undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
+undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
 
 {
   undefined1 uVar1;
@@ -1071,7 +1074,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
     puVar3 = (undefined4 *)((uint)((int)param_3 + 7) & 0xfffffff8);
     local_40 = *puVar3;
     local_3c = puVar3[1];
-    iVar8 = FUN_20163808();
+    iVar8 = fp_classify_double();
     if (local_3c < 0) {
       local_44 = 0x2d;
     }
@@ -1091,7 +1094,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       else {
         uVar2 = 6;
       }
-      FUN_20155b5c(&local_38,local_64,&local_40,uVar2,1);
+      _fp_digits(&local_38,local_64,&local_40,uVar2,1);
       iVar7 = 0;
       iVar8 = local_34;
       if (iStack_30 == 0) {
@@ -1200,7 +1203,7 @@ undefined4 FUN_20100c7c(uint *param_1,uint param_2,uint *param_3)
       iVar7 = 0;
       iVar8 = 0;
       while (lVar14 != 0) {
-        lVar14 = FUN_20155a10();
+        lVar14 = _ll_udiv10();
         *(byte *)((int)param_1 + iVar8 + 0x24) = extraout_r2 + 0x30;
         iVar8 = iVar8 + 1;
       }
@@ -1372,9 +1375,12 @@ uint FUN_20100d0c(void)
 }
 
 
-// ===== FUN_20100d48 @ 20100d48 (36 bytes)
+// ===== mmu_l1_table_init @ 20100d48 (36 bytes)
 
-void FUN_20100d48(void)
+/* Fills the 4096-entry L1 table 0x2044C000 with flat 1-MB sections (VA = PA, attributes 0x10C02)
+   [fact]; called from Reset_Handler and reset_in_ram */
+
+void mmu_l1_table_init(void)
 
 {
   int iVar1;
@@ -1433,9 +1439,12 @@ void FUN_20100dc0(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20100e24 @ 20100e24 (104 bytes)
+// ===== mmu_set_cacheable @ 20100e24 (104 bytes)
 
-void FUN_20100e24(uint param_1,int param_2)
+/* (addr, size): sets the section attributes of the range to 0xC0C (AP = 3, C = B = 1: cacheable) in
+   0x2044C000, then invalidates the TLB and the I-cache [fact] */
+
+void mmu_set_cacheable(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -1456,9 +1465,12 @@ void FUN_20100e24(uint param_1,int param_2)
 }
 
 
-// ===== FUN_20100e8c @ 20100e8c (112 bytes)
+// ===== mmu_map_range @ 20100e8c (112 bytes)
 
-void FUN_20100e8c(uint param_1,uint param_2,int param_3)
+/* (va, pa, size): rewrites the section base addresses of the L1 table 0x2044C000 for the range,
+   keeping the attribute bits [fact] */
+
+void mmu_map_range(uint param_1,uint param_2,int param_3)
 
 {
   uint uVar1;
@@ -1481,9 +1493,11 @@ void FUN_20100e8c(uint param_1,uint param_2,int param_3)
 }
 
 
-// ===== FUN_20100efc @ 20100efc (36 bytes)
+// ===== icache_disable @ 20100efc (36 bytes)
 
-uint FUN_20100efc(void)
+/* SCTLR: clears the I bit (12) when it is set [fact] */
+
+uint icache_disable(void)
 
 {
   uint uVar1;
@@ -1497,9 +1511,11 @@ uint FUN_20100efc(void)
 }
 
 
-// ===== FUN_20100f20 @ 20100f20 (36 bytes)
+// ===== dcache_disable @ 20100f20 (36 bytes)
 
-uint FUN_20100f20(void)
+/* SCTLR: clears the C bit (2) when it is set [fact] */
+
+uint dcache_disable(void)
 
 {
   uint uVar1;
@@ -1513,9 +1529,11 @@ uint FUN_20100f20(void)
 }
 
 
-// ===== FUN_20100f44 @ 20100f44 (32 bytes)
+// ===== icache_enable @ 20100f44 (32 bytes)
 
-uint FUN_20100f44(void)
+/* SCTLR: sets the I bit (12) [fact] */
+
+uint icache_enable(void)
 
 {
   uint uVar1;
@@ -1527,9 +1545,11 @@ uint FUN_20100f44(void)
 }
 
 
-// ===== FUN_20100f64 @ 20100f64 (32 bytes)
+// ===== dcache_enable @ 20100f64 (32 bytes)
 
-uint FUN_20100f64(void)
+/* SCTLR: sets the C bit (2) [fact] */
+
+uint dcache_enable(void)
 
 {
   uint uVar1;

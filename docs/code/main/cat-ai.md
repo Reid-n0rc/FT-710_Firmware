@@ -358,3 +358,32 @@ detectors (`FUN_fffea63a`, `FUN_fffea88c`, `FUN_fffead00`, ...) are not named ye
 | 0x1FF14 / 0x1FF16 / 0x1FF18 | u16 shadows of RPT SHIFT (50 MHz), DATA SHIFT (SSB), CONTEST NUMBER **[fact]** |
 | 0x1B299 | EX hold-off flag (`cat_ai_ex_holdoff`), with soft timer 0x32 **[fact]** |
 | 0x15E06 | `cat_ai_buf`, where `cat_ai_ex` copies the frame **[fact]** |
+
+<!-- T23e3:begin -->
+
+### More functions (T23e round 3)
+
+Named in the T23e round-3 batch for MAIN (`tools/ghidra/names_main.T23e3.tsv`); they show in `decomp/main` after the next Ghidra apply and re-export.
+
+| Address | Ghidra name | Inferred name | Purpose |
+|---|---|---|---|
+| 0xFFFEA63A | `ai_ex_preset_name` |  | Shared AI detector for EX060n01 (PRESET n name): called by ai_ex06{01..05}01 with n = 1..5; compares g_opstate.presets[n-1].name with its shadow, strncmp on the 12-char name, copies it to its shadow, length 0x15 **[fact: fffea63a]** |
+| 0xFFFEA88C | `ai_ex_preset_cat1_rate` |  | Shared AI detector for EX060n02 (PRESET n cat1_rate): called by ai_ex06{01..05}02 with n = 1..5; compares g_opstate.presets[n-1].cat1_rate with its shadow, formats with nib2hex **[fact: fffea88c]** |
+| 0xFFFEAA08 | `ai_ex_preset_cat1_tot` |  | Shared AI detector for EX060n03 (PRESET n cat1_tot): called by ai_ex06{01..05}03 with n = 1..5; compares g_opstate.presets[n-1].cat1_tot with its shadow, formats with nib2hex **[fact: fffeaa08]** |
+| 0xFFFEAB84 | `ai_ex_preset_cat1_cat3_stop_bit` |  | Shared AI detector for EX060n04 (PRESET n cat1_cat3_stop_bit): called by ai_ex06{01..05}04 with n = 1..5; compares g_opstate.presets[n-1].cat1_cat3_stop_bit with its shadow, formats with nib2hex **[fact: fffeab84]** |
+| 0xFFFEAD00 | `ai_ex_preset_agc_fast_delay` |  | Shared AI detector for EX060n05 (PRESET n agc_fast_delay): called by ai_ex06{01..05}05 with n = 1..5; compares g_opstate.presets[n-1].agc_fast_delay with its shadow, formats with ai_ex_fmt_u16_4 **[fact: fffead00]** |
+| 0xFFFEAE77 | `ai_ex_preset_agc_mid_delay` |  | Shared AI detector for EX060n06 (PRESET n agc_mid_delay): called by ai_ex06{01..05}06 with n = 1..5; compares g_opstate.presets[n-1].agc_mid_delay with its shadow, formats with ai_ex_fmt_u16_4 **[fact: fffeae77]** |
+| 0xFFFEAFEE | `ai_ex_preset_agc_slow_delay` |  | Shared AI detector for EX060n07 (PRESET n agc_slow_delay): called by ai_ex06{01..05}07 with n = 1..5; compares g_opstate.presets[n-1].agc_slow_delay with its shadow, formats with ai_ex_fmt_u16_4 **[fact: fffeafee]** |
+| 0xFFFEB165 | `ai_ex_preset_lcut_freq` |  | Shared AI detector for EX060n08 (PRESET n lcut_freq): called by ai_ex06{01..05}08 with n = 1..5; compares g_opstate.presets[n-1].lcut_freq with its shadow, formats with ai_ex_fmt_u8 **[fact: fffeb165]** |
+| 0xFFFEB2B9 | `ai_ex_preset_lcut_slope` |  | Shared AI detector for EX060n09 (PRESET n lcut_slope): called by ai_ex06{01..05}09 with n = 1..5; compares g_opstate.presets[n-1].lcut_slope with its shadow, formats with nib2hex **[fact: fffeb2b9]** |
+| 0xFFFEB435 | `ai_ex_preset_hcut_freq` |  | Shared AI detector for EX060n10 (PRESET n hcut_freq): called by ai_ex06{01..05}10 with n = 1..5; compares g_opstate.presets[n-1].hcut_freq with its shadow, formats with ai_ex_fmt_u8 **[fact: fffeb435]** |
+| 0xFFFEB589 | `ai_ex_preset_hcut_slope` |  | Shared AI detector for EX060n11 (PRESET n hcut_slope): called by ai_ex06{01..05}11 with n = 1..5; compares g_opstate.presets[n-1].hcut_slope with its shadow, formats with nib2hex **[fact: fffeb589]** |
+| 0xFFFEB705 | `ai_ex_preset_usb_out_level` |  | Shared AI detector for EX060n12 (PRESET n usb_out_level): called by ai_ex06{01..05}12 with n = 1..5; compares g_opstate.presets[n-1].usb_out_level with its shadow, formats with ai_ex_fmt_u8 **[fact: fffeb705]** |
+| 0xFFFEB859 | `ai_ex_preset_rear_out_level` |  | Shared AI detector for EX060n13 (PRESET n rear_out_level): called by ai_ex06{01..05}13 with n = 1..5; compares g_opstate.presets[n-1].rear_out_level with its shadow, formats with ai_ex_fmt_u8 **[fact: fffeb859]** |
+| 0xFFFEB9AD | `ai_ex_preset_tx_bpf_sel` |  | Shared AI detector for EX060n14 (PRESET n tx_bpf_sel): called by ai_ex06{01..05}14 with n = 1..5; compares g_opstate.presets[n-1].tx_bpf_sel with its shadow, formats with nib2hex **[fact: fffeb9ad]** |
+| 0xFFFEBB29 | `ai_ex_preset_mod_source` |  | Shared AI detector for EX060n15 (PRESET n mod_source): called by ai_ex06{01..05}15 with n = 1..5; compares g_opstate.presets[n-1].mod_source with its shadow, formats with nib2hex **[fact: fffebb29]** |
+| 0xFFFEBCA5 | `ai_ex_preset_usb_mod_gain` |  | Shared AI detector for EX060n16 (PRESET n usb_mod_gain): called by ai_ex06{01..05}16 with n = 1..5; compares g_opstate.presets[n-1].usb_mod_gain with its shadow, formats with ai_ex_fmt_u8 **[fact: fffebca5]** |
+| 0xFFFEBDF9 | `ai_ex_preset_rear_mod_gain` |  | Shared AI detector for EX060n17 (PRESET n rear_mod_gain): called by ai_ex06{01..05}17 with n = 1..5; compares g_opstate.presets[n-1].rear_mod_gain with its shadow, formats with ai_ex_fmt_u8 **[fact: fffebdf9]** |
+| 0xFFFEBF4D | `ai_ex_preset_rptt_select` |  | Shared AI detector for EX060n18 (PRESET n rptt_select): called by ai_ex06{01..05}18 with n = 1..5; compares g_opstate.presets[n-1].rptt_select with its shadow, formats with nib2hex **[fact: fffebf4d]** |
+
+<!-- T23e3:end -->

@@ -5,7 +5,7 @@
 void dmac9_register_isr(void)
 
 {
-  itron_acre_isr(0,&cisr_dmac9_isr);
+  itron_acre_isr(0,0x204200ec);
   return;
 }
 
@@ -80,7 +80,7 @@ void dmac9_isr(void)
 void dmac10_register_isr(void)
 
 {
-  itron_acre_isr(0,&cisr_dmac10_isr);
+  itron_acre_isr(0,0x20420100);
   return;
 }
 
@@ -336,9 +336,13 @@ int FUN_20137eac(undefined4 param_1,int param_2,int param_3,int param_4,int para
 }
 
 
-// ===== FUN_20137fac @ 20137fac (1124 bytes)
+// ===== usbh_enumerate_config @ 20137fac (1124 bytes)
 
-undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
+/* Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the
+   configuration and walks its interfaces and endpoints to set up pipes and the class driver
+   (FUN_20137eac, usbh_open_endpoint_pipes) [fact for the calls] */
+
+undefined4 usbh_enumerate_config(uint param_1,int param_2,undefined4 *param_3)
 
 {
   char cVar1;
@@ -473,7 +477,7 @@ undefined4 FUN_20137fac(uint param_1,int param_2,undefined4 *param_3)
                          ((sVar8 != 0x56e || sVar9 != 0x134 || (unaff_r7 == 1)))))) {
 LAB_20138360:
                   *(uint *)(iVar10 + -0xb4) = unaff_r7;
-                  puVar16 = (undefined4 *)FUN_2013a90c(param_3,pbVar13);
+                  puVar16 = (undefined4 *)usbh_open_endpoint_pipes(param_3,pbVar13);
                   if (puVar16 == (undefined4 *)0x0) {
                     iVar21 = 1;
                     if (1 < iVar11) {
@@ -637,9 +641,12 @@ int FUN_2013857c(int param_1,int param_2)
 }
 
 
-// ===== FUN_201385b4 @ 201385b4 (172 bytes)
+// ===== usbh_ports_init @ 201385b4 (172 bytes)
 
-undefined4 FUN_201385b4(void)
+/* For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0..,
+   starts the two port tasks and FUN_2013b2b4 (boot-rtos.md init list) [fact] */
+
+undefined4 usbh_ports_init(void)
 
 {
   uint uVar1;
@@ -1218,9 +1225,12 @@ int FUN_20138fdc(int param_1,uint param_2,uint param_3,int param_4)
 }
 
 
-// ===== FUN_2013927c @ 2013927c (180 bytes)
+// ===== usbh_pipe_write_buf @ 2013927c (180 bytes)
 
-int FUN_2013927c(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet
+   when needed [fact for the calls] */
+
+int usbh_pipe_write_buf(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -1260,9 +1270,12 @@ int FUN_2013927c(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_20139330 @ 20139330 (20 bytes)
+// ===== usbh_buf_needs_bounce @ 20139330 (20 bytes)
 
-undefined4 FUN_20139330(uint param_1)
+/* (addr): -1 when addr has a bit of the mask 0x20808AB8 set (the buffer must be copied through the
+   pipe buffer), else 0 [fact] */
+
+undefined4 usbh_buf_needs_bounce(uint param_1)
 
 {
   undefined4 uVar1;
@@ -1275,9 +1288,12 @@ undefined4 FUN_20139330(uint param_1)
 }
 
 
-// ===== FUN_20139344 @ 20139344 (144 bytes)
+// ===== usbh_pipe_write @ 20139344 (144 bytes)
 
-int FUN_20139344(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): when the buffer needs a bounce (usbh_buf_needs_bounce) copies it in 0x2000-byte
+   pieces into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf [fact] */
+
+int usbh_pipe_write(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -1285,13 +1301,13 @@ int FUN_20139344(int param_1,int param_2,int param_3)
   int iVar3;
   
   iVar3 = 0;
-  iVar1 = FUN_20139330(param_2);
+  iVar1 = usbh_buf_needs_bounce(param_2);
   iVar2 = 0;
   if (iVar1 != 0) {
     iVar2 = param_3;
   }
   if (iVar1 == 0 || param_3 == 0) {
-    iVar3 = FUN_2013927c(param_1,param_2,param_3);
+    iVar3 = usbh_pipe_write_buf(param_1,param_2,param_3);
   }
   else if (-1 < iVar2) {
     do {
@@ -1300,7 +1316,7 @@ int FUN_20139344(int param_1,int param_2,int param_3)
         iVar2 = 0x2000;
       }
       memcpy(*(undefined4 *)(param_1 + 0x48),param_2 + iVar3,iVar2);
-      iVar2 = FUN_2013927c(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
+      iVar2 = usbh_pipe_write_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar2 < 0) {
         return iVar2;
       }
@@ -1312,9 +1328,12 @@ int FUN_20139344(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_201393d4 @ 201393d4 (444 bytes)
+// ===== usbh_pipe_read_buf @ 201393d4 (444 bytes)
 
-int FUN_201393d4(int param_1,undefined4 param_2,int param_3)
+/* (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on
+   the port event flag, under the port semaphore [fact for the calls] */
+
+int usbh_pipe_read_buf(int param_1,undefined4 param_2,int param_3)
 
 {
   int iVar1;
@@ -1384,9 +1403,12 @@ LAB_2013950c:
 }
 
 
-// ===== FUN_20139590 @ 20139590 (148 bytes)
+// ===== usbh_pipe_read @ 20139590 (148 bytes)
 
-int FUN_20139590(int param_1,int param_2,int param_3)
+/* (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces
+   (usbh_pipe_read_buf) and copies out, stopping at a short packet [fact] */
+
+int usbh_pipe_read(int param_1,int param_2,int param_3)
 
 {
   int iVar1;
@@ -1396,9 +1418,9 @@ int FUN_20139590(int param_1,int param_2,int param_3)
   bool bVar5;
   
   iVar4 = 0;
-  iVar2 = FUN_20139330(param_2);
+  iVar2 = usbh_buf_needs_bounce(param_2);
   if (iVar2 == 0) {
-    iVar4 = FUN_201393d4(param_1,param_2,param_3);
+    iVar4 = usbh_pipe_read_buf(param_1,param_2,param_3);
   }
   else if (0 < param_3) {
     do {
@@ -1406,7 +1428,7 @@ int FUN_20139590(int param_1,int param_2,int param_3)
       if (0x2000 < param_3) {
         iVar2 = 0x2000;
       }
-      iVar3 = FUN_201393d4(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
+      iVar3 = usbh_pipe_read_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar3 < 0) {
         return iVar3;
       }
@@ -1425,19 +1447,22 @@ int FUN_20139590(int param_1,int param_2,int param_3)
 }
 
 
-// ===== FUN_20139624 @ 20139624 (48 bytes)
+// ===== usbh_pipe_xfer @ 20139624 (48 bytes)
 
-void FUN_20139624(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
+/* (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read
+   uses it [fact] */
+
+void usbh_pipe_xfer(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   if (param_2 == 0) {
     return;
   }
   if (*(int *)(param_2 + 0x18) == 0) {
-    FUN_20139344(param_2,param_3,param_4);
+    usbh_pipe_write(param_2,param_3,param_4);
     return;
   }
-  FUN_20139590();
+  usbh_pipe_read();
   return;
 }
 
@@ -1447,7 +1472,7 @@ void FUN_20139624(undefined4 param_1,int param_2,undefined4 param_3,undefined4 p
 void FUN_20139654(void)
 
 {
-  FUN_20139624();
+  usbh_pipe_xfer();
   return;
 }
 

@@ -318,7 +318,7 @@ void keyer_task(void)
   }
   if (bVar1) {
     keyer_init();
-    FUN_fffbb1c2();
+    keyer_sidetone_off();
     g_ui.ptt_keyer = 0;
     return;
   }
@@ -329,7 +329,7 @@ void keyer_task(void)
   if (DAT_0001b4d5 != g_opstate.key_speed) {
     bVar1 = false;
     if (DAT_00012164 == '\0') {
-      FUN_fffbb283(&cStack_18,&cStack_19);
+      keyer_paddles_read(&cStack_18,&cStack_19);
       if ((cStack_18 == '\x01') && (cStack_19 == '\x01')) {
         bVar2 = true;
       }
@@ -361,7 +361,7 @@ void keyer_task(void)
     DAT_00021014 = 1200000 / DAT_0001b4d5;
   }
   DAT_00021010 = ((local_1 + 0x19) * DAT_00021014) / 10;
-  DAT_0001215c = FUN_fffb548a();
+  DAT_0001215c = qsk_delay_ticks();
   if (DAT_0001215f == 0) {
     DAT_0001215c = 0xf;
   }
@@ -404,13 +404,13 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     g_ui.keyer_state = 1;
     swtimer_start(0x19,(ushort)DAT_0001215c);
-    FUN_fffbaff6();
+    keyer_state_clear();
   case 1:
     if (DAT_0001215f < 2) {
-      FUN_fffba840(DAT_0001215f);
+      keyer_straight_bug(DAT_0001215f);
     }
     else if (DAT_0001215f - 2 < 4) {
-      FUN_fffba377(DAT_0001215f,'\0');
+      keyer_elekey(DAT_0001215f,'\0');
     }
     break;
   case 2:
@@ -427,7 +427,7 @@ void keyer_task(void)
     g_ui.keyer_state = 3;
     swtimer_start(0x19,(ushort)DAT_0001215c);
     swtimer_start(0x1b,10000);
-    FUN_fffbaff6();
+    keyer_state_clear();
     DAT_00021040 = vfo_rec_ptr(1);
     iVar7 = tx_breakin_on();
     if (iVar7 == 1) {
@@ -439,7 +439,7 @@ void keyer_task(void)
     }
   case 3:
     if (DAT_0001215f - 2 < 4) {
-      FUN_fffba377(DAT_0001215f,'\x01');
+      keyer_elekey(DAT_0001215f,'\x01');
     }
     break;
   case 4:
@@ -543,21 +543,21 @@ void keyer_task(void)
               bVar1 = false;
             }
             if (!bVar1) {
-              bStack_14 = FUN_fffbb2bf(bStack_14);
+              bStack_14 = contest_cut_digit(bStack_14);
               bStack_16 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2];
               bStack_15 = BYTE_ARRAY_fff815c3[(uint)bStack_14 * 2 + 1];
               for (bStack_10 = 0; bStack_10 < bStack_16; bStack_10 = bStack_10 + 1) {
                 if ((bStack_15 & 0x80) == 0) {
-                  FUN_fffbb024(1);
+                  keyer_elem_put(1);
                 }
                 else {
-                  FUN_fffbb024(2);
+                  keyer_elem_put(2);
                 }
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
                 bStack_15 = bStack_15 << 1;
               }
               for (bStack_10 = 0; bStack_10 < 2; bStack_10 = bStack_10 + 1) {
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
               }
             }
           }
@@ -566,14 +566,14 @@ void keyer_task(void)
           iVar7 = tx_breakin_on();
           if ((iVar7 == 1) && (uStack_e = contest_number_get(), uStack_e < 9999)) {
             uStack_e = uStack_e + 1;
-            FUN_fffba336(uStack_e);
+            contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x3e) {
           iVar7 = tx_breakin_on();
           if ((iVar7 == 1) && (uStack_e = contest_number_get(), 1 < uStack_e)) {
             uStack_e = uStack_e - 1;
-            FUN_fffba336(uStack_e);
+            contest_number_set(uStack_e);
           }
         }
         else if (bStack_14 == 0x5b) {
@@ -597,7 +597,7 @@ void keyer_task(void)
               cVar4 = hex2nib(bStack_14);
               bStack_14 = cVar4 - 1;
               if (bStack_9 != bStack_14) {
-                FUN_fffbb338(bStack_14);
+                keyer_text_msg_encode(bStack_14);
               }
             }
           }
@@ -606,23 +606,23 @@ void keyer_task(void)
           bStack_10 = 0;
           if (bStack_16 == 0) {
             for (; bStack_10 < 4; bStack_10 = bStack_10 + 1) {
-              FUN_fffbb024(0);
+              keyer_elem_put(0);
             }
           }
           else {
             for (; bStack_10 < bStack_16; bStack_10 = bStack_10 + 1) {
               if ((bStack_15 & 0x80) == 0) {
-                FUN_fffbb024(1);
+                keyer_elem_put(1);
               }
               else {
-                FUN_fffbb024(2);
+                keyer_elem_put(2);
               }
-              FUN_fffbb024(0);
+              keyer_elem_put(0);
               bStack_15 = bStack_15 << 1;
             }
             if (cStack_17 == '\0') {
               for (bStack_10 = 0; bStack_10 < 2; bStack_10 = bStack_10 + 1) {
-                FUN_fffbb024(0);
+                keyer_elem_put(0);
               }
             }
           }
@@ -634,7 +634,7 @@ void keyer_task(void)
     DAT_0001fa38 = 0;
     swtimer_start(0x19,(ushort)DAT_0001215c);
     g_ui.keyer_state = 6;
-    FUN_fffbaff6();
+    keyer_state_clear();
   case 6:
     if (DAT_0001fa3a == DAT_0001fa3c) {
       g_ui.keyer_state = 7;
@@ -643,11 +643,11 @@ void keyer_task(void)
       }
       if ((DAT_00012165 == '\x01') && (uStack_e = contest_number_get(), uStack_e < 9999)) {
         uStack_e = uStack_e + 1;
-        FUN_fffba336(uStack_e);
+        contest_number_set(uStack_e);
       }
     }
     else {
-      FUN_fffbb283(&cStack_18,&cStack_19);
+      keyer_paddles_read(&cStack_18,&cStack_19);
       if ((cStack_18 == '\x01') || (cStack_19 == '\x01')) {
         bVar1 = true;
       }
@@ -671,11 +671,11 @@ void keyer_task(void)
     else {
       DAT_0001fa38 = 0;
       DAT_0001fa3a = 0;
-      FUN_fffbb1c2();
+      keyer_sidetone_off();
       g_ui.keyer_state = 0;
     }
   }
-  FUN_fffbaa81(DAT_0001215f);
+  keyer_output_step(DAT_0001215f);
   return;
 }
 
@@ -738,7 +738,7 @@ byte tx_cw_keying_class(void)
   bVar4 = ptt_source_get();
   bVar5 = vfo_mode(1);
   bStack_5 = 0;
-  cVar6 = FUN_fffb50d7(bVar5);
+  cVar6 = rptt_select_get(bVar5);
   bVar3 = g_opstate.ex020115_pc_keying;
   DAT_0001215d = 0;
   if ((bVar5 == 3) || (bVar5 == 2)) {
@@ -866,9 +866,12 @@ undefined2 contest_number_get(void)
 }
 
 
-// ===== FUN_fffba336 @ fffba336 (38 bytes)
+// ===== contest_number_set @ fffba336 (38 bytes)
 
-void FUN_fffba336(undefined2 param_1)
+/* Stores a u16 big-endian into g_opstate.ex020205_contest_number_be [fact: fffba336]; the setter
+   twin of contest_number_get */
+
+void contest_number_set(undefined2 param_1)
 
 {
   g_opstate.ex020205_contest_number_be[0] = (byte)((ushort)param_1 >> 8);
@@ -886,9 +889,12 @@ undefined2 FUN_fffba35c(void)
 }
 
 
-// ===== FUN_fffba377 @ fffba377 (1225 bytes)
+// ===== keyer_elekey @ fffba377 (1225 bytes)
 
-void FUN_fffba377(char param_1,char param_2)
+/* Keyer for KEYER TYPE 2..5 (ELEKEY-A, -B, -Y, ACS): keyer_task calls it when the type - 2 < 4;
+   iambic squeeze memory for types 3 and 4 [fact: fffba377 and the caller's test] */
+
+void keyer_elekey(char param_1,char param_2)
 
 {
   bool bVar1;
@@ -911,7 +917,7 @@ void FUN_fffba377(char param_1,char param_2)
   bVar2 = swtimer_expired(0x17);
   if (bVar2 != 1) {
     if (DAT_00012160 == '\0') {
-      FUN_fffbb283(&cStack_9,&cStack_a);
+      keyer_paddles_read(&cStack_9,&cStack_a);
       if ((local_1 == '\x03') || (local_1 == '\x04')) {
         bVar1 = true;
       }
@@ -1042,12 +1048,12 @@ void FUN_fffba377(char param_1,char param_2)
       DAT_0001fa3a = DAT_0001fa38;
     }
   }
-  if ((local_2 == '\x01') && (iVar3 = FUN_fffbb10b(), iVar3 == 1)) {
+  if ((local_2 == '\x01') && (iVar3 = keyer_ring_limit(), iVar3 == 1)) {
     g_ui.keyer_state = 4;
     return;
   }
   if (DAT_00012161 == '\0') {
-    FUN_fffbb283(&cStack_9,&cStack_a);
+    keyer_paddles_read(&cStack_9,&cStack_a);
     if ((local_1 == '\x03') || (local_1 == '\x04')) {
       bVar1 = true;
     }
@@ -1156,16 +1162,19 @@ void FUN_fffba377(char param_1,char param_2)
   if (bVar1) {
     timer_start_us(0x1d,DAT_00021014);
   }
-  FUN_fffbb024(DAT_00012161);
+  keyer_elem_put(DAT_00012161);
   return;
 }
 
 
-// ===== FUN_fffba840 @ fffba840 (387 bytes)
+// ===== keyer_straight_bug @ fffba840 (387 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffba98f) */
+/* Keyer for KEYER TYPE 0/1 (OFF = straight key, BUG): keyer_task calls it when the type (0x1215F) <
+   2; times elements with timer 0x17 and puts them with keyer_elem_put [fact: fffba840 and the
+   caller's test; type labels from ROM 0xFFF84339 OFF/BUG/ELEKEY-A/-B/-Y/ACS] */
 
-void FUN_fffba840(char param_1)
+void keyer_straight_bug(char param_1)
 
 {
   bool bVar1;
@@ -1200,7 +1209,7 @@ void FUN_fffba840(char param_1)
     }
     cStack_9 = DAT_00012161;
     swtimer_start(0x17,2);
-    FUN_fffbb024(DAT_00012161);
+    keyer_elem_put(DAT_00012161);
     return;
   }
   if (DAT_00012161 == '\x01') {
@@ -1208,7 +1217,7 @@ void FUN_fffba840(char param_1)
     iStack_8 = DAT_00021014;
   }
   else {
-    FUN_fffbb283(&cStack_9,&cStack_a);
+    keyer_paddles_read(&cStack_9,&cStack_a);
     if (cStack_a == '\x01') {
       DAT_00012161 = '\x02';
       iStack_8 = 2000;
@@ -1232,10 +1241,10 @@ void FUN_fffba840(char param_1)
   timer_start_us(0x17,iStack_8);
   *(int *)(&DAT_00021018 + ((uint)DAT_0001fa38 % 10) * 4) = iStack_8;
   if (DAT_00012161 == '\x02') {
-    FUN_fffbb024(1);
+    keyer_elem_put(1);
     return;
   }
-  FUN_fffbb024(DAT_00012161);
+  keyer_elem_put(DAT_00012161);
   return;
 }
 
@@ -1256,10 +1265,10 @@ void FUN_fffba9c3(void)
     if (((uint)(byte)(&DAT_000120bc)[(byte)(DAT_0001fa38 >> 3)] & 1 << ((byte)DAT_0001fa38 & 7)) ==
         0) {
       iStack_4 = DAT_00021014;
-      uStack_6 = FUN_fffbb16b(DAT_0001fa38);
+      uStack_6 = keyer_ring_next(DAT_0001fa38);
     }
     else {
-      uStack_6 = FUN_fffbb16b(DAT_0001fa38);
+      uStack_6 = keyer_ring_next(DAT_0001fa38);
       if ((DAT_0001fa3c == uStack_6) ||
          (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_6 >> 3)] & 1 << ((byte)uStack_6 & 7)) == 0)) {
         bVar1 = false;
@@ -1269,8 +1278,8 @@ void FUN_fffba9c3(void)
       }
       if (bVar1) {
         iStack_4 = DAT_00021010;
-        uVar3 = FUN_fffbb16b(uStack_6);
-        uStack_6 = FUN_fffbb16b(uVar3);
+        uVar3 = keyer_ring_next(uStack_6);
+        uStack_6 = keyer_ring_next(uVar3);
       }
       else {
         iStack_4 = DAT_00021014;
@@ -1284,11 +1293,13 @@ void FUN_fffba9c3(void)
 }
 
 
-// ===== FUN_fffbaa81 @ fffbaa81 (1397 bytes)
+// ===== keyer_output_step @ fffbaa81 (1397 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffbafc6) */
+/* Plays the element ring 0x120BC from the read index 0x1FA3A up to the write index 0x1FA38:
+   raises/clears g_ui.ptt_keyer (break-in), keyer_key_out, sidetone in state 6 [fact: fffbaa81] */
 
-void FUN_fffbaa81(byte param_1)
+void keyer_output_step(byte param_1)
 
 {
   bool bVar1;
@@ -1373,7 +1384,7 @@ void FUN_fffbaa81(byte param_1)
         uStack_12 = DAT_0001fa3a;
         for (bStack_17 = 0; bStack_17 < bStack_18; bStack_17 = bStack_17 + 1) {
           if (bStack_17 != 0) {
-            uStack_12 = FUN_fffbb16b(uStack_12);
+            uStack_12 = keyer_ring_next(uStack_12);
           }
           if (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_12 >> 3)] & 1 << ((byte)uStack_12 & 7)) !=
               0) {
@@ -1471,23 +1482,23 @@ void FUN_fffbaa81(byte param_1)
         if (((uint)(byte)(&DAT_000120bc)[(byte)(DAT_0001fa3a >> 3)] & 1 << ((byte)DAT_0001fa3a & 7))
             == 0) {
           if (g_ui.keyer_state == 6) {
-            FUN_fffbb1c2();
+            keyer_sidetone_off();
           }
-          FUN_fffbb1dd(0);
+          keyer_key_out(0);
           if (DAT_00012164 != '\0') {
             swtimer_start(0x1a,*(ushort *)
                                 (BYTE_ARRAY_fff88270 + (uint)g_opstate.cw_bkin_delay * 2 + 0x110));
           }
           uStack_10 = DAT_00021014;
-          uStack_12 = FUN_fffbb16b(uVar2);
+          uStack_12 = keyer_ring_next(uVar2);
           DAT_00012164 = 0;
         }
         else {
           if (g_ui.keyer_state == 6) {
-            FUN_fffbb185();
+            keyer_sidetone_on();
           }
-          FUN_fffbb1dd(1);
-          uStack_12 = FUN_fffbb16b(uVar2);
+          keyer_key_out(1);
+          uStack_12 = keyer_ring_next(uVar2);
           if ((DAT_0001fa38 == uStack_12) ||
              (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_12 >> 3)] & 1 << ((byte)uStack_12 & 7)) ==
               0)) {
@@ -1498,8 +1509,8 @@ void FUN_fffbaa81(byte param_1)
           }
           if (bVar3) {
             uStack_10 = DAT_00021010;
-            uVar6 = FUN_fffbb16b(uStack_12);
-            uStack_12 = FUN_fffbb16b(uVar6);
+            uVar6 = keyer_ring_next(uStack_12);
+            uStack_12 = keyer_ring_next(uVar6);
             DAT_00012164 = 2;
           }
           else {
@@ -1517,9 +1528,9 @@ void FUN_fffbaa81(byte param_1)
       bVar5 = (byte)DAT_0001fa3a & 7;
       if (((uint)(byte)(&DAT_000120bc)[bVar4] & 1 << bVar5) == 0) {
         if (g_ui.keyer_state == 6) {
-          FUN_fffbb1c2();
+          keyer_sidetone_off();
         }
-        FUN_fffbb1dd(0);
+        keyer_key_out(0);
         if (DAT_00012164 != '\0') {
           swtimer_start(0x1a,*(ushort *)
                               (BYTE_ARRAY_fff88270 + (uint)g_opstate.cw_bkin_delay * 2 + 0x110));
@@ -1528,9 +1539,9 @@ void FUN_fffbaa81(byte param_1)
       }
       else {
         if (g_ui.keyer_state == 6) {
-          FUN_fffbb185();
+          keyer_sidetone_on();
         }
-        FUN_fffbb1dd(1);
+        keyer_key_out(1);
         DAT_00012164 = 1;
         (&DAT_000120bc)[bVar4] = (&DAT_000120bc)[bVar4] & ~(byte)(1 << bVar5);
       }
@@ -1541,7 +1552,7 @@ void FUN_fffbaa81(byte param_1)
         uStack_10 = *(uint *)(&DAT_00021018 + ((uint)uVar2 % 10) * 4);
       }
       timer_start_us(0x18,uStack_10 & 0xffff);
-      DAT_0001fa3a = FUN_fffbb16b(uVar2);
+      DAT_0001fa3a = keyer_ring_next(uVar2);
       return;
     }
   }
@@ -1549,9 +1560,11 @@ void FUN_fffbaa81(byte param_1)
 }
 
 
-// ===== FUN_fffbaff6 @ fffbaff6 (46 bytes)
+// ===== keyer_state_clear @ fffbaff6 (46 bytes)
 
-void FUN_fffbaff6(void)
+/* Clears the keyer bytes 0x12160..0x12164 [fact: fffbaff6]; keyer_task states 0 and 2 */
+
+void keyer_state_clear(void)
 
 {
   DAT_00012160 = 0;
@@ -1563,12 +1576,15 @@ void FUN_fffbaff6(void)
 }
 
 
-// ===== FUN_fffbb024 @ fffbb024 (231 bytes)
+// ===== keyer_elem_put @ fffbb024 (231 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffbb098) */
 /* WARNING: Removing unreachable block (ram,0xfffbb108) */
+/* Appends to the keyer element ring 0x120BC (index 0x1FA38): arg 1 = one mark bit + sidetone on, 0
+   = one space bit + sidetone off, 2 = three mark bits (dash) [fact: fffbb024]; matches eeprom.md's
+   description of the ring */
 
-undefined4 FUN_fffbb024(char param_1)
+undefined4 keyer_elem_put(char param_1)
 
 {
   byte bVar1;
@@ -1588,13 +1604,13 @@ undefined4 FUN_fffbb024(char param_1)
     bVar1 = (byte)(1 << (uint)(bVar1 & 7));
     if (param_1 == '\x01') {
       (&DAT_000120bc)[bVar2] = (&DAT_000120bc)[bVar2] | bVar1;
-      FUN_fffbb185();
+      keyer_sidetone_on();
     }
     else {
       (&DAT_000120bc)[bVar2] = (&DAT_000120bc)[bVar2] & ~bVar1;
-      FUN_fffbb1c2();
+      keyer_sidetone_off();
     }
-    uVar3 = FUN_fffbb16b(DAT_0001fa38);
+    uVar3 = keyer_ring_next(DAT_0001fa38);
     DAT_0001fa38 = (short)uVar3;
     return uVar3;
   }
@@ -1605,16 +1621,19 @@ undefined4 FUN_fffbb024(char param_1)
       (&DAT_000120bc)[bVar2] = 0;
     }
     (&DAT_000120bc)[bVar2] = (&DAT_000120bc)[bVar2] | (byte)(1 << (bVar1 & 7));
-    DAT_0001fa38 = FUN_fffbb16b(DAT_0001fa38);
+    DAT_0001fa38 = keyer_ring_next(DAT_0001fa38);
   }
-  uVar3 = FUN_fffbb185();
+  uVar3 = keyer_sidetone_on();
   return uVar3;
 }
 
 
-// ===== FUN_fffbb10b @ fffbb10b (96 bytes)
+// ===== keyer_ring_limit @ fffbb10b (96 bytes)
 
-undefined1 FUN_fffbb10b(void)
+/* Helper of keyer_elekey: when timer 0x1B expires drops the last 7 elements and returns 1; caps the
+   ring at 0x4B0 elements (returns 1) [fact: fffbb10b] */
+
+undefined1 keyer_ring_limit(void)
 
 {
   byte bVar1;
@@ -1638,9 +1657,11 @@ undefined1 FUN_fffbb10b(void)
 }
 
 
-// ===== FUN_fffbb16b @ fffbb16b (26 bytes)
+// ===== keyer_ring_next @ fffbb16b (26 bytes)
 
-ushort FUN_fffbb16b(short param_1)
+/* Ring index + 1, wraps to 0 above 0x4FF [fact: fffbb16b]; the keyer element ring 0x120BC */
+
+ushort keyer_ring_next(short param_1)
 
 {
   undefined2 local_2;
@@ -1653,9 +1674,12 @@ ushort FUN_fffbb16b(short param_1)
 }
 
 
-// ===== FUN_fffbb185 @ fffbb185 (61 bytes)
+// ===== keyer_sidetone_on @ fffbb185 (61 bytes)
 
-void FUN_fffbb185(void)
+/* When MONITOR (g_opstate.monitor[0] for SSB/AM-type modes, [1] from CW) is on: beep_request(4),
+   flag 0x1215E = 1 [fact: fffbb185] */
+
+void keyer_sidetone_on(void)
 
 {
   byte bVar1;
@@ -1677,9 +1701,11 @@ void FUN_fffbb185(void)
 }
 
 
-// ===== FUN_fffbb1c2 @ fffbb1c2 (27 bytes)
+// ===== keyer_sidetone_off @ fffbb1c2 (27 bytes)
 
-void FUN_fffbb1c2(void)
+/* If flag 0x1215E is set: beep_stop, flag = 0 [fact: fffbb1c2] */
+
+void keyer_sidetone_off(void)
 
 {
   if (DAT_0001215e != '\x01') {
@@ -1691,9 +1717,12 @@ void FUN_fffbb1c2(void)
 }
 
 
-// ===== FUN_fffbb1dd @ fffbb1dd (166 bytes)
+// ===== keyer_key_out @ fffbb1dd (166 bytes)
 
-void FUN_fffbb1dd(byte param_1)
+/* (on): sets SEND_A/SEND_B (send_a_set / send_b_set) when the PTT source / CW keying class asks for
+   it, and handles EX020116 CW BK-IN TYPE [fact: fffbb1dd]; only caller keyer_output_step */
+
+void keyer_key_out(byte param_1)
 
 {
   bool bVar1;
@@ -1749,12 +1778,14 @@ LAB_fffbb21f:
 }
 
 
-// ===== FUN_fffbb283 @ fffbb283 (60 bytes)
+// ===== keyer_paddles_read @ fffbb283 (60 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffbb2a9) */
 /* WARNING: Removing unreachable block (ram,0xfffbb2bc) */
+/* (*dot, *dash): ckey_dot / ckey_dash, swapped when EX020202 KEYER DOT/DASH is reversed [fact:
+   fffbb283] */
 
-void FUN_fffbb283(void *param_1,void *param_2)
+void keyer_paddles_read(void *param_1,void *param_2)
 
 {
   bool bVar1;
@@ -1774,9 +1805,12 @@ void FUN_fffbb283(void *param_1,void *param_2)
 }
 
 
-// ===== FUN_fffbb2bf @ fffbb2bf (121 bytes)
+// ===== contest_cut_digit @ fffbb2bf (121 bytes)
 
-char FUN_fffbb2bf(char param_1)
+/* Cut-number substitution by EX020204 NUMBER STYLE: '1' -> 'A', '2' -> 'U', '9' -> 'N', '0' -> 'T'
+   or 'O', others unchanged [fact: fffbb2bf] */
+
+char contest_cut_digit(char param_1)
 
 {
   char local_1;
@@ -1819,7 +1853,7 @@ LAB_fffbb32d:
 }
 
 
-// ===== FUN_fffbb338 @ fffbb338 (559 bytes)
+// ===== keyer_text_msg_encode @ fffbb338 (559 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffbb382) */
 /* WARNING: Removing unreachable block (ram,0xfffbb408) */
@@ -1828,8 +1862,10 @@ LAB_fffbb32d:
 /* WARNING: Removing unreachable block (ram,0xfffbb373) */
 /* WARNING: Removing unreachable block (ram,0xfffbb51a) */
 /* WARNING: Removing unreachable block (ram,0xfffbb440) */
+/* (n): turns keyer memory text n (0x969F + n*0x33: length + 50 chars, eeprom.md) into elements via
+   the Morse table 0xFFF815C3 (2 bytes per char), '#' inserts the contest number [fact: fffbb338] */
 
-void FUN_fffbb338(byte param_1)
+void keyer_text_msg_encode(byte param_1)
 
 {
   byte bVar1;
@@ -1888,21 +1924,21 @@ void FUN_fffbb338(byte param_1)
         }
         if (bVar3) {
           bVar4 = true;
-          bVar7 = FUN_fffbb2bf(cVar6);
+          bVar7 = contest_cut_digit(cVar6);
           bVar2 = BYTE_ARRAY_fff815c3[(uint)bVar7 * 2];
           local_13 = BYTE_ARRAY_fff815c3[(uint)bVar7 * 2 + 1];
           for (local_e = 0; local_e < bVar2; local_e = local_e + 1) {
             if ((local_13 & 0x80) == 0) {
-              FUN_fffbb024(1);
+              keyer_elem_put(1);
             }
             else {
-              FUN_fffbb024(2);
+              keyer_elem_put(2);
             }
-            FUN_fffbb024(0);
+            keyer_elem_put(0);
             local_13 = local_13 << 1;
           }
           for (local_e = 0; local_e < 2; local_e = local_e + 1) {
-            FUN_fffbb024(0);
+            keyer_elem_put(0);
           }
         }
       }
@@ -1910,13 +1946,13 @@ void FUN_fffbb338(byte param_1)
     else if (bVar2 == 0x3c) {
       uVar8 = contest_number_get();
       if (uVar8 < 9999) {
-        FUN_fffba336(uVar8 + 1);
+        contest_number_set(uVar8 + 1);
       }
     }
     else if (bVar2 == 0x3e) {
       uVar8 = contest_number_get();
       if (1 < uVar8) {
-        FUN_fffba336(uVar8 - 1);
+        contest_number_set(uVar8 - 1);
       }
     }
     else if (bVar2 == 0x5b) {
@@ -1932,23 +1968,23 @@ void FUN_fffbb338(byte param_1)
       local_e = 0;
       if (bVar7 == 0) {
         for (; local_e < 4; local_e = local_e + 1) {
-          FUN_fffbb024(0);
+          keyer_elem_put(0);
         }
       }
       else {
         for (; local_e < bVar7; local_e = local_e + 1) {
           if ((local_13 & 0x80) == 0) {
-            FUN_fffbb024(1);
+            keyer_elem_put(1);
           }
           else {
-            FUN_fffbb024(2);
+            keyer_elem_put(2);
           }
-          FUN_fffbb024(0);
+          keyer_elem_put(0);
           local_13 = local_13 << 1;
         }
         if (!bVar5) {
           for (local_e = 0; local_e < 2; local_e = local_e + 1) {
-            FUN_fffbb024(0);
+            keyer_elem_put(0);
           }
         }
       }
@@ -2060,7 +2096,7 @@ void align_load_preset(void)
     local_c->freq_be[3] = (&LAB_fff88cdc)[(uint)PTR_g_ui_00025d4c->align_item * 0xc];
     PTR_g_ui_00025d4c->freq_refresh_req = 1;
   }
-  DAT_00021048 = FUN_fffc7827(&local_4,&bStack_5);
+  DAT_00021048 = rf_power_ptr(&local_4,&bStack_5);
   if ((PTR_g_ui_00025d4c->align_item < 0x45) || (0xda < PTR_g_ui_00025d4c->align_item)) {
     bVar2 = false;
   }
@@ -2267,11 +2303,11 @@ void FUN_fffbbb85(short param_1)
   
   if (param_1 != DAT_0001ff68) {
     if (DAT_0001ff68 == 0xf5) {
-      puVar1 = (undefined1 *)FUN_fff99877();
+      puVar1 = (undefined1 *)mic_gain_ptr();
       *puVar1 = DAT_00012169;
     }
     if (param_1 == 0xf5) {
-      puVar1 = (undefined1 *)FUN_fff99877();
+      puVar1 = (undefined1 *)mic_gain_ptr();
       DAT_00012169 = *puVar1;
       *puVar1 = 0x32;
     }

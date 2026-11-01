@@ -623,9 +623,13 @@ undefined4 rspi_wait_tx_end(uint param_1)
 }
 
 
-// ===== FUN_2011f970 @ 2011f970 (288 bytes)
+// ===== riic_regs_init @ 2011f970 (288 bytes)
 
-void FUN_2011f970(uint param_1)
+/* (ch 0..3): RIIC register set-up from the per-channel pointer table 0x20166D18 (0x24 B each):
+   ICCR1 ICE/IICRST sequence, ICMR1 CKS, ICBRL/ICBRH, ICMR3, ICFER, ICIER TIE/RIE/TEIE [fact for the
+   stores] */
+
+void riic_regs_init(uint param_1)
 
 {
   int iVar1;
@@ -653,9 +657,13 @@ void FUN_2011f970(uint param_1)
 }
 
 
-// ===== FUN_2011fa90 @ 2011fa90 (508 bytes)
+// ===== riic_port_init @ 2011fa90 (508 bytes)
 
-void FUN_2011fa90(uint param_1)
+/* (ch 0/1 only): P1_0 and P1_1 to alternative function 1 with bidirectional mode
+   (PIBC/PBDC/PM/PMC/PIPC/PFC/PFCE/PFCAE of port 1) [fact]; RZ/A1H RIIC0/1 SCL/SDA pins [inference]
+    */
+
+void riic_port_init(uint param_1)
 
 {
   if ((1 < param_1) && (param_1 != 2 && param_1 != 3)) {
@@ -687,20 +695,25 @@ void FUN_2011fa90(uint param_1)
 }
 
 
-// ===== FUN_2011fc8c @ 2011fc8c (144 bytes)
+// ===== userdef_riic0_init @ 2011fc8c (144 bytes)
 
-void FUN_2011fc8c(void)
+/* RIIC0 open: clears STBCR9 bit 7 (module clock on) and the P1 pin functions (riic_port_init),
+   riic_regs_init(0), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids
+   [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same call
+   structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic0_init(void)
 
 {
   uint uVar1;
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR9,0,7,0x80,in_r3);
-  FUN_2011fa90(0);
-  FUN_2011f970(0);
-  uVar1 = itron_acre_isr(0,&cisr_int191);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int190), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,&cisr_int189), 0 < (int)uVar1)) {
+  riic_port_init(0);
+  riic_regs_init(0);
+  uVar1 = itron_acre_isr(0,0x20166c28);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166c3c), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,0x20166c50), 0 < (int)uVar1)) {
     gic_enable_irq(0xbf);
     gic_enable_irq(0xbe);
     gic_enable_irq(0xbd);
@@ -710,20 +723,25 @@ void FUN_2011fc8c(void)
 }
 
 
-// ===== FUN_2011fd1c @ 2011fd1c (144 bytes)
+// ===== userdef_riic1_init @ 2011fd1c (144 bytes)
 
-void FUN_2011fd1c(void)
+/* RIIC1 open: clears STBCR9 bit 6 (module clock on) and the P1 pin functions (riic_port_init),
+   riic_regs_init(1), creates the TEI/RI/TI ISRs with itron_acre_isr and enables their GIC ids
+   [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same call
+   structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic1_init(void)
 
 {
   uint uVar1;
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR9,0,6,0x40,in_r3);
-  FUN_2011fa90(1);
-  FUN_2011f970(1);
-  uVar1 = itron_acre_isr(0,&cisr_int199);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int198), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,&cisr_int197), 0 < (int)uVar1)) {
+  riic_port_init(1);
+  riic_regs_init(1);
+  uVar1 = itron_acre_isr(0,0x20166c64);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166c78), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,0x20166c8c), 0 < (int)uVar1)) {
     gic_enable_irq(199);
     gic_enable_irq(0xc6);
     gic_enable_irq(0xc5);
@@ -733,19 +751,23 @@ void FUN_2011fd1c(void)
 }
 
 
-// ===== FUN_2011fdac @ 2011fdac (136 bytes)
+// ===== userdef_riic2_init @ 2011fdac (136 bytes)
 
-void FUN_2011fdac(void)
+/* RIIC2 open: clears STBCR9 bit 5 (module clock on), riic_regs_init(2), creates the TEI/RI/TI ISRs
+   with itron_acre_isr and enables their GIC ids [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic2_init(void)
 
 {
   uint uVar1;
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR9,0,5,0x20,in_r3);
-  FUN_2011f970(2);
-  uVar1 = itron_acre_isr(0,&cisr_int207);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int206), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,&cisr_int205), 0 < (int)uVar1)) {
+  riic_regs_init(2);
+  uVar1 = itron_acre_isr(0,0x20166ca0);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166cb4), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,0x20166cc8), 0 < (int)uVar1)) {
     gic_enable_irq(0xcf);
     gic_enable_irq(0xce);
     gic_enable_irq(0xcd);
@@ -755,19 +777,23 @@ void FUN_2011fdac(void)
 }
 
 
-// ===== FUN_2011fe34 @ 2011fe34 (136 bytes)
+// ===== userdef_riic3_init @ 2011fe34 (136 bytes)
 
-void FUN_2011fe34(void)
+/* RIIC3 open: clears STBCR9 bit 4 (module clock on), riic_regs_init(3), creates the TEI/RI/TI ISRs
+   with itron_acre_isr and enables their GIC ids [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic3_init(void)
 
 {
   uint uVar1;
   undefined4 in_r3;
   
   reg_rmw8(&CPG_STBCR9,0,4,0x10,in_r3);
-  FUN_2011f970(3);
-  uVar1 = itron_acre_isr(0,&cisr_int215);
-  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,&cisr_int214), 0 < (int)uVar1)) &&
-     (uVar1 = itron_acre_isr(0,&cisr_int213), 0 < (int)uVar1)) {
+  riic_regs_init(3);
+  uVar1 = itron_acre_isr(0,0x20166cdc);
+  if (((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166cf0), 0 < (int)uVar1)) &&
+     (uVar1 = itron_acre_isr(0,0x20166d04), 0 < (int)uVar1)) {
     gic_enable_irq(0xd7);
     gic_enable_irq(0xd6);
     gic_enable_irq(0xd5);
@@ -777,9 +803,12 @@ void FUN_2011fe34(void)
 }
 
 
-// ===== FUN_2011febc @ 2011febc (16 bytes)
+// ===== userdef_riic0_init_rx_full @ 2011febc (16 bytes)
 
-void FUN_2011febc(void)
+/* Clears the ch0 receive-full flag 0x20800454 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic0_init_rx_full(void)
 
 {
   DAT_20800454 = 0;
@@ -787,9 +816,12 @@ void FUN_2011febc(void)
 }
 
 
-// ===== FUN_2011fecc @ 2011fecc (16 bytes)
+// ===== userdef_riic1_init_rx_full @ 2011fecc (16 bytes)
 
-void FUN_2011fecc(void)
+/* Clears the ch1 receive-full flag 0x20800455 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic1_init_rx_full(void)
 
 {
   DAT_20800455 = 0;
@@ -797,9 +829,12 @@ void FUN_2011fecc(void)
 }
 
 
-// ===== FUN_2011fedc @ 2011fedc (16 bytes)
+// ===== userdef_riic2_init_rx_full @ 2011fedc (16 bytes)
 
-void FUN_2011fedc(void)
+/* Clears the ch2 receive-full flag 0x20800456 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic2_init_rx_full(void)
 
 {
   DAT_20800456 = 0;
@@ -807,9 +842,12 @@ void FUN_2011fedc(void)
 }
 
 
-// ===== FUN_2011feec @ 2011feec (16 bytes)
+// ===== userdef_riic3_init_rx_full @ 2011feec (16 bytes)
 
-void FUN_2011feec(void)
+/* Clears the ch3 receive-full flag 0x20800457 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic3_init_rx_full(void)
 
 {
   DAT_20800457 = 0;
@@ -817,9 +855,12 @@ void FUN_2011feec(void)
 }
 
 
-// ===== FUN_2011fefc @ 2011fefc (16 bytes)
+// ===== userdef_riic0_init_tx_empty @ 2011fefc (16 bytes)
 
-void FUN_2011fefc(void)
+/* Clears the ch0 transmit-empty flag 0x20800458 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic0_init_tx_empty(void)
 
 {
   DAT_20800458 = 0;
@@ -827,9 +868,12 @@ void FUN_2011fefc(void)
 }
 
 
-// ===== FUN_2011ff0c @ 2011ff0c (16 bytes)
+// ===== userdef_riic1_init_tx_empty @ 2011ff0c (16 bytes)
 
-void FUN_2011ff0c(void)
+/* Clears the ch1 transmit-empty flag 0x20800459 [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic1_init_tx_empty(void)
 
 {
   DAT_20800459 = 0;
@@ -837,9 +881,12 @@ void FUN_2011ff0c(void)
 }
 
 
-// ===== FUN_2011ff1c @ 2011ff1c (16 bytes)
+// ===== userdef_riic2_init_tx_empty @ 2011ff1c (16 bytes)
 
-void FUN_2011ff1c(void)
+/* Clears the ch2 transmit-empty flag 0x2080045A [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic2_init_tx_empty(void)
 
 {
   DAT_2080045a = 0;
@@ -847,9 +894,12 @@ void FUN_2011ff1c(void)
 }
 
 
-// ===== FUN_2011ff2c @ 2011ff2c (16 bytes)
+// ===== userdef_riic3_init_tx_empty @ 2011ff2c (16 bytes)
 
-void FUN_2011ff2c(void)
+/* Clears the ch3 transmit-empty flag 0x2080045B [fact]; Renesas RZ/A1H RIIC sample driver (riic.c /
+   riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic3_init_tx_empty(void)
 
 {
   DAT_2080045b = 0;
@@ -857,9 +907,13 @@ void FUN_2011ff2c(void)
 }
 
 
-// ===== FUN_2011ff3c @ 2011ff3c (24 bytes)
+// ===== userdef_riic0_init_tx_end @ 2011ff3c (24 bytes)
 
-void FUN_2011ff3c(int param_1)
+/* (mode): clears the ch0 transmit-end flag 0x2080045C (mode 0) or receive-full flag 0x20800454
+   (mode 1) [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same
+   call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic0_init_tx_end(int param_1)
 
 {
   undefined1 *puVar1;
@@ -875,9 +929,13 @@ void FUN_2011ff3c(int param_1)
 }
 
 
-// ===== FUN_2011ff54 @ 2011ff54 (24 bytes)
+// ===== userdef_riic1_init_tx_end @ 2011ff54 (24 bytes)
 
-void FUN_2011ff54(int param_1)
+/* (mode): clears the ch1 transmit-end flag 0x2080045D (mode 0) or receive-full flag 0x20800455
+   (mode 1) [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same
+   call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic1_init_tx_end(int param_1)
 
 {
   undefined1 *puVar1;
@@ -893,9 +951,13 @@ void FUN_2011ff54(int param_1)
 }
 
 
-// ===== FUN_2011ff6c @ 2011ff6c (24 bytes)
+// ===== userdef_riic2_init_tx_end @ 2011ff6c (24 bytes)
 
-void FUN_2011ff6c(int param_1)
+/* (mode): clears the ch2 transmit-end flag 0x2080045E (mode 0) or receive-full flag 0x20800456
+   (mode 1) [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same
+   call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic2_init_tx_end(int param_1)
 
 {
   undefined1 *puVar1;
@@ -911,9 +973,13 @@ void FUN_2011ff6c(int param_1)
 }
 
 
-// ===== FUN_2011ff84 @ 2011ff84 (24 bytes)
+// ===== userdef_riic3_init_tx_end @ 2011ff84 (24 bytes)
 
-void FUN_2011ff84(int param_1)
+/* (mode): clears the ch3 transmit-end flag 0x2080045F (mode 0) or receive-full flag 0x20800457
+   (mode 1) [fact]; Renesas RZ/A1H RIIC sample driver (riic.c / riic_userdef.c) [inference: same
+   call structure, per-channel flag bytes and mode arguments] */
+
+void userdef_riic3_init_tx_end(int param_1)
 
 {
   undefined1 *puVar1;
@@ -929,9 +995,12 @@ void FUN_2011ff84(int param_1)
 }
 
 
-// ===== FUN_2011ff9c @ 2011ff9c (16 bytes)
+// ===== userdef_riic0_set_rx_full @ 2011ff9c (16 bytes)
 
-void FUN_2011ff9c(void)
+/* Sets the ch0 receive-full flag 0x20800454; called from the RI interrupt dispatcher
+   R_RIIC_RiInterrupt [fact] */
+
+void userdef_riic0_set_rx_full(void)
 
 {
   DAT_20800454 = 1;
@@ -939,9 +1008,12 @@ void FUN_2011ff9c(void)
 }
 
 
-// ===== FUN_2011ffac @ 2011ffac (16 bytes)
+// ===== userdef_riic1_set_rx_full @ 2011ffac (16 bytes)
 
-void FUN_2011ffac(void)
+/* Sets the ch1 receive-full flag 0x20800455; called from the RI interrupt dispatcher
+   R_RIIC_RiInterrupt [fact] */
+
+void userdef_riic1_set_rx_full(void)
 
 {
   DAT_20800455 = 1;
@@ -949,9 +1021,12 @@ void FUN_2011ffac(void)
 }
 
 
-// ===== FUN_2011ffbc @ 2011ffbc (16 bytes)
+// ===== userdef_riic2_set_rx_full @ 2011ffbc (16 bytes)
 
-void FUN_2011ffbc(void)
+/* Sets the ch2 receive-full flag 0x20800456; called from the RI interrupt dispatcher
+   R_RIIC_RiInterrupt [fact] */
+
+void userdef_riic2_set_rx_full(void)
 
 {
   DAT_20800456 = 1;
@@ -959,9 +1034,12 @@ void FUN_2011ffbc(void)
 }
 
 
-// ===== FUN_2011ffcc @ 2011ffcc (16 bytes)
+// ===== userdef_riic3_set_rx_full @ 2011ffcc (16 bytes)
 
-void FUN_2011ffcc(void)
+/* Sets the ch3 receive-full flag 0x20800457; called from the RI interrupt dispatcher
+   R_RIIC_RiInterrupt [fact] */
+
+void userdef_riic3_set_rx_full(void)
 
 {
   DAT_20800457 = 1;
@@ -969,9 +1047,11 @@ void FUN_2011ffcc(void)
 }
 
 
-// ===== FUN_2011ffdc @ 2011ffdc (16 bytes)
+// ===== userdef_riic0_set_tx_empty @ 2011ffdc (16 bytes)
 
-void FUN_2011ffdc(void)
+/* Sets the ch0 transmit-empty flag 0x20800458; called from R_RIIC_TiInterrupt [fact] */
+
+void userdef_riic0_set_tx_empty(void)
 
 {
   DAT_20800458 = 1;
@@ -979,9 +1059,11 @@ void FUN_2011ffdc(void)
 }
 
 
-// ===== FUN_2011ffec @ 2011ffec (16 bytes)
+// ===== userdef_riic1_set_tx_empty @ 2011ffec (16 bytes)
 
-void FUN_2011ffec(void)
+/* Sets the ch1 transmit-empty flag 0x20800459; called from R_RIIC_TiInterrupt [fact] */
+
+void userdef_riic1_set_tx_empty(void)
 
 {
   DAT_20800459 = 1;
@@ -989,9 +1071,12 @@ void FUN_2011ffec(void)
 }
 
 
-// ===== FUN_2011fffc @ 2011fffc (32 bytes)
+// ===== userdef_riic2_set_tx_empty @ 2011fffc (32 bytes)
 
-void FUN_2011fffc(void)
+/* Sets the ch2 transmit-empty flag 0x2080045A and counts it in 0x20800462 (read by
+   userdef_riic2_tx_count for task_tsc2007_irq); called from R_RIIC_TiInterrupt [fact] */
+
+void userdef_riic2_set_tx_empty(void)
 
 {
   DAT_2080045a = 1;
@@ -1000,18 +1085,23 @@ void FUN_2011fffc(void)
 }
 
 
-// ===== FUN_2012001c @ 2012001c (12 bytes)
+// ===== userdef_riic2_tx_count @ 2012001c (12 bytes)
 
-undefined1 FUN_2012001c(void)
+/* Returns the byte counter 0x20800462 that userdef_riic2_set_tx_empty increments (RIIC2 = touch
+   controller bus, input.md) [fact] */
+
+undefined1 userdef_riic2_tx_count(void)
 
 {
   return DAT_20800462;
 }
 
 
-// ===== FUN_20120028 @ 20120028 (16 bytes)
+// ===== userdef_riic3_set_tx_empty @ 20120028 (16 bytes)
 
-void FUN_20120028(void)
+/* Sets the ch3 transmit-empty flag 0x2080045B; called from R_RIIC_TiInterrupt [fact] */
+
+void userdef_riic3_set_tx_empty(void)
 
 {
   DAT_2080045b = 1;
@@ -1019,9 +1109,11 @@ void FUN_20120028(void)
 }
 
 
-// ===== FUN_20120038 @ 20120038 (16 bytes)
+// ===== userdef_riic0_set_tx_end @ 20120038 (16 bytes)
 
-void FUN_20120038(void)
+/* Sets the ch0 transmit-end flag 0x2080045C; called from R_RIIC_TeiInterrupt [fact] */
+
+void userdef_riic0_set_tx_end(void)
 
 {
   DAT_2080045c = 1;
@@ -1029,9 +1121,11 @@ void FUN_20120038(void)
 }
 
 
-// ===== FUN_20120048 @ 20120048 (16 bytes)
+// ===== userdef_riic1_set_tx_end @ 20120048 (16 bytes)
 
-void FUN_20120048(void)
+/* Sets the ch1 transmit-end flag 0x2080045D; called from R_RIIC_TeiInterrupt [fact] */
+
+void userdef_riic1_set_tx_end(void)
 
 {
   DAT_2080045d = 1;
@@ -1039,9 +1133,11 @@ void FUN_20120048(void)
 }
 
 
-// ===== FUN_20120058 @ 20120058 (16 bytes)
+// ===== userdef_riic2_set_tx_end @ 20120058 (16 bytes)
 
-void FUN_20120058(void)
+/* Sets the ch2 transmit-end flag 0x2080045E; called from R_RIIC_TeiInterrupt [fact] */
+
+void userdef_riic2_set_tx_end(void)
 
 {
   DAT_2080045e = 1;
@@ -1049,9 +1145,11 @@ void FUN_20120058(void)
 }
 
 
-// ===== FUN_20120068 @ 20120068 (16 bytes)
+// ===== userdef_riic3_set_tx_end @ 20120068 (16 bytes)
 
-void FUN_20120068(void)
+/* Sets the ch3 transmit-end flag 0x2080045F; called from R_RIIC_TeiInterrupt [fact] */
+
+void userdef_riic3_set_tx_end(void)
 
 {
   DAT_2080045f = 1;
@@ -1059,9 +1157,13 @@ void FUN_20120068(void)
 }
 
 
-// ===== FUN_20120078 @ 20120078 (20 bytes)
+// ===== userdef_riic0_wait_rx_full @ 20120078 (20 bytes)
 
-void FUN_20120078(void)
+/* Spins until the ch0 receive-full flag 0x20800454 is set [fact]; Renesas RZ/A1H RIIC sample driver
+   (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic0_wait_rx_full(void)
 
 {
   do {
@@ -1070,9 +1172,13 @@ void FUN_20120078(void)
 }
 
 
-// ===== FUN_2012008c @ 2012008c (20 bytes)
+// ===== userdef_riic1_wait_rx_full @ 2012008c (20 bytes)
 
-void FUN_2012008c(void)
+/* Spins until the ch1 receive-full flag 0x20800455 is set [fact]; Renesas RZ/A1H RIIC sample driver
+   (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic1_wait_rx_full(void)
 
 {
   do {
@@ -1081,9 +1187,13 @@ void FUN_2012008c(void)
 }
 
 
-// ===== FUN_201200a0 @ 201200a0 (20 bytes)
+// ===== userdef_riic2_wait_rx_full @ 201200a0 (20 bytes)
 
-void FUN_201200a0(void)
+/* Spins until the ch2 receive-full flag 0x20800456 is set [fact]; Renesas RZ/A1H RIIC sample driver
+   (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic2_wait_rx_full(void)
 
 {
   do {
@@ -1092,9 +1202,13 @@ void FUN_201200a0(void)
 }
 
 
-// ===== FUN_201200b4 @ 201200b4 (20 bytes)
+// ===== userdef_riic3_wait_rx_full @ 201200b4 (20 bytes)
 
-void FUN_201200b4(void)
+/* Spins until the ch3 receive-full flag 0x20800457 is set [fact]; Renesas RZ/A1H RIIC sample driver
+   (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic3_wait_rx_full(void)
 
 {
   do {
@@ -1103,9 +1217,13 @@ void FUN_201200b4(void)
 }
 
 
-// ===== FUN_201200c8 @ 201200c8 (20 bytes)
+// ===== userdef_riic0_wait_tx_empty @ 201200c8 (20 bytes)
 
-void FUN_201200c8(void)
+/* Spins until the ch0 transmit-empty flag 0x20800458 is set [fact]; Renesas RZ/A1H RIIC sample
+   driver (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic0_wait_tx_empty(void)
 
 {
   do {
@@ -1114,9 +1232,13 @@ void FUN_201200c8(void)
 }
 
 
-// ===== FUN_201200dc @ 201200dc (20 bytes)
+// ===== userdef_riic1_wait_tx_empty @ 201200dc (20 bytes)
 
-void FUN_201200dc(void)
+/* Spins until the ch1 transmit-empty flag 0x20800459 is set [fact]; Renesas RZ/A1H RIIC sample
+   driver (riic.c / riic_userdef.c) [inference: same call structure, per-channel flag bytes and mode
+   arguments] */
+
+void userdef_riic1_wait_tx_empty(void)
 
 {
   do {

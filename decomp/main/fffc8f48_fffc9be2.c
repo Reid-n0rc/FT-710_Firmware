@@ -918,7 +918,7 @@ void r_sci7_callback_receiveerror(void)
 void menu_subsys_init(void)
 
 {
-  FUN_fffd405e();
+  menu_cursors_load();
   menu_init();
   return;
 }
@@ -1094,7 +1094,7 @@ void menu_draw_flags(byte *param_1,char param_2)
   }
   param_1[1] = 3;
   param_1[2] = 0;
-  FUN_fff9c787((int)param_2,param_1 + 0x18);
+  dec_to_str_s8((int)param_2,param_1 + 0x18);
   return;
 }
 

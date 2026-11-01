@@ -249,9 +249,12 @@ undefined1 * FUN_201640a4(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_201640ec @ 201640ec (24 bytes)
+// ===== copy10 @ 201640ec (24 bytes)
 
-undefined4 FUN_201640ec(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields
+   (fwfile_check_versions, fwobj_*) [fact] */
+
+undefined4 copy10(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,10);
@@ -259,9 +262,11 @@ undefined4 FUN_201640ec(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20164104 @ 20164104 (24 bytes)
+// ===== copy32 @ 20164104 (24 bytes)
 
-undefined4 FUN_20164104(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields [fact] */
+
+undefined4 copy32(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,0x20);
@@ -269,9 +274,11 @@ undefined4 FUN_20164104(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_2016411c @ 2016411c (24 bytes)
+// ===== copy48 @ 2016411c (24 bytes)
 
-undefined4 FUN_2016411c(undefined4 param_1,undefined4 param_2)
+/* (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor [fact] */
+
+undefined4 copy48(undefined4 param_1,undefined4 param_2)
 
 {
   memcpy(param_1,param_2,0x30);
@@ -307,9 +314,12 @@ void FUN_20164298(int param_1,int param_2,ushort *param_3,ushort *param_4)
 }
 
 
-// ===== FUN_20164334 @ 20164334 (44 bytes)
+// ===== scope3d_widths_init @ 20164334 (44 bytes)
 
-void FUN_20164334(int param_1,undefined4 param_2)
+/* (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide)
+   [fact] */
+
+void scope3d_widths_init(int param_1,undefined4 param_2)
 
 {
   int iVar1;
@@ -329,16 +339,18 @@ void FUN_20164334(int param_1,undefined4 param_2)
 }
 
 
-// ===== FUN_20164360 @ 20164360 (28 bytes)
+// ===== ring100_advance @ 20164360 (28 bytes)
 
-undefined4 FUN_20164360(undefined4 *param_1)
+/* (idx): returns *idx and advances it with ring100_next; affft_wf_add_row [fact] */
+
+undefined4 ring100_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_20164788();
+  uVar1 = ring100_next();
   *param_1 = uVar1;
   return uVar2;
 }
@@ -354,24 +366,28 @@ void FUN_2016437c(undefined4 *param_1)
 }
 
 
-// ===== FUN_20164388 @ 20164388 (28 bytes)
+// ===== ring133_advance @ 20164388 (28 bytes)
 
-undefined4 FUN_20164388(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope_obj_wf_add_row [fact] */
+
+undefined4 ring133_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_201647d0();
+  uVar1 = ring133_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
-// ===== FUN_201643a4 @ 201643a4 (12 bytes)
+// ===== ring133_reset @ 201643a4 (12 bytes)
 
-void FUN_201643a4(undefined4 *param_1)
+/* (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact] */
+
+void ring133_reset(undefined4 *param_1)
 
 {
   *param_1 = 0;
@@ -379,31 +395,35 @@ void FUN_201643a4(undefined4 *param_1)
 }
 
 
-// ===== FUN_201643b0 @ 201643b0 (28 bytes)
+// ===== ring20_advance @ 201643b0 (28 bytes)
 
-undefined4 FUN_201643b0(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope_history_push [fact] */
+
+undefined4 ring20_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_20164814();
+  uVar1 = ring20_next();
   *param_1 = uVar1;
   return uVar2;
 }
 
 
-// ===== FUN_201643cc @ 201643cc (28 bytes)
+// ===== ring30_advance @ 201643cc (28 bytes)
 
-undefined4 FUN_201643cc(undefined4 *param_1)
+/* (idx): returns *idx and advances it; scope3d_redraw_history [fact] */
+
+undefined4 ring30_advance(undefined4 *param_1)
 
 {
   undefined4 uVar1;
   undefined4 uVar2;
   
   uVar2 = *param_1;
-  uVar1 = FUN_2016485c();
+  uVar1 = ring30_next();
   *param_1 = uVar1;
   return uVar2;
 }
@@ -746,18 +766,22 @@ void FUN_20164714(int param_1,int param_2,int param_3,int param_4)
 }
 
 
-// ===== FUN_20164758 @ 20164758 (44 bytes)
+// ===== ring100_offset @ 20164758 (44 bytes)
 
-int FUN_20164758(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring [fact] */
+
+int ring100_offset(int *param_1,int param_2)
 
 {
   return (*param_1 + param_2 + 100) % 100;
 }
 
 
-// ===== FUN_20164788 @ 20164788 (20 bytes)
+// ===== ring100_next @ 20164788 (20 bytes)
 
-int FUN_20164788(int *param_1)
+/* (idx): *idx + 1, wrapping at 100 [fact] */
+
+int ring100_next(int *param_1)
 
 {
   int iVar1;
@@ -770,9 +794,12 @@ int FUN_20164788(int *param_1)
 }
 
 
-// ===== FUN_2016479c @ 2016479c (48 bytes)
+// ===== ring133_offset @ 2016479c (48 bytes)
 
-int FUN_2016479c(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) [fact]
+    */
+
+int ring133_offset(int *param_1,int param_2)
 
 {
   int iVar1;
@@ -784,9 +811,11 @@ int FUN_2016479c(int *param_1,int param_2)
 }
 
 
-// ===== FUN_201647d0 @ 201647d0 (20 bytes)
+// ===== ring133_next @ 201647d0 (20 bytes)
 
-int FUN_201647d0(int *param_1)
+/* (idx): *idx + 1, wrapping at 133 [fact] */
+
+int ring133_next(int *param_1)
 
 {
   int iVar1;
@@ -799,18 +828,23 @@ int FUN_201647d0(int *param_1)
 }
 
 
-// ===== FUN_201647e4 @ 201647e4 (44 bytes)
+// ===== ring20_offset @ 201647e4 (44 bytes)
 
-int FUN_201647e4(int *param_1,int param_2)
+/* (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line)
+   [fact] */
+
+int ring20_offset(int *param_1,int param_2)
 
 {
   return (*param_1 + param_2 + 0x14) % 0x14;
 }
 
 
-// ===== FUN_20164814 @ 20164814 (20 bytes)
+// ===== ring20_next @ 20164814 (20 bytes)
 
-int FUN_20164814(int *param_1)
+/* (idx): *idx + 1, wrapping at 20 [fact] */
+
+int ring20_next(int *param_1)
 
 {
   int iVar1;

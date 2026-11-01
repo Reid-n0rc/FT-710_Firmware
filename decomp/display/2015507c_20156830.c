@@ -1697,9 +1697,11 @@ ulonglong __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
 }
 
 
-// ===== FUN_20155a10 @ 20155a10 (152 bytes)
+// ===== _ll_udiv10 @ 20155a10 (152 bytes)
 
-undefined8 FUN_20155a10(uint param_1,uint param_2)
+/* 64-bit unsigned divide by 10 by shifts and adds (quotient in r0:r1) [fact for the arithmetic] */
+
+undefined8 _ll_udiv10(uint param_1,uint param_2)
 
 {
   uint uVar1;
@@ -1731,11 +1733,13 @@ undefined8 FUN_20155a10(uint param_1,uint param_2)
 }
 
 
-// ===== FUN_20155b5c @ 20155b5c (430 bytes)
+// ===== _fp_digits @ 20155b5c (430 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x20155ba6) */
+/* (out, buf, *exp, ...): decimal digit generation for _printf_fp_dec using the soft-float helpers
+   and _ll_udiv10 [inference: callers and callees] */
 
-void FUN_20155b5c(uint *param_1,char *param_2,int *param_3,uint param_4,uint param_5)
+void _fp_digits(uint *param_1,char *param_2,int *param_3,uint param_4,uint param_5)
 
 {
   char cVar1;
@@ -1843,7 +1847,7 @@ LAB_20155bbe:
       for (uVar9 = 0;
           (uVar12 = CONCAT44(local_60._4_4_,(int)local_60), lVar13 != 0 && ((int)uVar9 < 0x11));
           uVar9 = uVar9 + 1) {
-        lVar13 = FUN_20155a10();
+        lVar13 = _ll_udiv10();
         param_2[uVar9] = extraout_r2_00 + '0';
       }
       if (lVar13 != 0) {
@@ -1869,7 +1873,7 @@ LAB_20155cee:
     }
     while (uVar9 = uVar9 - 1, -1 < (int)uVar9) {
       local_60 = uVar12;
-      lVar13 = FUN_20155a10();
+      lVar13 = _ll_udiv10();
       param_2[uVar9] = extraout_r2 + '0';
       uVar12 = local_60;
     }
@@ -1904,9 +1908,12 @@ undefined1 FUN_20155f68(int param_1)
 }
 
 
-// ===== FUN_20155f72 @ 20155f72 (32 bytes)
+// ===== _sprintf_body @ 20155f72 (32 bytes)
 
-void FUN_20155f72(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+/* Builds the string-output descriptor with the _sputc callback 0x20155F69 and runs _printf_core;
+   sprintf, sprintf_veneer and snprintf call it [fact] */
+
+void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
   undefined1 auStack_40 [4];
@@ -1921,7 +1928,7 @@ void FUN_20155f72(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
   local_3c = param_4;
   uStack_38 = param_2;
   uStack_30 = param_1;
-  FUN_20154c48(auStack_40,param_3);
+  _printf_core(auStack_40,param_3);
   return;
 }
 
@@ -2421,7 +2428,7 @@ void kernel_heap_init(void)
   if (uVar1 == 0) {
     knl_sys.task_cpsr = 0;
     knl_sys.f_0x00_u32 = 0;
-    FUN_201530fc(&DAT_20980000,&stack0xfffffff8);
+    knl_sys_init(&DAT_20980000,&stack0xfffffff8);
   }
   return;
 }
@@ -2449,9 +2456,13 @@ ulonglong FUN_20156310(void)
 }
 
 
-// ===== FUN_2015632c @ 2015632c (192 bytes)
+// ===== knl_irq_enter @ 2015632c (192 bytes)
 
-ulonglong FUN_2015632c(undefined4 param_1)
+/* IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the
+   outermost interrupt saves the running task's SP into its TCB and switches to the interrupt stack
+   knl_sys.isr_area [fact] */
+
+ulonglong knl_irq_enter(undefined4 param_1)
 
 {
   byte *pbVar1;
@@ -2470,9 +2481,13 @@ ulonglong FUN_2015632c(undefined4 param_1)
 }
 
 
-// ===== FUN_201563ec @ 201563ec (368 bytes)
+// ===== knl_irq_exit @ 201563ec (368 bytes)
 
-undefined8 FUN_201563ec(void)
+/* Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with
+   dispatch allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns
+   the new task's context, else the old one [fact] */
+
+undefined8 knl_irq_exit(void)
 
 {
   uint uVar1;
@@ -2583,9 +2598,13 @@ longlong knl_dispatch(void)
 }
 
 
-// ===== FUN_201566f0 @ 201566f0 (88 bytes)
+// ===== knl_resched @ 201566f0 (88 bytes)
 
-longlong FUN_201566f0(void)
+/* Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
+   running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
+    */
+
+longlong knl_resched(void)
 
 {
   uint uVar1;
