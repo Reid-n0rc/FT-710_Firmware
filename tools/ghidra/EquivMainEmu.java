@@ -18,7 +18,7 @@
 //   {"op":"run", "bases":[N,...], "loads":[[addr,"hex"]], "entry":A, "regs":{"R1":v,...}, "sp":S,
 //    "stack":[w,...] (words at SP+4.., [SP] = the return address), "seed":s, "budget":n,
 //    "stubs":{addr:[name,nargs]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
-//    "mmio_fixed":{addr:value}}
+//    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions)}
 //     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
 //         "diff":[[addr,"hex"],...] (snap ranges that differ from the start state), "hits":[addr,...] (cover
@@ -31,7 +31,9 @@
 // as a fault. A call to a stub address records (name, R1..R4 and stack arguments), sets R1 from the same seeded
 // sequence and returns (RX BSR/JSR push the return address; the caller pops stack arguments). The string compare
 // pcodeops of the module (scmpu, suntil, swhile) are implemented here after the RXv2 software manual R01US0071EJ0100
-// (SCMPU p. 184, SUNTIL p. 196, SWHILE p. 198), because the module leaves them as named operations (T21c).
+// (SCMPU p. 184, SUNTIL p. 196, SWHILE p. 198), because the module leaves them as named operations (T21c), and
+// JMP Rs is executed here, because the module's "PC = Rs" does not branch in the emulator (T22a listed it as not
+// fixed: MAIN has no JMP Rs; GCC's switch tables use it).
 // @category FT710
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -311,6 +313,7 @@ public class EquivMainEmu extends GhidraScript {
         t.overrideCounter(ram.getAddress(entry));
         long budget = q.has("budget") ? q.get("budget").getAsLong() : 2000000;
         List<JsonArray> calls = new ArrayList<>();
+        JsonArray trace = q.has("trace") && q.get("trace").getAsBoolean() ? new JsonArray() : null;
         String end = "budget", why = "";
         long steps = 0;
         try {
@@ -341,6 +344,21 @@ public class EquivMainEmu extends GhidraScript {
                     continue;
                 }
                 if (!(pc >= ROM_LO || pc >= SCRATCH_LO && pc < ROM_LO)) throw new Fault(String.format("execute at 0x%x", pc));
+                if (trace != null && trace.size() < 400) {
+                    JsonArray st = new JsonArray();
+                    st.add(pc);
+                    for (int k = 1; k <= 15; k++) st.add(r.reg("R" + k));
+                    trace.add(st);
+                }
+                // JMP Rs (7F 0s): the module's p-code is "PC = Rs" without a branch, so the emulator falls through
+                // (found here: GCC emits JMP for switch tables, CC-RX never does). Executed here instead.
+                byte[] op2 = shared.inspectConcrete(ram.getAddress(pc), 2);
+                if ((op2[0] & 0xff) == 0x7F && (op2[1] & 0xF0) == 0x00) {
+                    int rs = op2[1] & 0x0F;
+                    t.overrideCounter(ram.getAddress(r.reg(rs == 0 ? "SP" : "R" + rs)));
+                    steps++;
+                    continue;
+                }
                 t.stepInstruction();
                 steps++;
             }
@@ -406,6 +424,7 @@ public class EquivMainEmu extends GhidraScript {
         JsonArray ra = new JsonArray();
         for (Long a : r.reads) ra.add(a);
         res.add("reads", ra);
+        if (trace != null) res.add("trace", trace);
         return res;
     }
 

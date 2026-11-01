@@ -47,6 +47,7 @@ import glob
 import json
 import os
 import random
+import re
 import subprocess
 import sys
 import tempfile
@@ -132,6 +133,47 @@ class Originals:
         import bisect
         i = bisect.bisect_right(self.entries, a)
         return (self.entries[i] - a) if i < len(self.entries) else 0x100
+
+
+FORM_NUM = re.compile(r'#?-?(0x[0-9a-f]+|\d+)')
+
+
+def forms(dis):
+    """Instruction forms of an objdump listing: the mnemonic and the operand shape, with registers, numbers and
+    addresses abstracted (r, n). T22a checked the module's semantics on the forms the MAIN image uses; a form only
+    the GCC code uses was not checked (JMP Rs was wrong; EquivMainEmu.java executes it itself)."""
+    out = set()
+    for ln in dis.splitlines():
+        p = ln.split('\t')
+        if len(p) < 3 or not p[2].strip():
+            continue
+        mn, _, ops = ' '.join(x.strip() for x in p[2:]).split(';')[0].strip().partition(' ')
+        ops = re.sub(r'\br([0-9]|1[0-5])\b', 'r', ops.split('<')[0].strip())
+        ops = re.sub(r'^[0-9a-f]{5,8}$', 'n', ops)          # branch target (the image listing prints it with 0x)
+        out.add((mn + ' ' + FORM_NUM.sub('n', ops)).strip())
+    return out
+
+
+_MAIN_FORMS = None
+
+
+def main_forms(img):
+    global _MAIN_FORMS
+    if _MAIN_FORMS is None:
+        od = tool('RX_BINUTILS', os.path.join(HOME, 'opt/rx-binutils-2.42/bin/rx-elf-'), 'objdump')
+        with tempfile.NamedTemporaryFile(suffix='.bin') as f:
+            f.write(img.rom)
+            f.flush()
+            dis = subprocess.run([od, '-D', '-b', 'binary', '-m', 'rx', f'--adjust-vma=0x{ROM:08X}',
+                                  '--start-address=0xFFF8FBDB', '--stop-address=0xFFFEE2B8', f.name],
+                                 capture_output=True, text=True).stdout
+        _MAIN_FORMS = forms(dis)
+    return _MAIN_FORMS
+
+
+def new_forms(path):
+    od = tool('RX_BINUTILS', os.path.join(HOME, 'opt/rx-binutils-2.42/bin/rx-elf-'), 'objdump')
+    return forms(subprocess.run([od, '-d', path], capture_output=True, text=True).stdout)
 
 
 def tool(prefix_env, default, name):
@@ -378,15 +420,61 @@ def eeprom_args(rng, regs):
     return [], None
 
 
-PRESETS = {'__udiv64': udiv64_args, 'eeprom_read': eeprom_args, 'eeprom_write': eeprom_args}
+def strncmp_args(rng, regs):
+    """Two strings that share a prefix (often all of it, NUL included, with different bytes after the NUL), and n
+    around their length: random buffers almost never compare equal, so the end tests would go unexercised."""
+    s = bytes(rng.choice(b'ABCDEF;0123') for _ in range(rng.randrange(0, 12)))
+    a = s + b'\0' + bytes(rng.getrandbits(8) for _ in range(8))
+    b = bytearray(a)
+    x = rng.random()
+    if x < 0.4:
+        b[len(s) + 1 + rng.randrange(0, 8)] ^= 1 + rng.randrange(255)     # differs only after the shared NUL
+    elif x < 0.8 and s:
+        b[rng.randrange(0, len(s))] = rng.choice(b'ABCDEFXYZ\0\xff')
+    regs[0], regs[1] = ARGBUF, ARGBUF + 0x800
+    regs[2] = rng.choice([0, 1, len(s), len(s) + 1, len(s) + 2, len(s) + 9, rng.randrange(0, 24)])
+    return [(ARGBUF, a), (ARGBUF + 0x800, bytes(b))], None
 
 
-def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None):
+HEAP_BREAK, HEAP_END = 0x25D34, 0x207F4     # sbrk's pointer and its limit (docs/code/main/bsp.md)
+
+
+def sbrk_args(rng, regs):
+    """The heap pointer anywhere in its area and sizes that end just below, at and just above the limit."""
+    brk = rng.randrange(0x203F4, HEAP_END + 1)
+    left = HEAP_END - brk
+    regs[0] = max(0, left + rng.choice([-2, -1, 0, 0, 1, 2, rng.randrange(-left, 0x40) if left else 3])) & 0xFFFFFFFF
+    return [(HEAP_BREAK, brk.to_bytes(4, 'little'))], None
+
+
+def sci5_hook_args(rng, regs):
+    """sci5_rx_byte_hook: the first byte of a frame (count 0, sometimes not) is one of the replies it knows."""
+    buf = ARGBUF + 0x3000
+    first = rng.choice([0x06, ord('?'), ord('r'), 0x00, rng.getrandbits(8)])
+    cnt = 0 if rng.random() < 0.8 else rng.randrange(1, 8)
+    return [(buf, bytes([first]) + bytes(rng.getrandbits(8) for _ in range(15))),
+            (0x20820, buf.to_bytes(4, 'little')), (0x1B624, cnt.to_bytes(2, 'little'))], None
+
+
+def adc_channel_args(rng, regs):
+    """R_S12ADn_Get_ValueResult (channel, buffer): channel numbers around the 27 the drivers know."""
+    regs[0] = rng.randrange(0, 32)
+    return [], None
+
+
+PRESETS = {'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
+           '__udiv64': udiv64_args, 'eeprom_read': eeprom_args, 'eeprom_write': eeprom_args,
+           'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
+
+
+def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False):
     q = {'op': 'run', 'bases': bases, 'entry': entry, 'sp': STACK, 'seed': seed, 'budget': budget,
          'regs': {f'R{k + 1}': v for k, v in enumerate(regs[:NREG])},
          'stack': ([0x00030000] if isr else []) + list(regs[NREG:]),
          'loads': [[a, d.hex()] for a, d in loads], 'snap': SNAP, 'track': TRACK,
          'stubs': {str(a): [n, STUBS[n]] for a, n in stubs.items()}, 'cover': sorted(cover)}
+    if trace:
+        q['trace'] = True
     if mmio_fixed:
         q['mmio_fixed'] = {str(a): v for a, v in mmio_fixed.items()}
     return eng.send(q)
@@ -469,6 +557,9 @@ class Checker:
         lk = Linked(path, fname)
         if lk.rw:
             return oaddr, 'not yet', f'the recreated code has {lk.rw} bytes of .data/.bss (must use the image\'s RAM)'
+        unverified = sorted(new_forms(path) - main_forms(self.img) - {'jmp r'})
+        note = f'; instruction forms the MAIN image does not use (semantics not checked by T22a): {", ".join(unverified)}' \
+            if unverified else ''
         eng = self.engine()
         eng.send({'op': 'base', 'name': 'new', 'segs': [[a, d.hex()] for a, d in lk.segs]})
         meta = self.blocks([oaddr])[oaddr]
@@ -517,7 +608,7 @@ class Checker:
             return oaddr, 'not yet', f'emulation: no trial of {trials} returned normally ({covtxt})'
         if cov < MIN_COVER:
             return oaddr, 'not yet', f'emulation: {trials} trials agree but reach only {covtxt} of the original'
-        return oaddr, 'equivalent', f'differential emulation (Ghidra p-code): {trials} trials agree ({ok} returned normally, {covtxt})'
+        return oaddr, 'equivalent', f'differential emulation (Ghidra p-code): {trials} trials agree ({ok} returned normally, {covtxt}){note}'
 
     def close(self):
         if self.eng:
