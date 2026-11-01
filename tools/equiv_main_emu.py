@@ -112,7 +112,9 @@ MAIN_LOOP_TASKS = ('wdt_kick', 'io_task', 'sdr_task', 'dsp_link_poll', 'rf_ctrl_
                    'ladder_key_task', 'scan_task', 'dispreq_e8_task', 'dispreq_e7_task', 'keyer_task', 'sd_menu_task',
                    'displink_task', 'key_task', 'tuner_task')
 FUNC_STOP = {'main_loop': {'wdt_kick': 2}}
-FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2, 'beep_task': 2, 'cat_GT': 3}
+# the remote keypad codes ladder_key_task tests: none, keys 1..12, their held codes 0xF1..0xFC [fact: its compares]
+REMOTE_KEYS = tuple(range(13)) + tuple(range(0xF1, 0xFD)) + (0xF0, 0x20)
+FUNC_TRIALS = {'cat_dispatch': 4, 'trx_sequencer': 2, 'beep_task': 2, 'cat_GT': 3, 'displink_tx_schedule': 2, 'ladder_key_task': 4}
 FUNC_STUBS = {
     'tuner_atas_task': {'swtimer_expired': (1, [0, 1, 1])},
     # scan_task: the predicates are functions of the receiver state; stubbed with 0 / 1
@@ -145,6 +147,10 @@ FUNC_STUBS = {
     # trx_sequencer: its states wait for soft timers 12..17 (round 4: 60 % of the blocks with the timers' own RAM)
     'trx_sequencer': {'swtimer_expired': (1, [0, 1, 1])},
     'main_loop': {n: (0, [0]) for n in MAIN_LOOP_TASKS},
+    # ladder_key_task (round 5): the remote keypad code and the gates drawn; the actions run
+    'displink_rx_F0_hello': {'dest_code_get': (0, [0xA983, 0xB5A7, 0xD950, 0xA4C5, 0x1234])},
+    'ladder_key_task': {'remote_key_get': (0, list(REMOTE_KEYS)), 'ladder_key_delay': (0, [0, 1]),
+                        'key_event_filter': (2, [0, 1, 1]), 'swtimer_expired': (1, [0, 1])},
     # beep_task: tone_set stubbed, so the tone's float bits are compared (through tone_set only the truncated TPU
     # period is seen: a mutation 1046.502 -> 1046.5 passed)
     'beep_task': {'swtimer_expired': (1, [0, 1, 1, 1]), 'tone_set': (2, [0])},
@@ -990,6 +996,19 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'io_task': ram_bytes({G_UI + 0x2C: (0, 0, 1, 2), G_UI + 0x82: (0, 1), G_UI + 0xBA: (0, 1),
                                  G_UI + 0x40: (0, 1), G_UI + 0x14: (8, 8, 1, 3)}),
            'rf_ctrl_task': ram_bytes({0x12042: (0, 1)}), 'beep_task': beep_task_args, 'cat_EM': cat_em_args,
+           # displink_rx_F0_hello: the frame (R1) with each boot code it tests in byte 7
+           'displink_rx_F0_hello': g_ui_ptr_ok(lambda rng, regs: (regs.__setitem__(0, ARGBUF) or [(ARGBUF, bytes(
+               rng.getrandbits(8) for _ in range(7)) + bytes([rng.choice((0, 1, 2, 3, 4, 5, 6, 7, 8, 0x10, 0x10, 0xFF))]))],
+               None)),
+           # ladder_key_task: the last remote-key code (0x1B554) over the codes it tests; the UI flags mostly 0
+           'ladder_key_task': both(ram_bytes({0x1B554: REMOTE_KEYS, G_UI + 0x86: (0,) * 7 + (1,), G_UI + 0x407: (0,) * 7 + (1,),
+                                              G_UI + 0x437: (0,) * 7 + (1,), G_UI + 0x1CB: (0, 1)}),
+                                   lambda rng, regs: ([(0x25D78, G_UI.to_bytes(4, 'little'))], None)),
+           # displink_tx_schedule: the request and screen flags it tests (UI offsets from its MOVU.B), mostly 0, so that
+           # each priority level is reached
+           'displink_tx_schedule': g_ui_ptr_ok(ram_bytes({0x1B3D0: (0,) * 15 + (1,), **{G_UI + k: (0,) * 9 + (1,) for k in (
+               128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 143, 144, 145, 147, 148, 149, 150, 151,
+               153, 154, 183, 186, 448, 449, 1024, 1095)}})),
            'swr_meter_protect': both(adc_words(G_UI, G_UI + 2),
                                      ram_bytes({G_UI + 0x67: (0, 1, 1, 1), G_UI + 0x3D: (0, 2), 0x1B4C6: range(11),
                                                 0x1B4C7: range(11)})),

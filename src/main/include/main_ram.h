@@ -91,6 +91,11 @@ extern uint8_t displink_hello_sent;
 extern uint8_t displink_stage[];          /* staging buffer of most frames */
 extern uint8_t displink_stage_status[];   /* staging buffer of frame 0x20 */
 extern uint8_t *g_ui_ptr;                 /* pointer to the UI state (0x20B04) */
+extern uint8_t dl_hello_req;              /* 0x1B3D0: power-on pending, the scheduler sends the 0x60 hello */
+extern uint8_t *g_ui_ptr4;                /* 0x25D78: the same, used by ladder_key_task */
+extern uint8_t dl_hello_text[32];         /* 0x199F: the DISPLAY version / date text built from frame F0 */
+extern uint8_t remote_key_last;           /* 0x1B554: the remote keypad code of the last pass */
+extern uint8_t ladder_delay_armed;        /* 0x18871: ladder_key_delay has started soft timer 0x38 */
 extern uint8_t *g_ui_ptr2;                /* 0x25D70: the same, used by dispreq_e7_task */
 extern uint8_t *g_ui_ptr3;                /* 0x25D7C: the same, used by scan_task */
 extern uint8_t scan_state, scan_busy_wait, scan_resume_wait;   /* 0x18877, 0x18873, 0x18874 */

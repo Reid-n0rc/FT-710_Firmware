@@ -173,3 +173,8 @@ fm_sql_last_mode	1b4cb	fm_noise_squelch 0xFFFB7D42 / 0xFFFB7D5A: the mode of the
 po_meter_segs	fff88c74	meter_po 0xFFFB77FE..0xFFFB7827: 8 rows of {bound, slope, offset} floats
 s_meter_segs	fff88bfc	meter_s 0xFFFB7988..0xFFFB79D0: 10 rows of {slope, offset, bound} floats
 tx_row_ptrs	fff8861c	sdr_upd_r25_tx_drive 0xFFFA2A38..0xFFFA2A40: MOV.L [band, 0xFFF8861C], the TX row pointer (names_main.tsv @tx_row_ptrs)
+dl_hello_req	1b3d0	displink_tx_schedule 0xFFF95F5A: 1 sends the 0x60 hello reply first; power_on_request sets it (README.md "Power-on")
+remote_key_last	1b554	ladder_key_task 0xFFFE3E3E..: compared with remote_key_get, stored after each change
+ladder_delay_armed	18871	ladder_key_delay 0xFFFE419A: 0 -> 1 with soft timer 0x38 = 200, back to 0 when it expires; ladder_key_task clears it on a change
+g_ui_ptr4	25d78	ladder_key_task 0xFFFE3E2A: a fourth pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d78)
+dl_hello_text	199f	displink_rx_F0_hello 0xFFF95470..0xFFF95490: 8 words cleared, then the version and the date text built byte by byte
