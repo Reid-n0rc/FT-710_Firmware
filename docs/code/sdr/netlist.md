@@ -525,7 +525,7 @@ are not affected by an SRL delay, so they stand, but they were not re-run.
 **Open.** (1) What triggers `u` in practice: the thresholds' register (the bits at `SLICE_X38Y76`, `X28Y79`, `X14Y80`)
 and the meaning of the level from DSP48_X1Y28/29; would be settled by a register sweep with a large tone on B, as for
 reg 0x04. (2) Why the M17 words still look like noise with a tone on the ADC (3.8): the stages up to and including the
-adder are clean and linear; the first stages that do not scale are DSP48_X0Y7 / DSP48_X1Y3 (#193); #232 traced the break to the second decimator stage (3.9). (3) Whether the
+adder are clean and linear; the first stages that do not scale are DSP48_X0Y7 / DSP48_X1Y3 (#193); #232 traced the break to the second decimator stage (3.9), and #246 settled the rest (a harness framing error, 3.10). (3) Whether the
 board feeds both converters the same RF (Yaesu's diagram says a divider) and at what levels; would be settled by the
 SDR module's schematic or by measuring J3003.
 
@@ -590,7 +590,8 @@ time, a second receiver path (scope or lane) **[inference]**.
 - The read side loads a 64-flip-flop shift register (`SLICE_X56Y38`, `X58Y36..39`, `X59Y37..39`, `X61Y38`; load strobe
   `SLICE_X15Y42/DLUT` from the same 7-bit counter as U16/V17) and shifts it out on **pin M17**. Decoded on rising U16
   edges with the I2S one-bit delay, **both 32-bit slots of every frame carry the same word** (correlation 1.0 over 460
-  frames). With the ADC at 0 every word is 0; with a tone on the ADC the words are non-zero. So **M17 is the RX IF data
+  frames). With the ADC at 0 every word is 0; with a tone on the ADC the words are non-zero. (`ddc_main.cpp`'s `H` lines
+  applied that delay only from #246 on; earlier `H` words carry the previous word's LSB in bit 31, see 3.10.) So **M17 is the RX IF data
   line (J2002 pin 33 `RX_DATA`, FC3 on the RT685)** **[inference, strong; the module's pin routing is not in the
   service manual]**, not the scope port as 5.5 first read it. The HiFi4's `rxif_dma_to_fifo` de-interleaves two slots; it gets
   the same sample twice.
@@ -784,7 +785,8 @@ flowchart LR
   0x23 = 8000, 0x24 = 0317, 0x25 = 0, 0x26 = 0610, 0x27 = 8000) and a 10.001 MHz tone from clock 4,250,000, the same stages are
   identical at 400 and 1,200 LSB.
 - **The output [fact, simulation].** On M17 (650 words per run, 2.0 M clocks) the words are near full scale (RMS 1.3·10⁹,
-  peaks 2.15·10⁹) with no line above 9 % of the power at 400, 800 and 1,200 LSB.
+  peaks 2.15·10⁹) with no line above 9 % of the power at 400, 800 and 1,200 LSB. (Before the fix below; these words were
+  also read without the I2S one-bit delay, see 3.10.)
 - **The delay-line RAM itself.** For RAMB18_X0Y2/X0Y3 a software memory built from the probed address, write-enable and data
   drivers predicts DOA at a latency of 2 clocks (DOA_REG = 1) on 42 of 42 checkable clocks **[fact, simulation]**, but that
   RAM is written only 3 times in 15,000 clocks, so its stored words could not be checked in that window.
@@ -845,13 +847,11 @@ So the FPGA puts the SSB/CW carrier at fs/4 and the AM/FM carrier at fs/3, which
 ([ifdsp/dsp-chains.md](../ifdsp/dsp-chains.md)); in USB the audio is inverted around fs/4 (tone above the carrier → below
 18 kHz) and in LSB it is not **[fact for the line positions, inference for the carrier from the NCO offset]**.
 
-**Still open: the output level.** The line holds only 14–27 % of the output power and the words stay near full scale
-(RMS 1.5·10⁹); at 1,000 LSB the USB line is as strong as at 2,000 LSB (amplitude 1.07·10⁹ against 9.8·10⁸) **[fact,
-simulation]**. So the frequency now gets through but the amplitude still does not. A hard limiter would put about 80 % of
-the power into the line; this does not look like one **[inference]**. Open: which stage after the fix still loses the
-amplitude (an FPGA AGC or a remaining model error); would be settled by the probed onset runs above repeated over at least
-2 M clocks with the tone on from clock 0, so that the second stage and DSP48_X0Y6/X0Y11 carry signal, or by a capture of
-`RX_DATA` on a radio (needs the owner's approval). #232 stays open for that point.
+**The output level (settled in 3.10, #246).** These runs read the M17 words without the I2S one-bit delay, so bit 31 of
+every word was the previous word's LSB; that harness error, not the FPGA, made the words look near full scale (RMS
+1.5·10⁹), left the line only 14–27 % of the power and gave 1,000 and 2,000 LSB the same line amplitude. Read correctly the
+output follows the input exactly (3.10). The line positions in the table are not affected: the misplaced bit adds a
+broadband component, not a line.
 
 **Reg 0x0B [fact].** For 10 MHz `gen_subband_of_freq` returns 5 (first boundary above 10 MHz is 11.8 MHz, table
 0xFFF887CC), and row 5 of the table at 0xFFF87FFA is {0x006A, 0x1800, 0x0060, 0x0A00}, so MAIN writes **0x006A** in RX (and
@@ -869,6 +869,117 @@ ADC_FROM=700000 PROBE_FROM=999999999 GAP_BITS=10 DUMP=0-<words-1>:700000:790000:
   build/sdr/vl/OBJ/Vft710_sdr 790000 w000A0004 w00180098 w00199680 w0004E519
 # mode runs (unprobed build: MAIN=ddc_main.cpp OBJ=obj_ddc, same VDEFS): FRAMES = MAIN's 18 RX registers for the mode
 GAP_BITS=2 HALF_FROM=0 ADC=tone:10001000:2000 build/sdr/vl/obj_ddc/Vft710_sdr 4600000 FRAMES   # USB; FFT the H lines
+```
+
+### 3.10 RX output word and level (#246)
+
+#246 asked why, after the CARRY4 fix, the M17 words stayed near full scale and the line amplitude did not follow the input
+(3.9): an FPGA AGC or normaliser, or another model or harness error. **It was a harness error: `ddc_main.cpp` framed the
+M17 words one bit early. There is no AGC, normaliser or limiter in the RX path between 8 and 8,000 LSB.** Method: the
+unprobed `ddc_main` build and a 343-probe build (`--declared --ports`: the 55-bit output accumulator, the A/B operands of
+DSP48_X0Y6/X0Y7, X0Y11/X0Y12 and X1Y0/X1Y1, the P buses of DSP48_X0Y7 and X1Y3, the 32 FIFO input pins and the
+accumulator/FIFO strobes), MAIN's USB register set at dial 10 MHz (the 18 frames of 3.9, last ACK at clock 2,450,495), a
+10.001 MHz tone on both channels from clock 0 at 8, 64, 1,000, 2,000 and 8,000 LSB, 3.5–4.0 M clocks.
+
+```mermaid
+flowchart LR
+  B2["b2: 32-bit word<br/>(2nd-stage output)"] --> M11["DSP48_X0Y11<br/>c x b2[16:0]"]
+  B2 --> M12["DSP48_X0Y12<br/>(PCIN >> 17) + c x b2[31:17]"]
+  C["c: 25-bit coefficient"] --> M11
+  M11 -->|"P[16:0], 1 register"| ACC["55-bit accumulator<br/>SLICE_X29Y26..Y39"]
+  M12 -->|"P[37:0]"| ACC
+  ACC -->|"acc[54:23]"| MUX{"SLICE_X40Y62/AFF = 0"}
+  MUX --> FIFO["RAMB18_X2Y15<br/>DIBDI:DIADI"] --> SER["SLICE_X59Y39/D5FF<br/>MSB first"] --> M17["M17, 1 bit after V17"]
+```
+
+- **Output multiplier and accumulator [fact, cells].** DSP48_X0Y11 (OPMODE pins 0111111 with `IS_OPMODE_INVERTED` 0x0A: P = M)
+  and DSP48_X0Y12 (pins 1111111 with 0x2A: P = (PCIN ≫ 17) + M, A cascaded from X0Y11, BREG = 2) form one 25 × 32-bit
+  product per clock: c (X0Y11.A, 25 bits signed) times b2 (X0Y11.B = bits 16..0, unsigned; X0Y12.B = bits 31..17, sign in
+  B14..B17). The carry chain `SLICE_X29Y26..Y39` is a 55-bit accumulator: bits 0..16 take X0Y11.P0..P16 through one register
+  (`SLICE_X28Y26/AFF`, …, `SLICE_X13Y30/B5FF`), bits 17..54 take X0Y12.P0..P37 directly; each LUT is `S = clr ? P : P XOR acc`
+  (e.g. `SLICE_X29Y39/CLUT` INIT 0xAAAAAAAA66666666, clear `SLICE_X49Y12/BLUT`, CE `SLICE_X49Y12/CLUT`, both decoded from the
+  state counter `SLICE_X48Y12..Y13`): a multiply-accumulate-and-dump. X0Y12.P38..P47 are not used.
+- **The output word is acc[54:23], unsaturated [fact, cells].** Acc bits 23..54 are latched under `SLICE_X29Y19/AFF` and go,
+  through the 2-to-1 mux of 3.8 (select `SLICE_X40Y62/AFF`; for instance `SLICE_X43Y42/DLUT`, LUT6_2 INIT 0xFF0FF000CACACACA:
+  with I2 = 0, O5 = I0 = acc bit 54 via `SLICE_X41Y41/DFF` → DIBDI15, O6 = I4 = acc bit 25 → DIADI2), to RAMB18_X2Y15 (SDP,
+  36 bits: DIADI = word bits 15..0, DIBDI = bits 31..16). No LUT compares the top bits, so nothing rounds or saturates
+  the word. The serializer's last flip-flop `SLICE_X59Y39/D5FF` (the M17 driver) loads DOBDO15, word bit 31: MSB first.
+- **M17 carries the word one bit clock after the V17 edge [fact, simulation].** In the probed run (2,000 LSB, clocks
+  3,000,000–3,350,000) all 203 FIFO input words appear on M17, in order, when each M17 word is taken from the second rising
+  U16 edge after a V17 edge to the first after the next (the I2S one-bit delay); framed between V17 edges (as `ddc_main`
+  printed its `H` lines) or two bits late, none of them do. The V17 = 0 and V17 = 1 slots of a frame carry the same word
+  (100 % of the frames).
+- **The harness error and what it caused [fact, simulation].** Framed between V17 edges, bit 31 of each word is the
+  previous word's LSB and bits 30..0 are the true bits 31..1. The true words are far below full scale, so that one bit
+  put about half of the words near ±2³¹ (0x7FFFFFxx, 0x800000xx at 64 LSB): at 2,000 LSB the old framing gives RMS 1.5·10⁹ with 39 % of the power in the line,
+  the corrected words RMS 1.1·10⁸ with 99.7 %. That is the #232/#246 symptom (near full scale, 14–27 % in the line, the
+  same line amplitude at 1,000 and 2,000 LSB). `ddc_main.cpp` now frames with the delay (`I2S_DELAY=1`, the default;
+  `I2S_DELAY=0` gives the old framing); its words match the old ones re-framed in software on 910 of 910 half-frames.
+- **The output follows the input [fact, simulation].** After the settling below (clock 3.25 M on), USB set:
+
+  | Tone | Output RMS | Line amplitude | Line share | Word-by-word against the run above |
+  |---|---|---|---|---|
+  | 8 LSB | 4.51·10⁵ | 5.65·10⁵ | 99.7 % | – |
+  | 2,000 LSB | 1.12·10⁸ | 1.41·10⁸ | 99.7 % | gain 248.8 (2,000 / 8.04; the 8 LSB sine rounds), error 0.00 % |
+  | 8,000 LSB | 4.64·10⁸ | 4.81·10⁸ | 98.1 % | gain 4.000, error 0.00 % |
+
+  "Error" is the RMS of y − g·x over the RMS of y, on the 144 common words from 3.25 M to 3.5 M; during the settling
+  (2.5–3.25 M) it is 0.26 % (8 → 2,000) and 0.00 % (2,000 → 8,000). So the RX path is linear and time-invariant in level
+  from −60 dBFS to −0.2 dBFS at the ADC: an AGC, a normaliser (block floating point) or a limiter would change the ratio
+  between these runs, and none does. A full-scale ADC tone gives words of about 0.33 of full scale (peak 7.0·10⁸ at
+  8,000 LSB), so the 32-bit word does not clip **[fact for this tone and register set]**. Over the 781 steady words from 3.4 M to
+  4.6 M (2,000 LSB) the line is at 16,963 Hz (bin 92 Hz) with 100.0 % of the power, the next component −49.6 dB: the USB
+  position of the table in 3.9 (16,981 Hz) within one bin.
+- **Register writes alone do not disturb it [fact, simulation].** Writing reg 0x08 (TX frequency) or rewriting reg 0x1F
+  with its value at clock 3,300,000 (ACK at 3,440,052) leaves every word identical to the other run's (402 words, 3.3–4.0 M).
+
+**Settling: a long, linear, time-invariant filter, not a gain loop.** After the last USB frame the output rose by about
+95 dB over 0.8 M clocks and then stayed flat (2,000 LSB: RMS 1.5·10³ at 2.5 M, 1.1·10⁸ from 3.25 M), with the same time
+course at every amplitude (the ratios above hold during the rise). The probes put the rise in the second stage: the
+operands b1 (DSP48_X0Y6/X0Y7.B) and b2 (DSP48_X0Y11/X0Y12.B) grow from 26 dB to 116 dB (relative to 1 LSB²) between 2.45 M
+and 3.1 M, while the coefficient operands c1 and c2 repeat the same pattern in every 200,000-clock window and do not grow
+**[fact, simulation]**. Three 5.4 M-clock runs (2,000 LSB, USB set) with the tone on throughout, switched on at clock
+2,600,000 (`ADC_FROM`) and switched off at 3,500,000 (`ADC_TO`, new) show what kind of element that is **[fact,
+simulation]**:
+
+| Run | First word that differs from the steady run | Main step | Difference to the steady run |
+|---|---|---|---|
+| on at 2,600,000 | the first non-zero word at 2.86 M (+0.26 M) | between 3.73 M and 3.82 M (+1.13…+1.22 M): −1.6 dB → −22.5 dB | −64 dB at 4.16 M, −100 dB at 4.42 M, at the rounding floor (−155 dB) from 4.6 M (+2.0 M) |
+| off at 3,500,000 | identical word for word up to 3.83 M (+0.33 M), then −120 dB | between 4.62 M and 4.70 M (+1.12…+1.20 M): −13.6 dB → −0.4 dB | the output decays to 1.6·10³ (−97 dB) at 5.3 M (+1.8 M) |
+
+The switched-on run ends bit for bit on the steady run's words, and the two transients mirror each other (off = steady −
+on, shifted by 0.9 M), as a linear time-invariant system must give; an AGC or any other gain that adapts would not.
+So the RX path delays the signal by about **1.17 M clocks (9.4 ms)** and its response to a step lasts about **2 M clocks
+(16 ms)**, with tails rising from −120 dB to the main step over 0.9 M clocks on both sides **[fact, simulation]**. That is
+the shape of a long linear-phase FIR with very high stopband attenuation (symmetric tails, group delay half the length),
+the channel filter that reg 0x1F (width) and reg 0x1E (passband centre) set **[inference]**. The rise after the last
+USB frame is a transient of the same path: it starts when reg 0x1E and 0x1F are written (ACKs at 2.32 M and 2.45 M; before
+that the passband is elsewhere and the tone is attenuated), and it is linear in the input like the switched-on run
+**[inference, from the timing and the linearity]**. Open: why it reaches the steady level after 0.8 M clocks rather than
+the ~1.2 M of a tone switched on (the stages before the filter that 0x1E/0x1F change already carry the tone, which would
+shorten it); would be settled by the same on/off runs with the tone on throughout and only reg 0x1F rewritten with a new
+width.
+The HiFi4 (and anyone reading `RX_DATA` on a radio) therefore sees about 9 ms of FPGA latency and a settling time of about
+16 ms after a frequency or filter change. Open: the exact tap count and window of that filter and how it is split between
+the decimator stages; would be settled by reading the coefficient walk (c1, c2 and the A operands of DSP48_X1Y0..3) over
+one output period and the delay-line lengths (the RAM address ranges of 3.9).
+
+**#246 is answered.** The RX words follow the input linearly (8 to 8,000 LSB, 0.00 % error); there is no FPGA AGC, so no
+control register or time constant to find; the near-full-scale words came from the harness's framing and are fixed in
+`ddc_main.cpp`; the slow rise is the FPGA's long channel filter.
+
+Reproduce (derived files under `build/sdr/vl/`, never commit):
+
+```sh
+# unprobed: MAIN=ddc_main.cpp OBJ=obj_ddc VDEFS="+define+MMCM_FRAC +define+IDDR_DDR" hdl/sdr/sim/build_full.sh
+USB="w0003E63D w0004E519 w00080098 w00099680 w000A0004 w000B006A w000E1200 w000F1800 w00128000 w00138000 w00142000 \
+  w00152000 w00160012 w00180098 w00199C5C w001D0000 w001EFED4 w001F0960"
+GAP_BITS=2 ADC=tone:10001000:2000 build/sdr/vl/obj_ddc/Vft710_sdr 3500000 $USB    # H lines: V17 = 0 slot, one per frame
+ADC_FROM=2600000 GAP_BITS=2 ADC=tone:10001000:2000 build/sdr/vl/obj_ddc/Vft710_sdr 5400000 $USB   # tone switched on
+ADC_TO=3500000 GAP_BITS=2 ADC=tone:10001000:2000 build/sdr/vl/obj_ddc/Vft710_sdr 5400000 $USB     # tone switched off
+# probed (343 probes, 11 words): probe list = SLICE_X29Y26..Y39 FFs, DSP48_X0Y11/X0Y12/X0Y6/X0Y7/X1Y0/X1Y1 A/B pins,
+# DSP48_X0Y7/X1Y3 P, RAMB18_X2Y15 DIADI/DIBDI, SLICE_X49Y12/B,CLUT, SLICE_X29Y19/AFF, SLICE_X31Y30/A5FF
+PROBE_FROM=999999999 DUMP=0-10:2400000:3400000:16 GAP_BITS=2 ADC=tone:10001000:2000 build/sdr/vl/OBJ/Vft710_sdr 3400000 $USB
 ```
 
 ## 4. Structural Verilog, smoke test and simulation (T15d)
