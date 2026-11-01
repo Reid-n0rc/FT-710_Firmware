@@ -153,3 +153,15 @@ scan_state	18877	scan_task 0xFFFE58B0 (the switch): the scan state 0..7
 scan_busy_wait	18873	scan_task: 1 with soft timer 0x33 = 500 when the scan stops on a busy channel (state 2 -> 3)
 scan_resume_wait	18874	scan_task: 1 with soft timer 0x34 = 1500 (states 4 -> 5, 6 -> 7)
 g_ui_ptr3	25d7c	scan_task 0xFFFE5884: a third pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d7c)
+g_bsp_protect_counters	1b5fc	R_BSP_RegisterProtectDisable 0xFFF8FED1 indexes 0x1B5FC by the region (16-bit counters); FUN_fff8ff3d clears four
+g_bsp_locks	1ffc4	R_BSP_HardwareLock 0xFFF90874 passes 0x1FFC4 + id * 4 to R_BSP_SoftwareLock; bsp_callbacks_clear clears 0x74 words
+g_bsp_vectors	20194	R_BSP_InterruptControl 0xFFF90097 calls the word 0x20194 + vector * 4; bsp_interrupt_open fills 0x5F words
+g_bsp_swint_access_ctrl	20310	bsp_swint_get_access_control 0xFFF9105F exchanges the word 0x20310 + unit * 4
+g_bsp_swint_task	20318	R_BSP_SoftwareInterruptSetTask 0xFFF90B35: 0x20318 + unit * 0x6C + slot * 0xC
+g_bsp_swint_task_num	142c	R_BSP_SoftwareInterruptSetTask 0xFFF90ADA compares 0x142C[unit] with 8
+g_bsp_swint_buf_top	142e	R_BSP_SoftwareInterruptSetTask 0xFFF90AEF advances 0x142E[unit]
+g_bsp_swint_buf_bottom	1430	bsp_swint_execute_task 0xFFF910FC advances 0x1430[unit]
+g_bsp_swint_nested	1432	bsp_swint_execute_task 0xFFF910DF tests 0x1432[unit] == 1
+bsp_prcr_masks	fff87ed0	R_BSP_RegisterProtectDisable 0xFFF8FEEB loads the PRCR bit of the region from 0xFFF87ED0 (u16 1, 2, 8)
+bsp_hoco_freqs	fff8f30c	get_iclk_freq_hz 0xFFF91306 copies three words from 0xFFF8F30C (16, 18, 20 MHz)
+bsp_swint_dummy_task	fff910bc	R_BSP_SoftwareInterruptOpen stores 0xFFF910BC as the task of a free slot (code: SUB #4,SP; MOV.L R1,[SP]; NOP; RTSD #4)

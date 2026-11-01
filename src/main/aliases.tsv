@@ -1,3 +1,13 @@
 # MAIN: recreated functions whose source name is not the Ghidra name, or whose address Ghidra's list lacks (T24):
 # source name -> original address, with the evidence. tools/equiv_main_emu.py checks the function against that address.
 name	address	evidence
+R_BSP_GetVersion	fff8fc3f	FUN_fff8fc3f returns 0x50040, the FIT R_BSP_GetVersion form (major << 16 | minor) [inference]
+R_BSP_InterruptsDisable	fff8fd6d	FUN_fff8fd6d: CLRPSW I unless PSW.PM [fact]; FIT r_bsp_cpu.c name [inference]
+R_BSP_InterruptsEnable	fff8fd84	FUN_fff8fd84: SETPSW I unless PSW.PM [fact]; called by bsp_swint_execute_task for nesting
+R_BSP_CpuInterruptLevelRead	fff8fd9b	FUN_fff8fd9b: (PSW & 0x0F000000) >> 24 [fact]
+R_BSP_CpuInterruptLevelWrite	fff8fdb8	FUN_fff8fdb8: MVTIPL #level through a 16-entry table [fact]
+bsp_register_protect_open	fff8ff3d	FUN_fff8ff3d clears the four counters 0x1B5FC of R_BSP_RegisterProtect* [fact]
+R_BSP_InterruptRead	fff90046	FUN_fff90046 copies the callback of 0x20194[vector] to *out [fact]
+bsp_fit_interrupts_control	fff90181	FUN_fff90181: R_BSP_InterruptControl commands 5/6, IPL save/raise/restore [fact]
+bsp_interrupt_enable_disable	fff916ac	FUN_fff916ac: R_BSP_InterruptControl commands 1/2 for NMI, FPU, bus error [fact]
+bsp_non_existent_port_init	fff91608	FUN_fff91608 sets PDR bits of all ports [fact]; FIT name [inference]
