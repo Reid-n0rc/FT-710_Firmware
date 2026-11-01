@@ -320,7 +320,7 @@ void pclink_stats_print(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_hw_config @ 2011d9a8  (1272 bytes, 7 callers, export file 2011d248_2011e148.c)
+ * rspi_hw_config @ 2011d9a8  (1272 bytes, 7 callers, export file 2011d19c_2011e118.c)
  * Purpose: Programs one channel as master (mode 0) or slave (mode 1), see the table above [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -415,7 +415,7 @@ undefined4 rspi_hw_config(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_open @ 2011dea4  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
+ * rspi0_open @ 2011dea4  (124 bytes, 1 callers, export file 2011d19c_2011e118.c)
  * Purpose: Clears the STBCR10 module-stop bit (bit 7-n), creates the SPTI/SPRI ISRs, enables the GIC IDs, then
  *     calls `rspi_hw_config`: ch0, 2, 3, 4 as slave, ch1 as master [fact]
  * Tag: [fact]
@@ -446,7 +446,7 @@ undefined4 rspi0_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_open @ 2011df20  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
+ * rspi1_open @ 2011df20  (124 bytes, 1 callers, export file 2011d19c_2011e118.c)
  * Purpose: Clears the STBCR10 module-stop bit (bit 7-n), creates the SPTI/SPRI ISRs, enables the GIC IDs, then
  *     calls `rspi_hw_config`: ch0, 2, 3, 4 as slave, ch1 as master [fact]
  * Tag: [fact]
@@ -477,7 +477,7 @@ undefined4 rspi1_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_open @ 2011df9c  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
+ * rspi2_open @ 2011df9c  (124 bytes, 1 callers, export file 2011d19c_2011e118.c)
  * Purpose: Clears the STBCR10 module-stop bit (bit 7-n), creates the SPTI/SPRI ISRs, enables the GIC IDs, then
  *     calls `rspi_hw_config`: ch0, 2, 3, 4 as slave, ch1 as master [fact]
  * Tag: [fact]
@@ -508,7 +508,7 @@ undefined4 rspi2_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_open @ 2011e018  (132 bytes, 1 callers, export file 2011d248_2011e148.c)
+ * rspi3_open @ 2011e018  (132 bytes, 1 callers, export file 2011d19c_2011e118.c)
  * Purpose: Clears the STBCR10 module-stop bit (bit 7-n), creates the SPTI/SPRI ISRs, enables the GIC IDs, then
  *     calls `rspi_hw_config`: ch0, 2, 3, 4 as slave, ch1 as master [fact]
  * Tag: [fact]
@@ -540,7 +540,7 @@ undefined4 rspi3_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_open @ 2011e09c  (124 bytes, 1 callers, export file 2011d248_2011e148.c)
+ * rspi4_open @ 2011e09c  (124 bytes, 1 callers, export file 2011d19c_2011e118.c)
  * Purpose: Clears the STBCR10 module-stop bit (bit 7-n), creates the SPTI/SPRI ISRs, enables the GIC IDs, then
  *     calls `rspi_hw_config`: ch0, 2, 3, 4 as slave, ch1 as master [fact]
  * Tag: [fact]
@@ -571,7 +571,7 @@ undefined4 rspi4_open(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_clear_rx_flag @ 2011e118  (16 bytes, 2 callers, export file 2011d248_2011e148.c)
+ * rspi0_clear_rx_flag @ 2011e118  (16 bytes, 2 callers, export file 2011d19c_2011e118.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -586,9 +586,8 @@ void rspi0_clear_rx_flag(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * rspi1_clear_rx_flag @ 2011e128  (16 bytes, 2 callers, export file 2011d248_2011e148.c)
+ * rspi1_clear_rx_flag @ 2011e128  (16 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -605,7 +604,7 @@ void rspi1_clear_rx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_clear_rx_flag @ 2011e138  (16 bytes, 2 callers, export file 2011d248_2011e148.c)
+ * rspi2_clear_rx_flag @ 2011e138  (16 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -622,7 +621,7 @@ void rspi2_clear_rx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_clear_rx_flag @ 2011e148  (16 bytes, 2 callers, export file 2011d248_2011e148.c)
+ * rspi3_clear_rx_flag @ 2011e148  (16 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -637,8 +636,9 @@ void rspi3_clear_rx_flag(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * rspi4_clear_rx_flag @ 2011e158  (16 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_clear_rx_flag @ 2011e158  (16 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -655,7 +655,7 @@ void rspi4_clear_rx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_clear_tx_flag @ 2011e168  (16 bytes, 3 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_clear_tx_flag @ 2011e168  (16 bytes, 3 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -672,7 +672,7 @@ void rspi0_clear_tx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_clear_tx_flag @ 2011e178  (16 bytes, 3 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_clear_tx_flag @ 2011e178  (16 bytes, 3 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -689,7 +689,7 @@ void rspi1_clear_tx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_clear_tx_flag @ 2011e188  (16 bytes, 3 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_clear_tx_flag @ 2011e188  (16 bytes, 3 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -706,7 +706,7 @@ void rspi2_clear_tx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_clear_tx_flag @ 2011e198  (16 bytes, 3 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_clear_tx_flag @ 2011e198  (16 bytes, 3 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -723,7 +723,7 @@ void rspi3_clear_tx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_clear_tx_flag @ 2011e1e0  (16 bytes, 3 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_clear_tx_flag @ 2011e1e0  (16 bytes, 3 callers, export file 2011e128_2011ed24.c)
  * (The page describes the range 0x2011E118..0x2011E1E0 in one row.)
  * Purpose: Clear the flags above [fact]
  * Tag: [fact]
@@ -740,7 +740,7 @@ void rspi4_clear_tx_flag(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_rx_isr @ 2011e1f0  (80 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_rx_isr @ 2011e1f0  (80 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -761,7 +761,7 @@ void rspi0_rx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_rx_isr @ 2011e240  (80 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_rx_isr @ 2011e240  (80 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 80 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -780,7 +780,7 @@ void rspi1_rx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_rx_isr @ 2011e290  (40 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_rx_isr @ 2011e290  (40 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: clear SPRIE, flag [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -799,7 +799,7 @@ void rspi2_rx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_rx_isr @ 2011e2b8  (40 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_rx_isr @ 2011e2b8  (40 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -816,7 +816,7 @@ void rspi3_rx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_rx_isr @ 2011e2e0  (40 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_rx_isr @ 2011e2e0  (40 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -833,7 +833,7 @@ void rspi4_rx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_tx_isr @ 2011e308  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_tx_isr @ 2011e308  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: clear SPTIE, flag 0x2080041D [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -852,7 +852,7 @@ void rspi0_tx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_tx_isr @ 2011e330  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_tx_isr @ 2011e330  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -869,7 +869,7 @@ void rspi1_tx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_tx_isr @ 2011e358  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_tx_isr @ 2011e358  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -886,7 +886,7 @@ void rspi2_tx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_tx_isr @ 2011e380  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_tx_isr @ 2011e380  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -903,7 +903,7 @@ void rspi3_tx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_tx_isr @ 2011e3a8  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_tx_isr @ 2011e3a8  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -920,7 +920,7 @@ void rspi4_tx_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_tx_wait @ 2011e3d0  (44 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_tx_wait @ 2011e3d0  (44 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 44 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -938,7 +938,7 @@ void rspi0_tx_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_read_burst @ 2011e3fc  (328 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_read_burst @ 2011e3fc  (328 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: dummy 0xFF writes, wait RX [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1003,7 +1003,7 @@ void rspi0_read_burst(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_tx_wait @ 2011e544  (44 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_tx_wait @ 2011e544  (44 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 44 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1021,7 +1021,7 @@ void rspi1_tx_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_read_burst @ 2011e570  (320 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_read_burst @ 2011e570  (320 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi1_clear_tx_flag` and 2 more; 320 B, callers: 1 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -1082,7 +1082,7 @@ void rspi1_read_burst(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_tx_wait @ 2011e6b0  (44 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_tx_wait @ 2011e6b0  (44 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 44 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1100,7 +1100,7 @@ void rspi2_tx_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_read_burst @ 2011e6dc  (328 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_read_burst @ 2011e6dc  (328 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi2_clear_tx_flag` and 2 more; 328 B, callers: 1 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -1164,7 +1164,7 @@ void rspi2_read_burst(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_tx_wait @ 2011e824  (44 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_tx_wait @ 2011e824  (44 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 44 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1182,7 +1182,7 @@ void rspi3_tx_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_read_burst @ 2011e850  (320 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_read_burst @ 2011e850  (320 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi3_clear_tx_flag` and 2 more; 320 B, callers: 1 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -1243,7 +1243,7 @@ void rspi3_read_burst(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_tx_wait @ 2011e990  (44 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_tx_wait @ 2011e990  (44 bytes, 2 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_rmw8`; 44 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1261,7 +1261,7 @@ void rspi4_tx_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_read_burst @ 2011e9bc  (328 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_read_burst @ 2011e9bc  (328 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read16`, `reg_read8`, `reg_rmw8`, `rspi4_clear_tx_flag` and 2 more; 328 B, callers: 1 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -1324,7 +1324,7 @@ void rspi4_read_burst(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_wait_tend @ 2011eb58  (36 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_wait_tend @ 2011eb58  (36 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: SPSR.TEND [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1346,7 +1346,7 @@ void rspi0_wait_tend(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_wait_tend @ 2011eb7c  (36 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_wait_tend @ 2011eb7c  (36 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read8`; 36 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1366,7 +1366,7 @@ void rspi1_wait_tend(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_wait_tend @ 2011eba0  (36 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_wait_tend @ 2011eba0  (36 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read8`; 36 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1386,7 +1386,7 @@ void rspi2_wait_tend(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_wait_tend @ 2011ebc4  (36 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_wait_tend @ 2011ebc4  (36 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read8`; 36 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1406,7 +1406,7 @@ void rspi3_wait_tend(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_wait_tend @ 2011ebe8  (36 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_wait_tend @ 2011ebe8  (36 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: calls `reg_read8`; 36 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1426,7 +1426,7 @@ void rspi4_wait_tend(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi0_delay @ 2011ec0c  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_delay @ 2011ec0c  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: no direct calls; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1449,7 +1449,7 @@ void rspi0_delay(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_delay @ 2011ec34  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_delay @ 2011ec34  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: no direct calls; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1472,7 +1472,7 @@ void rspi1_delay(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi2_delay @ 2011ec5c  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi2_delay @ 2011ec5c  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: no direct calls; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1495,7 +1495,7 @@ void rspi2_delay(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi3_delay @ 2011ec84  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi3_delay @ 2011ec84  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: no direct calls; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1518,7 +1518,7 @@ void rspi3_delay(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi4_delay @ 2011ecac  (40 bytes, 1 callers, export file 2011e158_2011f0cc.c)
+ * rspi4_delay @ 2011ecac  (40 bytes, 1 callers, export file 2011e128_2011ed24.c)
  * Purpose: no direct calls; 40 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1541,7 +1541,7 @@ void rspi4_delay(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_hw_config_master @ 2011ed24  (676 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi_hw_config_master @ 2011ed24  (676 bytes, 0 callers, export file 2011e128_2011ed24.c)
  * Purpose: (ch, spbr, brdv, loopback); no callers [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1591,9 +1591,8 @@ void rspi_hw_config_master(int param_1,undefined4 param_2,undefined4 param_3,und
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * rspi0_open_irq_only @ 2011efc8  (120 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi0_open_irq_only @ 2011efc8  (120 bytes, 0 callers, export file 2011efc8_201200a0.c)
  * Purpose: Like the open calls but without `rspi_hw_config`. No callers [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1620,7 +1619,7 @@ undefined4 rspi0_open_irq_only(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi1_open_irq_only @ 2011f040  (120 bytes, 0 callers, export file 2011e158_2011f0cc.c)
+ * rspi1_open_irq_only @ 2011f040  (120 bytes, 0 callers, export file 2011efc8_201200a0.c)
  * Purpose: Like the open calls but without `rspi_hw_config`. No callers [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1647,7 +1646,7 @@ undefined4 rspi1_open_irq_only(void)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_open @ 2011f0cc  (72 bytes, 2 callers, export file 2011e158_2011f0cc.c)
+ * rspi_open @ 2011f0cc  (72 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: `rspi_open(ch)`: jump table to `rspiN_open` [fact: disassembly]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1681,8 +1680,9 @@ undefined4 rspi_open(uint param_1)
   return 0;
 }
 
+
 /* -----------------------------------------------------------------------------
- * rspi_spe_set @ 2011f128  (16 bytes, 2 callers, export file 2011f128_201200dc.c)
+ * rspi_spe_set @ 2011f128  (16 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets SPCR.SPE [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1698,7 +1698,7 @@ void rspi_spe_set(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_start @ 2011f138  (80 bytes, 9 callers, export file 2011f128_201200dc.c)
+ * rspi_start @ 2011f138  (80 bytes, 9 callers, export file 2011efc8_201200a0.c)
  * Purpose: Sets SPCR.SPE [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1740,7 +1740,7 @@ switchD_2011f14c_default:
 
 
 /* -----------------------------------------------------------------------------
- * rspi_spe_clear @ 2011f19c  (16 bytes, 5 callers, export file 2011f128_201200dc.c)
+ * rspi_spe_clear @ 2011f19c  (16 bytes, 5 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears SPCR.SPE, then a 10-iteration delay loop (`rspiN_delay` 0x2011EC0C–0x2011ECAC) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1756,7 +1756,7 @@ void rspi_spe_clear(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_stop @ 2011f1ac  (112 bytes, 7 callers, export file 2011f128_201200dc.c)
+ * rspi_stop @ 2011f1ac  (112 bytes, 7 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears SPCR.SPE, then a 10-iteration delay loop (`rspiN_delay` 0x2011EC0C–0x2011ECAC) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1797,7 +1797,7 @@ undefined4 rspi_stop(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_base @ 2011f230  (52 bytes, 2 callers, export file 2011f128_201200dc.c)
+ * rspi_base @ 2011f230  (52 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: Channel → register base [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -1823,7 +1823,7 @@ void * rspi_base(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_read @ 2011f278  (500 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * rspi_read @ 2011f278  (500 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: `(ch, buf, count, rxtrg)`: PIO read in chunks of the RX trigger level (table 0x20800434). Clocks dummy
  *     0xFF bytes through `rspiN_read_burst` 0x2011E3FC/E570/E6DC/E850/E9BC. No callers [fact]
  * Tag: [fact]
@@ -1948,7 +1948,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_write @ 2011f718  (604 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * rspi_write @ 2011f718  (604 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: `(ch, buf, count, txtrg)`: PIO write by TX trigger level (table 0x20800424). It waits on the TX-empty
  *     flag (`rspiN_tx_wait` 0x2011E3D0/E544/E6B0/E824/E990) [fact]
  * Tag: [fact]
@@ -2081,7 +2081,7 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_fifo_reset @ 2011f758  (92 bytes, 2 callers, export file 2011f128_201200dc.c)
+ * rspi_fifo_reset @ 2011f758  (92 bytes, 2 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the driver's TX/RX-done flags and pulses SPBFCR.TXRST/RXRST [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2102,7 +2102,7 @@ void rspi_fifo_reset(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * rspi_reset_buffers @ 2011f7b4  (120 bytes, 9 callers, export file 2011f128_201200dc.c)
+ * rspi_reset_buffers @ 2011f7b4  (120 bytes, 9 callers, export file 2011efc8_201200a0.c)
  * Purpose: Clears the driver's TX/RX-done flags and pulses SPBFCR.TXRST/RXRST [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2152,7 +2152,7 @@ switchD_2011f7c8_default:
 
 
 /* -----------------------------------------------------------------------------
- * rspi_wait_tx_end @ 2011f8f8  (72 bytes, 1 callers, export file 2011f128_201200dc.c)
+ * rspi_wait_tx_end @ 2011f8f8  (72 bytes, 1 callers, export file 2011efc8_201200a0.c)
  * Purpose: Spins on SPSR.TEND (bit 6) through `rspiN_wait_tend` 0x2011EB58–0x2011EBE8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2186,7 +2186,7 @@ undefined4 rspi_wait_tx_end(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_store_frame @ 20120d40  (188 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * afscope_store_frame @ 20120d40  (188 bytes, 2 callers, export file 20120d40_20124744.c)
  * Purpose: 600-byte AF-FFT record 0x208DD73C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2221,7 +2221,7 @@ LAB_20157258:
 
 
 /* -----------------------------------------------------------------------------
- * afscope_buf_ptr @ 20120dc8  (12 bytes, 1 callers, export file 20120d60_201248f8.c)
+ * afscope_buf_ptr @ 20120dc8  (12 bytes, 1 callers, export file 20120d40_20124744.c)
  * Purpose: 600-byte AF-FFT record 0x208DD73C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2236,7 +2236,7 @@ uint afscope_buf_ptr(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_buf @ 20132f74  (8 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * sdr_rx_buf @ 20132f74  (8 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: Return 0x605C00A0 / 0x605C0780 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2253,7 +2253,7 @@ void * sdr_rx_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_hdr_buf @ 20132f7c  (8 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * dsp_hdr_buf @ 20132f7c  (8 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: Return 0x605C00A0 / 0x605C0780 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2270,7 +2270,7 @@ void * dsp_hdr_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * cycle_delta_2 @ 20132fe0  (48 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * cycle_delta_2 @ 20132fe0  (48 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: `{delta, last}` from CP15 PMCCNTR (c9,c13) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2294,7 +2294,7 @@ int cycle_delta_2(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_rx_done_cb @ 201330d4  (108 bytes, 1 callers, export file 201322c8_201335f8.c)
+ * sdr_rx_done_cb @ 201330d4  (108 bytes, 1 callers, export file 201322ac_20133440.c)
  * Purpose: SDR frame complete [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2324,7 +2324,7 @@ void sdr_rx_done_cb(void)
 
 
 /* -----------------------------------------------------------------------------
- * sdr_link_recover @ 20133140  (136 bytes, 0 callers, export file 201322c8_201335f8.c)
+ * sdr_link_recover @ 20133140  (136 bytes, 0 callers, export file 201322ac_20133440.c)
  * Purpose: Error recovery, unreferenced [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2362,7 +2362,7 @@ void sdr_link_recover(void)
 
 
 /* -----------------------------------------------------------------------------
- * dsp_set_audio_ptr @ 201331c8  (20 bytes, 1 callers, export file 201322c8_201335f8.c)
+ * dsp_set_audio_ptr @ 201331c8  (20 bytes, 1 callers, export file 201322ac_20133440.c)
  * Purpose: 0x20808598 = audio pointer, 0x2080858E = halfword at +2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2379,7 +2379,7 @@ void dsp_set_audio_ptr(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * link_ss_irq_init @ 20133440  (68 bytes, 2 callers, export file 201322c8_201335f8.c)
+ * link_ss_irq_init @ 20133440  (68 bytes, 2 callers, export file 201322ac_20133440.c)
  * Purpose: ISRs for GIC 535 (SDR) and 449 (DSP) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2405,9 +2405,8 @@ void link_ss_irq_init(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * sdr_dsp_link_init @ 20133484  (200 bytes, 1 callers, export file 201322c8_201335f8.c)
+ * sdr_dsp_link_init @ 20133484  (200 bytes, 1 callers, export file 20133484_20134318.c)
  * Purpose: Sets up RSPI2 + DMA ch5 and RSPI4 + DMA ch3/ch4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2445,7 +2444,7 @@ void sdr_dsp_link_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_store_frame @ 201342ec  (168 bytes, 1 callers, export file 20133618_20134348.c)
+ * scope_store_frame @ 201342ec  (168 bytes, 1 callers, export file 20133484_20134318.c)
  * Purpose: 850-byte scope record 0x204832BB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2478,7 +2477,7 @@ void scope_store_frame(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_history_push @ 20134348  (212 bytes, 6 callers, export file 20133618_20134348.c)
+ * scope_history_push @ 20134348  (212 bytes, 6 callers, export file 20134328_2013519c.c)
  * Purpose: Appends the 800 points to the waterfall/3D history ring 0x20490894 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2509,8 +2508,9 @@ void scope_history_push(int param_1,void *param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * scope_frame_buf @ 201344a0  (8 bytes, 1 callers, export file 20134358_201352e8.c)
+ * scope_frame_buf @ 201344a0  (8 bytes, 1 callers, export file 20134328_2013519c.c)
  * Purpose: 850-byte scope record 0x204832BB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2525,7 +2525,7 @@ void * scope_frame_buf(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac3_rspi4_tx_setup @ 20137080  (504 bytes, 1 callers, export file 201353f8_201378b0.c)
+ * dmac3_rspi4_tx_setup @ 20137080  (504 bytes, 1 callers, export file 201351ac_201374ac.c)
  * Purpose: DMARS 0x131 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2588,7 +2588,7 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * dmac5_rspi2_rx_setup @ 20137278  (536 bytes, 1 callers, export file 201353f8_201378b0.c)
+ * dmac5_rspi2_rx_setup @ 20137278  (536 bytes, 1 callers, export file 201351ac_201374ac.c)
  * Purpose: DMARS 0x12A, 0x6A4 B [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2655,7 +2655,7 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * dmac4_rspi4_rx_setup @ 201374ac  (536 bytes, 1 callers, export file 201353f8_201378b0.c)
+ * dmac4_rspi4_rx_setup @ 201374ac  (536 bytes, 1 callers, export file 201351ac_201374ac.c)
  * Purpose: DMARS 0x132, 0x11F8 B [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2720,9 +2720,8 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * dmac8_m2m_init @ 201376d0  (436 bytes, 1 callers, export file 201353f8_201378b0.c)
+ * dmac8_m2m_init @ 201376d0  (436 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: frame-buffer copy DMA [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2772,7 +2771,7 @@ void dmac8_m2m_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac9_register_isr @ 20137904  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac9_register_isr @ 20137904  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: calls `itron_acre_isr`; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2788,7 +2787,7 @@ void dmac9_register_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac9_rspi_tx_setup @ 20137910  (476 bytes, 3 callers, export file 20137904_20139658.c)
+ * dmac9_rspi_tx_setup @ 20137910  (476 bytes, 3 callers, export file 201376c4_20139590.c)
  * Purpose: arg 1 RSPI0 (0x121), 0 RSPI1 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2850,7 +2849,7 @@ void dmac9_rspi_tx_setup(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_register_isr @ 20137af8  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac10_register_isr @ 20137af8  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: calls `itron_acre_isr`; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2866,7 +2865,7 @@ void dmac10_register_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_rspi_rx_setup @ 20137b04  (536 bytes, 2 callers, export file 20137904_20139658.c)
+ * dmac10_rspi_rx_setup @ 20137b04  (536 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: arg 1 RSPI0 (0x122) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2937,7 +2936,7 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * dmac3_enable @ 20137d50  (20 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac3_enable @ 20137d50  (20 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2953,7 +2952,7 @@ void dmac3_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac3_disable @ 20137d64  (20 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac3_disable @ 20137d64  (20 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: writes 0 to SETEN (no-op?) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2971,7 +2970,7 @@ void dmac3_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac5_enable @ 20137d84  (20 bytes, 3 callers, export file 20137904_20139658.c)
+ * dmac5_enable @ 20137d84  (20 bytes, 3 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -2987,7 +2986,7 @@ void dmac5_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac5_disable @ 20137d98  (20 bytes, 3 callers, export file 20137904_20139658.c)
+ * dmac5_disable @ 20137d98  (20 bytes, 3 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3003,7 +3002,7 @@ void dmac5_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac5_set_callback @ 20137dac  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac5_set_callback @ 20137dac  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3019,7 +3018,7 @@ void dmac5_set_callback(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac4_enable @ 20137db8  (20 bytes, 2 callers, export file 20137904_20139658.c)
+ * dmac4_enable @ 20137db8  (20 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3035,7 +3034,7 @@ void dmac4_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac4_disable @ 20137dcc  (20 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac4_disable @ 20137dcc  (20 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3051,7 +3050,7 @@ void dmac4_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac4_set_callback @ 20137de0  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac4_set_callback @ 20137de0  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3067,7 +3066,7 @@ void dmac4_set_callback(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac9_stop @ 20137e00  (52 bytes, 4 callers, export file 20137904_20139658.c)
+ * dmac9_stop @ 20137e00  (52 bytes, 4 callers, export file 201376c4_20139590.c)
  * Purpose: CHCTRL.CLREN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3086,7 +3085,7 @@ void dmac9_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac9_set_callback @ 20137e34  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac9_set_callback @ 20137e34  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3102,7 +3101,7 @@ void dmac9_set_callback(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_enable @ 20137e40  (20 bytes, 3 callers, export file 20137904_20139658.c)
+ * dmac10_enable @ 20137e40  (20 bytes, 3 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 20 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3118,7 +3117,7 @@ void dmac10_enable(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_stop @ 20137e54  (52 bytes, 3 callers, export file 20137904_20139658.c)
+ * dmac10_stop @ 20137e54  (52 bytes, 3 callers, export file 201376c4_20139590.c)
  * Purpose: calls `reg_rmw32`; 52 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3135,7 +3134,7 @@ void dmac10_stop(void)
 
 
 /* -----------------------------------------------------------------------------
- * dmac10_set_callback @ 20137e88  (12 bytes, 1 callers, export file 20137904_20139658.c)
+ * dmac10_set_callback @ 20137e88  (12 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: no direct calls; 12 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3151,7 +3150,7 @@ void dmac10_set_callback(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw8 @ 20157138  (20 bytes, 157 callers, export file 20156860_20158744.c)
+ * reg_rmw8 @ 20157138  (20 bytes, 157 callers, export file 201567f4_2015863c.c)
  * Purpose: (reg, val, shift, mask): *reg = *reg & ~mask | val << shift, 8-bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3169,7 +3168,7 @@ void reg_rmw8(byte *param_1,int param_2,uint param_3,byte param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw16 @ 2015714c  (20 bytes, 49 callers, export file 20156860_20158744.c)
+ * reg_rmw16 @ 2015714c  (20 bytes, 49 callers, export file 201567f4_2015863c.c)
  * Purpose: 16-bit read-modify-write, same arguments (spi-links.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3187,7 +3186,7 @@ void reg_rmw16(ushort *param_1,int param_2,uint param_3,ushort param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw32 @ 20157160  (20 bytes, 122 callers, export file 20156860_20158744.c)
+ * reg_rmw32 @ 20157160  (20 bytes, 122 callers, export file 201567f4_2015863c.c)
  * Purpose: 32-bit read-modify-write, same arguments [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3205,7 +3204,7 @@ void reg_rmw32(uint *param_1,int param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_read8 @ 20157174  (16 bytes, 38 callers, export file 20156860_20158744.c)
+ * reg_read8 @ 20157174  (16 bytes, 38 callers, export file 201567f4_2015863c.c)
  * Purpose: (reg, shift, mask): (*reg & mask) >> shift, 8-bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3222,7 +3221,7 @@ byte reg_read8(byte *param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * reg_read16 @ 20157184  (16 bytes, 5 callers, export file 20156860_20158744.c)
+ * reg_read16 @ 20157184  (16 bytes, 5 callers, export file 201567f4_2015863c.c)
  * Purpose: 16-bit field read (spi-links.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md

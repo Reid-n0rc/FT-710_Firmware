@@ -1,16 +1,16 @@
 metric	value
-functions	2213
+functions	2216
 decompile_failures	0
-warnings	212
-functions_with_warnings	68
+warnings	209
+functions_with_warnings	67
 spacebase_warnings	0
-unreachable_block_warnings	147
+unreachable_block_warnings	144
 halt_baddata	4
 functions_with_halt_baddata	4
 functions_with_in_vars	60
-functions_with_unaff_vars	43
-functions_with_extraout_vars	67
-functions_with_in_unaff_extraout	158
+functions_with_unaff_vars	40
+functions_with_extraout_vars	65
+functions_with_in_unaff_extraout	155
 undefined_nonff_bytes	86
 undefined_nonff_bytes:.text	86
 bookmarks_error	1
@@ -20,6 +20,6 @@ warning:Control flow encountered bad instruction data	4
 warning:Could not recover jumptable at #. Too many branches	17
 warning:Do nothing block with infinite loop	6
 warning:Globals starting with '_' overlap smaller symbols at the same address	13
-warning:Removing unreachable block (#)	147
+warning:Removing unreachable block (#)	144
 warning:Treating indirect jump as call	17
 warning:Type propagation algorithm not settling	4

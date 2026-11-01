@@ -1,0 +1,1713 @@
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
+
+// ===== vdc5_ch0_isr_iv4_vbuferr @ 201189f8 (80 bytes)
+
+/* VDC5 ch0 interrupt 15: enabled in VDC50_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC48 with type 15 [fact]; type = VDC5_INT_TYPE_IV4_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv4_vbuferr(void)
+
+{
+  uint vdc50_syscnt_int2;
+  uint vdc50_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc50_syscnt_int5 = VDC50_SYSCNT_INT5;
+  if (((vdc50_syscnt_int5 & 0x10000000) != 0) &&
+     (vdc50_syscnt_int2 = VDC50_SYSCNT_INT2, (vdc50_syscnt_int2 & 0x10000000) != 0)) {
+    VDC50_SYSCNT_INT2 = vdc50_syscnt_int5 & 0xefffffff;
+    if (DAT_208dcc48 != (code *)0x0) {
+      (*DAT_208dcc48)(0xf);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC50_SYSCNT_INT2 = vdc50_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_s1_wline @ 20118a48 (80 bytes)
+
+/* VDC5 ch0 interrupt 16: enabled in VDC50_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC4C with type 16 [fact]; type = VDC5_INT_TYPE_S1_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_s1_wline(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 1) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 1) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xfffffffe;
+    if (DAT_208dcc4c != (code *)0x0) {
+      (*DAT_208dcc4c)(0x10);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_oir_vi_vsync @ 20118a98 (80 bytes)
+
+/* VDC5 ch0 interrupt 17: enabled in VDC50_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC50 with type 17 [fact]; type = VDC5_INT_TYPE_OIR_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vi_vsync(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x10) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x10) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xffffffef;
+    if (DAT_208dcc50 != (code *)0x0) {
+      (*DAT_208dcc50)(0x11);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_oir_lo_vsync @ 20118ae8 (80 bytes)
+
+/* VDC5 ch0 interrupt 18: enabled in VDC50_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC54 with type 18 [fact]; type = VDC5_INT_TYPE_OIR_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_lo_vsync(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x100) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x100) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xfffffeff;
+    if (DAT_208dcc54 != (code *)0x0) {
+      (*DAT_208dcc54)(0x12);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_oir_vline @ 20118b50 (80 bytes)
+
+/* VDC5 ch0 interrupt 19: enabled in VDC50_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC58 with type 19 [fact]; type = VDC5_INT_TYPE_OIR_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vline(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x1000) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x1000) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xffffefff;
+    if (DAT_208dcc58 != (code *)0x0) {
+      (*DAT_208dcc58)(0x13);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_oir_vfield @ 20118ba0 (80 bytes)
+
+/* VDC5 ch0 interrupt 20: enabled in VDC50_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC5C with type 20 [fact]; type = VDC5_INT_TYPE_OIR_VFIELD
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_oir_vfield(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x10000) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x10000) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xfffeffff;
+    if (DAT_208dcc5c != (code *)0x0) {
+      (*DAT_208dcc5c)(0x14);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_iv7_vbuferr @ 20118bf0 (80 bytes)
+
+/* VDC5 ch0 interrupt 21: enabled in VDC50_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC60 with type 21 [fact]; type = VDC5_INT_TYPE_IV7_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv7_vbuferr(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x100000) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x100000) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xffefffff;
+    if (DAT_208dcc60 != (code *)0x0) {
+      (*DAT_208dcc60)(0x15);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch0_isr_iv8_vbuferr @ 20118c40 (80 bytes)
+
+/* VDC5 ch0 interrupt 22: enabled in VDC50_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCC64 with type 22 [fact]; type = VDC5_INT_TYPE_IV8_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch0_isr_iv8_vbuferr(void)
+
+{
+  uint vdc50_syscnt_int3;
+  uint vdc50_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc50_syscnt_int6 = VDC50_SYSCNT_INT6;
+  if (((vdc50_syscnt_int6 & 0x1000000) != 0) &&
+     (vdc50_syscnt_int3 = VDC50_SYSCNT_INT3, (vdc50_syscnt_int3 & 0x1000000) != 0)) {
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6 & 0xfeffffff;
+    if (DAT_208dcc64 != (code *)0x0) {
+      (*DAT_208dcc64)(0x16);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC50_SYSCNT_INT3 = vdc50_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s0_vi_vsync @ 20118c90 (80 bytes)
+
+/* VDC5 ch1 interrupt 0: enabled in VDC51_SYSCNT_INT4 bit 0 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC68 with type 0 [fact]; type = VDC5_INT_TYPE_S0_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vi_vsync(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 1) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 1) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xfffffffe;
+    if (DAT_208dcc68 != (code *)0x0) {
+      (*DAT_208dcc68)(0);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s0_lo_vsync @ 20118ce0 (80 bytes)
+
+/* VDC5 ch1 interrupt 1: enabled in VDC51_SYSCNT_INT4 bit 4 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC6C with type 1 [fact]; type = VDC5_INT_TYPE_S0_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_lo_vsync(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x10) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x10) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xffffffef;
+    if (DAT_208dcc6c != (code *)0x0) {
+      (*DAT_208dcc6c)(1);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s0_vsyncerr @ 20118d30 (80 bytes)
+
+/* VDC5 ch1 interrupt 2: enabled in VDC51_SYSCNT_INT4 bit 8 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC70 with type 2 [fact]; type = VDC5_INT_TYPE_S0_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vsyncerr(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x100) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x100) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xfffffeff;
+    if (DAT_208dcc70 != (code *)0x0) {
+      (*DAT_208dcc70)(2);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_gr3_vline @ 20118d80 (80 bytes)
+
+/* VDC5 ch1 interrupt 3: enabled in VDC51_SYSCNT_INT4 bit 12 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC74 with type 3 [fact]; type = VDC5_INT_TYPE_GR3_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_gr3_vline(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x1000) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x1000) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xffffefff;
+    if (DAT_208dcc74 != (code *)0x0) {
+      (*DAT_208dcc74)(3);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s0_vfield @ 20118dd0 (80 bytes)
+
+/* VDC5 ch1 interrupt 4: enabled in VDC51_SYSCNT_INT4 bit 16 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC78 with type 4 [fact]; type = VDC5_INT_TYPE_S0_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_vfield(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x10000) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x10000) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xfffeffff;
+    if (DAT_208dcc78 != (code *)0x0) {
+      (*DAT_208dcc78)(4);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv1_vbuferr @ 20118e20 (80 bytes)
+
+/* VDC5 ch1 interrupt 5: enabled in VDC51_SYSCNT_INT4 bit 20 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC7C with type 5 [fact]; type = VDC5_INT_TYPE_IV1_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv1_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x100000) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x100000) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xffefffff;
+    if (DAT_208dcc7c != (code *)0x0) {
+      (*DAT_208dcc7c)(5);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv3_vbuferr @ 20118e70 (80 bytes)
+
+/* VDC5 ch1 interrupt 6: enabled in VDC51_SYSCNT_INT4 bit 24 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC80 with type 6 [fact]; type = VDC5_INT_TYPE_IV3_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv3_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x1000000) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x1000000) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xfeffffff;
+    if (DAT_208dcc80 != (code *)0x0) {
+      (*DAT_208dcc80)(6);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv5_vbuferr @ 20118ec0 (80 bytes)
+
+/* VDC5 ch1 interrupt 7: enabled in VDC51_SYSCNT_INT4 bit 28 and pending in SYSCNT_INT1: clears the
+   status bit, calls callback slot 0x208DCC84 with type 7 [fact]; type = VDC5_INT_TYPE_IV5_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv5_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int1;
+  uint vdc51_syscnt_int4;
+  
+                    /* Interrupt control 4 [sfr] */
+  vdc51_syscnt_int4 = VDC51_SYSCNT_INT4;
+  if (((vdc51_syscnt_int4 & 0x10000000) != 0) &&
+     (vdc51_syscnt_int1 = VDC51_SYSCNT_INT1, (vdc51_syscnt_int1 & 0x10000000) != 0)) {
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4 & 0xefffffff;
+    if (DAT_208dcc84 != (code *)0x0) {
+      (*DAT_208dcc84)(7);
+    }
+                    /* Interrupt control 1 [sfr] */
+    VDC51_SYSCNT_INT1 = vdc51_syscnt_int4;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv6_vbuferr @ 20118f10 (80 bytes)
+
+/* VDC5 ch1 interrupt 8: enabled in VDC51_SYSCNT_INT5 bit 0 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC88 with type 8 [fact]; type = VDC5_INT_TYPE_IV6_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv6_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 1) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 1) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xfffffffe;
+    if (DAT_208dcc88 != (code *)0x0) {
+      (*DAT_208dcc88)(8);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s0_wline @ 20118f60 (80 bytes)
+
+/* VDC5 ch1 interrupt 9: enabled in VDC51_SYSCNT_INT5 bit 4 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC8C with type 9 [fact]; type = VDC5_INT_TYPE_S0_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s0_wline(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x10) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x10) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xffffffef;
+    if (DAT_208dcc8c != (code *)0x0) {
+      (*DAT_208dcc8c)(9);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s1_vi_vsync @ 20118fb0 (80 bytes)
+
+/* VDC5 ch1 interrupt 10: enabled in VDC51_SYSCNT_INT5 bit 8 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC90 with type 10 [fact]; type = VDC5_INT_TYPE_S1_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vi_vsync(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x100) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x100) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xfffffeff;
+    if (DAT_208dcc90 != (code *)0x0) {
+      (*DAT_208dcc90)(10);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s1_lo_vsync @ 20119000 (80 bytes)
+
+/* VDC5 ch1 interrupt 11: enabled in VDC51_SYSCNT_INT5 bit 12 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC94 with type 11 [fact]; type = VDC5_INT_TYPE_S1_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_lo_vsync(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x1000) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x1000) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xffffefff;
+    if (DAT_208dcc94 != (code *)0x0) {
+      (*DAT_208dcc94)(0xb);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s1_vsyncerr @ 20119050 (80 bytes)
+
+/* VDC5 ch1 interrupt 12: enabled in VDC51_SYSCNT_INT5 bit 16 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC98 with type 12 [fact]; type = VDC5_INT_TYPE_S1_VSYNCERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vsyncerr(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x10000) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x10000) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xfffeffff;
+    if (DAT_208dcc98 != (code *)0x0) {
+      (*DAT_208dcc98)(0xc);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s1_vfield @ 201190a0 (80 bytes)
+
+/* VDC5 ch1 interrupt 13: enabled in VDC51_SYSCNT_INT5 bit 20 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCC9C with type 13 [fact]; type = VDC5_INT_TYPE_S1_VFIELD of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_vfield(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x100000) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x100000) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xffefffff;
+    if (DAT_208dcc9c != (code *)0x0) {
+      (*DAT_208dcc9c)(0xd);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv2_vbuferr @ 201190f0 (80 bytes)
+
+/* VDC5 ch1 interrupt 14: enabled in VDC51_SYSCNT_INT5 bit 24 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCCA0 with type 14 [fact]; type = VDC5_INT_TYPE_IV2_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv2_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x1000000) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x1000000) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xfeffffff;
+    if (DAT_208dcca0 != (code *)0x0) {
+      (*DAT_208dcca0)(0xe);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv4_vbuferr @ 20119140 (80 bytes)
+
+/* VDC5 ch1 interrupt 15: enabled in VDC51_SYSCNT_INT5 bit 28 and pending in SYSCNT_INT2: clears the
+   status bit, calls callback slot 0x208DCCA4 with type 15 [fact]; type = VDC5_INT_TYPE_IV4_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv4_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int2;
+  uint vdc51_syscnt_int5;
+  
+                    /* Interrupt control 5 [sfr] */
+  vdc51_syscnt_int5 = VDC51_SYSCNT_INT5;
+  if (((vdc51_syscnt_int5 & 0x10000000) != 0) &&
+     (vdc51_syscnt_int2 = VDC51_SYSCNT_INT2, (vdc51_syscnt_int2 & 0x10000000) != 0)) {
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5 & 0xefffffff;
+    if (DAT_208dcca4 != (code *)0x0) {
+      (*DAT_208dcca4)(0xf);
+    }
+                    /* Interrupt control 2 [sfr] */
+    VDC51_SYSCNT_INT2 = vdc51_syscnt_int5;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_s1_wline @ 20119190 (80 bytes)
+
+/* VDC5 ch1 interrupt 16: enabled in VDC51_SYSCNT_INT6 bit 0 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCA8 with type 16 [fact]; type = VDC5_INT_TYPE_S1_WLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_s1_wline(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 1) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 1) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xfffffffe;
+    if (DAT_208dcca8 != (code *)0x0) {
+      (*DAT_208dcca8)(0x10);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_oir_vi_vsync @ 201191e0 (80 bytes)
+
+/* VDC5 ch1 interrupt 17: enabled in VDC51_SYSCNT_INT6 bit 4 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCAC with type 17 [fact]; type = VDC5_INT_TYPE_OIR_VI_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vi_vsync(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x10) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x10) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xffffffef;
+    if (DAT_208dccac != (code *)0x0) {
+      (*DAT_208dccac)(0x11);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_oir_lo_vsync @ 20119230 (80 bytes)
+
+/* VDC5 ch1 interrupt 18: enabled in VDC51_SYSCNT_INT6 bit 8 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB0 with type 18 [fact]; type = VDC5_INT_TYPE_OIR_LO_VSYNC
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_lo_vsync(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x100) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x100) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xfffffeff;
+    if (DAT_208dccb0 != (code *)0x0) {
+      (*DAT_208dccb0)(0x12);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_oir_vline @ 20119280 (80 bytes)
+
+/* VDC5 ch1 interrupt 19: enabled in VDC51_SYSCNT_INT6 bit 12 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB4 with type 19 [fact]; type = VDC5_INT_TYPE_OIR_VLINE of
+   the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vline(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x1000) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x1000) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xffffefff;
+    if (DAT_208dccb4 != (code *)0x0) {
+      (*DAT_208dccb4)(0x13);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_oir_vfield @ 201192d0 (80 bytes)
+
+/* VDC5 ch1 interrupt 20: enabled in VDC51_SYSCNT_INT6 bit 16 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCB8 with type 20 [fact]; type = VDC5_INT_TYPE_OIR_VFIELD
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_oir_vfield(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x10000) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x10000) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xfffeffff;
+    if (DAT_208dccb8 != (code *)0x0) {
+      (*DAT_208dccb8)(0x14);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv7_vbuferr @ 20119320 (80 bytes)
+
+/* VDC5 ch1 interrupt 21: enabled in VDC51_SYSCNT_INT6 bit 20 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCBC with type 21 [fact]; type = VDC5_INT_TYPE_IV7_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv7_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x100000) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x100000) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xffefffff;
+    if (DAT_208dccbc != (code *)0x0) {
+      (*DAT_208dccbc)(0x15);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_ch1_isr_iv8_vbuferr @ 20119370 (80 bytes)
+
+/* VDC5 ch1 interrupt 22: enabled in VDC51_SYSCNT_INT6 bit 24 and pending in SYSCNT_INT3: clears the
+   status bit, calls callback slot 0x208DCCC0 with type 22 [fact]; type = VDC5_INT_TYPE_IV8_VBUFERR
+   of the Renesas r_vdc5 enum, 0x20118638 = ch0 GR3_VLINE as in gui.md [inference] */
+
+void vdc5_ch1_isr_iv8_vbuferr(void)
+
+{
+  uint vdc51_syscnt_int3;
+  uint vdc51_syscnt_int6;
+  
+                    /* Interrupt control 6 [sfr] */
+  vdc51_syscnt_int6 = VDC51_SYSCNT_INT6;
+  if (((vdc51_syscnt_int6 & 0x1000000) != 0) &&
+     (vdc51_syscnt_int3 = VDC51_SYSCNT_INT3, (vdc51_syscnt_int3 & 0x1000000) != 0)) {
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6 & 0xfeffffff;
+    if (DAT_208dccc0 != (code *)0x0) {
+      (*DAT_208dccc0)(0x16);
+    }
+                    /* Interrupt control 3 [sfr] */
+    VDC51_SYSCNT_INT3 = vdc51_syscnt_int6;
+  }
+  return;
+}
+
+
+// ===== vdc5_wait_200us @ 201193c0 (44 bytes)
+
+/* [fact] counts a stack word to 0x3458; called after the LVDS PLL power-up in vdc5_reg_initialize;
+   Ghidra FUN_201193c0 (T24 round 5) */
+
+void vdc5_wait_200us(void)
+
+{
+  undefined4 i;
+  
+  i = 0;
+  do {
+    i = i + 1;
+  } while (i < 0x3458);
+  return;
+}
+
+
+// ===== vdc5_reg_initialize @ 201193ec (508 bytes)
+
+/* Register part of r_vdc5_initialize: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks; programs the panel clock and the LVDS PLL (LCLKSELR/LPLLSETR,
+   peripherals.md) [fact for the call]; Renesas r_vdc5_register.c VDC5_Initialize [inference: one
+   register function per API, same order as the API functions] */
+
+void vdc5_reg_initialize(int param_1,byte *param_2)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  uint uVar3;
+  byte *pbVar4;
+  ushort *puVar5;
+  uint local_18;
+  
+  puVar5 = *(ushort **)(&DAT_20166a48 + param_1 * 0x20);
+  *puVar5 = *puVar5 & 0xfeff;
+  pbVar4 = *(byte **)(param_2 + 4);
+  if (pbVar4 != (byte *)0x0) {
+                    /* LVDS clock select [sfr] */
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 & 0xffffffef;
+                    /* LVDSPLL setting [sfr] */
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 | 1;
+    local_18 = 0;
+    do {
+      local_18 = local_18 + 1;
+    } while (local_18 < 0x26);
+    uVar3 = LVDS_LPHYACC;
+    LVDS_LPHYACC = uVar3 & 0xfffffffc;
+    uVar3 = LVDS_LPHYACC;
+    LVDS_LPHYACC = uVar3 | 1;
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 & 0xf8fc00fd;
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 | (uint)*pbVar4 << 0x18;
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 | (uint)pbVar4[1] << 0x10;
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 | (uint)*(ushort *)(pbVar4 + 2) << 10;
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 | (uint)pbVar4[4] << 8;
+    if (pbVar4[5] != 0) {
+      uVar3 = LVDS_LCLKSELR;
+      LVDS_LCLKSELR = uVar3 | 2;
+    }
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 & 0xf800e0cf;
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 | (uint)*(ushort *)(pbVar4 + 6) << 0x10;
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 | (uint)*(ushort *)(pbVar4 + 8) << 8;
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 | (uint)pbVar4[10] << 4;
+    local_18 = 0;
+    do {
+      local_18 = local_18 + 1;
+    } while (local_18 < 0x26);
+    uVar3 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar3 & 0xfffffffe;
+    vdc5_wait_200us();
+    uVar3 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar3 | 0x10;
+  }
+  uVar3 = **(uint **)(&DAT_20165ca4 + param_1 * 0x20);
+  if (*param_2 == 1) {
+    uVar3 = uVar3 | 0x100000;
+  }
+  else {
+    uVar3 = uVar3 & 0xffefffff;
+  }
+  **(uint **)(&DAT_20165ca4 + param_1 * 0x20) = uVar3;
+  uVar1 = *(ushort *)(&DAT_20165bfc + (uint)param_2[1] * 2);
+  uVar2 = *(ushort *)(&DAT_20165c16 + (uint)*param_2 * 2);
+  *puVar5 = uVar1 | uVar2;
+  *puVar5 = uVar1 | uVar2 | 0x100;
+  return;
+}
+
+
+// ===== vdc5_reg_terminate @ 201195e8 (128 bytes)
+
+/* [inference] called by the terminate 0x20117A68 between the interrupt and resource steps, the
+   place of the driver's register terminate; Ghidra FUN_201195e8 (T24 round 5) */
+
+void vdc5_reg_terminate(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  uint uVar2;
+  ushort uVar3;
+  
+  uVar3 = **(ushort **)(&DAT_20166a48 + param_1 * 0x20) & 0xfeff;
+  **(ushort **)(&DAT_20166a48 + param_1 * 0x20) = uVar3;
+                    /* state byte via vdc5_shrd_state_ptr, 0 for a bad n [doc] */
+  iVar1 = vdc5_shrd_get_state(param_1,4,uVar3,param_4,param_4);
+  if ((iVar1 != 0) && (iVar1 = vdc5_shrd_get_lvds_clk_ref(), iVar1 == 0)) {
+                    /* LVDS clock select [sfr] */
+    uVar2 = LVDS_LCLKSELR;
+    LVDS_LCLKSELR = uVar2 & 0xffffffef;
+                    /* LVDSPLL setting [sfr] */
+    uVar2 = LVDS_LPLLSETR;
+    LVDS_LPLLSETR = uVar2 | 1;
+    uVar2 = 0;
+    do {
+      uVar2 = uVar2 + 1;
+    } while (uVar2 < 0x26);
+  }
+  return;
+}
+
+
+// ===== vdc5_set_video_external_input @ 20119668 (344 bytes)
+
+/* [fact] INP_SEL_CNT &= ~0x7111 and INP_EXT_SYNC_CNT &= 0xEEEEFEEC, then the bits of the 11 signal
+   bytes; called by 0x201197C0; Ghidra FUN_20119668 (T24 round 5) */
+
+void vdc5_set_video_external_input(byte *param_1,int param_2)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  
+  **(uint **)(param_2 + 4) = **(uint **)(param_2 + 4) & 0xffff8eee;
+  puVar1 = *(uint **)(param_2 + 4);
+  if (*param_1 == 6) {
+    uVar2 = *puVar1;
+  }
+  else {
+    uVar2 = *puVar1 | (uint)*param_1 << 0xc;
+  }
+  *puVar1 = uVar2;
+  if (param_1[1] != 0) {
+    **(uint **)(param_2 + 4) = **(uint **)(param_2 + 4) | 0x100;
+  }
+  if (param_1[2] != 0) {
+    **(uint **)(param_2 + 4) = **(uint **)(param_2 + 4) | 0x10;
+  }
+  if (param_1[3] != 0) {
+    **(uint **)(param_2 + 4) = **(uint **)(param_2 + 4) | 1;
+  }
+  **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) & 0xeeeefeec;
+  if (param_1[4] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x10000000;
+  }
+  if (param_1[5] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x1000000;
+  }
+  if (param_1[6] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x100000;
+  }
+  if (param_1[7] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x10000;
+  }
+  if (param_1[8] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x100;
+  }
+  if (param_1[9] != 0) {
+    **(uint **)(param_2 + 8) = **(uint **)(param_2 + 8) | 0x10;
+  }
+  **(uint **)(param_2 + 8) = (uint)param_1[10] | **(uint **)(param_2 + 8);
+  return;
+}
+
+
+// ===== vdc5_reg_video_input @ 201197c0 (284 bytes)
+
+/* [inference] called by the video-input call 0x20117AD4 with its parameters; Ghidra calls it
+   vdc5_reg_terminate (T24 round 5) */
+
+void vdc5_reg_video_input(int param_1,char *param_2)
+
+{
+  int iVar1;
+  byte *pbVar2;
+  uint *puVar3;
+  uint uVar4;
+  
+  iVar1 = param_1 * 0x20;
+  uVar4 = **(uint **)(&DAT_20165ca4 + param_1 * 0x20);
+  if (*param_2 == '\0') {
+    uVar4 = uVar4 & 0xffefffff;
+  }
+  else {
+    uVar4 = uVar4 | 0x100000;
+  }
+  **(uint **)(&DAT_20165ca4 + param_1 * 0x20) = uVar4;
+  **(int **)(&DAT_20165cac + iVar1) = (uint)*(ushort *)(param_2 + 2) << 0x10;
+  **(uint **)(&DAT_20165cac + iVar1) =
+       **(uint **)(&DAT_20165cac + iVar1) | (uint)*(ushort *)(param_2 + 4);
+  pbVar2 = *(byte **)(param_2 + 8);
+  if (pbVar2 != (byte *)0x0) {
+    **(int **)(&DAT_20165cb0 + iVar1) = (uint)*pbVar2 << 0x18;
+    **(uint **)(&DAT_20165cb0 + iVar1) =
+         **(uint **)(&DAT_20165cb0 + iVar1) | (uint)*(ushort *)(pbVar2 + 2) << 0x10;
+    **(uint **)(&DAT_20165cb0 + iVar1) =
+         **(uint **)(&DAT_20165cb0 + iVar1) | (uint)*(ushort *)(pbVar2 + 4) << 8;
+    **(uint **)(&DAT_20165cb0 + iVar1) =
+         (uint)*(ushort *)(pbVar2 + 6) | **(uint **)(&DAT_20165cb0 + iVar1);
+  }
+  **(uint **)(&DAT_20165cb8 + iVar1) = **(uint **)(&DAT_20165cb8 + iVar1) | 0x100000;
+  pbVar2 = *(byte **)(param_2 + 0xc);
+  if ((pbVar2 != (byte *)0x0) &&
+     (vdc5_set_video_external_input(pbVar2,&DAT_20165ca0 + iVar1), *pbVar2 < 3)) {
+    **(uint **)(&DAT_20165cb8 + iVar1) = **(uint **)(&DAT_20165cb8 + iVar1) & 0xffefffff;
+  }
+  puVar3 = *(uint **)(&DAT_20165ca0 + iVar1);
+  *puVar3 = *puVar3 | 0x11;
+  **(uint **)(&DAT_20165cb4 + iVar1) = **(uint **)(&DAT_20165cb4 + iVar1) | 1;
+  return;
+}
+
+
+// ===== vdc5_set_initial_connection @ 201198dc (180 bytes)
+
+/* [fact] GR1_AB1 bit 28, cascade on (0x2011D57C), the VIN layer's AB1/AB6/AB7; called at the end of
+   vdc5_reg_sync_control; Ghidra FUN_201198dc (T24 round 5) */
+
+void vdc5_set_initial_connection(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = param_1 * 0x210;
+  **(uint **)(&DAT_20166338 + iVar1) = **(uint **)(&DAT_20166338 + iVar1) | 0x10000000;
+  **(uint **)(&DAT_20166318 + iVar1) = **(uint **)(&DAT_20166318 + iVar1) | 0x100;
+  vdc5_shrd_set_cascade(param_1,1);
+  **(uint **)(&DAT_20166440 + iVar1) = **(uint **)(&DAT_20166440 + iVar1) & 0xffffefff;
+  **(uint **)(&DAT_20166440 + iVar1) = **(uint **)(&DAT_20166440 + iVar1) | 4;
+  **(uint **)(&DAT_20166440 + iVar1) = **(uint **)(&DAT_20166440 + iVar1) & 0xfffffffc;
+  **(uint **)(&DAT_20166440 + iVar1) = **(uint **)(&DAT_20166440 + iVar1) | 1;
+  **(uint **)(&DAT_20166454 + iVar1) = **(uint **)(&DAT_20166454 + iVar1) & 0xfe00ff00;
+  **(uint **)(&DAT_20166458 + iVar1) = **(uint **)(&DAT_20166458 + iVar1) | 0xff0000;
+  **(uint **)(&DAT_20166420 + iVar1) = **(uint **)(&DAT_20166420 + iVar1) | 0x110;
+  return;
+}
+
+
+// ===== vdc5_reg_sync_control @ 20119990 (784 bytes)
+
+/* Register part of r_vdc5_sync_control: its only callee in the 0x201193EC..0x2011CA00 block, called
+   after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c VDC5_SyncControl
+   [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_sync_control(int param_1,char *param_2)
+
+{
+  int iVar1;
+  uint *puVar2;
+  uint uVar3;
+  undefined4 uVar4;
+  
+  iVar1 = param_1 * 0x228;
+  puVar2 = *(uint **)(&DAT_20165ce4 + iVar1);
+  if (*(ushort **)(param_2 + 0x10) == (ushort *)0x0) {
+    *puVar2 = *puVar2 & 0xfffffffe;
+    **(uint **)(&DAT_20165d9c + iVar1) = **(uint **)(&DAT_20165d9c + iVar1) & 0xfffffffe;
+    **(uint **)(&DAT_20165ce8 + iVar1) = **(uint **)(&DAT_20165ce8 + iVar1) & 0xfffffffe;
+    **(uint **)(&DAT_20165ce8 + iVar1) = **(uint **)(&DAT_20165ce8 + iVar1) | 0xffff0000;
+    **(uint **)(&DAT_20165da0 + iVar1) = **(uint **)(&DAT_20165da0 + iVar1) & 0xfffffffe;
+    puVar2 = *(uint **)(&DAT_20165da0 + iVar1);
+    uVar3 = *puVar2 | 0xffff0000;
+  }
+  else {
+    *puVar2 = (uint)**(ushort **)(param_2 + 0x10) << 0x10;
+    **(int **)(&DAT_20165d9c + iVar1) = (uint)**(ushort **)(param_2 + 0x10) << 0x10;
+    **(int **)(&DAT_20165ce8 + iVar1) = (uint)*(ushort *)(*(int *)(param_2 + 0x10) + 2) << 0x10;
+    **(int **)(&DAT_20165da0 + iVar1) = (uint)*(ushort *)(*(int *)(param_2 + 0x10) + 2) << 0x10;
+    **(uint **)(&DAT_20165ce4 + iVar1) = **(uint **)(&DAT_20165ce4 + iVar1) | 1;
+    **(uint **)(&DAT_20165d9c + iVar1) = **(uint **)(&DAT_20165d9c + iVar1) | 1;
+    **(uint **)(&DAT_20165ce8 + iVar1) = **(uint **)(&DAT_20165ce8 + iVar1) | 1;
+    puVar2 = *(uint **)(&DAT_20165da0 + iVar1);
+    uVar3 = *puVar2 | 1;
+  }
+  *puVar2 = uVar3;
+  **(uint **)(&DAT_20165e54 + iVar1) = **(uint **)(&DAT_20165e54 + iVar1) & 0xfffffffe;
+  **(uint **)(&DAT_20165e58 + iVar1) = **(uint **)(&DAT_20165e58 + iVar1) & 0xfffffffe;
+  **(uint **)(&DAT_20165cf0 + iVar1) = (uint)*(ushort *)(param_2 + 4);
+  **(uint **)(&DAT_20165da8 + iVar1) = (uint)*(ushort *)(param_2 + 4);
+  **(uint **)(&DAT_20165e60 + iVar1) = (uint)*(ushort *)(param_2 + 4);
+  puVar2 = *(uint **)(&DAT_20165cec + iVar1);
+  if (*param_2 == '\0') {
+    *puVar2 = *puVar2 & 0xfffffffe;
+    puVar2 = *(uint **)(&DAT_20165da4 + iVar1);
+    uVar3 = *puVar2 & 0xfffffffe;
+  }
+  else {
+    *puVar2 = *puVar2 | 1;
+    **(uint **)(&DAT_20165da4 + iVar1) = **(uint **)(&DAT_20165da4 + iVar1) | 1;
+    **(uint **)(&DAT_20165cf0 + iVar1) = **(uint **)(&DAT_20165cf0 + iVar1) & 0xf800ffff;
+    **(uint **)(&DAT_20165cf0 + iVar1) =
+         **(uint **)(&DAT_20165cf0 + iVar1) | (uint)*(ushort *)(param_2 + 2) << 0x10;
+    **(uint **)(&DAT_20165da8 + iVar1) = **(uint **)(&DAT_20165da8 + iVar1) & 0xf800ffff;
+    puVar2 = *(uint **)(&DAT_20165da8 + iVar1);
+    uVar3 = *puVar2 | (uint)*(ushort *)(param_2 + 2) << 0x10;
+  }
+  *puVar2 = uVar3;
+  **(uint **)(&DAT_20165e5c + iVar1) = **(uint **)(&DAT_20165e5c + iVar1) & 0xfffffffe;
+  **(uint **)(&DAT_20165cec + iVar1) = **(uint **)(&DAT_20165cec + iVar1) & 0xfffffeff;
+  **(uint **)(&DAT_20165da4 + iVar1) = **(uint **)(&DAT_20165da4 + iVar1) | 0x100;
+  **(uint **)(&DAT_20165cf4 + iVar1) = **(uint **)(&DAT_20165cf4 + iVar1) & 0xffffff00;
+  **(uint **)(&DAT_20165cf4 + iVar1) =
+       **(uint **)(&DAT_20165cf4 + iVar1) | (uint)*(ushort *)(param_2 + 6);
+  **(uint **)(&DAT_20165dac + iVar1) = **(uint **)(&DAT_20165dac + iVar1) & 0xffffff00;
+  **(uint **)(&DAT_20165dac + iVar1) =
+       **(uint **)(&DAT_20165dac + iVar1) | (uint)*(ushort *)(param_2 + 6);
+  **(uint **)(&DAT_20165e64 + iVar1) = **(uint **)(&DAT_20165e64 + iVar1) & 0xffffff00;
+  **(uint **)(&DAT_20165e64 + iVar1) = **(uint **)(&DAT_20165e64 + iVar1) | 1;
+  uVar4 = CONCAT22(*(undefined2 *)(param_2 + 8),*(undefined2 *)(param_2 + 10));
+  **(undefined4 **)(&DAT_20165cf8 + iVar1) = uVar4;
+  **(undefined4 **)(&DAT_20165db0 + iVar1) = uVar4;
+  **(undefined4 **)(&DAT_20165e68 + iVar1) = uVar4;
+  uVar4 = CONCAT22(*(undefined2 *)(param_2 + 0xc),*(undefined2 *)(param_2 + 0xe));
+  *(undefined4 *)(&PTR_VDC50_SC0_SCL0_FRC7_20165cfc)[param_1 * 0x8a] = uVar4;
+  *(undefined4 *)(&PTR_VDC50_SC1_SCL0_FRC7_20165db4)[param_1 * 0x8a] = uVar4;
+  **(undefined4 **)(&DAT_20165e6c + iVar1) = uVar4;
+  **(uint **)(&DAT_20165ce0 + iVar1) = **(uint **)(&DAT_20165ce0 + iVar1) | 0x110;
+  **(uint **)(&DAT_20165d98 + iVar1) = **(uint **)(&DAT_20165d98 + iVar1) | 0x110;
+  **(uint **)(&DAT_20165e50 + iVar1) = **(uint **)(&DAT_20165e50 + iVar1) | 0x110;
+  vdc5_set_initial_connection(param_1);
+  vdc5_shrd_set_und_sel(param_1,0);
+  return;
+}
+
+
+// ===== vdc5_set_graphics_display_mode @ 20119cd0 (232 bytes)
+
+/* [fact] GRx_AB1 bits 1..0 from a table of signed bytes (-1 skipped), one layer or all but VIN;
+   Ghidra FUN_20119cd0 (T24 round 5) */
+
+void vdc5_set_graphics_display_mode(int param_1,int param_2,char *param_3)
+
+{
+  uint i;
+  undefined4 *puVar1;
+  
+  if (param_2 != -1) {
+    if ((param_2 - 3U < 6) && (*param_3 != -1)) {
+      puVar1 = (undefined4 *)(&DAT_201662c0 + (param_2 + -3) * 0x58 + param_1 * 0x210);
+      *(uint *)puVar1[8] = *(uint *)puVar1[8] & 0xfffffffc;
+      *(uint *)puVar1[8] = (int)*param_3 | *(uint *)puVar1[8];
+      *(uint *)*puVar1 = *(uint *)*puVar1 | 0x10;
+    }
+    return;
+  }
+  i = 0;
+  do {
+    if (param_3[i] != -1) {
+      puVar1 = (undefined4 *)(&DAT_201662c0 + i * 0x58 + param_1 * 0x210);
+      *(uint *)puVar1[8] = *(uint *)puVar1[8] & 0xfffffffc;
+      *(uint *)puVar1[8] = *(uint *)puVar1[8] | (int)param_3[i];
+      *(uint *)*puVar1 = *(uint *)*puVar1 | 0x10;
+    }
+    do {
+      i = i + 1;
+      if (5 < i) {
+        return;
+      }
+    } while (i == 4);
+  } while( true );
+}
+
+
+// ===== vdc5_color_to_agbr @ 20119db8 (28 bytes)
+
+/* [fact] (c << 8 & 0xFFFF00) | (c & 0xFF000000) | (c >> 16 & 0xFF); Ghidra FUN_20119db8 (T24 round
+   5) */
+
+uint vdc5_color_to_agbr(uint param_1)
+
+{
+  return (param_1 & 0xffffff) >> 0x10 | (param_1 & 0xffff) << 8 | param_1 & 0xff000000;
+}
+
+
+// ===== vdc5_set_graphics_background_color @ 20119dd4 (140 bytes)
+
+/* [fact] the RGB background colour into GR_BASE of graphics 2..5 and SCL0_OVR1 of the OIR; Ghidra
+   FUN_20119dd4 (T24 round 5) */
+
+void vdc5_set_graphics_background_color(int param_1)
+
+{
+  undefined4 uVar1;
+  uint uVar2;
+  uint uVar3;
+  uint *puVar4;
+  
+  uVar1 = vdc5_shrd_get_bg_color(param_1,0);
+  uVar2 = vdc5_color_to_agbr();
+  uVar3 = 2;
+  do {
+    **(uint **)(&DAT_201662c0 + uVar3 * 0x58 + param_1 * 0x210 + 0x4c) = uVar2 & 0xffffff;
+    puVar4 = *(uint **)(&DAT_201662c0 + uVar3 * 0x58 + param_1 * 0x210);
+    *puVar4 = *puVar4 | 0x10;
+    uVar3 = uVar3 + 1 & 0xff;
+  } while (uVar3 < 6);
+  **(undefined4 **)(&DAT_20165eb8 + param_1 * 0x228) = uVar1;
+  **(uint **)(&DAT_20165e50 + param_1 * 0x228) = **(uint **)(&DAT_20165e50 + param_1 * 0x228) | 0x10
+  ;
+  return;
+}
+
+
+// ===== vdc5_reg_display_output @ 20119e60 (660 bytes)
+
+/* Register part of r_vdc5_display_output: its only callee in the 0x201193EC..0x2011CA00 block,
+   called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_DisplayOutput [inference: one register function per API, same order as the API functions] */
+
+void vdc5_reg_display_output(int param_1,ushort *param_2)
+
+{
+  int iVar1;
+  uint *puVar2;
+  int iVar3;
+  ushort *puVar4;
+  uint uVar5;
+  undefined4 local_78 [4];
+  undefined4 local_68;
+  undefined4 local_64;
+  undefined4 local_60;
+  uint local_5c [14];
+  
+  local_5c[0] = 0x40;
+  local_5c[1] = 0x20;
+  local_5c[2] = 0x10;
+  local_5c[3] = 8;
+  local_5c[4] = 4;
+  local_5c[5] = 2;
+  local_5c[6] = 1;
+  local_5c[0xc] = 0xff;
+  local_5c[0xb] = 0x1010100;
+  local_5c[7] = 0;
+  local_5c[8] = 0x10000;
+  local_5c[9] = 0x20000;
+  local_5c[10] = 0;
+  iVar1 = param_1 * 0x60;
+  **(int **)(&DAT_20166714 + iVar1) = (uint)*param_2 << 0x10;
+  **(uint **)(&DAT_20166714 + iVar1) = **(uint **)(&DAT_20166714 + iVar1) | (uint)param_2[1];
+  local_78[0] = *(undefined4 *)(&DAT_2016671c + iVar1);
+  local_78[1] = *(undefined4 *)(&DAT_20166724 + iVar1);
+  local_78[2] = *(undefined4 *)(&DAT_2016672c + iVar1);
+  local_78[3] = *(undefined4 *)(&DAT_20166734 + iVar1);
+  local_68 = *(undefined4 *)(&DAT_2016673c + iVar1);
+  local_64 = *(undefined4 *)(&DAT_20166744 + iVar1);
+  local_60 = *(undefined4 *)(&DAT_2016674c + iVar1);
+  *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18] =
+       *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18] & 0xffffff80;
+  uVar5 = 0;
+  puVar4 = param_2;
+  do {
+    puVar4 = puVar4 + 2;
+    if (*(int *)puVar4 != 0) {
+      (*(code *)(&DAT_20165c24)[uVar5])(*(int *)puVar4,&DAT_20166710 + iVar1);
+      iVar3 = (int)*(char *)(*(int *)puVar4 + 7);
+      if (iVar3 != -1) {
+        puVar2 = (uint *)local_78[iVar3];
+        *puVar2 = *puVar2 & 0xfffffff8;
+        *puVar2 = *puVar2 | uVar5;
+        if (*(char *)(*(int *)puVar4 + 8) != '\0') {
+          *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18] =
+               local_5c[iVar3] | *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18];
+        }
+      }
+    }
+    uVar5 = uVar5 + 1;
+  } while (uVar5 < 8);
+  **(uint **)(&DAT_20166758 + iVar1) = **(uint **)(&DAT_20166758 + iVar1) & 0xeeffccec;
+  if (*(char *)((int)param_2 + 0x25) != '\0') {
+    **(uint **)(&DAT_20166758 + iVar1) = **(uint **)(&DAT_20166758 + iVar1) | 0x10000000;
+  }
+  if ((char)param_2[0x13] != '\0') {
+    **(uint **)(&DAT_20166758 + iVar1) = **(uint **)(&DAT_20166758 + iVar1) | 0x1000000;
+  }
+  **(uint **)(&DAT_20166758 + iVar1) =
+       **(uint **)(&DAT_20166758 + iVar1) | (uint)*(byte *)((int)param_2 + 0x27) << 0xc;
+  **(uint **)(&DAT_20166768 + iVar1) = **(uint **)(&DAT_20166768 + iVar1) & 0xfffcffff;
+  **(uint **)(&DAT_20166768 + iVar1) =
+       **(uint **)(&DAT_20166768 + iVar1) | local_5c[*(byte *)((int)param_2 + 0x27) + 7];
+  puVar2 = *(uint **)(&DAT_20166758 + iVar1);
+  uVar5 = *puVar2;
+  if (*(char *)((int)param_2 + 0x27) == '\x03') {
+    *puVar2 = uVar5 | (uint)(byte)param_2[0x14] << 8;
+    if (*(char *)((int)param_2 + 0x29) != '\0') {
+      **(uint **)(&DAT_20166758 + iVar1) = **(uint **)(&DAT_20166758 + iVar1) | 0x10;
+    }
+    puVar2 = *(uint **)(&DAT_20166758 + iVar1);
+    uVar5 = *puVar2 | (uint)(byte)param_2[0x15];
+  }
+  *puVar2 = uVar5;
+  uVar5 = *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18];
+  if ((char)param_2[0x12] == '\0') {
+    uVar5 = uVar5 & 0xfffffeff;
+  }
+  else {
+    uVar5 = uVar5 | 0x100;
+  }
+  *(uint *)(&PTR_VDC50_OUT_CLK_PHASE_2016676c)[param_1 * 0x18] = uVar5;
+  vdc5_set_graphics_background_color(param_1);
+  vdc5_set_graphics_display_mode(param_1,0xffffffff,local_5c + 0xb);
+  puVar2 = *(uint **)(&DAT_20166710 + iVar1);
+  *puVar2 = *puVar2 | 1;
+  **(uint **)(&DAT_20166754 + iVar1) = **(uint **)(&DAT_20166754 + iVar1) | 1;
+  return;
+}
+
+
+// ===== vdc5_set_color_matrix @ 2011a110 (252 bytes)
+
+/* [fact] stores r0 in MTX_MODE and the offset/gain halfwords into MTX_YG/CBB/CRR_ADJ0/1, then
+   MTX_UPDATE |= 1; Ghidra FUN_2011a110 (T24 round 5) */
+
+void vdc5_set_color_matrix(undefined4 param_1,ushort *param_2,ushort *param_3,undefined4 *param_4)
+
+{
+  *(undefined4 *)param_4[1] = param_1;
+  *(uint *)param_4[2] = (uint)*param_2 << 0x10;
+  *(uint *)param_4[2] = *(uint *)param_4[2] | (uint)*param_3;
+  *(uint *)param_4[3] = (uint)param_3[1] << 0x10;
+  *(uint *)param_4[3] = *(uint *)param_4[3] | (uint)param_3[2];
+  *(uint *)param_4[4] = (uint)param_2[1] << 0x10;
+  *(uint *)param_4[4] = *(uint *)param_4[4] | (uint)param_3[3];
+  *(uint *)param_4[5] = (uint)param_3[4] << 0x10;
+  *(uint *)param_4[5] = *(uint *)param_4[5] | (uint)param_3[5];
+  *(uint *)param_4[6] = (uint)param_2[2] << 0x10;
+  *(uint *)param_4[6] = *(uint *)param_4[6] | (uint)param_3[6];
+  *(uint *)param_4[7] = (uint)param_3[7] << 0x10;
+  *(uint *)param_4[7] = *(uint *)param_4[7] | (uint)param_3[8];
+  *(uint *)*param_4 = *(uint *)*param_4 | 1;
+  return;
+}
+
+
+// ===== vdc5_set_input_cntrl_color_mtx @ 2011a20c (124 bytes)
+
+/* [fact] mode from the input's and the written frame buffer's colour spaces (0x2011D5CC,
+   0x2011D668), tail call of 0x2011A110; not in Ghidra's function list (T24 round 5) */
+
+void vdc5_set_input_cntrl_color_mtx(int param_1,int param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  int iVar4;
+  
+  iVar4 = param_1;
+  if (param_2 != 0) {
+    if (param_1 == 0) {
+      iVar4 = 1;
+    }
+    else {
+      iVar4 = 0;
+    }
+  }
+  iVar1 = vdc5_shrd_get_color_space(iVar4);
+  iVar2 = vdc5_shrd_get_color_space_fb_wr(param_1,param_2);
+  if (iVar1 == 0) {
+    uVar3 = (uint)(iVar2 != 0);
+  }
+  else if (iVar2 == 0) {
+    uVar3 = 2;
+  }
+  else {
+    uVar3 = 3;
+  }
+  vdc5_set_color_matrix
+            (uVar3,&DAT_20165b88,&UNK_20165b8e + uVar3 * 0x12,&DAT_20166200 + iVar4 * 0x18);
+  return;
+}
+
+
+// ===== FUN_2011a288 @ 2011a288 (8 bytes)
+
+undefined4 FUN_2011a288(void)
+
+{
+  return 0x1000;
+}
+
+
+// ===== FUN_2011a290 @ 2011a290 (260 bytes)
+
+void FUN_2011a290(int param_1,int param_2,int param_3)
+
+{
+  ushort uVar1;
+  ushort uVar2;
+  ushort uVar3;
+  ushort uVar4;
+  uint *puVar5;
+  
+  uVar1 = *(ushort *)(param_1 + 2);
+  uVar2 = *(ushort *)(param_1 + 6);
+  uVar3 = *(ushort *)(param_1 + 10);
+  uVar4 = *(ushort *)(param_1 + 0xc);
+  **(uint **)(param_3 + 0x2c) = **(uint **)(param_3 + 0x2c) | 0x10;
+  **(uint **)(param_3 + 0x48) = **(uint **)(param_3 + 0x48) & 0xffffffef;
+  if (uVar3 < uVar1) {
+    **(undefined4 **)(param_3 + 0x40) = 0x1000;
+  }
+  else {
+    **(undefined4 **)(param_3 + 0x40) = 0x1000;
+  }
+  puVar5 = *(uint **)(param_3 + 0x2c);
+  if (uVar4 < uVar2) {
+    *puVar5 = *puVar5 | 1;
+    **(uint **)(param_3 + 0x38) = **(uint **)(param_3 + 0x38) & 0xffff0000;
+    **(uint **)(param_3 + 0x38) = **(uint **)(param_3 + 0x38) | 0x1000;
+  }
+  else {
+    *puVar5 = *puVar5 & 0xfffffffe;
+  }
+  **(uint **)(param_3 + 0x3c) = **(uint **)(param_3 + 0x3c) & 0xf000f000;
+  **(uint **)(param_3 + 0x5c) = **(uint **)(param_3 + 0x5c) & 0xf000f000;
+  if (param_2 != 0) {
+    **(uint **)(param_3 + 0x3c) = **(uint **)(param_3 + 0x3c) | 0x8000000;
+  }
+  return;
+}
+
+
+// ===== vdc5_config @ 2011a394 (820 bytes)
+
+/* writes VDC5 ch0 registers 0xFCFF7400+ */
+
+void vdc5_config(int param_1,int param_2,ushort *param_3)
+
+{
+  uint *puVar1;
+  uint uVar2;
+  undefined4 *puVar3;
+  
+  puVar3 = (undefined4 *)(&DAT_20165ce0 + param_2 * 0xb8 + param_1 * 0x228);
+  *(uint *)puVar3[0xc] = (uint)*param_3 << 0x10;
+  *(uint *)puVar3[0xc] = *(uint *)puVar3[0xc] | (uint)param_3[1];
+  *(uint *)puVar3[0xd] = (uint)param_3[2] << 0x10;
+  *(uint *)puVar3[0xd] = *(uint *)puVar3[0xd] | (uint)param_3[3];
+  *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] & 0xfff8fff2;
+  *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | (uint)(byte)param_3[8] << 0x10;
+  *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | (uint)*(byte *)((int)param_3 + 0x11) << 2;
+  if ((char)param_3[9] != '\0') {
+    *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | 1;
+  }
+  *(undefined4 *)puVar3[0x1d] = *(undefined4 *)(param_3 + 0xc);
+  *(uint *)puVar3[0x1e] = (uint)param_3[0xe] << 0x10;
+  *(uint *)puVar3[0x1e] = *(uint *)(param_3 + 0x10) | *(uint *)puVar3[0x1e];
+  if (*(int *)(param_3 + 0x10) != 0) {
+    *(undefined4 *)puVar3[0x1f] = *(undefined4 *)(param_3 + 0x12);
+  }
+  *(uint *)puVar3[0x20] = *(uint *)puVar3[0x20] & 0xfffffcff;
+  *(uint *)puVar3[0x20] = *(uint *)puVar3[0x20] | (uint)(byte)param_3[10] << 8;
+  uVar2 = *(uint *)puVar3[0x21];
+  if ((char)param_3[0xb] == '\0') {
+    uVar2 = uVar2 & 0xffffffef;
+  }
+  else {
+    uVar2 = uVar2 | 0x10;
+  }
+  *(uint *)puVar3[0x21] = uVar2;
+  uVar2 = *(uint *)puVar3[0x21];
+  if (*(char *)((int)param_3 + 0x11) == '\x01') {
+    uVar2 = uVar2 | 1;
+  }
+  else {
+    uVar2 = uVar2 & 0xfffffffe;
+  }
+  *(uint *)puVar3[0x21] = uVar2;
+  if (param_2 == 2) {
+    *(uint *)puVar3[0x11] = (uint)param_3[1] << 0x10;
+    *(uint *)puVar3[0x11] = *(uint *)puVar3[0x11] | (uint)param_3[3];
+    *(uint *)puVar3[0xb] = *(uint *)puVar3[0xb] & 0xffffffee;
+    puVar1 = (uint *)puVar3[0x20];
+    uVar2 = *puVar1 & 0xffffefff;
+  }
+  else {
+    uVar2 = *(uint *)puVar3[5];
+    if (*(int *)(param_3 + 0x10) == 0) {
+      uVar2 = uVar2 & 0xfffffeff;
+    }
+    else {
+      uVar2 = uVar2 | 0x100;
+    }
+    *(uint *)puVar3[5] = uVar2;
+    uVar2 = *(uint *)puVar3[0xe];
+    if ((char)param_3[4] == '\0') {
+      uVar2 = uVar2 & 0xdfffffff;
+    }
+    else {
+      uVar2 = uVar2 | 0x20000000;
+    }
+    *(uint *)puVar3[0xe] = uVar2;
+    *(uint *)puVar3[0x11] = (uint)param_3[5] << 0x10;
+    *(uint *)puVar3[0x11] = (uint)param_3[6] | *(uint *)puVar3[0x11];
+    FUN_2011a290(param_3,*(undefined1 *)((int)param_3 + 0x13),puVar3);
+    *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] & 0xffffff8f;
+    *(uint *)puVar3[0x1c] = *(uint *)puVar3[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
+    uVar2 = *(uint *)puVar3[0x20];
+    if (*(char *)((int)param_3 + 0x13) == '\0') {
+      uVar2 = uVar2 & 0xffffefff;
+    }
+    else {
+      uVar2 = uVar2 | 0x1000;
+    }
+    *(uint *)puVar3[0x20] = uVar2;
+    uVar2 = *(uint *)puVar3[0x20];
+    if (*(char *)((int)param_3 + 0x15) == '\0') {
+      uVar2 = uVar2 & 0xffffffef;
+    }
+    else {
+      uVar2 = uVar2 | 0x10;
+    }
+    *(uint *)puVar3[0x20] = uVar2;
+    puVar1 = (uint *)puVar3[0x1c];
+    if (*(int *)(param_3 + 0x14) != 0) {
+      *puVar1 = *puVar1 | 0x80;
+      *(undefined4 *)puVar3[0x23] = *(undefined4 *)(param_3 + 0x14);
+      *(uint *)puVar3[0x24] = (uint)param_3[0xe] << 0x10;
+      *(uint *)puVar3[0x24] = *(uint *)puVar3[0x24] | *(uint *)(param_3 + 0x10);
+      if (*(int *)(param_3 + 0x10) != 0) {
+        *(undefined4 *)puVar3[0x25] = *(undefined4 *)(param_3 + 0x12);
+      }
+      goto LAB_2011a684;
+    }
+    uVar2 = *puVar1 & 0xffffff7f;
+  }
+  *puVar1 = uVar2;
+LAB_2011a684:
+  *(uint *)*puVar3 = *(uint *)*puVar3 | 0x1011;
+  *(uint *)puVar3[0x1b] = *(uint *)puVar3[0x1b] | 0x10011;
+  if (param_2 == 2) {
+    return;
+  }
+  vdc5_set_input_cntrl_color_mtx(param_1,param_2);
+  return;
+}
+
+
+// ===== vdc5_reg_change_write_process @ 2011a6c8 (312 bytes)
+
+/* Register part of r_vdc5_change_write_process: its only callee in the 0x201193EC..0x2011CA00
+   block, called after the shared-parameter checks [fact for the call]; Renesas r_vdc5_register.c
+   VDC5_ChangeWriteProcess [inference: one register function per API, same order as the API
+   functions] */
+
+void vdc5_reg_change_write_process(int param_1,int param_2,ushort *param_3)
+
+{
+  undefined4 uVar1;
+  uint *puVar2;
+  uint uVar3;
+  undefined4 *puVar4;
+  
+  puVar4 = (undefined4 *)(&DAT_20165ce0 + param_2 * 0xb8 + param_1 * 0x228);
+  *(uint *)puVar4[0xc] = (uint)*param_3 << 0x10;
+  *(uint *)puVar4[0xc] = *(uint *)puVar4[0xc] | (uint)param_3[1];
+  *(uint *)puVar4[0xd] = (uint)param_3[2] << 0x10;
+  *(uint *)puVar4[0xd] = *(uint *)puVar4[0xd] | (uint)param_3[3];
+  if (param_2 == 2) {
+    *(uint *)puVar4[0x11] = (uint)param_3[1] << 0x10;
+    puVar2 = (uint *)puVar4[0x11];
+    uVar3 = *puVar2 | (uint)param_3[3];
+  }
+  else {
+    uVar3 = *(uint *)puVar4[0xe];
+    if ((char)param_3[4] == '\0') {
+      uVar3 = uVar3 & 0xdfffffff;
+    }
+    else {
+      uVar3 = uVar3 | 0x20000000;
+    }
+    *(uint *)puVar4[0xe] = uVar3;
+    *(uint *)puVar4[0x11] = (uint)param_3[5] << 0x10;
+    *(uint *)puVar4[0x11] = *(uint *)puVar4[0x11] | (uint)param_3[6];
+    uVar1 = vdc5_shrd_get_interlace();
+    FUN_2011a290(param_3,uVar1,puVar4);
+    *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] & 0xffffff8f;
+    *(uint *)puVar4[0x1c] = *(uint *)puVar4[0x1c] | (uint)*(byte *)((int)param_3 + 0xf) << 4;
+    puVar2 = (uint *)puVar4[0x1b];
+    uVar3 = *puVar2 | 0x11;
+  }
+  *puVar2 = uVar3;
+  *(uint *)*puVar4 = *(uint *)*puVar4 | 0x1011;
+  return;
+}
+
+
+// ===== vdc5_set_img_qa_improver_color_mtx @ 2011a800 (72 bytes)
+
+/* [fact] mode 0 or 2 by colour space, matrix module 1 or 2 by graphics, tail call of 0x2011A110;
+   Ghidra FUN_2011a800 (T24 round 5) */
+
+void vdc5_set_img_qa_improver_color_mtx(int param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (param_3 == 0) {
+    iVar1 = 0;
+  }
+  else {
+    iVar1 = 2;
+  }
+  if (param_2 == 0) {
+    iVar2 = 1;
+  }
+  else {
+    iVar2 = 2;
+  }
+  vdc5_set_color_matrix
+            (iVar1,&DAT_20165b88,&UNK_20165b8e + iVar1 * 0x12,
+             &DAT_20166200 + param_1 * 0x18 + iVar2 * 8);
+  return;
+}
+
+
+// ===== FUN_2011a848 @ 2011a848 (132 bytes)
+
+void FUN_2011a848(int param_1,int param_2,undefined4 param_3)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  uint uVar3;
+  uint *puVar4;
+  uint *puVar5;
+  undefined4 *puVar6;
+  uint *puVar7;
+  
+  iVar1 = param_1 * 0x228;
+  if (param_2 == 0) {
+    puVar4 = *(uint **)(&DAT_20165ce0 + param_1 * 0x228);
+    puVar5 = *(uint **)(&DAT_201662c0 + param_1 * 0x210);
+    puVar6 = *(undefined4 **)(&DAT_20165d48 + iVar1);
+    puVar7 = *(uint **)(&DAT_2016630c + param_1 * 0x210);
+  }
+  else {
+    puVar4 = *(uint **)(&DAT_20165d98 + iVar1);
+    puVar5 = *(uint **)(&DAT_20166318 + param_1 * 0x210);
+    puVar6 = *(undefined4 **)(&DAT_20165e00 + iVar1);
+    puVar7 = (uint *)(&PTR_VDC50_GR1_BASE_20166364)[param_1 * 0x84];
+  }
+  uVar2 = vdc5_shrd_get_bg_color(param_1,param_3);
+  uVar3 = vdc5_color_to_agbr();
+  *puVar6 = uVar2;
+  *puVar4 = *puVar4 | 0x10;
+  *puVar7 = uVar3 & 0xffffff;
+  *puVar5 = *puVar5 | 0x10;
+  return;
+}
+

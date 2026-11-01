@@ -361,54 +361,25 @@ void progress_range_init(void *param_1,uint param_2,uint param_3)
 }
 
 
-// ===== progress_scale @ 201140f4 (84 bytes)
+// ===== progress_scale @ 201140f4 (76 bytes)
 
 /* maps a fraction into the range */
 
-uint progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+void progress_scale(int *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
 
 {
-  uint uVar1;
-  uint uVar2;
-  undefined2 *unaff_r4;
-  int iVar3;
-  uint uVar4;
-  bool bVar5;
-  bool bVar6;
-  undefined8 uVar7;
-  undefined8 uVar8;
+  int iVar1;
+  undefined8 uVar2;
+  undefined8 uVar3;
   
-  iVar3 = *param_1;
-  uVar7 = __aeabi_i2d(param_1[1] - iVar3);
-  uVar7 = __aeabi_dmul((int)uVar7,(int)((ulonglong)uVar7 >> 0x20),param_3,param_4);
-  uVar8 = __aeabi_i2d(iVar3);
-  uVar7 = __aeabi_dadd((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),(int)uVar7,
-                       (int)((ulonglong)uVar7 >> 0x20));
-  uVar1 = (uint)((ulonglong)uVar7 >> 0x20);
-  iVar3 = ((uVar1 & 0x7fffffff) >> 0x14) - 0x400;
-  bVar6 = SBORROW4(0x1e,iVar3);
-  uVar2 = -iVar3 + 0x1e;
-  bVar5 = uVar2 == 0;
-  uVar4 = uVar2;
-  if (!bVar5 && iVar3 < 0x1f) {
-    bVar6 = SBORROW4(0x21,uVar2);
-    uVar4 = 0x21 - uVar2;
-    bVar5 = uVar2 == 0x21;
-  }
-  if (!bVar5 && (int)uVar4 < 0 == bVar6) {
-    return ((uVar1 << 0xb | 0x80000000 | (uint)uVar7 >> 0x15) >> (uVar2 & 0xff) ^ (int)uVar1 >> 0x1f
-           ) - ((int)uVar1 >> 0x1f);
-  }
-  if (0x10 < (int)uVar2) {
-    return 0;
-  }
-  if (-iVar3 != -0x3ff) {
-    return (int)uVar1 >> 0x20 ^ 0x7fffffff;
-  }
-  fp_nan_handler((uint)uVar7);
-  do {
-    *unaff_r4 = (short)unaff_r4;
-  } while( true );
+  iVar1 = *param_1;
+  uVar2 = __aeabi_i2d(param_1[1] - iVar1);
+  uVar2 = __aeabi_dmul((int)uVar2,(int)((ulonglong)uVar2 >> 0x20),param_3,param_4);
+  uVar3 = __aeabi_i2d(iVar1);
+  __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,(int)((ulonglong)uVar2 >> 0x20)
+              );
+  __aeabi_d2iz_a32();
+  return;
 }
 
 

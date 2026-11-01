@@ -4938,45 +4938,35 @@ void renc_poll_mtu2(void)
 
 
 /* -----------------------------------------------------------------------------
- * adc_ring_average @ 20112894  (76 bytes, 2 callers, export file 2011158c_20113d00.c)
+ * adc_ring_average @ 20112894  (68 bytes, 2 callers, export file 2011158c_20113d00.c)
  * Purpose: pots
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
  */
-// ===== adc_ring_average @ 20112894 (76 bytes)
+// ===== adc_ring_average @ 20112894 (68 bytes)
 
 /* average of the ad renc ring buffer (returns double) */
 
-undefined8 adc_ring_average(int param_1)
+void adc_ring_average(int param_1)
 
 {
   int iVar1;
-  uint uVar2;
-  uint uVar3;
+  uint n;
   int i;
-  uint uVar4;
   ulonglong __aeabi_idivmod_ret;
   
-  uVar2 = 0;
+  n = 0;
   i = 0;
   if (0 < (int)DAT_208001f4) {
     do {
       iVar1 = i * 2;
       i = i + 1;
-      uVar2 = uVar2 + *(ushort *)(param_1 + iVar1);
+      n = n + *(ushort *)(param_1 + iVar1);
     } while (i < (int)DAT_208001f4);
   }
-  __aeabi_idivmod_ret = __aeabi_idivmod(uVar2,DAT_208001f4);
-  uVar2 = (uint)__aeabi_idivmod_ret;
-  uVar4 = uVar2 & 0x80000000;
-  if ((int)uVar4 < 0) {
-    uVar2 = -uVar2;
-  }
-  uVar3 = uVar2 << LZCOUNT(uVar2);
-  if (uVar3 == 0) {
-    return 0;
-  }
-  return CONCAT44(uVar4 + (0x41d - LZCOUNT(uVar2)) * 0x100000 + (uVar3 >> 0xb),uVar3 << 0x15);
+  __aeabi_idivmod_ret = __aeabi_idivmod(n,DAT_208001f4);
+  __aeabi_i2d_a32((int)__aeabi_idivmod_ret,(int)(__aeabi_idivmod_ret >> 0x20));
+  return;
 }
 
 
@@ -6748,7 +6738,7 @@ void radio_on_flag_set(undefined1 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * userdef_riic0_wait_bus_master @ 20120224  (72 bytes, 2 callers, export file 201200f0_20120d58.c)
+ * userdef_riic0_wait_bus_master @ 20120224  (72 bytes, 2 callers, export file 201200b4_20120d38.c)
  * Purpose: RIIC ch0 bus-busy wait (was `riic_init`; the RIIC driver is in peripherals.md)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -6780,7 +6770,7 @@ void userdef_riic0_wait_bus_master(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbkbd_screen_settings @ 20120de4  (184 bytes, 1 callers, export file 20120d60_201248f8.c)
+ * usbkbd_screen_settings @ 20120de4  (184 bytes, 1 callers, export file 20120d40_20124744.c)
  * Purpose: Every GUI frame (gui_input_poll): on the keyboard screen 0x50 with a 0x24 settings frame, sets the
  *     layout from settings byte 1 (usbkbd_set_layout) and CapsLock by the text mode of payload byte 0 (table
  *     0x20801D44, usbkbd_capslock_for_mode); on other screens usbkbd_reset [fact]
@@ -6824,7 +6814,7 @@ void usbkbd_screen_settings(void)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_touch_key @ 20120e9c  (288 bytes, 27 callers, export file 20120d60_201248f8.c)
+ * mainlink_send_touch_key @ 20120e9c  (288 bytes, 27 callers, export file 20120d40_20124744.c)
  * Purpose: soft keys → E0
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -6890,7 +6880,7 @@ void mainlink_send_touch_key(uint param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * gui_middle_key @ 20120fe4  (96 bytes, 5 callers, export file 20120d60_201248f8.c)
+ * gui_middle_key @ 20120fe4  (96 bytes, 5 callers, export file 20120d40_20124744.c)
  * Purpose: soft keys → E0
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -6923,7 +6913,7 @@ ushort gui_middle_key(void)
 
 
 /* -----------------------------------------------------------------------------
- * gui_right_key @ 20121160  (352 bytes, 4 callers, export file 20120d60_201248f8.c)
+ * gui_right_key @ 20121160  (352 bytes, 4 callers, export file 20120d40_20124744.c)
  * Purpose: soft keys → E0
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -7045,7 +7035,7 @@ switchD_20121250_caseD_7:
 
 
 /* -----------------------------------------------------------------------------
- * touch_key_poll @ 201214b0  (740 bytes, 2 callers, export file 20120d60_201248f8.c)
+ * touch_key_poll @ 201214b0  (740 bytes, 2 callers, export file 20120d40_20124744.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -7145,7 +7135,7 @@ switchD_20121518_caseD_0:
 
 
 /* -----------------------------------------------------------------------------
- * touch_cal_hit @ 2013071c  (76 bytes, 5 callers, export file 2012cf30_201322bc.c)
+ * touch_cal_hit @ 2013071c  (76 bytes, 5 callers, export file 2012c71c_20131f74.c)
  * Purpose: calibration screen 0x7C
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -7173,7 +7163,7 @@ uint touch_cal_hit(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * touch_cal_step @ 20130768  (420 bytes, 1 callers, export file 2012cf30_201322bc.c)
+ * touch_cal_step @ 20130768  (420 bytes, 1 callers, export file 2012c71c_20131f74.c)
  * Purpose: calibration screen 0x7C
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -7259,7 +7249,7 @@ void touch_cal_step(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * power_key_flag_get @ 201309b4  (12 bytes, 1 callers, export file 2012cf30_201322bc.c)
+ * power_key_flag_get @ 201309b4  (12 bytes, 1 callers, export file 2012c71c_20131f74.c)
  * Purpose: Returns 0x20800493, which power_key_on sets while the radio is on; pot_resend_all reads it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -7277,7 +7267,7 @@ undefined1 power_key_flag_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_enumerate_config @ 20137fac  (1124 bytes, 1 callers, export file 20137904_20139658.c)
+ * usbh_enumerate_config @ 20137fac  (1124 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: Reads the configuration descriptor (usbh_get_config_descriptor, 0x7FF bytes), sets the configuration and
  *     walks its interfaces and endpoints to set up pipes and the class driver (FUN_20137eac,
  *     usbh_open_endpoint_pipes) [fact for the calls]
@@ -7461,7 +7451,7 @@ LAB_20138360:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_ports_init @ 201385b4  (172 bytes, 2 callers, export file 20137904_20139658.c)
+ * usbh_ports_init @ 201385b4  (172 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: For USB ports 0/1: usbh_create_objects (0x2090B660 + 0x4D8*port), pipe buffers 0x20909FD0.., starts the
  *     two port tasks and FUN_2013b2b4 (boot-rtos.md init list) [fact]
  * Tag: [fact]
@@ -7507,7 +7497,7 @@ undefined4 usbh_ports_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_control_transfer @ 20138cf0  (504 bytes, 1 callers, export file 20137904_20139658.c)
+ * usbh_control_transfer @ 20138cf0  (504 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: Control transfer on a pipe object under its semaphore (+0x4A8, TMO_FEVR): SETUP, data and status stages
  *     [inference]
  * Tag: [inference]
@@ -7600,7 +7590,7 @@ LAB_20138ea8:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_control_req @ 20138f00  (20 bytes, 6 callers, export file 20137904_20139658.c)
+ * usbh_control_req @ 20138f00  (20 bytes, 6 callers, export file 201376c4_20139590.c)
  * Purpose: Thin wrapper of usbh_control_transfer used by every request helper [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -7619,7 +7609,7 @@ void usbh_control_req(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_write_buf @ 2013927c  (180 bytes, 2 callers, export file 20137904_20139658.c)
+ * usbh_pipe_write_buf @ 2013927c  (180 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: (pipe, buf, len): sends the buffer packet by packet with FUN_20138fdc, then a zero-length packet when
  *     needed [fact for the calls]
  * Tag: [fact]
@@ -7671,7 +7661,7 @@ int usbh_pipe_write_buf(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_buf_needs_bounce @ 20139330  (20 bytes, 2 callers, export file 20137904_20139658.c)
+ * usbh_buf_needs_bounce @ 20139330  (20 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: (addr): -1 when addr has a bit of the mask 0x20808AB8 set (the buffer must be copied through the pipe
  *     buffer), else 0 [fact]
  * Tag: [fact]
@@ -7696,7 +7686,7 @@ undefined4 usbh_buf_needs_bounce(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_write @ 20139344  (144 bytes, 1 callers, export file 20137904_20139658.c)
+ * usbh_pipe_write @ 20139344  (144 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: (pipe, buf, len): when the buffer needs a bounce (usbh_buf_needs_bounce) copies it in 0x2000-byte pieces
  *     into the pipe buffer +0x48 and sends each with usbh_pipe_write_buf [fact]
  * Tag: [fact]
@@ -7744,7 +7734,7 @@ int usbh_pipe_write(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_read_buf @ 201393d4  (444 bytes, 2 callers, export file 20137904_20139658.c)
+ * usbh_pipe_read_buf @ 201393d4  (444 bytes, 2 callers, export file 201376c4_20139590.c)
  * Purpose: (pipe, buf, len): reads up to len bytes (packet count from the max packet size +0x2C), waits on the port
  *     event flag, under the port semaphore [fact for the calls]
  * Tag: [fact]
@@ -7827,7 +7817,7 @@ LAB_2013950c:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_read @ 20139590  (148 bytes, 1 callers, export file 20137904_20139658.c)
+ * usbh_pipe_read @ 20139590  (148 bytes, 1 callers, export file 201376c4_20139590.c)
  * Purpose: (pipe, buf, len): receives into the bounce buffer +0x48 in 0x2000-byte pieces (usbh_pipe_read_buf) and
  *     copies out, stopping at a short packet [fact]
  * Tag: [fact]
@@ -7877,9 +7867,8 @@ int usbh_pipe_read(int param_1,int param_2,int param_3)
   return iVar4;
 }
 
-
 /* -----------------------------------------------------------------------------
- * usbh_pipe_xfer @ 20139624  (48 bytes, 2 callers, export file 20137904_20139658.c)
+ * usbh_pipe_xfer @ 20139624  (48 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: (port, pipe, buf, len): pipe +0x18 = 0 -> usbh_pipe_write, else usbh_pipe_read; usbhid_pipe_read uses it
  *     [fact]
  * Tag: [fact]
@@ -7906,7 +7895,7 @@ void usbh_pipe_xfer(undefined4 param_1,int param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * usbh_port_isr @ 201396b0  (488 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_port_isr @ 201396b0  (488 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: (port): USB interrupt body behind usbh0_isr / usbh1_isr (peripherals.md: GIC 73/74 ->
  *     usbh_port_isr(port)): reads and clears the status, marks pipe 0 done and sets the port event flags 0x2090B674
  *     / 680 / 67C [fact]
@@ -8016,7 +8005,7 @@ void usbh_port_isr(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_port_task @ 20139d78  (396 bytes, 0 callers, export file 201396ac_2013b544.c)
+ * usbh_port_task @ 20139d78  (396 bytes, 0 callers, export file 20139624_2013b524.c)
  * Purpose: (port): port task: waits on the port event flag, handles attach (200-tick debounce, bus reset,
  *     enumeration events) and detach, then the pipe, control and class events (FUN_201398a0, FUN_20139c68,
  *     FUN_20139970) [fact for the calls]
@@ -8091,7 +8080,7 @@ void usbh_port_task(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_brdy_pipe_read @ 20139f6c  (548 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_brdy_pipe_read @ 20139f6c  (548 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: (port, pipe): BRDY on a receive pipe: reads the FIFO into the pipe buffer under the port semaphore,
  *     completes the transfer on a short packet and sets the pipe's event bit [fact for the calls]
  * Tag: [fact]
@@ -8204,7 +8193,7 @@ LAB_2013a160:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_brdy_pipe_write @ 2013a198  (508 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_brdy_pipe_write @ 2013a198  (508 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: (port, pipe): BRDY on a send pipe: writes the next packet from the pipe buffer into the FIFO under the
  *     port semaphore [fact for the calls]
  * Tag: [fact]
@@ -8305,7 +8294,7 @@ LAB_2013a368:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_brdy_handler @ 2013a394  (176 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_brdy_handler @ 2013a394  (176 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: (port): BRDYSTS (+0x46) per pipe 0..9: a pipe with a buffer goes to usbh_brdy_pipe_read (read) or
  *     usbh_brdy_pipe_write (write); then re-enables BRDYE in INTENB0 [fact]
  * Tag: [fact]
@@ -8359,7 +8348,7 @@ undefined4 usbh_brdy_handler(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_brdy_task @ 2013a444  (120 bytes, 0 callers, export file 201396ac_2013b544.c)
+ * usbh_brdy_task @ 2013a444  (120 bytes, 0 callers, export file 20139624_2013b524.c)
  * Purpose: (port): waits on the BRDY event flag and runs usbh_brdy_handler for the port [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8395,7 +8384,7 @@ void usbh_brdy_task(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_open_endpoint_pipes @ 2013a90c  (120 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_open_endpoint_pipes @ 2013a90c  (120 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: (port, endpoint): picks a free pipe in the range 1..4 or 6..9 by endpoint type (FUN_2013a798) and sets
  *     it up (FUN_2013a690) [fact for the ranges]; on the RZ/A1H USB controller pipes 6..9 are the interrupt pipes
  *     [inference]
@@ -8436,7 +8425,7 @@ int usbh_open_endpoint_pipes(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_port_ctx @ 2013a9d4  (20 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_port_ctx @ 2013a9d4  (20 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: (port): 0x2090B660 + 0x4D8 * port, the port context [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8453,7 +8442,7 @@ undefined * usbh_port_ctx(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_port_open @ 2013ab9c  (104 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_port_open @ 2013ab9c  (104 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: (port, regs, speed, ...): stores the port's register base and speed (FUN_2013ab7c) and starts the
  *     controller (FUN_2013aab4); usbh_hw_init calls it for USB0 and USB1 [fact for the calls]
  * Tag: [fact]
@@ -8493,7 +8482,7 @@ undefined4 usbh_port_open(uint param_1,undefined4 param_2,undefined4 param_3,und
 
 
 /* -----------------------------------------------------------------------------
- * usbh_enumerate_device @ 2013afa4  (660 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_enumerate_device @ 2013afa4  (660 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: (task ctx, event): device attach: bus reset (FUN_2013a4bc), GET_DESCRIPTOR device (8 bytes),
  *     SET_ADDRESS, GET_DESCRIPTOR device (18 bytes) and configuration, then usbh_enumerate_config [fact for the
  *     request sequence]
@@ -8637,7 +8626,7 @@ LAB_2013b114:
 
 
 /* -----------------------------------------------------------------------------
- * usbh_enum_task @ 2013b238  (124 bytes, 0 callers, export file 201396ac_2013b544.c)
+ * usbh_enum_task @ 2013b238  (124 bytes, 0 callers, export file 20139624_2013b524.c)
  * Purpose: (n): task loop: receives attach/detach events from a data queue (itron_trcv_dtq) and runs
  *     usbh_enumerate_device for each; 500-tick retry on a queue error [fact]
  * Tag: [fact]
@@ -8680,7 +8669,7 @@ void usbh_enum_task(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_mark_done @ 2013b2f8  (84 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_pipe_mark_done @ 2013b2f8  (84 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: Sets +0x30 = 1 in the pipe slot (0x2091C220, 0x34 each) whose +0x2C matches [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8708,7 +8697,7 @@ void usbh_pipe_mark_done(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_get_device_descriptor @ 2013b35c  (76 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_get_device_descriptor @ 2013b35c  (76 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: SETUP 0x80, 6 (GET_DESCRIPTOR), wValue 0x0100 (device), length n [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8737,7 +8726,7 @@ void usbh_get_device_descriptor(undefined4 param_1,undefined4 param_2,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * usbh_get_config_descriptor @ 2013b3a8  (76 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_get_config_descriptor @ 2013b3a8  (76 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: SETUP 0x80, 6, wValue 0x0200 (configuration) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8766,7 +8755,7 @@ void usbh_get_config_descriptor(undefined4 param_1,undefined4 param_2,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * usbh_set_address @ 2013b3f4  (72 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_set_address @ 2013b3f4  (72 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: SETUP 0x00, 5 (SET_ADDRESS), wValue = address [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8795,7 +8784,7 @@ void usbh_set_address(undefined4 param_1,undefined2 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_set_configuration @ 2013b43c  (72 bytes, 1 callers, export file 201396ac_2013b544.c)
+ * usbh_set_configuration @ 2013b43c  (72 bytes, 1 callers, export file 20139624_2013b524.c)
  * Purpose: SETUP 0x00, 9 (SET_CONFIGURATION), wValue = configuration [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8824,7 +8813,7 @@ void usbh_set_configuration(undefined4 param_1,undefined2 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_get_hub_descriptor @ 2013b484  (72 bytes, 0 callers, export file 201396ac_2013b544.c)
+ * usbh_get_hub_descriptor @ 2013b484  (72 bytes, 0 callers, export file 20139624_2013b524.c)
  * Purpose: SETUP 0xA0 (class, device), 6 (GET_DESCRIPTOR) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8854,7 +8843,7 @@ void usbh_get_hub_descriptor(undefined4 param_1,undefined4 param_2,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * usbh_hw_init @ 2013b4cc  (88 bytes, 2 callers, export file 201396ac_2013b544.c)
+ * usbh_hw_init @ 2013b4cc  (88 bytes, 2 callers, export file 20139624_2013b524.c)
  * Purpose: Registers the USBI0/USBI1 handlers (GIC 73/74) and calls usbh_port_open for USB0 (SYSCFG0 0xE8010000)
  *     and USB1 (peripherals.md: host mode on both ports) [fact]
  * Tag: [fact]
@@ -8880,7 +8869,7 @@ void usbh_hw_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_loc_cpu @ 2013b524  (16 bytes, 11 callers, export file 201396ac_2013b544.c)
+ * usbh_loc_cpu @ 2013b524  (16 bytes, 11 callers, export file 20139624_2013b524.c)
  * Purpose: itron_loc_cpu, returns 0 (critical section of the USB host stack) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -8896,9 +8885,8 @@ undefined4 usbh_loc_cpu(void)
   return 0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * usbh0_isr @ 2013b58c  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
+ * usbh0_isr @ 2013b58c  (12 bytes, 0 callers, export file 2013b538_2013e71c.c)
  * Purpose: USB0 interrupt (GIC 73, peripherals.md): reads and clears INTSTS0/INTSTS1, counts the causes in
  *     0x2090BB0C.., masks BRDY/NRDY/BEMP, and sets the port event flags 0x2090B674/680/67C [fact]
  * Tag: [fact]
@@ -9005,7 +8993,7 @@ void usbh0_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh1_isr @ 2013b598  (12 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
+ * usbh1_isr @ 2013b598  (12 bytes, 0 callers, export file 2013b538_2013e71c.c)
  * Purpose: USB1 interrupt (GIC 74): the same handler for port 1 (peripherals.md) [fact for the vector]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -9109,7 +9097,7 @@ void usbh1_isr(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_hid_init @ 2013b928  (72 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbh_hid_init @ 2013b928  (72 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: UHHID [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/input.md
@@ -9140,7 +9128,7 @@ uint usbh_hid_init(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_hid_class_init @ 2013b97c  (56 bytes, 2 callers, export file 2013b54c_2013e8d0.c)
+ * usbh_hid_class_init @ 2013b97c  (56 bytes, 2 callers, export file 2013b538_2013e71c.c)
  * Purpose: Clears the 0x610-byte HID work area 0x2091C568, usbh_hid_init and usbhid_class_register; -1 on error
  *     (boot-rtos.md init list) [fact]
  * Tag: [fact]
@@ -9172,7 +9160,7 @@ undefined4 usbh_hid_class_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_device_stop @ 2013ba44  (104 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_device_stop @ 2013ba44  (104 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: (slot): stops a running HID device: clears its run flag, cancels the pipe (usbh_pipe_cancel) and waits
  *     up to 1 s for the task to end [fact]
  * Tag: [fact]
@@ -9211,7 +9199,7 @@ undefined4 usbhid_device_stop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbkbd_set_leds @ 2013baac  (264 bytes, 7 callers, export file 2013b54c_2013e8d0.c)
+ * usbkbd_set_leds @ 2013baac  (264 bytes, 7 callers, export file 2013b538_2013e71c.c)
  * Purpose: Builds the HID output report from the NumLock/CapsLock/ScrollLock state (report fields 1/2/3) and sends
  *     it with usbh_class_request (SET_REPORT 0x21, 9, wValue 0x0200, 1 byte); input.md: sends the LED report [fact]
  * Tag: [fact]
@@ -9269,7 +9257,7 @@ LAB_2013bb6c:
 
 
 /* -----------------------------------------------------------------------------
- * hid_report_bits_get @ 2013bbb4  (124 bytes, 3 callers, export file 2013b54c_2013e8d0.c)
+ * hid_report_bits_get @ 2013bbb4  (124 bytes, 3 callers, export file 2013b538_2013e71c.c)
  * Purpose: (report, bit offset, bit count): little-endian bit-field extract from a HID report [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -9310,7 +9298,7 @@ uint hid_report_bits_get(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * hid_item_data @ 2013bc30  (240 bytes, 15 callers, export file 2013b54c_2013e8d0.c)
+ * hid_item_data @ 2013bc30  (240 bytes, 15 callers, export file 2013b538_2013e71c.c)
  * Purpose: (*pos, *out, signed): reads the data of one short HID item (size code 0/1/2/4 bytes from the low two
  *     bits of the prefix), sign-extends when asked, advances the pointer [fact]
  * Tag: [fact]
@@ -9370,7 +9358,7 @@ void hid_item_data(int *param_1,uint *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * hid_report_desc_parse @ 2013bd20  (1540 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * hid_report_desc_parse @ 2013bd20  (1540 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: (dev, desc): walks a HID report descriptor item by item (hid_item_data) and records the report id, usage
  *     and the bit offsets and sizes of the fields the driver uses (buttons, X/Y, wheel, keys) [fact for the item
  *     walk; inference for the field roles from usbhid_device_task]
@@ -9672,7 +9660,7 @@ LAB_2013be4c:
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_device_task @ 2013c32c  (912 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_device_task @ 2013c32c  (912 bytes, 0 callers, export file 2013b538_2013e71c.c)
  * Purpose: Per-device HID task: GET_DESCRIPTOR configuration (0x80/6/0x200), SET_PROTOCOL (0x21/0x0B),
  *     GET_DESCRIPTOR report (0x81/6/0x2200), hid_report_desc_parse, SET_IDLE (0x21/0x0A), usbhid_attach_event, then
  *     reads interrupt reports and passes the extracted fields to usbhid_report_event; detach event and
@@ -9813,7 +9801,7 @@ void usbhid_device_task(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_class_register @ 2013c6bc  (84 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_class_register @ 2013c6bc  (84 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: Clears the two HID device slots 0x2091CB78.. and registers the class table 0x204201FC with the host
  *     stack (thunk_FUN_201384d4) [fact]
  * Tag: [fact]
@@ -9854,7 +9842,7 @@ undefined4 usbhid_class_register(void)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_class_request @ 2013c710  (92 bytes, 6 callers, export file 2013b54c_2013e8d0.c)
+ * usbh_class_request @ 2013c710  (92 bytes, 6 callers, export file 2013b538_2013e71c.c)
  * Purpose: (device, bmRequestType, bRequest, wValue, wIndex, data, length) on device table 0x2091CB78 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -9890,7 +9878,7 @@ void usbh_class_request(int param_1,undefined1 param_2,undefined1 param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_pipe_read @ 2013c76c  (44 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_pipe_read @ 2013c76c  (44 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: (dev, pipe slot): starts a read on the device's interrupt pipe (usbh_pipe_xfer) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -9914,7 +9902,7 @@ void usbhid_pipe_read(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbh_pipe_cancel @ 2013c798  (316 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbh_pipe_cancel @ 2013c798  (316 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: (port, pipe): with the CPU locked, waits for the pipe to go idle (about 50 ticks), clears it in the
  *     controller and signals the port flag and semaphore [fact for the calls]
  * Tag: [fact]
@@ -9982,7 +9970,7 @@ undefined4 usbh_pipe_cancel(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_find_int_in @ 2013c7c4  (156 bytes, 1 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_find_int_in @ 2013c7c4  (156 bytes, 1 callers, export file 2013b538_2013e71c.c)
  * Purpose: (slot, config): first interrupt (type 3) IN endpoint with max packet 1..256; -1 if none [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10020,7 +10008,7 @@ undefined4 usbhid_find_int_in(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * usbhid_class_attach @ 2013c860  (336 bytes, 0 callers, export file 2013b54c_2013e8d0.c)
+ * usbhid_class_attach @ 2013c860  (336 bytes, 0 callers, export file 2013b538_2013e71c.c)
  * Purpose: Class attach/detach callback (port, address, config): detach stops the device (usbhid_device_stop);
  *     attach finds the interrupt-IN endpoint (usbhid_find_int_in), fills a free slot (max 2) and starts
  *     usbhid_device_task, waiting up to 1 s for it [fact]
@@ -10098,7 +10086,7 @@ int usbhid_class_attach(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * pointer_touch_poll @ 20159320  (28 bytes, 6 callers, export file 201587ac_2015c048.c)
+ * pointer_touch_poll @ 20159320  (28 bytes, 6 callers, export file 2015869c_2015bb7c.c)
  * Purpose: pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog)
  *     [inference]
  * Tag: [inference]
@@ -10120,7 +10108,7 @@ void pointer_touch_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_table @ 2015bf88  (184 bytes, 34 callers, export file 201587ac_2015c048.c)
+ * touch_hit_table @ 2015bf88  (184 bytes, 34 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10174,7 +10162,7 @@ undefined2 touch_hit_table(uint param_1,uint param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_test @ 2015c048  (912 bytes, 2 callers, export file 201587ac_2015c048.c)
+ * touch_hit_test @ 2015c048  (912 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10325,8 +10313,9 @@ LAB_2015cc24:
   return iVar4;
 }
 
+
 /* -----------------------------------------------------------------------------
- * touch_hit_text_list @ 2015c34c  (224 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_text_list @ 2015c34c  (224 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through
  *     touch_hit_text_list_rows) [fact for the dispatch]
  * Tag: [fact]
@@ -10367,7 +10356,7 @@ int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_select_popup @ 2015c43c  (376 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_select_popup @ 2015c43c  (376 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10444,7 +10433,7 @@ undefined4 touch_hit_select_popup(undefined4 param_1,undefined4 param_2,int para
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_rect @ 2015c6fc  (84 bytes, 3 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_rect @ 2015c6fc  (84 bytes, 3 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10487,7 +10476,7 @@ ushort touch_hit_rect(uint param_1,uint param_2,ushort *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_sd_menu @ 2015c750  (500 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_sd_menu @ 2015c750  (500 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch_hit_test for screen 0x43 (SD-card menu) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10613,7 +10602,7 @@ LAB_2015d19c:
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_scope_drag @ 2015c81c  (344 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_scope_drag @ 2015c81c  (344 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 / step)
  *     while the finger moves; called by touch_hit_scope [fact for the calls]
  * Tag: [fact]
@@ -10701,7 +10690,7 @@ LAB_2015c958:
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_dialog @ 2015ca14  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_dialog @ 2015ca14  (244 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: touch_hit_test for screen 0x70 (dialog / confirm screen) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10768,7 +10757,7 @@ int touch_hit_dialog(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_text_list_rows @ 2015cdd4  (244 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * touch_hit_text_list_rows @ 2015cdd4  (244 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row
  *     (0x208F0C5B + 0x2D*row) gives its own code [fact]
  * Tag: [fact]
@@ -10829,7 +10818,7 @@ int touch_hit_text_list_rows(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_task_create @ 2015eff4  (72 bytes, 0 callers, export file 2015c278_2015f0ec.c)
+ * mouse_cursor_task_create @ 2015eff4  (72 bytes, 0 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: mouse task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10855,7 +10844,7 @@ void mouse_cursor_task_create(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_set_device @ 2015f098  (28 bytes, 2 callers, export file 2015c278_2015f0ec.c)
+ * kbdobj_set_device @ 2015f098  (28 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active flag
  *     +0x80 when not present; usbkbd_attach / usbkbd_detach [fact]
  * Tag: [fact]
@@ -10879,7 +10868,7 @@ void kbdobj_set_device(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_activate @ 2015f0b4  (16 bytes, 2 callers, export file 2015c278_2015f0ec.c)
+ * kbdobj_activate @ 2015f0b4  (16 bytes, 2 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10898,7 +10887,7 @@ void kbdobj_activate(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_flush @ 2015f0c4  (8 bytes, 1 callers, export file 2015c278_2015f0ec.c)
+ * kbdobj_flush @ 2015f0c4  (8 bytes, 1 callers, export file 2015bc6c_2015f0c4.c)
  * Purpose: (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10914,9 +10903,8 @@ void kbdobj_flush(int param_1)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * kbdobj_ctor @ 2015f0cc  (20 bytes, 2 callers, export file 2015c278_2015f0ec.c)
+ * kbdobj_ctor @ 2015f0cc  (20 bytes, 2 callers, export file 2015f0cc_20162c10.c)
  * Purpose: (obj): constructs the key ring at +0x88 (ring16_ctor) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10937,7 +10925,7 @@ int kbdobj_ctor(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_fwdbg @ 2015f0e0  (12 bytes, 2 callers, export file 2015c278_2015f0ec.c)
+ * task_fwdbg @ 2015f0e0  (12 bytes, 2 callers, export file 2015f0cc_20162c10.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11004,7 +10992,7 @@ undefined4 task_fwdbg(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_verify_bank1 @ 2015f1f0  (332 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwdbg_verify_bank1 @ 2015f1f0  (332 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: `fw1up` / `fw1chk`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11066,7 +11054,7 @@ undefined4 fwdbg_verify_bank1(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_write_other_bank @ 2015f348  (512 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwdbg_write_other_bank @ 2015f348  (512 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: `fw1up` / `fw1chk`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11175,7 +11163,7 @@ undefined4 fwdbg_write_other_bank(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_task_create @ 2015f55c  (200 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * fwdbg_task_create @ 2015f55c  (200 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11236,7 +11224,7 @@ undefined4 fwdbg_task_create(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * update_display_self @ 2015f62c  (1028 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * update_display_self @ 2015f62c  (1028 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11367,7 +11355,7 @@ LAB_2015f638:
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_move @ 2015fa54  (52 bytes, 3 callers, export file 2015f1f0_20162c28.c)
+ * mouse_cursor_move @ 2015fa54  (52 bytes, 3 callers, export file 2015f0cc_20162c10.c)
  * Purpose: cursor
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11386,7 +11374,7 @@ void mouse_cursor_move(int param_1,ushort param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_wheel_event @ 2015fac4  (360 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * mouse_wheel_event @ 2015fac4  (360 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: wheel
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11475,7 +11463,7 @@ switchD_2015fb98_caseD_5:
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_obj_init @ 2015fcc4  (148 bytes, 1 callers, export file 2015f1f0_20162c28.c)
+ * mouse_cursor_obj_init @ 2015fcc4  (148 bytes, 1 callers, export file 2015f0cc_20162c10.c)
  * Purpose: mouse task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11516,7 +11504,7 @@ void mouse_cursor_obj_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_run @ 2015fd60  (500 bytes, 0 callers, export file 2015f1f0_20162c28.c)
+ * mouse_cursor_run @ 2015fd60  (500 bytes, 0 callers, export file 2015f0cc_20162c10.c)
  * Task (descriptor): mouse_cursor (0x201656E4/0x20165700)
  * Pri: 7
  * Wake-up: message box
