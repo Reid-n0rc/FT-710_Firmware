@@ -535,7 +535,7 @@ void FUN_fffec8a1(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  DAT_00025d04 = (float)FUN_fffb6e5c();
+  DAT_00025d04 = (float)meter_get_swr_avg_f();
   if (DAT_00025d04 <= 4.3) {
     if (1.1 < DAT_00025d04 != (bool)((byte)(uVar1 >> 3) & 1)) {
       send_a_set(0);
@@ -669,7 +669,7 @@ void FUN_fffeca7e(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar2 = (float)FUN_fffb6e4e();
+  fVar2 = (float)meter_get_swr_f();
   if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
@@ -774,7 +774,7 @@ void FUN_fffecce7(void)
   if (swtimer_expired_ret == 0) {
     return;
   }
-  fVar2 = (float)FUN_fffb6e4e();
+  fVar2 = (float)meter_get_swr_f();
   if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
@@ -1300,7 +1300,7 @@ void FUN_fffed50f(void)
   uint uVar2;
   
   uVar2 = (uint)SBORROW4((int)&stack0x00000000,4) << 3;
-  fVar1 = (float)FUN_fffb6e4e();
+  fVar1 = (float)meter_get_swr_f();
   if (2.0 < fVar1 == (bool)((byte)(uVar2 >> 3) & 1)) {
     if (DAT_00025d10 < fVar1) {
       DAT_0001b3c2 = DAT_0001b3c2 + 1;

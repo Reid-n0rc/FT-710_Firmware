@@ -186,7 +186,7 @@ void FUN_fffed934(void)
   
   swtimer_expired_ret = swtimer_expired(0x26);
   if (swtimer_expired_ret != 0) {
-    DAT_00025d14 = FUN_fffb6e5c();
+    DAT_00025d14 = meter_get_swr_avg_f();
     send_a_set(0);
     send_b_set(0);
     swtimer_start(0x26,5);
@@ -269,7 +269,7 @@ void FUN_fffeda3b(void)
     swtimer_start(0x26,0xfa);
     return;
   }
-  fVar1 = (float)FUN_fffb6e5c();
+  fVar1 = (float)meter_get_swr_avg_f();
   if (DAT_00025d14 <= fVar1) {
     ext_tuner_step = 0xe;
     return;
