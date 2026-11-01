@@ -1996,6 +1996,138 @@ def sd_mount_args(rng, args):
 PRESETS.update({n: sd_mount_args for n in ('sd_mount_volume', 'sd_drive_mount')})
 
 
+def switch_block(rng, sup1=None, sup3=None, sel1=None, sel3=None, sel4=None, busy=False, ma=None):
+    """One CMD6 status block (64 bytes, as switch_status_words) with chosen fields (round 9): group 1 / 3 support,
+    the selected functions of groups 1, 3 and 4, the busy bits with version 1, the maximum current."""
+    b = bytearray(rng.getrandbits(8) for _ in range(64))
+    ma = rng.choice([100, 200, 800]) if ma is None else ma
+    b[0], b[1] = ma >> 8, ma & 0xFF
+    if sup1 is not None:
+        b[13] = sup1
+    if sup3 is not None:
+        b[9] = sup3
+    g4, g3 = b[15] >> 4, b[15] & 0xF
+    b[15] = (g4 if sel4 is None else sel4) << 4 | (g3 if sel3 is None else sel3)
+    if sel1 is not None:
+        b[16] = b[16] & 0xF0 | sel1
+    b[17] = 1 if busy else rng.choice([0, 1])
+    for k in (23, 25, 29):
+        b[k] = 0xFF if busy else 0
+    return [struct.unpack_from('<I', b, 4 * k)[0] for k in range(16)]
+
+
+def sd_switch_args(rng, args, kind):
+    """sd_switch_uhs_speed / sd_set_driver_strength (round 9): the handle preset with slots 6 and 7 answering 0, and
+    the CMD6 status blocks in the order the function reads them: the first inquiry, then (inquiry, switch) rounds.
+    For the UHS switch the support bits pick the function (SDR104, DDR50, SDR50, high speed, as the code does)
+    and the blocks select it with current limit 3, now and then refused (above 800 mA, busy, function 0xF, another
+    one selected); for the driver strength group 3 offers type B and the blocks select function 0 or 0xF ("cannot
+    be switched"). Round 8's random blocks reached neither the SDR104 case nor the 0xF test (two mutations passed),
+    one in a hundred trials at best."""
+    fill = sd_handle_args(rng, args, 'handle')
+    h = SCRATCH_ARGS + 0xB000
+    ops = SCRATCH_ARGS + 0xB300
+    tbl = bytearray(_image_bytes(SDHI_OPS, 26 * 4))
+    for slot in (6, 7):
+        struct.pack_into('<I', tbl, 4 * slot, 0x20140440)
+    ctx = struct.unpack_from('<I', dict(args['buffers'])[h], 0)[0]
+    args['buffers'] = [b for b in args['buffers'] if b[0] not in (h, ops)] + \
+        [(h, struct.pack('<II', ctx, ops)), (ops, bytes(tbl))]
+    blocks = []
+    if kind == 'uhs':
+        sup = rng.choice([0x08, 0x0E, 0x1E, 0x10, 0x14, 0x04, 0x06, 0x02, 0x00, 0x18])
+        fn = 3 if sup & 8 else 4 if sup & 0x10 else 2 if sup & 4 else 1
+        blocks.append(switch_block(rng, sup1=sup))
+        for _ in range(3):
+            refuse = rng.random() < 0.25
+            how = rng.choice(['ma', 'busy', 'f1', 'f4', 'other'])
+            blocks.append(switch_block(rng, sup1=sup, sel1=0xF if refuse and how == 'f1' else fn,
+                                       sel4=0xF if refuse and how == 'f4' else 3, busy=refuse and how == 'busy',
+                                       ma=900 if refuse and how == 'ma' else None))
+            blocks.append(switch_block(rng, sup1=sup, sel1=rng.choice([1, 2, 3, 4]) if refuse and how == 'other' else fn,
+                                       sel4=3 if rng.random() < 0.9 else rng.getrandbits(4)))
+    else:
+        blocks.append(switch_block(rng, sup3=rng.choice([1, 1, 1, 3, 0])))
+        for _ in range(3):
+            refuse = rng.random() < 0.3
+            how = rng.choice(['ma', 'busy', 'f'])
+            blocks.append(switch_block(rng, sel3=0xF if refuse and how == 'f' else 0, busy=refuse and how == 'busy',
+                                       ma=900 if refuse and how == 'ma' else None))
+            blocks.append(switch_block(rng, sel3=rng.choice([0, 0, 0, 1])))
+    args['mmio_seq'] = {0xE804E030: sum(blocks, [])}
+    return fill
+
+
+PRESETS['sd_switch_uhs_speed'] = lambda rng, args: sd_switch_args(rng, args, 'uhs')
+PRESETS['sd_set_driver_strength'] = lambda rng, args: sd_switch_args(rng, args, 'strength')
+
+
+_RSV_EDGE = None
+
+
+def rsv_edge_sizes():
+    """C_SIZE values of a version-2 CSD for which fat_format_layout's FAT32 reserved-sector step meets its boundary
+    (round 9): some call of layout_reserved computes 8 reserved sectors before the "fewer than 9: one unit more"
+    correction. The count is the unit times n less twice the FAT size, always even, so 9 never occurs and the
+    mutation rsv < 9 -> rsv < 10 is an equivalent one; rsv < 9 -> rsv < 8 is caught with these sizes. A Python model of the steps (app/fat_format.c, the 0x2C-byte record both small and large
+    cards get: unit 8192, hidden 8192, 64 sectors per cluster, 512 bytes, FAT32 [fact: 0x20420300, 0x2042032C]),
+    used only to choose inputs; the check compares the image's code with ours. Random sizes meet the boundary in
+    one of about 4,000 (round 8: the mutation rsv < 9 -> rsv < 10 passed)."""
+    global _RSV_EDGE
+    if _RSV_EDGE is None:
+        _RSV_EDGE = []
+        align, start, spc, bits, typ = 8192, 8192, 64, 4096, 32
+
+        def up(a, b):
+            return a // b + (a % b != 0)
+
+        for c in range(0xFFFF):
+            sectors = (c + 1) * 1024
+            seen = []
+
+            def lr(fat):
+                n = 1
+                while align * n <= fat * 2:
+                    n += 1
+                rsv = (align * n - fat * 2) & 0xFFFF
+                seen.append(rsv)
+                if rsv < 9:
+                    rsv = (rsv + align) & 0xFFFF
+                return rsv + fat * 2
+            fat = up(sectors // spc * typ, bits)
+            system = lr(fat)
+            data = sectors - start
+            need = up(((data - system) // spc + 2) * typ, bits)
+            for _ in range(64):
+                if fat == need:
+                    break
+                if fat < need:
+                    system += align
+                else:
+                    fat -= 1
+                    system = lr(fat)
+                need = up(((data - system) // spc + 2) * typ, bits)
+            if 8 in seen or 9 in seen:
+                _RSV_EDGE.append(c)
+    return _RSV_EDGE
+
+
+def fmt_edge_args(rng, args):
+    """The format presets with, half of the time, a version-2 CSD whose size meets the reserved-sector boundary."""
+    fill = sd_handle_args(rng, args, 'fmt')
+    if rng.random() < 0.5 and rsv_edge_sizes():
+        ctx = SCRATCH_ARGS + 0xC000
+        c = bytearray(dict(args['buffers'])[ctx])
+        size = rng.choice(rsv_edge_sizes())
+        c[0x201] = 0x40 | c[0x201] & 0x3F
+        c[0x201 + 7:0x201 + 10] = bytes([size >> 16 & 0x3F, size >> 8 & 0xFF, size & 0xFF])
+        args['buffers'] = [b for b in args['buffers'] if b[0] != ctx] + [(ctx, bytes(c))]
+    return fill
+
+
+PRESETS['fat_format_layout'] = fmt_edge_args
+
+
 def byte_check(res, obj, fname, shndx, off, oaddr):
     """identical: the section linked so that the function lands at its original address gives the image's bytes over
     the whole function symbol (code and its literals), which must cover at least the Ghidra function. In practice
