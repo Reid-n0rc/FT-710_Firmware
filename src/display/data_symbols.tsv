@@ -19,3 +19,10 @@ cisr_scif4_rxi_isr	201657a0	[fact] scif4_get: txi + 0x14
 cisr_scif5_txi_isr	201657b4	[fact] scif5_get passes it as txi
 cisr_scif5_rxi_isr	201657c8	[fact] scif5_get: txi + 0x14
 uart_vtbl	2042803c	[fact] uart_obj_ctor stores it as the vtable; slots 0x20162FAC uart_obj_init, scif_start, scif_irq_off, scif_has_flag, scif_read, 0, scif_read_timeout, 0, 0, scif_write
+sflash_dev	20810d90	[fact] sflash_dev_open stores SPIBSC0 (0x3FEFA000) into it; sflash_dev_read/write use +4 (dual), +8 (mode), +0xC (address), +0x10 (error) (drivers/sflash.c)
+sflash_page_buf	20810dbc	[fact] sflash_page_program and sflash_dev_read keep the partial page there
+sflash_page_fill	208000a0	[fact] the byte count of sflash_page_buf (sflash_page_program, sflash_dev_read)
+sflash_erase_stamp	208000a8	[fact] sflash_erase_block passes it to the cycle stamp 0x20104154 before and after the erase
+spibsc_spide_single	2016525c	[fact] spibsc_xfer and sflash_cmd_read index it by the unit size (literal 0x2016525C): bytes 00 08 0C 00 0F
+spibsc_spide_dual	20165269	[fact] the same for two chips (literal 0x20165269): index 2 -> 08, 4 -> 0C, 8 -> 0F
+sflash_sst_blocks	201651fc	[fact] sflash_sst_block_size reads {int16 index, uint32 size} pairs at 8-byte stride, entries 1..10

@@ -776,6 +776,42 @@ def scif_args(rng, args, kind):
     return fill
 
 
+SFLASH_DEV = 0x20810D90
+
+
+def sflash_args(rng, args, kind):
+    """The serial-flash driver (src/display/drivers/sflash.c): the device object 0x20810D90 valid (SPIBSC0 base, one or
+    two chips, a state 0..3, mostly no error, a last command among RDSR/RDID/0x70/other), the partial-page count
+    0x208000A0 below a page; arguments by kind: 'obj' (object, 64-byte buffer, count 0..20, keep), 'dev' (a device
+    command 'r'/'e'/'p'/'d'/'b' or data, length 0..12), 'xip' (flash offset, buffer, count 0..40), 'bar' (no
+    progress bar, offset, size up to 3 blocks), 'id' (a block index)."""
+    regs = args['regs']
+    dual = rng.choice([0, 0, 1])
+    o = bytearray(rng.getrandbits(8) for _ in range(0x2C))
+    struct.pack_into('<IIIIIII', o, 0, 0x3FEFA000, dual, rng.choice([0, 0, 1, 2, 3, 4]), rng.getrandbits(20),
+                     rng.choice([0] * 6 + [1]), rng.choice([0, 1]), rng.choice([0, 1]))
+    o[0x28] = rng.choice([0x05, 0x9F, 0x70, 0x02, 0x0B])
+    fill = [(SFLASH_DEV, bytes(o)), (0x208000A0, struct.pack('<I', rng.choice([0, 0, 1, 100, 255]))),
+            (0x20810DBC, bytes(rng.getrandbits(8) for _ in range(512)))]
+    buf = SCRATCH_ARGS + 0x2000
+    args['buffers'] = [b for b in args['buffers'] if b[0] != buf] + [(buf, bytes(rng.getrandbits(8) for _ in range(64)))]
+    if kind == 'obj':
+        regs[0], regs[1], regs[2], regs[3] = SFLASH_DEV, buf, rng.choice([0, 1, 2, 3, 4, 5, 6, 8, 9, 13, 20]), rng.choice([0, 1])
+    elif kind == 'reg':           # (object, offset) or (object, value, offset)
+        regs[0], regs[1], regs[2] = SFLASH_DEV, rng.choice(range(0, 0x4C, 4)), rng.choice(range(0, 0x4C, 4))
+    elif kind == 'dev':
+        c = bytes([rng.choice(b'repdbx'), rng.choice(b'01pr')]) + bytes(rng.getrandbits(8) for _ in range(30))
+        args['buffers'] = [b for b in args['buffers'] if b[0] != buf] + [(buf, c)]
+        regs[0], regs[1] = buf, rng.choice([0, 1, 2, 5, 6, 7, 8, 12])
+    elif kind == 'xip':
+        regs[0], regs[1], regs[2] = rng.getrandbits(16), buf, rng.choice([0, 1, 2, 7, 40])
+    elif kind == 'bar':
+        regs[0], regs[1], regs[2] = 0, rng.getrandbits(20), rng.choice([0, 1, 0x10000, 0x10001, 0x30000])
+    elif kind == 'id':
+        regs[0] = rng.choice(list(range(8)) + [0x83, 0x84, 0x87, 0x88, 200])
+    return fill
+
+
 # return registers the DWARF cannot tell (assembly): the 64-bit divisions return quotient r0:r1 and remainder r2:r3
 RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16}
 
@@ -791,6 +827,17 @@ PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'obj')) for n in (
 PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'glob')) for n in (
     'scif3_rxi_isr', 'scif3_txi_isr', 'scif4_rxi_isr', 'scif4_txi_isr', 'scif5_rxi_isr', 'scif5_txi_isr',
     'scif5_get', 'scif4_get', 'scif3_get', 'scif5_rxi_count_get', 'scif4_rxi_count_get', 'scif_uarts_ctor')})
+for _kind, _names in (
+        ('reg', ('spibsc_reg_read32', 'spibsc_reg_write32', 'spibsc_reg_write16', 'spibsc_reg_write8')),
+        ('obj', ('spibsc_ssl_negated',
+                 'spibsc_wait_tend', 'spibsc_ensure_idle', 'spibsc_xfer', 'sflash_cmd_read', 'sflash_cmd_write',
+                 'sflash_wait_ready', 'sflash_wait_wel', 'sflash_read_sr2', 'spibsc_cmncr_set', 'spibsc_enter_spi_mode',
+                 'spibsc_exit_spi_mode', 'sflash_fast_read', 'sflash_erase_block', 'sflash_page_program',
+                 'sflash_global_unlock', 'sflash_cmd_bp', 'sflash_dev_open', 'sflash_read_mfr_id')),
+        ('dev', ('sflash_dev_write', 'sflash_dev_read', 'sflash_checksum')), ('xip', ('spiflash_write', 'spiflash_read')),
+        ('bar', ('spiflash_erase', 'sflash_erase_chip_sst', 'sflash_erase_chip_uniform', 'sflash_erase_chip', 'sflash_cmd_erase')),
+        ('id', ('sflash_sst_block_size',))):
+    PRESETS.update({n: (lambda rng, args, k=_kind: sflash_args(rng, args, k)) for n in _names})
 for _shape, _names in (('bn', ('R_RIIC_Write', 'R_RIIC_Read')), ('vm', ('R_RIIC_WriteSlaveAddr',)),
                        ('c', ('R_RIIC_SendCond',)), ('mb', ('riic_receive',)), ('v', ('riic_transmit',)),
                        ('', ('R_RIIC_Init', 'R_RIIC_ReadDummy', 'R_RIIC_DetectStop', 'R_RIIC_ClearNack',

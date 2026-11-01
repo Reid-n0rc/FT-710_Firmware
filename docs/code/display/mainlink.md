@@ -105,6 +105,13 @@ first time and re-binds the RX event flag on later calls (the update code uses t
 | 0x201148A4 / 0x201148AC | `scif5_rxi_isr` / `scif5_txi_isr` | GIC 0xF3 / 0xF4 stubs: `r0 = 0x208DB280`, branch to the common handler (**new entries**) |
 | 0x20114894 / 0x2011489C | `scif4_rxi_isr` / `scif4_txi_isr` | GIC 0xEF / 0xF0 |
 | 0x20114884 / 0x2011488C | `scif3_rxi_isr` / `scif3_txi_isr` | |
+| 0x20114850 | `pmu_cycle_stamp` (was FUN_20114850; T24 round 4) | (stamp): {delta, last} = {PMCCNTR - last, PMCCNTR}, returns delta; the RXI and TXI handlers stamp obj+0x840 / obj+0x848 per byte (through the thunk 0x20114880) **[fact: mrc p15, 0, r0, c9, c13, 0]** |
+
+Found while recreating the driver (`src/display/drivers/scif.c`, T24 round 4) **[fact]**: when the RX ring is full the
+RXI handler still reads SCFRDR once (into a stack byte) before clearing RDF, so the byte is dropped, not left in the
+FIFO (0x20162ED0); `scif_open` reads SCLSR before writing 0 to it (0x20163190), as the manual requires for clearing
+ORER; the error count tests every SCFSR bit except RDF, TDFE and TEND (`bics r1, r1, #0x62`, 0x20162DF4); and
+`scif_open` does not clear the overflow counter obj+0x824.
 
 ## 4. Frame format and the command table
 
