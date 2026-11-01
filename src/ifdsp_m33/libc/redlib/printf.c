@@ -15,8 +15,13 @@ extern int fputc(int c, redlib_file_t *f);
 extern int vsnprintf_core(redlib_file_t *f, long long max, const char *fmt, va_list ap, int (*hook)(void));
 
 /* The hook passed to the core as its last argument (0x872F5, Thumb) [fact: literal pools 0x85B04, 0x85B7C, 0x85BD8];
- * it returns 0 [fact: 0x872F4 movs r0, #0; bx lr]. Open: what the core calls it for (the floating-point conversions are
- * the likely case, Redlib's "no float" printf); would be settled by the hook's call sites in the core 0x84EB0. */
+ * it returns 0 [fact: 0x872F4 movs r0, #0; bx lr]. The core calls it only for the floating-point conversions a A e E f
+ * g G, as hook(conv, &arg, buf, flags, &prefix, &zeros, &lead, &trail), and prints the characters it returns [fact:
+ * 0x85806..0x85822, vsnprintf_core.c]; returning 0 gives no digits, and as it does not set the prefix, which the core
+ * starts at NULL for these conversions [fact: 0x851A0..0x851B2], the core then prints the string at address 0 as the
+ * prefix [inference: strlen and the prefix loop take the pointer unchecked]. No format string of the application has a
+ * floating-point conversion [fact: the strings of app/ and board/, taken from the image], so this is never reached
+ * (T24 round 3). */
 int printf_float_none(void)
 {
     return 0;
