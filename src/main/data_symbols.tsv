@@ -83,8 +83,8 @@ displink_stage	1741	displink_tx_70 0xFFF98931: displink_copy_if_changed(0x1741, 
 displink_stage_status	16a0	displink_build_20 0xFFF9C454
 g_ui_ptr	25d38	displink_tx_23 0xFFF98E39: mov.l [0x25D38], then 137[r14]
 g_ui_keyer_state	20b2f	keyer_init 0xFFFB98C8: mov.b #0, 43[0x20B04]
-keyer_msg_active	1215f	keyer_init 0xFFFB98D2
-keyer_state	120bc	keyer_init 0xFFFB98E0: sstr 0xA0 bytes
+keyer_type	1215f	keyer_init 0xFFFB98D2 clears it; keyer_task 0xFFFB99C0..0xFFFB99D7 stores 0 (KEYER off) or EX020201 KEYER TYPE, and passes it to keyer_output_step
+keyer_elem_buf	120bc	keyer_init 0xFFFB98E0: sstr 0xA0 bytes; keyer_task copies 150 bytes between it and a message slot (0xFFFB9C93, 0xFFFB9D7F); the element bits (eeprom.md "Message memory")
 keyer_flags	12160	keyer_state_clear 0xFFFBAFF6..0xFFFBB020
 keyer_sidetone_on	1215e	keyer_sidetone_off 0xFFFBB1C2
 menu_tuner_select	9ab8	tuner_task 0xFFFEC479: 21609[0x464F]
@@ -100,3 +100,17 @@ dnr_tables	fff87f1a	dsp_set_dnr_400b 0xFFF9FCD0 reads 0xFFF87F1A + level x 2; th
 rf_gain_curve	fff805ac	dsp_set_rf_gain 0xFFF9FC2A reads 0xFFF805AC[g_ui.rf_gain >> 2]
 dsp_freq_ranges	fff88598	dsp_set_freq_range_param 0xFFF9FB8A: mov.l #0xfff88598, r14 (5 x u32 frequency limits)
 cat_sq_level	464e	cat_SQ 0xFFFAE6F8 (read) and 0xFFFAE839 (set): the squelch byte 0..255 when RF/SQL VR (EX030102) is 0; no other reference in decomp/main
+keyer_speed_cur	1b4d5	keyer_task 0xFFFB9944..0xFFFB99AB: the key speed in use, copied from g_opstate.key_speed when no paddle holds it; divisor of 1200000 at 0xFFFB99E6
+keyer_dot_time	21014	keyer_task 0xFFFB99EF: 1200000 / keyer_speed_cur (u32)
+keyer_dash_time	21010	keyer_task 0xFFFB9A09: (EX020203 CW WEIGHT + 25) x keyer_dot_time / 10 (u32)
+keyer_qsk_ticks	1215c	keyer_task 0xFFFB9A15: qsk_delay_ticks(), capped by the key speed; the time of soft timer 25 (0xFFFB9B03)
+tx_keying_kind	1215d	tx_cw_keying_class 0xFFFBA192: 1 in CW-L/CW-U, 2 in LSB/USB, else 0; keyer_task records and sends messages only at 1 (0xFFFB9B45, 0xFFFB9CCD)
+keyer_has_number	12165	keyer_task 0xFFFB9DE5: set when a message text contains '#' (the contest number); the number is incremented after the send (0xFFFBA086)
+keyer_breakin_saved	12166	keyer_task 0xFFFB9BAC: 1 when break-in was on at the start of a recording and bit 1 of VFO-B record byte 0x14 was cleared (restored at 0xFFFB9C02)
+keyer_rec_vfob	21040	keyer_task 0xFFFB9B9C: vfo_rec_ptr(1) kept while recording
+keyer_elem_wr	1fa38	keyer_task (u16): element count written (recording, text encoding); the 0x4B0 limit at 0xFFFB9FF3
+keyer_elem_rd	1fa3a	keyer_task (u16): element count sent; the send is done when it equals keyer_elem_end (0xFFFBA04A)
+keyer_elem_end	1fa3c	keyer_task 0xFFFBA015 (u16): the length of the message being sent
+keyer_msg_mem	93a7	keyer_task 0xFFFB9C46 / 0xFFFB9D34: 5 x 0x98 = {u16 length big-endian, 150 element bytes} (eeprom.md "Message memory", type 0)
+keyer_text_mem	969f	keyer_task 0xFFFB9D84: 5 x 0x33 = {length, 50 characters} (eeprom.md, type 1: cat_KM)
+morse_table	fff815c3	keyer_task 0xFFFB9DBC: 2 bytes per character {element count, elements from bit 7, 1 = dash}

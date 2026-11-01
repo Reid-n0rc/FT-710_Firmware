@@ -90,6 +90,14 @@ STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
 STUB_DATA = {'eeprom_write': (1, 2)}
 STUB_BUF = {'eeprom_read': 1, 'eeprom_write': 1}     # the buffer argument, compared as 'stack' when on the stack
 STACK_TOP = 0x1004
+# Extra stubs per checked function: callee -> (number of arguments recorded, the values it returns, drawn per call). For tasks whose gates are
+# functions of the whole radio state (T24 MAIN round 4: keyer_task runs only when tx_cw_keying_class() is not 0 and
+# soft timer 19 has expired); the calls are compared like the other stubs. A stubbed callee has no side effects, so
+# only callees whose effects the function does not read back are stubbed.
+FUNC_STUBS = {
+    'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
+                   'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
+}
 
 
 _SCRATCH = None
@@ -730,6 +738,34 @@ def cat_ss_args(rng, regs):
     return [(ARGBUF, bytes(t))], None
 
 
+G_UI, G_OP = 0x20B04, 0x9A2A           # g_ui, g_opstate (tools/main_structs.py --globals)
+
+
+def keyer_task_args(rng, regs):
+    """keyer_task: its state 0..7 (and one beyond), the speed in use and the menu speed (often equal), the keyer
+    type and on/off, the message slot and CW MEMORY n, a keyer text of the characters it treats specially, element
+    counts that are sometimes equal (the end of a send)."""
+    sp = rng.choice([0, 4, 20, 31, 36, 41, 60])
+    loads = [(G_UI + 0x2B, bytes([rng.choice(range(9))])), (0x1B4D5, bytes([sp if rng.random() < 0.6 else rng.choice([4, 20, 45])])),
+             (G_OP + 0x1D9, bytes([sp])), (G_OP + 0x1D8, bytes([rng.choice([0, 1, 1])])),
+             (G_OP + 0x7D, bytes([rng.choice(range(7))])), (G_OP + 0x7F, bytes([rng.randrange(21)])),
+             (G_UI + 0x93, bytes([rng.choice([0, 0, 0, 1])])), (G_UI + 0x408, bytes([rng.choice([0, 0, 0, 1])])),
+             (G_UI + 0x1C8, bytes([rng.choice(range(7))])), (G_UI + 0x1D1, bytes([rng.choice([0, 1])])),
+             (0x1215D, bytes([rng.choice([0, 1, 1, 2])])), (0x12166, bytes([rng.choice([0, 1])])),
+             (0x12160, bytes(rng.choice([0, 0, 1, 2]) for _ in range(5))),
+             (G_OP + 0x83, bytes(rng.choice([0, 1]) for _ in range(5))), (G_OP + 0x88, bytes([rng.randrange(1, 61)])),
+             (0x21040, (ARGBUF + 0x400).to_bytes(4, 'little'))]
+    n = rng.randrange(0, 0x800)
+    loads.append((0x1FA38, rng.randrange(0, 0x600).to_bytes(2, 'little')))
+    loads.append((0x1FA3A, n.to_bytes(2, 'little')))
+    loads.append((0x1FA3C, (n if rng.random() < 0.5 else rng.randrange(0, 0x800)).to_bytes(2, 'little')))
+    for k in range(5):
+        text = bytes(rng.choice(b'CQ TEST#<>[]^0123ABK ?') for _ in range(50))
+        loads.append((0x969F + 0x33 * k, bytes([rng.randrange(0, 51)]) + text))
+        loads.append((0x93A7 + 0x98 * k, rng.randrange(0, 0x500).to_bytes(2, 'big') + bytes(rng.getrandbits(8) for _ in range(150))))
+    return loads, None
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -746,7 +782,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
-           'cat_SS': cat_ss_args,
+           'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
@@ -756,12 +792,15 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
 
 
-def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False):
+def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fixed=None, trace=False, rets=None):
     q = {'op': 'run', 'bases': bases, 'entry': entry, 'sp': STACK, 'seed': seed, 'budget': budget,
          'regs': {f'R{k + 1}': v for k, v in enumerate(regs[:NREG])},
          'stack': ([0x00030000] if isr else []) + list(regs[NREG:]),
          'loads': [[a, d.hex()] for a, d in loads], 'snap': SNAP, 'track': TRACK,
-         'stubs': {str(a): [n, STUBS[n], *STUB_DATA.get(n, ())] for a, n in stubs.items()}, 'cover': sorted(cover)}
+         'stubs': {str(a): [n, STUBS[n] if n in STUBS else rets[a][0], *STUB_DATA.get(n, ())] for a, n in stubs.items()},
+         'cover': sorted(cover)}
+    if rets:
+        q['stub_rets'] = {str(a): v[1] for a, v in rets.items()}
     if trace:
         q['trace'] = True
     if mmio_fixed:
@@ -864,6 +903,8 @@ class Checker:
         meta = self.blocks([oaddr])[oaddr]
         lead, isr = set(meta['blocks']), meta['isr']
         stubs = {self.orig.addr(n): n for n in STUBS if self.orig.addr(n) and n != fname}
+        rets = {self.orig.addr(n): v for n, v in FUNC_STUBS.get(fname, {}).items() if self.orig.addr(n)}
+        stubs.update({a: n for n, a in ((n, self.orig.addr(n)) for n in FUNC_STUBS.get(fname, {})) if a})
         rng = random.Random(seed)
         seen_reads = set()
         reached, ok, inconclusive = set(), 0, 0
@@ -878,8 +919,8 @@ class Checker:
             loads = fill + loads
             s = rng.getrandbits(31)
             for budget in (BUDGET, 8 * BUDGET):
-                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix)
-                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix)
+                r1 = run(eng, ['image', 'ram'], oaddr, regs, loads, s, budget, stubs, lead, isr, mfix, rets=rets)
+                r2 = run(eng, ['image', 'ram', 'new'], lk.entry, regs, loads, s, budget, stubs, (), isr, mfix, rets=rets)
                 if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                     break
             seen_reads |= set(r1['reads']) | set(r2['reads'])

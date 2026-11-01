@@ -200,7 +200,6 @@ void displink_build_70(void);
 void trx_sequencer(void);
 void ptt_arbiter(void);
 uint8_t qsk_delay_ticks(void);
-uint8_t tx_cw_keying_class(void);
 int32_t tx_breakin_on(void);
 uint8_t ckey_det(void);
 uint8_t tx_freq_allowed(uint32_t freq);
@@ -213,6 +212,33 @@ void send_b_set(uint8_t on);
 
 /* --- keyer and tuner (app/keyer.c, app/tuner.c) --- */
 void beep_stop(void);
+void keyer_init(void);
+void keyer_state_clear(void);
+void keyer_sidetone_off(void);
+void keyer_paddles_read(uint8_t *p1, uint8_t *p2);   /* the two paddle inputs, 1 = closed */
+void keyer_straight_bug(uint8_t type);                /* KEYER TYPE 0/1 */
+void keyer_elekey(uint8_t type, uint8_t record);      /* KEYER TYPE 2..5; record = 1 while recording a message */
+void keyer_output_step(uint8_t type);
+void keyer_elem_put(uint8_t elem);                     /* 0 space, 1 dot, 2 dash unit into keyer_elem_buf */
+void keyer_text_msg_encode(uint8_t slot);              /* the elements of another keyer text (slot 0..4) */
+uint16_t contest_number_get(void);
+void contest_number_set(uint16_t n);
+char contest_cut_digit(char c);                        /* EX020204 NUMBER STYLE substitution */
+void FUN_fffba9c3(void);                               /* keyer_task state 6, every pass */
+void keyer_init(void);
+void keyer_state_clear(void);
+void keyer_sidetone_off(void);
+void keyer_paddles_read(uint8_t *p1, uint8_t *p2);   /* the two paddle inputs, 1 = closed */
+void keyer_straight_bug(uint8_t type);                /* KEYER TYPE 0/1 */
+void keyer_elekey(uint8_t type, uint8_t record);      /* KEYER TYPE 2..5; record = 1 while recording a message */
+void keyer_output_step(uint8_t type);
+void keyer_elem_put(uint8_t elem);                     /* 0 space, 1 dot, 2 dash unit into keyer_elem_buf */
+void keyer_text_msg_encode(uint8_t slot);              /* the elements of another keyer text (slot 0..4) */
+uint16_t contest_number_get(void);
+void contest_number_set(uint16_t n);
+char contest_cut_digit(char c);                        /* EX020204 NUMBER STYLE substitution */
+void FUN_fffba9c3(void);                               /* keyer_task state 6, every pass */
+uint8_t tx_cw_keying_class(void);                      /* 0 = the mode does not key CW; sets tx_keying_kind */
 void tuner_atas_task(void);
 void tuner_ext_task(void);
 void tuner_int_task(void);

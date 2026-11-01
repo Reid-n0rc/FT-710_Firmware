@@ -90,10 +90,34 @@ extern uint8_t *g_ui_ptr;                 /* pointer to the UI state (0x20B04) *
 
 /* keyer and tuner [fact: app/keyer.c, app/tuner.c] */
 extern uint8_t g_ui_keyer_state;          /* UI +0x2B */
-extern uint8_t keyer_msg_active;          /* 0x1215F */
-extern uint8_t keyer_state[];             /* 0x120BC, 0xA0 bytes */
+extern uint8_t keyer_type;                /* 0x1215F: 0 = KEYER off, else EX020201 KEYER TYPE */
+extern uint8_t keyer_elem_buf[];          /* 0x120BC, 0xA0 bytes: the element bits */
 extern uint8_t keyer_flags[5];            /* 0x12160..0x12164 */
 extern uint8_t keyer_sidetone_on;         /* 0x1215E */
+extern uint8_t keyer_speed_cur;           /* 0x1B4D5: the key speed in use */
+extern uint32_t keyer_dot_time;           /* 0x21014: 1200000 / speed */
+extern uint32_t keyer_dash_time;          /* 0x21010: (weight + 25) x dot / 10 */
+extern uint8_t keyer_qsk_ticks;           /* 0x1215C */
+extern uint8_t tx_keying_kind;            /* 0x1215D: 1 CW, 2 LSB/USB (tx_cw_keying_class) */
+extern uint8_t keyer_has_number;          /* 0x12165 */
+extern uint8_t keyer_breakin_saved;       /* 0x12166 */
+extern uint8_t *keyer_rec_vfob;           /* 0x21040 */
+extern uint16_t keyer_elem_wr;            /* 0x1FA38 */
+extern uint16_t keyer_elem_rd;            /* 0x1FA3A */
+extern uint16_t keyer_elem_end;           /* 0x1FA3C */
+/* message memory (eeprom.md "Message memory"): recorded elements and keyer texts, slots 1..5 */
+struct keyer_msg {
+    uint8_t len_be[2];                    /* element count, big-endian */
+    uint8_t elems[150];
+};
+struct keyer_text {
+    uint8_t len;
+    uint8_t text[50];
+};
+_Static_assert(sizeof(struct keyer_msg) == 0x98 && sizeof(struct keyer_text) == 0x33, "message slot sizes");
+extern struct keyer_msg keyer_msg_mem[5];      /* 0x93A7 */
+extern struct keyer_text keyer_text_mem[5];    /* 0x969F */
+extern const uint8_t morse_table[][2];         /* 0xFFF815C3: {element count, elements from bit 7, 1 = dash} */
 extern uint8_t menu_tuner_select;         /* 0x9AB8 */
 extern uint8_t atu_ac;                    /* 0x1B3AD */
 extern uint8_t atu_tc;                    /* 0x1B3AF */

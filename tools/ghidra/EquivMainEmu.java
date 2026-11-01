@@ -19,7 +19,8 @@
 //    "stack":[w,...] (words at SP+4.., [SP] = the return address), "seed":s, "budget":n,
 //    "stubs":{addr:[name,nargs(,ptr_arg,len_arg)]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
 //    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions),
-//    "module_fp":true (FTOI/ROUND/FTOU by the module's p-code instead of fpConv)}
+//    "module_fp":true (FTOI/ROUND/FTOU by the module's p-code instead of fpConv),
+//    "stub_rets":{addr:[v,...]} (the return values of a stub, drawn from the seeded sequence)}
 //     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
 //         "diff":[[addr,"hex"],...] (snap ranges that differ from the start state), "hits":[addr,...] (cover
@@ -296,6 +297,16 @@ public class EquivMainEmu extends GhidraScript {
                         ? new String[]{a.get(0).getAsString(), a.get(1).getAsString(), a.get(2).getAsString(), a.get(3).getAsString()}
                         : new String[]{a.get(0).getAsString(), a.get(1).getAsString()});
             }
+        // "stub_rets":{addr:[v,...]}: the values a stub returns, drawn from the seeded sequence (default {0, 0, 0, 1,
+        // FFFFFFFFh, random}); T24 MAIN round 4: a task's gate functions stubbed to reach its state machine
+        Map<Long, long[]> stubRets = new HashMap<>();
+        if (q.has("stub_rets"))
+            for (Map.Entry<String, JsonElement> e : q.getAsJsonObject("stub_rets").entrySet()) {
+                JsonArray a = e.getValue().getAsJsonArray();
+                long[] v = new long[a.size()];
+                for (int k = 0; k < v.length; k++) v[k] = lv(a.get(k));
+                stubRets.put(Long.decode(e.getKey()), v);
+            }
         Set<Long> cover = new HashSet<>();
         if (q.has("cover")) for (JsonElement e : q.getAsJsonArray("cover")) cover.add(lv(e));
         Set<Long> hits = new TreeSet<>();
@@ -352,7 +363,9 @@ public class EquivMainEmu extends GhidraScript {
                             c.add(hex(shared.inspectConcrete(ram.getAddress(ptr), (int) len), 0, (int) len));
                     }
                     calls.add(c);
-                    long ret = new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];
+                    long[] rv = stubRets.get(pc);
+                    long ret = rv != null ? rv[r.rng.nextInt(rv.length)]
+                            : new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];
                     r.setReg("R1", ret);
                     long ra = readLE(shared, csp);
                     r.setReg("SP", csp + 4);
