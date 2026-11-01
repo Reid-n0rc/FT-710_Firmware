@@ -523,7 +523,7 @@ are not affected by an SRL delay, so they stand, but they were not re-run.
 **Open.** (1) What triggers `u` in practice: the thresholds' register (the bits at `SLICE_X38Y76`, `X28Y79`, `X14Y80`)
 and the meaning of the level from DSP48_X1Y28/29; would be settled by a register sweep with a large tone on B, as for
 reg 0x04. (2) Why the M17 words still look like noise with a tone on the ADC (3.8): the stages up to and including the
-adder are clean and linear; the first stages that do not scale are DSP48_X0Y7 / DSP48_X1Y3 (#193). (3) Whether the
+adder are clean and linear; the first stages that do not scale are DSP48_X0Y7 / DSP48_X1Y3 (#193); #232 traced the break to the second decimator stage (3.9). (3) Whether the
 board feeds both converters the same RF (Yaesu's diagram says a divider) and at what levels; would be settled by the
 SDR module's schematic or by measuring J3003.
 
@@ -654,12 +654,12 @@ after clock 700,000. Controls with one extra write after the same three (compare
   operand muxes in front of DSP48_X0Y11..X0Y15, which select among about 70 BRAM and DSP outputs. A stage whose output is
   independent of the input level is either a legitimate normalisation (an AGC or block-floating-point step in the FPGA) or
   the next model error (candidates: the BRAM read/write-collision and output-register corner cases, the LUT-RAM SMALL halves,
-  the DSP pattern-detect/dynamic-OPMODE paths of the two dynamic DSPs) **[open]**.
+  the DSP pattern-detect/dynamic-OPMODE paths of the two dynamic DSPs) **[open]**. #232 followed this up: it is **not** an AGC
+  or normalisation, and the break sits earlier, in the second decimator stage (3.9).
 
 So the carrier placement per mode is still **not** confirmed by simulation. Open: where the SSB carrier and the FM carrier land
-in the 72 kHz stream; would be settled by finding why DSP48_X0Y7 / X1Y3 do not scale (probe their A/B operands and the operand-mux
-selects over one 1,736-clock output period, with A and 2A), then re-running the USB/LSB/FM/AM register sets above and reading
-the tone's position on M17.
+in the 72 kHz stream; would be settled by fixing the model error that 3.9 narrows down, then re-running the USB/LSB/CW/AM/FM
+register sets and reading the tone's position on M17.
 
 **Before #193's fix:** **What the words contain is not settled.** With the tone on the ADC the 72 kHz words look like white noise near full
 scale (spectral peak < 10 % of the power), from 40 LSB (−46 dBFS) to 4,000 LSB input, while the stages up to the mixers
@@ -707,6 +707,107 @@ ADC=tone:10002000:40 HALF_FROM=600000 build/sdr/vl/obj_ddc/Vft710_sdr 1500000 w0
 
 (`H` lines: half-frame words on M17; `DUMP=W0-W1:FROM:TO:EVERY` prints probe words for time series; `PROBE_COUNT=1`
 counts toggles per probe.)
+
+### 3.9 RX decimator: where the signal stops being linear (#232)
+
+#232 asked whether the stages that stop scaling with the input (3.8: DSP48_X0Y7, DSP48_X1Y3) are a real AGC or
+normalisation, an undriven coefficient walk, or a model error, and then where the carrier lands per mode. Method: probed
+builds of the whole netlist (`tools/xc7_probe_netlist.py --declared --ports`, up to 6,256 probes: A/B/C/P/OPMODE of
+DSP48_X0Y0..X1Y16, DI/DO/ADDR/WE of RAMB18_X*Y9..Y19, the 16 adder CARRY4s of 3.7, and the fan-in cones of the operand
+register and of the second-stage delay-line RAMs), `ddc_main.cpp`, frames `w000A0004 w00180098 w00199680 w0004E519`
+(sum mode, NCO 10 MHz), a 10.002 MHz tone on both channels at 0, 400, 800 and 1,200 LSB. Each probed bus was rebuilt
+as a full-width word (low partial product unsigned, high one signed and shifted by 17; RAM words as described below).
+"Linear" means v(2A) − v(0) = 2·(v(A) − v(0)) within 1 % RMS. Two kinds of run: steady state (tone on from clock 0,
+12,000-15,000 clocks dumped from clock 800,000 or 900,000), and **onset** runs with the new `ADC_FROM=700000` (ADC at 0
+until then, all frames already written), which show the order in which the signal reaches each stage.
+
+```mermaid
+flowchart LR
+  SUM["A + B adders<br/>SLICE_X46Y88.., X55Y107.."] --> S1["RAMB18_X2Y17<br/>DSP48_X1Y11/12, X1Y13/14"]
+  S1 --> S2["DSP48_X1Y7/8, X0Y8/9<br/>(B = coef ROM RAMB18_X1Y18/19)<br/>DSP48_X1Y9/10"]
+  S2 --> D1["1st delay lines<br/>RAMB18_X0Y4..7, X1Y4/5"]
+  D1 --> PA1["pre-adders A+B port<br/>SLICE_X8Y9..16, X44Y10..17"]
+  PA1 --> MUX{"one-hot operand mux<br/>12 selects"}
+  MUX --> B["b register (35 bit)<br/>SLICE_X37Y5.., CE X29Y10/BLUT"]
+  B --> MAC["DSP48_X1Y0/1, X1Y2/3<br/>b x coefficient"]
+  MAC --> ACC["accumulators, write registers<br/>(SLICE_X40Y14..16, X43Y16, X31Y5..7, X34Y4)"]
+  ACC --> D2["2nd delay lines<br/>RAMB18_X0Y0..3, X0Y8/9, X1Y2/3"]
+  D2 --> PA2["pre-adders<br/>SLICE_X14Y9..16, X36Y5..12"]
+  PA2 --> MUX
+  MAC --> OUT["DSP48_X0Y6/7, X0Y11/12"] --> FIFO["RX FIFO RAMB18_X2Y15"]
+```
+
+- **Zero in, zero out [fact, simulation].** With the ADC at 0 every probed bus of the chain stays 0 (steady-state run,
+  every probed bus at RMS 0), so nothing in the chain is a free-running source.
+- **Linear part [fact, simulation].** In steady state the sum (3.7), RAMB18_X2Y17's 32-bit word (DIBDI:DIADI), the 35-bit
+  products of DSP48_X1Y11/12, X1Y13/14, X1Y9/10, X1Y7/8 and X0Y8/9, and the two first-stage pre-adder chains
+  `SLICE_X8Y9..X8Y16` and `SLICE_X44Y10..X44Y17` are linear (ratio 2.000, error ≤ 0.1 %). Onset order (first clock that
+  differs from the silent run, tone on at 700,000): sum 700,109, RAMB18_X2Y17 701,261, DSP48_X1Y11/12 701,268, X1Y7/8
+  712,391, X0Y8/9 714,127, X1Y9/10 716,129, chain X44Y10 729,813, the operand b 729,750, chains X14Y9/X36Y5 735,022,
+  DSP48_X0Y6.B 747,130, X0Y11.B 750,597, FIFO input 752,317. That order and the routing put the delay-line RAMs and the
+  pre-adders of the diagram in the RX path **[inference, strong]**; `fir_bank` and `scope_engine_x9` (3.6) had claimed some
+  of the same cells.
+- **Pre-adders [fact, equations].** Each of the four 32-bit CARRY4 chains adds the port-A and port-B words of one pair of RAM
+  tiles (`S = DOA_k XOR DOB_k`, `DI = DOA_k`): a symmetric-FIR pre-add of two taps **[inference]**. The 32-bit word is 18 bits
+  from one tile and 14 from the next. Within a tile, chain bits 0..17 are lower-half pin 0, upper-half pin 0, lower 1, upper 1,
+  … lower 3, upper 3, lower parity, lower 4, upper 4, … upper 7, upper parity: two 9-bit bytes {P, D[7:0]} with D[2k] in the
+  lower half and D[2k+1] in the upper half, the RAMB36 interleave of 4.4. A RAMB36 x18 and two RAMB18 x9 halves on the same
+  address store and return the same word, so the two-half model is equivalent for these tiles **[inference]**. In the second
+  tile of each chain the upper half's pin 3 is not used (its DI is tied 0, e.g. RAMB18_X0Y5 DIADI3): open why.
+- **Operand mux and b register [fact, equations; simulation].** DSP48_X1Y0.B/X1Y1.B take a 35-bit word b from flip-flops
+  `SLICE_X37Y5`, `X40Y6`, `X38Y8`, … (CE `SLICE_X29Y10/BLUT`, reset `SLICE_X15Y11/CLUT`), each fed by an AND-OR mux of the four
+  chains (selects `SLICE_X14Y6/ALUT` → X8Y9, `SLICE_X15Y8/CLUT` → X44Y10, `SLICE_X15Y6/ALUT` → X14Y9, `SLICE_X30Y11/CLUT` → X36Y5)
+  and eight register sources (selects `SLICE_X29Y4/BLUT`, `X34Y7/B,C,DLUT`, `X34Y8/C,DLUT`, `X31Y5/B,CLUT`). DSP48_X1Y2/X1Y3 take
+  the same b one clock later (`SLICE_X53Y5/BFF` ← `SLICE_X37Y5/CFF`, …). In simulation exactly one select is high on every
+  clock (15,001 of 15,001), the schedule per 15,000 clocks is 618 / 618 / 618 / 13,099 plus 6 each for the register sources,
+  and it is the same in every run; b equals the selected chain word of the previous clock whenever it loads. The A operands
+  of DSP48_X1Y0..3 and X0Y6/X0Y11 are identical in all runs (coefficients, changing about 1,600 times per 12,000 clocks): the
+  coefficient walk runs and does not depend on the input **[fact, simulation]**.
+- **Where it breaks [fact, simulation].** The two second-stage pre-adder chains `SLICE_X14Y9..16` (RAMB18_X0Y2/3 + X0Y8/9)
+  and `SLICE_X36Y5..12` (RAMB18_X1Y2/3 + X0Y0/1) are not linear in steady state (ratio 1.19 / 1.30 for 2A, error 0.90 / 0.76),
+  and neither are the accumulator chains in the fan-in cone of those RAMs (`SLICE_X42Y7`, `X52Y7`, `X54Y6`, `X41Y14`, `X45Y6`,
+  `X45Y12`, `X45Y16`) nor b as a whole. From there on (DSP48_X0Y6/7, X0Y11/12, FIFO) the output does not depend on the input
+  amplitude **at all**: after the tone onset, X0Y6.B, the X0Y6/7 product, X0Y11.B, the X0Y11/12 product and the FIFO input word
+  are identical at 400, 800 **and 1,200 LSB** on 100 % of the clocks where they differ from the silent run, and X0Y6.B takes
+  only 19 values (0 on 83,766 of 90,001 clocks, then 0x140, −0x320, 0x2300, 0x464A, 0x5A12, 0x3EFC, …), the shape of a filter's
+  impulse response.
+- **Not an AGC or normalisation [inference, strong].** A normaliser (block floating point) gives the same mantissa at A and
+  2A but a different one at 3A; an AGC needs time to settle and then still passes the waveform. Here the words are the same
+  for A, 2A and 3A from the first sample, so what reaches DSP48_X0Y6 carries no amplitude information: the tone does not get
+  through the second stage in the model.
+- **Not a missing register [fact, simulation].** With MAIN's whole USB register set written first (31 frames, all ACKed:
+  0x03 = E63D, 0x04 = E519, 0x08/09 = 10 MHz, 0x0A = 4, 0x0B = 0x006E (inside MAIN's RX range 105…117; not checked against the ROM entry
+  for this band), 0x0C = 2203, 0x0D = 9, 0x0E = 1200, 0x0F = 1800, 0x12/13 = 8000, 0x14 = 0x15 = 2000, 0x16 = 0x12,
+  0x18/19 = 10,001,500, 0x1A = 0, 0x1B = 6, 0x1C = 2, 0x1D = 0, 0x1E = FED4, 0x1F = 2400, 0x20/21 = 10 MHz, 0x22 = 100,
+  0x23 = 8000, 0x24 = 0317, 0x25 = 0, 0x26 = 0610, 0x27 = 8000) and a 10.001 MHz tone from clock 4,250,000, the same stages are
+  identical at 400 and 1,200 LSB.
+- **The output [fact, simulation].** On M17 (650 words per run, 2.0 M clocks) the words are near full scale (RMS 1.3·10⁹,
+  peaks 2.15·10⁹) with no line above 9 % of the power at 400, 800 and 1,200 LSB.
+- **The delay-line RAM itself.** For RAMB18_X0Y2/X0Y3 a software memory built from the probed address, write-enable and data
+  drivers predicts DOA at a latency of 2 clocks (DOA_REG = 1) on 42 of 42 checkable clocks **[fact, simulation]**, but that
+  RAM is written only 3 times in 15,000 clocks, so its stored words could not be checked in that window.
+
+**What is left [open].** The first non-linear element is inside the second-stage loop: MAC DSP48_X1Y0..3 → accumulators →
+write registers → RAMB18_X0Y0..3, X0Y8/9, X1Y2/3 → pre-adders X14Y9 / X36Y5 → operand mux → b. Because the loop feeds itself,
+one wrong element anywhere in it makes all of it non-linear. Candidates: the accumulators' load/clear control (the two
+dynamic-OPMODE DSPs of 3.5, or a fabric clear), the write path into those RAMs (the 14-bit second tile with an unused pin),
+and the RAMB36 x18 equivalence assumed for those tiles. Would be settled by a run that also probes the b-register CE and the
+accumulator chains' control inputs and dumps at least 50,000 clocks, so that (1) the products formed in the first-stage slots
+(selects X14Y6, X15Y8) can be followed into their accumulator, and (2) every word written into RAMB18_X0Y2/3 can be compared
+with what the pre-adders later read back. Until then the carrier placement per mode (USB, LSB, CW, AM, FM) cannot be read
+from the model, and #232 stays open.
+
+Reproduce (derived files under `build/sdr/vl/`, never commit):
+
+```sh
+python3 -I tools/xc7_probe_netlist.py --declared --ports build/sdr/vl/OBJ/probe_ports.h \
+  build/sdr/netlist.json build/sdr/ft710_sdr.v PROBED.v PROBED.names @PROBES
+NET=$PWD/PROBED.v PROBE_W=<words> PROBE_PORTS=1 MAIN=ddc_main.cpp OBJ=OBJ VDEFS="+define+MMCM_FRAC +define+IDDR_DDR" \
+  hdl/sdr/sim/build_full.sh                 # NET must be an absolute path: the script changes directory
+# PROBE_FROM beyond the run: without it every probe toggle is printed (gigabytes)
+ADC_FROM=700000 PROBE_FROM=999999999 GAP_BITS=10 DUMP=0-<words-1>:700000:790000:1 ADC=tone:10002000:400 \
+  build/sdr/vl/OBJ/Vft710_sdr 790000 w000A0004 w00180098 w00199680 w0004E519
+```
 
 ## 4. Structural Verilog, smoke test and simulation (T15d)
 
