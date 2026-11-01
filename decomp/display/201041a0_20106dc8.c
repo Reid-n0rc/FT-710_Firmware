@@ -2141,8 +2141,7 @@ void task_audio_codec(void)
                   }
                   break;
                 }
-                    /* DCCIMVAC per cache line over the range [doc] */
-                dcache_clean_invalidate_range(local_5c,4000);
+                dcache_invalidate_range(local_5c,4000);
                 DAT_208000e4 = DAT_208000e4 + iVar6 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
               }

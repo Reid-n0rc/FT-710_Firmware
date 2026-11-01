@@ -9935,7 +9935,7 @@ void PINT_PatternMatchResetDetectLogic(int param_1)
 }
 
 /* -----------------------------------------------------------------------------
- * PINT_PinInterruptClrStatus @ 00086f3c  (22 bytes, 8 callers, export file 00086f3c_08001222.c)
+ * PINT_PinInterruptClrStatus @ 00086f3c  (22 bytes, 8 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 22 B, callers: 8 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -9958,7 +9958,7 @@ void PINT_PinInterruptClrStatus(uint *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * RESET_PeripheralReset @ 00086f52  (18 bytes, 6 callers, export file 00086f3c_08001222.c)
+ * RESET_PeripheralReset @ 00086f52  (18 bytes, 6 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "NXP SDK drivers"; calls `RESET_SetPeripheralReset`; 18 B, callers: 6 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -9980,7 +9980,7 @@ void RESET_PeripheralReset(uint peripheral)
 
 
 /* -----------------------------------------------------------------------------
- * SCTIMER_GetDefaultConfig @ 00086f64  (38 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * SCTIMER_GetDefaultConfig @ 00086f64  (38 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "SCT0 PWM (duty from register 0x4005)"; calls `memset`; 38 B, callers: 1 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -10006,7 +10006,7 @@ void SCTIMER_GetDefaultConfig(void *ptr)
 
 
 /* -----------------------------------------------------------------------------
- * SCTIMER_UpdatePwmDutycycle @ 00086f8a  (98 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * SCTIMER_UpdatePwmDutycycle @ 00086f8a  (98 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "SCT0 PWM (duty from register 0x4005)"; calls `__aeabi_uldivmod`; 98 B, callers: 1
  *     [fact] (code shape)
  * Tag: [fact]
@@ -10050,7 +10050,7 @@ void SCTIMER_UpdatePwmDutycycle(int param_1,undefined4 param_2,uint param_3,int 
 
 
 /* -----------------------------------------------------------------------------
- * USART_GetDefaultConfig @ 0008702c  (34 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * USART_GetDefaultConfig @ 0008702c  (34 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "NXP SDK drivers"; calls `memset`; 34 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10071,7 +10071,7 @@ void USART_GetDefaultConfig(void *ptr)
 
 
 /* -----------------------------------------------------------------------------
- * USART_SetBaudRate @ 0008704e  (178 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * USART_SetBaudRate @ 0008704e  (178 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: FC0 baud
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10147,7 +10147,7 @@ void * USART_SetBaudRate(uint *param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * USART_Init @ 00087100  (306 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * USART_Init @ 00087100  (306 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "NXP SDK drivers"; calls `FLEXCOMM_Init`, `USART_SetBaudRate`; 306 B, callers: 1 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -10214,7 +10214,7 @@ undefined ** USART_Init(uint *param_1,uint *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitDebugConsole @ 00087232  (2 bytes, 0 callers, export file 00086f3c_08001222.c)
+ * BOARD_InitDebugConsole @ 00087232  (2 bytes, 0 callers, export file 00086f3c_08001220.c)
  * Purpose: empty (bx lr), no callers [fact: 0x87232]; its address (0x87233, Thumb bit) is the literal at 0x80A10
  *     that BOARD_SetFlexspiClock masks with 0xE8000000 and compares with 0x08000000 before
  *     BOARD_DeinitXip/BOARD_InitXip [fact: 0x809BC..0x80A06], which is the BOARD_IS_XIP_FLEXSPI() test on
@@ -10239,7 +10239,7 @@ void BOARD_InitDebugConsole(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_FlexspiClockSafeConfig @ 00087234  (8 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BOARD_FlexspiClockSafeConfig @ 00087234  (8 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: FlexSPI on FFRO /1
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10257,7 +10257,7 @@ void BOARD_FlexspiClockSafeConfig(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitBootPeripherals @ 00087240  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BOARD_InitBootPeripherals @ 00087240  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: body is only bx lr [fact: 0x87240]; one caller, main 0x81098, between BOARD_BootClockRUN and
  *     regfile_clear [fact]. Not BOARD_InitDebugConsole, which is the separate empty function at 0x87232 [fact:
  *     literal 0x80A10]. Open: which source function this was; would be settled by the vendor's source or link map
@@ -10281,7 +10281,7 @@ void BOARD_InitBootPeripherals(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitPins_flexcomm @ 00087242  (42 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BOARD_InitPins_flexcomm @ 00087242  (42 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: IOPCTL groups
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10317,7 +10317,7 @@ void BOARD_InitPins_flexcomm(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitPins_i2s @ 0008726c  (40 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BOARD_InitPins_i2s @ 0008726c  (40 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Inferred name: `_i2s`
  * Purpose: IOPCTL groups
  * Tag: none in the table row
@@ -10352,7 +10352,7 @@ void BOARD_InitPins_i2s(void)
 
 
 /* -----------------------------------------------------------------------------
- * BOARD_InitBootPins @ 00087294  (26 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BOARD_InitBootPins @ 00087294  (26 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: pin mux, section 4
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10376,7 +10376,7 @@ void BOARD_InitBootPins(void)
 
 
 /* -----------------------------------------------------------------------------
- * __main @ 000872ae  (14 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * __main @ 000872ae  (14 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: Redlib C entry: `stdio_init`, tail-jump `main` (was `main` until T24 round 2) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10399,7 +10399,7 @@ void __main(void)
 
 
 /* -----------------------------------------------------------------------------
- * free @ 000872c4  (48 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * free @ 000872c4  (48 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: Marks block 0x10000000 and merges free successors [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10425,7 +10425,7 @@ void free(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * setvbuf @ 000872f8  (62 bytes, 3 callers, export file 00086f3c_08001222.c)
+ * setvbuf @ 000872f8  (62 bytes, 3 callers, export file 00086f3c_08001220.c)
  * Purpose: _IOFBF 0x100 / _IOLBF 0x200 / _IONBF 0x400 [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10467,7 +10467,7 @@ LAB_0008732a:
 
 
 /* -----------------------------------------------------------------------------
- * strcmp @ 00087336  (68 bytes, 3 callers, export file 00086f3c_08001222.c)
+ * strcmp @ 00087336  (68 bytes, 3 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 68 B, callers: 3 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -10509,7 +10509,7 @@ int strcmp(uint *param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strlen @ 0008737a  (72 bytes, 10 callers, export file 00086f3c_08001222.c)
+ * strlen @ 0008737a  (72 bytes, 10 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 72 B, callers: 10 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -10555,7 +10555,7 @@ LAB_00087384:
 
 
 /* -----------------------------------------------------------------------------
- * strncmp @ 000873c2  (86 bytes, 4 callers, export file 00086f3c_08001222.c)
+ * strncmp @ 000873c2  (86 bytes, 4 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 86 B, callers: 4 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -10595,7 +10595,7 @@ int strncmp(uint *param_1,uint *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * strncpy @ 00087418  (88 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * strncpy @ 00087418  (88 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 88 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10643,7 +10643,7 @@ void strncpy(uint *param_1,uint *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * file_clear_flag20 @ 00087470  (64 bytes, 3 callers, export file 00086f3c_08001222.c)
+ * file_clear_flag20 @ 00087470  (64 bytes, 3 callers, export file 00086f3c_08001220.c)
  * Purpose: FILE flags (+0xC) &= ~0x20; if +0x18 != +0x28: call file_flush_write_buffer, flags = (flags & ~0x3010) |
  *     0x10, +0x18 = +0x28, +0x2C = +0 = buffer (+0x10); then flags &= ~0x4040 [fact: 0x87470]. Callers fputc (x2)
  *     and _Cfflush1 call it only when flag 0x20 is set [fact]. Open: the Redlib name and the meaning of flag 0x20;
@@ -10676,7 +10676,7 @@ void file_clear_flag20(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fputc @ 000874b0  (320 bytes, 19 callers, export file 00086f3c_08001222.c)
+ * fputc @ 000874b0  (320 bytes, 19 callers, export file 00086f3c_08001220.c)
  * Purpose: FILE output slow path, 19 callers (printf engine) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10791,7 +10791,7 @@ LAB_000874ee:
 
 
 /* -----------------------------------------------------------------------------
- * _Cfdopen @ 000875f0  (104 bytes, 3 callers, export file 00086f3c_08001222.c)
+ * _Cfdopen @ 000875f0  (104 bytes, 3 callers, export file 00086f3c_08001220.c)
  * Purpose: Opens fd with mode "r"/"w"/"a"[+][b] into a FILE (used by stdio_init) [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10845,7 +10845,7 @@ int _Cfdopen(undefined4 param_1,char *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * file_flush_write_buffer @ 00087658  (82 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * file_flush_write_buffer @ 00087658  (82 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: clears flag 0x80000; if (flags & 0x82) == 2 and flag 0x10000 set, writes buffer (+0x10) .. max(ptr,
  *     +0x2C) with _Cwrite_buffer, then resets the pointers and clears 0x10000; returns 0, or -1 on error / wrong
  *     mode [fact: 0x87658]. Redlib's own name unknown
@@ -10889,7 +10889,7 @@ undefined4 file_flush_write_buffer(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _Cfclose @ 000876aa  (88 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * _Cfclose @ 000876aa  (88 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: calls `__sys_close`, `__sys_tmpnam`, `fflush`, `free` and 2 more; 88 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10933,7 +10933,7 @@ undefined4 _Cfclose(void *ptr)
 
 
 /* -----------------------------------------------------------------------------
- * remove @ 00087702  (20 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * remove @ 00087702  (20 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: strlen(name), then tail-calls __sys_remove(name, len) which returns -1 [fact: 0x87702]. Only caller
  *     _Cfclose 0x876E8, on a FILE whose flags top bits are 0xAD8, with a name just built by __sys_tmpnam: the C
  *     rule that closing a tmpfile() deletes it [inference]
@@ -10958,7 +10958,7 @@ void remove(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _Cfflush1 @ 00087716  (64 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * _Cfflush1 @ 00087716  (64 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: calls `file_clear_flag20`, `file_flush_write_buffer`, `fseek`; 64 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -10992,7 +10992,7 @@ uint _Cfflush1(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_uldivmod @ 00087756  (252 bytes, 9 callers, export file 00086f3c_08001222.c)
+ * __aeabi_uldivmod @ 00087756  (252 bytes, 9 callers, export file 00086f3c_08001220.c)
  * Inferred name: `__aeabi_uldivmod`
  * Purpose: 64-bit divide (clock maths)
  * Tag: none in the table row
@@ -11092,7 +11092,7 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
 
 
 /* -----------------------------------------------------------------------------
- * udiv64by32_helper @ 00087850  (122 bytes, 3 callers, export file 00086f3c_08001222.c)
+ * udiv64by32_helper @ 00087850  (122 bytes, 3 callers, export file 00086f3c_08001220.c)
  * Purpose: shift-and-subtract division of the 64-bit r1:r0 by r2 (byte steps while r1 < r2>>8, then bit steps)
  *     [fact: 0x87850]; the 3 call sites are all in __aeabi_uldivmod [fact]. Library's own name unknown
  * Tag: [fact]
@@ -11225,7 +11225,7 @@ void udiv64by32_helper(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * memcpy_body @ 000878cc  (52 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * memcpy_body @ 000878cc  (52 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 52 B, callers: 2 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -11274,7 +11274,7 @@ void memcpy_body(void *param_1,void *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * memset_body @ 00087900  (50 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * memset_body @ 00087900  (50 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: names-file group "C library (NXP Redlib: `_Csys_alloc`)"; no direct calls; 50 B, callers: 2 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -11316,7 +11316,7 @@ void memset_body(void *ptr,int value,uint size)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_appexit @ 00087932  (2 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * __sys_appexit @ 00087932  (2 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: b . (hang) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11335,7 +11335,7 @@ void __sys_appexit(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_close @ 00087934  (6 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * __sys_close @ 00087934  (6 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 (no host) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11352,7 +11352,7 @@ undefined4 __sys_close(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_flen @ 0008793a  (6 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * __sys_flen @ 0008793a  (6 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11369,7 +11369,7 @@ uint __sys_flen(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_istty @ 00087940  (6 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * __sys_istty @ 00087940  (6 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11386,7 +11386,7 @@ uint __sys_istty(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_remove @ 00087946  (6 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * __sys_remove @ 00087946  (6 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 [fact]. Only caller is remove (b.w at 0x87712) with r0 = path, r1 = strlen(path) [fact],
  *     which is the SYS_REMOVE (0x0E) argument pair (path, length) in the ARM semihosting spec
  *     (ARM-software/abi-aa@36203f2c semihosting.rst); SYS_READC takes no argument [inference]
@@ -11407,7 +11407,7 @@ undefined4 __sys_remove(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_seek @ 0008794c  (6 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * __sys_seek @ 0008794c  (6 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11424,7 +11424,7 @@ uint __sys_seek(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_tmpnam @ 00087952  (6 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * __sys_tmpnam @ 00087952  (6 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: returns -1 [fact]. Only caller _Cfclose 0x876E2 passes (stack buffer, FILE+0x20, 0x20) [fact] =
  *     SYS_TMPNAM (0x0D) fields (buffer, target id, buffer length) in the ARM semihosting spec
  *     (ARM-software/abi-aa@36203f2c semihosting.rst) [inference]
@@ -11445,7 +11445,7 @@ undefined4 __sys_tmpnam(void)
 
 
 /* -----------------------------------------------------------------------------
- * __sys_write @ 00087958  (4 bytes, 2 callers, export file 00086f3c_08001222.c)
+ * __sys_write @ 00087958  (4 bytes, 2 callers, export file 00086f3c_08001220.c)
  * Purpose: returns len (nothing written: stdio goes nowhere) [fact]
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11462,7 +11462,7 @@ undefined4 __sys_write(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ResetISR @ 080011a8  (76 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * ResetISR @ 080011a8  (76 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: VTOR/MSP/MSPLIM, `SystemInit`, copy tables, `call_main`
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11500,7 +11500,7 @@ void ResetISR(void)
 
 
 /* -----------------------------------------------------------------------------
- * NMI_Handler @ 0800120c  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * NMI_Handler @ 0800120c  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11517,7 +11517,7 @@ void NMI_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * MemManage_Handler @ 08001210  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * MemManage_Handler @ 08001210  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11534,7 +11534,7 @@ void MemManage_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * BusFault_Handler @ 08001212  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * BusFault_Handler @ 08001212  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11551,7 +11551,7 @@ void BusFault_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * UsageFault_Handler @ 08001214  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * UsageFault_Handler @ 08001214  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11568,7 +11568,7 @@ void UsageFault_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * SecureFault_Handler @ 08001216  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * SecureFault_Handler @ 08001216  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11585,7 +11585,7 @@ void SecureFault_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * DebugMon_Handler @ 0800121a  (2 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * DebugMon_Handler @ 0800121a  (2 bytes, 1 callers, export file 00086f3c_08001220.c)
  * Purpose: no direct calls; 2 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11602,7 +11602,7 @@ void DebugMon_Handler(void)
 
 
 /* -----------------------------------------------------------------------------
- * IntDefaultHandler @ 08001220  (2 bytes, 25 callers, export file 00086f3c_08001222.c)
+ * IntDefaultHandler @ 08001220  (2 bytes, 25 callers, export file 00086f3c_08001220.c)
  * Purpose: MCUXpresso startup - library function, matched by idiom (score 0.900, T23d): b . loop right after the
  *     per-exception b . handlers 0x0800120C..0x0800121E; the 25 weak IRQ handlers without a driver call it
  *     [inference]
@@ -11623,9 +11623,8 @@ void IntDefaultHandler(void)
   } while( true );
 }
 
-
 /* -----------------------------------------------------------------------------
- * data_init @ 08001222  (18 bytes, 1 callers, export file 00086f3c_08001222.c)
+ * data_init @ 08001222  (18 bytes, 1 callers, export file 08001222_080013bc.c)
  * Purpose: names-file group "reset / startup (flash)"; no direct calls; 18 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11643,8 +11642,9 @@ void data_init(int param_1,int param_2,uint param_3)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * bss_init @ 08001234  (16 bytes, 1 callers, export file 08001234_080013c4.c)
+ * bss_init @ 08001234  (16 bytes, 1 callers, export file 08001222_080013bc.c)
  * Purpose: names-file group "reset / startup (flash)"; no direct calls; 16 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11664,7 +11664,7 @@ void bss_init(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * WDT0_IRQHandler @ 08001244  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * WDT0_IRQHandler @ 08001244  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11680,7 +11680,7 @@ void WDT0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * DMA0_IRQHandler @ 0800124c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * DMA0_IRQHandler @ 0800124c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__DMA0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11696,7 +11696,7 @@ void DMA0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * GPIO_INTA_IRQHandler @ 08001254  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * GPIO_INTA_IRQHandler @ 08001254  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11712,7 +11712,7 @@ void GPIO_INTA_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * GPIO_INTB_IRQHandler @ 0800125c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * GPIO_INTB_IRQHandler @ 0800125c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11728,7 +11728,7 @@ void GPIO_INTB_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT0_IRQHandler @ 08001264  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT0_IRQHandler @ 08001264  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11744,7 +11744,7 @@ void PIN_INT0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT1_IRQHandler @ 0800126c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT1_IRQHandler @ 0800126c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT1_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11760,7 +11760,7 @@ void PIN_INT1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT2_IRQHandler @ 08001274  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT2_IRQHandler @ 08001274  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT2_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11776,7 +11776,7 @@ void PIN_INT2_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT3_IRQHandler @ 0800127c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT3_IRQHandler @ 0800127c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT3_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11792,7 +11792,7 @@ void PIN_INT3_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * UTICK0_IRQHandler @ 08001284  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * UTICK0_IRQHandler @ 08001284  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__UTICK0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11808,7 +11808,7 @@ void UTICK0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * MRT0_IRQHandler @ 0800128c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * MRT0_IRQHandler @ 0800128c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11824,7 +11824,7 @@ void MRT0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CTIMER0_IRQHandler @ 08001294  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * CTIMER0_IRQHandler @ 08001294  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__CTIMER0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11840,7 +11840,7 @@ void CTIMER0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CTIMER1_IRQHandler @ 0800129c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * CTIMER1_IRQHandler @ 0800129c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__CTIMER1_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11856,7 +11856,7 @@ void CTIMER1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * SCT0_IRQHandler @ 080012a4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * SCT0_IRQHandler @ 080012a4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__SCT0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11872,7 +11872,7 @@ void SCT0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CTIMER3_IRQHandler @ 080012ac  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * CTIMER3_IRQHandler @ 080012ac  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__CTIMER3_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11888,7 +11888,7 @@ void CTIMER3_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM1_IRQHandler @ 080012b4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM1_IRQHandler @ 080012b4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM1_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11904,7 +11904,7 @@ void FLEXCOMM1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM2_IRQHandler @ 080012bc  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM2_IRQHandler @ 080012bc  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM2_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11920,7 +11920,7 @@ void FLEXCOMM2_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM3_IRQHandler @ 080012c4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM3_IRQHandler @ 080012c4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM3_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11936,7 +11936,7 @@ void FLEXCOMM3_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM4_IRQHandler @ 080012cc  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM4_IRQHandler @ 080012cc  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM4_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11952,7 +11952,7 @@ void FLEXCOMM4_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM5_IRQHandler @ 080012d4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM5_IRQHandler @ 080012d4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM5_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11968,7 +11968,7 @@ void FLEXCOMM5_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM14_IRQHandler @ 080012dc  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM14_IRQHandler @ 080012dc  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM14_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -11984,7 +11984,7 @@ void FLEXCOMM14_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM15_IRQHandler @ 080012e4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM15_IRQHandler @ 080012e4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM15_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12000,7 +12000,7 @@ void FLEXCOMM15_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * ADC0_IRQHandler @ 080012ec  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * ADC0_IRQHandler @ 080012ec  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12016,7 +12016,7 @@ void ADC0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * Reserved39_IRQHandler @ 080012f4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * Reserved39_IRQHandler @ 080012f4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12032,7 +12032,7 @@ void Reserved39_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * ACMP_IRQHandler @ 080012fc  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * ACMP_IRQHandler @ 080012fc  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12048,7 +12048,7 @@ void ACMP_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * DMIC0_IRQHandler @ 08001304  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * DMIC0_IRQHandler @ 08001304  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__DMIC0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12064,7 +12064,7 @@ void DMIC0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * Reserved42_IRQHandler @ 0800130c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * Reserved42_IRQHandler @ 0800130c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12080,7 +12080,7 @@ void Reserved42_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * HYPERVISOR_IRQHandler @ 08001314  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * HYPERVISOR_IRQHandler @ 08001314  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12096,7 +12096,7 @@ void HYPERVISOR_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * SECUREVIOLATION_IRQHandler @ 0800131c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * SECUREVIOLATION_IRQHandler @ 0800131c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12116,7 +12116,7 @@ void SECUREVIOLATION_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * HWVAD0_IRQHandler @ 08001324  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * HWVAD0_IRQHandler @ 08001324  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__HWVAD0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12132,7 +12132,7 @@ void HWVAD0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * Reserved46_IRQHandler @ 0800132c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * Reserved46_IRQHandler @ 0800132c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12148,7 +12148,7 @@ void Reserved46_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * RNG_IRQHandler @ 08001334  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * RNG_IRQHandler @ 08001334  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12164,7 +12164,7 @@ void RNG_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * RTC_IRQHandler @ 0800133c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * RTC_IRQHandler @ 0800133c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12180,7 +12180,7 @@ void RTC_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * DSPWAKE_IRQHandler @ 08001344  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * DSPWAKE_IRQHandler @ 08001344  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12199,7 +12199,7 @@ void DSPWAKE_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT4_IRQHandler @ 0800134c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT4_IRQHandler @ 0800134c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT4_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12215,7 +12215,7 @@ void PIN_INT4_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT5_IRQHandler @ 08001354  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT5_IRQHandler @ 08001354  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT5_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12231,7 +12231,7 @@ void PIN_INT5_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT6_IRQHandler @ 0800135c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT6_IRQHandler @ 0800135c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT6_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12247,7 +12247,7 @@ void PIN_INT6_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PIN_INT7_IRQHandler @ 08001364  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * PIN_INT7_IRQHandler @ 08001364  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__PIN_INT7_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12263,7 +12263,7 @@ void PIN_INT7_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CTIMER2_IRQHandler @ 0800136c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * CTIMER2_IRQHandler @ 0800136c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__CTIMER2_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12279,7 +12279,7 @@ void CTIMER2_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CTIMER4_IRQHandler @ 08001374  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * CTIMER4_IRQHandler @ 08001374  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__CTIMER4_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12295,7 +12295,7 @@ void CTIMER4_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * OS_EVENT_IRQHandler @ 0800137c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * OS_EVENT_IRQHandler @ 0800137c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__OS_EVENT_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12311,7 +12311,7 @@ void OS_EVENT_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXSPI_IRQHandler @ 08001384  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXSPI_IRQHandler @ 08001384  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXSPI_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12327,7 +12327,7 @@ void FLEXSPI_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM6_IRQHandler @ 0800138c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM6_IRQHandler @ 0800138c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM6_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12343,7 +12343,7 @@ void FLEXCOMM6_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * FLEXCOMM7_IRQHandler @ 08001394  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * FLEXCOMM7_IRQHandler @ 08001394  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__FLEXCOMM7_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12359,7 +12359,7 @@ void FLEXCOMM7_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * USDHC0_IRQHandler @ 0800139c  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * USDHC0_IRQHandler @ 0800139c  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__USDHC0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12375,7 +12375,7 @@ void USDHC0_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * USDHC1_IRQHandler @ 080013a4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * USDHC1_IRQHandler @ 080013a4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__USDHC1_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12391,7 +12391,7 @@ void USDHC1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * SGPIO_INTA_IRQHandler @ 080013ac  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * SGPIO_INTA_IRQHandler @ 080013ac  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12407,7 +12407,7 @@ void SGPIO_INTA_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * SGPIO_INTB_IRQHandler @ 080013b4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * SGPIO_INTB_IRQHandler @ 080013b4  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12423,7 +12423,7 @@ void SGPIO_INTB_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * I3C0_IRQHandler @ 080013bc  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * I3C0_IRQHandler @ 080013bc  (8 bytes, 0 callers, export file 08001222_080013bc.c)
  * Purpose: calls `__I3C0_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12437,9 +12437,8 @@ void I3C0_IRQHandler(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * USB_IRQHandler @ 080013c4  (8 bytes, 0 callers, export file 08001234_080013c4.c)
+ * USB_IRQHandler @ 080013c4  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12456,8 +12455,9 @@ void USB_IRQHandler(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * USB_WAKEUP_IRQHandler @ 080013cc  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * USB_WAKEUP_IRQHandler @ 080013cc  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12476,7 +12476,7 @@ void USB_WAKEUP_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * WDT1_IRQHandler @ 080013d4  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * WDT1_IRQHandler @ 080013d4  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12492,7 +12492,7 @@ void WDT1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * USBPHY_DCD_IRQHandler @ 080013dc  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * USBPHY_DCD_IRQHandler @ 080013dc  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12511,7 +12511,7 @@ void USBPHY_DCD_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * DMA1_IRQHandler @ 080013e4  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * DMA1_IRQHandler @ 080013e4  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `__DMA1_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12527,7 +12527,7 @@ void DMA1_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PUF_IRQHandler @ 080013ec  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * PUF_IRQHandler @ 080013ec  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12543,7 +12543,7 @@ void PUF_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * POWERQUAD_IRQHandler @ 080013f4  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * POWERQUAD_IRQHandler @ 080013f4  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12559,7 +12559,7 @@ void POWERQUAD_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * CASPER_IRQHandler @ 080013fc  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * CASPER_IRQHandler @ 080013fc  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12575,7 +12575,7 @@ void CASPER_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * PMC_PMIC_IRQHandler @ 08001404  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * PMC_PMIC_IRQHandler @ 08001404  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `IntDefaultHandler`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12591,7 +12591,7 @@ void PMC_PMIC_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * HASHCRYPT_IRQHandler @ 0800140c  (8 bytes, 0 callers, export file 080013cc_08001808.c)
+ * HASHCRYPT_IRQHandler @ 0800140c  (8 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: calls `__HASHCRYPT_DriverIRQHandler_veneer`; 8 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12607,7 +12607,7 @@ void HASHCRYPT_IRQHandler(void)
 
 
 /* -----------------------------------------------------------------------------
- * getFFroFreq @ 08001414  (28 bytes, 3 callers, export file 080013cc_08001808.c)
+ * getFFroFreq @ 08001414  (28 bytes, 3 callers, export file 080013c4_08001808.c)
  * Purpose: FFROCTL0 trim range 0 -> 48 MHz, 3 -> 60 MHz, else 0 [fact: 0x08001414]; its 3 callers are the 3 FFRO
  *     cases of SystemCoreClockUpdate; same as static getFFroFreq in mcux-sdk@8a289764
  *     devices/MIMXRT685S/system_MIMXRT685S_cm33.c [inference]
@@ -12640,7 +12640,7 @@ undefined4 getFFroFreq(void)
 
 
 /* -----------------------------------------------------------------------------
- * SystemCoreClockUpdate @ 0800143c  (240 bytes, 0 callers, export file 080013cc_08001808.c)
+ * SystemCoreClockUpdate @ 0800143c  (240 bytes, 0 callers, export file 080013c4_08001808.c)
  * Purpose: flash copy; entry fixed by entries_m33.tsv (T21j), docs/code/ifdsp/m33-platform.md [inference]
  * Tag: [inference]
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12750,7 +12750,7 @@ void SystemCoreClockUpdate(undefined4 param_1,undefined4 param_2,undefined4 para
 
 
 /* -----------------------------------------------------------------------------
- * SystemInit @ 08001540  (128 bytes, 1 callers, export file 080013cc_08001808.c)
+ * SystemInit @ 08001540  (128 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: FPU, DSPSTALL=1, CACHE64
  * Tag: none in the table row
  * Doc: ../../../../docs/code/ifdsp/m33-platform.md
@@ -12798,7 +12798,7 @@ void SystemInit(void)
 
 
 /* -----------------------------------------------------------------------------
- * SystemInitHook @ 080015d4  (2 bytes, 1 callers, export file 080013cc_08001808.c)
+ * SystemInitHook @ 080015d4  (2 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: empty (bx lr) [fact: 0x080015D4]; the last call in SystemInit 0x08001540, as the weak SystemInitHook()
  *     at the end of SystemInit in mcux-sdk@8a289764 system_MIMXRT685S_cm33.c [inference]
  * Tag: [fact] [inference]
@@ -12818,7 +12818,7 @@ void SystemInitHook(void)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM2_DriverIRQHandler_veneer @ 080015d8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM2_DriverIRQHandler_veneer @ 080015d8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083fb9; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12838,7 +12838,7 @@ void __FLEXCOMM2_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __USDHC0_DriverIRQHandler_veneer @ 080015e8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __USDHC0_DriverIRQHandler_veneer @ 080015e8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084905; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12858,7 +12858,7 @@ void __USDHC0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __OS_EVENT_DriverIRQHandler_veneer @ 080015f8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __OS_EVENT_DriverIRQHandler_veneer @ 080015f8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000842d9; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12878,7 +12878,7 @@ void __OS_EVENT_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __CTIMER1_DriverIRQHandler_veneer @ 08001608  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __CTIMER1_DriverIRQHandler_veneer @ 08001608  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00086e93; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12898,7 +12898,7 @@ void __CTIMER1_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ____aeabi_uldivmod_veneer @ 08001618  (10 bytes, 2 callers, export file 080013cc_08001808.c)
+ * ____aeabi_uldivmod_veneer @ 08001618  (10 bytes, 2 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00087757; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12921,7 +12921,7 @@ ulonglong ____aeabi_uldivmod_veneer
 
 
 /* -----------------------------------------------------------------------------
- * __HASHCRYPT_DriverIRQHandler_veneer @ 08001628  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __HASHCRYPT_DriverIRQHandler_veneer @ 08001628  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084229; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12942,7 +12942,7 @@ void __HASHCRYPT_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __USDHC1_DriverIRQHandler_veneer @ 08001638  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __USDHC1_DriverIRQHandler_veneer @ 08001638  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x0008491d; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12962,7 +12962,7 @@ void __USDHC1_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT2_DriverIRQHandler_veneer @ 08001648  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT2_DriverIRQHandler_veneer @ 08001648  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084351; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -12982,7 +12982,7 @@ void __PIN_INT2_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __CTIMER0_DriverIRQHandler_veneer @ 08001658  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __CTIMER0_DriverIRQHandler_veneer @ 08001658  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00086e8d; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13002,7 +13002,7 @@ void __CTIMER0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __UTICK0_DriverIRQHandler_veneer @ 08001668  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __UTICK0_DriverIRQHandler_veneer @ 08001668  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084935; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13022,7 +13022,7 @@ void __UTICK0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT0_DriverIRQHandler_veneer @ 08001678  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT0_DriverIRQHandler_veneer @ 08001678  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000842f1; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13042,7 +13042,7 @@ void __PIN_INT0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __CTIMER4_DriverIRQHandler_veneer @ 08001688  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __CTIMER4_DriverIRQHandler_veneer @ 08001688  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00086ea5; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13062,7 +13062,7 @@ void __CTIMER4_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __DMA0_DriverIRQHandler_veneer @ 08001698  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __DMA0_DriverIRQHandler_veneer @ 08001698  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083e11; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13082,7 +13082,7 @@ void __DMA0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM15_DriverIRQHandler_veneer @ 080016a8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM15_DriverIRQHandler_veneer @ 080016a8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084109; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13102,7 +13102,7 @@ void __FLEXCOMM15_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT5_DriverIRQHandler_veneer @ 080016b8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT5_DriverIRQHandler_veneer @ 080016b8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000843e1; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13122,7 +13122,7 @@ void __PIN_INT5_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __HWVAD0_DriverIRQHandler_veneer @ 080016c8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __HWVAD0_DriverIRQHandler_veneer @ 080016c8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083e39; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13142,7 +13142,7 @@ void __HWVAD0_DriverIRQHandler_veneer(void)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM1_DriverIRQHandler_veneer @ 080016d8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM1_DriverIRQHandler_veneer @ 080016d8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083f89; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13163,7 +13163,7 @@ void __FLEXCOMM1_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM5_DriverIRQHandler_veneer @ 080016e8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM5_DriverIRQHandler_veneer @ 080016e8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084049; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13183,7 +13183,7 @@ void __FLEXCOMM5_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __CTIMER3_DriverIRQHandler_veneer @ 080016f8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __CTIMER3_DriverIRQHandler_veneer @ 080016f8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00086e9f; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13203,7 +13203,7 @@ void __CTIMER3_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM6_DriverIRQHandler_veneer @ 08001708  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM6_DriverIRQHandler_veneer @ 08001708  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084079; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13223,7 +13223,7 @@ void __FLEXCOMM6_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT4_DriverIRQHandler_veneer @ 08001718  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT4_DriverIRQHandler_veneer @ 08001718  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000843b1; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13243,7 +13243,7 @@ void __PIN_INT4_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT3_DriverIRQHandler_veneer @ 08001728  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT3_DriverIRQHandler_veneer @ 08001728  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084381; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13263,7 +13263,7 @@ void __PIN_INT3_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __CTIMER2_DriverIRQHandler_veneer @ 08001738  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __CTIMER2_DriverIRQHandler_veneer @ 08001738  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00086e99; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13283,7 +13283,7 @@ void __CTIMER2_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXSPI_DriverIRQHandler_veneer @ 08001748  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXSPI_DriverIRQHandler_veneer @ 08001748  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084139; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13303,7 +13303,7 @@ void __FLEXSPI_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __DMA1_DriverIRQHandler_veneer @ 08001758  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __DMA1_DriverIRQHandler_veneer @ 08001758  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083e1d; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13323,7 +13323,7 @@ void __DMA1_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM14_DriverIRQHandler_veneer @ 08001768  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM14_DriverIRQHandler_veneer @ 08001768  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000840d9; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13343,7 +13343,7 @@ void __FLEXCOMM14_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM7_DriverIRQHandler_veneer @ 08001778  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM7_DriverIRQHandler_veneer @ 08001778  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000840a9; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13363,7 +13363,7 @@ void __FLEXCOMM7_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT6_DriverIRQHandler_veneer @ 08001788  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT6_DriverIRQHandler_veneer @ 08001788  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084411; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13383,7 +13383,7 @@ void __PIN_INT6_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT1_DriverIRQHandler_veneer @ 08001798  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT1_DriverIRQHandler_veneer @ 08001798  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084321; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13403,7 +13403,7 @@ void __PIN_INT1_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * call_main @ 080017a8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * call_main @ 080017a8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): renamed; push {r0}; ldr
  *     r0,=0x000872af; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13421,7 +13421,7 @@ void call_main(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __DMIC0_DriverIRQHandler_veneer @ 080017b8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __DMIC0_DriverIRQHandler_veneer @ 080017b8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083e29; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13441,7 +13441,7 @@ void __DMIC0_DriverIRQHandler_veneer(void)
 
 
 /* -----------------------------------------------------------------------------
- * __I3C0_DriverIRQHandler_veneer @ 080017c8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __I3C0_DriverIRQHandler_veneer @ 080017c8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084281; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13462,7 +13462,7 @@ void __I3C0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __PIN_INT7_DriverIRQHandler_veneer @ 080017d8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __PIN_INT7_DriverIRQHandler_veneer @ 080017d8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084441; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13482,7 +13482,7 @@ void __PIN_INT7_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM3_DriverIRQHandler_veneer @ 080017e8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM3_DriverIRQHandler_veneer @ 080017e8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00083fe9; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13502,7 +13502,7 @@ void __FLEXCOMM3_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __SCT0_DriverIRQHandler_veneer @ 080017f8  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __SCT0_DriverIRQHandler_veneer @ 080017f8  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x000848e5; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]
@@ -13522,7 +13522,7 @@ void __SCT0_DriverIRQHandler_veneer(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __FLEXCOMM4_DriverIRQHandler_veneer @ 08001808  (10 bytes, 1 callers, export file 080013cc_08001808.c)
+ * __FLEXCOMM4_DriverIRQHandler_veneer @ 08001808  (10 bytes, 1 callers, export file 080013c4_08001808.c)
  * Purpose: GNU ld - library function, matched by veneer_pattern (score 1.000, T23d): new; push {r0}; ldr
  *     r0,=0x00084019; mov ip,r0; pop {r0}; bx ip [inference]
  * Tag: [inference]

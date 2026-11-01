@@ -3630,14 +3630,14 @@ undefined4 sdhi_read_block(undefined1 *param_1)
   if (((uint)param_1 & 0x1f) != 0) {
     puVar3 = &DAT_2091cec0;
   }
-  dcache_clean_invalidate_range(puVar3,0x200);
+  dcache_invalidate_range(puVar3,0x200);
                     /* DMAC channel 0 for one 512-byte block [doc] */
   sdhi_dma_read_start(puVar3,&SDHI_SD_CMD_0);
                     /* itron_twai_flg on 0x20808B74 for ms/10 ticks [doc] */
   iVar1 = sdhi_flag_wait(4,500);
                     /* Polls DMAC channel 0 CHSTAT until idle [doc] */
   sdhi_dma_read_wait();
-  dcache_clean_invalidate_range(puVar3,0x200);
+  dcache_invalidate_range(puVar3,0x200);
   if (iVar1 == 0) {
     if (((uint)param_1 & 0x1f) != 0) {
       iVar1 = 0x1ff;

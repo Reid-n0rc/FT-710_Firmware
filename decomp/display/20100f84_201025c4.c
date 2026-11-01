@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_20100f84 @ 20100f84 (84 bytes)
+// ===== icache_invalidate_range @ 20100f84 (84 bytes)
 
-void FUN_20100f84(uint param_1,int param_2)
+/* (addr, size): ICIMVAU per cache line over the range, or ICIALLU when addr or size is 0; then
+   BPIALL [fact for the CP15 operations; name: inference] (T24 round 3) */
+
+void icache_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -29,12 +32,13 @@ void FUN_20100f84(uint param_1,int param_2)
 }
 
 
-// ===== dcache_invalidate_range @ 20100fd8 (68 bytes)
+// ===== dcache_clean_invalidate_range @ 20100fd8 (68 bytes)
 
-/* (addr, size): DCIMVAC per cache line over the range, or the whole cache (dcache_setway_all(2))
-   when addr or size is 0 [fact] */
+/* (addr, size): DCCIMVAC (mcr c7,c14,1) per cache line over the range, or clean and invalidate the
+   whole cache by set/way (dcache_setway_all(2)) when addr or size is 0 [fact]. Was
+   dcache_invalidate_range (T24 round 3: the CP15 operation is clean and invalidate) */
 
-uint dcache_invalidate_range(uint param_1,int param_2)
+uint dcache_clean_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -57,11 +61,12 @@ uint dcache_invalidate_range(uint param_1,int param_2)
 }
 
 
-// ===== dcache_invalidate_all @ 2010101c (20 bytes)
+// ===== dcache_clean_invalidate_all @ 2010101c (20 bytes)
 
-/* dcache_setway_all(2) (invalidate by set/way) [fact] */
+/* dcache_setway_all(2): clean and invalidate by set/way (DCCISW) [fact]. Was dcache_invalidate_all
+   (T24 round 3) */
 
-undefined4 dcache_invalidate_all(undefined4 param_1)
+undefined4 dcache_clean_invalidate_all(undefined4 param_1)
 
 {
   dcache_setway_all(2);
@@ -97,12 +102,14 @@ uint dcache_clean_range(uint param_1,int param_2)
 }
 
 
-// ===== dcache_clean_invalidate_range @ 20101088 (88 bytes)
+// ===== dcache_invalidate_range @ 20101088 (88 bytes)
 
-/* (addr, size): DCCIMVAC per cache line over the range; Reset_Handler, task_audio_codec and
-   sdhi_read_block use it [fact] */
+/* (addr, size): DCIMVAC (mcr c7,c6,1) per cache line over the range, or invalidate the whole cache
+   by set/way (dcache_setway_all(0)) when addr or size is 0; Reset_Handler, task_audio_codec and
+   sdhi_read_block use it [fact]. Was dcache_clean_invalidate_range (T24 round 3: the CP15 operation
+   is invalidate) */
 
-uint dcache_clean_invalidate_range(uint param_1,int param_2)
+uint dcache_invalidate_range(uint param_1,int param_2)
 
 {
   int iVar1;
@@ -127,8 +134,10 @@ uint dcache_clean_invalidate_range(uint param_1,int param_2)
 
 // ===== dcache_setway_all @ 201010e0 (164 bytes)
 
-/* (op): walks every set and way of the data cache levels in CLIDR: op 0 clean and invalidate
-   (DCCISW), 1 clean (DCCSW), 2 invalidate (DCISW) [fact for the CP15 operations] */
+/* (op): walks every set and way of the data and unified cache levels in CLIDR up to the level of
+   coherence: op 0 (and below) invalidate (DCISW), 1 clean (DCCSW), 2 (and above) clean and
+   invalidate (DCCISW) [fact: cmp op, #1; mcrlt c7,c6,2 / mcreq c7,c10,2 / mcrgt c7,c14,2] (T24
+   round 3: 0 and 2 were the other way round) */
 
 longlong dcache_setway_all(int param_1,uint param_2)
 
