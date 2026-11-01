@@ -41,6 +41,11 @@ original addresses. What the code does: [docs/code/main/](../../docs/code/main/R
 | `app/fpu_conv.h` | `ftou()` (CC-RX's FTOU, which GCC for RX has not) and a bit-level `is_nan()` (GCC tests float compares with S alone, so a NaN passes `a >= b`) (round 5) |
 | `app/keys.c` | `ladder_key_task`, the remote-keypad dispatch over three action tables (round 5) |
 | `app/main_loop.c` | `main_loop`, the 16 tasks for ever; checked for one pass (round 5) |
+| `bsp/r_bsp_sys.c` | the FIT BSP (UI track): `R_BSP_SoftwareLock`/`HardwareLock` and unlocks, `R_BSP_InterruptsEnable/Disable`, `R_BSP_CpuInterruptLevelRead/Write`, `R_BSP_RegisterProtectEnable/Disable`, `R_BSP_SoftwareDelay`, `R_BSP_InterruptWrite/Read/Control`, `bsp_fit_interrupts_control`, `bsp_interrupt_group_enable_disable`, `bsp_interrupt_enable_disable`, the exception vectors and SWINT ISRs, the software-interrupt queue (`R_BSP_SoftwareInterrupt*`, `bsp_swint_*`), the clocks (`get_iclk_freq_hz`, `mcu_clock_setup`, `clock_source_select`), `bsp_non_existent_port_init`, the CC-RX setters (byte-identical) |
+| `app/meters.c` | VDD, IDD, ALC, PO, COMP and S meters, their 16-sample averages and getters, `meter_task`, `adc_scan_blocking`, `vdd_scale_calc`, `remote_keypad_scan` (UI track) |
+| `app/ui_dial.c`, `app/ui_beep.c` | `dial_step_hz`, `dial_step_mode_hz`, `ch_step_hz`, `ch_step_scale`; `beep_request`, `beep_stop`, `beep_pattern_get`, `tone_idle`, `tone_set` (UI track) |
+| `app/ui_funcknob.c`, `app/ui_keys.c`, `app/ui_kbd.c` | the FUNC-knob pop-up entries and steps (`funcknob_*`); `key_class_of`, `key_assign_slot`, `key_call_*`, `key_slot_*`, `key_nop`, `key_task_init`, the CONTOUR / APF reset keys; the frame-0x50 keyboard builders `dl50_*`, `kbd_fmt_char_pos`, `kbd_copy_text` (UI track) |
+| `include/ui.h` | the image's functions the UI-track files call (kept apart from main.h) |
 | `include/main.h`, `include/main_ram.h`, `include/r_cg_sci.h`, `include/cat_cmds.h` | the image's functions the recreated code calls, its RAM variables, the SCI prototypes, the CAT handler prototypes |
 | `data_symbols.tsv` | RAM variables used by the recreated code → original address, with evidence |
 | `aliases.tsv` | recreated functions whose name is not the Ghidra name (none yet) |

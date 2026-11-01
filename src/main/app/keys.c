@@ -72,7 +72,7 @@ static void remote_key_changed(uint8_t last, uint8_t key)
 
 /* ladder_key_task 0xFFFE3E2A: main-loop task 8, nothing while a dialog is shown. A held code that stays repeats its
  * action; a change stops the CW spot tone, or goes to the numeric entry, or (unless the mode locks refuse keys 1..6,
- * key_event_filter) runs the change's action and remembers the new code (remote_key_last 0x1B554). Then the message
+ * key_event_filter) runs the change's action and remembers the new code (ladder_key_last 0x1B554). Then the message
  * send's wait ends when soft timer 0x37 expires. */
 void ladder_key_task(void)
 {
@@ -82,7 +82,7 @@ void ladder_key_task(void)
     if (ui->dialog_shown == 1)
         return;
     key = remote_key_get();
-    if (remote_key_last == key) {
+    if (ladder_key_last == key) {
         if (key == KEY_HELD(10))
             FUN_fffe4da3();
         else if (key == KEY_HELD(8))
@@ -100,14 +100,14 @@ void ladder_key_task(void)
         }
         if (ui->numentry_mode == 1) {
             FUN_fffe56e4();
-            remote_key_last = key;
+            ladder_key_last = key;
             return;
         }
         if (key >= 1 && key <= 6 && key_event_filter((uint16_t)(key + KEY_FILTER_BASE), 1) == 0)
             return;
-        remote_key_changed(remote_key_last, key);
+        remote_key_changed(ladder_key_last, key);
         ladder_delay_armed = 0;             /* ladder_key_delay starts again */
-        remote_key_last = key;
+        ladder_key_last = key;
     }
     if (ui->msg_tx_wait == 1 && swtimer_expired(TMR_MSG_TX_WAIT) == 1) {
         ui->msg_tx_wait = 0;

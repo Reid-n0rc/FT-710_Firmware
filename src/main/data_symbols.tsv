@@ -158,23 +158,67 @@ beep_pattern	12041	beep_request 0xFFFB2DE5 stores the pattern; beep_task 0xFFFB2
 beep_step	1b3e2	beep_task: cleared on start (0xFFFB28F9), compared and incremented in each pattern (0xFFFB2942..0xFFFB295E)
 beep_last_pattern	1b3e3	beep_task: = beep_pattern after each pass; the RTTY cases compare it with 9, 10, 11
 beep_cw_freq	25d40	beep_task 0xFFFB2A3D..0xFFFB2A50: FCMP with and store of the CW pitch tone (float)
-tone_table	1ff1c	tone_set 0xFFFB2E85 passes it to tone_play with 36; tone_idle 0xFFFB2E11 writes its first word to DA0
 vdd_scale	20fc0	meter_vdd 0xFFFB7493: FMUL by the float at 0x20FC0 after vdd_scale_calc
 meter_vdd_val	12043	meter_vdd 0xFFFB74B1: the smoothed supply meter byte
 swr_good_count	1b4c6	swr_meter_protect 0xFFFB7621..0xFFFB7637: passes inside [1, 5), cleared by a bad one
 swr_bad_count	1b4c7	swr_meter_protect 0xFFFB75DC..0xFFFB75F2: passes outside [1, 5), cleared by a good one
-swr_value	20fc4	swr_meter_protect 0xFFFB76B6: the SWR (float) after the pinning
-meter_swr_pos	12047	swr_meter_protect 0xFFFB7760: the SWR meter position before smoothing
 meter_swr_val	12046	swr_meter_protect 0xFFFB776E: FUN_fffb9422 of the position
 meter_po_val	12048	meter_po 0xFFFB7865: FUN_fffb94f9 of the PO position
 meter_comp_val	12049	meter_comp 0xFFFB7954: the COMP meter position
 meter_s_val	1204a	meter_s 0xFFFB7A26 / 0xFFFB7A3A: 0 in TX, else FUN_fffb959c of the S position
 fm_sql_last_mode	1b4cb	fm_noise_squelch 0xFFFB7D42 / 0xFFFB7D5A: the mode of the last pass, while FM
-po_meter_curve	fff88c74	meter_po 0xFFFB77FE..0xFFFB7827: 8 rows of {bound, slope, offset} floats
-s_meter_curve	fff88bfc	meter_s 0xFFFB7988..0xFFFB79D0: 10 rows of {slope, offset, bound} floats
 tx_row_ptrs	fff8861c	sdr_upd_r25_tx_drive 0xFFFA2A38..0xFFFA2A40: MOV.L [band, 0xFFF8861C], the TX row pointer (names_main.tsv @tx_row_ptrs)
 dl_hello_req	1b3d0	displink_tx_schedule 0xFFF95F5A: 1 sends the 0x60 hello reply first; power_on_request sets it (README.md "Power-on")
-remote_key_last	1b554	ladder_key_task 0xFFFE3E3E..: compared with remote_key_get, stored after each change
+ladder_key_last	1b554	ladder_key_task 0xFFFE3E3E..: compared with remote_key_get, stored after each change
 ladder_delay_armed	18871	ladder_key_delay 0xFFFE419A: 0 -> 1 with soft timer 0x38 = 200, back to 0 when it expires; ladder_key_task clears it on a change
 g_ui_ptr4	25d78	ladder_key_task 0xFFFE3E2A: a fourth pointer to the UI state (= 0x20B04, structs_main.h PTR_DAT_00025d78)
 dl_hello_text	199f	displink_rx_F0_hello 0xFFF95470..0xFFF95490: 8 words cleared, then the version and the date text built byte by byte
+g_bsp_protect_counters	1b5fc	R_BSP_RegisterProtectDisable 0xFFF8FED1 indexes 0x1B5FC by the region (16-bit counters); FUN_fff8ff3d clears four
+g_bsp_locks	1ffc4	R_BSP_HardwareLock 0xFFF90874 passes 0x1FFC4 + id * 4 to R_BSP_SoftwareLock; bsp_callbacks_clear clears 0x74 words
+g_bsp_vectors	20194	R_BSP_InterruptControl 0xFFF90097 calls the word 0x20194 + vector * 4; bsp_interrupt_open fills 0x5F words
+g_bsp_swint_access_ctrl	20310	bsp_swint_get_access_control 0xFFF9105F exchanges the word 0x20310 + unit * 4
+g_bsp_swint_task	20318	R_BSP_SoftwareInterruptSetTask 0xFFF90B35: 0x20318 + unit * 0x6C + slot * 0xC
+g_bsp_swint_task_num	142c	R_BSP_SoftwareInterruptSetTask 0xFFF90ADA compares 0x142C[unit] with 8
+g_bsp_swint_buf_top	142e	R_BSP_SoftwareInterruptSetTask 0xFFF90AEF advances 0x142E[unit]
+g_bsp_swint_buf_bottom	1430	bsp_swint_execute_task 0xFFF910FC advances 0x1430[unit]
+g_bsp_swint_nested	1432	bsp_swint_execute_task 0xFFF910DF tests 0x1432[unit] == 1
+bsp_prcr_masks	fff87ed0	R_BSP_RegisterProtectDisable 0xFFF8FEEB loads the PRCR bit of the region from 0xFFF87ED0 (u16 1, 2, 8)
+bsp_hoco_freqs	fff8f30c	get_iclk_freq_hz 0xFFF91306 copies three words from 0xFFF8F30C (16, 18, 20 MHz)
+bsp_swint_dummy_task	fff910bc	R_BSP_SoftwareInterruptOpen stores 0xFFF910BC as the task of a free slot (code: SUB #4,SP; MOV.L R1,[SP]; NOP; RTSD #4)
+meter_idd_val	12044	meter_idd 0xFFFB74FB; meter_get_idd 0xFFFB6E14
+meter_alc_val	12045	meter_alc 0xFFFB7541; meter_get_alc 0xFFFB6E23
+meter_swr_raw_val	12047	meter_get_swr_raw 0xFFFB6E41
+meter_po_peak	1204b	FUN_fffb94f9 stores the highest PO sample; meter_get_po 0xFFFB6E87 (METER DETECTOR 1)
+remote_key	1204c	remote_keypad_scan 0xFFFB7AD4 / 0xFFFB7AFC; remote_key_get 0xFFFB6EB8
+meter_swr_f	20fc4	FUN_fffb6e4e 0xFFFB6E50 loads the word
+meter_swr_avg_f	20fc8	FUN_fffb948b stores the ring sum / 16; FUN_fffb6e5c 0xFFFB6E5E loads it
+remote_key_count	1b4c8	remote_keypad_scan 0xFFFB7AC2 / 0xFFFB7B33
+remote_key_last	1b4c9	remote_keypad_scan 0xFFFB7A90 / 0xFFFB7AA4
+meter_ring_vdd	12052	FUN_fffb92e7: 16 samples at 0x12052, index 0x12062
+meter_ring_idd	12063	FUN_fffb9350: 16 samples at 0x12063, index 0x12073
+meter_ring_alc	12074	FUN_fffb93b9: 16 samples at 0x12074, index 0x12084
+meter_ring_swr	12085	FUN_fffb9422: 16 samples at 0x12085, index 0x12095
+meter_ring_swr_f_idx	12096	FUN_fffb948b 0xFFFB948F
+meter_ring_swr_f	20fd0	FUN_fffb948b stores the float sample at 0x20FD0 + index * 4
+meter_ring_po	12097	FUN_fffb94f9: 16 samples at 0x12097, index 0x120A7
+meter_ring_s	120a8	FUN_fffb959c: 16 samples at 0x120A8, index 0x120B8
+meter_po_curve	fff88c74	meter_po 0xFFFB77FE: 8 x {watts_min, slope, offset} floats
+meter_s_curve	fff88bfc	meter_s 0xFFFB7988: 10 x {slope, offset, level_max} floats
+remote_key_windows	fff815ab	remote_keypad_scan 0xFFFB7A5A: 12 x {low, high} A/D bytes
+g_ui_ptr_d58	25d58	dial_step_hz 0xFFFC6195: mov.l [0x25D58], then 1045[r14] (a pointer to the UI state = 0x20B04, structs_main.h PTR_DAT_00025d58)
+ch_step_x10_inhibit	1b4e5	FUN_fffc648c 0xFFFC649E: with FAST, 1 here leaves the channel step as it is
+ch_step_x10_skipped	1b4e6	FUN_fffc648c 0xFFFC64AA sets it to 1 instead of multiplying
+ch_step_table	fff88514	ch_step_hz 0xFFFC642A: u16 step by CH STEP (EX030503)
+am_ch_step_table	fff8851c	ch_step_hz 0xFFFC6450: u16 step by AM CH STEP (EX030504)
+fm_ch_step_table	fff88528	ch_step_hz 0xFFFC6476: u16 step by FM CH STEP (EX030505)
+tone_idle_level	1ff1c	tone_idle 0xFFFB2E11 writes the u16 at 0x1FF1C to DA0; tone_set passes 0x1FF1C to tone_play
+key_class_table	fff83164	key_class_of 0xFFFBC1E4: class byte per key code (ui-keys.md)
+key_slot_class_table	fff834b6	key_class_of 0xFFFBC20D: byte at 0xFFF834C3 + slot - 13 = 0xFFF834B6 + slot, the class of slots 13..20
+key_assign_codes	fff88534	key_class_of 0xFFFBC1F7 / key_slot_press 0xFFFC40E1: u16 key code of slots 0..12
+key_press_table	fff89d94	key_call_press 0xFFFBC37F: JSR through the u32 handler of the code
+key_short_table	fff8ab10	key_call_short 0xFFFBC3AE
+key_long_table	fff8b88c	key_call_long 0xFFFBC3F7
+key_repeat_table	fff8c608	key_call_repeat 0xFFFBC426
+key_release_table	fff8d384	key_call_release 0xFFFBC455
+key_slot_tables	fff8e100	key_slot_press 0xFFFC40F9: 0xFFF8E100 + slot * 4 - 52; five 8-entry tables 0x20 apart (ui-keys.md)
+key_code	1fa40	key_call_press 0xFFFBC361 loads the u16 code

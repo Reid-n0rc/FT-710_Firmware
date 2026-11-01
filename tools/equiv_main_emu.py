@@ -1037,6 +1037,106 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'strncmp': strncmp_args, 'sbrk': sbrk_args, 'heap_getmem': sbrk_args, 'sci5_rx_byte_hook': sci5_hook_args}
 
 
+# --- T24 MAIN UI track (BSP, front-panel input, meters, dial steps, beep): presets of the functions in
+# src/main/bsp/r_bsp_sys.c, src/main/app/ui_*.c, meters.c ---
+
+SWINT_TASKS, SWINT_NUM, SWINT_TOP, SWINT_BOTTOM = 0x20318, 0x142C, 0x142E, 0x1430   # src/main/data_symbols.tsv
+SWINT_ACCESS, SWINT_DUMMY = 0x20310, 0xFFF910BC
+
+
+def swint_state(rng, unit):
+    """A software-interrupt unit with its access word free (1) most of the time, a few queued slots in every status
+    and the image's dummy task as the task (a random task address would run anywhere)."""
+    loads = [(SWINT_ACCESS + 4 * unit, (1 if rng.random() < 0.85 else 0).to_bytes(4, 'little'))]
+    slots = b''.join(rng.choice([0, 1, 1, 2, 3]).to_bytes(4, 'little') + SWINT_DUMMY.to_bytes(4, 'little') +
+                     rng.getrandbits(32).to_bytes(4, 'little') for _ in range(9))
+    loads.append((SWINT_TASKS + 0x6C * unit, slots))
+    loads += [(SWINT_NUM + unit, bytes([rng.choice([0, 1, 3, 7, 8, 9])])),
+              (SWINT_TOP + unit, bytes([rng.randrange(10)])), (SWINT_BOTTOM + unit, bytes([rng.randrange(10)]))]
+    return loads
+
+
+def swint_unit_args(cmds=None):
+    """(unit 0/1 or a bad one, [cmd], arg): the unit's state, arg a buffer whose first byte is a slot / level."""
+    def pre(rng, regs):
+        unit = rng.choice([0, 1, 0, 1, 2, 0xFFFFFFFF])
+        regs[0] = unit
+        k = 1
+        if cmds is not None:
+            regs[1] = rng.choice(cmds)
+            k = 2
+        if len(regs) > k:
+            regs[k] = ARGBUF + 0x800 * k
+        loads = swint_state(rng, unit if unit in (0, 1) else 0)
+        if len(regs) > k:
+            loads.append((ARGBUF + 0x800 * k, bytes([rng.choice([0, 1, 5, 8, 9, 15, 16, 0xFF])]) +
+                          bytes(rng.getrandbits(8) for _ in range(0x80))))
+        return loads, None
+    return pre
+
+
+def bsp_group_args(rng, regs):
+    """bsp_interrupt_group_enable_disable (vector, enable, ipl): vectors at the ends of the six group ranges and
+    outside them, enable 0/1, ipl 0..16."""
+    regs[0] = rng.choice([0x10, 0x11, 0x12, 0x13, 0x14, 0x30, 0x31, 0x32, 0x49, 0x4A, 0x4B, 0x4C, 0x4D, 0x56, 0x57,
+                          0x58, 0x5C, 0x5D, rng.randrange(0x60)])
+    regs[1] = rng.choice([0, 1, 1, 2])
+    regs[2] = rng.choice([0, 1, 5, 14, 15, 16, rng.randrange(16)])
+    return [], None
+
+
+def bsp_region_args(rng, regs):
+    """R_BSP_RegisterProtect* (region): the four regions (and one past), counters around 0 / 1."""
+    regs[0] = rng.choice([0, 1, 2, 3, 3, 4])
+    return [(0x1B5FC, b''.join(rng.choice([0, 0, 1, 2]).to_bytes(2, 'little') for _ in range(5)))], None
+
+
+def bsp_fit_args(rng, regs):
+    """bsp_fit_interrupts_control (enable, *ipl): a buffer holding a level 0..16."""
+    regs[0] = rng.choice([0, 1, 2])
+    regs[1] = rng.choice([ARGBUF + 0x800, ARGBUF + 0x800, 0, 0x10000000])
+    return [(ARGBUF + 0x800, rng.choice([0, 3, 14, 15, 16]).to_bytes(4, 'little'))], None
+
+
+UI_PRESETS = {
+    'bsp_interrupt_group_enable_disable': bsp_group_args,
+    'R_BSP_RegisterProtectEnable': bsp_region_args, 'R_BSP_RegisterProtectDisable': bsp_region_args,
+    'bsp_fit_interrupts_control': bsp_fit_args,
+    'bsp_swint_clear_task': swint_unit_args(), 'bsp_swint_clear_all_task': swint_unit_args(),
+    'bsp_swint_execute_task': swint_unit_args(), 'R_BSP_SoftwareInterruptSetTask': swint_unit_args(),
+    'R_BSP_SoftwareInterruptControl': swint_unit_args(list(range(14))),
+    'bsp_swint_set_interrupt_priority': swint_unit_args(),
+    # dial steps (src/main/app/ui_dial.c): the request flags of g_ui through the pointer 0x25D58, FINE / FAST, the
+    # DIAL STEP menu values, the mode nibble of both VFO records
+    'dial_step_hz': both(lambda rng, regs: ([(0x25D58, G_UI.to_bytes(4, 'little'))], None),
+                         ram_bytes({G_UI + 0x415: (0, 0, 0, 1), G_UI + 0x416: (0, 1), G_UI + 0x418: (0, 0, 1),
+                                    G_UI + 0x46A: (0, 0, 0, 1), G_UI + 0x46B: (0, 0, 1), G_UI + 0x46D: (0, 1),
+                                    G_UI + 0x478: (0, 1), G_UI + 0x479: (0, 1), G_OP + 0x237: (0, 1, 2),
+                                    0x9D09: range(16), 0x9D63: range(16)})),
+    'dial_step_mode_hz': ram_bytes({G_OP + 0x237: (0, 1, 2, 3), G_OP + 0xCF: (0, 1, 2, 3), G_OP + 0xD0: (0, 1, 2, 3)}),
+    'ch_step_scale': ram_bytes({G_OP + 0x237: (0, 1, 2, 2), 0x1B4E5: (0, 1)}),
+    # key tables (src/main/app/ui_keys.c): the microphone assignments 0..20 and a key code inside the 863-entry
+    # tables (a random code read a word past the table that pointed at Undefined_0xD8, whose RTE pops the caller's
+    # frame: trial 89 of key_call_press)
+    'key_assign_slot': lambda rng, regs: (regs.__setitem__(0, rng.choice([0x348, 0x34E, 0x35B, 0x35C, 0x35D, 0x35E,
+                                                                           rng.randrange(0x35F)])) or [], None),
+}
+for _n in ('key_call_press', 'key_call_short', 'key_call_long', 'key_call_repeat', 'key_call_release'):
+    UI_PRESETS[_n] = lambda rng, regs: ([(0x1FA40, rng.choice([0x300, 0x30F, 0x312, rng.randrange(0x35F)]).to_bytes(2, 'little'))], None)
+# the frame-0x50 keyboard builders (src/main/app/ui_kbd.c) read g_ui through 0x25D38
+for _n in ('dl50_mycall', 'dl50_memory_name', 'dl50_cw_text', 'dl50_rtty_text', 'dl50_psk_text', 'dl50_file_name',
+           'dl50_preset_name', 'kbd_fmt_char_pos', 'dl50_slot_label', 'dl50_msg_text'):
+    UI_PRESETS[_n] = g_ui_ptr_ok(ram_bytes({G_UI + 0xC0: (0, 1, 2, 3), G_UI + 0xC1: range(50), G_UI + 0xBF: range(5),
+                                            G_UI + 0x1BC: (0, 0, 1)}))
+UI_PRESETS['kbd_copy_text'] = g_ui_ptr_ok(both(real_buffer(0), real_buffer(1)))
+UI_PRESETS['key_class_of'] = both(UI_PRESETS['key_assign_slot'],
+                                  ram_bytes({G_OP + 0x9E + k: list(range(21)) for k in range(6)}))
+PRESETS.update(UI_PRESETS)
+# adc_scan_blocking polls adc_scan_done, which waits on the S12AD scan-end flag; with random peripheral reads both runs
+# ran out of budget in every trial, so the two drivers are stubbed (their calls are compared)
+FUNC_STUBS.update({'adc_scan_blocking': {'adc_scan_start': (0, [0]), 'adc_scan_done': (0, [0, 0, 1])}})
+
+
 def norm_stack_ptrs(a, h):
     """A changed-RAM run [addr, hex] with each STACK_PTR_SLOTS word that holds a stack address replaced by a
     marker."""

@@ -1287,9 +1287,11 @@ void beep_stop(void)
 }
 
 
-// ===== FUN_fffb2dfe @ fffb2dfe (15 bytes)
+// ===== beep_pattern_get @ fffb2dfe (15 bytes)
 
-byte FUN_fffb2dfe(void)
+/* Returns the beep pattern 0x12041 [fact: fffb2dfe] */
+
+byte beep_pattern_get(void)
 
 {
   return DAT_00012041;

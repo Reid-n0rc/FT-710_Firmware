@@ -1,8 +1,10 @@
 // FT-710_MAIN_V0112.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_fffb9422 @ fffb9422 (105 bytes)
+// ===== meter_avg_swr @ fffb9422 (105 bytes)
 
-undefined1 FUN_fffb9422(undefined1 param_1)
+/* (v): the same for SWR (ring 0x12085; swr_meter_protect) [fact: fffb9422] */
+
+undefined1 meter_avg_swr(undefined1 param_1)
 
 {
   byte i;
@@ -21,9 +23,11 @@ undefined1 FUN_fffb9422(undefined1 param_1)
 }
 
 
-// ===== FUN_fffb948b @ fffb948b (110 bytes)
+// ===== meter_avg_swr_f @ fffb948b (110 bytes)
 
-void FUN_fffb948b(undefined4 param_1)
+/* (swr): float ring 0x20FD0, 0x20FC8 = sum / 16 [fact: fffb948b] */
+
+void meter_avg_swr_f(undefined4 param_1)
 
 {
   byte i;
@@ -43,9 +47,11 @@ void FUN_fffb948b(undefined4 param_1)
 }
 
 
-// ===== FUN_fffb94f9 @ fffb94f9 (163 bytes)
+// ===== meter_avg_po @ fffb94f9 (163 bytes)
 
-undefined1 FUN_fffb94f9(undefined1 param_1)
+/* (v): PO average (ring 0x12097) and the peak of the ring into 0x1204B [fact: fffb94f9] */
+
+undefined1 meter_avg_po(undefined1 param_1)
 
 {
   byte local_5;
@@ -70,9 +76,11 @@ undefined1 FUN_fffb94f9(undefined1 param_1)
 }
 
 
-// ===== FUN_fffb959c @ fffb959c (105 bytes)
+// ===== meter_avg_s @ fffb959c (105 bytes)
 
-undefined1 FUN_fffb959c(undefined1 param_1)
+/* (v): the same for S (ring 0x120A8) [fact: fffb959c] */
+
+undefined1 meter_avg_s(undefined1 param_1)
 
 {
   byte i;
@@ -506,7 +514,7 @@ void keyer_task(void)
       keyer_has_number = 0;
       return;
     }
-    bVar3 = FUN_fffb2dfe();
+    bVar3 = beep_pattern_get();
     if (bVar3 == 1) {
       return;
     }
@@ -2734,7 +2742,7 @@ byte key_class_of(ushort param_1)
     uVar1 = (uint)key_assign_slot_ret;
     if (uVar1 < 0xd) {
       bStack_5 = *(byte *)((int)&key_class_table +
-                          (uint)*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20));
+                          (uint)*(ushort *)(ch_step_table + uVar1 * 2 + 0x20));
     }
     else {
       bStack_5 = BYTE_ARRAY_fff834b3[uVar1 + 3];

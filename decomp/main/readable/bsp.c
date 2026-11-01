@@ -348,7 +348,7 @@ void R_BSP_RegisterProtectEnable(int param_1)
     else {
                     /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
-      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2);
+      SYSTEM_PRCR = (system_prcr | 0xa500) & ~*(ushort *)((int)&bsp_prcr_masks + local_4 * 2);
     }
   }
   R_BSP_InterruptControl(0x5e,5,auStack_8);
@@ -391,7 +391,7 @@ void R_BSP_RegisterProtectDisable(int param_1)
     else {
                     /* Protect [sfr] */
       system_prcr = SYSTEM_PRCR;
-      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&PTR_DAT_fff87ed0 + local_4 * 2) | 0xa500;
+      SYSTEM_PRCR = system_prcr | *(ushort *)((int)&bsp_prcr_masks + local_4 * 2) | 0xa500;
     }
   }
   *(short *)(&DAT_0001b5fc + local_4 * 2) = *(short *)(&DAT_0001b5fc + local_4 * 2) + 1;
@@ -1093,7 +1093,7 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
       (&DAT_00001432)[local_4] = 1;
       for (bStack_11 = 0; bStack_11 < 9; bStack_11 = bStack_11 + 1) {
         *(undefined4 *)(&DAT_00020318 + (uint)bStack_11 * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x20320) = 0x10000000;
       }
       (&DAT_0000142e)[local_4] = 0;
@@ -1131,7 +1131,7 @@ void R_BSP_SoftwareInterruptClose(int param_1)
     R_BSP_SoftwareInterruptControl(param_1,5,(char *)0x10000000);
     for (i = 0; i < 9; i = i + 1) {
       *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &bsp_swint_dummy_task;
       *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
@@ -1504,7 +1504,7 @@ uint bsp_swint_clear_task(int param_1,byte *param_2)
       }
       else {
         *(undefined4 *)(&DAT_00020318 + (uint)*local_8 * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x20320) = 0x10000000;
         uStack_10 = 0;
       }
@@ -1557,7 +1557,7 @@ uint bsp_swint_clear_all_task(int param_1)
     if (uStack_c == 0) {
       for (bStack_d = 0; bStack_d < 9; bStack_d = bStack_d + 1) {
         *(undefined4 *)(&DAT_00020318 + (uint)bStack_d * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x20320) = 0x10000000;
       }
       (&DAT_0000142e)[local_4] = 0;
@@ -1749,7 +1749,7 @@ void bsp_swint_execute_task(int param_1)
                     /* Exchanges back into 0x20310[unit] [doc] */
     bsp_swint_release_access_control(local_4,&local_8);
     if ((&DAT_00001432)[local_4] == '\x01') {
-      FUN_fff8fd84();
+      R_BSP_InterruptsEnable();
     }
     local_8 = 0;
     bsp_swint_get_access_control(local_4,&local_8);

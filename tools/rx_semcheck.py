@@ -706,6 +706,8 @@ GCC_FORMS = [
     # T24 MAIN round 5 (meters.c, the GCC objects): MIN #imm (GCC's clamp to 255), MIN/MAX Rs, SCGE.L
     "min #255, {a}", "min #{n}, {a}", "min #-{n}, {a}", "min #0x1234, {a}", "min {a}, {b}", "max {a}, {b}",
     "max #{n}, {a}", "scge.l {a}", "sclt.l {a}",
+    "min [{a}].l, {b}", "max [{a}].l, {b}", "min 4[{a}].l, {b}", "max 8[{a}].w, {b}", "min [{a}].b, {b}",
+    "max 2[{a}].uw, {b}", "min 3[{a}].ub, {b}", "max [{a}].ub, {b}", "max #-{n}, {a}", "max #0x1234, {a}",
 ]
 
 

@@ -1,18 +1,16 @@
 /* Beeps and side tones of the MAIN image (T24 MAIN round 5; docs/code/main/peripherals.md "DA tone"): beep_task, the
- * main-loop task that plays a requested pattern of tones on soft timer 0x16, its request / stop / query calls, and
- * tone_set, which sets the TPU1 period for a 36-sample tone table played into DA0. The tone frequencies are the
+ * main-loop task that plays a requested pattern of tones on soft timer 0x16 (beep_request, beep_stop, tone_set and
+ * tone_idle are in ui_beep.c, UI track). The tone frequencies are the
  * image's float constants (each decimal below rounds to the bits at the cited instruction). */
 #include "main.h"
 #include "main_ram.h"
 #include "ft710_state.h"
 #include "iodefine.h"
 
-void tone_play(const uint16_t *table, uint16_t n);
-void tone_stop(void);
-void dac0_write(uint16_t v);
+void tone_set(float hz, uint16_t ms);
+void tone_idle(void);
 
 #define TMR_BEEP 0x16             /* the soft timer of every tone and pause [fact: 0xFFFB2914, 0xFFFB2E91] */
-#define TONE_SAMPLES 36           /* samples per cycle in tone_table [fact: 0xFFFB2E82] */
 #define TONE_FOREVER 0xFFFF       /* the RTTY test tones hold until stopped */
 
 /* beep_state 0x12040 [fact: beep_task's compares] */
@@ -57,58 +55,6 @@ static float rtty_shift(void)
     case 3: return 850.0f;
     default: return 170.0f;
     }
-}
-
-/* beep_request 0xFFFB2DA6: start pattern n; the restart pattern always wins, an RTTY test tone replaces only the CW
- * pitch tone, anything else waits until no pattern is set. (A request >= 12 first clears the pattern, then stores
- * it anyway, 0xFFFB2DD0..0xFFFB2DE5.) */
-void beep_request(int32_t n)
-{
-    if (n != BEEP_RESTART) {
-        if ((uint32_t)(n - BEEP_RTTY_MARK) <= 2) {
-            if (beep_pattern == BEEP_CW_PITCH)
-                return;
-        } else if (beep_pattern != BEEP_NONE) {
-            return;
-        }
-    }
-    beep_pattern = (uint8_t)n;
-    beep_state = BEEP_START;
-}
-
-/* beep_stop 0xFFFB2DF4 */
-void beep_stop(void)
-{
-    beep_state = BEEP_STOP;
-}
-
-/* FUN_fffb2dfe 0xFFFB2DFE: the requested pattern (keyer_task stubs it as a gate) */
-uint8_t FUN_fffb2dfe(void)
-{
-    return beep_pattern;
-}
-
-/* tone_idle 0xFFFB2E0D: stop the tone and leave DA0 at the table's first sample */
-void tone_idle(void)
-{
-    tone_stop();
-    dac0_write(tone_table[0]);
-}
-
-/* tone_set 0xFFFB2E1E: play f Hz (30..20000; 0 = silence) for ms milliseconds. TPU1 counts PCLK = 60 MHz and
- * steps one table sample per compare match, so TGRA = 1 / (36 f / 60e6) - 1, converted with FTOU [fact:
- * 0xFFFB2E56..0xFFFB2E80; in range the signed conversion gives the same 16 bits, and a NaN gives 0xFFFF or 0 either
- * way]. A frequency out of range plays nothing and starts no timer. */
-void tone_set(float f, uint16_t ms)
-{
-    if (f != 0.0f) {
-        if (f < 30.0f || f > 20000.0f)
-            return;
-        float period = 1.0f / (f * 36.0f / 60000000.0f);
-        TPU1_TGRA = (uint16_t)(int32_t)(period + -1.0f);
-        tone_play(tone_table, TONE_SAMPLES);
-    }
-    swtimer_start(TMR_BEEP, ms);
 }
 
 /* the patterns of n tone/pause steps: step k plays tones[k] (F_PAUSE for a pause) for ms[k]; the step after the last
