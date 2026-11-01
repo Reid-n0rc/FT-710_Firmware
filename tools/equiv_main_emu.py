@@ -813,6 +813,23 @@ def cat_sf_args(rng, regs):
             (G_UI + 0x7A, bytes([rng.choice(range(0x1C, 0x23))]))], None
 
 
+def cat_dt_args(rng, regs):
+    """cat_DT: DT0 with 20yy and month / day around the limits (February in leap and other years), DT1 with hours
+    and minutes around 23 / 59."""
+    loads, _ = cat_handler_args(rng, regs)
+    t = bytearray(loads[0][1])
+    t[2] = rng.choice(b'0011X')
+    if t[2] == ord('0'):
+        t[3:11] = b'%02d%02d%02d%02d' % (rng.choice([20, 20, 20, 19, 21]), rng.randrange(100), rng.choice(range(14)),
+                                         rng.choice([0, 1, 28, 29, 30, 31, 32, rng.randrange(40)]))
+    else:
+        t[3:9] = b'%02d%02d%02d' % (rng.choice([0, 12, 23, 24, rng.randrange(30)]), rng.choice([0, 59, 60, rng.randrange(70)]),
+                                    rng.randrange(60))
+    if rng.random() < 0.1:
+        t[rng.randrange(3, 11)] = ord('X')
+    return [(ARGBUF, bytes(t))], None
+
+
 def both(a, b):
     """Two presets in turn (their loads together)."""
     def pre(rng, regs):
@@ -830,7 +847,7 @@ PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 
            'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
            'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1),
            'cat_SS': cat_ss_args, 'keyer_task': keyer_task_args, 'cat_MR': memch_text_args, 'cat_MW': cat_mw_args,
-           'cat_MC': memch_text_args, 'cat_SF': cat_sf_args,
+           'cat_MC': memch_text_args, 'cat_SF': cat_sf_args, 'cat_DT': cat_dt_args,
            'cat_GP': both(cat_handler_args, ram_bytes({0x9AB7: (0, 3, 3, 3)})),   # TUN/LIN PORT SELECT = GPO
            'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),

@@ -294,6 +294,99 @@ void cat_SC(const uint8_t *text, uint8_t set)
 }
 
 void func_display_open(void);
+/* a packed BCD byte as two characters. The image's code uses all of R2: declared uint32_t so that GCC passes the
+ * byte zero-extended (with a uint8_t parameter GCC loads it with the sign-extending MOV.B, and a byte >= 0x80
+ * printed differently: the check of cat_DT, round 4) */
+void bcd_to_ascii2(uint8_t *out, uint32_t bcd);
+uint8_t ascii2_to_bcd(const uint8_t *in);           /* two characters as a packed BCD byte */
+
+/* cat_DT 0xFFFA9281: DT0 = date as yyyymmdd (the year must be 20yy; leap years by yy & 3, months of 30 and 31 days),
+ * DT1 = time as hhmmss (the seconds are checked as digits and read as "00"); the clock bytes are packed BCD in the
+ * UI block, copied to rtc_set and sent to the DISPLAY by the 0x65 request */
+void cat_DT(const uint8_t *text, uint8_t set)
+{
+    uint8_t yy, mm, dd, days, hh, mi;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] == '0') {
+            cat_reply[3] = '2';
+            cat_reply[4] = '0';
+            bcd_to_ascii2(&cat_reply[5], g_ui.rtc_yy);
+            bcd_to_ascii2(&cat_reply[7], g_ui.rtc_mm);
+            bcd_to_ascii2(&cat_reply[9], g_ui.rtc_dd);
+            reply_done(11);
+        } else if (text[2] == '1') {
+            bcd_to_ascii2(&cat_reply[3], g_ui.rtc_hh);
+            bcd_to_ascii2(&cat_reply[5], g_ui.rtc_min);
+            cat_reply[8] = '0';
+            cat_reply[7] = '0';
+            reply_done(9);
+        } else {
+            cat_error = 1;
+        }
+        return;
+    }
+    if (text[2] == '0') {
+        for (i = 3; i < 11; i++) {
+            if (text[i] < '0' || text[i] > '9') {
+                cat_error = 1;
+                return;
+            }
+        }
+        (void)get_dec(&text[3], 2, 10, &yy);
+        if (yy != 20u) {
+            cat_error = 1;
+            return;
+        }
+        (void)get_dec(&text[5], 2, 10, &yy);
+        (void)get_dec(&text[7], 2, 10, &mm);
+        if (mm == 0 || mm > 12u) {
+            cat_error = 1;
+            return;
+        }
+        (void)get_dec(&text[9], 2, 10, &dd);
+        if (mm == 2)
+            days = (yy & 3u) == 0 ? 29 : 28;
+        else if (mm == 4 || mm == 6 || mm == 9 || mm == 11)
+            days = 30;
+        else
+            days = 31;
+        if (dd == 0 || dd > days) {
+            cat_error = 1;
+            return;
+        }
+        g_ui.rtc_yy = ascii2_to_bcd(&text[5]);
+        g_ui.rtc_set[0] = g_ui.rtc_yy;
+        g_ui.rtc_mm = ascii2_to_bcd(&text[7]);
+        g_ui.rtc_set[1] = g_ui.rtc_mm;
+        g_ui.rtc_dd = ascii2_to_bcd(&text[9]);
+        g_ui.rtc_set[2] = g_ui.rtc_dd;
+        g_ui.dl_req_65_clock = 1;
+        return;
+    }
+    if (text[2] != '1') {
+        cat_error = 1;
+        return;
+    }
+    for (i = 3; i < 9; i++) {
+        if (text[i] < '0' || text[i] > '9') {
+            cat_error = 1;
+            return;
+        }
+    }
+    (void)get_dec(&text[3], 2, 10, &hh);
+    (void)get_dec(&text[5], 2, 10, &mi);
+    if (hh > 23u || mi > 59u) {
+        cat_error = 1;
+        return;
+    }
+    g_ui.rtc_hh = ascii2_to_bcd(&text[3]);
+    g_ui.rtc_set[3] = g_ui.rtc_hh;
+    g_ui.rtc_set[4] = ascii2_to_bcd(&text[5]);
+    g_ui.rtc_min = g_ui.rtc_set[4];
+    g_ui.dl_req_65_clock = 1;
+}
 
 /* SF0's characters and the FUNC knob function each stands for [fact: the two switches of cat_SF 0xFFFADEB6] */
 static const uint8_t sf_chars[] = "123456789ABCDEFGH";
