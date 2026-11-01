@@ -38,6 +38,7 @@ Usage:
   python3 -I tools/equiv_display_emu.py check FUNCTION... [--object OBJ] [--trials N] [--seed S]
                                         the named functions, or all of an object (src/display/out/obj)
   python3 -I tools/equiv_display_emu.py status [--trials N]   every recreated function -> src/display/status.tsv
+  python3 -I tools/equiv_display_emu.py linkcheck      the hybrid image (tools/display_link.py) against the original
 The image is read from build/FT-710_DISPLAY_V0108.bin (or $FT710_BUILD/...); it is never written anywhere.
 """
 import argparse
@@ -48,7 +49,7 @@ import random
 import struct
 import sys
 
-from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_ARM, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, \
+from unicorn import Uc, UcError, UC_ARCH_ARM, UC_MODE_ARM, UC_HOOK_CODE, UC_HOOK_MEM_UNMAPPED, UC_HOOK_INTR, \
     UC_PROT_ALL
 from unicorn import arm_const as A
 
@@ -77,8 +78,9 @@ BUDGET = 1000000
 NARGS = 8
 MIN_COVER = 0.5
 # compared after each run: the RW data of the image (.data .bss, .data2 .bss2, the boot-info block, the uncached
-# mirror with the frame buffers and .data_nc) and the argument buffers
-SNAP = [(0x20000000, 0x20000100), (0x2042C000, 0x20A00000), (0x60000000, 0x60A00000), (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
+# mirror with the frame buffers and .data_nc) and the argument buffers. RAM from 0x20440000: below it the hybrid
+# image (tools/display_link.py) has its recreated code (0x2042BC10..0x2043FFFF), which linkcheck must not compare.
+SNAP = [(0x20000000, 0x20000100), (0x20440000, 0x20A00000), (0x60000000, 0x60A00000), (SCRATCH_ARGS, SCRATCH_ARGS + 0x20000)]
 
 R_ARM_NONE, R_ARM_ABS32, R_ARM_REL32, R_ARM_CALL, R_ARM_JUMP24 = 0, 2, 3, 28, 29
 R_ARM_V4BX, R_ARM_PREL31, R_ARM_MOVW_ABS_NC, R_ARM_MOVT_ABS = 40, 42, 43, 44
@@ -157,8 +159,8 @@ def orig_functions():
 class Image:
     """The DISPLAY memory after __scatterload: the file at 0x20100000 and the decompressed RW regions."""
 
-    def __init__(self):
-        self.file = open(image_path(), 'rb').read()
+    def __init__(self, path=None):
+        self.file = open(path or image_path(), 'rb').read()
         self.regions = [(BASE, self.file)]
         uc = Uc(UC_ARCH_ARM, UC_MODE_ARM)
         for lo, hi in RAM:
@@ -401,6 +403,7 @@ class Run:
         for a in list(stub_addrs) + [STOP]:
             uc.hook_add(UC_HOOK_CODE, self.on_code, begin=a, end=a)
         uc.hook_add(UC_HOOK_MEM_UNMAPPED, self.on_unmapped)
+        uc.hook_add(UC_HOOK_INTR, self.on_intr)
         # coverage: one code hook per static block leader of the original, removed at its first hit (a block hook
         # would call back into Python on every loop iteration)
         self.blocks = set()
@@ -456,6 +459,21 @@ class Run:
     def on_mmio_write(self, uc, offset, size, value, base):
         self.mmio.append(('w', base + offset, size, value & ((1 << (8 * size)) - 1)))
 
+    def on_intr(self, uc, intno, _):
+        """An SVC enters the image's own SVC_Handler as the CPU would: SVC mode with IRQs masked, LR_svc = the return
+        address, SPSR_svc = the caller's CPSR, PC = vector 0x20100008. The kernel's interrupt masking
+        (knl_int_disable: svc #0 with r0 = knl_psr_set_i) works only this way. Any other exception ends the run."""
+        if intno != 2:
+            self.end = ('fault', f'exception {intno}')
+            uc.emu_stop()
+            return
+        cpsr = uc.reg_read(A.UC_ARM_REG_CPSR)
+        pc = uc.reg_read(A.UC_ARM_REG_PC)
+        uc.reg_write(A.UC_ARM_REG_CPSR, (cpsr & ~0x3F) | 0x93)
+        uc.reg_write(A.UC_ARM_REG_SPSR, cpsr)
+        uc.reg_write(A.UC_ARM_REG_LR, pc | (1 if cpsr & 0x20 else 0))
+        uc.reg_write(A.UC_ARM_REG_PC, BASE + 8)
+
     def on_unmapped(self, uc, access, addr, size, value, _):
         self.end = ('fault', access)
         return False
@@ -463,7 +481,9 @@ class Run:
     def go(self, entry, thumb, ret_size=4, budget=BUDGET):
         """Run from entry; ret_size 1/2/4 (r0), 8 (r0:r1), 16 (r0..r3, the 64-bit divisions) or None (void)."""
         uc = self.uc
-        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1D3)    # SVC mode, IRQ and FIQ masked, ARM state
+        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1D3)    # SVC mode: its own stack for the SVC entries
+        uc.reg_write(A.UC_ARM_REG_SP, STACK_TOP - 0x8000)
+        uc.reg_write(A.UC_ARM_REG_CPSR, 0x1DF)    # SYS mode (as main and the tasks), IRQ and FIQ masked, ARM state
         for reg, v in zip((A.UC_ARM_REG_R0, A.UC_ARM_REG_R1, A.UC_ARM_REG_R2, A.UC_ARM_REG_R3), self.regs):
             uc.reg_write(reg, v & 0xFFFFFFFF)
         uc.reg_write(A.UC_ARM_REG_SP, STACK_TOP - 0x100)
@@ -710,6 +730,52 @@ def riic_args(rng, args, shape):
     return [(0x20800454, bytes(rng.randrange(1, 256) for _ in range(12)) + bytes(rng.getrandbits(8) for _ in range(16)))]
 
 
+SCIF_OBJS = {0x208DA1E0: (0xE8008800, 0x20165764), 0x208DAA30: (0xE8009000, 0x2016578C),
+             0x208DB280: (0xE8009800, 0x201657B4)}   # object: (registers, TXI descriptor; RXI = TXI + 0x14) [fact: scifN_get]
+
+
+def scif_obj(rng, regs_blk=None, txi=None):
+    """A valid SCIF UART object (src/display/include/scif.h): the vtable 0x2042803C, a register block (or, rarely,
+    none yet), ring indices that are equal, adjacent, wrapped or random (so the full and empty cases run), random
+    ring bytes and counters, the TXI/RXI descriptors, an event flag id or 0."""
+    if regs_blk is None:
+        regs_blk, txi = SCIF_OBJS[rng.choice(list(SCIF_OBJS))]
+    o = bytearray(rng.getrandbits(8) for _ in range(0x850))
+
+    def idx_pair():
+        a = rng.randrange(0x400)
+        k = rng.random()
+        b = a if k < 0.25 else (a + 1) & 0x3FF if k < 0.4 else (a - 1) & 0x3FF if k < 0.55 else \
+            (a + 0x3FE) & 0x3FF if k < 0.65 else rng.randrange(0x400)
+        return a, b
+    rd, wr = idx_pair()
+    trd, twr = idx_pair()
+    struct.pack_into('<IIHH', o, 0, 0x2042803C, 0 if rng.random() < 0.1 else regs_blk, rd, wr)
+    struct.pack_into('<HH', o, 0x40C, trd, twr)
+    struct.pack_into('<III', o, 0x810, txi + 0x14, txi, rng.choice([0, 0, 1, 3, 7]))
+    return bytes(o)
+
+
+def scif_args(rng, args, kind):
+    """kind 'obj': r0 = a SCIF object in the argument area (and a 64-byte buffer in r1, a count 0..40 in r2, a
+    retry count in r3, baud / bits / parity / stop for scif_open); 'glob': the three global objects valid."""
+    regs = args['regs']
+    fill = []
+    if kind == 'obj':
+        a = SCRATCH_ARGS
+        args['buffers'] = [b for b in args['buffers'] if not (SCRATCH_ARGS <= b[0] < SCRATCH_ARGS + 0x4000)]
+        args['buffers'] += [(a, scif_obj(rng)), (a + 0x2000, bytes(rng.getrandbits(8) for _ in range(64)))]
+        regs[0], regs[1], regs[2] = a, a + 0x2000, rng.choice([0, 1, 2, 5, 16, 40, rng.randrange(1100)])
+        regs[3] = rng.choice([0, 1, 2, 5])
+        if rng.random() < 0.5:     # scif_open / scif_start: (baud, bits, parity, stop)
+            regs[1] = rng.choice([9600, 38400, 115200, 345600, 460800, 1200])
+            regs[2], regs[3] = rng.choice([7, 8]), rng.choice([0, 1, 2, 3])
+            regs[4] = rng.choice([1, 2, 0x81, 0x80, 0])
+    for o, (rb, txi) in SCIF_OBJS.items():
+        fill.append((o, scif_obj(rng, rb, txi)))
+    return fill
+
+
 # return registers the DWARF cannot tell (assembly): the 64-bit divisions return quotient r0:r1 and remainder r2:r3
 RET_SIZE = {'__aeabi_uldivmod': 16, '__aeabi_ldivmod': 16}
 
@@ -719,6 +785,12 @@ PRESETS = {'mmu_enable': flat_l1, '__aeabi_uldivmod': div64_args, '__aeabi_ldivm
 PRESETS.update({n: gpio_args for n in ('gpio_cfg_reset', 'gpio_cfg_out_low', 'gpio_cfg_out_high', 'gpio_cfg_input',
                                      'gpio_set_alt_func', 'gpio_cfg_alt', 'gpio_read_bit', 'gpio_read_port_bit')})
 PRESETS['gpio_cfg_mask'] = lambda rng, args: gpio_args(rng, args, True)
+PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'obj')) for n in (
+    'scif_rxi_isr', 'scif_txi_isr', 'uart_obj_init', 'scif_irq_off', 'scif_read', 'scif_start', 'scif_open',
+    'scif_read_timeout', 'scif_flush', 'scif_write', 'uart_obj_ctor', 'scif_has_flag')})
+PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'glob')) for n in (
+    'scif3_rxi_isr', 'scif3_txi_isr', 'scif4_rxi_isr', 'scif4_txi_isr', 'scif5_rxi_isr', 'scif5_txi_isr',
+    'scif5_get', 'scif4_get', 'scif3_get', 'scif5_rxi_count_get', 'scif4_rxi_count_get', 'scif_uarts_ctor')})
 for _shape, _names in (('bn', ('R_RIIC_Write', 'R_RIIC_Read')), ('vm', ('R_RIIC_WriteSlaveAddr',)),
                        ('c', ('R_RIIC_SendCond',)), ('mb', ('riic_receive',)), ('v', ('riic_transmit',)),
                        ('', ('R_RIIC_Init', 'R_RIIC_ReadDummy', 'R_RIIC_DetectStop', 'R_RIIC_ClearNack',
@@ -870,6 +942,59 @@ def _check_one(job):
     return path, fname, None, 'not yet', 'not in the object'
 
 
+def _link_one(job):
+    """Worker of cmd_linkcheck: (function, address, thumb, seed, trials) -> (function, verdict, detail)."""
+    global _RES, _HYB
+    if _RES is None:
+        _RES = Resolver(Image())
+    if _HYB is None:
+        _HYB = Image(os.path.join(SRC, 'out', 'FT-710_DISPLAY_hybrid.bin'))
+    fname, oaddr, thumb, seed, trials = job
+    res = _RES
+    stub_addrs = {res.func(n)[0]: n for n in STUBS if res.func(n)}
+    rng = random.Random(seed)
+    ok = inconclusive = 0
+    for t in range(trials):
+        args = draw_args(rng)
+        fill = PRESETS[fname](rng, args) if fname in PRESETS else []
+        sd = rng.getrandbits(32)
+        size = RET_SIZE.get(fname, 4)
+        for budget in (BUDGET, 8 * BUDGET):
+            r1 = Run(res.img, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
+            r2 = Run(_HYB, [], stub_addrs, sd, fill, args).go(oaddr, thumb, size, budget)
+            if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
+                break
+        if r1['end'] == r2['end'] == 'budget':
+            inconclusive += 1
+            continue
+        d = compare(r1, r2)
+        if d:
+            return fname, 'differs', f'trial {t}: {d} differs (image ended {r1["end"]}, hybrid {r2["end"]})'
+        ok += r1['end'] == 'return'
+    return fname, 'same', f'{trials} trials agree ({ok} returned normally, {inconclusive} inconclusive)'
+
+
+_HYB = None
+
+
+def cmd_linkcheck(args):
+    """Every patched entry of the hybrid image (tools/display_link.py): the original image and the hybrid one, both
+    called at the original address, on the same inputs. This checks the link itself (relocations, patches) and the
+    recreated functions composed with each other, since in the hybrid image they call one another."""
+    import multiprocessing
+    rows = read_tsv(os.path.join(SRC, 'out', 'patches.tsv'))[1:]
+    modes = {int(r[0], 16): r[3] == 'thumb' for r in read_tsv(MODES_TSV)[1:]}
+    jobs = [(r[1], int(r[0], 16), modes.get(int(r[0], 16), False), args.seed, args.trials) for r in rows if r[0] != '-']
+    cnt = {}
+    with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
+        for fname, v, d in pool.imap_unordered(_link_one, jobs):
+            cnt[v] = cnt.get(v, 0) + 1
+            if v != 'same' or args.verbose:
+                print(f'equiv_display_emu: linkcheck {fname:28s} {v}: {d}', file=sys.stderr)
+    print('equiv_display_emu: linkcheck: ' + ', '.join(f'{k} {v}' for k, v in sorted(cnt.items())) +
+          f' (of {len(jobs)} patched entries)')
+
+
 def cmd_status(args):
     import multiprocessing
     res = Resolver(Image())
@@ -926,13 +1051,18 @@ def main():
     c.add_argument('functions', nargs='*')
     c.add_argument('--object', action='append', help='check every function of this object (e.g. drivers/riic.o)')
     c.add_argument('--jobs', type=int, default=0)
+    lc = sub.add_parser('linkcheck', help='the hybrid image against the original at every patched entry')
+    lc.add_argument('--jobs', type=int, default=0)
+    lc.add_argument('--verbose', action='store_true')
+    lc.add_argument('--trials', type=int, default=100)
+    lc.add_argument('--seed', type=int, default=3)
     st = sub.add_parser('status')
     st.add_argument('--jobs', type=int, default=0, help='worker processes (default: all cores)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)
     args = ap.parse_args()
-    {'check': cmd_check, 'status': cmd_status}[args.cmd](args)
+    {'check': cmd_check, 'status': cmd_status, 'linkcheck': cmd_linkcheck}[args.cmd](args)
 
 
 if __name__ == '__main__':

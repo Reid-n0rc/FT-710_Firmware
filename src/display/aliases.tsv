@@ -10,3 +10,5 @@ dcache_clean_invalidate_range	0x20100fd8	[fact] its loop issues DCCIMVAC (mcr c7
 dcache_clean_invalidate_all	0x2010101c	[fact] dcache_setway_all(2) = DCCISW; Ghidra calls it dcache_invalidate_all
 dcache_invalidate_range	0x20101088	[fact] its loop issues DCIMVAC (mcr c7,c6,1 at 0x201010B4); Ghidra calls it dcache_clean_invalidate_range
 vec_reset	0x20100000	[fact] the exception vector table (8 branches and the initial-SP word) at the image base; Ghidra has vec_reset there but the export lists no function (startup/vectors.S)
+pmu_cycle_stamp	0x20114850	[fact] mrc p15, 0, r0, c9, c13, 0 (PMCCNTR), delta = now - last, last = now (drivers/scif.c); Ghidra FUN_20114850; scif_rxi_isr and scif_txi_isr call it through the thunk 0x20114880
+__aeabi_uidiv	__aeabi_uidivmod	[fact] the image has only __aeabi_uidivmod (quotient in r0, RTABI), which GCC-compiled division calls as __aeabi_uidiv

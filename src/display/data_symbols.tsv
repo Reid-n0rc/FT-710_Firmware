@@ -9,3 +9,13 @@ riic_tx_end	2080045c	[fact] the transmit-end flags 0x2080045C + N (userdef_riicN
 riic2_tx_count	20800462	[fact] userdef_riic2_set_tx_empty increments it, userdef_riic2_tx_count returns it
 riic_reg_table	20166d18	[fact] riic_regs_init indexes 9 register pointers per channel (literal 0x20166D18); values ICCR1, ICMR1, ICBRL, ICBRH, ICMR3, ICFER, ICIER, ICCR2, ICSR2 of RIICn
 riic_cisr	20166c28	[fact] userdef_riicN_init passes 0x20166C28 + 0x3C N (+0x14, +0x28) to itron_acre_isr: T_CISR {0, 0, intno, isr, 9}
+scif3_uart	208da1e0	[fact] scif3_get returns it (literal 0x208DA1E0); struct scif_uart (include/scif.h, tools/ghidra/structs_display.h)
+scif4_uart	208daa30	[fact] scif4_get returns it
+scif5_uart	208db280	[fact] scif5_get returns it; the MAIN link object
+cisr_scif3_txi_isr	20165764	[fact] scif3_get passes it as txi (r3) and +0x14 as rxi
+cisr_scif3_rxi_isr	20165778	[fact] scif3_get: txi descriptor + 0x14
+cisr_scif4_txi_isr	2016578c	[fact] scif4_get passes it as txi
+cisr_scif4_rxi_isr	201657a0	[fact] scif4_get: txi + 0x14
+cisr_scif5_txi_isr	201657b4	[fact] scif5_get passes it as txi
+cisr_scif5_rxi_isr	201657c8	[fact] scif5_get: txi + 0x14
+uart_vtbl	2042803c	[fact] uart_obj_ctor stores it as the vtable; slots 0x20162FAC uart_obj_init, scif_start, scif_irq_off, scif_has_flag, scif_read, 0, scif_read_timeout, 0, 0, scif_write
