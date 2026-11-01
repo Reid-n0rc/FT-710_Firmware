@@ -366,7 +366,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011210c	pclink_tx_copy_afscope	28			not yet	0	
 20112128	pclink_tx_copy_scope	28			not yet	0	
 20112144	pclink_tx_trailer_init	20			not yet	0	
-20112158	pclink_tx_dma_start	60			not yet	0	
+20112158	pclink_tx_dma_start	40			not yet	0	
 20112180	pclink_tx_done_cb	40			not yet	0	
 201121a8	pclink_set_testmode	12			not yet	0	
 201121b4	pclink_rx_parse	128			not yet	0	
@@ -663,8 +663,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011acd8	vdc5_set_scaler_graphics	500	vdc5_set_scaler_graphics	drivers/vdc5_reg.o	equivalent	500	differential emulation: 200 trials agree (11 returned normally, 93% of 14 blocks reached)
 2011aecc	vdc5_confirm_graphics_enlargement	104	vdc5_confirm_graphics_enlargement	drivers/vdc5_reg.o	equivalent	104	differential emulation: 200 trials agree (11 returned normally, 100% of 9 blocks reached)
 2011af34	vdc5_reg_read_data_control	1052	vdc5_reg_read_data_control	drivers/vdc5_reg.o	equivalent	1052	differential emulation: 200 trials agree (165 returned normally, 100% of 23 blocks reached)
-2011b374	-	0	vdc5_change_graphics_vin	drivers/vdc5_reg.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
-2011b498	vdc5_reg_change_read_process	868	vdc5_reg_change_read_process	drivers/vdc5_reg.o	equivalent	868	differential emulation: 200 trials agree (170 returned normally, 100% of 15 blocks reached)
+2011b374	vdc5_change_graphics_vin	292	vdc5_change_graphics_vin	drivers/vdc5_reg.o	equivalent	292	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+2011b498	vdc5_reg_change_read_process	576	vdc5_reg_change_read_process	drivers/vdc5_reg.o	equivalent	576	differential emulation: 200 trials agree (170 returned normally, 100% of 15 blocks reached)
 2011b6d8	vdc5_set_reg_update_rw_enable	440	vdc5_set_reg_update_rw_enable	drivers/vdc5_reg.o	equivalent	440	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 2011b8b8	vdc5_reg_start_process	208	vdc5_reg_start_process	drivers/vdc5_reg.o	equivalent	208	differential emulation: 200 trials agree (15 returned normally, 56% of 9 blocks reached, 1 trials inconclusive)
 2011b988	vdc5_reg_stop_process	192	vdc5_reg_stop_process	drivers/vdc5_reg.o	equivalent	192	differential emulation: 200 trials agree (61 returned normally, 100% of 9 blocks reached, 13 trials inconclusive)
@@ -815,10 +815,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2011f19c	rspi_spe_clear	16	rspi_spe_clear	drivers/rspi.o	identical	16	byte-identical at the original address (16 bytes)
 2011f1ac	rspi_stop	112	rspi_stop	drivers/rspi.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
 2011f230	rspi_base	52	rspi_base	drivers/rspi.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2011f278	rspi_read	500	rspi_read_pio	drivers/rspi.o	equivalent	500	differential emulation: 200 trials agree (94 returned normally, 100% of 18 blocks reached, 81 trials inconclusive)
-2011f494	FUN_2011f494	64	rspi_read	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (105 returned normally, 100% of 6 blocks reached, 82 trials inconclusive)
-2011f4d4	-	0	rspi_write_pio	drivers/rspi.o	equivalent	0	differential emulation: 200 trials agree (119 returned normally, 100% of 25 blocks reached, 12 trials inconclusive)
-2011f718	rspi_write	604	rspi_write	drivers/rspi.o	equivalent	604	differential emulation: 200 trials agree (154 returned normally, 100% of 6 blocks reached, 16 trials inconclusive)
+2011f278	rspi_read_pio	500	rspi_read_pio	drivers/rspi.o	equivalent	500	differential emulation: 200 trials agree (94 returned normally, 100% of 18 blocks reached, 81 trials inconclusive)
+2011f494	rspi_read	64	rspi_read	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (105 returned normally, 100% of 6 blocks reached, 82 trials inconclusive)
+2011f4d4	rspi_write_pio	540	rspi_write_pio	drivers/rspi.o	equivalent	540	differential emulation: 200 trials agree (119 returned normally, 100% of 23 blocks reached, 12 trials inconclusive)
+2011f718	rspi_write	64	rspi_write	drivers/rspi.o	equivalent	64	differential emulation: 200 trials agree (154 returned normally, 100% of 6 blocks reached, 16 trials inconclusive)
 2011f758	rspi_fifo_reset	92	rspi_fifo_reset	drivers/rspi.o	equivalent	92	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2011f7b4	rspi_reset_buffers	120	rspi_reset_buffers	drivers/rspi.o	equivalent	120	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2011f840	rspi_rx_isr	72	rspi_rx_isr	drivers/rspi.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
@@ -1269,14 +1269,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20137d1c	dmac10_isr	12	dmac10_isr	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137d50	dmac3_enable	20	dmac3_enable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137d64	dmac3_disable	20	dmac3_disable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20137d78	FUN_20137d78	12	dmac3_set_callback	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20137d78	dmac3_set_callback	12	dmac3_set_callback	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137d84	dmac5_enable	20	dmac5_enable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137d98	dmac5_disable	20	dmac5_disable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137dac	dmac5_set_callback	12	dmac5_set_callback	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137db8	dmac4_enable	20	dmac4_enable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137dcc	dmac4_disable	20	dmac4_disable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137de0	dmac4_set_callback	12	dmac4_set_callback	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20137dec	-	0	dmac9_enable	drivers/dmac.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20137dec	dmac9_enable	20	dmac9_enable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137e00	dmac9_stop	52	dmac9_stop	drivers/dmac.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137e34	dmac9_set_callback	12	dmac9_set_callback	drivers/dmac.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20137e40	dmac10_enable	20	dmac10_enable	drivers/dmac.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
@@ -1444,7 +1444,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013fde4	sdhi_stub_2013fde4	4	sdhi_stub_2013fde4	drivers/sdhi.o	identical	4	byte-identical at the original address (4 bytes)
 2013fde8	sdhi0_irq_enable	104	sdhi0_irq_enable	drivers/sdhi.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 50% of 4 blocks reached)
 2013fe50	sdhi0_clock_on	20	sdhi0_clock_on	drivers/sdhi.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-2013fe68	-	0	sdhi_dma_open	drivers/sdhi.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+2013fe68	sdhi_dma_open	372	sdhi_dma_open	drivers/sdhi.o	equivalent	372	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 2013ffdc	sdhi_stub_2013ffdc	4	sdhi_stub_2013ffdc	drivers/sdhi.o	identical	4	byte-identical at the original address (4 bytes)
 2013ffec	sdhi_dma_read_start	68	sdhi_dma_read_start	drivers/sdhi.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20140030	sdhi_dma_read_wait	48	sdhi_dma_read_wait	drivers/sdhi.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
@@ -1486,10 +1486,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201407bc	sdhi_error_reset	36	sdhi_error_reset	drivers/sdhi.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201407e0	sdhi_read_sectors_cmd	316	sdhi_read_sectors_cmd	drivers/sdhi.o	equivalent	316	differential emulation: 200 trials agree (200 returned normally, 94% of 17 blocks reached)
 2014091c	sdhi_read_op	124	sdhi_read_op	drivers/sdhi.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
-20140998	FUN_20140998	84	sdhi_read_buf_pio	drivers/sdhi.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+20140998	sdhi_read_buf_pio	84	sdhi_read_buf_pio	drivers/sdhi.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 201409ec	sdhi_write_sectors_cmd	316	sdhi_write_sectors_cmd	drivers/sdhi.o	equivalent	316	differential emulation: 200 trials agree (200 returned normally, 94% of 17 blocks reached)
 20140b50	sdhi_write_op	24	sdhi_write_op	drivers/sdhi.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20140b68	sdhi_open	424	sdhi_open	drivers/sdhi.o	equivalent	424	differential emulation: 200 trials agree (200 returned normally, 75% of 4 blocks reached)
+20140b68	sdhi_open	52	sdhi_open	drivers/sdhi.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 75% of 4 blocks reached)
 20140b9c	sdhi0_buf_isr	76	sdhi0_buf_isr	drivers/sdhi.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 20140be8	file_buf_sync	940			not yet	0	
 20140f94	file_open_core	2180			not yet	0	
