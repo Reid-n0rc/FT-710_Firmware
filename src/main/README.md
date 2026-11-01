@@ -36,8 +36,8 @@ original addresses. What the code does: [docs/code/main/](../../docs/code/main/R
 | `app/cat_dsp.c` | `cat_CO`, `cat_BP`, `cat_SH`, `cat_GT`: CONTOUR/APF, NOTCH, WIDTH, AGC on the per-mode block (round 4) |
 | `app/cat_vfo.c` | `cat_FA_FB`, `cat_IF_OI`, `cat_CF`, `cat_MR`, `cat_MW`, `cat_MC`, `cat_VM`: VFO frequency, information, clarifier, memory read/write/recall, V/M (round 4) |
 | `app/tuner.c`, `app/keyer.c` | `tuner_task` (dispatch by TUNER SELECT), `tuner_init`, `atu_ac_get`/`atu_tc_get`; `keyer_init`, `keyer_state_clear`, `keyer_ring_next`, `keyer_sidetone_off` (round 2); `keyer_task`, the keyer and message-memory state machine; `tuner_int_task`, `tuner_ext_task`, `tuner_atas_task`, `tuner_rearm` (round 4) |
-| `app/beep.c` | `beep_task` (the beep patterns on soft timer 0x16), `beep_request`, `beep_stop`, `FUN_fffb2dfe`, `tone_idle`, `tone_set` (TPU1 period from a float frequency) (round 5) |
-| `app/meters.c` | `vdd_scale_calc`, `meter_vdd`, `swr_meter_protect` (SWR, HI-SWR alarm, pinning), `meter_po`, `meter_comp`, `meter_s`, `fm_noise_squelch`, `signal_level_squelch`: the float code, step for step in the image's order (round 5) |
+| `app/beep.c` | `beep_task`, the beep patterns on soft timer 0x16 (round 5; the request, stop and tone functions are in `ui_beep.c`) |
+| `app/swr_squelch.c` | `swr_meter_protect` (SWR, HI-SWR alarm, pinning), `fm_noise_squelch`, `signal_level_squelch`: the float code step for step in the image's order (round 5) |
 | `app/fpu_conv.h` | `ftou()` (CC-RX's FTOU, which GCC for RX has not) and a bit-level `is_nan()` (GCC tests float compares with S alone, so a NaN passes `a >= b`) (round 5) |
 | `app/keys.c` | `ladder_key_task`, the remote-keypad dispatch over three action tables (round 5) |
 | `app/main_loop.c` | `main_loop`, the 16 tasks for ever; checked for one pass (round 5) |

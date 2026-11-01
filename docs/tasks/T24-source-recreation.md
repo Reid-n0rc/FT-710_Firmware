@@ -1901,6 +1901,132 @@ python3 -I tools/readability_stats.py readme
 After the re-export the 21 functions carry their new names in `decomp/main/functions.tsv`; the rows in
 `src/main/aliases.tsv` then name the same addresses and can be removed.
 
+## MAIN, round 5 (2026-11-01)
+
+### Plan (MAIN round 5)
+
+1. FPU semantics: FADD/FSUB/FMUL/FDIV/FCMP/FSQRT/ITOF/UTOF (and the round-4 conversions) against the RXv2 manual,
+   rounding modes, FPSW flags, denormals and NaNs, the way `rx_fpconv_check.py` and T22a did; fix the module in a new
+   `rx62t-*-fix.patch` and/or the engine; then `beep_task` and the other float users.
+2. Code, biggest first: CAT handlers, tasks and DISPLAY-link handlers, menu, band/VFO/memory, TX protection.
+3. Coverage of `sdr_task` (52 %), `cat_EM` (66 %), `cat_GT` (68 %); the inconclusive `io_task` trials; `main_loop` for
+   one pass.
+4. `status.tsv`, the README block, Ghidra rows with the apply commands.
+
+### MAIN: the FPU (round 5)
+
+MAIN uses FADD 31, FSUB 18 (one 3-operand, `signal_level_squelch` 0xFFFB7ECD), FMUL 28, FDIV 25, FCMP 40, ITOF 42 and
+FTOU 12 times, in 23 functions; no FSQRT, FTOI, ROUND or UTOF **[fact: rx-elf-objdump of 0xFFF8FBDB..0xFFFEE2B7]**. FPSW is
+0x100 (RM 0, DN 1, all exceptions masked) from 0xFFF8FBFF on; the only `R_BSP_InterruptControl(…, 1, …)` call enables
+vector 0xB, not the FPU's 3 **[inference from the call sites; docs/tooling.md "The other FPU instructions"]**.
+
+- **Engine.** `EquivMainEmu.java` executes every FPU instruction itself (`RxFpu`): exact arithmetic on (sign, BigInteger,
+  exponent) with one rounding by FPSW.RM; DN = 1 reads a denormal as a zero of its sign and returns 0 for an underflow,
+  DN = 0 starts unimplemented processing; Table 1.6 NaN results (the QNaN operand, an SNaN made quiet, 7FFFFFFFh for an
+  invalid operation without a NaN); overflow by RM (Table 1.1); division by zero; FCMP's Z/S/O; FPSW cause and
+  accumulated flags (Fj only while Ej = 0, FS); an enabled exception ends the run as a fault with the destination
+  unchanged. The memory operand goes through the same load path as the module's p-code (I/O recorded, tracked bytes).
+  The result carries FPSW; `compare` checks its mode bits (RM, DN, EV..EX), not the flags (MAIN reads them only in the FPU
+  exception handler, which never runs, and GCC folds constant FDIVs whose inexact flag the original sets: `meter_comp`).
+- **Check.** `tools/rx_fpu_check.py` runs 11,950 cases (every form: #imm, Rs, [Rs].L, dsp:8, dsp:16, 3-operand; ITOF/UTOF
+  every memex; specials, ties, limits, random values; RM 0..3, DN 0/1, enable bits) against a model written from the
+  manual in Python fractions: **11,950 / 11,950 agree**. `rx_fpconv_check.py`: 84 / 84 still.
+- **The module (`rx_fpu_check.py module`)** disagrees on 4,136 of 11,553 returning cases **[fact]**: FCMP never writes O
+  (and FCMP #imm compared through `Rs f- imm`), S of a float result is `f< 0` (clear for -0), UTOF does not decode (FC 54..57)
+  and converts 2^31.. as negative, plus the host-arithmetic classes it cannot change (DN, NaN payloads, RM, the invalid
+  NaN). The O flag matters for MAIN: 17 BLT and 1 BGE follow an FCMP, and a stale O from an earlier ADD inverted them in
+  the emulator and the decompile (`swr_meter_protect`: `10.0 < (float)uVar6 == bVar1` with `bVar1 = SCARRY4(...)`).
+  `rx62t-fpu-fix.patch` (tenth `--only rx` stage) fixes the first three; then only DN 599, NaN 953, RM 381 and invalid 426
+  disagree, none with MAIN's FPSW and normal operands.
+- **GCC and NaN [fact: the objects].** GCC for RX tests a float compare with S alone (`a < b` BN, `a >= b` BPZ), so a NaN
+  passes `a >= b`, and it drops a `v != v` next to such a compare as redundant. CC-RX's BLT/BGE read O. `swr_meter_protect`
+  gets 0 / 0 with no RF (both ADC readings 0), which the image counts as in range; the recreation tests the NaN on the bits
+  (`app/fpu_conv.h` `is_nan`), and `ftou()` writes CC-RX's FTOU in C (GCC's unsigned cast calls `__fixunssfsi`).
+- **MIN / MAX [fact].** All six constructors were an unsigned minimum, MAX too (found in parallel by the UI track).
+  `rx62t-minmax-fix.patch` (eleventh stage) makes them signed with MAX keeping the larger value; `rx_semcheck.py` models
+  MIN/MAX, and the forms check gains MIN/MAX #imm, Rs and memory forms, SCGE.L, SCLT.L: **5,960 / 5,960** with the patch,
+  807 failures without. This settles the UI track's two Open points on MIN/MAX: the fix is a SLEIGH stage, and the objects
+  using MIN (`cat_SS`, `displink_build_41`, `keyer_task`, the meters, `swr_meter_protect`) were rerun in the status below
+  with the patched module.
+- Open (both readings are the model's and the engine's): whether underflow is decided before rounding (p. 24 does not say),
+  and whether "the S and Z flags do not change when an exception is generated" also covers a masked exception such as
+  inexact; would be settled by FADD of a result just below 2^-126 and of 0.1f + 0.2f on an RX651, reading the
+  destination and PSW. MAIN never branches on S/Z after an FPU arithmetic instruction [fact: the instructions after each].
+
+### MAIN: harness changes (round 5)
+
+- `stub_sets` (a stubbed callee writes one RAM byte, drawn from the seeded sequence) and `stop_after` / `FUNC_STOP` (the run
+  ends "stop" at the n-th call of a stubbed callee): `main_loop` is checked for one pass, its 16 tasks stubbed, stopping at
+  the second `wdt_kick`; a mutation swapping two tasks differs at stub call 5.
+- Coverage: `sdr_task` 100 % of 86 blocks (every updater stubbed and setting `sdr_busy_write` one time in eight; was
+  52 %), `cat_EM` 100 % of 59 (slot digits, ';', 0xFE end marks; was 66 %), `cat_GT` 91 % of 104 (`vfo_mode` over all 16
+  codes, 600 trials; was 68 %), `io_task` 0 inconclusive (meters, GPIO poll, lamps and the save path stubbed; was 137 of
+  200), 100 %.
+- `beep_task` stubs `tone_set`, so the tone's float bits are compared (a mutation 1046.502 → 1046.5 passed through
+  `tone_set`, which only shows the truncated TPU period); `STUB_WIDTHS` for its 16-bit duration.
+- The FPU mnemonics are no longer listed as "forms not checked by T22a" (`rx_fpu_check.py` checks them).
+
+### MAIN: recreated (src/main, round 5)
+
+- `app/beep.c`: `beep_task` (the eleven patterns, docs/code/main/peripherals.md); the request / stop / tone functions are
+  the UI track's `ui_beep.c`.
+- `app/swr_squelch.c`: `swr_meter_protect`, `fm_noise_squelch`, `signal_level_squelch`. Found **[fact]**: the meter is pinned
+  only when both readings are <= 10 counts (tx-protection.md said "or"), and SWR = +inf (ρ = 1) is not pinned.
+- `app/sdr_link.c`: `sdr_upd_r25_tx_drive` (the band's TX gain row interpolated between the power points).
+- `app/display_link.c`: `displink_tx_schedule` (the send priority list) and `displink_rx_F0_hello` (the DISPLAY's version and
+  date texts in 0x199F, the boot codes).
+- `app/keys.c`: `ladder_key_task`, the remote-keypad dispatch over three action tables.
+- `app/main_loop.c`: `main_loop` (a file of its own, so GCC inlines none of the tasks).
+- The UI track recreated `meter_vdd`, `meter_po`, `meter_comp`, `meter_s`, `vdd_scale_calc` and the beep request functions in
+  parallel; round 5's versions were dropped at the merge.
+
+### MAIN: results (status.tsv, round 5)
+
+STATUS_PLACEHOLDER
+
+### MAIN: Ghidra (round 5)
+
+- `tools/ghidra/names_main.tsv`: 21 RAM labels of round 5 (beep state, the SWR counters, `fm_sql_last_mode`, `dl_hello_req`,
+  `dl_hello_text`, `ladder_key_last`, `ladder_delay_armed`, ...), each with its instruction. Proved on a copy of
+  `/home/user/ghidra_tasks/t24main/proj` with the UI track's 30 names merged: **ApplyNames 2,905 applied, 0 failed**.
+- `tools/ghidra/rx62t-fpu-fix.patch` and `rx62t-minmax-fix.patch`: the tenth and eleventh `bootstrap.sh --only rx` stages
+  (`f4688bc6…f403` → `ff99d4e8…cd25` → `8b7bc4f0…bb2c`), checked on a private Ghidra copy and with `RX_MODULE_DIR` on a copy
+  of the round-4 module. They change the decompile at the FCMP sites (16 functions) and the S flag after FPU arithmetic (23 functions), nothing else in MAIN (MAIN has
+  no MIN, MAX or UTOF), so `decomp/main` should be re-exported after installing them.
+
+Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+tools/bootstrap.sh --only rx                                   # rx62t-fpu-fix.patch, rx62t-minmax-fix.patch, sleigh
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/rx_fpu_check.py module     # with the patches: only the DN / NaN / RM / invalid classes remain
+sh tools/rx_semcheck_forms.sh /tmp/semforms # 5,960 / 5,960
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+`bootstrap.sh --only rx` changes the shared Ghidra's `rx62t.sinc` hash, so a branch without these patches then refuses to
+bootstrap that Ghidra, as with rounds 2 and 4.
+
+### MAIN: blockers and next steps (round 5)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- **The shared Ghidra has neither round-5 patch.** The round-5 status ran with `GHIDRA_HEADLESS` on a private Ghidra copy
+  that has both; the FPU results do not depend on them (the engine executes the FPU), the GCC `MIN` results do.
+- Not done this round (step 2 of the plan): the remaining CAT handlers (`cat_ext_PE`, `_EO`, `_JP`, the `cat_ai_*` change
+  detectors), `key_task`, `dsp_link_poll`, the menu/settings code, the band/VFO/memory logic, `keyer_output_step`,
+  `keyer_elekey`; the float users `cat_ai_SQ`, `pa_dac_update`, `align_store_ui8_scaled` and the seven unnamed FPU
+  functions 0xFFFEC8A1..0xFFFEDA3B.
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -1923,7 +2049,9 @@ After the re-export the 21 functions carry their new names in `decomp/main/funct
 7. MAIN: apply the round-2 Ghidra entries and names (command block in "MAIN: Ghidra (round 2)"), install
    `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), the round-3 names ("MAIN: Ghidra (round 3)") and the
    round-4 names, signature and `rx62t-fpconv-fix.patch` ("MAIN: Ghidra (round 4)"), then the next functions ("MAIN:
-   blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
+   blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1"). Round 5:
+   `rx62t-fpu-fix.patch`, `rx62t-minmax-fix.patch` and the 21 names ("MAIN: Ghidra (round 5)"), then "MAIN: blockers and
+   next steps (round 5)".
 
 5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation;
    `abicheck` covers calls through a register (round 7). Open: the functions the emulated boot does not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the
