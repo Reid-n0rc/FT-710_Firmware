@@ -1,8 +1,11 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
-// ===== FUN_2011a8cc @ 2011a8cc (276 bytes)
+// ===== vdc5_set_cascade @ 2011a8cc (276 bytes)
 
-undefined4 FUN_2011a8cc(int param_1,int param_2,int param_3,int param_4)
+/* [fact] GR1_AB1 bit 28, SCL0_FRC3 bit 8 of both scalers, vdc5_shrd_set_cascade; returns the state;
+   called by 0x2011A9E0 and 0x2011B3A0; Ghidra FUN_2011a8cc (T24 round 6) */
+
+undefined4 vdc5_set_cascade(int param_1,int param_2,int param_3,int param_4)
 
 {
   int iVar1;
@@ -47,9 +50,12 @@ undefined4 FUN_2011a8cc(int param_1,int param_2,int param_3,int param_4)
 }
 
 
-// ===== FUN_2011a9e0 @ 2011a9e0 (236 bytes)
+// ===== vdc5_setup_graphics_vin @ 2011a9e0 (236 bytes)
 
-void FUN_2011a9e0(int param_1,int param_2)
+/* [fact] the cascade (0x2011A8CC) and the VIN layer's GR_AB1..5 (synthesizer [ch][4]); called from
+   0x2011B2AC; Ghidra FUN_2011a9e0 (T24 round 6) */
+
+void vdc5_setup_graphics_vin(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -57,7 +63,7 @@ void FUN_2011a9e0(int param_1,int param_2)
   int iVar3;
   uint *puVar4;
   
-  iVar2 = FUN_2011a8cc();
+  iVar2 = vdc5_set_cascade();
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
   iVar3 = r_vdc5_shrd_get_resource(param_1,3);
   if ((iVar2 == 0) && ((iVar3 != 0 || (param_2 == 0)))) {
@@ -84,9 +90,12 @@ void FUN_2011a9e0(int param_1,int param_2)
 }
 
 
-// ===== FUN_2011aad8 @ 2011aad8 (32 bytes)
+// ===== vdc5_display_start_pixel @ 2011aad8 (32 bytes)
 
-uint FUN_2011aad8(uint param_1,int param_2)
+/* [fact] ((base & 7) << 3) / bits-per-pixel table 0x20165C70 [format], & 0x3F; called from
+   0x2011B10C and 0x2011B578; Ghidra FUN_2011aad8 (T24 round 6) */
+
+uint vdc5_display_start_pixel(uint param_1,int param_2)
 
 {
   uint uVar1;
@@ -97,10 +106,13 @@ uint FUN_2011aad8(uint param_1,int param_2)
 }
 
 
-// ===== FUN_2011aaf8 @ 2011aaf8 (480 bytes)
+// ===== vdc5_set_scaling_up @ 2011aaf8 (480 bytes)
 
-void FUN_2011aaf8(ushort *param_1,int param_2,undefined4 param_3,int param_4,int param_5,int param_6
-                 ,int param_7)
+/* [fact] SCL0_US1/US5/US6 and DS1/DS5/DS6 by buffer size, area, interlace and writing mode; called
+   by 0x2011ACD8 (0x2011AE6C); Ghidra FUN_2011aaf8 (T24 round 6) */
+
+void vdc5_set_scaling_up(ushort *param_1,int param_2,undefined4 param_3,int param_4,int param_5,
+                        int param_6,int param_7)
 
 {
   uint *puVar1;
@@ -165,9 +177,14 @@ LAB_2011aca0:
 }
 
 
-// ===== FUN_2011acd8 @ 2011acd8 (500 bytes)
+// ===== vdc5_set_scaler_graphics @ 2011acd8 (500 bytes)
 
-void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int param_5,int param_6)
+/* [fact] the scaler (0, 1 or OIR by graphics id) read side: SCL0_US2..4 and US8, the up-scaling
+   (0x2011AAF8), GRx_FLM4 from SCL1_WR4; called from 0x2011AF94 and 0x2011B514; Ghidra FUN_2011acd8
+   (T24 round 6) */
+
+void vdc5_set_scaler_graphics
+               (int param_1,int param_2,ushort *param_3,ushort *param_4,int param_5,int param_6)
 
 {
   undefined4 uVar1;
@@ -215,7 +232,7 @@ void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int pa
         uVar8 = 1;
       }
       uVar3 = vdc5_shrd_get_ln_off_dir(param_1,param_2);
-      FUN_2011aaf8(param_3,param_4,uVar2,uVar8,uVar1,uVar3,puVar6);
+      vdc5_set_scaling_up(param_3,param_4,uVar2,uVar8,uVar1,uVar3,puVar6);
     }
     *(uint *)*puVar6 = *(uint *)*puVar6 | 0x2111;
     if (param_5 == 1) {
@@ -231,9 +248,12 @@ void FUN_2011acd8(int param_1,int param_2,ushort *param_3,ushort *param_4,int pa
 }
 
 
-// ===== FUN_2011aecc @ 2011aecc (104 bytes)
+// ===== vdc5_confirm_graphics_enlargement @ 2011aecc (104 bytes)
 
-undefined4 FUN_2011aecc(uint param_1,int param_2,ushort *param_3,int param_4)
+/* [fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4;
+   Ghidra FUN_2011aecc (T24 round 6) */
+
+undefined4 vdc5_confirm_graphics_enlargement(uint param_1,int param_2,ushort *param_3,int param_4)
 
 {
   if (param_2 == 1) {
@@ -270,9 +290,9 @@ void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
   undefined4 *puVar7;
   
   puVar2 = (ushort *)vdc5_shrd_get_fr_buff_width_rd();
-  uVar3 = FUN_2011aecc(param_2,param_3[1],puVar2,param_3 + 0x14);
+  uVar3 = vdc5_confirm_graphics_enlargement(param_2,param_3[1],puVar2,param_3 + 0x14);
   if (param_2 < 2 || param_2 == 5) {
-    FUN_2011acd8(param_1,param_2,puVar2,param_3 + 0x14,param_3[1],uVar3);
+    vdc5_set_scaler_graphics(param_1,param_2,puVar2,param_3 + 0x14,param_3[1],uVar3);
   }
   puVar7 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
   *(uint *)puVar7[2] = *(uint *)puVar7[2] & 0xfffefcfe;
@@ -303,7 +323,7 @@ void vdc5_reg_read_data_control(int param_1,uint param_2,char *param_3)
   *(uint *)puVar7[7] = (uint)puVar2[1] * 0x10000 - 0x10000 | *(uint *)puVar7[7];
   *(uint *)puVar7[7] = *(uint *)puVar7[7] | (uint)(byte)param_3[0x13] << 10;
   if ((byte)param_3[1] < 2) {
-    uVar4 = FUN_2011aad8(*(undefined4 *)(param_3 + 4),param_3[0x11]);
+    uVar4 = vdc5_display_start_pixel(*(undefined4 *)(param_3 + 4),param_3[0x11]);
     *(uint *)puVar7[7] = uVar4 | *(uint *)puVar7[7];
   }
   *(uint *)puVar7[8] = *(uint *)puVar7[8] & 0xfffffffc;
@@ -342,9 +362,9 @@ LAB_2011b23c:
     uVar4 = *puVar6 | 0x100;
   }
   *puVar6 = uVar4;
-  FUN_2011a9e0(param_1,param_2,param_3[1],uVar3);
+  vdc5_setup_graphics_vin(param_1,param_2,param_3[1],uVar3);
   iVar5 = vdc5_shrd_get_color_space_fb_rd(param_1,param_2);
-  FUN_2011a848(param_1,param_2,iVar5);
+  vdc5_set_scaler_background_color(param_1,param_2,iVar5);
   vdc5_set_img_qa_improver_color_mtx(param_1,param_2,iVar5);
   puVar1 = &DAT_20166130;
   if (param_2 != 0) {
@@ -403,15 +423,15 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
   uVar6 = vdc5_shrd_get_sel_fb_addr_sig();
   uVar7 = vdc5_shrd_get_display_area(param_1,param_2);
   uVar8 = vdc5_shrd_get_fr_buff_width_rd(param_1,param_2);
-  uVar9 = FUN_2011aecc(param_2,uVar6,uVar8,uVar7);
+  uVar9 = vdc5_confirm_graphics_enlargement(param_2,uVar6,uVar8,uVar7);
   if (param_2 < 2 || param_2 == 5) {
-    FUN_2011acd8(param_1,param_2,uVar8,uVar7,uVar6,uVar9);
+    vdc5_set_scaler_graphics(param_1,param_2,uVar8,uVar7,uVar6,uVar9);
   }
   puVar11 = (undefined4 *)(&DAT_201662c0 + param_2 * 0x58 + param_1 * 0x210);
   if ((*param_3 != 0) && (*(uint *)puVar11[3] = *param_3 & 0xfffffff8, uVar6 < 2)) {
     uVar7 = vdc5_shrd_get_graphics_format(param_1,param_2);
     *(uint *)puVar11[7] = *(uint *)puVar11[7] & 0xffffffc0;
-    uVar10 = FUN_2011aad8(*param_3,uVar7);
+    uVar10 = vdc5_display_start_pixel(*param_3,uVar7);
     *(uint *)puVar11[7] = uVar10 | *(uint *)puVar11[7];
   }
   if (param_3[1] != 0) {
@@ -434,8 +454,8 @@ void vdc5_reg_change_read_process(int param_1,uint param_2,uint *param_3)
   *(uint *)*puVar11 = *(uint *)*puVar11 | 0x11;
   if (param_2 < 2) {
     iVar2 = vdc5_shrd_get_cascade();
-    iVar3 = FUN_2011a8cc(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,unaff_r8,
-                         unaff_lr);
+    iVar3 = vdc5_set_cascade(param_1,param_2,uVar6,uVar9,unaff_r4,unaff_r5,unaff_r6,unaff_r7,
+                             unaff_r8,unaff_lr);
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
     iVar4 = r_vdc5_shrd_get_resource(param_1,3);
     if (iVar4 != 0) {
@@ -714,9 +734,12 @@ void vdc5_reg_image_color_matrix(int param_1,byte *param_2)
 }
 
 
-// ===== FUN_2011bcb0 @ 2011bcb0 (220 bytes)
+// ===== vdc5_set_enhancement_lti @ 2011bcb0 (220 bytes)
 
-void FUN_2011bcb0(int param_1,char *param_2,int param_3)
+/* [fact] the ADJx_ENH_LTI1/2 writes (+0x2C/+0x30), second call of 0x2011BF00; Ghidra FUN_2011bcb0
+   (T24 round 6) */
+
+void vdc5_set_enhancement_lti(int param_1,char *param_2,int param_3)
 
 {
   uint uVar1;
@@ -753,9 +776,12 @@ void FUN_2011bcb0(int param_1,char *param_2,int param_3)
 }
 
 
-// ===== FUN_2011bd8c @ 2011bd8c (372 bytes)
+// ===== vdc5_set_enhancement_sharpness @ 2011bd8c (372 bytes)
 
-void FUN_2011bd8c(int param_1,char *param_2,int param_3)
+/* [fact] the ADJx_ENH_SHP1..6 writes of the image-enhancement call (vdc5_reg_image_enhancement
+   0x2011BF00 calls it first, table at +0x14..+0x28); Ghidra FUN_2011bd8c (T24 round 6) */
+
+void vdc5_set_enhancement_sharpness(int param_1,char *param_2,int param_3)
 
 {
   uint uVar1;
@@ -813,8 +839,8 @@ void vdc5_reg_image_enhancement
   undefined4 *puVar1;
   
   puVar1 = (undefined4 *)(&DAT_20166130 + param_2 * 0x34 + param_1 * 0x68);
-  FUN_2011bd8c(param_3,param_4,puVar1);
-  FUN_2011bcb0(param_5,param_6,puVar1);
+  vdc5_set_enhancement_sharpness(param_3,param_4,puVar1);
+  vdc5_set_enhancement_lti(param_5,param_6,puVar1);
   if (param_7 != (ushort *)0x0) {
     *(uint *)puVar1[3] = (uint)*param_7 << 0x10;
     *(uint *)puVar1[3] = *(uint *)puVar1[3] | (uint)param_7[1];
@@ -893,9 +919,12 @@ void vdc5_reg_alpha_blending(int param_1,int param_2,int *param_3)
 }
 
 
-// ===== FUN_2011c118 @ 2011c118 (92 bytes)
+// ===== vdc5_set_alpha_rect_area @ 2011c118 (92 bytes)
 
-void FUN_2011c118(ushort *param_1,int param_2)
+/* [fact] GRx_AB4/AB5 from the area and GRx_AB2/AB3, called by vdc5_reg_alpha_blending_rect; Ghidra
+   FUN_2011c118 (T24 round 6) */
+
+void vdc5_set_alpha_rect_area(ushort *param_1,int param_2)
 
 {
   uint uVar1;
@@ -917,9 +946,12 @@ void FUN_2011c118(ushort *param_1,int param_2)
 }
 
 
-// ===== FUN_2011c174 @ 2011c174 (184 bytes)
+// ===== vdc5_set_und_sel @ 2011c174 (184 bytes)
 
-void FUN_2011c174(int param_1,int param_2)
+/* [fact] vdc5_shrd_get_und_sel / set_und_sel, then the VIN layer's GR_AB1..3; called by
+   vdc5_reg_alpha_blending_rect; Ghidra FUN_2011c174 (T24 round 6) */
+
+void vdc5_set_und_sel(int param_1,int param_2)
 
 {
   undefined *puVar1;
@@ -979,9 +1011,9 @@ void vdc5_reg_alpha_blending_rect(int param_1,int param_2,int param_3,undefined4
   **(uint **)(&DAT_201662e0 + param_1 * 0x210 + param_2 * 0x58) = uVar3;
   if (param_4 != (undefined4 *)0x0) {
     if ((undefined1 *)param_4[2] != (undefined1 *)0x0) {
-      FUN_2011c174(param_1,*(undefined1 *)param_4[2]);
+      vdc5_set_und_sel(param_1,*(undefined1 *)param_4[2]);
     }
-    FUN_2011c118(*param_4,puVar4);
+    vdc5_set_alpha_rect_area(*param_4,puVar4);
     psVar1 = (short *)param_4[1];
     if (psVar1 != (short *)0x0) {
       if (param_2 != 4) {
@@ -1046,9 +1078,12 @@ uint rgb6_to_8(ushort param_1)
 }
 
 
-// ===== FUN_2011c3a4 @ 2011c3a4 (256 bytes)
+// ===== vdc5_color_conversion @ 2011c3a4 (256 bytes)
 
-uint FUN_2011c3a4(undefined4 param_1,uint param_2)
+/* [fact] switch on the graphics format calling rgb4/5/6_to_8 and vdc5_color_to_agbr; called by
+   vdc5_reg_chromakey; Ghidra FUN_2011c3a4 (T24 round 6) */
+
+uint vdc5_color_conversion(undefined4 param_1,uint param_2)
 
 {
   int iVar1;
@@ -1117,9 +1152,9 @@ void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
       *(undefined4 *)puVar4[0x10] = uVar2;
     }
     else {
-      uVar2 = FUN_2011c3a4(iVar1,*(undefined4 *)param_4);
+      uVar2 = vdc5_color_conversion(iVar1,*(undefined4 *)param_4);
       *(undefined4 *)puVar4[0xf] = uVar2;
-      uVar2 = FUN_2011c3a4(iVar1,*(undefined4 *)(param_4 + 4));
+      uVar2 = vdc5_color_conversion(iVar1,*(undefined4 *)(param_4 + 4));
       *(undefined4 *)puVar4[0x10] = uVar2;
     }
     uVar3 = *(uint *)puVar4[0x10];
@@ -1144,9 +1179,12 @@ void vdc5_reg_chromakey(int param_1,int param_2,int param_3,byte *param_4)
 }
 
 
-// ===== FUN_2011c5b4 @ 2011c5b4 (48 bytes)
+// ===== vdc5_set_clut @ 2011c5b4 (48 bytes)
 
-void FUN_2011c5b4(uint *param_1,undefined4 *param_2)
+/* [fact] copies color_num words to the CLUT RAM pointer of 0x201666E0; called by vdc5_reg_clut;
+   Ghidra FUN_2011c5b4 (T24 round 6) */
+
+void vdc5_set_clut(uint *param_1,undefined4 *param_2)
 
 {
   undefined4 *puVar1;
@@ -1202,7 +1240,7 @@ void vdc5_reg_clut(int param_1,int param_2,int *param_3)
     uVar4 = *puVar2 | 0xff000000;
   }
   else {
-    FUN_2011c5b4(param_3,(&PTR_DAT_201666e0)[param_1 * 6 + param_2]);
+    vdc5_set_clut(param_3,(&PTR_DAT_201666e0)[param_1 * 6 + param_2]);
     puVar2 = (uint *)puVar5[0x14];
     uVar4 = *puVar2 ^ 0x10000;
   }
@@ -1269,9 +1307,12 @@ void vdc5_reg_display_calibration(int param_1,char *param_2)
 }
 
 
-// ===== FUN_2011c85c @ 2011c85c (72 bytes)
+// ===== vdc5_set_gamma_gain @ 2011c85c (72 bytes)
 
-void FUN_2011c85c(ushort *param_1,int param_2)
+/* [fact] 16 registers of two halfwords, called with the GAM_x_LUT pointers of 0x201667D8 + 0x4C ch;
+   Ghidra FUN_2011c85c (T24 round 6) */
+
+void vdc5_set_gamma_gain(ushort *param_1,int param_2)
 
 {
   ushort *puVar1;
@@ -1294,9 +1335,12 @@ void FUN_2011c85c(ushort *param_1,int param_2)
 }
 
 
-// ===== FUN_2011c8a4 @ 2011c8a4 (172 bytes)
+// ===== vdc5_set_gamma_threshold @ 2011c8a4 (172 bytes)
 
-void FUN_2011c8a4(byte *param_1,undefined4 *param_2)
+/* [fact] 3 + 7 x 4 bytes into GAM_x_AREA1..8 (0x20166818 + 0x4C ch); Ghidra FUN_2011c8a4 (T24 round
+   6) */
+
+void vdc5_set_gamma_threshold(byte *param_1,undefined4 *param_2)
 
 {
   uint i;
@@ -1335,16 +1379,16 @@ void vdc5_reg_gamma_correction(int param_1,int param_2,undefined4 *param_3)
 {
   **(uint **)(&DAT_201667d0 + param_1 * 0x130) = (uint)(param_2 != 0);
   if (param_3 != (undefined4 *)0x0) {
-    FUN_2011c8a4(param_3[1],&PTR_VDC50_GAM_G_AREA1_20166818 + param_1 * 0x4c);
-    FUN_2011c85c(*param_3,&PTR_VDC50_GAM_G_LUT1_201667d8 + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[1],&PTR_VDC50_GAM_G_AREA1_20166818 + param_1 * 0x4c);
+    vdc5_set_gamma_gain(*param_3,&PTR_VDC50_GAM_G_LUT1_201667d8 + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_G_UPDATE_201667d4)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_G_UPDATE_201667d4)[param_1 * 0x4c] | 1;
-    FUN_2011c8a4(param_3[3],&PTR_VDC50_GAM_B_AREA1_2016687c + param_1 * 0x4c);
-    FUN_2011c85c(param_3[2],&PTR_VDC50_GAM_B_LUT1_2016683c + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[3],&PTR_VDC50_GAM_B_AREA1_2016687c + param_1 * 0x4c);
+    vdc5_set_gamma_gain(param_3[2],&PTR_VDC50_GAM_B_LUT1_2016683c + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_B_UPDATE_20166838)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_B_UPDATE_20166838)[param_1 * 0x4c] | 1;
-    FUN_2011c8a4(param_3[5],&PTR_VDC50_GAM_R_AREA1_201668e0 + param_1 * 0x4c);
-    FUN_2011c85c(param_3[4],&PTR_VDC50_GAM_R_LUT1_201668a0 + param_1 * 0x4c);
+    vdc5_set_gamma_threshold(param_3[5],&PTR_VDC50_GAM_R_AREA1_201668e0 + param_1 * 0x4c);
+    vdc5_set_gamma_gain(param_3[4],&PTR_VDC50_GAM_R_LUT1_201668a0 + param_1 * 0x4c);
     *(uint *)(&PTR_VDC50_GAM_R_UPDATE_2016689c)[param_1 * 0x4c] =
          *(uint *)(&PTR_VDC50_GAM_R_UPDATE_2016689c)[param_1 * 0x4c] | 1;
   }

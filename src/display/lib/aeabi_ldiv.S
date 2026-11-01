@@ -272,3 +272,55 @@ uldivmod_recip:                         @ 2^32 / (1 + k/16), k = the 4 bits afte
         .word 0x84210842    @ 20155a08
         .word 0x80000000    @ 20155a0c
         .size __aeabi_uldivmod, . - __aeabi_uldivmod
+
+/*
+ * _ll_udiv10 (0x20155A10), moved here from lib/aeabi_div.c in T24 round 6: it returns the quotient n / 10 in r0:r1
+ * and also the remainder in r2 (r3 = 0), which C cannot express, and the C library relies on it: _fp_digits adds
+ * '0' to r2 right after the call (0x20155C8A, 0x20155CBA) [fact]. The C version returned only r0:r1; the check
+ * compared only those, and the emulated boot of the hybrid image (tools/display_boot_emu.py) found the difference: a
+ * snprintf of vk_key_name never ended. q = n - n/4 + ... >> 3 by shifts and adds, r = n - 10 q, one correction.
+ */
+        .section .text._ll_udiv10,"ax",%progbits
+        .global _ll_udiv10
+        .type _ll_udiv10, %function
+        .p2align 2
+_ll_udiv10:                             @ (r0:r1 n) -> r0:r1 n / 10, r2 n % 10, r3 0
+        push {r4, r5, lr}    @ 20155a10
+        subs r2, r0, #0xa    @ 20155a14
+        lsr lr, r0, #2    @ 20155a18
+        sbcs r3, r1, #0    @ 20155a1c
+        orr lr, lr, r1, lsl #30    @ 20155a20
+        subs r0, r0, lr    @ 20155a24
+        sbc r1, r1, r1, lsr #2    @ 20155a28
+        lsr lr, r0, #4    @ 20155a2c
+        orr lr, lr, r1, lsl #28    @ 20155a30
+        adds r0, r0, lr    @ 20155a34
+        adc r1, r1, r1, lsr #4    @ 20155a38
+        lsr lr, r0, #8    @ 20155a3c
+        orr lr, lr, r1, lsl #24    @ 20155a40
+        adds r0, r0, lr    @ 20155a44
+        adc r1, r1, r1, lsr #8    @ 20155a48
+        lsr lr, r0, #0x10    @ 20155a4c
+        orr lr, lr, r1, lsl #16    @ 20155a50
+        adds r0, r0, lr    @ 20155a54
+        adc r1, r1, r1, lsr #16    @ 20155a58
+        adds r0, r0, r1    @ 20155a5c
+        adc r1, r1, #0    @ 20155a60
+        lsr r0, r0, #3    @ 20155a64
+        orr r0, r0, r1, lsl #29    @ 20155a68
+        lsr r1, r1, #3    @ 20155a6c
+        adds r5, r0, r0, lsl #2    @ 20155a70
+        lsl r4, r1, #2    @ 20155a74
+        orr r4, r4, r0, lsr #30    @ 20155a78
+        adc r4, r4, r1    @ 20155a7c
+        adds r5, r5, r5    @ 20155a80
+        adc r4, r4, r4    @ 20155a84
+        subs r2, r2, r5    @ 20155a88
+        sbcs r3, r3, r4    @ 20155a8c
+        mov r3, #0    @ 20155a90
+        addmi r2, r2, #0xa    @ 20155a94
+        popmi {r4, r5, pc}    @ 20155a98
+        adds r0, r0, #1    @ 20155a9c
+        adc r1, r1, #0    @ 20155aa0
+        pop {r4, r5, pc}    @ 20155aa4
+        .size _ll_udiv10, . - _ll_udiv10

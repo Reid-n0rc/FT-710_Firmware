@@ -85,4 +85,22 @@ vdc5_rw_read_3	0x2011cfa8	[fact] entry 6 of 0x20165BD8 (graphics 3); Ghidra FUN_
 vdc5_rw_read_oir	0x2011d014	[fact] entry 8 of 0x20165BD8 (OIR read, background when stopped); Ghidra FUN_2011d014
 vdc5_shrd_get_oir_rw_proc_enabled	0x2011d958	[fact] 1 if layer 2 or 8 has its resource and runs (0x208DCE04/0x208DCE16 + 2, + 8); Ghidra FUN_2011d958
 vdc5_set_reg_update_rw_enable	0x2011b6d8	[fact] the SCL1_UPDATE / GRx_UPDATE bits by layer id; called by start and stop with their layer; Ghidra FUN_2011b6d8
-vdc5_vline_cb_entry	0x20133014	[fact] the image entry of vdc5_vline_cb; vdc5_vline_cb_enable stores this word into gui_vline_int.callback (literal at 0x20133558), so the recreation stores the entry, which the hybrid image patches to the recreated function
+vdc5_set_enhancement_sharpness	0x2011bd8c	[fact] the ADJx_ENH_SHP1..6 writes of the image-enhancement call (vdc5_reg_image_enhancement 0x2011BF00 calls it first, table at +0x14..+0x28); Ghidra FUN_2011bd8c
+vdc5_set_enhancement_lti	0x2011bcb0	[fact] the ADJx_ENH_LTI1/2 writes (+0x2C/+0x30), second call of 0x2011BF00; Ghidra FUN_2011bcb0
+vdc5_set_alpha_rect_area	0x2011c118	[fact] GRx_AB4/AB5 from the area and GRx_AB2/AB3, called by vdc5_reg_alpha_blending_rect; Ghidra FUN_2011c118
+vdc5_set_und_sel	0x2011c174	[fact] vdc5_shrd_get_und_sel / set_und_sel, then the VIN layer's GR_AB1..3; called by vdc5_reg_alpha_blending_rect; Ghidra FUN_2011c174
+vdc5_color_conversion	0x2011c3a4	[fact] switch on the graphics format calling rgb4/5/6_to_8 and vdc5_color_to_agbr; called by vdc5_reg_chromakey; Ghidra FUN_2011c3a4
+vdc5_set_clut	0x2011c5b4	[fact] copies color_num words to the CLUT RAM pointer of 0x201666E0; called by vdc5_reg_clut; Ghidra FUN_2011c5b4
+vdc5_set_gamma_gain	0x2011c85c	[fact] 16 registers of two halfwords, called with the GAM_x_LUT pointers of 0x201667D8 + 0x4C ch; Ghidra FUN_2011c85c
+vdc5_set_gamma_threshold	0x2011c8a4	[fact] 3 + 7 x 4 bytes into GAM_x_AREA1..8 (0x20166818 + 0x4C ch); Ghidra FUN_2011c8a4
+vdc5_reg_write_data_control	vdc5_config	[fact] the register part of R_VDC5_WriteDataControl: called by r_vdc5_write_data_control after the shared-parameter calls, programs SCL0_DS2/3 and SCL1_WR1..10 of the scaler table 0x20165CE0 (0x2011A394)
+vdc5_ratio_one	0x2011a288	[fact] mov r0, #0x1000; bx lr; no caller; Ghidra FUN_2011a288
+vdc5_set_scaling_down	0x2011a290	[fact] SCL0_DS1/DS4/DS5/DS6 and US1/US6 from the scaling block; called by 0x2011A394 and 0x2011A6C8 (0x2011A574, 0x2011A78C); Ghidra FUN_2011a290
+vdc5_set_scaler_background_color	0x2011a848	[fact] SCL0_OVR1 and GRx_BASE from vdc5_shrd_get_bg_color, for scaler 0 or 1; called from 0x2011B2CC; Ghidra FUN_2011a848
+vdc5_set_cascade	0x2011a8cc	[fact] GR1_AB1 bit 28, SCL0_FRC3 bit 8 of both scalers, vdc5_shrd_set_cascade; returns the state; called by 0x2011A9E0 and 0x2011B3A0; Ghidra FUN_2011a8cc
+vdc5_setup_graphics_vin	0x2011a9e0	[fact] the cascade (0x2011A8CC) and the VIN layer's GR_AB1..5 (synthesizer [ch][4]); called from 0x2011B2AC; Ghidra FUN_2011a9e0
+vdc5_display_start_pixel	0x2011aad8	[fact] ((base & 7) << 3) / bits-per-pixel table 0x20165C70 [format], & 0x3F; called from 0x2011B10C and 0x2011B578; Ghidra FUN_2011aad8
+vdc5_set_scaling_up	0x2011aaf8	[fact] SCL0_US1/US5/US6 and DS1/DS5/DS6 by buffer size, area, interlace and writing mode; called by 0x2011ACD8 (0x2011AE6C); Ghidra FUN_2011aaf8
+vdc5_set_scaler_graphics	0x2011acd8	[fact] the scaler (0, 1 or OIR by graphics id) read side: SCL0_US2..4 and US8, the up-scaling (0x2011AAF8), GRx_FLM4 from SCL1_WR4; called from 0x2011AF94 and 0x2011B514; Ghidra FUN_2011acd8
+vdc5_confirm_graphics_enlargement	0x2011aecc	[fact] 1 when the display area exceeds the buffer size; called from 0x2011AF60 and 0x2011B4E4; Ghidra FUN_2011aecc
+__aeabi_uidiv	0x20156260	[inference] GCC calls __aeabi_uidiv for an unsigned division; the image's divisions call __aeabi_uidivmod 0x20156260 (e.g. 0x2011AAD8), whose quotient in r0 is __aeabi_uidiv's result (RTABI)

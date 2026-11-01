@@ -385,7 +385,7 @@ undefined4 r_vdc5_write_data_control(int param_1,int param_2,undefined4 param_3)
 LAB_20117cf4:
                     /* Shared-parameter update of r_vdc5_write_data_control [doc, inference] */
   vdc5_shrd_set_write_param(param_1,uVar1,param_3);
-  vdc5_config(param_1,uVar1,param_3);
+  vdc5_reg_write_data_control(param_1,uVar1,param_3);
                     /* resource state 0x208DCE04[ch9 + id] [doc] */
   vdc5_shrd_set_resource(param_1,param_2,1);
   return 0;
