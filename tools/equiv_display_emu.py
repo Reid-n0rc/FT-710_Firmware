@@ -1879,7 +1879,14 @@ def fs_spec_args(rng, args, spec):
         disk = bytearray(args['disk'])
         o = (vol.start + vol.rsv) * 512
         n = rng.choice([512, 1024, vol.fatsz * 512])
-        disk[o:o + n] = bytes(rng.getrandbits(8) for _ in range(n))
+        if rng.random() < 0.5:
+            disk[o:o + n] = bytes(rng.getrandbits(8) for _ in range(n))
+        else:       # entries free or not in runs (equal runs reach the free counters' longest-run tests)
+            w = {12: 3, 16: 2, 32: 4}[vol.fat]
+            ent = []
+            while len(ent) * w < n:
+                ent += [rng.choice([0, 0, 1, 0xFFFFFFFF])] * rng.choice([1, 2, 3])
+            disk[o:o + n] = b''.join((e & ((1 << 8 * w) - 1)).to_bytes(w, 'little') for e in ent)[:n]
         args['disk'] = bytes(disk)
     d = bytearray(dict(args['buffers'])[FS_DRIVE])
     if rng.random() < 0.5:
