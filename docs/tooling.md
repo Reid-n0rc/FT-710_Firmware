@@ -263,18 +263,20 @@ now reports 6 NOP constructors (was 8).
 ### Forms only the GCC-built code uses (T24 MAIN round 2, 2026-11-01): `tools/ghidra/rx62t-gccforms-fix.patch`
 
 T22a checked the module's p-code on the forms the MAIN image uses. The recreated MAIN source (GCC 13.3.0 for RX) also uses
-3-operand `SUB`/`MUL`/`OR`, `SCGTU.L`, `MOV.B Rs,[Rd+]`, `ROTL Rs,Rd`, `BRA.A` and `JMP Rs`, and libgcc a few more.
-`tools/rx_semcheck_forms.sh <workdir>` assembles 12 random instances of each form in `rx_semcheck.py`'s `GCC_FORMS` (40 forms,
-480 instructions; also the two T22a left unchecked, `JMP Rs` and `BNOT Rs,Rd`, and the same-register store forms), imports the
+3-operand `SUB`/`MUL`/`OR`, `SCGTU.L`, `MOV.B Rs,[Rd+]`, `ROTL Rs,Rd`, `BRA.A`, `JMP Rs` and `REVL Rd,Rd`, and libgcc a few
+more. `tools/rx_semcheck_forms.sh <workdir>` assembles 12 random instances of each form in `rx_semcheck.py`'s `GCC_FORMS` (43
+forms, 516 instructions; also the two T22a left unchecked, `JMP Rs` and `BNOT Rs,Rd`, and the same-register cases), imports the
 binary raw into a scratch project, decodes it with `ExportListing.java decode` and runs the T22a model check with 8 start
-states per instruction. On the T21i module (`73d417d2…8290`): **3,848 cases, 3,176 ok, 672 fail in three classes, all SLEIGH
-bugs** [fact]: `JMP Rs` does not branch (`PC = Rs`; manual p. 112), `BNOT Rs,Rd` XORs `Rs & 31` instead of `1 << (Rs & 31)`
-(p. 68), and `MOV.size Rs,[Rd+]` / `[-Rd]` with Rs = Rd stores the updated register (the `rd_post` sub-constructor runs
-before the source is read; p. 121 note 3 says the value before the update is stored). The patch (eighth `--only rx` stage,
-`73d417d2…8290` → `RX_SINC_FIXED` `11fbb030…0e14`) fixes the three; with it **3,848 / 3,848 agree**. MAIN has none of these
-three forms [fact: `rx-elf-objdump` of 0xFFF8FBDB..0xFFFEE2B7: no `jmp`, no `bnot Rs,Rd`, no post-increment or pre-decrement
-store], so MAIN's decompile does not change. The forms that passed already (3-operand `SUB`/`MUL`/`OR`, `SCCnd.L`, `ROTL`,
-`ROTR`, `BRA.A`, `ABS`, `NEG`/`NOT Rs,Rd`, `REVL`, `XOR`, `EMUL`/`EMULU`, post-increment loads) needed no change.
+states per instruction. On the T21i module (`73d417d2…8290`): **4,136 cases, 3,272 ok, 864 fail in four classes, all SLEIGH
+bugs** [fact]: `JMP Rs` does not branch (`PC = Rs`; manual p. 112); `BNOT Rs,Rd` XORs `Rs & 31` instead of
+`1 << (Rs & 31)` (p. 68); `MOV.size Rs,[Rd+]` / `[-Rd]` with Rs = Rd stores the updated register (the `rd_post`
+sub-constructor runs before the source is read; p. 121 note 3: the value before the update is stored); `REVL`/`REVW Rd,Rd`
+read bytes they have already overwritten (p. 163/164). The patch (eighth `--only rx` stage, `73d417d2…8290` →
+`RX_SINC_FIXED` `8451ead0…8ed7`) fixes the four; with it **4,136 / 4,136 agree**. MAIN has none of these forms [fact:
+`rx-elf-objdump` of 0xFFF8FBDB..0xFFFEE2B7: no `jmp`, no `bnot Rs,Rd`, no post-increment or pre-decrement store, no
+`revl`/`revw`], so MAIN's decompile does not change. The forms that passed already (3-operand `SUB`/`MUL`/`OR` with the
+manual's operand order, p. 296; `SCCnd.L`, `ROTL`, `ROTR`, `BRA.A`, `ABS`, `NEG`/`NOT Rs,Rd`, `REVL`/`REVW` with two
+registers, `XOR`, `EMUL`/`EMULU`, post-increment loads) needed no change.
 
 ## Bootstrap (T20)
 

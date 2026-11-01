@@ -125,7 +125,7 @@ RX_SINC_MVFAC=9efea07b76390e708c29f7e2ed8a7a044976d58d67a991cf4687319954b882a5
 RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3d0
 RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
 RX_SINC_MVTAC=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
-RX_SINC_FIXED=11fbb030dfd3ba2b55232d9bad104467e9105b207ab4db551fdfead7cead0e14
+RX_SINC_FIXED=8451ead043aaa1e400539775cc986c0e0a8b4388247736046bbe6a3dff9c8ed7
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -340,7 +340,7 @@ step_rx() {
   fi
   if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_MVTAC" ]; then
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-gccforms-fix.patch")
-    info "applied tools/ghidra/rx62t-gccforms-fix.patch (T24: JMP Rs branches, BNOT Rs,Rd, MOV Rs,[Rd+]/[-Rd] source first)"
+    info "applied tools/ghidra/rx62t-gccforms-fix.patch (T24: JMP Rs branches, BNOT Rs,Rd, MOV Rs,[Rd+]/[-Rd] source first, REVL/REVW Rd = Rs)"
   fi
   [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i/T24-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"

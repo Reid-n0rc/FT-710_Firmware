@@ -44,3 +44,36 @@
  }
  
  ## (15.1) MOV.B/W/L as L [Rs+], Rd
+@@ -1759,20 +1767,24 @@
+ 
+ ## REVL - reverse longword data
+ :REVL reg4_4, reg0_4    is op0_8 = 0xFD; op0_8 = 0x67; reg4_4 & reg0_4 {
+-    reg0_4[0,8]  = reg4_4[24,8];
+-    reg0_4[8,8]  = reg4_4[16,8];
+-    reg0_4[16,8] = reg4_4[8,8];
+-    reg0_4[24,8] = reg4_4[0,8];
++    # T24 fix: from a copy of Rs; with Rs = Rd the byte writes overwrote the source (p. 163)
++    local v:4 = reg4_4;
++    reg0_4[0,8]  = v[24,8];
++    reg0_4[8,8]  = v[16,8];
++    reg0_4[16,8] = v[8,8];
++    reg0_4[24,8] = v[0,8];
+ }
+ 
+ 
+ ## REVW - reverse word data
+ :REVW reg4_4, reg0_4    is op0_8 = 0xFD; op0_8 = 0x65; reg4_4 & reg0_4 {
+-    reg0_4[0,8]  = reg4_4[8,8];
+-    reg0_4[8,8]  = reg4_4[0,8];
++    # T24 fix: from a copy of Rs, as REVL (p. 164)
++    local v:4 = reg4_4;
++    reg0_4[0,8]  = v[8,8];
++    reg0_4[8,8]  = v[0,8];
+ 
+-    reg0_4[16,8] = reg4_4[24,8];
+-    reg0_4[24,8] = reg4_4[16,8];
++    reg0_4[16,8] = v[24,8];
++    reg0_4[24,8] = v[16,8];
+ }
+ 
+ 

@@ -41,7 +41,7 @@ MODELLED = set(ALU2) | {"MOV.B", "MOV.W", "MOV.L", "MOVU.B", "MOVU.W", "SHLL", "
                         "BNOT", "NOT", "NEG", "RTS", "RTSD", "JSR", "BRA.L", "PUSH.L", "PUSHM", "POPM", "XCHG", "SMOVF",
                         "SSTR.B", "SCMPU", "SUNTIL.B", "NOP", "ADC", "SBB", "ROLC", "RORC", "STZ", "STNZ", "ITOF",
                         # T24 MAIN round 2: forms only the GCC-built code uses (rx_semcheck.py forms)
-                        "ROTL", "ROTR", "ABS", "REVL", "EMUL", "EMULU", "JMP"}
+                        "ROTL", "ROTR", "ABS", "REVL", "REVW", "EMUL", "EMULU", "JMP"}
 
 
 class Unmodelled(Exception):
@@ -314,6 +314,10 @@ def model(st, addr, ln, mn, ops_txt):
     if base == "REVL":                           # p. 163, no flags
         v = st.r[ops[0][1]]
         st.r[ops[1][1]] = int.from_bytes(v.to_bytes(4, "little"), "big")
+        return
+    if base == "REVW":                           # p. 164: bytes swapped within each halfword, no flags
+        v = st.r[ops[0][1]]
+        st.r[ops[1][1]] = ((v & 0x00FF00FF) << 8) | ((v >> 8) & 0x00FF00FF)
         return
     if base in ("EMUL", "EMULU") and ops[0][0] in ("reg", "imm"):   # p. 82, p. 85: R(n+1):Rn = Rn * src, no flags
         b = get_src(st, ops[0], 4)
@@ -680,7 +684,8 @@ def check(a):
 
 
 # Instruction forms the GCC 13.3.0 build of src/main uses and the MAIN image does not (tools/equiv_main_emu.py lists
-# them per function), plus the two forms T22a named as unchecked (JMP Rs, BNOT Rs,Rd). "{a}".."{c}" are distinct
+# them per function), plus the two forms T22a named as unchecked (JMP Rs, BNOT Rs,Rd) and the same-register cases
+# (GCC emits REVL R14,R14 for a big-endian store, eeprom_hdr_update). "{a}".."{c}" are distinct
 # random registers R1..R14, "{n}" a random 5-bit count, "{same}" one register used twice.
 GCC_FORMS = [
     "sub {a}, {b}, {c}", "sub {a}, {a}, {b}", "mul {a}, {b}, {c}", "mul {a}, {a}, {b}", "or {a}, {b}, {c}",
@@ -690,7 +695,8 @@ GCC_FORMS = [
     "mov.b [{a}+], {b}", "mov.w [{a}+], {b}", "movu.w [{a}+], {b}", "mov.l [-{a}], {b}", "mov.l [{a}+], {a}",
     "rotl {a}, {b}", "rotl {a}, {a}", "rotl #{n}, {a}", "rotr {a}, {b}", "rotr #{n}, {a}",
     "bra.a {fwd}", "bra.a {back}", "jmp {a}",
-    "abs {a}, {b}", "abs {a}", "neg {a}, {b}", "not {a}, {b}", "revl {a}, {b}", "xor {a}, {b}",
+    "abs {a}, {b}", "abs {a}", "neg {a}, {b}", "not {a}, {b}", "revl {a}, {b}", "revl {a}, {a}", "revw {a}, {b}",
+    "revw {a}, {a}", "xor {a}, {b}",
     "emul {a}, {b}", "emulu {a}, {b}", "bnot {a}, {b}",
 ]
 
