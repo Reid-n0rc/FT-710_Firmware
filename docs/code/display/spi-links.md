@@ -204,14 +204,20 @@ mode until the next reset **[inference: nothing switches it back]**.
   ([system.md O8](../system.md#8-contradictions-and-open-questions)) **[inference for the clock]**.
 - **What starts it:** nothing per frame. Register 0x04 bit 3 (RX; reg 0x03 bit 3 in the other TX/RX state) releases the counter, and
   every wrap starts the next frame. Register 0x06 has a test-pattern bit that sends byte k = k mod 256.
-- **Header and trailer are not made by the serializer.** It copies RAM bytes 0..24 and 825..849 like the 800 points;
-  their content is whatever the 125 MHz writer puts there. In simulation with MAIN's set-up the writer fills all 850 positions alike
-  (no constant, counter or register field at 0..24 or 825..849) **[fact, simulation]**, so header and trailer are most likely 25 more
-  trace bins on each side of the 800 drawn points, which the PC software can use or drop **[inference]**.
+- **Header and trailer are not made by the serializer.** It copies RAM bytes 0..24 and 825..849 like the 800 points.
+- **Header and trailer are the outermost 25 trace positions on each side.** The 125 MHz writer fills the free RAM bank once per
+  frame in one centre-out sweep: index 425 first, then 425 − k and 425 + k for k = 1..425, from two counters and one data path
+  that has no index-dependent field. So header byte j is step k = 425 − j of the down counter, and trailer byte j is step k = 400 + j of the up counter, of the same line
+  as the 800 drawn points. Register 0x27 (scope reference level) shifts all 850 bytes alike: 0x8080 instead of 0x8044 adds
+  0x3C to every byte **[fact, netlist and simulation; [sdr/netlist.md 5.6](../sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186)]**.
+  The record is therefore one 850-position trace centred on position 425; the DISPLAY draws positions 25..824, and the PC
+  software gets the 25 positions beyond each edge as well **[inference from the write order and the shared data path]**.
 
-**What stays open** (#186): the serializer is located and the period is 614,400 `dsp_clk` cycles (above); what is left is the
-`dsp_clk` frequency and the header/trailer content on a real radio, which needs a capture. A capture needs the owner's approval: either the debug overlay's "S" counter on a debug-enabled
-unit, or the FT4222 PC stream, which carries the header unchanged.
+**What stays open** (#186): the serializer, the period (614,400 `dsp_clk` cycles) and the record layout are settled from the
+bitstream (above). Left for the radio: the `dsp_clk` frequency (which turns the period into 33.3 ms or 21.8 ms), what the outer
+25 positions on each side show (the simulated DSP chain does not produce a recognisable spectrum), and that R15 is
+`SDR_UPDATE`. These need a capture, which needs the owner's approval: either the debug overlay's "S" counter on a
+debug-enabled unit, or the FT4222 PC stream, which carries the header unchanged.
 
 The debug overlay (`debug_overlay_draw`, only with `debug_enabled`) shows the SS-IRQ counters as "S" (SDR) and "D" (DSP) **[fact: labels at
 0x20136C48/0x20136C50]**, so the rate can be read on a debug-enabled unit. 1700 B per frame is about 13.6 kbit, so even 30 frames/s need only
