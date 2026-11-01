@@ -893,9 +893,13 @@ undefined4 FUN_20114848(void)
 }
 
 
-// ===== FUN_20114850 @ 20114850 (48 bytes)
+// ===== pmu_cycle_stamp @ 20114850 (48 bytes)
 
-int FUN_20114850(int *param_1)
+/* (stamp): delta = PMCCNTR - stamp->last, stamp->last = PMCCNTR, returns delta; scif_rxi_isr /
+   scif_txi_isr time-stamp each byte (obj+0x840/+0x848) through the thunk 0x20114880 [fact: mrc p15,
+   0, r0, c9, c13, 0] (T24 round 4) */
+
+int pmu_cycle_stamp(int *param_1)
 
 {
   int iVar1;
@@ -937,7 +941,7 @@ void scif3_rxi_isr(void)
     }
     itron_set_flg(scif3_uart.rx_flg,1);
     scif3_uart.rx_count = scif3_uart.rx_count + 1;
-    thunk_FUN_20114850(0x208daa20);
+    pmu_cycle_stamp(0x208daa20);
     return;
   }
   scif3_uart.rxi_no_data = scif3_uart.rxi_no_data + 1;
@@ -983,7 +987,7 @@ void scif4_rxi_isr(void)
     }
     itron_set_flg(scif4_uart.rx_flg,1);
     scif4_uart.rx_count = scif4_uart.rx_count + 1;
-    thunk_FUN_20114850(0x208db270);
+    pmu_cycle_stamp(0x208db270);
     return;
   }
   scif4_uart.rxi_no_data = scif4_uart.rxi_no_data + 1;

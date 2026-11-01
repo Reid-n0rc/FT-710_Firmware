@@ -89,7 +89,7 @@ void scif_rxi_isr(scif_uart *uart)
     }
     itron_set_flg(uart->rx_flg,1);
     uart->rx_count = uart->rx_count + 1;
-    thunk_FUN_20114850(&uart->rx_time);
+    pmu_cycle_stamp(&uart->rx_time);
     return;
   }
   uart->rxi_no_data = uart->rxi_no_data + 1;
@@ -118,7 +118,7 @@ void scif_txi_isr(scif_uart *uart)
     uart->tx_rd = uart->tx_rd + 1 & 0x3ff;
     uart->regs->scfsr = uart->regs->scfsr & 0xff9f;
     uart->tx_count = uart->tx_count + 1;
-    thunk_FUN_20114850(&uart->tx_time);
+    pmu_cycle_stamp(&uart->tx_time);
     return;
   }
   p_scif_regs->scscr = p_scif_regs->scscr & 0xff7f;

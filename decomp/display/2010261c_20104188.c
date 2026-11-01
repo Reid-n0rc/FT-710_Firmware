@@ -1264,9 +1264,12 @@ uint sflash_cmd_erase(undefined4 param_1)
 }
 
 
-// ===== FUN_20103cc8 @ 20103cc8 (52 bytes)
+// ===== sflash_checksum @ 20103cc8 (52 bytes)
 
-int FUN_20103cc8(int param_1,int param_2)
+/* (buf, n): sum of (byte + 1) & 0xFF over n bytes; spiflash_write compares the data's sum with the
+   XIP window's (0x18000000 + offset) after programming [fact] (T24 round 4) */
+
+int sflash_checksum(int param_1,int param_2)
 
 {
   int iVar1;
@@ -1354,7 +1357,7 @@ uint spiflash_write(int param_1,uint param_2,uint param_3)
   int local_2e;
   uint local_1c [2];
   
-  iVar1 = FUN_20103cc8(param_2,param_3);
+  iVar1 = sflash_checksum(param_2,param_3);
   local_1c[0] = 0xff;
   local_30 = 0x70;
   local_2f = 0x72;
@@ -1363,7 +1366,7 @@ uint spiflash_write(int param_1,uint param_2,uint param_3)
   if ((-1 < iVar2) && (iVar2 = sflash_dev_write(param_2,param_3), -1 < iVar2)) {
                     /* Read side of the flash device object [doc] */
     sflash_dev_read(local_1c,1);
-    iVar2 = FUN_20103cc8(param_1 + 0x18000000,param_3);
+    iVar2 = sflash_checksum(param_1 + 0x18000000,param_3);
     if (iVar2 == iVar1) {
       local_1c[0] = local_1c[0] & 0xff;
     }
@@ -1532,9 +1535,12 @@ void sflash_erase_chip(undefined4 param_1)
 }
 
 
-// ===== FUN_20104078 @ 20104078 (104 bytes)
+// ===== spiflash_read @ 20104078 (104 bytes)
 
-undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3)
+/* (offset, n, buf): sflash_dev_open, device command 'r' 'd' + 32-bit offset (6 bytes), then
+   sflash_dev_read(buf, n); no caller [fact] (T24 round 4) */
+
+undefined4 spiflash_read(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
   int iVar1;
@@ -1607,9 +1613,11 @@ void spibsc_reg_write8(int *param_1,undefined1 param_2,int param_3)
 }
 
 
-// ===== FUN_2010414c @ 2010414c (8 bytes)
+// ===== pmu_ccnt_read @ 2010414c (8 bytes)
 
-undefined4 FUN_2010414c(void)
+/* returns PMCCNTR [fact: mrc p15, 0, r0, c9, c13, 0] (T24 round 4) */
+
+undefined4 pmu_ccnt_read(void)
 
 {
   undefined4 uVar1;
@@ -1621,9 +1629,12 @@ undefined4 FUN_2010414c(void)
 }
 
 
-// ===== FUN_20104154 @ 20104154 (48 bytes)
+// ===== sflash_cycle_stamp @ 20104154 (48 bytes)
 
-int FUN_20104154(int *param_1)
+/* {delta, last} PMCCNTR stamp, a second copy of pmu_cycle_stamp; sflash_erase_block stamps
+   0x208000A8 before and after each block erase (thunk 0x20104184) [fact] (T24 round 4) */
+
+int sflash_cycle_stamp(int *param_1)
 
 {
   int iVar1;

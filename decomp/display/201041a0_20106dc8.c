@@ -598,10 +598,10 @@ int sflash_erase_block(int param_1)
                     /* RDSR until WEL [doc] */
     iVar1 = sflash_wait_wel(param_1);
     if (iVar1 == 0) {
-      thunk_FUN_20104154(&DAT_208000a8);
+      sflash_cycle_stamp(&DAT_208000a8);
       sflash_cmd_write(param_1,&local_10,4,0);
       iVar1 = sflash_wait_ready(param_1);
-      thunk_FUN_20104154(&DAT_208000a8);
+      sflash_cycle_stamp(&DAT_208000a8);
                     /* Restores DRCR and CMNCR and flushes the read cache [doc] */
       spibsc_exit_spi_mode(&DAT_20810d90);
     }

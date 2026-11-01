@@ -25,6 +25,7 @@
 20103c70	sflash_cmd_erase	sends the device command "er"	fact	update.md
 20103f44	sflash_erase_chip_uniform	erases 256 blocks of 64 KiB	fact	update.md
 20104000	sflash_read_mfr_id	Switches SPIBSC0 external reads to command 0x9F	fact	update.md
+20104078	spiflash_read	device command "rd" + address	fact	update.md
 20104124	spibsc_reg_write16	16-bit register store	fact	update.md
 20104138	spibsc_reg_write8	8-bit register store	fact	update.md
 201041f4	spibsc_ensure_idle	Waits for TEND	fact	update.md

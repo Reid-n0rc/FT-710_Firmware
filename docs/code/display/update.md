@@ -437,7 +437,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI
 | 0x20104138 | `spibsc_reg_write8` | 8-bit register store **[fact]** |
 | 0x20104188 | `spibsc_ssl_negated` | 1 when CMNSR bit 1 (SSLF) is clear **[fact]** |
 | 0x201041A0 | `spibsc_wait_tend` | Polls CMNSR (0x48) bit 0 TEND, 100000 tries, -1 on timeout **[fact]** |
-| 0x201041F4 | `spibsc_ensure_idle` | Waits for TEND; if CMNSR is still not 1, pulses SMCR (0x20) and waits again; -1 on failure **[fact]** |
+| 0x201041F4 | `spibsc_ensure_idle` | Waits for TEND; if CMNSR is still not 1, tries to restart the controller and waits again; -1 on failure **[fact]**. The restart is meant as SMCR = 1, then 0, but value and offset are passed the other way round: it writes 0x20 to CMNCR + 1 (an unaligned word store to device memory) and to CMNCR **[fact: 0x20104230..0x2010424C, `spibsc_reg_write32(obj, 0x20, 1)`; T24 round 4]**. *Open: whether that path ever runs (CMNSR != 1 after a successful TEND wait); would be settled by a trace of the update on the radio.* |
 | 0x2010427C | `spibsc_xfer` | SPI-mode transfer of n bytes through SMENR/SMWDR/SMRDR in 1/2/4-byte steps (size codes 0x2016525C), keeps SSL asserted between calls when asked **[inference]** |
 | 0x2010448C | `sflash_cmd_read` | Reads response bytes (spibsc_xfer read side) **[inference]** |
 | 0x2010474C | `sflash_cmd_write` | Sends command/address bytes; with two flash chips in parallel (+4) each byte is doubled **[fact]** |
@@ -454,6 +454,22 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): SPI
 | 0x20104E20 | `sflash_dev_read` | Read side of the flash device object (mode 0x20810D98: 1 = read data with sflash_fast_read, 2/3 = return a status byte, flushes a partial page) **[fact]** |
 | 0x20104F34 | `sflash_dev_write` | Command side: 'r' + address (read), 'e' + address (erase block), program data in the other mode **[fact]** |
 | 0x20105060 | `sflash_dev_open` | Object 0x20810D90 base = SPIBSC_CMNCR_0; spiflash_erase and spiflash_write start with it **[fact]** |
+
+### SPI flash helpers named in T24 round 4
+
+Recreated in `src/display/drivers/sflash.c` and checked by differential emulation (`tools/equiv_display_emu.py`). The
+device object 0x20810D90 has a 16-bit state at +8 (0 idle, 1 read pending, 2 erase status, 3 programming), the
+address at +0xC, an error word at +0x10, two status-merge flags at +0x14/+0x18, the saved CMNCR/DRCR at +0x20/+0x24
+and the first byte of the last command at +0x28 **[fact: the accesses of sflash_dev_read, sflash_cmd_read,
+sflash_cmd_write]**. With two chips in parallel the status bytes come in pairs, which `sflash_cmd_read` merges by OR,
+or by AND after command 0x70 **[fact]**.
+
+| Address | Ghidra name | Purpose |
+|---|---|---|
+| 0x20103CC8 | `sflash_checksum` (was FUN_20103cc8) | (buf, n): sum of (byte + 1) & 0xFF; `spiflash_write` compares the data's sum with the XIP window's after programming and returns 0x16 if they differ **[fact]** |
+| 0x20104078 | `spiflash_read` (was FUN_20104078) | (offset, n, buf): device command "rd" + address, then `sflash_dev_read`; no caller **[fact]** |
+| 0x2010414C | `pmu_ccnt_read` (was FUN_2010414c) | returns PMCCNTR (mrc p15, 0, r0, c9, c13, 0) **[fact]** |
+| 0x20104154 | `sflash_cycle_stamp` (was FUN_20104154) | {delta, last} cycle stamp, a copy of `pmu_cycle_stamp`; `sflash_erase_block` stamps 0x208000A8 before and after each erase (through the thunk 0x20104184) **[fact]** |
 
 ### Update / boot-loader screens (update.md) (T23e round 3)
 
