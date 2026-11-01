@@ -49,3 +49,7 @@ _site/
 # The owner's radio backups (EEPROM / memory-channel dumps): radio-specific, never committed
 radio_backup/
 radio-backup*/
+
+# T24 recreated source: fetched vendor files and build output (an image built from it is firmware: never commit it)
+/src/*/vendor/
+/src/*/out/
