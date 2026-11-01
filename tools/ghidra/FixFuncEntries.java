@@ -7,8 +7,10 @@
 //     -scriptPath tools/ghidra -postScript FixFuncEntries.java tools/ghidra/entries_display.tsv
 // A second script argument "nolate" skips step (1): for tables of entries that are only reached through pointers
 // (MAIN key handlers, entries_main.tsv, #70), where a neighbour without call references is still a real entry.
-// TSV format: address[<TAB>drop|thumb][<TAB>comment]; "#" lines and blank lines are ignored. "thumb" disassembles a
-// still-undefined entry as Thumb (ARM images; T21e).
+// TSV format: address[<TAB>drop|thumb|arm][<TAB>comment]; "#" lines and blank lines are ignored. "thumb" disassembles a
+// still-undefined entry as Thumb (ARM images; T21e). "arm" clears 8 bytes at the entry, sets TMode 0 there and
+// disassembles them as A32: an A32 veneer inside a Thumb range; the function around it is re-created at its own entry
+// afterwards (T24 round 5).
 // For each address: (1) functions that start within the first 8 fall-through instructions after it are removed (late
 // starts; the walk stops at a call, and a function that has call references is kept, T21e); (2) the function containing it, if it starts earlier, is removed and later re-created at its old entry (so its
 // body is recomputed and stops at the new entry), unless column 2 is "drop" (the old entry was data); (3) the function at
@@ -25,6 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FixFuncEntries extends GhidraScript {
+    java.util.List<Address> armRecreate = new java.util.ArrayList<>();
+
     boolean hasCallers(Function f) {
         for (ghidra.program.model.symbol.Reference r : getReferencesTo(f.getEntryPoint()))
             if (r.getReferenceType().isCall()) return true;
@@ -35,6 +39,7 @@ public class FixFuncEntries extends GhidraScript {
     protected void run() throws Exception {
         int made = 0, late = 0, bad = 0, tail = 0;
         java.util.List<Address> entries = new java.util.ArrayList<>();
+        armRecreate.clear();
         boolean nolate = getScriptArgs().length > 1 && getScriptArgs()[1].equals("nolate");
         for (String line : Files.readAllLines(Paths.get(getScriptArgs()[0]))) {
             if (line.isBlank() || line.startsWith("#")) continue;
@@ -42,6 +47,22 @@ public class FixFuncEntries extends GhidraScript {
             Address a = toAddr(Long.decode(p[0].startsWith("0x") ? p[0] : "0x" + p[0]));
             boolean drop = p.length > 1 && p[1].trim().equals("drop");
             boolean thumb = p.length > 1 && p[1].trim().equals("thumb");
+            // "arm" (T24 round 5): an A32 entry inside a Thumb range (the armcc fplib veneers "add ip, pc, #1; bx ip"):
+            // the 8 bytes are cleared, get TMode 0 and are disassembled as A32, whatever was there before
+            boolean arm = p.length > 1 && p[1].trim().equals("arm");
+            if (arm) {
+                Function inside = getFunctionContaining(a);
+                if (inside != null && !inside.getEntryPoint().equals(a)) {
+                    Address e = inside.getEntryPoint();
+                    removeFunction(inside);
+                    armRecreate.add(e);
+                }
+                clearListing(a, a.add(7));
+                ghidra.program.model.lang.Register tmode = currentProgram.getRegister("TMode");
+                currentProgram.getProgramContext().setValue(tmode, a, a.add(7), java.math.BigInteger.ZERO);
+                new ghidra.app.cmd.disassemble.ArmDisassembleCommand(a,
+                    new ghidra.program.model.address.AddressSet(a, a.add(7)), false).applyTo(currentProgram, monitor);
+            }
             Function old = getFunctionContaining(a);
             Address oldEntry = null;
             if (old != null && !old.getEntryPoint().equals(a)) {
@@ -74,6 +95,9 @@ public class FixFuncEntries extends GhidraScript {
             if (oldEntry != null && !drop && getFunctionAt(oldEntry) == null) {
                 if (createFunction(oldEntry, null) == null) printerr("FixFuncEntries: cannot re-create " + oldEntry);
             }
+        }
+        for (Address e : armRecreate) {
+            if (getFunctionAt(e) == null && createFunction(e, null) == null) printerr("FixFuncEntries: cannot re-create " + e);
         }
         for (Address a : entries) {
             for (ghidra.program.model.symbol.Reference r : getReferencesTo(a)) {
