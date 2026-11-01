@@ -423,6 +423,8 @@ class Run:
         for a in cover or ():
             self.cover_hooks[a] = uc.hook_add(UC_HOOK_CODE, self.on_leader, begin=a, end=a)
         self.regs = args['regs']
+        # a preset may bias chosen registers (round 7): address -> values a read returns, drawn from the run's rng
+        self.mmio_pick = args.get('mmio', {})
         self.snap = SNAP
 
     def on_code(self, uc, addr, size, _):
@@ -439,7 +441,9 @@ class Run:
         r += [struct.unpack('<I', uc.mem_read(sp + 4 * k, 4))[0] for k in range(max(0, n - 4))]
         norm = []
         for k, v in enumerate(r):
-            if STACK_TOP - STACK_SIZE <= v < STACK_TOP:
+            if STACK_TOP - STACK_SIZE <= v < STACK_TOP and k == out:
+                norm.append(('stack', 'out'))   # what the kernel writes there: its prior contents are not an input
+            elif STACK_TOP - STACK_SIZE <= v < STACK_TOP:      # (round 7: stack garbage differed in sdhi_flag_wait)
                 norm.append(('stack', bytes(uc.mem_read(v, min(STACK_ARG_BYTES.get((name, k), 4), STACK_TOP - v)))))
             else:
                 norm.append(v)
@@ -465,7 +469,8 @@ class Run:
             uc.hook_del(h)
 
     def on_mmio_read(self, uc, offset, size, base):
-        v = self.rng.getrandbits(8 * size)
+        pick = self.mmio_pick.get(base + offset)
+        v = self.rng.choice(pick) if pick else self.rng.getrandbits(8 * size)
         self.mmio.append(('r', base + offset, size, v))
         return v
 
@@ -1012,6 +1017,40 @@ def dmac_args(rng, args):
     return [(0x20808AA0, struct.pack('<5I', *[VDC5_STUB_FN] * 5))]
 
 
+def sd_card_args(rng, args, kind):
+    """The SDHI command layer (round 7): the card context (0x300 bytes: card type +0x2C6 0 or 1, addressing +0x2C0 2
+    or 0) last, after (card address, buffer, blocks 0..3) for the sector transfers and ops, (length, blocks) for
+    CMD16, (response type 0..8) for the response copy, (buffer, length) for the PIO read; the DMA interrupt states
+    of sdhi_dma_open (0x20808B78: registered -1 or 1, a GIC id 0..0x25F)."""
+    regs = args['regs']
+    ctx = SCRATCH_ARGS + 0xC000
+    c = bytearray(rng.getrandbits(8) for _ in range(0x300))
+    struct.pack_into('<HH', c, 0x2C0, rng.choice([0, 2, 2]), 0)
+    struct.pack_into('<H', c, 0x2C6, rng.choice([0, 0, 1]))
+    buf = SCRATCH_ARGS + 0xE000
+    args['buffers'] = [b for b in args['buffers'] if not ctx <= b[0] < ctx + 0x4000]
+    args['buffers'] += [(ctx, bytes(c)), (buf, bytes(rng.getrandbits(8) for _ in range(0x800)))]
+    n = rng.choice([0, 1, 1, 2, 2, 3])
+    if kind == 'xfer':
+        regs[0], regs[1], regs[2], regs[3] = rng.getrandbits(32), buf, n, ctx
+    elif kind == 'cmd16':
+        regs[0], regs[1], regs[2] = rng.choice([0x200, 8, 64]), n, ctx
+    elif kind == 'rsp':
+        regs[0], regs[1] = rng.randrange(9), ctx
+    elif kind == 'ctx':
+        regs[0] = ctx
+    elif kind == 'pio':
+        regs[0], regs[1] = buf, rng.choice([0, 3, 4, 16, 512])
+    # SD_INFO1 with the response and access end bits, SD_INFO2 without error bits now and then, so that commands
+    # complete and the transfers run on (with random status they almost never got past CMD16); R1 (RSP01:RSP00)
+    # mostly without error bits
+    args["mmio"] = {0xE804E01C: [0xFFFF, 0x0005, rng.getrandbits(16)], 0xE804E01E: [0x0000, 0x0300, 0x2000, 0x0040],
+                    0xE804E00C: [0x0900, 0, rng.getrandbits(16)], 0xE804E00E: [0, 0, rng.getrandbits(16)]}
+    irq = b''.join(struct.pack('<IIbxH', VDC5_STUB_FN, rng.randrange(0x260), rng.choice([-1, 1]), rng.getrandbits(16))
+                   for _ in range(2))
+    return [(0x20808B78, irq)]
+
+
 def mode_args(rng, args, k):
     """vdc5_args with argument k a display mode 0/1 (the GUI's timing tables have two entries)."""
     fill = vdc5_args(rng, args)
@@ -1124,6 +1163,11 @@ def preset_for(fname):
         return lambda rng, args: vdc5_read_args(rng, args, kind)
     if fname.startswith('dmac'):
         return dmac_args
+    sd = {'sdhi_read_sectors_cmd': 'xfer', 'sdhi_write_sectors_cmd': 'xfer', 'sdhi_read_op': 'xfer',
+          'sdhi_write_op': 'xfer', 'sd_cmd16_set_blocklen': 'cmd16', 'sdhi_read_response': 'rsp', 'sd_cmd12_stop': 'ctx',
+          'sdhi_read_buf_pio': 'pio', 'sdhi_dma_open': 'irq', 'sdhi_open': 'irq'}.get(fname)
+    if sd:
+        return lambda rng, args: sd_card_args(rng, args, sd)
     if fname.startswith('rspi'):
         kind = ('xfer' if fname in ('rspi_read', 'rspi_read_pio', 'rspi_write', 'rspi_write_pio') else
                 'burst' if fname.endswith('_read_burst') else 'config' if fname == 'rspi_hw_config' else

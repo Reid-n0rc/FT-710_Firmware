@@ -84,3 +84,8 @@ rspi_rx_trigger_bytes	20800434	[fact] SPBFCR.RXTRG -> bytes {1, 2, 4, 8, 16, 24,
 dmac_done	20808a8c	[fact] done flags of DMA channels 3, 4, 5, 9, 10 (words): each set-up clears its own (str at +0, +4, +8, +0xC, +0x10 of literal 0x20808A8C), dmac3_isr sets the first
 dmac_callback	20808aa0	[fact] end callbacks of DMA channels 3, 4, 5, 9, 10: dmacN_set_callback stores at +0..+0x10, dmac4/5/9/10_isr branch through +4..+0x10
 dmac_cisr	204200b0	[fact] T_CISR of DMA channels 3, 4, 5, 9, 10 (0x14 apart): the itron_acre_isr arguments 0x204200B0, C4, D8, EC, 0x20420100
+sd_r1_err_cmd12	20420234	[fact] R1 error mask per card type that sd_cmd12_stop tests (literal 0x20140B44, index +0x2C6)
+sd_r1_err_cmd16	2042023c	[fact] the same for sd_cmd16_set_blocklen (literal 0x20140B40)
+sd_r1_err_read	20420244	[fact] the same for sdhi_read_sectors_cmd (literal 0x20140B48)
+sd_r1_err_write	2042024c	[fact] the same for sdhi_write_sectors_cmd (literal 0x20140B4C)
+sdhi_dma_irq	20808b78	[fact] two {handler definition, GIC id, registered (-1 until gic_def_inh), state} of 0xC bytes for the SDHI DMA end interrupts; sdhi_dma_open 0x2013FE68 (literal 0x20140124)

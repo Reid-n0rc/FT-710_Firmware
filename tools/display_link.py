@@ -458,9 +458,24 @@ def main():
     if not os.path.exists(hz):
         sys.exit('display_link: out/abi_hazards.tsv missing: run python3 -I tools/equiv_display_emu.py abicheck '
                  '(make link does)')
-    for r in read_tsv(hz)[1:]:
-        if r[0] in cand:
-            held.setdefault(r[0], f'{r[1]} reads {r[4]} after calling it ({r[2]}; abicheck)')
+    # a caller that is itself linked no longer runs its original code (its entry is patched or overwritten), so
+    # its hazard lapses (round 7: sdhi_error_reset recreated releases sdhi_soft_reset); to a fixed point, since a
+    # caller held back for another reason runs as the original again
+    src_at = {}
+    for n in cand:
+        o = orig_of(n)
+        if o is not None:
+            src_at[o[0]] = n
+    hz_rows = [r for r in read_tsv(hz)[1:] if r[0] in cand]
+    while True:
+        new = {}
+        for r in hz_rows:
+            caller = src_at.get(funcs[r[1]][0]) if r[1] in funcs else None
+            if r[0] not in held and (caller is None or caller in held):
+                new.setdefault(r[0], f'{r[1]} reads {r[4]} after calling it ({r[2]}; abicheck)')
+        if not new:
+            break
+        held.update(new)
     for n in held:
         inplace.pop(n, None)
     gap_only = {n for n in cand if n in flash_phase and n not in inplace}

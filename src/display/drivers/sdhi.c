@@ -482,3 +482,301 @@ int sdhi_cmd(int cmd, int app, uint32_t arg)
     }
     return SD_INFO2 & 0xFFFF807FU;
 }
+
+/* ---- round 7: the command layer above the target functions, 0x201405F4..0x20140BE7, and the DMA open ---- */
+
+#define SD_RSP(n) REG16(SDHI0 + 0x0C + 2 * (n))   /* SD_RSP00..SD_RSP07 */
+#define SD_BUF0 REG32(SDHI0 + 0x30)
+#define CC_EXT_MODE REG16(SDHI0 + 0xD8)           /* bit 1: DMA mode */
+#define DMARS0 REG32(0xFCFE1000U)
+#define ICDIPR_REG(id) REG32(0xE8201400U + ((id) & ~3U))
+
+/* the parts of the SD driver's card context these functions use [fact: the offsets below] */
+typedef struct
+{
+    uint8_t _r0[0x2B0];
+    union
+    {
+        uint32_t r1;          /* +0x2B0: short response */
+        uint8_t r2[15];       /* +0x2B0: long response, RSP07 low byte first .. RSP00 */
+    } rsp;
+    uint16_t addr_mode;       /* +0x2C0: 2 = block addressing (next block addr + 1), else bytes (+ 0x200) */
+    uint16_t _r1[2];
+    uint16_t card_type;       /* +0x2C6: 1 = MMC (docs/code/display/filesystem.md) */
+} sd_card_t;
+
+/* the R1 status bits that count as an error, per card type [fact: the literals of the four users] */
+extern const uint32_t sd_r1_err_cmd12[];   /* 0x20420234 */
+extern const uint32_t sd_r1_err_cmd16[];   /* 0x2042023C */
+extern const uint32_t sd_r1_err_read[];    /* 0x20420244 */
+extern const uint32_t sd_r1_err_write[];   /* 0x2042024C */
+
+/* the two DMA end interrupts of the SDHI channels [fact: 0x2013FE68 reads +0, +4, +8 and +0xC, +0x10, +0x14] */
+typedef struct
+{
+    const void *def;          /* the handler definition for gic_def_inh */
+    uint32_t intid;
+    int8_t registered;        /* -1 until gic_def_inh succeeded */
+    uint16_t state;           /* +0xA: cleared at open */
+} sdhi_dma_irq_t;
+
+extern sdhi_dma_irq_t sdhi_dma_irq[2];   /* 0x20808B78 */
+
+int sdhi_init(void);
+
+/* 0x201405F4: (response type, context): the response registers into the context: the 128-bit R2 (types other
+ * than 1, 3, 6, 7) as 15 bytes from RSP07's low byte down to RSP00, else RSP01:RSP00 as one word [fact] */
+void sdhi_read_response(int type, sd_card_t *c)
+{
+    if (type == 1 || type == 6 || type == 7 || type == 3)
+    {
+        uint32_t hi;
+
+        c->rsp.r1 = 0;
+        hi = SD_RSP(1);
+        c->rsp.r1 = hi << 16;
+        c->rsp.r1 |= SD_RSP(0);
+        return;
+    }
+    c->rsp.r2[0] = (uint8_t)SD_RSP(7);
+    for (int k = 6; k >= 0; k--)
+    {
+        uint16_t v = SD_RSP(k);
+
+        c->rsp.r2[13 - 2 * k] = (uint8_t)(v >> 8);
+        c->rsp.r2[14 - 2 * k] = (uint8_t)v;
+    }
+}
+
+/* 0x201406B4: (block length, blocks, context): SD_SIZE, SD_SECCNT, SD_STOP (0x100: auto CMD12 for more than one
+ * block), then CMD16 with three tries; -9 when it fails, -23 for an error bit in R1 [fact] */
+int sd_cmd16_set_blocklen(uint32_t len, uint32_t blocks, sd_card_t *c)
+{
+    int i;
+
+    sdhi_set_block_size(len);
+    sdhi_set_sector_count(blocks);
+    sdhi_set_stop(blocks == 1 ? 0 : 0x100);
+    for (i = 0; i < 3; i++)
+    {
+        if (sdhi_cmd(16, 0, len) == 0)
+        {
+            break;
+        }
+    }
+    if (i >= 3)
+    {
+        return -9;
+    }
+    sdhi_read_response(1, c);
+    return (c->rsp.r1 & sd_r1_err_cmd16[c->card_type]) != 0 ? -23 : 0;
+}
+
+/* 0x2014074C: CMD12 (stop) with three tries; -9 when it fails or R1 has an error bit [fact] */
+int sd_cmd12_stop(sd_card_t *c)
+{
+    int i;
+
+    for (i = 0; i < 3; i++)
+    {
+        if (sdhi_cmd(12, 0, 0) == 0)
+        {
+            break;
+        }
+    }
+    if (i >= 3)
+    {
+        return -9;
+    }
+    sdhi_read_response(1, c);
+    return (c->rsp.r1 & sd_r1_err_cmd12[c->card_type]) != 0 ? -9 : 0;
+}
+
+/* 0x201407BC: after an error: SOFT_RST with SD_CLK_CTRL and SD_OPTION kept. The image keeps them in r3 and ip across
+ * sdhi_soft_reset (armcc knows the callee), which the recreated sdhi_soft_reset may change (abicheck) [fact] */
+void sdhi_error_reset(void)
+{
+    uint16_t clk = SD_CLK_CTRL;
+    uint16_t opt = SD_OPTION;
+
+    sdhi_soft_reset();
+    SD_CLK_CTRL = clk;
+    SD_OPTION = opt;
+}
+
+/* 0x201407E0 / 0x201409EC: (card address, buffer, blocks, context): block length 512; DMA mode on; CMD17/18 (read)
+ * or CMD24/25 (write) with three tries (-9; DMA mode stays on); R1 error bits (-22 read, -21 write); each block by
+ * DMA (its error ends the loop, DMA mode off); DMA mode off; then the access end (-1 when it fails) [fact] */
+#define SDHI_XFER_SECTORS(name, single, multi, mask, err, block)                                                   \
+    int name(uint32_t addr, uint8_t *buf, uint32_t n, sd_card_t *c)                                                \
+    {                                                                                                              \
+        int r = sd_cmd16_set_blocklen(0x200, n, c);                                                                \
+        int i;                                                                                                     \
+                                                                                                                   \
+        if (r != 0)                                                                                                \
+        {                                                                                                          \
+            return r;                                                                                              \
+        }                                                                                                          \
+        CC_EXT_MODE |= 2;                                                                                          \
+        for (i = 0; i < 3; i++)                                                                                    \
+        {                                                                                                          \
+            if (sdhi_cmd(n == 1 ? (single) : (multi), 0, addr) == 0)                                               \
+            {                                                                                                      \
+                break;                                                                                             \
+            }                                                                                                      \
+        }                                                                                                          \
+        if (i >= 3)                                                                                                \
+        {                                                                                                          \
+            return -9;                                                                                             \
+        }                                                                                                          \
+        sdhi_read_response(1, c);                                                                                  \
+        if (c->rsp.r1 & (mask)[c->card_type])                                                                      \
+        {                                                                                                          \
+            return (err);                                                                                          \
+        }                                                                                                          \
+        for (uint16_t k = 0; k < n; k++, buf += 0x200)                                                             \
+        {                                                                                                          \
+            r = block(buf);                                                                                        \
+            if (r != 0)                                                                                            \
+            {                                                                                                      \
+                CC_EXT_MODE &= ~2;                                                                                 \
+                return r;                                                                                          \
+            }                                                                                                      \
+        }                                                                                                          \
+        CC_EXT_MODE &= ~2;                                                                                         \
+        return sdhi_wait_info(2) != 0 ? -1 : 0;                                                                    \
+    }
+
+SDHI_XFER_SECTORS(sdhi_read_sectors_cmd, 17, 18, sd_r1_err_read, -22, sdhi_read_block)
+SDHI_XFER_SECTORS(sdhi_write_sectors_cmd, 24, 25, sd_r1_err_write, -21, sdhi_write_block)
+
+/* 0x2014091C: slot 22 of the operation table, read: two blocks one command each (the second at addr + 1 or + 0x200
+ * by the addressing), otherwise one command for all; sdhi_error_reset after an error [fact] */
+int sdhi_read_op(uint32_t addr, uint8_t *buf, uint32_t n, sd_card_t *c)
+{
+    int r;
+
+    if (n != 2)
+    {
+        r = sdhi_read_sectors_cmd(addr, buf, n, c);
+    }
+    else
+    {
+        r = sdhi_read_sectors_cmd(addr, buf, 1, c);
+        if (r == 0)
+        {
+            r = sdhi_read_sectors_cmd(c->addr_mode == 2 ? addr + 1 : addr + 0x200, buf + 0x200, 1, c);
+        }
+    }
+    if (r != 0)
+    {
+        sdhi_error_reset();
+    }
+    return r;
+}
+
+/* 0x20140998: slot 23: read len / 4 words from SD_BUF0 into the buffer, low byte first; returns 0 [fact] */
+int sdhi_read_buf_pio(uint8_t *buf, uint32_t len)
+{
+    for (int i = 0; i < (int)(len >> 2); i++)
+    {
+        uint32_t w = SD_BUF0;
+
+        buf[0] = (uint8_t)w;
+        buf[1] = (uint8_t)(w >> 8);
+        buf[2] = (uint8_t)(w >> 16);
+        buf[3] = (uint8_t)(w >> 24);
+        buf += 4;
+    }
+    return 0;
+}
+
+/* 0x20140B50: slot 24, write: one command for all blocks, sdhi_error_reset after an error [fact] */
+int sdhi_write_op(uint32_t addr, uint8_t *buf, uint32_t n, sd_card_t *c)
+{
+    int r = sdhi_write_sectors_cmd(addr, buf, n, c);
+
+    if (r != 0)
+    {
+        sdhi_error_reset();
+    }
+    return r;
+}
+
+/* 0x2013FE68 (Ghidra: part of sdhi_open, its tail call): the DMA side: both interrupt states cleared, the DMARS0
+ * request selects 0xC2 (channel 0) and 0xC1 (channel 1), each end interrupt's handler once (gic_def_inh) and its
+ * priority 0x38 (the register read before the handler is set, as the image does), both channels reset (CHCTRL
+ * SWRST), both interrupts enabled with interrupts masked; -1 when a handler fails [fact] */
+int sdhi_dma_open(void)
+{
+    int s;
+
+    sdhi_dma_irq[0].state = 0;
+    sdhi_dma_irq[1].state = 0;
+    DMARS0 &= ~0xFFU;
+    DMARS0 |= 0xC2;
+    DMARS0 &= ~0xFF0000U;
+    DMARS0 |= 0xC10000;
+    for (int k = 0; k < 2; k++)
+    {
+        uint32_t id = sdhi_dma_irq[k].intid;
+        uint32_t pri = ICDIPR_REG(id) & ~(0xFFU << 8 * (id & 3));
+
+        if (sdhi_dma_irq[k].registered == -1)
+        {
+            if (gic_def_inh(id, sdhi_dma_irq[k].def) < 0)
+            {
+                return -1;
+            }
+            sdhi_dma_irq[k].registered = 1;
+        }
+        id = sdhi_dma_irq[k].intid;
+        ICDIPR_REG(id) = pri | 7U << (8 * (id & 3) + 3);
+    }
+    DMAC_CH(0, CHCTRL) |= 8;
+    DMAC_CH(1, CHCTRL) |= 8;
+    s = knl_int_disable();
+    ICDISER(sdhi_dma_irq[0].intid >> 5) = 1U << (sdhi_dma_irq[0].intid & 0x1F);
+    ICDISER(sdhi_dma_irq[1].intid >> 5) = 1U << (sdhi_dma_irq[1].intid & 0x1F);
+    knl_int_restore(s);
+    return 0;
+}
+
+/* 0x20140B68: slot 25, open: module clock, soft reset, the SDHI interrupt, the target init, the DMA side; the
+ * first error is returned [fact] */
+int sdhi_open(void)
+{
+    int r;
+
+    sdhi0_clock_on();
+    sdhi_soft_reset();
+    r = sdhi0_irq_enable();
+    if (r != 0)
+    {
+        return r;
+    }
+    r = sdhi_init();
+    if (r != 0)
+    {
+        return r;
+    }
+    return sdhi_dma_open();
+}
+
+/* 0x20140B9C: the SDHI0 buffer interrupt: SD_INFO2 BRE (bit 8) -> event bit 1, else BWE (bit 9) -> bit 2, each
+ * cleared by writing its complement [fact] */
+void sdhi0_buf_isr(void)
+{
+    uint16_t v = SD_INFO2;
+
+    if (v & 0x100)
+    {
+        SD_INFO2 = (uint16_t)~0x100U;
+        sdhi_flag_set(1);
+    }
+    else if (v & 0x200)
+    {
+        SD_INFO2 = (uint16_t)~0x200U;
+        sdhi_flag_set(2);
+    }
+}

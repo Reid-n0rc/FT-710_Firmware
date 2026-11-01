@@ -111,3 +111,5 @@ rspi_write_pio	0x2011f4d4	[fact] the body of rspi_write behind its checks (b 0x2
 rspi_nop_2011dea0	0x2011dea0	[fact] bx lr between rspi_hw_config and rspi0_open, no caller; Ghidra FUN_2011dea0
 dmac9_enable	0x20137dec	[fact] reg_rmw32(CHCTRL_9 0xE8200468, 1, 0, 1) between dmac4_set_callback and dmac9_stop; no Ghidra entry (drivers/dmac.c)
 dmac3_set_callback	0x20137d78	[inference] stores r0 at 0x20808AA0, the first of the five callback slots (4: +4, 5: +8, 9: +0xC, 10: +0x10, set by the named setters), right after dmac3_disable; no caller; Ghidra FUN_20137d78
+sdhi_read_buf_pio	0x20140998	[fact] len / 4 reads of SD_BUF0 (0xE804E030) stored low byte first, returns 0; slot 23 of the SDHI operation table 0x20420564; Ghidra FUN_20140998 (drivers/sdhi.c)
+sdhi_dma_open	0x2013fe68	[fact] the tail call of sdhi_open (b 0x2013FE68 at 0x20140B94): DMARS0 0xC2/0xC1, the two DMA end interrupts (gic_def_inh, priority, ICDISER), CHCTRL0/1 SWRST; Ghidra counts it into sdhi_open
