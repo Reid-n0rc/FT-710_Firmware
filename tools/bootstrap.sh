@@ -24,14 +24,16 @@
 #           module and compile it; the stock Xtensa:LE:32:default is not changed. HIFI4_REGEN=1 first downloads
 #           xtensa-modules.c (SHA-256 checked) and regenerates the committed files (needs a C compiler).
 #   ghidra  build the Ghidra projects FT710_MAIN, FT710_DISPLAY, FT710_IFDSP (two programs) with the committed setup,
-#           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files).
+#           code-discovery and names scripts. A program is rebuilt only when its inputs changed (stamp files). Then the
+#           inline comments (tools/ghidra/CommentCode.java, T23i) go onto each program, with their own stamp: a comment
+#           change does not rebuild the program, a rebuilt program gets its comments again.
 #   export  re-export the decompiled C (tools/ghidra/ExportDecomp.java) and decomp/main/cat_dispatch.tsv; into the
 #           repo's decomp/ it also refreshes the README progress block and decomp/*/readable/ (tools/readable_view.py).
 #   flix    FLIX-aware HiFi4 listing decomp/ifdsp/hifi4/flix.dis with the Zephyr SDK RT600 objdump (tools/ifdsp_hifi4_dis.py).
 #           Skipped with a warning when the objdump is missing (step deps installs it); verify then leaves flix.dis out.
 #   verify  diff the exports against the committed decomp/ (INDEX.md and README.md are hand-written, not compared;
 #           readable/ is generated from the export by tools/readable_view.py, so it is left out of the diff and checked
-#           on its own with `readable_view.py check`), and
+#           on its own with `readable_view.py check`; `code_comments.py check` tests the T23i comment tables), and
 #           compare each decomp/<image>/quality.tsv (decompile-quality counts from ExportDecomp.java) with the committed one
 #           (tools/decomp_quality.py compare): fails if any count got worse; better counts are printed.
 #   sdr     SDR FPGA chain (T15): prjxray checkouts + venv, FASM, cell netlist, structural Verilog/XDC, Verilator
@@ -184,7 +186,7 @@ headless() {  # headless <project> <analyzeHeadless args...>
   cat "$run" >> "$OUT/logs/ghidra_$p.log"
   [ "$rc" -eq 0 ] || { tail -30 "$run" >&2; die "Ghidra run failed (log: $OUT/logs/ghidra_$p.log)"; }
   grep -q -i -E 'ERROR.*script|REPORT: .*failed' "$run" && { grep -E 'ERROR|failed' "$run" | head -10 >&2; die "a Ghidra script failed (log: $OUT/logs/ghidra_$p.log)"; }
-  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
+  grep -E '^(INFO|WARN|ERROR) +(ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|CommentCode|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)|> (ExportDecomp|ApplyNames|ApplySignatures|ApplyStructs|ApplyEnums|ApplySfr|CommentCode|DefineRomData|FixFuncEntries|CatDispatch|Display|Ifdsp|SetupRX651)' \
     "$run" | sed -e 's/ (GhidraScript) *$//' -e 's/^INFO  //' | tail -n 3 | sed 's/^/   /' || true
 }
 
@@ -446,6 +448,20 @@ build_ifdsp() {
     echo "$st" > "$PROJ/.stamp_ifdsp_hifi4"
   fi
 }
+# T23i: short inline comments (PRE comments, printed in the decompiled C) from the SFR table, the docs' function purposes
+# (purposes_<image>.tsv, tools/code_comments.py) and the curated comments_<image>.tsv. Runs after the program's build, on
+# its own stamp, which includes the program's stamp (a rebuilt program starts without comments).
+comment_program() {  # comment_program <project> <program> <program stamp key> <sfr table> <image key>
+  local deps=("$G/CommentCode.java" "$G/$4" "$G/purposes_$5.tsv" "$G/comments_$5.tsv") st
+  [ -f "$PROJ/.stamp_$3" ] && deps+=("$PROJ/.stamp_$3")
+  st=$(stamp_of "${deps[@]}")
+  if stamp_ok "$1" "$3_comments" "$st"; then info "$1/$5 comments up to date"; return; fi
+  info "$1/$5: CommentCode (T23i)"
+  rm -f "$PROJ/.stamp_$3_comments"
+  headless "$1" -process "$2" -noanalysis \
+    -postScript CommentCode.java "$G/$4" "$G/purposes_$5.tsv" "$G/comments_$5.tsv" "$OUT/logs/comments_$5.tsv"
+  echo "$st" > "$PROJ/.stamp_$3_comments"
+}
 step_ghidra() {
   log "ghidra: projects in $PROJ (JOBS=$JOBS, heap $GHIDRA_HEADLESS_MAXMEM; logs in $OUT/logs/)"
   [ -f "$BUILD/FT-710_MAIN_V0112.bin" ] || die "no decoded images in $BUILD (run step decode)"
@@ -454,6 +470,10 @@ step_ghidra() {
   build_main
   build_display
   build_ifdsp
+  comment_program FT710_MAIN FT-710_MAIN_V0112.bin main sfr_rx651.tsv main
+  comment_program FT710_DISPLAY FT-710_DISPLAY_V0108.bin display sfr_rza1h.tsv display
+  comment_program FT710_IFDSP FT-710_IFDSP_V0101.bin ifdsp_m33 sfr_rt685.tsv m33
+  comment_program FT710_IFDSP FT-710_IFDSP_V0101_hifi4.bin ifdsp_hifi4 sfr_rt685_hifi4.tsv hifi4
 }
 
 # ---------------------------------------------------------------- export
@@ -530,9 +550,13 @@ step_verify() {
   # T23g: the committed readable view must match decomp/ and docs/code/ (stale = rerun readable_view.py build).
   local vrc=0
   (cd "$REPO" && python3 -I tools/readable_view.py check) | sed 's/^/   /' || vrc=1  # pipefail
+  # T23i: purposes_<image>.tsv must match decomp/ + docs/code/, and comments_<image>.tsv must be well formed.
+  local crc=0
+  (cd "$REPO" && python3 -I tools/code_comments.py check) | sed 's/^/   /' || crc=1
   [ "$qrc" -eq 0 ] || die "decompile quality got worse (see WORSE above), or a quality.tsv is missing"
   [ "$rc" -eq 0 ] || die "the export differs from decomp/ (see above). If you changed names or scripts on purpose, commit the new export"
   [ "$vrc" -eq 0 ] || die "decomp/*/readable/ is stale: run python3 -I tools/readable_view.py build and commit it"
+  [ "$crc" -eq 0 ] || die "tools/ghidra/purposes_*.tsv is stale or comments_*.tsv is malformed: run python3 -I tools/code_comments.py purposes, re-apply CommentCode.java (T23i)"
 }
 
 # ---------------------------------------------------------------- sdr
