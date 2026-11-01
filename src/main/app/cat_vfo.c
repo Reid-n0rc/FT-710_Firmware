@@ -8,7 +8,7 @@ void vfo_mem_to_memtune(uint8_t side);                   /* memory channel -> me
 uint32_t freq_clamp(uint8_t side, uint32_t hz);          /* sets g_ui.freq_rejected for a refused frequency */
 
 /* u32 as 9 decimal digits, as the image prints it: each digit (v / place) through nib2hex [fact: cat_FA_FB
- * 0xFFFA99E6..] */
+ * 0xFFFA9A21..0xFFFA9A4A] */
 static void put_dec32(uint8_t *at, uint32_t v, uint32_t div)
 {
     for (; div != 0; div /= 10u) {
@@ -40,14 +40,14 @@ extern const uint8_t cat_mode_codes[];        /* 0xFFF806D0: the CAT mode charac
 extern const uint8_t cat_vfo_state_codes[];   /* 0xFFF806DF: the CAT P7 character per VFO state */
 extern const uint8_t cat_pms_names[][3];      /* 0xFFF806E9: names of the channels from 99 on */
 
-/* the channel as three characters: 001..099, or the name of channel 99 + n with n in 8 bits [fact: add #0x9D,
- * cat_IF_OI 0xFFFAA44E, cat_MR] */
+/* the channel as three characters: 001..099, or the name of channel 99 + n [fact: add #-99, cat_IF_OI 0xFFFAA458;
+ * cat_MR, cat_MC] */
 static void put_channel(uint8_t *at, uint8_t ch)
 {
     if (ch < 99u) {
         put_dec(at, (uint8_t)(ch + 1u), 100);
     } else {
-        const uint8_t *nm = cat_pms_names[(uint8_t)(ch + 0x9Du)];
+        const uint8_t *nm = cat_pms_names[(uint8_t)(ch - 99u)];
 
         at[2] = nm[2];
         at[0] = nm[0];
@@ -306,7 +306,7 @@ void cat_CF(const uint8_t *text, uint8_t set)
 /* cat_FA_FB 0xFFFA99BD: FA / FB P1 = the frequency of VFO-A / VFO-B in Hz, 9 digits. A read gives the TX frequency
  * while transmitting on the active VFO. A set is refused while a dialog or the keypad is open, outside the bands,
  * while the VFO is locked and when freq_clamp refuses it; in SPLIT both VFO states are taken from the saved VFO-A
- * state for the tune and put back afterwards [fact: 0xFFFA9AB6..0xFFFA9C8E]. */
+ * state for the tune and put back afterwards [fact: 0xFFFA9B0C..0xFFFA9C8F]. */
 void cat_FA_FB(const uint8_t *text, uint8_t set, uint8_t vfo_b)
 {
     struct vfo_rec *rec;
@@ -396,7 +396,7 @@ static uint8_t parse_channel(const uint8_t *text)
 /* cat_MW 0xFFFAC534: MW P1..P10 = memory channel write, IF's layout: channel, frequency (9 digits, in the bands),
  * clarifier (sign and four digits, checked but not stored: the offset and both clarifier flags are cleared), P4 P5
  * 0/1, mode (a CAT mode character), P7 '1', tone mode, "00", repeater shift. The channel becomes the active VFO's
- * memory channel before the rest is checked [fact: 0xFFFAC64F]. */
+ * memory channel before the rest is checked [fact: 0xFFFAC68A]. */
 void cat_MW(const uint8_t *ctext, uint8_t set)
 {
     uint8_t *text = (uint8_t *)ctext;       /* the ring slot; upper-cased in place */
@@ -509,7 +509,7 @@ static void rec_copy(struct vfo_rec *dst, const struct vfo_rec *src)
  * on) recalls the channel: the 60 m channels only where the destination has them, EMG only with EX030406
  * EMERGENCY FREQ TX, an empty channel is refused. The VFO's record is kept as its memory-tune record, the channel
  * record is copied into it, and the state becomes MEMORY; the save is of channel 1 whatever the channel
- * [fact: eeprom_save_memch(1), 0xFFFAB7B9]. */
+ * [fact: eeprom_save_memch(1), 0xFFFAB7BD..0xFFFAB7BF]. */
 void cat_MC(const uint8_t *ctext, uint8_t set)
 {
     uint8_t *text = (uint8_t *)ctext;       /* the ring slot; upper-cased in place */

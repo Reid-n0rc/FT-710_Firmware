@@ -294,6 +294,93 @@ void cat_SC(const uint8_t *text, uint8_t set)
 }
 
 void func_display_open(void);
+/* the first byte == c in buf[0..n), else buf itself [fact: mem_find_byte 0xFFFB012C returns it in R1; the decompile
+ * shows void] */
+const uint8_t *mem_find_byte(const uint8_t *buf, uint8_t c, uint16_t n);
+
+/* cat_EM 0xFFFA9648: EM0 P2 P3 = text slot 1..5 (em_text_mem, 50 bytes ended by 0xFE; RAM only, no save). A read
+ * answers the bytes before the 0xFE (none when there is none in the 50 or it is the first); a set stores the
+ * characters up to the ';' (found in the first 50 bytes of the command, the length in 8 bits) and an 0xFE after
+ * them [fact: the mem_find_byte calls 0xFFFA9681..0xFFFA97D7 (read) and 0xFFFA984C (set)] */
+void cat_EM(const uint8_t *text, uint8_t set)
+{
+    uint8_t *slot;
+    uint8_t n;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] != '0' || text[3] < '1' || text[3] > '5') {
+            cat_error = 1;
+            return;
+        }
+        slot = em_text_mem[text[3] - '1'];
+        n = (uint8_t)(mem_find_byte(slot, 0xFE, 50) - slot);
+        if (n != 0 && n <= 50u)
+            for (i = 0; i < n; i++)
+                cat_reply[4 + i] = slot[i];
+        cat_reply[4 + n] = ';';
+        cat_reply_len = (uint16_t)(n + 5u);
+        return;
+    }
+    n = (uint8_t)((uint8_t)(uintptr_t)mem_find_byte(text, ';', 50) - (uint8_t)(uintptr_t)text - 4u);
+    if (text[2] != '0' || text[3] < '1' || text[3] > '5') {
+        cat_error = 1;
+        return;
+    }
+    slot = em_text_mem[text[3] - '1'];
+    for (i = 0; i < n; i++)
+        slot[i] = text[4 + i];
+    slot[n] = 0xFE;
+}
+
+/* cat_KM 0xFFFAA905: KM P1 P2 = keyer memory text 1..5 (keyer_text_mem, the texts keyer_task sends). A read answers
+ * the stored characters (a length of 0 answers "KM;", the ';' over P1); a set stores len - 4 characters (filled to
+ * 50 with spaces; the image does not limit the count) and ends the text with '}' unless the command has one in its
+ * first 50 characters after the first, then saves the slot. Refused while the keyboard edits the same slot. */
+void cat_KM(const uint8_t *text, uint8_t set, uint16_t len)
+{
+    struct keyer_text *t;
+    uint8_t slot = (uint8_t)hex2nib(text[2]);
+    uint8_t n;
+    unsigned i;
+
+    if (!set) {
+        if (text[2] < '1' || text[2] > '5') {
+            cat_error = 1;
+            return;
+        }
+        t = &keyer_text_mem[text[2] - '1'];
+        n = t->len;
+        for (i = 0; i < n; i++)
+            cat_reply[3 + i] = t->text[i];
+        if (n == 0) {
+            cat_reply[2] = ';';
+            cat_reply_len = 3;
+            return;
+        }
+        cat_reply[3 + n] = ';';
+        cat_reply_len = (uint16_t)(n + 4u);
+        return;
+    }
+    if (g_ui.kbd_open == 1 && g_ui.kbd_target == 2 && slot == g_ui.msg_slot_idx + 1u) {
+        cat_error = 1;
+        return;
+    }
+    if (text[2] < '1' || text[2] > '5') {
+        cat_error = 1;
+        return;
+    }
+    n = (uint8_t)(len - 4u);
+    t = &keyer_text_mem[text[2] - '1'];
+    for (i = 0; i < sizeof t->text; i++)
+        t->text[i] = ' ';
+    for (i = 0; i < n; i++)
+        t->text[i] = text[3 + i];
+    if (mem_find_byte(&text[3], '}', 50) == &text[3])
+        t->text[n] = '}';
+    t->len = n;
+    eeprom_save_msg(1, text[2] - '0');
+}
 /* a packed BCD byte as two characters. The image's code uses all of R2: declared uint32_t so that GCC passes the
  * byte zero-extended (with a uint8_t parameter GCC loads it with the sign-extending MOV.B, and a byte >= 0x80
  * printed differently: the check of cat_DT, round 4) */

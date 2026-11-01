@@ -4,8 +4,8 @@
 #include "cat_cmds.h"
 
 /* blocks that have the APF flag (CO P2 = 2): CW, RTTY, DATA/PSK. In the others cat_CO points its APF pointer at a
- * local 0xFF and refuses when the byte reads 0xFF, so a real flags byte of 0xFF is refused too [fact:
- * 0xFFFA88C0..0xFFFA8973, the 0xFF test] */
+ * local set to 0xFF (0xFFFA86B2; the pointers 0xFFFA890C, 0xFFFA8965, 0xFFFA897A) and refuses when the byte reads
+ * 0xFF (0xFFFA8A81), so a real flags byte of 0xFF is refused too [fact] */
 static int apf_flags_ok(uint8_t blk, const struct mode_blk *b)
 {
     return (blk == 1 || blk == 2 || blk == 3) && b->flags != 0xFFu;
@@ -49,7 +49,7 @@ void cat_CO(const uint8_t *text, uint8_t set)
             cat_reply[5] = '0';
             put_dec(&cat_reply[6], (uint8_t)(g_opstate.apf_freq + 25u), 10);
             break;
-        default:                                /* only the ';' [fact: 0xFFFA8977] */
+        default:                                /* only the ';' [fact: 0xFFFA88C6] */
             break;
         }
         reply_done(8);
@@ -260,7 +260,7 @@ void cat_GT(const uint8_t *text, uint8_t set)
 }
 
 /* cat_BP 0xFFFA7A71: BP0 P2 P3..P5 = manual NOTCH of VFO 0's mode block: P2 = 0 on/off (flags bit 7; P3 P4 must be
- * "00", else the command is ignored without an error [fact: 0xFFFA7CA6]), 1 the frequency 001..320 (x 10 Hz). A
+ * "00", else the command is ignored without an error [fact: 0xFFFA7CA2..0xFFFA7CAC]), 1 the frequency 001..320 (x 10 Hz). A
  * set marks the active VFO edited and stores it back. */
 void cat_BP(const uint8_t *text, uint8_t set)
 {

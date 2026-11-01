@@ -118,6 +118,7 @@ _Static_assert(sizeof(struct keyer_msg) == 0x98 && sizeof(struct keyer_text) == 
 extern struct keyer_msg keyer_msg_mem[5];      /* 0x93A7 */
 extern struct keyer_text keyer_text_mem[5];    /* 0x969F */
 extern const uint8_t morse_table[][2];         /* 0xFFF815C3: {element count, elements from bit 7, 1 = dash} */
+extern uint8_t em_text_mem[5][50];             /* 0x979E: the EM text slots, each ended by 0xFE */
 extern uint8_t menu_tuner_select;         /* 0x9AB8 */
 extern uint8_t atu_ac;                    /* 0x1B3AD */
 extern uint8_t atu_tc;                    /* 0x1B3AF */

@@ -9,11 +9,11 @@ uint32_t scope_span_ptr(uint32_t freq);                  /* the scope span index
 uint8_t FUN_fffc4f8f(void);                              /* RAM 0x1B4DF: 1 while SS00 = 5 is in force */
 void FUN_fffc4f9e(uint8_t on);                           /* sets 0x1B4DF; on = 0 also copies ss00_value to 0x1B4E0 */
 
-#define SS_LEVEL_ZERO 0x3Cu       /* the level byte for 0.0 dB; one step is 0.5 dB [fact: 0xFFFAE9B9, 0xFFFAEF55] */
+#define SS_LEVEL_ZERO 0x3Cu       /* the level byte for 0.0 dB; one step is 0.5 dB [fact: the read halves it, 0xFFFAE9B9; the set doubles 30 -+ n, 0xFFFAEF45..0xFFFAEF62] */
 #define SS_LEVEL_MAX  0x78u       /* +30.0 dB */
 
 /* SS06's value: the display layout (3DSS, scope mode 0..2, waterfall size and expand) as one number 0..11
- * [fact: the read 0xFFFAEA92.., the set 0xFFFAEDE6..] */
+ * [fact: the read from 0xFFFAEA92, the set's switch 0xFFFAF083..0xFFFAF093 over the table 0xFFF8F17A] */
 static uint8_t ss06_layout(void)
 {
     uint8_t mode = g_opstate.scope_mode;

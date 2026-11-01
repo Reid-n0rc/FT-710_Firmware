@@ -117,3 +117,4 @@ morse_table	fff815c3	keyer_task 0xFFFB9DBC: 2 bytes per character {element count
 cat_mode_codes	fff806d0	cat_IF_OI 0xFFFAA631: the CAT mode character of mode index n (Ghidra label @cat_mode_codes)
 cat_vfo_state_codes	fff806df	cat_IF_OI 0xFFFAA648: the CAT P7 character of a VFO state (Ghidra label @cat_vfo_state_codes)
 cat_pms_names	fff806e9	cat_IF_OI 0xFFFAA461: 3-character names of the channels from 99 on (P1L..), 3 bytes each (Ghidra label @cat_pms_names)
+em_text_mem	979e	cat_EM 0xFFFA9648: 5 x 0x32 text slots, each ended by 0xFE (eeprom.md "Text slots (EM)")
