@@ -81,6 +81,12 @@ STUBS = {'eeprom_read': 3, 'eeprom_write': 3}
 # the 16-bit address and length with MOV.W and reload them with MOVU.W, 0xFFFB14A4/0xFFFB14ED), while CC-RX and GCC
 # leave different upper bits in the register (MOVU.W vs MOV.W)
 STUB_WIDTHS = {'eeprom_read': (2, 4, 2), 'eeprom_write': (2, 4, 2)}
+# eeprom_write's buffer: its bytes are recorded and compared; the buffer address of both only when it is not on the
+# stack (a callee's stack buffer moves with the caller's frame, which differs between CC-RX -O0 and GCC; T24 MAIN
+# round 3: cat_ext_SP -> cat_SP_eeprom_byte reads and writes a stack byte)
+STUB_DATA = {'eeprom_write': (1, 2)}
+STUB_BUF = {'eeprom_read': 1, 'eeprom_write': 1}     # the buffer argument, compared as 'stack' when on the stack
+STACK_TOP = 0x1004
 
 
 def read_tsv(path):
@@ -127,7 +133,14 @@ class Originals:
         if os.path.exists(ALIAS_TSV):
             for r in read_tsv(ALIAS_TSV)[1:]:
                 self.alias[r[0]] = int(r[1], 16)
-        self.data = {r[0]: int(r[1], 16) for r in read_tsv(DATA_TSV)[1:]}
+        # the typed globals of tools/ghidra/structs_main.h (g_ui, g_opstate, ...; tools/main_structs.py), then
+        # src/main/data_symbols.tsv
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('main_structs', os.path.join(ROOT, 'tools/main_structs.py'))
+        ms = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(ms)
+        self.data = ms.globals_map()
+        self.data.update({r[0]: int(r[1], 16) for r in read_tsv(DATA_TSV)[1:]})
 
     def addr(self, name):
         if name in self.alias:
@@ -498,7 +511,134 @@ def copy_if_changed_args(rng, regs):
     return [], None
 
 
-PRESETS = {'eeprom_save_msg': save_msg_args, 'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
+CAT_RING, CAT_RING_IN, CAT_RING_OUT, CAT_E_SLOT = 0x1E14C, 0x11FEC, 0x11FEB, 0x1B78C   # src/main/data_symbols.tsv
+_CAT_LENS = None
+
+
+def cat_lens():
+    """index -> the command lengths cat_dispatch tests for it, with their neighbours (decomp/main/cat_dispatch.tsv)."""
+    global _CAT_LENS
+    if _CAT_LENS is None:
+        _CAT_LENS = {}
+        for r in read_tsv(os.path.join(ROOT, 'decomp/main/cat_dispatch.tsv'))[1:]:
+            if r[0] != 'primary':
+                continue
+            ns = {int(x) for x in re.findall(r'len\D{1,2}(\d+)', r[4] if len(r) > 4 else '')}
+            _CAT_LENS[int(r[1])] = sorted(ns | {n + 1 for n in ns} | {n - 1 for n in ns if n} | {3})
+    return _CAT_LENS
+
+
+def cat_text(rng, mn, n=0x60):
+    """A CAT command text: the mnemonic, then mostly digits (the handlers parse decimal parameters)."""
+    body = bytes(rng.choice(b'0000111223456789;+-PWRSE') for _ in range(n - len(mn)))
+    return bytes(mn) + body
+
+
+def cat_mnemonic(rng, img, ext=False):
+    tab, cnt = (0xFFF806BC, 10) if ext else (0xFFF805EC, 104)
+    k = rng.randrange(cnt)
+    mn = bytearray(img.read(tab + 2 * k, 2))
+    if rng.random() < 0.3:
+        mn = bytearray(c | 0x20 for c in mn)     # lower case: cat_parse upper-cases the mnemonic
+    return mn
+
+
+def cat_dispatch_args(rng, regs):
+    """cat_dispatch (slot, index, len): every index of the table with the lengths its case tests (T24 MAIN round 3;
+    random indexes and lengths reach only the error path)."""
+    lens = cat_lens()
+    idx = rng.randrange(104) if rng.random() < 0.95 else rng.randrange(104, 256)
+    regs[0] = ARGBUF
+    regs[1] = idx
+    regs[2] = rng.choice(lens.get(idx, [3])) if rng.random() < 0.9 else rng.randrange(0, 0x40)
+    slot = bytes([rng.randrange(1, 4), 0]) + regs[2].to_bytes(2, 'little') + cat_text(rng, b'XX')
+    return [(ARGBUF, slot)], None
+
+
+def cat_dispatch_ext_args(rng, regs):
+    """cat_dispatch_ext (slot, index, len): the ten extended indexes and the lengths their cases test."""
+    regs[0] = ARGBUF
+    regs[1] = rng.randrange(10) if rng.random() < 0.95 else rng.randrange(10, 256)
+    regs[2] = rng.choice([5, 6, 7, 8, 9, 10, 11, 14, 15, 16]) if rng.random() < 0.9 else rng.randrange(0, 0x40)
+    slot = bytes([rng.randrange(1, 4), 0]) + regs[2].to_bytes(2, 'little') + cat_text(rng, b'XX')
+    return [(ARGBUF, slot)], None
+
+
+def cat_ext_sp_args(rng, regs):
+    """cat_ext_SP (slot): "SP" + the sub-command letters it tests (S D I W R M N A, either case) and a length."""
+    text = bytearray(cat_text(rng, b'SP'))
+    text[2] = rng.choice(b'SsDdIiWRwrMmNnAaX')
+    text[3] = rng.choice(b'WwRrSsX')
+    text[4] = rng.choice(b'EeX')
+    n = rng.randrange(5, 20)
+    if rng.random() < 0.5:                       # a good sum over the first n - 2 bytes (cat_checksum_ok)
+        text[n - 2] = sum(text[:n - 2]) & 0xFF
+    regs[0] = ARGBUF
+    return [(ARGBUF, bytes([rng.randrange(1, 4), 0]) + n.to_bytes(2, 'little') + bytes(text))], None
+
+
+def cat_parse_args(rng, regs):
+    """cat_parse (): a command in the ring slot at the tail (mnemonic from either table, port 1..3), or an E9 frame
+    in the E9 slot when the ring is empty."""
+    img = _IMG
+    out = rng.randrange(60)
+    empty = rng.random() < 0.2
+    loads = [(CAT_RING_OUT, bytes([out])), (CAT_RING_IN, bytes([out if empty else (out + 1 + rng.randrange(5)) % 60]))]
+    ext = rng.random() < 0.15
+    mn = cat_mnemonic(rng, img, ext)
+    if rng.random() < 0.05:
+        mn = bytearray(b'QQ')
+    n = rng.randrange(3, 0x20)
+    loads.append((CAT_RING + 0x6A * out, bytes([rng.randrange(1, 4), 0]) + n.to_bytes(2, 'little') + cat_text(rng, mn)))
+    e9 = b'E9' if rng.random() < 0.7 else bytes(cat_mnemonic(rng, img, True))
+    loads.append((CAT_E_SLOT, bytes([1 if rng.random() < 0.8 else 0, rng.randrange(1, 4), 0, 0]) + cat_text(rng, e9, 0x40)))
+    return loads, None
+
+
+def ram_bytes(table):
+    """RAM bytes that a function switches on, drawn from the values it tests (random words rarely hit a state
+    number): {address: choices}."""
+    def pre(rng, regs):
+        return [(a, bytes([rng.choice(v)])) for a, v in table.items()], None
+    return pre
+
+
+# trx_sequencer: trx_state 0..8 (0x20B18), the two TX acks, ptt_source (0x1204D), the last P14 level (0x12051),
+# pc_keying_active (0x12050), the speaker route (0x20FCC), dsp_route_ready (0x20B49), pb3_last (0x20B44)
+TRX_SEQ_BYTES = {0x20B18: range(9), 0x20B19: (0, 1), 0x20B1A: (0, 1), 0x1204D: range(11), 0x12051: (0, 1),
+                 0x12050: (0, 1), 0x20FCC: range(5), 0x20B49: (0, 1), 0x20B44: (0, 1)}
+
+def ram_words(addr, choices):
+    """A 16-bit RAM word drawn from choices (the register numbers a shadow store compares)."""
+    def pre(rng, regs):
+        return [(addr, rng.choice(choices).to_bytes(2, 'little'))], None
+    return pre
+
+
+def real_buffer(k):
+    """Argument k is a caller's buffer, never in the stack (a random small pointer would read the stack frames,
+    which differ between the two builds)."""
+    def pre(rng, regs):
+        if regs[k] < 0x1004:
+            regs[k] = ARGBUF + 0x800 * k
+        return [], None
+    return pre
+
+
+# the registers of dsp_shadow_store 0xFFFA037A and sdr_shadow_update 0xFFFA2C9F (src/main/app/dsp_link.c, sdr_link.c)
+DSP_SHADOW_REGS = [0, 1, 2, 3, 4, 6, 8, 9, 10, 12, 13, 14, 15, 16, 17, 18, 19, 0x20, 0x21, 0x22] + list(range(0x25, 0x39)) + \
+    [0x3A, 0x3B] + list(range(0x40, 0x59)) + [0x5C, 0x5D] + list(range(0x60, 0x69)) + \
+    [0x400B, 0x400D, 0x4020, 0x4022, 0x4023, 0x4025, 0x4026, 0x5, 0x7, 0x39, 0x1234]
+SDR_SHADOW_REGS = [0xFFFF, 0, 1, 3, 4, 8, 9, 10, 11, 12, 13, 14, 15] + list(range(0x12, 0x17)) + list(range(0x18, 0x28)) + \
+    [0x30, 0x31, 0x32, 0x33, 0x37, 2, 0x17, 0x34, 0x1234]
+
+_IMG = None      # the Image of the running Checker (cat_parse_args reads the mnemonic tables from it)
+
+PRESETS = {'eeprom_save_msg': save_msg_args, 'cat_dispatch': cat_dispatch_args, 'cat_dispatch_ext': cat_dispatch_ext_args,
+           'cat_ext_SP': cat_ext_sp_args, 'cat_parse': cat_parse_args,
+           'trx_sequencer': ram_bytes(TRX_SEQ_BYTES), 'dsp_set_rf_gain': ram_bytes({0x9AB6: (0, 1, 2, 3)}),
+           'dsp_shadow_store': ram_words(0x1B6DE, DSP_SHADOW_REGS), 'sdr_shadow_update': ram_words(0x1B784, SDR_SHADOW_REGS),
+           'eeprom_write_raw': real_buffer(1), 'eeprom_read_raw': real_buffer(1), 'sum8': buffer_args(1), 'cat_checksum_ok': buffer_args(1), 'displink_put_sum': buffer_args(1),
            'displink_copy_if_changed': copy_if_changed_args, 'dsp_sum8': buffer_args(1), 'sdr_sum8': buffer_args(1),
            'dsp_reply_sum_ok': buffer_args(1), 'sdr_check_hex_sum': buffer_args(1),
            'R_S12AD0_Get_ValueResult': adc_channel_args, 'R_S12AD1_Get_ValueResult': adc_channel_args,
@@ -511,7 +651,7 @@ def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fi
          'regs': {f'R{k + 1}': v for k, v in enumerate(regs[:NREG])},
          'stack': ([0x00030000] if isr else []) + list(regs[NREG:]),
          'loads': [[a, d.hex()] for a, d in loads], 'snap': SNAP, 'track': TRACK,
-         'stubs': {str(a): [n, STUBS[n]] for a, n in stubs.items()}, 'cover': sorted(cover)}
+         'stubs': {str(a): [n, STUBS[n], *STUB_DATA.get(n, ())] for a, n in stubs.items()}, 'cover': sorted(cover)}
     if trace:
         q['trace'] = True
     if mmio_fixed:
@@ -521,6 +661,9 @@ def run(eng, bases, entry, regs, loads, seed, budget, stubs, cover, isr, mmio_fi
         for i, w in enumerate(STUB_WIDTHS.get(c[0], ())):
             if 1 + i < len(c) and isinstance(c[1 + i], int):
                 c[1 + i] &= (1 << (8 * w)) - 1
+        k = 1 + STUB_BUF[c[0]] if c[0] in STUB_BUF else None
+        if k is not None and k < len(c) and isinstance(c[k], int) and c[k] < STACK_TOP:
+            c[k] = 'stack'
     return r
 
 
@@ -558,7 +701,8 @@ def first_diff(a, b, k):
 
 class Checker:
     def __init__(self):
-        self.img = Image()
+        global _IMG
+        self.img = _IMG = Image()
         self.orig = Originals()
         self.eng = None
         self.work = tempfile.mkdtemp(prefix='equiv_main_')

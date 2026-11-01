@@ -21,7 +21,7 @@ ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST)))/../..)
 OUT := out
 CFLAGS := -mcpu=rx600 -mlittle-endian-data -Os -g -ffunction-sections -fdata-sections -fno-ipa-ra \
           -fno-tree-loop-distribute-patterns -fno-optimize-sibling-calls -ffreestanding -fno-builtin -fno-common -std=gnu11 \
-          -Wall -Wextra -Wno-unused-parameter -Iinclude -I$(OUT)/include
+          -Wall -Wextra -Wno-unused-parameter -Iinclude -I$(OUT)/include -I$(ROOT)/tools/ghidra
 
 SRCS := $(wildcard lib/*.c bsp/*.c drivers/*.c app/*.c)
 OBJS := $(patsubst %.c,$(OUT)/obj/%.o,$(SRCS))
@@ -31,7 +31,11 @@ all: $(OBJS)
 $(OUT)/include/iodefine.h: $(ROOT)/tools/main_iodefine.py $(ROOT)/tools/ghidra/sfr_rx651.tsv
 	python3 -I $(ROOT)/tools/main_iodefine.py $@
 
-$(OUT)/obj/%.o: %.c $(OUT)/include/iodefine.h $(wildcard include/*.h drivers/*.h)
+# the typed state blocks (struct ui_state g_ui, struct opstate g_opstate, ...) from tools/ghidra/structs_main.h
+$(OUT)/include/ft710_state.h: $(ROOT)/tools/main_structs.py $(ROOT)/tools/ghidra/structs_main.h $(ROOT)/tools/ghidra/enums_main.h
+	python3 -I $(ROOT)/tools/main_structs.py $@
+
+$(OUT)/obj/%.o: %.c $(OUT)/include/iodefine.h $(OUT)/include/ft710_state.h $(wildcard include/*.h drivers/*.h app/*.h)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
