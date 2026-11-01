@@ -138,3 +138,5 @@ fs_name_dirstr_sem	2014df7c	[fact] "dirstr_sem" after fs_sem2_create
 fs_name_fsys_sem	2014e034	[fact] "fsys_sem" after fsys_init_sem
 fs_name_fsys_mpf	2014e0f0	[fact] "fsys_mpf" after fs_mpf_create (add r1, pc, #0x1c at 0x2014E0CC)
 fs_name_fsys_work	2014e1a4	[fact] "FSYS Work" after fs_work_pool_create (add r1, pc, #0x20 at 0x2014E17C)
+fs_last_error	20808ba4	[fact] fs_set_error / fs_set_error_m2 / fs_set_error_ret store it ([0x20808BA0 + 4], 0x20144868); FUN_201447f4 returns it
+clmap_bit	20808bac	[fact] clmap_clear / clmap_set / clmap_test index it with cluster & 7 (literal 0x20808BAC); eight bytes 1 << n in .data	keep

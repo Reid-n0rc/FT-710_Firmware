@@ -549,6 +549,7 @@ class Run:
         # or return a fixed sequence, cyclically (round 8: a whole CMD6 status block through SD_BUF0)
         self.mmio_seq = {a: [v, 0] for a, v in args.get('mmio_seq', {}).items()}
         self.snap = SNAP
+        self.stub_ok = args.get('stub_ok', 0)
 
     def on_code(self, uc, addr, size, _):
         if addr == STOP:
@@ -577,6 +578,10 @@ class Run:
             except UcError:
                 pass
         ret = self.rng.choice([0, 0, 0, 1, 0xFFFFFFFF, 0xFFFFFFCE, 0xFFFFFFE7, self.rng.getrandbits(32)])  # E_OK, E_TMOUT (-50), E_PAR (-17)
+        # a preset may make E_OK likelier (round 9: the file system takes a semaphore around every sector access,
+        # so with 3 of 8 returns E_OK hardly a trial got past its second sector)
+        if self.stub_ok and self.rng.random() < self.stub_ok:
+            ret = 0
         uc.reg_write(A.UC_ARM_REG_R0, ret)
         lr = uc.reg_read(A.UC_ARM_REG_LR)
         if lr & 1:
@@ -1797,6 +1802,8 @@ def fs_vol_args(rng, args, kind):
         [(FS_DRIVE, bytes(d)), (FS_DRIVE2, bytes(d2)), (RAMDISK_CODE, code),
          (FS_WORK, bytes(rng.getrandbits(8) for _ in range(0x1000)))]
     args['disk'] = img
+    args['vol'] = vol
+    args['stub_ok'] = 0.9
     regs[0] = FS_DRIVE
     if kind == 'clu':          # (drive, cluster)
         regs[1] = rng.choice([0, 1, 2, 3, vol.root_cluster or 2, rng.randrange(2, vol.nclusters + 2),
@@ -1812,11 +1819,96 @@ def fs_vol_args(rng, args, kind):
         args['buffers'] += [(at, bytes(data))]
         regs[1] = at
     fill = [(0x20808BA0, struct.pack('<I', FS_DRIVE)), (0x20808B90, struct.pack('<I', rng.choice([1, 1, 1, 0])))]
+    # the drive-lock tables (fs_lock_a / fs_lock_b, 0x2091D4C0 / 0x2091D4E8): five semaphores, mostly created, an
+    # entry already holding the drive's letter now and then; zero after __scatterload, every lock failed (-34)
+    for at in (0x2091D4C0, 0x2091D4E8):
+        fill.append((at, b''.join(struct.pack('<Ibxxx', rng.choice([k + 1, k + 1, k + 1, 0]),
+                                              rng.choice([0, 0, 0, 0x49, 0x4A])) for k in range(5))))
     return fill
 
 
 PRESETS.update({n: (lambda rng, args: fs_vol_args(rng, args, 'drv')) for n in ('fs_drive_sem_create',
                                                                              'fs_drive_sem_delete')})
+
+
+FS_OUT = SCRATCH_ARGS + 0xB000       # an output word
+FS_CLMAP = SCRATCH_ARGS + 0x14000    # a cluster-use bitmap
+
+
+def fs_cluster(rng, vol):
+    """A cluster: one in use (a chain of the card), a free one, the root, the ends of the volume, or anything."""
+    used = [c for c in range(2, len(vol.fat_table)) if vol.fat_table[c]]
+    return rng.choice([rng.choice(used), rng.choice(used), rng.choice(used), rng.randrange(2, 64),
+                       rng.randrange(2, vol.nclusters + 2), 0, 1,
+                       vol.nclusters + 1, vol.nclusters + 2, rng.getrandbits(rng.choice([16, 32]))])
+
+
+def fs_spec_args(rng, args, spec):
+    """fs_vol_args, then the arguments by spec, one letter per argument (r0.. then the stack): D the drive, C a
+    cluster, P a previous cluster (0 or a cluster), S a sector of the volume, N a FAT sector index, V an entry value,
+    M the mode 'r'/'w', W the work buffer, B the work buffer's sector buffer, O an output word, L a drive letter.
+    Half of the time the drive has a cluster-use bitmap built from the card's FAT (a few bits flipped), enabled or
+    not (+0x54), covering all or part of the clusters (+0x60), with +0x64 equal to +0x60 or not."""
+    fill = fs_vol_args(rng, args, 'drv')
+    vol = args['vol']
+    regs = args['regs']
+    if rng.random() < 0.3:      # a FAT of random entries now and then (the card's chains are short, most entries 0)
+        disk = bytearray(args['disk'])
+        o = (vol.start + vol.rsv) * 512
+        n = rng.choice([512, 1024, vol.fatsz * 512])
+        disk[o:o + n] = bytes(rng.getrandbits(8) for _ in range(n))
+        args['disk'] = bytes(disk)
+    d = bytearray(dict(args['buffers'])[FS_DRIVE])
+    if rng.random() < 0.5:
+        n = vol.nclusters + 2
+        bits = bytearray((n + 7) // 8 + 8)
+        for c in range(n):
+            if vol.fat_table[c]:
+                bits[c >> 3] |= 1 << (c & 7)
+        for _ in range(rng.choice([0, 0, 3])):
+            k = rng.randrange(n)
+            bits[k >> 3] ^= 1 << (k & 7)
+        cover = rng.choice([n, n, n - 1, rng.randrange(2, n)])
+        struct.pack_into('<I', d, 0x58, FS_CLMAP)
+        d[0x54] = rng.choice([1, 1, 0])
+        struct.pack_into('<II', d, 0x60, cover, rng.choice([cover, 0, n]))
+        args['buffers'] += [(FS_CLMAP, bytes(bits))]
+    args['buffers'] = [b if b[0] != FS_DRIVE else (FS_DRIVE, bytes(d)) for b in args['buffers']]
+    args['buffers'] += [(FS_OUT, bytes(16))]
+    vals = []
+    for k in spec:
+        vals.append({
+            'D': lambda: FS_DRIVE,
+            'C': lambda: fs_cluster(rng, vol),
+            'P': lambda: rng.choice([0, 0, fs_cluster(rng, vol)]),
+            'S': lambda: rng.choice([vol.data_start, vol.data_start + rng.randrange(vol.nclusters * vol.spc),
+                                     vol.data_start + vol.spc - 1, rng.randrange(vol.sectors), rng.getrandbits(32)]),
+            'N': lambda: rng.choice([0, 1, rng.randrange(vol.fatsz), vol.fatsz - 1, vol.fatsz, rng.getrandbits(16)]),
+            'V': lambda: rng.choice([0, 0xFFFF, 0x0FFFFFFF, rng.randrange(2, vol.nclusters + 2), rng.getrandbits(32)]),
+            'M': lambda: rng.choice([0x72, 0x77, 0x77, rng.getrandbits(8)]),
+            'W': lambda: FS_WORK,
+            'B': lambda: FS_WORK + 0xC0C,
+            'O': lambda: FS_OUT,
+            'K': lambda: rng.choice([0, 1, 1, 2]),
+            'L': lambda: rng.choice([0x49, 0x49, 0x4A, 0x4B, 0x41, rng.getrandbits(8)]),
+        }[k]())
+    for i, v in enumerate(vals):
+        regs[i] = v
+    return fill
+
+
+FS_SPECS = {
+    'fs_find_drive': 'LO', 'fat_table_sector_get': 'DNOW', 'fat_table_sector_dirty': 'DNB',
+    'fat32_entry_get': 'DCW', 'fat32_entry_set': 'DCVW', 'fat_entry_rw': 'DCVMW', 'fat_entry_rw_locked': 'DOCVMW',
+    'clmap_clear': 'DC', 'clmap_set': 'DC', 'clmap_test': 'DC', 'fat_chain_free': 'DCW',
+    'fat_chain_free_locked': 'DCW', 'clmap_find_free': 'DO', 'fat32_find_free': 'DOW', 'fat32_alloc_cluster': 'DPW',
+    'fat_alloc_cluster': 'DPW', 'fat_alloc_cluster_locked': 'DPOW', 'fat_next_cluster': 'DCOW',
+    'fat_next_sector': 'DSOW', 'fat_next_sector_alloc': 'DSOW', 'fat32_fsinfo_write': 'DW',
+    'fat32_fsinfo_write_locked': 'DW', 'fs_dev_op1': 'DSBK', 'fs_dev_op2': 'DSBK', 'fat_clust2sect': 'DC',
+    'fat_sect2clust': 'DS', 'fat_sector_is_cluster_first': 'DS', 'fs_drive_check_mounted': 'D',
+    'fs_drive_check_writable': 'D', 'fs_lock_a': 'D', 'fs_unlock_a': 'D', 'fs_lock_b': 'D', 'fs_unlock_b': 'D',
+}
+PRESETS.update({n: (lambda rng, args, sp=spec: fs_spec_args(rng, args, sp)) for n, spec in FS_SPECS.items()})
 
 
 def byte_check(res, obj, fname, shndx, off, oaddr):
