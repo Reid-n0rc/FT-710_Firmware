@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.31 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 10.31 % re-implemented, round 5, and links into a complete hybrid image that passes linkcheck; MAIN 2.82 % re-implemented, round 1, GCC for RX and Ghidra p-code emulation: CC-RX not obtainable) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -17,7 +17,7 @@ firmware does: byte for byte where we have the same compiler, otherwise by a dif
 |---|---|---|---|
 | IFDSP M33 (RT685 Cortex-M33) | GCC 10.2.1 (Arm 10-2020-q4-major) from an MCUXpresso IDE project: MCUXpresso SDK drivers, FreeRTOS 10.3.0, rpmsg-lite, Redlib (found in this task, below) | vendor files unmodified where they match, recreated board/application code, stand-ins for the closed Redlib | byte match (same compiler), else differential emulation in Unicorn |
 | IFDSP HiFi4 | Cadence Xtensa compiler (XCC), NatureDSP, XOS, newlib, rpmsg-lite v3.1.1 (`docs/code/ifdsp/hifi4-libraries.md`) | vendor libraries where public (rpmsg-lite, newlib); recreated application; XCC is proprietary, so byte match is out of reach without a licence | differential emulation with Ghidra's p-code emulator on our `Xtensa:LE:32:rt600hifi4` language (T21a); the recreated code built with the Zephyr SDK GCC for Xtensa |
-| MAIN (RX651) | Renesas CC-RX (T05, T23d: Code Generator `r_cg_*` modules) | recreated C; CC-RX is free for evaluation, so a byte match may be possible: *Open: which CC-RX version and options; would be settled by compiling the `r_cg_*` modules with candidate versions as done here for the M33* | byte match if CC-RX matches, else p-code emulation on Ghidra's RX language (`rx62t` family, T21c) |
+| MAIN (RX651) | Renesas CC-RX, optimization level 0, RXv2 with FPU, 32-bit double; Code Generator `r_cg_*` drivers ("MAIN, round 1" below) | recreated C built with GCC 13.3.0 for RX: CC-RX could not be obtained (renesas.com refused by the proxy), *Open: the CC-RX version; would be settled by compiling the `r_cg_*` modules with candidate versions as done here for the M33* | p-code emulation on Ghidra's RX language (`tools/equiv_main_emu.py`); byte match only for trivial functions |
 | DISPLAY (RZ/A1H Cortex-A9) | armcc (ARM Compiler 5), NORTi µITRON (T23d) | recreated C on GCC; NORTi is proprietary, so its calls need a stand-in kernel or an RTOS shim | differential emulation (Unicorn ARM, A32/Thumb) |
 | SDR (Artix-7) | Vivado design | hand-written RTL in `hdl/sdr/`, verified against the recovered netlist (T15e) | netlist simulation (already in place; its own "Re-implemented" column) |
 
@@ -729,6 +729,137 @@ before), and the mutation dither 0x10000 → 0x10001 is reported as differing. `
 all-"not yet" table). The recreated code passes with either compiler; the Makefile's default `CROSS` is whatever
 `arm-none-eabi-gcc` is on the path, and the status run after this fix (GCC 13.2.1, 200 trials) gives identical 41, equivalent 425, differs 0, **10.31 %** (40,844 of 396,256 bytes; the three formerly unlisted VDC5 functions count now). The display-output functions also pass with xPack GCC 10.2.1.
 
+## MAIN, round 1 (2026-11-01)
+
+### Plan (MAIN round 1)
+
+1. Identify the compiler and options from the image (strings, run-time library, code shapes); find out whether CC-RX
+   can be obtained and installed here; otherwise build GCC for RX and plan equivalence checking.
+2. An equivalence harness for RX on Ghidra's p-code emulator (Unicorn has no RX), modelled on `equiv_m33_emu.py` and
+   `equiv_display_emu.py`: link each recreated function alone against the image's addresses, run both on the same
+   inputs, compare return, registers, RAM and the peripheral sequence; presets, block coverage, a mutation test.
+3. First functions in `src/main/`: run-time and library helpers, then the self-contained Code Generator drivers (SCI,
+   EEPROM, timers, A/D, DA, IWDT, pins); `src/main/status.tsv` wired into the "Re-implemented" column.
+
+### MAIN: compiler and options
+
+No string in the image names a compiler, library or version [fact: `strings` of the whole image; the only
+library string is lowsrc's `C:\stdin`/`C:\stdout`/`C:\stderr` at 0xFFF8F2E9..0xFFF8F300]. What the code shows:
+
+| Item | Finding | Evidence |
+|---|---|---|
+| Compiler | **Renesas CC-RX** **[inference]** | the CC-RX start-up and library structure: `_INITSCT` driven by the section tables DTBL {src, end, dst} and BTBL {start, end} (0xFFFEDEDA, tables 0xFFF8E6A0/0xFFF8E6C4), `_INIT_IOLIB`/`_CLOSEALL` and the lowsrc console on the E1/E2 debug registers (docs/code/main/bsp.md); two code shapes that **GCC 13.3.0 for RX does not produce at -O0, -O2 or -Os [fact: compiled here]**: the switch as `MOV.W [Ri, table], R14; BRA.L R14` over a table of 16-bit offsets (`cat_dispatch` 0xFFFA3B8A, `R_S12AD1_Get_ValueResult` 0xFFF92CC4; GCC uses a table of absolute addresses and `JMP Rn`), and frames addressed from SP (`SUB #4, R0` ... `RTSD #4`, `eeprom_spi_tx` 0xFFFB15AA; GCC -O0 sets up R6 as a frame pointer). *Open: whether Renesas's own GCC for RX (GNURX/"GCC for Renesas") can produce these shapes; would be settled by compiling `r_cg_sci.c` with it (llvm-gcc-renesas.com, refused by the proxy)* |
+| Optimization | **level 0 for the application and drivers** **[inference]** | every parameter and local is stored to the stack and reloaded at each use (`eeprom_spi_tx` 0xFFFB15AC `mov.b r1, 3[r0]`, `eeprom_write`); functions without locals use registers only (`r_sci0_transmit_interrupt` 0xFFF9340E). The library functions are optimized (`strncmp` 0xFFFEDE1D and `__udiv64` 0xFFFEDE41 keep everything in registers), as a precompiled library would be |
+| Instruction set | **RXv2 with FPU** (CC-RX `-isa=rxv2 -fpu`) **[inference from the instructions]** | FTOU, an RXv2-only instruction, at 12 sites (e.g. 0xFFFA2B59, 0xFFFAE71E) [fact: rx-elf-objdump; T21c]; FADD 31, FMUL 28, FDIV 25, FSUB 18, FCMP 40, ITOF 42 sites [fact] |
+| `double` | **32 bits** (CC-RX `-dbl_size=4`) **[inference]** | the C library at 0xFFFEDD9A..0xFFFEE2B7 has no floating-point routine, and every floating-point operation is an FPU instruction (the FPU is single precision) |
+| Endian | little | option-setting memory 0xFE7F5D00.. all 0xFF (MDE = little) [fact: docs/memory-maps.md, T18] |
+| Driver source | **Renesas Code Generator** (`r_cg_*`, `R_<module>_Create/_Start/_Stop`, empty `_Create_UserInit`) **[inference: names and structure, T05/T23d]** | e.g. `R_SCI0_Create` 0xFFF9321F .. `R_SCI0_Create_UserInit` 0xFFF9340D (`rts`); BSP pieces with the FIT `r_bsp` API (`R_BSP_InterruptRequestEnable`, `R_BSP_SoftwareInterruptControl`, bsp.md) |
+| CC-RX version | **Open** | *Open: the version and the exact options; would be settled by compiling the Code Generator's `r_cg_sci.c`/`r_cg_sci_user.c` at `-optimize=0 -isa=rxv2 -fpu` with each candidate CC-RX release and comparing bytes, as done for the M33 GCC (the image's `-optimize=0` code is regular enough that a byte match per function is likely), or by the release notes of the first CC-RX release that emits FTOU* |
+
+**Obtaining CC-RX: blocked.** www.renesas.com (where the evaluation edition and its licence are published) and
+llvm-gcc-renesas.com are refused by the container's proxy [fact: `curl` CONNECT 403, and the proxy's
+`recentRelayFailures` list `connect_rejected` for both hosts, 2026-11-01]; the evaluation edition's licence terms
+and whether it runs on Linux could not be read. *Open: whether the CC-RX evaluation edition may be used for this
+(and installed on the owner's machine); would be settled by its licence agreement on renesas.com, which the owner
+can read in a browser.* Even with CC-RX, nothing of it may be committed (AGENTS.md).
+
+**Route taken: GCC 13.3.0 for RX** (built from Ubuntu's source tarballs, docs/tooling.md "GCC for RX") and differential
+emulation. Mainline GCC knows RXv1 only (`-mcpu=rx600`); the RX651 runs RXv1 code unchanged (RXv2 is a superset),
+and GCC's RX ABI passes R1..R4 and returns R1 (R1:R2 for 64 bits), with R6..R13 preserved, as CC-RX's code does
+[fact for the image: every call site and callee checked by the harness below; the cspec of the rx62t module agrees].
+Byte matches are possible only where the code is trivial: the empty `*_UserInit` hooks, `R_DA0_Stop` and the four
+TPU start/stop functions came out byte-identical at their original addresses [fact: status.tsv].
+
+### MAIN: harness (`tools/equiv_main_emu.py`, `tools/ghidra/EquivMainEmu.java`)
+
+- **Engine.** `EquivMainEmu.java` is a headless Ghidra script that serves JSON requests on stdin: it builds a
+  `ghidra.pcode.emu.PcodeEmulator` on the program's language (`rx62t:LE:32:default`, the module with all of
+  T17..T22's patches) for every run and watches it with `PcodeEmulationCallbacks` (beforeLoad, afterStore,
+  handleMissingUserop). One Ghidra process per worker serves a whole check (start-up about 10 s, a run of a small
+  function 5 to 50 ms). Each worker opens its own copy of the project (Ghidra locks an open project, also
+  read-only: three workers on one copy died in the first try).
+- **Memory.** RAM 0x0..0x3FFFF as after `_INITSCT` (the three DTBL copies), the image at 0xFFF80000, the recreated
+  code at 0xFFF00000 (inside BSR.A's +-8 MB reach). Peripheral loads (0x80000..0xFFFFF, 0x7FC000..0x7FFFFF) return a
+  seeded random sequence and every access is recorded (kind, address, width, value); any other access ends the run as
+  a fault. The string compare pcodeops `scmpu`/`suntil`/`swhile` are implemented after the manual.
+- **Linking.** `rx-elf-ld --gc-sections` per function: every other Ghidra name and every `data_symbols.tsv` name is
+  defined at its original address in the script (a script assignment overrides the object's own definition [fact:
+  a test link]), so the function calls the image's own callees; recreated `.data`/`.bss` is refused.
+- **Inputs.** R1..R4 and stack words from the DWARF parameter types (CC-RX callers extend char/short arguments
+  [fact: `eeprom_read` 0xFFFB14BA..0xFFFB14C3]; 64-bit arguments as register pairs); pointers to random buffers
+  or strings; the RAM bytes the two runs read before writing are collected over the trials and filled with random
+  words, small values or pointers; interrupt handlers (the original contains RTE) get a PSW on the stack.
+- **Compared.** End (return, fault with its address, budget), R1 (R1:R2) masked to the DWARF return size, R6..R13
+  (R1..R15 for an interrupt handler), PSW.I and IPL, RAM 0x1404..0x3FFFF, the peripheral sequence, stub calls;
+  **equivalent** needs every trial to agree, one normal return and half of the original's basic blocks
+  (Ghidra's SimpleBlockModel); one-sided budget exhaustion is re-run with 8 times the budget.
+- **Instruction forms.** T22a checked the module's p-code only on the forms MAIN uses. Every result lists the forms
+  the recreated code uses that MAIN does not. One of them was wrong: **`JMP Rs` is `PC = Rs` without a branch, so
+  the emulator falls through** [fact: a trace of `R_S12AD0_Get_ValueResult`, GCC's switch `jmp r14` continued at
+  the next instruction; T22a had listed it as known and unfixed because MAIN has none]; the engine executes JMP
+  itself. Still unchecked (they agree in every trial, but T22a has not modelled them): 3-operand `mul`/`or`/`sub`
+  and `scgtu.l` (libgcc's `__udivdi3`), `mov.b Rs, [Rd+]`, `rotl Rs, Rd`, `bra.a`. *Open: their semantics; would be
+  settled by `tools/rx_semcheck.py` cases for these forms.*
+
+**Mutation test** (a one-off script, not committed: one source change, rebuild, `check` with 200 trials, restore):
+
+| Mutation | First run | With the presets |
+|---|---|---|
+| M1 SCI0 BRR 0xC2 → 0xC3 | differs (peripheral write #14) | |
+| M2 `eeprom_spi_rx` samples MISO before SCK rises | differs (R1) | |
+| M3 RXI clears RE before RIE (SCI0, SCI4) | differs (peripheral write #1) | |
+| M4 `eeprom_write` page 64 → 32 | differs (peripheral write #1895) | |
+| M5 `strncmp` stops at a shared NUL (ISO C) | **passed** (random strings never share a prefix) | differs (trial 24) |
+| M6 `sbrk` `>=` for `>` | **passed** (the limit is never hit exactly) | differs (trial 2) |
+| M7 `sci5_rx_byte_hook` 'r' → 8 bytes | **passed** (the first byte is never 'r') | differs (RAM 0x1B626) |
+
+The three that passed showed where random inputs do not reach the interesting cases; the presets added for them
+(two strings with a shared prefix, sbrk around its limit, the SDR reply bytes; also 64-bit divisors, EEPROM lengths,
+A/D channel numbers) catch all seven, and the recreated originals stay equivalent with them (100 % of the blocks for
+`strncmp`, `sbrk`, `sci5_rx_byte_hook`).
+
+### MAIN: recreated (src/main, round 1)
+
+`drivers/r_cg_sci.c`, `drivers/r_cg_sci_user.c` (SCI0..SCI5 written once as inline helpers over a constant
+channel description, `drivers/sci_cfg.h`, folded per channel; Yaesu's callbacks and receive hooks), `drivers/eeprom.c`,
+`drivers/r_cg_misc.c` (IWDT, DA, TPU0/1), `drivers/r_cg_s12ad.c`, `drivers/r_cg_init.c` (`icu_select_init`,
+`R_Pins_Create`, `mpc_pin_functions_init`, `FUN_fff92e25`), `lib/runtime.c`, `bsp/r_bsp.c` (src/main/README.md lists
+the functions). Register names come from `tools/ghidra/sfr_rx651.tsv` through a generated `iodefine.h`
+(`tools/main_iodefine.py`, build time, not committed). Findings **[fact]**:
+
+- CC-RX's `strncmp` (0xFFFEDE1D) does not stop at a NUL both strings share: it compares n bytes (or up to the first
+  difference), so `"ab\0x"` and `"ab\0y"` with n = 4 differ, unlike ISO C (docs/code/main/bsp.md).
+- `heap_getmem` returns sbrk's pointer or NULL (`stz #0, r1`, 0xFFFEE2B2), not a flag.
+- The CC-RX bit-field writes to IPR keep the field's zero bits only: priority 8 is `(IPR & 0xF8) | 8`, 10 is
+  `(IPR & 0xFA) | 0x0A` (`R_SCI0_Create`, `R_SCI1_Create`), which leaves the same value as the field insert.
+- Unlisted in Ghidra: the intrinsic setters between the getters (0xFFF9125F `mvtc r1, bpc`, 0xFFF91276 `mvtc r1,
+  extb`, 0xFFF9128D/0xFFF91291 `mvtachi`/`mvtaclo`, 0xFFF912BB/BF/C3 byte `bset`/`bclr`/`bnot` helpers) and
+  0xFFF927E0 (`bsr.a sw_reset; rts`, the callback registered at index 7, sci.md). *Open: their Ghidra entries and
+  names; would be settled by FixFuncEntries rows with this evidence, proved on a copy.*
+
+### MAIN: results (status.tsv, round 1)
+
+| Verdict | Ghidra functions | Bytes (of 387,054) |
+|---|---:|---:|
+| identical | 26 | 89 |
+| equivalent | 107 | 10,822 counted (10,593 own) |
+| differs | 0 | 0 |
+| not yet | 3,660 | 376,372 |
+
+**Re-implemented: 2.82 %** (README column of the MAIN row). By file: SCI 81 functions (4,840 bytes), pins/ICU/MPC 4
+(2,957), S12AD 12 (1,492), IWDT/DA/TPU 18 (489), EEPROM 4 (398), library 7 (574), BSP 7 (161). The status run
+(200 trials, 3 workers) took about 15 minutes.
+
+### MAIN: blockers and next steps
+
+- **CC-RX** is not obtainable from the container (above), so no byte match and no CC-RX version; the owner could
+  check the evaluation licence and, if it allows, run the version comparison on his machine.
+- Next, by size and self-containment: the BSP (interrupt control, software-interrupt queue, group dispatchers),
+  the soft timers, the C library's stdio and heap, then the links (DISPLAY, SDR, DSP), the CAT parser and handlers.
+- A hybrid image (as DISPLAY's) needs room: the code area ends at 0xFFFEE2B7 and 0xFFFEE2B8..0xFFFFFEFF is 0xFF fill
+  (about 72 KB) [fact: docs/memory-maps.md]. *Open: whether the flash update writes that range; would be settled by
+  the SFL loader's erase/write ranges (T04).*
+
 ## Open steps
 
 1. M33: byte matches for the 34 equivalent functions, which would also put the functions after them at their
@@ -747,4 +878,7 @@ all-"not yet" table). The recreated code passes with either compiler; the Makefi
    Function addresses that the recreated code stores as data must be the image's entries (round 5: one alias,
    `vdc5_vline_cb_entry`); *Open: a general rule in display_link.py; would be settled by resolving the ABS32 and
    MOVW/MOVT references to linked functions from data stores to their original entries.*
-6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.
+6. HiFi4 (Ghidra p-code): `tools/ghidra/EquivMainEmu.java` is the model (a headless p-code emulator server).
+7. MAIN: the next functions (BSP, soft timers, C library, then the links and the CAT code), the semantics of the
+   instruction forms only the GCC code uses, the Ghidra entries of the unlisted helpers, and the CC-RX version if the
+   owner can obtain CC-RX ("MAIN, round 1").

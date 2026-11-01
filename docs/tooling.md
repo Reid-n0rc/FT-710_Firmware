@@ -532,6 +532,26 @@ sources itself):
 developer.arm.com (Arm's own toolchain downloads) is not reachable from the container (proxy refuses the host), so the
 xPack builds were used. xPack 10.2.1-1.1 ships the Arm release notes of "GNU Arm Embedded Toolchain 2020-q4-major" (`distro-info/arm-release.txt`) and reports `10.2.1 20201103`, the 10-2020-q4-major compiler.
 
+### GCC for RX (T24 MAIN, 2026-11-01)
+
+The MAIN image's compiler, Renesas CC-RX, could not be obtained: www.renesas.com and llvm-gcc-renesas.com (Renesas's
+GCC/LLVM builds for RX) are refused by the container's proxy (CONNECT 403, 2026-11-01), as are ftp.gnu.org,
+gcc.gnu.org and sourceware.org. GCC was therefore built from Ubuntu's source tarballs (archive.ubuntu.com is
+reachable), C only, without a C library (the recreated code is freestanding):
+
+| Item | Value |
+|---|---|
+| Sources | http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-13/gcc-13_13.3.0.orig.tar.gz (SHA-256 `3b85d91b…1a46`, contains `gcc-13.3.0.tar.xz`), gmp `gmp_6.3.0+dfsg.orig.tar.xz` (`bd2966e6…1572`), mpfr `mpfr4_4.2.1.orig.tar.xz` (`27780735…cbb2`), mpc `mpclib3_1.3.1.orig.tar.gz` (`ab642492…59b8`), all from the same archive, in `~/opt/dl/gcc-rx/`; gmp/mpfr/mpc built in-tree (the dfsg gmp lacks `doc/`, so an empty `gmp/doc/Makefile.in` was added) |
+| Build | `configure --target=rx-elf --prefix=$HOME/opt/rx-gcc-13.3.0 --with-as=…/rx-elf-as --with-ld=…/rx-elf-ld --enable-languages=c --without-headers --with-newlib --disable-nls --disable-shared --disable-threads --disable-libssp --disable-libquadmath --disable-libgomp --disable-multilib --disable-werror`, `make all-gcc all-target-libgcc` and the install targets (script `~/opt/build/rx-gcc-obj/build.sh`, about 25 minutes on 3 cores) |
+| Location | `~/opt/rx-gcc-13.3.0/bin/rx-elf-gcc` (`rx-elf-gcc (GCC) 13.3.0`), libgcc in `lib/gcc/rx-elf/13.3.0/` |
+| Notes | mainline GCC knows RXv1 only (`-mcpu=` rx100, rx200, rx600, rx610); RXv2 (the RX651) is a superset. Defaults: little-endian, 32-bit `double` (`__RX_32BIT_DOUBLES__`), unsigned `char`, FPU instructions; C symbols get a leading `_`. `<stdint.h>` needs `-ffreestanding` (no C library) |
+| Linker | `rx-elf-ld` was added to `~/opt/rx-binutils-2.42` (the 2.42 build above had `--disable-ld`): same source tree, `configure` without `--disable-ld` in `~/opt/build/rx-ld-obj`, `make all-ld install-ld` |
+| Remove | `rm -rf ~/opt/rx-gcc-13.3.0 ~/opt/build/gcc-src ~/opt/build/rx-gcc-obj ~/opt/build/rx-ld-obj ~/opt/dl/gcc-rx ~/opt/rx-binutils-2.42/bin/rx-elf-ld* ~/opt/rx-binutils-2.42/rx-elf/bin/ld*` |
+
+`tools/equiv_main_emu.py` needs no new Python package (pyelftools, above). Ghidra's p-code emulator API used by
+`tools/ghidra/EquivMainEmu.java` is `ghidra.pcode.emu.PcodeEmulator` with `PcodeEmulationCallbacks` (Ghidra 12.1.4,
+`Ghidra/Framework/Emulation/lib/Emulation.jar`).
+
 ## Commit signing (2026-10-28)
 
 The owner wants commits signed, but not required. `ssh-keygen -t ed25519` created `~/.ssh/ft710_signing_ed25519` (no passphrase, so

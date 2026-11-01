@@ -8,6 +8,8 @@ memory map: [docs/memory-maps.md](../../memory-maps.md#main-mc-image-ft-710_main
 
 Tags follow AGENTS.md: **[fact]** = seen in code or data at the address given, **[inference]** = evidence and reasoning given; anything unsettled is written as an open question.
 Names in `code` are the current Ghidra names. Function names are the names applied in Ghidra (`tools/ghidra/names_main.tsv`, merged by T17) and match `decomp/main/`; a name still in *italics* is a description that was not applied as a Ghidra name.
+Recreated source (T24): [`src/main/`](../../../src/main/README.md), with the same names; the compiler (Renesas CC-RX,
+optimization level 0, RXv2 with FPU) is identified in [T24 "MAIN, round 1"](../../tasks/T24-source-recreation.md).
 
 ## What the MAIN CPU does
 
