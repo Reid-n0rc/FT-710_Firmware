@@ -8,6 +8,8 @@ Reads only committed files, so anyone can re-run it after a re-export (tools/boo
   docs/code/<dir>/*.md           which function names the subsystem pages mention
   tools/ghidra/sfr_<chip>.tsv    peripheral-register labels (tools/sfr_table.py), for the "registers named" column
   decomp/sdr/progress.tsv        SDR FPGA cells per recognized block (tools/sdr_progress.py), for the SDR table (if present)
+  src/<image>/status.tsv         per-function result of the recreated source (T24, tools/equiv_m33.py), for the
+                                 "Re-implemented" column (images without one show "not started")
 
 Usage:
   python3 -I tools/readability_stats.py            print the table
@@ -32,6 +34,8 @@ Definitions (also printed under the table):
                A function's variables are its parameters (signature), its declared locals (the declaration lines
                at the top of the body) and the undeclared in_/unaff_/extraout_ names; a use is one occurrence in the
                body after the declarations.
+  Re-implemented  share of code bytes in functions whose recreated source (src/<image>/, T24) compiles to the same
+               bytes or passes the differential-emulation equivalence check (column `covered` of status.tsv).
 
 The SDR image is an FPGA bitstream with no functions, so it gets its own table, in cells of the recovered netlist:
   Recovered       cells in the netlist that tools/xc7_netlist.py recovers from the bitstream (all of them).
@@ -56,6 +60,8 @@ IMAGES = [
      [(0x40000000, 0x40160000), (0x50000000, 0x50160000), (0xE0000000, 0xE0100000)]),
     ('ifdsp/hifi4', 'IFDSP HiFi4 (RT685)', 'ifdsp', 'tools/ghidra/sfr_rt685_hifi4.tsv', [(0x40000000, 0x40160000)]),
 ]
+# T24 recreated source per image: src/<dir>/status.tsv (tools/equiv_m33.py); images not listed are not started
+RECREATED = {'ifdsp/m33': 'src/ifdsp_m33/status.tsv'}
 DEFAULT_NAME = re.compile(r'^(thunk_)?FUN_[0-9a-f]+$')
 CALL = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 IDENT = re.compile(r'\b[A-Za-z_][A-Za-z0-9_]*\b')
@@ -168,6 +174,16 @@ def sfr_labels(path):
         return {ln.split('\t')[1] for ln in f if ln.strip() and not ln.startswith('#')}
 
 
+def reimplemented_bytes(d):
+    """Bytes of Ghidra functions covered by recreated source that passed its check (T24), or None if not started."""
+    path = RECREATED.get(d)
+    if not path or not os.path.exists(path):
+        return None
+    hdr, rows = read_tsv(path)
+    col = {h: i for i, h in enumerate(hdr)}
+    return sum(int(r[col['covered']]) for r in rows if r[col['ghidra_name']] != '-')
+
+
 def image_stats(d, label, docdir, sfr, ranges):
     base = f'decomp/{d}'
     hdr, rows = read_tsv(f'{base}/functions.tsv')
@@ -190,6 +206,7 @@ def image_stats(d, label, docdir, sfr, ranges):
         'calls': 0, 'calls_named': 0, 'reg_refs': None, 'reg_named': None, 'var_uses': 0, 'var_named': 0,
         'commented_functions': 0,
         'warnings_functions': quality(f'{base}/quality.tsv').get('functions_with_warnings', 0),
+        'reimpl_bytes': reimplemented_bytes(d),
     }
     labels = sfr_labels(sfr)
     if labels is not None:
@@ -267,10 +284,12 @@ def table(stats, sdr=None):
             f"**{pct(sdr['reimplemented'], sdr['cells'])} re-implemented** in RTL (in netlist cells, second table; "
             'see [docs/code/sdr](docs/code/sdr/README.md)).'),
         '',
-        '| Image | Functions | Code | Decompiled | Named | Documented | Calls named | Registers named | Variables named | Commented |',
-        '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|',
+        '| Image | Functions | Code | Decompiled | Named | Documented | Calls named | Registers named | Variables named | Commented | Re-implemented |',
+        '|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|',
     ]
+    tot['reimpl_bytes'] = sum(x['reimpl_bytes'] or 0 for x in stats)
     for x in stats + [dict(tot, image='**All CPU images**', reg_refs=None, reg_named=None)]:
+        reimpl = 'not started' if x['reimpl_bytes'] is None else pct(x['reimpl_bytes'], x['bytes'])
         reg = 'not mapped yet' if x['reg_refs'] is None else pct(x['reg_named'], x['reg_refs'])
         if x['image'].startswith('**'):
             part = '' if len(regs) == len(stats) else ' (' + ', '.join(r['image'].split(' (')[0] for r in regs) + ')'
@@ -278,7 +297,7 @@ def table(stats, sdr=None):
         out.append(f"| {x['image']} | {x['named_functions']:,} / {x['functions']:,} | {x['bytes'] / 1024:,.0f} KB | "
                    f"{pct(x['decompiled_bytes'], x['bytes'])} | {pct(x['named_bytes'], x['bytes'])} | "
                    f"{pct(x['documented_bytes'], x['bytes'])} | {pct(x['calls_named'], x['calls'])} | {reg} | "
-                   f"{pct(x['var_named'], x['var_uses'])} | {pct(x['commented_functions'], x['functions'])} |")
+                   f"{pct(x['var_named'], x['var_uses'])} | {pct(x['commented_functions'], x['functions'])} | {reimpl} |")
     out += [
         '',
         '*Functions* = named / total. Percentages are of code bytes, except *Calls named* (call sites), *Registers named* '
@@ -288,8 +307,11 @@ def table(stats, sdr=None):
         'functions with a real name instead of `FUN_<address>`; *Documented* = in named functions that the '
         '`docs/code/` pages mention; *Commented* = functions (share of all) whose decompiled C has at least one short '
         'inline comment with its evidence tag (a register name, a callee\'s documented purpose, an enum value or a '
-        'curated step note; [T23i](docs/tasks/T23-readability.md#t23i--inline-comments)). Generated by `tools/readability_stats.py` from the committed `decomp/` export; '
-        'the plan to raise these numbers is [T23](docs/tasks/T23-readability.md).',
+        'curated step note; [T23i](docs/tasks/T23-readability.md#t23i--inline-comments)); *Re-implemented* = in '
+        'functions whose recreated source in `src/<image>/` compiles to the same bytes or passes the differential-emulation '
+        'equivalence check (`src/<image>/status.tsv`, [T24](docs/tasks/T24-source-recreation.md)). Generated by '
+        '`tools/readability_stats.py` from the committed `decomp/` export; the plan to raise these numbers is '
+        '[T23](docs/tasks/T23-readability.md).',
     ]
     if sdr is not None:
         out += sdr_table(sdr)

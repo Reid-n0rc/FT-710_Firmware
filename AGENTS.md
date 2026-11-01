@@ -12,6 +12,7 @@ Instructions for any agent (Claude, Codex, etc.) working in this repo. `CLAUDE.m
    can cite them. It pins this repository as a submodule and opens a sync pull request when `main` moves.
 
 The first milestone is decoding every firmware image and committing Ghidra's decompiled output to `decomp/`.
+**The end goal is [T24](docs/tasks/T24-source-recreation.md) (owner, 2026-10-30): recreated source for every image in `src/<image>/`, checked function by function against the firmware (byte match or differential emulation), so it can be modified.**
 
 ## Ground rules
 

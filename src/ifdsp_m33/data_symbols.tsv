@@ -1,0 +1,24 @@
+# Original addresses of data objects of the recreated source, for objects tools/equiv_m33.py cannot learn from a
+# byte-identical function (it learns the others itself). Key: a global's name, or <object>:<section> for a static
+# (with -fdata-sections each static has its own section). Evidence: the literal pools of the functions named.
+symbol	address	evidence
+uart.o:.bss.s_uartEvents	00087ec4	uart0_init stores xEventGroupCreate's handle there; CommandTask, FLEXCOMM0_IRQHandler read it
+uart.o:.bss.s_rx	00087ec8	FLEXCOMM0_IRQHandler: ring 0x87EC8, count +0x400 (0x882C8), head +0x404, tail +0x408
+uart.o:.bss.s_tx	000882d4	uart0_write / uart0_tx_pending: ring 0x882D4, count +0x400 (0x886D4)
+uart.o:.bss.s_printBuf	00088c2c	uart0_printf (0x80F0C) formats into 0x88C2C
+ipc.o:.bss.s_ipcSendQueue	000886e0	create_IpcTasks stores xQueueGenericCreate's handle; IpcSendTask reads it
+g_taskHandles	000886e4	main clears 12 bytes there; get_task_handles returns it
+pwm.o:.bss.s_pwmEvent	000886f0	sct0_pwm_init passes it to SCTIMER_SetupPwm as the event number
+pwm.o:.bss.s_pwmTicks	000886f4	sct0_pwm_callback counts to 400 there
+pwm.o:.bss.s_pwmDuty	00088d2c	sct0_pwm_init / sct0_pwm_callback: duty byte
+console.o:.bss.s_argv	000886f8	console_init: four token pointers
+console.o:.bss.s_lineLen	00088708	console_rx_char: line length
+console.o:.bss.s_interactive	00088d2d	console_cmd_i / console_init
+console.o:.bss.s_echo	00088d2e	console_cmd_i / console_init
+console.o:.bss.s_tokens	00088d2f	console_init: 4 x 16 bytes
+console.o:.bss.s_line	00088d6f	console_rx_char: 128-byte line
+console.o:.bss.s_lineActive	00088def	console_rx_char / console_init
+console.o:.bss.s_printBuf	00088df0	console_printf formats into 0x88DF0
+console.o:.rodata.s_commands	0008795c	console_rx_char: command table, 4 x {name[16], handler}
+codec.o:.rodata.s_aic3204InitSequence	00087a1c	aic3204_init: 67 x {reg, value, delay}
+redlib_ctype	00087d04	tolower: table + 0x80; console_rx_char: 0x87D84

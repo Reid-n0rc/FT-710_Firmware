@@ -517,6 +517,21 @@ mcux-sdk itself has no SVD files (only the generated headers); `mcux-soc-svd` is
 `curl -L -o <dir>/<file> https://raw.githubusercontent.com/nxp-mcuxpresso/<repo>/<commit>/<path>` into an empty directory
 outside the repo, then `python3 -I tools/sfr_table.py build --chip rt685 --svd <dir>/MIMXRT685S_cm33.xml --dsp-header <dir>/MIMXRT685S_dsp.h`.
 
+## Source recreation (T24, 2026-11-01)
+
+Installed in the Claude cloud container for T24 (none of it is committed; `src/ifdsp_m33/vendor.sh` fetches the vendor
+sources itself):
+
+| Tool | Version | Source | Method, location | Use |
+|---|---|---|---|---|
+| xPack GNU Arm Embedded GCC | 10.2.1-1.1 (the image's compiler, see T24), plus 9.2.1-1.1, 9.3.1-1.1, 10.3.1-2.3, 11.2.1-1.2, 12.2.1-1.2 for the comparison | github.com/xpack-dev-tools/arm-none-eabi-gcc-xpack releases (`xpack-arm-none-eabi-gcc-<v>-linux-x64.tar.gz`) | tarball, `/home/user/t24/tc/<v>/` | build `src/ifdsp_m33` (`make CROSS=/home/user/t24/tc/10.2.1-1.1/bin/arm-none-eabi-`) |
+| unicorn (Python) | 2.1.4 | PyPI | `pip install --break-system-packages` | `tools/equiv_m33_emu.py` |
+| pyelftools | 0.33 | PyPI | same | `tools/equiv_m33.py` (objects, relocations, DWARF) |
+| capstone (Python) | 5.0.9 | PyPI | same | `tools/equiv_m33.py diff` |
+
+developer.arm.com (Arm's own toolchain downloads) is not reachable from the container (proxy refuses the host), so the
+xPack builds were used. xPack 10.2.1-1.1 ships the Arm release notes of "GNU Arm Embedded Toolchain 2020-q4-major" (`distro-info/arm-release.txt`) and reports `10.2.1 20201103`, the 10-2020-q4-major compiler.
+
 ## Commit signing (2026-10-28)
 
 The owner wants commits signed, but not required. `ssh-keygen -t ed25519` created `~/.ssh/ft710_signing_ed25519` (no passphrase, so
