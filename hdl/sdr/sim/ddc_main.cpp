@@ -9,10 +9,15 @@
 //            on both ADC channels (ADC2=off: channel 2 at 0; ADC2=tone:...: its own tones; ADC2=same (default);
 //            ADC1=off: channel 1 at 0). ADCFMT=offset for offset binary. ADC_FROM=CLOCK: both channels at 0 before
 //            that clock (the tone starts there; to see where a stage first departs from linearity, #232).
+//            ADC_TO=CLOCK: both channels at 0 from that clock on (tone switched off, to measure how long the RX
+//            path remembers its input, #246).
 //            Bit map [inference, from the capture RAMs RAMB36_X0Y11/X0Y12]: pair k carries bits 2k (rising edge)
 //            and 2k+1 (falling edge); channel 1 pairs H1 H2 G4 J4 J3 K2 H6, channel 2 B1 B3 C2 E2 F1 D5 B7 (k = 0..6).
 //        HALF_FROM=CLOCK (default 0): print "H <clock> <V17> <M17 word> <V16 word>" for every half-frame after it, the
-//            32 bits sampled on rising U16 edges since the last V17 edge, first bit = MSB.
+//            32 bits sampled on rising U16 edges, first bit = MSB, framed with the I2S one-bit delay (I2S_DELAY=1,
+//            default): the word of a half-frame runs from the 2nd rising U16 edge after its V17 edge to the 1st edge
+//            after the next V17 edge; the line is printed at that next V17 edge's clock. I2S_DELAY=0: the bits
+//            between two V17 edges, as before #246 (bit 31 is then the previous word's LSB).
 //        Built with -DPROBE_W=<words> (tools/xc7_probe_netlist.py) it prints "<clock> P <index> <value>" for every
 //        probe bit change between PROBE_FROM and PROBE_TO (default: whole run), a full "<clock> S <words>" snapshot
 //        at PROBE_FROM, or with PROBE_COUNT=1 only "T <index> <toggles>" per probe bit over that window at the end.
@@ -85,6 +90,7 @@ int main(int argc, char** argv) {
     CData* ch2[7] = {&top->io_B1_p, &top->io_B3_p, &top->io_C2_p, &top->io_E2_p, &top->io_F1_p, &top->io_D5_p, &top->io_B7_p};
     uint64_t half_from = getenv("HALF_FROM") ? strtoull(getenv("HALF_FROM"), 0, 10) : 0;
     uint64_t adc_from = getenv("ADC_FROM") ? strtoull(getenv("ADC_FROM"), 0, 10) : 0;   // ADC pins at 0 before
+    uint64_t adc_to = getenv("ADC_TO") ? strtoull(getenv("ADC_TO"), 0, 10) : ~0ull;     // and from this clock on
 #ifdef PROBE_W
 #if defined(PROBE_PORTS)
 #include "probe_ports.h"   // 32-bit ports probe_w<k> (wide probe sets; a single port of >~4k bits compiles for hours)
@@ -111,6 +117,10 @@ int main(int argc, char** argv) {
     }
 #endif
     int last_u16 = 0, last_v17 = 0; uint32_t wm = 0, wv = 0; int nb = 0;
+    // I2S framing (#246): the MSB of each slot leaves M17 one bit clock after the V17 edge, so a word is the 32 bits
+    // from the 2nd rising U16 edge after one V17 edge to the 1st after the next. I2S_DELAY=0 gives the old framing.
+    int i2s_delay = getenv("I2S_DELAY") ? atoi(getenv("I2S_DELAY")) : 1;
+    int h_pend = 0, h_v17 = 0, h_nb = 0; uint64_t h_clk = 0;
     int brx_state = 0, brx_last = 1, brx_n = 0; unsigned brx_byte = 0; double brx_t0 = 0;
     top->uart_a_rx = 1; top->uart_b_rx = 1;
     for (uint64_t clk = 1; clk <= N; clk++) {
@@ -124,7 +134,7 @@ int main(int argc, char** argv) {
         if (!bits.empty() && clk >= next) { level = bits.front(); bits.pop_front(); next += CLK_PER_BIT; }
         top->uart_b_rx = level;
         // ADC sample for this clock
-        bool quiet = clk < adc_from;
+        bool quiet = clk < adc_from || clk >= adc_to;
         unsigned u = ch1off || quiet ? 0 : sample(tones, clk, offset);
         unsigned u2 = ch2off || quiet ? 0 : ch2own ? sample(tones2, clk, offset) : sample(tones, clk, offset);
         // falling half: odd bits; rising half: even bits
@@ -135,10 +145,17 @@ int main(int argc, char** argv) {
         // I2S-style port
         int u16 = top->io_U16 & 1, v17 = top->io_V17 & 1;
         if (v17 != last_v17) {
-            if (clk >= half_from) printf("H %llu %d %08x %08x %d\n", (unsigned long long)clk, last_v17, wm, wv, nb);
-            wm = wv = 0; nb = 0;
+            h_clk = clk; h_v17 = last_v17; h_nb = nb; nb = 0;
+            if (i2s_delay == 0) {
+                if (clk >= half_from) printf("H %llu %d %08x %08x %d\n", (unsigned long long)clk, last_v17, wm, wv, h_nb);
+                wm = wv = 0;
+            } else h_pend = i2s_delay;
         }
-        if (u16 && !last_u16) { wm = (wm << 1) | (top->io_M17 & 1); wv = (wv << 1) | (top->io_V16 & 1); nb++; }
+        if (u16 && !last_u16) {
+            wm = (wm << 1) | (top->io_M17 & 1); wv = (wv << 1) | (top->io_V16 & 1); nb++;
+            if (h_pend && --h_pend == 0 && h_clk >= half_from)   // the word ends I2S_DELAY bits after the V17 edge
+                printf("H %llu %d %08x %08x %d\n", (unsigned long long)h_clk, h_v17, wm, wv, h_nb);
+        }
         last_u16 = u16; last_v17 = v17;
         {   // UART B replies
             int b = top->uart_b_tx & 1;
