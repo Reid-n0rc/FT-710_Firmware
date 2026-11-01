@@ -132,6 +132,7 @@ void ipc_print_dsp_reply(int param_1,undefined4 param_2,undefined4 param_3,uint 
   uStack_4 = param_4;
   sprintf(&DAT_00088c2c,pcVar1,&uStack_c,param_4,pcVar1,&uStack_c);
   strlen_ret = strlen((uint *)&DAT_00088c2c);
+                    /* Copy bytes into the TX ring [doc] */
   uart0_write(&DAT_00088c2c,strlen_ret);
   return;
 }
@@ -175,13 +176,16 @@ undefined4 app_main(void)
   BOARD_BootClockRUN();
   app_init_nop();
   regfile_clear();
+                    /* clock set 2 [sfr] */
   CLKCTL1_PSCCTL2_SET = 0x80000000;
   INPUTMUX_AttachSignal(0x40026000,1,0x14000015);
   RESET_ClearPeripheralReset(0x41d);
   RESET_ClearPeripheralReset(0x41c);
+                    /* Reset P1_0 low 20 ms, high 20 ms [doc] */
   aic3204_init();
   sct0_pwm_init();
   ipc_init();
+                    /* DSP clocks, DSP_Init, image copy, DSPSTALL = 0 [doc] */
   BOARD_DSP_Init();
   SEMA42_Init();
   SEMA42_ResetAllGates(&SEMA42_GATE3,0x40);
@@ -191,12 +195,15 @@ undefined4 app_main(void)
   } while ((uVar1 & 7) != 1);
   SEMA42_Lock(0x40112000,0,'\x01');
   MU_SetFlags(0x40110000,2);
+                    /* Semphores2 Gate n [sfr] */
   SEMA42_GATE0 = 0;
   do {
     uVar1 = MUA_SR;
   } while ((uVar1 & 7) != 3);
+                    /* Store if reg < 0x8000 [doc] */
   regfile_write(0,0x101);
   regfile_write(0x4000,1);
+                    /* word[reg] |= v in a critical section [doc] */
   regfile_set_bits(1,1);
   create_IpcTasks();
   SCTIMER_StartTimer();
@@ -220,6 +227,7 @@ void MU_A_IRQHandler(void)
   int iVar1;
   code *UNRECOVERED_JUMPTABLE;
   
+                    /* Status [sfr] */
   iVar1 = MUA_SR;
   if (-1 < iVar1 << 5) {
     return;
@@ -259,6 +267,7 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
 {
   uint mua_cr;
   
+                    /* isr_table[32] at 0x88720 [doc] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_00088714);
   if (DAT_00088710 < 0) {
@@ -267,6 +276,7 @@ undefined4 platform_init_interrupt(uint param_1,uint param_2)
     } while( true );
   }
   if (DAT_00088710 == 0) {
+                    /* Control [sfr] */
     mua_cr = MUA_CR;
     MUA_CR = mua_cr & 0xfff0ffff | 0x4000000;
   }
@@ -321,6 +331,7 @@ void platform_interrupt_enable(void)
   disableIRQinterrupts();
   DAT_0008870c = DAT_0008870c + -1;
   if (DAT_0008870c == 0) {
+                    /* Interrupt Set Enable [sfr] */
     NVIC_ISER1 = 4;
   }
   enableIRQinterrupts();
@@ -348,6 +359,7 @@ void platform_interrupt_disable(void)
   }
   disableIRQinterrupts();
   if (DAT_0008870c == 0) {
+                    /* Interrupt Clear Enable [sfr] */
     NVIC_ICER1 = 4;
     DataSynchronizationBarrier(0xf);
     InstructionSynchronizationBarrier(0xf);
@@ -377,6 +389,7 @@ int platform_init(void)
   
   MU_Init();
   NVIC_IPR8._2_1_ = 0x60;
+                    /* Interrupt Set Enable [sfr] */
   NVIC_ISER1 = 4;
   env_create_mutex_ret = env_create_mutex(&DAT_00088714,1);
   return -(uint)(env_create_mutex_ret != 0);
@@ -411,6 +424,7 @@ uint env_init(void)
     DAT_0008871c = (int *)xQueueGenericCreate(1,0,3);
     memset(&DAT_00088720,0,0x80);
     xTaskResumeAll();
+                    /* MU_Init, NVIC IRQ 34 prio 0x60 + enable, platform_lock [doc] */
     uVar1 = platform_init();
     xQueueGenericSend((int)DAT_0008871c,0,0,0);
   }
@@ -490,6 +504,7 @@ rpmsg_queue_recv(void *rpmsg_lite_dev,uint param_2,undefined4 *param_3,void *par
       memcpy(param_4,local_20,local_1c);
       uVar1 = 0;
     }
+                    /* return rx buffer [doc] */
     rpmsg_queue_nocopy_free_ret = rpmsg_queue_nocopy_free(rpmsg_lite_dev,local_20);
     if (rpmsg_queue_nocopy_free_ret == 0) {
       return uVar1;
@@ -639,6 +654,7 @@ int * rpmsg_lite_master_init(uint param_1,uint param_2,int param_3)
   if ((((0x7ff < uVar1) && (param_3 == 0)) && (param_1 != 0)) &&
      (pvPortMalloc_ret = (int *)pvPortMalloc(0x24), pvPortMalloc_ret != (int *)0x0)) {
     memset(pvPortMalloc_ret,0,0x24);
+                    /* env counter, semaphore, isr_table clear, platform_init [doc] */
     uVar1 = env_init();
     if (uVar1 == 0) {
       pvPortMalloc_ret[6] = uVar3 >> 9;
@@ -706,6 +722,7 @@ LAB_00081d56:
               }
               piVar5 = piVar5 + 1;
               if (iVar2 != 0) {
+                    /* register ISR, CR RIE1 on first use [doc] */
                 platform_init_interrupt(*(undefined2 *)(*pvPortMalloc_ret + 0x50));
                 platform_init_interrupt(*(undefined2 *)(pvPortMalloc_ret[1] + 0x50));
                 platform_interrupt_disable();
@@ -801,8 +818,10 @@ void DSP_Init(void)
   uint uVar1;
   int rstctl0_prstctl0;
   
+                    /* Run configuration 1 [sfr] */
   uVar1 = SYSCTL0_PDRUNCFG1;
   if ((uVar1 & 0xf000000) != 0) {
+                    /* Run configuration 1 clear [sfr] */
     SYSCTL0_PDRUNCFG1_CLR = 0x4000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x8000000;
     SYSCTL0_PDRUNCFG1_CLR = 0x1000000;
@@ -813,6 +832,7 @@ void DSP_Init(void)
   }
   rstctl0_prstctl0 = RSTCTL0_PRSTCTL0;
   if (rstctl0_prstctl0 << 0x1e < 0) {
+                    /* peripheral reset clear 0 [sfr] */
     RSTCTL0_PRSTCTL0_CLR = 2;
     do {
       uVar1 = RSTCTL0_PRSTCTL0;
@@ -834,6 +854,7 @@ void DSP_Init(void)
 void MU_Init(void)
 
 {
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
@@ -851,6 +872,7 @@ void MU_Init(void)
 void SEMA42_Init(void)
 
 {
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x20000000;
   return;
 }
@@ -886,6 +908,7 @@ void ipc_init(void)
 void ipc_send(uint param_1)
 
 {
+                    /* blocking send with 1-tick retry [doc] */
   rpmsg_lite_send(DAT_00088b60,DAT_00088b58,DAT_00088b54,param_1,0x98,0xffffffff);
   return;
 }
@@ -942,10 +965,12 @@ void BOARD_DSP_Init(void)
   CLOCK_AttachClk(0x80002434);
   CLOCK_SetClkDiv(0x80000400,1);
   CLOCK_SetClkDiv(0x80000404,2);
+                    /* DSP memory power-up and reset release [doc, inference] */
   DSP_Init();
   DSP_CopyImage(&local_2c);
   DSP_CopyImage(&local_20);
   DSP_CopyImage(&local_14);
+                    /* DSP stall [sfr] */
   SYSCTL0_DSPSTALL = 0;
   return;
 }
@@ -967,6 +992,7 @@ void IpcRecvTask(int param_1)
   do {
     do {
       ipc_recv(auStack_a0);
+                    /* category/command text on the console [doc] */
       ipc_print_dsp_reply(auStack_a0);
     } while (*(int *)(param_1 + 4) == 0);
     xTaskGenericNotify(*(int *)(param_1 + 4),0,2);
@@ -1183,6 +1209,7 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
   if (xPortIsInsideInterrupt_ret) {
     uVar1 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
     if ((uVar1 == 1) && (bVar2 = true, local_14[0] != 0)) {
+                    /* Interrupt Control and State [sfr] */
       SCB_ICSR = 0x10000000;
     }
   }
@@ -1219,6 +1246,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
   if (xPortIsInsideInterrupt_ret) {
     xQueueReceiveFromISR_ret = xQueueReceiveFromISR(param_1,param_2,local_14);
     if ((xQueueReceiveFromISR_ret == 1) && (bVar2 = true, local_14[0] != 0)) {
+                    /* Interrupt Control and State [sfr] */
       SCB_ICSR = 0x10000000;
     }
   }
@@ -1352,6 +1380,7 @@ void rpmsg_lite_tx_callback(int param_1)
 void virtqueue_notify(int param_1)
 
 {
+                    /* MU-A TR1 = vector << 16 under platform_lock [doc] */
   platform_notify(*(undefined2 *)(param_1 + 0x50));
   return;
 }

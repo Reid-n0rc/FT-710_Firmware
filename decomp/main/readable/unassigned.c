@@ -37,7 +37,9 @@ void FUN_fff8f7ca(void)
   byte bVar1;
   
   bVar1 = ICU_IER0D;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0D = bVar1 & 0xbf;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR110;
   ICU_IPR110 = bVar1 & 0xf8 | 8;
   bVar1 = ICU_IER0D;
@@ -89,12 +91,16 @@ void FUN_fff8f809(void)
   uint system_mstpcra;
   undefined4 system_mstpcra_2;
   
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa502;
+                    /* Module Stop Control A [sfr] */
   system_mstpcra = SYSTEM_MSTPCRA;
   uVar1 = SYSTEM_MSTPCRA;
   SYSTEM_MSTPCRA = uVar1 & 0xfffeffff;
   system_mstpcra_2 = SYSTEM_MSTPCRA;
+                    /* A/D Conversion Time Setting Protection Release [sfr] */
   S12AD1_ADSAMPR = 3;
+                    /* A/D Conversion Time Setting [sfr] */
   S12AD1_ADSAM = 0x20;
   S12AD1_ADSAMPR = 2;
   uVar1 = SYSTEM_MSTPCRA;
@@ -113,6 +119,7 @@ void FUN_fff8f879(void)
   undefined4 local_4;
   uint bsc_ebmapcr;
   
+                    /* Extended Bus Master Priority Control [sfr] */
   bsc_ebmapcr = BSC_EBMAPCR;
   local_4 = bsc_ebmapcr & 0xfffca9b8 | 0x42130;
   BSC_EBMAPCR = local_4;
@@ -462,41 +469,59 @@ void FUN_fff91608(void)
   byte bVar1;
   undefined1 uVar2;
   
+                    /* Port Direction [sfr] */
   bVar1 = PORT0_PDR;
   PORT0_PDR = bVar1 | 0x50;
+                    /* Port Direction [sfr] */
   bVar1 = PORT1_PDR;
   PORT1_PDR = bVar1 | 3;
   uVar2 = PORT2_PDR;
+                    /* Port Direction [sfr] */
   PORT2_PDR = uVar2;
   uVar2 = PORT3_PDR;
+                    /* Port Direction [sfr] */
   PORT3_PDR = uVar2;
   uVar2 = PORT4_PDR;
+                    /* Port Direction [sfr] */
   PORT4_PDR = uVar2;
   bVar1 = PORT5_PDR;
+                    /* Port Direction [sfr] */
   PORT5_PDR = bVar1 | 0x80;
   uVar2 = PORT6_PDR;
+                    /* Port Direction [sfr] */
   PORT6_PDR = uVar2;
   uVar2 = PORT7_PDR;
+                    /* Port Direction [sfr] */
   PORT7_PDR = uVar2;
+                    /* Port Direction [sfr] */
   bVar1 = PORT8_PDR;
   PORT8_PDR = bVar1 | 0x30;
   bVar1 = PORT9_PDR;
+                    /* Port Direction [sfr] */
   PORT9_PDR = bVar1 | 0xf0;
   uVar2 = PORTA_PDR;
+                    /* Port Direction [sfr] */
   PORTA_PDR = uVar2;
   uVar2 = PORTB_PDR;
+                    /* Port Direction [sfr] */
   PORTB_PDR = uVar2;
   uVar2 = PORTC_PDR;
+                    /* Port Direction [sfr] */
   PORTC_PDR = uVar2;
   uVar2 = PORTD_PDR;
+                    /* Port Direction [sfr] */
   PORTD_PDR = uVar2;
   uVar2 = PORTE_PDR;
+                    /* Port Direction [sfr] */
   PORTE_PDR = uVar2;
   bVar1 = PORTF_PDR;
+                    /* Port Direction [sfr] */
   PORTF_PDR = bVar1 | 0xdf;
+                    /* Port Direction [sfr] */
   uVar2 = PORTG_PDR;
   PORTG_PDR = 0xff;
   bVar1 = PORTJ_PDR;
+                    /* Port Direction [sfr] */
   PORTJ_PDR = bVar1 | 0xd7;
   return;
 }
@@ -515,6 +540,7 @@ uint FUN_fff916ac(int param_1,char param_2)
   if (param_1 == 2) {
     if (param_2 == '\x01') {
       bVar1 = ICU_NMIER;
+                    /* Non-Maskable Interrupt Enable [sfr] */
       ICU_NMIER = bVar1 | 1;
     }
     else {
@@ -525,11 +551,14 @@ uint FUN_fff916ac(int param_1,char param_2)
     if (param_1 == 0xb) {
       if (param_2 == '\x01') {
         bVar1 = ICU_IR016;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
         ICU_IR016 = bVar1 & 0xfe;
+                    /* Interrupt Source Priority 000 [sfr] */
         bVar1 = ICU_IPR000;
         ICU_IPR000 = bVar1 | 0xf;
         R_BSP_InterruptRequestEnable(0x10);
         bVar1 = BSC_BEREN;
+                    /* Bus Error Monitoring Enable [sfr] */
         BSC_BEREN = bVar1 | 1;
         bVar1 = BSC_BEREN;
         BSC_BEREN = bVar1 | 2;
@@ -563,9 +592,12 @@ void FUN_fff92e25(void)
 {
   byte bVar1;
   
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER08 = 0;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER09 = 0;
   bVar1 = ICU_IER03;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER03 = bVar1 & 0xf7;
   bVar1 = ICU_IER03;
   ICU_IER03 = bVar1 & 0xfb;
@@ -2350,6 +2382,7 @@ byte FUN_fffb4062(void)
   
   vfo_freq_ret = vfo_freq(1,2);
   vfo_mode_ret = vfo_mode(1);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cVar3 = tx_band_of_freq(vfo_freq_ret);
   bVar2 = g_opstate.rf_power[3];
   if ((vfo_mode_ret == 4) || (vfo_mode_ret == 5)) {
@@ -2488,6 +2521,7 @@ void FUN_fffb6f94(byte param_1)
   byte port7_podr;
   
   port7_podr = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = port7_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
@@ -2688,6 +2722,7 @@ void FUN_fffb9605(void)
   bVar4 = gen_subband_of_freq(uVar6);
   vfo_mode_ret = vfo_mode(0);
   bVar5 = g_ui.trx_state;
+                    /* Returns the audio-route state 0..14 [doc] */
   uVar6 = audio_route_state();
   bVar1 = DAT_000120ba != bVar3;
   if (!bVar1) {
@@ -2823,6 +2858,7 @@ void FUN_fffba9c3(void)
       uStack_6 = keyer_ring_next(DAT_0001fa38);
     }
     else {
+                    /* Ring index + 1, wraps to 0 above 0x4FF [doc] */
       uStack_6 = keyer_ring_next(DAT_0001fa38);
       if ((DAT_0001fa3c == uStack_6) ||
          (((uint)(byte)(&DAT_000120bc)[(byte)(uStack_6 >> 3)] & 1 << ((byte)uStack_6 & 7)) == 0)) {
@@ -2963,6 +2999,7 @@ void FUN_fffbbbdc(char param_1)
     cal_adjust(0x19,0xe6,param_1);
     return;
   }
+                    /* Pointer table 0x25D50 = 0x4659 and 0x25D4C = 0x20B04 [doc] */
   cal_adjust(0,0xff,param_1);
   return;
 }
@@ -3115,6 +3152,7 @@ void FUN_fffbc782(void)
       FUN_fffe1e70();
       PTR_g_ui_00025d54->keypad_pos = 0;
       PTR_g_ui_00025d54->keypad_set_fix = 1;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(8);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 8;
@@ -3239,6 +3277,7 @@ void FUN_fffbc99c(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(6);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 6;
@@ -3275,6 +3314,7 @@ void FUN_fffbca2b(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xd);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 0xd;
@@ -3304,6 +3344,7 @@ void FUN_fffbcaba(void)
     popup_close();
   }
   else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0);
     popup_open_timed();
     PTR_g_ui_00025d54->popup_code = 0;
@@ -3439,6 +3480,7 @@ void FUN_fffbcd48(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(10);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 10;
@@ -3475,6 +3517,7 @@ void FUN_fffbcdd7(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(9);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 9;
@@ -3506,12 +3549,14 @@ void FUN_fffbce66(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(1);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 1;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -3545,12 +3590,14 @@ void FUN_fffbcefc(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(2);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 2;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -3609,12 +3656,14 @@ void FUN_fffbcf91(void)
       popup_close();
     }
     else {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(3);
       popup_open_timed();
       PTR_g_ui_00025d54->popup_code = 3;
       popup_mark_clear();
     }
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -3637,6 +3686,7 @@ void FUN_fffbd074(void)
   PTR_g_ui_00025d54->func_panel_open = 0;
   if (PTR_g_ui_00025d54->scan_running != 1) {
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -3664,6 +3714,7 @@ void FUN_fffbd0b9(void)
     popup_close();
     return;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(4);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 4;
@@ -3681,6 +3732,7 @@ void FUN_fffbd109(void)
   byte bVar1;
   byte *pbVar2;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar2 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar2 == (byte *)0x0) {
     return;
@@ -5523,6 +5575,7 @@ void FUN_fffbe1af(void)
 
 {
   func_knob_assign_key(0xe1);
+                    /* Sets UI +0x443 [doc] */
   vfo_mark_edited_if_vfo();
   return;
 }
@@ -6142,6 +6195,7 @@ void FUN_fffbe370(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   beep_request(1);
   return;
@@ -6155,6 +6209,7 @@ void FUN_fffbe388(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   DAT_0001b4dc = 1;
@@ -6170,6 +6225,7 @@ void FUN_fffbe3b3(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 1;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   return;
@@ -6193,6 +6249,7 @@ void FUN_fffbe3d0(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   beep_request(1);
   return;
@@ -6206,6 +6263,7 @@ void FUN_fffbe3e8(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   DAT_0001b4dc = 1;
@@ -6221,6 +6279,7 @@ void FUN_fffbe413(void)
 
 {
   PTR_g_ui_00025d54->menu_step_dir = 0;
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   swtimer_start(0x40,0x96);
   return;
@@ -7000,6 +7059,7 @@ void FUN_fffc052b(byte param_1)
     g_opstate.scope_span_idx_b[bVar1] = param_1;
     return;
   }
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   uVar2 = vfo_freq_clar(0,2);
   bVar1 = freq_range_index(uVar2);
   if (bVar1 == 0xff) {
@@ -7413,6 +7473,7 @@ void FUN_fffc1625(byte param_1)
     popup8_close();
     ui_clear_415_423();
     band_select(param_1);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     return;
   }
@@ -7701,6 +7762,7 @@ void FUN_fffc23a4(void)
 
 {
   PTR_g_ui_00025d54->key_consumed = 1;
+                    /* Clears UI +0x95 [doc] */
   menu_screen_close();
   return;
 }
@@ -8100,6 +8162,7 @@ byte FUN_fffc3006(void)
   uint freq;
   undefined1 uStack_9;
   
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   freq = vfo_freq_clar(0,2);
   uStack_9 = band_of_freq(freq);
   if (uStack_9 == 0xff) {
@@ -8397,6 +8460,7 @@ void FUN_fffc38fa(void)
     beep_request(1);
     return;
   }
+                    /* Memory-list button by g_ui.memlist_group [doc] */
   memlist_btn_press();
   PTR_g_ui_00025d54->key_consumed = 1;
   return;
@@ -9213,6 +9277,7 @@ void FUN_fffc49c1(void)
   byte *pbVar1;
   byte bVar2;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;
@@ -9246,6 +9311,7 @@ void FUN_fffc4a47(void)
 {
   byte *pbVar1;
   
+                    /* Returns VFO-A/B record [doc] */
   pbVar1 = (byte *)vfo_filter_byte_ptr(g_opstate.active_vfo != VFO_A);
   if (pbVar1 == (byte *)0x0) {
     return;
@@ -9369,6 +9435,7 @@ undefined1 FUN_fffc4cc5(short param_1,uint param_2)
       PTR_g_ui_00025d54->popup_text[8] = pcStack_c[8];
       *(undefined4 *)(p_ui_state->popup_text + 4) = *(undefined4 *)(pcStack_c + 4);
       *(undefined4 *)p_ui_state->popup_text = *(undefined4 *)pcStack_c;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(0x5e);
       popup_open_timed();
       beep_request(1);
@@ -9698,6 +9765,7 @@ LAB_fffc5452:
   if (bVar3) {
     vfo_enter_mem_state(bVar1);
     memtune_flags_clear(bVar1);
+                    /* n channel steps up [doc] */
     memch_step(local_1,bVar1);
     return;
   }
@@ -10371,6 +10439,7 @@ void FUN_fffc670d(char param_1)
   }
   if (DAT_0001b4ea == '\0') {
     DAT_0001b4ea = 1;
+                    /* set or clear one bit of UI +0x34 [doc] */
     ui_lamp_set(DAT_0001b4e9,1);
     swtimer_start(0x47,100);
     DAT_0001b4eb = 1;
@@ -10415,6 +10484,7 @@ void FUN_fffc6cd7(char param_1)
     local_4 = 0xf;
   }
   PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(5);
   popup_open_timed();
   return;
@@ -10448,6 +10518,7 @@ void FUN_fffc6d28(char param_1)
   else {
     PTR_g_ui_00025d58->popup_cursor = 0xb;
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xb);
   popup_open_timed();
   return;
@@ -10472,6 +10543,7 @@ void FUN_fffc6d8c(char param_1)
     local_4 = 0xb;
   }
   PTR_g_ui_00025d58->popup_cursor = (byte)local_4;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0xc);
   popup_open_timed();
   return;
@@ -10793,6 +10865,7 @@ void FUN_fffc81e5(undefined1 param_1)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* n channel steps up [doc] */
     memch_step(param_1,local_2);
     return;
   }
@@ -10888,11 +10961,13 @@ void FUN_fffc89ef(byte param_1)
   else {
     local_4 = 5;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_1,(int)&DAT_00012221 + (uint)local_4);
   p_ui_state = PTR_g_ui_00025d58;
   PTR_g_ui_00025d58->popup_text[8] = DAT_00012229;
   *(undefined4 *)(p_ui_state->popup_text + 4) = DAT_00012225;
   *(undefined4 *)p_ui_state->popup_text = DAT_00012221;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x5e);
   popup_open_timed();
   local_4._0_1_ = (byte)(((uint)param_1 * 0x14) / 0xff);
@@ -10921,6 +10996,7 @@ void FUN_fffc8a90(byte param_1)
     DAT_0001222e = 0x46464f20;
   }
   else if (param_1 < 10) {
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
     dec_to_str_u8(param_1,0x12231);
   }
   else if (param_1 < 100) {
@@ -10933,6 +11009,7 @@ void FUN_fffc8a90(byte param_1)
   PTR_g_ui_00025d58->popup_text[8] = DAT_00012232;
   *(undefined4 *)(p_ui_state->popup_text + 4) = DAT_0001222e;
   *(undefined4 *)p_ui_state->popup_text = DAT_0001222a;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x5e);
   popup_open_timed();
   bStack_4 = (byte)(((uint)param_1 * 0x14) / 0xff);
@@ -11195,6 +11272,7 @@ void FUN_fffc9046(void)
   if ((PTR_g_ui_00025d5c->lamp_restore_req != 0) &&
      (swtimer_expired_ret = swtimer_expired(0x41), swtimer_expired_ret == 1)) {
     PTR_g_ui_00025d5c->lamp_restore_req = 0;
+                    /* set or clear one bit of UI +0x34 [doc] */
     ui_lamp_set(DAT_00012233,DAT_00012234);
     return;
   }
@@ -11334,6 +11412,7 @@ void FUN_fffcdb26(void)
   if ((DAT_0001b4fc == '\x02') &&
      (swtimer_expired_ret = swtimer_expired(0x31), swtimer_expired_ret == 1)) {
     DAT_0001b4fc = 0;
+                    /* Runs the selected row's on_enter [doc, inference] */
     menu_ui_enter();
     return;
   }
@@ -11789,6 +11868,7 @@ undefined1 FUN_fffcfaff(int param_1)
   
   if (param_1 == 0x166) {
     PTR_g_ui_00025d60->dl_40_force = 1;
+                    /* dialog_close_to_menu, returns 1 [doc] */
     local_4 = dialog_close_to_menu_ok();
   }
   else {
@@ -11849,6 +11929,7 @@ undefined1 FUN_fffcfb9a(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == 0xff) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else if ((uint)DAT_00015de6 < DAT_00015de8 + 1) {
@@ -12036,6 +12117,7 @@ undefined1 FUN_fffcfdca(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == 0xff) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else if (DAT_00015de8 == 0xfe) {
@@ -12197,6 +12279,7 @@ undefined1 FUN_fffcffb4(void)
   undefined1 local_2;
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
     local_2 = dialog_close_to_menu_ok();
   }
   else {
@@ -12238,6 +12321,7 @@ undefined1 FUN_fffd000d(void)
   
   if (PTR_g_ui_00025d60->sd_step == 2) {
     if (DAT_00015de8 == -1) {
+                    /* dialog_close_to_menu, returns 1 [doc] */
       local_2 = dialog_close_to_menu_ok();
     }
     else {
@@ -12341,6 +12425,7 @@ void FUN_fffd00fa(undefined1 param_1)
       return;
     }
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }
@@ -12359,6 +12444,7 @@ void FUN_fffd016f(char param_1)
     FUN_fffd04a6();
     return;
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }
@@ -12381,6 +12467,7 @@ void FUN_fffd0194(char param_1)
     PTR_g_ui_00025d60->sd_busy = 1;
     return;
   }
+                    /* Clears UI +0x88 [doc] */
   dialog_close_to_menu();
   return;
 }
@@ -13792,6 +13879,7 @@ void FUN_fffd1a24(char param_1)
   else {
     PTR_g_ui_00025d60->menu_step_dir = 0;
   }
+                    /* Front-panel dial on the selected row [doc] */
   menu_ui_step();
   return;
 }
@@ -13863,6 +13951,7 @@ void FUN_fffd1ad8(void)
     return;
   }
   if (bVar1 == 2) {
+                    /* Runs the selected row's on_enter [doc, inference] */
     menu_ui_enter();
     return;
   }
@@ -14033,6 +14122,7 @@ void FUN_fffe186d(void)
 void FUN_fffe19a6(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0);
   return;
 }
@@ -14044,6 +14134,7 @@ void FUN_fffe19a6(void)
 void FUN_fffe19ac(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(1);
   return;
 }
@@ -14055,6 +14146,7 @@ void FUN_fffe19ac(void)
 void FUN_fffe19b2(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(2);
   return;
 }
@@ -14066,6 +14158,7 @@ void FUN_fffe19b2(void)
 void FUN_fffe19b8(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(3);
   return;
 }
@@ -14077,6 +14170,7 @@ void FUN_fffe19b8(void)
 void FUN_fffe19be(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(4);
   return;
 }
@@ -14088,6 +14182,7 @@ void FUN_fffe19be(void)
 void FUN_fffe19c4(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(5);
   return;
 }
@@ -14099,6 +14194,7 @@ void FUN_fffe19c4(void)
 void FUN_fffe19ca(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(6);
   return;
 }
@@ -14110,6 +14206,7 @@ void FUN_fffe19ca(void)
 void FUN_fffe19d0(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(7);
   return;
 }
@@ -14125,6 +14222,7 @@ void FUN_fffe19d0(void)
 void FUN_fffe19d6(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(8);
   return;
 }
@@ -14136,6 +14234,7 @@ void FUN_fffe19d6(void)
 void FUN_fffe19dc(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(9);
   return;
 }
@@ -14147,6 +14246,7 @@ void FUN_fffe19dc(void)
 void FUN_fffe19e2(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(10);
   return;
 }
@@ -14158,6 +14258,7 @@ void FUN_fffe19e2(void)
 void FUN_fffe19e8(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xb);
   return;
 }
@@ -14169,6 +14270,7 @@ void FUN_fffe19e8(void)
 void FUN_fffe19ee(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xc);
   return;
 }
@@ -14180,6 +14282,7 @@ void FUN_fffe19ee(void)
 void FUN_fffe19f4(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xd);
   return;
 }
@@ -14191,6 +14294,7 @@ void FUN_fffe19f4(void)
 void FUN_fffe19fa(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0xe);
   return;
 }
@@ -14386,6 +14490,7 @@ void FUN_fffe1f60(void)
 void FUN_fffe2025(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\0');
   return;
 }
@@ -14397,6 +14502,7 @@ void FUN_fffe2025(void)
 void FUN_fffe202b(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x01');
   return;
 }
@@ -14408,6 +14514,7 @@ void FUN_fffe202b(void)
 void FUN_fffe2031(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x02');
   return;
 }
@@ -14419,6 +14526,7 @@ void FUN_fffe2031(void)
 void FUN_fffe2037(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x03');
   return;
 }
@@ -14430,6 +14538,7 @@ void FUN_fffe2037(void)
 void FUN_fffe203d(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x04');
   return;
 }
@@ -14441,6 +14550,7 @@ void FUN_fffe203d(void)
 void FUN_fffe2043(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x05');
   return;
 }
@@ -14452,6 +14562,7 @@ void FUN_fffe2043(void)
 void FUN_fffe2049(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x06');
   return;
 }
@@ -14463,6 +14574,7 @@ void FUN_fffe2049(void)
 void FUN_fffe204f(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\a');
   return;
 }
@@ -14474,6 +14586,7 @@ void FUN_fffe204f(void)
 void FUN_fffe2055(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\b');
   return;
 }
@@ -14485,6 +14598,7 @@ void FUN_fffe2055(void)
 void FUN_fffe205b(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\t');
   return;
 }
@@ -14496,6 +14610,7 @@ void FUN_fffe205b(void)
 void FUN_fffe2061(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\n');
   return;
 }
@@ -14507,6 +14622,7 @@ void FUN_fffe2061(void)
 void FUN_fffe2067(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\v');
   return;
 }
@@ -14518,6 +14634,7 @@ void FUN_fffe2067(void)
 void FUN_fffe206d(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\f');
   return;
 }
@@ -14529,6 +14646,7 @@ void FUN_fffe206d(void)
 void FUN_fffe2073(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\r');
   return;
 }
@@ -14540,6 +14658,7 @@ void FUN_fffe2073(void)
 void FUN_fffe2079(void)
 
 {
+                    /* two-digit BCD entry in UI +0x411/+0x412 [doc] */
   keypad_2digit_key('\x0e');
   return;
 }
@@ -16280,6 +16399,7 @@ void FUN_fffe3b31(void)
 void FUN_fffe3b38(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(1);
   return;
 }
@@ -16291,6 +16411,7 @@ void FUN_fffe3b38(void)
 void FUN_fffe3b3f(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(2);
   return;
 }
@@ -16302,6 +16423,7 @@ void FUN_fffe3b3f(void)
 void FUN_fffe3b46(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(3);
   return;
 }
@@ -16313,6 +16435,7 @@ void FUN_fffe3b46(void)
 void FUN_fffe3b4d(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(4);
   return;
 }
@@ -16324,6 +16447,7 @@ void FUN_fffe3b4d(void)
 void FUN_fffe3b54(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(5);
   return;
 }
@@ -16489,6 +16613,7 @@ void FUN_fffe3be4(void)
       bVar1 = false;
     }
     if (bVar1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return;
     }
@@ -16577,6 +16702,7 @@ void FUN_fffe46b0(void)
   if (PTR_g_ui_00025d78->kbd_target != 5) {
     return;
   }
+                    /* Keyboard target 5 [doc] */
   kbd_edit_file_name(0x84);
   return;
 }
@@ -16667,19 +16793,23 @@ void FUN_fffe47c8(void)
   uVar1 = (uint)PTR_g_ui_00025d78->kbd_target;
   if (uVar1 != 6) {
     if (uVar1 == 1) {
+                    /* Keyboard target 1 [doc] */
       kbd_edit_memory_name(0x85);
     }
     else if (uVar1 == 2) {
+                    /* Keyboard target 2 [doc] */
       kbd_edit_cw_text(0x85);
     }
     else if (1 < uVar1 - 3) {
       if (uVar1 == 5) {
+                    /* Keyboard target 5 [doc] */
         kbd_edit_file_name(0x85);
       }
       else {
         if (uVar1 != 0) {
           return;
         }
+                    /* Keyboard target 0 [doc] */
         kbd_edit_mycall(0x85);
       }
     }
@@ -17494,6 +17624,7 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
   }
   if (bVar1) {
     if (PTR_g_ui_00025d78->keyer_state != 1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return 0;
     }
@@ -17549,6 +17680,7 @@ void FUN_fffe56e4(byte param_1)
     *(undefined2 *)(PTR_g_ui_00025d78->popup_text + 8) = *(undefined2 *)(local_80 + 2);
     *(undefined4 *)(p_ui_state->popup_text + 4) = local_80[1];
     *(undefined4 *)p_ui_state->popup_text = *local_80;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x5e);
     popup_open_timed();
     PTR_g_ui_00025d78->key_consumed = 1;
@@ -17796,6 +17928,7 @@ byte FUN_fffe5c26(char param_1,byte param_2)
       return 0;
     }
     memch_valid_ret = memch_valid(local_1 + local_4,&pbStack_c);
+                    /* Memory channel n [doc] */
     if (((memch_valid_ret) && (iVar1 = memch_skip_get(local_1 + local_4), iVar1 == 0)) &&
        (local_5 = local_5 + 1, 1 < local_5)) break;
     local_4 = local_4 + 1;
@@ -18370,6 +18503,7 @@ void FUN_fffec728(void)
       }
       if (cStack_5 != -1) {
         DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
         DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
         FUN_fffed12f();
         g_ui.atu_state = 2;
@@ -18397,6 +18531,7 @@ void FUN_fffec7f9(void)
   tx_freq_allowed_ret = tx_freq_allowed(g_ui.freq_tx);
   if (tx_freq_allowed_ret) {
     DAT_00025d00 = g_ui_freq_tx_val;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
     DAT_0001b3bb = tx_band_of_freq(g_ui_freq_tx_val);
     FUN_fffec493();
     g_ui.tune_cycle_3d = 2;
@@ -19022,6 +19157,7 @@ void FUN_fffed401(void)
     swtimer_start(0x20,60000);
   }
   else {
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
     iVar1 = tx_band_of_freq(g_ui.freq_tx);
     if (iVar1 == 9) {
       DAT_0001b3c0 = '\x01';

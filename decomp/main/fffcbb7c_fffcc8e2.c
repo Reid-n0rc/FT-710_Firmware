@@ -165,6 +165,7 @@ void menu_ex030115_draw(byte *param_1)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 0x6e;
@@ -268,6 +269,7 @@ void menu_ex030118_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)g_opstate_ex030118_ref_freq_fine_adj_val,param_1 + 0x18);
   return;
 }
@@ -350,6 +352,7 @@ void menu_ex030120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030120_mic_p1,0,param_4,param_5,param_1);
   return;
 }
@@ -399,6 +402,7 @@ void menu_ex030121_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030121_mic_p2,1,param_4,param_5,param_1);
   return;
 }
@@ -412,6 +416,7 @@ void menu_ex030122_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030122_mic_p3,2,param_4,param_5,param_1);
   return;
 }
@@ -425,6 +430,7 @@ void menu_ex030123_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030123_mic_p4,3,param_4,param_5,param_1);
   return;
 }
@@ -438,6 +444,7 @@ void menu_ex030124_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030124_mic_up,0xd,param_4,param_5,param_1);
   return;
 }
@@ -451,6 +458,7 @@ void menu_ex030125_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030125_mic_down,0xe,param_4,param_5,param_1);
   return;
 }
@@ -639,6 +647,7 @@ void menu_ex030205_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)g_opstate_ex030205_contour_level_val,param_1 + 0x18);
   return;
 }
@@ -662,6 +671,7 @@ void menu_ex030206_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex030206_contour_width_val,param_1 + 0x18);
   return;
 }
@@ -714,6 +724,7 @@ void menu_ex030302_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,100,g_opstate.ex030302_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
@@ -747,6 +758,7 @@ void menu_draw_eq_freq(byte *param_1,short param_2,byte param_3,byte param_4)
   if (0xc80 < local_c) {
     local_c = 0xc80;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(local_c,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -762,6 +774,7 @@ void menu_ex030303_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030303_prmtrc_eq1_level,5,param_4,param_5,param_1);
   return;
 }
@@ -782,6 +795,7 @@ void menu_draw_eq_level(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)param_2,param_1 + 0x18);
   return;
 }
@@ -795,6 +809,7 @@ void menu_ex030304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030304_prmtrc_eq1_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -815,6 +830,7 @@ void menu_draw_eq_bwth(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -829,6 +845,7 @@ void menu_ex030305_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,700,g_opstate.ex030305_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
@@ -842,6 +859,7 @@ void menu_ex030306_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030306_prmtrc_eq2_level,5,param_4,param_5,param_1);
   return;
 }
@@ -855,6 +873,7 @@ void menu_ex030307_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030307_prmtrc_eq2_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -869,6 +888,7 @@ void menu_ex030308_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030308_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
@@ -882,6 +902,7 @@ void menu_ex030309_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030309_prmtrc_eq3_level,5,param_4,param_5,param_1);
   return;
 }
@@ -895,6 +916,7 @@ void menu_ex030310_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030310_prmtrc_eq3_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -909,6 +931,7 @@ void menu_ex030311_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,100,g_opstate.ex030311_p_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
@@ -922,6 +945,7 @@ void menu_ex030312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030312_p_prmtrc_eq1_level,0,param_4,param_5,param_1);
   return;
 }
@@ -935,6 +959,7 @@ void menu_ex030313_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030313_p_prmtrc_eq1_bwth,2,param_4,param_5,param_1);
   return;
 }
@@ -949,6 +974,7 @@ void menu_ex030314_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,700,g_opstate.ex030314_p_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
@@ -962,6 +988,7 @@ void menu_ex030315_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030315_p_prmtrc_eq2_level,0,param_4,param_5,param_1);
   return;
 }
@@ -975,6 +1002,7 @@ void menu_ex030316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030316_p_prmtrc_eq2_bwth,1,param_4,param_5,param_1);
   return;
 }
@@ -989,6 +1017,7 @@ void menu_ex030317_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030317_p_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
@@ -1002,6 +1031,7 @@ void menu_ex030318_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030318_p_prmtrc_eq3_level,0,param_4,param_5,param_1);
   return;
 }
@@ -1015,6 +1045,7 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030319_p_prmtrc_eq3_bwth,1,param_4,param_5,param_1);
   return;
 }
@@ -1062,6 +1093,7 @@ void menu_draw_max_power(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 4;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(param_2,param_1 + 0x18);
   param_1[bVar1 + 0x18] = 0x57;
   return;

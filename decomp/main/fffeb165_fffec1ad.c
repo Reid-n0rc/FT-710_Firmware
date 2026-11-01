@@ -39,6 +39,7 @@ void ai_ex_preset_lcut_freq(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b573 != g_opstate.presets[0].lcut_freq)) {
     DAT_0001b573 = g_opstate.presets[0].lcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].lcut_freq,0,0);
     return;
   }
@@ -132,6 +133,7 @@ void ai_ex_preset_hcut_freq(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b57d != g_opstate.presets[0].hcut_freq)) {
     DAT_0001b57d = g_opstate.presets[0].hcut_freq;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].hcut_freq,0,0);
     return;
   }
@@ -225,6 +227,7 @@ void ai_ex_preset_usb_out_level(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b587 != g_opstate.presets[0].usb_out_level)) {
     DAT_0001b587 = g_opstate.presets[0].usb_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].usb_out_level,1,0);
     return;
   }
@@ -271,6 +274,7 @@ void ai_ex_preset_rear_out_level(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b58c != g_opstate.presets[0].rear_out_level)) {
     DAT_0001b58c = g_opstate.presets[0].rear_out_level;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].rear_out_level,1,0);
     return;
   }
@@ -411,6 +415,7 @@ void ai_ex_preset_usb_mod_gain(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b59b != g_opstate.presets[0].usb_mod_gain)) {
     DAT_0001b59b = g_opstate.presets[0].usb_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].usb_mod_gain,1,0);
     return;
   }
@@ -457,6 +462,7 @@ void ai_ex_preset_rear_mod_gain(char param_1)
   }
   else if ((param_1 == '\x01') && (DAT_0001b5a0 != g_opstate.presets[0].rear_mod_gain)) {
     DAT_0001b5a0 = g_opstate.presets[0].rear_mod_gain;
+                    /* CAT AI EX reply value at 0x1B23D [doc] */
     DAT_0001ff12 = ai_ex_fmt_u8(g_opstate.presets[0].rear_mod_gain,1,0);
     return;
   }
@@ -518,6 +524,7 @@ void ai_ex_preset_rptt_select(char param_1)
 void ai_ex060101(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(1);
   return;
 }
@@ -530,6 +537,7 @@ void ai_ex060101(void)
 void ai_ex060102(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(1);
   return;
 }
@@ -542,6 +550,7 @@ void ai_ex060102(void)
 void ai_ex060103(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(1);
   return;
 }
@@ -554,6 +563,7 @@ void ai_ex060103(void)
 void ai_ex060104(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(1);
   return;
 }
@@ -566,6 +576,7 @@ void ai_ex060104(void)
 void ai_ex060105(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(1);
   return;
 }
@@ -578,6 +589,7 @@ void ai_ex060105(void)
 void ai_ex060106(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(1);
   return;
 }
@@ -590,6 +602,7 @@ void ai_ex060106(void)
 void ai_ex060107(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(1);
   return;
 }
@@ -602,6 +615,7 @@ void ai_ex060107(void)
 void ai_ex060108(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(1);
   return;
 }
@@ -614,6 +628,7 @@ void ai_ex060108(void)
 void ai_ex060109(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(1);
   return;
 }
@@ -626,6 +641,7 @@ void ai_ex060109(void)
 void ai_ex060110(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(1);
   return;
 }
@@ -638,6 +654,7 @@ void ai_ex060110(void)
 void ai_ex060111(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(1);
   return;
 }
@@ -650,6 +667,7 @@ void ai_ex060111(void)
 void ai_ex060112(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(1);
   return;
 }
@@ -662,6 +680,7 @@ void ai_ex060112(void)
 void ai_ex060113(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(1);
   return;
 }
@@ -674,6 +693,7 @@ void ai_ex060113(void)
 void ai_ex060114(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(1);
   return;
 }
@@ -686,6 +706,7 @@ void ai_ex060114(void)
 void ai_ex060115(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(1);
   return;
 }
@@ -698,6 +719,7 @@ void ai_ex060115(void)
 void ai_ex060116(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(1);
   return;
 }
@@ -710,6 +732,7 @@ void ai_ex060116(void)
 void ai_ex060117(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(1);
   return;
 }
@@ -722,6 +745,7 @@ void ai_ex060117(void)
 void ai_ex060118(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(1);
   return;
 }
@@ -734,6 +758,7 @@ void ai_ex060118(void)
 void ai_ex060201(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(2);
   return;
 }
@@ -746,6 +771,7 @@ void ai_ex060201(void)
 void ai_ex060202(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(2);
   return;
 }
@@ -758,6 +784,7 @@ void ai_ex060202(void)
 void ai_ex060203(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(2);
   return;
 }
@@ -770,6 +797,7 @@ void ai_ex060203(void)
 void ai_ex060204(void)
 
 {
+                    /* Shared AI detector for EX060n04 [doc] */
   ai_ex_preset_cat1_cat3_stop_bit(2);
   return;
 }
@@ -782,6 +810,7 @@ void ai_ex060204(void)
 void ai_ex060205(void)
 
 {
+                    /* Shared AI detector for EX060n05 [doc] */
   ai_ex_preset_agc_fast_delay(2);
   return;
 }
@@ -794,6 +823,7 @@ void ai_ex060205(void)
 void ai_ex060206(void)
 
 {
+                    /* Shared AI detector for EX060n06 [doc] */
   ai_ex_preset_agc_mid_delay(2);
   return;
 }
@@ -806,6 +836,7 @@ void ai_ex060206(void)
 void ai_ex060207(void)
 
 {
+                    /* Shared AI detector for EX060n07 [doc] */
   ai_ex_preset_agc_slow_delay(2);
   return;
 }
@@ -818,6 +849,7 @@ void ai_ex060207(void)
 void ai_ex060208(void)
 
 {
+                    /* Shared AI detector for EX060n08 [doc] */
   ai_ex_preset_lcut_freq(2);
   return;
 }
@@ -830,6 +862,7 @@ void ai_ex060208(void)
 void ai_ex060209(void)
 
 {
+                    /* Shared AI detector for EX060n09 [doc] */
   ai_ex_preset_lcut_slope(2);
   return;
 }
@@ -842,6 +875,7 @@ void ai_ex060209(void)
 void ai_ex060210(void)
 
 {
+                    /* Shared AI detector for EX060n10 [doc] */
   ai_ex_preset_hcut_freq(2);
   return;
 }
@@ -854,6 +888,7 @@ void ai_ex060210(void)
 void ai_ex060211(void)
 
 {
+                    /* Shared AI detector for EX060n11 [doc] */
   ai_ex_preset_hcut_slope(2);
   return;
 }
@@ -866,6 +901,7 @@ void ai_ex060211(void)
 void ai_ex060212(void)
 
 {
+                    /* Shared AI detector for EX060n12 [doc] */
   ai_ex_preset_usb_out_level(2);
   return;
 }
@@ -878,6 +914,7 @@ void ai_ex060212(void)
 void ai_ex060213(void)
 
 {
+                    /* Shared AI detector for EX060n13 [doc] */
   ai_ex_preset_rear_out_level(2);
   return;
 }
@@ -890,6 +927,7 @@ void ai_ex060213(void)
 void ai_ex060214(void)
 
 {
+                    /* Shared AI detector for EX060n14 [doc] */
   ai_ex_preset_tx_bpf_sel(2);
   return;
 }
@@ -902,6 +940,7 @@ void ai_ex060214(void)
 void ai_ex060215(void)
 
 {
+                    /* Shared AI detector for EX060n15 [doc] */
   ai_ex_preset_mod_source(2);
   return;
 }
@@ -914,6 +953,7 @@ void ai_ex060215(void)
 void ai_ex060216(void)
 
 {
+                    /* Shared AI detector for EX060n16 [doc] */
   ai_ex_preset_usb_mod_gain(2);
   return;
 }
@@ -926,6 +966,7 @@ void ai_ex060216(void)
 void ai_ex060217(void)
 
 {
+                    /* Shared AI detector for EX060n17 [doc] */
   ai_ex_preset_rear_mod_gain(2);
   return;
 }
@@ -938,6 +979,7 @@ void ai_ex060217(void)
 void ai_ex060218(void)
 
 {
+                    /* Shared AI detector for EX060n18 [doc] */
   ai_ex_preset_rptt_select(2);
   return;
 }
@@ -950,6 +992,7 @@ void ai_ex060218(void)
 void ai_ex060301(void)
 
 {
+                    /* Shared AI detector for EX060n01 [doc] */
   ai_ex_preset_name(3);
   return;
 }
@@ -962,6 +1005,7 @@ void ai_ex060301(void)
 void ai_ex060302(void)
 
 {
+                    /* Shared AI detector for EX060n02 [doc] */
   ai_ex_preset_cat1_rate(3);
   return;
 }
@@ -974,6 +1018,7 @@ void ai_ex060302(void)
 void ai_ex060303(void)
 
 {
+                    /* Shared AI detector for EX060n03 [doc] */
   ai_ex_preset_cat1_tot(3);
   return;
 }

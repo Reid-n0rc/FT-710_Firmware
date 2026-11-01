@@ -24,6 +24,7 @@ ushort R_SCI5_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b624 = 0;
     bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
     SCI5_SCR = bVar1 | 0x40;
     bVar1 = SCI5_SCR;
     SCI5_SCR = bVar1 | 0x10;
@@ -59,9 +60,12 @@ ushort R_SCI5_Serial_Send(uint param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER0A = bVar1 & 0xdf;
       bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
       SCI5_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORTC_PMR;
       PORTC_PMR = bVar1 | 8;
       bVar1 = ICU_IER0A;
@@ -97,6 +101,7 @@ void r_sci5_receive_interrupt(void)
   
   if (DAT_0001b624 < DAT_0001b626) {
     sci5_rdr = SCI5_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00020820 = sci5_rdr;
     sci5_rx_byte_hook();
     DAT_00020820 = DAT_00020820 + 1;
@@ -104,6 +109,7 @@ void r_sci5_receive_interrupt(void)
   }
   if (DAT_0001b626 <= DAT_0001b624) {
     bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
     SCI5_SCR = bVar1 & 0xbf;
     bVar1 = SCI5_SCR;
     SCI5_SCR = bVar1 & 0xef;
@@ -750,6 +756,7 @@ void sdr_upd_r16_filter(void)
   short sStack_2;
   
   bStack_5 = vfo_mode(0);
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (char *)aess_level_ptr();
   bVar1 = *aess_level_ptr_ret == '\0';
   vfo_filter_width_hz(&uStack_7);
@@ -1460,6 +1467,7 @@ void sdr_upd_r25_tx_drive(byte param_1)
   iVar4 = FUN_fffb4062();
   fVar5 = (float)iVar4;
   uVar6 = uVar6 & 0xfffffff9;
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   bVar2 = tx_band_of_freq(g_ui.freq_tx);
   puVar1 = (&tx_row_ptrs)[bVar2];
   if (fVar5 - 100.0 == 0.0) {
@@ -1827,6 +1835,7 @@ byte sdr_wait_reply(char param_1,char param_2)
       }
     }
     if (DAT_00001c8c != '\x01') break;
+                    /* Non-blocking reply check with timeout [doc] */
     bVar1 = sdr_poll_reply('r',&iStack_8);
     if (bVar1 == 1) {
       DAT_0001b786 = hex2word((char *)(iStack_8 + 1));
@@ -1868,6 +1877,7 @@ byte sdr_poll_reply(char param_1,void *param_2)
     DAT_00001c8b = 0;
     DAT_00001c8c = 0;
     if (param_1 == 'r') {
+                    /* Reply checksum test [doc] */
       bVar1 = sdr_check_hex_sum((int)*(char **)param_2,5);
       if (bVar1 == 1) {
         local_e = 1;
@@ -2055,6 +2065,7 @@ void gpo_a_dir_out(void)
 {
   byte port1_pdr;
   
+                    /* Port Direction [sfr] */
   port1_pdr = PORT1_PDR;
   PORT1_PDR = port1_pdr | 8;
   return;
@@ -2084,6 +2095,7 @@ void gpo_c_dir(char param_1)
     return;
   }
   bVar1 = PORT5_PDR;
+                    /* Port Direction [sfr] */
   PORT5_PDR = bVar1 & 0xfe;
   return;
 }

@@ -125,6 +125,7 @@ void fs_sem_a_create(void)
   uint os_create_sem_named_ret;
   int i;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(&DAT_2091d4c0,0,0x28,0x200);
   i = 0;
   do {
@@ -244,6 +245,7 @@ void fs_sem_b_create(void)
   uint os_create_sem_named_ret;
   int i;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(&DAT_2091d4e8,0,0x28,0x200);
   i = 0;
   do {
@@ -986,6 +988,7 @@ uint str_to_long(byte *param_1,undefined4 *param_2,uint param_3)
       uVar10 = 0;
       bVar2 = false;
       if (bVar12) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
         uVar14 = __aeabi_uidivmod(0x80000000);
       }
       else {

@@ -17,11 +17,14 @@
 void wdt_system_reset(void)
 
 {
+                    /* Watchdog reset control/status [sfr] */
   WDT_WRCSR = 0xa500;
   DataMemoryBarrier(2);
   WDT_WRCSR = 0x5a5f;
+                    /* Watchdog timer counter [sfr] */
   WDT_WTCNT = 0x5aff;
   DataMemoryBarrier(2);
+                    /* Watchdog timer control/status [sfr] */
   WDT_WTCSR = 0xa578;
   return;
 }
@@ -445,6 +448,7 @@ void touch_cal_load(int *param_1,int *param_2)
   int iVar3;
   
   if ((*param_1 != -1) && (*param_1 == -0x5a3cffff)) {
+                    /* reflected poly 0xEDB88320 [doc, inference] */
     crc32_make_table();
     crc32_update_ret = crc32_update(0xffffffff,0x30,(uint)(param_1 + 2));
     if (param_1[0xe] == ~crc32_update_ret) {
@@ -517,6 +521,7 @@ void touch_cal_save(void *param_1)
   uStack_24 = *(undefined4 *)((int)param_1 + 0x24);
   uStack_20 = *(undefined4 *)((int)param_1 + 0x28);
   uStack_1c = *(undefined4 *)((int)param_1 + 0x2c);
+                    /* reflected poly 0xEDB88320 [doc, inference] */
   crc32_make_table();
   local_18 = crc32_update(0xffffffff,0x30,(uint)&local_48);
   local_18 = ~local_18;
@@ -972,6 +977,7 @@ void touch_cal_apply(uint param_1,uint param_2,short *param_3,short *param_4)
                        (int)((ulonglong)uVar6 >> 0x20));
   uVar6 = __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),DAT_20808c20,DAT_20808c24);
   __aeabi_dadd((int)uVar6,(int)((ulonglong)uVar6 >> 0x20),0,0x3fe00000);
+                    /* Double to signed int, truncating with saturation [doc] */
   sVar1 = __aeabi_d2iz();
   uVar5 = __aeabi_dmul((int)uVar5,uVar3,DAT_20808c30,DAT_20808c34);
   uVar6 = __aeabi_dmul((int)uVar7,uVar4,DAT_20808c28,DAT_20808c2c);
@@ -1037,9 +1043,12 @@ undefined4 tsc2007_write_cmd(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
+                    /* 0 start, 1 restart, 2 stop condition [doc, inference] */
   R_RIIC_SendCond(2,0);
+                    /* riic_transmit then waits for transmit end [doc, inference] */
   iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
   if (iVar1 == 0) {
+                    /* riic_transmit per byte [doc, inference] */
     R_RIIC_Write(2,(int)&uStack_10,1);
   }
   R_RIIC_SendCond(2);
@@ -1068,9 +1077,12 @@ uint tsc2007_read12(undefined4 param_1)
   undefined4 uStack_10;
   
   uStack_10 = param_1;
+                    /* 0 start, 1 restart, 2 stop condition [doc, inference] */
   iVar1 = R_RIIC_SendCond(2,0);
   if (iVar1 == 0) {
+                    /* riic_transmit then waits for transmit end [doc, inference] */
     iVar1 = R_RIIC_WriteSlaveAddr(2,0x90,0);
+                    /* riic_transmit per byte [doc, inference] */
     if ((iVar1 == 0) && (iVar1 = R_RIIC_Write(2,(int)&uStack_10,1), iVar1 == 0)) {
       itron_dly_tsk(1);
       R_RIIC_SendCond(2,1);
@@ -1128,6 +1140,7 @@ uint tsc2007_pressure(short *param_1)
     uVar3 = __aeabi_dmul(0,0x40790000,(int)uVar3,(int)((ulonglong)uVar3 >> 0x20));
     __aeabi_dmul((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),(int)uVar2,
                  (int)((ulonglong)uVar2 >> 0x20));
+                    /* Double to unsigned int [doc] */
     uVar1 = __aeabi_d2uiz();
   }
   return uVar1;
@@ -1154,6 +1167,7 @@ void tsc2007_tint_isr(void)
   DAT_20808c40 = DAT_20808c40 + 1;
   DAT_20800074 = DAT_20800074 + 1;
   itron_iwup_tsk(DAT_20800088);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 8) != 0) {
     uVar1 = INTC_IRQRR;
@@ -1243,6 +1257,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   bVar1 = false;
   local_20 = param_4;
   mutex_guard_ctor(&local_20,DAT_20800118,1);
+                    /* stores the present flag [doc] */
   kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,1);
   i = 0;
   do {
@@ -1254,6 +1269,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   } while (i < 2);
   kbdobj_activate(&DAT_20811080 + param_1 * 0xd0);
 LAB_20106e8c:
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&local_20);
   if (bVar1) {
     return;
@@ -1281,6 +1297,7 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   iVar1 = -1;
   local_18 = param_4;
   mutex_guard_ctor(&local_18,DAT_20800118,1);
+                    /* stores the present flag [doc] */
   kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,0);
   i = 0;
   do {
@@ -1291,6 +1308,7 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
     }
     i = i + 1;
   } while (i < 2);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&local_18);
   if (iVar1 != -1) {
     usbkbd_set_leds(iVar1,0,&DAT_2080010c,local_18);
@@ -1324,6 +1342,7 @@ void usbkbd_queue_key(int param_1,int param_2)
   local_18 = *(undefined1 *)(param_2 + 5);
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   ring16_push(param_1 * 0xd0 + 0x20811108,&local_18);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(auStack_10);
   return;
 }
@@ -1376,6 +1395,7 @@ usbkbd_get_device(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
     uVar1 = *(undefined4 *)((int)usbkbd_active_ret + 0x84);
     *param_1 = *(undefined4 *)((int)usbkbd_active_ret + 0x80);
     param_1[1] = uVar1;
+                    /* Scoped lock destructor [doc] */
     mutex_guard_dtor(&uStack_10);
     return *(undefined1 *)param_1;
   }
@@ -1410,11 +1430,13 @@ usbkbd_pop_key(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefin
     iVar1 = *(int *)((int)usbkbd_active_ret + 0x84);
     param_1[1] = iVar1;
     *param_1 = uVar3;
+                    /* Returns the slot at the head and advances it [doc] */
     puVar2 = (undefined4 *)ring16_pop(iVar1 * 0xd0 + 0x20811108);
     if (puVar2 != (undefined4 *)0x0) {
       uVar3 = puVar2[1];
       param_1[2] = *puVar2;
       param_1[3] = uVar3;
+                    /* Scoped lock destructor [doc] */
       mutex_guard_dtor(&uStack_10);
       return 1;
     }
@@ -1441,9 +1463,11 @@ void usbkbd_flush_all(void)
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   i = 0;
   do {
+                    /* ring16_reset of the key ring at +0x88 [doc] */
     kbdobj_flush(&DAT_20811080 + i * 0xd0);
     i = i + 1;
   } while (i < 2);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(auStack_10);
   return;
 }
@@ -2292,6 +2316,7 @@ LAB_20107cc4:
   if ((bVar2 && uVar3 != 0xc0) && (uVar3 != 0x14)) {
     bVar5 = 0x30;
   }
+                    /* E0 with a given flag byte and 16-bit code [doc, inference] */
   mainlink_send_e0(bVar5 | 1,(uint)uVar1);
   mainlink_send_e0(bVar5,(uint)uVar1);
 LAB_20107d28:
@@ -4589,6 +4614,7 @@ void mainlink_trace_dump(void)
           uVar2 = uVar2 + 1 & 0x7ff;
           iVar7 = *piVar5;
           sprintf(auStack_338,"%-6d: ",iVar7 - iVar6);
+                    /* Word-at-a-time string length [doc] */
           uVar3 = strlen(auStack_338);
           uVar3 = fs_fwrite((uint)auStack_338,1,uVar3,local_33c);
           uVar4 = strlen(auStack_338);
@@ -4741,8 +4767,10 @@ void keycode_line(undefined4 param_1,int param_2)
             {
               if ((puVar2 != (uint *)0x0) &&
                  (iVar3 = strncmp((byte *)0x20112034,(byte *)puVar2,4), iVar3 == 0)) {
+                    /* 1 = running, 2 = idle [doc, inference] */
                 test_disp_state_ret = test_disp_state();
                 if (test_disp_state_ret == 2) {
+                    /* set flag 1 [doc, inference] */
                   test_disp_start();
                 }
                 else {
@@ -4867,6 +4895,7 @@ void renc_rec_set(int param_1,byte param_2)
 void renc_poll_mtu1(void)
 
 {
+                    /* Timer counter_1 [sfr] */
   DAT_208001fc = MTU2_TCNT_1;
   if (DAT_208001fc != DAT_208001fe) {
     renc_rec_set(1,(char)DAT_208001fc - (char)DAT_208001fe);
@@ -4893,6 +4922,7 @@ void renc_poll_mtu1(void)
 void renc_poll_mtu2(void)
 
 {
+                    /* Timer counter_2 [sfr] */
   DAT_20800202 = MTU2_TCNT_2;
   if (DAT_20800202 != DAT_20800204) {
     renc_rec_set(2,(char)DAT_20800202 - (char)DAT_20800204);
@@ -4990,6 +5020,7 @@ void pot_detect(void)
   
   uVar3 = adc_ring_average(&DAT_208d9a08);
   __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x3fe00000);
+                    /* Double to unsigned int [doc] */
   uVar1 = __aeabi_d2uiz();
   uVar3 = adc_ring_average(&DAT_208d99c8);
   __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x3fe00000);
@@ -5038,12 +5069,16 @@ void renc_mtu2_init(void)
 {
   byte bVar1;
   
+                    /* Timer start [sfr] */
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 & 0xfd;
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 & 0xfb;
+                    /* Timer mode_1 [sfr] */
   MTU2_TMDR_1 = 4;
+                    /* Timer counter_1 [sfr] */
   MTU2_TCNT_1 = 0;
+                    /* Timer mode_2 [sfr] */
   MTU2_TMDR_2 = 7;
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 | 4;
@@ -5074,6 +5109,7 @@ void renc_irq4_isr(void)
   
   gic_disable_irq(0x24);
   uVar1 = PORT_PPR3;
+                    /* Port pin read_3 [sfr] */
   port_ppr3 = PORT_PPR3;
   if ((uVar1 & 0xf) >> 3 == (port_ppr3 & 0x3f) >> 5) {
     bVar2 = 0xff;
@@ -5083,6 +5119,7 @@ void renc_irq4_isr(void)
   }
   DAT_208001e4 = DAT_208001e4 + bVar2;
   renc_rec_set(3,bVar2);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x10) != 0) {
     uVar1 = INTC_IRQRR;
@@ -5123,6 +5160,7 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
       uVar2 = itron_acre_tsk(0,(byte *)&ctsk_detect_renc);
       if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
         periodic_wakeup_register(uVar2,2);
+                    /* Interrupt control 1 [sfr] */
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 & 0xfcff;
         uVar1 = INTC_ICR1;
@@ -5459,6 +5497,7 @@ uint gpio_read_port_bit(uint param_1,uint param_2)
   uVar1 = 1 << (param_2 & 0xff);
   switch(param_1) {
   case 2:
+                    /* Port pin read_2 [sfr] */
     uVar2 = PORT_PPR2;
     break;
   case 3:
@@ -5467,12 +5506,15 @@ uint gpio_read_port_bit(uint param_1,uint param_2)
   default:
     goto switchD_20113204_caseD_4;
   case 7:
+                    /* Port pin read_7 [sfr] */
     uVar2 = PORT_PPR7;
     break;
   case 8:
+                    /* Port pin read_8 [sfr] */
     uVar2 = PORT_PPR8;
     break;
   case 9:
+                    /* Port pin read_9 [sfr] */
     uVar2 = PORT_PPR9;
     break;
   case 10:
@@ -5514,6 +5556,7 @@ void mainlink_send_key(uint param_1,byte param_2)
   puVar2 = &local_20;
   uStack_1c = 0;
   local_20 = CONCAT13((char)param_1,CONCAT12((char)(param_1 >> 8),CONCAT11(param_2,0xe0)));
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
   iVar1 = full_mode_get();
   if (iVar1 == 0) goto LAB_20113460;
   if (DAT_20800495 == '\0') {
@@ -6080,6 +6123,7 @@ void system_reboot(void)
 
 {
   itron_chg_pri(0,1);
+                    /* P2_4, P2_5 and P10_1 low [doc, inference] */
   gpio_p2_4_5_clear();
   backlight_enable(0);
   lvds_pins_enable(0);
@@ -6090,12 +6134,14 @@ void system_reboot(void)
   gpio_p7_9_11(1);
   itron_dly_tsk(4);
   gpio_rx_update(0);
+                    /* Drive the MAIN reset and boot pins [fact: mainlink.md] */
   gpio_rx_reset(1);
   itron_dly_tsk(1);
   gpio_p8_5(1);
   gpio_rx_reset(0);
   itron_dly_tsk(0xe);
   gpio_qf_reset(1);
+                    /* Then reset the DISPLAY by the watchdog [fact: 0x20100268] */
   wdt_system_reset();
   return;
 }
@@ -6175,6 +6221,7 @@ void mainlink_send_enc(byte *param_1)
   if (g_ml.ack_pending != 0) {
     itron_twai_sem(g_ml.enc_sem,0xffffffff);
     uVar3 = (uint)*param_1;
+                    /* ACK pending: queue the encoder event [fact: mainlink.md] */
     g_ml.enc_queue_mask = g_ml.enc_queue_mask | (byte)(1 << uVar3);
     iVar4 = (&DAT_2045f224)[uVar3];
     if (iVar4 < 10) {
@@ -6184,6 +6231,7 @@ void mainlink_send_enc(byte *param_1)
     else {
       iVar4 = iVar4 * 5 + uVar3 * 0x32;
       cVar1 = (&DAT_2045f0c5)[iVar4 + -4];
+                    /* Copies 5 bytes [doc] */
       copy5(&DAT_2045f0c5 + iVar4 + -5,param_1);
       switch(uVar3) {
       case 1:
@@ -6199,6 +6247,7 @@ void mainlink_send_enc(byte *param_1)
         else if (0x7f < iVar2) {
           iVar2 = 0x7f;
         }
+                    /* Queue full: sum the deltas, clamped to +-127 [fact: mainlink.md] */
         (&DAT_2045f0c5)[iVar4 + -4] = (char)iVar2;
         break;
       case 4:
@@ -6212,6 +6261,7 @@ void mainlink_send_enc(byte *param_1)
   uVar3 = mainlink_tx_alloc((int)(g_ml.link_obj + 0x8218));
   *(undefined2 *)(uVar3 + 4) = 0xaa;
   *(undefined2 *)(uVar3 + 6) = 7;
+                    /* Send an E1 encoder frame now [fact: mainlink.md] */
   *(undefined1 *)(uVar3 + 8) = 0xe1;
   copy5(uVar3 + 9,param_1);
   FUN_201636a8(0x20450068);
@@ -6309,6 +6359,7 @@ uint pot5_filter(uint param_1)
     g_ml.pot5_hist[g_ml.pot5_last[1]] = g_ml.pot5_last[0];
     if (((param_1 - 3 < 0xfa) && (g_ml.pot5_hist[0] != g_ml.pot5_hist[2])) &&
        (g_ml.pot5_hist[1] != g_ml.pot5_hist[3])) {
+                    /* min or max of 4 bytes [doc, inference] */
       uVar1 = minmax4(1,g_ml.pot5_hist);
       minmax4_ret = minmax4(0,g_ml.pot5_hist);
       if (2 < (int)(uVar1 - minmax4_ret)) {
@@ -6353,6 +6404,7 @@ uint pot4_filter(uint param_1)
     g_ml.pot4_hist[g_ml.pot4_last[1]] = g_ml.pot4_last[0];
     if (((param_1 - 3 < 0xfa) && (g_ml.pot4_hist[0] != g_ml.pot4_hist[2])) &&
        (g_ml.pot4_hist[1] != g_ml.pot4_hist[3])) {
+                    /* min or max of 4 bytes [doc, inference] */
       uVar1 = minmax4(1,g_ml.pot4_hist);
       minmax4_ret = minmax4(0,g_ml.pot4_hist);
       if (2 < (int)(uVar1 - minmax4_ret)) {
@@ -6387,6 +6439,7 @@ void mainlink_renc_event(byte *param_1,undefined4 param_2,undefined4 param_3,und
     return;
   }
   local_10 = param_4;
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
   iVar2 = full_mode_get();
   if (iVar2 == 0) {
     return;
@@ -7186,6 +7239,7 @@ void touch_cal_step(uint param_1,uint param_2)
   case 5:
     uVar3 = touch_cal_hit(uVar3,param_1,param_2);
     if (uVar3 != 0) {
+                    /* full-screen window, alpha 0xFF [doc, inference] */
       layer_alpha_rect_opaque(5);
       iVar4 = fb_get_layer_addr(DAT_208085bc);
       fb_clear_rect(iVar4,0,0,800,0x1e0);
@@ -7286,6 +7340,7 @@ undefined4 usbh_enumerate_config(uint param_1,int param_2,undefined4 *param_3)
     *(undefined1 *)(iVar10 + -0x8d8) = *(undefined1 *)((int)param_3 + 0x26);
     __aeabi_memclr4(iVar10 + -0xa4,0x78);
     *param_3 = 1;
+                    /* SETUP 0x80, 6, wValue 0x0200 [doc] */
     uVar12 = usbh_get_config_descriptor(param_3,iVar10 + -0x8b6,0x7ff);
     if (-1 < (int)uVar12) {
       uVar17 = 0xffffffff;
@@ -7429,6 +7484,7 @@ undefined4 usbh_ports_init(void)
   i = 0;
   DAT_20808ab8 = 0;
   do {
+                    /* m596 / udevtsk%d names [doc, inference] */
     usbh_create_objects_ret = usbh_create_objects(i,(int)(&DAT_2090b660 + i * 0x4d8));
     uVar1 = DAT_20808ab8;
     if ((int)usbh_create_objects_ret < 0) {
@@ -7556,6 +7612,7 @@ LAB_20138ea8:
 void usbh_control_req(void)
 
 {
+                    /* Control transfer on a pipe object under its semaphore [doc, inference] */
   usbh_control_transfer();
   return;
 }
@@ -7673,6 +7730,7 @@ int usbh_pipe_write(int param_1,int param_2,int param_3)
         iVar2 = 0x2000;
       }
       memcpy(*(undefined4 *)(param_1 + 0x48),param_2 + iVar3,iVar2);
+                    /* sends the buffer packet by packet with FUN_20138fdc [doc] */
       iVar2 = usbh_pipe_write_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar2 < 0) {
         return iVar2;
@@ -7800,6 +7858,7 @@ int usbh_pipe_read(int param_1,int param_2,int param_3)
       if (0x2000 < param_3) {
         iVar2 = 0x2000;
       }
+                    /* reads up to len bytes [doc] */
       iVar3 = usbh_pipe_read_buf(param_1,*(undefined4 *)(param_1 + 0x48),iVar2);
       if (iVar3 < 0) {
         return iVar3;
@@ -7930,6 +7989,7 @@ void usbh_port_isr(int param_1,int param_2)
      (*(int *)(&DAT_2090bb28 + iVar1) = *(int *)(&DAT_2090bb28 + iVar1) + 1, (uVar4 & 0x1000) != 0))
   {
     uVar6 = uVar6 | 1;
+                    /* Sets +0x30 = 1 in the pipe slot [doc] */
     usbh_pipe_mark_done(param_1,0);
     FUN_20139658(param_1,0);
   }
@@ -7995,6 +8055,7 @@ void usbh_port_task(int param_1)
           if ((((&DAT_204201a0)[i * 7] & local_c) != 0) &&
              ((*(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) & 0x1000) !=
               0)) {
+                    /* itron_loc_cpu, returns 0 [doc] */
             uVar1 = usbh_loc_cpu();
             *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) =
                  *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a4)[i * 7]) & 0xefff;
@@ -8289,6 +8350,7 @@ undefined4 usbh_brdy_handler(int param_1)
       uVar5 = uVar5 >> 1;
     } while (i < 10);
   } while (bVar2);
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar3 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x100;
   itron_unl_cpu(uVar3);
@@ -8535,6 +8597,7 @@ LAB_2013b114:
           *(ushort *)(iVar7 + 0x20) = (ushort)local_126 + (ushort)local_125 * 0x100;
           *(ushort *)(iVar7 + 0x22) = (ushort)local_124 + (ushort)local_123 * 0x100;
           do {
+                    /* SETUP 0x80, 6, wValue 0x0200 [doc] */
             iVar5 = usbh_get_config_descriptor(iVar7,local_130,0xff);
             if (-1 < iVar5) {
               iVar8 = (uint)local_12e + (uint)local_12d * 0x100;
@@ -8550,6 +8613,7 @@ LAB_2013b114:
                 iVar8 = iVar8 - (uint)bVar1;
                 pbVar6 = pbVar6 + bVar1;
               } while (0 < iVar8);
+                    /* Reads the configuration descriptor [doc] */
               iVar8 = usbh_enumerate_config(local_30,uVar4,iVar7);
               if (iVar8 == 0) {
                 *(code **)(iVar7 + 0x28) = FUN_20138410;
@@ -8806,6 +8870,7 @@ void usbh_hw_init(void)
 {
   gic_def_inh(0x49,0x204201b8);
   gic_enable_irq(0x49);
+                    /* stores the port's register base and speed [doc] */
   usbh_port_open(0,&USB_SYSCFG0_0,2,&DAT_20808ac0);
   gic_def_inh(0x4a,0x204201c4);
   gic_enable_irq(0x4a);
@@ -9095,6 +9160,7 @@ undefined4 usbh_hid_class_init(void)
   
   __aeabi_memclr4(&DAT_2091c568,0x610);
   usbh_hid_init_ret = usbh_hid_init((int *)&DAT_2091c568);
+                    /* Clears the two HID device slots 0x2091CB78 [doc] */
   if (((int)usbh_hid_init_ret < 0) || (iVar1 = usbhid_class_register(), iVar1 < 0)) {
     uVar2 = 0xffffffff;
   }
@@ -9670,12 +9736,14 @@ void usbhid_device_task(int param_1)
                          (&DAT_2091c570)[param_1],0,0);
       iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
                                  (&DAT_2091c570)[param_1],pbVar9,uVar7);
+                    /* walks a HID report descriptor item by item [doc] */
       if (((-1 < iVar3) && (iVar3 = hid_report_desc_parse(puVar6,pbVar9), -1 < iVar3)) &&
          ((iVar3 = *(int *)(&DAT_2091c588 + param_1), iVar3 == 2 || iVar3 == 4 ||
           (iVar3 == 5 || iVar3 == 6)))) {
         usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,
                            (&DAT_2091c570)[param_1],0,0);
         usbhid_attach_event(*(int *)(&DAT_2091c56c + param_1),*(int *)(&DAT_2091c588 + param_1));
+                    /* starts a read on the device's interrupt pipe [doc] */
         while ((*(int *)(&DAT_2091c57c + param_1) != 0 &&
                (iVar3 = usbhid_pipe_read(*(undefined4 *)(&DAT_2091c56c + param_1),
                                          *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
@@ -9719,6 +9787,7 @@ void usbhid_device_task(int param_1)
             else if (local_48 == 6) {
               if (-1 < *(int *)(&DAT_2091c62c + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c634)[param_1];
+                    /* little-endian bit-field extract from a HID report [doc] */
                 uVar1 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
                                             *(undefined4 *)(&DAT_2091c630 + param_1));
                 local_44._0_2_ = CONCAT11(uVar1,(undefined1)local_44);
@@ -9885,9 +9954,11 @@ undefined4 usbh_pipe_cancel(int param_1,int param_2)
     iVar6 = (&DAT_20420144)[*(int *)(iVar3 + 0xc)];
     iVar7 = *(int *)(&DAT_2042016c + iVar4 * 4);
     uVar8 = *(undefined4 *)(iVar5 + iVar4 * 4 + 0x30);
+                    /* itron_loc_cpu, returns 0 [doc] */
     uVar2 = usbh_loc_cpu();
     *(ushort *)(*(int *)(iVar5 + 8) + iVar6) = *(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0xfffc;
     itron_unl_cpu(uVar2);
+                    /* Low word of itron_get_tim [doc] */
     iVar3 = fs_get_tick();
     while ((iVar4 = fs_get_tick(), (uint)(iVar4 - iVar3) < 0x33 &&
            ((*(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0x1020) != 0))) {
@@ -10129,6 +10200,7 @@ int touch_hit_test(undefined4 param_1,undefined4 param_2)
   byte gui_frame_dsp_knob_val;
   
   if (gui_frame.cmd == 0x40) {
+                    /* touch_hit_test for screen 0x40 [doc] */
     iVar4 = touch_hit_text_list(param_1,param_2);
 switchD_2015c074_caseD_32:
     if (iVar4 != 0x1ff) {
@@ -10140,6 +10212,7 @@ switchD_2015c074_caseD_32:
       iVar4 = 0x1ff;
       switch(gui_frame.cmd) {
       case 0x30:
+                    /* touch_hit_test for screen 0x30 [doc] */
         iVar4 = touch_hit_select_popup(param_1,param_2,gui_frame.payload[0]);
         break;
       case 0x31:
@@ -10183,11 +10256,13 @@ switchD_2015c074_caseD_32:
       }
       else {
         if (gui_frame.cmd != 0x43) goto LAB_2015c240;
+                    /* touch_hit_test for screen 0x43 [doc] */
         iVar4 = touch_hit_sd_menu(param_1,param_2);
       }
       goto switchD_2015c074_caseD_32;
     }
     if (gui_frame.cmd == 0x70) {
+                    /* touch_hit_test for screen 0x70 [doc] */
       iVar4 = touch_hit_dialog(param_1,param_2);
       goto switchD_2015c074_caseD_32;
     }
@@ -10275,6 +10350,7 @@ int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
   if (iVar1 == 0x1ff) {
     iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
   }
+                    /* row index from [doc] */
   if ((((iVar1 == 0x1ff) && (iVar1 = touch_hit_text_list_rows(param_1,param_2), iVar1 != 0x1ff)) &&
       (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
      ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
@@ -10854,6 +10930,7 @@ int kbdobj_ctor(int param_1)
 {
   int iVar1;
   
+                    /* ring16_reset, returns this [doc] */
   iVar1 = ring16_ctor(param_1 + 0x88);
   return iVar1 + -0x88;
 }
@@ -11052,6 +11129,7 @@ undefined4 fwdbg_write_other_bank(int param_1,uint param_2)
       if (uVar3 == 0) {
         kbd_led_status(4,7);
         local_48 = 0xffffffff;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
         crc32_make_table();
         do {
           uVar3 = fs_fread(param_1 + 4,1,0x100,uVar1);
@@ -11257,6 +11335,7 @@ LAB_2015f638:
     } while (uVar3 == 0);
     bVar1 = false;
     local_54 = 0xffffffff;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
     crc32_make_table();
     do {
       uVar4 = fs_fread((int)param_1 + 4,1,0x100,uVar3);
@@ -11420,6 +11499,7 @@ void mouse_cursor_obj_init(int param_1)
     FUN_20164524(param_1 + 0x504,uVar2 & 0xffff,iVar3 + 4);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x20);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x58c) = uVar1;
   *(undefined1 *)(param_1 + 0x590) = 0;

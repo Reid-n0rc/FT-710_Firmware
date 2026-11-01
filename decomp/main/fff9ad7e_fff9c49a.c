@@ -57,6 +57,7 @@ void dl37_slot_contrast(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CONTRAST pop-up [doc] */
   popup_fmt_contrast(param_1);
   return;
 }
@@ -76,6 +77,7 @@ void dl37_slot_dimmer(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the DIMMER pop-up [doc] */
   popup_fmt_dimmer(param_1);
   return;
 }
@@ -112,6 +114,7 @@ void dl37_slot_mic_gain(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the MIC GAIN pop-up [doc] */
   popup_fmt_mic_gain(param_1);
   return;
 }
@@ -167,6 +170,7 @@ void dl37_slot_proc_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the PROC LEVEL pop-up [doc] */
   popup_fmt_proc_level(param_1);
   return;
 }
@@ -186,6 +190,7 @@ void dl37_slot_amc_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AMC LEVEL pop-up [doc] */
   popup_fmt_amc_level(param_1);
   return;
 }
@@ -205,6 +210,7 @@ void dl37_slot_vox_gain(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the VOX GAIN pop-up [doc] */
   popup_fmt_vox_gain(param_1);
   return;
 }
@@ -224,6 +230,7 @@ void dl37_slot_vox_delay(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the VOX DELAY pop-up [doc] */
   popup_fmt_vox_delay(param_1);
   return;
 }
@@ -243,6 +250,7 @@ void dl37_slot_anti_vox(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the ANTI VOX pop-up [doc] */
   popup_fmt_anti_vox(param_1);
   return;
 }
@@ -262,6 +270,7 @@ void dl37_slot_rf_power(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the RF POWER pop-up [doc] */
   popup_fmt_rf_power(param_1);
   return;
 }
@@ -281,6 +290,7 @@ void dl37_slot_moni_level(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the MONI LEVEL pop-up [doc] */
   popup_fmt_moni_level(param_1);
   return;
 }
@@ -385,6 +395,7 @@ void dl37_slot_cw_speed(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CW SPEED pop-up [doc] */
   popup_fmt_cw_speed(param_1);
   return;
 }
@@ -404,6 +415,7 @@ void dl37_slot_cw_pitch(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the CW PITCH pop-up [doc] */
   popup_fmt_cw_pitch(param_1);
   return;
 }
@@ -423,6 +435,7 @@ void dl37_slot_bk_delay(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the BK DELAY pop-up [doc] */
   popup_fmt_bk_delay(param_1);
   return;
 }
@@ -517,6 +530,7 @@ void dl37_slot_aess(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AESS pop-up [doc] */
   popup_fmt_aess_level(param_1);
   return;
 }
@@ -536,6 +550,7 @@ void dl37_slot_aess_cf(ushort param_1)
   param_1 = param_1 + 2;
   *(undefined4 *)(&DAT_00001745 + param_1) = 0x20202020;
   *(undefined4 *)(&DAT_00001741 + param_1) = 0x20202020;
+                    /* Value text of the AESS CF pop-up [doc] */
   popup_fmt_aess_cf(param_1);
   return;
 }
@@ -992,6 +1007,7 @@ void displink_build_41(void)
       bStack_1 = DAT_00020884->flags5 >> 7 | DAT_00020884->flags1 >> 6 & 2;
       (&DAT_00001741)[DAT_0001b632] = bStack_1;
       DAT_0001b632 = DAT_0001b632 + 1;
+                    /* channel label text [doc] */
       memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
       DAT_0001b632 = DAT_0001b632 + 5;
       FUN_fff9c2f9(&DAT_00001741 + DAT_0001b632,bStack_4);
@@ -1182,6 +1198,7 @@ undefined4 * memch_label_fmt(undefined4 *param_1,byte param_2)
       *(byte *)((int)param_1 + 3) = param_2 + 0x31;
     }
     else {
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
       dec_to_str_u8(param_2 + 1,(undefined2 *)((int)param_1 + 2));
     }
     *(undefined1 *)(param_1 + 1) = 0x20;
@@ -1457,6 +1474,7 @@ void displink_build_62(void)
       pcVar1 = pcVar1 + 1;
       pcVar2 = pcVar2 + 1;
     }
+                    /* 3-character value of an alignment item for 0x62 [doc] */
     displink_62_value(uStack_4,(uint)i * 0x1c + 0xb3);
     uStack_4 = uStack_4 + 1;
     if (0x104 < uStack_4) {

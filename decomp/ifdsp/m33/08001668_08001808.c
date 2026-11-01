@@ -99,6 +99,7 @@ void __HWVAD0_DriverIRQHandler_veneer(void)
 void __FLEXCOMM1_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ15, generic fsl_flexcomm handler [doc] */
   FLEXCOMM1_DriverIRQHandler(param_1);
   return;
 }
@@ -291,6 +292,7 @@ void __DMIC0_DriverIRQHandler_veneer(void)
 void __I3C0_DriverIRQHandler_veneer(undefined4 param_1)
 
 {
+                    /* IRQ49, base 0x40036000 [doc] */
   I3C0_DriverIRQHandler(param_1);
   return;
 }

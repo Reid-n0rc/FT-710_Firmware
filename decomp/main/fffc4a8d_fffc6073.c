@@ -147,6 +147,7 @@ void band_select_on(byte param_1,byte param_2)
   band_select(param_1);
   g_opstate.split_on = 0;
   g_opstate.active_vfo = g_opstate_active_vfo_val;
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -221,6 +222,7 @@ undefined1 FUN_fffc4cc5(short param_1,uint param_2)
       PTR_g_ui_00025d54->popup_text[8] = pcStack_c[8];
       *(undefined4 *)(p_ui_state->popup_text + 4) = *(undefined4 *)(pcStack_c + 4);
       *(undefined4 *)p_ui_state->popup_text = *(undefined4 *)pcStack_c;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
       popup_duration_get(0x5e);
       popup_open_timed();
       beep_request(1);
@@ -277,6 +279,7 @@ void dsp_knob_reset(void)
   bVar2 = PTR_g_ui_00025d54->dsp_knob_func;
   if (bVar2 == 3) {
     if (PTR_g_ui_00025d54->dsp_knob_apf != 0) {
+                    /* g_opstate.apf_freq = 0 and bit 5 [doc] */
       vfo_apf_reset();
       return;
     }
@@ -288,6 +291,7 @@ void dsp_knob_reset(void)
     return;
   }
   if (bVar2 == 2) {
+                    /* manual NOTCH of the VFO's mode block = 0x0096 [doc] */
     vfo_notch_reset(bVar1);
     return;
   }
@@ -826,6 +830,7 @@ LAB_fffc5452:
   if (bVar3) {
     vfo_enter_mem_state(bVar1);
     memtune_flags_clear(bVar1);
+                    /* n channel steps up [doc] */
     memch_step(local_1,bVar1);
     return;
   }
@@ -850,11 +855,13 @@ void memch_step(byte param_1,byte param_2)
   local_3 = 0;
   if (PTR_g_ui_00025d58->ch_knob_mode == 0) {
     for (; local_3 < param_1; local_3 = local_3 + 1) {
+                    /* memory channel +1, wrapping to the first [doc] */
       memch_step_up(param_2);
     }
   }
   else {
     for (; local_3 < param_1; local_3 = local_3 + 1) {
+                    /* memory channel -1 [doc] */
       memch_step_down(param_2);
     }
   }

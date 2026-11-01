@@ -28,6 +28,7 @@ void Reset_Handler(void)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
+                    /* DCCIMVAC per cache line over the range [doc] */
   dcache_clean_invalidate_range(0);
   FUN_20100d0c();
   cpg_early_init();
@@ -70,6 +71,7 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
   undefined4 in_cr0;
   undefined4 in_cr12;
   
+                    /* writes SPIBSC0 regs 0x3FEFA0xx [doc, inference] */
   spibsc0_init();
   boot_select_bank();
   do {
@@ -115,6 +117,7 @@ void reset_in_ram(int param_1,undefined4 *param_2,undefined4 *param_3)
     pbVar3 = pbVar3 + 0x20;
   } while ((int)pbVar3 < 0x2043ffff);
   mmu_l1_table_init();
+                    /* sets the section attributes of the range to 0xC0C [doc] */
   mmu_set_cacheable(vec_reset,0x400000);
   mmu_set_cacheable(&PTR_DAT_20800000,0x200000);
   FUN_20100d6c();
@@ -272,6 +275,7 @@ void gpio_p7_9_11(int param_1)
   else {
     uVar1 = 0x8000000;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   if (param_1 != 0) {
     uVar1 = 0x2000200;
@@ -299,11 +303,17 @@ void spibsc0_init(void)
 {
   uint spibsc_drdmcr_0;
   
+                    /* P9_2..P9_7 alt 2 [doc, inference] */
   spibsc0_pins_init();
+                    /* Bit rate_0 [sfr] */
   SPIBSC_SPBCR_0 = 1;
+                    /* Data read command setting_0 [sfr] */
   SPIBSC_DRCMR_0 = 0xeb0000;
+                    /* Data read enable setting_0 [sfr] */
   SPIBSC_DRENR_0 = 0x222c780;
+                    /* Data read option setting_0 [sfr] */
   SPIBSC_DROPR_0 = 0xff000000;
+                    /* Data read dummy cycle setting_0 [sfr] */
   spibsc_drdmcr_0 = SPIBSC_DRDMCR_0;
   SPIBSC_DRDMCR_0 = spibsc_drdmcr_0 | 3;
   return;
@@ -329,50 +339,62 @@ uint gpio_read_bit(uint param_1,uint param_2)
   switch(param_1) {
   case 0:
     uVar1 = PORT_PPR0;
+                    /* Port pin read_0 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 1:
     uVar1 = PORT_PPR1;
+                    /* Port pin read_1 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 2:
     uVar1 = PORT_PPR2;
+                    /* Port pin read_2 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 3:
     uVar1 = PORT_PPR3;
+                    /* Port pin read_3 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 4:
     uVar1 = PORT_PPR4;
+                    /* Port pin read_4 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 5:
     uVar1 = PORT_PPR5;
+                    /* Port pin read_5 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 6:
     uVar1 = PORT_PPR6;
+                    /* Port pin read_6 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 7:
     uVar1 = PORT_PPR7;
+                    /* Port pin read_7 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 8:
     uVar1 = PORT_PPR8;
+                    /* Port pin read_8 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 9:
     uVar1 = PORT_PPR9;
+                    /* Port pin read_9 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 10:
     uVar1 = PORT_PPR10;
+                    /* Port pin read_10 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   case 0xb:
     uVar1 = PORT_PPR11;
+                    /* Port pin read_11 [sfr] */
     uVar2 = (uint)uVar1;
     break;
   default:
@@ -402,6 +424,7 @@ void boot_select_bank(void)
   
   bVar2 = false;
   bVar1 = false;
+                    /* Data read option setting_1 [sfr] */
   spibsc_dropr_1 = SPIBSC_DROPR_1;
   if (spibsc_dropr_1 == 0) {
     SPIBSC_DROPR_1 = 0x20000000;
@@ -427,13 +450,16 @@ void boot_select_bank(void)
     if (bVar2) {
       if (!bVar1) {
         _DAT_20000000 = 1;
+                    /* Bank 1 valid: jump to 0x18400000 [fact: README.md] */
         FUN_18400000();
       }
     }
     else if (bVar1) {
       _DAT_20000000 = 2;
+                    /* Bank 2 valid: jump to 0x18A00000 [fact: README.md] */
       FUN_18a00000();
     }
+                    /* No valid bank: stay in the boot loader [inference: loader strings] */
     uRam20000008 = 3;
     return;
   }
@@ -481,6 +507,7 @@ void __scatterload(void)
 {
                     /* WARNING: Could not recover jumptable at 0x20100bf2. Too many branches */
                     /* WARNING: Treating indirect jump as call */
+                    /* armcc LZ decompressor for RW regions [doc, inference] */
   __decompress(0x2042886c,0x20450000,0x290);
   return;
 }
@@ -682,6 +709,7 @@ undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
     puVar3 = (undefined4 *)((uint)((int)param_3 + 7) & 0xfffffff8);
     local_40 = *puVar3;
     local_3c = puVar3[1];
+                    /* class bits of a double for _printf_fp_dec [doc] */
     iVar8 = fp_classify_double();
     if (local_3c < 0) {
       local_44 = 0x2d;
@@ -811,6 +839,7 @@ undefined4 _printf_fp_dec(uint *param_1,uint param_2,uint *param_3)
       iVar7 = 0;
       iVar8 = 0;
       while (lVar14 != 0) {
+                    /* 64-bit unsigned divide by 10 by shifts and adds [doc] */
         lVar14 = _ll_udiv10();
         *(byte *)((int)param_1 + iVar8 + 0x24) = extraout_r2 + 0x30;
         iVar8 = iVar8 + 1;
@@ -1561,6 +1590,7 @@ void gpio_p8_14(int param_1)
   else {
     uVar1 = 0x40004000;
   }
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = uVar1;
   return;
 }
@@ -1587,6 +1617,7 @@ void gpio_rx_reset(int param_1)
   else {
     uVar1 = 0x4000400;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   return;
 }
@@ -1605,16 +1636,27 @@ void gpio_rx_reset(int param_1)
 void cpg_set_clock_profile(int param_1)
 
 {
+                    /* Standby control 2 [sfr] */
   CPG_STBCR2 = (&DAT_2016517c)[param_1];
+                    /* Standby control 3 [sfr] */
   CPG_STBCR3 = (&DAT_2016517e)[param_1];
+                    /* Standby control 4 [sfr] */
   CPG_STBCR4 = (&DAT_20165180)[param_1];
+                    /* Standby control 5 [sfr] */
   CPG_STBCR5 = (&DAT_20165182)[param_1];
+                    /* Standby control 6 [sfr] */
   CPG_STBCR6 = (&DAT_20165184)[param_1];
+                    /* Standby control 7 [sfr] */
   CPG_STBCR7 = (&DAT_20165186)[param_1];
+                    /* Standby control 8 [sfr] */
   CPG_STBCR8 = (&DAT_20165188)[param_1];
+                    /* Standby control 9 [sfr] */
   CPG_STBCR9 = (&DAT_2016518a)[param_1];
+                    /* Standby control 10 [sfr] */
   CPG_STBCR10 = (&DAT_2016518c)[param_1];
+                    /* Standby control 11 [sfr] */
   CPG_STBCR11 = (&DAT_2016518e)[param_1];
+                    /* Standby control 12 [sfr] */
   CPG_STBCR12 = (&DAT_20165190)[param_1];
   return;
 }
@@ -1658,6 +1700,7 @@ void task_tsc2007(void)
   iVar2 = R_RIIC_Init(2);
   if (iVar2 == 0) {
     uVar1 = INTC_ICR1;
+                    /* Interrupt control 1 [sfr] */
     INTC_ICR1 = uVar1 & 0xff3f;
     uVar1 = INTC_ICR1;
     local_28 = (uint)uVar1;
@@ -1681,6 +1724,7 @@ void task_tsc2007(void)
         }
         while( true ) {
           itron_dly_tsk(1);
+                    /* Port pin read_1 [sfr] */
           uVar1 = PORT_PPR1;
           if ((uVar1 & 8) != 0) break;
           DAT_20808c48 = DAT_20808c48 + 1;
@@ -1689,6 +1733,7 @@ void task_tsc2007(void)
         touch_set_up();
         uVar1 = INTC_IRQRR;
         if ((uVar1 & 8) != 0) {
+                    /* IRQ interrupt request [sfr] */
           uVar1 = INTC_IRQRR;
           INTC_IRQRR = uVar1 & 0xfff7;
         }
@@ -1868,6 +1913,7 @@ void task_audio_codec(void)
       local_34 = 0;
       local_30 = 0;
       local_2c = 0;
+                    /* drive 'I' free space == 0 [doc, inference] */
       uVar4 = sd_is_full('I');
       if (uVar4 == 0) {
         local_4c = &DAT_2081104c;
@@ -1932,6 +1978,7 @@ void task_audio_codec(void)
                   }
                   break;
                 }
+                    /* DCCIMVAC per cache line over the range [doc] */
                 dcache_clean_invalidate_range(local_5c,4000);
                 DAT_208000e4 = DAT_208000e4 + iVar6 * 2;
                 if ((DAT_208000b3 == 2) && (0x57e3ff < DAT_208000e4)) break;
@@ -2015,6 +2062,7 @@ LAB_20106a5c:
                         (&DAT_208f4de0)[uVar4 * 0x11f8] = 0;
                         iVar5 = uVar4 * 0x11f8;
                         *(undefined1 *)(iVar5 + 0x208f4de1) = 0;
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
                         dcache_clean_range(&DAT_208f4de0 + iVar5,local_58);
                         itron_twai_flg(DAT_208000c8,0xffff,5,&local_1004,-1);
                         DAT_208000b0 = DAT_208000b0 + 1;
@@ -2356,6 +2404,7 @@ void task_fwupdate(void)
     do {
       if (*(char *)((&DAT_2081166c)[i] + 0x88) != '\0') {
         *(undefined1 *)((&DAT_2081166c)[i] + 0xa9) = 4;
+                    /* progress percent 0x20800364 [doc, inference] */
         progress_set(0);
         iVar1 = (*(code *)**(undefined4 **)(&DAT_2081166c)[i])((undefined4 *)(&DAT_2081166c)[i],0,1)
         ;
@@ -2460,6 +2509,7 @@ LAB_2010ea9c:
     uVar3 = 10;
   }
   itron_dly_tsk(uVar3);
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   goto LAB_2010ea9c;
@@ -2500,6 +2550,7 @@ LAB_2011012c:
           DAT_2080019f = sdmenu_load_file(&stack0xffffffd8);
         }
         else if (local_20 == 3) {
+                    /* I:\FT-710\Capture, MemList, Menu, PlayList [doc, inference] */
           DAT_2080019f = sd_make_dirs();
         }
       }
@@ -2603,6 +2654,7 @@ undefined4 loader_selfinstall(void)
   undefined4 local_1c;
   int flctl_fladr;
   
+                    /* Address [sfr] */
   flctl_fladr = FLCTL_FLADR;
   if (flctl_fladr == -0x55443323) {
     uVar2 = spiflash_erase(0,0,0x340000);
@@ -2741,6 +2793,7 @@ void task_keycode(void)
           puStack_8 = &DAT_208d9960;
           puVar2 = (uint *)strtok_r(&DAT_208d9960," ",&puStack_8);
           if ((puVar2 != (uint *)0x0) && (uVar3 = strcmp(puVar2,(uint *)0x20111a9c), uVar3 == 0)) {
+                    /* next token, 0 at the end [doc] */
             pbVar4 = (byte *)strtok_r(puStack_8," ",&puStack_8);
             if (pbVar4 == (byte *)0x0) {
               rtc_get_date(&uStack_10,auStack_14,&stack0xffffffe8);
@@ -2827,8 +2880,10 @@ void task_spi_slave(void)
   
   dmac9_register_isr();
   dmac9_stop();
+                    /* arg 1 RSPI0 [doc, inference] */
   dmac9_rspi_tx_setup(1);
   dmac9_set_callback((uint)pclink_tx_done_cb);
+                    /* Programs one channel as master [doc] */
   rspi_hw_config(0,1);
   rspi_reset_buffers(0);
   rspi_start(0);
@@ -2851,6 +2906,7 @@ void task_spi_slave(void)
         rspi_stop(0);
         rspi_reset_buffers(0);
         dmac9_rspi_tx_setup(1);
+                    /* arg 1 RSPI0 [doc, inference] */
         dmac10_rspi_rx_setup(1,0xe800c804,0x60500000,0x1000);
         DAT_2045d4a8 = 0;
         DAT_2045d4ac = 0;
@@ -2956,6 +3012,7 @@ void task_ad_renc(void)
   uint auStack_20 [8];
   
   uVar2 = 0;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(&DAT_208d9a08,0x20);
   __aeabi_memclr(&DAT_208d99c8,0x20);
   do {
@@ -3196,6 +3253,7 @@ LAB_201139f0:
       }
       iVar3 = iVar3 + 1;
     } while (iVar3 < 6);
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
     iVar3 = full_mode_get();
     if ((iVar3 != 0) || (DAT_2080049b != '\0')) {
       iVar3 = 0;
@@ -3304,6 +3362,7 @@ void task_powon(void)
       } while (itron_twai_flg_ret != (void *)0x0);
     } while (uStack_4 != 1);
     port_ppr2 = PORT_PPR2;
+                    /* Port pin read_2 [sfr] */
     key_set_power_level(port_ppr2 & 1);
     gic_enable_irq(0x25);
   } while( true );
@@ -3329,6 +3388,7 @@ void powon_isr(void)
   gic_disable_irq(0x25);
   itron_set_flg(DAT_20800358,1);
   itron_iwup_tsk(DAT_2080035c);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x20) != 0) {
     uVar1 = INTC_IRQRR;
@@ -3355,6 +3415,7 @@ void powon_init(void)
   ushort uVar1;
   uint uVar2;
   
+                    /* Interrupt control 1 [sfr] */
   uVar1 = INTC_ICR1;
   INTC_ICR1 = uVar1 & 0xf3ff;
   uVar1 = INTC_ICR1;
@@ -3526,7 +3587,9 @@ int periodic_wakeup_start(void)
   byte bVar1;
   uint itron_acre_isr_ret;
   
+                    /* OSTM1 compare [sfr] */
   OSTM_OSTM1CMP = 31999;
+                    /* OSTM1 control [sfr] */
   bVar1 = OSTM_OSTM1CTL;
   OSTM_OSTM1CTL = bVar1 & 0xfd;
   OSTM_OSTM1CTL = 1;
@@ -3535,6 +3598,7 @@ int periodic_wakeup_start(void)
     return itron_acre_isr_ret;
   }
   gic_enable_irq(0x87);
+                    /* OSTM1 count start trigger [sfr] */
   bVar1 = OSTM_OSTM1TS;
   OSTM_OSTM1TS = bVar1 | 1;
   return 0;
@@ -3563,6 +3627,7 @@ void cli_exec_line(byte *param_1,undefined4 param_2,undefined4 param_3,byte *par
   
   cVar6 = false;
   local_18 = param_4;
+                    /* Word-at-a-time string length [doc] */
   uVar3 = strlen();
   bVar5 = uVar3 == 2;
   if (1 < uVar3) {
@@ -3661,9 +3726,11 @@ uint cli_run_file(uint param_1)
   undefined1 auStack_90 [64];
   undefined1 auStack_50 [64];
   
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen();
   if (3 < uVar2) {
     memcpy(auStack_90,param_1,0x40);
+                    /* Case-insensitive compare with tolower [doc] */
     iVar3 = strcasecmp(auStack_94 + uVar2,".txt");
     if (iVar3 == 0) {
       __aeabi_memcpy4(auStack_50,&DAT_20165984,0x40);
@@ -3804,6 +3871,7 @@ void bootinfo_load(void)
   int spibsc_dropr_1;
   undefined4 spibsc_dropr_1_2;
   
+                    /* Data read option setting_1 [sfr] */
   spibsc_dropr_1 = SPIBSC_DROPR_1;
   if (spibsc_dropr_1 == 0) {
     g_bootinfo.bank = 0;
@@ -4012,6 +4080,7 @@ void power_on_full_init(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -4020,6 +4089,7 @@ void power_on_full_init(void)
     DAT_208dc1d0 = keycode_init();
     DAT_208dc1dc = kbdtest_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -4065,6 +4135,7 @@ void task_root(void)
   bootinfo_load();
   fb_clear_all();
   rtc_init();
+                    /* FAT volume + SDHI driver registration [doc, inference] */
   sd_fs_init();
   DAT_208dc1bc = fwdbg_init();
   loader_selfinstall();
@@ -4074,11 +4145,13 @@ void task_root(void)
   DAT_208003a3 = uVar1 != 0;
   powon_init();
   key_init();
+                    /* Standby or full start (P2_0, key scan) [fact: README.md] */
   DAT_208003a0 = boot_mode_full();
   cpg_set_clock_profile((uint)DAT_208003a0);
   gpio_rx_reset(1);
   if (DAT_208003a0 == 0) {
     gpio_p8_14(0);
+                    /* Standby: only the MAIN link, wake-up and GUI [fact: README.md] */
     mainlink_init();
     uVar1 = knl_current_task_id();
     periodic_wakeup_register(uVar1,0);
@@ -4088,6 +4161,7 @@ void task_root(void)
     }
   }
   else {
+                    /* Full start: every driver and task [fact: README.md] */
     DAT_208003a5 = 1;
     gpio_p8_14(1);
     full_mode_set(1);
@@ -4098,6 +4172,7 @@ void task_root(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -4107,6 +4182,7 @@ void task_root(void)
     DAT_208dc1dc = kbdtest_init();
     mainlink_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -4121,6 +4197,7 @@ void task_root(void)
     touch_cal_init();
     audio_codec_init();
   }
+                    /* Ends in gui_main_loop (33 ms slot 0) [fact: mainlink.md] */
   gui_start();
   return;
 }
@@ -4141,10 +4218,12 @@ void main(void)
 {
   uint uVar1;
   
+                    /* MMU and caches, pin multiplexing, heap [fact: README.md] */
   mmu_cache_enable();
   pinmux_init();
   gpio_p7_9_11(1);
   kernel_heap_init();
+                    /* Create task_root (priority 8), then the OSTM0 tick [fact: README.md] */
   uVar1 = itron_acre_tsk(0,(byte *)&ctsk_root);
   if ((int)uVar1 < 1) {
     return;
@@ -4299,9 +4378,11 @@ undefined4 gic_dispatch(void)
     if (uVar2 < 0x24b) {
       uVar1 = (&DAT_208dc1e0)[uVar2];
       (&DAT_208dcb8c)[uVar3] = uVar2;
+                    /* Interrupt priority mask [sfr] */
       uVar2 = INTC_ICCPMR;
       (&DAT_208dcb0c)[uVar3] = uVar2 & 0xff;
       DAT_20800404 = DAT_20800404 + 1;
+                    /* Running priority [sfr] */
       uVar3 = INTC_ICCRPR;
       INTC_ICCPMR = uVar3 & 0xff;
       return uVar1;
@@ -4355,13 +4436,16 @@ uint ostm_init(void)
   byte bVar1;
   uint uVar2;
   
+                    /* OSTM0 compare [sfr] */
   OSTM_OSTM0CMP = 319999;
+                    /* OSTM0 control [sfr] */
   bVar1 = OSTM_OSTM0CTL;
   OSTM_OSTM0CTL = bVar1 & 0xfd;
   OSTM_OSTM0CTL = 1;
   uVar2 = itron_acre_isr(0,0x20165a60);
   if (0 < (int)uVar2) {
     gic_enable_irq(0x86);
+                    /* OSTM0 count start trigger [sfr] */
     bVar1 = OSTM_OSTM0TS;
     OSTM_OSTM0TS = bVar1 | 1;
     uVar2 = 0;
@@ -4421,6 +4505,7 @@ void power_on_request(void)
   }
   g_bootinfo.mode = 2;
   logo_fade_in();
+                    /* ldr r0, =0x208F4BF4 [doc] */
   bootloader_entry_screen_thunk(&g_bootinfo);
   return;
 }
@@ -4935,6 +5020,7 @@ uint str_to_long(byte *param_1,undefined4 *param_2,uint param_3)
       uVar10 = 0;
       bVar2 = false;
       if (bVar12) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
         uVar14 = __aeabi_uidivmod(0x80000000);
       }
       else {
@@ -5888,6 +5974,7 @@ uint itron_acre_isr(uint param_1,int param_2)
   
   if (knl_sys.ctx_isr == 0) {
     if (param_1 < 0x41) {
+                    /* intno < 0x24B, prio < 0x20 [doc, inference] */
       uVar2 = isr_desc_check(param_2);
       if (uVar2 == 0) {
         software_interrupt(0);
@@ -5914,6 +6001,7 @@ uint itron_acre_isr(uint param_1,int param_2)
           if (gic_get_handler_ret == gic_default_handler) {
             uVar4 = knl_sys_alloc(0x58);
             if (uVar4 == 0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
               knl_sys_free(puVar3,0x14);
               software_interrupt(0);
               knl_sys.last_ercd = -5;
@@ -6827,8 +6915,10 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
         }
         puVar5 = *(uint **)(param_2 + 0x14);
         iVar8 = *(int *)(param_2 + 0x10);
+                    /* knl_freelist_alloc on the system pool 0x208003FC [doc] */
         if ((puVar5 == (uint *)0x0) &&
            (puVar5 = (uint *)knl_stack_alloc(iVar8), puVar5 == (uint *)0x0)) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
           knl_sys_free(p_knl_tcb,uVar7);
           software_interrupt(0);
           knl_sys.last_ercd = -0x21;
@@ -6914,6 +7004,7 @@ code * itron_del_mpf(uint param_1)
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -6931,6 +7022,7 @@ code * itron_del_mpf(uint param_1)
         }
       }
       if (p_knl_mpf->cmpf->mpf == (byte *)0x0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
         knl_pool_free(p_knl_mpf->pool,p_knl_mpf->pool_size);
       }
       iVar4 = 0x14;
@@ -6941,6 +7033,7 @@ code * itron_del_mpf(uint param_1)
       if (iVar3 == 0) {
         iVar4 = (iVar4 + 3U & 0xfffffffc) + 0x14;
       }
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
       knl_sys_free(p_knl_mpf,iVar4);
       knl_mpf_tab[param_1] = (knl_mpf *)0x0;
       if (bVar2) {
@@ -6999,6 +7092,7 @@ code * itron_del_sem(uint param_1)
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -7023,6 +7117,7 @@ code * itron_del_sem(uint param_1)
       if (iVar2 == 0) {
         iVar3 = (iVar3 + 3U & 0xfffffffc) + 0x10;
       }
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
       knl_sys_free(p_knl_sem,iVar3);
       knl_sem_tab[param_1] = (knl_sem *)0x0;
       if (!bVar1) {
@@ -7098,6 +7193,7 @@ undefined4 itron_dly_tsk(int tmout)
       if (tmout != 0) {
         knl_timeout_add(tmout,tcb,knl_rdq[0]);
         tcb->state = 0x32;
+                    /* removes the running task from its ready queue [doc] */
         uVar1 = knl_wait_self(tcb,uVar2);
         return uVar1;
       }
@@ -7381,6 +7477,7 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
           tcb = knl_tsk_tab[tskid];
           **(undefined4 **)(tcb->sp + 0xc) = param_2;
           if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
             knl_timeout_remove(tcb,tskid);
           }
           tcb->state = 0x10;
@@ -7388,6 +7485,7 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
             pcVar2 = (code *)knl_release_suspended();
             return pcVar2;
           }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
           pcVar2 = (code *)knl_make_ready(tcb,tskid);
           return pcVar2;
         }
@@ -7582,11 +7680,13 @@ LAB_20151030:
       }
       p_knl_flg->flgptn = param_2;
       if ((bVar1 & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(p_knl_tcb,uVar8);
         puVar7 = extraout_r2;
       }
       p_knl_tcb->state = 0x10;
       if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
         pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar8,puVar7,param_4);
         return pcVar4;
       }
@@ -7655,6 +7755,7 @@ code * itron_sig_sem(uint param_1)
     if (tskid < 0xfe) {
       tcb = knl_tsk_tab[tskid];
       if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(tcb,tskid);
       }
       tcb->state = 0x10;
@@ -7662,6 +7763,7 @@ code * itron_sig_sem(uint param_1)
         pcVar2 = (code *)knl_release_suspended();
         return pcVar2;
       }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
       pcVar2 = (code *)knl_make_ready(tcb,tskid);
       return pcVar2;
     }
@@ -7716,6 +7818,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
       p_knl_tcb = knl_tsk_tab[uVar6];
       **(uint **)(p_knl_tcb->sp + 0xc) = param_2;
       if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(p_knl_tcb,uVar6);
       }
       p_knl_tcb->state = 0x10;
@@ -7723,6 +7826,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
         pcVar3 = (code *)knl_release_suspended();
         return pcVar3;
       }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
       pcVar3 = (code *)knl_make_ready(p_knl_tcb,uVar6);
       return pcVar3;
     }
@@ -7758,6 +7862,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
       }
       knl_sys.wait_arg2 = param_2;
       knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
       pcVar3 = (code *)knl_wait_enter(iVar2,p_knl_tcb,uVar6);
       return pcVar3;
     }
@@ -7849,10 +7954,12 @@ code * itron_snd_mbx(uint param_1,undefined4 *param_2)
   tcb = knl_tsk_tab[uVar8];
   **(undefined4 **)(tcb->sp + 0xc) = param_2;
   if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,uVar8);
   }
   tcb->state = 0x10;
   if (tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
     pcVar3 = (code *)knl_make_ready(tcb,uVar8);
     return pcVar3;
   }
@@ -8054,6 +8161,7 @@ code * itron_sus_tsk(uint param_1)
       }
       if ((uint)knl_rdq[0] == (param_1 & 0xff)) {
         if (knl_sys.ctx_isr == 0) {
+                    /* removes the running task from its ready queue [doc] */
           pcVar1 = (code *)knl_wait_self(p_knl_tcb,param_1);
           return pcVar1;
         }
@@ -8134,6 +8242,7 @@ code * itron_tget_mpf(uint param_1,undefined4 *param_2,int tmout)
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
@@ -8229,6 +8338,7 @@ code * itron_tloc_mtx(uint param_1,int tmout)
           }
           else if ((iVar6 == 3) && (iVar5 < tcb->pri)) {
             tcb->pri = sVar2;
+                    /* Moves the running task into an object's wait queue [doc] */
             pcVar4 = (code *)knl_wait_enter(knl_rdq + iVar5,tcb,tskid);
             return pcVar4;
           }
@@ -8302,6 +8412,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
         p_knl_tcb->state = bVar1;
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar4 = (code *)knl_wait_enter(iVar5 + 0x18,p_knl_tcb,uVar6);
         return pcVar4;
       }
@@ -8339,6 +8450,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
     *(undefined4 **)(iVar5 + 8) = puVar2;
   }
   if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(p_knl_tcb,uVar6);
   }
   p_knl_tcb->state = 0x10;
@@ -8346,6 +8458,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
     pcVar4 = (code *)knl_release_suspended();
     return pcVar4;
   }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
   pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar6);
   return pcVar4;
 }
@@ -8457,6 +8570,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
     return -0x2a;
   }
   if (*(short *)(iVar5 + 0xc) != *(short *)(iVar5 + 0xe)) {
+                    /* copies the next message out of the message-buffer ring [doc] */
     iVar5 = knl_mbf_get(iVar5,param_2,tmout,param_4,param_1,param_2,tmout);
     iVar4 = FUN_20153dec(param_1);
     if (iVar4 == 0) {
@@ -8479,6 +8593,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
       knl_memcpy(param_2,*(undefined4 *)(p_knl_tcb->sp + 0xc),iVar5);
     }
     if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
       knl_timeout_remove(p_knl_tcb,uVar6);
     }
     p_knl_tcb->state = 0x10;
@@ -8517,6 +8632,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
     }
     knl_sys.wait_arg2 = param_2;
     knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
     iVar5 = knl_wait_enter(iVar5,p_knl_tcb,uVar6);
     return iVar5;
   }
@@ -8602,6 +8718,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int tmout)
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(iVar5,tcb,uVar7);
         return pcVar3;
       }
@@ -8656,6 +8773,7 @@ code * itron_tslp_tsk(int tmout)
         bVar1 = 0x22;
       }
       tcb->state = bVar1;
+                    /* removes the running task from its ready queue [doc] */
       pcVar2 = (code *)knl_wait_self(tcb,uVar3);
       return pcVar2;
     }
@@ -8712,6 +8830,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
     if (param_3 != 0) {
       for (pbVar3 = (byte *)(iVar5 + 0x13); *pbVar3 == 0; pbVar3 = pbVar3 + 1) {
       }
+                    /* puts a message into the message-buffer ring [doc] */
       if ((0xfd < *pbVar3) &&
          (iVar4 = knl_mbf_put(iVar5,param_2,param_3,tmout,param_1,param_2,param_3,tmout), iVar4 != 0
          )) {
@@ -8742,6 +8861,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
         knl_sys.wait_arg3 = param_3;
         knl_sys.wait_arg2 = param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar2 = (code *)knl_wait_enter(iVar4,p_knl_tcb,uVar6);
         return pcVar2;
       }
@@ -8756,10 +8876,12 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
   }
   *(uint *)p_knl_tcb->sp = param_3;
   if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(p_knl_tcb,uVar6);
   }
   p_knl_tcb->state = 0x10;
   if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
     pcVar2 = (code *)knl_make_ready(p_knl_tcb,uVar6);
     return pcVar2;
   }
@@ -8829,6 +8951,7 @@ LAB_20152a7c:
           knl_sys.wait_arg3 = param_2;
           knl_sys.wait_arg2 = (uint)param_4;
           knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
           pvVar4 = (void *)knl_wait_enter(pbVar3,tcb,uVar2);
           return pvVar4;
         }
@@ -8912,6 +9035,7 @@ code * itron_twai_sem(uint param_1,int tmout)
           pbVar2 = pbVar2 + knl_sys.run_pri + -1;
         }
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
@@ -9083,6 +9207,7 @@ code * itron_iwup_tsk(uint param_1)
   bVar1 = tcb->state;
   if (bVar1 == 0x22) {
     tcb->state = 0x10;
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,param_1);
     if (tcb->f_0x09_u8 != 0) {
       software_interrupt(0);
@@ -10069,6 +10194,7 @@ LAB_2015463c:
 void knl_stack_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -10108,6 +10234,7 @@ void knl_sys_free_a(undefined4 param_1,undefined4 param_2)
 void knl_pool_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -10149,6 +10276,7 @@ void knl_pool_free(undefined4 param_1,undefined4 param_2)
 void knl_sys_alloc(undefined4 param_1)
 
 {
+                    /* First-fit allocator on a free list {next, size} [doc] */
   knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
@@ -10537,6 +10665,7 @@ LAB_20154d80:
         uVar4 = uVar4 | 0x800;
       }
       *param_1 = uVar4;
+                    /* %e/%f/%g conversion of the armcc printf core [doc, inference] */
       iVar5 = _printf_fp_dec(param_1,uVar1,param_2);
       if (iVar5 == 0) goto LAB_20154c6c;
       if (iVar5 == 1) {
@@ -10783,6 +10912,7 @@ void qsort_partition(undefined4 param_1,uint param_2,uint param_3,code *param_4)
             } while (uVar3 != 0);
           }
           puVar8 = (undefined4 *)((int)puVar8 - param_3);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
           iVar2 = __aeabi_uidivmod((int)puVar8 - (int)puVar9,param_3);
           uVar3 = iVar2 - 1;
           uVar5 = (uVar5 - uVar3) - 1;
@@ -10842,6 +10972,7 @@ void qsort(uint param_1,uint param_2,uint param_3,code *param_4)
   
   if ((param_3 != 0) && (param_2 != 0)) {
     if (10 < param_2) {
+                    /* the quicksort stage of qsort for n > 10 [doc, inference] */
       qsort_partition();
     }
     uVar7 = param_1;
@@ -12927,6 +13058,7 @@ LAB_20155cee:
     }
     while (uVar9 = uVar9 - 1, -1 < (int)uVar9) {
       local_60 = uVar12;
+                    /* 64-bit unsigned divide by 10 by shifts and adds [doc] */
       lVar13 = _ll_udiv10();
       param_2[uVar9] = extraout_r2 + '0';
       uVar12 = local_60;
@@ -12976,6 +13108,7 @@ void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
   local_3c = param_4;
   uStack_38 = param_2;
   uStack_30 = param_1;
+                    /* Format loop called by the sprintf family [doc, inference] */
   _printf_core(auStack_40,param_3);
   return;
 }
@@ -13493,6 +13626,7 @@ void kernel_heap_init(void)
   if (gic_init_ret == 0) {
     knl_sys.task_cpsr = 0;
     knl_sys.f_0x00_u32 = 0;
+                    /* Kernel start-up called by kernel_heap_init [doc] */
     knl_sys_init(&DAT_20980000,&stack0xfffffff8);
   }
   return;
@@ -13565,6 +13699,7 @@ undefined8 knl_irq_exit(void)
   uint in_stack_00000014;
   
   software_interrupt(0);
+                    /* pops nesting stack, EOIR + PMR restore [doc, inference] */
   gic_irq_exit();
   knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
   if (knl_sys.ctx_isr != 0) {
@@ -13918,6 +14053,7 @@ void task_mainlink_rx(uint param_1)
   mainlink_rx_clear_stats(param_1);
   uVar4 = 0;
 LAB_2015ec90:
+                    /* Wait for RX data (2 ms while a frame is partial) [fact: mainlink.md] */
   while (itron_twai_flg_ret = itron_twai_flg(*(uint *)(param_1 + 0x34),0xc001,5,local_30,tmout),
         itron_twai_flg_ret != (void *)0xffffffce) {
     if (itron_twai_flg_ret != (void *)0x0) {
@@ -13939,6 +14075,7 @@ joined_r0x2015ece4:
       bVar6 = 2 < (int)uVar4;
       uVar4 = uVar4 + 1;
       if (bVar6) {
+                    /* 3 timeouts with a partial frame: NAK and resync [fact: mainlink.md] */
         mainlink_send_nak(param_1);
         local_534 = 0;
         uVar3 = 0;
@@ -13959,6 +14096,7 @@ joined_r0x2015ece4:
         uVar3 = uVar5;
       }
       else {
+                    /* Table command: wait for n + 2 bytes, check, ACK [fact: 0x2015EEC8] */
         uVar2 = mainlink_rx_frame(param_1,local_534,(uint)acStack_530,uVar5);
         if (600 < uVar2) {
           mainlink_send_nak(param_1);
@@ -14081,17 +14219,20 @@ void task_mainlink_dispatch(int param_1)
     *(int *)(param_1 + 0x81a0) = *(int *)(param_1 + 0x81a0) + 1;
     bVar1 = *(byte *)(aiStack_8[0] + 8);
     if (bVar1 == 0x21) {
+                    /* 0x21: payload to 0x20450035 [fact: mainlink.md] */
       memcpy(&g_ml.last21,aiStack_8[0] + 9,*(ushort *)(aiStack_8[0] + 6) - 2);
       g_ml.got21 = 1;
     }
     else if (bVar1 < 0x22) {
       if (bVar1 == 6) {
         *(int *)(param_1 + 0x81a4) = *(int *)(param_1 + 0x81a4) + 1;
+                    /* 0x06: ACK [fact: mainlink.md] */
         mainlink_audio_ack();
         mainlink_on_ack();
       }
       else if (bVar1 == 0x15) {
         *(int *)(param_1 + 0x81a8) = *(int *)(param_1 + 0x81a8) + 1;
+                    /* 0x15: NAK [fact: mainlink.md] */
         mainlink_on_nak();
       }
       else if (bVar1 == 0x1b) {
@@ -14106,6 +14247,7 @@ void task_mainlink_dispatch(int param_1)
       DAT_208084d4 = 1;
     }
     else if (bVar1 == 0x24) {
+                    /* 0x24: display settings from +0x98 [fact: mainlink.md] */
       FUN_201636f8(g_ml.settings24,aiStack_8[0] + 0xa0);
       g_ml.got24 = 1;
     }
@@ -14115,8 +14257,10 @@ void task_mainlink_dispatch(int param_1)
     else if (bVar1 == 0x60) {
       g_ml.got60 = 1;
       __aeabi_memcpy4(&DAT_2045fb00,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
+                    /* Returns the radio-on flag 0x208003A0 [doc] */
       iVar2 = radio_on_flag_get();
       if (((iVar2 == 0) && (*(int *)(param_1 + 0x81b0) != 0)) && (DAT_2045fbb3 == '\x01')) {
+                    /* 2nd 0x60 with 0xB3 = 1 while off: power on [fact: mainlink.md] */
         radio_on_flag_set(1);
       }
       *(int *)(param_1 + 0x81b0) = *(int *)(param_1 + 0x81b0) + 1;
@@ -14124,6 +14268,7 @@ void task_mainlink_dispatch(int param_1)
     g_ml.last_rx_cmd = *(byte *)(aiStack_8[0] + 8);
     if ((g_ml.last_rx_cmd != 6 && g_ml.last_rx_cmd != 0x15) && g_ml.last_rx_cmd != 0x1b) {
       __aeabi_memcpy4(&ml_rx_frame,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
+                    /* GUI snapshot of the frame (0x240 bytes) [fact: mainlink.md] */
       __aeabi_memcpy4(&ml_gui_snapshot,aiStack_8[0] + 8,*(undefined2 *)(aiStack_8[0] + 6));
     }
   } while( true );
@@ -14524,6 +14669,7 @@ uint __aeabi_dadd(uint param_1,uint param_2,uint param_3,uint param_4)
       }
       return param_1;
     }
+                    /* Shared NaN/Inf path of the double routines [doc] */
     fp_nan_handler();
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
@@ -14603,6 +14749,7 @@ LAB_2016491c:
   if (param_2 << 1 < 0xffe00000) {
     return uVar3;
   }
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
   uVar4 = fp_exception_stub(uVar3,param_2 + 0xa0000000);
   return uVar4;
 }
@@ -14641,6 +14788,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
   undefined8 uVar14;
   
   if ((~(param_2 >> 4) & 0x7ff0000) == 0 || (~(param_4 >> 4) & 0x7ff0000) == 0) {
+                    /* Shared NaN/Inf path of the double routines [doc] */
     uVar14 = fp_nan_handler();
     uVar6 = fp_exception_stub((int)uVar14,
                               *(byte *)((int)((ulonglong)uVar14 >> 0x20) + 0x18) ^ extraout_r3);
@@ -14725,6 +14873,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
         if ((int)uVar6 < 0) {
           return 0;
         }
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
         uVar6 = fp_exception_stub(uVar4,iVar5 + -0x60000000);
         return uVar6;
       }
@@ -14785,6 +14934,7 @@ uint __aeabi_d2iz(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return (int)param_2 >> 0x20 ^ 0x7fffffff;
   }
+                    /* Shared NaN/Inf path of the double routines [doc] */
   fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
@@ -14832,6 +14982,7 @@ uint __aeabi_d2uiz(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return 0xffffffff;
   }
+                    /* Shared NaN/Inf path of the double routines [doc] */
   fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
@@ -14993,7 +15144,9 @@ longlong __aeabi_dmul(uint param_1,uint param_2,uint param_3,uint param_4)
     return CONCAT44(uVar5,uVar12);
   }
   if (uVar12 == 0x7ff0000 || (param_4 >> 4 & 0x7ff0000) == 0x7ff0000) {
+                    /* Shared NaN/Inf path of the double routines [doc] */
     uVar16 = fp_nan_handler();
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
     lVar17 = fp_exception_stub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20) << 2 ^ extraout_r3);
     return lVar17;
   }
@@ -15139,6 +15292,7 @@ ulonglong __aeabi_dsub(uint param_1,uint param_2,uint param_3,uint param_4)
         }
         return CONCAT44(param_2,param_1);
       }
+                    /* Shared NaN/Inf path of the double routines [doc] */
       fp_nan_handler();
       do {
         software_interrupt(0x40);

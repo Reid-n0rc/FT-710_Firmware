@@ -75,6 +75,7 @@ void FUN_fffc052b(byte param_1)
     g_opstate.scope_span_idx_b[bVar1] = param_1;
     return;
   }
+                    /* vfo_freq plus the clarifier offset +0x48 [doc] */
   uVar2 = vfo_freq_clar(0,2);
   bVar1 = freq_range_index(uVar2);
   if (bVar1 == 0xff) {
@@ -389,6 +390,7 @@ void mode_select_simple(byte mode)
 {
   int iVar1;
   
+                    /* Returns 0 while a message plays [doc] */
   iVar1 = vfo_edit_begin();
   if (iVar1 == 1) {
     vfo_mode_set(mode);
@@ -1102,6 +1104,7 @@ void FUN_fffc1625(byte param_1)
     popup8_close();
     ui_clear_415_423();
     band_select(param_1);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     return;
   }

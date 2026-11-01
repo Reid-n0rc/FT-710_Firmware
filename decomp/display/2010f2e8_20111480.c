@@ -91,7 +91,9 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
     uVar8 = __aeabi_i2d(iVar6);
     uVar8 = __aeabi_ddiv((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),uVar1,uVar3);
     uVar4 = (undefined4)((ulonglong)uVar8 >> 0x20);
+                    /* maps a fraction into the range [doc, inference] */
     uVar2 = progress_scale(param_6,uVar4,(int)uVar8,uVar4);
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(uVar2);
     itron_rot_rdq(0);
     uVar2 = fs_fwrite((uint)auStack_78,1,0x40,local_34);
@@ -101,6 +103,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
     i = i + 1;
   } while (i < 8);
   local_38 = 0x139eeca6;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
   crc32_make_table();
   uVar2 = crc32_update(0xffffffff,param_5,param_4);
   uVar2 = crc32_update(uVar2,4,(uint)&local_38);
@@ -111,6 +114,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
     pcVar5 = "Menu";
   }
   sprintf(auStack_78,"%s  %d  %08X",pcVar5,param_3,~uVar2);
+                    /* Word-at-a-time string length [doc] */
   iVar6 = strlen(auStack_78);
   iVar7 = iVar7 + 0x80;
   auStack_78[iVar6] = 0x20;
@@ -122,6 +126,7 @@ sdmenu_write_dat(uint param_1,int param_2,undefined4 param_3,uint param_4,uint p
   itron_rot_rdq(0);
   uVar2 = fs_fwrite((uint)auStack_78,1,0x40,local_34);
   if (0x3f < uVar2) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     __aeabi_uidivmod(param_5,0x100);
     iVar6 = 0;
     if (param_5 >> 8 != 0) {
@@ -178,11 +183,14 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
   undefined1 auStack_20 [12];
   
   progress_range_init(&local_28,1,5);
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(local_28);
+                    /* Once per mount [doc] */
   iVar1 = sd_clmap_prepare();
   if (iVar1 != 0) {
     return iVar1;
   }
+                    /* directory handle, 0 on error [doc] */
   iVar1 = fs_opendir(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
   if (iVar1 == 0) {
     iVar1 = fs_opendir("I:\\FT-710");
@@ -201,6 +209,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
     fs_closedir();
     uVar4 = extraout_r1;
   }
+                    /* maps a fraction into the range [doc, inference] */
   uVar2 = progress_scale(&local_28,uVar4,0,0x3fe00000);
   progress_set(uVar2);
   sprintf(auStack_50,"%s\\%s.dat",*(undefined4 *)(&DAT_208001ac + param_1 * 4),param_2);
@@ -208,6 +217,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
   if (uVar2 != 0) {
     gui_scope_draw_hold_set(1);
     iVar1 = work_buf_get(0x8350);
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
     __aeabi_memclr(iVar1 + 0x640,0x7d10);
     *(char *)(iVar1 + 0x640) = (char)param_1;
     *(char *)(iVar1 + 0x641) = (char)((uint)param_1 >> 8);
@@ -223,6 +233,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
     progress_set(uVar3);
     progress_range_init(auStack_20,local_24,99);
     iVar1 = sdmenu_write_dat(uVar2,param_1,param_3,iVar1 + 0x640,0x7d10,auStack_20);
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
     scope3d_tables_init();
     gui_scope_draw_hold_set(0);
     if (iVar1 == 0) {
@@ -232,6 +243,7 @@ int sdmenu_save_file(int param_1,uint param_2,uint param_3)
       progress_set(100);
     }
     else {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
       uVar3 = fs_task_ctx_get();
       fs_fclose(uVar2);
     }
@@ -279,10 +291,12 @@ undefined4 sdmenu_load_file(uint *param_1)
   uint *local_28;
   
   local_28 = param_1;
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(*param_1);
   sprintf(auStack_a8,"%s\\%s.dat",*(undefined4 *)(&DAT_208001ac + (uint)DAT_2080019d * 4),
           &DAT_208193a6);
   if (DAT_2080019d < 2) {
+                    /* directory entry of a path, 0 when it exists [doc] */
     iVar1 = fs_stat(auStack_a8,auStack_78);
     if (iVar1 == 0) {
       if ((local_44 == 0x7f50) && (local_80 = fs_fopen((uint)auStack_a8,0x2010fb88), local_80 != 0))
@@ -297,6 +311,7 @@ undefined4 sdmenu_load_file(uint *param_1)
           uVar10 = __aeabi_i2d(iVar1);
           uVar10 = __aeabi_ddiv((int)uVar10,(int)((ulonglong)uVar10 >> 0x20),(int)uVar9,uVar5);
           uVar6 = (undefined4)((ulonglong)uVar10 >> 0x20);
+                    /* maps a fraction into the range [doc, inference] */
           uVar2 = progress_scale(local_28,uVar6,(int)uVar10,uVar6);
           progress_set(uVar2);
           uVar2 = fs_fread((uint)auStack_1a8,1,0x40,local_80);
@@ -305,7 +320,9 @@ undefined4 sdmenu_load_file(uint *param_1)
           iVar7 = iVar7 + 1;
         } while (iVar7 < 9);
         local_168 = 0;
+                    /* Word-at-a-time string length [doc] */
         iVar7 = strlen(auStack_1a8);
+                    /* next token, 0 at the end [doc] */
         if ((((iVar7 == 0x40) && (iVar7 = strtok_r(auStack_1a8,0x2010fb8c,&local_7c), iVar7 != 0))
             && (iVar7 = strtok_r(local_7c,0x2010fb8c,&local_7c), iVar7 != 0)) &&
            (pbVar3 = (byte *)strtok_r(local_7c,0x2010fb8c,&local_7c), pbVar3 != (byte *)0x0)) {
@@ -314,6 +331,7 @@ undefined4 sdmenu_load_file(uint *param_1)
           if (local_34 != pbVar3) {
             local_40 = 0xffffffff;
             local_30 = 0x139eeca6;
+                    /* reflected poly 0xEDB88320 [doc, inference] */
             crc32_make_table();
             gui_scope_draw_hold_set(1);
             iVar7 = work_buf_get(0x8350);
@@ -351,6 +369,7 @@ undefined4 sdmenu_load_file(uint *param_1)
             else {
               DAT_208001a1 = 1;
             }
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
             scope3d_tables_init();
             gui_scope_draw_hold_set(0);
             return local_38;
@@ -396,6 +415,7 @@ byte sd_make_dirs(void)
   sd_monitor_request(0);
   itron_dly_tsk(0x14);
   if (uVar1 == 0) {
+                    /* creates a directory [doc] */
     iVar2 = fs_mkdir("I:\\FT-710");
     if (iVar2 == 0) {
       iVar2 = fs_mkdir("I:\\FT-710\\Capture");
@@ -569,6 +589,7 @@ LAB_2011012c:
           DAT_2080019f = sdmenu_load_file(&stack0xffffffd8);
         }
         else if (local_20 == 3) {
+                    /* I:\FT-710\Capture, MemList, Menu, PlayList [doc, inference] */
           DAT_2080019f = sd_make_dirs();
         }
       }
@@ -622,6 +643,7 @@ char sdmenu_request(int param_1,void *param_2,uint *param_3)
   }
   DAT_2080019c = 1;
   DAT_2080019f = 0;
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(0);
   uVar3 = progress_get();
   *(uint *)param_2 = uVar3;
@@ -661,6 +683,7 @@ char sd_format_request(undefined4 *param_1,uint *param_2,undefined4 param_3,int 
       uVar4 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar4,
                            (int)((ulonglong)uVar4 >> 0x20));
       __aeabi_dmul((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x40590000);
+                    /* Double to signed int, truncating with saturation [doc] */
       uVar2 = __aeabi_d2iz();
       *param_1 = uVar2;
     }
@@ -841,6 +864,7 @@ uint sdr_reg_read(uint param_1,uint param_2)
   local_20[6] = '\0';
   local_20[7] = '\0';
   sprintf(local_40,"%04X",param_2);
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen(local_40);
   memcpy(local_20 + 2,local_40,uVar2);
   uVar3 = 0;
@@ -891,6 +915,7 @@ uint sdr_reg_write(uint param_1,uint param_2,uint param_3,uint param_4)
   local_28[10] = '\0';
   local_28[0xb] = '\0';
   sprintf(local_48,"%04X%04X",param_2,param_3);
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen(local_48);
   memcpy(local_28 + 2,local_48,uVar2);
   uVar3 = 0;
@@ -962,12 +987,15 @@ void sdr_spi_master_write(uint param_1,uint param_2)
   if (DAT_208001b4 == '\0') {
     dmac5_disable();
     rspi_stop(2);
+                    /* Programs one channel as master [doc] */
     rspi_hw_config(2,0);
     DAT_208001b4 = '\x01';
   }
   rspi_reset_buffers(2);
   rspi_start(2);
+                    /* PIO write by TX trigger level [doc] */
   rspi_write(2,param_1,param_2,0xff);
+                    /* Spins on SPSR.TEND [doc] */
   rspi_wait_tx_end(2);
   rspi_stop(2);
   return;
@@ -1001,11 +1029,13 @@ uint sdr_spi_xfer_block(uint param_1,uint param_2,int param_3,ushort param_4)
     i = 0;
     uVar4 = uVar3 | 0x32;
     do {
+                    /* regs 0x30 / 0x31 = flash address [doc, inference] */
       sdr_set_flash_addr_ret = sdr_set_flash_addr(param_1,uVar3,(short)param_3 * 0x1000);
       if ((((sdr_set_flash_addr_ret != -1) &&
            (uVar2 = sdr_reg_write(param_1,uVar4,3,(uint)auStack_128), uVar2 != 0xffffffff)) &&
           (uVar2 = sdr_wait_ready(param_1,uVar3,1000), uVar2 != 0xffffffff)) &&
          (uVar2 = sdr_reg_write(param_1,uVar4,1,(uint)auStack_128), uVar2 != 0xffffffff)) {
+                    /* RSPI2 in master mode for the SDR image [doc] */
         sdr_spi_master_write((uint)pbVar5,0x1000);
         uVar2 = sdr_wait_ready(param_1,uVar3,1000);
         if ((((uVar2 != 0xffffffff) &&
@@ -1080,7 +1110,9 @@ uint sdr_flash_write(uint param_1,int param_2,int param_3)
   undefined1 auStack_24 [8];
   
   progress_range_init(auStack_24,5,99);
+                    /* maps a fraction into the range [doc, inference] */
   uVar1 = progress_scale(auStack_24);
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(uVar1);
   sfl_stream_init(auStack_3c,param_1,0,param_2);
   mainlink_rx_ctrl(1);
@@ -1291,6 +1323,7 @@ undefined4 loader_selfinstall(void)
   undefined4 local_1c;
   int flctl_fladr;
   
+                    /* Address [sfr] */
   flctl_fladr = FLCTL_FLADR;
   if (flctl_fladr == -0x55443323) {
     uVar2 = spiflash_erase(0,0,0x340000);
@@ -1389,14 +1422,22 @@ void adc_read_all(uint *param_1)
   ushort adc_addrg;
   ushort adc_addrh;
   
+                    /* A/D data A [sfr] */
   adc_addra = ADC_ADDRA;
+                    /* A/D data B [sfr] */
   adc_addrb = ADC_ADDRB;
+                    /* A/D data C [sfr] */
   adc_addrc = ADC_ADDRC;
+                    /* A/D data D [sfr] */
   uVar1 = ADC_ADDRD;
   DAT_20819530 = (uint)(uVar1 >> 4);
+                    /* A/D data E [sfr] */
   uVar1 = ADC_ADDRE;
+                    /* A/D data F [sfr] */
   adc_addrf = ADC_ADDRF;
+                    /* A/D data G [sfr] */
   adc_addrg = ADC_ADDRG;
+                    /* A/D data H [sfr] */
   adc_addrh = ADC_ADDRH;
   DAT_20819524 = (uint)(adc_addra >> 4);
   DAT_20819528 = (uint)(adc_addrb >> 4);
@@ -1424,6 +1465,7 @@ void adc_read_all(uint *param_1)
 void adc_start_scan(void)
 
 {
+                    /* A/D control/status [sfr] */
   ADC_ADCSR = 0x20ff;
   return;
 }

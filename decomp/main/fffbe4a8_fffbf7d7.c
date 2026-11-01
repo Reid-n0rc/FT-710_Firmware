@@ -174,6 +174,7 @@ void key_lock_pwr_short(void)
   if (g_opstate.lock_on == 0) {
     g_opstate.lock_on = 1;
     PTR_g_ui_00025d54->popup_code = 0x47;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x47);
     popup_open_timed();
   }
@@ -221,6 +222,7 @@ void key_tune_press(void)
   ui_clear_415_423();
   if (PTR_g_ui_00025d54->scan_running != 1) {
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -276,6 +278,7 @@ void key_tune_short(void)
         FUN_fffec52d();
         return;
       }
+                    /* Returns bit 2 of the TX VFO record's flags1 [doc] */
       iVar1 = vfo_tuner_bit_get();
       if (iVar1 == 0) {
         vfo_tuner_bit_set(1);
@@ -417,6 +420,7 @@ void key_nb_press(void)
   ui_clear_415_423();
   if (PTR_g_ui_00025d54->scan_running != 1) {
     beep_request(1);
+                    /* Sets UI +0x443 [doc] */
     vfo_mark_edited_if_vfo();
     return;
   }
@@ -487,6 +491,7 @@ void key_nb_long(void)
   }
   if (bVar1) {
     g_opstate.nb_level = 0;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x38);
     popup_open_timed();
     beep_request(1);
@@ -553,6 +558,7 @@ void key_dnr_press(void)
     return;
   }
   beep_request(1);
+                    /* Sets UI +0x443 [doc] */
   vfo_mark_edited_if_vfo();
   return;
 }
@@ -639,6 +645,7 @@ void key_dnr_long(void)
       PTR_g_ui_00025d54->freq_refresh_req = 1;
     }
   }
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x39);
   popup_open_timed();
   beep_request(2);
@@ -1176,6 +1183,7 @@ void vm_toggle(void)
   if (g_ui.memlist_open != 1) {
     msg_send_cancel();
     vm_toggle_core();
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     return;
   }
@@ -1277,6 +1285,7 @@ void vfo_ab_toggle(void)
   else {
     vm_toggle();
   }
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   PTR_g_ui_00025d54->freq_refresh_req = 1;
   return;
@@ -1351,6 +1360,7 @@ void key_band_short(void)
   }
   else {
     PTR_g_ui_00025d54->band_popup_pick = 0;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0xc);
     popup_open_timed();
     PTR_g_ui_00025d54->popup_code = 0xc;
@@ -1419,6 +1429,7 @@ void key_mode_short(void)
     p_vfo_rec = &g_opstate.vfo_b;
   }
   PTR_g_ui_00025d54->popup_cursor = p_vfo_rec->mode & 0xf;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(5);
   popup_open_timed();
   PTR_g_ui_00025d54->popup_code = 5;

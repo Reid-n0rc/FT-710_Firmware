@@ -12,6 +12,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   bVar1 = false;
   local_20 = param_4;
   mutex_guard_ctor(&local_20,DAT_20800118,1);
+                    /* stores the present flag [doc] */
   kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,1);
   i = 0;
   do {
@@ -23,6 +24,7 @@ void usbkbd_attach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   } while (i < 2);
   kbdobj_activate(&DAT_20811080 + param_1 * 0xd0);
 LAB_20106e8c:
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&local_20);
   if (bVar1) {
     return;
@@ -44,6 +46,7 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
   iVar1 = -1;
   local_18 = param_4;
   mutex_guard_ctor(&local_18,DAT_20800118,1);
+                    /* stores the present flag [doc] */
   kbdobj_set_device(&DAT_20811080 + param_1 * 0xd0,param_1,0);
   i = 0;
   do {
@@ -54,6 +57,7 @@ void usbkbd_detach(int param_1,undefined4 param_2,undefined4 param_3,undefined4 
     }
     i = i + 1;
   } while (i < 2);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&local_18);
   if (iVar1 != -1) {
     usbkbd_set_leds(iVar1,0,&DAT_2080010c,local_18);
@@ -81,6 +85,7 @@ void usbkbd_queue_key(int param_1,int param_2)
   local_18 = *(undefined1 *)(param_2 + 5);
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   ring16_push(param_1 * 0xd0 + 0x20811108,&local_18);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(auStack_10);
   return;
 }
@@ -165,6 +170,7 @@ usbkbd_get_device(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
     uVar1 = *(undefined4 *)((int)usbkbd_active_ret + 0x84);
     *param_1 = *(undefined4 *)((int)usbkbd_active_ret + 0x80);
     param_1[1] = uVar1;
+                    /* Scoped lock destructor [doc] */
     mutex_guard_dtor(&uStack_10);
     return *(undefined1 *)param_1;
   }
@@ -193,11 +199,13 @@ usbkbd_pop_key(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefin
     iVar1 = *(int *)((int)usbkbd_active_ret + 0x84);
     param_1[1] = iVar1;
     *param_1 = uVar3;
+                    /* Returns the slot at the head and advances it [doc] */
     puVar2 = (undefined4 *)ring16_pop(iVar1 * 0xd0 + 0x20811108);
     if (puVar2 != (undefined4 *)0x0) {
       uVar3 = puVar2[1];
       param_1[2] = *puVar2;
       param_1[3] = uVar3;
+                    /* Scoped lock destructor [doc] */
       mutex_guard_dtor(&uStack_10);
       return 1;
     }
@@ -218,9 +226,11 @@ void usbkbd_flush_all(void)
   mutex_guard_ctor(auStack_10,DAT_20800118,1);
   i = 0;
   do {
+                    /* ring16_reset of the key ring at +0x88 [doc] */
     kbdobj_flush(&DAT_20811080 + i * 0xd0);
     i = i + 1;
   } while (i < 2);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(auStack_10);
   return;
 }
@@ -1027,6 +1037,7 @@ LAB_20107cc4:
   if ((bVar2 && uVar3 != 0xc0) && (uVar3 != 0x14)) {
     bVar5 = 0x30;
   }
+                    /* E0 with a given flag byte and 16-bit code [doc, inference] */
   mainlink_send_e0(bVar5 | 1,(uint)uVar1);
   mainlink_send_e0(bVar5,(uint)uVar1);
 LAB_20107d28:
@@ -1174,6 +1185,7 @@ undefined * FUN_20107ee0(void)
   i = 2;
   puVar1 = &DAT_20811080;
   while (bVar2 = i != 0, i = i + -1, bVar2) {
+                    /* constructs the key ring at +0x88 [doc] */
     kbdobj_ctor(puVar1);
     puVar1 = puVar1 + 0xd0;
   }
@@ -3085,7 +3097,9 @@ uint dsp_isp_write_image(int *param_1,uint param_2)
   fs_fsize(param_2,&local_194);
   uVar5 = 0;
   if (local_194 != 0) {
+                    /* maps a fraction into the range [doc, inference] */
     uVar5 = progress_scale(&DAT_20800178,extraout_r1,0,0x3ff00000);
+                    /* progress percent 0x20800364 [doc, inference] */
     progress_set(uVar5);
     progress_range_init(auStack_30,DAT_2080017c,99);
     sfl_stream_init(auStack_48,param_2,0,(uint)param_1);
@@ -3111,6 +3125,7 @@ LAB_2010acc8:
           uVar5 = (uint)local_77;
           local_74 = local_77._1_1_;
           local_77 = CONCAT11(local_7c[4],local_7c[3]);
+                    /* CRC-16 poly 0x1021 init 0 [doc, inference] */
           local_75 = crc16_xmodem((int)(local_18c + 3),uVar5 + 4);
           local_7c[4] = cVar3;
           local_77 = uVar4;
@@ -3282,6 +3297,7 @@ uint dsp_isp_erase_region(int *param_1)
   local_50[0xf] = 0;
   local_50[0x17] = 0;
   local_50[7] = 0x10;
+                    /* CRC-16 poly 0x1021 init 0 [doc, inference] */
   local_50[7] = crc16_xmodem((int)(local_50 + 5),0x14);
   local_50[4] = 0xa4;
   local_50[5] = 0x10;
@@ -3383,6 +3399,7 @@ uint dsp_isp_configure_memory(int *param_1)
   local_50[0xf] = 0;
   local_50[0x14] = 0;
   local_50[7] = 0xc;
+                    /* CRC-16 poly 0x1021 init 0 [doc, inference] */
   local_50[7] = crc16_xmodem((int)(local_50 + 5),0x10);
   local_50[4] = 0xa4;
   local_50[5] = 0xc;

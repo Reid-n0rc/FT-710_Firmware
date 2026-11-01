@@ -600,6 +600,7 @@ uint itron_acre_isr(uint param_1,int param_2)
   
   if (knl_sys.ctx_isr == 0) {
     if (param_1 < 0x41) {
+                    /* intno < 0x24B, prio < 0x20 [doc, inference] */
       uVar2 = isr_desc_check(param_2);
       if (uVar2 == 0) {
         software_interrupt(0);
@@ -626,6 +627,7 @@ uint itron_acre_isr(uint param_1,int param_2)
           if (gic_get_handler_ret == gic_default_handler) {
             uVar4 = knl_sys_alloc(0x58);
             if (uVar4 == 0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
               knl_sys_free(puVar3,0x14);
               software_interrupt(0);
               knl_sys.last_ercd = -5;
@@ -1493,8 +1495,10 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
         }
         puVar5 = *(uint **)(param_2 + 0x14);
         iVar8 = *(int *)(param_2 + 0x10);
+                    /* knl_freelist_alloc on the system pool 0x208003FC [doc] */
         if ((puVar5 == (uint *)0x0) &&
            (puVar5 = (uint *)knl_stack_alloc(iVar8), puVar5 == (uint *)0x0)) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
           knl_sys_free(p_knl_tcb,uVar7);
           software_interrupt(0);
           knl_sys.last_ercd = -0x21;
@@ -1573,6 +1577,7 @@ code * itron_del_mpf(uint param_1)
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -1590,6 +1595,7 @@ code * itron_del_mpf(uint param_1)
         }
       }
       if (p_knl_mpf->cmpf->mpf == (byte *)0x0) {
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
         knl_pool_free(p_knl_mpf->pool,p_knl_mpf->pool_size);
       }
       iVar4 = 0x14;
@@ -1600,6 +1606,7 @@ code * itron_del_mpf(uint param_1)
       if (iVar3 == 0) {
         iVar4 = (iVar4 + 3U & 0xfffffffc) + 0x14;
       }
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
       knl_sys_free(p_knl_mpf,iVar4);
       knl_mpf_tab[param_1] = (knl_mpf *)0x0;
       if (bVar2) {
@@ -1651,6 +1658,7 @@ code * itron_del_sem(uint param_1)
             tcb = knl_tsk_tab[tskid];
             *(undefined4 *)tcb->sp = 0xffffffcd;
             if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
               knl_timeout_remove(tcb,tskid);
             }
             tcb->state = 0x10;
@@ -1675,6 +1683,7 @@ code * itron_del_sem(uint param_1)
       if (iVar2 == 0) {
         iVar3 = (iVar3 + 3U & 0xfffffffc) + 0x10;
       }
+                    /* knl_freelist_free on the system pool 0x208003FC [doc] */
       knl_sys_free(p_knl_sem,iVar3);
       knl_sem_tab[param_1] = (knl_sem *)0x0;
       if (!bVar1) {
@@ -1737,6 +1746,7 @@ undefined4 itron_dly_tsk(int tmout)
       if (tmout != 0) {
         knl_timeout_add(tmout,tcb,knl_rdq[0]);
         tcb->state = 0x32;
+                    /* removes the running task from its ready queue [doc] */
         uVar1 = knl_wait_self(tcb,uVar2);
         return uVar1;
       }
@@ -2003,6 +2013,7 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
           tcb = knl_tsk_tab[tskid];
           **(undefined4 **)(tcb->sp + 0xc) = param_2;
           if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
             knl_timeout_remove(tcb,tskid);
           }
           tcb->state = 0x10;
@@ -2010,6 +2021,7 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
             pcVar2 = (code *)knl_release_suspended();
             return pcVar2;
           }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
           pcVar2 = (code *)knl_make_ready(tcb,tskid);
           return pcVar2;
         }
@@ -2193,11 +2205,13 @@ LAB_20151030:
       }
       p_knl_flg->flgptn = param_2;
       if ((bVar1 & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(p_knl_tcb,uVar8);
         puVar7 = extraout_r2;
       }
       p_knl_tcb->state = 0x10;
       if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
         pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar8,puVar7,param_4);
         return pcVar4;
       }
@@ -2260,6 +2274,7 @@ code * itron_sig_sem(uint param_1)
     if (tskid < 0xfe) {
       tcb = knl_tsk_tab[tskid];
       if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(tcb,tskid);
       }
       tcb->state = 0x10;
@@ -2267,6 +2282,7 @@ code * itron_sig_sem(uint param_1)
         pcVar2 = (code *)knl_release_suspended();
         return pcVar2;
       }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
       pcVar2 = (code *)knl_make_ready(tcb,tskid);
       return pcVar2;
     }
@@ -2313,6 +2329,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
       p_knl_tcb = knl_tsk_tab[uVar6];
       **(uint **)(p_knl_tcb->sp + 0xc) = param_2;
       if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(p_knl_tcb,uVar6);
       }
       p_knl_tcb->state = 0x10;
@@ -2320,6 +2337,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
         pcVar3 = (code *)knl_release_suspended();
         return pcVar3;
       }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
       pcVar3 = (code *)knl_make_ready(p_knl_tcb,uVar6);
       return pcVar3;
     }
@@ -2355,6 +2373,7 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
       }
       knl_sys.wait_arg2 = param_2;
       knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
       pcVar3 = (code *)knl_wait_enter(iVar2,p_knl_tcb,uVar6);
       return pcVar3;
     }
@@ -2439,10 +2458,12 @@ code * itron_snd_mbx(uint param_1,undefined4 *param_2)
   tcb = knl_tsk_tab[uVar8];
   **(undefined4 **)(tcb->sp + 0xc) = param_2;
   if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,uVar8);
   }
   tcb->state = 0x10;
   if (tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
     pcVar3 = (code *)knl_make_ready(tcb,uVar8);
     return pcVar3;
   }
@@ -2618,6 +2639,7 @@ code * itron_sus_tsk(uint param_1)
       }
       if ((uint)knl_rdq[0] == (param_1 & 0xff)) {
         if (knl_sys.ctx_isr == 0) {
+                    /* removes the running task from its ready queue [doc] */
           pcVar1 = (code *)knl_wait_self(p_knl_tcb,param_1);
           return pcVar1;
         }
@@ -2692,6 +2714,7 @@ code * itron_tget_mpf(uint param_1,undefined4 *param_2,int tmout)
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
@@ -2781,6 +2804,7 @@ code * itron_tloc_mtx(uint param_1,int tmout)
           }
           else if ((iVar6 == 3) && (iVar5 < tcb->pri)) {
             tcb->pri = sVar2;
+                    /* Moves the running task into an object's wait queue [doc] */
             pcVar4 = (code *)knl_wait_enter(knl_rdq + iVar5,tcb,tskid);
             return pcVar4;
           }
@@ -2847,6 +2871,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
         p_knl_tcb->state = bVar1;
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar4 = (code *)knl_wait_enter(iVar5 + 0x18,p_knl_tcb,uVar6);
         return pcVar4;
       }
@@ -2884,6 +2909,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
     *(undefined4 **)(iVar5 + 8) = puVar2;
   }
   if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(p_knl_tcb,uVar6);
   }
   p_knl_tcb->state = 0x10;
@@ -2891,6 +2917,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
     pcVar4 = (code *)knl_release_suspended();
     return pcVar4;
   }
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
   pcVar4 = (code *)knl_make_ready(p_knl_tcb,uVar6);
   return pcVar4;
 }
@@ -2988,6 +3015,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
     return -0x2a;
   }
   if (*(short *)(iVar5 + 0xc) != *(short *)(iVar5 + 0xe)) {
+                    /* copies the next message out of the message-buffer ring [doc] */
     iVar5 = knl_mbf_get(iVar5,param_2,tmout,param_4,param_1,param_2,tmout);
     iVar4 = FUN_20153dec(param_1);
     if (iVar4 == 0) {
@@ -3010,6 +3038,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
       knl_memcpy(param_2,*(undefined4 *)(p_knl_tcb->sp + 0xc),iVar5);
     }
     if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
       knl_timeout_remove(p_knl_tcb,uVar6);
     }
     p_knl_tcb->state = 0x10;
@@ -3048,6 +3077,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
     }
     knl_sys.wait_arg2 = param_2;
     knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
     iVar5 = knl_wait_enter(iVar5,p_knl_tcb,uVar6);
     return iVar5;
   }
@@ -3126,6 +3156,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int tmout)
         }
         knl_sys.wait_arg2 = (uint)param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(iVar5,tcb,uVar7);
         return pcVar3;
       }
@@ -3174,6 +3205,7 @@ code * itron_tslp_tsk(int tmout)
         bVar1 = 0x22;
       }
       tcb->state = bVar1;
+                    /* removes the running task from its ready queue [doc] */
       pcVar2 = (code *)knl_wait_self(tcb,uVar3);
       return pcVar2;
     }
@@ -3223,6 +3255,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
     if (param_3 != 0) {
       for (pbVar3 = (byte *)(iVar5 + 0x13); *pbVar3 == 0; pbVar3 = pbVar3 + 1) {
       }
+                    /* puts a message into the message-buffer ring [doc] */
       if ((0xfd < *pbVar3) &&
          (iVar4 = knl_mbf_put(iVar5,param_2,param_3,tmout,param_1,param_2,param_3,tmout), iVar4 != 0
          )) {
@@ -3253,6 +3286,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
         knl_sys.wait_arg3 = param_3;
         knl_sys.wait_arg2 = param_2;
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar2 = (code *)knl_wait_enter(iVar4,p_knl_tcb,uVar6);
         return pcVar2;
       }
@@ -3267,10 +3301,12 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
   }
   *(uint *)p_knl_tcb->sp = param_3;
   if ((p_knl_tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(p_knl_tcb,uVar6);
   }
   p_knl_tcb->state = 0x10;
   if (p_knl_tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
     pcVar2 = (code *)knl_make_ready(p_knl_tcb,uVar6);
     return pcVar2;
   }
@@ -3335,6 +3371,7 @@ LAB_20152a7c:
           knl_sys.wait_arg3 = param_2;
           knl_sys.wait_arg2 = (uint)param_4;
           knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
           pvVar4 = (void *)knl_wait_enter(pbVar3,tcb,uVar2);
           return pvVar4;
         }
@@ -3412,6 +3449,7 @@ code * itron_twai_sem(uint param_1,int tmout)
           pbVar2 = pbVar2 + knl_sys.run_pri + -1;
         }
         knl_sys.wait_id = param_1;
+                    /* Moves the running task into an object's wait queue [doc] */
         pcVar3 = (code *)knl_wait_enter(pbVar2,tcb,uVar4);
         return pcVar3;
       }
@@ -3564,6 +3602,7 @@ code * itron_iwup_tsk(uint param_1)
   bVar1 = tcb->state;
   if (bVar1 == 0x22) {
     tcb->state = 0x10;
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
     knl_timeout_remove(tcb,param_1);
     if (tcb->f_0x09_u8 != 0) {
       software_interrupt(0);

@@ -51,27 +51,42 @@ void R_SCI0_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0x7fffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR058;
   ICU_IPR058 = bVar1 & 0xf8 | 8;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR059;
   ICU_IPR059 = bVar1 & 0xf8 | 8;
+                    /* Serial Control [sfr] */
   SCI0_SCR = 0;
   SCI0_SCR = 0;
   bVar1 = SCI0_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI0_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI0_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI0_SMR = 1;
+                    /* Smart Card Mode [sfr] */
   SCI0_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI0_SEMR = 0x10;
+                    /* Bit Rate [sfr] */
   SCI0_BRR = 0xc2;
+                    /* P33 Pin Function Control [sfr] */
   MPC_P33PFS = 0xb;
+                    /* Port Mode [sfr] */
   bVar1 = PORT3_PMR;
   PORT3_PMR = bVar1 | 8;
+                    /* P32 Pin Function Control [sfr] */
   MPC_P32PFS = 0xb;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT3_PODR;
   PORT3_PODR = bVar1 | 4;
+                    /* Port Direction [sfr] */
   bVar1 = PORT3_PDR;
   PORT3_PDR = bVar1 | 4;
   R_SCI0_Create_UserInit();
@@ -94,11 +109,15 @@ void R_SCI0_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR059;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR059 = bVar1 & 0xfe;
   bVar1 = ICU_IR058;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR058 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 | 8;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 1;
   bVar1 = ICU_IER07;
@@ -124,8 +143,10 @@ void R_SCI0_Stop(void)
   uint uVar2;
   
   bVar1 = PORT3_PMR;
+                    /* Port Mode [sfr] */
   PORT3_PMR = bVar1 & 0xfb;
   bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
   SCI0_SCR = bVar1 & 0xdf;
   bVar1 = SCI0_SCR;
   SCI0_SCR = bVar1 & 0xef;
@@ -134,16 +155,20 @@ void R_SCI0_Stop(void)
   bVar1 = SCI0_SCR;
   SCI0_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 & 0xf7;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffffe;
   bVar1 = ICU_IR059;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR059 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
   ICU_IER07 = bVar1 & 0xfb;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffffd;
   bVar1 = ICU_IR058;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR058 = bVar1 & 0xfe;
   return;
 }
@@ -170,6 +195,7 @@ ushort R_SCI0_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b606 = 0;
     bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
     SCI0_SCR = bVar1 | 0x40;
     bVar1 = SCI0_SCR;
     SCI0_SCR = bVar1 | 0x10;
@@ -205,9 +231,12 @@ ushort R_SCI0_Serial_Send(uint param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER07 = bVar1 & 0xf7;
       bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
       SCI0_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORT3_PMR;
       PORT3_PMR = bVar1 | 4;
       bVar1 = ICU_IER07;
@@ -258,11 +287,13 @@ void r_sci0_transmit_interrupt(void)
   
   if (DAT_0001b604 == 0) {
     bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
     SCI0_SCR = bVar1 & 0x7f;
     bVar1 = SCI0_SCR;
     SCI0_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI0_TDR = *DAT_000207f4;
   DAT_000207f4 = DAT_000207f4 + 1;
   DAT_0001b604 = DAT_0001b604 + -1;
@@ -286,8 +317,10 @@ void r_sci0_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORT3_PMR;
+                    /* Port Mode [sfr] */
   PORT3_PMR = bVar1 & 0xfb;
   bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
   SCI0_SCR = bVar1 & 0x7f;
   bVar1 = SCI0_SCR;
   SCI0_SCR = bVar1 & 0xdf;
@@ -322,6 +355,7 @@ void r_sci0_receive_interrupt(void)
   
   if (DAT_0001b606 < DAT_0001b608) {
     sci0_rdr = SCI0_RDR;
+                    /* Receive Data [sfr] */
     *DAT_000207f8 = sci0_rdr;
     r_sci0_rx_byte_hook();
     DAT_000207f8 = DAT_000207f8 + 1;
@@ -329,6 +363,7 @@ void r_sci0_receive_interrupt(void)
   }
   if (DAT_0001b608 <= DAT_0001b606) {
     bVar1 = SCI0_SCR;
+                    /* Serial Control [sfr] */
     SCI0_SCR = bVar1 & 0xbf;
     bVar1 = SCI0_SCR;
     SCI0_SCR = bVar1 & 0xef;
@@ -355,6 +390,7 @@ void r_sci0_receiveerror_interrupt(void)
   byte sci0_ssr;
   
   r_sci0_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci0_ssr = SCI0_SSR;
   SCI0_SSR = sci0_ssr & 199 | 0xc0;
   return;
@@ -446,27 +482,42 @@ void R_SCI1_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xbfffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR060;
   ICU_IPR060 = bVar1 & 0xfa | 10;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR061;
   ICU_IPR061 = bVar1 & 0xfa | 10;
+                    /* Serial Control [sfr] */
   SCI1_SCR = 0;
   SCI1_SCR = 0;
   bVar1 = SCI1_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI1_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI1_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI1_SMR = 8;
+                    /* Smart Card Mode [sfr] */
   SCI1_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI1_SEMR = 0x10;
+                    /* Bit Rate [sfr] */
   SCI1_BRR = 10;
+                    /* P30 Pin Function Control [sfr] */
   MPC_P30PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORT3_PMR;
   PORT3_PMR = bVar1 | 1;
+                    /* P26 Pin Function Control [sfr] */
   MPC_P26PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT2_PODR;
   PORT2_PODR = bVar1 | 0x40;
+                    /* Port Direction [sfr] */
   bVar1 = PORT2_PDR;
   PORT2_PDR = bVar1 | 0x40;
   R_SCI1_Create_UserInit();
@@ -488,11 +539,15 @@ void R_SCI1_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR061;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR061 = bVar1 & 0xfe;
   bVar1 = ICU_IR060;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR060 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 | 0x20;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 4;
   bVar1 = ICU_IER07;
@@ -524,8 +579,10 @@ void R_SCI1_Stop(void)
   uint uVar2;
   
   bVar1 = PORT2_PMR;
+                    /* Port Mode [sfr] */
   PORT2_PMR = bVar1 & 0xbf;
   bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
   SCI1_SCR = bVar1 & 0xdf;
   bVar1 = SCI1_SCR;
   SCI1_SCR = bVar1 & 0xef;
@@ -534,16 +591,20 @@ void R_SCI1_Stop(void)
   bVar1 = SCI1_SCR;
   SCI1_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 & 0xdf;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffffb;
   bVar1 = ICU_IR061;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR061 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
   ICU_IER07 = bVar1 & 0xef;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffff7;
   bVar1 = ICU_IR060;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR060 = bVar1 & 0xfe;
   return;
 }
@@ -569,6 +630,7 @@ ushort R_SCI1_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b60c = 0;
     bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
     SCI1_SCR = bVar1 | 0x40;
     bVar1 = SCI1_SCR;
     SCI1_SCR = bVar1 | 0x10;
@@ -603,9 +665,12 @@ ushort R_SCI1_Serial_Send(uint param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER07 = bVar1 & 0xdf;
       bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
       SCI1_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORT2_PMR;
       PORT2_PMR = bVar1 | 0x40;
       bVar1 = ICU_IER07;
@@ -653,11 +718,13 @@ void r_sci1_transmit_interrupt(void)
   
   if (DAT_0001b60a == 0) {
     bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
     SCI1_SCR = bVar1 & 0x7f;
     bVar1 = SCI1_SCR;
     SCI1_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI1_TDR = *DAT_000207fc;
   DAT_000207fc = DAT_000207fc + 1;
   DAT_0001b60a = DAT_0001b60a + -1;
@@ -681,8 +748,10 @@ void r_sci1_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORT2_PMR;
+                    /* Port Mode [sfr] */
   PORT2_PMR = bVar1 & 0xbf;
   bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
   SCI1_SCR = bVar1 & 0x7f;
   bVar1 = SCI1_SCR;
   SCI1_SCR = bVar1 & 0xdf;
@@ -715,6 +784,7 @@ void r_sci1_receive_interrupt(void)
   
   if (DAT_0001b60c < DAT_0001b60e) {
     sci1_rdr = SCI1_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00020800 = sci1_rdr;
     displink_rx_frame_len();
     DAT_00020800 = DAT_00020800 + 1;
@@ -722,6 +792,7 @@ void r_sci1_receive_interrupt(void)
   }
   if (DAT_0001b60e <= DAT_0001b60c) {
     bVar1 = SCI1_SCR;
+                    /* Serial Control [sfr] */
     SCI1_SCR = bVar1 & 0xbf;
     bVar1 = SCI1_SCR;
     SCI1_SCR = bVar1 & 0xef;
@@ -748,6 +819,7 @@ void r_sci1_receiveerror_interrupt(void)
   byte sci1_ssr;
   
   r_sci1_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci1_ssr = SCI1_SSR;
   SCI1_SSR = sci1_ssr & 199 | 0xc0;
   return;
@@ -926,27 +998,42 @@ void R_SCI2_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xdfffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR062;
   ICU_IPR062 = bVar1 & 0xf8 | 8;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR063;
   ICU_IPR063 = bVar1 & 0xf8 | 8;
+                    /* Serial Control [sfr] */
   SCI2_SCR = 0;
   SCI2_SCR = 0;
   bVar1 = SCI2_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI2_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI2_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI2_SMR = 1;
+                    /* Smart Card Mode [sfr] */
   SCI2_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI2_SEMR = 0x10;
+                    /* Bit Rate [sfr] */
   SCI2_BRR = 0xc2;
+                    /* P12 Pin Function Control [sfr] */
   MPC_P12PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORT1_PMR;
   PORT1_PMR = bVar1 | 4;
+                    /* P13 Pin Function Control [sfr] */
   MPC_P13PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT1_PODR;
   PORT1_PODR = bVar1 | 8;
+                    /* Port Direction [sfr] */
   bVar1 = PORT1_PDR;
   PORT1_PDR = bVar1 | 8;
   R_SCI2_Create_UserInit();
@@ -969,11 +1056,15 @@ void R_SCI2_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR063;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR063 = bVar1 & 0xfe;
   bVar1 = ICU_IR062;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR062 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 | 0x80;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x10;
   bVar1 = ICU_IER07;
@@ -999,8 +1090,10 @@ void R_SCI2_Stop(void)
   uint uVar2;
   
   bVar1 = PORT1_PMR;
+                    /* Port Mode [sfr] */
   PORT1_PMR = bVar1 & 0xf7;
   bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
   SCI2_SCR = bVar1 & 0xdf;
   bVar1 = SCI2_SCR;
   SCI2_SCR = bVar1 & 0xef;
@@ -1009,16 +1102,20 @@ void R_SCI2_Stop(void)
   bVar1 = SCI2_SCR;
   SCI2_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER07 = bVar1 & 0x7f;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffffef;
   bVar1 = ICU_IR063;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR063 = bVar1 & 0xfe;
   bVar1 = ICU_IER07;
   ICU_IER07 = bVar1 & 0xbf;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffffdf;
   bVar1 = ICU_IR062;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR062 = bVar1 & 0xfe;
   return;
 }
@@ -1046,6 +1143,7 @@ ushort R_SCI2_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b612 = 0;
     bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
     SCI2_SCR = bVar1 | 0x40;
     bVar1 = SCI2_SCR;
     SCI2_SCR = bVar1 | 0x10;
@@ -1080,9 +1178,12 @@ ushort R_SCI2_Serial_Send(uint param_1,short param_2)
     icu_ier07 = ICU_IER07;
     if (icu_ier07 < '\0') {
       bVar1 = ICU_IER07;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER07 = bVar1 & 0x7f;
       bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
       SCI2_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORT1_PMR;
       PORT1_PMR = bVar1 | 8;
       bVar1 = ICU_IER07;
@@ -1135,11 +1236,13 @@ void r_sci2_transmit_interrupt(void)
   
   if (DAT_0001b610 == 0) {
     bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
     SCI2_SCR = bVar1 & 0x7f;
     bVar1 = SCI2_SCR;
     SCI2_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI2_TDR = *DAT_00020804;
   DAT_00020804 = DAT_00020804 + 1;
   DAT_0001b610 = DAT_0001b610 + -1;
@@ -1163,8 +1266,10 @@ void r_sci2_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORT1_PMR;
+                    /* Port Mode [sfr] */
   PORT1_PMR = bVar1 & 0xf7;
   bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
   SCI2_SCR = bVar1 & 0x7f;
   bVar1 = SCI2_SCR;
   SCI2_SCR = bVar1 & 0xdf;
@@ -1199,6 +1304,7 @@ void r_sci2_receive_interrupt(void)
   
   if (DAT_0001b612 < DAT_0001b614) {
     sci2_rdr = SCI2_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00020808 = sci2_rdr;
     sci2_rx_byte_hook();
     DAT_00020808 = DAT_00020808 + 1;
@@ -1206,6 +1312,7 @@ void r_sci2_receive_interrupt(void)
   }
   if (DAT_0001b614 <= DAT_0001b612) {
     bVar1 = SCI2_SCR;
+                    /* Serial Control [sfr] */
     SCI2_SCR = bVar1 & 0xbf;
     bVar1 = SCI2_SCR;
     SCI2_SCR = bVar1 & 0xef;
@@ -1232,6 +1339,7 @@ void r_sci2_receiveerror_interrupt(void)
   byte sci2_ssr;
   
   r_sci2_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci2_ssr = SCI2_SSR;
   SCI2_SSR = sci2_ssr & 199 | 0xc0;
   return;
@@ -1399,27 +1507,42 @@ void R_SCI3_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xefffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR080;
   ICU_IPR080 = bVar1 & 0xf8 | 8;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR081;
   ICU_IPR081 = bVar1 & 0xf8 | 8;
+                    /* Serial Control [sfr] */
   SCI3_SCR = 0;
   SCI3_SCR = 0;
   bVar1 = SCI3_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI3_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI3_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI3_SMR = 0;
+                    /* Smart Card Mode [sfr] */
   SCI3_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI3_SEMR = 0x50;
+                    /* Bit Rate [sfr] */
   SCI3_BRR = 0xc2;
+                    /* P25 Pin Function Control [sfr] */
   MPC_P25PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORT2_PMR;
   PORT2_PMR = bVar1 | 0x20;
+                    /* P23 Pin Function Control [sfr] */
   MPC_P23PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORT2_PODR;
   PORT2_PODR = bVar1 | 8;
+                    /* Port Direction [sfr] */
   bVar1 = PORT2_PDR;
   PORT2_PDR = bVar1 | 8;
   R_SCI3_Create_UserInit();
@@ -1442,11 +1565,15 @@ void R_SCI3_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR081;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR081 = bVar1 & 0xfe;
   bVar1 = ICU_IR080;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR080 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 | 2;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x40;
   bVar1 = ICU_IER0A;
@@ -1472,8 +1599,10 @@ void R_SCI3_Stop(void)
   uint uVar2;
   
   bVar1 = PORT2_PMR;
+                    /* Port Mode [sfr] */
   PORT2_PMR = bVar1 & 0xf7;
   bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
   SCI3_SCR = bVar1 & 0xdf;
   bVar1 = SCI3_SCR;
   SCI3_SCR = bVar1 & 0xef;
@@ -1482,16 +1611,20 @@ void R_SCI3_Stop(void)
   bVar1 = SCI3_SCR;
   SCI3_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 & 0xfd;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffffbf;
   bVar1 = ICU_IR081;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR081 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
   ICU_IER0A = bVar1 & 0xfe;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffff7f;
   bVar1 = ICU_IR080;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR080 = bVar1 & 0xfe;
   return;
 }
@@ -1519,6 +1652,7 @@ ushort R_SCI3_Serial_Receive(uint param_1,short param_2)
   else {
     DAT_0001b618 = 0;
     bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
     SCI3_SCR = bVar1 | 0x40;
     bVar1 = SCI3_SCR;
     SCI3_SCR = bVar1 | 0x10;
@@ -1555,9 +1689,12 @@ ushort R_SCI3_Serial_Send(uint param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER0A = bVar1 & 0xfd;
       bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
       SCI3_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORT2_PMR;
       PORT2_PMR = bVar1 | 8;
       bVar1 = ICU_IER0A;
@@ -1607,11 +1744,13 @@ void r_sci3_transmit_interrupt(void)
   
   if (DAT_0001b616 == 0) {
     bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
     SCI3_SCR = bVar1 & 0x7f;
     bVar1 = SCI3_SCR;
     SCI3_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI3_TDR = *DAT_0002080c;
   DAT_0002080c = DAT_0002080c + 1;
   DAT_0001b616 = DAT_0001b616 + -1;
@@ -1635,8 +1774,10 @@ void r_sci3_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORT2_PMR;
+                    /* Port Mode [sfr] */
   PORT2_PMR = bVar1 & 0xf7;
   bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
   SCI3_SCR = bVar1 & 0x7f;
   bVar1 = SCI3_SCR;
   SCI3_SCR = bVar1 & 0xdf;
@@ -1671,6 +1812,7 @@ void r_sci3_receive_interrupt(void)
   
   if (DAT_0001b618 < DAT_0001b61a) {
     sci3_rdr = SCI3_RDR;
+                    /* Receive Data [sfr] */
     *DAT_00020810 = sci3_rdr;
     sci3_rx_byte_hook();
     DAT_00020810 = DAT_00020810 + 1;
@@ -1678,6 +1820,7 @@ void r_sci3_receive_interrupt(void)
   }
   if (DAT_0001b61a <= DAT_0001b618) {
     bVar1 = SCI3_SCR;
+                    /* Serial Control [sfr] */
     SCI3_SCR = bVar1 & 0xbf;
     bVar1 = SCI3_SCR;
     SCI3_SCR = bVar1 & 0xef;
@@ -1704,6 +1847,7 @@ void r_sci3_receiveerror_interrupt(void)
   byte sci3_ssr;
   
   r_sci3_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci3_ssr = SCI3_SSR;
   SCI3_SSR = sci3_ssr & 199 | 0xc0;
   return;
@@ -1794,11 +1938,15 @@ void R_SCI4_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR083;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR083 = bVar1 & 0xfe;
   bVar1 = ICU_IR082;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR082 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 | 8;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x100;
   bVar1 = ICU_IER0A;
@@ -1829,8 +1977,10 @@ void R_SCI4_Stop(void)
   uint uVar2;
   
   bVar1 = PORTB_PMR;
+                    /* Port Mode [sfr] */
   PORTB_PMR = bVar1 & 0xfd;
   bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
   SCI4_SCR = bVar1 & 0xdf;
   bVar1 = SCI4_SCR;
   SCI4_SCR = bVar1 & 0xef;
@@ -1839,16 +1989,20 @@ void R_SCI4_Stop(void)
   bVar1 = SCI4_SCR;
   SCI4_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 & 0xf7;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffeff;
   bVar1 = ICU_IR083;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR083 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
   ICU_IER0A = bVar1 & 0xfb;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffdff;
   bVar1 = ICU_IR082;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR082 = bVar1 & 0xfe;
   return;
 }
@@ -1887,8 +2041,10 @@ void r_sci4_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORTB_PMR;
+                    /* Port Mode [sfr] */
   PORTB_PMR = bVar1 & 0xfd;
   bVar1 = SCI4_SCR;
+                    /* Serial Control [sfr] */
   SCI4_SCR = bVar1 & 0x7f;
   bVar1 = SCI4_SCR;
   SCI4_SCR = bVar1 & 0xdf;
@@ -1915,6 +2071,7 @@ void r_sci4_receiveerror_interrupt(void)
   byte sci4_ssr;
   
   r_sci4_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci4_ssr = SCI4_SSR;
   SCI4_SSR = sci4_ssr & 199 | 0xc0;
   return;
@@ -1972,27 +2129,42 @@ void R_SCI5_Create(void)
   byte bVar1;
   uint system_mstpcrb;
   
+                    /* Module Stop Control B [sfr] */
   system_mstpcrb = SYSTEM_MSTPCRB;
   SYSTEM_MSTPCRB = system_mstpcrb & 0xfbffffff;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR084;
   ICU_IPR084 = bVar1 & 0xfa | 10;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR085;
   ICU_IPR085 = bVar1 & 0xfa | 10;
+                    /* Serial Control [sfr] */
   SCI5_SCR = 0;
   SCI5_SCR = 0;
   bVar1 = SCI5_SIMR1;
+                    /* I2C Mode 1 [sfr] */
   SCI5_SIMR1 = bVar1 & 0xfe;
+                    /* SPI Mode [sfr] */
   SCI5_SPMR = 0;
+                    /* Serial Mode [sfr] */
   SCI5_SMR = 0;
+                    /* Smart Card Mode [sfr] */
   SCI5_SCMR = 0x72;
+                    /* Serial Extended Mode [sfr] */
   SCI5_SEMR = 0x50;
+                    /* Bit Rate [sfr] */
   SCI5_BRR = 0x40;
+                    /* PC2 Pin Function Control [sfr] */
   MPC_PC2PFS = 10;
+                    /* Port Mode [sfr] */
   bVar1 = PORTC_PMR;
   PORTC_PMR = bVar1 | 4;
+                    /* PC3 Pin Function Control [sfr] */
   MPC_PC3PFS = 10;
+                    /* Port Output Data [sfr] */
   bVar1 = PORTC_PODR;
   PORTC_PODR = bVar1 | 8;
+                    /* Port Direction [sfr] */
   bVar1 = PORTC_PDR;
   PORTC_PDR = bVar1 | 8;
   R_SCI5_Create_UserInit();
@@ -2018,11 +2190,15 @@ void R_SCI5_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR085;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR085 = bVar1 & 0xfe;
   bVar1 = ICU_IR084;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR084 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 | 0x20;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x400;
   bVar1 = ICU_IER0A;
@@ -2049,8 +2225,10 @@ void R_SCI5_Stop(void)
   uint uVar2;
   
   bVar1 = PORTC_PMR;
+                    /* Port Mode [sfr] */
   PORTC_PMR = bVar1 & 0xf7;
   bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
   SCI5_SCR = bVar1 & 0xdf;
   bVar1 = SCI5_SCR;
   SCI5_SCR = bVar1 & 0xef;
@@ -2059,16 +2237,20 @@ void R_SCI5_Stop(void)
   bVar1 = SCI5_SCR;
   SCI5_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER0A;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0A = bVar1 & 0xdf;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffffbff;
   bVar1 = ICU_IR085;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR085 = bVar1 & 0xfe;
   bVar1 = ICU_IER0A;
   ICU_IER0A = bVar1 & 0xef;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xfffff7ff;
   bVar1 = ICU_IR084;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR084 = bVar1 & 0xfe;
   return;
 }
@@ -2110,11 +2292,13 @@ void r_sci5_transmit_interrupt(void)
   
   if (DAT_0001b622 == 0) {
     bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
     SCI5_SCR = bVar1 & 0x7f;
     bVar1 = SCI5_SCR;
     SCI5_SCR = bVar1 | 4;
     return;
   }
+                    /* Transmit Data [sfr] */
   SCI5_TDR = *DAT_0002081c;
   DAT_0002081c = DAT_0002081c + 1;
   DAT_0001b622 = DAT_0001b622 + -1;
@@ -2138,8 +2322,10 @@ void r_sci5_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORTC_PMR;
+                    /* Port Mode [sfr] */
   PORTC_PMR = bVar1 & 0xf7;
   bVar1 = SCI5_SCR;
+                    /* Serial Control [sfr] */
   SCI5_SCR = bVar1 & 0x7f;
   bVar1 = SCI5_SCR;
   SCI5_SCR = bVar1 & 0xdf;
@@ -2166,6 +2352,7 @@ void r_sci5_receiveerror_interrupt(void)
   byte sci5_ssr;
   
   r_sci5_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci5_ssr = SCI5_SSR;
   SCI5_SSR = sci5_ssr & 199 | 0xc0;
   return;
@@ -2276,6 +2463,7 @@ void sci_start_all(void)
   sci2_configure();
   sci3_set_baud();
   FUN_fffb1a81();
+                    /* Clears 0xA2B3 and starts SCI5 [doc] */
   sdr_link_start();
   return;
 }
@@ -2312,9 +2500,12 @@ void sci0_set_baud(void)
     local_1 = 0;
   }
   bVar1 = SCI0_SMR;
+                    /* Serial Mode [sfr] */
   SCI0_SMR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xfc;
+                    /* Bit Rate [sfr] */
   SCI0_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
   bVar1 = SCI0_SEMR;
+                    /* Serial Extended Mode [sfr] */
   SCI0_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
   bVar1 = SCI0_SEMR;
   SCI0_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
@@ -2385,13 +2576,16 @@ void sci3_set_baud(void)
     local_1 = 3;
   }
   bVar1 = SCI3_SMR;
+                    /* Serial Mode [sfr] */
   bStack_3 = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 1] | bVar1 & 0xf4;
   if (local_4 != 0) {
     bStack_3 = bStack_3 | 8;
   }
   SCI3_SMR = bStack_3;
+                    /* Bit Rate [sfr] */
   SCI3_BRR = BYTE_ARRAY_fff80ff5[(uint)local_1 * 4 + 2];
   bVar1 = SCI3_SEMR;
+                    /* Serial Extended Mode [sfr] */
   SCI3_SEMR = bVar1 & 0xbf | (BYTE_ARRAY_fff80fd7[(uint)local_1 * 4 + 0x1d] & 1) << 6;
   bVar1 = SCI3_SEMR;
   SCI3_SEMR = bVar1 & 0xef | (BYTE_ARRAY_fff80ff5[(uint)local_1 * 4] & 1) << 4;
@@ -2598,11 +2792,15 @@ void R_SCI7_Start(void)
   uint uVar2;
   
   bVar1 = ICU_IR099;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR099 = bVar1 & 0xfe;
   bVar1 = ICU_IR098;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR098 = bVar1 & 0xfe;
   bVar1 = ICU_IER0C;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0C = bVar1 | 8;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 | 0x4000;
   bVar1 = ICU_IER0C;
@@ -2632,8 +2830,10 @@ void R_SCI7_Stop(void)
   uint uVar2;
   
   bVar1 = PORT9_PMR;
+                    /* Port Mode [sfr] */
   PORT9_PMR = bVar1 & 0xfe;
   bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
   SCI7_SCR = bVar1 & 0xdf;
   bVar1 = SCI7_SCR;
   SCI7_SCR = bVar1 & 0xef;
@@ -2642,16 +2842,20 @@ void R_SCI7_Stop(void)
   bVar1 = SCI7_SCR;
   SCI7_SCR = bVar1 & 0xbf;
   bVar1 = ICU_IER0C;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER0C = bVar1 & 0xf7;
+                    /* Group BL0 Interrupt Request Enable [sfr] */
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffffbfff;
   bVar1 = ICU_IR099;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR099 = bVar1 & 0xfe;
   bVar1 = ICU_IER0C;
   ICU_IER0C = bVar1 & 0xfb;
   uVar2 = ICU_GENBL0;
   ICU_GENBL0 = uVar2 & 0xffff7fff;
   bVar1 = ICU_IR098;
+                    /* Interrupt Request 016 to Interrupt Request 255 [sfr] */
   ICU_IR098 = bVar1 & 0xfe;
   return;
 }
@@ -2683,6 +2887,7 @@ undefined2 R_SCI7_Serial_Receive(undefined4 param_1,short param_2)
   else {
     DAT_0001fa4a = 0;
     bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
     SCI7_SCR = bVar1 | 0x40;
     bVar1 = SCI7_SCR;
     SCI7_SCR = bVar1 | 0x10;
@@ -2723,9 +2928,12 @@ undefined2 R_SCI7_Serial_Send(undefined4 param_1,short param_2)
     }
     else {
       bVar1 = ICU_IER0C;
+                    /* Interrupt Request Enable 02 [sfr] */
       ICU_IER0C = bVar1 & 0xf7;
       bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
       SCI7_SCR = bVar1 | 0xa0;
+                    /* Port Mode [sfr] */
       bVar1 = PORT9_PMR;
       PORT9_PMR = bVar1 | 1;
       bVar1 = ICU_IER0C;
@@ -2771,8 +2979,10 @@ void r_sci7_transmitend_interrupt(void)
   byte bVar1;
   
   bVar1 = PORT9_PMR;
+                    /* Port Mode [sfr] */
   PORT9_PMR = bVar1 & 0xfe;
   bVar1 = SCI7_SCR;
+                    /* Serial Control [sfr] */
   SCI7_SCR = bVar1 & 0x7f;
   bVar1 = SCI7_SCR;
   SCI7_SCR = bVar1 & 0xdf;
@@ -2799,6 +3009,7 @@ void r_sci7_receiveerror_interrupt(void)
   byte sci7_ssr;
   
   r_sci7_callback_receiveerror();
+                    /* Serial Status [sfr] */
   sci7_ssr = SCI7_SSR;
   SCI7_SSR = sci7_ssr & 199 | 0xc0;
   return;

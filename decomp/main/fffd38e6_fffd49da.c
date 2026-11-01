@@ -7,6 +7,7 @@
 void menu_ex060213_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(2);
   return;
 }
@@ -19,6 +20,7 @@ void menu_ex060213_step(void)
 void menu_ex060313_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(3);
   return;
 }
@@ -31,6 +33,7 @@ void menu_ex060313_step(void)
 void menu_ex060413_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(4);
   return;
 }
@@ -43,6 +46,7 @@ void menu_ex060413_step(void)
 void menu_ex060513_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(5);
   return;
 }
@@ -98,6 +102,7 @@ void menu_step_preset_rear_out_level(byte param_1)
 void menu_ex060114_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(1);
   return;
 }
@@ -110,6 +115,7 @@ void menu_ex060114_step(void)
 void menu_ex060214_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(2);
   return;
 }
@@ -122,6 +128,7 @@ void menu_ex060214_step(void)
 void menu_ex060314_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(3);
   return;
 }
@@ -134,6 +141,7 @@ void menu_ex060314_step(void)
 void menu_ex060414_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(4);
   return;
 }
@@ -146,6 +154,7 @@ void menu_ex060414_step(void)
 void menu_ex060514_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(5);
   return;
 }
@@ -201,6 +210,7 @@ void menu_step_preset_tx_bpf_sel(byte param_1)
 void menu_ex060115_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(1);
   return;
 }
@@ -213,6 +223,7 @@ void menu_ex060115_step(void)
 void menu_ex060215_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(2);
   return;
 }
@@ -225,6 +236,7 @@ void menu_ex060215_step(void)
 void menu_ex060315_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(3);
   return;
 }
@@ -237,6 +249,7 @@ void menu_ex060315_step(void)
 void menu_ex060415_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(4);
   return;
 }
@@ -249,6 +262,7 @@ void menu_ex060415_step(void)
 void menu_ex060515_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(5);
   return;
 }
@@ -304,6 +318,7 @@ void menu_step_preset_mod_source(byte param_1)
 void menu_ex060116_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(1);
   return;
 }
@@ -316,6 +331,7 @@ void menu_ex060116_step(void)
 void menu_ex060216_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(2);
   return;
 }
@@ -328,6 +344,7 @@ void menu_ex060216_step(void)
 void menu_ex060316_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(3);
   return;
 }
@@ -340,6 +357,7 @@ void menu_ex060316_step(void)
 void menu_ex060416_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(4);
   return;
 }
@@ -352,6 +370,7 @@ void menu_ex060416_step(void)
 void menu_ex060516_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(5);
   return;
 }
@@ -407,6 +426,7 @@ void menu_step_preset_usb_mod_gain(byte param_1)
 void menu_ex060117_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(1);
   return;
 }
@@ -419,6 +439,7 @@ void menu_ex060117_step(void)
 void menu_ex060217_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(2);
   return;
 }
@@ -431,6 +452,7 @@ void menu_ex060217_step(void)
 void menu_ex060317_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(3);
   return;
 }
@@ -443,6 +465,7 @@ void menu_ex060317_step(void)
 void menu_ex060417_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(4);
   return;
 }
@@ -455,6 +478,7 @@ void menu_ex060417_step(void)
 void menu_ex060517_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(5);
   return;
 }
@@ -510,6 +534,7 @@ void menu_step_preset_rear_mod_gain(byte param_1)
 void menu_ex060118_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(1);
   return;
 }
@@ -522,6 +547,7 @@ void menu_ex060118_step(void)
 void menu_ex060218_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(2);
   return;
 }
@@ -534,6 +560,7 @@ void menu_ex060218_step(void)
 void menu_ex060318_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(3);
   return;
 }
@@ -546,6 +573,7 @@ void menu_ex060318_step(void)
 void menu_ex060418_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(4);
   return;
 }
@@ -558,6 +586,7 @@ void menu_ex060418_step(void)
 void menu_ex060518_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(5);
   return;
 }

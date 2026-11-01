@@ -58,6 +58,7 @@ void aic3204_select_right_input(int param_1)
   else {
     uVar1 = 0x40;
   }
+                    /* 16-bit word reg<<9 | val [doc] */
   aic3204_spi_write(0,1);
   aic3204_spi_write(0x37,uVar1);
   aic3204_spi_write(0,0);
@@ -73,6 +74,7 @@ void console_puts(uint param_1)
   int strlen_ret;
   
   strlen_ret = strlen((uint *)param_1);
+                    /* Copy bytes into the TX ring [doc] */
   uart0_write(param_1,strlen_ret);
   return;
 }
@@ -88,6 +90,7 @@ void IpcRecvTask(int param_1)
   do {
     do {
       ipc_recv(auStack_a0);
+                    /* category/command text on the console [doc] */
       ipc_print_dsp_reply(auStack_a0);
     } while (*(int *)(param_1 + 4) == 0);
     xTaskGenericNotify(*(int *)(param_1 + 4),0,2);
@@ -307,6 +310,7 @@ bool env_put_queue(uint param_1,uint param_2,uint param_3)
   if (xPortIsInsideInterrupt_ret) {
     uVar1 = xQueueGenericSendFromISR(param_1,param_2,local_14,0);
     if ((uVar1 == 1) && (bVar2 = true, local_14[0] != 0)) {
+                    /* Interrupt Control and State [sfr] */
       SCB_ICSR = 0x10000000;
     }
   }
@@ -337,6 +341,7 @@ bool env_get_queue(uint param_1,uint param_2,uint param_3)
   if (xPortIsInsideInterrupt_ret) {
     xQueueReceiveFromISR_ret = xQueueReceiveFromISR(param_1,param_2,local_14);
     if ((xQueueReceiveFromISR_ret == 1) && (bVar2 = true, local_14[0] != 0)) {
+                    /* Interrupt Control and State [sfr] */
       SCB_ICSR = 0x10000000;
     }
   }
@@ -440,6 +445,7 @@ void rpmsg_lite_tx_callback(int param_1)
 void virtqueue_notify(int param_1)
 
 {
+                    /* MU-A TR1 = vector << 16 under platform_lock [doc] */
   platform_notify(*(undefined2 *)(param_1 + 0x50));
   return;
 }
@@ -796,6 +802,7 @@ void vq_ring_init(int param_1)
 void vPortYield(void)
 
 {
+                    /* Interrupt Control and State [sfr] */
   SCB_ICSR = 0x10000000;
   DataSynchronizationBarrier(0xf);
   InstructionSynchronizationBarrier(0xf);
@@ -814,6 +821,7 @@ void SysTick_Handler(void)
   ulSetInterruptMask_ret = ulSetInterruptMask();
   xTaskIncrementTick_ret = xTaskIncrementTick();
   if (xTaskIncrementTick_ret != 0) {
+                    /* Interrupt Control and State [sfr] */
     SCB_ICSR = 0x10000000;
   }
   vClearInterruptMask(ulSetInterruptMask_ret);
@@ -827,6 +835,7 @@ void vPortSVCHandler_C(int param_1)
 
 {
   if (*(char *)(*(int *)(param_1 + 0x18) + -2) == '\x02') {
+                    /* PSPLIM/CONTROL=2/PSP from pxCurrentTCB [doc, inference] */
     vRestoreContextOfFirstTask();
     return;
   }

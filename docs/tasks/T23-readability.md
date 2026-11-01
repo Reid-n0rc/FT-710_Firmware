@@ -29,6 +29,7 @@ caps in docs/tooling.md apply only to the owner's tower server.)
 | T23f | Signatures, enums and parameter names for DISPLAY and IFDSP (MAIN has `signatures_main.tsv`), enums for mode/band/CAT ids | ApplySignatures + re-export | tables, scripts and bootstrap steps done, checked on per-task copies; canonical apply + re-export open |
 | T23g | Optional readable view: `decomp/<image>/readable/` grouped by subsystem, with the docs' name and [fact]/[inference] tag per function | export only | done (2026-10-29) |
 | T23h | Variable and parameter names by rule (`tools/ghidra/NameVariables.java`, checker `tools/rename_check.py`, "Variables named" metric) | apply + re-export | done (2026-11-01): applied to the canonical projects, 2,452 renames, 0 structural changes; Variables named 0.8 % → 6.8 %. Rerun after new signatures/structs/SFR labels |
+| T23i | Short inline comments in the decompiled C: PRE comments from rules (`tools/ghidra/CommentCode.java`: register names, documented callee purposes, enum values) and curated `comments_<image>.tsv` rows from `docs/code/` | apply + re-export | script, tables, bootstrap step done, checked on per-task copies; canonical apply + re-export open |
 
 Order: T23a and T23b first (mechanical, largest gain per hour), then T23c (the real gain in readability; register names make
 field accesses easier to recognise), then T23d, T23e and T23f, which feed each other. T23g last. T23h (variable
@@ -985,6 +986,134 @@ names were added since `b8d4a64`), 0 structural changes, nothing worse.
    structure, find its rows in `logs/namevars_<image>.tsv`, and if a parameter commit caused it, rerun with
    `params=locked` and record why here.
 4. `python3 -I tools/readability_stats.py readme`, commit. Names from an earlier run are kept (rule a), so a rerun only adds.
+## T23i — Inline comments
+
+Short one-line comments inside the decompiled C, explaining what a line does where the line itself does not show it. They
+live in the Ghidra projects as **PRE comments at instruction addresses**: the decompiler prints a PRE comment above the
+statement of that instruction, so every re-export (`ExportDecomp.java`) and the readable view (T23g, which copies the bodies)
+keep them. Owner request 2026-10-30: concise, one short line, not one on every statement, every claim backed (no [guess]).
+
+**Status:** script, tables and bootstrap step done, checked on per-task copies (2026-10-30, worktree agent). Open: apply to the
+canonical projects and re-export (open steps below).
+
+### Plan
+1. One postScript, `tools/ghidra/CommentCode.java`, for all four programs, that owns its comments (recognised by their
+   trailing tag) and replaces them on every run: idempotent and deterministic.
+2. Generated rules from one decompile of each function (high p-code, so a rule sees what the C prints), each with a tag:
+   register names from the SFR tables, the documented purpose of a called function, enum names the decompiler lost.
+3. A curated `tools/ghidra/comments_<image>.tsv` per image for the key steps of the main loops, the link protocols, the
+   CAT parser, the TX/RX sequencer and the DSP chains, each row taken from `docs/code/` with its evidence.
+4. `tools/bootstrap.sh` step, a progress metric, checks; prove it on copies (export, `readable_view.py`, `decomp_quality.py`).
+
+### How it works
+- **Comment format:** one line, `<text> <tag>`. Generated: `[sfr]`, `[doc]` / `[doc, inference]`, `[enum]`. Curated:
+  `[fact: <address or doc page>]` or `[inference]` / `[inference: <reason>]`. `CommentCode.java` owns every PRE comment line
+  that ends in one of these tags and rewrites them on each run; any other line (a hand-written comment) is kept above them.
+  A comment never sits at a function's entry (it would print in the header, next to the plate comment).
+- **`[sfr]`**: the first read or write of each peripheral register in a function (a RAM varnode, or a LOAD/STORE with a
+  constant pointer, at an address of `sfr_<chip>.tsv`, primary rows) gets the register's name from column `name`, without the
+  word "register" and cut at a clause break or 50 characters: `Protect [sfr]` above `SYSTEM_PRCR = 0xa50b`, `FFRO control 0
+  [sfr]` above `CLKCTL0_FFROCTL0`. The label already prints, so the name is what it adds.
+- **`[doc]`**: the first call of each documented function in a caller gets that function's short purpose from
+  `tools/ghidra/purposes_<image>.tsv`. `tools/code_comments.py purposes` makes that table from the `docs/code/` function tables
+  (the rows `readable_view.py` assigns): first purpose-like column, tags, issue numbers and links removed, cut at the first
+  clause break, kept only with 3..9 words and at most 56 characters, not boilerplate (library-match, code-shape, menu-item,
+  CAT-handler rows, fragments that need their context), with under half of its words in the callee's name, and only from a
+  row for one function that carries [fact] or [inference] (untagged and [guess] rows are not evidence). A row with
+  [inference] prints `[doc, inference]`. A curated row at the same call replaces the `[doc]` line.
+- **`[enum]`**: an `==` / `!=` test of a constant against a value that comes (through copies, casts, extensions) from a call
+  whose return type is an enum (ApplyEnums), when the decompiler printed the constant as a number: `7 MODE_FM_N, 0xb
+  MODE_DATA_FM_N [enum]`. On the copies this rule found nothing: the canonical MAIN project does not have the T23f parameter
+  and return enums applied yet (only the struct-field enums, which print by name), so it starts working after T23f step 1.
+- **Shape guard:** a comment that would print right above the condition of an `else if` makes the decompiler write
+  `else { /* ... */ if (...)` instead. The rules skip such places (`elseIfHeader`: the comment's block has no statement
+  before its CBRANCH and is the only successor of another conditional branch). The first run without the guard changed 32
+  lines of the DISPLAY export this way; with them the code lines of all four exports are unchanged (a second guard keeps a `[doc]` comment out of a
+  `do { } while (...)` condition).
+- **Not done, with the reason:** frequency constants (Hz → kHz/MHz): Ghidra already prints them in decimal (44 constants in
+  MAIN, e.g. `param_1 < 28000000`), so a comment would repeat the line. CAT command codes: the code works with table indexes,
+  not the mnemonic characters (no two-letter ASCII constant in MAIN is a CAT mnemonic); `cat_dispatch` prints `case CAT_xx`
+  once T23f's enums are applied, and the one index test in `cat_parse` (0x47 = `PS`) is a curated row. Link-frame IDs are
+  curated rows in the dispatchers and the scheduler. Register field decoding: only the RT685 SVD has field names, and the
+  repo has no committed field table yet (follow-up below).
+- `tools/ghidra/DecompLines.java` prints a function's C with the statement address of each line, to find the address for a
+  curated row.
+
+### Findings (per-task copies `/home/user/ghidra_tasks/comments/`, 2026-10-30)
+Copies of `ghidra/FT710_{MAIN,DISPLAY,IFDSP}` as of 2026-10-30 15:42 (before the T23e round 3 names; the comments are by
+address, so they do not depend on that). Each program: export (base), `CommentCode.java`, export (after), `CommentCode.java`
+again.
+
+| Image | Curated | `[sfr]` | `[doc]` (of them `[doc, inference]`) | `[enum]` | Comments | Functions with one | Second run |
+|---|---:|---:|---:|---:|---:|---:|---|
+| MAIN | 126 | 955 | 1,076 (64) | 0 | 2,157 | 1,055 / 3,793 (27.8 %) | 0 set, 0 removed |
+| DISPLAY | 43 | 401 | 1,119 (297) | 0 | 1,563 | 703 / 2,213 (31.8 %) | 0 set, 0 removed |
+| IFDSP M33 | 14 | 273 | 49 (18) | 0 | 336 | 114 / 427 (26.7 %) | 0 set, 0 removed |
+| IFDSP HiFi4 | 48 | 292 | 184 (163) | 0 | 524 | 194 / 1,083 (17.9 %) | 0 set, 0 removed |
+| **All** | **231** | **1,921** | **2,428** | **0** | **4,580** | 2,066 / 7,516 (27.5 %) | |
+
+- **Every comment prints** in the export, each on one line: curated rows are limited to 74 characters with their tag
+  (Ghidra wraps a PRE comment longer than that at line width 100, indent 20; `code_comments.py check` enforces it), and a
+  generated one that long is left out (none was).
+- **The code is unchanged:** diffing base against after, every added line is a comment and no line was removed, in all four
+  exports; `decomp_quality.py compare` reports no metric worse for any image. Two guards were needed: the first run turned
+  `else if` chains into `else { /* ... */ if` (32 lines in DISPLAY), and put a `[doc]` comment inside a `do { } while (...)`
+  condition (`strcasecmp(..., ".dat")` in a DISPLAY file search loop). The generated rules now skip both places, and one
+  curated row (0x23 in `task_mainlink_dispatch`) was dropped. The else-if guard also matches a plain nested `if`, so for
+  curated rows it only prints a note (11 rows noted; none of them changed the C).
+- `tools/readable_view.py` builds from the commented export (main 2,786 functions assigned, display 1,823, m33 427, hifi4 956).
+- `purposes_<image>.tsv` after the merge of the T23e round 3 names: main 344, display 513, m33 46, hifi4 118 functions.
+- Examples: `/* Protect [sfr] */` above `SYSTEM_PRCR = 0xa50b`; `/* FFRO control 0 [sfr] */` above `uVar11 =
+  CLKCTL0_FFROCTL0;`; `/* Page-split write with WIP poll and WREN [doc] */` above `eeprom_write(...)`; in `trx_sequencer`
+  `/* RX->TX timers 0x0C..0x11 (1,1,5,1,3 ms, TX delay) [fact: tx-protection.md] */`; in `rx_audio_chain` `/* Other modes:
+  CW zero-in estimate into reg 4 [fact: dsp-chains.md] */`.
+- Curated tables (231 rows, 224 [fact] with a doc page or an address, 7 [inference]): MAIN `app_main`, `main_loop`,
+  `cat_parse`, `io_task`, `trx_sequencer`, `ptt_arbiter`, `tx_freq_allowed`, `ptt_source_select`, `sdr_task`, `dsp_link_poll`,
+  `displink_task`, `displink_rx_dispatch`, `displink_rx_F0_hello`, `displink_tx_schedule`, `power_down_save`, `eeprom_load_all`,
+  `key_task`; DISPLAY boot (`boot_select_bank`, `main`, `task_root`), the MAIN link (`mainlink_queue_frame`, `mainlink_submit`,
+  `mainlink_send_enc`, `mainlink_on_ack`, `mainlink_on_nak`, `task_mainlink_rx`, `mainlink_rx_parse`, `mainlink_rx_deliver`,
+  `task_mainlink_dispatch`, `system_reboot`), `gui_main_loop`; M33 `console_rx_char`; HiFi4 `Thread_Rx_Path_entry`,
+  `rx_demod_dispatch`, `if_agc_process`, `rx_audio_chain`, `Thread_Tx_Path_entry`, `tx_chain`, `tx_core_12k`, `tx_alc`.
+
+### Open steps (parent)
+1. Apply to the canonical projects (Ghidra closed), from the repo root:
+   ```
+   G=tools/ghidra; P="$PWD/ghidra"
+   tools/ghidra-headless.sh "$P" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath $G \
+     -postScript CommentCode.java $G/sfr_rx651.tsv $G/purposes_main.tsv $G/comments_main.tsv
+   tools/ghidra-headless.sh "$P" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath $G \
+     -postScript CommentCode.java $G/sfr_rza1h.tsv $G/purposes_display.tsv $G/comments_display.tsv
+   tools/ghidra-headless.sh "$P" FT710_IFDSP -process FT-710_IFDSP_V0101.bin -noanalysis -scriptPath $G \
+     -postScript CommentCode.java $G/sfr_rt685.tsv $G/purposes_m33.tsv $G/comments_m33.tsv
+   tools/ghidra-headless.sh "$P" FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -scriptPath $G \
+     -postScript CommentCode.java $G/sfr_rt685_hifi4.tsv $G/purposes_hifi4.tsv $G/comments_hifi4.tsv
+   ```
+   then `tools/bootstrap.sh --only export` (re-export, README block, readable view), `tools/bootstrap.sh --only verify`
+   (`decomp_quality.py compare`, `code_comments.py check`), and commit the projects, `decomp/` and `README.md` together.
+   Apply it after any rename batch or T23h variable names; the order does not matter (comments do not depend on names), but
+   `purposes_<image>.tsv` does: rerun `python3 -I tools/code_comments.py purposes` after the re-export that brought the names,
+   commit it, and re-apply.
+2. After T23f step 1 (enum returns), rerun on MAIN so the `[enum]` rule can work, and count its comments here.
+3. Grow the curated tables (below).
+
+### Redo
+- **New firmware or moved code:** curated rows are by address, so port them like names (function matcher), re-check each
+  with `DecompLines.java`; `CommentCode.java` rejects (and the bootstrap stops on) a row that is not at an instruction inside a
+  function. Generated comments need nothing: rerun.
+- **After docs change** (a purpose edited, a row added): `python3 -I tools/code_comments.py purposes`, commit, re-apply.
+  `tools/bootstrap.sh --only verify` fails while a purposes table is stale.
+- **New curated rows:** find the line's address (`tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process
+  FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra -postScript DecompLines.java out.txt cat_parse`), add
+  `address<TAB>comment<TAB>[fact: ...]` taken from the doc page, `python3 -I tools/code_comments.py check`, re-apply. Prefer a
+  statement line over an `else if` condition (a comment there changes the C's shape).
+- **Bootstrap:** `step_ghidra` ends with `comment_program` for the four programs, on stamps `.stamp_<program>_comments` that
+  hash the script, the SFR table, both comment tables and the program's own stamp, so a comment change does not rebuild the
+  program and a rebuilt program gets its comments again.
+- **Progress:** *Commented* in the README block = share of functions whose decompiled body has at least one of these tagged
+  comments (`tools/readability_stats.py`); `python3 -I tools/code_comments.py stats` gives the counts by tag from the export.
 
 ## Follow-ups
 - Run `tools/issues_sync.py` (owner or parent agent) to create the T23 issues for this file and its board rows.
+- T23i: decode the constants written to RT685 registers into their fields (`// FFRO control 0: TRIM=..`): needs a committed
+  field table from the SVD (`tools/sfr_table.py` writes registers only today) and a rule in `CommentCode.java` that keeps the
+  comment short; the RX651 and RZ/A1H tables have no field names.

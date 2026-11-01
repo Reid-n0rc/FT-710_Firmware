@@ -36,6 +36,7 @@ void mainlink_trace_dump(void)
           uVar2 = uVar2 + 1 & 0x7ff;
           iVar7 = *piVar5;
           sprintf(auStack_338,"%-6d: ",iVar7 - iVar6);
+                    /* Word-at-a-time string length [doc] */
           uVar3 = strlen(auStack_338);
           uVar3 = fs_fwrite((uint)auStack_338,1,uVar3,local_33c);
           uVar4 = strlen(auStack_338);
@@ -85,6 +86,7 @@ void task_keycode(void)
           puStack_8 = &DAT_208d9960;
           puVar2 = (uint *)strtok_r(&DAT_208d9960," ",&puStack_8);
           if ((puVar2 != (uint *)0x0) && (uVar3 = strcmp(puVar2,(uint *)0x20111a9c), uVar3 == 0)) {
+                    /* next token, 0 at the end [doc] */
             pbVar4 = (byte *)strtok_r(puStack_8," ",&puStack_8);
             if (pbVar4 == (byte *)0x0) {
               rtc_get_date(&uStack_10,auStack_14,&stack0xffffffe8);
@@ -270,8 +272,10 @@ void keycode_line(undefined4 param_1,int param_2)
             {
               if ((puVar2 != (uint *)0x0) &&
                  (iVar3 = strncmp((byte *)0x20112034,(byte *)puVar2,4), iVar3 == 0)) {
+                    /* 1 = running, 2 = idle [doc, inference] */
                 test_disp_state_ret = test_disp_state();
                 if (test_disp_state_ret == 2) {
+                    /* set flag 1 [doc, inference] */
                   test_disp_start();
                 }
                 else {
@@ -435,8 +439,11 @@ void pclink_tx_trailer_init(void)
 void pclink_tx_dma_start(void)
 
 {
+                    /* Next0 Source Address 9 [sfr] */
   DMAC_N0SA_9 = &DAT_60501000;
+                    /* Next0 Destination Address 9 [sfr] */
   DMAC_N0DA_9 = 0xe800c804;
+                    /* Next0 Transaction Byte 9 [sfr] */
   DMAC_N0TB_9 = 0x1000;
   reg_rmw32(&DMAC_CHCTRL_9,1,0);
   return;
@@ -528,8 +535,10 @@ void task_spi_slave(void)
   
   dmac9_register_isr();
   dmac9_stop();
+                    /* arg 1 RSPI0 [doc, inference] */
   dmac9_rspi_tx_setup(1);
   dmac9_set_callback((uint)pclink_tx_done_cb);
+                    /* Programs one channel as master [doc] */
   rspi_hw_config(0,1);
   rspi_reset_buffers(0);
   rspi_start(0);
@@ -552,6 +561,7 @@ void task_spi_slave(void)
         rspi_stop(0);
         rspi_reset_buffers(0);
         dmac9_rspi_tx_setup(1);
+                    /* arg 1 RSPI0 [doc, inference] */
         dmac10_rspi_rx_setup(1,0xe800c804,0x60500000,0x1000);
         DAT_2045d4a8 = 0;
         DAT_2045d4ac = 0;
@@ -720,6 +730,7 @@ void task_renc(void)
 void renc_poll_mtu1(void)
 
 {
+                    /* Timer counter_1 [sfr] */
   DAT_208001fc = MTU2_TCNT_1;
   if (DAT_208001fc != DAT_208001fe) {
     renc_rec_set(1,(char)DAT_208001fc - (char)DAT_208001fe);
@@ -740,6 +751,7 @@ void renc_poll_mtu1(void)
 void renc_poll_mtu2(void)
 
 {
+                    /* Timer counter_2 [sfr] */
   DAT_20800202 = MTU2_TCNT_2;
   if (DAT_20800202 != DAT_20800204) {
     renc_rec_set(2,(char)DAT_20800202 - (char)DAT_20800204);
@@ -815,6 +827,7 @@ void task_ad_renc(void)
   uint auStack_20 [8];
   
   uVar2 = 0;
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
   __aeabi_memclr(&DAT_208d9a08,0x20);
   __aeabi_memclr(&DAT_208d99c8,0x20);
   do {
@@ -847,6 +860,7 @@ void pot_detect(void)
   
   uVar3 = adc_ring_average(&DAT_208d9a08);
   __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x3fe00000);
+                    /* Double to unsigned int [doc] */
   uVar1 = __aeabi_d2uiz();
   uVar3 = adc_ring_average(&DAT_208d99c8);
   __aeabi_dadd((int)uVar3,(int)((ulonglong)uVar3 >> 0x20),0,0x3fe00000);
@@ -903,12 +917,16 @@ void renc_mtu2_init(void)
 {
   byte bVar1;
   
+                    /* Timer start [sfr] */
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 & 0xfd;
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 & 0xfb;
+                    /* Timer mode_1 [sfr] */
   MTU2_TMDR_1 = 4;
+                    /* Timer counter_1 [sfr] */
   MTU2_TCNT_1 = 0;
+                    /* Timer mode_2 [sfr] */
   MTU2_TMDR_2 = 7;
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 | 4;
@@ -933,6 +951,7 @@ void renc_irq4_isr(void)
   
   gic_disable_irq(0x24);
   uVar1 = PORT_PPR3;
+                    /* Port pin read_3 [sfr] */
   port_ppr3 = PORT_PPR3;
   if ((uVar1 & 0xf) >> 3 == (port_ppr3 & 0x3f) >> 5) {
     bVar2 = 0xff;
@@ -942,6 +961,7 @@ void renc_irq4_isr(void)
   }
   DAT_208001e4 = DAT_208001e4 + bVar2;
   renc_rec_set(3,bVar2);
+                    /* IRQ interrupt request [sfr] */
   uVar1 = INTC_IRQRR;
   if ((uVar1 & 0x10) != 0) {
     uVar1 = INTC_IRQRR;
@@ -976,6 +996,7 @@ void renc_init(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefine
       uVar2 = itron_acre_tsk(0,(byte *)&ctsk_detect_renc);
       if ((0 < (int)uVar2) && (uVar3 = itron_sta_tsk(uVar2,0), uVar3 == 0)) {
         periodic_wakeup_register(uVar2,2);
+                    /* Interrupt control 1 [sfr] */
         uVar1 = INTC_ICR1;
         INTC_ICR1 = uVar1 & 0xfcff;
         uVar1 = INTC_ICR1;
@@ -1351,6 +1372,7 @@ uint gpio_read_port_bit(uint param_1,uint param_2)
   uVar1 = 1 << (param_2 & 0xff);
   switch(param_1) {
   case 2:
+                    /* Port pin read_2 [sfr] */
     uVar2 = PORT_PPR2;
     break;
   case 3:
@@ -1359,12 +1381,15 @@ uint gpio_read_port_bit(uint param_1,uint param_2)
   default:
     goto switchD_20113204_caseD_4;
   case 7:
+                    /* Port pin read_7 [sfr] */
     uVar2 = PORT_PPR7;
     break;
   case 8:
+                    /* Port pin read_8 [sfr] */
     uVar2 = PORT_PPR8;
     break;
   case 9:
+                    /* Port pin read_9 [sfr] */
     uVar2 = PORT_PPR9;
     break;
   case 10:
@@ -1400,6 +1425,7 @@ void mainlink_send_key(uint param_1,byte param_2)
   puVar2 = &local_20;
   uStack_1c = 0;
   local_20 = CONCAT13((char)param_1,CONCAT12((char)(param_1 >> 8),CONCAT11(param_2,0xe0)));
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
   iVar1 = full_mode_get();
   if (iVar1 == 0) goto LAB_20113460;
   if (DAT_20800495 == '\0') {
@@ -1736,6 +1762,7 @@ LAB_201139f0:
       }
       iVar3 = iVar3 + 1;
     } while (iVar3 < 6);
+                    /* Returns the full-mode flag 0x208003A4 [doc] */
     iVar3 = full_mode_get();
     if ((iVar3 != 0) || (DAT_2080049b != '\0')) {
       iVar3 = 0;

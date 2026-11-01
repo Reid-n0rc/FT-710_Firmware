@@ -100,6 +100,7 @@ void HASHCRYPT_DriverIRQHandler(void)
   int hashcrypt_status;
   
   iVar1 = DAT_00088ab0;
+                    /* Indicates status of Hash peripheral [sfr] */
   hashcrypt_status = HASHCRYPT_STATUS;
   if (hashcrypt_status << 0x1d < 0) {
     uVar2 = 1;
@@ -112,11 +113,14 @@ void HASHCRYPT_DriverIRQHandler(void)
         uVar3 = uVar4;
       }
       *(uint *)(DAT_00088ab0 + 0x4c) = uVar4 - uVar3;
+                    /* Setup Master to access memory (if available) [sfr] */
       HASHCRYPT_MEMCTRL = uVar3 << 0x10 | 1;
       return;
     }
+                    /* Write 1 to clear interrupts [sfr] */
     HASHCRYPT_INTENCLR = 6;
     HASHCRYPT_MEMCTRL = 0;
+                    /* n = 5 if ctx byte +0x44 == 1 [doc, inference] */
     hashcrypt_save_running_hash(0x40158000,DAT_00088ab0);
     uVar2 = 0;
   }
@@ -140,10 +144,12 @@ void I3C0_DriverIRQHandler(void)
   uint i3c_mconfig;
   int i3c_sconfig;
   
+                    /* Master Configuration [sfr] */
   i3c_mconfig = I3C_MCONFIG;
   if (((i3c_mconfig & 3) == 1) && (DAT_00088ab8 != (code *)0x0)) {
     (*DAT_00088ab8)(&I3C_MCONFIG,DAT_00088ab4);
   }
+                    /* Slave Configuration [sfr] */
   i3c_sconfig = I3C_SCONFIG;
   if ((i3c_sconfig << 0x1f < 0) && (DAT_00088ac0 != (code *)0x0)) {
                     /* WARNING: Could not recover jumptable at 0x000842b0. Too many branches */
@@ -160,6 +166,7 @@ void I3C0_DriverIRQHandler(void)
 void MU_Init(void)
 
 {
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
@@ -193,6 +200,7 @@ void PIN_INT0_DriverIRQHandler(void)
   if (DAT_00088acc != (code *)0x0) {
     (*DAT_00088acc)(0,uVar1);
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if ((pint_isel & 1) == 0) {
     PINT_PinInterruptClrStatus();
@@ -222,6 +230,7 @@ void PIN_INT1_DriverIRQHandler(void)
     (*DAT_00088ad0)(1,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1e) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,1,uVar2,in_r3);
@@ -251,6 +260,7 @@ void PIN_INT2_DriverIRQHandler(void)
     (*DAT_00088ad4)(2,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1d) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,2,uVar2,in_r3);
@@ -280,6 +290,7 @@ void PIN_INT3_DriverIRQHandler(void)
     (*DAT_00088ad8)(3,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1c) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,3,uVar2,in_r3);
@@ -309,6 +320,7 @@ void PIN_INT4_DriverIRQHandler(void)
     (*DAT_00088adc)(4,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1b) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,4,uVar2,in_r3);
@@ -338,6 +350,7 @@ void PIN_INT5_DriverIRQHandler(void)
     (*DAT_00088ae0)(5,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x1a) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,5,uVar2,in_r3);
@@ -367,6 +380,7 @@ void PIN_INT6_DriverIRQHandler(void)
     (*DAT_00088ae4)(6,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x19) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,6,uVar2,in_r3);
@@ -396,6 +410,7 @@ void PIN_INT7_DriverIRQHandler(void)
     (*DAT_00088ae8)(7,uVar1);
     uVar2 = extraout_r2_00;
   }
+                    /* Pin Interrupt Mode [sfr] */
   pint_isel = PINT_ISEL;
   if (-1 < pint_isel << 0x18) {
     PINT_PinInterruptClrStatus(&PINT_ISEL,7,uVar2,in_r3);
@@ -418,6 +433,7 @@ void POWER_ApplyPD(void)
   do {
     iVar1 = PMC_STATUS;
   } while (iVar1 << 0x1f < 0);
+                    /* PMC control [sfr] */
   pmc_ctrl = PMC_CTRL;
   PMC_CTRL = pmc_ctrl | 1;
   do {
@@ -452,36 +468,42 @@ void RESET_SetPeripheralReset(uint param_1)
   uVar2 = 1 << (param_1 & 0xff);
   switch(param_1 >> 8) {
   case 0:
+                    /* peripheral reset set 0 [sfr] */
     RSTCTL0_PRSTCTL0_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL0;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 1:
+                    /* peripheral reset set 1 [sfr] */
     RSTCTL0_PRSTCTL1_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL1;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 2:
+                    /* peripheral reset set 2 [sfr] */
     RSTCTL0_PRSTCTL2_SET = uVar2;
     do {
       uVar1 = RSTCTL0_PRSTCTL2;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 3:
+                    /* peripheral reset set 0 [sfr] */
     RSTCTL1_PRSTCTL0_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL0;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 4:
+                    /* peripheral reset set 1 [sfr] */
     RSTCTL1_PRSTCTL1_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL1;
     } while ((uVar1 & uVar2) == 0);
     return;
   case 5:
+                    /* peripheral reset set 2 [sfr] */
     RSTCTL1_PRSTCTL2_SET = uVar2;
     do {
       uVar1 = RSTCTL1_PRSTCTL2;
@@ -500,6 +522,7 @@ undefined4 SCTIMER_Init(uint *param_1,byte *param_2)
   undefined4 *puVar2;
   int i;
   
+                    /* clock set 0 [sfr] */
   CLKCTL0_PSCCTL0_SET = 0x1000000;
   RESET_ClearPeripheralReset(0x18);
   bVar1 = *param_2;
@@ -714,6 +737,7 @@ void SCT0_DriverIRQHandler(void)
 void SEMA42_Init(void)
 
 {
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x20000000;
   return;
 }
@@ -768,6 +792,7 @@ void BOARD_BootClockRUN(void)
 {
   uint clkctl1_audiopll0ctl0;
   
+                    /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = 0x4000;
   SYSCTL0_PDRUNCFG0_CLR = 0x10000;
   CLOCK_EnableFfroClk(0);
@@ -780,11 +805,13 @@ void BOARD_BootClockRUN(void)
   CLOCK_EnableSysOscClk(1,1,0x104);
   DAT_00088930 = 24000000;
   DAT_00088928 = 0x1194000;
+                    /* system oscillator bypass [sfr] */
   CLKCTL0_SYSOSCBYPASS = 1;
   CLOCK_InitSysPll(&DAT_00087a08);
   CLOCK_InitSysPfd(0,0xc);
   CLOCK_InitSysPfd(2,0x18);
   CLOCK_InitAudioPll(&DAT_000879f8);
+                    /* audio pll0 control0 [sfr] */
   clkctl1_audiopll0ctl0 = CLKCTL1_AUDIOPLL0CTL0;
   CLKCTL1_AUDIOPLL0CTL0 = clkctl1_audiopll0ctl0 | 1;
   CLOCK_InitAudioPfd(0,0x1a);
@@ -817,6 +844,7 @@ void ipc_init(void)
 void ipc_send(uint param_1)
 
 {
+                    /* blocking send with 1-tick retry [doc] */
   rpmsg_lite_send(DAT_00088b60,DAT_00088b58,DAT_00088b54,param_1,0x98,0xffffffff);
   return;
 }
@@ -860,10 +888,12 @@ void BOARD_DSP_Init(void)
   CLOCK_AttachClk(0x80002434);
   CLOCK_SetClkDiv(0x80000400,1);
   CLOCK_SetClkDiv(0x80000404,2);
+                    /* DSP memory power-up and reset release [doc, inference] */
   DSP_Init();
   DSP_CopyImage(&local_2c);
   DSP_CopyImage(&local_20);
   DSP_CopyImage(&local_14);
+                    /* DSP stall [sfr] */
   SYSCTL0_DSPSTALL = 0;
   return;
 }
@@ -879,6 +909,7 @@ void BOARD_InitPins_P0(uint param_1,uint param_2,uint param_3,uint param_4)
   uint local_10;
   uint local_c;
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 1;
   local_18 = param_1 & 0xffff0000;
   local_14 = param_2;
@@ -891,9 +922,13 @@ void BOARD_InitPins_P0(uint param_1,uint param_2,uint param_3,uint param_4)
   GPIO_PinInit(0x40100000,0,0x15,(char *)&local_10);
   local_c = local_c & 0xffff0000;
   GPIO_PinInit(0x40100000,0,0x16,(char *)&local_c);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_21 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_22 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_4 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_5 = 0x40;
   return;
 }
@@ -910,6 +945,7 @@ void BOARD_InitPins_codec_spi(void)
   char local_18 [4];
   char local_14 [4];
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 2;
   CLKCTL1_PSCCTL1_SET = 4;
   local_24[0] = '\x01';
@@ -927,10 +963,15 @@ void BOARD_InitPins_codec_spi(void)
   local_14[0] = '\x01';
   local_14[1] = 0;
   GPIO_PinInit(0x40100000,2,0x1d,local_14);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_0 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_1 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_7 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_28 = 0x40;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_29 = 0;
   return;
 }
@@ -951,6 +992,7 @@ void BOARD_InitPins_debug_gpio(void)
   char local_18 [4];
   char local_14 [4];
   
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 1;
   CLKCTL1_PSCCTL1_SET = 4;
   local_28[0] = '\x01';
@@ -971,11 +1013,17 @@ void BOARD_InitPins_debug_gpio(void)
   local_14[0] = '\x01';
   local_14[1] = 0;
   GPIO_PinInit(0x40100000,2,6,local_14);
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_28 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_29 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_31 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_4 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_5 = 0;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_6 = 0;
   return;
 }
@@ -1096,6 +1144,7 @@ byte tolower(int param_1)
 void stdio_init(void)
 
 {
+                    /* Opens fd with mode "r"/"w"/"a"[+][b] into a FILE [doc, inference] */
   _Cfdopen(0,"r",&DAT_00088b78);
   setvbuf(&DAT_00088b78,0,0x400,0x100);
   _Cfdopen(1,"w",&DAT_00088bb4);
@@ -1166,6 +1215,7 @@ LAB_00084ec2:
       iVar8 = param_1[2];
       param_1[2] = iVar8 + -1;
       if (iVar8 + -1 < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
         fputc(bVar1,param_1);
       }
       else {
@@ -2073,6 +2123,7 @@ undefined4 siprintf(undefined1 *param_1,undefined4 param_2,undefined4 param_3,un
                          &LAB_000872f4_1);
   local_4c = local_4c + -1;
   if (local_4c < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_54);
   }
   else {
@@ -2112,6 +2163,7 @@ undefined4 snprintf(undefined1 *param_1,int param_2,undefined4 param_3,undefined
   uVar1 = vsnprintf_core(local_54,extraout_r1,param_2 + -1,0,param_3,local_58,&LAB_000872f4_1);
   local_4c = local_4c + -1;
   if (local_4c < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_54);
   }
   else {
@@ -2140,6 +2192,7 @@ undefined4 sprintf(undefined1 *param_1,undefined4 param_2,undefined4 param_3)
   ;
   local_44 = local_44 + -1;
   if (local_44 < 0) {
+                    /* FILE output slow path, 19 callers [doc, inference] */
     fputc(0,local_4c);
   }
   else {
@@ -2236,6 +2289,7 @@ LAB_00085c30:
   uVar6 = 0;
   uVar7 = 0;
   bVar1 = false;
+                    /* ctype-table digit value for strtoul [doc, inference] */
   while (_Cdigit_value_ret = _Cdigit_value(uVar3,param_3), -1 < _Cdigit_value_ret) {
     uVar6 = uVar6 * param_3 + _Cdigit_value_ret;
     uVar7 = uVar7 * param_3 + (uVar6 >> 0x10);
@@ -2338,6 +2392,7 @@ void * _sbrk(int param_1)
   }
   puVar2 = DAT_00088b6c;
   puVar1 = DAT_00088b6c + (param_1 + 3U & 0xfffffffc);
+                    /* new_end >= 0xA2EF8 [doc] */
   __check_heap_overflow_ret = __check_heap_overflow(puVar1);
   if (__check_heap_overflow_ret) {
     puVar2 = (undefined *)0xffffffff;

@@ -57,6 +57,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
   }
   else if (param_1 == 0xe) {
     memw();
+                    /* flexcomm14 clock selection [sfr] */
     dVar3 = CLKCTL1_FC14FCLKSEL;
   }
   else {
@@ -64,12 +65,14 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
       return 16000000;
     }
     memw();
+                    /* flexcomm15 clock selection [sfr] */
     dVar3 = CLKCTL1_FC15FCLKSEL;
   }
   if (dVar3 == 0) {
     return 16000000;
   }
   if (dVar3 == 1) {
+                    /* 48 / 60 MHz by FFROCTL0 trim range [doc, inference] */
     uVar2 = CLOCK_GetFFroFreq();
     return uVar2;
   }
@@ -86,6 +89,7 @@ uint CLOCK_GetFlexCommClkFreq(uint param_1)
   }
   uVar1 = CLOCK_GetAudioPfdFreq(0);
   memw();
+                    /* audio pll0 clock divider [sfr] */
   uVar2 = CLKCTL1_AUDIOPLLCLKDIV;
   return uVar1 / ((uVar2 & 0xff) + 1);
 }
@@ -114,32 +118,39 @@ void DMA_Init(dword *param_1)
   uVar3 = uVar1 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 3) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 4) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   else if (uVar3 == 5) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar1 & 0x1f));
   }
   iVar2 = 0;
   if (param_1 != &DMA0_CTRL) {
     iVar2 = 4;
   }
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200198 + iVar2));
   memw();
   param_1[2] = (dword)(&PTR_DAT_00236828)[param_1 != &DMA0_CTRL];
@@ -182,6 +193,7 @@ void DMA_CreateHandle(undefined4 *param_1,dword *param_2,int param_3)
   param_1[3] = 0;
   *(char *)(param_1 + 3) = (char)param_3;
   (&DAT_00238470)[param_3 + iVar1] = param_1;
+                    /* fsl_dma.c static, called by DMA_CreateHandle [doc, inference] */
   DMA_GetVirtualStartChannel();
   return;
 }
@@ -278,6 +290,7 @@ void I2S_TxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -322,6 +335,7 @@ void I2S_RxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -457,6 +471,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -495,6 +510,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
@@ -531,6 +547,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -569,6 +586,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
@@ -704,6 +722,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (((param_1 == 0) || (param_2 == (byte *)0x0)) || (param_3 == 0)) {
     return 4;
   }
+                    /* clock enable, reset, PSELID [doc, inference] */
   iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
@@ -712,6 +731,7 @@ int SPI_MasterInit(int param_1,byte *param_2,int param_3)
   if (iVar1 != 0) {
     return iVar1;
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();
@@ -1135,7 +1155,9 @@ void tx_gpio_to_reg4004(void)
   sVar1 = regfile_gpio_sel();
   memw();
   gpio_b0_21 = GPIO_B0_21;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   gpio_b0_22 = GPIO_B0_22;
   DAT_20078008 = (ushort)gpio_b0_22 | sVar1 << 2 | (ushort)gpio_b0_21 << 1;
   return;
@@ -1458,6 +1480,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
   uVar2 = rpmsg_lite_create_ept(*param_1,0x1e,ipc_ept_rx_cb,param_1[2],auStack_dc);
   param_1[1] = uVar2;
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   while ((uVar1 & 7) != 1) {
     memw();
@@ -1499,6 +1522,7 @@ undefined4 xos_create_main_ipc_threads(void)
   xthal_set_region_attribute(&DAT_20060000,0x31e0,2,0);
   xthal_set_region_attribute(&DAT_20060000,0,2,0);
   regfile_set_defaults();
+                    /* capture block table 0x2390E0 = {0x2007E000, 0x2007F000} [doc, inference] */
   regfile_capture_init();
   DAT_002cb680 = 594000000;
   xos_start_system_timer(0xffffffff,0);
@@ -1591,10 +1615,12 @@ undefined1 regfile_gpio_sel(void)
   
   if ((DAT_20070018 & 0xf000) != 0x1000) {
     memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     uVar1 = GPIO_B0_4;
     return uVar1;
   }
   memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   uVar1 = GPIO_B0_5;
   return uVar1;
 }
@@ -1645,6 +1671,7 @@ void rx_audio_chain_init(void)
   spectral_nr_init();
   nlms_auto_notch_init();
   contour_init();
+                    /* clears the APF state 0x244510 [doc, inference] */
   apf_init();
   peak_limiter_init(1);
   af_hicut_init();
@@ -1704,6 +1731,7 @@ void create_Thread_Rx_Audio(void)
                     ,6,0,0);
   xos_msgq_create(PTR_DAT_00236bc0,2,4,0);
   if_agc_init();
+                    /* state word 0x2576E4 = 0xFFFF [doc, inference] */
   rx_audio_init();
   return;
 }
@@ -2013,6 +2041,7 @@ void Thread_Rx_Audio_entry(void)
     } while (iVar1 != 0);
     rx_audio_fifo_pop(&DAT_00259e00);
     rx_audio_chain(&DAT_00259e00,&DAT_0025a280,&DAT_0025a700);
+                    /* pushes 12 blocks of 96 bytes into FIFO ch [doc] */
     rx_audio_out_fifo_push(0,&DAT_0025a280);
     rx_audio_out_fifo_push(1,&DAT_0025a700);
   } while( true );
@@ -2050,6 +2079,7 @@ void fc1_spi_dma_init(void)
   SPI_MasterInit(&SPI1_BASE,auStack_50,uVar2);
   DMA_Init(&DMA0_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA0_ENABLESET0;
   memw();
   DMA0_ENABLESET0 = uVar1 | 8;
@@ -2058,10 +2088,12 @@ void fc1_spi_dma_init(void)
   memw();
   DMA0_ENABLESET0 = uVar1 | 4;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL3_CFG;
   memw();
   DMA0_CHANNEL3_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA0_CHANNEL2_CFG;
   memw();
   DMA0_CHANNEL2_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
@@ -2089,6 +2121,7 @@ void spi_fc1_dma_init(void)
   DAT_0025abb0 = 0;
   memset(&DAT_200607e0,0,&DAT_000011f8);
   memset(&DAT_200619e0,0,&DAT_000011f8);
+                    /* DMA callbacks 0x2151B8 / 0x2151F0 [doc, inference] */
   SPI_MasterTransferCreateHandleDMA
             (&SPI1_BASE,&DAT_0025abd4,spi_fc1_dma_callback,0,&DAT_0025abb4,&DAT_0025abc4);
   return;
@@ -2695,10 +2728,12 @@ void Thread_Spi_entry(void)
   uint uStack_34;
   undefined4 uStack_30;
   
+                    /* SPI_MasterTransferCreateHandleDMA on FLEXCOMM1 [doc] */
   spi_fc1_dma_init();
   uVar2 = spi_tx_buffer_ptr();
   memset(uVar2,1,200);
   memset(&DAT_00266490,1,400);
+                    /* memcpy into 0x200607E0 if offset + len <= 0x11F8 [doc] */
   spi_tx_buffer_write(200,&DAT_00266490,400);
   uVar9 = const_s(0);
   uVar10 = 0x3dfa35de;
@@ -2829,7 +2864,9 @@ void Thread_Spi_entry(void)
         iVar3 = spi_tx_buffer_ptr();
         FUN_002244c8(iVar3 + 200);
         iVar3 = spi_tx_buffer_ptr();
+                    /* reads the int16 recording ring 0x266ED8 [doc, inference] */
         rec_ring_read_to_spi(iVar3 + 600);
+                    /* SPI_MasterTransferDMA of the 0x200607E0 buffer [doc, inference] */
         spi_fc1_start();
       }
     }
@@ -2947,6 +2984,7 @@ void rec_resample_init(void)
 {
   undefined8 uVar1;
   
+                    /* clears the ring 0x268D1C indices under PS.INTLEVEL 2 [doc] */
   rec_ring_reset_0();
   rec_ring_reset_1();
   DAT_00266ec0 = iir_cascade_init(&DAT_002c6a30,3,&DAT_00237700,1);
@@ -3138,21 +3176,28 @@ void create_rx_tx_path_threads(void)
   CLOCK_AttachClk(0x80002568);
   CLOCK_AttachClk(0x80002588);
   CLOCK_AttachClk(0x800025a8);
+                    /* set then clear [doc, inference] */
   RESET_PeripheralReset(0x30a);
   RESET_PeripheralReset(0x30b);
   RESET_PeripheralReset(0x30c);
   RESET_PeripheralReset(0x30d);
   CLOCK_AttachClk(0x80001740);
+                    /* write divider, wait REQFLAG [doc, inference] */
   CLOCK_SetClkDiv(0x80000744,1);
   memw();
+                    /* mclk direction control [sfr] */
   SYSCTL1_MCLKPINDIR = 1;
   memw();
+                    /* shared control set N [sfr] */
   SYSCTL1_SHAREDCTRLSET0 = 0x22;
   memw();
+                    /* flexcomm control selection N [sfr] */
   SYSCTL1_FCCTRLSEL3 = 0x101;
   memw();
+                    /* shared control set N [sfr] */
   SYSCTL1_SHAREDCTRLSET1 = 0x55;
   memw();
+                    /* flexcomm control selection N [sfr] */
   SYSCTL1_FCCTRLSEL4 = 0x202;
   xos_register_interrupt_handler(0x17,DMA_IRQHandle,&DMA1_CTRL);
   xos_interrupt_enable(0x17);
@@ -3182,6 +3227,7 @@ void create_rx_tx_path_threads(void)
   I2S_RxInit(&I2S4_BASE,&DAT_002c825c);
   DMA_Init(&DMA1_CTRL);
   memw();
+                    /* Channel Enable read and Set for all DMA channels [sfr] */
   uVar1 = DMA1_ENABLESET0;
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x20;
@@ -3190,10 +3236,12 @@ void create_rx_tx_path_threads(void)
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x40;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL5_CFG;
   memw();
   DMA1_CHANNEL5_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00050000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL6_CFG;
   memw();
   DMA1_CHANNEL6_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00030000;
@@ -3208,16 +3256,20 @@ void create_rx_tx_path_threads(void)
   memw();
   DMA1_ENABLESET0 = uVar1 | 0x100;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL11_CFG;
   memw();
   DMA1_CHANNEL11_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00040000;
   memw();
+                    /* Configuration for DMA channel [sfr] */
   uVar1 = DMA1_CHANNEL8_CFG;
   memw();
   DMA1_CHANNEL8_CFG = uVar1 & 0xfff8ffff | (uint)&DAT_00020000;
   DMA_CreateHandle(&DAT_002c8298,&DMA1_CTRL,0xb);
   DMA_CreateHandle(&DAT_002c82a8,&DMA1_CTRL,8);
+                    /* resets both TXAF FIFOs and the mute ramp [doc, inference] */
   txaf_out_init();
+                    /* resets both codec-out FIFOs and the mute ramp [doc, inference] */
   codec_out_init();
   xos_thread_create(&DAT_002c7890,0,Thread_Rx_Path_entry,0,"Thread_Rx_Path",&DAT_002c83b0,
                     &DAT_00001398,7,0,0);
@@ -3395,15 +3447,20 @@ void Thread_Rx_Path_entry(void)
     do {
       iVar1 = xos_msgq_get(PTR_DAT_0023773c,auStack_30);
     } while (iVar1 != 0);
+                    /* Next 24-sample block of the RX IF stream [fact: dsp-chains.md] */
     rxif_fifo_pop(&DAT_002cab90);
+                    /* AGC, then the demodulator chosen by reg 6 [fact: 0x220EE0] */
     rx_demod_dispatch(&DAT_002cab90,&DAT_002cab90);
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), iVar1 == 1)) {
+                    /* reg 6 = 10 and reg 10 n0 = 1: codec ADC ch 1 instead [fact: dsp-chains.md] */
       codec_in_fifo_pop(1,&DAT_002cabf0);
+                    /* Gain from reg 0x60 [doc, inference] */
       rx_aux_in_gain(&DAT_002cabf0);
       rx_audio_push_block(&DAT_002cabf0,&DAT_002cac50,&DAT_002cacb0);
       memcpy(&DAT_002cad10,&DAT_002cab90,0x60);
     }
     else {
+                    /* Hand the block to Rx_Audio (12 blocks) [fact: dsp-chains.md] */
       rx_audio_push_block(&DAT_002cab90,&DAT_002cac50,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d56,0);
@@ -3414,6 +3471,7 @@ void Thread_Rx_Path_entry(void)
       codec_out_sink(1,&DAT_002cad10);
     }
     else if (iVar1 == 6) {
+                    /* per-output gain, clip, into the codec-out object [doc, inference] */
       codec_out_sink(1,&DAT_002cacb0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
@@ -3445,8 +3503,10 @@ void Thread_Rx_Path_entry(void)
       rec_resample_sink(&DAT_002cac50);
     }
     else if (iVar1 == 6) {
+                    /* x2/9 to 16 kHz, int16 ring 0x266ED8 [doc, inference] */
       rec_resample_sink(&DAT_002cacb0);
     }
+                    /* Output gains and mute from regs 0xD, 0xE, 0x10 [fact: 0x224814] */
     rx_out_gain_mute_update();
     play_gain_update();
   } while( true );
@@ -3482,7 +3542,9 @@ void Thread_Tx_Path_entry(void)
       iVar1 = xos_msgq_get(PTR_DAT_00237740,auStack_30);
       fVar3 = (float)in_aed0;
     } while (iVar1 != 0);
+                    /* Split regs 8/9/10 into the routing selectors [fact: 0x2249D0] */
     routing_regs_decode();
+                    /* Mic block from codec input ch 0 [inference: dsp-chains.md] */
     codec_in_fifo_pop(0,&DAT_002cad70);
     uVar2 = 0;
     if ((DAT_2007000c == 10) && (iVar1 = ae_l16ui_n(&DAT_00263d5c,0), uVar2 = 0, iVar1 != 1)) {
@@ -3490,6 +3552,7 @@ void Thread_Tx_Path_entry(void)
       uVar2 = 1;
     }
     aux_in_gain_lp(uVar2,&DAT_002cadd0);
+                    /* Playback block from the 4000-block ring [fact: dsp-chains.md] */
     playback_ring_read(&DAT_002cae30);
     iVar1 = ae_l16ui_n(&DAT_00263d5a,0);
     if (iVar1 == 2) {
@@ -3499,7 +3562,9 @@ void Thread_Tx_Path_entry(void)
       rec_resample_sink(&DAT_002cae30);
     }
     else if (iVar1 == 4) {
+                    /* Test tone (regs 0x4013/0x4014) [fact: dsp-chains.md] */
       test_tone_gen(&DAT_002cae90,0x18);
+                    /* x2/9 to 16 kHz, int16 ring 0x266ED8 [doc, inference] */
       rec_resample_sink(&DAT_002cae90);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d5c,0);
@@ -3510,6 +3575,7 @@ void Thread_Tx_Path_entry(void)
       memcpy(&DAT_002cae90,&DAT_002cae30,0x60);
     }
     else if (iVar1 == 4) {
+                    /* Sine, phase += f·2π/72000 [doc] */
       test_tone_gen(&DAT_002cae90,0x18);
     }
     else {
@@ -3539,6 +3605,7 @@ void Thread_Tx_Path_entry(void)
       codec_out_sink(1,&DAT_002cadd0);
     }
     else if (iVar1 == 7) {
+                    /* per-output gain, clip, into the codec-out object [doc, inference] */
       codec_out_sink(1,&DAT_002caef0);
     }
     iVar1 = ae_l16ui_n(&DAT_00263d54,0);
@@ -3578,7 +3645,9 @@ void Thread_Tx_Path_entry(void)
     else if (iVar1 == 2) {
       txaf_out_push(&DAT_002cafb0);
     }
+                    /* mute = reg 0x10 bit 1 or GPIO P0_4 [doc] */
     tx_mute_ctrl();
+                    /* Recorder gain from reg 0x12 [doc] */
     rec_gain_update();
   } while( true );
 }

@@ -11,6 +11,7 @@ void funcknob_anti_vox_step(char param_1)
   short sStack_a;
   byte *pbStack_8;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x2b);
   popup_open_timed();
   if (g_opstate.ex030405_vox_select == 0) {
@@ -62,8 +63,10 @@ void funcknob_rf_power_step(char param_1)
   char local_1;
   
   local_1 = param_1;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x2c);
   popup_open_timed();
+                    /* returns &g_opstate.rf_power[i] for the TX band [doc] */
   rf_power_ptr_ret = rf_power_ptr(abStack_9,&bStack_a);
   uStack_c = (ushort)*rf_power_ptr_ret + (short)local_1;
   if ((short)(ushort)bStack_a < (short)uStack_c) {
@@ -97,6 +100,7 @@ void * rf_power_ptr(void *param_1,byte *param_2)
   
   vfo_freq_ret = vfo_freq(1,2);
   bVar2 = vfo_mode(1);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   bVar3 = tx_band_of_freq(vfo_freq_ret);
   if ((bVar2 == 4) || (bVar2 == 5)) {
     bVar1 = true;
@@ -158,6 +162,7 @@ void funcknob_moni_level_step(char param_1)
   byte *moni_level_ptr_ret;
   short sStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x2d);
   popup_open_timed();
   moni_level_ptr_ret = (byte *)moni_level_ptr();
@@ -187,6 +192,7 @@ void funcknob_moni_level_step(char param_1)
 void funcknob_keyer_step(char param_1)
 
 {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x46);
   popup_open_timed();
   if (param_1 < '\x01') {
@@ -215,6 +221,7 @@ void funcknob_bk_in_step(char param_1)
   mode_blk *p_mode_blk;
   vfo_rec *p_vfo_rec;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x2f);
   popup_open_timed();
   if (g_opstate.split_on == 0) {
@@ -287,6 +294,7 @@ void funcknob_cw_speed_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x30);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.key_speed + (short)param_1;
@@ -327,6 +335,7 @@ void funcknob_cw_pitch_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x31);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.cw_pitch + (short)param_1;
@@ -367,6 +376,7 @@ void funcknob_bk_delay_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x32);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.cw_bkin_delay + (short)param_1;
@@ -408,7 +418,9 @@ void funcknob_aess_level_step(char param_1)
   byte *aess_level_ptr_ret;
   undefined2 uStack_4;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (byte *)aess_level_ptr();
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x33);
   popup_open_timed();
   uStack_4 = (ushort)*aess_level_ptr_ret + (short)param_1;
@@ -450,7 +462,9 @@ void funcknob_aess_cf_step(char param_1)
   byte *aess_mode_ptr_ret;
   undefined2 uStack_4;
   
+                    /* Pointer to the active mode's AESS on/off byte [doc] */
   aess_mode_ptr_ret = (byte *)aess_mode_ptr();
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x58);
   popup_open_timed();
   uStack_4 = (ushort)*aess_mode_ptr_ret + (short)param_1;
@@ -517,6 +531,7 @@ void funcknob_nb_level_step(char param_1)
 {
   undefined2 uStack_4;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x38);
   popup_open_timed();
   uStack_4 = (ushort)g_opstate.nb_level + (short)param_1;
@@ -545,6 +560,7 @@ void funcknob_dnr_level_step(char param_1)
   short sStack_4;
   vfo_rec *p_vfo_rec;
   
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x39);
   popup_open_timed();
   if (g_opstate.active_vfo == VFO_A) {
@@ -633,6 +649,7 @@ void enc3_step(char param_1)
     return;
   }
   PTR_g_ui_00025d58->popup_code = 0x47;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x47);
   popup_open_timed();
   return;
@@ -782,6 +799,7 @@ void vfo_step_up(uint param_1)
   local_8 = p_vfo_rec->freq_be;
   if (local_2 == VFO_STATE_MEMORY) {
     if (PTR_g_ui_00025d58->ch_step_mode == 1) {
+                    /* memory channel +1, wrapping to the first [doc] */
       memch_step_up(bVar1);
       return;
     }
@@ -831,6 +849,7 @@ void vfo_step_down(uint param_1)
   local_8 = p_vfo_rec->freq_be;
   if (local_2 == VFO_STATE_MEMORY) {
     if (PTR_g_ui_00025d58->ch_step_mode == 1) {
+                    /* memory channel -1 [doc] */
       memch_step_down(bVar1);
       return;
     }
@@ -874,6 +893,7 @@ void FUN_fffc81e5(undefined1 param_1)
     bVar1 = false;
   }
   if (bVar1) {
+                    /* n channel steps up [doc] */
     memch_step(param_1,local_2);
     return;
   }
@@ -1410,11 +1430,13 @@ void FUN_fffc89ef(byte param_1)
   else {
     local_4 = 5;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_1,(int)&DAT_00012221 + (uint)local_4);
   p_ui_state = PTR_g_ui_00025d58;
   PTR_g_ui_00025d58->popup_text[8] = DAT_00012229;
   *(undefined4 *)(p_ui_state->popup_text + 4) = DAT_00012225;
   *(undefined4 *)p_ui_state->popup_text = DAT_00012221;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x5e);
   popup_open_timed();
   local_4._0_1_ = (byte)(((uint)param_1 * 0x14) / 0xff);
@@ -1442,6 +1464,7 @@ void FUN_fffc8a90(byte param_1)
     DAT_0001222e = 0x46464f20;
   }
   else if (param_1 < 10) {
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
     dec_to_str_u8(param_1,0x12231);
   }
   else if (param_1 < 100) {
@@ -1454,6 +1477,7 @@ void FUN_fffc8a90(byte param_1)
   PTR_g_ui_00025d58->popup_text[8] = DAT_00012232;
   *(undefined4 *)(p_ui_state->popup_text + 4) = DAT_0001222e;
   *(undefined4 *)p_ui_state->popup_text = DAT_0001222a;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x5e);
   popup_open_timed();
   bStack_4 = (byte)(((uint)param_1 * 0x14) / 0xff);

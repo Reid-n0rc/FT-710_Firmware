@@ -77,6 +77,7 @@ void power_down_save(void)
   byte swtimer_expired_ret;
   
   DAT_00001456 = 0x7f;
+                    /* 0x7F frame: power command, then the 8-byte key [fact: display-link.md] */
   DAT_00001457 = PTR_g_ui_00025d38->power_cmd & 0x7f;
   DAT_00001458 = 0x9b;
   DAT_00001459 = 0xba;
@@ -89,6 +90,7 @@ void power_down_save(void)
   DAT_0001b628 = 0xb;
   displink_tx_start(0xb);
   if (PTR_g_ui_00025d38->power_cmd == 0x90) {
+                    /* Low-voltage off (0x90): wait 2000, no save [fact: README.md] */
     swtimer_start(0x14,2000);
     do {
       swtimer_expired_ret = swtimer_expired(0x14);
@@ -102,6 +104,7 @@ void power_down_save(void)
     g_opstate.auto_power_on = 0;
     eeprom_save_all();
   }
+                    /* Software reset [fact: 0xFFFB3E55] */
   sw_reset();
   return;
 }
@@ -124,13 +127,16 @@ void eeprom_init(void)
   byte bVar1;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 | 1;
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 & 0xdf;
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 | 0x20;
   bVar1 = PORTE_PODR;
   PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
   eeprom_spi_tx(1);
   eeprom_spi_tx(0x80);
   bVar1 = PORTE_PODR;
@@ -156,12 +162,15 @@ void eeprom_init(void)
 void eeprom_load_all(void)
 
 {
+                    /* Read the 10-byte header; byte 0x4658 says what is valid [fact: README.md] */
   eeprom_read(0,g_ee_hdr.stamp,10);
   if (g_ee_hdr.state == 1) {
+                    /* Valid image: read everything [fact: README.md] */
     eeprom_read(0,g_ee_hdr.stamp,0x5837);
     return;
   }
   if (g_ee_hdr.state == 0) {
+                    /* State 0: keep cfg105 and region, rest default [fact: README.md] */
     eeprom_read(10,&g_cfg105.a001_gn_vdd_mtr,0x105);
     eeprom_read(0x10f,dest_code,3);
     settings_defaults(0);
@@ -169,6 +178,7 @@ void eeprom_load_all(void)
   else {
     g_ee_hdr.save_count_be[3] = 0;
     g_ee_hdr.state = 0;
+                    /* Blank EEPROM: clear the header, full defaults [fact: README.md] */
     g_ee_hdr.stamp[4] = 0;
     g_ee_hdr.save_count_be[0] = 0;
     g_ee_hdr.save_count_be[1] = 0;
@@ -201,7 +211,9 @@ void eeprom_load_all(void)
 void eeprom_save_all(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x112,(byte *)bandstack_a,0x5725);
   eeprom_hdr_update(1);
   return;
@@ -223,7 +235,9 @@ void eeprom_save_all(void)
 void eeprom_save_opstate(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x53db,(byte *)&g_opstate,0x45c);
   eeprom_write(0x1a62,bandstack_level_a,0x18);
   eeprom_hdr_update(1);
@@ -254,7 +268,9 @@ void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint buf)
     if (param_1 != '\0') {
       local_a = 0xdba;
     }
+                    /* Counter++, state flag, 10-byte header write [doc] */
     eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
     eeprom_write((ushort)param_2 * 0x5a + (ushort)param_3 * 0x438 + local_a,(byte *)buf,0x5a);
     eeprom_hdr_update(1);
     return;
@@ -277,7 +293,9 @@ void eeprom_save_bandstack(char param_1,byte param_2,byte param_3,uint buf)
 void eeprom_save_qmb(void)
 
 {
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x49c3,g_qmb_hdr.used_mask_be,0x395);
   eeprom_hdr_update(1);
   return;
@@ -304,7 +322,9 @@ void eeprom_save_qmb_slot(byte param_1)
   if (supply_undervolt_check_ret == '\x01') {
     return;
   }
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x49c3,g_qmb_hdr.used_mask_be,0x11);
   eeprom_write((ushort)param_1 * 0x5a + 0x49d4,&qmb[param_1].mode,0x5a);
   eeprom_hdr_update(1);
@@ -340,8 +360,10 @@ void eeprom_save_msg(int param_1,int param_2)
     }
     if (!bVar2) {
       sVar1 = (short)param_2 + -1;
+                    /* Counter++, state flag, 10-byte header write [doc] */
       eeprom_hdr_update(0);
       if (param_1 == 0) {
+                    /* Page-split write with WIP poll and WREN [doc] */
         eeprom_write(sVar1 * 0x98 + 0x4d58,&DAT_000093a7 + (ushort)(sVar1 * 0x98),0x98);
       }
       else if (param_1 == 1) {
@@ -378,7 +400,9 @@ void eeprom_save_atu_mem(void)
   if (supply_undervolt_check_ret == '\x01') {
     return;
   }
+                    /* Counter++, state flag, 10-byte header write [doc] */
   eeprom_hdr_update(0);
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0x5249,&DAT_00009898,0x192);
   eeprom_hdr_update(1);
   return;
@@ -434,6 +458,7 @@ void reset_menu(void)
 void eeprom_read_raw(ushort addr,byte *buf,ushort n)
 
 {
+                    /* READ + 16-bit address, n bytes [doc] */
   eeprom_read(addr,buf,n);
   return;
 }
@@ -452,6 +477,7 @@ void eeprom_read_raw(ushort addr,byte *buf,ushort n)
 void eeprom_write_raw(ushort addr,uint buf,ushort n)
 
 {
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(addr,(byte *)buf,n);
   return;
 }
@@ -714,6 +740,7 @@ void defaults_bandstack(void)
     *(byte *)pavVar1 = 0;
     pavVar1 = (vfo_rec (*) [12])((int)pavVar1 + 1);
   }
+                    /* Fills one band-stack set [doc] */
   defaults_bandstack_set(bandstack_a);
   defaults_bandstack_set(0x4b99);
   defaults_bandstack_set(0x4fd1);
@@ -1372,6 +1399,7 @@ void eeprom_hdr_update(byte param_1)
     g_ee_hdr.save_count_be[local_2] = (byte)(local_8 + 1 >> ((3 - local_2 & 3) << 3));
   }
   g_ee_hdr.state = param_1;
+                    /* Page-split write with WIP poll and WREN [doc] */
   eeprom_write(0,g_ee_hdr.stamp,10);
   return;
 }
@@ -1397,12 +1425,15 @@ void eeprom_read(ushort addr,byte *buf,ushort n)
   byte bStack_6;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
   eeprom_spi_tx(3);
   eeprom_spi_tx((byte)(addr >> 8));
   bStack_6 = (byte)addr;
   eeprom_spi_tx(bStack_6);
   for (i = 0; i < n; i = i + 1) {
+                    /* Shift one byte in from PE7 [doc] */
     bVar1 = eeprom_spi_rx();
     buf[i] = bVar1;
   }
@@ -1446,8 +1477,11 @@ void eeprom_write(ushort addr,byte *buf,ushort n)
     bVar2 = true;
     while (bVar2) {
       bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
       PORTE_PODR = bVar1 & 0xfe;
+                    /* Shift one byte out on PE6 [doc] */
       eeprom_spi_tx(5);
+                    /* Shift one byte in from PE7 [doc] */
       eeprom_spi_rx_ret = eeprom_spi_rx();
       bVar1 = PORTE_PODR;
       PORTE_PODR = bVar1 | 1;
@@ -1496,6 +1530,7 @@ void eeprom_spi_tx(byte b)
   undefined1 local_1;
   
   bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
   PORTE_PODR = bVar1 & 0xdf;
   local_1 = b;
   for (i = 0; i < 8; i = i + 1) {
@@ -1546,6 +1581,7 @@ byte eeprom_spi_rx(void)
       local_3 = local_3 | 1;
     }
     bVar1 = PORTE_PODR;
+                    /* Port Output Data [sfr] */
     PORTE_PODR = bVar1 & 0xdf;
   }
   return local_3;
@@ -1692,7 +1728,9 @@ void dest_jumper_apply(void)
 void sw_reset(void)
 
 {
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa502;
+                    /* Software Reset [sfr] */
   SYSTEM_SWRR = 0xa501;
   return;
 }
@@ -2127,6 +2165,7 @@ undefined1 memch_current_skip(void)
   undefined1 uVar1;
   
   memch_current_ret = memch_current(g_opstate.active_vfo);
+                    /* Memory channel n [doc] */
   uVar1 = memch_skip_get(memch_current_ret);
   return uVar1;
 }

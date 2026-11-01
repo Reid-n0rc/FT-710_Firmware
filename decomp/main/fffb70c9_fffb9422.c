@@ -10,6 +10,7 @@ void pa_pon_set(byte param_1)
   byte portc_podr;
   
   portc_podr = PORTC_PODR;
+                    /* Port Output Data [sfr] */
   PORTC_PODR = portc_podr & 0xfe | param_1 & 1;
   return;
 }
@@ -26,6 +27,7 @@ void tun_lin_sel_set(byte param_1)
   byte port8_podr;
   
   port8_podr = PORT8_PODR;
+                    /* Port Output Data [sfr] */
   PORT8_PODR = port8_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
@@ -42,6 +44,7 @@ void rem_key_sel_set(byte param_1)
   byte port8_podr;
   
   port8_podr = PORT8_PODR;
+                    /* Port Output Data [sfr] */
   PORT8_PODR = port8_podr & 0xbf | (param_1 & 1) << 6;
   return;
 }
@@ -56,6 +59,7 @@ void gpo_a_dir_out(void)
 {
   byte port1_pdr;
   
+                    /* Port Direction [sfr] */
   port1_pdr = PORT1_PDR;
   PORT1_PDR = port1_pdr | 8;
   return;
@@ -71,6 +75,7 @@ void gpo_b_dir_out(void)
 {
   byte port1_pdr;
   
+                    /* Port Direction [sfr] */
   port1_pdr = PORT1_PDR;
   PORT1_PDR = port1_pdr | 4;
   return;
@@ -92,6 +97,7 @@ void gpo_c_dir(char param_1)
     return;
   }
   bVar1 = PORT5_PDR;
+                    /* Port Direction [sfr] */
   PORT5_PDR = bVar1 & 0xfe;
   return;
 }
@@ -108,6 +114,7 @@ void gpo_a_set(byte param_1)
   byte port1_podr;
   
   port1_podr = PORT1_PODR;
+                    /* Port Output Data [sfr] */
   PORT1_PODR = port1_podr & 0xf7 | (param_1 & 1) << 3;
   return;
 }
@@ -124,6 +131,7 @@ void gpo_b_set(byte param_1)
   byte port1_podr;
   
   port1_podr = PORT1_PODR;
+                    /* Port Output Data [sfr] */
   PORT1_PODR = port1_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
@@ -139,6 +147,7 @@ void gpo_c_set(byte param_1)
   byte port5_podr;
   
   port5_podr = PORT5_PODR;
+                    /* Port Output Data [sfr] */
   PORT5_PODR = port5_podr & 0xfe | param_1 & 1;
   return;
 }
@@ -155,6 +164,7 @@ void gpo_d_set(byte param_1)
   byte port2_podr;
   
   port2_podr = PORT2_PODR;
+                    /* Port Output Data [sfr] */
   PORT2_PODR = port2_podr & 0xfb | (param_1 & 1) << 2;
   return;
 }
@@ -167,6 +177,7 @@ byte gpo_a_get(void)
 {
   byte port1_podr;
   
+                    /* Port Output Data [sfr] */
   port1_podr = PORT1_PODR;
   return port1_podr >> 3 & 1;
 }
@@ -179,6 +190,7 @@ byte gpo_b_get(void)
 {
   byte port1_podr;
   
+                    /* Port Output Data [sfr] */
   port1_podr = PORT1_PODR;
   return port1_podr >> 2 & 1;
 }
@@ -191,6 +203,7 @@ byte gpo_c_get(void)
 {
   byte port5_podr;
   
+                    /* Port Output Data [sfr] */
   port5_podr = PORT5_PODR;
   return port5_podr & 1;
 }
@@ -203,6 +216,7 @@ byte gpo_d_get(void)
 {
   byte port2_podr;
   
+                    /* Port Output Data [sfr] */
   port2_podr = PORT2_PODR;
   return port2_podr >> 2 & 1;
 }
@@ -233,6 +247,7 @@ void etun_reset_set(char param_1)
     return;
   }
   bVar1 = PORT2_PODR;
+                    /* Port Output Data [sfr] */
   PORT2_PODR = bVar1 | 4;
   return;
 }
@@ -247,6 +262,7 @@ byte rx_line_get(void)
 {
   byte portb_podr;
   
+                    /* Port Output Data [sfr] */
   portb_podr = PORTB_PODR;
   return portb_podr >> 7;
 }
@@ -262,6 +278,7 @@ bool af_mute_get(void)
   byte portb_podr;
   
   portb_podr = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   return (portb_podr & 8) != 0;
 }
 
@@ -278,6 +295,7 @@ void af_mute_set(char param_1)
   uint audio_route_state_ret;
   char local_1;
   
+                    /* Returns the audio-route state 0..14 [doc] */
   audio_route_state_ret = audio_route_state();
   if ((audio_route_state_ret - 4 < 2) ||
      (local_1 = param_1, audio_route_state_ret == 0xb || audio_route_state_ret == 0xc)) {
@@ -288,6 +306,7 @@ void af_mute_set(char param_1)
     bVar2 = PORTB_PODR;
     if ((bVar2 & 8) == 0) {
       bVar2 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
       PORTB_PODR = bVar2 | 8;
     }
     if (DAT_0001204f == '\0') {
@@ -337,6 +356,7 @@ bool ear_det(void)
   byte portf_pidr;
   
   portf_pidr = PORTF_PIDR;
+                    /* Port Input [sfr] */
   return (portf_pidr & 0x20) == 0;
 }
 
@@ -359,6 +379,7 @@ void speaker_switch_set(byte param_1)
   }
   if (DAT_00020fcc == 1) {
     bVar1 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
     PORT8_PODR = bVar1 & 0xfe | param_1 & 1;
     return;
   }
@@ -366,6 +387,7 @@ void speaker_switch_set(byte param_1)
     bVar1 = PORT7_PODR;
     PORT7_PODR = bVar1 & 0xfe | param_1 & 1;
     bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
     PORTB_PODR = bVar1 & 0xfb | (param_1 & 1) << 2;
     return;
   }
@@ -373,6 +395,7 @@ void speaker_switch_set(byte param_1)
     return;
   }
   bVar1 = PORT7_PODR;
+                    /* Port Output Data [sfr] */
   PORT7_PODR = bVar1 & 0xfe | param_1 & 1;
   return;
 }
@@ -391,15 +414,19 @@ void power_off_io(void)
   sdr_update_set(0);
   tun_lin_sel_set(0);
   bVar1 = PORTC_PODR;
+                    /* Port Output Data [sfr] */
   PORTC_PODR = bVar1 & 0xef;
   R_SCI5_Stop();
   bVar1 = PORTC_PODR;
   PORTC_PODR = bVar1 & 0xf7;
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 & 0x7f;
   bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = bVar1 & 0xdf;
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0x7f;
   return;
 }
@@ -673,6 +700,7 @@ void meter_po(void)
   
   fVar2 = (float)g_ui.adc_mcup_for;
   fVar3 = (float)((uint)g_ui.po_meter_scale << 4);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cVar1 = tx_band_of_freq(g_ui.freq_tx);
   if (cVar1 == '\n') {
     fStack_28 = 50.0;
@@ -837,6 +865,7 @@ LAB_fffb7abb:
         return;
       }
       if (DAT_0001b4c8 == 2) {
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
         screensaver_timer_restart();
         if (g_ui.screensaver_on == 0) {
           DAT_0001204c = DAT_0001b4c9;
@@ -925,6 +954,7 @@ void af_mute_update(void)
         DAT_0001204f = 0;
         return;
       }
+                    /* Returns the audio-route state 0..14 [doc] */
       uVar3 = audio_route_state();
       if (((uVar3 - 4 < 2) || (uVar3 == 0xb || uVar3 == 0xc)) && (bVar1 = af_mute_get(), bVar1)) {
         af_mute_set('\0');
@@ -983,6 +1013,7 @@ void af_mute_update(void)
       return;
     }
     bVar2 = PORT2_PODR;
+                    /* Port Output Data [sfr] */
     PORT2_PODR = bVar2 | 0x10;
     bVar1 = af_mute_get();
     if ((bVar1) && (g_ui.trx_state == 3)) {
@@ -1163,6 +1194,7 @@ void ptt_inputs_read(void)
   g_ui.ptt_usb_dtr = 0;
   g_ui.ptt_vox = 0;
   bVar2 = PORT1_PIDR;
+                    /* Port Input [sfr] */
   g_ui.ptt_extpa = (bVar2 & 0x20) == 0;
   if (tx_cw_keying_class_ret == 0) {
     bStack_5 = 1;
@@ -1250,10 +1282,12 @@ void trx_sequencer(void)
   byte bStack_9;
   
   freq = g_ui.freq_tx;
+                    /* Returns EX020119 QSK DELAY TIME x 5 + 15 [doc] */
   bStack_9 = qsk_delay_ticks();
   bVar2 = g_opstate.ex020117_cw_wave_shape;
   tx_cw_keying_class_ret = tx_cw_keying_class();
   bVar2 = bVar2 * '\x02' + 4;
+                    /* Arbiter: pick a PTT source, start or end TX [fact: 0xFFFB86E8] */
   ptt_arbiter();
   iVar4 = tx_breakin_on();
   if (iVar4 == 1) {
@@ -1273,9 +1307,11 @@ void trx_sequencer(void)
     }
   }
   if (g_ui.trx_state == 0) {
+                    /* State 0: TX freq allowed? state 1 + timers [fact: tx-protection.md] */
     bVar3 = tx_freq_allowed(freq);
     if (bVar3) {
       g_ui.trx_state = 1;
+                    /* RX->TX timers 0x0C..0x11 (1,1,5,1,3 ms, TX delay) [fact: tx-protection.md] */
       swtimer_start(0xc,1);
       swtimer_start(0xd,1);
       swtimer_start(0xe,5);
@@ -1283,6 +1319,7 @@ void trx_sequencer(void)
       swtimer_start(0x10,3);
       swtimer_start(0x11,(ushort)bStack_9);
     }
+                    /* Clear the SDR and DSP switch ACKs [fact: tx-protection.md] */
     g_ui.tx_ack_sdr = 0;
     g_ui.tx_ack_dsp = 0;
   }
@@ -1296,6 +1333,8 @@ void trx_sequencer(void)
     }
     if (bVar3) {
       bVar2 = PORT2_PODR;
+                    /* Timer 0x0C: DATA_BUSY (P24) on [fact: tx-protection.md]
+                       Port Output Data [sfr] */
       PORT2_PODR = bVar2 | 0x10;
     }
     bVar3 = af_mute_get();
@@ -1306,6 +1345,7 @@ void trx_sequencer(void)
       bVar3 = true;
     }
     if (bVar3) {
+                    /* Timer 0x0D: AF mute on [fact: tx-protection.md] */
       af_mute_set('\x01');
     }
     bVar2 = swtimer_expired(0xe);
@@ -1318,12 +1358,17 @@ void trx_sequencer(void)
       }
       if (bVar3) {
         bVar2 = PORT7_PODR;
+                    /* Timer 0x0E: speakers off (P70/PB2/P80), not in CW [fact: tx-protection.md]
+                       Port Output Data [sfr] */
         PORT7_PODR = bVar2 & 0xfe;
         bVar2 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
         PORTB_PODR = bVar2 & 0xfb;
         bVar2 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
         PORT8_PODR = bVar2 & 0xfe;
       }
+                    /* Both ACKs: speakers back, unmute, state 2 [fact: tx-protection.md] */
       if ((g_ui.tx_ack_sdr == 1) && (g_ui.tx_ack_dsp == 1)) {
         bVar3 = true;
       }
@@ -1358,11 +1403,13 @@ void trx_sequencer(void)
     }
     if (bVar3) {
       bVar2 = PORTB_PODR;
+                    /* Timer 0x0F: RX line PB7 off (RX8 rail) [fact: tx-protection.md] */
       PORTB_PODR = bVar2 & 0x7f;
     }
     bVar2 = swtimer_expired(0x10);
     if (bVar2 == 1) {
       bVar2 = PORT7_PODR;
+                    /* Timer 0x10: TX line P73 on (TX8 rail) [fact: tx-protection.md] */
       PORT7_PODR = bVar2 | 8;
     }
   }
@@ -1370,6 +1417,7 @@ void trx_sequencer(void)
     bVar2 = swtimer_expired(0x11);
     if (bVar2 == 1) {
       DAT_00012051 = 1;
+                    /* TX delay over: state 3, SEND_A/SEND_B may key [fact: tx-protection.md] */
       g_ui.trx_state = 3;
     }
   }
@@ -1414,11 +1462,13 @@ void trx_sequencer(void)
           }
         }
       }
+                    /* Port Input [sfr] */
       bVar2 = PORT1_PIDR;
       DAT_00012051 = bVar2 >> 4 & 1;
     }
   }
   else if (g_ui.trx_state == 4) {
+                    /* Release: state 5, SEND off [fact: tx-protection.md] */
     g_ui.trx_state = 5;
     g_ui.tx_ack_sdr = 0;
     g_ui.tx_ack_dsp = 0;
@@ -1427,8 +1477,10 @@ void trx_sequencer(void)
     send_a_set(0);
     send_b_set(0);
     g_ui.trx_state = 6;
+                    /* TX->RX timers: d = 2 x CW WAVE SHAPE + 4 ms [fact: tx-protection.md] */
     swtimer_start(0x12,(ushort)bVar2);
     swtimer_start(0xc,bVar2 + 6);
+                    /* Audio back last: d + SDR filter delay 0x20B4A [fact: tx-protection.md] */
     swtimer_start(0xd,g_ui.rx_unmute_delay_ms + bVar2);
     swtimer_start(0xe,bVar2 + 5);
     swtimer_start(0xf,bVar2 + 4);
@@ -1447,6 +1499,7 @@ void trx_sequencer(void)
       if (!bVar3) {
         af_mute_set('\x01');
       }
+                    /* State 7: switching back to RX [fact: tx-protection.md] */
       g_ui.trx_state = 7;
     }
   }
@@ -1460,6 +1513,7 @@ void trx_sequencer(void)
     }
     if (bVar3) {
       bVar2 = PORT7_PODR;
+                    /* Timer 0x10: TX line P73 off [fact: tx-protection.md] */
       PORT7_PODR = bVar2 & 0xf7;
     }
     cVar1 = PORTB_PODR;
@@ -1471,6 +1525,7 @@ void trx_sequencer(void)
     }
     if (bVar3) {
       bVar2 = PORTB_PODR;
+                    /* Timer 0x0F: RX line PB7 on [fact: tx-protection.md] */
       PORTB_PODR = bVar2 | 0x80;
     }
     bVar2 = PORT2_PODR;
@@ -1482,6 +1537,7 @@ void trx_sequencer(void)
     }
     if (bVar3) {
       bVar2 = PORT2_PODR;
+                    /* Timer 0x0C: DATA_BUSY off [fact: tx-protection.md] */
       PORT2_PODR = bVar2 & 0xef;
     }
     bVar2 = swtimer_expired(0xe);
@@ -1509,6 +1565,7 @@ void trx_sequencer(void)
         swtimer_start(0x2a,0);
         af_mute_set('\0');
       }
+                    /* Back in RX (state 8) [fact: tx-protection.md] */
       g_ui.trx_state = 8;
     }
   }
@@ -1568,6 +1625,7 @@ byte ptt_source_select(void)
       bStack_3 = 6;
     }
     if (bStack_3 != 0) {
+                    /* Any PTT source restarts the screen-saver timer [fact: tx-protection.md] */
       screensaver_timer_restart();
     }
     DAT_00012050 = 0;
@@ -1580,10 +1638,12 @@ byte ptt_source_select(void)
         bVar2 = false;
       }
       if (bVar2) {
+                    /* DAKY/RTS/DTR, 8/9 in CW: the line keys CW [fact: tx-protection.md] */
         DAT_00012050 = 1;
       }
     }
     if ((bStack_3 != 0) && (bStack_3 != 6)) {
+                    /* Any source but VOX: hold VOX off for 200 ms [fact: tx-protection.md] */
       swtimer_start(0x2f,200);
     }
     bStack_5 = bStack_3;
@@ -1614,6 +1674,7 @@ void ptt_arbiter(void)
   uVar1 = g_ui.freq_tx;
   vfo_mode(1);
   bVar2 = tx_cw_keying_class();
+                    /* First active PTT source, CAT TX1 first [fact: 0xFFFB85A2] */
   bVar3 = ptt_source_select();
   if (DAT_0001204d != bVar3) {
     DAT_0001b4cd = DAT_0001204d;
@@ -1631,6 +1692,8 @@ void ptt_arbiter(void)
     bVar2 = PORTA_PODR;
     if ((bVar2 >> 1 & 1) != 1) {
       bVar2 = PORTA_PODR;
+                    /* TX refused: TXINH (PA1) = 1, end TX if it was on [fact: tx-protection.md]
+                       Port Output Data [sfr] */
       PORTA_PODR = bVar2 | 2;
     }
     if (g_ui.transmitting != 1) {
@@ -1651,6 +1714,7 @@ void ptt_arbiter(void)
   }
   if (bVar4) {
     bVar3 = PORTA_PODR;
+                    /* TX allowed: TXINH follows ETUN_TXINH_REQ (P14) [fact: tx-protection.md] */
     PORTA_PODR = bVar3 | 2;
   }
   else {
@@ -1674,6 +1738,7 @@ void ptt_arbiter(void)
       }
       DAT_0001b4cc = 0;
       DAT_0001b4ce = 1;
+                    /* PTT on 2 passes: start TX (state 0), TOT [fact: tx-protection.md] */
       g_ui.trx_state = 0;
       g_ui.transmitting = 1;
       tot_start();
@@ -1686,9 +1751,11 @@ void ptt_arbiter(void)
       if (tot_prewarn_ret != '\x01') {
         return;
       }
+                    /* TOT pre-warning: beep pattern 7 [fact: tx-protection.md] */
       beep_request(7);
       return;
     }
+                    /* TX time-out expired: inhibit TX until PTT release [fact: tx-protection.md] */
     g_ui.tot_tripped = 1;
     return;
   }
@@ -1706,6 +1773,7 @@ void ptt_arbiter(void)
         else {
           bStack_f = g_opstate.vox_delay[1];
         }
+                    /* VOX released: hang time from ROM 0xFFF8833C [fact: tx-protection.md] */
         swtimer_start(0x15,*(ushort *)(BYTE_ARRAY_fff88270 + (uint)bStack_f * 2 + 0xcc));
         DAT_0001b4cc = DAT_0001b4cc + 1;
       }
@@ -1744,6 +1812,7 @@ LAB_fffb8963:
   if (bVar4) {
     if (DAT_0001b4cc == 0) {
       uVar5 = FUN_fffba35c();
+                    /* CW-type modes: break-in delay timer 0x1A [fact: tx-protection.md] */
       swtimer_start(0x1a,uVar5);
       DAT_0001b4cc = DAT_0001b4cc + 1;
     }
@@ -1763,6 +1832,7 @@ LAB_fffb89c6:
   }
   DAT_0001b4cc = 0;
   DAT_0001b4ce = 0;
+                    /* PTT off after the hang: release (state 4) [fact: tx-protection.md] */
   g_ui.trx_state = 4;
   g_ui.transmitting = 0;
   return;
@@ -1800,6 +1870,7 @@ void tx_audio_select(void)
   if (cStack_2 != '\x01') {
     if (cStack_2 == '\0') {
       bVar2 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
       PORT8_PODR = bVar2 & 0xfd;
       bVar2 = PORT8_PODR;
       PORT8_PODR = bVar2 & 0xfb;
@@ -1831,6 +1902,7 @@ void speaker_route(void)
   byte bVar3;
   char *aess_level_ptr_ret;
   
+                    /* Pointer to the active mode's AESS level byte [doc] */
   aess_level_ptr_ret = (char *)aess_level_ptr();
   cVar1 = *aess_level_ptr_ret;
   if (g_ui.trx_state != 7) {
@@ -1893,6 +1965,7 @@ void speaker_route(void)
         bVar3 = PORT8_PODR;
         PORT8_PODR = bVar3 & 0xfe;
         bVar3 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
         PORTA_PODR = bVar3 & 0xbf;
         g_ui.spk_boost_level = 0xff;
         g_ui.spk_route_both = 0;
@@ -1958,10 +2031,13 @@ void speaker_route(void)
         return;
       }
       bVar3 = PORT7_PODR;
+                    /* Port Output Data [sfr] */
       PORT7_PODR = bVar3 & 0xfe;
       bVar3 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
       PORTB_PODR = bVar3 & 0xfb;
       bVar3 = PORT8_PODR;
+                    /* Port Output Data [sfr] */
       PORT8_PODR = bVar3 & 0xfe;
       g_ui.spk_boost_level = 0;
       g_ui.spk_route_both = 0;
@@ -2133,12 +2209,15 @@ void linear_band_data(void)
       switch(cVar2) {
       case '\0':
         bVar1 = PORT1_PODR;
+                    /* Port Output Data [sfr] */
         PORT1_PODR = bVar1 | 8;
         bVar1 = PORT1_PODR;
         PORT1_PODR = bVar1 & 0xfb;
         bVar1 = PORT5_PODR;
+                    /* Port Output Data [sfr] */
         PORT5_PODR = bVar1 | 1;
         bVar1 = PORT2_PODR;
+                    /* Port Output Data [sfr] */
         PORT2_PODR = bVar1 | 4;
         return;
       case '\x01':
@@ -2291,6 +2370,7 @@ void rtty_fsk_keying(void)
       DAT_0001b4d1 = 0;
       beep_stop();
       bVar3 = PORTC_PODR;
+                    /* Port Output Data [sfr] */
       PORTC_PODR = bVar3 | 0x10;
       return;
     }
@@ -2304,6 +2384,7 @@ void rtty_fsk_keying(void)
       bStack_3 = g_ui.preset_active.rptt_select;
     }
     if (bStack_3 == 3) {
+                    /* Port Input [sfr] */
       bVar1 = PORT2_PIDR;
       bStack_4 = bVar1 >> 1 & 1;
     }
@@ -2315,6 +2396,7 @@ void rtty_fsk_keying(void)
       if (bStack_3 != 1) {
         return;
       }
+                    /* Port Input [sfr] */
       bVar1 = PORTC_PIDR;
       bStack_4 = bVar1 >> 5 & 1;
     }

@@ -13,10 +13,12 @@ undefined4 fat32_entry_get(int param_1,undefined4 param_2,undefined4 param_3)
   undefined4 local_18;
   int local_14;
   
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar3 = __aeabi_uidivmod(param_2,*(uint *)(param_1 + 0x6c) >> 2);
   iVar1 = fat_table_sector_get(param_1,(int)uVar3,&local_14,param_3);
   if (iVar1 == 0) {
     local_18 = *(undefined4 *)(local_14 + (int)((ulonglong)uVar3 >> 0x20) * 4);
+                    /* 32-bit field read from an on-disk structure [doc] */
     uVar2 = fat_ld_dword(&local_18);
     return uVar2;
   }
@@ -50,11 +52,14 @@ void fat32_entry_set(int param_1,undefined4 param_2,undefined4 param_3,undefined
   uStack_20 = param_2;
   uStack_1c = param_3;
   uStack_18 = param_4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar3 = __aeabi_uidivmod(param_2,*(uint *)(param_1 + 0x6c) >> 2);
   iVar1 = fat_table_sector_get(param_1,(int)uVar3,&local_28,param_4);
   if (iVar1 == 0) {
+                    /* 32-bit field read from an on-disk structure [doc] */
     uVar2 = fat_ld_dword(&uStack_1c);
     *(undefined4 *)(local_28 + (int)((ulonglong)uVar3 >> 0x20) * 4) = uVar2;
+                    /* After a FAT change [doc] */
     fat_table_sector_dirty(param_1,(int)uVar3);
   }
   return;
@@ -96,6 +101,7 @@ uint fat_entry_rw(int param_1,uint param_2,uint param_3,int param_4,undefined4 p
   }
   else {
     iVar4 = *(int *)(param_1 + 0x6c);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     iVar1 = __aeabi_uidivmod(param_2 * 3,iVar4 << 1);
     iVar4 = (param_2 * 3 >> 1) - iVar4 * iVar1;
   }
@@ -104,9 +110,11 @@ uint fat_entry_rw(int param_1,uint param_2,uint param_3,int param_4,undefined4 p
     return 0xffffff7;
   }
   if (*(char *)(param_1 + 0x10) == '\x10') {
+                    /* 16-bit field read from an on-disk structure [doc] */
     uVar3 = fat_ld_word(local_2c[0] + iVar4);
     if (param_4 == 0x77) {
       fat_st_word(local_2c[0] + iVar4,param_3 & 0xffff);
+                    /* After a FAT change [doc] */
       iVar4 = fat_table_sector_dirty(param_1,iVar1,local_2c[0]);
       if (iVar4 != 0) {
         return 0xffffff7;
@@ -199,6 +207,7 @@ undefined4 fat_chain_free(int param_1,uint param_2,undefined4 param_3)
   
   uVar3 = param_2;
   while( true ) {
+                    /* reads or writes a FAT12 [doc] */
     uVar1 = fat_entry_rw(param_1,uVar3,0,0x72,param_3);
     if ((uVar1 == 0xffffff7) || (uVar3 < 2)) {
       return 0xffffffc3;
@@ -259,6 +268,7 @@ fat_entry_rw_locked(undefined4 param_1,undefined4 *param_2,undefined4 param_3,un
   
   iVar1 = fs_lock_b();
   if (iVar1 == 0) {
+                    /* reads or writes a FAT12 [doc] */
     uVar2 = fat_entry_rw(param_1,param_3,param_4,param_5,param_6);
     *param_2 = uVar2;
     fs_unlock_b(param_1);
@@ -315,6 +325,7 @@ LAB_20149870:
   if (bVar4 && !bVar3) {
     do {
       if (bVar4 && !bVar3) {
+                    /* Tests a cluster's bit in the bitmap +0x58 [doc] */
         iVar1 = clmap_test(param_1,uVar2);
         if (iVar1 == 0) goto LAB_20149908;
         if (*(int *)(param_1 + 0x2c) != 0) goto code_r0x201498a4;
@@ -342,6 +353,7 @@ LAB_201498c0:
 LAB_20149908:
         *param_2 = uVar2;
         *(uint *)(param_1 + 0x28) = uVar2 + 1;
+                    /* Sets a cluster's bit in the bitmap +0x58 [doc] */
         clmap_set(param_1,uVar2);
         return 0;
       }
@@ -386,6 +398,7 @@ int fat32_find_free(int param_1,uint *param_2,undefined4 param_3)
   iStack_30 = param_1;
   local_2c = param_2;
   local_28 = param_3;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
   iVar2 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar2 + iVar4 * (uint)*(ushort *)(param_1 + 8) +
@@ -405,6 +418,7 @@ LAB_201499a0:
         return iVar3;
       }
       if (local_38[0] != 0) {
+                    /* 32-bit field read from an on-disk structure [doc] */
         iVar7 = fat_ld_dword(local_38[0] + (int)((ulonglong)uVar8 >> 0x20) * 4);
       }
       if (iVar7 == 0) {
@@ -444,6 +458,7 @@ uint fat32_alloc_cluster(int param_1,int param_2,undefined4 param_3,uint param_4
     iVar1 = fat32_find_free(param_1,&local_18);
   }
   else {
+                    /* First clear bitmap bit from the hint +0x28 [doc] */
     iVar1 = clmap_find_free(param_1,&local_18);
     if (iVar1 == 0) goto LAB_20149af8;
     if (*(int *)(param_1 + 0x60) == *(int *)(param_1 + 100)) {
@@ -458,6 +473,7 @@ LAB_20149af8:
   iVar1 = fat32_entry_set(param_1,local_18,0xfffffff,param_3);
   if (iVar1 == 0) {
     if ((*(int *)(param_1 + 0x58) != 0) && (local_18 < *(uint *)(param_1 + 0x60))) {
+                    /* Sets a cluster's bit in the bitmap +0x58 [doc] */
       clmap_set(param_1);
     }
     if (*(uint *)(param_1 + 0x2c) == local_18) {
@@ -491,6 +507,7 @@ uint fat_alloc_cluster(int param_1,int param_2,undefined4 param_3)
   
   bVar1 = false;
   if (*(char *)(param_1 + 0x10) == ' ') {
+                    /* Finds a free cluster [doc] */
     uVar3 = fat32_alloc_cluster(param_1);
     return uVar3;
   }
@@ -500,6 +517,7 @@ uint fat_alloc_cluster(int param_1,int param_2,undefined4 param_3)
   else {
     uVar3 = (*(uint *)(param_1 + 0x6c) * *(int *)(param_1 + 0xc) * 2) / 3;
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
   iVar2 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar2 + *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) +
@@ -508,6 +526,7 @@ uint fat_alloc_cluster(int param_1,int param_2,undefined4 param_3)
     uVar3 = iVar2 + 2U & 0xffff;
   }
   if ((*(int *)(param_1 + 0x58) != 0) && (*(char *)(param_1 + 0x54) != '\0')) {
+                    /* First clear bitmap bit from the hint +0x28 [doc] */
     iVar2 = clmap_find_free(param_1,&local_24);
     if (iVar2 == 0) {
       iVar2 = fat_entry_rw(param_1,local_24,0xffff,0x77,param_3);
@@ -531,6 +550,7 @@ joined_r0x20149d18:
 LAB_20149c58:
   do {
     for (local_24 = *(uint *)(param_1 + 0x28); local_24 < uVar3; local_24 = local_24 + 1) {
+                    /* reads or writes a FAT12 [doc] */
       iVar2 = fat_entry_rw(param_1,local_24,0,0x72,param_3);
       if (iVar2 == 0) {
         *(uint *)(param_1 + 0x28) = local_24 + 1;
@@ -542,6 +562,7 @@ LAB_20149c58:
           *(undefined4 *)(param_1 + 0x2c) = 0;
         }
         if ((*(int *)(param_1 + 0x58) != 0) && (local_24 < *(uint *)(param_1 + 0x60))) {
+                    /* Sets a cluster's bit in the bitmap +0x58 [doc] */
           clmap_set(param_1);
         }
         if (param_2 == 0) {
@@ -587,9 +608,11 @@ uint fat_alloc_cluster_locked
   fs_set_error(0);
   iVar1 = fs_lock_b(param_1);
   if (iVar1 == 0) {
+                    /* allocates a cluster on FAT12/16 [doc] */
     uVar2 = fat_alloc_cluster(param_1,param_2,param_4);
     *param_3 = uVar2;
     fs_unlock_b(param_1);
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     fs_task_ctx_get_ret = fs_task_ctx_get();
     return fs_task_ctx_get_ret;
   }
@@ -610,6 +633,7 @@ undefined4 fat_next_cluster(undefined4 param_1,undefined4 param_2,uint *param_3,
   
   iVar1 = fs_lock_b();
   if (iVar1 == 0) {
+                    /* reads or writes a FAT12 [doc] */
     uVar3 = fat_entry_rw(param_1,param_2,0,0x72,param_4);
     *param_3 = uVar3;
     if (0xffffff6 < uVar3) {
@@ -642,6 +666,7 @@ int fat_next_sector_alloc(int param_1,int param_2,int *param_3,int param_4)
   uVar1 = *(ushort *)(param_1 + 4);
   local_20 = param_4;
   if (1 < uVar1) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
     __aeabi_uidivmod((param_2 -
                      (iVar2 + *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) +
@@ -652,6 +677,7 @@ int fat_next_sector_alloc(int param_1,int param_2,int *param_3,int param_4)
     }
   }
   uVar3 = fat_sect2clust(param_1,param_2);
+                    /* fat_alloc_cluster under fs_lock_b [doc] */
   iVar2 = fat_alloc_cluster_locked(param_1,uVar3,&local_20,param_4);
   if (iVar2 != 0) {
     return iVar2;
@@ -684,6 +710,7 @@ int fat_next_sector(int param_1,int param_2,int *param_3,int param_4)
   uVar1 = *(ushort *)(param_1 + 4);
   local_20 = param_4;
   if (1 < uVar1) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(undefined4 *)(param_1 + 0x6c));
     __aeabi_uidivmod((param_2 -
                      (iVar2 + *(int *)(param_1 + 0xc) * (uint)*(ushort *)(param_1 + 8) +
@@ -750,6 +777,7 @@ undefined4 fat32_fsinfo_write_locked(undefined4 param_1,undefined4 param_2)
   
   iVar1 = fs_lock_b();
   if (iVar1 == 0) {
+                    /* reads the FSInfo sector [doc] */
     uVar2 = fat32_fsinfo_write(param_1,param_2);
     fs_unlock_b(param_1);
   }
@@ -785,6 +813,7 @@ void fs_clmap_attach(undefined4 param_1,int param_2,uint param_3,undefined4 para
     goto LAB_2014a14c;
   }
   uVar3 = fs_toupper(param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
   iVar4 = fs_find_drive(uVar3,&local_28);
   iVar2 = local_28;
   if (iVar4 != 0) goto LAB_2014a14c;
@@ -806,6 +835,7 @@ LAB_2014a1cc:
     *(uint *)(local_28 + 100) = (*(uint *)(local_28 + 0x6c) >> 1) * *(int *)(local_28 + 0xc);
   }
   uVar6 = *(undefined4 *)(local_28 + 0x6c);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar4 = __aeabi_uidivmod((uint)*(ushort *)(local_28 + 10) << 5);
   iVar4 = __aeabi_uidivmod(*(int *)(iVar2 + 0x14) -
                            (iVar4 + *(int *)(iVar2 + 0xc) * (uint)*(ushort *)(iVar2 + 8) +
@@ -822,6 +852,7 @@ LAB_2014a1cc:
   }
   *(int *)(iVar2 + 0x58) = param_2;
   *(uint *)(iVar2 + 0x5c) = param_3;
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(param_2,0,param_3,uVar6);
   if (param_5 == 0) {
     iVar4 = 0;
@@ -834,9 +865,11 @@ LAB_2014a1cc:
           iVar4 = -0x13;
           goto LAB_2014a14c;
         }
+                    /* fat_entry_rw under fs_lock_b, result to out [doc] */
         iVar4 = fat_entry_rw_locked(local_28,local_24,uVar5,0,0x72,param_4);
         if (iVar4 != 0) goto LAB_2014a14c;
         if (local_24[0] != 0) {
+                    /* Sets a cluster's bit in the bitmap +0x58 [doc] */
           clmap_set(local_28,uVar5);
         }
         uVar5 = uVar5 + 1;
@@ -861,9 +894,12 @@ undefined4 fs_clmap_attach_scan(undefined4 param_1,undefined4 param_2,undefined4
   int iVar1;
   undefined4 uVar2;
   
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
+                    /* gives a drive a cluster-use bitmap [doc] */
     uVar2 = fs_clmap_attach(param_1,param_2,param_3,iVar1,1);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -898,6 +934,7 @@ void fs_clmap_size(undefined4 param_1,uint *param_2)
   }
   else {
     uVar3 = fs_toupper(param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
     iVar4 = fs_find_drive(uVar3,&local_18);
     iVar2 = local_18;
     if (iVar4 == 0) {
@@ -915,6 +952,7 @@ void fs_clmap_size(undefined4 param_1,uint *param_2)
         }
         uVar5 = (*(uint *)(local_18 + 0x6c) >> 2) * *(int *)(local_18 + 0xc);
       }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       iVar4 = __aeabi_uidivmod((uint)*(ushort *)(local_18 + 10) << 5,
                                *(undefined4 *)(local_18 + 0x6c));
       iVar4 = __aeabi_uidivmod(*(int *)(iVar2 + 0x14) -
@@ -967,6 +1005,7 @@ void fs_init(undefined4 param_1,short param_2,undefined4 param_3,short param_4)
 {
   int iVar1;
   
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(param_1,0,param_2 * 0x450);
   fs_memset(param_3,0,param_4 * 0x24c);
   DAT_20808ba0 = 0;
@@ -974,12 +1013,14 @@ void fs_init(undefined4 param_1,short param_2,undefined4 param_3,short param_4)
   DAT_20808b94 = param_2;
   DAT_20808b98 = param_3;
   DAT_20808b9c = param_4;
+                    /* Creates the "fsys_mpf" fixed pool 0x20808BC4 [doc] */
   fs_mpf_create();
   iVar1 = fs_work_pool_create();
   if (iVar1 < 0) {
     fs_set_error(0xffffffe2,0);
     return;
   }
+                    /* Creates the five semaphores of table 0x2091D4C0 [doc] */
   iVar1 = fs_sem_a_create();
   if (iVar1 != 0) {
     fs_set_error(0xffffffdc,0);
@@ -990,11 +1031,13 @@ void fs_init(undefined4 param_1,short param_2,undefined4 param_3,short param_4)
     fs_set_error(0xffffffdf,0);
     return;
   }
+                    /* Creates semaphore 0x20808BB4 [doc] */
   iVar1 = fs_sem1_create();
   if (iVar1 != 0) {
     fs_set_error(0xffffffd9,0);
     return;
   }
+                    /* Creates semaphore 0x20808BB8 [doc] */
   iVar1 = fs_sem2_create();
   if (iVar1 != 0) {
     fs_set_error(0xffffffd6,0);
@@ -1026,6 +1069,7 @@ void fs_drive_attach(undefined4 *param_1,undefined4 param_2,undefined4 param_3,u
     fs_set_error(0xffffffee,0);
     return;
   }
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(param_1,0,0x74,param_6);
   uVar3 = fs_toupper(param_2);
   *(undefined1 *)((int)param_1 + 0x11) = uVar3;
@@ -1075,6 +1119,7 @@ LAB_2014a734:
   if (param_1[0x1b] * (uint)*(ushort *)(param_1 + 1) < 0x20001) {
     if (*(char *)(param_1 + 4) != ' ') goto LAB_2014a774;
     if (param_1[0xf] == -1) {
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
       iVar5 = fs_work_alloc();
       if (iVar5 == 0) {
         iVar4 = fs_drive_sem_delete(param_1);
@@ -1084,7 +1129,9 @@ LAB_2014a734:
         }
         goto LAB_2014a800;
       }
+                    /* Free space of a drive by FAT type [doc] */
       iVar4 = fs_count_free((int)*(char *)((int)param_1 + 0x11),auStack_24,auStack_24,iVar5);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
       fs_work_free(iVar5);
     }
     if (param_1[0x10] == -1) {
@@ -1134,6 +1181,7 @@ void fs_exit(void)
   iVar3 = DAT_20808ba0;
   iVar2 = fs_check_ready();
   if (iVar2 != -0x12) {
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
     fs_memset(DAT_20808b90,0,DAT_20808b94 * 0x450);
     fs_memset(DAT_20808b98,0,DAT_20808b9c * 0x24c);
     DAT_20808b90 = 0;
@@ -1150,7 +1198,9 @@ void fs_exit(void)
       piVar1 = (int *)*piVar1;
     }
     DAT_20808ba0 = 0;
+                    /* itron_del_mpf of pool 0x20808BC4 [doc] */
     fs_mpf_delete();
+                    /* itron_del_mpf of pool 0x20808BC8 [doc] */
     iVar3 = fs_work_pool_delete();
     if (iVar3 != 0) {
       fs_set_error(0xffffffd0,0);
@@ -1223,6 +1273,7 @@ void fs_drive_mount(int param_1)
   iVar1 = (int)uVar3;
   if (iVar1 == 0) {
     *(undefined4 *)(param_1 + 0x28) = 2;
+                    /* Zeroes the BPB fields of a drive [doc] */
     fs_vol_clear_geometry(param_1,(int)((ulonglong)uVar3 >> 0x20));
     iVar1 = (**(code **)(param_1 + 0x18))(param_1,7,0,0,1);
     if (iVar1 != 0) {
@@ -1238,12 +1289,15 @@ void fs_drive_mount(int param_1)
       }
       if (*(char *)(param_1 + 0x10) == ' ') {
         if (*(int *)(param_1 + 0x3c) == -1) {
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
           iVar2 = fs_work_alloc();
           if (iVar2 == 0) {
             iVar1 = -0x1f;
             goto LAB_2014aa68;
           }
+                    /* Free space of a drive by FAT type [doc] */
           iVar1 = fs_count_free((int)*(char *)(param_1 + 0x11),auStack_1c,auStack_1c,iVar2);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
           fs_work_free(iVar2);
         }
         if (*(int *)(param_1 + 0x40) == -1) {
@@ -1357,6 +1411,7 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
   
   local_4c = DAT_20808ba0;
   uVar1 = fs_toupper((int)*param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
   iVar2 = fs_find_drive(uVar1,&local_4c);
   if ((iVar2 != 0) || (iVar2 = fs_drive_check_mounted(local_4c), iVar2 != 0)) {
     return iVar2;
@@ -1364,10 +1419,12 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
   param_1 = param_1 + 2;
   uVar3 = *(undefined4 *)(local_4c + 0x34);
   if (*(char *)(local_4c + 0x10) != ' ') {
+                    /* copies the "\\name" component at p [doc] */
     param_1 = (char *)path_next_component(param_1,param_3);
     if ((param_1 == (char *)0x0) || (*param_3 == '\0')) {
       return -1;
     }
+                    /* root_dir_find under fs_lock_a [doc] */
     iVar2 = root_dir_find_locked(local_4c,param_3,auStack_48,0,0,auStack_28,param_3);
     if (iVar2 != 0) {
       if (*param_1 == '\0') {
@@ -1375,6 +1432,7 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
       }
       return -4;
     }
+                    /* First cluster of an entry [doc] */
     uVar3 = dirent_get_cluster(auStack_48,(int)*(char *)(local_4c + 0x10));
   }
   if (*param_1 != '\0') {
@@ -1386,6 +1444,7 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
       if (*param_3 == '\0') {
         return -1;
       }
+                    /* subdir_find under fs_lock_a [doc] */
       iVar2 = subdir_find_locked(local_4c,uVar3,param_3,auStack_48,0,0,auStack_28,auStack_24,param_3
                                 );
       if (iVar2 != 0) {
@@ -1402,9 +1461,11 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
     *param_2 = -0x1b;
   }
   param_2[0xb] = local_3d;
+                    /* FAT date/time words to struct tm [doc] */
   fat_time_to_tm(param_2 + 0xc,local_32,local_30);
   uVar3 = dirent_get_cluster(auStack_48,(int)*(char *)(local_4c + 0x10));
   *(undefined4 *)(param_2 + 0x30) = uVar3;
+                    /* 32-bit field read from an on-disk structure [doc] */
   uVar3 = fat_ld_dword(auStack_2c);
   *(undefined4 *)(param_2 + 0x34) = uVar3;
   return 0;
@@ -1435,9 +1496,11 @@ void fs_stat_work(int param_1,int param_2,int param_3)
     }
     iVar1 = fs_path_validate(param_1);
     if (iVar1 == 0) {
+                    /* Byte-wise string length [doc] */
       iVar1 = fs_strlen(param_1);
       iVar2 = param_3 + 0x100c;
       fs_strncpy(iVar2,param_1,iVar1 + 1);
+                    /* Rewrites NEC/IBM extension codes in a path [doc, inference] */
       sjis_map_ext_chars(iVar2);
       uVar3 = fs_path_lookup(iVar2,param_2,param_3);
       fs_set_error(uVar3,0);
@@ -1460,9 +1523,12 @@ undefined4 fs_stat(undefined4 param_1,undefined4 param_2)
   int iVar1;
   undefined4 uVar2;
   
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
+                    /* fs_stat with a caller work buffer [doc] */
     uVar2 = fs_stat_work(param_1,param_2,iVar1);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -1482,6 +1548,7 @@ int fs_get_attr(undefined4 param_1)
   undefined1 auStack_40 [11];
   char local_35;
   
+                    /* directory entry of a path, 0 when it exists [doc] */
   iVar1 = fs_stat(param_1,auStack_40);
   if (iVar1 == 0) {
     fs_set_error(0);
@@ -1517,6 +1584,7 @@ void fs_fsize(undefined4 param_1,int param_2)
   iVar1 = fs_check_ready();
   if ((iVar1 == 0) && (iVar1 = fs_file_check(param_1), iVar1 == 0)) {
     if (param_2 != 0) {
+                    /* Copies the 4-byte size at file +0x2C [doc] */
       uVar2 = fs_file_size_copy(param_1,param_2);
       fs_set_error(uVar2,param_1);
       return;
@@ -1540,6 +1608,7 @@ void fs_split_sectors(uint param_1,undefined4 *param_2,int *param_3,uint param_4
   uint uVar1;
   undefined8 uVar2;
   
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar1 = __aeabi_uidivmod(0x800000,param_4 >> 9);
   if (param_1 < uVar1) {
     *param_2 = 0;
@@ -1594,6 +1663,7 @@ undefined4 fs_disk_total_calc(undefined4 param_1,undefined4 param_2,undefined4 p
     uVar6 = ((uint)piVar5[0x1b] >> 2) * piVar5[3];
   }
   iVar4 = piVar5[0x1b];
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar3 = __aeabi_uidivmod((uint)*(ushort *)((int)piVar5 + 10) << 5);
   uVar1 = *(ushort *)(piVar5 + 1);
   iVar3 = __aeabi_uidivmod(piVar5[5] -
@@ -1627,9 +1697,11 @@ void fs_disk_size(undefined4 param_1,int param_2,int param_3)
     }
     else {
       uVar1 = fs_toupper(param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
       iVar2 = fs_find_drive(uVar1,&local_18);
       if ((iVar2 != 0) || (iVar2 = fs_drive_check_mounted(local_18), iVar2 != 0)) goto LAB_2014b1b0;
       uVar3 = fs_toupper(param_1);
+                    /* Total data size of a drive [doc] */
       uVar3 = fs_disk_total_calc(uVar3,param_2,param_3);
     }
     fs_set_error(uVar3,0);
@@ -1687,6 +1759,7 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
   }
   iVar4 = *(int *)(param_1 + 0xc);
   uVar7 = (*(uint *)(param_1 + 0x6c) >> 2) * iVar4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
   iVar2 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar2 + iVar4 * (uint)*(ushort *)(param_1 + 8) +
@@ -1709,6 +1782,7 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
       if (local_44 == 0) {
         return -0xd;
       }
+                    /* 32-bit field read from an on-disk structure [doc] */
       iVar2 = fat_ld_dword(local_44 + local_3c);
       if (iVar2 == 0) {
         bVar9 = uVar3 == 0;
@@ -1796,6 +1870,7 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
   local_30 = param_2;
   local_2c = param_3;
   local_28 = param_4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar1 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5);
   iVar3 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
                            (iVar1 + iVar3 * (uint)*(ushort *)(param_1 + 8) +
@@ -1817,6 +1892,7 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
       if (local_38 == 0) {
         return -0xd;
       }
+                    /* 16-bit field read from an on-disk structure [doc] */
       iVar3 = fat_ld_word(local_38 + (int)((ulonglong)uVar6 >> 0x20) * 2);
       i = i + 1;
       if (iVar3 == 0) {
@@ -1886,6 +1962,7 @@ int fat12_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
   local_30 = param_2;
   local_2c = param_3;
   local_28 = param_4;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   iVar2 = __aeabi_uidivmod((uint)*(ushort *)(param_1 + 10) << 5,*(int *)(param_1 + 0x6c),(int)lVar1)
   ;
   iVar5 = __aeabi_uidivmod(*(int *)(param_1 + 0x14) -
@@ -1919,6 +1996,7 @@ int fat12_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
         }
       }
       local_3b = *(undefined1 *)(local_40 + iVar7 + 1);
+                    /* 16-bit field read from an on-disk structure [doc] */
       uVar4 = fat_ld_word(&local_3c);
       if ((uVar6 & 1) != 0) {
         uVar4 = uVar4 >> 4;
@@ -1977,18 +2055,22 @@ void fs_count_free(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
   
   local_14 = DAT_20808ba0;
   uVar2 = fs_toupper();
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
   iVar3 = fs_find_drive(uVar2,&local_14);
   if (iVar3 == 0) {
     cVar1 = *(char *)(local_14 + 0x10);
     if (cVar1 == '\f') {
+                    /* fat12_count_free under fs_lock_b [doc] */
       fat12_count_free_locked(local_14,param_2,param_3,param_4);
       return;
     }
     if (cVar1 == '\x10') {
+                    /* fat16_count_free under fs_lock_b [doc] */
       fat16_count_free_locked(local_14,param_2,param_3,param_4);
       return;
     }
     if (cVar1 == ' ') {
+                    /* fat32_count_free under fs_lock_b [doc] */
       fat32_count_free_locked(local_14,param_2,param_3,param_4,1);
     }
   }
@@ -2016,9 +2098,11 @@ void fs_disk_free_work(undefined4 param_1,int param_2,int param_3,undefined4 par
     }
     else {
       uVar1 = fs_toupper(param_1);
+                    /* walks the drive list 0x20808BA0 for +0x11 == letter [doc] */
       iVar2 = fs_find_drive(uVar1,&local_18);
       if ((iVar2 != 0) || (iVar2 = fs_drive_check_mounted(local_18), iVar2 != 0)) goto LAB_2014b850;
       uVar3 = fs_toupper(param_1);
+                    /* Free space of a drive by FAT type [doc] */
       uVar3 = fs_count_free(uVar3,param_2,param_3,param_4);
     }
     fs_set_error(uVar3,0);
@@ -2040,9 +2124,12 @@ undefined4 fs_disk_free(undefined4 param_1,undefined4 param_2,undefined4 param_3
   int iVar1;
   undefined4 uVar2;
   
+                    /* itron_tget_mpf from pool 0x20808BC8, 0 on failure [doc] */
   iVar1 = fs_work_alloc();
   if (iVar1 != 0) {
+                    /* Checked wrapper of fs_count_free with a work buffer [doc] */
     uVar2 = fs_disk_free_work(param_1,param_2,param_3,iVar1);
+                    /* itron_rel_mpf to pool 0x20808BC8 [doc] */
     fs_work_free(iVar1);
     return uVar2;
   }
@@ -2059,10 +2146,12 @@ undefined4 fs_disk_free(undefined4 param_1,undefined4 param_2,undefined4 param_3
 void dirent_init(int param_1,undefined4 param_2,undefined1 param_3,undefined4 param_4,int param_5)
 
 {
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(param_1,0,0x20,*(undefined4 *)(param_5 + 0x6c));
   fs_memcpy(param_1,param_2,0xb);
   *(undefined1 *)(param_1 + 0xb) = param_3;
   dirent_set_time(param_1,0,7);
+                    /* Stores the first cluster in an entry [doc] */
   dirent_set_cluster(param_1,param_4,(int)*(char *)(param_5 + 0x10));
   *(undefined4 *)(param_1 + 0x1c) = 0;
   return;

@@ -171,6 +171,7 @@ undefined1 msg_cw_send_start(byte param_1)
       bVar1 = false;
     }
     if ((bVar1) && (param_1 == PTR_g_ui_00025d78->msg_slot)) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       uStack_3 = 0;
     }
@@ -742,6 +743,7 @@ undefined1 FUN_fffe55ab(undefined1 param_1)
   }
   if (bVar1) {
     if (PTR_g_ui_00025d78->keyer_state != 1) {
+                    /* Clears +0x1CC, +0x1CD, +0x417, +0x1D1 [doc] */
       msg_cw_stop();
       return 0;
     }
@@ -865,6 +867,7 @@ void FUN_fffe56e4(byte param_1)
     *(undefined2 *)(PTR_g_ui_00025d78->popup_text + 8) = *(undefined2 *)(local_80 + 2);
     *(undefined4 *)(p_ui_state->popup_text + 4) = local_80[1];
     *(undefined4 *)p_ui_state->popup_text = *local_80;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x5e);
     popup_open_timed();
     PTR_g_ui_00025d78->key_consumed = 1;
@@ -1267,6 +1270,7 @@ byte FUN_fffe5c26(char param_1,byte param_2)
       return 0;
     }
     memch_valid_ret = memch_valid(local_1 + local_4,&pbStack_c);
+                    /* Memory channel n [doc] */
     if (((memch_valid_ret) && (iVar1 = memch_skip_get(local_1 + local_4), iVar1 == 0)) &&
        (local_5 = local_5 + 1, 1 < local_5)) break;
     local_4 = local_4 + 1;

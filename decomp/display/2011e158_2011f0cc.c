@@ -230,6 +230,7 @@ void rspi0_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_0 [sfr] */
       RSPI_SPDR_0._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -238,6 +239,7 @@ void rspi0_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_0,0,0x3f);
     } while (uVar3 < param_1);
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
   }
   else {
@@ -295,6 +297,7 @@ void rspi1_read_burst(uint param_1,int param_2)
       uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_1 [sfr] */
       RSPI_SPDR_1._0_1_ = 0xff;
       uVar1 = uVar1 - 1;
     }
@@ -362,6 +365,7 @@ void rspi2_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_2 [sfr] */
       RSPI_SPDR_2._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -370,6 +374,7 @@ void rspi2_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_2,0,0x3f);
     } while (uVar3 < param_1);
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
   }
   else {
@@ -427,6 +432,7 @@ void rspi3_read_burst(uint param_1,int param_2)
       uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_3 [sfr] */
       RSPI_SPDR_3._0_1_ = 0xff;
       uVar1 = uVar1 - 1;
     }
@@ -494,6 +500,7 @@ void rspi4_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_4 [sfr] */
       RSPI_SPDR_4._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }

@@ -459,7 +459,9 @@ int periodic_wakeup_start(void)
   byte bVar1;
   uint itron_acre_isr_ret;
   
+                    /* OSTM1 compare [sfr] */
   OSTM_OSTM1CMP = 31999;
+                    /* OSTM1 control [sfr] */
   bVar1 = OSTM_OSTM1CTL;
   OSTM_OSTM1CTL = bVar1 & 0xfd;
   OSTM_OSTM1CTL = 1;
@@ -468,6 +470,7 @@ int periodic_wakeup_start(void)
     return itron_acre_isr_ret;
   }
   gic_enable_irq(0x87);
+                    /* OSTM1 count start trigger [sfr] */
   bVar1 = OSTM_OSTM1TS;
   OSTM_OSTM1TS = bVar1 | 1;
   return 0;
@@ -489,6 +492,7 @@ void cli_exec_line(byte *param_1,undefined4 param_2,undefined4 param_3,byte *par
   
   cVar6 = false;
   local_18 = param_4;
+                    /* Word-at-a-time string length [doc] */
   uVar3 = strlen();
   bVar5 = uVar3 == 2;
   if (1 < uVar3) {
@@ -580,9 +584,11 @@ uint cli_run_file(uint param_1)
   undefined1 auStack_90 [64];
   undefined1 auStack_50 [64];
   
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen();
   if (3 < uVar2) {
     memcpy(auStack_90,param_1,0x40);
+                    /* Case-insensitive compare with tolower [doc] */
     iVar3 = strcasecmp(auStack_94 + uVar2,".txt");
     if (iVar3 == 0) {
       __aeabi_memcpy4(auStack_50,&DAT_20165984,0x40);
@@ -1017,6 +1023,7 @@ void bootinfo_load(void)
   int spibsc_dropr_1;
   undefined4 spibsc_dropr_1_2;
   
+                    /* Data read option setting_1 [sfr] */
   spibsc_dropr_1 = SPIBSC_DROPR_1;
   if (spibsc_dropr_1 == 0) {
     g_bootinfo.bank = 0;
@@ -1041,20 +1048,35 @@ void bootinfo_load(void)
 void cpg_early_init(void)
 
 {
+                    /* Power Control [sfr] */
   L2C_REG15_POWER_CTRL = 1;
+                    /* Frequency control [sfr] */
   CPG_FRQCR = 0x35;
+                    /* Frequency control 2 [sfr] */
   CPG_FRQCR2 = 1;
+                    /* System control 3 [sfr] */
   CPG_SYSCR3 = 0xf;
+                    /* Standby control 2 [sfr] */
   CPG_STBCR2 = 0x6a;
+                    /* Standby control 3 [sfr] */
   CPG_STBCR3 = 0;
+                    /* Standby control 4 [sfr] */
   CPG_STBCR4 = 0;
+                    /* Standby control 5 [sfr] */
   CPG_STBCR5 = 0;
+                    /* Standby control 6 [sfr] */
   CPG_STBCR6 = 0;
+                    /* Standby control 7 [sfr] */
   CPG_STBCR7 = 0x24;
+                    /* Standby control 8 [sfr] */
   CPG_STBCR8 = 5;
+                    /* Standby control 9 [sfr] */
   CPG_STBCR9 = 0;
+                    /* Standby control 10 [sfr] */
   CPG_STBCR10 = 0;
+                    /* Standby control 11 [sfr] */
   CPG_STBCR11 = 0xc0;
+                    /* Standby control 12 [sfr] */
   CPG_STBCR12 = 0xf0;
   gpio_early_init();
   gpio_rx_reset(0);
@@ -1239,6 +1261,7 @@ void power_on_full_init(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -1247,6 +1270,7 @@ void power_on_full_init(void)
     DAT_208dc1d0 = keycode_init();
     DAT_208dc1dc = kbdtest_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -1317,6 +1341,7 @@ void task_root(void)
   bootinfo_load();
   fb_clear_all();
   rtc_init();
+                    /* FAT volume + SDHI driver registration [doc, inference] */
   sd_fs_init();
   DAT_208dc1bc = fwdbg_init();
   loader_selfinstall();
@@ -1326,11 +1351,13 @@ void task_root(void)
   DAT_208003a3 = uVar1 != 0;
   powon_init();
   key_init();
+                    /* Standby or full start (P2_0, key scan) [fact: README.md] */
   DAT_208003a0 = boot_mode_full();
   cpg_set_clock_profile((uint)DAT_208003a0);
   gpio_rx_reset(1);
   if (DAT_208003a0 == 0) {
     gpio_p8_14(0);
+                    /* Standby: only the MAIN link, wake-up and GUI [fact: README.md] */
     mainlink_init();
     uVar1 = knl_current_task_id();
     periodic_wakeup_register(uVar1,0);
@@ -1340,6 +1367,7 @@ void task_root(void)
     }
   }
   else {
+                    /* Full start: every driver and task [fact: README.md] */
     DAT_208003a5 = 1;
     gpio_p8_14(1);
     full_mode_set(1);
@@ -1350,6 +1378,7 @@ void task_root(void)
     mouse_cursor_init();
     usbh_ports_init();
     usbh_hid_class_init();
+                    /* Registers the USBI0/USBI1 handlers [doc] */
     usbh_hw_init();
     adc_start_scan();
     DAT_208dc1c0 = uptest_init();
@@ -1359,6 +1388,7 @@ void task_root(void)
     DAT_208dc1dc = kbdtest_init();
     mainlink_init();
     renc_init();
+                    /* ISRs for GIC 535 [doc] */
     link_ss_irq_init();
     DAT_208dc1d8 = sdr_debug_init();
     spi_slave_init();
@@ -1373,6 +1403,7 @@ void task_root(void)
     touch_cal_init();
     audio_codec_init();
   }
+                    /* Ends in gui_main_loop (33 ms slot 0) [fact: mainlink.md] */
   gui_start();
   return;
 }
@@ -1453,10 +1484,12 @@ void main(void)
 {
   uint uVar1;
   
+                    /* MMU and caches, pin multiplexing, heap [fact: README.md] */
   mmu_cache_enable();
   pinmux_init();
   gpio_p7_9_11(1);
   kernel_heap_init();
+                    /* Create task_root (priority 8), then the OSTM0 tick [fact: README.md] */
   uVar1 = itron_acre_tsk(0,(byte *)&ctsk_root);
   if ((int)uVar1 < 1) {
     return;
@@ -1536,44 +1569,73 @@ uint gic_init(void)
 {
   int iVar1;
   
+                    /* CPU interface control [sfr] */
   INTC_ICCICR = 0;
   iVar1 = 0;
   do {
     (&INTC_ICDISR0)[iVar1] = 0;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x13);
+                    /* Interrupt configuration 0 [sfr] */
   INTC_ICDICFR0 = 0xaaaaaaaa;
+                    /* Interrupt configuration 1 [sfr] */
   INTC_ICDICFR1 = 0x55;
+                    /* Interrupt configuration 2 [sfr] */
   INTC_ICDICFR2 = 0xfffd5555;
+                    /* Interrupt configuration 3 [sfr] */
   INTC_ICDICFR3 = 0x555fffff;
+                    /* Interrupt configuration 4 [sfr] */
   INTC_ICDICFR4 = 0x55555555;
+                    /* Interrupt configuration 5 [sfr] */
   INTC_ICDICFR5 = 0x55555555;
+                    /* Interrupt configuration 6 [sfr] */
   INTC_ICDICFR6 = 0x55555555;
+                    /* Interrupt configuration 7 [sfr] */
   INTC_ICDICFR7 = 0x55555555;
+                    /* Interrupt configuration 8 [sfr] */
   INTC_ICDICFR8 = 0x5555f555;
+                    /* Interrupt configuration 9 [sfr] */
   INTC_ICDICFR9 = 0x55555555;
+                    /* Interrupt configuration 10 [sfr] */
   INTC_ICDICFR10 = 0x55555555;
+                    /* Interrupt configuration 11 [sfr] */
   INTC_ICDICFR11 = 0xf5555555;
+                    /* Interrupt configuration 12 [sfr] */
   INTC_ICDICFR12 = 0xf555f555;
+                    /* Interrupt configuration 13 [sfr] */
   INTC_ICDICFR13 = 0x5555f555;
+                    /* Interrupt configuration 14 [sfr] */
   INTC_ICDICFR14 = 0x55555555;
+                    /* Interrupt configuration 15 [sfr] */
   INTC_ICDICFR15 = 0x55555555;
+                    /* Interrupt configuration 16 [sfr] */
   INTC_ICDICFR16 = 0x55555555;
+                    /* Interrupt configuration 17 [sfr] */
   INTC_ICDICFR17 = 0xfd555555;
+                    /* Interrupt configuration 18 [sfr] */
   INTC_ICDICFR18 = 0x55555557;
+                    /* Interrupt configuration 19 [sfr] */
   INTC_ICDICFR19 = 0x55555555;
+                    /* Interrupt configuration 20 [sfr] */
   INTC_ICDICFR20 = 0x55555555;
+                    /* Interrupt configuration 21 [sfr] */
   INTC_ICDICFR21 = 0x5f555555;
+                    /* Interrupt configuration 22 [sfr] */
   INTC_ICDICFR22 = 0xfd55555f;
+                    /* Interrupt configuration 23 [sfr] */
   INTC_ICDICFR23 = 0x55555557;
   iVar1 = 0x18;
   do {
     (&INTC_ICDICFR0)[iVar1] = 0xffffffff;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x25);
+                    /* Interrupt priority 0 [sfr] */
   INTC_ICDIPR0 = 0x60687078;
+                    /* Interrupt priority 1 [sfr] */
   INTC_ICDIPR1 = 0x40485058;
+                    /* Interrupt priority 2 [sfr] */
   INTC_ICDIPR2 = 0x20283038;
+                    /* Interrupt priority 3 [sfr] */
   INTC_ICDIPR3 = 0x81018;
   iVar1 = 0x20;
   do {
@@ -1602,8 +1664,10 @@ uint gic_init(void)
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x20);
   DAT_20800404 = 0;
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = 0xf8;
   INTC_ICCICR = 3;
+                    /* Distributor control [sfr] */
   INTC_ICDDCR = 1;
   DAT_20800408 = 0;
   return 0;
@@ -1657,7 +1721,9 @@ void gic_install_isr_stub(uint param_1,int param_2)
 
 {
   FUN_20100f84(param_1,0x58);
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(param_1,0x58);
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
   gic_set_priority(*(uint *)(param_2 + 8),*(int *)(param_2 + 0x10));
   (&DAT_208dc1e0)[*(int *)(param_2 + 8)] = param_1;
   return;
@@ -1688,6 +1754,7 @@ uint gic_def_inh(uint param_1,int param_2)
   if (param_2 == 0) {
     uVar1 = knl_int_disable();
     (&DAT_208dc1e0)[param_1] = gic_default_handler;
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
     gic_set_priority(param_1,0x1f);
   }
   else {
@@ -1721,9 +1788,11 @@ undefined4 gic_dispatch(void)
     if (uVar2 < 0x24b) {
       uVar1 = (&DAT_208dc1e0)[uVar2];
       (&DAT_208dcb8c)[uVar3] = uVar2;
+                    /* Interrupt priority mask [sfr] */
       uVar2 = INTC_ICCPMR;
       (&DAT_208dcb0c)[uVar3] = uVar2 & 0xff;
       DAT_20800404 = DAT_20800404 + 1;
+                    /* Running priority [sfr] */
       uVar3 = INTC_ICCRPR;
       INTC_ICCPMR = uVar3 & 0xff;
       return uVar1;
@@ -1741,7 +1810,9 @@ void gic_irq_exit(void)
 
 {
   DAT_20800404 = DAT_20800404 - 1;
+                    /* End-of-interrupt [sfr] */
   INTC_ICCEOIR = (&DAT_208dcb8c)[DAT_20800404];
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = (&DAT_208dcb0c)[DAT_20800404];
   return;
 }

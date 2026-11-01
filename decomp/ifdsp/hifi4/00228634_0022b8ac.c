@@ -418,6 +418,7 @@ void __malloc_unlock(void)
 void FUN_00228e1c(undefined4 param_1)
 
 {
+                    /* XOS clib support [doc, inference] */
   __malloc_lock(param_1);
   return;
 }
@@ -428,6 +429,7 @@ void FUN_00228e1c(undefined4 param_1)
 void FUN_00228e28(undefined4 param_1)
 
 {
+                    /* XOS clib support [doc, inference] */
   __malloc_unlock(param_1);
   return;
 }
@@ -1166,6 +1168,7 @@ void sqrtf(void)
           uStack_48 = 0;
         }
         else {
+                    /* XCC soft double [doc, inference] */
           uStack_48 = __divdf3(0,0,0,0);
         }
         if (iVar1 == 2) {
@@ -1315,6 +1318,7 @@ void __ieee754_powf(void)
   uVar25 = ae_mov(uVar22);
   uVar22 = ae_s64_i(uVar25);
   uVar4 = ae_s32_l_i(in_aed1);
+                    /* bits & 0x7FFFFFFF [doc] */
   fabsf();
   uVar13 = ae_s64_i(uVar25);
   if (((uVar16 == 0x7f800000) || (uVar16 == 0)) || (uVar16 == 0x3f800000)) {
@@ -1526,6 +1530,7 @@ LAB_0022a0c0:
       return;
     }
   }
+                    /* two25 0x4C000000, 50000 limit [doc] */
   scalbnf(iVar21);
   ae_l32_i(uVar4);
   return;
@@ -1604,6 +1609,7 @@ int __ieee754_rem_pio2f(undefined4 *param_1)
     return 1;
   }
   if (uVar4 < 0x43490f81) {
+                    /* bits & 0x7FFFFFFF [doc] */
     fabsf();
     uVar12 = const_s(3);
     iVar16 = trunc_s((ulonglong)(uint)((float)in_aed0 * 0.6366198 + (float)uVar12),0);
@@ -2023,6 +2029,7 @@ LAB_0022a90b:
       puVar5[1] = uVar27;
     }
   }
+                    /* two25 0x4C000000, 50000 limit [doc] */
   scalbnf(iVar33);
   uVar29 = ae_l32_i(0x3e000000);
   uVar24 = fifloor_s((ulonglong)(uint)(fVar13 * (float)uVar29));
@@ -2642,6 +2649,7 @@ uint rint(uint param_1,uint param_2)
       if (uVar4 != 0x7ff) {
         return param_1;
       }
+                    /* XCC soft double [doc, inference] */
       uVar4 = __muldf3(0,&RSTCTL0_SYSRSTSTAT,param_1,param_2,0x7ff,0x7ff,param_1,param_2);
       return uVar4;
     }
@@ -2658,11 +2666,13 @@ LAB_0022b584:
     iVar1 = iVar1 * -8;
     uVar6 = *(undefined4 *)(&DAT_00205e54 + iVar1);
     uVar7 = *(undefined4 *)(&DAT_00205e50 + iVar1);
+                    /* XCC soft double using the HiFi4 f64 assist ops [doc, inference] */
     uVar8 = __adddf3(param_1,param_2,uVar7,uVar6);
     memw();
     memw();
     memw();
     memw();
+                    /* XCC soft double [doc, inference] */
     uVar4 = __subdf3((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),uVar7,uVar6);
     return uVar4;
   }

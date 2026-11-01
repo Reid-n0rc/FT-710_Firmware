@@ -217,6 +217,7 @@ uint __aeabi_dadd(uint param_1,uint param_2,uint param_3,uint param_4)
       }
       return param_1;
     }
+                    /* Shared NaN/Inf path of the double routines [doc] */
     fp_nan_handler();
                     /* WARNING: Bad instruction - Truncating control flow here */
     halt_baddata();
@@ -296,6 +297,7 @@ LAB_2016491c:
   if (param_2 << 1 < 0xffe00000) {
     return uVar3;
   }
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
   uVar4 = fp_exception_stub(uVar3,param_2 + 0xa0000000);
   return uVar4;
 }
@@ -327,6 +329,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
   undefined8 uVar14;
   
   if ((~(param_2 >> 4) & 0x7ff0000) == 0 || (~(param_4 >> 4) & 0x7ff0000) == 0) {
+                    /* Shared NaN/Inf path of the double routines [doc] */
     uVar14 = fp_nan_handler();
     uVar6 = fp_exception_stub((int)uVar14,
                               *(byte *)((int)((ulonglong)uVar14 >> 0x20) + 0x18) ^ extraout_r3);
@@ -411,6 +414,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
         if ((int)uVar6 < 0) {
           return 0;
         }
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
         uVar6 = fp_exception_stub(uVar4,iVar5 + -0x60000000);
         return uVar6;
       }
@@ -464,6 +468,7 @@ uint __aeabi_d2iz(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return (int)param_2 >> 0x20 ^ 0x7fffffff;
   }
+                    /* Shared NaN/Inf path of the double routines [doc] */
   fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
@@ -505,6 +510,7 @@ uint __aeabi_d2uiz(uint param_1,uint param_2)
   if (-iVar1 != -0x3ff) {
     return 0xffffffff;
   }
+                    /* Shared NaN/Inf path of the double routines [doc] */
   fp_nan_handler(param_1);
   do {
     *unaff_r4 = (short)unaff_r4;
@@ -647,7 +653,9 @@ longlong __aeabi_dmul(uint param_1,uint param_2,uint param_3,uint param_4)
     return CONCAT44(uVar5,uVar12);
   }
   if (uVar12 == 0x7ff0000 || (param_4 >> 4 & 0x7ff0000) == 0x7ff0000) {
+                    /* Shared NaN/Inf path of the double routines [doc] */
     uVar16 = fp_nan_handler();
+                    /* Empty 12-byte routine the NaN path calls [doc, inference] */
     lVar17 = fp_exception_stub((int)uVar16,(int)((ulonglong)uVar16 >> 0x20) << 2 ^ extraout_r3);
     return lVar17;
   }
@@ -774,6 +782,7 @@ ulonglong __aeabi_dsub(uint param_1,uint param_2,uint param_3,uint param_4)
         }
         return CONCAT44(param_2,param_1);
       }
+                    /* Shared NaN/Inf path of the double routines [doc] */
       fp_nan_handler();
       do {
         software_interrupt(0x40);

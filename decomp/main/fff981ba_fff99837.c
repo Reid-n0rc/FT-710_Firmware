@@ -456,6 +456,7 @@ void power_down_save(void)
   byte swtimer_expired_ret;
   
   DAT_00001456 = 0x7f;
+                    /* 0x7F frame: power command, then the 8-byte key [fact: display-link.md] */
   DAT_00001457 = PTR_g_ui_00025d38->power_cmd & 0x7f;
   DAT_00001458 = 0x9b;
   DAT_00001459 = 0xba;
@@ -468,6 +469,7 @@ void power_down_save(void)
   DAT_0001b628 = 0xb;
   displink_tx_start(0xb);
   if (PTR_g_ui_00025d38->power_cmd == 0x90) {
+                    /* Low-voltage off (0x90): wait 2000, no save [fact: README.md] */
     swtimer_start(0x14,2000);
     do {
       swtimer_expired_ret = swtimer_expired(0x14);
@@ -481,6 +483,7 @@ void power_down_save(void)
     g_opstate.auto_power_on = 0;
     eeprom_save_all();
   }
+                    /* Software reset [fact: 0xFFFB3E55] */
   sw_reset();
   return;
 }
@@ -1179,116 +1182,144 @@ void displink_build_31(void)
     return;
   }
   if (bVar1 == 0x1f) {
+                    /* Value text of the PEAK pop-up [doc] */
     popup_fmt_peak(0x99);
     return;
   }
   if (bVar1 == 0x22) {
+                    /* Value text of the CONTRAST pop-up [doc] */
     popup_fmt_contrast(0x99);
     return;
   }
   if (bVar1 == 0x23) {
+                    /* Value text of the DIMMER pop-up [doc] */
     popup_fmt_dimmer(0x99);
     return;
   }
   if (bVar1 == 0x24) {
+                    /* Value text of the M GROUP pop-up [doc] */
     popup_fmt_mgroup(0x99);
     return;
   }
   if (bVar1 == 0x25) {
+                    /* Value text of the MIC GAIN pop-up [doc] */
     popup_fmt_mic_gain(0x99);
     return;
   }
   if (bVar1 == 0x26) {
+                    /* Value text of the MIC EQ pop-up [doc] */
     popup_fmt_mic_eq(0x99);
     return;
   }
   if (bVar1 == 0x27) {
+                    /* Value text of the PROC LEVEL pop-up [doc] */
     popup_fmt_proc_level(0x99);
     return;
   }
   if (bVar1 == 0x28) {
+                    /* Value text of the AMC LEVEL pop-up [doc] */
     popup_fmt_amc_level(0x99);
     return;
   }
   if (bVar1 == 0x29) {
+                    /* Value text of the VOX GAIN pop-up [doc] */
     popup_fmt_vox_gain(0x99);
     return;
   }
   if (bVar1 == 0x2a) {
+                    /* Value text of the VOX DELAY pop-up [doc] */
     popup_fmt_vox_delay(0x99);
     return;
   }
   if (bVar1 == 0x2b) {
+                    /* Value text of the ANTI VOX pop-up [doc] */
     popup_fmt_anti_vox(0x99);
     return;
   }
   if (bVar1 == 0x2c) {
+                    /* Value text of the RF POWER pop-up [doc] */
     popup_fmt_rf_power(0x99);
     return;
   }
   if (bVar1 == 0x2d) {
+                    /* Value text of the MONI LEVEL pop-up [doc] */
     popup_fmt_moni_level(0x99);
     return;
   }
   if (bVar1 == 0x2f) {
+                    /* Value text of the BK IN pop-up [doc] */
     popup_fmt_bk_in(0x99);
     return;
   }
   if (bVar1 == 0x30) {
+                    /* Value text of the CW SPEED pop-up [doc] */
     popup_fmt_cw_speed(0x99);
     return;
   }
   if (bVar1 == 0x31) {
+                    /* Value text of the CW PITCH pop-up [doc] */
     popup_fmt_cw_pitch(0x99);
     return;
   }
   if (bVar1 == 0x32) {
+                    /* Value text of the BK DELAY pop-up [doc] */
     popup_fmt_bk_delay(0x99);
     return;
   }
   if (bVar1 == 0x33) {
+                    /* Value text of the AESS pop-up [doc] */
     popup_fmt_aess_level(0x99);
     return;
   }
   if (bVar1 == 0x38) {
+                    /* Value text of the NB LEVEL pop-up [doc] */
     popup_fmt_nb_level(0x99);
     return;
   }
   if (bVar1 == 0x39) {
+                    /* Value text of the DNR LEVEL pop-up [doc] */
     popup_fmt_dnr_level(0x99);
     return;
   }
   if (bVar1 == 0x3a) {
+                    /* Value text of the DEC LVL pop-up [doc] */
     popup_fmt_dec_level(0x99);
     return;
   }
   if (bVar1 == 0x43) {
+                    /* Value text of the QMB pop-up [doc] */
     popup_fmt_qmb(0x99);
     return;
   }
   if (bVar1 == 0x44) {
+                    /* Value text of the SCAN pop-up [doc] */
     popup_fmt_mem_scan(0x99);
     return;
   }
   if (bVar1 == 0x45) {
+                    /* Value text of the TYPE pop-up [doc] */
     popup_fmt_mem_type(0x99);
     return;
   }
   if (bVar1 == 0x46) {
+                    /* Value text of the KEYER pop-up [doc] */
     popup_fmt_keyer(0x99);
     return;
   }
   if (bVar1 == 0x55) {
+                    /* Value text of the MODE pop-up [doc] */
     popup_fmt_mem_mode(0x99);
     return;
   }
   if (bVar1 == 0x58) {
+                    /* Value text of the AESS CF pop-up [doc] */
     popup_fmt_aess_cf(0x99);
     return;
   }
   if (bVar1 != 0x1e) {
     return;
   }
+                    /* Value text of the SCOPE LEVEL pop-up [doc] */
   popup_fmt_scope_level(0x99);
   return;
 }
@@ -1391,6 +1422,7 @@ void popup_fmt_rf_power(ushort param_1)
   uint uVar5;
   
   uVar1 = FUN_fffb4062();
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar2 = dec_to_str_n(uVar1,3,&DAT_000019ca);
   (&DAT_00001748)[param_1] = 0x57;
   uVar5 = (uint)bVar2;
@@ -1428,6 +1460,7 @@ void popup_fmt_moni_level(ushort param_1)
     cStack_3 = *moni_level_ptr_ret;
   }
   if (cStack_3 != '\0') {
+                    /* decimal without leading zeros, returns the length [doc] */
     bVar1 = dec_to_str_n(cStack_3,3,&DAT_000019d2);
     uVar4 = (uint)bVar1;
     puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -1493,6 +1526,7 @@ void popup_fmt_vox_gain(ushort param_1)
   undefined1 *puVar3;
   uint uVar4;
   
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(g_opstate.vox_gain,3,&DAT_000019da);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -1530,6 +1564,7 @@ void popup_fmt_vox_delay(ushort param_1)
   if (0x21 < local_3) {
     local_3 = 0;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(*(undefined2 *)(BYTE_ARRAY_fff87ed4 + (uint)local_3 * 2 + 2),4,&DAT_000019e2)
   ;
   uVar4 = (uint)bVar1;
@@ -1564,6 +1599,7 @@ void popup_fmt_anti_vox(ushort param_1)
   else {
     local_3 = g_opstate.antivox[1];
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(local_3,3,&DAT_000019ea);
   uVar4 = (uint)bVar1;
   puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -1591,6 +1627,7 @@ void popup_fmt_proc_level(ushort param_1)
   uint uVar4;
   
   if (g_opstate.proc_level != 0) {
+                    /* decimal without leading zeros, returns the length [doc] */
     bVar1 = dec_to_str_n(g_opstate.proc_level,3,&DAT_000019f2);
     uVar4 = (uint)bVar1;
     puVar2 = &DAT_00001749 + (param_1 - uVar4);
@@ -1629,6 +1666,7 @@ void popup_fmt_mic_gain(ushort param_1)
   else {
     uStack_3 = *puVar2;
   }
+                    /* decimal without leading zeros, returns the length [doc] */
   bVar1 = dec_to_str_n(uStack_3,3,&DAT_000019fa);
   uVar4 = (uint)bVar1;
   puVar3 = &DAT_00001749 + (param_1 - uVar4);

@@ -1873,6 +1873,7 @@ LAB_20155cee:
     }
     while (uVar9 = uVar9 - 1, -1 < (int)uVar9) {
       local_60 = uVar12;
+                    /* 64-bit unsigned divide by 10 by shifts and adds [doc] */
       lVar13 = _ll_udiv10();
       param_2[uVar9] = extraout_r2 + '0';
       uVar12 = local_60;
@@ -1928,6 +1929,7 @@ void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
   local_3c = param_4;
   uStack_38 = param_2;
   uStack_30 = param_1;
+                    /* Format loop called by the sprintf family [doc, inference] */
   _printf_core(auStack_40,param_3);
   return;
 }
@@ -2428,6 +2430,7 @@ void kernel_heap_init(void)
   if (gic_init_ret == 0) {
     knl_sys.task_cpsr = 0;
     knl_sys.f_0x00_u32 = 0;
+                    /* Kernel start-up called by kernel_heap_init [doc] */
     knl_sys_init(&DAT_20980000,&stack0xfffffff8);
   }
   return;
@@ -2506,6 +2509,7 @@ undefined8 knl_irq_exit(void)
   uint in_stack_00000014;
   
   software_interrupt(0);
+                    /* pops nesting stack, EOIR + PMR restore [doc, inference] */
   gic_irq_exit();
   knl_sys.ctx_isr = knl_sys.ctx_isr + 1;
   if (knl_sys.ctx_isr != 0) {

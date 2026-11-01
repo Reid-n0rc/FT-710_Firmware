@@ -109,6 +109,7 @@ void str_rtrim(int param_1)
   uint uVar1;
   uint uVar2;
   
+                    /* Word-at-a-time string length [doc] */
   uVar2 = strlen();
   while ((uVar1 = uVar2 & 0xff, uVar1 != 0 && (*(char *)(param_1 + uVar1 + -1) == ' '))) {
     uVar2 = uVar1 - 1;
@@ -178,6 +179,7 @@ void fb_clear_rect(int param_1,int param_2,int param_3,int param_4,int param_5)
   iVar1 = param_1 + (param_3 + param_2 * 800) * 2;
   if (0 < param_5) {
     do {
+                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
       __aeabi_memclr(iVar1,param_4 << 1);
       i = i + 1;
       iVar1 = iVar1 + 0x640;
@@ -557,6 +559,7 @@ void gui_draw_dec(int param_1,undefined4 param_2,int param_3,int param_4,int par
           iVar3 = iVar3 * 10;
         } while (j < iVar4);
       }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       uVar1 = __aeabi_uidivmod(local_30,iVar3);
       uVar2 = uVar1 % 10;
       if (uVar2 < 10) {
@@ -643,6 +646,7 @@ void gui_draw_text(int param_1,int param_2,int param_3,int param_4,int param_5,i
   uint uVar1;
   uint uVar2;
   
+                    /* Word-at-a-time string length [doc] */
   uVar1 = strlen(param_2);
   uVar2 = 0;
   if ((uVar1 & 0xffff) != 0) {
@@ -666,6 +670,7 @@ void FUN_20135e40(int param_1,int param_2,int param_3,int param_4,int param_5)
   ushort *puVar2;
   uint uVar3;
   
+                    /* Word-at-a-time string length [doc] */
   uVar1 = strlen(param_2);
   uVar1 = uVar1 & 0xffff;
   uVar3 = (uint)**(ushort **)
@@ -726,8 +731,10 @@ void gui_draw_text_words(uint param_1,uint param_2,uint param_3,int param_4,uint
   local_30 = 0;
   local_2c = 0;
   local_28 = 0;
+                    /* Word-at-a-time string length [doc] */
   uVar1 = strlen(param_2);
   memcpy(&local_60,param_2,uVar1);
+                    /* next token, 0 at the end [doc] */
   iVar2 = strtok_r(&local_60,&DWORD_20135fec,local_24);
   gui_draw_text(param_1,iVar2,param_3,param_4,param_5,param_6);
   iVar3 = strlen(iVar2);
@@ -762,6 +769,7 @@ void gui_draw_text_centered
   
   iVar4 = 0;
   i = 0;
+                    /* Word-at-a-time string length [doc] */
   iVar2 = strlen(param_2);
   if (iVar2 != 0) {
     do {
@@ -1179,6 +1187,7 @@ void debug_overlay_draw(int param_1)
       uVar4 = mainlink_stat_rx_resync();
       gui_draw_dec(iVar2,uVar4,2,2,0x1a9);
       gui_draw_text(iVar2,0x20136c5c,2,0x1cc,10,&DAT_20803730);
+                    /* RX task NAK counter [doc, inference] */
       uVar4 = mainlink_stat_nak_sent();
       gui_draw_dec(iVar2,uVar4,2,2,0x1db);
       bVar6 = (byte)g_bootinfo.mode & 0xf;
@@ -1209,11 +1218,13 @@ void debug_overlay_draw(int param_1)
     if ((DAT_20808a84 & 2) != 0) {
       iVar5 = memcmp(&ml_rx_frame,&DAT_20909db4,0x200);
       if (iVar5 != 0) {
+                    /* F2 debug overlay [doc] */
         debug_dump_rx_frame(&ml_rx_frame,&DAT_20909db4,0x200);
         memcpy(&DAT_20909db4,&ml_rx_frame,0x240);
       }
       iVar5 = memcmp(&DAT_2045f4a0,&DAT_20909ff4,0x20);
       if (iVar5 != 0) {
+                    /* F2 debug overlay [doc] */
         debug_dump_rx_buf2(&DAT_2045f4a0,&DAT_20909ff4,0x20);
         memcpy(&DAT_20909ff4,&DAT_2045f4a0,0x401);
       }
@@ -1276,13 +1287,16 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
 {
   uint uVar1;
   
+                    /* Channel Control 3 [sfr] */
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 8;
   gic_disable_irq(0x2c);
   DAT_20808a8c = 0;
+                    /* DMA extended resource selector 1 [sfr] */
   DMAC_DMARS1 = 0x1310000;
+                    /* Channel Configuration 3 [sfr] */
   DMAC_CHCFG_3 = 0;
   reg_rmw32(&DMAC_CHCFG_3,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_3,1,0xc,0xf000);
@@ -1301,10 +1315,15 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_3,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_3,1,3,8);
   reg_rmw32(&DMAC_CHCFG_3,3,0,7);
+                    /* Channel Interval 3 [sfr] */
   DMAC_CHITVL_3 = 0;
+                    /* Channel Extension 3 [sfr] */
   DMAC_CHEXT_3 = 0;
+                    /* Next0 Source Address 3 [sfr] */
   DMAC_N0SA_3 = param_1;
+                    /* Next0 Destination Address 3 [sfr] */
   DMAC_N0DA_3 = param_2;
+                    /* Next0 Transaction Byte 3 [sfr] */
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200b0);
@@ -1327,14 +1346,17 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 5 [sfr] */
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 8;
   gic_disable_irq(0x2e);
   DAT_20808a94 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x12a0000;
+                    /* Channel Configuration 5 [sfr] */
   DMAC_CHCFG_5 = 0;
   reg_rmw32(&DMAC_CHCFG_5,0,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_5,0,0xc,0xf000);
@@ -1353,10 +1375,15 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_5,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_5,0,3,8);
   reg_rmw32(&DMAC_CHCFG_5,5,0,7);
+                    /* Channel Interval 5 [sfr] */
   DMAC_CHITVL_5 = 0;
+                    /* Channel Extension 5 [sfr] */
   DMAC_CHEXT_5 = 0;
+                    /* Next0 Source Address 5 [sfr] */
   DMAC_N0SA_5 = param_1;
+                    /* Next0 Destination Address 5 [sfr] */
   DMAC_N0DA_5 = param_2;
+                    /* Next0 Transaction Byte 5 [sfr] */
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200d8);
@@ -1406,14 +1433,17 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 4 [sfr] */
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 8;
   gic_disable_irq(0x2d);
   DAT_20808a90 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x132;
+                    /* Channel Configuration 4 [sfr] */
   DMAC_CHCFG_4 = 0;
   reg_rmw32(&DMAC_CHCFG_4,1,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_4,0,0xc,0xf000);
@@ -1432,10 +1462,15 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_4,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_4,0,3,8);
   reg_rmw32(&DMAC_CHCFG_4,4,0,7);
+                    /* Channel Interval 4 [sfr] */
   DMAC_CHITVL_4 = 0;
+                    /* Channel Extension 4 [sfr] */
   DMAC_CHEXT_4 = 0;
+                    /* Next0 Source Address 4 [sfr] */
   DMAC_N0SA_4 = param_1;
+                    /* Next0 Destination Address 4 [sfr] */
   DMAC_N0DA_4 = param_2;
+                    /* Next0 Transaction Byte 4 [sfr] */
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200c4);
@@ -1471,12 +1506,14 @@ void dmac8_m2m_init(void)
 {
   uint uVar1;
   
+                    /* Channel Control 8 [sfr] */
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 8;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 4;
+                    /* Channel Configuration 8 [sfr] */
   DMAC_CHCFG_8 = 0;
   reg_rmw32(&DMAC_CHCFG_8,7,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_8,7,0xc,0xf000);
@@ -1495,7 +1532,9 @@ void dmac8_m2m_init(void)
   reg_rmw32(&DMAC_CHCFG_8,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_8,0,3,8);
   reg_rmw32(&DMAC_CHCFG_8,0,0,7);
+                    /* Channel Interval 8 [sfr] */
   DMAC_CHITVL_8 = 0;
+                    /* Channel Extension 8 [sfr] */
   DMAC_CHEXT_8 = 0;
   reg_rmw32(&DMAC_DCTRL_8_15,1,0);
   return;
@@ -1511,14 +1550,18 @@ void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 {
   uint uVar1;
   
+                    /* Channel Control 8 [sfr] */
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 8;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 4;
+                    /* Next0 Source Address 8 [sfr] */
   DMAC_N0SA_8 = param_2;
+                    /* Next0 Destination Address 8 [sfr] */
   DMAC_N0DA_8 = param_1;
+                    /* Next0 Transaction Byte 8 [sfr] */
   DMAC_N0TB_8 = param_3;
   reg_rmw32(&DMAC_CHCTRL_8,1,0);
   return;

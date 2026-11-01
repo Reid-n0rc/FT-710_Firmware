@@ -47,6 +47,7 @@ uint dsp_isp_fill_option(int *param_1)
   local_50[0x13] = 0;
   local_50[0x17] = 0;
   local_50[7] = 0x10;
+                    /* CRC-16 poly 0x1021 init 0 [doc, inference] */
   local_50[7] = crc16_xmodem((int)(local_50 + 5),0x14);
   local_50[4] = 0xa4;
   local_50[5] = 0x10;
@@ -125,7 +126,9 @@ uint dsp_isp_program(uint param_1,uint param_2,uint param_3,uint param_4,int par
   DAT_2080017c = uStack_14;
   DAT_2080016c = 0x1d1;
   itron_dly_tsk(1);
+                    /* maps a fraction into the range [doc, inference] */
   uVar1 = progress_scale(&DAT_20800178,extraout_r1,0,0);
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(uVar1);
   if (param_5 == 0) {
     uVar1 = 0;
@@ -179,6 +182,7 @@ rx_boot_read_compare
   while( true ) {
     _local_30 = CONCAT13((char)param_6,0x10081);
     local_2c = 0x300;
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)(local_30 + 1),3);
     itron_dly_tsk(1);
     do {
@@ -255,6 +259,7 @@ uint rx_boot_read_start(int *param_1,uint param_2,uint param_3,uint param_4)
     _local_40 = CONCAT13((char)param_3,
                          CONCAT12((char)(param_3 >> 8),
                                   CONCAT11((char)(param_3 >> 0x10),(char)(param_3 >> 0x18))));
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)(local_48 + 1),0xb);
     itron_dly_tsk(1);
     do {
@@ -388,7 +393,9 @@ undefined4 rx_boot_verify_areas(int *param_1,uint param_2,int param_3,uint param
               return 0;
             }
             iVar9 = iVar9 + 1;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
             iVar6 = __aeabi_uidivmod(iVar9 * 0x46,DAT_20800164);
+                    /* progress percent 0x20800364 [doc, inference] */
             progress_set(iVar6 + 0x1e);
             bVar12 = CARRY4(uVar5,uVar8);
             uVar5 = uVar5 + uVar8;
@@ -444,6 +451,7 @@ rx_boot_data_packet(int *param_1,undefined4 param_2,int param_3,undefined4 param
                           CONCAT12((char)(param_3 + 1),
                                    CONCAT11((char)((uint)(param_3 + 1) >> 8),0x81)));
     memcpy(&uStack_484,local_2c,param_3);
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)&uStack_487,param_3 + 3);
     if (param_5 == 0) {
       uVar1 = 0x17;
@@ -526,6 +534,7 @@ uint rx_boot_write_start(int *param_1,uint param_2,uint param_3,uint param_4)
     _local_40 = CONCAT13((char)param_3,
                          CONCAT12((char)(param_3 >> 8),
                                   CONCAT11((char)(param_3 >> 0x10),(char)(param_3 >> 0x18))));
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)(local_48 + 1),0xb);
     itron_dly_tsk(1);
     do {
@@ -651,8 +660,10 @@ undefined4 rx_boot_write_areas(int *param_1,uint param_2,int param_3,uint param_
                 return 0;
               }
               iVar12 = iVar12 + 1;
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
               uVar5 = __aeabi_uidivmod(iVar12 * 0x14,DAT_20800164);
               if (uVar5 < 0x14) {
+                    /* progress percent 0x20800364 [doc, inference] */
                 progress_set(uVar5 + 10);
               }
               bVar13 = CARRY4(uVar6,uVar11);
@@ -702,6 +713,7 @@ uint rx_boot_erase(int *param_1)
       }
       local_30 = 0x50020001;
       _local_2c = CONCAT31(0x300,*(undefined1 *)((int)local_20 + i));
+                    /* appends the negated 8-bit sum [doc, inference] */
       sum8_neg_append((int)&local_30 + 1,4);
       itron_dly_tsk(2);
       iVar1 = (**(code **)(*param_1 + 0x24))(param_1,&local_30,7);
@@ -709,6 +721,7 @@ uint rx_boot_erase(int *param_1)
         return 0;
       }
       itron_dly_tsk(2);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       uVar2 = __aeabi_uidivmod(local_28[i],10);
       iVar1 = (**(code **)(*param_1 + 0x18))(param_1,auStack_70,4,uVar2);
       if (iVar1 != -1) break;
@@ -765,6 +778,7 @@ LAB_2010c8f4:
     _local_34 = CONCAT31(0x300,(char)i);
     local_30 = 0x54010081;
     uStack_2c = 0x3ab;
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)&local_38 + 1,4);
     itron_dly_tsk(2);
     iVar1 = (**(code **)(*param_1 + 0x24))(param_1,&local_38,7);
@@ -801,6 +815,7 @@ LAB_2010c8f4:
     iVar2 = iVar2 + 1;
   } while( true );
   *(undefined1 *)(param_3 + i * 0x1c) = local_74;
+                    /* big-endian bytes to integer [doc, inference] */
   iVar2 = be_bytes_to_u32((int)auStack_73,4);
   iVar1 = param_3 + i * 0x1c;
   *(int *)(iVar1 + 4) = iVar2;
@@ -1045,6 +1060,7 @@ uint rx_boot_set_baud(int *param_1)
     local_28 = 0x34050001;
     uStack_24 = 0x460500;
     uStack_20 = 0x304;
+                    /* appends the negated 8-bit sum [doc, inference] */
     sum8_neg_append((int)&local_28 + 1,7);
     itron_dly_tsk(2);
     iVar1 = (**(code **)(*param_1 + 0x24))(param_1,&local_28,10);
@@ -1113,6 +1129,7 @@ uint rx_boot_set_freq(int *param_1)
         uVar2 = local_28;
         local_28._3_1_ = SUB41(uVar1,3);
         local_28._0_3_ = CONCAT12(1,(short)uVar2);
+                    /* appends the negated 8-bit sum [doc, inference] */
         sum8_neg_append((int)&local_28 + 1,3);
         uStack_24._0_2_ = CONCAT11(3,(undefined1)uStack_24);
         itron_dly_tsk(2);
@@ -1361,6 +1378,7 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
         uVar2 = rx_boot_set_freq(scif5_get_ret);
         uVar5 = 0;
         if (uVar2 != 0) {
+                    /* progress percent 0x20800364 [doc, inference] */
           progress_set(5);
           uVar2 = rx_boot_set_baud(scif5_get_ret);
           uVar5 = 0;
@@ -1406,6 +1424,7 @@ undefined4 rx_boot_program(uint param_1,uint *param_2)
                           uVar2 = local_30;
                           if (local_34 <= local_30) {
                             iVar7 = aiStack_124[i * 7 + 3];
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
                             iVar4 = __aeabi_uidivmod(local_34,iVar7);
                             aiStack_124[i * 7 + 4] = iVar4 * iVar7;
                             iVar3 = __aeabi_uidivmod(uVar2,iVar7);
@@ -1654,10 +1673,14 @@ void fwobj_create_all(void)
   __aeabi_memclr4(&DAT_20811440,0xac);
   __aeabi_memclr4(&DAT_20811500,0xac);
   __aeabi_memclr4(&DAT_208115c0,0xac);
+                    /* MAIN object, vtable 0x20428088 [doc, inference] */
   DAT_2081166c = fwobj_main_ctor(0x208115c0);
   __aeabi_memclr4(&DAT_20811380,0xac);
+                    /* DISPLAY object, vtable 0x204280A0 [doc, inference] */
   DAT_20811670 = fwobj_display_ctor(0x20811380);
+                    /* IFDSP object, vtable 0x20428094, +0xAB flag [doc, inference] */
   DAT_20811674 = fwobj_ifdsp_ctor(0x20811440,1);
+                    /* SDR object, vtable 0x20428070, +0xAB flag [doc, inference] */
   DAT_20811678 = fwobj_sdr_ctor(0x20811500,1);
   return;
 }
@@ -1676,6 +1699,7 @@ void fwfile_check_versions(int param_1)
   undefined1 auStack_28 [16];
   
   fwobj_create_all();
+                    /* memcpy of 10 bytes, returns dst [doc] */
   uVar1 = copy10(auStack_28,"MAIN");
   memcpy(DAT_2081166c + 4,uVar1,10);
   uVar1 = copy10(auStack_28,"DISPLAY");
@@ -1684,6 +1708,7 @@ void fwfile_check_versions(int param_1)
   memcpy(DAT_20811674 + 4,uVar1,10);
   uVar1 = copy10(auStack_28,"SDR");
   memcpy(DAT_20811678 + 4,uVar1,10);
+                    /* builds the name pattern [doc, inference] */
   fwname_pattern_init((int *)(DAT_2081166c + 0x14),0x2010df70,0x2010df68);
   fwname_pattern_init((int *)(DAT_20811670 + 0x14),0x2010df80,0x2010df68);
   fwname_pattern_init((int *)(DAT_20811674 + 0x14),0x2010df94,0x2010df68);
@@ -1736,6 +1761,7 @@ uint fwfile_status_text(int param_1,int param_2)
     *(undefined1 *)(param_1 + iVar5 * 0x48) = 2;
     iVar5 = iVar1;
   } while (iVar1 < 4);
+                    /* directory handle, 0 on error [doc] */
   uVar2 = fs_opendir("I:\\FT-710");
   iVar5 = 0;
   do {
@@ -1744,6 +1770,7 @@ uint fwfile_status_text(int param_1,int param_2)
   } while (iVar5 < 4);
   do {
     do {
+                    /* next directory entry or 0 at the end [doc] */
       piVar3 = (int *)fs_readdir(uVar2);
       if (piVar3 == (int *)0x0) {
         fs_closedir(uVar2);
@@ -1756,6 +1783,7 @@ uint fwfile_status_text(int param_1,int param_2)
           }
           else {
             fwobj_version_from_name((&DAT_2081166c)[iVar5]);
+                    /* "%s%s" dir + file name [doc, inference] */
             fwobj_build_path((&DAT_2081166c)[iVar5],0x2010e1c4);
             iVar1 = (*(code *)**(undefined4 **)(&DAT_2081166c)[iVar5])
                               ((undefined4 *)(&DAT_2081166c)[iVar5],0);
@@ -1773,6 +1801,7 @@ uint fwfile_status_text(int param_1,int param_2)
           }
           iVar1 = param_1 + iVar5 * 0x48;
           fwobj_version_text((&DAT_2081166c)[iVar5],iVar1 + 1);
+                    /* word copy while aligned [doc, inference] */
           strcpy(iVar1 + 0x15,(&DAT_2081166c)[iVar5] + 0x89);
           FUN_201635b8((&DAT_2081166c)[iVar5],iVar1 + 0x29);
           FUN_20163770(iVar1 + 0x3c,(&DAT_2081166c)[iVar5] + 0x2c);
@@ -1812,6 +1841,7 @@ void task_fwupdate(void)
     do {
       if (*(char *)((&DAT_2081166c)[i] + 0x88) != '\0') {
         *(undefined1 *)((&DAT_2081166c)[i] + 0xa9) = 4;
+                    /* progress percent 0x20800364 [doc, inference] */
         progress_set(0);
         iVar1 = (*(code *)**(undefined4 **)(&DAT_2081166c)[i])((undefined4 *)(&DAT_2081166c)[i],0,1)
         ;
@@ -1855,6 +1885,7 @@ byte fwupdate_poll(int param_1)
          (*(int *)(param_1 + iVar5 * 0x48 + 0x34) == 0)) {
         fwobj_set_status((&DAT_2081166c)[iVar5],0x2010e48c);
       }
+                    /* marks the object selected for update [doc, inference] */
       fwobj_select((&DAT_2081166c)[iVar5],*(int *)(param_1 + iVar5 * 0x48 + 0x34) != 0);
       if (*(char *)((&DAT_2081166c)[iVar5] + 0x88) != '\0') {
         fwobj_set_status((&DAT_2081166c)[iVar5],0x2010e498);
@@ -2070,6 +2101,7 @@ int srec_parse_line(char *param_1,uint *param_2,void *param_3)
   case '3':
     iVar5 = 4;
 LAB_2010e6e0:
+                    /* two uppercase hex digits [doc, inference] */
     hex2_parse_ret = hex2_parse(pbVar1);
     if (hex2_parse_ret - 1 < 0xff) {
       iVar4 = 0;
@@ -2410,6 +2442,7 @@ LAB_2010ea9c:
     uVar3 = 10;
   }
   itron_dly_tsk(uVar3);
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   goto LAB_2010ea9c;
@@ -2573,6 +2606,7 @@ int sdmenu_list_files(int param_1,int param_2,int param_3)
   int iVar8;
   bool bVar9;
   
+                    /* directory handle, 0 on error [doc] */
   iVar2 = fs_opendir(*(undefined4 *)(&DAT_208001ac + param_1 * 4));
   iVar5 = 0;
   if (iVar2 != 0) {
@@ -2583,12 +2617,14 @@ LAB_2010efc4:
     do {
       do {
         do {
+                    /* next directory entry or 0 at the end [doc] */
           piVar4 = (int *)fs_readdir(iVar2);
           iVar5 = iVar8;
           if (piVar4 == (int *)0x0) goto LAB_2010f068;
           iVar5 = fs_attr_check((int)*(char *)(*piVar4 + 0xb),0x20);
         } while (iVar5 != 0);
         iVar5 = (int)piVar4 + 10;
+                    /* Word-at-a-time string length [doc] */
         uVar6 = strlen(iVar5);
         uVar1 = uVar6;
       } while (0x13 < uVar6);
@@ -2597,6 +2633,7 @@ LAB_2010efc4:
         if ((int)uVar1 < 1) goto LAB_2010efc4;
       } while ((*(char *)(iVar5 + uVar1) != '.') ||
               (iVar7 = strcasecmp(iVar5 + uVar1,".dat"), iVar7 != 0));
+                    /* Copies up to n bytes and pads with 0 [doc] */
       strncpy(iVar3 + iVar8 * 0x10,iVar5,uVar6 - 4);
       iVar5 = iVar8 + 1;
       bVar9 = SBORROW4(iVar5,100);
@@ -2610,6 +2647,7 @@ LAB_2010efc4:
 LAB_2010f068:
     fs_closedir(iVar2);
     if (iVar5 != 0) {
+                    /* insertion sort, with a quicksort pass [doc] */
       qsort(iVar3,iVar5,0x10,strcasecmp);
       iVar2 = 0;
       if (0 < iVar5) {
@@ -2619,6 +2657,7 @@ LAB_2010f068:
         } while (iVar2 < iVar5);
       }
     }
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
     scope3d_tables_init();
     gui_scope_draw_hold_set(0);
   }
@@ -2651,6 +2690,7 @@ void sdmenu_default_name(undefined4 param_1,int param_2,int param_3,int param_4)
   if (0 < param_3) {
     do {
       pbVar3 = (byte *)(param_2 + i * 0x10);
+                    /* Word-at-a-time string length [doc] */
       iVar1 = strlen(pbVar3);
       if (((iVar1 == 0xd) && (iVar1 = strncmp(abStack_3c,pbVar3,0xb), iVar1 == 0)) &&
          (iVar1 = FUN_20111374(pbVar3 + 0xb,2,&local_40), *local_40 == '\0')) {

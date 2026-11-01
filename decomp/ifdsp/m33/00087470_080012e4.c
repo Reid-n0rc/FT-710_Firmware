@@ -12,6 +12,7 @@ void file_clear_flag20(void *param_1)
 {
   *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffffdf;
   if (*(int *)((int)param_1 + 0x18) != *(int *)((int)param_1 + 0x28)) {
+                    /* clears flag 0x80000 [doc] */
     file_flush_write_buffer();
     *(uint *)((int)param_1 + 0xc) = *(uint *)((int)param_1 + 0xc) & 0xffffcfef | 0x10;
     *(undefined4 *)((int)param_1 + 0x18) = *(undefined4 *)((int)param_1 + 0x28);
@@ -239,6 +240,7 @@ undefined4 _Cfclose(int param_1)
       fflush();
       __sys_close(uVar3);
       if ((int)(uVar1 << 0x14) < 0) {
+                    /* Marks block 0x10000000 and merges free successors [doc, inference] */
         free(iVar2);
       }
       if ((uVar1 & 0xffc00000) == 0xad800000) {
@@ -290,6 +292,7 @@ uint _Cfflush1(int *param_1)
       iVar2 = (*param_1 + param_1[6]) - param_1[4];
     }
     param_1[3] = param_1[3] & 0xffffcfff;
+                    /* clears flag 0x80000 [doc] */
     uVar1 = file_flush_write_buffer(param_1);
     fseek(param_1,iVar2,0);
   }
@@ -328,6 +331,7 @@ ulonglong __aeabi_uldivmod(ulonglong n,ulonglong d)
     }
     iVar3 = 0;
     if (uVar6 <= uVar5) {
+                    /* shift-and-subtract division of the 64-bit r1:r0 by r2 [doc] */
       iVar3 = udiv64by32_helper(uVar5,0);
       n = n & 0xffffffff;
     }
@@ -686,6 +690,7 @@ void ResetISR(void)
   dword *pdVar2;
   
   disableIRQinterrupts();
+                    /* Vector Table Offset [sfr] */
   SCB_VTOR = 0x8001000;
   bVar1 = (bool)isCurrentModePrivileged();
   if (bVar1) {

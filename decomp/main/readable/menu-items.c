@@ -203,6 +203,7 @@ void menu_ex010111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -222,6 +223,7 @@ void menu_ex010112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -349,6 +351,7 @@ void menu_ex010117_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010117_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -618,6 +621,7 @@ void menu_ex010211_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010211_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -637,6 +641,7 @@ void menu_ex010212_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010212_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -732,6 +737,7 @@ void menu_ex010217_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010217_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -937,6 +943,7 @@ void menu_ex010311_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010311_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -956,6 +963,7 @@ void menu_ex010312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010312_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -1032,6 +1040,7 @@ void menu_ex010316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010316_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -1110,6 +1119,7 @@ void menu_ex010318_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(uVar2 * 10,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 0x7a;
@@ -1146,6 +1156,7 @@ void menu_ex010319_draw(byte *param_1)
   }
   param_1[1] = 7;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(sVar2 * 10,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 0x7a;
@@ -1471,6 +1482,7 @@ void menu_ex010411_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010411_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -1490,6 +1502,7 @@ void menu_ex010412_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010412_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -1585,6 +1598,7 @@ void menu_ex010417_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010417_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -1679,6 +1693,7 @@ void menu_ex010420_draw(byte *param_1)
   }
   param_1[1] = 6;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(sVar2 * 10,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -1887,6 +1902,7 @@ void menu_ex010511_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010511_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -1906,6 +1922,7 @@ void menu_ex010512_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010512_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -1924,6 +1941,7 @@ void menu_ex010513_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010513_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -2281,6 +2299,7 @@ void menu_ex020111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex020111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -2300,6 +2319,7 @@ void menu_ex020112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex020112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -2319,6 +2339,7 @@ void menu_ex020113_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex020113_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -2357,6 +2378,7 @@ void menu_ex020115_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex020115_pc_keying,0,param_4,param_5,param_1);
   return;
 }
@@ -2767,6 +2789,7 @@ void menu_ex020205_draw(byte *param_1)
   }
   param_1[1] = 4;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   dec_to_str_u16(sVar1,param_1 + 0x18);
   return;
 }
@@ -2891,6 +2914,7 @@ void menu_ex020211_draw(byte *param_1)
   }
   param_1[1] = 5;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 99;
@@ -2924,6 +2948,7 @@ void menu_ex030101_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex030101_beep_level_val,param_1 + 0x18);
   return;
 }
@@ -3394,6 +3419,7 @@ void menu_ex030115_draw(byte *param_1)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u8(bVar1,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[2] = 0x6e;
@@ -3515,6 +3541,7 @@ void menu_ex030118_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)g_opstate_ex030118_ref_freq_fine_adj_val,param_1 + 0x18);
   return;
 }
@@ -3609,6 +3636,7 @@ void menu_ex030120_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030120_mic_p1,0,param_4,param_5,param_1);
   return;
 }
@@ -3628,6 +3656,7 @@ void menu_ex030121_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030121_mic_p2,1,param_4,param_5,param_1);
   return;
 }
@@ -3647,6 +3676,7 @@ void menu_ex030122_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030122_mic_p3,2,param_4,param_5,param_1);
   return;
 }
@@ -3666,6 +3696,7 @@ void menu_ex030123_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030123_mic_p4,3,param_4,param_5,param_1);
   return;
 }
@@ -3685,6 +3716,7 @@ void menu_ex030124_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030124_mic_up,0xd,param_4,param_5,param_1);
   return;
 }
@@ -3704,6 +3736,7 @@ void menu_ex030125_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* MIC P1..P4 / UP / DOWN row [doc] */
   menu_draw_mic_key(param_1,g_opstate.ex030125_mic_down,0xe,param_4,param_5,param_1);
   return;
 }
@@ -3928,6 +3961,7 @@ void menu_ex030205_draw(byte *param_1)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* Signed byte to decimal text [doc] */
   dec_to_str_s8((int)g_opstate_ex030205_contour_level_val,param_1 + 0x18);
   return;
 }
@@ -3957,6 +3991,7 @@ void menu_ex030206_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex030206_contour_width_val,param_1 + 0x18);
   return;
 }
@@ -4021,6 +4056,7 @@ void menu_ex030302_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,100,g_opstate.ex030302_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
@@ -4040,6 +4076,7 @@ void menu_ex030303_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030303_prmtrc_eq1_level,5,param_4,param_5,param_1);
   return;
 }
@@ -4059,6 +4096,7 @@ void menu_ex030304_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030304_prmtrc_eq1_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -4079,6 +4117,7 @@ void menu_ex030305_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,700,g_opstate.ex030305_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
@@ -4098,6 +4137,7 @@ void menu_ex030306_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030306_prmtrc_eq2_level,5,param_4,param_5,param_1);
   return;
 }
@@ -4117,6 +4157,7 @@ void menu_ex030307_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030307_prmtrc_eq2_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -4137,6 +4178,7 @@ void menu_ex030308_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030308_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
@@ -4156,6 +4198,7 @@ void menu_ex030309_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030309_prmtrc_eq3_level,5,param_4,param_5,param_1);
   return;
 }
@@ -4175,6 +4218,7 @@ void menu_ex030310_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030310_prmtrc_eq3_bwth,10,param_4,param_5,param_1);
   return;
 }
@@ -4195,6 +4239,7 @@ void menu_ex030311_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,100,g_opstate.ex030311_p_prmtrc_eq1_freq,0,in_R15,param_1);
   return;
 }
@@ -4214,6 +4259,7 @@ void menu_ex030312_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030312_p_prmtrc_eq1_level,0,param_4,param_5,param_1);
   return;
 }
@@ -4233,6 +4279,7 @@ void menu_ex030313_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030313_p_prmtrc_eq1_bwth,2,param_4,param_5,param_1);
   return;
 }
@@ -4253,6 +4300,7 @@ void menu_ex030314_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,700,g_opstate.ex030314_p_prmtrc_eq2_freq,0,in_R15,param_1);
   return;
 }
@@ -4272,6 +4320,7 @@ void menu_ex030315_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030315_p_prmtrc_eq2_level,0,param_4,param_5,param_1);
   return;
 }
@@ -4291,6 +4340,7 @@ void menu_ex030316_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030316_p_prmtrc_eq2_bwth,1,param_4,param_5,param_1);
   return;
 }
@@ -4311,6 +4361,7 @@ void menu_ex030317_draw(undefined4 param_1)
 {
   undefined4 in_R15;
   
+                    /* PRMTRC EQ1..3 FREQ row [doc] */
   menu_draw_eq_freq(param_1,0x5dc,g_opstate.ex030317_p_prmtrc_eq3_freq,0,in_R15,param_1);
   return;
 }
@@ -4330,6 +4381,7 @@ void menu_ex030318_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 LEVEL row [doc] */
   menu_draw_eq_level(param_1,(int)g_opstate.ex030318_p_prmtrc_eq3_level,0,param_4,param_5,param_1);
   return;
 }
@@ -4349,6 +4401,7 @@ void menu_ex030319_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* PRMTRC EQ1..3 BWTH row [doc] */
   menu_draw_eq_bwth(param_1,g_opstate.ex030319_p_prmtrc_eq3_bwth,1,param_4,param_5,param_1);
   return;
 }
@@ -5059,6 +5112,7 @@ void menu_ex040105_draw(byte *param_1)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex040105_led_dimmer_val,param_1 + 0x18);
   return;
 }
@@ -5088,6 +5142,7 @@ void menu_ex040106_draw(byte *param_1)
   }
   param_1[1] = 2;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(g_opstate_ex040106_mouse_pointer_speed_val,param_1 + 0x18);
   return;
 }
@@ -5807,6 +5862,7 @@ char * menu_m4_18_0_draw(char *param_1)
     pcVar1 = pcVar1 + 1;
     pcVar3 = pcVar3 + 1;
   }
+                    /* Returns pointer to MAIN version string 0xFFFFFF00 [doc, inference] */
   puVar2 = (undefined4 *)ver_main();
   *(undefined2 *)(param_1 + 0xe) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 10) = *puVar2;
@@ -5814,10 +5870,12 @@ char * menu_m4_18_0_draw(char *param_1)
     param_1[0x10] = '-';
     puVar2 = (undefined4 *)ver_main_ext1();
     *(undefined4 *)(param_1 + 0x11) = *puVar2;
+                    /* Returns 0xFFFFFF20, the ROM string "24-02-16" [doc] */
     puVar2 = (undefined4 *)ver_main_ext2();
     *(undefined4 *)(param_1 + 0x1a) = puVar2[1];
     *(undefined4 *)(param_1 + 0x16) = *puVar2;
   }
+                    /* Returns pointer to DISPLAY version 0x1436 [doc, inference] */
   puVar2 = (undefined4 *)ver_display();
   *(undefined2 *)(param_1 + 0x2c) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 0x28) = *puVar2;
@@ -5826,9 +5884,11 @@ char * menu_m4_18_0_draw(char *param_1)
     *(undefined4 *)(param_1 + 0x38) = puVar2[1];
     *(undefined4 *)(param_1 + 0x34) = *puVar2;
   }
+                    /* Returns pointer to DSP version 0x1444 [doc, inference] */
   puVar2 = (undefined4 *)ver_dsp();
   *(undefined2 *)(param_1 + 0x4a) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 0x46) = *puVar2;
+                    /* Returns pointer to SDR version 0x144A [doc, inference] */
   puVar2 = (undefined4 *)ver_sdr();
   *(undefined2 *)(param_1 + 0x68) = *(undefined2 *)(puVar2 + 1);
   *(undefined4 *)(param_1 + 100) = *puVar2;
@@ -6968,6 +7028,7 @@ void menu_ex010319_step(void)
   
   local_2 = g_opstate.ex010319_rpt_shift_50mhz_be[1];
   bStack_1 = g_opstate.ex010319_rpt_shift_50mhz_be[0];
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(0,400,&local_2);
   g_opstate.ex010319_rpt_shift_50mhz_be[0] = bStack_1;
   g_opstate.ex010319_rpt_shift_50mhz_be[1] = local_2;
@@ -7394,6 +7455,7 @@ void menu_ex010420_step(void)
   
   local_2 = g_opstate.ex010420_data_shift_ssb_be[1];
   bStack_1 = g_opstate.ex010420_data_shift_ssb_be[0];
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(0,300,&local_2);
   g_opstate.ex010420_data_shift_ssb_be[0] = bStack_1;
   g_opstate.ex010420_data_shift_ssb_be[1] = local_2;
@@ -8080,6 +8142,7 @@ void menu_ex020201_step(void)
 
 {
   menu_step_u8(0,5,&g_opstate.ex020201_keyer_type);
+                    /* Clears 0x20B2F, 0x1215F and 0xA0 bytes at 0x120BC [doc] */
   keyer_init();
   return;
 }
@@ -8155,6 +8218,7 @@ void menu_ex020205_step(void)
   undefined2 uStack_2;
   
   uStack_2 = contest_number_get();
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(1,&DAT_0000270f,&uStack_2);
   contest_number_set(uStack_2);
   return;
@@ -8346,6 +8410,7 @@ void menu_ex030104_step(void)
   }
   g_ui.tuner_indicator = 0;
   vfo_tuner_bit_set(0);
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
   tuner_rearm();
   return;
 }
@@ -9563,6 +9628,7 @@ void menu_ex040104_step(void)
 
 {
   menu_step_u8(0,3,&g_opstate.ex040104_screen_saver);
+                    /* Restarts slow timer 0 from menu 040104 SCREEN SAVER [doc] */
   screensaver_timer_restart();
   return;
 }
@@ -9862,6 +9928,7 @@ void menu_ex040101_enter(void)
 void menu_m4_16_0_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(1,0x31,PTR_g_ui_00025d60->rtc_set + 2);
   return;
 }
@@ -9880,6 +9947,7 @@ void menu_m4_16_0_step(void)
 void menu_m4_16_1_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(1,0x12,PTR_g_ui_00025d60->rtc_set + 1);
   return;
 }
@@ -9898,6 +9966,7 @@ void menu_m4_16_1_step(void)
 void menu_m4_16_2_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x99,PTR_g_ui_00025d60->rtc_set);
   return;
 }
@@ -9916,6 +9985,7 @@ void menu_m4_16_2_step(void)
 void menu_m4_16_3_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x23,PTR_g_ui_00025d60->rtc_set + 3);
   return;
 }
@@ -9934,6 +10004,7 @@ void menu_m4_16_3_step(void)
 void menu_m4_16_4_step(void)
 
 {
+                    /* +/-1 on a packed-BCD byte by direction +0x421, clamped [doc] */
   menu_step_bcd(0,0x59,PTR_g_ui_00025d60->rtc_set + 4);
   return;
 }
@@ -9954,10 +10025,12 @@ void menu_m4_17_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* MEM LIST LOAD after the confirmation [doc, inference] */
   sd_memlist_load_start();
   return;
 }
@@ -9978,6 +10051,7 @@ void menu_m4_17_1_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -10002,6 +10076,7 @@ void menu_m4_17_2_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -10026,6 +10101,7 @@ void menu_m4_17_3_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
@@ -10050,10 +10126,12 @@ void menu_m4_17_4_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* mode 3, op 5, first frame 0x43 [doc, inference] */
   sd_info_start();
   return;
 }
@@ -10074,6 +10152,7 @@ void menu_m4_17_5_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(1);
   if (iVar1 != 1) {
     return;
@@ -10098,10 +10177,12 @@ void menu_m4_17_6_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(2);
   if (iVar1 != 1) {
     return;
   }
+                    /* mode 4, op 8, first frame 0x43 [doc, inference] */
   sd_format_start();
   return;
 }
@@ -10122,6 +10203,7 @@ void menu_m4_19_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -10148,6 +10230,7 @@ void menu_m4_20_0_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -10172,6 +10255,7 @@ void menu_m4_20_1_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -10196,6 +10280,7 @@ void menu_m4_20_2_enter(void)
 {
   int iVar1;
   
+                    /* SD CARD action on_enter guard [doc] */
   iVar1 = sd_menu_enter_check(0);
   if (iVar1 != 1) {
     return;
@@ -10398,6 +10483,7 @@ void menu_ex060502_draw(void)
 void menu_ex060103_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(1);
   return;
 }
@@ -10416,6 +10502,7 @@ void menu_ex060103_draw(void)
 void menu_ex060203_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(2);
   return;
 }
@@ -10434,6 +10521,7 @@ void menu_ex060203_draw(void)
 void menu_ex060303_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(3);
   return;
 }
@@ -10452,6 +10540,7 @@ void menu_ex060303_draw(void)
 void menu_ex060403_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(4);
   return;
 }
@@ -10470,6 +10559,7 @@ void menu_ex060403_draw(void)
 void menu_ex060503_draw(void)
 
 {
+                    /* PRESET n CAT-1 TIME OUT TIMER row [doc] */
   menu_draw_preset_cat_tot(5);
   return;
 }
@@ -10937,6 +11027,7 @@ void menu_ex060508_draw(void)
 void menu_ex060109_draw(void)
 
 {
+                    /* PRESET n lcut_slope row [doc] */
   menu_draw_preset_lcut_slope(1);
   return;
 }
@@ -10955,6 +11046,7 @@ void menu_ex060109_draw(void)
 void menu_ex060209_draw(void)
 
 {
+                    /* PRESET n lcut_slope row [doc] */
   menu_draw_preset_lcut_slope(2);
   return;
 }
@@ -10973,6 +11065,7 @@ void menu_ex060209_draw(void)
 void menu_ex060309_draw(void)
 
 {
+                    /* PRESET n lcut_slope row [doc] */
   menu_draw_preset_lcut_slope(3);
   return;
 }
@@ -10991,6 +11084,7 @@ void menu_ex060309_draw(void)
 void menu_ex060409_draw(void)
 
 {
+                    /* PRESET n lcut_slope row [doc] */
   menu_draw_preset_lcut_slope(4);
   return;
 }
@@ -11009,6 +11103,7 @@ void menu_ex060409_draw(void)
 void menu_ex060509_draw(void)
 
 {
+                    /* PRESET n lcut_slope row [doc] */
   menu_draw_preset_lcut_slope(5);
   return;
 }
@@ -11027,6 +11122,7 @@ void menu_ex060509_draw(void)
 void menu_ex060110_draw(void)
 
 {
+                    /* PRESET n hcut_freq row [doc] */
   menu_draw_preset_hcut_freq(1);
   return;
 }
@@ -11045,6 +11141,7 @@ void menu_ex060110_draw(void)
 void menu_ex060210_draw(void)
 
 {
+                    /* PRESET n hcut_freq row [doc] */
   menu_draw_preset_hcut_freq(2);
   return;
 }
@@ -11063,6 +11160,7 @@ void menu_ex060210_draw(void)
 void menu_ex060310_draw(void)
 
 {
+                    /* PRESET n hcut_freq row [doc] */
   menu_draw_preset_hcut_freq(3);
   return;
 }
@@ -11081,6 +11179,7 @@ void menu_ex060310_draw(void)
 void menu_ex060410_draw(void)
 
 {
+                    /* PRESET n hcut_freq row [doc] */
   menu_draw_preset_hcut_freq(4);
   return;
 }
@@ -11099,6 +11198,7 @@ void menu_ex060410_draw(void)
 void menu_ex060510_draw(void)
 
 {
+                    /* PRESET n hcut_freq row [doc] */
   menu_draw_preset_hcut_freq(5);
   return;
 }
@@ -11117,6 +11217,7 @@ void menu_ex060510_draw(void)
 void menu_ex060111_draw(void)
 
 {
+                    /* PRESET n hcut_slope row [doc] */
   menu_draw_preset_hcut_slope(1);
   return;
 }
@@ -11135,6 +11236,7 @@ void menu_ex060111_draw(void)
 void menu_ex060211_draw(void)
 
 {
+                    /* PRESET n hcut_slope row [doc] */
   menu_draw_preset_hcut_slope(2);
   return;
 }
@@ -11153,6 +11255,7 @@ void menu_ex060211_draw(void)
 void menu_ex060311_draw(void)
 
 {
+                    /* PRESET n hcut_slope row [doc] */
   menu_draw_preset_hcut_slope(3);
   return;
 }
@@ -11171,6 +11274,7 @@ void menu_ex060311_draw(void)
 void menu_ex060411_draw(void)
 
 {
+                    /* PRESET n hcut_slope row [doc] */
   menu_draw_preset_hcut_slope(4);
   return;
 }
@@ -11189,6 +11293,7 @@ void menu_ex060411_draw(void)
 void menu_ex060511_draw(void)
 
 {
+                    /* PRESET n hcut_slope row [doc] */
   menu_draw_preset_hcut_slope(5);
   return;
 }
@@ -11207,6 +11312,7 @@ void menu_ex060511_draw(void)
 void menu_ex060112_draw(void)
 
 {
+                    /* PRESET n usb_out_level row [doc] */
   menu_draw_preset_usb_out_level(1);
   return;
 }
@@ -11225,6 +11331,7 @@ void menu_ex060112_draw(void)
 void menu_ex060212_draw(void)
 
 {
+                    /* PRESET n usb_out_level row [doc] */
   menu_draw_preset_usb_out_level(2);
   return;
 }
@@ -11243,6 +11350,7 @@ void menu_ex060212_draw(void)
 void menu_ex060312_draw(void)
 
 {
+                    /* PRESET n usb_out_level row [doc] */
   menu_draw_preset_usb_out_level(3);
   return;
 }
@@ -11261,6 +11369,7 @@ void menu_ex060312_draw(void)
 void menu_ex060412_draw(void)
 
 {
+                    /* PRESET n usb_out_level row [doc] */
   menu_draw_preset_usb_out_level(4);
   return;
 }
@@ -11279,6 +11388,7 @@ void menu_ex060412_draw(void)
 void menu_ex060512_draw(void)
 
 {
+                    /* PRESET n usb_out_level row [doc] */
   menu_draw_preset_usb_out_level(5);
   return;
 }
@@ -11297,6 +11407,7 @@ void menu_ex060512_draw(void)
 void menu_ex060113_draw(void)
 
 {
+                    /* PRESET n rear_out_level row [doc] */
   menu_draw_preset_rear_out_level(1);
   return;
 }
@@ -11315,6 +11426,7 @@ void menu_ex060113_draw(void)
 void menu_ex060213_draw(void)
 
 {
+                    /* PRESET n rear_out_level row [doc] */
   menu_draw_preset_rear_out_level(2);
   return;
 }
@@ -11333,6 +11445,7 @@ void menu_ex060213_draw(void)
 void menu_ex060313_draw(void)
 
 {
+                    /* PRESET n rear_out_level row [doc] */
   menu_draw_preset_rear_out_level(3);
   return;
 }
@@ -11351,6 +11464,7 @@ void menu_ex060313_draw(void)
 void menu_ex060413_draw(void)
 
 {
+                    /* PRESET n rear_out_level row [doc] */
   menu_draw_preset_rear_out_level(4);
   return;
 }
@@ -11369,6 +11483,7 @@ void menu_ex060413_draw(void)
 void menu_ex060513_draw(void)
 
 {
+                    /* PRESET n rear_out_level row [doc] */
   menu_draw_preset_rear_out_level(5);
   return;
 }
@@ -11387,6 +11502,7 @@ void menu_ex060513_draw(void)
 void menu_ex060114_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(1);
   return;
 }
@@ -11405,6 +11521,7 @@ void menu_ex060114_draw(void)
 void menu_ex060214_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(2);
   return;
 }
@@ -11423,6 +11540,7 @@ void menu_ex060214_draw(void)
 void menu_ex060314_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(3);
   return;
 }
@@ -11441,6 +11559,7 @@ void menu_ex060314_draw(void)
 void menu_ex060414_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(4);
   return;
 }
@@ -11459,6 +11578,7 @@ void menu_ex060414_draw(void)
 void menu_ex060514_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(5);
   return;
 }
@@ -11477,6 +11597,7 @@ void menu_ex060514_draw(void)
 void menu_ex060115_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(1);
   return;
 }
@@ -11495,6 +11616,7 @@ void menu_ex060115_draw(void)
 void menu_ex060215_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(2);
   return;
 }
@@ -11513,6 +11635,7 @@ void menu_ex060215_draw(void)
 void menu_ex060315_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(3);
   return;
 }
@@ -11531,6 +11654,7 @@ void menu_ex060315_draw(void)
 void menu_ex060415_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(4);
   return;
 }
@@ -11549,6 +11673,7 @@ void menu_ex060415_draw(void)
 void menu_ex060515_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(5);
   return;
 }
@@ -11567,6 +11692,7 @@ void menu_ex060515_draw(void)
 void menu_ex060116_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(1);
   return;
 }
@@ -11585,6 +11711,7 @@ void menu_ex060116_draw(void)
 void menu_ex060216_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(2);
   return;
 }
@@ -11603,6 +11730,7 @@ void menu_ex060216_draw(void)
 void menu_ex060316_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(3);
   return;
 }
@@ -11621,6 +11749,7 @@ void menu_ex060316_draw(void)
 void menu_ex060416_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(4);
   return;
 }
@@ -11639,6 +11768,7 @@ void menu_ex060416_draw(void)
 void menu_ex060516_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(5);
   return;
 }
@@ -11657,6 +11787,7 @@ void menu_ex060516_draw(void)
 void menu_ex060117_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(1);
   return;
 }
@@ -11675,6 +11806,7 @@ void menu_ex060117_draw(void)
 void menu_ex060217_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(2);
   return;
 }
@@ -11693,6 +11825,7 @@ void menu_ex060217_draw(void)
 void menu_ex060317_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(3);
   return;
 }
@@ -11711,6 +11844,7 @@ void menu_ex060317_draw(void)
 void menu_ex060417_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(4);
   return;
 }
@@ -11729,6 +11863,7 @@ void menu_ex060417_draw(void)
 void menu_ex060517_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(5);
   return;
 }
@@ -11747,6 +11882,7 @@ void menu_ex060517_draw(void)
 void menu_ex060118_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(1);
   return;
 }
@@ -11765,6 +11901,7 @@ void menu_ex060118_draw(void)
 void menu_ex060218_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(2);
   return;
 }
@@ -11783,6 +11920,7 @@ void menu_ex060218_draw(void)
 void menu_ex060318_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(3);
   return;
 }
@@ -11801,6 +11939,7 @@ void menu_ex060318_draw(void)
 void menu_ex060418_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(4);
   return;
 }
@@ -11819,6 +11958,7 @@ void menu_ex060418_draw(void)
 void menu_ex060518_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(5);
   return;
 }
@@ -11841,6 +11981,7 @@ void menu_ex060101_enter(void)
   ui_state *p_ui_state;
   ui_state *p_ui_state_2;
   
+                    /* Returns the RAM address of the open PRESET's name [doc] */
   menu_preset_name_ptr_ret = (undefined4 *)menu_preset_name_ptr();
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 6;
@@ -11880,6 +12021,7 @@ void menu_ex060101_enter(void)
 void menu_ex060102_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(1);
   return;
 }
@@ -11898,6 +12040,7 @@ void menu_ex060102_step(void)
 void menu_ex060202_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(2);
   return;
 }
@@ -11916,6 +12059,7 @@ void menu_ex060202_step(void)
 void menu_ex060302_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(3);
   return;
 }
@@ -11934,6 +12078,7 @@ void menu_ex060302_step(void)
 void menu_ex060402_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(4);
   return;
 }
@@ -11952,6 +12097,7 @@ void menu_ex060402_step(void)
 void menu_ex060502_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(5);
   return;
 }
@@ -11970,6 +12116,7 @@ void menu_ex060502_step(void)
 void menu_ex060103_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(1);
   return;
 }
@@ -11988,6 +12135,7 @@ void menu_ex060103_step(void)
 void menu_ex060203_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(2);
   return;
 }
@@ -12006,6 +12154,7 @@ void menu_ex060203_step(void)
 void menu_ex060303_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(3);
   return;
 }
@@ -12024,6 +12173,7 @@ void menu_ex060303_step(void)
 void menu_ex060403_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(4);
   return;
 }
@@ -12042,6 +12192,7 @@ void menu_ex060403_step(void)
 void menu_ex060503_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(5);
   return;
 }
@@ -12060,6 +12211,7 @@ void menu_ex060503_step(void)
 void menu_ex060104_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(1);
   return;
 }
@@ -12078,6 +12230,7 @@ void menu_ex060104_step(void)
 void menu_ex060204_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(2);
   return;
 }
@@ -12096,6 +12249,7 @@ void menu_ex060204_step(void)
 void menu_ex060304_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(3);
   return;
 }
@@ -12114,6 +12268,7 @@ void menu_ex060304_step(void)
 void menu_ex060404_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(4);
   return;
 }
@@ -12132,6 +12287,7 @@ void menu_ex060404_step(void)
 void menu_ex060504_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(5);
   return;
 }
@@ -12149,6 +12305,7 @@ void menu_ex060504_step(void)
 void menu_ex060105_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(1);
   return;
 }
@@ -12167,6 +12324,7 @@ void menu_ex060105_step(void)
 void menu_ex060205_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(2);
   return;
 }
@@ -12185,6 +12343,7 @@ void menu_ex060205_step(void)
 void menu_ex060305_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(3);
   return;
 }
@@ -12203,6 +12362,7 @@ void menu_ex060305_step(void)
 void menu_ex060405_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(4);
   return;
 }
@@ -12221,6 +12381,7 @@ void menu_ex060405_step(void)
 void menu_ex060505_step(void)
 
 {
+                    /* PRESET n agc_fast_delay on_step [doc] */
   menu_step_preset_agc_fast_delay(5);
   return;
 }
@@ -12239,6 +12400,7 @@ void menu_ex060505_step(void)
 void menu_ex060106_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(1);
   return;
 }
@@ -12257,6 +12419,7 @@ void menu_ex060106_step(void)
 void menu_ex060206_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(2);
   return;
 }
@@ -12275,6 +12438,7 @@ void menu_ex060206_step(void)
 void menu_ex060306_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(3);
   return;
 }
@@ -12293,6 +12457,7 @@ void menu_ex060306_step(void)
 void menu_ex060406_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(4);
   return;
 }
@@ -12311,6 +12476,7 @@ void menu_ex060406_step(void)
 void menu_ex060506_step(void)
 
 {
+                    /* PRESET n agc_mid_delay on_step [doc] */
   menu_step_preset_agc_mid_delay(5);
   return;
 }
@@ -12329,6 +12495,7 @@ void menu_ex060506_step(void)
 void menu_ex060107_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(1);
   return;
 }
@@ -12347,6 +12514,7 @@ void menu_ex060107_step(void)
 void menu_ex060207_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(2);
   return;
 }
@@ -12365,6 +12533,7 @@ void menu_ex060207_step(void)
 void menu_ex060307_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(3);
   return;
 }
@@ -12383,6 +12552,7 @@ void menu_ex060307_step(void)
 void menu_ex060407_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(4);
   return;
 }
@@ -12401,6 +12571,7 @@ void menu_ex060407_step(void)
 void menu_ex060507_step(void)
 
 {
+                    /* PRESET n agc_slow_delay on_step [doc] */
   menu_step_preset_agc_slow_delay(5);
   return;
 }
@@ -12419,6 +12590,7 @@ void menu_ex060507_step(void)
 void menu_ex060108_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(1);
   return;
 }
@@ -12437,6 +12609,7 @@ void menu_ex060108_step(void)
 void menu_ex060208_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(2);
   return;
 }
@@ -12455,6 +12628,7 @@ void menu_ex060208_step(void)
 void menu_ex060308_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(3);
   return;
 }
@@ -12473,6 +12647,7 @@ void menu_ex060308_step(void)
 void menu_ex060408_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(4);
   return;
 }
@@ -12491,6 +12666,7 @@ void menu_ex060408_step(void)
 void menu_ex060508_step(void)
 
 {
+                    /* PRESET n lcut_freq on_step [doc] */
   menu_step_preset_lcut_freq(5);
   return;
 }
@@ -12509,6 +12685,7 @@ void menu_ex060508_step(void)
 void menu_ex060109_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(1);
   return;
 }
@@ -12527,6 +12704,7 @@ void menu_ex060109_step(void)
 void menu_ex060209_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(2);
   return;
 }
@@ -12545,6 +12723,7 @@ void menu_ex060209_step(void)
 void menu_ex060309_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(3);
   return;
 }
@@ -12563,6 +12742,7 @@ void menu_ex060309_step(void)
 void menu_ex060409_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(4);
   return;
 }
@@ -12581,6 +12761,7 @@ void menu_ex060409_step(void)
 void menu_ex060509_step(void)
 
 {
+                    /* PRESET n lcut_slope on_step [doc] */
   menu_step_preset_lcut_slope(5);
   return;
 }
@@ -12599,6 +12780,7 @@ void menu_ex060509_step(void)
 void menu_ex060110_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(1);
   return;
 }
@@ -12617,6 +12799,7 @@ void menu_ex060110_step(void)
 void menu_ex060210_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(2);
   return;
 }
@@ -12635,6 +12818,7 @@ void menu_ex060210_step(void)
 void menu_ex060310_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(3);
   return;
 }
@@ -12653,6 +12837,7 @@ void menu_ex060310_step(void)
 void menu_ex060410_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(4);
   return;
 }
@@ -12671,6 +12856,7 @@ void menu_ex060410_step(void)
 void menu_ex060510_step(void)
 
 {
+                    /* PRESET n hcut_freq on_step [doc] */
   menu_step_preset_hcut_freq(5);
   return;
 }
@@ -12689,6 +12875,7 @@ void menu_ex060510_step(void)
 void menu_ex060111_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(1);
   return;
 }
@@ -12707,6 +12894,7 @@ void menu_ex060111_step(void)
 void menu_ex060211_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(2);
   return;
 }
@@ -12725,6 +12913,7 @@ void menu_ex060211_step(void)
 void menu_ex060311_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(3);
   return;
 }
@@ -12743,6 +12932,7 @@ void menu_ex060311_step(void)
 void menu_ex060411_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(4);
   return;
 }
@@ -12761,6 +12951,7 @@ void menu_ex060411_step(void)
 void menu_ex060511_step(void)
 
 {
+                    /* PRESET n hcut_slope on_step [doc] */
   menu_step_preset_hcut_slope(5);
   return;
 }
@@ -12779,6 +12970,7 @@ void menu_ex060511_step(void)
 void menu_ex060112_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(1);
   return;
 }
@@ -12797,6 +12989,7 @@ void menu_ex060112_step(void)
 void menu_ex060212_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(2);
   return;
 }
@@ -12815,6 +13008,7 @@ void menu_ex060212_step(void)
 void menu_ex060312_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(3);
   return;
 }
@@ -12833,6 +13027,7 @@ void menu_ex060312_step(void)
 void menu_ex060412_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(4);
   return;
 }
@@ -12851,6 +13046,7 @@ void menu_ex060412_step(void)
 void menu_ex060512_step(void)
 
 {
+                    /* PRESET n usb_out_level on_step [doc] */
   menu_step_preset_usb_out_level(5);
   return;
 }
@@ -12869,6 +13065,7 @@ void menu_ex060512_step(void)
 void menu_ex060113_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(1);
   return;
 }
@@ -12886,6 +13083,7 @@ void menu_ex060113_step(void)
 void menu_ex060213_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(2);
   return;
 }
@@ -12904,6 +13102,7 @@ void menu_ex060213_step(void)
 void menu_ex060313_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(3);
   return;
 }
@@ -12922,6 +13121,7 @@ void menu_ex060313_step(void)
 void menu_ex060413_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(4);
   return;
 }
@@ -12940,6 +13140,7 @@ void menu_ex060413_step(void)
 void menu_ex060513_step(void)
 
 {
+                    /* PRESET n rear_out_level on_step [doc] */
   menu_step_preset_rear_out_level(5);
   return;
 }
@@ -12958,6 +13159,7 @@ void menu_ex060513_step(void)
 void menu_ex060114_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(1);
   return;
 }
@@ -12976,6 +13178,7 @@ void menu_ex060114_step(void)
 void menu_ex060214_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(2);
   return;
 }
@@ -12994,6 +13197,7 @@ void menu_ex060214_step(void)
 void menu_ex060314_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(3);
   return;
 }
@@ -13012,6 +13216,7 @@ void menu_ex060314_step(void)
 void menu_ex060414_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(4);
   return;
 }
@@ -13030,6 +13235,7 @@ void menu_ex060414_step(void)
 void menu_ex060514_step(void)
 
 {
+                    /* PRESET n tx_bpf_sel on_step [doc] */
   menu_step_preset_tx_bpf_sel(5);
   return;
 }
@@ -13048,6 +13254,7 @@ void menu_ex060514_step(void)
 void menu_ex060115_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(1);
   return;
 }
@@ -13066,6 +13273,7 @@ void menu_ex060115_step(void)
 void menu_ex060215_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(2);
   return;
 }
@@ -13084,6 +13292,7 @@ void menu_ex060215_step(void)
 void menu_ex060315_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(3);
   return;
 }
@@ -13102,6 +13311,7 @@ void menu_ex060315_step(void)
 void menu_ex060415_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(4);
   return;
 }
@@ -13120,6 +13330,7 @@ void menu_ex060415_step(void)
 void menu_ex060515_step(void)
 
 {
+                    /* PRESET n mod_source on_step [doc] */
   menu_step_preset_mod_source(5);
   return;
 }
@@ -13138,6 +13349,7 @@ void menu_ex060515_step(void)
 void menu_ex060116_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(1);
   return;
 }
@@ -13156,6 +13368,7 @@ void menu_ex060116_step(void)
 void menu_ex060216_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(2);
   return;
 }
@@ -13174,6 +13387,7 @@ void menu_ex060216_step(void)
 void menu_ex060316_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(3);
   return;
 }
@@ -13192,6 +13406,7 @@ void menu_ex060316_step(void)
 void menu_ex060416_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(4);
   return;
 }
@@ -13210,6 +13425,7 @@ void menu_ex060416_step(void)
 void menu_ex060516_step(void)
 
 {
+                    /* PRESET n usb_mod_gain on_step [doc] */
   menu_step_preset_usb_mod_gain(5);
   return;
 }
@@ -13228,6 +13444,7 @@ void menu_ex060516_step(void)
 void menu_ex060117_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(1);
   return;
 }
@@ -13246,6 +13463,7 @@ void menu_ex060117_step(void)
 void menu_ex060217_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(2);
   return;
 }
@@ -13264,6 +13482,7 @@ void menu_ex060217_step(void)
 void menu_ex060317_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(3);
   return;
 }
@@ -13282,6 +13501,7 @@ void menu_ex060317_step(void)
 void menu_ex060417_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(4);
   return;
 }
@@ -13300,6 +13520,7 @@ void menu_ex060417_step(void)
 void menu_ex060517_step(void)
 
 {
+                    /* PRESET n rear_mod_gain on_step [doc] */
   menu_step_preset_rear_mod_gain(5);
   return;
 }
@@ -13318,6 +13539,7 @@ void menu_ex060517_step(void)
 void menu_ex060118_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(1);
   return;
 }
@@ -13336,6 +13558,7 @@ void menu_ex060118_step(void)
 void menu_ex060218_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(2);
   return;
 }
@@ -13354,6 +13577,7 @@ void menu_ex060218_step(void)
 void menu_ex060318_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(3);
   return;
 }
@@ -13372,6 +13596,7 @@ void menu_ex060318_step(void)
 void menu_ex060418_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(4);
   return;
 }
@@ -13390,6 +13615,7 @@ void menu_ex060418_step(void)
 void menu_ex060518_step(void)
 
 {
+                    /* PRESET n rptt_select on_step [doc] */
   menu_step_preset_rptt_select(5);
   return;
 }

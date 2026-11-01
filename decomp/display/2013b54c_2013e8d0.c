@@ -361,6 +361,7 @@ undefined4 usbh_hid_class_init(void)
   
   __aeabi_memclr4(&DAT_2091c568,0x610);
   usbh_hid_init_ret = usbh_hid_init((int *)&DAT_2091c568);
+                    /* Clears the two HID device slots 0x2091CB78 [doc] */
   if (((int)usbh_hid_init_ret < 0) || (iVar1 = usbhid_class_register(), iVar1 < 0)) {
     uVar2 = 0xffffffff;
   }
@@ -892,12 +893,14 @@ void usbhid_device_task(int param_1)
                          (&DAT_2091c570)[param_1],0,0);
       iVar3 = usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x81,6,0x2200,
                                  (&DAT_2091c570)[param_1],pbVar9,uVar7);
+                    /* walks a HID report descriptor item by item [doc] */
       if (((-1 < iVar3) && (iVar3 = hid_report_desc_parse(puVar6,pbVar9), -1 < iVar3)) &&
          ((iVar3 = *(int *)(&DAT_2091c588 + param_1), iVar3 == 2 || iVar3 == 4 ||
           (iVar3 == 5 || iVar3 == 6)))) {
         usbh_class_request(*(undefined4 *)(&DAT_2091c56c + param_1),0x21,10,0,
                            (&DAT_2091c570)[param_1],0,0);
         usbhid_attach_event(*(int *)(&DAT_2091c56c + param_1),*(int *)(&DAT_2091c588 + param_1));
+                    /* starts a read on the device's interrupt pipe [doc] */
         while ((*(int *)(&DAT_2091c57c + param_1) != 0 &&
                (iVar3 = usbhid_pipe_read(*(undefined4 *)(&DAT_2091c56c + param_1),
                                          *(undefined4 *)(&DAT_2091c574 + param_1),pbVar9,
@@ -941,6 +944,7 @@ void usbhid_device_task(int param_1)
             else if (local_48 == 6) {
               if (-1 < *(int *)(&DAT_2091c62c + param_1)) {
                 local_44 = (uint)(byte)(&DAT_2091c634)[param_1];
+                    /* little-endian bit-field extract from a HID report [doc] */
                 uVar1 = hid_report_bits_get(pbVar9,*(undefined4 *)(&DAT_2091c62c + param_1),
                                             *(undefined4 *)(&DAT_2091c630 + param_1));
                 local_44._0_2_ = CONCAT11(uVar1,(undefined1)local_44);
@@ -1081,9 +1085,11 @@ undefined4 usbh_pipe_cancel(int param_1,int param_2)
     iVar6 = (&DAT_20420144)[*(int *)(iVar3 + 0xc)];
     iVar7 = *(int *)(&DAT_2042016c + iVar4 * 4);
     uVar8 = *(undefined4 *)(iVar5 + iVar4 * 4 + 0x30);
+                    /* itron_loc_cpu, returns 0 [doc] */
     uVar2 = usbh_loc_cpu();
     *(ushort *)(*(int *)(iVar5 + 8) + iVar6) = *(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0xfffc;
     itron_unl_cpu(uVar2);
+                    /* Low word of itron_get_tim [doc] */
     iVar3 = fs_get_tick();
     while ((iVar4 = fs_get_tick(), (uint)(iVar4 - iVar3) < 0x33 &&
            ((*(ushort *)(*(int *)(iVar5 + 8) + iVar6) & 0x1020) != 0))) {
@@ -1749,6 +1755,7 @@ int sd_acmd51_read_scr(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
+                    /* makes sure the card is selected [doc] */
   iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(8,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
@@ -1836,6 +1843,7 @@ int sd_acmd13_read_status(int *param_1)
   int iVar3;
   
   iVar1 = *param_1;
+                    /* makes sure the card is selected [doc] */
   iVar2 = sd_select_card(param_1);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_1[1] + 0x50))(0x40,1,*param_1), iVar2 == 0)) {
     iVar2 = 0;
@@ -1889,6 +1897,7 @@ int sd_cmd6_switch_func(undefined4 param_1,int *param_2)
   int iVar3;
   
   iVar1 = *param_2;
+                    /* makes sure the card is selected [doc] */
   iVar2 = sd_select_card(param_2);
   if ((iVar2 == 0) && (iVar2 = (**(code **)(param_2[1] + 0x50))(0x40,1,*param_2), iVar2 == 0)) {
     iVar2 = 0;
@@ -2207,6 +2216,7 @@ int sd_card_identify(int *param_1)
       return iVar4;
     }
     *(ushort *)(*param_1 + 0x2c0) = *(ushort *)(*param_1 + 0x2c0) | 1;
+                    /* Initialisation without a CMD8 answer [doc] */
     iVar4 = sd_init_v1_or_mmc(param_1);
   }
   if (iVar4 != 0) {
@@ -2354,6 +2364,7 @@ uint sd_read_sectors(int param_1,uint param_2,uint param_3,int *param_4)
   if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
     param_1 = param_1 << 9;
   }
+                    /* makes sure the card is selected [doc] */
   uVar1 = sd_select_card(param_4);
   if ((uVar1 == 0) &&
      ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
@@ -2381,6 +2392,7 @@ int sd_write_sectors(int param_1,uint param_2,uint param_3,int *param_4)
     if ((*(byte *)(*param_4 + 0x2c0) & 2) == 0) {
       param_1 = param_1 << 9;
     }
+                    /* makes sure the card is selected [doc] */
     iVar1 = sd_select_card(param_4);
     if ((iVar1 == 0) &&
        ((*(short *)(*param_4 + 0x2c2) != 2 && *(short *)(*param_4 + 0x2c2) != 3 ||
@@ -2416,6 +2428,7 @@ uint sd_vol_read(int param_1,uint param_2,uint param_3,uint param_4,int *param_5
       if (uVar1 != 0) {
         return uVar1;
       }
+                    /* driver op +0x58 [doc, inference] */
       uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
       if (uVar1 == 0) {
         return 0;
@@ -2447,6 +2460,7 @@ int sd_vol_write(int param_1,uint param_2,uint param_3,uint param_4,int *param_5
       if (iVar1 != 0) {
         return iVar1;
       }
+                    /* driver op +0x60 [doc, inference] */
       iVar1 = sd_write_sectors(*(int *)(param_1 + 0x30) + param_2,param_3,param_4,param_5);
       if (iVar1 == 0) {
         return 0;
@@ -2472,8 +2486,10 @@ uint sd_mount_volume(int param_1,int *param_2)
   uint uVar1;
   int iVar2;
   
+                    /* driver op +0x58 [doc, inference] */
   uVar1 = sd_read_sectors(0,*param_2 + 1,1,param_2);
   if (uVar1 == 0) {
+                    /* partition start from the MBR [doc] */
     iVar2 = fat_find_volume(param_1,*param_2 + 1);
     if (iVar2 == 0) {
       uVar1 = sd_read_sectors(*(int *)(param_1 + 0x30),*param_2 + 1,1,param_2);
@@ -2524,6 +2540,7 @@ int sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
     break;
   case 2:
     if ((*(byte *)(param_1 + 0x68) & 0x40) != 0) {
+                    /* partition write, bounds check, one sd_write_sectors try [doc] */
       iVar2 = sd_vol_write(param_1,param_3,param_4,param_5,param_6);
       return iVar2;
     }
@@ -2542,6 +2559,9 @@ int sd_driver_op(int param_1,undefined4 param_2,undefined4 param_3,undefined4 pa
         i = 0;
         do {
           iVar2 = (**(code **)(param_6[1] + 0x20))(2);
+                    /* card reset/identify, card-type flags at +0x2C0/+0x2C2 [doc, inference] */
+                    /* CMD9 with sd_csd_check / mmc_csd_check [doc] */
+                    /* Reads sector 0 [doc] */
           if ((((((iVar2 == 0) && (iVar2 = sd_card_identify(param_6), iVar2 == 0)) &&
                 (iVar2 = sd_read_csd_cid(param_6), iVar2 == 0)) &&
                ((iVar2 = sd_selected_op(*(undefined2 *)(*param_6 + 0x2aa),0x200,1,param_6),
@@ -2637,6 +2657,7 @@ int fat_format_write_fats(int *param_1)
   
   iVar2 = *param_1;
   iVar6 = 0;
+                    /* word fill for aligned 0x200-byte blocks, else bytes [doc] */
   fs_memset(iVar2 + 1,0,0x200,0);
   cVar1 = *(char *)(iVar2 + 0x2dc);
   if (cVar1 == '\f') {
@@ -2652,6 +2673,7 @@ int fat_format_write_fats(int *param_1)
     fs_memcpy(*param_1 + 1,&DAT_204202f3,0xc);
   }
   iVar5 = *(int *)(iVar2 + 0x2d0) + (uint)*(ushort *)(iVar2 + 0x2e4);
+                    /* driver op +0x60 [doc, inference] */
   iVar3 = sd_write_sectors(iVar5,*param_1 + 1,1,param_1);
   if (iVar3 == 0) {
     if (*(char *)(iVar2 + 0x2dc) != '@') {

@@ -20,12 +20,15 @@ void sdr_spi_master_write(uint param_1,uint param_2)
   if (DAT_208001b4 == '\0') {
     dmac5_disable();
     rspi_stop(2);
+                    /* Programs one channel as master [doc] */
     rspi_hw_config(2,0);
     DAT_208001b4 = '\x01';
   }
   rspi_reset_buffers(2);
   rspi_start(2);
+                    /* PIO write by TX trigger level [doc] */
   rspi_write(2,param_1,param_2,0xff);
+                    /* Spins on SPSR.TEND [doc] */
   rspi_wait_tx_end(2);
   rspi_stop(2);
   return;
@@ -150,8 +153,11 @@ void pclink_tx_trailer_init(void)
 void pclink_tx_dma_start(void)
 
 {
+                    /* Next0 Source Address 9 [sfr] */
   DMAC_N0SA_9 = &DAT_60501000;
+                    /* Next0 Destination Address 9 [sfr] */
   DMAC_N0DA_9 = 0xe800c804;
+                    /* Next0 Transaction Byte 9 [sfr] */
   DMAC_N0TB_9 = 0x1000;
   reg_rmw32(&DMAC_CHCTRL_9,1,0);
   return;
@@ -431,6 +437,7 @@ undefined4 rspi0_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166a98), 0 < (int)uVar1)) {
     gic_enable_irq(0x110);
     gic_enable_irq(0x10f);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(0,1);
     return uVar2;
   }
@@ -461,6 +468,7 @@ undefined4 rspi1_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ac0), 0 < (int)uVar1)) {
     gic_enable_irq(0x113);
     gic_enable_irq(0x112);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(1,0);
     return uVar2;
   }
@@ -491,6 +499,7 @@ undefined4 rspi2_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166ae8), 0 < (int)uVar1)) {
     gic_enable_irq(0x116);
     gic_enable_irq(0x115);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(2,1);
     return uVar2;
   }
@@ -522,6 +531,7 @@ undefined4 rspi3_open(void)
     gic_enable_irq(0x119);
     gic_enable_irq(0x118);
     gic_enable_irq(0x117);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(3,1);
     return uVar2;
   }
@@ -552,6 +562,7 @@ undefined4 rspi4_open(void)
   if ((0 < (int)uVar1) && (uVar1 = itron_acre_isr(0,0x20166b38), 0 < (int)uVar1)) {
     gic_enable_irq(0x11c);
     gic_enable_irq(0x11b);
+                    /* Programs one channel as master [doc] */
     uVar2 = rspi_hw_config(4,1);
     return uVar2;
   }
@@ -970,6 +981,7 @@ void rspi0_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_0 [sfr] */
       RSPI_SPDR_0._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -978,6 +990,7 @@ void rspi0_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_0,0,0x3f);
     } while (uVar3 < param_1);
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
   }
   else {
@@ -1048,6 +1061,7 @@ void rspi1_read_burst(uint param_1,int param_2)
       uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_1 [sfr] */
       RSPI_SPDR_1._0_1_ = 0xff;
       uVar1 = uVar1 - 1;
     }
@@ -1128,6 +1142,7 @@ void rspi2_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_2 [sfr] */
       RSPI_SPDR_2._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -1136,6 +1151,7 @@ void rspi2_read_burst(uint param_1,int param_2)
     do {
       uVar3 = reg_read16(&RSPI_SPBFDR_2,0,0x3f);
     } while (uVar3 < param_1);
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
   }
   else {
@@ -1206,6 +1222,7 @@ void rspi3_read_burst(uint param_1,int param_2)
       uVar1 = uVar1 - 2;
     }
     else {
+                    /* Data_3 [sfr] */
       RSPI_SPDR_3._0_1_ = 0xff;
       uVar1 = uVar1 - 1;
     }
@@ -1286,6 +1303,7 @@ void rspi4_read_burst(uint param_1,int param_2)
       uVar3 = uVar3 - 2;
     }
     else {
+                    /* Data_4 [sfr] */
       RSPI_SPDR_4._0_1_ = 0xff;
       uVar3 = uVar3 - 1;
     }
@@ -1856,6 +1874,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
   }
   reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),0,7);
   uVar2 = *(uint *)(&DAT_20800434 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   if ((uVar2 < uVar5) || (__aeabi_uidivmod(uVar2,uVar5), extraout_r1 != 0)) {
     local_3c = 0xffffffff;
   }
@@ -1869,6 +1888,7 @@ undefined4 rspi_read(uint param_1,undefined4 *param_2,int param_3,int param_4)
       }
       switch(param_1) {
       case 0:
+                    /* dummy 0xFF writes, wait RX [doc, inference] */
         rspi0_read_burst(uVar4);
         break;
       case 1:
@@ -1982,6 +2002,7 @@ undefined4 rspi_write(uint param_1,undefined4 *param_2,int param_3,int param_4)
       }
       reg_read8_ret_2 = reg_read8((byte *)((int)rspi_base_ret + 0x20),4,0x30);
       uVar3 = *(uint *)(&DAT_20800424 + (uint)reg_read8_ret_2 * 4);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
       if ((uVar3 < uVar5) || (__aeabi_uidivmod(uVar3,uVar5), extraout_r1 != 0)) {
         local_48 = 0xffffffff;
       }
@@ -2321,6 +2342,7 @@ void sdr_link_recover(void)
   rspi_stop(2);
   dmac5_enable();
   rspi_reset_buffers(2);
+                    /* Status_2 [sfr] */
   bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 1) != 0) {
     bVar1 = RSPI_SPSR_2;
@@ -2472,8 +2494,10 @@ void scope_history_push(int param_1,void *param_2)
   
   if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
      (DAT_204832ba == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(&DAT_20494768,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
     *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
     *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
@@ -2515,13 +2539,16 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
 {
   uint uVar1;
   
+                    /* Channel Control 3 [sfr] */
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_3;
   DMAC_CHCTRL_3 = uVar1 | 8;
   gic_disable_irq(0x2c);
   DAT_20808a8c = 0;
+                    /* DMA extended resource selector 1 [sfr] */
   DMAC_DMARS1 = 0x1310000;
+                    /* Channel Configuration 3 [sfr] */
   DMAC_CHCFG_3 = 0;
   reg_rmw32(&DMAC_CHCFG_3,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_3,1,0xc,0xf000);
@@ -2540,10 +2567,15 @@ void dmac3_rspi4_tx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_3,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_3,1,3,8);
   reg_rmw32(&DMAC_CHCFG_3,3,0,7);
+                    /* Channel Interval 3 [sfr] */
   DMAC_CHITVL_3 = 0;
+                    /* Channel Extension 3 [sfr] */
   DMAC_CHEXT_3 = 0;
+                    /* Next0 Source Address 3 [sfr] */
   DMAC_N0SA_3 = param_1;
+                    /* Next0 Destination Address 3 [sfr] */
   DMAC_N0DA_3 = param_2;
+                    /* Next0 Transaction Byte 3 [sfr] */
   DMAC_N0TB_3 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200b0);
@@ -2572,14 +2604,17 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 5 [sfr] */
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_5;
   DMAC_CHCTRL_5 = uVar1 | 8;
   gic_disable_irq(0x2e);
   DAT_20808a94 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x12a0000;
+                    /* Channel Configuration 5 [sfr] */
   DMAC_CHCFG_5 = 0;
   reg_rmw32(&DMAC_CHCFG_5,0,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_5,0,0xc,0xf000);
@@ -2598,10 +2633,15 @@ void dmac5_rspi2_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_5,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_5,0,3,8);
   reg_rmw32(&DMAC_CHCFG_5,5,0,7);
+                    /* Channel Interval 5 [sfr] */
   DMAC_CHITVL_5 = 0;
+                    /* Channel Extension 5 [sfr] */
   DMAC_CHEXT_5 = 0;
+                    /* Next0 Source Address 5 [sfr] */
   DMAC_N0SA_5 = param_1;
+                    /* Next0 Destination Address 5 [sfr] */
   DMAC_N0DA_5 = param_2;
+                    /* Next0 Transaction Byte 5 [sfr] */
   DMAC_N0TB_5 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200d8);
@@ -2631,14 +2671,17 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   undefined4 uVar2;
   
   uVar2 = 0;
+                    /* Channel Control 4 [sfr] */
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_4;
   DMAC_CHCTRL_4 = uVar1 | 8;
   gic_disable_irq(0x2d);
   DAT_20808a90 = 0;
+                    /* DMA extended resource selector 2 [sfr] */
   uVar1 = DMAC_DMARS2;
   DMAC_DMARS2 = uVar1 | 0x132;
+                    /* Channel Configuration 4 [sfr] */
   DMAC_CHCFG_4 = 0;
   reg_rmw32(&DMAC_CHCFG_4,1,0x10,0xf0000,uVar2);
   reg_rmw32(&DMAC_CHCFG_4,0,0xc,0xf000);
@@ -2657,10 +2700,15 @@ void dmac4_rspi4_rx_setup(uint param_1,uint param_2,uint param_3)
   reg_rmw32(&DMAC_CHCFG_4,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_4,0,3,8);
   reg_rmw32(&DMAC_CHCFG_4,4,0,7);
+                    /* Channel Interval 4 [sfr] */
   DMAC_CHITVL_4 = 0;
+                    /* Channel Extension 4 [sfr] */
   DMAC_CHEXT_4 = 0;
+                    /* Next0 Source Address 4 [sfr] */
   DMAC_N0SA_4 = param_1;
+                    /* Next0 Destination Address 4 [sfr] */
   DMAC_N0DA_4 = param_2;
+                    /* Next0 Transaction Byte 4 [sfr] */
   DMAC_N0TB_4 = param_3;
   reg_rmw32(&DMAC_DCTRL_0_7,1,0);
   uVar1 = itron_acre_isr(0,0x204200c4);
@@ -2688,12 +2736,14 @@ void dmac8_m2m_init(void)
 {
   uint uVar1;
   
+                    /* Channel Control 8 [sfr] */
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 8;
   uVar1 = DMAC_CHCTRL_8;
   DMAC_CHCTRL_8 = uVar1 | 4;
+                    /* Channel Configuration 8 [sfr] */
   DMAC_CHCFG_8 = 0;
   reg_rmw32(&DMAC_CHCFG_8,7,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_8,7,0xc,0xf000);
@@ -2712,7 +2762,9 @@ void dmac8_m2m_init(void)
   reg_rmw32(&DMAC_CHCFG_8,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_8,0,3,8);
   reg_rmw32(&DMAC_CHCFG_8,0,0,7);
+                    /* Channel Interval 8 [sfr] */
   DMAC_CHITVL_8 = 0;
+                    /* Channel Extension 8 [sfr] */
   DMAC_CHEXT_8 = 0;
   reg_rmw32(&DMAC_DCTRL_8_15,1,0);
   return;
@@ -2751,12 +2803,14 @@ void dmac9_rspi_tx_setup(int param_1)
   uint uVar1;
   uint uVar2;
   
+                    /* Channel Control 9 [sfr] */
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_9;
   DMAC_CHCTRL_9 = uVar1 | 8;
   gic_disable_irq(0x32);
   DAT_20808a98 = 0;
+                    /* DMA extended resource selector 4 [sfr] */
   uVar1 = DMAC_DMARS4;
   DMAC_DMARS4 = uVar1 & 0xffff;
   uVar1 = DMAC_DMARS4;
@@ -2767,6 +2821,7 @@ void dmac9_rspi_tx_setup(int param_1)
     uVar2 = 0x1210000;
   }
   DMAC_DMARS4 = uVar1 | uVar2;
+                    /* Channel Configuration 9 [sfr] */
   DMAC_CHCFG_9 = 0;
   reg_rmw32(&DMAC_CHCFG_9,0,0x10,0xf0000);
   reg_rmw32(&DMAC_CHCFG_9,0,0xc,0xf000);
@@ -2785,7 +2840,9 @@ void dmac9_rspi_tx_setup(int param_1)
   reg_rmw32(&DMAC_CHCFG_9,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_9,0,3,8);
   reg_rmw32(&DMAC_CHCFG_9,1,0,7);
+                    /* Channel Interval 9 [sfr] */
   DMAC_CHITVL_9 = 0;
+                    /* Channel Extension 9 [sfr] */
   DMAC_CHEXT_9 = 0;
   gic_enable_irq(0x32);
   return;
@@ -2826,12 +2883,14 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   undefined4 uVar3;
   
   uVar3 = 0;
+                    /* Channel Control 10 [sfr] */
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 2;
   uVar1 = DMAC_CHCTRL_10;
   DMAC_CHCTRL_10 = uVar1 | 8;
   gic_disable_irq(0x33);
   DAT_20808a9c = 0;
+                    /* DMA extended resource selector 5 [sfr] */
   uVar1 = DMAC_DMARS5;
   DMAC_DMARS5 = uVar1 & 0xffff0000;
   uVar1 = DMAC_DMARS5;
@@ -2842,6 +2901,7 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
     uVar2 = 0x122;
   }
   DMAC_DMARS5 = uVar1 | uVar2;
+                    /* Channel Configuration 10 [sfr] */
   DMAC_CHCFG_10 = 0;
   reg_rmw32(&DMAC_CHCFG_10,0,0x10,0xf0000,uVar3);
   reg_rmw32(&DMAC_CHCFG_10,0,0xc,0xf000);
@@ -2860,10 +2920,15 @@ void dmac10_rspi_rx_setup(int param_1,uint param_2,uint param_3,uint param_4)
   reg_rmw32(&DMAC_CHCFG_10,0,4,0x10);
   reg_rmw32(&DMAC_CHCFG_10,0,3,8);
   reg_rmw32(&DMAC_CHCFG_10,2,0,7);
+                    /* Channel Interval 10 [sfr] */
   DMAC_CHITVL_10 = 0;
+                    /* Channel Extension 10 [sfr] */
   DMAC_CHEXT_10 = 0;
+                    /* Next0 Source Address 10 [sfr] */
   DMAC_N0SA_10 = param_2;
+                    /* Next0 Destination Address 10 [sfr] */
   DMAC_N0DA_10 = param_3;
+                    /* Next0 Transaction Byte 10 [sfr] */
   DMAC_N0TB_10 = param_4;
   gic_enable_irq(0x33);
   reg_rmw32(&DMAC_CHCTRL_10,1,0);

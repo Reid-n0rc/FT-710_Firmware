@@ -162,6 +162,7 @@ void qmb_recall(void)
     }
     if (local_3 == 0) {
       if (g_qmb_hdr.ptr_a[0] != 0) {
+                    /* state = 5, load QMB slot, save header [doc, inference] */
         qmb_enter(0);
         return;
       }
@@ -177,6 +178,7 @@ void qmb_recall(void)
     qmb_set_depth(local_3);
     vfo_reload(local_3);
     PTR_g_ui_00025d54->vfo_refresh_req = 1;
+                    /* TUNER TYPE SELECT 0x9AB8 = 2 path [doc] */
     tuner_rearm();
     popup_close();
     return;
@@ -452,8 +454,10 @@ void key_step_mch_long(void)
   bVar1 = g_opstate.active_vfo != VFO_A;
   vfo_shift_reset(bVar1);
   vfo_width_reset(bVar1);
+                    /* manual NOTCH of the VFO's mode block = 0x0096 [doc] */
   vfo_notch_reset(bVar1);
   vfo_contour_reset(bVar1);
+                    /* g_opstate.apf_freq = 0 and bit 5 [doc] */
   vfo_apf_reset(bVar1);
   vfo_mark_edited(bVar1);
   vfo_store_back(bVar1);
@@ -546,6 +550,7 @@ void key_dsp_press(void)
     return;
   }
   if (PTR_g_ui_00025d54->zz_align_mode == 1) {
+                    /* DSP key in alignment mode [doc, inference] */
     iVar1 = align_store();
     if (iVar1 == 1) {
       beep_request(1);
@@ -580,6 +585,7 @@ void key_dsp_short(void)
   else {
     PTR_g_ui_00025d54->dsp_key_state = 1;
   }
+                    /* Sets UI +0x443 [doc] */
   vfo_mark_edited_if_vfo();
   return;
 }
@@ -625,6 +631,7 @@ void key_dsp_release(void)
     if (PTR_g_ui_00025d54->func_panel_open == 1) {
       if (PTR_g_ui_00025d54->dsp_key_func_short == 1) {
         if (PTR_g_ui_00025d54->dsp_key_func_long == 1) {
+                    /* DSP key long press in the FUNC panel [doc] */
           dsp_knob_reset();
           PTR_g_ui_00025d54->dsp_key_func_long = 0;
           PTR_g_ui_00025d54->dsp_key_func_short = 0;
@@ -644,12 +651,15 @@ void key_dsp_release(void)
               }
             }
             else if (bVar2 == 1) {
+                    /* DSP key short press with knob function 1 [doc] */
               dsp_knob_width_toggle();
             }
             else if (bVar2 == 2) {
+                    /* DSP key short press with knob function 2 [doc] */
               dsp_knob_notch_toggle();
             }
             else if (bVar2 == 0) {
+                    /* DSP key short press with knob function 0 [doc] */
               dsp_knob_shift_toggle();
             }
           }

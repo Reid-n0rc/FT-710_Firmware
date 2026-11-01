@@ -532,6 +532,7 @@ void menu_init(void)
 
 {
   DAT_0001fa4e = 0;
+                    /* 314 BSR menuitem_ in order [doc] */
   menu_build_all();
   return;
 }

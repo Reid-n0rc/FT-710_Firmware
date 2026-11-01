@@ -99,6 +99,7 @@ undefined4 I2C_SlaveInit(int param_1,undefined1 *param_2,uint param_3)
     if (puVar1 < &DAT_0000ffff) {
       puVar2 = puVar1;
     }
+                    /* clock enable, reset, PSELID [doc, inference] */
     FLEXCOMM_Init(param_1,3);
     memw();
     *(undefined **)(param_1 + 0x814) = puVar2;
@@ -264,6 +265,7 @@ void I2C_SlaveTransferCreateHandle
 
 {
   memset(param_2,0,0x38);
+                    /* 9 FLEXCOMM bases at 0x2002E0 [doc, inference] */
   I2C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x34) = param_4;
   *(undefined4 *)(param_2 + 0x30) = param_3;
@@ -795,6 +797,7 @@ LAB_0020e883:
   uVar2 = 0xa31;
 LAB_0020e80d:
   *param_2 = '\0';
+                    /* fsl_i2c.h inline, fsl_i2c_dma.c copy [doc] */
   I2C_DisableInterrupts_dma(param_1,0x1000051);
   if (*(code **)(param_2 + 0x3c) == (code *)0x0) {
     return;
@@ -862,10 +865,12 @@ void I2C_MasterTransferCreateHandleDMA
   int iVar1;
   
   memset(param_2,0,0x44);
+                    /* 9 FLEXCOMM bases at 0x2002E0 [doc, inference] */
   iVar1 = I2C_GetInstance(param_1);
   *(undefined4 *)(param_2 + 0x40) = param_4;
   *(undefined4 *)(param_2 + 0x3c) = param_3;
   FLEXCOMM_SetIRQHandler(param_1,I2C_MasterTransferDMAHandleIRQ,param_2);
+                    /* fsl_i2c.h inline, fsl_i2c_dma.c copy [doc] */
   I2C_DisableInterrupts_dma(param_1,0x1000051);
   *(undefined4 *)(param_2 + 0x1c) = param_5;
   *(undefined4 *)(&DAT_00238c10 + iVar1 * 8) = param_1;
@@ -961,6 +966,7 @@ LAB_0020ec17:
 LAB_0020ec90:
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x50;
+                    /* fsl_i2c.h inline, fsl_i2c_dma.c copy [doc] */
   I2C_EnableInterrupts_dma(param_1,0x1000051);
   return uVar1;
 }
@@ -1000,6 +1006,7 @@ void I2C_MasterTransferAbortDMA(int param_1,char *param_2)
   DMA_AbortTransfer(*(undefined4 *)(param_2 + 0x1c));
   memw();
   *(undefined4 *)(param_1 + 0x820) = 0;
+                    /* fsl_i2c.h inline, fsl_i2c_dma.c copy [doc] */
   I2C_DisableInterrupts_dma(param_1,0x1000051);
   do {
     uVar1 = I2C_GetStatusFlags(param_1);
@@ -1073,6 +1080,7 @@ void I2S_TxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,4);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -1111,6 +1119,7 @@ void I2S_RxInit(dword *param_1,uint *param_2)
   uint uVar3;
   uint uVar4;
   
+                    /* clock enable, reset, PSELID [doc, inference] */
   FLEXCOMM_Init(param_1,5);
   uVar4 = ((byte)param_2[2] & 1) << 8 | (*(byte *)((int)param_2 + 9) & 1) << 9 |
           (*param_2 & 3) << 4 | (param_2[1] & 3) << 6;
@@ -2075,6 +2084,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -2113,6 +2123,7 @@ int I2S_TxTransferSendDMA(undefined4 param_1,int *param_2,uint param_3,uint para
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }
@@ -2127,6 +2138,7 @@ void I2S_TransferAbortDMA(dword *param_1,int *param_2)
 {
   uint uVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2,param_1 != &USART0_CFG);
   DMA_AbortTransfer(param_2[4]);
   if (*param_2 == 1) {
@@ -2205,6 +2217,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
 {
   int iVar1;
   
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_DisableDMAInterrupts(param_2);
   if ((((param_2 == (int *)0x0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
   {
@@ -2243,6 +2256,7 @@ int I2S_RxTransferReceiveDMA(undefined4 param_1,int *param_2,uint param_3,uint p
     }
     iVar1 = 0xa8e;
   }
+                    /* fsl_i2s_dma.c static inline [doc, inference] */
   I2S_EnableDMAInterrupts(param_2);
   return iVar1;
 }

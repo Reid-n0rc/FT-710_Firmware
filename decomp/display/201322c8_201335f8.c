@@ -184,9 +184,11 @@ void vdc5_module_start(char param_1)
 {
   byte bVar1;
   
+                    /* Standby control 9 [sfr] */
   bVar1 = CPG_STBCR9;
   if (param_1 != '\0') {
     CPG_STBCR9 = bVar1 & 0xfc;
+                    /* Standby request 2 [sfr] */
     bVar1 = CPG_STBREQ2;
     CPG_STBREQ2 = bVar1 & 0xef;
     do {
@@ -213,6 +215,7 @@ void vdc5_module_stop(char param_1)
 {
   byte bVar1;
   
+                    /* Standby request 2 [sfr] */
   bVar1 = CPG_STBREQ2;
   if (param_1 == '\0') {
     bVar1 = bVar1 | 0x20;
@@ -232,6 +235,7 @@ void vdc5_module_stop(char param_1)
     do {
       bVar1 = CPG_STBACK2;
     } while ((bVar1 & 0x10) == 0);
+                    /* Standby control 9 [sfr] */
     bVar1 = CPG_STBCR9;
     bVar1 = bVar1 | 1;
   }
@@ -380,6 +384,7 @@ uint vdc5_output_setup(int param_1,int param_2)
   if (param_1 == 0) {
     local_40 = 0x1fb;
     local_3e = 0;
+                    /* TCON pin table for the parallel RGB TFT [doc, inference] */
     lcd_tcon_cfg_ch0(auStack_3c);
     local_1a = 1;
   }
@@ -391,6 +396,7 @@ uint vdc5_output_setup(int param_1,int param_2)
       local_40 = 0x20f;
     }
     local_3e = 0;
+                    /* TCON pin table for the LVDS/DVI channel [doc, inference] */
     dvi_tcon_cfg_ch1(param_2,auStack_3c);
     local_1a = 0;
   }
@@ -556,6 +562,7 @@ uint vdc5_layers_setup(uint param_1,int param_2)
         local_64 = uVar1;
         local_54 = uVar3;
         local_50 = uVar4;
+                    /* 12x21 mouse-cursor window for graphics 3 [doc, inference] */
         cursor_rect_calc((short *)&local_40,local_2c,400,0xf0);
         DAT_20808584 = (short)local_40;
         DAT_20808586 = local_40._2_2_;
@@ -617,6 +624,7 @@ int vdc5_layers_stop(uint param_1)
     uVar1 = (uint)r_vdc5_stop_process_ret;
     if (uVar1 == 0) {
       FUN_2011ba48(param_1,0xffffffff);
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
       vdc5_shrd_set_resource(param_1,0xffffffff,0,extraout_r3,unaff_r4);
       return 0;
     }
@@ -643,6 +651,7 @@ int vdc5_channel_shutdown(uint param_1)
   FUN_2011d1e0();
   vdc5_int_callbacks_clear(param_1);
   FUN_201195e8(param_1);
+                    /* sets that state byte [doc] */
   vdc5_shrd_set_state(param_1,0,0,extraout_r3,unaff_r4);
   iVar1 = FUN_2011d5a8();
   if (iVar1 == 0) {
@@ -665,6 +674,7 @@ byte dvi_set_resolution(int param_1)
   undefined1 local_17;
   undefined4 local_14;
   
+                    /* stop layers, terminate the channel, clock off [doc, inference] */
   uVar1 = vdc5_channel_shutdown(1);
   DAT_20808574 = 0x58;
   DAT_20808578 = 0x20;
@@ -715,7 +725,9 @@ void gui_start(void)
   FUN_201340a4();
   scope_objects_init();
   afscope_init();
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
+                    /* frame-buffer copy DMA [doc, inference] */
   dmac8_m2m_init();
   sdr_dsp_link_init();
   iVar1 = vdc5_isr_create();
@@ -729,6 +741,7 @@ void gui_start(void)
       DAT_20808574 = 0x58;
       DAT_20808578 = 0x20;
       if (uVar2 == 0) {
+                    /* VLINE interrupt, no callback [doc, inference] */
         uVar2 = vdc5_vline_int_setup(0);
       }
     }
@@ -761,6 +774,7 @@ void gui_start(void)
       }
     }
   }
+                    /* stop layers, terminate the channel, clock off [doc, inference] */
   vdc5_channel_shutdown(0);
   vdc5_channel_shutdown(1);
   return;
@@ -838,6 +852,7 @@ void fb_cache_clean_buf(undefined4 param_1)
 void FUN_20132f10(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_600bb800);
   return;
 }
@@ -848,6 +863,7 @@ void FUN_20132f10(void)
 void FUN_20132f18(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_605048a0);
   return;
 }
@@ -858,6 +874,7 @@ void FUN_20132f18(void)
 void FUN_20132f20(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60177000);
   return;
 }
@@ -868,6 +885,7 @@ void FUN_20132f20(void)
 void FUN_20132f28(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(0x60000000);
   return;
 }
@@ -878,6 +896,7 @@ void FUN_20132f28(void)
 void FUN_20132f30(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60232800);
   return;
 }
@@ -888,6 +907,7 @@ void FUN_20132f30(void)
 void FUN_20132f38(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_602ee000,0x11300);
   return;
 }
@@ -1024,6 +1044,7 @@ uint vdc5_vline_int_setup(uint param_1)
   DAT_20907f58 = 3;
   DAT_20907f5c = 0;
   DAT_20907f60 = 0;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked();
   return uVar1;
 }
@@ -1039,6 +1060,7 @@ uint vdc5_vline_cb_enable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = vdc5_vline_cb;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
@@ -1052,6 +1074,7 @@ uint vdc5_vline_cb_disable(uint param_1)
   uint uVar1;
   
   DAT_20907f5c = 0;
+                    /* Checks channel states 0 and 2 [doc] */
   uVar1 = r_vdc5_callback_isr_checked(param_1,&DAT_20907f58);
   return uVar1;
 }
@@ -1126,6 +1149,7 @@ void sdr_link_recover(void)
   rspi_stop(2);
   dmac5_enable();
   rspi_reset_buffers(2);
+                    /* Status_2 [sfr] */
   bVar1 = RSPI_SPSR_2;
   if ((bVar1 & 1) != 0) {
     bVar1 = RSPI_SPSR_2;
@@ -1190,6 +1214,7 @@ void dsp_rx_done_cb(void)
   dsp_set_audio_ptr((int)(puVar2 + 600));
   dmac4_disable();
   rspi_stop(4);
+                    /* Status_4 [sfr] */
   bVar1 = RSPI_SPSR_4;
   if ((bVar1 & 1) != 0) {
     DAT_20808594 = DAT_20808594 + 1;
@@ -1203,6 +1228,7 @@ void dsp_rx_done_cb(void)
     bVar1 = RSPI_SPSR_4;
     RSPI_SPSR_4 = bVar1 & 0xfb;
   }
+                    /* writes 0 to SETEN [doc, inference] */
   dmac3_disable();
   rspi_reset_buffers(4);
   DAT_2080858c = DAT_2080858c == '\0';
@@ -1211,7 +1237,9 @@ void dsp_rx_done_cb(void)
     DMAC_N0DA_4 = 0x60502000;
   }
   else {
+                    /* Next0 Source Address 3 [sfr] */
     DMAC_N0SA_3 = 0x60502258;
+                    /* Next0 Destination Address 4 [sfr] */
     DMAC_N0DA_4 = 0x60503450;
   }
   if (DAT_208000b2 != '\0') {

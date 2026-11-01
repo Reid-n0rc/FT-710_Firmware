@@ -46,6 +46,7 @@ void kbd_edit_file_name(char param_1)
     }
     DAT_0001b552 = '\0';
   }
+                    /* the on-screen keyboard key handler [doc] */
   kbd_edit_key(0x20bc6,param_1);
   if (param_1 != -0x7c) {
     if (param_1 == -0x7b) {
@@ -88,10 +89,12 @@ int kbd_edit_key(int param_1,char param_2)
   int iVar2;
   
   if (param_2 == '\b') {
+                    /* deletes the character before the cursor [doc] */
     iVar2 = kbd_backspace(param_1);
     return iVar2;
   }
   if (param_2 == -0x79) {
+                    /* Moves g_ui.kbd_cursor right while below kbd_max_cursor [doc] */
     iVar2 = kbd_cursor_right();
     if (iVar2 == 0) {
       iVar2 = 3;
@@ -125,6 +128,7 @@ int kbd_edit_key(int param_1,char param_2)
       return iVar2;
     }
     if (param_2 == -0x7a) {
+                    /* Moves g_ui.kbd_cursor left while above 0 [doc] */
       iVar2 = kbd_cursor_left();
       if (iVar2 == 0) {
         iVar2 = 3;
@@ -148,6 +152,7 @@ int kbd_edit_key(int param_1,char param_2)
       beep_request(1);
       *(char *)((uint)PTR_g_ui_00025d6c->kbd_cursor + param_1) = param_2;
       bVar1 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
       iVar2 = kbd_max_cursor();
       if ((int)(uint)bVar1 < iVar2) {
         PTR_g_ui_00025d6c->kbd_cursor = PTR_g_ui_00025d6c->kbd_cursor + 1;
@@ -177,6 +182,7 @@ void kbd_backspace(int param_1)
     return;
   }
   local_5 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
   bVar1 = kbd_max_cursor();
   if ((bVar1 == PTR_g_ui_00025d6c->kbd_cursor) && (*(char *)((uint)local_5 + param_1) != ' ')) {
     *(undefined1 *)((uint)local_5 + param_1) = 0x20;
@@ -188,6 +194,7 @@ void kbd_backspace(int param_1)
     local_5 = local_5 + 1;
   }
   *(undefined1 *)(param_1 + (local_5 - 1)) = 0x20;
+                    /* Moves g_ui.kbd_cursor left while above 0 [doc] */
   iVar2 = kbd_cursor_left();
   if (iVar2 == 0) {
     beep_request(3);
@@ -265,6 +272,7 @@ bool kbd_cursor_right(void)
   int iVar3;
   
   bVar2 = PTR_g_ui_00025d6c->kbd_cursor;
+                    /* Last cursor position for the keyboard target [doc] */
   iVar3 = kbd_max_cursor();
   bVar1 = (int)(uint)bVar2 < iVar3;
   if (bVar1) {
@@ -284,6 +292,7 @@ void kbd_edit_preset_name(char param_1)
 {
   byte *menu_preset_name_ptr_ret;
   
+                    /* Returns the RAM address of the open PRESET's name [doc] */
   menu_preset_name_ptr_ret = (byte *)menu_preset_name_ptr();
   if (menu_preset_name_ptr_ret != (byte *)0x0) {
     if (DAT_0001b553 == '\x01') {
@@ -292,6 +301,7 @@ void kbd_edit_preset_name(char param_1)
       DAT_00018864 = *(undefined4 *)menu_preset_name_ptr_ret;
       DAT_0001b553 = '\0';
     }
+                    /* the on-screen keyboard key handler [doc] */
     kbd_edit_key(PTR_g_ui_00025d6c->msg_text,param_1);
     if (param_1 == -0x7c) {
       *(undefined4 *)(menu_preset_name_ptr_ret + 8) = DAT_0001886c;
@@ -1217,6 +1227,7 @@ void FUN_fffe3b31(void)
 void FUN_fffe3b38(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(1);
   return;
 }
@@ -1227,6 +1238,7 @@ void FUN_fffe3b38(void)
 void FUN_fffe3b3f(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(2);
   return;
 }
@@ -1237,6 +1249,7 @@ void FUN_fffe3b3f(void)
 void FUN_fffe3b46(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(3);
   return;
 }
@@ -1247,6 +1260,7 @@ void FUN_fffe3b46(void)
 void FUN_fffe3b4d(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(4);
   return;
 }
@@ -1257,6 +1271,7 @@ void FUN_fffe3b4d(void)
 void FUN_fffe3b54(void)
 
 {
+                    /* stops a latched send [doc] */
   msg_cw_slot_key(5);
   return;
 }

@@ -224,6 +224,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
     uVar2 = uVar2 | 8;
   }
   if (param_2 < 0x54600) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     cVar1 = __aeabi_uidivmod(64000000,param_2 << 5);
     cVar1 = cVar1 + -1;
   }
@@ -823,6 +824,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
@@ -994,6 +996,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;

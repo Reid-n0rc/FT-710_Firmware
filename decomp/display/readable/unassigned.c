@@ -44,11 +44,16 @@ void FUN_201004a4(int param_1)
   do {
     dVar1 = SPIBSC_CMNSR_0;
   } while ((dVar1 & 1) == 0);
+                    /* Common control_0 [sfr] */
   dVar1 = SPIBSC_CMNCR_0;
   SPIBSC_CMNCR_0 = dVar1 | 0x80000000;
+                    /* SPI mode command setting_0 [sfr] */
   SPIBSC_SMCMR_0 = param_1 << 0x10;
+                    /* SPI mode address setting_0 [sfr] */
   SPIBSC_SMADR_0 = 0;
+                    /* SPI mode enable setting_0 [sfr] */
   SPIBSC_SMENR_0 = 0x4000;
+                    /* SPI mode control_0 [sfr] */
   dVar1 = SPIBSC_SMCR_0;
   SPIBSC_SMCR_0 = dVar1 | 1;
   do {
@@ -238,6 +243,7 @@ void FUN_20103a94(int param_1,undefined4 param_2)
   
   while( true ) {
     iVar1 = sd_card_remount(param_2);
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     fs_task_ctx_get();
     if (((param_1 != 0) && (iVar1 == 1)) || (param_1 == 0 && iVar1 == 0)) break;
     itron_tslp_tsk(10);
@@ -315,6 +321,7 @@ undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3
   undefined1 local_27;
   undefined4 local_26;
   
+                    /* Object 0x20810D90 base = SPIBSC_CMNCR_0 [doc] */
   sflash_dev_open();
   local_28 = 0x72;
   local_27 = 100;
@@ -324,6 +331,7 @@ undefined4 FUN_20104078(undefined4 param_1,undefined4 param_2,undefined4 param_3
     uVar2 = 1;
   }
   else {
+                    /* Read side of the flash device object [doc] */
     uVar2 = sflash_dev_read(param_3,param_2);
   }
   return uVar2;
@@ -386,6 +394,7 @@ undefined4 FUN_201050ac(void)
       DAT_208000e0 = 0;
       return 0;
     }
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     DAT_208000bc = fs_task_ctx_get();
     DAT_208000e0 = 0;
   }
@@ -455,6 +464,7 @@ undefined * FUN_20107ee0(void)
   i = 2;
   puVar1 = &DAT_20811080;
   while (bVar2 = i != 0, i = i + -1, bVar2) {
+                    /* constructs the key ring at +0x88 [doc] */
     kbdobj_ctor(puVar1);
     puVar1 = puVar1 + 0xd0;
   }
@@ -1347,10 +1357,13 @@ void FUN_201195e8(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
   
   uVar3 = **(ushort **)(&DAT_20166a48 + param_1 * 0x20) & 0xfeff;
   **(ushort **)(&DAT_20166a48 + param_1 * 0x20) = uVar3;
+                    /* state byte via vdc5_shrd_state_ptr, 0 for a bad n [doc] */
   iVar1 = vdc5_shrd_get_state(param_1,4,uVar3,param_4,param_4);
   if ((iVar1 != 0) && (iVar1 = FUN_2011d5a8(), iVar1 == 0)) {
+                    /* LVDS clock select [sfr] */
     uVar2 = LVDS_LCLKSELR;
     LVDS_LCLKSELR = uVar2 & 0xffffffef;
+                    /* LVDSPLL setting [sfr] */
     uVar2 = LVDS_LPLLSETR;
     LVDS_LPLLSETR = uVar2 | 1;
     uVar2 = 0;
@@ -1709,6 +1722,7 @@ void FUN_2011a9e0(int param_1,int param_2)
   uint *puVar4;
   
   iVar2 = FUN_2011a8cc();
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
   iVar3 = r_vdc5_shrd_get_resource(param_1,3);
   if ((iVar2 == 0) && ((iVar3 != 0 || (param_2 == 0)))) {
     iVar2 = param_1 * 0x210;
@@ -1742,6 +1756,7 @@ uint FUN_2011aad8(uint param_1,int param_2)
 {
   uint uVar1;
   
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar1 = __aeabi_uidivmod((param_1 & 7) << 3,*(undefined4 *)(&DAT_20165c70 + param_2 * 4));
   return uVar1 & 0x3f;
 }
@@ -2132,6 +2147,7 @@ void FUN_2011c174(int param_1,int param_2)
   if (param_2 != iVar2) {
     FUN_2011d58c(param_1,param_2);
     iVar2 = FUN_2011d5fc(param_1);
+                    /* resource state 0x208DCE04[ch9 + id] [doc] */
     iVar3 = r_vdc5_shrd_get_resource(param_1,3);
     if ((iVar2 == 0) && (iVar3 != 0)) {
       param_1 = param_1 * 0x210;
@@ -2165,7 +2181,9 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
   
   switch(param_1) {
   case 0:
+                    /* 5-bit colour component scaled to 8 bits [doc] */
     uVar3 = rgb5_to_8((param_2 & 0xffff) >> 0xb);
+                    /* 6-bit colour component scaled to 8 bits [doc] */
     iVar1 = rgb6_to_8((param_2 & 0x7ff) >> 5);
     iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
@@ -2178,6 +2196,7 @@ uint FUN_2011c3a4(undefined4 param_1,uint param_2)
     iVar2 = rgb5_to_8(param_2 & 0x1f);
     return iVar1 << 0x10 | iVar2 << 8 | uVar3;
   case 3:
+                    /* 4-bit colour component scaled to 8 bits [doc] */
     uVar3 = rgb4_to_8((param_2 & 0xfff) >> 8);
     iVar1 = rgb4_to_8((param_2 & 0xff) >> 4);
     iVar2 = rgb4_to_8(param_2 & 0xf);
@@ -3413,6 +3432,7 @@ void FUN_2012616c(int param_1)
     return;
   }
   DAT_208007cc = 0;
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
   scope3d_tables_init();
   gui_scope_draw_hold_set(0);
   return;
@@ -3536,6 +3556,7 @@ undefined1 FUN_20130998(void)
 void FUN_20132f10(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_600bb800);
   return;
 }
@@ -3547,6 +3568,7 @@ void FUN_20132f10(void)
 void FUN_20132f18(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_605048a0);
   return;
 }
@@ -3558,6 +3580,7 @@ void FUN_20132f18(void)
 void FUN_20132f20(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60177000);
   return;
 }
@@ -3569,6 +3592,7 @@ void FUN_20132f20(void)
 void FUN_20132f28(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(0x60000000);
   return;
 }
@@ -3580,6 +3604,7 @@ void FUN_20132f28(void)
 void FUN_20132f30(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_60232800);
   return;
 }
@@ -3591,6 +3616,7 @@ void FUN_20132f30(void)
 void FUN_20132f38(void)
 
 {
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_602ee000,0x11300);
   return;
 }
@@ -3989,6 +4015,7 @@ void FUN_201340a4(void)
   undefined2 *puVar3;
   int iVar4;
   
+                    /* fills the 3DSS line width table 0x317 - 10i [doc] */
   scope3d_widths_init(&DAT_2090836c,&DAT_203a70ae);
   scope3d_widths_init(&DAT_209083ac,&DAT_203a70ae);
   iVar4 = 0;
@@ -4358,6 +4385,7 @@ void FUN_20135e40(int param_1,int param_2,int param_3,int param_4,int param_5)
   ushort *puVar2;
   uint uVar3;
   
+                    /* Word-at-a-time string length [doc] */
   uVar1 = strlen(param_2);
   uVar1 = uVar1 & 0xffff;
   uVar3 = (uint)**(ushort **)
@@ -5221,6 +5249,7 @@ undefined4 FUN_201398a0(int param_1,uint param_2)
   do {
     uVar4 = (&DAT_2042019c)[i * 7];
     if ((param_2 & uVar4) != 0) {
+                    /* itron_loc_cpu, returns 0 [doc] */
       uVar1 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[i * 7]) =
            *(ushort *)(*(int *)(param_1 + 8) + (&DAT_204201a4)[i * 7]) & 0xf7ff;
@@ -5291,6 +5320,7 @@ LAB_20139a10:
       uVar7 = uVar7 >> 1;
     } while (i < 10);
     if (!bVar2) {
+                    /* itron_loc_cpu, returns 0 [doc] */
       uVar4 = usbh_loc_cpu();
       *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x200;
       itron_unl_cpu(uVar4);
@@ -5419,6 +5449,7 @@ undefined4 FUN_20139c68(int param_1)
       uVar5 = uVar5 >> 1;
     } while (i < 10);
   } while (bVar2);
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar4 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x30) = *(ushort *)(*(int *)(param_1 + 8) + 0x30) | 0x400;
   itron_unl_cpu(uVar4);
@@ -5505,6 +5536,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + iVar6) & 0xffbf | 0x10;
   itron_dly_tsk(2);
+                    /* Low word of itron_get_tim [doc] */
   uVar2 = fs_get_tick();
   uVar3 = uVar2;
   do {
@@ -5535,6 +5567,7 @@ undefined4 FUN_2013a4bc(int param_1,int param_2)
   } while (uVar5 != 3);
   uVar7 = 0;
 LAB_2013a5c8:
+                    /* itron_loc_cpu, returns 0 [doc] */
   usbh_loc_cpu();
   *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) =
        *(ushort *)(*(int *)(&DAT_2090b668 + param_1) + (&DAT_204201a8)[param_2 * 7]) & 0xefff;
@@ -5741,6 +5774,7 @@ undefined4 FUN_2013a9e8(int param_1)
 {
   undefined4 uVar1;
   
+                    /* itron_loc_cpu, returns 0 [doc] */
   uVar1 = usbh_loc_cpu();
   *(ushort *)(*(int *)(param_1 + 8) + 0x36) = *(ushort *)(*(int *)(param_1 + 8) + 0x36) | 0x3ff;
   *(ushort *)(*(int *)(param_1 + 8) + 0x38) = *(ushort *)(*(int *)(param_1 + 8) + 0x38) | 0x3ff;
@@ -5799,6 +5833,7 @@ undefined4 FUN_2013aab4(undefined4 *param_1)
 {
   ushort uVar1;
   
+                    /* System configuration control_0 [sfr] */
   uVar1 = USB_SYSCFG0_0;
   if ((uVar1 & 2) == 0) {
     uVar1 = USB_SYSCFG0_0;
@@ -6307,6 +6342,7 @@ int FUN_20147c20(char *param_1)
   char local_18 [12];
   char *pcVar3;
   
+                    /* 11-byte space-padded 8.3 form of a name [doc] */
   iVar1 = sfn_pack(local_18);
   if (iVar1 == 0) {
     pcVar3 = local_18;
@@ -6340,6 +6376,7 @@ int FUN_201480b4(char *param_1)
   char local_18 [12];
   
   pcVar3 = local_18;
+                    /* 11-byte space-padded 8.3 form of a name [doc] */
   iVar1 = sfn_pack(local_18);
   if (iVar1 != 0) {
     return iVar1;
@@ -6634,6 +6671,7 @@ byte FUN_20153b8c(int param_1)
     while (tskid != 0) {
       tcb = knl_tsk_tab[tskid];
       iVar7 = *(int *)(tcb->sp + 8) + 8;
+                    /* First-fit allocator on a free list {next, size} [doc] */
       piVar3 = (int *)knl_freelist_alloc(iVar8 + 4,iVar7);
       if (piVar3 == (int *)0x0) {
         return bVar6;
@@ -6704,6 +6742,7 @@ byte FUN_20153dec(int param_1)
         if (*(int *)(tcb->sp + 8) == 0) {
           return bVar7;
         }
+                    /* puts a message into the message-buffer ring [doc] */
         iVar4 = knl_mbf_put(iVar3,*(undefined4 *)(tcb->sp + 0xc));
         if (iVar4 == 0) {
           return bVar7;
@@ -6960,6 +6999,7 @@ byte FUN_201547d0(int param_1,short param_2)
     while (tskid_00 != 0) {
       tcb = knl_tsk_tab[tskid_00];
       if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
         knl_timeout_remove(tcb,tskid_00);
       }
       knl_queue_remove(tcb,tskid_00);
@@ -8020,6 +8060,7 @@ undefined4 FUN_201574e8(int param_1,undefined4 param_2,undefined4 param_3,int pa
   undefined1 auStack_1a0 [200];
   byte local_d8 [204];
   
+                    /* n/4 words dst = ~src [doc] */
   copy_inverted_words(param_1,auStack_1a0,param_1 + 0x900,200);
   FUN_20134084(local_d8,auStack_1a0);
   i = 0;
@@ -8111,8 +8152,10 @@ void FUN_20157f8c(int param_1)
   
   if (((*(char *)(param_1 + 0x9c7c) == '\0') && (*(char *)(param_1 + 0x9c7d) == '\0')) &&
      (*(char *)(param_1 + 0x9c7e) == '\0')) {
+                    /* returns idx and advances it [doc] */
     ring20_advance();
     iVar1 = ring20_offset(param_1 + 0x1b12c,0);
+                    /* n/4 words dst = ~src [doc] */
     copy_inverted_words_b(param_1,param_1 + iVar1 * 800 + 0x17258,param_1 + 0x9c98,800);
     return;
   }
@@ -8625,6 +8668,7 @@ undefined4 FUN_2015fa40(int param_1,undefined4 param_2,undefined4 param_3,undefi
   mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x588),1);
   iVar1 = ring32_post_inc(param_1 + 0x504);
   uVar2 = *(undefined4 *)(param_1 + 0x504 + iVar1 * 4 + 4);
+                    /* Scoped lock destructor [doc] */
   mutex_guard_dtor(&uStack_10);
   return uVar2;
 }
@@ -8695,6 +8739,7 @@ void FUN_2015ff94(int param_1,undefined4 param_2)
     FUN_20164454(param_1 + 0x894,uVar2 & 0xffff,iVar3 + 0x14);
     uVar2 = uVar2 + 1;
   } while ((int)uVar2 < 0x10);
+                    /* itron_acre_mbx with a zeroed T_CMBX [doc] */
   uVar1 = os_mbx_create_fifo(param_1);
   *(undefined4 *)(param_1 + 0x8dc) = uVar1;
   return;
@@ -9272,6 +9317,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
@@ -9450,6 +9496,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;
@@ -9565,6 +9612,7 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
   uVar9 = param_4;
   uVar8 = __aeabi_i2d(param_6);
   __aeabi_dmul((int)uVar8,(int)((ulonglong)uVar8 >> 0x20),param_3,param_4,uVar9);
+                    /* Double to signed int, truncating with saturation [doc] */
   iVar2 = __aeabi_d2iz();
   uVar6 = (uint)*param_5;
   *param_1 = *(undefined4 *)param_5;

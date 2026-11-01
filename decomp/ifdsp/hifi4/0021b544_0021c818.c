@@ -982,7 +982,9 @@ void tx_gpio_to_reg4004(void)
   sVar1 = regfile_gpio_sel();
   memw();
   gpio_b0_21 = GPIO_B0_21;
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   gpio_b0_22 = GPIO_B0_22;
   DAT_20078008 = (ushort)gpio_b0_22 | sVar1 << 2 | (ushort)gpio_b0_21 << 1;
   return;
@@ -1284,6 +1286,7 @@ void Thread_Ipc_entry(undefined4 *param_1)
   uVar2 = rpmsg_lite_create_ept(*param_1,0x1e,ipc_ept_rx_cb,param_1[2],auStack_dc);
   param_1[1] = uVar2;
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   while ((uVar1 & 7) != 1) {
     memw();
@@ -1318,6 +1321,7 @@ undefined4 xos_create_main_ipc_threads(void)
   xthal_set_region_attribute(&DAT_20060000,0x31e0,2,0);
   xthal_set_region_attribute(&DAT_20060000,0,2,0);
   regfile_set_defaults();
+                    /* capture block table 0x2390E0 = {0x2007E000, 0x2007F000} [doc, inference] */
   regfile_capture_init();
   DAT_002cb680 = 594000000;
   xos_start_system_timer(0xffffffff,0);
@@ -1391,10 +1395,12 @@ undefined1 regfile_gpio_sel(void)
   
   if ((DAT_20070018 & 0xf000) != 0x1000) {
     memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
     uVar1 = GPIO_B0_4;
     return uVar1;
   }
   memw();
+                    /* Byte pin registers for all port 0 and 1 GPIO pins [sfr] */
   uVar1 = GPIO_B0_5;
   return uVar1;
 }

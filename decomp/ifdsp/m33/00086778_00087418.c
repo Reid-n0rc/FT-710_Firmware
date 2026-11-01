@@ -774,6 +774,7 @@ void CTIMER0_DriverIRQHandler(void)
   uint i;
   uint ctimer0_ir;
   
+                    /* Interrupt [sfr] */
   ctimer0_ir = CTIMER0_IR;
   CTIMER0_IR = ctimer0_ir;
   if (DAT_000a1ef0 == '\0') {
@@ -1389,14 +1390,23 @@ void app_init_nop(void)
 void BOARD_InitPins_flexcomm(void)
 
 {
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_1 = 1;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_10 = 1;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_2 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_7 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_8 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_9 = 0x41;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_10 = 0x101;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_2 = 2;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO2_30 = 0x45;
   return;
 }
@@ -1410,13 +1420,21 @@ void BOARD_InitPins_flexcomm(void)
 void BOARD_InitPins_i2s(void)
 
 {
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_14 = 0x941;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_15 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_16 = 0x101;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_23 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO0_30 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_3 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_4 = 0x141;
+                    /* iop pad control for port0 to port5 [sfr] */
   IOPCTL_PIO1_5 = 0x101;
   return;
 }
@@ -1442,6 +1460,7 @@ void main(void)
 
 {
   stdio_init();
+                    /* SEMA42 init/reset, flags 1 [doc] */
   app_main();
   return;
 }

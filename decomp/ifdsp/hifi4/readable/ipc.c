@@ -29,10 +29,12 @@ void MU_Init(dword *param_1)
 {
   if (param_1 != &MUB_VER) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1;
     return;
   }
   memw();
+                    /* clock set 1 [sfr] */
   CLKCTL1_PSCCTL1_SET = 0x10000000;
   return;
 }
@@ -130,22 +132,26 @@ void SEMA42_Init(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock set 0 [sfr] */
     CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock set 1 [sfr] */
     CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock set 1 [sfr] */
       CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -153,10 +159,12 @@ void SEMA42_Init(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock set 2 [sfr] */
     CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -184,22 +192,26 @@ void SEMA42_Deinit(undefined4 param_1)
   uVar3 = uVar2 >> 8 & 0xff;
   if (uVar3 == 0) {
     memw();
+                    /* clock clear 0 [sfr] */
     CLKCTL0_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 1) {
     memw();
+                    /* clock clear 1 [sfr] */
     CLKCTL0_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 == 2) {
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL0_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   if (uVar3 != 3) {
     if (uVar3 == 4) {
       memw();
+                    /* clock clear 1 [sfr] */
       CLKCTL1_PSCCTL1_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
       return;
     }
@@ -207,10 +219,12 @@ void SEMA42_Deinit(undefined4 param_1)
       return;
     }
     memw();
+                    /* clock clear 2 [sfr] */
     CLKCTL1_PSCCTL2_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL1_PSCCTL0_CLR = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   return;
 }
@@ -365,11 +379,13 @@ void MU_B_IRQHandler(void)
   uint uVar1;
   
   memw();
+                    /* Status [sfr] */
   uVar1 = MUB_SR;
   if ((uVar1 & 0x4000000) == 0) {
     return;
   }
   memw();
+                    /* Receive [sfr] */
   uVar1 = MUB_RR1;
   env_isr(uVar1 >> 0x10 & 1 | 2);
   return;
@@ -391,11 +407,13 @@ undefined4 platform_init_interrupt(undefined4 param_1,undefined4 param_2)
 {
   uint mub_cr;
   
+                    /* isr_table entry store [doc, inference] */
   env_register_isr(param_1,param_2);
   env_lock_mutex(DAT_002390d0);
   if (-1 < DAT_002390d4) {
     if (DAT_002390d4 == 0) {
       memw();
+                    /* Control [sfr] */
       mub_cr = MUB_CR;
       memw();
       MUB_CR = mub_cr & 0xfff0fff7 | 0x4000000;
@@ -433,6 +451,7 @@ undefined4 platform_deinit_interrupt(undefined4 param_1)
   if (bVar1) {
     if (DAT_002390d4 == 0) {
       memw();
+                    /* Control [sfr] */
       mub_cr = MUB_CR;
       memw();
       MUB_CR = mub_cr & 0xfbf0fff7;
@@ -466,12 +485,14 @@ void platform_notify(uint param_1)
   if (param_1 >> 1 == 1) {
     env_lock_mutex(DAT_002390d0);
     memw();
+                    /* Status [sfr] */
     uVar1 = MUB_SR;
     while ((uVar1 & 0x400000) == 0) {
       memw();
       uVar1 = MUB_SR;
     }
     memw();
+                    /* Transmit [sfr] */
     MUB_TR1 = param_1 << 0x10;
     env_unlock_mutex(DAT_002390d0);
     return;
@@ -1068,6 +1089,7 @@ undefined4 xthal_set_region_attribute(uint param_1,int param_2,uint param_3,uint
     else if (((param_1 & 0x1fffffff) != 0) || ((uVar5 + 1 & 0x1fffffff) != 0)) {
       return 0xfffffffe;
     }
+                    /* rdtlb1 of the 8 x 512 MB regions [doc, inference] */
     uVar2 = xthal_get_cacheattr();
     uVar5 = uVar2;
     if (uVar7 < uVar6) {

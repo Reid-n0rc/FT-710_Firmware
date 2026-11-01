@@ -509,20 +509,30 @@ void R_TPU2_Create(void)
   byte bVar1;
   uint system_mstpcra;
   
+                    /* Module Stop Control A [sfr] */
   system_mstpcra = SYSTEM_MSTPCRA;
   SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfb;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR138 = 0x18;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR138;
   ICU_IPR138 = bVar1 & 0xf2 | 2;
   bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
   TPUA_TSYR = bVar1 & 0xfb;
+                    /* Timer Control [sfr] */
   TPU2_TCR = 0x29;
+                    /* Timer Interrupt Enable [sfr] */
   bVar1 = TPU2_TIER;
   TPU2_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control [sfr] */
   TPU2_TIOR = 0;
+                    /* Timer General A [sfr] */
   TPU2_TGRA = 0x4a;
+                    /* Timer General B [sfr] */
   TPU2_TGRB = 0x5db;
   R_TPU2_Create_UserInit();
   return;
@@ -537,8 +547,10 @@ void R_TPU2_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 | 4;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 4;
   return;
 }
@@ -554,8 +566,10 @@ void R_TPU2_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 & 0xfb;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xfb;
   return;
 }
@@ -606,6 +620,7 @@ uint freopen(uint param_1,uint param_2,ushort *param_3)
   *(byte *)param_3 = (byte)*param_3 & 0x7f;
   fclose(param_3);
   *param_3 = uVar1 & 0x80;
+                    /* Parses the mode string [doc, inference] */
   uVar2 = _freopen_core(param_1,param_2,param_3,0xffffffff);
   return uVar2;
 }
@@ -640,6 +655,7 @@ uint fclose(ushort *param_1)
     if (iVar1 != 0) {
       uVar2 = 0xffffffff;
     }
+                    /* Resets a static FILE [doc, inference] */
     _file_release(param_1);
   }
   return uVar2;
@@ -1226,6 +1242,7 @@ uint * malloc(uint param_1)
     if (uVar3 < 8) {
       uVar3 = 8;
     }
+                    /* First-fit search of the free list at 0x25E5C [doc, inference] */
     puVar2 = (uint *)_heap_find(uVar3);
     if (puVar2 != (uint *)0x0) {
       puVar1 = (uint *)*puVar2;

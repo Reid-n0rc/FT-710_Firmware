@@ -44,6 +44,7 @@ void menu_draw_agc_delay(byte *param_1,byte param_2,short param_3)
   }
   param_1[1] = 8;
   param_1[2] = 0;
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(sVar2,param_1 + 0x18);
   param_1 = param_1 + bVar1 + 0x18;
   param_1[0] = 0x6d;
@@ -118,6 +119,7 @@ void menu_draw_lcut_freq(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x32,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -212,6 +214,7 @@ void menu_draw_hcut_freq(byte *param_1,byte param_2,byte param_3)
     param_1[0x19] = 0x46;
     return;
   }
+                    /* u16 as 1..5 ASCII digits without leading zeros [doc] */
   bVar1 = dec_to_str_u16(uVar2 * 0x32 + 0x28a,param_1 + 0x18);
   (param_1 + bVar1 + 0x18)[0] = 0x48;
   (param_1 + bVar1 + 0x18)[1] = 0x7a;
@@ -276,6 +279,7 @@ void menu_ex010111_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010111_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -296,6 +300,7 @@ void menu_draw_out_level(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -309,6 +314,7 @@ void menu_ex010112_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010112_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -491,6 +497,7 @@ void menu_draw_usb_mod_gain(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -525,6 +532,7 @@ void menu_draw_rear_mod_gain(byte *param_1,char param_2,char param_3)
   }
   param_1[1] = 3;
   param_1[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(param_2,param_1 + 0x18);
   return;
 }
@@ -538,6 +546,7 @@ void menu_ex010117_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010117_rptt_select,0,param_4,param_5,param_1);
   return;
 }
@@ -802,6 +811,7 @@ void menu_ex010211_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010211_usb_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -815,6 +825,7 @@ void menu_ex010212_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* USB / REAR OUT LEVEL row [doc] */
   menu_draw_out_level(param_1,g_opstate.ex010212_rear_out_level,0x32,param_4,param_5,param_1);
   return;
 }
@@ -880,6 +891,7 @@ void menu_ex010217_draw(undefined4 param_1,undefined4 param_2,undefined4 param_3
                        undefined4 param_5)
 
 {
+                    /* RPTT SELECT / PC KEYING row [doc] */
   menu_draw_rptt_select(param_1,g_opstate.ex010217_rptt_select,0,param_4,param_5,param_1);
   return;
 }

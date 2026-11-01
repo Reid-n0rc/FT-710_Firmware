@@ -619,10 +619,12 @@ void memlist_key(byte param_1)
       if (PTR_g_ui_00025d54->memlist_flag == 0) {
         memlist_cursor_channel();
       }
+                    /* Memory-list button by g_ui.memlist_group [doc] */
       memlist_btn_press();
       return;
     }
     if (uVar1 == 8) {
+                    /* Memory-list button 4 [doc] */
       memlist_btn_valid_toggle();
       eeprom_save_memch(PTR_g_ui_00025d54->memlist_ch);
       return;
@@ -659,24 +661,29 @@ void memlist_btn_press(void)
     return;
   }
   if (bVar1 == 1) {
+                    /* Memory-list button 1 [doc] */
     memlist_btn_mode();
     return;
   }
   if (bVar1 == 2) {
+                    /* Memory-list button 2 [doc] */
     memlist_btn_scan();
     return;
   }
   if (bVar1 == 3) {
+                    /* Memory-list button 3 [doc] */
     memlist_btn_type();
     return;
   }
   if (bVar1 == 4) {
+                    /* Memory-list button 4 [doc] */
     memlist_btn_valid_toggle();
     return;
   }
   if (bVar1 != 0) {
     return;
   }
+                    /* Memory-list button 0 NAME [doc] */
   memlist_btn_name();
   return;
 }
@@ -757,6 +764,7 @@ void memlist_btn_mode(void)
   }
   PTR_g_ui_00025d54->memlist_popup55 = 1;
   PTR_g_ui_00025d54->popup_code = 0x55;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
   popup_duration_get(0x55);
   popup_open_timed();
   beep_request(1);
@@ -779,6 +787,7 @@ void memlist_btn_scan(void)
   if (memch_valid_ret) {
     PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x44;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x44);
     popup_open_timed();
     beep_request(1);
@@ -804,6 +813,7 @@ void memlist_btn_type(void)
   if (memch_valid_ret) {
     PTR_g_ui_00025d54->memlist_popup55 = 1;
     PTR_g_ui_00025d54->popup_code = 0x45;
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x45);
     popup_open_timed();
     beep_request(1);
@@ -875,6 +885,7 @@ void menu_row_key(undefined1 param_1)
 {
   char cVar1;
   
+                    /* sets the row cursor of the current group [doc] */
   cVar1 = menu_select_row(param_1);
   if (cVar1 != '\x01') {
     return;
@@ -901,6 +912,7 @@ void FUN_fffc23a4(void)
 
 {
   PTR_g_ui_00025d54->key_consumed = 1;
+                    /* Clears UI +0x95 [doc] */
   menu_screen_close();
   return;
 }

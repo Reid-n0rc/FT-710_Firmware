@@ -1224,6 +1224,7 @@ undefined2 cat_ai_PC(void)
   uStack_10 = vfo_freq(0,2);
   bStack_11 = vfo_mode(0);
   builtin_strncpy(acStack_1c,"PC000;",6);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cStack_12 = tx_band_of_freq(uStack_10);
   if ((bStack_11 == 4) || (bStack_11 == 5)) {
     bVar2 = true;
@@ -1470,7 +1471,9 @@ undefined2 cat_ai_RG(void)
         if (bVar2) {
           return 0;
         }
+                    /* Largest of 4 bytes at p [doc] */
         bVar3 = max4_u8(&DAT_0001b542);
+                    /* Smallest of 4 bytes at p [doc] */
         bVar4 = min4_u8(&DAT_0001b542);
         if ((int)((uint)bVar3 - (uint)bVar4) < 3) {
           return 0;
@@ -1546,6 +1549,7 @@ ushort cat_ai_RI(void)
     s_RI00000000__0001b51f[0xb] = bVar2;
   }
   acStack_d[3] = nib2hex(bVar2);
+                    /* Returns 1 while a message/DVS recording runs [doc] */
   bVar1 = msg_rec_play_state();
   if (DAT_0001b52b != bVar1) {
     local_12 = 0xb;
@@ -2958,6 +2962,7 @@ void FUN_fffe186d(void)
 void FUN_fffe19a6(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(0);
   return;
 }
@@ -2968,6 +2973,7 @@ void FUN_fffe19a6(void)
 void FUN_fffe19ac(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(1);
   return;
 }
@@ -2978,6 +2984,7 @@ void FUN_fffe19ac(void)
 void FUN_fffe19b2(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(2);
   return;
 }
@@ -2988,6 +2995,7 @@ void FUN_fffe19b2(void)
 void FUN_fffe19b8(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(3);
   return;
 }
@@ -2998,6 +3006,7 @@ void FUN_fffe19b8(void)
 void FUN_fffe19be(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(4);
   return;
 }
@@ -3008,6 +3017,7 @@ void FUN_fffe19be(void)
 void FUN_fffe19c4(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(5);
   return;
 }
@@ -3018,6 +3028,7 @@ void FUN_fffe19c4(void)
 void FUN_fffe19ca(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(6);
   return;
 }
@@ -3028,6 +3039,7 @@ void FUN_fffe19ca(void)
 void FUN_fffe19d0(void)
 
 {
+                    /* direct frequency entry [doc] */
   freq_keypad_key(7);
   return;
 }

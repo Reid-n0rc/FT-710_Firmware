@@ -11,14 +11,17 @@ byte sci_tx_end(int param_1)
   undefined1 local_6;
   
   if (param_1 == 1) {
+                    /* Serial Status [sfr] */
     bVar1 = SCI3_SSR;
     local_6 = bVar1 >> 2 & 1;
   }
   else if (param_1 == 2) {
+                    /* Serial Status [sfr] */
     bVar1 = SCI0_SSR;
     local_6 = bVar1 >> 2 & 1;
   }
   else {
+                    /* Serial Status [sfr] */
     bVar1 = SCI2_SSR;
     local_6 = bVar1 >> 2 & 1;
   }
@@ -37,10 +40,13 @@ void shreg_bus_init(void)
   
   pa_pon_set(1);
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0xdf;
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 & 0xbf;
   bVar1 = PORT5_PODR;
+                    /* Port Output Data [sfr] */
   PORT5_PODR = bVar1 & 0xbf;
   bVar1 = PORT6_PODR;
   PORT6_PODR = bVar1 | 0x80;
@@ -48,6 +54,7 @@ void shreg_bus_init(void)
   bVar1 = PORTA_PODR;
   PORTA_PODR = bVar1 | 1;
   bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = bVar1 | 0x20;
   bVar1 = PORTB_PODR;
   PORTB_PODR = bVar1 & 0xbf;
@@ -56,7 +63,9 @@ void shreg_bus_init(void)
   bVar1 = PORTA_PODR;
   PORTA_PODR = bVar1 | 0x40;
   bVar1 = PORT0_PODR;
+                    /* Port Output Data [sfr] */
   PORT0_PODR = bVar1 & 0xfb;
+                    /* Port Direction [sfr] */
   bVar1 = PORT0_PDR;
   PORT0_PDR = bVar1 | 1;
   bVar1 = PORT5_PODR;
@@ -89,6 +98,7 @@ void bu2505_write(int param_1,byte param_2,short param_3)
   }
   local_8 = param_2 & 0xf | param_3 << 4;
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0xdf;
   for (i = 0; i < 0xe; i = i + 1) {
     if ((local_8 & 1) == 0) {
@@ -107,12 +117,14 @@ void bu2505_write(int param_1,byte param_2,short param_3)
   }
   if (param_1 == 0) {
     bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
     PORT6_PODR = bVar1 | 0x40;
     bVar1 = PORT6_PODR;
     PORT6_PODR = bVar1 & 0xbf;
     return;
   }
   bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
   PORTB_PODR = bVar1 | 0x40;
   bVar1 = PORTB_PODR;
   PORTB_PODR = bVar1 & 0xbf;
@@ -134,6 +146,7 @@ void sst2_write12(char param_1,byte param_2)
   undefined1 local_1;
   
   bVar1 = PORT6_PODR;
+                    /* Port Output Data [sfr] */
   PORT6_PODR = bVar1 & 0x7f;
   if (param_1 == '\b') {
     local_1 = 1;
@@ -164,6 +177,7 @@ void sst2_write12(char param_1,byte param_2)
   }
   local_4 = CONCAT11(local_1,param_2);
   bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
   PORTA_PODR = bVar1 & 0xdf;
   for (i = 0; i < 0xc; i = i + 1) {
     if ((local_4 & 0x800) == 0) {
@@ -214,6 +228,7 @@ void shreg_write24(int param_1,uint param_2)
   }
   if (!bVar2) {
     bVar1 = PORTA_PODR;
+                    /* Port Output Data [sfr] */
     PORTA_PODR = bVar1 & 0xdf;
     local_8 = param_2;
     for (i = 0; i < 0x18; i = i + 1) {
@@ -238,6 +253,7 @@ void shreg_write24(int param_1,uint param_2)
     }
     else if (param_1 == 3) {
       bVar1 = PORTB_PODR;
+                    /* Port Output Data [sfr] */
       PORTB_PODR = bVar1 & 0xdf;
     }
     else {
@@ -647,6 +663,7 @@ char cat_rand8(void)
   ushort tpu0_tcnt;
   
   tpu0_tcnt = TPU0_TCNT;
+                    /* Timer Counter [sfr] */
   return (char)tpu0_tcnt + (char)(tpu0_tcnt / 0xff);
 }
 
@@ -661,23 +678,36 @@ void R_TPU3_Create(void)
   byte bVar1;
   uint system_mstpcra;
   
+                    /* Module Stop Control A [sfr] */
   system_mstpcra = SYSTEM_MSTPCRA;
   SYSTEM_MSTPCRA = system_mstpcra & 0xffffdfff;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xf7;
+                    /* Software Configurable Interrupt B Source Select ... [sfr] */
   ICU_SLIBXR142 = 0x1c;
+                    /* Interrupt Source Priority 000 [sfr] */
   bVar1 = ICU_IPR142;
   ICU_IPR142 = bVar1 & 0xf2 | 2;
   bVar1 = TPUA_TSYR;
+                    /* Timer Synchronous [sfr] */
   TPUA_TSYR = bVar1 & 0xf7;
+                    /* Timer Control [sfr] */
   TPU3_TCR = 0x2e;
+                    /* Timer Interrupt Enable [sfr] */
   bVar1 = TPU3_TIER;
   TPU3_TIER = bVar1 | 0x41;
+                    /* Timer I/O Control H [sfr] */
   TPU3_TIORH = 0;
+                    /* Timer I/O Control L [sfr] */
   TPU3_TIORL = 0;
+                    /* Timer General A [sfr] */
   TPU3_TGRA = 0x5b8d;
+                    /* Timer General B [sfr] */
   TPU3_TGRB = 0x16;
+                    /* Timer General C [sfr] */
   TPU3_TGRC = 0x16;
+                    /* Timer General D [sfr] */
   TPU3_TGRD = 0x16;
   R_TPU3_Create_UserInit();
   return;
@@ -694,8 +724,10 @@ void R_TPU3_Start(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 | 0x40;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 | 8;
   return;
 }
@@ -712,8 +744,10 @@ void R_TPU3_Stop(void)
   byte bVar1;
   
   bVar1 = ICU_IER11;
+                    /* Interrupt Request Enable 02 [sfr] */
   ICU_IER11 = bVar1 & 0xbf;
   bVar1 = TPUA_TSTR;
+                    /* Timer Start [sfr] */
   TPUA_TSTR = bVar1 & 0xf7;
   return;
 }
@@ -1175,6 +1209,7 @@ void tone_set(float param_1,ushort param_2)
     if (bVar1) {
       return;
     }
+                    /* Timer General A [sfr] */
     TPU1_TGRA = SUB42(ROUND(1.0 / ((param_1 * 36.0) / 6e+07) + -1.0),0);
     tone_play(0x1ff1c,0x24);
   }
@@ -1277,6 +1312,7 @@ byte hex2byte(char *s)
   char hex2nib_ret;
   byte hex2nib_ret_2;
   
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
   hex2nib_ret = hex2nib(*s);
   hex2nib_ret_2 = hex2nib(s[1]);
   return hex2nib_ret_2 | hex2nib_ret << 4;

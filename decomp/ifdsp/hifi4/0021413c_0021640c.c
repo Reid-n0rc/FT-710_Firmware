@@ -12,10 +12,12 @@ int SPI_SlaveInit(int param_1,char *param_2)
   if ((param_1 == 0) || (param_2 == (char *)0x0)) {
     return 4;
   }
+                    /* clock enable, reset, PSELID [doc, inference] */
   iVar1 = FLEXCOMM_Init(param_1,2);
   if (iVar1 != 0) {
     return iVar1;
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   memw();
@@ -144,6 +146,7 @@ void SPI_WriteData(int param_1,uint param_2,uint param_3)
 {
   int iVar1;
   
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memw();
   *(uint *)(param_1 + 0xe20) =
@@ -165,6 +168,7 @@ SPI_MasterTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undefi
   int iVar1;
   undefined4 uVar2;
   
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar1 = SPI_GetInstance(param_1);
   memset(param_2,0,0x30);
   memw();
@@ -236,6 +240,7 @@ undefined4 SPI_MasterTransferBlocking(int param_1,undefined4 *param_2)
   else {
     uVar11 = param_2[3];
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iVar2 = SPI_GetInstance();
   uVar5 = *(uint *)(&DAT_00238f50 + iVar2 * 8);
   if ((7 < uVar5) && ((param_2[3] & 1) != 0)) {
@@ -552,6 +557,7 @@ void SPI_MasterTransferHandleIRQ(int param_1,int *param_2)
     }
   }
   else {
+                    /* 8 bases at 0x2004F0 [doc, inference] */
     iVar5 = SPI_GetInstance(param_1);
     memw();
     uVar9 = *(uint *)(param_1 + 0xe00);
@@ -732,6 +738,7 @@ SPI_MasterTransferCreateHandleDMA
   int *piVar2;
   
   if ((param_1 != 0) && (param_2 != 0)) {
+                    /* 8 bases at 0x2004F0 [doc, inference] */
     iVar1 = SPI_GetInstance(param_1);
     memset(param_2,0,0x20);
     *(undefined4 *)(param_2 + 0x10) = param_3;
@@ -804,6 +811,7 @@ undefined * SPI_MasterTransferDMA(int param_1,undefined1 *param_2,int *param_3)
   if (((param_2 == (undefined1 *)0x0) || (param_3 == (int *)0x0)) || (param_3[3] == 0)) {
     return (undefined *)0x4;
   }
+                    /* 8 bases at 0x2004F0 [doc, inference] */
   iStack_34 = SPI_GetInstance(param_1);
   if (*(int *)(param_2 + 0x18) == 1) {
     return &DAT_000015e0;
@@ -819,6 +827,7 @@ undefined * SPI_MasterTransferDMA(int param_1,undefined1 *param_2,int *param_3)
   puVar5 = (uint *)SPI_GetConfig(param_1);
   *(int *)(param_2 + 0x1c) = param_3[3];
   *(undefined4 *)(param_2 + 0x18) = 1;
+                    /* FIFOCFG bit 13 [doc, inference] */
   SPI_EnableRxDMA(param_1,1);
   uVar8 = 2;
   if (*puVar5 < 8) {
@@ -835,6 +844,7 @@ undefined * SPI_MasterTransferDMA(int param_1,undefined1 *param_2,int *param_3)
   memw();
   param_2[1] = 1;
   DMA_StartTransfer(*(undefined4 *)(param_2 + 8));
+                    /* FIFOCFG bit 12 [doc, inference] */
   SPI_EnableTxDMA(param_1,1);
   uVar14 = param_3[2];
   if (*param_3 == 0) {
@@ -1389,6 +1399,7 @@ int TRNG_Init(dword *param_1,char *param_2)
     return 4;
   }
   memw();
+                    /* clock set 0 [sfr] */
   CLKCTL0_PSCCTL0_SET =
        1 << 0x20 - (0x20 - ((byte)(&DAT_002005a0)[(uint)(param_1 != &TRNG_MCTL) * 4] & 0x1f));
   memw();
@@ -1492,6 +1503,7 @@ void TRNG_Deinit(dword *param_1)
     return;
   }
   memw();
+                    /* clock clear 0 [sfr] */
   CLKCTL0_PSCCTL0_CLR = 0x1000;
   return;
 }
@@ -1728,6 +1740,7 @@ undefined * USART_Init(uint *param_1,uint *param_2,int param_3)
   if (((param_1 == (uint *)0x0) || (param_2 == (uint *)0x0)) || (param_3 == 0)) {
     return (undefined *)0x4;
   }
+                    /* clock enable, reset, PSELID [doc, inference] */
   puVar2 = (undefined *)FLEXCOMM_Init(param_1,1);
   if (puVar2 != (undefined *)0x0) {
     return puVar2;
@@ -2081,6 +2094,7 @@ undefined4 USART_TransferCreateHandle(int param_1,int param_2,undefined4 param_3
 
 {
   if ((param_1 != 0) && (param_2 != 0)) {
+                    /* 8 bases at 0x2005B0 [doc, inference] */
     USART_GetInstance(param_1);
     memset(param_2,0,0x30);
     memw();

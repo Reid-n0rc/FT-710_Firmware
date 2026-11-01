@@ -7,6 +7,7 @@
 void menu_ex060114_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(1);
   return;
 }
@@ -19,6 +20,7 @@ void menu_ex060114_draw(void)
 void menu_ex060214_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(2);
   return;
 }
@@ -31,6 +33,7 @@ void menu_ex060214_draw(void)
 void menu_ex060314_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(3);
   return;
 }
@@ -43,6 +46,7 @@ void menu_ex060314_draw(void)
 void menu_ex060414_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(4);
   return;
 }
@@ -55,6 +59,7 @@ void menu_ex060414_draw(void)
 void menu_ex060514_draw(void)
 
 {
+                    /* PRESET n tx_bpf_sel row [doc] */
   menu_draw_preset_tx_bpf_sel(5);
   return;
 }
@@ -132,6 +137,7 @@ void menu_draw_preset_tx_bpf_sel(byte param_1,byte *param_2)
 void menu_ex060115_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(1);
   return;
 }
@@ -144,6 +150,7 @@ void menu_ex060115_draw(void)
 void menu_ex060215_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(2);
   return;
 }
@@ -156,6 +163,7 @@ void menu_ex060215_draw(void)
 void menu_ex060315_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(3);
   return;
 }
@@ -168,6 +176,7 @@ void menu_ex060315_draw(void)
 void menu_ex060415_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(4);
   return;
 }
@@ -180,6 +189,7 @@ void menu_ex060415_draw(void)
 void menu_ex060515_draw(void)
 
 {
+                    /* PRESET n mod_source row [doc] */
   menu_draw_preset_mod_source(5);
   return;
 }
@@ -257,6 +267,7 @@ void menu_draw_preset_mod_source(byte param_1,byte *param_2)
 void menu_ex060116_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(1);
   return;
 }
@@ -269,6 +280,7 @@ void menu_ex060116_draw(void)
 void menu_ex060216_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(2);
   return;
 }
@@ -281,6 +293,7 @@ void menu_ex060216_draw(void)
 void menu_ex060316_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(3);
   return;
 }
@@ -293,6 +306,7 @@ void menu_ex060316_draw(void)
 void menu_ex060416_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(4);
   return;
 }
@@ -305,6 +319,7 @@ void menu_ex060416_draw(void)
 void menu_ex060516_draw(void)
 
 {
+                    /* PRESET n usb_mod_gain row [doc] */
   menu_draw_preset_usb_mod_gain(5);
   return;
 }
@@ -357,6 +372,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xc;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -369,6 +385,7 @@ void menu_draw_preset_usb_mod_gain(byte param_1,byte *param_2)
 void menu_ex060117_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(1);
   return;
 }
@@ -381,6 +398,7 @@ void menu_ex060117_draw(void)
 void menu_ex060217_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(2);
   return;
 }
@@ -393,6 +411,7 @@ void menu_ex060217_draw(void)
 void menu_ex060317_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(3);
   return;
 }
@@ -405,6 +424,7 @@ void menu_ex060317_draw(void)
 void menu_ex060417_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(4);
   return;
 }
@@ -417,6 +437,7 @@ void menu_ex060417_draw(void)
 void menu_ex060517_draw(void)
 
 {
+                    /* PRESET n rear_mod_gain row [doc] */
   menu_draw_preset_rear_mod_gain(5);
   return;
 }
@@ -469,6 +490,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
   }
   param_2[1] = 0xd;
   param_2[2] = 0;
+                    /* u8 as 1..3 ASCII digits without leading zeros [doc] */
   dec_to_str_u8(local_b,param_2 + 0x18);
   return;
 }
@@ -481,6 +503,7 @@ void menu_draw_preset_rear_mod_gain(byte param_1,byte *param_2)
 void menu_ex060118_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(1);
   return;
 }
@@ -493,6 +516,7 @@ void menu_ex060118_draw(void)
 void menu_ex060218_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(2);
   return;
 }
@@ -505,6 +529,7 @@ void menu_ex060218_draw(void)
 void menu_ex060318_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(3);
   return;
 }
@@ -517,6 +542,7 @@ void menu_ex060318_draw(void)
 void menu_ex060418_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(4);
   return;
 }
@@ -529,6 +555,7 @@ void menu_ex060418_draw(void)
 void menu_ex060518_draw(void)
 
 {
+                    /* PRESET n rptt_select row [doc] */
   menu_draw_preset_rptt_select(5);
   return;
 }
@@ -645,6 +672,7 @@ void menu_ex060101_enter(void)
   ui_state *p_ui_state;
   ui_state *p_ui_state_2;
   
+                    /* Returns the RAM address of the open PRESET's name [doc] */
   menu_preset_name_ptr_ret = (undefined4 *)menu_preset_name_ptr();
   PTR_g_ui_00025d60->kbd_open = 1;
   PTR_g_ui_00025d60->kbd_target = 6;
@@ -689,6 +717,7 @@ void menu_step_nop(void)
 void menu_ex060102_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(1);
   return;
 }
@@ -701,6 +730,7 @@ void menu_ex060102_step(void)
 void menu_ex060202_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(2);
   return;
 }
@@ -713,6 +743,7 @@ void menu_ex060202_step(void)
 void menu_ex060302_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(3);
   return;
 }
@@ -725,6 +756,7 @@ void menu_ex060302_step(void)
 void menu_ex060402_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(4);
   return;
 }
@@ -737,6 +769,7 @@ void menu_ex060402_step(void)
 void menu_ex060502_step(void)
 
 {
+                    /* PRESET n cat1_rate on_step [doc] */
   menu_step_preset_cat1_rate(5);
   return;
 }
@@ -792,6 +825,7 @@ void menu_step_preset_cat1_rate(byte param_1)
 void menu_ex060103_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(1);
   return;
 }
@@ -804,6 +838,7 @@ void menu_ex060103_step(void)
 void menu_ex060203_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(2);
   return;
 }
@@ -816,6 +851,7 @@ void menu_ex060203_step(void)
 void menu_ex060303_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(3);
   return;
 }
@@ -828,6 +864,7 @@ void menu_ex060303_step(void)
 void menu_ex060403_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(4);
   return;
 }
@@ -840,6 +877,7 @@ void menu_ex060403_step(void)
 void menu_ex060503_step(void)
 
 {
+                    /* PRESET n cat1_tot on_step [doc] */
   menu_step_preset_cat1_tot(5);
   return;
 }
@@ -895,6 +933,7 @@ void menu_step_preset_cat1_tot(byte param_1)
 void menu_ex060104_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(1);
   return;
 }
@@ -907,6 +946,7 @@ void menu_ex060104_step(void)
 void menu_ex060204_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(2);
   return;
 }
@@ -919,6 +959,7 @@ void menu_ex060204_step(void)
 void menu_ex060304_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(3);
   return;
 }
@@ -931,6 +972,7 @@ void menu_ex060304_step(void)
 void menu_ex060404_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(4);
   return;
 }
@@ -943,6 +985,7 @@ void menu_ex060404_step(void)
 void menu_ex060504_step(void)
 
 {
+                    /* PRESET n cat1_cat3_stop_bit on_step [doc] */
   menu_step_preset_cat1_cat3_stop_bit(5);
   return;
 }

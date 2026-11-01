@@ -61,6 +61,7 @@ void system_reset_select(int param_1)
     return;
   }
   if (param_1 == 2) {
+                    /* bulk port-mode pin set-up [doc, inference] */
     gpio_cfg_mask((ushort *)0x0,0x4000,1);
     gpio_cfg_mask((ushort *)0x0,0x10,1);
     gpio_cfg_mask(&PORT_P11,0x10004,1);
@@ -407,6 +408,7 @@ void backlight_enable(int param_1)
     gpio_cfg_alt(4,7,3,2);
     uVar1 = 0x100010;
   }
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar1;
   return;
 }
@@ -451,6 +453,7 @@ void lcd_power(uint param_1)
 {
   undefined4 uVar1;
   
+                    /* P3_4 LCD_DEN alt1, P11_15 LCD_CLK alt5 [doc, inference] */
   lcd_pins_enable(param_1 & 0xff);
   if (param_1 != 0) {
     uVar1 = 0x400040;
@@ -458,6 +461,7 @@ void lcd_power(uint param_1)
   else {
     uVar1 = 0x400000;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   if (param_1 != 0) {
     uVar1 = 0x40004000;
@@ -465,6 +469,7 @@ void lcd_power(uint param_1)
   else {
     uVar1 = 0x40000000;
   }
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar1;
   return;
 }
@@ -491,6 +496,7 @@ void gpio_p4_7(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -518,6 +524,7 @@ void gpio_rx_update(int param_1)
   else {
     uVar1 = 0x80008;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -545,6 +552,7 @@ void gpio_rx_update_b(int param_1)
   else {
     uVar1 = 0x80008;
   }
+                    /* Port set/reset_4 [sfr] */
   PORT_PSR4 = uVar1;
   return;
 }
@@ -572,6 +580,7 @@ void gpio_qf_reset(int param_1)
   else {
     uVar1 = 0x40004;
   }
+                    /* Port set/reset_11 [sfr] */
   PORT_PSR11 = uVar1;
   return;
 }
@@ -604,7 +613,9 @@ void gpio_p2_4_5_select(int param_1)
   else if (param_1 == 2) {
     uVar1 = 0x10;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1 | 0x300000;
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = uVar2 | 0x20000;
   return;
 }
@@ -623,7 +634,9 @@ void gpio_p2_4_5_select(int param_1)
 void gpio_p2_4_5_clear(void)
 
 {
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = 0x300000;
+                    /* Port set/reset_10 [sfr] */
   PORT_PSR10 = 0x20000;
   return;
 }
@@ -642,6 +655,7 @@ void gpio_p2_4_5_clear(void)
 void gpio_p8_6to9_3(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c000c0;
   return;
 }
@@ -660,6 +674,7 @@ void gpio_p8_6to9_3(void)
 void gpio_p8_6to9_8(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c00200;
   return;
 }
@@ -678,6 +693,7 @@ void gpio_p8_6to9_8(void)
 void gpio_p8_6to9_6(void)
 
 {
+                    /* Port set/reset_8 [sfr] */
   PORT_PSR8 = 0x3c00180;
   return;
 }
@@ -704,6 +720,7 @@ void sd_power(int param_1)
   else {
     uVar1 = 0x10000000;
   }
+                    /* Port set/reset_7 [sfr] */
   PORT_PSR7 = uVar1;
   if (param_1 == 0) {
     return;
@@ -729,6 +746,7 @@ uint sd_card_detect(void)
   ushort port_ppr11;
   
   port_ppr11 = PORT_PPR11;
+                    /* Port pin read_11 [sfr] */
   return (port_ppr11 & 0x1f) >> 4;
 }
 
@@ -755,6 +773,7 @@ void gpio_usb0_en(int param_1,int param_2)
     else {
       uVar1 = 0x4000400;
     }
+                    /* Port set/reset_8 [sfr] */
     PORT_PSR8 = uVar1;
   }
   return;
@@ -818,6 +837,7 @@ void gpio_p2_15(int param_1)
   else {
     uVar1 = 0x80008000;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -844,6 +864,7 @@ void gpio_p2_7(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -871,6 +892,7 @@ void gpio_ft4222_reset(int param_1)
   else {
     uVar1 = 0x800080;
   }
+                    /* Port set/reset_2 [sfr] */
   PORT_PSR2 = uVar1;
   return;
 }
@@ -968,23 +990,40 @@ void backlight_pwm_init(void)
 {
   byte bVar1;
   
+                    /* Timer control_3 [sfr] */
   MTU2_TCR_3 = 0x40;
+                    /* Timer counter_3 [sfr] */
   MTU2_TCNT_3 = 0;
+                    /* Timer counter_4 [sfr] */
   MTU2_TCNT_4 = 0;
+                    /* Timer general A_3 [sfr] */
   MTU2_TGRA_3 = 0;
+                    /* Timer general B_3 [sfr] */
   MTU2_TGRB_3 = 0x13f;
+                    /* Timer general C_3 [sfr] */
   MTU2_TGRC_3 = 0;
+                    /* Timer general D_3 [sfr] */
   MTU2_TGRD_3 = 0x13f;
+                    /* Timer general A_4 [sfr] */
   MTU2_TGRA_4 = 0;
+                    /* Timer general B_4 [sfr] */
   MTU2_TGRB_4 = 0;
+                    /* Timer general C_4 [sfr] */
   MTU2_TGRC_4 = 0;
+                    /* Timer general D_4 [sfr] */
   MTU2_TGRD_4 = 0;
+                    /* Timer output control 1 [sfr] */
   MTU2_TOCR1 = 0x47;
+                    /* Timer output control 2 [sfr] */
   MTU2_TOCR2 = 0x7f;
+                    /* Timer output level buffer [sfr] */
   MTU2_TOLBR = 0x3f;
+                    /* Timer mode_3 [sfr] */
   MTU2_TMDR_3 = 0x38;
+                    /* Timer output master enable [sfr] */
   bVar1 = MTU2_TOER;
   MTU2_TOER = bVar1 | 0x20;
+                    /* Timer start [sfr] */
   bVar1 = MTU2_TSTR;
   MTU2_TSTR = bVar1 | 0x40;
   return;
@@ -1018,6 +1057,7 @@ void backlight_set_pct(int param_1)
   if (iVar1 == 0x140) {
     iVar1 = 0x13f;
   }
+                    /* Timer general D_4 [sfr] */
   MTU2_TGRD_4 = (short)iVar1 + -1;
   return;
 }
@@ -1054,6 +1094,7 @@ void backlight_set(uint param_1)
 void backlight_init(void)
 
 {
+                    /* MTU2 ch3/ch4 reset-synchronised PWM [doc] */
   backlight_pwm_init();
   backlight_set_pct(0x3c,1);
   return;
@@ -1195,6 +1236,7 @@ uint wav_open_read(int *param_1,int param_2)
   local_84 = 0;
   local_80 = 0;
   local_7c = 0;
+                    /* word copy while aligned [doc, inference] */
   strcpy(&local_b8,pcVar7);
   strcat(&local_b8,0x20105524);
   strcat(&local_b8,*param_1);
@@ -1237,6 +1279,7 @@ uint wav_open_read(int *param_1,int param_2)
 LAB_20105468:
   iVar1 = param_1[8];
   if (iVar1 != 0) {
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
     uVar2 = __aeabi_uidivmod(local_20,local_5c);
     uVar5 = (uint)((ulonglong)uVar2 * 0x91a2b3c5 >> 0x20);
     uVar6 = (uVar5 & 0x7ffff) >> 0xb;
@@ -1318,6 +1361,7 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       }
       pcVar3 = "I:\\FT-710\\MESSAGE";
     }
+                    /* directory handle, 0 on error [doc] */
     local_34 = fs_opendir(pcVar3);
     if (local_34 == 0) {
       iVar2 = -4;
@@ -1327,12 +1371,14 @@ int wav_list_dir(int param_1,int param_2,int param_3)
       iVar4 = work_buf_get(0x33cc);
       iVar2 = 0;
 LAB_201055b8:
+                    /* next directory entry or 0 at the end [doc] */
       piVar5 = (int *)fs_readdir(local_34);
       if (piVar5 != (int *)0x0) {
         iVar6 = fs_attr_check((int)*(char *)(*piVar5 + 0xb),0);
         if (iVar6 == 0) {
           iVar6 = (int)piVar5 + 10;
           if (piVar5 == (int *)0xfffffff6) goto LAB_20105660;
+                    /* Word-at-a-time string length [doc] */
           uVar7 = strlen(iVar6);
           uVar9 = uVar7;
           if (uVar7 < 0x15) {
@@ -1347,6 +1393,7 @@ LAB_201055b8:
               goto LAB_20105660;
             }
             iVar2 = iVar4 + iVar2 * 0x34;
+                    /* Copies up to n bytes and pads with 0 [doc] */
             strncpy(iVar2,iVar6,uVar7 - 4);
             local_44 = 0;
             local_4c = 0;
@@ -1376,6 +1423,7 @@ LAB_20105660:
         iVar2 = -4;
       }
       else {
+                    /* insertion sort, with a quicksort pass [doc] */
         qsort(iVar4,iVar2,0x34,strcasecmp);
         __aeabi_memclr4(local_30,0x33cc);
         iVar6 = 0;
@@ -1396,6 +1444,7 @@ LAB_20105660:
           puVar13[0xc] = puVar14[0xc];
         } while (iVar6 < iVar2);
       }
+                    /* Builds the 3DSS line offset tables 0x20907F7C/7FF4 [doc] */
       scope3d_tables_init();
       gui_scope_draw_hold_set(0);
     }
@@ -1493,9 +1542,11 @@ LAB_20105820:
           iVar2 = iVar2 + 1;
         } while (iVar2 < 10);
       }
+                    /* word copy while aligned [doc, inference] */
       strcpy(auStack_a0,pcVar3);
       strcat(auStack_a0,0x20105524);
       strcat(auStack_a0,param_1);
+                    /* deletes a file [doc] */
       iVar2 = fs_remove(auStack_a0);
       if (iVar2 == 0) {
         uVar1 = wav_list_dir(param_2,param_3,param_4);
@@ -1575,6 +1626,7 @@ void rec_start(int param_1,void *param_2,uint param_3,byte param_4)
             *(undefined1 *)((int)param_2 + 3),*(undefined1 *)((int)param_2 + 4),
             *(undefined1 *)((int)param_2 + 5),*(undefined1 *)((int)param_2 + 6),
             *(undefined1 *)((int)param_2 + 7));
+                    /* Copies up to n bytes and pads with 0 [doc] */
     strncpy(0x20811067,&UNK_20165274 + param_3 * 10,10);
     DAT_208000d0 = 1;
     DAT_208000b3 = param_4;
@@ -1777,6 +1829,7 @@ void play_progress(void *param_1,uint param_2)
   }
   uVar1 = (uVar2 / 64000) % 0xe10;
   sprintf(param_2,"%02d:%02d:%02d",(uVar2 / 64000) / 0xe10,uVar1 / 0x3c,uVar1 % 0x3c);
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   uVar2 = __aeabi_uidivmod(uVar2,DAT_208000e4 / 100);
   if (100 < uVar2) {
     uVar2 = 100;
@@ -1908,6 +1961,7 @@ uint play_read_block(int param_1,void *param_2)
       *(undefined1 *)((int)param_2 + 3) = 0x12;
       return 0;
     }
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
     DAT_208000bc = fs_task_ctx_get();
     if (DAT_208000bc == 0xfffffff2) {
       return 0xfffffffb;
@@ -1972,6 +2026,7 @@ uint play_seek(int param_1)
     fs_fseek_ret = fs_fseek(DAT_208000e0,param_1 + 0x5c,0);
     uVar2 = 0;
     if (fs_fseek_ret != 0) {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
       DAT_208000bc = fs_task_ctx_get();
       play_close();
       uVar2 = 0xfffffffe;
@@ -2011,6 +2066,7 @@ int play_prime(int param_1)
       DAT_208000b8 = DAT_208000b8 + 1;
     }
   }
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(&DAT_208f4de0 + (uint)DAT_208000b0 * 0x11f8,unaff_r7);
   return uVar1;
 }
@@ -2033,6 +2089,7 @@ void rec_close_abort(void)
   DAT_208000dc = 0;
   DAT_208000e8 = 0;
   if (DAT_20810fcc != '\0') {
+                    /* deletes a file [doc] */
     fs_remove(&DAT_20810fcc);
   }
   __aeabi_memclr4_veneer(&DAT_20810fcc,0x80);
@@ -2209,9 +2266,11 @@ uint rec_open_wav(void *param_1,int param_2)
         local_4c = 0x544d4349;
         local_48 = 0x20;
         if (param_2 == 1) {
+                    /* Word-at-a-time string length [doc] */
           iVar1 = strlen(*(undefined4 *)((int)param_1 + 4));
           iVar3 = strlen(*(undefined4 *)((int)param_1 + 8));
           if ((uint)(iVar3 + iVar1) < 0x1f) {
+                    /* word copy while aligned [doc, inference] */
             strcpy(auStack_44,*(undefined4 *)((int)param_1 + 4));
             strcat(auStack_44,0x20106558);
             strcat(auStack_44,*(undefined4 *)((int)param_1 + 8));
@@ -2237,14 +2296,17 @@ uint rec_open_wav(void *param_1,int param_2)
         strcat(&DAT_20810fcc,*(undefined4 *)param_1);
         strcat(&DAT_20810fcc,0x20106570);
         if (param_2 == 2) {
+                    /* deletes a file [doc] */
           fs_remove(&DAT_20810fcc);
         }
         DAT_208000dc = fs_fopen(0x20810fcc,0x20106578);
+                    /* creates a directory [doc] */
         if ((DAT_208000dc == 0) &&
            (((DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0 &&
              ((DAT_208000bc = fs_mkdir("I:\\FT-710"), DAT_208000bc != 0 ||
               (DAT_208000bc = fs_mkdir(pcVar4), DAT_208000bc != 0)))) ||
             (DAT_208000dc = fs_fopen(0x20810fcc,0x20106578), DAT_208000dc == 0)))) {
+                    /* Per-task FS context 0x2091D0BC[tskid] [doc] */
           DAT_208000bc = fs_task_ctx_get();
         }
         else {
@@ -2343,6 +2405,7 @@ void sdmenu_default_name(undefined4 param_1,int param_2,int param_3,int param_4)
   if (0 < param_3) {
     do {
       pbVar3 = (byte *)(param_2 + i * 0x10);
+                    /* Word-at-a-time string length [doc] */
       iVar1 = strlen(pbVar3);
       if (((iVar1 == 0xd) && (iVar1 = strncmp(abStack_3c,pbVar3,0xb), iVar1 == 0)) &&
          (iVar1 = FUN_20111374(pbVar3 + 0xb,2,&local_40), *local_40 == '\0')) {
@@ -2559,6 +2622,7 @@ char sdmenu_request(int param_1,void *param_2,uint *param_3)
   }
   DAT_2080019c = 1;
   DAT_2080019f = 0;
+                    /* progress percent 0x20800364 [doc, inference] */
   progress_set(0);
   uVar3 = progress_get();
   *(uint *)param_2 = uVar3;
@@ -2604,6 +2668,7 @@ char sd_format_request(undefined4 *param_1,uint *param_2,undefined4 param_3,int 
       uVar4 = __aeabi_ddiv((int)uVar5,(int)((ulonglong)uVar5 >> 0x20),(int)uVar4,
                            (int)((ulonglong)uVar4 >> 0x20));
       __aeabi_dmul((int)uVar4,(int)((ulonglong)uVar4 >> 0x20),0,0x40590000);
+                    /* Double to signed int, truncating with saturation [doc] */
       uVar2 = __aeabi_d2iz();
       *param_1 = uVar2;
     }
@@ -2664,14 +2729,22 @@ void adc_read_all(uint *param_1)
   ushort adc_addrg;
   ushort adc_addrh;
   
+                    /* A/D data A [sfr] */
   adc_addra = ADC_ADDRA;
+                    /* A/D data B [sfr] */
   adc_addrb = ADC_ADDRB;
+                    /* A/D data C [sfr] */
   adc_addrc = ADC_ADDRC;
+                    /* A/D data D [sfr] */
   uVar1 = ADC_ADDRD;
   DAT_20819530 = (uint)(uVar1 >> 4);
+                    /* A/D data E [sfr] */
   uVar1 = ADC_ADDRE;
+                    /* A/D data F [sfr] */
   adc_addrf = ADC_ADDRF;
+                    /* A/D data G [sfr] */
   adc_addrg = ADC_ADDRG;
+                    /* A/D data H [sfr] */
   adc_addrh = ADC_ADDRH;
   DAT_20819524 = (uint)(adc_addra >> 4);
   DAT_20819528 = (uint)(adc_addrb >> 4);
@@ -2705,6 +2778,7 @@ void adc_read_all(uint *param_1)
 void adc_start_scan(void)
 
 {
+                    /* A/D control/status [sfr] */
   ADC_ADCSR = 0x20ff;
   return;
 }
@@ -2725,14 +2799,23 @@ void dimmer_pwm_init(void)
 {
   byte mtu2_tstr;
   
+                    /* Timer control_0 [sfr] */
   MTU2_TCR_0 = 0x22;
+                    /* Timer counter_0 [sfr] */
   MTU2_TCNT_0 = 0;
+                    /* Timer general A_0 [sfr] */
   MTU2_TGRA_0 = 19999;
+                    /* Timer general B_0 [sfr] */
   MTU2_TGRB_0 = 0;
+                    /* Timer general C_0 [sfr] */
   MTU2_TGRC_0 = 0;
+                    /* Timer general D_0 [sfr] */
   MTU2_TGRD_0 = 0;
+                    /* Timer I/O control H_0 [sfr] */
   MTU2_TIORH_0 = 0x12;
+                    /* Timer mode_0 [sfr] */
   MTU2_TMDR_0 = 2;
+                    /* Timer start [sfr] */
   mtu2_tstr = MTU2_TSTR;
   MTU2_TSTR = mtu2_tstr | 1;
   return;
@@ -2766,6 +2849,7 @@ void dimmer_set_pct(int param_1)
   if (iVar1 == 20000) {
     iVar1 = 19999;
   }
+                    /* Timer general B_0 [sfr] */
   MTU2_TGRB_0 = (short)iVar1 + -1;
   return;
 }
@@ -2848,6 +2932,7 @@ void rtc_send_byte(uint param_1)
   
   i = 0;
   do {
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     if ((param_1 & 1) == 0) {
       PORT_PSR1 = 0x10000;
@@ -2904,8 +2989,10 @@ byte rtc_recv_byte(void)
   i = 0;
   do {
     uVar1 = uVar1 >> 1;
+                    /* Port set/reset_1 [sfr] */
     PORT_PSR1 = 0x20000;
     rtc_delay();
+                    /* Port pin read_1 [sfr] */
     port_ppr1 = PORT_PPR1;
     PORT_PSR1 = 0x20002;
     if ((port_ppr1 & 1) != 0) {
@@ -2957,6 +3044,7 @@ byte rtc_read_reg(uint param_1)
   byte rtc_recv_byte_ret;
   
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(param_1 | 0x86);
@@ -2987,6 +3075,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
   local_10._2_2_ = (undefined2)((uint)param_4 >> 0x10);
   local_10 = CONCAT22(local_10._2_2_,CONCAT11(param_2,param_1)) | 6;
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_bytes(&local_10,2);
@@ -3010,6 +3099,7 @@ void rtc_write_reg(undefined1 param_1,undefined1 param_2,undefined4 param_3,unde
 void rtc_port_idle(void)
 
 {
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x20002;
   PORT_PSR1 = 0x40000;
   return;
@@ -3030,6 +3120,7 @@ void rtc_write_datetime_raw(uint param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x26);
@@ -3055,6 +3146,7 @@ void rtc_write_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0x66);
@@ -3080,6 +3172,7 @@ void rtc_read_datetime_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xa6);
@@ -3106,6 +3199,7 @@ void rtc_read_time_raw(int param_1)
 
 {
   itron_tloc_mtx(DAT_20800368,0xffffffff);
+                    /* Port set/reset_1 [sfr] */
   PORT_PSR1 = 0x40004;
   rtc_delay();
   rtc_send_byte(0xe6);
@@ -3392,6 +3486,7 @@ void rtc_init(void)
 {
   t_cmtx local_10;
   
+                    /* CK high, CS low [doc, inference] */
   rtc_port_idle();
   rtc_write_reg(0,2);
   rtc_write_reg(0x40,0);
@@ -3416,20 +3511,35 @@ void rtc_init(void)
 void cpg_early_init(void)
 
 {
+                    /* Power Control [sfr] */
   L2C_REG15_POWER_CTRL = 1;
+                    /* Frequency control [sfr] */
   CPG_FRQCR = 0x35;
+                    /* Frequency control 2 [sfr] */
   CPG_FRQCR2 = 1;
+                    /* System control 3 [sfr] */
   CPG_SYSCR3 = 0xf;
+                    /* Standby control 2 [sfr] */
   CPG_STBCR2 = 0x6a;
+                    /* Standby control 3 [sfr] */
   CPG_STBCR3 = 0;
+                    /* Standby control 4 [sfr] */
   CPG_STBCR4 = 0;
+                    /* Standby control 5 [sfr] */
   CPG_STBCR5 = 0;
+                    /* Standby control 6 [sfr] */
   CPG_STBCR6 = 0;
+                    /* Standby control 7 [sfr] */
   CPG_STBCR7 = 0x24;
+                    /* Standby control 8 [sfr] */
   CPG_STBCR8 = 5;
+                    /* Standby control 9 [sfr] */
   CPG_STBCR9 = 0;
+                    /* Standby control 10 [sfr] */
   CPG_STBCR10 = 0;
+                    /* Standby control 11 [sfr] */
   CPG_STBCR11 = 0xc0;
+                    /* Standby control 12 [sfr] */
   CPG_STBCR12 = 0xf0;
   gpio_early_init();
   gpio_rx_reset(0);
@@ -3494,44 +3604,73 @@ uint gic_init(void)
 {
   int iVar1;
   
+                    /* CPU interface control [sfr] */
   INTC_ICCICR = 0;
   iVar1 = 0;
   do {
     (&INTC_ICDISR0)[iVar1] = 0;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x13);
+                    /* Interrupt configuration 0 [sfr] */
   INTC_ICDICFR0 = 0xaaaaaaaa;
+                    /* Interrupt configuration 1 [sfr] */
   INTC_ICDICFR1 = 0x55;
+                    /* Interrupt configuration 2 [sfr] */
   INTC_ICDICFR2 = 0xfffd5555;
+                    /* Interrupt configuration 3 [sfr] */
   INTC_ICDICFR3 = 0x555fffff;
+                    /* Interrupt configuration 4 [sfr] */
   INTC_ICDICFR4 = 0x55555555;
+                    /* Interrupt configuration 5 [sfr] */
   INTC_ICDICFR5 = 0x55555555;
+                    /* Interrupt configuration 6 [sfr] */
   INTC_ICDICFR6 = 0x55555555;
+                    /* Interrupt configuration 7 [sfr] */
   INTC_ICDICFR7 = 0x55555555;
+                    /* Interrupt configuration 8 [sfr] */
   INTC_ICDICFR8 = 0x5555f555;
+                    /* Interrupt configuration 9 [sfr] */
   INTC_ICDICFR9 = 0x55555555;
+                    /* Interrupt configuration 10 [sfr] */
   INTC_ICDICFR10 = 0x55555555;
+                    /* Interrupt configuration 11 [sfr] */
   INTC_ICDICFR11 = 0xf5555555;
+                    /* Interrupt configuration 12 [sfr] */
   INTC_ICDICFR12 = 0xf555f555;
+                    /* Interrupt configuration 13 [sfr] */
   INTC_ICDICFR13 = 0x5555f555;
+                    /* Interrupt configuration 14 [sfr] */
   INTC_ICDICFR14 = 0x55555555;
+                    /* Interrupt configuration 15 [sfr] */
   INTC_ICDICFR15 = 0x55555555;
+                    /* Interrupt configuration 16 [sfr] */
   INTC_ICDICFR16 = 0x55555555;
+                    /* Interrupt configuration 17 [sfr] */
   INTC_ICDICFR17 = 0xfd555555;
+                    /* Interrupt configuration 18 [sfr] */
   INTC_ICDICFR18 = 0x55555557;
+                    /* Interrupt configuration 19 [sfr] */
   INTC_ICDICFR19 = 0x55555555;
+                    /* Interrupt configuration 20 [sfr] */
   INTC_ICDICFR20 = 0x55555555;
+                    /* Interrupt configuration 21 [sfr] */
   INTC_ICDICFR21 = 0x5f555555;
+                    /* Interrupt configuration 22 [sfr] */
   INTC_ICDICFR22 = 0xfd55555f;
+                    /* Interrupt configuration 23 [sfr] */
   INTC_ICDICFR23 = 0x55555557;
   iVar1 = 0x18;
   do {
     (&INTC_ICDICFR0)[iVar1] = 0xffffffff;
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x25);
+                    /* Interrupt priority 0 [sfr] */
   INTC_ICDIPR0 = 0x60687078;
+                    /* Interrupt priority 1 [sfr] */
   INTC_ICDIPR1 = 0x40485058;
+                    /* Interrupt priority 2 [sfr] */
   INTC_ICDIPR2 = 0x20283038;
+                    /* Interrupt priority 3 [sfr] */
   INTC_ICDIPR3 = 0x81018;
   iVar1 = 0x20;
   do {
@@ -3560,8 +3699,10 @@ uint gic_init(void)
     iVar1 = iVar1 + 1;
   } while (iVar1 < 0x20);
   DAT_20800404 = 0;
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = 0xf8;
   INTC_ICCICR = 3;
+                    /* Distributor control [sfr] */
   INTC_ICDDCR = 1;
   DAT_20800408 = 0;
   return 0;
@@ -3582,7 +3723,9 @@ void gic_install_isr_stub(uint param_1,int param_2)
 
 {
   FUN_20100f84(param_1,0x58);
+                    /* CP15 clean D-cache line by MVA over the range [doc] */
   dcache_clean_range(param_1,0x58);
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
   gic_set_priority(*(uint *)(param_2 + 8),*(int *)(param_2 + 0x10));
   (&DAT_208dc1e0)[*(int *)(param_2 + 8)] = param_1;
   return;
@@ -3610,6 +3753,7 @@ uint gic_def_inh(uint param_1,int param_2)
   if (param_2 == 0) {
     uVar1 = knl_int_disable();
     (&DAT_208dc1e0)[param_1] = gic_default_handler;
+                    /* GICD_IPRIORITYR byte = prio << 3 [doc, inference] */
     gic_set_priority(param_1,0x1f);
   }
   else {
@@ -3639,7 +3783,9 @@ void gic_irq_exit(void)
 
 {
   DAT_20800404 = DAT_20800404 - 1;
+                    /* End-of-interrupt [sfr] */
   INTC_ICCEOIR = (&DAT_208dcb8c)[DAT_20800404];
+                    /* Interrupt priority mask [sfr] */
   INTC_ICCPMR = (&DAT_208dcb0c)[DAT_20800404];
   return;
 }
@@ -3690,7 +3836,9 @@ uint ostm_time_us(void)
   byte ostm_ostm0te;
   
   uVar1 = DAT_20800408;
+                    /* OSTM0 counter [sfr] */
   iVar2 = OSTM_OSTM0CNT;
+                    /* OSTM0 count enable status [sfr] */
   ostm_ostm0te = OSTM_OSTM0TE;
   iVar2 = 320000 - iVar2;
   if ((ostm_ostm0te & 1) != 0) {
@@ -3971,12 +4119,14 @@ undefined4 rspi_rx_isr(uint param_1)
   }
   switch(param_1) {
   case 0:
+                    /* SPBFCR RXRST pulse, count 0x208DCE28, flag 0x20800418 [doc, inference] */
     rspi0_rx_isr();
     break;
   case 1:
     rspi1_rx_isr();
     break;
   case 2:
+                    /* clear SPRIE, flag [doc, inference] */
     rspi2_rx_isr();
     break;
   case 3:
@@ -4012,6 +4162,7 @@ undefined4 rspi_tx_isr(uint param_1)
   }
   switch(param_1) {
   case 0:
+                    /* clear SPTIE, flag 0x2080041D [doc, inference] */
     rspi0_tx_isr();
     break;
   case 1:
@@ -5619,6 +5770,7 @@ void riic_transmit_stop(int param_1)
 {
   void *riic_base_ret;
   
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
   reg_rmw8((int)riic_base_ret + 4,1,3,8);
@@ -5645,28 +5797,44 @@ void riic_transmit_restart(int param_1)
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(1);
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
     userdef_riic0_init_tx_empty();
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
     userdef_riic0_init_tx_end(0);
   }
   else if (param_1 == 1) {
+                    /* spins on RIIC1CR2 bit 7 [doc, inference] */
     userdef_riic1_wait_bus_master(1);
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
     userdef_riic1_init_tx_empty();
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
     userdef_riic1_init_tx_end(0);
   }
   else if (param_1 == 2) {
+                    /* spins on RIIC2CR2 bit 7 [doc, inference] */
     userdef_riic2_wait_bus_master(1);
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
     userdef_riic2_init_tx_empty();
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
     userdef_riic2_init_tx_end(0);
   }
   else if (param_1 == 3) {
+                    /* spins on RIIC3CR2 bit 7 [doc, inference] */
     userdef_riic3_wait_bus_master(1);
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
     userdef_riic3_init_tx_empty();
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
     userdef_riic3_init_tx_end(0);
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 4,1,2,4);
   return;
@@ -5692,28 +5860,44 @@ void riic_transmit_start(int param_1)
   
   if (param_1 == 0) {
     userdef_riic0_wait_bus_master(0);
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
     userdef_riic0_init_tx_empty();
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
     userdef_riic0_init_tx_end(0);
   }
   else if (param_1 == 1) {
+                    /* spins on RIIC1CR2 bit 7 [doc, inference] */
     userdef_riic1_wait_bus_master(0);
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
     userdef_riic1_init_tx_empty();
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
     userdef_riic1_init_tx_end(0);
   }
   else if (param_1 == 2) {
+                    /* spins on RIIC2CR2 bit 7 [doc, inference] */
     userdef_riic2_wait_bus_master(0);
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
     userdef_riic2_init_tx_empty();
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
     userdef_riic2_init_tx_end(0);
   }
   else if (param_1 == 3) {
+                    /* spins on RIIC3CR2 bit 7 [doc, inference] */
     userdef_riic3_wait_bus_master(0);
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
     userdef_riic3_init_tx_empty();
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
     userdef_riic3_init_tx_end(0);
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_rmw8((int)riic_base_ret + 4,1,1,2);
   return;
@@ -5770,24 +5954,29 @@ undefined4 riic_transmit(int param_1,undefined1 param_2)
   void *riic_base_ret;
   undefined4 uVar1;
   
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
   if (reg_read8_ret == 0) {
     uVar1 = 0;
     if (param_1 == 0) {
       userdef_riic0_wait_tx_empty();
+                    /* Clears the ch0 transmit-empty flag 0x20800458 [doc, inference] */
       userdef_riic0_init_tx_empty();
     }
     else if (param_1 == 1) {
       userdef_riic1_wait_tx_empty();
+                    /* Clears the ch1 transmit-empty flag 0x20800459 [doc, inference] */
       userdef_riic1_init_tx_empty();
     }
     else if (param_1 == 2) {
       userdef_riic2_wait_tx_empty();
+                    /* Clears the ch2 transmit-empty flag 0x2080045A [doc, inference] */
       userdef_riic2_init_tx_empty();
     }
     else if (param_1 == 3) {
       userdef_riic3_wait_tx_empty();
+                    /* Clears the ch3 transmit-empty flag 0x2080045B [doc, inference] */
       userdef_riic3_init_tx_empty();
     }
     *(undefined1 *)((int)riic_base_ret + 0x3c) = param_2;
@@ -5820,24 +6009,34 @@ int R_RIIC_WriteSlaveAddr(uint param_1,undefined1 param_2,uint param_3)
   void *riic_base_ret;
   
   if ((param_1 < 4) && (param_3 < 2)) {
+                    /* returns -2 on NACK [doc] */
     iVar1 = riic_transmit(param_1,param_2);
     if (iVar1 == 0) {
       if (param_1 == 0) {
+                    /* spins until the ch0 transmit-end flag [doc, inference] */
         userdef_riic0_wait_tx_end(param_3);
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
         userdef_riic0_init_tx_end(param_3);
       }
       else if (param_1 == 1) {
+                    /* spins until the ch1 transmit-end flag [doc, inference] */
         userdef_riic1_wait_tx_end(param_3);
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
         userdef_riic1_init_tx_end(param_3);
       }
       else if (param_1 == 2) {
+                    /* spins until the ch2 transmit-end flag [doc, inference] */
         userdef_riic2_wait_tx_end(param_3);
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
         userdef_riic2_init_tx_end(param_3);
       }
       else if (param_1 == 3) {
+                    /* spins until the ch3 transmit-end flag [doc, inference] */
         userdef_riic3_wait_tx_end(param_3);
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
         userdef_riic3_init_tx_end(param_3);
       }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
       riic_base_ret = riic_base(param_1);
       reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
       if (reg_read8_ret != 0) {
@@ -5879,6 +6078,7 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
   else {
     i = 0;
     do {
+                    /* returns -2 on NACK [doc] */
       iVar1 = riic_transmit(param_1,*(undefined1 *)(param_2 + i));
       if (iVar1 != 0) {
         return iVar1;
@@ -5886,21 +6086,30 @@ int R_RIIC_Write(uint param_1,int param_2,uint param_3)
       i = i + 1;
     } while (i < param_3);
     if (param_1 == 0) {
+                    /* spins until the ch0 transmit-end flag [doc, inference] */
       userdef_riic0_wait_tx_end(0);
+                    /* clears the ch0 transmit-end flag 0x2080045C [doc, inference] */
       userdef_riic0_init_tx_end(0);
     }
     else if (param_1 == 1) {
+                    /* spins until the ch1 transmit-end flag [doc, inference] */
       userdef_riic1_wait_tx_end(0);
+                    /* clears the ch1 transmit-end flag 0x2080045D [doc, inference] */
       userdef_riic1_init_tx_end(0);
     }
     else if (param_1 == 2) {
+                    /* spins until the ch2 transmit-end flag [doc, inference] */
       userdef_riic2_wait_tx_end(0);
+                    /* clears the ch2 transmit-end flag 0x2080045E [doc, inference] */
       userdef_riic2_init_tx_end(0);
     }
     else if (param_1 == 3) {
+                    /* spins until the ch3 transmit-end flag [doc, inference] */
       userdef_riic3_wait_tx_end(0);
+                    /* clears the ch3 transmit-end flag 0x2080045F [doc, inference] */
       userdef_riic3_init_tx_end(0);
     }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     reg_read8_ret = reg_read8((byte *)((int)riic_base_ret + 0x24),4,0x10);
     iVar1 = 0;
@@ -5947,18 +6156,23 @@ void riic_detect_stop(int param_1)
   void *riic_base_ret;
   
   if (param_1 == 0) {
+                    /* Spins until RIIC0SR2 bit 3 [doc, inference] */
     userdef_riic0_wait_stop();
   }
   else if (param_1 == 1) {
+                    /* Spins until RIIC1SR2 bit 3 [doc, inference] */
     userdef_riic1_wait_stop();
   }
   else if (param_1 == 2) {
+                    /* Spins until RIIC2SR2 bit 3 [doc, inference] */
     userdef_riic2_wait_stop();
   }
   else if (param_1 == 3) {
     userdef_riic3_wait_stop();
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
+                    /* clears ICSR2 NACKF [doc] */
   riic_clear_nack();
   reg_rmw8((int)riic_base_ret + 0x24,0,3,8);
   return;
@@ -5983,21 +6197,30 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
   void *riic_base_ret;
   
   if (param_1 == 0) {
+                    /* Spins until the ch0 receive-full flag 0x20800454 is set [doc, inference] */
     userdef_riic0_wait_rx_full();
+                    /* Clears the ch0 receive-full flag 0x20800454 [doc, inference] */
     userdef_riic0_init_rx_full();
   }
   else if (param_1 == 1) {
+                    /* Spins until the ch1 receive-full flag 0x20800455 is set [doc, inference] */
     userdef_riic1_wait_rx_full();
+                    /* Clears the ch1 receive-full flag 0x20800455 [doc, inference] */
     userdef_riic1_init_rx_full();
   }
   else if (param_1 == 2) {
+                    /* Spins until the ch2 receive-full flag 0x20800456 is set [doc, inference] */
     userdef_riic2_wait_rx_full();
+                    /* Clears the ch2 receive-full flag 0x20800456 [doc, inference] */
     userdef_riic2_init_rx_full();
   }
   else if (param_1 == 3) {
+                    /* Spins until the ch3 receive-full flag 0x20800457 is set [doc, inference] */
     userdef_riic3_wait_rx_full();
+                    /* Clears the ch3 receive-full flag 0x20800457 [doc, inference] */
     userdef_riic3_init_rx_full();
   }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base_ret = riic_base(param_1);
   switch(param_2) {
   case 1:
@@ -6012,6 +6235,7 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
     reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     break;
   case 4:
+                    /* clears ICSR2 STOP [doc, inference] */
     riic_transmit_stop(param_1);
   }
   *param_3 = *(undefined1 *)((int)riic_base_ret + 0x40);
@@ -6034,6 +6258,7 @@ void riic_receive(int param_1,undefined4 param_2,undefined1 *param_3)
 void riic_receive_dummy(uint param_1)
 
 {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
   riic_base(param_1);
   return;
 }
@@ -6060,16 +6285,19 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
     return 0xffffffff;
   }
   if (param_3 != 0) {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     if (param_3 == 1) {
       reg_rmw8((int)riic_base_ret + 0x10,1,6,0x40);
       reg_rmw8((int)riic_base_ret + 0x10,1,4,0x10);
       reg_rmw8((int)riic_base_ret + 0x10,1,3,8);
     }
+                    /* only computes the channel base in this build [doc] */
     riic_receive_dummy(param_1);
     if (param_3 != 1) {
       if (param_3 != 2) {
         for (; 3 < param_3; param_3 = param_3 - 1) {
+                    /* waits for receive full [doc] */
           riic_receive(param_1,0,param_2);
           param_2 = param_2 + 1;
         }
@@ -6081,6 +6309,7 @@ undefined4 R_RIIC_Read(uint param_1,int param_2,uint param_3)
     }
     riic_receive(param_1,4,param_2);
     reg_rmw8((int)riic_base_ret + 0x10,0,6,0x40);
+                    /* waits for the STOP flag, clears NACKF and STOP [doc, inference] */
     riic_detect_stop(param_1);
     return 0;
   }
@@ -6102,6 +6331,7 @@ undefined4 R_RIIC_ReadDummy(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* only computes the channel base in this build [doc] */
     riic_receive_dummy(param_1);
     return 0;
   }
@@ -6123,6 +6353,7 @@ undefined4 R_RIIC_DetectStop(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* waits for the STOP flag, clears NACKF and STOP [doc, inference] */
     riic_detect_stop(param_1);
     return 0;
   }
@@ -6144,7 +6375,9 @@ undefined4 R_RIIC_ClearNack(uint param_1)
 
 {
   if (param_1 < 4) {
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base(param_1);
+                    /* clears ICSR2 NACKF [doc] */
     riic_clear_nack();
     return 0;
   }
@@ -6174,12 +6407,15 @@ undefined4 R_RIIC_RiInterrupt(uint param_1)
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 receive-full flag 0x20800454 [doc] */
       userdef_riic0_set_rx_full();
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 receive-full flag 0x20800455 [doc] */
       userdef_riic1_set_rx_full();
     }
     else if (param_1 == 2) {
+                    /* Sets the ch2 receive-full flag 0x20800456 [doc] */
       userdef_riic2_set_rx_full();
     }
     else if (param_1 == 3) {
@@ -6215,9 +6451,11 @@ undefined4 R_RIIC_TiInterrupt(uint param_1)
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 transmit-empty flag 0x20800458 [doc] */
       userdef_riic0_set_tx_empty();
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 transmit-empty flag 0x20800459 [doc] */
       userdef_riic1_set_tx_empty();
     }
     else if (param_1 == 2) {
@@ -6259,17 +6497,21 @@ R_RIIC_TeiInterrupt(uint param_1,undefined4 param_2,undefined4 param_3,undefined
   
   if (param_1 < 4) {
     if (param_1 == 0) {
+                    /* Sets the ch0 transmit-end flag 0x2080045C [doc] */
       userdef_riic0_set_tx_end(0);
     }
     else if (param_1 == 1) {
+                    /* Sets the ch1 transmit-end flag 0x2080045D [doc] */
       userdef_riic1_set_tx_end();
     }
     else if (param_1 == 2) {
+                    /* Sets the ch2 transmit-end flag 0x2080045E [doc] */
       userdef_riic2_set_tx_end();
     }
     else if (param_1 == 3) {
       userdef_riic3_set_tx_end();
     }
+                    /* RIIC register base 0xFCFEE000 + 0x400ch [doc] */
     riic_base_ret = riic_base(param_1);
     reg_rmw8((int)riic_base_ret + 0x24,0,6,0x40,param_4);
     reg_read8((byte *)((int)riic_base_ret + 0x24),6,0x40);
@@ -6324,6 +6566,7 @@ void dsp_rx_done_cb(void)
   dsp_set_audio_ptr((int)(puVar2 + 600));
   dmac4_disable();
   rspi_stop(4);
+                    /* Status_4 [sfr] */
   bVar1 = RSPI_SPSR_4;
   if ((bVar1 & 1) != 0) {
     DAT_20808594 = DAT_20808594 + 1;
@@ -6337,6 +6580,7 @@ void dsp_rx_done_cb(void)
     bVar1 = RSPI_SPSR_4;
     RSPI_SPSR_4 = bVar1 & 0xfb;
   }
+                    /* writes 0 to SETEN [doc, inference] */
   dmac3_disable();
   rspi_reset_buffers(4);
   DAT_2080858c = DAT_2080858c == '\0';
@@ -6345,7 +6589,9 @@ void dsp_rx_done_cb(void)
     DMAC_N0DA_4 = 0x60502000;
   }
   else {
+                    /* Next0 Source Address 3 [sfr] */
     DMAC_N0SA_3 = 0x60502258;
+                    /* Next0 Destination Address 4 [sfr] */
     DMAC_N0DA_4 = 0x60503450;
   }
   if (DAT_208000b2 != '\0') {

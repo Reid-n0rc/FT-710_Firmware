@@ -58,6 +58,7 @@ int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
   if (iVar1 == 0x1ff) {
     iVar1 = FUN_2015ccf8(param_1,param_2,&DAT_202665ec,3);
   }
+                    /* row index from [doc] */
   if ((((iVar1 == 0x1ff) && (iVar1 = touch_hit_text_list_rows(param_1,param_2), iVar1 != 0x1ff)) &&
       (iVar2 = FUN_2015c278(), iVar2 != 0)) &&
      ((iVar2 = FUN_2015c2d4(iVar1), iVar2 != 0 && (DAT_208000b2 == '\0')))) {
@@ -810,6 +811,7 @@ void multi_panel_draw(undefined4 param_1)
   
   uVar1 = fb_get_layer_addr(DAT_208085b8);
   affft_spectrum_draw(uVar1,0x145,0x195,0x187,param_1);
+                    /* Writes one colour-mapped AF-FFT row [doc] */
   affft_wf_add_row();
   affft_waterfall_blit(uVar1,0x16d,0x195,0x187,0x27);
   osc_draw(uVar1,0x145,4,0,0x4f,param_1);
@@ -845,6 +847,7 @@ void scope2d_draw_normal(int param_1,void *param_2)
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
   scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
@@ -905,6 +908,7 @@ void scope2d_draw_multi(int param_1,void *param_2)
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
   scope2d_waterfall_blit(uVar1,0x11c - iVar3,4,0x317,iVar3);
@@ -1082,6 +1086,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
   scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
@@ -1117,6 +1122,7 @@ void scope2d_draw_expand(int param_1,void *param_2)
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
   __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
   DAT_208084d0 = extraout_r1;
   scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
@@ -1338,6 +1344,7 @@ mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefi
               (int)sVar3 + 0x4b0U < 0x961 && ((int)(char)param_2[0x20] + 0x19U < 0x33)) &&
              (param_2[0x21] - 0x1e < 0x4c)))))))))) &&
      ((param_2[0x23] >> 4 < 3 && ((param_2[0x23] & 0xf) < 5)))) {
+                    /* byte & 0x7F <= 12 or == 0x7F [doc, inference] */
     iVar4 = mainlink_valid_7f(param_1,param_2[0x24],(uint)param_2[0x1c],param_4,sVar3);
     if (iVar4 == 0) {
       return 0;
@@ -1362,6 +1369,7 @@ mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefi
     if (iVar4 == 0) {
       return 0;
     }
+                    /* small code-set check used by mainlink_status_valid [doc, inference] */
     iVar4 = mainlink_valid_code(param_1,param_2[0x2a]);
     if (iVar4 == 0) {
       return 0;
@@ -1842,6 +1850,7 @@ void mainlink_rx_deliver(int param_1,char *param_2,uint param_3)
   
   *(int *)(param_1 + 0x28) = *(int *)(param_1 + 0x28) + 1;
   if (*param_2 != '\x06' && *param_2 != '\x15') {
+                    /* Log the frame [fact: mainlink.md] */
     mainlink_trace((uint)param_2,param_3);
     *(char *)(param_1 + 0x24) = *param_2;
   }
@@ -1851,9 +1860,11 @@ void mainlink_rx_deliver(int param_1,char *param_2,uint param_3)
       *(undefined2 *)(mainlink_disp_alloc_ret + 4) = 0xaa;
       *(short *)(mainlink_disp_alloc_ret + 6) = (short)param_3;
       memcpy(mainlink_disp_alloc_ret + 8,param_2,param_3);
+                    /* Everything but 'D'/'E' goes to the dispatcher [fact: mainlink.md] */
       mainlink_disp_post(*(undefined4 *)(param_1 + 0x18),mainlink_disp_alloc_ret);
       return;
     }
+                    /* 'D'/'E': SD block write / read handled here [fact: mainlink.md] */
     mainlink_rx_block_write(param_2 + 1);
     return;
   }
@@ -1920,6 +1931,7 @@ int mainlink_rx_parse(uint param_1,char *param_2,int param_3,void *param_4)
   cVar1 = *param_2;
   if (cVar1 == '\x06') {
     if (g_ml.hello_acked == 0) {
+                    /* 0x06 from MAIN: the hello was acknowledged [fact: mainlink.md] */
       g_ml.hello_acked = 1;
     }
   }
@@ -1971,6 +1983,7 @@ void task_mainlink_rx(uint param_1)
   mainlink_rx_clear_stats(param_1);
   uVar4 = 0;
 LAB_2015ec90:
+                    /* Wait for RX data (2 ms while a frame is partial) [fact: mainlink.md] */
   while (itron_twai_flg_ret = itron_twai_flg(*(uint *)(param_1 + 0x34),0xc001,5,local_30,tmout),
         itron_twai_flg_ret != (void *)0xffffffce) {
     if (itron_twai_flg_ret != (void *)0x0) {
@@ -1992,6 +2005,7 @@ joined_r0x2015ece4:
       bVar6 = 2 < (int)uVar4;
       uVar4 = uVar4 + 1;
       if (bVar6) {
+                    /* 3 timeouts with a partial frame: NAK and resync [fact: mainlink.md] */
         mainlink_send_nak(param_1);
         local_534 = 0;
         uVar3 = 0;
@@ -2012,6 +2026,7 @@ joined_r0x2015ece4:
         uVar3 = uVar5;
       }
       else {
+                    /* Table command: wait for n + 2 bytes, check, ACK [fact: 0x2015EEC8] */
         uVar2 = mainlink_rx_frame(param_1,local_534,(uint)acStack_530,uVar5);
         if (600 < uVar2) {
           mainlink_send_nak(param_1);
@@ -2232,6 +2247,7 @@ int kbdobj_ctor(int param_1)
 {
   int iVar1;
   
+                    /* ring16_reset, returns this [doc] */
   iVar1 = ring16_ctor(param_1 + 0x88);
   return iVar1 + -0x88;
 }

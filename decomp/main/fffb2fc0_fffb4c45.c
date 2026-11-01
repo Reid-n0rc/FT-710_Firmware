@@ -73,6 +73,7 @@ byte ascii2_to_bcd(byte *param_1)
     bVar1 = true;
   }
   if (bVar1) {
+                    /* Accepts 0-9/A-F/a-f, else returns 0xFF [doc] */
     hex2nib_ret = hex2nib(*param_1);
     local_6 = hex2nib_ret << 4;
   }
@@ -696,18 +697,21 @@ bool tx_freq_allowed(uint freq)
   if (g_ui.zz_align_mode != 0) {
     return true;
   }
+                    /* TX inhibit: cfg105[3] or TX INHIBIT (EX030407) [fact: tx-protection.md] */
   if ((g_cfg105.a004_gn_tx_inh == 0) && (g_opstate.ex030407_tx_inhitbit == 0)) {
     bVar2 = true;
   }
   else {
     bVar2 = false;
   }
+                    /* CAT disabled from the DISPLAY link: no TX [fact: tx-protection.md] */
   if ((bVar2) && (g_ui.cat_disabled == 0)) {
     bVar2 = true;
   }
   else {
     bVar2 = false;
   }
+                    /* TX time-out tripped: no TX [fact: tx-protection.md] */
   if ((bVar2) && (g_ui.tot_tripped == 0)) {
     bVar2 = true;
   }
@@ -812,6 +816,7 @@ LAB_fffb397e:
         }
         if (bVar2) {
           bStack_1a = false;
+                    /* Tuning or 0x20B9E: clear every PTT request [fact: tx-protection.md] */
           g_ui.ptt_data = 0;
           g_ui.ptt_extpa = 0;
           g_ui.ptt_usb_rts = 0;
@@ -826,6 +831,7 @@ LAB_fffb397e:
       }
       return bStack_1a;
     }
+                    /* Walk the destination's {lo, hi} TX ranges [fact: tx-protection.md] */
     puVar1 = *ppuStack_14;
     ppuVar3 = ppuStack_14 + 1;
     ppuStack_14 = ppuStack_14 + 2;
@@ -1123,7 +1129,9 @@ LAB_fffb3de6:
 void sw_reset(void)
 
 {
+                    /* Protect [sfr] */
   SYSTEM_PRCR = 0xa502;
+                    /* Software Reset [sfr] */
   SYSTEM_SWRR = 0xa501;
   return;
 }
@@ -1334,6 +1342,7 @@ byte FUN_fffb4062(void)
   
   vfo_freq_ret = vfo_freq(1,2);
   vfo_mode_ret = vfo_mode(1);
+                    /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   cVar3 = tx_band_of_freq(vfo_freq_ret);
   bVar2 = g_opstate.rf_power[3];
   if ((vfo_mode_ret == 4) || (vfo_mode_ret == 5)) {
@@ -1978,6 +1987,7 @@ LAB_fffb48f7:
     bVar3 = true;
   }
   if ((bVar3) && (local_2 == 0xff0)) {
+                    /* display time of pop-up id for POP-UP TIME 0x9B0E [doc] */
     popup_duration_get(0x47);
     popup_open_timed();
     g_ui.popup_code = 0x47;

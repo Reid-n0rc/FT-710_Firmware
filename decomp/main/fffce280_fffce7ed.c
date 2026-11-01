@@ -259,6 +259,7 @@ void menu_ex010319_step(void)
   
   local_2 = g_opstate.ex010319_rpt_shift_50mhz_be[1];
   bStack_1 = g_opstate.ex010319_rpt_shift_50mhz_be[0];
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(0,400,&local_2);
   g_opstate.ex010319_rpt_shift_50mhz_be[0] = bStack_1;
   g_opstate.ex010319_rpt_shift_50mhz_be[1] = local_2;
@@ -650,6 +651,7 @@ void menu_ex010420_step(void)
   
   local_2 = g_opstate.ex010420_data_shift_ssb_be[1];
   bStack_1 = g_opstate.ex010420_data_shift_ssb_be[0];
+                    /* +1/-1 by the step direction g_ui.menu_step_dir, clamped [doc] */
   menu_step_u16(0,300,&local_2);
   g_opstate.ex010420_data_shift_ssb_be[0] = bStack_1;
   g_opstate.ex010420_data_shift_ssb_be[1] = local_2;

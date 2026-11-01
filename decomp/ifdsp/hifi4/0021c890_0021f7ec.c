@@ -720,6 +720,7 @@ void cw_zero_in_init(void)
   DAT_002465e4 = 0;
   DAT_002465fc = 0;
   ae_s16i_n(&DAT_00007fff,&DAT_002465e0,0);
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_002469d0);
   DAT_002469c0 = 0;
   DAT_002469c2 = 0;
@@ -768,6 +769,7 @@ void cw_zero_in_estimator(undefined4 param_1)
     DAT_20070008 = 0;
   }
   if (DAT_002465e4 != 0) {
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
     hilbert_iq(&DAT_002469d0,param_1,&DAT_00246d20,&DAT_00246de0,0x30);
     puStack_2c = &DAT_00246de0;
     i = 0x30;
@@ -932,6 +934,7 @@ void am_demod_init(void)
   uVar1 = const_s(0);
   DAT_00246eb4 = ae_s32_l_i(uVar1);
   DAT_00246eb0 = ae_s32_l_i(uVar1);
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_00246eb8);
   return;
 }
@@ -956,6 +959,7 @@ void am_demod(undefined4 param_1,undefined4 *param_2)
   undefined8 uVar9;
   
   puVar2 = &DAT_002471b0;
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
   hilbert_iq(&DAT_00246eb8,param_1,&DAT_002471b0,&DAT_00247210,0x18);
   puVar3 = &DAT_00247210;
   i = 0;
@@ -994,6 +998,7 @@ void fm_demod_init(void)
 {
   undefined8 uVar1;
   
+                    /* bkfiraf_init with the 71-tap Hilbert FIR 0x205840 [doc] */
   hilbert_iq_init(&DAT_00247270);
   uVar1 = const_s(0);
   DAT_00247560 = ae_s32_l_i(uVar1);
@@ -1040,6 +1045,7 @@ undefined * fm_demod(undefined4 param_1,undefined4 *param_2)
   undefined8 uVar17;
   
   puVar5 = &DAT_00247640;
+                    /* 71-tap Hilbert FIR 0x205840, I delayed 35 [doc, inference] */
   hilbert_iq(&DAT_00247270,param_1,&DAT_00247640,&DAT_002476a0,0x18);
   puVar6 = &DAT_002476a0;
   uVar12 = 0x40c90fdb;
@@ -2848,6 +2854,7 @@ void if_agc_process(undefined4 param_1)
   iVar1 = if_agc_params();
   uVar7 = ae_l32_i(DAT_00252bc0);
   DAT_00252bc4 = ae_s32_l_i(uVar7);
+                    /* Level = sqrt(sum x^2 / 24), mean with last block [fact: dsp-chains.md] */
   vec_powerf(param_1,0x18);
   uVar4 = (ulonglong)(uint)((float)uVar7 * 0.041666668);
   uStack_2c = ae_s32_l_i(uVar4);
@@ -2862,7 +2869,9 @@ void if_agc_process(undefined4 param_1)
   DAT_00252bc0 = ae_s32_l_i(uVar4);
   uVar7 = ae_mov((ulonglong)(uint)(((float)uVar4 + (float)uVar6) * (float)uVar7));
   local_30 = ae_s32_l_i(uVar7);
+                    /* Every 60 blocks: S-meter regs 3 and 0x4005 [fact: 0x21F320] */
   if_meter_tick();
+                    /* Fixed input gain from reg 0x68 [fact: dsp-chains.md] */
   reg68_gain_apply(&local_30,param_1,&DAT_00252cc0);
   uVar7 = ae_l32_i(DAT_00252bb4);
   uVar6 = ae_l32_i(DAT_00252bb0);
@@ -2896,6 +2905,7 @@ void if_agc_process(undefined4 param_1)
   uVar6 = ae_l32_i(0);
   uVar4 = ae_l32_i(uStack_28);
   uVar9 = const_s(1);
+                    /* Attack: a lower wanted gain is taken at once [inference: dsp-chains.md] */
   if ((SUB21(uVar3,0)) || (iVar1 != 0)) {
     DAT_00252bd4 = ae_s32_l_i(uVar5);
     DAT_00252bd0 = ae_s32_l_i(uVar4);
@@ -3118,6 +3128,7 @@ void rx_audio_chain_init(void)
   spectral_nr_init();
   nlms_auto_notch_init();
   contour_init();
+                    /* clears the APF state 0x244510 [doc, inference] */
   apf_init();
   peak_limiter_init(1);
   af_hicut_init();
@@ -3146,6 +3157,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   undefined8 uVar8;
   undefined8 uVar9;
   
+                    /* Decimate by 6 to 12 kHz [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d30,&DAT_00252f80,param_1,0x120);
   uVar2 = ae_l32_ip(DAT_00252f80);
   DAT_00253400 = ae_s32_l_ip(uVar2);
@@ -3153,23 +3165,34 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253404 = ae_s32_l_ip(uVar2);
   if (DAT_2007000c != 10) {
     if (DAT_2007000c == 9) {
+                    /* reg 6 = 9 (FM): CTCSS/DCS decoders, HPF, de-emphasis [fact: dsp-chains.md] */
       fm_audio_post(&DAT_00253400,&DAT_00253400);
     }
     else {
+                    /* Other modes: CW zero-in estimate into reg 4 [fact: dsp-chains.md] */
       cw_zero_in_estimator(&DAT_00253400);
     }
   }
+                    /* Manual notch (reg 0x52) [fact: dsp-chains.md] */
   manual_notch(&DAT_00253400,&DAT_00253400);
+                    /* STFT Wiener noise reduction (regs 0x4022/0x4023) [fact: dsp-chains.md] */
   spectral_nr(&DAT_00253400,&DAT_00253400);
+                    /* LMS line enhancer NR (reg 0x40) [fact: dsp-chains.md] */
   lms_ale_nr(&DAT_00253400,&DAT_00253400);
+                    /* NLMS auto notch (reg 0x41) [fact: dsp-chains.md] */
   nlms_auto_notch(&DAT_00253400,&DAT_00253400);
+                    /* Contour peaking biquad (regs 0x42..0x44) [fact: dsp-chains.md] */
   contour_peaking(&DAT_00253400,&DAT_00253400);
+                    /* APF peak filter (reg 0x45) [fact: dsp-chains.md] */
   apf_peak_filter(&DAT_00253400,&DAT_00253400);
+                    /* AF limiter, instance 1 (regs 0x57/0x58; off) [fact: dsp-chains.md] */
   peak_limiter(1,&DAT_00253400,&DAT_00253400);
+                    /* Branch A: hi/lo-cut 0x46/0x47, RX EQ, delay [fact: dsp-chains.md] */
   af_hicut(0,&DAT_00253400,&DAT_002534c0);
   af_locut(0,&DAT_002534c0,&DAT_002534c0);
   rx_eq_3band(&DAT_002534c0,&DAT_002534c0);
   branch_a_align_delay(&DAT_002534c0,&DAT_002534c0);
+                    /* Branch B (AESS): hi/lo-cut 0x54/0x55, LPF, delay [fact: dsp-chains.md] */
   af_hicut(1,&DAT_00253400,&DAT_00253580);
   af_locut(1,&DAT_00253580,&DAT_00253580);
   aess_lowpass_fir(&DAT_00253580,&DAT_00253580);
@@ -3199,6 +3222,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253058 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * 6.0));
   DAT_00253070 = ae_s32_l_ip((ulonglong)(uint)((float)uVar6 * 6.0));
   DAT_00253088 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * 6.0));
+                    /* Interpolate branch A by 6 to the RX block [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d34,param_2,&DAT_00252f80,0x120);
   memset(&DAT_00252f80,0,0x480);
   uVar2 = ae_l32_ip(DAT_00253580);
@@ -3227,6 +3251,7 @@ void rx_audio_chain(undefined4 param_1,undefined4 param_2,undefined4 param_3)
   DAT_00253058 = ae_s32_l_ip((ulonglong)(uint)((float)uVar3 * fVar1));
   DAT_00253070 = ae_s32_l_ip((ulonglong)(uint)((float)uVar4 * fVar1));
   DAT_00253088 = ae_s32_l_ip((ulonglong)(uint)((float)uVar7 * fVar1));
+                    /* Interpolate branch B by 6 [fact: dsp-chains.md] */
   iir_cascade_process(DAT_00252d38,param_3,&DAT_00252f80,0x120);
   return;
 }
