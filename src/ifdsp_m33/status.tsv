@@ -3,24 +3,24 @@
 # decomp/ifdsp/m33/functions.tsv lacks. covered = bytes of the Ghidra function inside recreated
 # functions that passed (identical or equivalent); tools/readability_stats.py sums it.
 address	ghidra_name	size	source	file	verdict	covered	detail
-00080000	-	48	IAP_FlexspiNorInit	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	0	bytes and relocations match (size 48, Ghidra size 12) (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
-0008000c	IAP_FlexspiNorAutoConfig	32	IAP_FlexspiNorInit,IAP_FlexspiNorAutoConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	64	bytes and relocations match (size 48, Ghidra size 12) (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv); bytes and relocations match (size 36, Ghidra size 32)
-00080030	POWER_SetBiasConfig	24	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	24	bytes and relocations match (size 2276, Ghidra size 24)
-00080050	delay	14	POWER_SetBiasConfig,delay	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	28	bytes and relocations match (size 2276, Ghidra size 24); bytes and relocations match
-0008005e	deinitXip	48	POWER_SetBiasConfig,deinitXip	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	96	bytes and relocations match (size 2276, Ghidra size 24); bytes and relocations match (size 62, Ghidra size 48)
-0008009c	countPartitionSwitches	68	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	68	bytes and relocations match (size 2276, Ghidra size 24)
-000800e8	POWER_CalculateSafetyCount	424	POWER_SetBiasConfig,POWER_CalculateSafetyCount	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	848	bytes and relocations match (size 2276, Ghidra size 24); bytes and relocations match (size 448, Ghidra size 424)
-000802aa	initFlexSPI	124	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	124	bytes and relocations match (size 2276, Ghidra size 24)
-0008032c	initXip	26	POWER_SetBiasConfig,initXip	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	52	bytes and relocations match (size 2276, Ghidra size 24); bytes and relocations match (size 32, Ghidra size 26)
-0008034c	POWER_EnterSleep_mode1	182	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (size 2276, Ghidra size 24)
-00080414	POWER_EnterSleep_mode2	182	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	182	bytes and relocations match (size 2276, Ghidra size 24)
-000804dc	POWER_EnterSleep_mode3	174	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	174	bytes and relocations match (size 2276, Ghidra size 24)
-0008059c	POWER_EnterDeepSleep	852	POWER_SetBiasConfig,POWER_EnterDeepSleep	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	1704	bytes and relocations match (size 2276, Ghidra size 24); bytes and relocations match (size 886, Ghidra size 852)
-00080914	BOARD_DeinitXip	26			not yet	0	
-0008092e	BOARD_InitXip	114			not yet	0	
-000809a0	BOARD_SetFlexspiClock	108			not yet	0	
-00080a18	OTFAD_Init	44	OTFAD_Init	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	44	bytes and relocations match (size 58, Ghidra size 44)
-00080a44	OTFAD_Deinit	14	OTFAD_Init,OTFAD_Deinit	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	28	bytes and relocations match (size 58, Ghidra size 44); bytes and relocations match
+00080000	-	12	IAP_FlexspiNorInit	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	0	bytes and relocations match (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)
+0008000c	IAP_FlexspiNorAutoConfig	32	IAP_FlexspiNorAutoConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_iap.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
+00080030	POWER_SetBiasConfig	24	POWER_SetBiasConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	24	bytes and relocations match (size 32, Ghidra size 24)
+00080050	delay	14	delay	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	14	bytes and relocations match
+0008005e	deinitXip	48	deinitXip	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	48	bytes and relocations match (size 62, Ghidra size 48)
+0008009c	countPartitionSwitches	68			not yet	0	
+000800e8	POWER_CalculateSafetyCount	424	POWER_CalculateSafetyCount	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	424	bytes and relocations match (size 448, Ghidra size 424)
+000802aa	initFlexSPI	124			not yet	0	
+0008032c	initXip	26	initXip	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	26	bytes and relocations match (size 32, Ghidra size 26)
+0008034c	POWER_EnterSleep_mode1	182			not yet	0	
+00080414	POWER_EnterSleep_mode2	182			not yet	0	
+000804dc	POWER_EnterSleep_mode3	174			not yet	0	
+0008059c	POWER_EnterDeepSleep	852	POWER_EnterDeepSleep	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/drivers/fsl_power.o	identical	852	bytes and relocations match (size 888, Ghidra size 852)
+00080914	BOARD_DeinitXip	26	BOARD_DeinitXip	src/ifdsp_m33/out/obj/board/board.o	identical	26	bytes and relocations match
+0008092e	BOARD_InitXip	114	BOARD_InitXip	src/ifdsp_m33/out/obj/board/board.o	identical	114	bytes and relocations match
+000809a0	BOARD_SetFlexspiClock	108	BOARD_SetFlexspiClock	src/ifdsp_m33/out/obj/board/board.o	identical	108	bytes and relocations match (size 120, Ghidra size 108)
+00080a18	OTFAD_Init	44	OTFAD_Init	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	44	bytes and relocations match
+00080a44	OTFAD_Deinit	14	OTFAD_Deinit	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/otfad/fsl_otfad.o	identical	14	bytes and relocations match
 00080a60	vRestoreContextOfFirstTask	30	vRestoreContextOfFirstTask	src/ifdsp_m33/out/obj/vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	30	bytes and relocations match (size 36, Ghidra size 30)
 00080a90	vStartFirstTask	32	vStartFirstTask	src/ifdsp_m33/out/obj/vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	32	bytes and relocations match (size 36, Ghidra size 32)
 00080ac0	PendSV_Handler	68	PendSV_Handler	src/ifdsp_m33/out/obj/vendor/FreeRTOS-Kernel/portable/GCC/ARM_CM33_NTZ/non_secure/portasm.o	identical	68	bytes and relocations match (size 84, Ghidra size 68)
@@ -198,14 +198,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00084904	USDHC0_DriverIRQHandler	12	USDHC0_DriverIRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/usdhc/fsl_usdhc.o	identical	12	bytes and relocations match (size 24, Ghidra size 12)
 0008491c	USDHC1_DriverIRQHandler	12	USDHC1_DriverIRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/usdhc/fsl_usdhc.o	identical	12	bytes and relocations match (size 24, Ghidra size 12)
 00084934	UTICK0_DriverIRQHandler	12	UTICK0_DriverIRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/utick/fsl_utick.o	identical	12	bytes and relocations match (size 24, Ghidra size 12)
-0008494c	BOARD_BootClockRUN	204			not yet	0	
+0008494c	BOARD_BootClockRUN	204	BOARD_BootClockRUN	src/ifdsp_m33/out/obj/board/clock_config.o	identical	204	bytes and relocations match (size 260, Ghidra size 204)
 00084a50	ipc_init	46			not yet	0	
 00084a8c	ipc_send	30			not yet	0	
 00084ab0	ipc_recv	34			not yet	0	
-00084ad8	BOARD_DSP_Init	114			not yet	0	
-00084b78	BOARD_InitPins_P0	108			not yet	0	
-00084bec	BOARD_InitPins_codec_spi	150			not yet	0	
-00084c90	BOARD_InitPins_debug_gpio	164			not yet	0	
+00084ad8	BOARD_DSP_Init	114	BOARD_DSP_Init	src/ifdsp_m33/out/obj/board/dsp_support.o	identical	114	bytes and relocations match (size 160, Ghidra size 114)
+00084b78	BOARD_InitPins_P0	108	BOARD_InitPins_P0	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	108	bytes and relocations match (size 116, Ghidra size 108)
+00084bec	BOARD_InitPins_codec_spi	150	BOARD_InitPins_codec_spi	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	150	bytes and relocations match (size 164, Ghidra size 150)
+00084c90	BOARD_InitPins_debug_gpio	164	BOARD_InitPins_debug_gpio	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	164	bytes and relocations match (size 172, Ghidra size 164)
 00084d3c	malloc	194			not yet	0	
 00084e04	_Csys_alloc	26			not yet	0	
 00084e24	tolower	16			not yet	0	
@@ -324,12 +324,13 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 0008702c	USART_GetDefaultConfig	34	USART_GetDefaultConfig	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	34	bytes and relocations match
 0008704e	USART_SetBaudRate	178	USART_SetBaudRate	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	178	bytes and relocations match
 00087100	USART_Init	306	USART_Init	src/ifdsp_m33/out/obj/vendor/mcux-sdk/drivers/flexcomm/fsl_usart.o	identical	306	bytes and relocations match
-00087232	BOARD_InitDebugConsole	2			not yet	0	
-00087234	BOARD_FlexspiClockSafeConfig	8			not yet	0	
-00087240	app_init_nop	2			not yet	0	
-00087242	BOARD_InitPins_flexcomm	42			not yet	0	
-0008726c	BOARD_InitPins_i2s	40			not yet	0	
-00087294	BOARD_InitPins	26			not yet	0	
+00087232	BOARD_InitDebugConsole	2	BOARD_InitDebugConsole	src/ifdsp_m33/out/obj/board/board.o	identical	2	bytes and relocations match
+00087234	BOARD_FlexspiClockSafeConfig	8	BOARD_FlexspiClockSafeConfig	src/ifdsp_m33/out/obj/board/board.o	identical	8	bytes and relocations match
+0008723c	-	4	BOARD_InitBootClocks	src/ifdsp_m33/out/obj/board/clock_config.o	identical	0	bytes and relocations match
+00087240	app_init_nop	2	BOARD_InitBootPeripherals	src/ifdsp_m33/out/obj/board/peripherals.o	identical	2	bytes and relocations match
+00087242	BOARD_InitPins_flexcomm	42	BOARD_InitPins_flexcomm	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	42	bytes and relocations match
+0008726c	BOARD_InitPins_i2s	40	BOARD_InitPins_i2s	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	40	bytes and relocations match
+00087294	BOARD_InitPins	26	BOARD_InitPins	src/ifdsp_m33/out/obj/board/pin_mux.o	identical	26	bytes and relocations match
 000872ae	main	14			not yet	0	
 000872c4	free	48			not yet	0	
 000872f8	setvbuf	62			not yet	0	
@@ -357,13 +358,13 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 00087952	__sys_tmpnam	6			not yet	0	
 00087958	__sys_write	4			not yet	0	
 080011a8	ResetISR	76	ResetISR	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	76	bytes and relocations match (size 100, Ghidra size 76)
-0800120c	NMI_Handler	2	NMI_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 22, Ghidra size 2)
-08001210	MemManage_Handler	2	NMI_Handler,MemManage_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
-08001212	BusFault_Handler	2	NMI_Handler,BusFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
-08001214	UsageFault_Handler	2	NMI_Handler,UsageFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
-08001216	SecureFault_Handler	2	NMI_Handler,SecureFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
-0800121a	DebugMon_Handler	2	NMI_Handler,DebugMon_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
-08001220	DefaultHandler	2	NMI_Handler,IntDefaultHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	4	bytes and relocations match (size 22, Ghidra size 2); bytes and relocations match
+0800120c	NMI_Handler	2	NMI_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
+08001210	MemManage_Handler	2	MemManage_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
+08001212	BusFault_Handler	2	BusFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
+08001214	UsageFault_Handler	2	UsageFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
+08001216	SecureFault_Handler	2	SecureFault_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 4, Ghidra size 2)
+0800121a	DebugMon_Handler	2	DebugMon_Handler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match (size 6, Ghidra size 2)
+08001220	DefaultHandler	2	IntDefaultHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	2	bytes and relocations match
 08001222	data_init	18	data_init	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	18	bytes and relocations match
 08001234	bss_init	16	bss_init	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	16	bytes and relocations match
 08001244	WDT0_IRQHandler	8	WDT0_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
@@ -393,12 +394,12 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 08001304	DMIC0_IRQHandler	8	DMIC0_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800130c	Reserved42_IRQHandler	8	Reserved42_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001314	HYPERVISOR_IRQHandler	8	HYPERVISOR_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-0800131c	SECURE_VIOLATION_IRQHandler	8			not yet	0	
+0800131c	SECURE_VIOLATION_IRQHandler	8	SECUREVIOLATION_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001324	HWVAD0_IRQHandler	8	HWVAD0_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800132c	Reserved46_IRQHandler	8	Reserved46_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001334	RNG_IRQHandler	8	RNG_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800133c	RTC_IRQHandler	8	RTC_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-08001344	DSP_TIE_EXPSTATE1_IRQHandler	8			not yet	0	
+08001344	DSP_TIE_EXPSTATE1_IRQHandler	8	DSPWAKE_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800134c	PIN_INT4_IRQHandler	8	PIN_INT4_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 08001354	PIN_INT5_IRQHandler	8	PIN_INT5_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 0800135c	PIN_INT6_IRQHandler	8	PIN_INT6_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
@@ -414,10 +415,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 080013ac	SGPIO_INTA_IRQHandler	8	SGPIO_INTA_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013b4	SGPIO_INTB_IRQHandler	8	SGPIO_INTB_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013bc	I3C0_IRQHandler	8	I3C0_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-080013c4	USB0_IRQHandler	8			not yet	0	
-080013cc	USB0_NEEDCLK_IRQHandler	8			not yet	0	
+080013c4	USB0_IRQHandler	8	USB_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
+080013cc	USB0_NEEDCLK_IRQHandler	8	USB_WAKEUP_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013d4	WDT1_IRQHandler	8	WDT1_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
-080013dc	USB_PHYDCD_IRQHandler	8			not yet	0	
+080013dc	USB_PHYDCD_IRQHandler	8	USBPHY_DCD_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013e4	DMA1_IRQHandler	8	DMA1_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013ec	PUF_IRQHandler	8	PUF_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
 080013f4	POWERQUAD_IRQHandler	8	POWERQUAD_IRQHandler	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/mcuxpresso/startup_mimxrt685s.o	identical	8	bytes and relocations match
@@ -428,39 +429,39 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 0800143c	SystemCoreClockUpdate	240	SystemCoreClockUpdate	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/system_MIMXRT685S_cm33.o	identical	240	bytes and relocations match (size 260, Ghidra size 240)
 08001540	SystemInit	128	SystemInit	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/system_MIMXRT685S_cm33.o	identical	128	bytes and relocations match (size 148, Ghidra size 128)
 080015d4	SystemInitHook	2	SystemInitHook	src/ifdsp_m33/out/obj/vendor/mcux-sdk/devices/MIMXRT685S/system_MIMXRT685S_cm33.o	identical	2	bytes and relocations match
-080015d8	__FLEXCOMM2_DriverIRQHandler_veneer	10			not yet	0	
-080015e8	__USDHC0_DriverIRQHandler_veneer	10			not yet	0	
-080015f8	__OS_EVENT_DriverIRQHandler_veneer	10			not yet	0	
-08001608	__CTIMER1_DriverIRQHandler_veneer	10			not yet	0	
-08001618	____aeabi_uldivmod_veneer	10			not yet	0	
-08001628	__HASHCRYPT_DriverIRQHandler_veneer	10			not yet	0	
-08001638	__USDHC1_DriverIRQHandler_veneer	10			not yet	0	
-08001648	__PIN_INT2_DriverIRQHandler_veneer	10			not yet	0	
-08001658	__CTIMER0_DriverIRQHandler_veneer	10			not yet	0	
-08001668	__UTICK0_DriverIRQHandler_veneer	10			not yet	0	
-08001678	__PIN_INT0_DriverIRQHandler_veneer	10			not yet	0	
-08001688	__CTIMER4_DriverIRQHandler_veneer	10			not yet	0	
-08001698	__DMA0_DriverIRQHandler_veneer	10			not yet	0	
-080016a8	__FLEXCOMM15_DriverIRQHandler_veneer	10			not yet	0	
-080016b8	__PIN_INT5_DriverIRQHandler_veneer	10			not yet	0	
-080016c8	__HWVAD0_DriverIRQHandler_veneer	10			not yet	0	
-080016d8	__FLEXCOMM1_DriverIRQHandler_veneer	10			not yet	0	
-080016e8	__FLEXCOMM5_DriverIRQHandler_veneer	10			not yet	0	
-080016f8	__CTIMER3_DriverIRQHandler_veneer	10			not yet	0	
-08001708	__FLEXCOMM6_DriverIRQHandler_veneer	10			not yet	0	
-08001718	__PIN_INT4_DriverIRQHandler_veneer	10			not yet	0	
-08001728	__PIN_INT3_DriverIRQHandler_veneer	10			not yet	0	
-08001738	__CTIMER2_DriverIRQHandler_veneer	10			not yet	0	
-08001748	__FLEXSPI_DriverIRQHandler_veneer	10			not yet	0	
-08001758	__DMA1_DriverIRQHandler_veneer	10			not yet	0	
-08001768	__FLEXCOMM14_DriverIRQHandler_veneer	10			not yet	0	
-08001778	__FLEXCOMM7_DriverIRQHandler_veneer	10			not yet	0	
-08001788	__PIN_INT6_DriverIRQHandler_veneer	10			not yet	0	
-08001798	__PIN_INT1_DriverIRQHandler_veneer	10			not yet	0	
-080017a8	call_main	10			not yet	0	
-080017b8	__DMIC0_DriverIRQHandler_veneer	10			not yet	0	
-080017c8	__I3C0_DriverIRQHandler_veneer	10			not yet	0	
-080017d8	__PIN_INT7_DriverIRQHandler_veneer	10			not yet	0	
-080017e8	__FLEXCOMM3_DriverIRQHandler_veneer	10			not yet	0	
-080017f8	__SCT0_DriverIRQHandler_veneer	10			not yet	0	
-08001808	__FLEXCOMM4_DriverIRQHandler_veneer	10			not yet	0	
+080015d8	__FLEXCOMM2_DriverIRQHandler_veneer	10	__FLEXCOMM2_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM2_DriverIRQHandler
+080015e8	__USDHC0_DriverIRQHandler_veneer	10	__USDHC0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to USDHC0_DriverIRQHandler
+080015f8	__OS_EVENT_DriverIRQHandler_veneer	10	__OS_EVENT_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to OS_EVENT_DriverIRQHandler
+08001608	__CTIMER1_DriverIRQHandler_veneer	10	__CTIMER1_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to CTIMER1_DriverIRQHandler
+08001618	____aeabi_uldivmod_veneer	10	____aeabi_uldivmod_veneer	linker	identical	10	GNU ld long-branch veneer to __aeabi_uldivmod
+08001628	__HASHCRYPT_DriverIRQHandler_veneer	10	__HASHCRYPT_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to HASHCRYPT_DriverIRQHandler
+08001638	__USDHC1_DriverIRQHandler_veneer	10	__USDHC1_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to USDHC1_DriverIRQHandler
+08001648	__PIN_INT2_DriverIRQHandler_veneer	10	__PIN_INT2_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT2_DriverIRQHandler
+08001658	__CTIMER0_DriverIRQHandler_veneer	10	__CTIMER0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to CTIMER0_DriverIRQHandler
+08001668	__UTICK0_DriverIRQHandler_veneer	10	__UTICK0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to UTICK0_DriverIRQHandler
+08001678	__PIN_INT0_DriverIRQHandler_veneer	10	__PIN_INT0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT0_DriverIRQHandler
+08001688	__CTIMER4_DriverIRQHandler_veneer	10	__CTIMER4_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to CTIMER4_DriverIRQHandler
+08001698	__DMA0_DriverIRQHandler_veneer	10	__DMA0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to DMA0_DriverIRQHandler
+080016a8	__FLEXCOMM15_DriverIRQHandler_veneer	10	__FLEXCOMM15_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM15_DriverIRQHandler
+080016b8	__PIN_INT5_DriverIRQHandler_veneer	10	__PIN_INT5_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT5_DriverIRQHandler
+080016c8	__HWVAD0_DriverIRQHandler_veneer	10	__HWVAD0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to HWVAD0_DriverIRQHandler
+080016d8	__FLEXCOMM1_DriverIRQHandler_veneer	10	__FLEXCOMM1_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM1_DriverIRQHandler
+080016e8	__FLEXCOMM5_DriverIRQHandler_veneer	10	__FLEXCOMM5_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM5_DriverIRQHandler
+080016f8	__CTIMER3_DriverIRQHandler_veneer	10	__CTIMER3_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to CTIMER3_DriverIRQHandler
+08001708	__FLEXCOMM6_DriverIRQHandler_veneer	10	__FLEXCOMM6_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM6_DriverIRQHandler
+08001718	__PIN_INT4_DriverIRQHandler_veneer	10	__PIN_INT4_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT4_DriverIRQHandler
+08001728	__PIN_INT3_DriverIRQHandler_veneer	10	__PIN_INT3_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT3_DriverIRQHandler
+08001738	__CTIMER2_DriverIRQHandler_veneer	10	__CTIMER2_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to CTIMER2_DriverIRQHandler
+08001748	__FLEXSPI_DriverIRQHandler_veneer	10	__FLEXSPI_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXSPI_DriverIRQHandler
+08001758	__DMA1_DriverIRQHandler_veneer	10	__DMA1_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to DMA1_DriverIRQHandler
+08001768	__FLEXCOMM14_DriverIRQHandler_veneer	10	__FLEXCOMM14_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM14_DriverIRQHandler
+08001778	__FLEXCOMM7_DriverIRQHandler_veneer	10	__FLEXCOMM7_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM7_DriverIRQHandler
+08001788	__PIN_INT6_DriverIRQHandler_veneer	10	__PIN_INT6_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT6_DriverIRQHandler
+08001798	__PIN_INT1_DriverIRQHandler_veneer	10	__PIN_INT1_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT1_DriverIRQHandler
+080017a8	call_main	10	call_main	linker	identical	10	GNU ld long-branch veneer to __main
+080017b8	__DMIC0_DriverIRQHandler_veneer	10	__DMIC0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to DMIC0_DriverIRQHandler
+080017c8	__I3C0_DriverIRQHandler_veneer	10	__I3C0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to I3C0_DriverIRQHandler
+080017d8	__PIN_INT7_DriverIRQHandler_veneer	10	__PIN_INT7_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to PIN_INT7_DriverIRQHandler
+080017e8	__FLEXCOMM3_DriverIRQHandler_veneer	10	__FLEXCOMM3_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM3_DriverIRQHandler
+080017f8	__SCT0_DriverIRQHandler_veneer	10	__SCT0_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to SCT0_DriverIRQHandler
+08001808	__FLEXCOMM4_DriverIRQHandler_veneer	10	__FLEXCOMM4_DriverIRQHandler_veneer	linker	identical	10	GNU ld long-branch veneer to FLEXCOMM4_DriverIRQHandler

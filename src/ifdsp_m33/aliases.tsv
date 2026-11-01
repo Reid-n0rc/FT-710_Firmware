@@ -21,3 +21,10 @@ env_rmb	0x8608c	[fact] see env_mb
 env_wmb	0x86092	[fact] see env_mb
 __main	main	[fact] ResetISR (MCUXpresso startup) calls __main through the veneer call_main; the 14-byte function at 0x872AE that Ghidra calls main is Redlib's __main: stdio init, then the application main
 main	app_main	[fact] __main (0x872AE) tail-calls 0x8106C after stdio_init; that is the application main, which Ghidra calls app_main
+SECUREVIOLATION_IRQHandler	SECURE_VIOLATION_IRQHandler	[fact] same vector slot; SDK 2.9 startup name, Ghidra took the later SDK name
+USB_IRQHandler	USB0_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
+USB_WAKEUP_IRQHandler	USB0_NEEDCLK_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
+USBPHY_DCD_IRQHandler	USB_PHYDCD_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
+DSPWAKE_IRQHandler	DSP_TIE_EXPSTATE1_IRQHandler	[fact] same vector slot (SDK 2.9 startup name)
+BOARD_InitBootClocks	0x8723c	[fact] b.w BOARD_BootClockRUN at 0x8723C, right after BOARD_FlexspiClockSafeConfig (Ghidra merged it into that function)
+BOARD_InitBootPeripherals	app_init_nop	[inference] the empty function between clock_config.c and pin_mux.c in link order, see board/peripherals.c

@@ -23,7 +23,7 @@ CFLAGS := -std=gnu99 -Os -fno-common -ffunction-sections -fdata-sections -ffrees
 INC := -Iconfig -Iboard -Iapp -Ilibc \
        -I$(SDK)/CMSIS/Include -I$(SDK)/devices/MIMXRT685S -I$(SDK)/devices/MIMXRT685S/drivers -I$(SDK)/drivers/common \
        $(addprefix -I$(SDK)/drivers/,flexcomm sctimer mu sema42 lpc_gpio inputmux pint lpc_dma otfad hashcrypt i3c ctimer \
-                                      dmic flexspi usdhc utick ostimer) \
+                                      dmic flexspi usdhc utick ostimer lpc_iopctl) \
        -I$(FR)/include -I$(FR)/portable/GCC/ARM_CM33_NTZ/non_secure \
        -I$(RL)/include -I$(RL)/include/platform/imxrt600_m33
 

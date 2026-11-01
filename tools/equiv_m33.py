@@ -159,6 +159,13 @@ class Obj:
         self.functions()
         return self._alias
 
+    def extent(self, shndx, off):
+        """Bytes of the function at off: up to the next function in its section, or the section end (so a
+        function's literal pool and padding belong to it). With -ffunction-sections that is the whole section,
+        except for sections that hold several functions (section attributes such as CodeQuickAccess)."""
+        nxt = [o for _, i, o, _ in self.functions() if i == shndx and o > off]
+        return (min(nxt) if nxt else len(self.section_data(shndx))) - off
+
     def section_data(self, idx):
         s = self.secs[idx]
         return b'\0' * s['sh_size'] if s['sh_type'] == 'SHT_NOBITS' else s.data()
@@ -246,7 +253,7 @@ def check_function(obj, res, fname, shndx, off, size, oaddr, osize):
     res.pending = {}
     data = obj.section_data(shndx)
     # the function's bytes are the whole section with -ffunction-sections (code + literal pool)
-    body = data[off:] if off == 0 else data[off:off + size]
+    body = data[off:off + obj.extent(shndx, off)]
     orig = res.img.read(oaddr, len(body))
     if orig is None:
         return 'differs', 'original address outside the image'
@@ -390,7 +397,31 @@ def check_objects(paths, img=None, res=None):
                     res.located[fname] = hits[0]
     infer_neighbours(objs, res)
     _check_pass(objs, res)
-    return _check_pass(objs, res), res
+    return _check_pass(objs, res) + check_veneers(res), res
+
+
+VENEER = bytes.fromhex('01b4024884460 1bc6047 00bf'.replace(' ', ''))  # push {r0}; ldr r0,[pc,#8]; mov ip,r0; pop {r0}; bx ip; nop
+
+
+def check_veneers(res):
+    """GNU ld's long-branch veneers (flash -> SRAM): no source of their own, the linker makes them. One passes when it
+    has ld's code and its literal is the original address of the function it is named after (call_main: __main)."""
+    out = []
+    for gname, (a, n) in res.funcs.items():
+        if not (gname.startswith('__') and gname.endswith('_veneer')) and gname != 'call_main':
+            continue
+        target = '__main' if gname == 'call_main' else gname[2:-len('_veneer')]
+        code, lit = res.img.read(a, 12), res.img.u32(a + 12)
+        want = res.func_addr(target)
+        if code != VENEER:
+            out.append((gname, a, 16, 'differs', 'linker', 'not the GNU ld veneer code'))
+        elif want is None:
+            out.append((gname, a, 16, 'not yet', 'linker', f'veneer to {lit:#x}; {target} not recreated yet'))
+        elif lit != (want | 1):
+            out.append((gname, a, 16, 'differs', 'linker', f'veneer to {lit:#x}, {target} is at {want:#x}'))
+        else:
+            out.append((gname, a, 16, 'identical', 'linker', f'GNU ld long-branch veneer to {target}'))
+    return out
 
 
 def masked_match(obj, shndx, img, addr, res=None):
@@ -471,7 +502,7 @@ def _check_pass(objs, res):
             verdict, detail = check_function(obj, res, fname, shndx, off, size, oaddr, osize)
             if fname in res.located:
                 detail += f' (found by byte search; not a function in decomp/ifdsp/m33/functions.tsv)'
-            out.append((fname, oaddr, len(obj.section_data(shndx)) if off == 0 else size, verdict, base, detail))
+            out.append((fname, oaddr, obj.extent(shndx, off), verdict, base, detail))
     return out
 
 
@@ -512,7 +543,7 @@ def cmd_diff(args):
 
 
 STATUS_TSV = os.path.join(SRC, 'status.tsv')
-RANK = {'identical': 0, 'equivalent': 1, 'differs': 2, 'not yet': 3}
+RANK = {'identical': 0, 'equivalent': 1, 'differs': 2, 'not yet': 3, 'not in image': 4}
 
 
 def build_status(rows, emu=None):
