@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 16.30 % re-implemented, round 7; MAIN 2.82 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 16.30 % re-implemented, round 7; MAIN 2.82 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (585 of 585) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -1089,7 +1089,11 @@ Emulated boot (`display_boot_emu.py --compare`, seed 1, 1.5·10⁹ instructions 
 - RAM2 intact, nothing in the watched range;
 - the `task_root` stack's untouched bottom: 5,648 bytes (the original: 5,672).
 
-The boot found no new defect. LINKCHECK_PLACEHOLDER
+The hybrid with RAM2 forced (`--gap-limit 15000`) also agrees with the original **[fact: the run]**: 134 functions in
+the gap, 334 in RAM2 (45,440 bytes, loaded intact by the recreated `reset_in_ram`), 179 recreated functions executed.
+The boot found no new defect. The round's defects were all in the tooling (the stale alias, the fill overrun and the
+output-pointer compare above). **linkcheck: 585 of 585 agree** for the default hybrid (100 trials per entry,
+in-place entries included) **[fact: the run]**.
 
 ### DISPLAY: results (status.tsv, round 7)
 
