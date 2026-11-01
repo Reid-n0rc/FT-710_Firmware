@@ -2388,7 +2388,7 @@ undefined2 cat_ai_SQ(void)
   else {
     local_b = g_ui.rf_gain;
     local_10 = ((float)g_ui.rf_gain * 100.0) / 255.0;
-    local_a = SUB41(ROUND(local_10 + 0.5),0);
+    local_a = (byte)(longlong)(local_10 + 0.5);
     if (DAT_000187ff == local_a) {
       local_1c = 0;
     }

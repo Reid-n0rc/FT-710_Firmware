@@ -703,8 +703,8 @@ ushort cw_memory_length(char param_1)
   }
   else if (param_1 == '\x01') {
     local_5 = g_opstate.ex020206_cw_memory_1;
-    local_8 = (ushort)DAT_0000969f;
-    local_a = CONCAT11(DAT_000093a7,DAT_000093a8);
+    local_8 = (ushort)keyer_text_mem;
+    local_a = CONCAT11(keyer_msg_mem,DAT_000093a8);
   }
   if (local_5 == 0) {
     local_c = local_8;

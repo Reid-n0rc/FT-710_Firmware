@@ -5883,25 +5883,25 @@ void cat_DT(int param_1,char param_2)
 
 // ===== cat_EM @ fffa9648 (736 bytes)
 
-void cat_EM(int param_1,byte param_2)
+void cat_EM(int buf,byte param_2)
 
 {
   bool bVar1;
-  char cVar2;
-  byte bVar3;
+  byte bVar2;
+  byte *pbVar3;
   undefined4 *puVar4;
   undefined1 *puVar5;
   uint uVar6;
   byte bStack_d;
   
   if (param_2 == 0) {
-    if (*(char *)(param_1 + 2) != '0') {
+    if (*(char *)(buf + 2) != '0') {
       cat_error = 1;
       return;
     }
-    if (*(char *)(param_1 + 3) == '1') {
-      cVar2 = mem_find_byte(&DAT_0000979e,0xfe,0x32);
-      bStack_d = cVar2 + 0x62;
+    if (*(char *)(buf + 3) == '1') {
+      pbVar3 = mem_find_byte((byte *)&em_text_mem,-2,0x32);
+      bStack_d = (char)pbVar3 + 0x62;
       if ((bStack_d == 0) || (0x32 < bStack_d)) {
         bVar1 = false;
       }
@@ -5909,7 +5909,7 @@ void cat_EM(int param_1,byte param_2)
         bVar1 = true;
       }
       if (bVar1) {
-        puVar4 = &DAT_0000979e;
+        puVar4 = &em_text_mem;
         puVar5 = &DAT_00001c92;
         for (uVar6 = (uint)bStack_d; uVar6 != 0; uVar6 = uVar6 - 1) {
           *puVar5 = *(undefined1 *)puVar4;
@@ -5918,9 +5918,9 @@ void cat_EM(int param_1,byte param_2)
         }
       }
     }
-    else if (*(char *)(param_1 + 3) == '2') {
-      cVar2 = mem_find_byte(&DAT_000097d0,0xfe,0x32);
-      bStack_d = cVar2 + 0x30;
+    else if (*(char *)(buf + 3) == '2') {
+      pbVar3 = mem_find_byte((byte *)&DAT_000097d0,-2,0x32);
+      bStack_d = (char)pbVar3 + 0x30;
       if ((bStack_d == 0) || (0x32 < bStack_d)) {
         bVar1 = false;
       }
@@ -5937,9 +5937,9 @@ void cat_EM(int param_1,byte param_2)
         }
       }
     }
-    else if (*(char *)(param_1 + 3) == '3') {
-      cVar2 = mem_find_byte(&DAT_00009802,0xfe,0x32);
-      bStack_d = cVar2 - 2;
+    else if (*(char *)(buf + 3) == '3') {
+      pbVar3 = mem_find_byte((byte *)&DAT_00009802,-2,0x32);
+      bStack_d = (char)pbVar3 - 2;
       if ((bStack_d == 0) || (0x32 < bStack_d)) {
         bVar1 = false;
       }
@@ -5956,9 +5956,9 @@ void cat_EM(int param_1,byte param_2)
         }
       }
     }
-    else if (*(char *)(param_1 + 3) == '4') {
-      cVar2 = mem_find_byte(&DAT_00009834,0xfe,0x32);
-      bStack_d = cVar2 - 0x34;
+    else if (*(char *)(buf + 3) == '4') {
+      pbVar3 = mem_find_byte((byte *)&DAT_00009834,-2,0x32);
+      bStack_d = (char)pbVar3 - 0x34;
       if ((bStack_d == 0) || (0x32 < bStack_d)) {
         bVar1 = false;
       }
@@ -5976,12 +5976,12 @@ void cat_EM(int param_1,byte param_2)
       }
     }
     else {
-      if (*(char *)(param_1 + 3) != '5') {
+      if (*(char *)(buf + 3) != '5') {
         cat_error = 1;
         return;
       }
-      cVar2 = mem_find_byte(&DAT_00009866,0xfe,0x32);
-      bStack_d = cVar2 + 0x9a;
+      pbVar3 = mem_find_byte((byte *)&DAT_00009866,-2,0x32);
+      bStack_d = (char)pbVar3 + 0x9a;
       if ((bStack_d == 0) || (0x32 < bStack_d)) {
         bVar1 = false;
       }
@@ -6002,65 +6002,65 @@ void cat_EM(int param_1,byte param_2)
     DAT_0001b788 = bStack_d + 5;
     return;
   }
-  cVar2 = mem_find_byte(param_1,0x3b,0x32);
-  bVar3 = (cVar2 - (char)param_1) - 4;
-  if (*(char *)(param_1 + 2) != '0') {
+  pbVar3 = mem_find_byte((byte *)buf,';',0x32);
+  bVar2 = ((char)pbVar3 - (char)buf) - 4;
+  if (*(char *)(buf + 2) != '0') {
     cat_error = 1;
     return;
   }
-  if (*(char *)(param_1 + 3) == '1') {
-    puVar5 = (undefined1 *)(param_1 + 4);
-    puVar4 = &DAT_0000979e;
-    for (uVar6 = (uint)bVar3; uVar6 != 0; uVar6 = uVar6 - 1) {
+  if (*(char *)(buf + 3) == '1') {
+    puVar5 = (undefined1 *)(buf + 4);
+    puVar4 = &em_text_mem;
+    for (uVar6 = (uint)bVar2; uVar6 != 0; uVar6 = uVar6 - 1) {
       *(undefined1 *)puVar4 = *puVar5;
       puVar4 = (undefined4 *)((int)puVar4 + 1);
       puVar5 = puVar5 + 1;
     }
-    *(undefined1 *)((int)&DAT_0000979e + (uint)bVar3) = 0xfe;
+    *(undefined1 *)((int)&em_text_mem + (uint)bVar2) = 0xfe;
     return;
   }
-  if (*(char *)(param_1 + 3) == '2') {
-    puVar5 = (undefined1 *)(param_1 + 4);
+  if (*(char *)(buf + 3) == '2') {
+    puVar5 = (undefined1 *)(buf + 4);
     puVar4 = &DAT_000097d0;
-    for (uVar6 = (uint)bVar3; uVar6 != 0; uVar6 = uVar6 - 1) {
+    for (uVar6 = (uint)bVar2; uVar6 != 0; uVar6 = uVar6 - 1) {
       *(undefined1 *)puVar4 = *puVar5;
       puVar4 = (undefined4 *)((int)puVar4 + 1);
       puVar5 = puVar5 + 1;
     }
-    *(undefined1 *)((int)&DAT_000097d0 + (uint)bVar3) = 0xfe;
+    *(undefined1 *)((int)&DAT_000097d0 + (uint)bVar2) = 0xfe;
     return;
   }
-  if (*(char *)(param_1 + 3) == '3') {
-    puVar5 = (undefined1 *)(param_1 + 4);
+  if (*(char *)(buf + 3) == '3') {
+    puVar5 = (undefined1 *)(buf + 4);
     puVar4 = &DAT_00009802;
-    for (uVar6 = (uint)bVar3; uVar6 != 0; uVar6 = uVar6 - 1) {
+    for (uVar6 = (uint)bVar2; uVar6 != 0; uVar6 = uVar6 - 1) {
       *(undefined1 *)puVar4 = *puVar5;
       puVar4 = (undefined4 *)((int)puVar4 + 1);
       puVar5 = puVar5 + 1;
     }
-    *(undefined1 *)((int)&DAT_00009802 + (uint)bVar3) = 0xfe;
+    *(undefined1 *)((int)&DAT_00009802 + (uint)bVar2) = 0xfe;
     return;
   }
-  if (*(char *)(param_1 + 3) == '4') {
-    puVar5 = (undefined1 *)(param_1 + 4);
+  if (*(char *)(buf + 3) == '4') {
+    puVar5 = (undefined1 *)(buf + 4);
     puVar4 = &DAT_00009834;
-    for (uVar6 = (uint)bVar3; uVar6 != 0; uVar6 = uVar6 - 1) {
+    for (uVar6 = (uint)bVar2; uVar6 != 0; uVar6 = uVar6 - 1) {
       *(undefined1 *)puVar4 = *puVar5;
       puVar4 = (undefined4 *)((int)puVar4 + 1);
       puVar5 = puVar5 + 1;
     }
-    *(undefined1 *)((int)&DAT_00009834 + (uint)bVar3) = 0xfe;
+    *(undefined1 *)((int)&DAT_00009834 + (uint)bVar2) = 0xfe;
     return;
   }
-  if (*(char *)(param_1 + 3) == '5') {
-    puVar5 = (undefined1 *)(param_1 + 4);
+  if (*(char *)(buf + 3) == '5') {
+    puVar5 = (undefined1 *)(buf + 4);
     puVar4 = &DAT_00009866;
-    for (uVar6 = (uint)bVar3; uVar6 != 0; uVar6 = uVar6 - 1) {
+    for (uVar6 = (uint)bVar2; uVar6 != 0; uVar6 = uVar6 - 1) {
       *(undefined1 *)puVar4 = *puVar5;
       puVar4 = (undefined4 *)((int)puVar4 + 1);
       puVar5 = puVar5 + 1;
     }
-    *(undefined1 *)((int)&DAT_00009866 + (uint)bVar3) = 0xfe;
+    *(undefined1 *)((int)&DAT_00009866 + (uint)bVar2) = 0xfe;
     return;
   }
   cat_error = 1;

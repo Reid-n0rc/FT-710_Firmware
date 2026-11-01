@@ -77,7 +77,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | MAIN |
 |---|---:|
-| Functions exported (non-thunk) | 3,793 |
+| Functions exported (non-thunk) | 3,794 |
 | Decompile failures | 0 |
 | Decompiler warnings (all kinds) | 1,246 |
 | Functions with a warning | 368 |

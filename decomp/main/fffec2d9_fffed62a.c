@@ -235,7 +235,7 @@ undefined1 FUN_fffec51e(void)
 void FUN_fffec52d(void)
 
 {
-  DAT_0001b3ac = 0x10;
+  int_tuner_step = 0x10;
   return;
 }
 
@@ -363,7 +363,7 @@ void tuner_int_task(void)
       g_ui.tuner_indicator = 0;
     }
   }
-  switch(DAT_0001b3ac) {
+  switch(int_tuner_step) {
   case 1:
     FUN_fffec728();
     return;
@@ -426,7 +426,7 @@ void FUN_fffec70a(void)
 {
   g_ui.tune_cycle_3d = 0;
   g_ui.atu_state = 0;
-  DAT_0001b3ac = 1;
+  int_tuner_step = 1;
   return;
 }
 
@@ -444,7 +444,7 @@ void FUN_fffec728(void)
   
   g_ui_freq_tx_val = g_ui.freq_tx;
   if (g_ui.tune_cycle_3d == 1) {
-    DAT_0001b3ac = 2;
+    int_tuner_step = 2;
   }
   else if (g_ui.atu_state == 3) {
     g_ui.atu_state = 0;
@@ -497,10 +497,10 @@ void FUN_fffec7f9(void)
     FUN_fffed12f();
     g_ui.atu_state = 0;
     swtimer_start(0x27,100);
-    DAT_0001b3ac = 3;
+    int_tuner_step = 3;
     return;
   }
-  DAT_0001b3ac = 0xf;
+  int_tuner_step = 0xf;
   return;
 }
 
@@ -517,7 +517,7 @@ void FUN_fffec881(void)
     return;
   }
   swtimer_start(0x27,0xa0);
-  DAT_0001b3ac = 4;
+  int_tuner_step = 4;
   return;
 }
 
@@ -541,14 +541,14 @@ void FUN_fffec8a1(void)
       send_a_set(0);
       send_b_set(0);
       swtimer_start(0x27,5);
-      DAT_0001b3ac = 5;
+      int_tuner_step = 5;
       return;
     }
     atu_mem_store();
-    DAT_0001b3ac = 0xe;
+    int_tuner_step = 0xe;
     return;
   }
-  DAT_0001b3ac = 0xf;
+  int_tuner_step = 0xf;
   return;
 }
 
@@ -574,7 +574,7 @@ void FUN_fffec911(void)
     DAT_0001b3b3 = DAT_0001b3ae;
     swtimer_start(0x27,5);
     DAT_00025cfc = 0x437f0000;
-    DAT_0001b3ac = 6;
+    int_tuner_step = 6;
     return;
   }
   return;
@@ -594,11 +594,11 @@ void FUN_fffec9b4(void)
   }
   FUN_fffed12f();
   swtimer_start(0x27,5);
-  if (DAT_0001b3ac == '\x06') {
-    DAT_0001b3ac = 0x14;
+  if (int_tuner_step == '\x06') {
+    int_tuner_step = 0x14;
   }
   else {
-    DAT_0001b3ac = 0x15;
+    int_tuner_step = 0x15;
   }
   return;
 }
@@ -612,7 +612,7 @@ void FUN_fffec9ed(void)
   byte swtimer_expired_ret;
   
   if (g_ui.atu_state == 3) {
-    DAT_0001b3ac = 0xf;
+    int_tuner_step = 0xf;
     return;
   }
   swtimer_expired_ret = swtimer_expired(0x27);
@@ -622,11 +622,11 @@ void FUN_fffec9ed(void)
   send_a_set(1);
   send_b_set(1);
   swtimer_start(0x27,5);
-  if (DAT_0001b3ac == '\x14') {
-    DAT_0001b3ac = 7;
+  if (int_tuner_step == '\x14') {
+    int_tuner_step = 7;
   }
   else {
-    DAT_0001b3ac = 0xb;
+    int_tuner_step = 0xb;
   }
   return;
 }
@@ -644,11 +644,11 @@ void FUN_fffeca48(void)
     return;
   }
   swtimer_start(0x27,5);
-  if (DAT_0001b3ac == '\a') {
-    DAT_0001b3ac = 8;
+  if (int_tuner_step == '\a') {
+    int_tuner_step = 8;
   }
   else {
-    DAT_0001b3ac = 0xc;
+    int_tuner_step = 0xc;
   }
   return;
 }
@@ -681,14 +681,14 @@ void FUN_fffeca7e(void)
     DAT_0001b3b9 = DAT_0001b3ad;
     DAT_0001b3ba = DAT_0001b3af;
     if ((g_opstate.ex030104_tuner_type_select == 1) && (fVar2 <= 1.5)) {
-      DAT_0001b3ac = 9;
+      int_tuner_step = 9;
       return;
     }
   }
   if ((ushort)DAT_0001b3b2 < (ushort)((ushort)DAT_0001b3b0 + (ushort)DAT_0001b3b4)) {
     DAT_0001b3b0 = DAT_0001b3b3;
     if ((ushort)DAT_0001b3b2 < (ushort)((ushort)DAT_0001b3ae + (ushort)DAT_0001b3b4)) {
-      DAT_0001b3ac = 9;
+      int_tuner_step = 9;
       return;
     }
     DAT_0001b3ae = DAT_0001b3ae + DAT_0001b3b4;
@@ -699,7 +699,7 @@ void FUN_fffeca7e(void)
   send_a_set(0);
   send_b_set(0);
   swtimer_start(0x27,4);
-  DAT_0001b3ac = 6;
+  int_tuner_step = 6;
   return;
 }
 
@@ -751,10 +751,10 @@ void FUN_fffecba2(void)
     send_a_set(0);
     send_b_set(0);
     swtimer_start(0x27,4);
-    DAT_0001b3ac = 10;
+    int_tuner_step = 10;
     return;
   }
-  DAT_0001b3ac = 0xf;
+  int_tuner_step = 0xf;
   return;
 }
 
@@ -789,7 +789,7 @@ void FUN_fffecce7(void)
   if ((ushort)DAT_0001b3b7 < (ushort)((ushort)DAT_0001b3b0 + (ushort)DAT_0001b3b4)) {
     DAT_0001b3b0 = DAT_0001b3b8;
     if ((ushort)DAT_0001b3b5 < (ushort)((ushort)DAT_0001b3ae + (ushort)DAT_0001b3b4)) {
-      DAT_0001b3ac = 0xd;
+      int_tuner_step = 0xd;
       return;
     }
     DAT_0001b3ae = DAT_0001b3ae + DAT_0001b3b4;
@@ -800,7 +800,7 @@ void FUN_fffecce7(void)
   send_a_set(0);
   send_b_set(0);
   swtimer_start(0x27,4);
-  DAT_0001b3ac = 10;
+  int_tuner_step = 10;
   return;
 }
 
@@ -820,7 +820,7 @@ void FUN_fffecde6(void)
   }
   FUN_fffed12f();
   atu_mem_store();
-  DAT_0001b3ac = 0xe;
+  int_tuner_step = 0xe;
   return;
 }
 
@@ -835,7 +835,7 @@ void FUN_fffece39(void)
   g_ui.ptt_atu_tune = 0;
   g_ui.atu_state = 2;
   vfo_tuner_bit_set(1);
-  DAT_0001b3ac = 1;
+  int_tuner_step = 1;
   return;
 }
 
@@ -846,7 +846,7 @@ void FUN_fffece69(void)
 
 {
   beep_request(3);
-  DAT_0001b3ac = 0x10;
+  int_tuner_step = 0x10;
   return;
 }
 
@@ -861,7 +861,7 @@ void FUN_fffece79(void)
   DAT_0001b3b0 = 0;
   FUN_fffed12f();
   FUN_fffec4db();
-  DAT_0001b3ac = 0;
+  int_tuner_step = 0;
   return;
 }
 
@@ -1036,10 +1036,10 @@ void tuner_atas_task(void)
 {
   byte bVar1;
   
-  if (DAT_0001b3c3 == '\x01') {
+  if (tuner_result_hold == '\x01') {
     bVar1 = swtimer_expired(0x22);
     if (bVar1 == 1) {
-      DAT_0001b3c3 = 0;
+      tuner_result_hold = 0;
       g_ui.tuner_result = 0;
       return;
     }
@@ -1102,7 +1102,7 @@ void tuner_tune_state_set(byte param_1)
 void tuner_result_set(char param_1)
 
 {
-  DAT_0001b3c3 = 1;
+  tuner_result_hold = 1;
   swtimer_start(0x22,0x32);
   if (param_1 == '\x01') {
     g_ui.tuner_result = 2;
@@ -1416,7 +1416,7 @@ void tuner_ext_task(void)
         g_ui.tuner_indicator = 0;
       }
     }
-    switch(DAT_0001b3c8) {
+    switch(ext_tuner_step) {
     case 1:
     case 4:
       FUN_fffed72b();
