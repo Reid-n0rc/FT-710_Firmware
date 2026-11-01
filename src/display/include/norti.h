@@ -82,5 +82,28 @@ ER itron_unl_cpu(void);
 ER itron_get_tim(void *p_systim);
 ER itron_sta_cyc(ID id);
 ER itron_stp_cyc(ID id);
+ER itron_act_tsk(ID id);
+ER itron_ext_tsk(void);
+ER itron_get_tid(ID *p_tskid);
+ER itron_wup_tsk(ID id);
+ER itron_rot_rdq(int pri);
+ER itron_chg_pri(ID id, int pri);
+ER itron_get_pri(ID id, int *p_pri);
+ER itron_sus_tsk(ID id);
+ER itron_dis_dsp(void);
+ER itron_ena_dsp(void);
+ER itron_acre_sem(ID id, const void *pk);
+ER itron_del_sem(ID id);
+ER itron_acre_flg(ID id, const void *pk);
+ER itron_acre_mbx(ID id, const void *pk);
+ER itron_acre_mbf(ID id, const void *pk);
+ER itron_acre_mtx(ID id, const void *pk);
+ER itron_acre_cyc(ID id, const void *pk);
+
+/* the stand-in's hooks for its port (src/display/rtos/): the timer interrupt, the IRQ dispatch, rescheduling */
+void norti_tick(void);
+void norti_isr_dispatch(uint32_t intno);
+void norti_dispatch(void);
+void norti_idle_step(void);
 
 #endif
