@@ -222,3 +222,52 @@ key_repeat_table	fff8c608	key_call_repeat 0xFFFBC426
 key_release_table	fff8d384	key_call_release 0xFFFBC455
 key_slot_tables	fff8e100	key_slot_press 0xFFFC40F9: 0xFFF8E100 + slot * 4 - 52; five 8-entry tables 0x20 apart (ui-keys.md)
 key_code	1fa40	key_call_press 0xFFFBC361 loads the u16 code
+cat_ai_buf	15e06	cat_ai_ex 0xFFFDED08 copies the EX frame there; cat_ai_poll passes 0x15E06 to cat_send_reply (0xFFFDDB26, 0xFFFDDB40, 0xFFFDDB5A)
+ai_ex_frame	1b235	cat_ai_ex_scan 0xFFFE6DBB writes the 8-character ID there; the formatters write the value from 0x1B23D (ai_ex_fmt_u8 0xFFFEC33E)
+ai_ex_len	1ff12	cat_ai_ex_scan 0xFFFE6D84 zeroes it and 0xFFFE6D9F tests it after each detector
+ai_ex_held	1b299	cat_ai_ex_holdoff 0xFFFE6E36 sets it; cat_ai_ex_scan 0xFFFE6DF2 tests it with timer 0x32
+ai_ex_shadow	1b29a	ai_ex010101 0xFFFE6E3A (entry 0 of 0xFFF8E1A0) compares with 0x1B29A; the next detectors with the next bytes up to 0x1B36F
+ai_ex_preset_names	1b370	ai_ex_preset_name 0xFFFEA63A: strncmp with 0x1B370 + 12 (n - 1), n = 1..5
+ai_ex_preset_shadow	1b555	ai_ex_preset_cat1_rate 0xFFFEA8AA compares presets[0].cat1_rate with 0x1B555; row r, preset n at 0x1B555 + 5 r + n - 1
+ai_ex_shadow_rpt_shift_50	1ff14	ai_ex010319 0xFFFE7CB3
+ai_ex_shadow_data_shift	1ff16	ai_ex010420 0xFFFE82D2
+ai_ex_shadow_contest_number	1ff18	ai_ex020205 0xFFFE8E3F
+ai_ex_detectors	fff8e1a0	cat_ai_ex_scan 0xFFFE6D8C: mov.l [i, 0xFFF8E1A0], jsr (296 entries, cmp #296 at 0xFFFE6DEC)
+ai_ex_ids	fff872b1	cat_ai_ex_scan 0xFFFE6DAE: 0xFFF872B1 + 8 i
+ai_sh	187c3	the AI detectors' byte shadows, one per item from cat_ai_AC 0xFFFDDD16 (0x187C3..0x187C8) to cat_ai_VX 0xFFFE17D3 (0x18807) (struct ai_shadow, main_ram.h)
+ai_ac_last	1b504	cat_ai_AC 0xFFFDDE1F: strncmp with the new frame, 6 bytes copied there on a difference
+ai_ag_idx	1b50a	cat_ai_AG 0xFFFDDEC9: incremented, 0 after 3
+ai_ag_hist	1b53e	cat_ai_AG 0xFFFDDEDB: history[ai_ag_idx]; max4_u8/min4_u8 at 0xFFFDDF2E
+ai_rg_idx	1b51e	cat_ai_RG 0xFFFE0475
+ai_rg_hist	1b542	cat_ai_RG 0xFFFE0487
+ai_rm_idx	1b530	cat_ai_RM 0xFFFE09A7
+ai_rm_hist	1b546	cat_ai_RM 0xFFFE09B9
+ai_sq_idx	1b531	cat_ai_SQ 0xFFFE0F1D
+ai_sq_hist	1b54a	cat_ai_SQ 0xFFFE0F4A
+ai_bp_notch	1ff06	cat_ai_BP 0xFFFDE4E4: the notch frequency last reported
+ai_cf_offset	1ff08	cat_ai_CF 0xFFFDE6E8 (side 0) and 0xFFFDE7D2 (0x1FF0A, side 1)
+ai_co_contour	1ff0c	cat_ai_CO 0xFFFDEA94
+ai_is_shift	1ff0e	cat_ai_IS 0xFFFDF717
+ai_fd_freq	25cec	cat_ai_FD 0xFFFDDC14
+ai_fd_scope_mode	25cf0	cat_ai_FD 0xFFFDDC22 (a 32-bit copy of g_opstate.scope_mode)
+ai_fa_freq	25cf4	cat_ai_FA_FB 0xFFFDED62
+ai_fb_freq	25cf8	cat_ai_FA_FB 0xFFFDED72
+ai_na	1b51d	cat_ai_NA 0xFFFDFE28
+ai_ts	1b53d	cat_ai_TS 0xFFFE14C6
+ai_if_chan_a	1b50b	cat_ai_IF_OI 0xFFFDF1AA (side 0)
+ai_if_chan_b	1b517	cat_ai_IF_OI 0xFFFDF1F3 (side 1)
+ai_if_chan_text	1b50c	cat_ai_IF_OI 0xFFFDF2DD: strncmp of the 3-character channel with 0x1B50C (side 0) / 0x1B50F (side 1)
+ai_if_a	1b512	cat_ai_IF_OI: side 0 mode 0x1B512, clarifier bits 0x1B513, shift 0x1B514, tone 0x1B515, state 0x1B516 (0xFFFDF4E9..0xFFFDF62A)
+ai_if_b	1b518	cat_ai_IF_OI: side 1, the same five bytes from 0x1B518
+ai_if_offset	1ff6e	cat_ai_IF_OI 0xFFFDF3E8 (side 0), 0x1FF70 (side 1)
+ai_if_freq	25d64	cat_ai_IF_OI 0xFFFDF33B (side 0), 0x25D68 (side 1)
+ai_ri_last	1b51f	cat_ai_RI 0xFFFE072A: strncmp of the 11-byte frame with 0x1B51F, copied there at 0xFFFE0741
+ai_ri_hi_swr	1b52a	cat_ai_RI 0xFFFE05A1
+ai_ri_msg	1b52b	cat_ai_RI 0xFFFE05C7
+ai_ri_tx	1b52c	cat_ai_RI
+ai_ri_tune	1b52d	cat_ai_RI
+ai_ri_lamp	1b52e	cat_ai_RI 0xFFFE06F5
+ai_ri_scan	1b52f	cat_ai_RI
+ai_mode_codes	fff87228	cat_ai_IF_OI 0xFFFDF52E and cat_ai_MD 0xFFFDFAB8: the mode character of mode index n (the same bytes as cat_mode_codes 0xFFF806D0)
+ai_vfo_state_codes	fff87237	cat_ai_IF_OI 0xFFFDF541: the P7 character of a VFO state (as cat_vfo_state_codes 0xFFF806DF)
+ai_pms_names	fff87241	cat_ai_IF_OI 0xFFFDF25E: 3-character names of the channels from 99 on (as cat_pms_names 0xFFF806E9)

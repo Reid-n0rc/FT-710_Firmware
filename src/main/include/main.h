@@ -140,6 +140,7 @@ void toupper_inplace(char *c);
 char hex2nib(uint8_t c);                /* '0'..'9', 'A'..'F', 'a'..'f' -> 0..15, else 0xFF */
 void key_dsp_press(void);
 /* used by the CAT handlers (app/cat_handlers.c) */
+int strncmp(const char *a, const char *b, size_t n);     /* CC-RX: no stop at a shared NUL (lib/runtime.c) */
 char nib2hex(uint8_t n);                /* "0123456789ABCDEF"[n & 15] */
 uint8_t key_event_filter(uint16_t key, uint8_t kind);   /* 0 = the key (and its CAT command) is locked now */
 int32_t vfo_mode_is_cw(void);

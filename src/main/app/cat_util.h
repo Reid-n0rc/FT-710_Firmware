@@ -122,4 +122,49 @@ static inline void put_be16(uint8_t *p, uint16_t v)
     p[1] = (uint8_t)v;
 }
 
+/* u32 as 9 decimal digits, as the image prints it: each digit (v / place) through nib2hex [fact: cat_FA_FB
+ * 0xFFFA9A21..0xFFFA9A4A] */
+static inline void put_dec32(uint8_t *at, uint32_t v, uint32_t div)
+{
+    for (; div != 0; div /= 10u) {
+        uint32_t n = v / div;
+
+        v -= n * div;
+        *at++ = (uint8_t)nib2hex((uint8_t)n);
+    }
+}
+
+extern const uint8_t cat_mode_codes[];        /* 0xFFF806D0: the CAT mode character per mode index */
+extern const uint8_t cat_vfo_state_codes[];   /* 0xFFF806DF: the CAT P7 character per VFO state */
+extern const uint8_t cat_pms_names[][3];      /* 0xFFF806E9: names of the channels from 99 on */
+
+/* the channel as three characters: 001..099, or the name of channel 99 + n [fact: add #-99, cat_IF_OI 0xFFFAA458;
+ * cat_MR, cat_MC] */
+static inline void put_channel(uint8_t *at, uint8_t ch)
+{
+    if (ch < 99u) {
+        put_dec(at, (uint8_t)(ch + 1u), 100);
+    } else {
+        const uint8_t *nm = cat_pms_names[(uint8_t)(ch - 99u)];
+
+        at[2] = nm[2];
+        at[0] = nm[0];
+        at[1] = nm[1];
+    }
+}
+
+/* the clarifier offset (s16, big-endian) as sign and four digits */
+static inline void put_clar_offset(uint8_t *at, const struct vfo_rec *r)
+{
+    uint16_t off = be16(r->clar_offset_be);
+
+    if (r->clar_offset_be[0] & 0x80u) {
+        at[0] = '-';
+        off = (uint16_t)(~off + 1u);
+    } else {
+        at[0] = '+';
+    }
+    put_dec16(&at[1], off, 1000);
+}
+
 #endif

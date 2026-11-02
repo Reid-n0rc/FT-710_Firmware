@@ -176,4 +176,62 @@ extern uint8_t swr_good_count;            /* 0x1B4C6 */
 extern uint8_t swr_bad_count;             /* 0x1B4C7 */
 extern uint8_t fm_sql_last_mode;          /* 0x1B4CB */
 
+/* CAT auto information for the EX menu (app/cat_ai_ex.c, round 6; docs/code/main/cat-ai.md) [fact: the addresses in
+ * cat_ai_ex_scan 0xFFFE6D7A and the detectors 0xFFFE6E3A..0xFFFEC46B] */
+extern uint8_t cat_ai_buf[];              /* 0x15E06: the AI frame cat_ai_poll sends */
+extern uint8_t ai_ex_frame[];             /* 0x1B235: "EX" + 6-digit ID, value from [8] */
+extern uint16_t ai_ex_len;                /* 0x1FF12: length of the frame, set by the detector that fired */
+extern uint8_t ai_ex_held;                /* 0x1B299: 1 while the hold-off after an EX set may run */
+extern uint8_t ai_ex_shadow[];            /* 0x1B29A: one byte per detector in table order (MY CALL: 12) */
+extern char ai_ex_preset_names[5][12];    /* 0x1B370: PRESET1..5 NAME */
+extern uint8_t ai_ex_preset_shadow[17][5];   /* 0x1B555: the 17 PRESET rows after the name, by preset */
+extern uint16_t ai_ex_shadow_rpt_shift_50;   /* 0x1FF14: EX010319 */
+extern uint16_t ai_ex_shadow_data_shift;     /* 0x1FF16: EX010420 */
+extern uint16_t ai_ex_shadow_contest_number; /* 0x1FF18: EX020205 */
+extern void (*const ai_ex_detectors[296])(void);  /* 0xFFF8E1A0 */
+extern const char ai_ex_ids[296][8];      /* 0xFFF872B1: "EX010101" .. */
+
+/* CAT auto information (app/cat_ai.c, round 6; docs/code/main/cat-ai.md): the last value each detector reported.
+ * One byte each from 0x187C3, in the order of the detectors [fact: the address in each cat_ai_* detector] */
+struct ai_shadow {
+    uint8_t ac_tuner_type, ac_cycle_3d, ac_cycle_3c, ac_cycle, ac_result, ac_atu;   /* 0x187C3 AC */
+    uint8_t ag, ao, as_level, as_mode, av_select, av_level, bc, bi, bp_on;         /* 0x187C9 */
+    uint8_t cf[2][2];                               /* 0x187D2 CF: [side][0] RX clarifier, [1] TX clarifier */
+    uint8_t cn_a, cn_b, co_on, co_apf_on, co_apf, cs, ct_a, ct_b, fn, ft, gt;   /* 0x187D6 */
+    uint8_t kp, kr, ks, lk, md[2], mg, ml_on, ml_level, ms, mx, nb, nl, nr, os, pa, pc, pl;   /* 0x187E1 */
+    uint8_t pr_level_on, pr_on, ra, rg, rl, rm, sc_running, sc_down, sd, sf[2], sh, sq;          /* 0x187F3 */
+    uint8_t ss[2], st, tx, vd, vg, vs, vx;          /* 0x18800 */
+};
+extern struct ai_shadow ai_sh;            /* 0x187C3 */
+extern uint8_t ai_ac_last[6];             /* 0x1B504: the last AC frame sent */
+extern uint8_t ai_ag_idx;                 /* 0x1B50A: AG history index 0..3 */
+extern uint8_t ai_ag_hist[4];             /* 0x1B53E */
+extern uint8_t ai_rg_idx;                 /* 0x1B51E */
+extern uint8_t ai_rg_hist[4];             /* 0x1B542 */
+extern uint8_t ai_rm_idx;                 /* 0x1B530 */
+extern uint8_t ai_rm_hist[4];             /* 0x1B546 */
+extern uint8_t ai_sq_idx;                 /* 0x1B531 */
+extern uint8_t ai_sq_hist[4];             /* 0x1B54A */
+extern uint16_t ai_bp_notch;              /* 0x1FF06 */
+extern uint16_t ai_cf_offset[2];          /* 0x1FF08: side 0, 1 */
+extern uint16_t ai_co_contour;            /* 0x1FF0C */
+extern uint16_t ai_is_shift;              /* 0x1FF0E */
+extern uint32_t ai_fd_freq;               /* 0x25CEC */
+extern uint32_t ai_fd_scope_mode;         /* 0x25CF0 */
+extern uint32_t ai_fa_freq, ai_fb_freq;   /* 0x25CF4, 0x25CF8 */
+extern uint8_t ai_na;                     /* 0x1B51D */
+extern uint8_t ai_ts;                     /* 0x1B53D */
+/* IF / OI: per side the channel, its 3-character text, and the fields of P4..P10 */
+struct ai_info_shadow {
+    uint8_t mode, clar, shift, tone, state;
+};
+extern uint8_t ai_if_chan_a, ai_if_chan_b;      /* 0x1B50B, 0x1B517 */
+extern uint8_t ai_if_chan_text[2][3];           /* 0x1B50C */
+extern struct ai_info_shadow ai_if_a, ai_if_b;  /* 0x1B512, 0x1B518 */
+extern uint16_t ai_if_offset[2];                /* 0x1FF6E */
+extern uint32_t ai_if_freq[2];                  /* 0x25D64 */
+/* RI: the last frame and its seven fields */
+extern uint8_t ai_ri_last[11];            /* 0x1B51F */
+extern uint8_t ai_ri_hi_swr, ai_ri_msg, ai_ri_tx, ai_ri_tune, ai_ri_lamp, ai_ri_scan;   /* 0x1B52A.. */
+
 #endif
