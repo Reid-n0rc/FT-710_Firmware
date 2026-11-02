@@ -1,4 +1,258 @@
-// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 30 functions
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 45 functions
+
+// ===== ring133_advance @ 20164388 (28 bytes)
+
+/* (idx): returns *idx and advances it; scope_obj_wf_add_row [fact] */
+
+undefined4 ring133_advance(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  
+  uVar2 = *param_1;
+                    /* idx + 1, wrapping at 133 [doc] */
+  uVar1 = ring133_next();
+  *param_1 = uVar1;
+  return uVar2;
+}
+
+
+// ===== ring133_reset @ 201643a4 (12 bytes)
+
+/* (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact] */
+
+void ring133_reset(undefined4 *param_1)
+
+{
+  *param_1 = 0;
+  return;
+}
+
+
+// ===== ring20_advance @ 201643b0 (28 bytes)
+
+/* (idx): returns *idx and advances it; scope_history_push [fact] */
+
+undefined4 ring20_advance(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  
+  uVar2 = *param_1;
+                    /* idx + 1, wrapping at 20 [doc] */
+  uVar1 = ring20_next();
+  *param_1 = uVar1;
+  return uVar2;
+}
+
+
+// ===== ring30_advance @ 201643cc (28 bytes)
+
+/* (idx): returns *idx and advances it; scope3d_redraw_history [fact] */
+
+undefined4 ring30_advance(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  undefined4 uVar2;
+  
+  uVar2 = *param_1;
+                    /* idx + 1, wrapping at 30 [doc] */
+  uVar1 = ring30_next();
+  *param_1 = uVar1;
+  return uVar2;
+}
+
+
+// ===== ring32_post_inc @ 201643f0 (28 bytes)
+
+/* Returns *idx and sets it to the next value mod 32 [fact] */
+
+undefined2 ring32_post_inc(undefined2 *param_1)
+
+{
+  undefined2 uVar1;
+  undefined2 uVar2;
+  
+  uVar1 = *param_1;
+  uVar2 = ring32_next();
+  *param_1 = uVar2;
+  return uVar1;
+}
+
+
+// ===== FUN_2016440c @ 2016440c (8 bytes)
+
+void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
+
+{
+  *param_1 = param_2;
+  return;
+}
+
+
+// ===== FUN_20164414 @ 20164414 (60 bytes)
+
+void FUN_20164414(int param_1)
+
+{
+  uint itron_acre_mtx_ret;
+  t_cmtx local_18;
+  
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x44) = itron_acre_mtx_ret;
+  return;
+}
+
+
+// ===== FUN_20164454 @ 20164454 (12 bytes)
+
+void FUN_20164454(int param_1,int param_2,undefined4 param_3)
+
+{
+  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
+  return;
+}
+
+
+// ===== txpool_init_mutex @ 20164460 (60 bytes)
+
+/* Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init /
+   uart4_tx_init / mainlink_disp_init [fact] */
+
+void txpool_init_mutex(int param_1)
+
+{
+  uint itron_acre_mtx_ret;
+  t_cmtx local_18;
+  
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
+  return;
+}
+
+
+// ===== txpool_set_slot @ 201644a0 (12 bytes)
+
+/* obj->slot[n] (obj+4+4n) = buffer [fact] */
+
+void txpool_set_slot(int param_1,int param_2,undefined4 param_3)
+
+{
+  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
+  return;
+}
+
+
+// ===== txpool_next_slot @ 201644ac (56 bytes)
+
+/* Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc /
+   uart4_tx_alloc / mainlink_disp_alloc [fact] */
+
+undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+
+{
+  int iVar1;
+  undefined4 uVar2;
+  undefined4 uStack_10;
+  
+  uStack_10 = param_4;
+  mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x84),1);
+  iVar1 = ring32_post_inc(param_1);
+  uVar2 = *(undefined4 *)(param_1 + iVar1 * 4 + 4);
+                    /* Scoped lock destructor [doc] */
+  mutex_guard_dtor(&uStack_10);
+  return uVar2;
+}
+
+
+// ===== FUN_201644e4 @ 201644e4 (60 bytes)
+
+void FUN_201644e4(int param_1)
+
+{
+  uint itron_acre_mtx_ret;
+  t_cmtx local_18;
+  
+  local_18.mtxatr = 2;
+  local_18.ceilpri = 0;
+  local_18.name = (char *)0x0;
+  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
+  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
+  return;
+}
+
+
+// ===== FUN_20164524 @ 20164524 (12 bytes)
+
+void FUN_20164524(int param_1,int param_2,undefined4 param_3)
+
+{
+  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
+  return;
+}
+
+
+// ===== FUN_20164568 @ 20164568 (56 bytes)
+
+uint FUN_20164568(char *param_1,int param_2,int param_3)
+
+{
+  char cVar1;
+  uint uVar2;
+  int iVar3;
+  
+  cVar1 = *param_1;
+  iVar3 = 0;
+  if (cVar1 != param_3) {
+    *param_1 = (char)param_3;
+    iVar3 = (int)(char)((char)param_3 - cVar1);
+  }
+  uVar2 = param_2 + iVar3;
+  if ((int)uVar2 < 0) {
+    uVar2 = 0;
+  }
+  else if ((int)uVar2 < 0x100) {
+    uVar2 = uVar2 & 0xff;
+  }
+  else {
+    uVar2 = 0xff;
+  }
+  return uVar2;
+}
+
+
+// ===== ring16_push @ 201645a0 (68 bytes)
+
+/* Copies an 8-byte item into the slot at the tail if count < 16 [fact]; usbkbd_queue_key [fact] */
+
+void ring16_push(ushort *param_1,undefined4 *param_2)
+
+{
+  ushort uVar1;
+  undefined4 *puVar2;
+  undefined4 uVar3;
+  
+  if (*param_1 < 0x10) {
+    uVar3 = param_2[1];
+    uVar1 = param_1[2];
+    puVar2 = *(undefined4 **)(param_1 + (uint)uVar1 * 2 + 4);
+    *puVar2 = *param_2;
+    puVar2[1] = uVar3;
+    param_1[2] = uVar1 + 1 & 0xf;
+    *param_1 = *param_1 + 1;
+  }
+  return;
+}
+
 
 // ===== ring16_reset @ 201645e4 (20 bytes)
 

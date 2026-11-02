@@ -313,7 +313,6 @@ undefined * FLEXSPI_TransferNonBlocking(int param_1,int *param_2,undefined4 *par
   uint uVar1;
   int iVar2;
   int iVar3;
-  int iVar4;
   
   if (*param_2 != 0) {
     return &DAT_00001b58;
@@ -322,12 +321,12 @@ undefined * FLEXSPI_TransferNonBlocking(int param_1,int *param_2,undefined4 *par
   iVar3 = param_3[5];
   param_2[3] = iVar3;
   param_2[1] = param_3[4];
-  iVar4 = 1;
   param_2[2] = iVar3;
+  iVar3 = 1;
   if (iVar2 == 2) {
-    iVar4 = 2;
+    iVar3 = 2;
   }
-  *param_2 = iVar4;
+  *param_2 = iVar3;
   iVar2 = param_3[1] * 4 + param_1;
   memw();
   memw();
@@ -612,9 +611,10 @@ undefined * FLEXSPI_TransferDMA(int param_1,undefined4 *param_2,undefined4 *para
   uint uVar2;
   uint uVar3;
   uint uVar4;
-  int iVar5;
-  uint uVar6;
+  uint uVar5;
+  int iVar6;
   uint uVar7;
+  uint uVar8;
   undefined4 uStack_b0;
   uint uStack_ac;
   undefined *puStack_a8;
@@ -627,8 +627,8 @@ undefined * FLEXSPI_TransferDMA(int param_1,undefined4 *param_2,undefined4 *para
   undefined1 auStack_78 [24];
   uint uStack_60;
   uint uStack_5c;
-  undefined4 uStack_58;
-  undefined4 uStack_54;
+  uint uStack_58;
+  uint uStack_54;
   uint uStack_50;
   uint uStack_4c;
   int iStack_48;
@@ -645,10 +645,10 @@ undefined * FLEXSPI_TransferDMA(int param_1,undefined4 *param_2,undefined4 *para
     return &DAT_00001b58;
   }
   param_2[2] = param_3[5];
-  iVar5 = param_3[1] * 4 + param_1;
+  iVar6 = param_3[1] * 4 + param_1;
   memw();
   memw();
-  *(uint *)(iVar5 + 0x80) = *(uint *)(iVar5 + 0x80) | 0x80000000;
+  *(uint *)(iVar6 + 0x80) = *(uint *)(iVar6 + 0x80) | 0x80000000;
   memw();
   memw();
   *(uint *)(param_1 + 0x14) = *(uint *)(param_1 + 0x14) | 0x1e;
@@ -659,34 +659,35 @@ undefined * FLEXSPI_TransferDMA(int param_1,undefined4 *param_2,undefined4 *para
   *(uint *)(param_1 + 0xbc) = *(uint *)(param_1 + 0xbc) | 1;
   memw();
   memw();
-  iVar5 = param_3[2];
+  iVar6 = param_3[2];
   *(uint *)(param_1 + 0xb8) = *(uint *)(param_1 + 0xb8) | 1;
-  if ((iVar5 == 2) || (iVar5 == 3)) {
-    uVar4 = (uint)*(ushort *)(param_3 + 5);
+  if ((iVar6 == 2) || (iVar6 == 3)) {
+    uVar5 = (uint)*(ushort *)(param_3 + 5);
   }
   else {
-    uVar4 = 0;
+    uVar5 = 0;
   }
+  uVar2 = 0xb;
   memw();
   *(uint *)(param_1 + 0xa4) =
-       uVar4 | (*(byte *)(param_3 + 3) & 0x1f) << 0x10 |
+       uVar5 | (*(byte *)(param_3 + 3) & 0x1f) << 0x10 |
                (*(byte *)((int)param_3 + 0xd) - 1) * 0x1000000 & 0x7000000;
-  if ((iVar5 != 3) && (iVar5 != 1)) {
-    if (iVar5 != 2) {
+  if ((iVar6 != 3) && (iVar6 != 1)) {
+    if (iVar6 != 2) {
       memw();
       memw();
       *(uint *)(param_1 + 0xb0) = *(uint *)(param_1 + 0xb0) | 1;
       memw();
       if ((*(uint *)(param_1 + 0xe0) & 2) == 0) goto LAB_0020caa0;
       memw();
-      uVar4 = *(uint *)(param_1 + 0xe0);
-      while ((uVar4 & 1) == 0) {
+      uVar5 = *(uint *)(param_1 + 0xe0);
+      while ((uVar5 & 1) == 0) {
 LAB_0020caa0:
         do {
           memw();
         } while ((*(uint *)(param_1 + 0xe0) & 2) == 0);
         memw();
-        uVar4 = *(uint *)(param_1 + 0xe0);
+        uVar5 = *(uint *)(param_1 + 0xe0);
       }
       memw();
       puVar1 = (undefined *)FLEXSPI_CheckAndClearError(param_1,*(undefined4 *)(param_1 + 0x14));
@@ -699,118 +700,122 @@ LAB_0020caa0:
     }
     param_2[5] = 1;
     iStack_40 = param_3[4];
-    uVar6 = param_3[5];
+    uVar7 = param_3[5];
     memw();
-    uVar4 = (((*(uint *)(param_1 + 0xb8) & 0xfc) >> 2) + 1) * 8;
-    uVar3 = uVar4 & 0xff;
-    *(char *)((int)param_2 + 0x11) = (char)uVar4;
-    if ((uVar3 - 1 & uVar3) != 0) {
+    uVar5 = (((*(uint *)(param_1 + 0xb8) & 0xfc) >> 2) + 1) * 8;
+    uVar4 = uVar5 & 0xff;
+    *(char *)((int)param_2 + 0x11) = (char)uVar5;
+    if ((uVar4 - 1 & uVar4) != 0) {
       return (undefined *)0x4;
     }
     uStack_b0 = 0x12;
-    uStack_3c = uVar6;
-    if (uVar6 < uVar3) {
+    uStack_3c = uVar7;
+    if (uVar7 < uVar4) {
       param_2[3] = 1;
-      uVar3 = uVar6 & 0xff;
-      *(char *)(param_2 + 4) = (char)uVar6;
-      uVar4 = 1;
+      uVar4 = uVar7 & 0xff;
+      *(char *)(param_2 + 4) = (char)uVar7;
+      uVar5 = 1;
       puStack_a8 = (undefined *)0x0;
-      if ((uVar3 & uVar3 - 1) != 0) {
-        uVar6 = (uVar3 & uVar3 - 1) << 1;
-        uVar3 = uVar6 & 0xff;
-        *(char *)(param_2 + 4) = (char)uVar6;
+      if ((uVar4 & uVar4 - 1) != 0) {
+        uVar7 = (uVar4 & uVar4 - 1) << 1;
+        uVar4 = uVar7 & 0xff;
+        *(char *)(param_2 + 4) = (char)uVar7;
       }
-      iVar5 = 1;
+      iVar6 = 1;
     }
     else {
-      uStack_30 = uVar6 % uVar3;
+      uStack_30 = uVar7 % uVar4;
       puStack_a8 = &DAT_00004000;
       if (uStack_30 == 0) {
-        iVar5 = 1;
-        uVar4 = param_2[3];
+        iVar6 = 1;
+        uVar5 = param_2[3];
       }
       else {
         if ((uStack_30 & 3) == 0) {
           param_2[3] = 4;
-          uVar4 = 4;
+          uVar5 = 4;
         }
         else {
-          uVar4 = 1;
+          uVar5 = 1;
           if ((uStack_30 & 1) == 0) {
-            uVar4 = 2;
+            uVar5 = 2;
           }
-          param_2[3] = uVar4;
+          param_2[3] = uVar5;
         }
-        iVar5 = 2;
-        uStack_3c = uVar6 - uStack_30;
+        iVar6 = 2;
+        uStack_3c = uVar7 - uStack_30;
       }
-      uVar3 = uVar3 / (uVar4 & 0xff);
-      *(char *)(param_2 + 4) = (char)uVar3;
-      if (0x400 < ((uVar6 - *(byte *)((int)param_2 + 0x11)) + 1) / uVar4) {
+      uVar4 = uVar4 / (uVar5 & 0xff);
+      *(char *)(param_2 + 4) = (char)uVar4;
+      if (0x400 < ((uVar7 - *(byte *)((int)param_2 + 0x11)) + 1) / uVar5) {
         return (undefined *)0x4;
       }
       bStack_a4 = (byte)uStack_30;
     }
-    uVar3 = uVar3 >> 1;
-    if (uVar3 == 0) {
-      uVar6 = 0;
+    uVar4 = uVar4 >> 1;
+    if (uVar4 == 0) {
+      uVar7 = 0;
     }
     else {
-      uVar6 = 0;
+      uVar7 = 0;
       do {
-        uVar3 = uVar3 >> 1;
-        uVar6 = uVar6 + 1;
-      } while (uVar3 != 0);
+        uVar4 = uVar4 >> 1;
+        uVar7 = uVar7 + 1;
+      } while (uVar4 != 0);
     }
-    uStack_ac = (uVar6 & 0xf) << 8 | 0x40;
-    uVar3 = iVar5 + 0xffU & 0xff;
-    if (uVar3 == 0) {
+    uStack_ac = (uVar7 & 0xf) << 8 | 0x40;
+    uVar4 = iVar6 + 0xffU & 0xff;
+    if (uVar4 == 0) {
       iStack_38 = param_1 + 0x100;
-      iVar5 = 0;
+      iVar6 = 0;
     }
     else {
       iStack_38 = param_1 + 0x100;
       uStack_30 = (uint)bStack_a4;
-      uVar6 = 1;
-      uVar4 = 9;
+      uVar7 = 1;
+      uVar5 = 9;
       do {
-        uVar2 = param_2[3];
-        if (uVar2 == 4) {
-          uVar7 = 0x200;
+        uVar3 = param_2[3];
+        if (uVar3 == 4) {
+          uVar8 = 0x200;
         }
         else {
-          uVar7 = (uVar2 - 1) * 0x100 & 0x300;
+          uVar8 = (uVar3 - 1) * 0x100 & 0x300;
         }
-        iStack_2c = uVar3 * 0x10 + 0x2387f0;
-        uStack_60 = uVar3;
+        iStack_2c = uVar4 * 0x10 + 0x2387f0;
+        uStack_60 = uVar4;
         DMA_SetupDescriptor(iStack_2c,
-                            (uStack_30 / uVar2 - 1) * 0x10000 & 0x3ff0000 |
-                            uVar7 | uVar4 | uVar6 << 4 | (uint)&DAT_00005000,iStack_38,
-                            iStack_40 + uVar3 * uStack_3c);
-        uVar6 = (uint)(iStack_2c == 0);
-        uVar3 = uStack_60 - 1 & 0xff;
-        uVar4 = uVar3;
-        if (uVar6 != 0) {
-          uVar4 = 9;
+                            (uStack_30 / uVar3 - 1) * 0x10000 & 0x3ff0000 |
+                            uVar8 | uVar5 | uVar7 << 4 | (uint)&DAT_00005000,iStack_38,
+                            iStack_40 + uVar4 * uStack_3c);
+        uVar7 = (uint)(iStack_2c == 0);
+        uVar4 = uStack_60 - 1 & 0xff;
+        uVar5 = uVar2;
+        if (uVar7 != 0) {
+          uVar5 = 9;
         }
-      } while (uVar3 != 0);
-      uVar4 = param_2[3];
-      iVar5 = iStack_2c;
+      } while (uVar4 != 0);
+      uVar5 = param_2[3];
+      iVar6 = iStack_2c;
     }
-    uStack_54 = 9;
-    if (uVar4 == 4) {
+    if ((iVar6 == 0) != 0) {
+      uVar2 = 9;
+    }
+    if (uVar5 == 4) {
       uStack_50 = 0x200;
     }
     else {
-      uStack_50 = (uVar4 - 1) * 0x100 & 0x300;
+      uStack_50 = (uVar5 - 1) * 0x100 & 0x300;
     }
+    uStack_54 = uVar2;
     DMA_PrepareChannelTransfer
               (auStack_a0,iStack_38,iStack_40,
-               (uStack_3c / uVar4 - 1) * 0x10000 & 0x3ff0000 | uStack_50 | 0x19 |
-               (uint)&DAT_00005000,0,&uStack_b0,iVar5);
+               (uStack_3c / uVar5 - 1) * 0x10000 & 0x3ff0000 |
+               uStack_50 | uVar2 | (uint)(iVar6 == 0) << 4 | (uint)&DAT_00005000,0,&uStack_b0,iVar6)
+    ;
     DMA_SubmitChannelTransfer(param_2[1],auStack_a0);
-    iVar5 = FLEXSPI_GetInstance(param_1);
-    DMA_SetCallback(param_2[1],FLEXSPI_TransferDMACallback,&DAT_00238c00 + iVar5 * 8);
+    iVar6 = FLEXSPI_GetInstance(param_1);
+    DMA_SetCallback(param_2[1],FLEXSPI_TransferDMACallback,&DAT_00238c00 + iVar6 * 8);
     DMA_StartTransfer(param_2[1]);
     memw();
     memw();
@@ -820,123 +825,127 @@ LAB_0020caa0:
     *(uint *)(param_1 + 0xb0) = *(uint *)(param_1 + 0xb0) | 1;
     return (undefined *)0x0;
   }
-  uVar4 = param_2[3];
+  uVar5 = param_2[3];
   uStack_4c = param_3[4];
   param_2[5] = 1;
-  uVar3 = param_3[5];
-  if ((uVar4 - 1 & uStack_4c) == 0) {
+  uVar4 = param_3[5];
+  if ((uVar5 - 1 & uStack_4c) == 0) {
     memw();
-    uVar6 = (((*(uint *)(param_1 + 0xbc) & 0x1fc) >> 2) + 1) * 8;
-    uVar2 = uVar6 & 0xff;
-    *(char *)((int)param_2 + 0x11) = (char)uVar6;
-    if ((uVar2 - 1 & uVar2) == 0) {
+    uVar7 = (((*(uint *)(param_1 + 0xbc) & 0x1fc) >> 2) + 1) * 8;
+    uVar3 = uVar7 & 0xff;
+    *(char *)((int)param_2 + 0x11) = (char)uVar7;
+    if ((uVar3 - 1 & uVar3) == 0) {
       uStack_88 = 0x12;
-      uStack_34 = uVar3;
-      if (uVar3 < uVar2) {
+      uStack_34 = uVar4;
+      if (uVar4 < uVar3) {
         param_2[3] = 1;
-        uVar2 = uVar3 & 0xff;
-        *(char *)(param_2 + 4) = (char)uVar3;
-        uVar4 = 1;
+        uVar3 = uVar4 & 0xff;
+        *(char *)(param_2 + 4) = (char)uVar4;
+        uVar5 = 1;
         puStack_80 = (undefined *)0x0;
-        if ((uVar2 & uVar2 - 1) != 0) {
-          uVar6 = (uVar2 & uVar2 - 1) << 1;
-          uVar2 = uVar6 & 0xff;
-          *(char *)(param_2 + 4) = (char)uVar6;
+        if ((uVar3 & uVar3 - 1) != 0) {
+          uVar7 = (uVar3 & uVar3 - 1) << 1;
+          uVar3 = uVar7 & 0xff;
+          *(char *)(param_2 + 4) = (char)uVar7;
         }
-        iVar5 = 1;
-        uVar6 = 1;
+        iVar6 = 1;
+        uVar7 = 1;
       }
       else {
-        uStack_44 = uVar3 % uVar2;
+        uStack_44 = uVar4 % uVar3;
         puStack_80 = &DAT_00008000;
         if (uStack_44 == 0) {
-          iVar5 = 1;
+          iVar6 = 1;
         }
         else {
           if ((uStack_44 & 3) == 0) {
             param_2[3] = 4;
-            uVar4 = 4;
+            uVar5 = 4;
           }
           else {
-            uVar4 = 1;
+            uVar5 = 1;
             if ((uStack_44 & 1) == 0) {
-              uVar4 = 2;
+              uVar5 = 2;
             }
-            param_2[3] = uVar4;
+            param_2[3] = uVar5;
           }
-          iVar5 = 2;
-          uStack_34 = uVar3 - uStack_44;
+          iVar6 = 2;
+          uStack_34 = uVar4 - uStack_44;
         }
-        uVar6 = uVar4 & 0xff;
-        uVar2 = uVar2 / uVar6;
-        *(char *)(param_2 + 4) = (char)uVar2;
-        if (0x400 < ((uVar3 - *(byte *)((int)param_2 + 0x11)) + 1) / uVar4) {
+        uVar7 = uVar5 & 0xff;
+        uVar3 = uVar3 / uVar7;
+        *(char *)(param_2 + 4) = (char)uVar3;
+        if (0x400 < ((uVar4 - *(byte *)((int)param_2 + 0x11)) + 1) / uVar5) {
           return (undefined *)0x4;
         }
         bStack_7c = (byte)uStack_44;
       }
-      if (uVar3 / uVar6 != 1) {
-        uVar2 = uVar2 >> 1;
-        if (uVar2 == 0) {
-          uVar6 = 0;
+      if (uVar4 / uVar7 != 1) {
+        uVar3 = uVar3 >> 1;
+        if (uVar3 == 0) {
+          uVar7 = 0;
         }
         else {
-          uVar6 = 0;
+          uVar7 = 0;
           do {
-            uVar2 = uVar2 >> 1;
-            uVar6 = uVar6 + 1;
-          } while (uVar2 != 0);
+            uVar3 = uVar3 >> 1;
+            uVar7 = uVar7 + 1;
+          } while (uVar3 != 0);
         }
-        uStack_84 = (uVar6 & 0xf) << 8 | 0x40;
-        param_2[2] = uVar3;
-        uVar3 = iVar5 + 0xffU & 0xff;
-        if (uVar3 == 0) {
+        uStack_84 = (uVar7 & 0xf) << 8 | 0x40;
+        param_2[2] = uVar4;
+        uVar4 = iVar6 + 0xffU & 0xff;
+        if (uVar4 == 0) {
           iStack_48 = param_1 + 0x180;
-          iVar5 = 0;
+          iVar6 = 0;
         }
         else {
           uStack_44 = (uint)bStack_7c;
           iStack_48 = param_1 + 0x180;
-          uVar6 = 1;
-          uVar4 = 9;
+          uVar7 = 1;
+          uVar5 = 9;
           do {
-            uVar2 = param_2[3];
-            if (uVar2 == 4) {
-              uVar7 = 0x200;
+            uVar3 = param_2[3];
+            if (uVar3 == 4) {
+              uVar8 = 0x200;
             }
             else {
-              uVar7 = (uVar2 - 1) * 0x100 & 0x300;
+              uVar8 = (uVar3 - 1) * 0x100 & 0x300;
             }
-            iStack_28 = uVar3 * 0x10 + 0x2387f0;
-            uStack_5c = uVar3;
+            iStack_28 = uVar4 * 0x10 + 0x2387f0;
+            uStack_5c = uVar4;
             DMA_SetupDescriptor(iStack_28,
-                                (uStack_44 / uVar2 - 1) * 0x10000 & 0x3ff0000 |
-                                uVar7 | uVar4 | uVar6 << 4 | (uint)&DAT_00005000,
-                                uStack_4c + uVar3 * uStack_34,iStack_48);
-            uVar3 = uStack_5c - 1 & 0xff;
-            uVar6 = (uint)(iStack_28 == 0);
-            uVar4 = 0;
-            if (uVar6 != 0) {
-              uVar4 = 9;
+                                (uStack_44 / uVar3 - 1) * 0x10000 & 0x3ff0000 |
+                                uVar8 | uVar5 | uVar7 << 4 | (uint)&DAT_00005000,
+                                uStack_4c + uVar4 * uStack_34,iStack_48);
+            uVar4 = uStack_5c - 1 & 0xff;
+            uVar7 = (uint)(iStack_28 == 0);
+            uVar5 = uVar2;
+            if (uVar7 != 0) {
+              uVar5 = 9;
             }
-          } while (uVar3 != 0);
-          uVar4 = param_2[3];
-          iVar5 = iStack_28;
+          } while (uVar4 != 0);
+          uVar5 = param_2[3];
+          iVar6 = iStack_28;
         }
-        uStack_58 = 9;
-        if (uVar4 == 4) {
-          uVar3 = 0x200;
+        if ((iVar6 == 0) != 0) {
+          uVar2 = 9;
+        }
+        if (uVar5 == 4) {
+          uVar4 = 0x200;
         }
         else {
-          uVar3 = (uVar4 - 1) * 0x100 & 0x300;
+          uVar4 = (uVar5 - 1) * 0x100 & 0x300;
         }
+        uStack_58 = uVar2;
         DMA_PrepareChannelTransfer
                   (auStack_78,uStack_4c,iStack_48,
-                   (uStack_34 / uVar4 - 1) * 0x10000 & 0x3ff0000 | uVar3 | 0x19 |
-                   (uint)&DAT_00005000,0,&uStack_88,iVar5);
+                   (uStack_34 / uVar5 - 1) * 0x10000 & 0x3ff0000 |
+                   uVar4 | uVar2 | (uint)(iVar6 == 0) << 4 | (uint)&DAT_00005000,0,&uStack_88,iVar6)
+        ;
         DMA_SubmitChannelTransfer(*param_2,auStack_78);
-        iVar5 = FLEXSPI_GetInstance(param_1);
-        DMA_SetCallback(*param_2,FLEXSPI_TransferDMACallback,&DAT_00238c00 + iVar5 * 8);
+        iVar6 = FLEXSPI_GetInstance(param_1);
+        DMA_SetCallback(*param_2,FLEXSPI_TransferDMACallback,&DAT_00238c00 + iVar6 * 8);
         DMA_StartTransfer(*param_2);
         memw();
         memw();
@@ -1413,16 +1422,23 @@ uint I2C_GetStatusFlags(int param_1)
 
 {
   uint uVar1;
-  uint uVar2;
   
   memw();
-  uVar2 = *(uint *)(param_1 + 0x804) & 0xe;
-  if (uVar2 == 0) {
-    uVar2 = *(uint *)(param_1 + 0x804) | 0x20;
+  uVar1 = *(uint *)(param_1 + 0x804);
+  if ((uVar1 & 0xe) == 0) {
+    uVar1 = uVar1 | 0x20;
   }
-  uVar1 = uVar2 & 0xffffff71 | 0x500080;
-  if ((uVar2 & 0x3000) == 0x3000) {
-    uVar1 = uVar2 & 0xffdfcf71 | 0x700080;
+  if ((uVar1 >> 1 & 7) == 3) {
+    uVar1 = uVar1 & 0xffffff71 | 0x80;
+  }
+  if ((uVar1 & 0x600) == 0) {
+    uVar1 = uVar1 | (uint)&DAT_00400000;
+  }
+  if ((uVar1 & (uint)&DAT_00003000) == 0) {
+    uVar1 = uVar1 | (uint)&DAT_00100000;
+  }
+  if ((uVar1 >> 0xc & 3) == 3) {
+    uVar1 = uVar1 & 0xffdfcfff | (uint)&DAT_00200000;
   }
   return uVar1;
 }
@@ -1436,44 +1452,42 @@ void I2C_MasterSetBaudRate(int param_1,uint param_2,uint param_3)
 
 {
   undefined *puVar1;
-  undefined4 uVar2;
-  uint uVar3;
-  undefined *puVar4;
+  uint uVar2;
+  undefined *puVar3;
+  uint uVar4;
   uint uVar5;
-  uint uVar6;
   
   puVar1 = (undefined *)(((param_3 * 10) / (uint)&DAT_001e8480 + 5) / 10);
   if ((param_3 / (uint)puVar1) / param_2 < 4) {
     puVar1 = (undefined *)((param_3 >> 2) / param_2);
   }
   if (&DAT_00010000 < puVar1) {
-    uVar3 = 0;
-    puVar4 = (undefined *)0x0;
+    uVar2 = 0;
+    puVar3 = (undefined *)0x0;
   }
   else {
-    uVar3 = 0;
+    uVar2 = 0;
     if (puVar1 == &DAT_00010000) {
       isync();
     }
-    puVar4 = (undefined *)0x0;
+    puVar3 = (undefined *)0x0;
     if (puVar1 != &DAT_00010001) {
-      uVar3 = ((param_3 * 10) / (param_2 * (int)puVar1) + 5) / 10;
-      uVar3 = (uVar3 < 0x12) * uVar3 + (uint)(uVar3 >= 0x12) * 0x12;
-      puVar4 = puVar1;
+      uVar2 = ((param_3 * 10) / (param_2 * (int)puVar1) + 5) / 10;
+      uVar2 = (uVar2 < 0x12) * uVar2 + (uint)(uVar2 >= 0x12) * 0x12;
+      puVar3 = puVar1;
     }
   }
-  uVar2 = ae_zext16(puVar4 + -1);
   memw();
-  *(undefined4 *)(param_1 + 0x814) = uVar2;
-  uVar5 = (uVar3 >> 1) - 2;
-  uVar6 = uVar5 * 0x10 & 0x70;
-  if ((uVar3 & 1) != 0) {
+  *(uint *)(param_1 + 0x814) = (uint)(puVar3 + -1) & 0xffff;
+  uVar4 = (uVar2 >> 1) - 2;
+  uVar5 = uVar4 * 0x10 & 0x70;
+  if ((uVar2 & 1) != 0) {
     memw();
-    *(uint *)(param_1 + 0x824) = uVar6 | (uVar3 >> 1) - 1 & 7;
+    *(uint *)(param_1 + 0x824) = uVar5 | (uVar2 >> 1) - 1 & 7;
     return;
   }
   memw();
-  *(uint *)(param_1 + 0x824) = uVar6 | uVar5 & 7;
+  *(uint *)(param_1 + 0x824) = uVar5 | uVar4 & 7;
   return;
 }
 
@@ -1500,26 +1514,31 @@ void I2C_MasterSetTimeoutValue(int param_1,int param_2,int param_3)
 
 /* fsl_i2c.c static: polls I2C_GetStatusFlags, kStatus_I2C_* 0xA2D/0xA30/0xA34/0xA35 [inference] */
 
-undefined1  [12] I2C_PendingStatusWait(int param_1)
+undefined4 I2C_PendingStatusWait(int param_1)
 
 {
-  uint uVar1;
-  undefined1 auVar2 [12];
-  undefined4 uVar3;
+  undefined4 uVar1;
+  uint uVar2;
   
+  uVar1 = 0;
   do {
-    uVar1 = I2C_GetStatusFlags(param_1);
-  } while ((uVar1 & 1) == 0);
-  uVar3 = 0;
-  if ((uVar1 >> 6 & 1) != 0) {
-    uVar3 = 0xa30;
+    uVar2 = I2C_GetStatusFlags(param_1);
+    if ((uVar2 >> 0x18 & 1) != 0) {
+      uVar1 = 0xa34;
+    }
+    if ((uVar2 >> 0x19 & 1) != 0) {
+      uVar1 = 0xa35;
+    }
+  } while ((uVar2 & 1) == 0);
+  if ((uVar2 >> 4 & 1) != 0) {
+    uVar1 = 0xa2d;
+  }
+  if ((uVar2 >> 6 & 1) != 0) {
+    uVar1 = 0xa30;
   }
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x3000050;
-  auVar2._4_4_ = 0xa35;
-  auVar2._0_4_ = uVar3;
-  auVar2._8_4_ = 0xa34;
-  return auVar2;
+  return uVar1;
 }
 
 
@@ -1530,20 +1549,29 @@ undefined1  [12] I2C_PendingStatusWait(int param_1)
 int I2C_MasterStart(int param_1,int param_2,uint param_3)
 
 {
-  uint uVar1;
-  int iVar2;
+  int iVar1;
+  uint uVar2;
   
+  iVar1 = 0;
   do {
-    uVar1 = I2C_GetStatusFlags(param_1);
-  } while ((uVar1 & 1) == 0);
-  iVar2 = 0;
-  if ((uVar1 >> 6 & 1) != 0) {
-    iVar2 = 0xa30;
+    uVar2 = I2C_GetStatusFlags(param_1);
+    if ((uVar2 >> 0x18 & 1) != 0) {
+      iVar1 = 0xa34;
+    }
+    if ((uVar2 >> 0x19 & 1) != 0) {
+      iVar1 = 0xa35;
+    }
+  } while ((uVar2 & 1) == 0);
+  if ((uVar2 >> 4 & 1) != 0) {
+    iVar1 = 0xa2d;
+  }
+  if ((uVar2 >> 6 & 1) != 0) {
+    iVar1 = 0xa30;
   }
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x3000050;
-  if (iVar2 != 0) {
-    return iVar2;
+  if (iVar1 != 0) {
+    return iVar1;
   }
   memw();
   *(uint *)(param_1 + 0x828) = param_3 & 1 | param_2 << 1;
@@ -1557,31 +1585,36 @@ int I2C_MasterStart(int param_1,int param_2,uint param_3)
 
 /* fsl_i2c.c: MSTCTL = 4 (stop) [fact for the code] */
 
-undefined1  [12] I2C_MasterStop(int param_1)
+int I2C_MasterStop(int param_1)
 
 {
-  uint uVar1;
-  undefined1 auVar2 [12];
-  int iVar3;
+  int iVar1;
+  uint uVar2;
   
+  iVar1 = 0;
   do {
-    uVar1 = I2C_GetStatusFlags(param_1);
-  } while ((uVar1 & 1) == 0);
-  iVar3 = 0;
-  if ((uVar1 >> 6 & 1) != 0) {
-    iVar3 = 0xa30;
+    uVar2 = I2C_GetStatusFlags(param_1);
+    if ((uVar2 >> 0x18 & 1) != 0) {
+      iVar1 = 0xa34;
+    }
+    if ((uVar2 >> 0x19 & 1) != 0) {
+      iVar1 = 0xa35;
+    }
+  } while ((uVar2 & 1) == 0);
+  if ((uVar2 >> 4 & 1) != 0) {
+    iVar1 = 0xa2d;
+  }
+  if ((uVar2 >> 6 & 1) != 0) {
+    iVar1 = 0xa30;
   }
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x3000050;
-  if (iVar3 != 0) {
-    auVar2._4_4_ = 0xa35;
-    auVar2._0_4_ = iVar3;
-    auVar2._8_4_ = 0xa34;
-    return auVar2;
+  if (iVar1 != 0) {
+    return iVar1;
   }
   memw();
   *(undefined4 *)(param_1 + 0x820) = 4;
-  return ZEXT812(0xa3400000a35) << 0x20;
+  return 0;
 }
 
 
@@ -1598,9 +1631,12 @@ int I2C_MasterWriteBlocking(int param_1,byte *param_2,int param_3,uint param_4)
   
   if (param_3 != 0) {
     do {
+      iVar2 = 0;
       do {
         uVar1 = I2C_GetStatusFlags(param_1);
-        iVar2 = 0;
+        if ((uVar1 >> 0x18 & 1) != 0) {
+          iVar2 = 0xa34;
+        }
         if ((uVar1 >> 0x19 & 1) != 0) {
           iVar2 = 0xa35;
         }
@@ -1656,37 +1692,38 @@ int I2C_MasterWriteBlocking(int param_1,byte *param_2,int param_3,uint param_4)
 int I2C_MasterReadBlocking(int param_1,undefined1 *param_2,int param_3,uint param_4)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int iVar1;
+  uint uVar2;
   undefined1 *local_30;
   
   if (param_3 != 0) {
-    iVar3 = param_1 + 0x608;
+    iVar1 = 0;
     local_30 = param_2;
     do {
       do {
-        uVar1 = I2C_GetStatusFlags(param_1);
-        if ((uVar1 >> 0x18 & 1) != 0) {
-          iVar3 = 0xa34;
+        uVar2 = I2C_GetStatusFlags(param_1);
+        if ((uVar2 >> 0x18 & 1) != 0) {
+          iVar1 = 0xa34;
         }
-      } while ((uVar1 & 1) == 0);
-      if ((uVar1 >> 4 & 1) != 0) {
-        iVar3 = 0xa2d;
+        if ((uVar2 >> 0x19 & 1) != 0) {
+          iVar1 = 0xa35;
+        }
+      } while ((uVar2 & 1) == 0);
+      if ((uVar2 >> 4 & 1) != 0) {
+        iVar1 = 0xa2d;
       }
-      iVar2 = iVar3;
-      if ((uVar1 >> 6 & 1) != 0) {
-        iVar2 = 0xa30;
+      if ((uVar2 >> 6 & 1) != 0) {
+        iVar1 = 0xa30;
       }
       memw();
       *(undefined4 *)(param_1 + 0x804) = 0x3000050;
-      if (iVar2 != 0) {
-        return iVar2;
+      if (iVar1 != 0) {
+        return iVar1;
       }
       memw();
-      uVar1 = (*(uint *)(param_1 + 0x804) & 0xe) >> 1;
-      if (uVar1 != 1) {
-        if ((uVar1 != 3) && (uVar1 != 4)) {
+      uVar2 = (*(uint *)(param_1 + 0x804) & 0xe) >> 1;
+      if (uVar2 != 1) {
+        if ((uVar2 != 3) && (uVar2 != 4)) {
           return 0xa31;
         }
         return 0xa2a;
@@ -1696,35 +1733,38 @@ int I2C_MasterReadBlocking(int param_1,undefined1 *param_2,int param_3,uint para
       local_30 = local_30 + 1;
       param_3 = param_3 + -1;
       if (param_3 == 0) {
-        iVar2 = 0;
+        iVar1 = 0;
         if ((param_4 & 4) == 0) {
           memw();
           *(undefined4 *)(param_1 + 0x820) = 4;
+          iVar1 = 0;
           do {
-            uVar1 = I2C_GetStatusFlags(param_1);
-            iVar3 = 0;
-            if ((uVar1 >> 0x19 & 1) != 0) {
-              iVar3 = 0xa35;
+            uVar2 = I2C_GetStatusFlags(param_1);
+            if ((uVar2 >> 0x18 & 1) != 0) {
+              iVar1 = 0xa34;
             }
-          } while ((uVar1 & 1) == 0);
-          if ((uVar1 >> 4 & 1) != 0) {
-            iVar3 = 0xa2d;
+            if ((uVar2 >> 0x19 & 1) != 0) {
+              iVar1 = 0xa35;
+            }
+          } while ((uVar2 & 1) == 0);
+          if ((uVar2 >> 4 & 1) != 0) {
+            iVar1 = 0xa2d;
           }
-          iVar2 = iVar3;
-          if ((uVar1 >> 6 & 1) != 0) {
-            iVar2 = 0xa30;
+          if ((uVar2 >> 6 & 1) != 0) {
+            iVar1 = 0xa30;
           }
           memw();
           *(undefined4 *)(param_1 + 0x804) = 0x3000050;
         }
-        if (iVar2 != 0) {
-          return iVar2;
+        if (iVar1 != 0) {
+          return iVar1;
         }
       }
       else {
         memw();
         *(undefined4 *)(param_1 + 0x820) = 1;
       }
+      iVar1 = 0;
     } while (param_3 != 0);
   }
   return 0;
@@ -1735,37 +1775,39 @@ int I2C_MasterReadBlocking(int param_1,undefined1 *param_2,int param_3,uint para
 
 /* fsl_i2c.c static [inference] */
 
-undefined1  [12] I2C_MasterCheckStartResponse(int param_1)
+int I2C_MasterCheckStartResponse(int param_1)
 
 {
-  uint uVar1;
-  undefined1 auVar2 [12];
-  undefined1 auVar3 [12];
-  int iVar4;
+  int iVar1;
+  uint uVar2;
   
+  iVar1 = 0;
   do {
-    uVar1 = I2C_GetStatusFlags(param_1);
-  } while ((uVar1 & 1) == 0);
-  iVar4 = param_1 + 0x600;
-  if ((uVar1 >> 6 & 1) != 0) {
-    iVar4 = 0xa30;
+    uVar2 = I2C_GetStatusFlags(param_1);
+    if ((uVar2 >> 0x18 & 1) != 0) {
+      iVar1 = 0xa34;
+    }
+    if ((uVar2 >> 0x19 & 1) != 0) {
+      iVar1 = 0xa35;
+    }
+  } while ((uVar2 & 1) == 0);
+  if ((uVar2 >> 4 & 1) != 0) {
+    iVar1 = 0xa2d;
+  }
+  if ((uVar2 >> 6 & 1) != 0) {
+    iVar1 = 0xa30;
   }
   memw();
   *(undefined4 *)(param_1 + 0x804) = 0x3000050;
-  if (iVar4 != 0) {
-    auVar2._4_4_ = 0xa35;
-    auVar2._0_4_ = iVar4;
-    auVar2._8_4_ = 0xa34;
-    return auVar2;
+  if (iVar1 != 0) {
+    return iVar1;
   }
   memw();
   if ((*(uint *)(param_1 + 0x804) & 0xe) != 6) {
-    return ZEXT812(0xa3400000a35) << 0x20;
+    return 0;
   }
   I2C_MasterStop(param_1);
-  auVar3._8_4_ = 0xa34;
-  auVar3._0_8_ = 0xa3500000a33;
-  return auVar3;
+  return 0xa33;
 }
 
 
@@ -2083,7 +2125,7 @@ void I2C_MasterTransferHandleIRQ(int param_1,char *param_2)
     if (*(int *)(param_2 + 0x24) == 0) {
       memw();
       *(uint *)(param_1 + 0x828) = uVar3;
-      cVar7 = '\0';
+      cVar7 = '\a';
       if (iVar6 != 0) {
         cVar7 = '\x02';
       }
@@ -2094,7 +2136,7 @@ void I2C_MasterTransferHandleIRQ(int param_1,char *param_2)
     }
     memw();
     *(uint *)(param_1 + 0x828) = uVar3 | 1;
-    cVar7 = '\0';
+    cVar7 = '\a';
     if (iVar6 != 0) {
       cVar7 = '\x04';
     }

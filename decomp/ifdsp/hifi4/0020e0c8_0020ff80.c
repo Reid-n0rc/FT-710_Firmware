@@ -1248,9 +1248,13 @@ void I2S_TxTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undef
   memw();
   *(byte *)(param_2 + 0xd) = ((byte)((uint)*(undefined4 *)(param_1 + 0xc00) >> 0x10) & 0x1f) + 1;
   memw();
-  uVar2 = *(uint *)(param_1 + 0xe00);
+  uVar2 = (*(uint *)(param_1 + 0xe00) & 8) >> 3;
+  uVar1 = (undefined1)uVar2;
   *(undefined1 *)(param_2 + 0x10) = 0;
-  *(bool *)(param_2 + 0xe) = (uVar2 & 8) != 0;
+  if (uVar2 != 0) {
+    uVar1 = 1;
+  }
+  *(undefined1 *)(param_2 + 0xe) = uVar1;
   FLEXCOMM_SetIRQHandler(param_1,I2S_TxHandleIRQ,param_2);
   I2S_DisableInterrupts(param_1,5);
   return;
@@ -1396,9 +1400,13 @@ void I2S_RxTransferCreateHandle(int param_1,int param_2,undefined4 param_3,undef
   memw();
   *(byte *)(param_2 + 0xd) = ((byte)((uint)*(undefined4 *)(param_1 + 0xc00) >> 0x10) & 0x1f) + 1;
   memw();
-  uVar2 = *(uint *)(param_1 + 0xe00);
+  uVar2 = (*(uint *)(param_1 + 0xe00) & 8) >> 3;
+  uVar1 = (undefined1)uVar2;
   *(undefined1 *)(param_2 + 0x10) = 0;
-  *(bool *)(param_2 + 0xe) = (uVar2 & 8) != 0;
+  if (uVar2 != 0) {
+    uVar1 = 1;
+  }
+  *(undefined1 *)(param_2 + 0xe) = uVar1;
   FLEXCOMM_SetIRQHandler(param_1,I2S_RxHandleIRQ,param_2);
   I2S_DisableInterrupts(param_1,10);
   return;
@@ -1568,151 +1576,147 @@ void I2S_TxHandleIRQ(int param_1,int *param_2)
 {
   byte bVar1;
   byte bVar2;
-  uint3 uVar3;
-  uint3 *puVar4;
-  uint uVar5;
-  undefined4 uVar6;
-  int iVar7;
+  uint *puVar3;
+  uint uVar4;
+  int iVar5;
   
   memw();
-  uVar5 = *(uint *)(param_1 + 0xe18);
+  uVar4 = *(uint *)(param_1 + 0xe18);
   memw();
   bVar1 = *(byte *)((int)param_2 + 0x35);
   memw();
-  puVar4 = (uint3 *)param_2[(uint)bVar1 * 2 + 5];
+  puVar3 = (uint *)param_2[(uint)bVar1 * 2 + 5];
   memw();
-  iVar7 = param_2[(uint)bVar1 * 2 + 6];
-  if ((uVar5 & 1) != 0) {
+  iVar5 = param_2[(uint)bVar1 * 2 + 6];
+  if ((uVar4 & 1) != 0) {
     memw();
     memw();
     param_2[0xe] = param_2[0xe] + 1;
     memw();
     *(undefined4 *)(param_1 + 0xe04) = 1;
   }
-  if ((uVar5 >> 2 & 1) == 0) {
+  if ((uVar4 >> 2 & 1) == 0) {
     return;
   }
   memw();
   if (*param_2 == 1) {
     memw();
-    if (((*(uint *)(param_1 + 0xe04) & 0x20) != 0) && (iVar7 != 0)) {
+    if (((*(uint *)(param_1 + 0xe04) & 0x20) != 0) && (iVar5 != 0)) {
       do {
         bVar2 = *(byte *)((int)param_2 + 0xd);
         if (bVar2 == 4) {
           memw();
-          *(uint *)(param_1 + 0xe20) = (byte)*puVar4 & 0xf | ((byte)*puVar4 & 0xf0) << 0xc;
-          puVar4 = (uint3 *)((int)puVar4 + 1);
+          *(uint *)(param_1 + 0xe20) = (byte)*puVar3 & 0xf | ((byte)*puVar3 & 0xf0) << 0xc;
+          puVar3 = (uint *)((int)puVar3 + 1);
           memw();
           memw();
           param_2[0xf] = param_2[0xf] + 1;
-          iVar7 = iVar7 + -1;
-          if (iVar7 == 0) goto LAB_0020f687;
+          iVar5 = iVar5 + -1;
+          if (iVar5 == 0) goto LAB_0020f687;
 LAB_0020f61b:
           memw();
-          param_2[(uint)bVar1 * 2 + 6] = iVar7;
+          param_2[(uint)bVar1 * 2 + 6] = iVar5;
           memw();
-          param_2[(uint)bVar1 * 2 + 5] = (int)puVar4;
+          param_2[(uint)bVar1 * 2 + 5] = (int)puVar3;
         }
         else {
           if (bVar2 < 9) {
             memw();
-            uVar5 = (ushort)*puVar4 & 0xff;
+            uVar4 = (ushort)*puVar3 & 0xff;
             if ((char)param_2[3] == '\0') {
               memw();
               *(uint *)(param_1 + 0xe20) =
-                   uVar5 | ((uint)(ushort)*puVar4 & (uint)&DAT_0000ff00) << 8;
-              puVar4 = (uint3 *)((int)puVar4 + 2);
+                   uVar4 | ((uint)(ushort)*puVar3 & (uint)&DAT_0000ff00) << 8;
+              puVar3 = (uint *)((int)puVar3 + 2);
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 2;
-              iVar7 = iVar7 + -2;
+              iVar5 = iVar5 + -2;
             }
             else {
               memw();
-              *(uint *)(param_1 + 0xe20) = uVar5;
-              puVar4 = (uint3 *)((int)puVar4 + 1);
+              *(uint *)(param_1 + 0xe20) = uVar4;
+              puVar3 = (uint *)((int)puVar3 + 1);
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 1;
-              iVar7 = iVar7 + -1;
+              iVar5 = iVar5 + -1;
             }
           }
           else if (bVar2 < 0x11) {
             memw();
             if ((char)param_2[3] == '\0') {
               memw();
-              *(undefined4 *)(param_1 + 0xe20) = *(undefined4 *)puVar4;
-              puVar4 = puVar4 + 1;
+              *(uint *)(param_1 + 0xe20) = *puVar3;
+              puVar3 = puVar3 + 1;
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 4;
-              iVar7 = iVar7 + -4;
+              iVar5 = iVar5 + -4;
             }
             else {
-              uVar6 = ae_zext16(*(undefined4 *)puVar4);
               memw();
-              *(undefined4 *)(param_1 + 0xe20) = uVar6;
-              puVar4 = (uint3 *)((int)puVar4 + 2);
+              *(uint *)(param_1 + 0xe20) = *puVar3 & 0xffff;
+              puVar3 = (uint *)((int)puVar3 + 2);
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 2;
-              iVar7 = iVar7 + -2;
+              iVar5 = iVar5 + -2;
             }
           }
           else if (bVar2 < 0x19) {
             if (*(char *)((int)param_2 + 0xe) == '\0') {
-              uVar3 = *puVar4;
-              puVar4 = (uint3 *)((int)puVar4 + 3);
+              uVar4 = *puVar3;
+              puVar3 = (uint *)((int)puVar3 + 3);
               if (((char)param_2[4] == '\0') || ((char)param_2[3] != '\0')) {
                 memw();
-                *(uint *)(param_1 + 0xe20) = (uint)uVar3;
+                *(uint *)(param_1 + 0xe20) = (uint)(uint3)uVar4;
                 *(undefined1 *)(param_2 + 4) = 1;
               }
               else {
                 memw();
-                *(uint *)(param_1 + 0xe24) = (uint)uVar3;
+                *(uint *)(param_1 + 0xe24) = (uint)(uint3)uVar4;
                 *(undefined1 *)(param_2 + 4) = 0;
               }
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 3;
-              iVar7 = iVar7 + -3;
+              iVar5 = iVar5 + -3;
             }
             else if ((char)param_2[4] == '\0') {
               memw();
               memw();
-              *(undefined4 *)(param_1 + 0xe20) = *(undefined4 *)puVar4;
-              puVar4 = puVar4 + 1;
+              *(uint *)(param_1 + 0xe20) = *puVar3;
+              puVar3 = puVar3 + 1;
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 4;
               *(undefined1 *)(param_2 + 4) = 1;
-              iVar7 = iVar7 + -4;
+              iVar5 = iVar5 + -4;
             }
             else {
               memw();
-              uVar6 = ae_l16ui_n(puVar4,0);
               memw();
-              *(undefined4 *)(param_1 + 0xe24) = uVar6;
-              puVar4 = (uint3 *)((int)puVar4 + 2);
+              *(uint *)(param_1 + 0xe24) = (uint)(ushort)*puVar3;
+              puVar3 = (uint *)((int)puVar3 + 2);
               memw();
               memw();
               param_2[0xf] = param_2[0xf] + 2;
               *(undefined1 *)(param_2 + 4) = 0;
-              iVar7 = iVar7 + -2;
+              iVar5 = iVar5 + -2;
             }
           }
           else {
             memw();
             memw();
-            *(undefined4 *)(param_1 + 0xe20) = *(undefined4 *)puVar4;
-            puVar4 = puVar4 + 1;
+            *(uint *)(param_1 + 0xe20) = *puVar3;
+            puVar3 = puVar3 + 1;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 4;
-            iVar7 = iVar7 + -4;
+            iVar5 = iVar5 + -4;
           }
-          if (iVar7 != 0) goto LAB_0020f61b;
+          if (iVar5 != 0) goto LAB_0020f61b;
 LAB_0020f687:
           memw();
           param_2[(uint)bVar1 * 2 + 6] = 0;
@@ -1732,7 +1736,7 @@ LAB_0020f687:
           }
         }
         memw();
-      } while (((*(uint *)(param_1 + 0xe04) >> 5 & 1) != 0) && (iVar7 != 0));
+      } while (((*(uint *)(param_1 + 0xe04) >> 5 & 1) != 0) && (iVar5 != 0));
     }
   }
   else {
@@ -1810,7 +1814,7 @@ void I2S_RxHandleIRQ(int param_1,undefined4 *param_2)
 {
   byte bVar1;
   byte bVar2;
-  byte *pbVar3;
+  ushort *puVar3;
   uint uVar4;
   int iVar5;
   undefined4 uVar6;
@@ -1820,7 +1824,7 @@ void I2S_RxHandleIRQ(int param_1,undefined4 *param_2)
   memw();
   bVar1 = *(byte *)((int)param_2 + 0x35);
   memw();
-  pbVar3 = (byte *)param_2[(uint)bVar1 * 2 + 5];
+  puVar3 = (ushort *)param_2[(uint)bVar1 * 2 + 5];
   memw();
   iVar5 = param_2[(uint)bVar1 * 2 + 6];
   if ((uVar4 >> 1 & 1) != 0) {
@@ -1839,9 +1843,10 @@ void I2S_RxHandleIRQ(int param_1,undefined4 *param_2)
       bVar2 = *(byte *)((int)param_2 + 0xd);
       if (bVar2 == 4) {
         memw();
-        *pbVar3 = (byte)*(uint *)(param_1 + 0xe30) & 0xf |
-                  (byte)(*(uint *)(param_1 + 0xe30) >> 0xc) & 0xf0;
-        pbVar3 = pbVar3 + 1;
+        *(byte *)puVar3 =
+             (byte)*(uint *)(param_1 + 0xe30) & 0xf |
+             (byte)(*(uint *)(param_1 + 0xe30) >> 0xc) & 0xf0;
+        puVar3 = (ushort *)((int)puVar3 + 1);
         memw();
         memw();
         param_2[0xf] = param_2[0xf] + 1;
@@ -1851,16 +1856,16 @@ LAB_0020f923:
         memw();
         param_2[(uint)bVar1 * 2 + 6] = iVar5;
         memw();
-        param_2[(uint)bVar1 * 2 + 5] = pbVar3;
+        param_2[(uint)bVar1 * 2 + 5] = puVar3;
       }
       else {
         if (bVar2 < 9) {
           memw();
-          uVar4 = *(uint *)(param_1 + 0xe30);
+          uVar6 = *(undefined4 *)(param_1 + 0xe30);
           if (*(char *)(param_2 + 3) == '\0') {
             memw();
-            ae_s16i_n(uVar4 >> 8 & (uint)&DAT_0000ff00 | uVar4 & 0xff,pbVar3,0);
-            pbVar3 = pbVar3 + 2;
+            *puVar3 = (ushort)((uint)uVar6 >> 8) & 0xff00 | (ushort)uVar6 & 0xff;
+            puVar3 = puVar3 + 1;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 2;
@@ -1868,8 +1873,8 @@ LAB_0020f923:
           }
           else {
             memw();
-            *pbVar3 = (byte)uVar4;
-            pbVar3 = pbVar3 + 1;
+            *(byte *)puVar3 = (byte)uVar6;
+            puVar3 = (ushort *)((int)puVar3 + 1);
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 1;
@@ -1880,8 +1885,8 @@ LAB_0020f923:
           memw();
           if (*(char *)(param_2 + 3) == '\0') {
             memw();
-            *(undefined4 *)pbVar3 = *(undefined4 *)(param_1 + 0xe30);
-            pbVar3 = pbVar3 + 4;
+            *(undefined4 *)puVar3 = *(undefined4 *)(param_1 + 0xe30);
+            puVar3 = puVar3 + 2;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 4;
@@ -1889,8 +1894,8 @@ LAB_0020f923:
           }
           else {
             memw();
-            ae_s16i_n(*(undefined4 *)(param_1 + 0xe30),pbVar3,0);
-            pbVar3 = pbVar3 + 2;
+            *puVar3 = (ushort)*(undefined4 *)(param_1 + 0xe30);
+            puVar3 = puVar3 + 1;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 2;
@@ -1909,10 +1914,10 @@ LAB_0020f923:
               *(undefined1 *)(param_2 + 4) = 0;
               uVar6 = *(undefined4 *)(param_1 + 0xe34);
             }
-            *pbVar3 = (byte)uVar6;
-            pbVar3[1] = (byte)((uint)uVar6 >> 8);
-            pbVar3[2] = (byte)((uint)uVar6 >> 0x10);
-            pbVar3 = pbVar3 + 3;
+            *(byte *)puVar3 = (byte)uVar6;
+            *(byte *)((int)puVar3 + 1) = (byte)((uint)uVar6 >> 8);
+            *(byte *)(puVar3 + 1) = (byte)((uint)uVar6 >> 0x10);
+            puVar3 = (ushort *)((int)puVar3 + 3);
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 3;
@@ -1922,8 +1927,8 @@ LAB_0020f923:
             memw();
             *(undefined1 *)(param_2 + 4) = 1;
             memw();
-            *(undefined4 *)pbVar3 = *(undefined4 *)(param_1 + 0xe30);
-            pbVar3 = pbVar3 + 4;
+            *(undefined4 *)puVar3 = *(undefined4 *)(param_1 + 0xe30);
+            puVar3 = puVar3 + 2;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 4;
@@ -1933,8 +1938,8 @@ LAB_0020f923:
             memw();
             *(undefined1 *)(param_2 + 4) = 0;
             memw();
-            ae_s16i_n(*(undefined4 *)(param_1 + 0xe34),pbVar3,0);
-            pbVar3 = pbVar3 + 2;
+            *puVar3 = (ushort)*(undefined4 *)(param_1 + 0xe34);
+            puVar3 = puVar3 + 1;
             memw();
             memw();
             param_2[0xf] = param_2[0xf] + 2;
@@ -1944,8 +1949,8 @@ LAB_0020f923:
         else {
           memw();
           memw();
-          *(undefined4 *)pbVar3 = *(undefined4 *)(param_1 + 0xe30);
-          pbVar3 = pbVar3 + 4;
+          *(undefined4 *)puVar3 = *(undefined4 *)(param_1 + 0xe30);
+          puVar3 = puVar3 + 2;
           memw();
           memw();
           param_2[0xf] = param_2[0xf] + 4;
@@ -2288,7 +2293,7 @@ undefined4 I2S_StartTransferDMA(int param_1,int *param_2)
     memw();
     if (*(undefined **)(&DAT_00238c88 + iVar4) < (undefined *)0x1001) {
       memw();
-      puStack_2c = (undefined *)ae_zext16(*(undefined4 *)(&DAT_00238c88 + iVar4));
+      puStack_2c = (undefined *)(*(uint *)(&DAT_00238c88 + iVar4) & 0xffff);
     }
     else {
       memw();
@@ -2296,7 +2301,7 @@ undefined4 I2S_StartTransferDMA(int param_1,int *param_2)
       if ((*(uint *)(&DAT_00238c88 + iVar4) >> 1 & 3) != 0) {
         uVar5 = uVar5 & (uint)&DAT_0000fffc;
       }
-      puStack_2c = (undefined *)ae_zext16(uVar5);
+      puStack_2c = (undefined *)(uVar5 & 0xffff);
     }
   }
   else {

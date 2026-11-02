@@ -9,7 +9,7 @@ Reads only committed files, so anyone can re-run it after a re-export (tools/boo
   tools/ghidra/sfr_<chip>.tsv    peripheral-register labels (tools/sfr_table.py), for the "registers named" column
   decomp/sdr/progress.tsv        SDR FPGA cells per recognized block (tools/sdr_progress.py), for the SDR table (if present)
   src/<image>/status.tsv         per-function result of the recreated source (T24, tools/equiv_m33.py,
-                                 tools/equiv_main_emu.py and
+                                 tools/equiv_main_emu.py, tools/equiv_hifi4_emu.py and
                                  tools/equiv_display_emu.py), for the
                                  "Re-implemented" column (images without one show "not started")
 
@@ -63,8 +63,9 @@ IMAGES = [
     ('ifdsp/hifi4', 'IFDSP HiFi4 (RT685)', 'ifdsp', 'tools/ghidra/sfr_rt685_hifi4.tsv', [(0x40000000, 0x40160000)]),
 ]
 # T24 recreated source per image: src/<dir>/status.tsv (tools/equiv_m33.py, tools/equiv_display_emu.py,
-# tools/equiv_main_emu.py); images not listed are not started
-RECREATED = {'ifdsp/m33': 'src/ifdsp_m33/status.tsv', 'display': 'src/display/status.tsv', 'main': 'src/main/status.tsv'}
+# tools/equiv_main_emu.py, tools/equiv_hifi4_emu.py); images not listed are not started
+RECREATED = {'ifdsp/m33': 'src/ifdsp_m33/status.tsv', 'display': 'src/display/status.tsv', 'main': 'src/main/status.tsv',
+             'ifdsp/hifi4': 'src/ifdsp_hifi4/status.tsv'}
 DEFAULT_NAME = re.compile(r'^(thunk_)?FUN_[0-9a-f]+$')
 CALL = re.compile(r'\b([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 IDENT = re.compile(r'\b[A-Za-z_][A-Za-z0-9_]*\b')

@@ -17,26 +17,21 @@ void regfile_capture_append(uint param_1,undefined4 param_2)
 
 {
   ushort *puVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
+  ushort uVar2;
   
   if (param_1 < 2) {
     puVar1 = (ushort *)(&DAT_002390e0)[param_1];
-    uVar3 = ae_l16ui_n(puVar1,0);
-    uVar4 = ae_l16ui_n(puVar1,2);
-    if (((uVar3 & 1) != 0) && (uVar4 < 0x3ff)) {
-      *(undefined4 *)(puVar1 + uVar4 * 2 + 2) = param_2;
-      iVar2 = ae_l16ui_n(puVar1,2);
-      uVar3 = ae_zext16(iVar2 + 1);
-      if (0x3fe < uVar3) {
+    if (((*puVar1 & 1) != 0) && (puVar1[1] < 0x3ff)) {
+      *(undefined4 *)(puVar1 + (uint)puVar1[1] * 2 + 2) = param_2;
+      uVar2 = puVar1[1] + 1;
+      if (0x3fe < uVar2) {
         if ((*puVar1 & 2) != 0) {
-          uVar3 = 0;
+          uVar2 = 0;
         }
-        ae_s16i_n(uVar3,puVar1,2);
+        puVar1[1] = uVar2;
         return;
       }
-      ae_s16i_n(uVar3,puVar1,2);
+      puVar1[1] = uVar2;
       return;
     }
   }

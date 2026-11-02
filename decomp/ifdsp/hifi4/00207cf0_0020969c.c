@@ -303,7 +303,6 @@ void ACMP_Init(dword *param_1,uint *param_2)
 
 {
   uint uVar1;
-  uint uVar2;
   
   if (param_1 == &CMP_VERID) {
     memw();
@@ -321,20 +320,17 @@ void ACMP_Init(dword *param_1,uint *param_2)
   if ((char)param_2[1] != '\0') {
     uVar1 = param_1[2] & 0xf9ffe1fc | (uint)&DAT_00001000;
   }
-  uVar2 = 0;
   if (*(char *)((int)param_2 + 5) != '\0') {
-    uVar2 = uVar1 | 0x800;
+    uVar1 = uVar1 | 0x800;
   }
-  uVar1 = *param_2;
   if (*(char *)((int)param_2 + 6) != '\0') {
-    uVar1 = uVar2 | 0x400;
+    uVar1 = uVar1 | 0x400;
   }
-  uVar2 = 0x200;
   if (*(char *)((int)param_2 + 7) != '\0') {
-    uVar2 = uVar1 | 0x200;
+    uVar1 = uVar1 | 0x200;
   }
   memw();
-  param_1[2] = uVar2 | *param_2 & 3;
+  param_1[2] = uVar1 | *param_2 & 3;
   return;
 }
 
@@ -487,14 +483,19 @@ void ACMP_EnableWindowMode(int param_1,int param_2)
 
 /* fsl_acmp.c order [inference] */
 
-void ACMP_SetFilterConfig(int param_1,int param_2)
+void ACMP_SetFilterConfig(int param_1,char *param_2)
 
 {
+  uint uVar1;
+  
   memw();
+  uVar1 = *(uint *)(param_1 + 8) & 0xf9007f8f;
+  if (*param_2 != '\0') {
+    uVar1 = uVar1 | (uint)&DAT_00008000;
+  }
   memw();
   *(uint *)(param_1 + 8) =
-       *(uint *)(param_1 + 8) & 0xf9007f8f | (uint)&DAT_00008000 |
-       (*(uint *)(param_2 + 4) & 7) << 4 | (*(uint *)(param_2 + 8) & 0xff) << 0x10;
+       uVar1 | (*(uint *)(param_2 + 4) & 7) << 4 | (*(uint *)(param_2 + 8) & 0xff) << 0x10;
   return;
 }
 
@@ -699,14 +700,17 @@ void ACMP_SetDiscreteModeConfig(int param_1,char *param_2)
 {
   uint uVar1;
   
-  uVar1 = *(int *)(param_2 + 0xc) << 8;
+  uVar1 = (uint)(*param_2 == '\0') << 0x1c;
+  if (param_2[1] == '\0') {
+    uVar1 = uVar1 | 0x1000000;
+  }
   if (param_2[2] != '\0') {
-    uVar1 = (uint)(*param_2 == '\0') << 0x1c | 0x1100000;
+    uVar1 = uVar1 | (uint)&DAT_00100000;
   }
   memw();
   *(uint *)(param_1 + 0x14) =
        uVar1 | (*(uint *)(param_2 + 0x10) & 7) << 4 |
-       *(int *)(param_2 + 0xc) << 8 & 0x700U |
+       (*(uint *)(param_2 + 0xc) & 7) << 8 |
        (*(uint *)(param_2 + 4) & 1) << 0x10 | (*(uint *)(param_2 + 8) & 7) << 0xc;
   return;
 }

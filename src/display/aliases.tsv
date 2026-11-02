@@ -128,3 +128,28 @@ sd_drive_attach	0x2013e6d0	[fact] driver op 5 (b 0x2013E6D0 at 0x2013E7D0): slot
 sd_lock	0x2013f9f4	[fact] b itron_loc_cpu; called around the drive flag updates of sd_drive_mount and sd_drive_unmount; no Ghidra entry
 sd_unlock	0x2013f9f8	[fact] b itron_unl_cpu; the pair of sd_lock; no Ghidra entry
 sd_card_write_protected	0x2013fd70	[fact] (index): bit 5 of +0x68 of the drive 0x20808B60[index], 0 without a handle +0x24; called from 0x20103BC4 (b); no Ghidra entry
+# T24 USB track (scope, USB, text terminal, NORTi helpers): tail-call targets without a Ghidra entry, and FUN_ names
+scope_obj_store_record	0x2015781c	[fact] scope_store_frame 0x201342EC: mov r1, r0; ldr r0, =0x2047963C; b 0x2015781C (app/scope_obj.c)
+scope_obj_set_2e04_thunk	0x201578c4	[fact] b 0x20162D48 (FUN_20162d48: strb r1, [r0, #0x2E04]); called from 0x20134454 and 0x20158470
+scope_obj_freeze_b_set	0x201578f0	[fact] scope_freeze_b_set 0x20134304 tail-calls it; strb r1, [r0, #0x9C7D]
+scope_obj_palette_set	0x201578fc	[fact] scope_palette_set 0x201342DC tail-calls it with (obj, a, b)
+scope_obj_redraw_history	0x20157a00	[fact] scope3d_redraw_history 0x20134318 tail-calls it
+scope_obj_freeze_a_set	0x20157bc4	[fact] scope_freeze_a_set 0x201342F8 tail-calls it; strb r1, [r0, #0x9C7C]
+scope_obj_layout_set	0x20157bd0	[fact] scope3d_layout_set 0x20134480 tail-calls it
+scope_obj_7f8c	FUN_20157f8c	[fact] 0x2013433C tail-calls it with (obj, a)
+scope_obj_history_push	0x20158010	[fact] scope_history_push 0x20134348 tail-calls it
+scope_obj_add_line	0x201580e0	[fact] scope3d_add_line 0x20134328 tail-calls it
+scope_obj_init	0x20158330	[fact] scope_objects_init 0x201342CC: b 0x20158330 after clearing the object
+scope_obj_set_2e00	FUN_201584f8	[fact] halfwords from 0x20428294 / 0x20428298 into +0x2E00, +0x3006, +0x3208 (app/scope_obj.c)
+scope_obj_set_2e02	FUN_20158544	[fact] halfword from 0x2042829C / 0x204282A0 into +0x2E02 (app/scope_obj.c)
+scope_obj_apply_2e00	0x20162d54	[fact] the tail call of 0x20158538: FUN_20157634(obj + 0x2D00, byte +0x2E04, obj + 0x2E00)
+scope_obj_apply_2e02	0x20162d68	[fact] the tail call of 0x2015855C (not recreated)
+scope_obj_line_markers	0x2016340c	[fact] scope3d_line_markers 0x20134408 tail-calls it; obj + 0x100E4 + 0x54 * i
+scope_obj_vscale	0x201634b8	[fact] scope3d_vscale 0x20134358 tail-calls it
+scope_obj_wf_row_addr	0x201634f0	[fact] scope_wf_row_addr 0x20134434 tail-calls it
+scope_obj_line_offset	0x20163564	[fact] scope3d_line_offset 0x20134368 tail-calls it
+scope_obj_7f8c_thunk	FUN_2013433c	[fact] ldr r0, =0x2047963C; b 0x20157F8C
+scope_set_2e04_2e00	FUN_20134444	[fact] bl 0x201578C4 (obj, v), then b 0x201584F8 (obj, on)
+scope_set_2e00	FUN_20134468	[fact] ldr r0, =0x2047963C; b 0x201584F8
+scope_set_2e02	FUN_20134474	[fact] ldr r0, =0x2047963C; b 0x20158544
+scope_obj_set_2e04	FUN_20162d48	[fact] strb r1, [r0, #0x2E04]; bx lr (names_display.T24usb.tsv renames it; the resolver then falls back to this name)

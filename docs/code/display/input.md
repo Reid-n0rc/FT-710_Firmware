@@ -742,3 +742,25 @@ Single helpers from the "misc" section of `tools/ghidra/names_display.T23e2.tsv`
 | 0x2015F0B4 | `kbdobj_activate` | (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) **[fact]** |
 | 0x2015F0C4 | `kbdobj_flush` | (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all **[fact]** |
 | 0x2015F0CC | `kbdobj_ctor` | (obj): constructs the key ring at +0x88 (ring16_ctor) **[fact]** |
+
+### USB host, HID and keyboard parts, recreated (T24 USB track)
+
+`src/display/drivers/usb_host.c`, `usb_hid.c`, `usb_kbd.c`, `usb_kbd_layout.c`. Found on the way **[fact: the
+disassembly at the addresses given]**:
+
+- `hid_item_data` 0x2013BC30 reads a size-code-3 (four-byte) item as two bytes, like size code 2, and skips five bytes
+  (prefix and four data bytes): the upper half of a 32-bit item value is lost (0x2013BC60..0x2013BC94). The table above
+  says "size code 0/1/2/4 bytes"; that is the skip, not the read.
+- `usbhid_find_int_in` 0x2013C7C4 looks at endpoint entries 1..n-1 of the configuration record (12-byte entries at
+  +0x860, count at +0x1C); entry 0 is never examined.
+- `usbh_get_hub_descriptor` 0x2013B484 sends wValue 0, not the hub class's descriptor type 0x29 << 8.
+- `usbh_pipe_mark_done` 0x2013B2F8 checks one slot per port (the loop runs once: `cmp r2, #1; blt`).
+- `usbh_pipe_xfer` 0x20139624 does not use its port argument; the pipe's word +0x18 picks read or write.
+- `usbkbd_set_layout` 0x20107378 maps 11 and above to table 0 (JPN).
+- The layout builders 0x201090A8..0x2010A62F write whole 12-byte entries and only their own table; per table they change
+  20 (POR(BR)) to 48 (FRA(AZ)) of the base entries [fact: emulated on tables of 0x00 and 0xFF,
+  `src/display/drivers/usb_kbd_layout.c`]. The second FRA(QW) builder 0x20109944, which nothing calls, writes 23 entries
+  where the one in use writes 25.
+
+Not recreated yet: the port and BRDY tasks, the port interrupt body, the pipe read and write paths, the control
+transfer, enumeration, `hid_report_desc_parse`, `usbhid_device_task`, `usbhid_class_attach`, the keyboard report and FIFO.

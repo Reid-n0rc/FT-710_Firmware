@@ -374,90 +374,86 @@ ulonglong FUN_00236540(uint param_1,uint param_2,uint param_3,uint param_4)
   uint uVar3;
   uint uVar4;
   uint uVar5;
-  uint uVar6;
-  int iVar7;
+  int iVar6;
+  uint uVar7;
   uint uVar8;
   uint uVar9;
   uint uVar10;
   uint uVar11;
-  uint uVar12;
   
   if (param_4 == 0) {
     if (param_2 < param_3) {
-      uVar10 = LZCOUNT(param_3);
+      uVar9 = LZCOUNT(param_3);
       uVar2 = param_1;
-      if (uVar10 != 0) {
-        iVar7 = 0x20 - (uVar10 & 0x1f);
-        param_3 = param_3 << 0x20 - iVar7;
-        uVar2 = param_1 << 0x20 - iVar7;
-        param_2 = (uint)(CONCAT44(param_2,param_1) >> iVar7);
+      if (uVar9 != 0) {
+        iVar6 = 0x20 - (uVar9 & 0x1f);
+        param_3 = param_3 << 0x20 - iVar6;
+        uVar2 = param_1 << 0x20 - iVar6;
+        param_2 = (uint)(CONCAT44(param_2,param_1) >> iVar6);
       }
-      iVar7 = ae_zext16(param_3);
-      uVar9 = param_3 >> 0x10;
-      uVar8 = iVar7 * (param_2 / uVar9);
-      uVar12 = (uint)(CONCAT44(param_2 % uVar9,uVar2) >> 0x10);
-      if (((uVar12 < uVar8) && (uVar12 = uVar12 + param_3, param_3 <= uVar12)) && (uVar12 < uVar8))
+      uVar8 = param_3 >> 0x10;
+      uVar7 = (param_3 & 0xffff) * (param_2 / uVar8);
+      uVar11 = (uint)(CONCAT44(param_2 % uVar8,uVar2) >> 0x10);
+      if (((uVar11 < uVar7) && (uVar11 = uVar11 + param_3, param_3 <= uVar11)) && (uVar11 < uVar7))
       {
-        uVar12 = param_3 + uVar12;
+        uVar11 = param_3 + uVar11;
       }
-      uVar11 = iVar7 * ((uVar12 - uVar8) / uVar9);
-      uVar2 = ae_zext16(uVar2);
-      uVar2 = uVar2 | (uVar12 - uVar8) % uVar9 << 0x10;
-      if (((uVar2 < uVar11) && (uVar2 = uVar2 + param_3, param_3 <= uVar2)) && (uVar2 < uVar11)) {
-        return (ulonglong)((param_3 + uVar2) - uVar11 >> (uVar10 & 0x1f));
+      uVar10 = (param_3 & 0xffff) * ((uVar11 - uVar7) / uVar8);
+      uVar2 = uVar2 & 0xffff | (uVar11 - uVar7) % uVar8 << 0x10;
+      if (((uVar2 < uVar10) && (uVar2 = uVar2 + param_3, param_3 <= uVar2)) && (uVar2 < uVar10)) {
+        return (ulonglong)((param_3 + uVar2) - uVar10 >> (uVar9 & 0x1f));
       }
-      return (ulonglong)(uVar2 - uVar11 >> (uVar10 & 0x1f));
+      return (ulonglong)(uVar2 - uVar10 >> (uVar9 & 0x1f));
     }
     if (param_3 == 0) {
       param_3 = 1 / param_3;
     }
     uVar2 = LZCOUNT(param_3);
     if (uVar2 == 0) {
-      uVar10 = param_3 >> 0x10;
+      uVar9 = param_3 >> 0x10;
       param_2 = param_2 - param_3;
-      iVar7 = ae_zext16(param_3);
+      uVar8 = param_3 & 0xffff;
     }
     else {
       param_3 = param_3 << 0x20 - (0x20 - (uVar2 & 0x1f));
-      uVar9 = param_2 >> (0x20 - uVar2 & 0x1f);
-      uVar10 = param_3 >> 0x10;
-      iVar7 = 0x20 - (uVar2 & 0x1f);
-      uVar1 = CONCAT44(param_2,param_1) >> iVar7;
-      param_1 = param_1 << 0x20 - iVar7;
-      iVar7 = ae_zext16(param_3);
-      uVar12 = iVar7 * (uVar9 / uVar10);
-      uVar9 = (uint)(((ulonglong)(uVar9 % uVar10) << 0x20) >> 0x10) | (uint)(uVar1 >> 0x10) & 0xffff
-      ;
-      if (((uVar9 < uVar12) && (uVar9 = uVar9 + param_3, param_3 <= uVar9)) && (uVar9 < uVar12)) {
-        uVar9 = param_3 + uVar9;
+      uVar11 = param_2 >> (0x20 - uVar2 & 0x1f);
+      uVar9 = param_3 >> 0x10;
+      iVar6 = 0x20 - (uVar2 & 0x1f);
+      uVar1 = CONCAT44(param_2,param_1) >> iVar6;
+      param_1 = param_1 << 0x20 - iVar6;
+      uVar8 = param_3 & 0xffff;
+      uVar7 = uVar8 * (uVar11 / uVar9);
+      uVar11 = (uint)(((ulonglong)(uVar11 % uVar9) << 0x20) >> 0x10) |
+               (uint)(uVar1 >> 0x10) & 0xffff;
+      if (((uVar11 < uVar7) && (uVar11 = uVar11 + param_3, param_3 <= uVar11)) && (uVar11 < uVar7))
+      {
+        uVar11 = param_3 + uVar11;
       }
-      param_2 = ae_zext16((int)uVar1);
-      uVar8 = iVar7 * ((uVar9 - uVar12) / uVar10);
-      param_2 = param_2 | (uVar9 - uVar12) % uVar10 << 0x10;
-      if (((param_2 < uVar8) && (param_2 = param_2 + param_3, param_3 <= param_2)) &&
-         (param_2 < uVar8)) {
+      uVar10 = uVar8 * ((uVar11 - uVar7) / uVar9);
+      param_2 = (uint)uVar1 & 0xffff | (uVar11 - uVar7) % uVar9 << 0x10;
+      if (((param_2 < uVar10) && (param_2 = param_2 + param_3, param_3 <= param_2)) &&
+         (param_2 < uVar10)) {
         param_2 = param_3 + param_2;
       }
-      param_2 = param_2 - uVar8;
+      param_2 = param_2 - uVar10;
     }
-    uVar12 = iVar7 * (param_2 / uVar10);
-    uVar9 = (uint)(CONCAT44(param_2 % uVar10,param_1) >> 0x10);
-    if (((uVar9 < uVar12) && (uVar9 = uVar9 + param_3, param_3 <= uVar9)) && (uVar9 < uVar12)) {
-      uVar9 = param_3 + uVar9;
+    uVar7 = uVar8 * (param_2 / uVar9);
+    uVar11 = (uint)(CONCAT44(param_2 % uVar9,param_1) >> 0x10);
+    if (((uVar11 < uVar7) && (uVar11 = uVar11 + param_3, param_3 <= uVar11)) && (uVar11 < uVar7)) {
+      uVar11 = param_3 + uVar11;
     }
-    uVar11 = iVar7 * ((uVar9 - uVar12) / uVar10);
-    uVar8 = ae_zext16(param_1);
-    uVar8 = uVar8 | (uVar9 - uVar12) % uVar10 << 0x10;
-    if (((uVar8 < uVar11) && (uVar8 = uVar8 + param_3, param_3 <= uVar8)) && (uVar8 < uVar11)) {
-      return (ulonglong)((param_3 + uVar8) - uVar11 >> (uVar2 & 0x1f));
+    uVar8 = uVar8 * ((uVar11 - uVar7) / uVar9);
+    uVar9 = param_1 & 0xffff | (uVar11 - uVar7) % uVar9 << 0x10;
+    if (((uVar9 < uVar8) && (uVar9 = uVar9 + param_3, param_3 <= uVar9)) && (uVar9 < uVar8)) {
+      return (ulonglong)((param_3 + uVar9) - uVar8 >> (uVar2 & 0x1f));
     }
-    return (ulonglong)(uVar8 - uVar11 >> (uVar2 & 0x1f));
+    return (ulonglong)(uVar9 - uVar8 >> (uVar2 & 0x1f));
   }
   if (param_2 < param_4) {
     return CONCAT44(param_2,param_1);
   }
   uVar2 = LZCOUNT(param_4);
-  uVar10 = 0x20 - uVar2;
+  uVar9 = 0x20 - uVar2;
   if (uVar2 == 0) {
     uVar2 = param_1 - param_3;
     if ((param_2 <= param_4) && (param_1 < param_3)) {
@@ -468,61 +464,59 @@ ulonglong FUN_00236540(uint param_1,uint param_2,uint param_3,uint param_4)
     }
     return CONCAT44((param_2 - param_4) + -1,uVar2);
   }
-  uVar8 = param_2 >> (uVar10 & 0x1f);
-  iVar7 = 0x20 - (uVar2 & 0x1f);
-  uVar1 = CONCAT44(param_2,param_1) >> iVar7;
-  uVar9 = (uint)(CONCAT44(param_4,param_3) >> iVar7);
-  iVar7 = ae_zext16(uVar9);
-  uVar12 = uVar9 >> 0x10;
-  uVar5 = uVar8 / uVar12;
-  uVar3 = iVar7 * uVar5;
-  uVar8 = (uint)(((ulonglong)(uVar8 % uVar12) << 0x20) >> 0x10) | (uint)(uVar1 >> 0x10) & 0xffff;
-  uVar4 = ae_zext16((int)uVar1);
+  uVar7 = param_2 >> (uVar9 & 0x1f);
+  iVar6 = 0x20 - (uVar2 & 0x1f);
+  uVar1 = CONCAT44(param_2,param_1) >> iVar6;
+  uVar8 = (uint)(CONCAT44(param_4,param_3) >> iVar6);
+  uVar11 = uVar8 >> 0x10;
+  uVar4 = uVar7 / uVar11;
+  uVar3 = (uVar8 & 0xffff) * uVar4;
+  uVar7 = (uint)(((ulonglong)(uVar7 % uVar11) << 0x20) >> 0x10) | (uint)(uVar1 >> 0x10) & 0xffff;
+  uVar10 = uVar4;
+  if (uVar7 < uVar3) {
+    uVar7 = uVar8 + uVar7;
+    uVar10 = uVar4 - 1;
+    if ((uVar8 <= uVar7) && (uVar7 < uVar3)) {
+      uVar10 = uVar4 - 2;
+      uVar7 = uVar8 + uVar7;
+    }
+  }
+  uVar5 = (uVar7 - uVar3) / uVar11;
+  uVar4 = (uVar8 & 0xffff) * uVar5;
+  iVar6 = 0x20 - (uVar2 & 0x1f);
+  uVar7 = (uint)uVar1 & 0xffff | (uVar7 - uVar3) % uVar11 << 0x10;
   uVar11 = uVar5;
-  if (uVar8 < uVar3) {
-    uVar8 = uVar9 + uVar8;
+  if (uVar7 < uVar4) {
+    uVar7 = uVar8 + uVar7;
     uVar11 = uVar5 - 1;
-    if ((uVar9 <= uVar8) && (uVar8 < uVar3)) {
+    if ((uVar8 <= uVar7) && (uVar7 < uVar4)) {
       uVar11 = uVar5 - 2;
-      uVar8 = uVar9 + uVar8;
+      uVar7 = uVar8 + uVar7;
     }
   }
-  uVar6 = (uVar8 - uVar3) / uVar12;
-  uVar5 = iVar7 * uVar6;
-  iVar7 = 0x20 - (uVar2 & 0x1f);
-  uVar4 = uVar4 | (uVar8 - uVar3) % uVar12 << 0x10;
-  uVar12 = uVar6;
-  if (uVar4 < uVar5) {
-    uVar4 = uVar9 + uVar4;
-    uVar12 = uVar6 - 1;
-    if ((uVar9 <= uVar4) && (uVar4 < uVar5)) {
-      uVar12 = uVar6 - 2;
-      uVar4 = uVar9 + uVar4;
-    }
-  }
-  param_3 = param_3 << 0x20 - iVar7;
-  uVar12 = uVar12 | uVar11 << 0x10;
-  uVar8 = uVar12 * param_3;
-  uVar12 = (uint)((ulonglong)uVar12 * (ulonglong)param_3 >> 0x20);
-  uVar4 = uVar4 - uVar5;
-  if (uVar4 < uVar12) {
-    param_1 = param_1 << 0x20 - iVar7;
+  param_3 = param_3 << 0x20 - iVar6;
+  uVar11 = uVar11 | uVar10 << 0x10;
+  uVar10 = uVar11 * param_3;
+  uVar11 = (uint)((ulonglong)uVar11 * (ulonglong)param_3 >> 0x20);
+  uVar7 = uVar7 - uVar4;
+  if (uVar7 < uVar11) {
+    param_1 = param_1 << 0x20 - iVar6;
   }
   else {
-    param_1 = param_1 << 0x20 - iVar7;
-    if ((uVar4 != uVar12) || (uVar8 <= param_1)) goto LAB_0023661b;
+    param_1 = param_1 << 0x20 - iVar6;
+    if ((uVar7 != uVar11) || (uVar10 <= param_1)) goto LAB_0023661b;
   }
-  uVar12 = (uVar12 - uVar9) - (uint)(uVar8 < uVar8 - param_3);
-  uVar8 = uVar8 - param_3;
+  uVar11 = (uVar11 - uVar8) - (uint)(uVar10 < uVar10 - param_3);
+  uVar10 = uVar10 - param_3;
 LAB_0023661b:
-  uVar8 = param_1 - uVar8;
-  if (uVar8 <= param_1) {
-    return CONCAT44(uVar4 - uVar12 >> (uVar2 & 0x1f),
-                    uVar8 >> (uVar2 & 0x1f) | uVar4 - uVar12 << 0x20 - (0x20 - (uVar10 & 0x1f)));
+  uVar10 = param_1 - uVar10;
+  if (uVar10 <= param_1) {
+    return CONCAT44(uVar7 - uVar11 >> (uVar2 & 0x1f),
+                    uVar10 >> (uVar2 & 0x1f) | uVar7 - uVar11 << 0x20 - (0x20 - (uVar9 & 0x1f)));
   }
-  uVar9 = (uVar4 - uVar12) - 1;
-  return CONCAT44(uVar9 >> (uVar2 & 0x1f),
-                  uVar8 >> (uVar2 & 0x1f) | uVar9 << 0x20 - (0x20 - (uVar10 & 0x1f)));
+  uVar8 = (uVar7 - uVar11) - 1;
+  return CONCAT44(uVar8 >> (uVar2 & 0x1f),
+                  uVar10 >> (uVar2 & 0x1f) | uVar8 << 0x20 - (0x20 - (uVar9 & 0x1f)));
 }
 
 

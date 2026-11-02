@@ -13,150 +13,26 @@ void scope_history_reset(void)
 }
 
 
-// ===== scope3d_redraw_history @ 20134318 (452 bytes)
+// ===== scope3d_redraw_history @ 20134318 (16 bytes)
 
 /* every N frames: re-project lines 29..2 (14..2) */
 
-void scope3d_redraw_history(int param_1,int param_2)
+void scope3d_redraw_history(undefined4 param_1,undefined4 param_2)
 
 {
-  int iVar1;
-  int iVar2;
-  int *piVar3;
-  int iVar4;
-  int *piVar5;
-  
-  if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-                    /* returns idx and advances it [doc] */
-    ring30_advance();
-    iVar2 = 0x1d;
-    do {
-      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
-      iVar4 = iVar2 * 800 + 0x2048395f;
-                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
-      __aeabi_memclr(iVar4,800);
-      if (param_1 == 8) {
-        if (param_2 == 0) {
-          FUN_20133ee8(iVar2,iVar4,&DAT_2048a0f8 + iVar1 * 800);
-        }
-        else {
-          FUN_20133efc();
-        }
-      }
-      else if ((param_1 == 9) && (iVar2 < 0xf)) {
-        FUN_20133f24(iVar2,iVar4,&DAT_2048a0f8 + iVar1 * 800);
-      }
-      iVar2 = iVar2 + -1;
-    } while (1 < iVar2);
-    iVar2 = 0x1d;
-    do {
-      iVar1 = ring30_offset(&DAT_20490890,-iVar2);
-      piVar3 = (int *)(&DAT_2048feb8 + iVar1 * 0x54);
-      piVar5 = (int *)(iVar2 * 0x54 + 0x20489720);
-      if ((param_1 == 8) || ((param_1 == 9 && (iVar2 < 0xf)))) {
-        iVar1 = *piVar3;
-        iVar4 = 0;
-        if (0 < iVar1) {
-          do {
-            if (param_1 == 8) {
-              if (param_2 == 0) goto LAB_20157b88;
-              FUN_20133f58(iVar2,piVar3 + iVar4 + 1,piVar5 + iVar4 + 1);
-            }
-            else if ((param_1 == 9) && (iVar2 < 0xf)) {
-LAB_20157b88:
-              FUN_20133f44(iVar2);
-            }
-            iVar1 = *piVar3;
-            iVar4 = iVar4 + 1;
-          } while (iVar4 < iVar1);
-        }
-        *piVar5 = iVar1;
-      }
-      iVar2 = iVar2 + -1;
-    } while (1 < iVar2);
-  }
+  scope_obj_redraw_history(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
-// ===== scope3d_add_line @ 20134328 (588 bytes)
+// ===== scope3d_add_line @ 20134328 (20 bytes)
 
 /* newest line = per-point max of the last N history rows */
 
-void scope3d_add_line(int param_1,int param_2,int param_3)
+void scope3d_add_line(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  int iVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  undefined *puVar5;
-  int *piVar6;
-  undefined *puVar7;
-  
-  iVar1 = DAT_20489774;
-  if (((DAT_204832b8 == '\0') && (DAT_204832b9 == '\0')) && (DAT_204832ba == '\0')) {
-    iVar1 = ring30_offset(&DAT_20490890,0xffffffff,param_2,param_3,param_3);
-    puVar7 = &DAT_2048a0f8 + iVar1 * 800;
-    iVar2 = ring20_offset(&DAT_20494768,0);
-    memcpy(puVar7,&DAT_20490894 + iVar2 * 800,800);
-    iVar2 = 1;
-    if (1 < param_2) {
-      do {
-        iVar3 = ring20_offset(&DAT_20494768,-iVar2);
-        iVar4 = 0;
-        do {
-          if ((byte)puVar7[iVar4] < (byte)(&DAT_20490894)[iVar4 + iVar3 * 800]) {
-            puVar7[iVar4] = (&DAT_20490894)[iVar4 + iVar3 * 800];
-          }
-          iVar4 = iVar4 + 1;
-        } while (iVar4 < 800);
-        iVar2 = iVar2 + 1;
-      } while (iVar2 < param_2);
-    }
-    iVar2 = 0;
-    if (0 < DAT_20494714) {
-      puVar5 = &DAT_2047963c + iVar1 * 0x54;
-      do {
-        iVar4 = ring20_offset(&DAT_20494768,-iVar2);
-        iVar3 = iVar2 * 4;
-        iVar2 = iVar2 + 1;
-        *(undefined4 *)(puVar5 + iVar3 + 0x16880) = *(undefined4 *)(&DAT_20494718 + iVar4 * 4);
-      } while (iVar2 < DAT_20494714);
-    }
-    *(int *)(&DAT_2048feb8 + iVar1 * 0x54) = DAT_20494714;
-                    /* zero fill with alignment fix-up, 32-byte blocks [doc] */
-    __aeabi_memclr(&DAT_20483c7f,800);
-    if (param_1 == 8) {
-      if (param_3 == 0) {
-        FUN_20133ec0(1,&DAT_20483c7f,puVar7);
-      }
-      else {
-        FUN_20133ed4();
-      }
-    }
-    else if (param_1 == 9) {
-      FUN_20133f10(1,&DAT_20483c7f,puVar7);
-    }
-    piVar6 = (int *)(&DAT_2048feb8 + iVar1 * 0x54);
-    iVar2 = 0;
-    iVar1 = *piVar6;
-    if (0 < *piVar6) {
-      do {
-        if (param_1 == 8) {
-          if (param_3 == 0) goto LAB_201582f8;
-          FUN_20133f58(1,piVar6 + iVar2 + 1,iVar2 * 4 + 0x20489778);
-        }
-        else if (param_1 == 9) {
-LAB_201582f8:
-          FUN_20133f44(1);
-        }
-        iVar2 = iVar2 + 1;
-        iVar1 = *piVar6;
-      } while (iVar2 < *piVar6);
-    }
-  }
-  DAT_20489774 = iVar1;
+  scope_obj_add_line(&DAT_2047963c,param_1,param_2,param_3);
   return;
 }
 
@@ -178,89 +54,41 @@ void FUN_2013433c(void)
 }
 
 
-// ===== scope_history_push @ 20134348 (212 bytes)
+// ===== scope_history_push @ 20134348 (16 bytes)
 
 /* 800 points -> ring 0x20490894 (inference) */
 
-void scope_history_push(int param_1,void *param_2)
+void scope_history_push(undefined4 param_1,undefined4 param_2)
 
 {
-  int iVar1;
-  
-  if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
-     (DAT_204832ba == '\0')) {
-                    /* returns idx and advances it [doc] */
-    ring20_advance();
-    iVar1 = ring20_offset(&DAT_20494768,0);
-                    /* n/4 words dst = ~src [doc] */
-    copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
-    *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
-    *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
-    DAT_20494714 = DAT_20494714 + 1;
-    if (param_1 <= DAT_20494714) {
-      DAT_20494714 = param_1;
-    }
-  }
+  scope_obj_history_push(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
-// ===== scope3d_vscale @ 20134358 (68 bytes)
+// ===== scope3d_vscale @ 20134358 (16 bytes)
 
 /* (i, mode 8/9): entry i of the vertical scale table *0x20450278 (mode 8) or *0x2045027C (mode 9)
    (gui.md 3DSS step 4) [fact] */
 
-undefined2 scope3d_vscale(int param_1,int param_2)
+void scope3d_vscale(undefined4 param_1,undefined4 param_2)
 
 {
-  undefined2 uVar1;
-  
-  if (param_2 == 8) {
-    return *(undefined2 *)(DAT_20450278 + param_1 * 2);
-  }
-  if (param_2 == 9) {
-    uVar1 = *(undefined2 *)(DAT_2045027c + param_1 * 2);
-  }
-  else {
-    uVar1 = 0;
-  }
-  return uVar1;
+  scope_obj_vscale(&DAT_2047963c,param_1,param_2);
+  return;
 }
 
 
-// ===== scope3d_line_offset @ 20134368 (88 bytes)
+// ===== scope3d_line_offset @ 20134368 (20 bytes)
 
 /* (i, mode 8/9, variant): entry i of the ROM offset tables 0x203D99DC / 0x203D9A18 / 0x203D9A80 /
    0x203D9A9E [fact] */
 
-undefined2 scope3d_line_offset(int param_1,int param_2,int param_3)
+void scope3d_line_offset(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 {
-  undefined2 uVar1;
-  undefined2 *puVar2;
-  
-  if (param_2 == 8) {
-    if (param_3 == 0) {
-      puVar2 = (undefined2 *)&DAT_203d99dc;
-    }
-    else {
-      puVar2 = &DAT_203d9a18;
-    }
-    return puVar2[param_1];
-  }
-  if (param_2 == 9) {
-    if (param_3 == 0) {
-      puVar2 = (undefined2 *)&DAT_203d9a80;
-    }
-    else {
-      puVar2 = &DAT_203d9a9e;
-    }
-    uVar1 = puVar2[param_1];
-  }
-  else {
-    uVar1 = 0;
-  }
-  return uVar1;
+  scope_obj_line_offset(&DAT_2047963c,param_1,param_2,param_3);
+  return;
 }
 
 
@@ -354,15 +182,16 @@ void FUN_201343ec(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-// ===== scope3d_line_markers @ 20134408 (36 bytes)
+// ===== scope3d_line_markers @ 20134408 (12 bytes)
 
 /* (i): 0x20489720 + 0x54*i, the per-line marker record of the 3DSS (gui.md: 0x54 bytes per line)
    [fact] */
 
-int scope3d_line_markers(int param_1)
+void scope3d_line_markers(undefined4 param_1)
 
 {
-  return param_1 * 0x54 + 0x20489720;
+  scope_obj_line_markers(&DAT_2047963c,param_1);
+  return;
 }
 
 
@@ -392,79 +221,66 @@ void scope_wf_add_row_mode(undefined4 param_1,undefined4 param_2)
 }
 
 
-// ===== scope_wf_row_addr @ 20134434 (116 bytes)
+// ===== scope_wf_row_addr @ 20134434 (16 bytes)
 
 /* (i): 0x2049476C + bank 0x20450280 * 0x33F40 + slot * 0x640, the i-th newest waterfall row
    (gui.md) [fact] */
 
-int scope_wf_row_addr(uint param_1,undefined4 param_2)
+void scope_wf_row_addr(undefined4 param_1,undefined4 param_2)
 
 {
-  int iVar1;
-  
-  iVar1 = ring133_offset(&DAT_204fc5f0,~param_1,param_2);
-  if (DAT_20450280 == 1) {
-    iVar1 = ring133_offset(&DAT_204fc5ec,~param_1);
-  }
-  return DAT_20450280 * 0x33f40 + iVar1 * 0x640 + 0x2049476c;
-}
-
-
-// ===== FUN_20134444 @ 20134444 (36 bytes)
-
-void FUN_20134444(undefined4 param_1,undefined4 param_2)
-
-{
-  thunk_FUN_20162d48(&DAT_2047963c,param_1);
-  FUN_201584f8(&DAT_2047963c,param_2);
+  scope_obj_wf_row_addr(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
-// ===== FUN_20134468 @ 20134468 (12 bytes)
+// ===== scope_set_2e04_2e00 @ 20134444 (36 bytes)
 
-void FUN_20134468(undefined4 param_1)
+/* [fact] (v, on): scope_obj_set_2e04_thunk(0x2047963C, v), then scope_obj_set_2e00(0x2047963C, on);
+   Ghidra FUN_20134444 (T24 USB track) */
+
+void scope_set_2e04_2e00(undefined4 param_1,undefined4 param_2)
 
 {
-  FUN_201584f8(&DAT_2047963c,param_1);
+  scope_obj_set_2e04_thunk(&DAT_2047963c,param_1);
+  scope_obj_set_2e00(&DAT_2047963c,param_2);
   return;
 }
 
 
-// ===== FUN_20134474 @ 20134474 (12 bytes)
+// ===== scope_set_2e00 @ 20134468 (12 bytes)
 
-void FUN_20134474(undefined4 param_1)
+/* [fact] (on): scope_obj_set_2e00(0x2047963C, on); Ghidra FUN_20134468 (T24 USB track) */
+
+void scope_set_2e00(undefined4 param_1)
 
 {
-  FUN_20158544(&DAT_2047963c,param_1);
+  scope_obj_set_2e00(&DAT_2047963c,param_1);
   return;
 }
 
 
-// ===== scope3d_layout_set @ 20134480 (120 bytes)
+// ===== scope_set_2e02 @ 20134474 (12 bytes)
+
+/* [fact] (on): scope_obj_set_2e02(0x2047963C, on); Ghidra FUN_20134474 (T24 USB track) */
+
+void scope_set_2e02(undefined4 param_1)
+
+{
+  scope_obj_set_2e02(&DAT_2047963c,param_1);
+  return;
+}
+
+
+// ===== scope3d_layout_set @ 20134480 (12 bytes)
 
 /* (expanded): stores the flag in four 3D sub-objects and selects the vertical scale tables
    0x203D9A18/0x203D9A9E (set) or 0x203D99DC/0x203D9A80 (clear) [fact] */
 
-void scope3d_layout_set(int param_1)
+void scope3d_layout_set(undefined4 param_1)
 
 {
-  DAT_2047c848 = (undefined1)param_1;
-  DAT_2047f400 = DAT_2047c848;
-  DAT_2047fd80 = DAT_2047c848;
-  DAT_20482938 = DAT_2047c848;
-  if (param_1 != 0) {
-    DAT_20450278 = &DAT_203d9a18;
-  }
-  else {
-    DAT_20450278 = (undefined2 *)&DAT_203d99dc;
-  }
-  if (param_1 != 0) {
-    DAT_2045027c = &DAT_203d9a9e;
-  }
-  else {
-    DAT_2045027c = (undefined2 *)&DAT_203d9a80;
-  }
+  scope_obj_layout_set(&DAT_2047963c,param_1);
   return;
 }
 

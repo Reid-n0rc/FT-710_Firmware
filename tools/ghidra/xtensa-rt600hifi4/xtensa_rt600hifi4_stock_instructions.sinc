@@ -888,7 +888,7 @@ macro extract_bit(bit, result) {
 
 # NSA - Normalization Shift Amount (RRR), pg. 461.
 :nsa at, as is op2 = 0b0100 & op1 = 0 & ar = 0b1110 & as & at & op0 = 0 {
-    at = lzcount(~as);
+    at = lzcount(as ^ (as s>> 31)) - 1;
 }
 
 # NSAU - Normalization Shift Amount Unsigned (RRR), pg. 462. (Count leading zeros)

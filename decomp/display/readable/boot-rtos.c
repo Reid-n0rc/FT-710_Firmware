@@ -14088,7 +14088,7 @@ uint knl_psr_clear_if(void)
 
 
 /* -----------------------------------------------------------------------------
- * msgbuf_init @ 20158618  (24 bytes, 4 callers, export file 201576f4_20159d98.c)
+ * msgbuf_init @ 20158618  (24 bytes, 4 callers, export file 201576f4_20159058.c)
  * Purpose: (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX objects
  *     [fact]
  * Tag: [fact]
@@ -14110,7 +14110,7 @@ void msgbuf_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_tx @ 201586ac  (152 bytes, 0 callers, export file 201576f4_20159d98.c)
+ * task_mainlink_tx @ 201586ac  (152 bytes, 0 callers, export file 201576f4_20159058.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14151,7 +14151,7 @@ void task_mainlink_tx(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_rx @ 2015ec40  (512 bytes, 0 callers, export file 2015eb74_201606bc.c)
+ * task_mainlink_rx @ 2015ec40  (512 bytes, 0 callers, export file 2015da3c_2016040c.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14272,7 +14272,7 @@ LAB_2015edf4:
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_cmd @ 2015f0ec  (240 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * fwdbg_cmd @ 2015f0ec  (240 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: self-update commands
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14329,7 +14329,7 @@ undefined4 fwdbg_cmd(undefined4 *param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_dispatch @ 201600a8  (440 bytes, 0 callers, export file 2015eb74_201606bc.c)
+ * task_mainlink_dispatch @ 201600a8  (440 bytes, 0 callers, export file 2015da3c_2016040c.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14414,7 +14414,7 @@ void task_mainlink_dispatch(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cpp_task_thunk @ 20162d04  (12 bytes, 0 callers, export file 201607c8_201637d8.c)
+ * cpp_task_thunk @ 20162d04  (12 bytes, 0 callers, export file 20160418_201635b8.c)
  * Purpose: task entry for C++ objects: `exinf` = object, calls `obj->vtbl[0]` (tasks `uart`, `uart4`,
  *     `mouse_cursor`)
  * Tag: none in the table row
@@ -14435,7 +14435,7 @@ void cpp_task_thunk(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * os_mbx_create_fifo @ 20162d10  (40 bytes, 5 callers, export file 201607c8_201637d8.c)
+ * os_mbx_create_fifo @ 20162d10  (40 bytes, 5 callers, export file 20160418_201635b8.c)
  * Purpose: itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init, uart4_tx_init,
  *     mainlink_disp_init, mouse_cursor_obj_init [fact]
  * Tag: [fact]
@@ -14464,7 +14464,7 @@ void os_mbx_create_fifo(void)
 
 
 /* -----------------------------------------------------------------------------
- * os_mbx_send @ 20162d3c  (12 bytes, 4 callers, export file 201607c8_201637d8.c)
+ * os_mbx_send @ 20162d3c  (12 bytes, 4 callers, export file 20160418_201635b8.c)
  * Purpose: (this, mbxid, msg): itron_snd_mbx(mbxid, msg) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14482,7 +14482,7 @@ void os_mbx_send(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_version_text @ 201635e4  (24 bytes, 4 callers, export file 201607c8_201637d8.c)
+ * fwobj_version_text @ 201635e4  (24 bytes, 4 callers, export file 201635e4_2016437c.c)
  * Purpose: (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
  *     fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact]
  * Tag: [fact]
@@ -14502,7 +14502,7 @@ void fwobj_version_text(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fill8 @ 201637f0  (24 bytes, 1 callers, export file 201637f0_201645a0.c)
+ * fill8 @ 201637f0  (24 bytes, 1 callers, export file 201635e4_2016437c.c)
  * Purpose: (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14525,7 +14525,7 @@ void fill8(uint *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fp_classify_double @ 20163808  (40 bytes, 1 callers, export file 201637f0_201645a0.c)
+ * fp_classify_double @ 20163808  (40 bytes, 1 callers, export file 201635e4_2016437c.c)
  * Purpose: (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the exponent 0 /
  *     0x7FF and the mantissa) [fact for the tests]
  * Tag: [fact]
@@ -14559,7 +14559,7 @@ uint fp_classify_double(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * is_decimal_digit @ 20163864  (14 bytes, 2 callers, export file 201637f0_201645a0.c)
+ * is_decimal_digit @ 20163864  (14 bytes, 2 callers, export file 201635e4_2016437c.c)
  * Purpose: (c): 1 for '0'..'9'; _printf_core uses it for widths [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14579,7 +14579,7 @@ undefined4 is_decimal_digit(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy10 @ 201640ec  (24 bytes, 8 callers, export file 201637f0_201645a0.c)
+ * copy10 @ 201640ec  (24 bytes, 8 callers, export file 201635e4_2016437c.c)
  * Purpose: (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields (fwfile_check_versions,
  *     fwobj_*) [fact]
  * Tag: [fact]
@@ -14599,7 +14599,7 @@ undefined4 copy10(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * copy32 @ 20164104  (24 bytes, 4 callers, export file 201637f0_201645a0.c)
+ * copy32 @ 20164104  (24 bytes, 4 callers, export file 201635e4_2016437c.c)
  * Purpose: (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14617,7 +14617,7 @@ undefined4 copy32(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * copy48 @ 2016411c  (24 bytes, 1 callers, export file 201637f0_201645a0.c)
+ * copy48 @ 2016411c  (24 bytes, 1 callers, export file 201635e4_2016437c.c)
  * Purpose: (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14635,7 +14635,7 @@ undefined4 copy48(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dadd @ 20164888  (316 bytes, 24 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_dadd @ 20164888  (316 bytes, 24 callers, export file 20164388_20164fa4.c)
  * Purpose: Double add: start + span*fraction in progress_scale, + 0.5 (0x3FE00000) rounding in touch_cal_apply
  *     [inference]
  * Tag: [inference]
@@ -14894,7 +14894,7 @@ LAB_2016491c:
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_ddiv @ 201649d8  (538 bytes, 41 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_ddiv @ 201649d8  (538 bytes, 41 callers, export file 20164388_20164fa4.c)
  * Purpose: Double divide: Z2/Z1 and X/4096.0 (0x40B00000) in tsc2007_pressure, sum/5.0 (0x40140000) in
  *     touch_cal_fit [inference]
  * Tag: [inference]
@@ -15031,7 +15031,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_d2iz @ 20164c90  (92 bytes, 11 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_d2iz @ 20164c90  (92 bytes, 11 callers, export file 20164388_20164fa4.c)
  * Purpose: Double to signed int, truncating with saturation (0x7FFFFFFF ^ sign); follows "+ 0.5" in touch_cal_apply
  *     [fact]
  * Tag: [fact]
@@ -15081,7 +15081,7 @@ uint __aeabi_d2iz(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_d2uiz @ 20164cf0  (88 bytes, 3 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_d2uiz @ 20164cf0  (88 bytes, 3 callers, export file 20164388_20164fa4.c)
  * Purpose: Double to unsigned int: negative gives 0, overflow 0xFFFFFFFF; tsc2007_pressure result [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15129,7 +15129,7 @@ uint __aeabi_d2uiz(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_i2d @ 20164d54  (46 bytes, 29 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_i2d @ 20164d54  (46 bytes, 29 callers, export file 20164388_20164fa4.c)
  * Purpose: int -> IEEE double (sign, exponent 0x41D - clz, mantissa) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15157,7 +15157,7 @@ undefined8 __aeabi_i2d(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_ui2d @ 20164d82  (38 bytes, 19 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_ui2d @ 20164d82  (38 bytes, 19 callers, export file 20164388_20164fa4.c)
  * Purpose: unsigned int -> IEEE double [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15180,7 +15180,7 @@ undefined8 __aeabi_ui2d(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dmul @ 20164da8  (300 bytes, 49 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_dmul @ 20164da8  (300 bytes, 49 callers, export file 20164388_20164fa4.c)
  * Purpose: Double multiply: 400.0 (0x40790000) * x in tsc2007_pressure, span * fraction in progress_scale, x *
  *     100.0 in sd_format_request [inference]
  * Tag: [inference]
@@ -15293,7 +15293,7 @@ longlong __aeabi_dmul(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fp_nan_handler @ 20164efc  (152 bytes, 6 callers, export file 201645e4_20164fa4.c)
+ * fp_nan_handler @ 20164efc  (152 bytes, 6 callers, export file 20164388_20164fa4.c)
  * Purpose: Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the caller's
  *     return address; armcc fplib internal [fact]
  * Tag: [fact]
@@ -15362,7 +15362,7 @@ switchD_20164f68_caseD_5:
 
 
 /* -----------------------------------------------------------------------------
- * fp_exception_stub @ 20164f98  (12 bytes, 7 callers, export file 201645e4_20164fa4.c)
+ * fp_exception_stub @ 20164f98  (12 bytes, 7 callers, export file 20164388_20164fa4.c)
  * Purpose: Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15380,7 +15380,7 @@ void fp_exception_stub(void)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dsub @ 20164fa4  (464 bytes, 24 callers, export file 201645e4_20164fa4.c)
+ * __aeabi_dsub @ 20164fa4  (464 bytes, 24 callers, export file 20164388_20164fa4.c)
  * Purpose: Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md

@@ -1,5 +1,232 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fwobj_version_text @ 201635e4 (24 bytes)
+
+/* (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
+   fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact] */
+
+void fwobj_version_text(int param_1,undefined4 param_2)
+
+{
+  sprintf_veneer(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
+  return;
+}
+
+
+// ===== fwname_pattern_match @ 20163600 (84 bytes)
+
+/* prefix + 4 chars + ".sfl", case-insensitive, exact length */
+
+uint fwname_pattern_match(int *param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  if (((*param_1 == param_3) && (iVar1 = strncasecmp(param_1[1],param_2,param_1[3]), iVar1 == 0)) &&
+     (iVar1 = strncasecmp(param_1[2],param_1[4] + param_2,param_1[5]), iVar1 == 0)) {
+    uVar2 = 1;
+  }
+  else {
+    uVar2 = 0;
+  }
+  return uVar2;
+}
+
+
+// ===== scif_has_flag @ 20163654 (16 bytes)
+
+/* RX event flag bound? */
+
+byte scif_has_flag(scif_uart *uart)
+
+{
+  return uart->rx_flg != 0;
+}
+
+
+// ===== FUN_20163668 @ 20163668 (28 bytes)
+
+void FUN_20163668(undefined2 *param_1)
+
+{
+  undefined2 *puVar1;
+  
+  if (((uint)param_1 & 1) == 0) {
+    *(undefined1 *)(param_1 + 2) = 0;
+    puVar1 = param_1;
+  }
+  else {
+    puVar1 = (undefined2 *)((int)param_1 + 1);
+    *(undefined1 *)param_1 = 0;
+  }
+  *puVar1 = 0;
+  puVar1[1] = 0;
+  return;
+}
+
+
+// ===== FUN_20163684 @ 20163684 (36 bytes)
+
+void FUN_20163684(undefined2 *param_1)
+
+{
+  undefined2 *puVar1;
+  
+  if (((uint)param_1 & 1) == 0) {
+    param_1[2] = 0;
+    puVar1 = param_1;
+  }
+  else {
+    *(undefined1 *)((int)param_1 + 5) = 0;
+    puVar1 = (undefined2 *)((int)param_1 + 1);
+    *(undefined1 *)param_1 = 0;
+  }
+  *puVar1 = 0;
+  puVar1[1] = 0;
+  return;
+}
+
+
+// ===== FUN_201636a8 @ 201636a8 (16 bytes)
+
+void FUN_201636a8(undefined4 *param_1)
+
+{
+  *param_1 = 0;
+  *(undefined1 *)(param_1 + 1) = 0;
+  return;
+}
+
+
+// ===== FUN_201636b8 @ 201636b8 (20 bytes)
+
+void FUN_201636b8(undefined4 *param_1)
+
+{
+  *param_1 = 0;
+  param_1[1] = 0;
+  *(undefined1 *)(param_1 + 2) = 0;
+  return;
+}
+
+
+// ===== copy5 @ 201636cc (44 bytes)
+
+/* Copies 5 bytes (encoder events, E1/E2 frames) [fact] */
+
+void copy5(undefined1 *param_1,undefined1 *param_2)
+
+{
+  *param_1 = *param_2;
+  param_1[1] = param_2[1];
+  param_1[2] = param_2[2];
+  param_1[3] = param_2[3];
+  param_1[4] = param_2[4];
+  return;
+}
+
+
+// ===== FUN_201636f8 @ 201636f8 (52 bytes)
+
+void FUN_201636f8(undefined1 *param_1,undefined1 *param_2)
+
+{
+  *param_1 = *param_2;
+  param_1[1] = param_2[1];
+  param_1[2] = param_2[2];
+  param_1[3] = param_2[3];
+  param_1[4] = param_2[4];
+  param_1[5] = param_2[5];
+  return;
+}
+
+
+// ===== FUN_2016372c @ 2016372c (68 bytes)
+
+void FUN_2016372c(undefined1 *param_1,undefined1 *param_2)
+
+{
+  *param_1 = *param_2;
+  param_1[1] = param_2[1];
+  param_1[2] = param_2[2];
+  param_1[3] = param_2[3];
+  param_1[4] = param_2[4];
+  param_1[5] = param_2[5];
+  param_1[6] = param_2[6];
+  param_1[7] = param_2[7];
+  return;
+}
+
+
+// ===== FUN_20163770 @ 20163770 (28 bytes)
+
+void FUN_20163770(undefined4 *param_1,undefined4 *param_2)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = param_2[1];
+  *param_1 = *param_2;
+  param_1[1] = uVar1;
+  *(undefined2 *)(param_1 + 2) = *(undefined2 *)(param_2 + 2);
+  return;
+}
+
+
+// ===== FUN_2016378c @ 2016378c (20 bytes)
+
+void FUN_2016378c(undefined4 *param_1,undefined4 *param_2)
+
+{
+  *param_1 = *param_2;
+  *(undefined1 *)(param_1 + 1) = *(undefined1 *)(param_2 + 1);
+  return;
+}
+
+
+// ===== FUN_201637a0 @ 201637a0 (28 bytes)
+
+void FUN_201637a0(undefined4 *param_1,undefined4 *param_2)
+
+{
+  *param_1 = *param_2;
+  *(undefined2 *)(param_1 + 1) = *(undefined2 *)(param_2 + 1);
+  *(undefined1 *)((int)param_1 + 6) = *(undefined1 *)((int)param_2 + 6);
+  return;
+}
+
+
+// ===== FUN_201637bc @ 201637bc (28 bytes)
+
+void FUN_201637bc(undefined4 *param_1,undefined4 *param_2)
+
+{
+  undefined4 uVar1;
+  
+  uVar1 = param_2[1];
+  *param_1 = *param_2;
+  param_1[1] = uVar1;
+  *(undefined1 *)(param_1 + 2) = *(undefined1 *)(param_2 + 2);
+  return;
+}
+
+
+// ===== FUN_201637d8 @ 201637d8 (24 bytes)
+
+void FUN_201637d8(ushort *param_1,ushort param_2)
+
+{
+  ushort uVar1;
+  
+  uVar1 = param_2 & 0xff | param_2 << 8;
+  *param_1 = uVar1;
+  param_1[1] = uVar1;
+  param_1[2] = uVar1;
+  return;
+}
+
+
 // ===== fill8 @ 201637f0 (24 bytes)
 
 /* (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact] */
@@ -746,260 +973,6 @@ void FUN_2016437c(undefined4 *param_1)
 
 {
   *param_1 = 0;
-  return;
-}
-
-
-// ===== ring133_advance @ 20164388 (28 bytes)
-
-/* (idx): returns *idx and advances it; scope_obj_wf_add_row [fact] */
-
-undefined4 ring133_advance(undefined4 *param_1)
-
-{
-  undefined4 uVar1;
-  undefined4 uVar2;
-  
-  uVar2 = *param_1;
-                    /* idx + 1, wrapping at 133 [doc] */
-  uVar1 = ring133_next();
-  *param_1 = uVar1;
-  return uVar2;
-}
-
-
-// ===== ring133_reset @ 201643a4 (12 bytes)
-
-/* (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact] */
-
-void ring133_reset(undefined4 *param_1)
-
-{
-  *param_1 = 0;
-  return;
-}
-
-
-// ===== ring20_advance @ 201643b0 (28 bytes)
-
-/* (idx): returns *idx and advances it; scope_history_push [fact] */
-
-undefined4 ring20_advance(undefined4 *param_1)
-
-{
-  undefined4 uVar1;
-  undefined4 uVar2;
-  
-  uVar2 = *param_1;
-                    /* idx + 1, wrapping at 20 [doc] */
-  uVar1 = ring20_next();
-  *param_1 = uVar1;
-  return uVar2;
-}
-
-
-// ===== ring30_advance @ 201643cc (28 bytes)
-
-/* (idx): returns *idx and advances it; scope3d_redraw_history [fact] */
-
-undefined4 ring30_advance(undefined4 *param_1)
-
-{
-  undefined4 uVar1;
-  undefined4 uVar2;
-  
-  uVar2 = *param_1;
-                    /* idx + 1, wrapping at 30 [doc] */
-  uVar1 = ring30_next();
-  *param_1 = uVar1;
-  return uVar2;
-}
-
-
-// ===== ring32_post_inc @ 201643f0 (28 bytes)
-
-/* Returns *idx and sets it to the next value mod 32 [fact] */
-
-undefined2 ring32_post_inc(undefined2 *param_1)
-
-{
-  undefined2 uVar1;
-  undefined2 uVar2;
-  
-  uVar1 = *param_1;
-  uVar2 = ring32_next();
-  *param_1 = uVar2;
-  return uVar1;
-}
-
-
-// ===== FUN_2016440c @ 2016440c (8 bytes)
-
-void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
-
-{
-  *param_1 = param_2;
-  return;
-}
-
-
-// ===== FUN_20164414 @ 20164414 (60 bytes)
-
-void FUN_20164414(int param_1)
-
-{
-  uint itron_acre_mtx_ret;
-  t_cmtx local_18;
-  
-  local_18.mtxatr = 2;
-  local_18.ceilpri = 0;
-  local_18.name = (char *)0x0;
-  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x44) = itron_acre_mtx_ret;
-  return;
-}
-
-
-// ===== FUN_20164454 @ 20164454 (12 bytes)
-
-void FUN_20164454(int param_1,int param_2,undefined4 param_3)
-
-{
-  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
-  return;
-}
-
-
-// ===== txpool_init_mutex @ 20164460 (60 bytes)
-
-/* Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init /
-   uart4_tx_init / mainlink_disp_init [fact] */
-
-void txpool_init_mutex(int param_1)
-
-{
-  uint itron_acre_mtx_ret;
-  t_cmtx local_18;
-  
-  local_18.mtxatr = 2;
-  local_18.ceilpri = 0;
-  local_18.name = (char *)0x0;
-  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
-  return;
-}
-
-
-// ===== txpool_set_slot @ 201644a0 (12 bytes)
-
-/* obj->slot[n] (obj+4+4n) = buffer [fact] */
-
-void txpool_set_slot(int param_1,int param_2,undefined4 param_3)
-
-{
-  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
-  return;
-}
-
-
-// ===== txpool_next_slot @ 201644ac (56 bytes)
-
-/* Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc /
-   uart4_tx_alloc / mainlink_disp_alloc [fact] */
-
-undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  int iVar1;
-  undefined4 uVar2;
-  undefined4 uStack_10;
-  
-  uStack_10 = param_4;
-  mutex_guard_ctor(&uStack_10,*(undefined4 *)(param_1 + 0x84),1);
-  iVar1 = ring32_post_inc(param_1);
-  uVar2 = *(undefined4 *)(param_1 + iVar1 * 4 + 4);
-                    /* Scoped lock destructor [doc] */
-  mutex_guard_dtor(&uStack_10);
-  return uVar2;
-}
-
-
-// ===== FUN_201644e4 @ 201644e4 (60 bytes)
-
-void FUN_201644e4(int param_1)
-
-{
-  uint itron_acre_mtx_ret;
-  t_cmtx local_18;
-  
-  local_18.mtxatr = 2;
-  local_18.ceilpri = 0;
-  local_18.name = (char *)0x0;
-  itron_acre_mtx_ret = itron_acre_mtx(0,&local_18);
-  *(uint *)(param_1 + 0x84) = itron_acre_mtx_ret;
-  return;
-}
-
-
-// ===== FUN_20164524 @ 20164524 (12 bytes)
-
-void FUN_20164524(int param_1,int param_2,undefined4 param_3)
-
-{
-  *(undefined4 *)(param_1 + param_2 * 4 + 4) = param_3;
-  return;
-}
-
-
-// ===== FUN_20164568 @ 20164568 (56 bytes)
-
-uint FUN_20164568(char *param_1,int param_2,int param_3)
-
-{
-  char cVar1;
-  uint uVar2;
-  int iVar3;
-  
-  cVar1 = *param_1;
-  iVar3 = 0;
-  if (cVar1 != param_3) {
-    *param_1 = (char)param_3;
-    iVar3 = (int)(char)((char)param_3 - cVar1);
-  }
-  uVar2 = param_2 + iVar3;
-  if ((int)uVar2 < 0) {
-    uVar2 = 0;
-  }
-  else if ((int)uVar2 < 0x100) {
-    uVar2 = uVar2 & 0xff;
-  }
-  else {
-    uVar2 = 0xff;
-  }
-  return uVar2;
-}
-
-
-// ===== ring16_push @ 201645a0 (68 bytes)
-
-/* Copies an 8-byte item into the slot at the tail if count < 16 [fact]; usbkbd_queue_key [fact] */
-
-void ring16_push(ushort *param_1,undefined4 *param_2)
-
-{
-  ushort uVar1;
-  undefined4 *puVar2;
-  undefined4 uVar3;
-  
-  if (*param_1 < 0x10) {
-    uVar3 = param_2[1];
-    uVar1 = param_1[2];
-    puVar2 = *(undefined4 **)(param_1 + (uint)uVar1 * 2 + 4);
-    *puVar2 = *param_2;
-    puVar2[1] = uVar3;
-    param_1[2] = uVar1 + 1 & 0xf;
-    *param_1 = *param_1 + 1;
-  }
   return;
 }
 
