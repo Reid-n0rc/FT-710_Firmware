@@ -169,7 +169,7 @@ Binary SP checksum (corrected in T10e/T17) **[fact]** (disassembly at 0xFFFA3867
 
 Handler functions are `cat_<MNEMONIC>` (primary) and `cat_ext_<MNEMONIC>` (extended). Their addresses are in [cat-commands.md](../../cat-commands.md) and `decomp/main/cat_dispatch.tsv`.
 
-## Handler behaviour found by the source recreation (T24 MAIN round 4)
+## Handler behaviour found by the source recreation (T24 MAIN rounds 4 and 6)
 
 Each row was recreated in `src/main/app/` and checked against the image by differential emulation
 (`src/main/status.tsv`); the facts are from the disassembly at the cited addresses.
@@ -188,6 +188,10 @@ Each row was recreated in `src/main/app/` and checked against the image by diffe
 | `KM` (0xFFFAA905) | a set stores len - 4 characters with no limit at 50 and adds `}` unless the text has one; a command of more than 54 bytes would write into the next slot **[inference: the byte loop over len - 4 from the slot start]** |
 | `EM` (0xFFFA9648) | the five text slots 0x979E.. are RAM only (no EEPROM save) and end with 0xFE |
 | `DT` (0xFFFA9281) | the year must be 20yy; leap years by yy & 3; the seconds of DT1 are checked as digits and read back as "00" |
+| `JP` (`cat_ext_JP` 0xFFFA556B, round 6) | the read is `JP0710` + the region code (4 hex) + its complement (4 hex) + the EEPROM header stamp (5 bytes, 10 hex), 25 bytes. A set checks the complement, stores 0xD32D for 0x306F, 0xA983 for 0xB5A7, 0x7753 for 0x9CF7, 0xD950 for 0xA4C5 and 0x315B for 0x50E2 (any other code as sent, 0xFFFA5600..0xFFFA5662), stamps the header with the clock (`g_ui.rtc_*`) and calls `dest_code_set` |
+| `EO` (`cat_ext_EO` 0xFFFA5C90, round 6) | first closes the pop-ups (eight UI flags); P2 0 moves VFO 0's frequency by P5..P7 x 1 Hz / 1 kHz / 1 MHz (P4 0 / 1 / 2) up (P3 `+`) or down (`-`, not below 0), clamped to 30 kHz .. 75 MHz; P2 1 / 2 turns encoder 2 / 3 (`enc2_step`, `enc3_step`) by up to 127 steps; P1 must be 0..2. With P2 0 and a P4 other than 0..2 the step is an uninitialised stack word (0xFFFA5D7C..0xFFFA5DAC) |
+| `PE` (`cat_ext_PE` 0xFFFA5FDF, round 6) | **the set form adds the digits to an uninitialised stack byte**: the accumulator `10[r0]` is written only by the read path, and the set loops at 0xFFFA6342 and 0xFFFA63B4 add `digit x place` to it before the store (0xFFFA638C, 0xFFFA63FC). So `PE` set stores the value sent plus whatever that byte held. A P1 other than 0 / 2 or a P2 other than 0..2 leaves the target pointer uninitialised, and P3 0..2 then reads or writes through it. *Open: what the stack byte holds when `cat_dispatch_ext` calls `cat_ext_PE` (if it is always 0 the set works); would be settled by an emulated `cat_parse` of a `PE` set, or by `PE` set then read on a radio.* Not recreated for that reason |
+| `AM`, `BM` (0xFFFA6A26, 0xFFFA7928, round 6) | refused for the channels 0x75..0x84; by the VFO state: VFO stores the VFO record; MEMORY TUNE stores the band's current band-stack record; QMB stores it and saves the channel without the VFO updates; any other state (PMS after `vm_toggle`) stores the band-stack record and also loads it into the VFO. The record pointers are taken before `vm_toggle` |
 
 ## Data structures and globals
 

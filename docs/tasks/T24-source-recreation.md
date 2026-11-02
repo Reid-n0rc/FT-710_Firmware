@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 19.98 % re-implemented, round 4; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-02; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 35.04 % re-implemented, round 6; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -2214,6 +2214,101 @@ bootstrap that Ghidra, as with rounds 2 and 4.
   `keyer_elekey`; the float users `cat_ai_SQ`, `pa_dac_update`, `align_store_ui8_scaled` and the seven unnamed FPU
   functions 0xFFFEC8A1..0xFFFEDA3B.
 
+## MAIN, round 6 (2026-11-02)
+
+### Plan (MAIN round 6)
+
+1. Biggest first from round 5's not-done list, choosing the code with the most regular shape per byte: the CAT
+   auto-information code (the 316 EX-menu detectors, 22 KB, and `cat_ai_poll` with its ~60 detectors, 16 KB), then the
+   remaining CAT handlers (`cat_ext_PE`/`EO`/`JP`, the 40 others), then `key_task`, `dsp_link_poll`, menu, band/VFO.
+2. A generator over decomp/main for the EX detectors' shapes (scratch, not committed), with the per-item values checked
+   against the disassembly; one macro per shape in the source.
+3. Presets for the detectors as `cat_ai_poll` and `cat_ai_ex_scan` call them; a mutation test of the new code.
+4. `status --object` for each new or changed object (the shared Ghidra has both round-5 patches); README rows; Ghidra rows.
+
+### MAIN: recreated (src/main, round 6)
+
+| File | Functions | Bytes counted | What |
+|---|---:|---:|---|
+| `app/cat_ai_ex.c` | 318 (1 identical) | 22,221 | `cat_ai_ex_scan`, `cat_ai_ex`, `cat_ai_ex_holdoff`, `ai_ex_fmt_u8`, `ai_ex_fmt_u16_4`, the 295 recreated `ai_ex*` detectors (one macro per shape: 2- or 3-digit / signed, one digit, AGC delay, PRESET stub) and the 18 PRESET-row detectors |
+| `app/cat_ai.c` | 54 | 14,722 | `cat_ai_poll` (checked with every detector stubbed, so the order is compared) and the detectors AC .. VX, FD, IF/OI |
+| `app/cat_ext.c` | 2 | 1,669 | `cat_ext_JP` (region code), `cat_ext_EO` (frequency / encoder steps) |
+| `app/cat_handlers.c` | +3 | 1,017 | `cat_AB`, `cat_AM`, `cat_BM` |
+
+`cat_vfo.c`'s IF/OI helpers (`put_dec32`, `put_channel`, `put_clar_offset`, the table externs) moved to `cat_util.h`; its
+functions were rerun and stay equivalent. Not recreated, because the image reads an uninitialised stack location and no C
+source can do the same **[fact, addresses in docs/code/main/cat-ai.md and cat.md "rounds 4 and 6"]**: `ai_ex010517`
+(compares its shadow with an uninitialised byte), `cat_ai_MG` and `cat_ai_MX` (return an uninitialised length when nothing
+changed), `cat_ext_PE` (the set form adds the digits to an uninitialised byte). Each is an Open point in the docs with what
+would settle its effect on the radio.
+
+### MAIN: harness changes (round 6)
+
+- Presets: the EX detectors (`ai_ex<6 digits>`, `ai_ex_preset_*`) start with `ai_ex_len` 0 as `cat_ai_ex_scan` leaves it and
+  a preset number 0..6; `ai_ex_fmt_u8` with a digit count of 0 or 1 (the only values its callers pass); the arguments of
+  `cat_ai_MD`/`SF`/`CF`/`IF_OI` 0 or 1 and of `cat_ai_AS` 0..3; `vfo_mode` stubbed with 0..14 for `cat_ai_ML` and `cat_ai_SH`
+  (mode code 15 makes the image read an uninitialised stack byte); `cat_ai_poll` with the three AI flags, the hold-off flag,
+  `cat_tx_busy`, `swtimer_expired`, `cat_send_reply` and all 57 detectors stubbed (a detector returns 5 one call in 61); JP
+  and EO command texts (P1 0710 and the five mapped region codes with their complements; EO P4 always 0..2).
+- When only one run faults, the result now names the fault (`end differs (… vs store of 1 bytes at 0x40000)`); that found the
+  first `cat_ai_RI` bug (a 28-byte length from the IF/OI helper).
+
+**Mutation test** (`mutate.py` in the session scratch, not committed: one source change, rebuild, `check`, restore): all six
+differ: M1 AGC delay x 21 for x 20 (`ai_ex010205`, RAM), M2 CO's forced `0` one digit early (`cat_ai_CO`, trial 12), M3 KR
+and KS swapped in the poll (`cat_ai_poll`, stub call 27), M4 JP maps 0x50E2 to 0x315C (`cat_ext_JP`, the `eeprom_write`
+data), M5 AG's `||` as `&&` in the jitter filter (`cat_ai_AG`, R1), M6 a 3-digit item as 2 digits (`ai_ex010112`, RAM).
+
+### MAIN: results (status.tsv, round 6)
+
+`equiv_main_emu.py status --jobs 2 --object` for `app/cat_ai_ex.o`, `app/cat_ai.o`, `app/cat_handlers.o`, `app/cat_vfo.o`
+(about 20 minutes), then `--object app/cat_ext.o`, on the shared Ghidra (which has `rx62t-fpu-fix.patch` and
+`rx62t-minmax-fix.patch` since round 5) with the harness project copy `/home/user/ghidra_tasks/t24main/proj`:
+
+| Verdict | Ghidra functions | Bytes (of 387,059) |
+|---|---:|---:|
+| identical | 57 | 364 |
+| equivalent | 875 | 135,266 |
+| differs | 0 | 0 |
+| not yet | 2,862 | 251,429 |
+
+**Re-implemented: 35.04 %** (24.80 % after round 5). Round 6 added 377 functions (39,629 bytes counted).
+
+### MAIN: Ghidra (round 6)
+
+`tools/ghidra/names_main.tsv`: 15 labels (the AI frame and shadows, the EX tables, the AI file's own copies of the mode,
+VFO-state and channel-name tables at 0xFFF87228..), and plate comments for `ai_ex010517`, `cat_ai_MG`, `cat_ai_MX` (the
+uninitialised reads), `cat_ext_EO`, `cat_ext_PE` and `cat_ext_JP`, each with its evidence. Proved on a copy of
+`/home/user/ghidra_tasks/t24main/proj`: **ApplyNames 2,920 applied, 0 failed** (2,905 + 15). No entry, signature or SLEIGH
+change. Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+### MAIN: blockers and next steps (round 6)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- **Uninitialised reads** keep four functions out (`ai_ex010517`, `cat_ai_MG`, `cat_ai_MX`, `cat_ext_PE`): a C function that
+  reads the same stack slot does not exist. *Open: whether the stack holds 0 there in the radio; would be settled by an
+  emulated pass of the callers (`cat_ai_ex_scan`, `cat_ai_poll`, `cat_parse` with a `PE` set) or by AI and `PE` on a radio.*
+  If it does, recreating them with the value 0 would be the same code on the radio, but not provably so by this harness.
+- Not done this round: `cat_ai_SS` (1,121 B) and 39 other CAT handlers (`cat_ML`, `DA`, `MD`, `BD`, `AC`, `LM`, `BU`, ...,
+  `cat_ext_FD`, the `cat_SP_*` service dumps, 18.1 KB), `key_task`, `dsp_link_poll`, the menu and settings code, the
+  band/VFO/memory logic, `keyer_output_step`/`keyer_elekey`, the float users `pa_dac_update`, `align_store_ui8_scaled` and
+  the seven unnamed FPU functions 0xFFFEC8A1..0xFFFEDA3B, and the UI-track items (`key_event_filter`, `enc_*`, the complex
+  `funcknob_*` steps, `kbd_edit_*`, `R_Systeminit`, the group-interrupt dispatchers).
+
 ## IFDSP HiFi4, round 1 (2026-11-01/02)
 
 ### Plan (HiFi4 round 1)
@@ -2472,7 +2567,8 @@ condition; the NSA and `ae_l16*`/`ae_s16i.n`/`ae_zext16` uses as arithmetic and 
    round-4 names, signature and `rx62t-fpconv-fix.patch` ("MAIN: Ghidra (round 4)"), then the next functions ("MAIN:
    blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1"). Round 5:
    `rx62t-fpu-fix.patch`, `rx62t-minmax-fix.patch` and the 21 names ("MAIN: Ghidra (round 5)"), then "MAIN: blockers and
-   next steps (round 5)".
+   next steps (round 5)". Round 6: the 15 labels and 6 plate comments ("MAIN: Ghidra (round 6)"), then "MAIN: blockers and
+   next steps (round 6)".
 
 5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation;
    `abicheck` covers calls through a register (round 7). Open: the functions the emulated boot does not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the

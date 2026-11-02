@@ -1182,6 +1182,32 @@ R6_PRESETS['cat_ai_poll'] = ram_bytes({G_UI + 0x1C: (0, 1, 1), G_UI + 0x1D: (0, 
 FUNC_STUBS['cat_ai_poll'] = {'cat_tx_busy': (1, [0, 0, 0, 0, 0, 1]), 'swtimer_expired': (1, [0, 1, 1]),
                              'cat_send_reply': (3, [0]),
                              **{n: (k, [0] * 60 + [5]) for n, k in CAT_AI_DETECTORS}}
+
+
+def cat_ext_jp_args(rng, regs):
+    """JP (text, set): P1 0710 mostly; a code among the five the set maps (cat_ext_JP 0xFFFA5600..) or random, with
+    its complement most of the time."""
+    regs[0] = ARGBUF
+    regs[1] = rng.choice((0, 1, 1))
+    code = rng.choice((0x306F, 0xB5A7, 0x9CF7, 0xA4C5, 0x50E2, rng.getrandbits(16)))
+    comp = code ^ 0xFFFF if rng.random() < 0.7 else rng.getrandbits(16)
+    p1 = '0710' if rng.random() < 0.85 else '%04X' % rng.getrandbits(16)
+    return [(ARGBUF, ('JP' + p1 + '%04X%04X;' % (code, comp)).encode() + bytes(32))], None
+
+
+R6_PRESETS['cat_ext_JP'] = cat_ext_jp_args
+
+
+def cat_ext_eo_args(rng, regs):
+    """EO (text, set): P1 0..3, P2 0..3, P3 '+' / '-' / other, P4 0..2 (another P4 adds an uninitialised stack word,
+    cat_ext_EO 0xFFFA5D7C), three digits (sometimes not)."""
+    regs[0] = ARGBUF
+    t = 'EO' + rng.choice('00123') + rng.choice('00112223') + rng.choice('++--x') + rng.choice('012') + \
+        ''.join(rng.choice('0123456789' * 9 + 'A') for _ in range(3)) + ';'
+    return [(ARGBUF, t.encode() + bytes(16))], None
+
+
+R6_PRESETS['cat_ext_EO'] = cat_ext_eo_args
 FUNC_STUBS['cat_ai_ML'] = {'vfo_mode': (1, list(range(15)))}
 FUNC_STUBS['cat_ai_SH'] = {'vfo_mode': (1, list(range(15)))}
 PRESETS.update(R6_PRESETS)

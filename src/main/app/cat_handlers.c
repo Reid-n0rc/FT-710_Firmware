@@ -1189,3 +1189,72 @@ void cat_BA(void)
     vfo_store_back(0);
     g_ui.freq_refresh_req = 1;
 }
+
+/* cat_AB 0xFFFA646D: VFO-A -> VFO-B, the mirror of cat_BA (round 6) */
+void cat_AB(void)
+{
+    if (dial_busy() || g_ui.msgmem_open == 1) {
+        cat_error = 1;
+        return;
+    }
+    if (vfo_tune_locked(1) == 1) {
+        cat_error = 1;
+        return;
+    }
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
+    vfo_rec_copy(&g_opstate.vfo_b, &g_opstate.vfo_a);
+    vfo_mark_edited(1);
+    vfo_store_back(1);
+    g_ui.freq_refresh_req = 1;
+}
+
+void vm_toggle(void);                           /* V/M: VFO <-> memory (radio-control.md) */
+
+/* cat_AM 0xFFFA6A26, cat_BM 0xFFFA7928: VFO-A / VFO-B -> its memory channel (round 6). Refused for the channels
+ * 0x75..0x84. By the VFO state: VFO stores the VFO record; MEMORY TUNE stores the band's current band-stack record;
+ * QMB stores it and returns before the VFO updates; any other state (PMS after leaving it with vm_toggle) stores
+ * the band-stack record and also loads it into the VFO [fact: the state chain 0xFFFA6A6C..0xFFFA6B3E]. The record
+ * pointers are taken before vm_toggle runs. */
+static void vfo_to_mem(uint8_t side)
+{
+    uint8_t ch = side == 0 ? g_mem_hdr.chan_a : g_mem_hdr.chan_b;
+    struct vfo_rec *mem = &memch[ch];
+    struct vfo_rec *vfo = side == 0 ? &g_opstate.vfo_a : &g_opstate.vfo_b;
+    const struct vfo_rec *stack = side == 0 ? &bandstack_a[bandstack_level_a[g_opstate.band_a]][g_opstate.band_a]
+                                            : &bandstack_b[bandstack_level_b[g_opstate.band_b]][g_opstate.band_b];
+    enum vfo_state state;
+
+    if (ch >= 0x75u && ch <= 0x84u) {
+        cat_error = 1;
+        return;
+    }
+    state = side == 0 ? g_opstate.vfo_state_a : g_opstate.vfo_state_b;
+    if (state == VFO_STATE_VFO) {
+        vfo_rec_copy(mem, vfo);
+    } else if (state == VFO_STATE_MEMTUNE) {
+        vfo_rec_copy(mem, stack);
+    } else if (state == VFO_STATE_QMB) {
+        vfo_rec_copy(mem, stack);
+        eeprom_save_memch(ch);
+        return;
+    } else {
+        if (state == VFO_STATE_PMS)
+            vm_toggle();
+        vfo_rec_copy(mem, stack);
+        vfo_rec_copy(vfo, stack);
+    }
+    vfo_mark_edited(g_opstate.active_vfo);
+    vfo_store_back(g_opstate.active_vfo);
+    g_ui.freq_refresh_req = 1;
+    eeprom_save_memch(ch);
+}
+
+void cat_AM(void)
+{
+    vfo_to_mem(0);
+}
+
+void cat_BM(void)
+{
+    vfo_to_mem(1);
+}
