@@ -561,7 +561,33 @@ def interleave_args(rng, vals):
     return [], None
 
 
-PRESETS = {'deinterleave2_u32': interleave_args, 'interleave2_u32': interleave_args,
+CLIB_LOCK, CLIB_HEAP, CURR_THREAD = 0x2CD6B0, 0x2CD6D8, 0x237858    # src/ifdsp_hifi4/data_symbols.tsv
+HEAP_START, HEAP_LIMIT = 0x2CD860, 0x480000                             # _sbrk_r 0x228E34
+
+
+def sbrk_args(rng, vals):
+    """_sbrk_r (r, incr): the break unset or anywhere up to the limit, increments that end just below, at and just
+    above the limit (random increments never reach it), and a valid reent pointer for the errno store."""
+    brk = rng.choice([0, HEAP_START, rng.randrange(HEAP_START, HEAP_LIMIT)])
+    base = brk or HEAP_START
+    left = HEAP_LIMIT - base
+    vals[0] = [ARGBUF]
+    vals[1] = [(left + rng.choice([-2, -1, 0, 0, 1, 2, -left, rng.randrange(-left, 0x40)])) & 0xFFFFFFFF]
+    return [(CLIB_HEAP, brk.to_bytes(4, 'little'))], None
+
+
+def clib_lock_args(rng, vals):
+    """__malloc_lock / __malloc_unlock (r): the lock ready or not, owned by the running thread or another, the
+    recursion count 0..3 (random words almost never make the owner the running thread)."""
+    me, other = 0x2C0000 + 4 * rng.randrange(0x100), 0x2C8000
+    owner = rng.choice([me, me, other, 0])
+    lock = owner.to_bytes(4, 'little') + bytes(28) + rng.choice([0, 1, 1, 2, 3, 0xFFFFFFFF]).to_bytes(4, 'little') + \
+        bytes([rng.choice([0, 1, 1, 1])])
+    return [(CURR_THREAD, me.to_bytes(4, 'little')), (CLIB_LOCK, lock)], None
+
+
+PRESETS = {'_sbrk_r': sbrk_args, '__malloc_lock': clib_lock_args, '__malloc_unlock': clib_lock_args,
+           'deinterleave2_u32': interleave_args, 'interleave2_u32': interleave_args,
            'strcmp': strn_args, 'strncmp': strn_args, 'env_strcmp': strn_args, 'env_strncmp': strn_args,
            'strncpy': strn_args, 'env_strncpy': strn_args, 'strcpy': strn_args,
            'memcpy': mem_args, 'memset': mem_args, 'env_memset': mem_args, 'env_memcpy': mem_args,
@@ -864,6 +890,14 @@ def cmd_status(args):
     orig = Originals()
     jobs = [(p, f, args.seed, args.trials) for p, f in recreated()]
     results = {}
+    if args.only:
+        # re-check only these functions; every other row is taken from the existing status.tsv
+        want = set(args.only.split(','))
+        jobs = [j for j in jobs if j[1] in want]
+        for r in read_tsv(STATUS_TSV)[1:]:
+            if r[3] and r[3] not in want:
+                a = int(r[0], 16)
+                results[a if a else ('-', r[3])] = (r[3], r[4], r[5], r[7] if len(r) > 7 else '')
     for path, fname, a, v, d in sorted(run_jobs(jobs, args.jobs or 1), key=lambda x: (x[0], x[1])):
         print(f'equiv_hifi4_emu: {fname:32s} {v}: {d}', file=sys.stderr)
         rel = os.path.relpath(path, os.path.join(SRC, 'out', 'obj'))
@@ -922,6 +956,7 @@ def main():
     c.add_argument('functions', nargs='*')
     c.add_argument('--object', action='append', help='every function of this object (e.g. libc/strlen.o)')
     st = sub.add_parser('status')
+    st.add_argument('--only', help='comma-separated functions to re-check; the other rows stay as they are')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)
         p.add_argument('--seed', type=int, default=1)

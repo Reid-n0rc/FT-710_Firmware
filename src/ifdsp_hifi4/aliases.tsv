@@ -1,0 +1,6 @@
+# Recreated functions whose original has a Ghidra name of its own (FUN_...), with the evidence.
+name	address	evidence
+add_to_list	00235370	rpmsg-lite llist.c: called by rpmsg_lite_create_ept 0x21B01E where v3.1.1 adds the endpoint node to rl_endpoints
+remove_from_list	00235398	rpmsg-lite llist.c: called by rpmsg_lite_destroy_ept 0x21B05D where v3.1.1 removes the node
+__fp_lock	00235f80	newlib findfp.c __fp_lock: _fwalk callback of __fp_lock_all (hifi4-libraries.md), entry; movi a2, 0; retw.n inside Ghidra's __sinit_lock_release
+__fp_unlock	00235f90	the same for __fp_unlock_all
