@@ -487,12 +487,15 @@ SEM = {
     "maxu": "local a:4 = {r1}; local b:4 = {r2}; {w0} = a; if (a >= b) goto <done>; {w0} = b; <done>",
     "mov.n": "{w0} = {r1};",
     "movi": "{w0} = {r1};", "movi.n": "{w0} = {r1};",
-    "moveqz": "if ({r2} != 0) goto <done>; {w0} = {r1}; <done>",
-    "movnez": "if ({r2} == 0) goto <done>; {w0} = {r1}; <done>",
-    "movltz": "if ({r2} s>= 0) goto <done>; {w0} = {r1}; <done>",
-    "movgez": "if ({r2} s< 0) goto <done>; {w0} = {r1}; <done>",
-    "movt": "if ({r2} == 0) goto <done>; {w0} = {r1}; <done>",
-    "movf": "if ({r2} != 0) goto <done>; {w0} = {r1}; <done>",
+    # conditional moves: the destination keeps its value when the condition fails. In a FLIX slot {w0} is a staging
+    # register that the bundle commits unconditionally, so it starts as the destination's value (T24 HiFi4: without
+    # it, { moveqz a12, a13, a3; ... } at 0x21B5CB in rpmsg_lite_remote_init cleared a12 when a3 != 0)
+    "moveqz": "{w0} = {r0}; if ({r2} != 0) goto <done>; {w0} = {r1}; <done>",
+    "movnez": "{w0} = {r0}; if ({r2} == 0) goto <done>; {w0} = {r1}; <done>",
+    "movltz": "{w0} = {r0}; if ({r2} s>= 0) goto <done>; {w0} = {r1}; <done>",
+    "movgez": "{w0} = {r0}; if ({r2} s< 0) goto <done>; {w0} = {r1}; <done>",
+    "movt": "{w0} = {r0}; if ({r2} == 0) goto <done>; {w0} = {r1}; <done>",
+    "movf": "{w0} = {r0}; if ({r2} != 0) goto <done>; {w0} = {r1}; <done>",
     "extui": "{w0} = ({r1} >> {r2}) & ((1 << {r3}) - 1);",
     "slli": "{w0} = {r1} << {r2};", "srli": "{w0} = {r1} >> {r2};", "srai": "{w0} = {r1} s>> {r2};",
     "sll": "{w0} = {r1} << (32 - SAR);", "srl": "{w0} = {r1} >> SAR;", "sra": "{w0} = {r1} s>> SAR;",
