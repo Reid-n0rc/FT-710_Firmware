@@ -1150,32 +1150,32 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201341e8	FUN_201341e8	28			not yet	0	
 20134204	FUN_20134204	44			not yet	0	
 20134230	FUN_20134230	132			not yet	0	
-201342b4	scope_objects_init	448	scope_objects_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 200 trials inconclusive)
+201342b4	scope_objects_init	28	scope_objects_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 200 trials inconclusive)
 201342d0	scope_obj_bank_reset	12	scope_obj_bank_reset	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-201342dc	scope_palette_set	256	scope_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
-201342ec	scope_store_frame	168	scope_store_frame	app/scope_obj.o	equivalent	168	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-201342f8	scope_freeze_a_set	24	scope_freeze_a_set	app/scope_obj.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134304	scope_freeze_b_set	24	scope_freeze_b_set	app/scope_obj.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201342dc	scope_palette_set	16	scope_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
+201342ec	scope_store_frame	12	scope_store_frame	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201342f8	scope_freeze_a_set	12	scope_freeze_a_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134304	scope_freeze_b_set	12	scope_freeze_b_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20134310	scope_history_reset	8	scope_history_reset	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134318	scope3d_redraw_history	452			not yet	0	
-20134328	scope3d_add_line	588			not yet	0	
+20134318	scope3d_redraw_history	16			not yet	0	
+20134328	scope3d_add_line	20			not yet	0	
 2013433c	FUN_2013433c	12	scope_obj_7f8c_thunk	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134348	scope_history_push	212			not yet	0	
-20134358	scope3d_vscale	68	scope3d_vscale	app/scope_obj.o	equivalent	68	differential emulation: 200 trials agree (121 returned normally, 100% of 1 blocks reached)
-20134368	scope3d_line_offset	88	scope3d_line_offset	app/scope_obj.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134348	scope_history_push	16			not yet	0	
+20134358	scope3d_vscale	16	scope3d_vscale	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (121 returned normally, 100% of 1 blocks reached)
+20134368	scope3d_line_offset	20	scope3d_line_offset	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013437c	scope_levels_get	20	scope_levels_get	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (94 returned normally, 100% of 1 blocks reached)
 20134390	scope_record_hold_copy	8	scope_record_hold_copy	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (98 returned normally, 100% of 1 blocks reached)
 20134398	scope_ramp_get	44	scope_ramp_get	app/scope_obj.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 80% of 5 blocks reached)
 201343c4	FUN_201343c4	40			not yet	0	
 201343ec	FUN_201343ec	28			not yet	0	
-20134408	scope3d_line_markers	36	scope3d_line_markers	app/scope_obj.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134408	scope3d_line_markers	12	scope3d_line_markers	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20134414	scope_wf_add_row	16	scope_wf_add_row	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (67 returned normally, 100% of 1 blocks reached, 133 trials inconclusive)
 20134424	scope_wf_add_row_mode	16	scope_wf_add_row_mode	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (67 returned normally, 100% of 1 blocks reached, 133 trials inconclusive)
-20134434	scope_wf_row_addr	116	scope_wf_row_addr	app/scope_obj.o	equivalent	116	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134444	FUN_20134444	36	scope_set_2e04_2e00	app/scope_obj.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134468	FUN_20134468	12	scope_set_2e00	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134474	FUN_20134474	12	scope_set_2e02	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20134480	scope3d_layout_set	120	scope3d_layout_set	app/scope_obj.o	equivalent	120	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134434	scope_wf_row_addr	16	scope_wf_row_addr	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134444	scope_set_2e04_2e00	36	scope_set_2e04_2e00	app/scope_obj.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134468	scope_set_2e00	12	scope_set_2e00	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134474	scope_set_2e02	12	scope_set_2e02	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134480	scope3d_layout_set	12	scope3d_layout_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013448c	scope_reset_bank0	12	scope_reset_bank0	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20134498	scope_reset_bank1	8	scope_reset_bank1	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201344a0	scope_frame_buf	8	scope_frame_buf	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
@@ -1961,19 +1961,22 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201576f4	scope_wf_bank_set	108	scope_wf_bank_set	app/scope_obj.o	equivalent	108	differential emulation: 200 trials agree (189 returned normally, 100% of 5 blocks reached)
 20157778	scope_obj_history_clear	116	scope_obj_history_clear	app/scope_obj.o	equivalent	116	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
 201577f8	copy_inverted_words_b	36	copy_inverted_words_b	lib/misc.o	equivalent	36	differential emulation: 200 trials agree (27 returned normally, 100% of 3 blocks reached, 20 trials inconclusive)
-2015781c	-	0	scope_obj_store_record	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (192 returned normally, 80% of 10 blocks reached)
+2015781c	scope_obj_store_record	156	scope_obj_store_record	app/scope_obj.o	equivalent	156	differential emulation: 200 trials agree (192 returned normally, 80% of 10 blocks reached)
 201578c4	-	0	scope_obj_set_2e04_thunk	app/scope_obj.o	identical	0	byte-identical at the original address (4 bytes)
 201578c8	scope_obj_reset_bank0	40	scope_obj_reset_bank0	app/scope_obj.o	equivalent	40	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
-201578f0	-	0	scope_obj_freeze_b_set	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
-201578fc	-	0	scope_obj_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
-20157bc4	-	0	scope_obj_freeze_a_set	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
-20157bd0	-	0	scope_obj_layout_set	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
+201578f0	scope_obj_freeze_b_set	12	scope_obj_freeze_b_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201578fc	scope_obj_palette_set	240	scope_obj_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
+20157a00	scope_obj_redraw_history	436			not yet	0	
+20157bc4	scope_obj_freeze_a_set	12	scope_obj_freeze_a_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20157bd0	scope_obj_layout_set	108	scope_obj_layout_set	app/scope_obj.o	equivalent	108	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
 20157c50	scope_obj_levels_get	224			not yet	0	
 20157d3c	scope_obj_wf_add_row	552			not yet	0	
 20157f8c	FUN_20157f8c	124			not yet	0	
-20158330	-	0	scope_obj_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 192 trials inconclusive)
-201584f8	FUN_201584f8	88	scope_obj_set_2e00	app/scope_obj.o	equivalent	88	differential emulation: 200 trials agree (188 returned normally, 100% of 4 blocks reached)
-20158544	FUN_20158544	136	scope_obj_set_2e02	app/scope_obj.o	equivalent	136	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20158010	scope_obj_history_push	196			not yet	0	
+201580e0	scope_obj_add_line	568			not yet	0	
+20158330	scope_obj_init	420	scope_obj_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 192 trials inconclusive)
+201584f8	scope_obj_set_2e00	68	scope_obj_set_2e00	app/scope_obj.o	equivalent	68	differential emulation: 200 trials agree (188 returned normally, 100% of 4 blocks reached)
+20158544	scope_obj_set_2e02	28	scope_obj_set_2e02	app/scope_obj.o	equivalent	28	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
 20158568	scope_obj_reset_bank1	40	scope_obj_reset_bank1	app/scope_obj.o	equivalent	40	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
 20158590	scope_obj_indices_clear	104	scope_obj_indices_clear	app/scope_obj.o	equivalent	104	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
 20158618	msgbuf_init	24	msgbuf_init	lib/norti_knl.o	equivalent	24	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
@@ -2135,8 +2138,9 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20162d04	cpp_task_thunk	12			not yet	0	
 20162d10	os_mbx_create_fifo	40	os_mbx_create_fifo	lib/norti_knl.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20162d3c	os_mbx_send	12	os_mbx_send	lib/norti_knl.o	identical	12	byte-identical at the original address (12 bytes)
-20162d48	FUN_20162d48	12			not yet	0	
-20162d54	-	0	scope_obj_apply_2e00	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20162d48	scope_obj_set_2e04	12			not yet	0	
+20162d54	scope_obj_apply_2e00	20	scope_obj_apply_2e00	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20162d68	scope_obj_apply_2e02	108			not yet	0	
 20162dd8	scif_rxi_isr	312	scif_rxi_isr	drivers/scif.o	equivalent	312	differential emulation: 200 trials agree (180 returned normally, 100% of 12 blocks reached)
 20162f10	scif_txi_isr	156	scif_txi_isr	drivers/scif.o	equivalent	156	differential emulation: 200 trials agree (180 returned normally, 100% of 5 blocks reached)
 20162fac	uart_obj_init	104	uart_obj_init	drivers/scif.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
@@ -2149,11 +2153,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201632d8	scif_write	136	scif_write	drivers/scif.o	equivalent	136	differential emulation: 200 trials agree (117 returned normally, 100% of 8 blocks reached)
 20163360	uart_obj_ctor	12	uart_obj_ctor	drivers/scif.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201633a0	FUN_201633a0	108			not yet	0	
-2016340c	-	0	scope_obj_line_markers	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2016340c	scope_obj_line_markers	24	scope_obj_line_markers	app/scope_obj.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20163428	FUN_20163428	136			not yet	0	
-201634b8	-	0	scope_obj_vscale	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (117 returned normally, 100% of 3 blocks reached)
-201634f0	-	0	scope_obj_wf_row_addr	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (188 returned normally, 67% of 3 blocks reached)
-20163564	-	0	scope_obj_line_offset	app/scope_obj.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+201634b8	scope_obj_vscale	52	scope_obj_vscale	app/scope_obj.o	equivalent	52	differential emulation: 200 trials agree (117 returned normally, 100% of 3 blocks reached)
+201634f0	scope_obj_wf_row_addr	100	scope_obj_wf_row_addr	app/scope_obj.o	equivalent	100	differential emulation: 200 trials agree (188 returned normally, 67% of 3 blocks reached)
+20163564	scope_obj_line_offset	68	scope_obj_line_offset	app/scope_obj.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 201635b8	FUN_201635b8	44			not yet	0	
 201635e4	fwobj_version_text	24			not yet	0	
 20163600	fwname_pattern_match	84			not yet	0	
