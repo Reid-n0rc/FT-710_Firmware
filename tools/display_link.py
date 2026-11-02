@@ -552,9 +552,13 @@ def main():
             limit = (used if limit is None else limit) - over - 256
             continue
         m = re.search(r"region `GAP' overflowed by (\d+) bytes", err or '')
-        if not m:
+        # round 9: past the region's end ld may instead report the location counter ("address A of ... section
+        # `.recreated' is not within region `GAP'"); the overflow is then at least A - GAP_END
+        m2 = re.search(r"address (0x[0-9a-f]+) of \S+ section `\.recreated' is not within region `GAP'", err or '')
+        if not m and not m2:
             sys.exit('display_link: ld failed:\n' + err[-4000:])
-        limit = (used if limit is None else limit) - int(m.group(1)) - 256
+        over = int(m.group(1)) if m else int(m2.group(1), 16) - GAP_END
+        limit = (used if limit is None else limit) - over - 256
     else:
         sys.exit('display_link: the recreated code does not fit into the gap and RAM2')
 
