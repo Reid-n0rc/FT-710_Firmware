@@ -1069,7 +1069,7 @@ void FUN_20134230(void)
 }
 
 
-// ===== scope_objects_init @ 201342b4 (448 bytes)
+// ===== scope_objects_init @ 201342b4 (28 bytes)
 
 /* gui_start: clears the 0x82FB8-byte scope object 0x2047963C, sets the scope record 0x204832BB and
    its hold copy 0x2048360D to 0xFF, builds the 3D objects 0x20470294 / 0x20474C68 with the default
@@ -1078,39 +1078,8 @@ void FUN_20134230(void)
 void scope_objects_init(void)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
-  undefined4 unaff_r4;
-  
   __aeabi_memclr4(&DAT_2047963c,0x82fb8);
-  DAT_204832b8 = 0;
-  DAT_204832b9 = 0;
-  DAT_204832ba = 0;
-  __aeabi_memset(&DAT_204832bb,0x352,0xff);
-  __aeabi_memset(&DAT_2048360d,0x352,0xff);
-  FUN_20164054(&DAT_2047c848,0,0x1e,&DAT_203d9a18,&DAT_203d99dc,unaff_r4);
-  FUN_20163f80(&DAT_2047f400,0,0xf,&DAT_203d9a9e);
-  FUN_20164018(&DAT_2047c848,&DAT_203b6704);
-  FUN_20163f44(&DAT_2047f400,&DAT_203daf14);
-                    /* resets the three sub-objects [doc] */
-  scope3d_obj_init(&DAT_20470294);
-  uVar1 = FUN_20164680(&DAT_2047f400);
-  uVar2 = FUN_2016469c(&DAT_2047c848);
-  FUN_20158838(&DAT_20470294,&DAT_203e58ac,uVar2,uVar1);
-  FUN_201640a4(&DAT_2047fd80,&DAT_2047c848);
-  FUN_20163fd0(&DAT_20482938,&DAT_2047f400);
-  scope3d_obj_init(&DAT_20474c68);
-  uVar1 = FUN_20164680(&DAT_20482938);
-  uVar2 = FUN_2016469c(&DAT_2047fd80);
-  FUN_20158838(&DAT_20474c68,&DAT_203e58ac,uVar2,uVar1);
-  thunk_FUN_20162d48(&DAT_2047963c,100);
-  FUN_201584f8(&DAT_2047963c,0);
-  FUN_20158544(&DAT_2047963c,0);
-  FUN_20162c28(&DAT_2047c442,DAT_2047032c);
-  FUN_20162c28(&DAT_2047c644,DAT_20474d00);
-                    /* 0 clears waterfall bank 0 [doc] */
-  scope_wf_bank_set(&DAT_2047963c,2);
-  scope_obj_history_clear(&DAT_2047963c);
+  scope_obj_init(&DAT_2047963c);
   return;
 }
 
@@ -1129,82 +1098,53 @@ void scope_obj_bank_reset(undefined4 param_1)
 }
 
 
-// ===== scope_palette_set @ 201342dc (256 bytes)
+// ===== scope_palette_set @ 201342dc (16 bytes)
 
 /* (colour a, colour b): loads the 3D colour ramps of the two 3D objects 0x20470294 / 0x20474C68
    from the ROM pointer tables 0x203D9A54 / 0x203D9ABC / 0x203D9AE8 by COLOR index (gui.md byte 0x12
    bits 0-3) [fact] */
 
-void scope_palette_set(int param_1,int param_2)
+void scope_palette_set(undefined4 param_1,undefined4 param_2)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
-  
-  FUN_20164018(&DAT_2047c848,(&PTR_DAT_203d9a54)[param_1]);
-  FUN_20163f44(&DAT_2047f400,(&PTR_DAT_203d9abc)[param_1]);
-  uVar1 = FUN_20164680(&DAT_2047f400);
-  uVar2 = FUN_2016469c(&DAT_2047c848);
-  FUN_20158838(&DAT_20470294,(&PTR_DAT_203d9ae8)[param_1],uVar2,uVar1);
-  FUN_20164018(&DAT_2047fd80,(&PTR_DAT_203d9a54)[param_2]);
-  FUN_20163f44(&DAT_20482938,(&PTR_DAT_203d9abc)[param_2]);
-  uVar1 = FUN_20164680(&DAT_20482938);
-  uVar2 = FUN_2016469c(&DAT_2047fd80);
-  FUN_20158838(&DAT_20474c68,(&PTR_DAT_203d9ae8)[param_2],uVar2,uVar1);
-  FUN_20162c28(&DAT_2047c442,DAT_2047032c);
-  FUN_20162c28(&DAT_2047c644,DAT_20474d00);
+  scope_obj_palette_set(&DAT_2047963c,param_1,param_2);
   return;
 }
 
 
-// ===== scope_store_frame @ 201342ec (168 bytes)
+// ===== scope_store_frame @ 201342ec (12 bytes)
 
 /* 850 B -> 0x204832BB */
 
-void scope_store_frame(uint param_1)
+void scope_store_frame(undefined4 param_1)
 
 {
-  if (DAT_204832b8 == '\0') {
-    if ((DAT_208004a0 == '\0') && (DAT_204832ba == '\0')) {
-      memcpy(&DAT_204832bb,param_1,0x352);
-    }
-    else {
-      __aeabi_memset(&DAT_204832bb,0x352,0xff);
-    }
-    if (((ushort)DAT_20808a84 & 0x400) != 0) {
-      __aeabi_memcpy4(&DAT_204832d4,&DAT_203d9b14,800);
-      return;
-    }
-  }
-  else if (DAT_204832ba != '\0') {
-    __aeabi_memset_veneer(&DAT_204832bb,0x352,0xff);
-    return;
-  }
+  scope_obj_store_record(&DAT_2047963c,param_1);
   return;
 }
 
 
-// ===== scope_freeze_a_set @ 201342f8 (24 bytes)
+// ===== scope_freeze_a_set @ 201342f8 (12 bytes)
 
 /* (v): 0x204832B8 = v, one of the three scope freeze bytes 0x204832B8..BA (gui.md);
    gui_screen_update sets it [fact] */
 
-void scope_freeze_a_set(undefined1 param_1)
+void scope_freeze_a_set(undefined4 param_1)
 
 {
-  DAT_204832b8 = param_1;
+  scope_obj_freeze_a_set(&DAT_2047963c,param_1);
   return;
 }
 
 
-// ===== scope_freeze_b_set @ 20134304 (24 bytes)
+// ===== scope_freeze_b_set @ 20134304 (12 bytes)
 
 /* (v): 0x204832B9 = v; scope_draw_frame and scope_area_setup set it [fact] */
 
-void scope_freeze_b_set(undefined1 param_1)
+void scope_freeze_b_set(undefined4 param_1)
 
 {
-  DAT_204832b9 = param_1;
+  scope_obj_freeze_b_set(&DAT_2047963c,param_1);
   return;
 }
 

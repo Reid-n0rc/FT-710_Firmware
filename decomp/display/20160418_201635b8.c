@@ -1,5 +1,245 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fwobj_match_name @ 20160418 (132 bytes)
+
+/* keeps the highest matching file name per object */
+
+uint fwobj_match_name(int param_1,uint param_2,uint param_3)
+
+{
+  uint fwname_pattern_match_ret;
+  int iVar1;
+  uint uVar2;
+  undefined1 auStack_30 [36];
+  
+  fwname_pattern_match_ret = fwname_pattern_match((int *)(param_1 + 0x14),param_2,param_3);
+  uVar2 = 0;
+  if (fwname_pattern_match_ret != 0) {
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
+    copy32(auStack_30,param_2);
+    if (*(char *)(param_1 + 0x57) == '\0') {
+      memcpy(param_1 + 0x37,auStack_30,0x20);
+      *(undefined1 *)(param_1 + 0x57) = 1;
+    }
+    else {
+      iVar1 = strcasecmp(param_1 + 0x37,auStack_30);
+      if (iVar1 < 1) {
+        memcpy(param_1 + 0x37,auStack_30,0x20);
+      }
+    }
+    uVar2 = 1;
+  }
+  return uVar2;
+}
+
+
+// ===== fwobj_set_status @ 2016049c (44 bytes)
+
+/* status text (Ready, failed, ...) */
+
+void fwobj_set_status(int param_1,uint param_2)
+
+{
+  undefined4 uVar1;
+  undefined1 auStack_28 [32];
+  
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
+  uVar1 = copy32(auStack_28);
+  memcpy(param_1 + 0x89,uVar1,0x20);
+  return;
+}
+
+
+// ===== fwobj_version_from_name @ 201604c8 (20 bytes)
+
+/* "0108" in the name -> "01-08" */
+
+void fwobj_version_from_name(int param_1)
+
+{
+  FUN_20160c28(param_1 + 0xe,*(int *)(param_1 + 0x20) + param_1 + 0x37);
+  return;
+}
+
+
+// ===== fwobj_select @ 201604dc (24 bytes)
+
+/* marks the object selected for update */
+
+void fwobj_select(int param_1,byte param_2)
+
+{
+  *(undefined1 *)(param_1 + 0xaa) = 0;
+  *(byte *)(param_1 + 0x88) = param_2;
+  *(undefined1 *)(param_1 + 0xa9) = 1;
+  return;
+}
+
+
+// ===== fwobj_base_ctor @ 201604f4 (88 bytes)
+
+/* base update-object constructor, vtable 0x2042807C */
+
+int fwobj_base_ctor(void *param_1)
+
+{
+  int iVar1;
+  
+  *(undefined **)param_1 = &DAT_2042807c;
+                    /* memcpy of 10 bytes, returns dst [doc] */
+  iVar1 = copy10((int)param_1 + 4,&DAT_20428430);
+  iVar1 = FUN_20160c5c(iVar1 + 10,"-----");
+  iVar1 = copy10(iVar1 + 0x1e,&DAT_20428430);
+                    /* memcpy of 0x20 bytes, returns dst [doc] */
+  iVar1 = copy32(iVar1 + 0xb,&DAT_20428430);
+                    /* memcpy of 0x30 bytes, returns dst [doc] */
+  iVar1 = copy48(iVar1 + 0x21,&DAT_20428430);
+  iVar1 = copy32(iVar1 + 0x31,&DAT_20428430);
+  return iVar1 + -0x89;
+}
+
+
+// ===== fwname_pattern_init @ 20160558 (80 bytes)
+
+/* builds the name pattern (prefix, "NNNN", suffix) */
+
+void fwname_pattern_init(int *param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  
+  param_1[1] = param_2;
+  param_1[2] = param_3;
+                    /* Word-at-a-time string length [doc] */
+  iVar1 = strlen(param_2);
+  param_1[3] = iVar1;
+  iVar1 = strlen(param_3);
+  param_1[5] = iVar1;
+  iVar1 = strlen(&DAT_204281f5);
+  param_1[4] = iVar1 + param_1[3];
+  *param_1 = iVar1 + param_1[3] + param_1[5];
+  return;
+}
+
+
+// ===== fwobj_main_run @ 201605ac (244 bytes)
+
+/* vtbl[0]: CRC check, then RX boot mode entry + rx_boot_program */
+
+undefined4 fwobj_main_run(int param_1,uint param_2,int param_3,int param_4)
+
+{
+  uint fs_fopen_ret;
+  undefined4 uVar1;
+  uint sfl_read_header_ret;
+  int iVar2;
+  int local_18;
+  
+  if (param_2 == 0) {
+    param_2 = param_1 + 0x58;
+  }
+  local_18 = param_4;
+  fs_fopen_ret = fs_fopen(param_2,0x204281fa);
+  if (fs_fopen_ret == 0) {
+    uVar1 = 1;
+  }
+  else {
+                    /* progress percent 0x20800364 [doc, inference] */
+    progress_set(5);
+    itron_rot_rdq(0);
+    itron_get_pri(0,&local_18);
+    local_18 = local_18 + -1;
+    itron_chg_pri(0);
+    sfl_read_header_ret = sfl_read_header(fs_fopen_ret,0);
+    itron_chg_pri(0);
+    if (param_3 == 0) {
+      fs_fclose(fs_fopen_ret);
+      if (sfl_read_header_ret != 0) {
+        return 2;
+      }
+    }
+    else {
+      mainlink_rx_ctrl(1);
+      gpio_rx_reset(0);
+      gpio_rx_update_b(1);
+      itron_dly_tsk(5);
+      gpio_rx_reset(1);
+      itron_dly_tsk(0x28);
+      iVar2 = rx_boot_program(fs_fopen_ret,1);
+      fs_fclose(fs_fopen_ret);
+      if (iVar2 == 0) {
+        return 3;
+      }
+    }
+    uVar1 = 0;
+  }
+  return uVar1;
+}
+
+
+// ===== fwobj_main_ctor @ 201606a4 (20 bytes)
+
+/* MAIN object, vtable 0x20428088 */
+
+uint fwobj_main_ctor(uint param_1)
+
+{
+  undefined4 *fwobj_base_ctor_ret;
+  
+                    /* base update-object constructor, vtable 0x2042807C [doc, inference] */
+  fwobj_base_ctor_ret = (undefined4 *)fwobj_base_ctor((void *)param_1);
+  *fwobj_base_ctor_ret = &DAT_20428088;
+  return (uint)fwobj_base_ctor_ret;
+}
+
+
+// ===== fwobj_ifdsp_run @ 201606bc (264 bytes)
+
+/* vtbl[0]: CRC check, then dsp_isp_program */
+
+undefined4 fwobj_ifdsp_run(int param_1,uint param_2,int param_3)
+
+{
+  uint fs_fopen_ret;
+  undefined4 uVar1;
+  uint uVar2;
+  
+  if (param_2 == 0) {
+    param_2 = param_1 + 0x58;
+  }
+  fs_fopen_ret = fs_fopen(param_2,0x204281fd);
+  if (fs_fopen_ret == 0) {
+    uVar1 = 1;
+  }
+  else {
+                    /* progress percent 0x20800364 [doc, inference] */
+    progress_set(5);
+    itron_rot_rdq(0);
+    itron_get_pri(0,&stack0xffffffd8);
+    itron_chg_pri(0);
+    uVar2 = sfl_read_header(fs_fopen_ret,0);
+    itron_chg_pri(0);
+    if (param_3 == 0) {
+      fs_fclose(fs_fopen_ret);
+      if (uVar2 != 0) {
+        return 2;
+      }
+    }
+    else {
+      gpio_p7_9_11(1);
+      gpio_rx_reset(1);
+      uVar2 = dsp_isp_program(fs_fopen_ret,1,0,0,(uint)*(byte *)(param_1 + 0xab));
+      fs_fclose(fs_fopen_ret);
+      if (uVar2 == 0) {
+        return 3;
+      }
+    }
+    uVar1 = 0;
+  }
+  return uVar1;
+}
+
+
 // ===== fwobj_ifdsp_ctor @ 201607c8 (28 bytes)
 
 /* IFDSP object, vtable 0x20428094, +0xAB flag */
@@ -613,12 +853,53 @@ void os_mbx_send(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 }
 
 
-// ===== FUN_20162d48 @ 20162d48 (12 bytes)
+// ===== scope_obj_set_2e04 @ 20162d48 (12 bytes)
 
-void FUN_20162d48(int param_1,undefined1 param_2)
+/* [fact] (obj, v): strb r1, [r0, #0x2E04]; Ghidra FUN_20162d48 (T24 USB track) */
+
+void scope_obj_set_2e04(int param_1,undefined1 param_2)
 
 {
   *(undefined1 *)(param_1 + 0x2e04) = param_2;
+  return;
+}
+
+
+// ===== scope_obj_apply_2e00 @ 20162d54 (20 bytes)
+
+/* [fact] (obj): FUN_20157634(obj + 0x2D00, byte +0x2E04, obj + 0x2E00); tail call of
+   scope_obj_set_2e00; new entry (T24 USB track) */
+
+void scope_obj_apply_2e00(int param_1)
+
+{
+  FUN_20157634(param_1 + 0x2d00,*(undefined1 *)(param_1 + 0x2e04),param_1 + 0x2e00);
+  return;
+}
+
+
+// ===== scope_obj_apply_2e02 @ 20162d68 (108 bytes)
+
+/* [fact] (obj, v): tail call of scope_obj_set_2e02 with the halfword it stored at +0x2E02; new
+   entry (T24 USB track) */
+
+void scope_obj_apply_2e02(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = 0;
+  do {
+    FUN_20157634(param_1 + iVar1 * 0x100,*(undefined2 *)(DAT_20450278 + iVar1 * 2),param_1 + 0x2e02)
+    ;
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 0x1e);
+  iVar1 = 0;
+  do {
+    FUN_20157634(param_1 + iVar1 * 0x100 + 0x1e00,*(undefined2 *)(DAT_2045027c + iVar1 * 2),
+                 param_1 + 0x2e02);
+    iVar1 = iVar1 + 1;
+  } while (iVar1 < 0xf);
   return;
 }
 
@@ -949,6 +1230,18 @@ void FUN_201633a0(int param_1,int param_2,int param_3,int param_4,uint param_5)
 }
 
 
+// ===== scope_obj_line_markers @ 2016340c (24 bytes)
+
+/* [fact] (obj, i): obj + 0x100E4 + 0x54 * i; tail call of scope3d_line_markers; new entry (T24 USB
+   track) */
+
+int scope_obj_line_markers(int param_1,int param_2)
+
+{
+  return param_1 + param_2 * 0x54 + 0x100e4;
+}
+
+
 // ===== FUN_20163428 @ 20163428 (136 bytes)
 
 undefined4 FUN_20163428(int param_1,int param_2,int param_3,undefined4 param_4,undefined4 param_5)
@@ -977,6 +1270,83 @@ undefined4 FUN_20163428(int param_1,int param_2,int param_3,undefined4 param_4,u
 }
 
 
+// ===== scope_obj_vscale @ 201634b8 (52 bytes)
+
+/* [fact] (obj, i, mode): halfword i of *0x20450278 (mode 8) or *0x2045027C (mode 9), else 0; tail
+   call of scope3d_vscale; new entry (T24 USB track) */
+
+undefined2 scope_obj_vscale(undefined4 param_1,int param_2,int param_3)
+
+{
+  undefined2 uVar1;
+  
+  if (param_3 == 8) {
+    return *(undefined2 *)(DAT_20450278 + param_2 * 2);
+  }
+  if (param_3 == 9) {
+    uVar1 = *(undefined2 *)(DAT_2045027c + param_2 * 2);
+  }
+  else {
+    uVar1 = 0;
+  }
+  return uVar1;
+}
+
+
+// ===== scope_obj_wf_row_addr @ 201634f0 (100 bytes)
+
+/* [fact] (obj, i): obj + 0x1B130 + bank * 0x33F40 + 0x640 * ring133_offset(index of the selected
+   bank, ~i); tail call of scope_wf_row_addr; new entry (T24 USB track) */
+
+int scope_obj_wf_row_addr(int param_1,uint param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = ring133_offset(param_1 + 0x82fb4,~param_2);
+  if (DAT_20450280 == 1) {
+    iVar1 = ring133_offset(param_1 + 0x82fb0,~param_2);
+  }
+  return param_1 + DAT_20450280 * 0x33f40 + iVar1 * 0x640 + 0x1b130;
+}
+
+
+// ===== scope_obj_line_offset @ 20163564 (68 bytes)
+
+/* [fact] (obj, i, mode, expanded): halfword i of the ROM scale table of mode 8 / 9 for the layout,
+   else 0; tail call of scope3d_line_offset; new entry (T24 USB track) */
+
+undefined2 scope_obj_line_offset(undefined4 param_1,int param_2,int param_3,int param_4)
+
+{
+  undefined2 uVar1;
+  undefined2 *puVar2;
+  
+  if (param_3 == 8) {
+    if (param_4 == 0) {
+      puVar2 = (undefined2 *)&DAT_203d99dc;
+    }
+    else {
+      puVar2 = &DAT_203d9a18;
+    }
+    return puVar2[param_2];
+  }
+  if (param_3 == 9) {
+    if (param_4 == 0) {
+      puVar2 = (undefined2 *)&DAT_203d9a80;
+    }
+    else {
+      puVar2 = &DAT_203d9a9e;
+    }
+    uVar1 = puVar2[param_2];
+  }
+  else {
+    uVar1 = 0;
+  }
+  return uVar1;
+}
+
+
 // ===== FUN_201635b8 @ 201635b8 (44 bytes)
 
 void FUN_201635b8(int param_1,undefined1 *param_2)
@@ -987,233 +1357,6 @@ void FUN_201635b8(int param_1,undefined1 *param_2)
   param_2[2] = *(undefined1 *)(param_1 + 0x11);
   param_2[3] = *(undefined1 *)(param_1 + 0x12);
   param_2[4] = 0;
-  return;
-}
-
-
-// ===== fwobj_version_text @ 201635e4 (24 bytes)
-
-/* (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
-   fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact] */
-
-void fwobj_version_text(int param_1,undefined4 param_2)
-
-{
-  sprintf_veneer(param_2,&UNK_20428286,param_1 + 4,param_1 + 0xe);
-  return;
-}
-
-
-// ===== fwname_pattern_match @ 20163600 (84 bytes)
-
-/* prefix + 4 chars + ".sfl", case-insensitive, exact length */
-
-uint fwname_pattern_match(int *param_1,int param_2,int param_3)
-
-{
-  int iVar1;
-  uint uVar2;
-  
-  if (((*param_1 == param_3) && (iVar1 = strncasecmp(param_1[1],param_2,param_1[3]), iVar1 == 0)) &&
-     (iVar1 = strncasecmp(param_1[2],param_1[4] + param_2,param_1[5]), iVar1 == 0)) {
-    uVar2 = 1;
-  }
-  else {
-    uVar2 = 0;
-  }
-  return uVar2;
-}
-
-
-// ===== scif_has_flag @ 20163654 (16 bytes)
-
-/* RX event flag bound? */
-
-byte scif_has_flag(scif_uart *uart)
-
-{
-  return uart->rx_flg != 0;
-}
-
-
-// ===== FUN_20163668 @ 20163668 (28 bytes)
-
-void FUN_20163668(undefined2 *param_1)
-
-{
-  undefined2 *puVar1;
-  
-  if (((uint)param_1 & 1) == 0) {
-    *(undefined1 *)(param_1 + 2) = 0;
-    puVar1 = param_1;
-  }
-  else {
-    puVar1 = (undefined2 *)((int)param_1 + 1);
-    *(undefined1 *)param_1 = 0;
-  }
-  *puVar1 = 0;
-  puVar1[1] = 0;
-  return;
-}
-
-
-// ===== FUN_20163684 @ 20163684 (36 bytes)
-
-void FUN_20163684(undefined2 *param_1)
-
-{
-  undefined2 *puVar1;
-  
-  if (((uint)param_1 & 1) == 0) {
-    param_1[2] = 0;
-    puVar1 = param_1;
-  }
-  else {
-    *(undefined1 *)((int)param_1 + 5) = 0;
-    puVar1 = (undefined2 *)((int)param_1 + 1);
-    *(undefined1 *)param_1 = 0;
-  }
-  *puVar1 = 0;
-  puVar1[1] = 0;
-  return;
-}
-
-
-// ===== FUN_201636a8 @ 201636a8 (16 bytes)
-
-void FUN_201636a8(undefined4 *param_1)
-
-{
-  *param_1 = 0;
-  *(undefined1 *)(param_1 + 1) = 0;
-  return;
-}
-
-
-// ===== FUN_201636b8 @ 201636b8 (20 bytes)
-
-void FUN_201636b8(undefined4 *param_1)
-
-{
-  *param_1 = 0;
-  param_1[1] = 0;
-  *(undefined1 *)(param_1 + 2) = 0;
-  return;
-}
-
-
-// ===== copy5 @ 201636cc (44 bytes)
-
-/* Copies 5 bytes (encoder events, E1/E2 frames) [fact] */
-
-void copy5(undefined1 *param_1,undefined1 *param_2)
-
-{
-  *param_1 = *param_2;
-  param_1[1] = param_2[1];
-  param_1[2] = param_2[2];
-  param_1[3] = param_2[3];
-  param_1[4] = param_2[4];
-  return;
-}
-
-
-// ===== FUN_201636f8 @ 201636f8 (52 bytes)
-
-void FUN_201636f8(undefined1 *param_1,undefined1 *param_2)
-
-{
-  *param_1 = *param_2;
-  param_1[1] = param_2[1];
-  param_1[2] = param_2[2];
-  param_1[3] = param_2[3];
-  param_1[4] = param_2[4];
-  param_1[5] = param_2[5];
-  return;
-}
-
-
-// ===== FUN_2016372c @ 2016372c (68 bytes)
-
-void FUN_2016372c(undefined1 *param_1,undefined1 *param_2)
-
-{
-  *param_1 = *param_2;
-  param_1[1] = param_2[1];
-  param_1[2] = param_2[2];
-  param_1[3] = param_2[3];
-  param_1[4] = param_2[4];
-  param_1[5] = param_2[5];
-  param_1[6] = param_2[6];
-  param_1[7] = param_2[7];
-  return;
-}
-
-
-// ===== FUN_20163770 @ 20163770 (28 bytes)
-
-void FUN_20163770(undefined4 *param_1,undefined4 *param_2)
-
-{
-  undefined4 uVar1;
-  
-  uVar1 = param_2[1];
-  *param_1 = *param_2;
-  param_1[1] = uVar1;
-  *(undefined2 *)(param_1 + 2) = *(undefined2 *)(param_2 + 2);
-  return;
-}
-
-
-// ===== FUN_2016378c @ 2016378c (20 bytes)
-
-void FUN_2016378c(undefined4 *param_1,undefined4 *param_2)
-
-{
-  *param_1 = *param_2;
-  *(undefined1 *)(param_1 + 1) = *(undefined1 *)(param_2 + 1);
-  return;
-}
-
-
-// ===== FUN_201637a0 @ 201637a0 (28 bytes)
-
-void FUN_201637a0(undefined4 *param_1,undefined4 *param_2)
-
-{
-  *param_1 = *param_2;
-  *(undefined2 *)(param_1 + 1) = *(undefined2 *)(param_2 + 1);
-  *(undefined1 *)((int)param_1 + 6) = *(undefined1 *)((int)param_2 + 6);
-  return;
-}
-
-
-// ===== FUN_201637bc @ 201637bc (28 bytes)
-
-void FUN_201637bc(undefined4 *param_1,undefined4 *param_2)
-
-{
-  undefined4 uVar1;
-  
-  uVar1 = param_2[1];
-  *param_1 = *param_2;
-  param_1[1] = uVar1;
-  *(undefined1 *)(param_1 + 2) = *(undefined1 *)(param_2 + 2);
-  return;
-}
-
-
-// ===== FUN_201637d8 @ 201637d8 (24 bytes)
-
-void FUN_201637d8(ushort *param_1,ushort param_2)
-
-{
-  ushort uVar1;
-  
-  uVar1 = param_2 & 0xff | param_2 << 8;
-  *param_1 = uVar1;
-  param_1[1] = uVar1;
-  param_1[2] = uVar1;
   return;
 }
 

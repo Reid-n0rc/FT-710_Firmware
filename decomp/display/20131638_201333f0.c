@@ -1444,7 +1444,7 @@ void sdr_rx_done_cb(void)
     sdr_rx_buf_ret[0x1a8] = cVar1;
     sdr_rx_buf_ret[0x1a9] = cVar1;
   }
-  scope_store_frame((uint)sdr_rx_buf_ret);
+  scope_store_frame(sdr_rx_buf_ret);
   dmac5_disable();
   rspi_stop(2);
   rspi_reset_buffers(2);

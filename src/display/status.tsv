@@ -210,7 +210,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20106eb4	usbkbd_detach	164			not yet	0	
 20106f58	usbkbd_queue_key	104			not yet	0	
 20106fc0	usbkbd_report	220			not yet	0	
-2010709c	usbkbd_active	68			not yet	0	
+2010709c	usbkbd_active	68	usbkbd_active	drivers/usb_kbd.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 80% of 5 blocks reached)
 201070e0	usbkbd_get_device	92			not yet	0	
 2010713c	usbkbd_pop_key	140			not yet	0	
 201071c8	usbkbd_flush_all	72			not yet	0	
@@ -218,31 +218,31 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201072d8	kbd_text_append	36			not yet	0	
 201072fc	kbd_text_backspace	40			not yet	0	
 20107324	kbd_text_clear	84			not yet	0	
-20107378	usbkbd_set_layout	20			not yet	0	
-2010738c	usbkbd_reset	24			not yet	0	
+20107378	usbkbd_set_layout	20	usbkbd_set_layout	drivers/usb_kbd.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010738c	usbkbd_reset	24	usbkbd_reset	drivers/usb_kbd.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201073a4	usbkbd_capslock_for_mode	1800			not yet	0	
 20107d8c	usbkbd_leds_refresh	144			not yet	0	
 20107dc0	debug_unlock_check	168			not yet	0	
 20107e68	debug_unlock	56			not yet	0	
-20107e90	usbkbd_last_key	12			not yet	0	
+20107e90	usbkbd_last_key	12	usbkbd_last_key	drivers/usb_kbd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20107e9c	usbkbd_init	68			not yet	0	
 20107ee0	FUN_20107ee0	62			not yet	0	
 20107efc	vk_key_name	2420			not yet	0	
-20108bc8	kbd_layout_base_fill	1240			not yet	0	
-201090a0	kbd_layout_jpn_init	8			not yet	0	
-201090a8	kbd_layout_us_init	432			not yet	0	
-20109258	kbd_layout_uk_init	432			not yet	0	
-2010940c	kbd_layout_fra_azerty_init	816			not yet	0	
-2010973c	kbd_layout_fra_qwerty_init	520			not yet	0	
-20109944	kbd_layout_fra_qwerty_init_alt	464			not yet	0	
-20109b14	kbd_layout_deu_init	516			not yet	0	
-20109d24	kbd_layout_por_init	464			not yet	0	
-20109ef4	kbd_layout_por_br_init	408			not yet	0	
-2010a08c	kbd_layout_esp_init	488			not yet	0	
-2010a274	kbd_layout_esp_la_init	452			not yet	0	
-2010a438	kbd_layout_ita_init	484			not yet	0	
-2010a630	kbd_layout_tables_init	84			not yet	0	
-2010a684	kbd_char_lookup	212			not yet	0	
+20108bc8	kbd_layout_base_fill	1240	kbd_layout_base_fill	drivers/usb_kbd_layout.o	equivalent	1240	differential emulation: 200 trials agree (70 returned normally, 100% of 9 blocks reached)
+201090a0	kbd_layout_jpn_init	8	kbd_layout_jpn_init	drivers/usb_kbd_layout.o	identical	8	byte-identical at the original address (8 bytes)
+201090a8	kbd_layout_us_init	432	kbd_layout_us_init	drivers/usb_kbd_layout.o	equivalent	432	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20109258	kbd_layout_uk_init	432	kbd_layout_uk_init	drivers/usb_kbd_layout.o	equivalent	432	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010940c	kbd_layout_fra_azerty_init	816	kbd_layout_fra_azerty_init	drivers/usb_kbd_layout.o	equivalent	816	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2010973c	kbd_layout_fra_qwerty_init	520	kbd_layout_fra_qwerty_init	drivers/usb_kbd_layout.o	equivalent	520	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20109944	kbd_layout_fra_qwerty_init_alt	464	kbd_layout_fra_qwerty_init_alt	drivers/usb_kbd_layout.o	equivalent	464	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20109b14	kbd_layout_deu_init	516	kbd_layout_deu_init	drivers/usb_kbd_layout.o	equivalent	516	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20109d24	kbd_layout_por_init	464	kbd_layout_por_init	drivers/usb_kbd_layout.o	equivalent	464	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20109ef4	kbd_layout_por_br_init	408	kbd_layout_por_br_init	drivers/usb_kbd_layout.o	equivalent	408	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010a08c	kbd_layout_esp_init	488	kbd_layout_esp_init	drivers/usb_kbd_layout.o	equivalent	488	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010a274	kbd_layout_esp_la_init	452	kbd_layout_esp_la_init	drivers/usb_kbd_layout.o	equivalent	452	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010a438	kbd_layout_ita_init	484	kbd_layout_ita_init	drivers/usb_kbd_layout.o	equivalent	484	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010a630	kbd_layout_tables_init	84	kbd_layout_tables_init	drivers/usb_kbd_layout.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2010a684	kbd_char_lookup	212	kbd_char_lookup	drivers/usb_kbd_layout.o	equivalent	212	differential emulation: 200 trials agree (59 returned normally, 75% of 16 blocks reached)
 2010a758	vk_name_lookup	60			not yet	0	
 2010a79c	kbdtest_draw	180			not yet	0	
 2010a864	kbdtest_record	52			not yet	0	
@@ -347,7 +347,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201111c8	FUN_201111c8	12			not yet	0	
 201111d4	FUN_201111d4	48			not yet	0	
 20111204	FUN_20111204	20			not yet	0	
-20111218	kbd_set_current	12			not yet	0	
+20111218	kbd_set_current	12	kbd_set_current	drivers/usb_kbd.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20111224	kbd_led_status	76			not yet	0	
 20111270	FUN_20111270	68			not yet	0	
 201112b4	hex_parse	192			not yet	0	
@@ -1048,14 +1048,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201309b4	power_key_flag_get	12			not yet	0	
 201309c0	gui_link_error_popup	604			not yet	0	
 20130c40	mainlink_set_power_cmd	12			not yet	0	
-20130c70	textterm_clear	32			not yet	0	
+20130c70	textterm_clear	32	textterm_clear	app/textterm.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20130c90	textterm_send_setting	1052			not yet	0	
-201310ec	textterm_send_all	68			not yet	0	
-20131130	textterm_rx_push	36			not yet	0	
+201310ec	textterm_send_all	68	textterm_send_all	app/textterm.o	not yet	0	emulation: no trial of 200 returned normally (83% of 6 blocks reached)
+20131130	textterm_rx_push	36	textterm_rx_push	app/textterm.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20131154	decode_text_rx	512			not yet	0	
 20131354	pkt23_tx_text	492			not yet	0	
-201315a4	textterm_rx_clear	28			not yet	0	
-201315c0	textterm_rx_expect	120			not yet	0	
+201315a4	textterm_rx_clear	28	textterm_rx_clear	app/textterm.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201315c0	textterm_rx_expect	120	textterm_rx_expect	app/textterm.o	equivalent	120	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 20131638	textterm_tx_poll	1204			not yet	0	
 20131f74	textterm_view_frame	768			not yet	0	
 201322ac	fwupdate_insert_sd_screen_thunk	8			not yet	0	
@@ -1150,36 +1150,36 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201341e8	FUN_201341e8	28			not yet	0	
 20134204	FUN_20134204	44			not yet	0	
 20134230	FUN_20134230	132			not yet	0	
-201342b4	scope_objects_init	448			not yet	0	
-201342d0	scope_obj_bank_reset	12			not yet	0	
-201342dc	scope_palette_set	256			not yet	0	
-201342ec	scope_store_frame	168			not yet	0	
-201342f8	scope_freeze_a_set	24			not yet	0	
-20134304	scope_freeze_b_set	24			not yet	0	
-20134310	scope_history_reset	8			not yet	0	
-20134318	scope3d_redraw_history	452			not yet	0	
-20134328	scope3d_add_line	588			not yet	0	
-2013433c	FUN_2013433c	12			not yet	0	
-20134348	scope_history_push	212			not yet	0	
-20134358	scope3d_vscale	68			not yet	0	
-20134368	scope3d_line_offset	88			not yet	0	
-2013437c	scope_levels_get	20			not yet	0	
-20134390	scope_record_hold_copy	8			not yet	0	
-20134398	scope_ramp_get	44			not yet	0	
+201342b4	scope_objects_init	28	scope_objects_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 200 trials inconclusive)
+201342d0	scope_obj_bank_reset	12	scope_obj_bank_reset	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201342dc	scope_palette_set	16	scope_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
+201342ec	scope_store_frame	12	scope_store_frame	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201342f8	scope_freeze_a_set	12	scope_freeze_a_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134304	scope_freeze_b_set	12	scope_freeze_b_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134310	scope_history_reset	8	scope_history_reset	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134318	scope3d_redraw_history	16			not yet	0	
+20134328	scope3d_add_line	20			not yet	0	
+2013433c	FUN_2013433c	12	scope_obj_7f8c_thunk	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134348	scope_history_push	16			not yet	0	
+20134358	scope3d_vscale	16	scope3d_vscale	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (121 returned normally, 100% of 1 blocks reached)
+20134368	scope3d_line_offset	20	scope3d_line_offset	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013437c	scope_levels_get	20	scope_levels_get	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (94 returned normally, 100% of 1 blocks reached)
+20134390	scope_record_hold_copy	8	scope_record_hold_copy	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (98 returned normally, 100% of 1 blocks reached)
+20134398	scope_ramp_get	44	scope_ramp_get	app/scope_obj.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 80% of 5 blocks reached)
 201343c4	FUN_201343c4	40			not yet	0	
 201343ec	FUN_201343ec	28			not yet	0	
-20134408	scope3d_line_markers	36			not yet	0	
-20134414	scope_wf_add_row	16			not yet	0	
-20134424	scope_wf_add_row_mode	16			not yet	0	
-20134434	scope_wf_row_addr	116			not yet	0	
-20134444	FUN_20134444	36			not yet	0	
-20134468	FUN_20134468	12			not yet	0	
-20134474	FUN_20134474	12			not yet	0	
-20134480	scope3d_layout_set	120			not yet	0	
-2013448c	scope_reset_bank0	12			not yet	0	
-20134498	scope_reset_bank1	8			not yet	0	
-201344a0	scope_frame_buf	8			not yet	0	
-201344a8	scope_indices_clear	8			not yet	0	
+20134408	scope3d_line_markers	12	scope3d_line_markers	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134414	scope_wf_add_row	16	scope_wf_add_row	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (67 returned normally, 100% of 1 blocks reached, 133 trials inconclusive)
+20134424	scope_wf_add_row_mode	16	scope_wf_add_row_mode	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (67 returned normally, 100% of 1 blocks reached, 133 trials inconclusive)
+20134434	scope_wf_row_addr	16	scope_wf_row_addr	app/scope_obj.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134444	scope_set_2e04_2e00	36	scope_set_2e04_2e00	app/scope_obj.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134468	scope_set_2e00	12	scope_set_2e00	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134474	scope_set_2e02	12	scope_set_2e02	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134480	scope3d_layout_set	12	scope3d_layout_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013448c	scope_reset_bank0	12	scope_reset_bank0	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20134498	scope_reset_bank1	8	scope_reset_bank1	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201344a0	scope_frame_buf	8	scope_frame_buf	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201344a8	scope_indices_clear	8	scope_indices_clear	app/scope_obj.o	equivalent	8	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201344c8	capture_merge_row	88			not yet	0	
 20134520	rgb565_row_to_bgr24	76			not yet	0	
 2013456c	bmp_write_screen	216			not yet	0	
@@ -1299,17 +1299,17 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20138a18	FUN_20138a18	620			not yet	0	
 20138c84	FUN_20138c84	108			not yet	0	
 20138cf0	usbh_control_transfer	504			not yet	0	
-20138f00	usbh_control_req	20			not yet	0	
+20138f00	usbh_control_req	20	usbh_control_req	drivers/usb_host.o	equivalent	20	differential emulation: 200 trials agree (13 returned normally, 100% of 1 blocks reached)
 20138f1c	FUN_20138f1c	28			not yet	0	
 20138f30	FUN_20138f30	40			not yet	0	
 20138f58	FUN_20138f58	132			not yet	0	
 20138fdc	FUN_20138fdc	672			not yet	0	
 2013927c	usbh_pipe_write_buf	180			not yet	0	
-20139330	usbh_buf_needs_bounce	20			not yet	0	
+20139330	usbh_buf_needs_bounce	20	usbh_buf_needs_bounce	drivers/usb_host.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20139344	usbh_pipe_write	144			not yet	0	
 201393d4	usbh_pipe_read_buf	444			not yet	0	
 20139590	usbh_pipe_read	148			not yet	0	
-20139624	usbh_pipe_xfer	48			not yet	0	
+20139624	usbh_pipe_xfer	48	usbh_pipe_xfer	drivers/usb_host.o	equivalent	48	differential emulation: 200 trials agree (9 returned normally, 80% of 5 blocks reached)
 20139654	FUN_20139654	4			not yet	0	
 20139658	FUN_20139658	84			not yet	0	
 201396ac	FUN_201396ac	4			not yet	0	
@@ -1331,7 +1331,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013a798	FUN_2013a798	300			not yet	0	
 2013a90c	usbh_open_endpoint_pipes	120			not yet	0	
 2013a93c	FUN_2013a93c	152			not yet	0	
-2013a9d4	usbh_port_ctx	20			not yet	0	
+2013a9d4	usbh_port_ctx	20	usbh_port_ctx	drivers/usb_host.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013a9e8	FUN_2013a9e8	116			not yet	0	
 2013aa5c	FUN_2013aa5c	68			not yet	0	
 2013aaa0	FUN_2013aaa0	4			not yet	0	
@@ -1350,35 +1350,35 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013afa4	usbh_enumerate_device	660			not yet	0	
 2013b238	usbh_enum_task	124			not yet	0	
 2013b2b4	FUN_2013b2b4	68			not yet	0	
-2013b2f8	usbh_pipe_mark_done	84			not yet	0	
+2013b2f8	usbh_pipe_mark_done	84	usbh_pipe_mark_done	drivers/usb_host.o	equivalent	84	differential emulation: 200 trials agree (77 returned normally, 100% of 5 blocks reached)
 2013b34c	FUN_2013b34c	4			not yet	0	
-2013b35c	usbh_get_device_descriptor	76			not yet	0	
-2013b3a8	usbh_get_config_descriptor	76			not yet	0	
-2013b3f4	usbh_set_address	72			not yet	0	
-2013b43c	usbh_set_configuration	72			not yet	0	
-2013b484	usbh_get_hub_descriptor	72			not yet	0	
+2013b35c	usbh_get_device_descriptor	76	usbh_get_device_descriptor	drivers/usb_host.o	equivalent	76	differential emulation: 200 trials agree (9 returned normally, 100% of 1 blocks reached)
+2013b3a8	usbh_get_config_descriptor	76	usbh_get_config_descriptor	drivers/usb_host.o	equivalent	76	differential emulation: 200 trials agree (9 returned normally, 100% of 1 blocks reached)
+2013b3f4	usbh_set_address	72	usbh_set_address	drivers/usb_host.o	equivalent	72	differential emulation: 200 trials agree (9 returned normally, 100% of 1 blocks reached)
+2013b43c	usbh_set_configuration	72	usbh_set_configuration	drivers/usb_host.o	equivalent	72	differential emulation: 200 trials agree (9 returned normally, 100% of 1 blocks reached)
+2013b484	usbh_get_hub_descriptor	72	usbh_get_hub_descriptor	drivers/usb_host.o	equivalent	72	differential emulation: 200 trials agree (9 returned normally, 100% of 1 blocks reached)
 2013b4cc	usbh_hw_init	88			not yet	0	
-2013b524	usbh_loc_cpu	16			not yet	0	
+2013b524	usbh_loc_cpu	16	usbh_loc_cpu	drivers/usb_host.o	identical	16	byte-identical at the original address (16 bytes)
 2013b538	FUN_2013b538	8			not yet	0	
 2013b540	FUN_2013b540	4			not yet	0	
 2013b544	FUN_2013b544	8			not yet	0	
 2013b54c	cpu_delay_cycles4	64			not yet	0	
-2013b58c	usbh0_isr	12			not yet	0	
-2013b598	usbh1_isr	12			not yet	0	
+2013b58c	usbh0_isr	12	usbh0_isr	drivers/usb_host.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2013b598	usbh1_isr	12	usbh1_isr	drivers/usb_host.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013b5bc	usbh_create_objects	696			not yet	0	
 2013b928	usbh_hid_init	72			not yet	0	
 2013b97c	usbh_hid_class_init	56			not yet	0	
 2013ba44	usbhid_device_stop	104			not yet	0	
 2013baac	usbkbd_set_leds	264			not yet	0	
-2013bbb4	hid_report_bits_get	124			not yet	0	
-2013bc30	hid_item_data	240			not yet	0	
+2013bbb4	hid_report_bits_get	124	hid_report_bits_get	drivers/usb_hid.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2013bc30	hid_item_data	240	hid_item_data	drivers/usb_hid.o	equivalent	240	differential emulation: 200 trials agree (200 returned normally, 100% of 19 blocks reached)
 2013bd20	hid_report_desc_parse	1540			not yet	0	
 2013c32c	usbhid_device_task	912			not yet	0	
 2013c6bc	usbhid_class_register	84			not yet	0	
 2013c710	usbh_class_request	92			not yet	0	
-2013c76c	usbhid_pipe_read	44			not yet	0	
+2013c76c	usbhid_pipe_read	44	usbhid_pipe_read	drivers/usb_hid.o	equivalent	44	differential emulation: 200 trials agree (75 returned normally, 100% of 3 blocks reached)
 2013c798	usbh_pipe_cancel	316			not yet	0	
-2013c7c4	usbhid_find_int_in	156			not yet	0	
+2013c7c4	usbhid_find_int_in	156	usbhid_find_int_in	drivers/usb_hid.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
 2013c860	usbhid_class_attach	336			not yet	0	
 2013c928	sd_card_clock	56	sd_card_clock	drivers/sd_setup.o	equivalent	56	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2013c960	sd_cmd0_go_idle	112	sd_cmd0_go_idle	drivers/sd_card.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
@@ -1815,7 +1815,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20151aa4	itron_tget_mpf	356			not yet	0	
 20151c3c	itron_tloc_mtx	504			not yet	0	
 20151e68	itron_trcv_dtq	536			not yet	0	
-201520b0	knl_mbf_get	248			not yet	0	
+201520b0	knl_mbf_get	248	knl_mbf_get	lib/norti_knl.o	equivalent	248	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
 201521a8	itron_trcv_mbf	600			not yet	0	
 20152434	itron_trcv_mbx	400			not yet	0	
 201525f8	itron_tslp_tsk	216			not yet	0	
@@ -1835,9 +1835,9 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201539ec	knl_queue_remove	76			not yet	0	
 20153a38	knl_queue_move	156			not yet	0	
 20153ad4	knl_timeout_remove	96			not yet	0	
-20153b34	knl_freelist_alloc	88			not yet	0	
+20153b34	knl_freelist_alloc	88	knl_freelist_alloc	lib/norti_knl.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 20153b8c	FUN_20153b8c	328			not yet	0	
-20153cd4	knl_mbf_put	280			not yet	0	
+20153cd4	knl_mbf_put	280	knl_mbf_put	lib/norti_knl.o	equivalent	280	differential emulation: 200 trials agree (200 returned normally, 100% of 12 blocks reached)
 20153dec	FUN_20153dec	316			not yet	0	
 20153f28	FUN_20153f28	412			not yet	0	
 201540c4	knl_tick_task_timeouts	492			not yet	0	
@@ -1850,15 +1850,15 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20154580	knl_make_ready	72			not yet	0	
 201545c8	knl_wait_self	20			not yet	0	
 201545dc	knl_wait_enter	20			not yet	0	
-201545f0	knl_memcpy	28			not yet	0	
-2015460c	knl_freelist_free	176			not yet	0	
+201545f0	knl_memcpy	28	knl_memcpy	lib/norti_knl.o	equivalent	28	differential emulation: 200 trials agree (25 returned normally, 100% of 3 blocks reached, 22 trials inconclusive)
+2015460c	knl_freelist_free	176	knl_freelist_free	lib/norti_knl.o	equivalent	176	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
 201546bc	FUN_201546bc	72			not yet	0	
-20154704	knl_stack_alloc	12			not yet	0	
-20154710	knl_sys_free_a	16			not yet	0	
-20154720	knl_pool_alloc	36			not yet	0	
-20154744	knl_pool_free	40			not yet	0	
-2015476c	knl_sys_alloc	36			not yet	0	
-20154790	knl_sys_free	40			not yet	0	
+20154704	knl_stack_alloc	12	knl_stack_alloc	lib/norti_knl.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20154710	knl_sys_free_a	16	knl_sys_free_a	lib/norti_knl.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20154720	knl_pool_alloc	36	knl_pool_alloc	lib/norti_knl.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+20154744	knl_pool_free	40	knl_pool_free	lib/norti_knl.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+2015476c	knl_sys_alloc	36	knl_sys_alloc	lib/norti_knl.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+20154790	knl_sys_free	40	knl_sys_free	lib/norti_knl.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
 201547d0	FUN_201547d0	352			not yet	0	
 20154930	FUN_20154930	52			not yet	0	
 20154974	__rt_ctype_table	10			not yet	0	
@@ -1958,18 +1958,28 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201575f8	FUN_201575f8	12			not yet	0	
 20157604	FUN_20157604	40			not yet	0	
 20157634	FUN_20157634	188			not yet	0	
-201576f4	scope_wf_bank_set	108			not yet	0	
-20157778	scope_obj_history_clear	116			not yet	0	
+201576f4	scope_wf_bank_set	108	scope_wf_bank_set	app/scope_obj.o	equivalent	108	differential emulation: 200 trials agree (189 returned normally, 100% of 5 blocks reached)
+20157778	scope_obj_history_clear	116	scope_obj_history_clear	app/scope_obj.o	equivalent	116	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
 201577f8	copy_inverted_words_b	36	copy_inverted_words_b	lib/misc.o	equivalent	36	differential emulation: 200 trials agree (27 returned normally, 100% of 3 blocks reached, 20 trials inconclusive)
-201578c8	scope_obj_reset_bank0	40			not yet	0	
+2015781c	scope_obj_store_record	156	scope_obj_store_record	app/scope_obj.o	equivalent	156	differential emulation: 200 trials agree (192 returned normally, 80% of 10 blocks reached)
+201578c4	-	0	scope_obj_set_2e04_thunk	app/scope_obj.o	identical	0	byte-identical at the original address (4 bytes)
+201578c8	scope_obj_reset_bank0	40	scope_obj_reset_bank0	app/scope_obj.o	equivalent	40	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
+201578f0	scope_obj_freeze_b_set	12	scope_obj_freeze_b_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201578fc	scope_obj_palette_set	240	scope_obj_palette_set	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
+20157a00	scope_obj_redraw_history	436			not yet	0	
+20157bc4	scope_obj_freeze_a_set	12	scope_obj_freeze_a_set	app/scope_obj.o	equivalent	12	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20157bd0	scope_obj_layout_set	108	scope_obj_layout_set	app/scope_obj.o	equivalent	108	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
 20157c50	scope_obj_levels_get	224			not yet	0	
 20157d3c	scope_obj_wf_add_row	552			not yet	0	
 20157f8c	FUN_20157f8c	124			not yet	0	
-201584f8	FUN_201584f8	88			not yet	0	
-20158544	FUN_20158544	136			not yet	0	
-20158568	scope_obj_reset_bank1	40			not yet	0	
-20158590	scope_obj_indices_clear	104			not yet	0	
-20158618	msgbuf_init	24			not yet	0	
+20158010	scope_obj_history_push	196			not yet	0	
+201580e0	scope_obj_add_line	568			not yet	0	
+20158330	scope_obj_init	420	scope_obj_init	app/scope_obj.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached, 192 trials inconclusive)
+201584f8	scope_obj_set_2e00	68	scope_obj_set_2e00	app/scope_obj.o	equivalent	68	differential emulation: 200 trials agree (188 returned normally, 100% of 4 blocks reached)
+20158544	scope_obj_set_2e02	28	scope_obj_set_2e02	app/scope_obj.o	equivalent	28	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20158568	scope_obj_reset_bank1	40	scope_obj_reset_bank1	app/scope_obj.o	equivalent	40	differential emulation: 200 trials agree (192 returned normally, 100% of 1 blocks reached)
+20158590	scope_obj_indices_clear	104	scope_obj_indices_clear	app/scope_obj.o	equivalent	104	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20158618	msgbuf_init	24	msgbuf_init	lib/norti_knl.o	equivalent	24	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 20158630	mainlink_tx_alloc	12			not yet	0	
 2015863c	mainlink_tx_init	96			not yet	0	
 2015869c	mainlink_tx_clear_stats	16			not yet	0	
@@ -1977,7 +1987,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20158744	mainlink_tx_post	100			not yet	0	
 201587ac	mainlink_tx_ctor	32			not yet	0	
 201587d0	FUN_201587d0	44			not yet	0	
-201587fc	scope3d_obj_init	60			not yet	0	
+201587fc	scope3d_obj_init	60	scope3d_obj_init	app/scope_obj.o	equivalent	60	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 20158838	FUN_20158838	16			not yet	0	
 20158848	FUN_20158848	180			not yet	0	
 20158914	FUN_20158914	12			not yet	0	
@@ -2069,10 +2079,10 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2015eff4	mouse_cursor_task_create	72			not yet	0	
 2015f040	FUN_2015f040	24			not yet	0	
 2015f05c	FUN_2015f05c	60			not yet	0	
-2015f098	kbdobj_set_device	28			not yet	0	
-2015f0b4	kbdobj_activate	16			not yet	0	
-2015f0c4	kbdobj_flush	8			not yet	0	
-2015f0cc	kbdobj_ctor	20			not yet	0	
+2015f098	kbdobj_set_device	28	kbdobj_set_device	drivers/usb_kbd.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+2015f0b4	kbdobj_activate	16	kbdobj_activate	drivers/usb_kbd.o	equivalent	16	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2015f0c4	kbdobj_flush	8	kbdobj_flush	drivers/usb_kbd.o	identical	8	byte-identical at the original address (8 bytes)
+2015f0cc	kbdobj_ctor	20	kbdobj_ctor	drivers/usb_kbd.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 2015f0e0	task_fwdbg	12			not yet	0	
 2015f0ec	fwdbg_cmd	240			not yet	0	
 2015f1f0	fwdbg_verify_bank1	332			not yet	0	
@@ -2126,9 +2136,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20162c20	FUN_20162c20	8			not yet	0	
 20162c28	FUN_20162c28	212			not yet	0	
 20162d04	cpp_task_thunk	12			not yet	0	
-20162d10	os_mbx_create_fifo	40			not yet	0	
-20162d3c	os_mbx_send	12			not yet	0	
-20162d48	FUN_20162d48	12			not yet	0	
+20162d10	os_mbx_create_fifo	40	os_mbx_create_fifo	lib/norti_knl.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20162d3c	os_mbx_send	12	os_mbx_send	lib/norti_knl.o	identical	12	byte-identical at the original address (12 bytes)
+20162d48	scope_obj_set_2e04	12			not yet	0	
+20162d54	scope_obj_apply_2e00	20	scope_obj_apply_2e00	app/scope_obj.o	equivalent	20	differential emulation: 200 trials agree (188 returned normally, 100% of 1 blocks reached)
+20162d68	scope_obj_apply_2e02	108			not yet	0	
 20162dd8	scif_rxi_isr	312	scif_rxi_isr	drivers/scif.o	equivalent	312	differential emulation: 200 trials agree (180 returned normally, 100% of 12 blocks reached)
 20162f10	scif_txi_isr	156	scif_txi_isr	drivers/scif.o	equivalent	156	differential emulation: 200 trials agree (180 returned normally, 100% of 5 blocks reached)
 20162fac	uart_obj_init	104	uart_obj_init	drivers/scif.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
@@ -2141,7 +2153,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201632d8	scif_write	136	scif_write	drivers/scif.o	equivalent	136	differential emulation: 200 trials agree (117 returned normally, 100% of 8 blocks reached)
 20163360	uart_obj_ctor	12	uart_obj_ctor	drivers/scif.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201633a0	FUN_201633a0	108			not yet	0	
+2016340c	scope_obj_line_markers	24	scope_obj_line_markers	app/scope_obj.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20163428	FUN_20163428	136			not yet	0	
+201634b8	scope_obj_vscale	52	scope_obj_vscale	app/scope_obj.o	equivalent	52	differential emulation: 200 trials agree (117 returned normally, 100% of 3 blocks reached)
+201634f0	scope_obj_wf_row_addr	100	scope_obj_wf_row_addr	app/scope_obj.o	equivalent	100	differential emulation: 200 trials agree (188 returned normally, 67% of 3 blocks reached)
+20163564	scope_obj_line_offset	68	scope_obj_line_offset	app/scope_obj.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 201635b8	FUN_201635b8	44			not yet	0	
 201635e4	fwobj_version_text	24			not yet	0	
 20163600	fwname_pattern_match	84			not yet	0	
@@ -2190,14 +2206,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20164104	copy32	24	copy32	lib/misc.o	equivalent	24	differential emulation: 200 trials agree (45 returned normally, 100% of 1 blocks reached)
 2016411c	copy48	24	copy48	lib/misc.o	equivalent	24	differential emulation: 200 trials agree (45 returned normally, 100% of 1 blocks reached)
 20164298	FUN_20164298	156			not yet	0	
-20164334	scope3d_widths_init	44			not yet	0	
-20164360	ring100_advance	28			not yet	0	
+20164334	scope3d_widths_init	44	scope3d_widths_init	app/scope_rings.o	equivalent	44	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+20164360	ring100_advance	28	ring100_advance	app/scope_rings.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 2016437c	FUN_2016437c	12			not yet	0	
-20164388	ring133_advance	28			not yet	0	
-201643a4	ring133_reset	12			not yet	0	
-201643b0	ring20_advance	28			not yet	0	
-201643cc	ring30_advance	28			not yet	0	
-201643f0	ring32_post_inc	28			not yet	0	
+20164388	ring133_advance	28	ring133_advance	app/scope_rings.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201643a4	ring133_reset	12	ring133_reset	app/scope_rings.o	equivalent	12	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201643b0	ring20_advance	28	ring20_advance	app/scope_rings.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201643cc	ring30_advance	28	ring30_advance	app/scope_rings.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201643f0	ring32_post_inc	28	ring32_post_inc	app/scope_rings.o	equivalent	28	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 2016440c	FUN_2016440c	8			not yet	0	
 20164414	FUN_20164414	60			not yet	0	
 20164454	FUN_20164454	12			not yet	0	
@@ -2207,11 +2223,11 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201644e4	FUN_201644e4	60			not yet	0	
 20164524	FUN_20164524	12			not yet	0	
 20164568	FUN_20164568	56			not yet	0	
-201645a0	ring16_push	68			not yet	0	
-201645e4	ring16_reset	20			not yet	0	
-201645f8	ring16_set_slot	12			not yet	0	
-20164604	ring16_pop	52			not yet	0	
-20164638	ring16_ctor	20			not yet	0	
+201645a0	ring16_push	68	ring16_push	app/scope_rings.o	equivalent	68	differential emulation: 200 trials agree (89 returned normally, 67% of 3 blocks reached)
+201645e4	ring16_reset	20	ring16_reset	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201645f8	ring16_set_slot	12	ring16_set_slot	app/scope_rings.o	equivalent	12	differential emulation: 200 trials agree (37 returned normally, 100% of 1 blocks reached)
+20164604	ring16_pop	52	ring16_pop	app/scope_rings.o	equivalent	52	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+20164638	ring16_ctor	20	ring16_ctor	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 20164654	FUN_20164654	12			not yet	0	
 2016466c	FUN_2016466c	8			not yet	0	
 20164674	FUN_20164674	12			not yet	0	
@@ -2219,15 +2235,15 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2016469c	FUN_2016469c	40			not yet	0	
 201646bc	FUN_201646bc	84			not yet	0	
 20164714	FUN_20164714	68			not yet	0	
-20164758	ring100_offset	44			not yet	0	
-20164788	ring100_next	20			not yet	0	
-2016479c	ring133_offset	48			not yet	0	
-201647d0	ring133_next	20			not yet	0	
-201647e4	ring20_offset	44			not yet	0	
-20164814	ring20_next	20			not yet	0	
-20164828	ring30_offset	48			not yet	0	
-2016485c	ring30_next	20			not yet	0	
-20164870	ring32_next	24			not yet	0	
+20164758	ring100_offset	44	ring100_offset	app/scope_rings.o	equivalent	44	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20164788	ring100_next	20	ring100_next	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2016479c	ring133_offset	48	ring133_offset	app/scope_rings.o	equivalent	48	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201647d0	ring133_next	20	ring133_next	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+201647e4	ring20_offset	44	ring20_offset	app/scope_rings.o	equivalent	44	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20164814	ring20_next	20	ring20_next	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20164828	ring30_offset	48	ring30_offset	app/scope_rings.o	equivalent	48	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2016485c	ring30_next	20	ring30_next	app/scope_rings.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+20164870	ring32_next	24	ring32_next	app/scope_rings.o	identical	24	byte-identical at the original address (24 bytes)
 20164888	__aeabi_dadd	316	__aeabi_dadd	lib/fplib.o	identical	316	byte-identical at the original address (336 bytes)
 201649d8	__aeabi_ddiv	538	__aeabi_ddiv	lib/fplib.o	identical	538	byte-identical at the original address (696 bytes)
 20164c90	__aeabi_d2iz	92	__aeabi_d2iz	lib/fplib.o	identical	92	byte-identical at the original address (96 bytes)
