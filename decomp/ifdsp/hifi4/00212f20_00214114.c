@@ -1074,8 +1074,8 @@ void RTC_GetDatetime(int param_1,ushort *param_2)
     do {
       uVar3 = uVar3 + 1;
       uVar2 = uVar2 - uVar1;
-      uVar1 = 0x16e;
       *param_2 = uVar3;
+      uVar1 = 0x16e;
       if ((uVar3 & 3) != 0) {
         uVar1 = 0x16d;
       }
@@ -1197,8 +1197,8 @@ void RTC_GetAlarm(int param_1,ushort *param_2)
     do {
       uVar3 = uVar3 + 1;
       uVar1 = uVar1 - uVar2;
-      uVar2 = 0x16e;
       *param_2 = uVar3;
+      uVar2 = 0x16e;
       if ((uVar3 & 3) != 0) {
         uVar2 = 0x16d;
       }

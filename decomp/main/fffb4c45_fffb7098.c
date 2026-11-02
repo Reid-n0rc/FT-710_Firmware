@@ -2033,7 +2033,7 @@ void io_task(void)
 byte meter_get_vdd(void)
 
 {
-  return DAT_00012043;
+  return meter_vdd_val;
 }
 
 
@@ -2060,7 +2060,7 @@ byte meter_get_alc(void)
 byte meter_get_swr(void)
 
 {
-  return DAT_00012046;
+  return meter_swr_val;
 }
 
 
@@ -2069,7 +2069,7 @@ byte meter_get_swr(void)
 byte meter_get_swr_raw(void)
 
 {
-  return DAT_00012047;
+  return meter_swr_raw_val;
 }
 
 
@@ -2103,7 +2103,7 @@ byte meter_get_po(void)
   undefined1 local_3;
   
   if (g_opstate.ex030408_meter_detector == 0) {
-    local_3 = DAT_00012048;
+    local_3 = meter_po_val;
   }
   else {
     local_3 = DAT_0001204b;
@@ -2117,7 +2117,7 @@ byte meter_get_po(void)
 byte meter_get_comp(void)
 
 {
-  return DAT_00012049;
+  return meter_comp_val;
 }
 
 
@@ -2126,7 +2126,7 @@ byte meter_get_comp(void)
 byte meter_get_s(void)
 
 {
-  return DAT_0001204a;
+  return meter_s_val;
 }
 
 

@@ -1104,3 +1104,273 @@ void displink_build_37(void)
     for (k = 0; k < sizeof dl37_slots / sizeof dl37_slots[0]; k++)
         dl37_slots[k]((uint16_t)(DL37_SLOT0 + DL37_SLOT_LEN * k));
 }
+
+/* --- the send scheduler (round 5) --- */
+
+void displink_tx_64(void);
+void power_down_save(void);
+void displink_tx_30_31(void);
+void displink_tx_7C(void);
+void displink_tx_7B(void);
+void displink_tx_7A(void);
+void displink_tx_req(void);
+void FUN_fff98e58(void);
+void FUN_fff98e77(void);
+void displink_tx_65_clock(void);
+void displink_tx_34(void);
+void displink_tx_3A(void);
+void displink_tx_3F(void);
+void displink_tx_40(void);
+void displink_tx_20_status(void);
+void displink_tx_41(void);
+
+#define TMR_DL_MENU_PAGE 0x29     /* frame 0x40 at most every 100 ticks [fact: 0xFFF961B5..0xFFF961C6] */
+
+/* displink_tx_schedule 0xFFF95F58: picks the one frame displink_task sends next, by priority (display-link.md "Send
+ * priority"): the hello reply while power-on is pending (dl_hello_req 0x1B3D0, set by power_on_request), then the
+ * requests and open screens of the UI state; some states send nothing (the encoder lock, the screen saver, the 0x7A
+ * and 0x34 blocks, a keyboard request while the keyboard is closed). The fall-back is the status block 0x20, or the
+ * memory list 0x41 while it is open. Every test reads the UI state through g_ui_ptr (0x25D38), as the image does. */
+void displink_tx_schedule(void)
+{
+    struct ui_state *ui = (struct ui_state *)g_ui_ptr;
+
+    if (dl_hello_req == 1) {
+        displink_tx_60_hello();
+        return;
+    }
+    if (ui->dl_req_64 == 1) {
+        displink_tx_64();
+        return;
+    }
+    if (ui->dl_req_24 == 1 && ui->playlist_open != 1) {
+        ui->dl_req_24 = 0;
+        displink_tx_24();
+        return;
+    }
+    if (ui->restart_req == 1) {
+        power_down_save();
+        return;
+    }
+    if (ui->zz_align_mode != 0) {           /* alignment mode: the pop-ups or frame 0x62 only */
+        if (ui->dl_req_popup_a == 1 || ui->dl_req_popup_b == 1)
+            displink_tx_30_31();
+        else
+            displink_tx_62();
+        return;
+    }
+    if (ui->dl_req_7c == 1) {
+        ui->dl_req_7c = 0;
+        displink_tx_7C();
+        return;
+    }
+    if (ui->enc_blocked == 1)
+        return;
+    if (ui->screensaver_toggle_req == 1) {
+        ui->screensaver_toggle_req = 0;
+        displink_tx_7B();
+        return;
+    }
+    if (ui->screensaver_on == 1)
+        return;
+    if (ui->dl_req_7a == 1) {
+        ui->dl_req_7a = 0;
+        displink_tx_7A();
+        return;
+    }
+    if (ui->dl_block_7a == 1)
+        return;
+    if (ui->dialog_shown == 1) {
+        displink_tx_70();
+        return;
+    }
+    if (ui->dl_req_sd == 1) {
+        displink_tx_req();
+        return;
+    }
+    if (ui->dl_req_50 != 0) {
+        if (ui->kbd_open == 1)
+            displink_tx_50();
+        return;
+    }
+    if (ui->dl_req_23 == 1) {
+        displink_tx_23();
+        return;
+    }
+    if (ui->dl_req_23b == 1) {
+        FUN_fff98e58();
+        return;
+    }
+    if (ui->dl_req_23c == 1) {
+        FUN_fff98e77();
+        return;
+    }
+    if (ui->dl_req_popup == 1) {
+        displink_tx_30_31();
+        return;
+    }
+    if (ui->dl_req_65_clock == 1) {
+        displink_tx_65_clock();
+        return;
+    }
+    if (ui->dl_req_34 == 1) {
+        displink_tx_34();
+        return;
+    }
+    if (ui->dl_block_34 == 1)
+        return;
+    if (ui->popup_hold == 0 && (ui->dl_req_popup_a == 1 || ui->dl_req_popup_b == 1)) {
+        displink_tx_30_31();
+        return;
+    }
+    if (ui->kbd_open == 1) {
+        displink_tx_50();
+        return;
+    }
+    if (ui->playlist_open == 1) {
+        displink_tx_3A();
+        return;
+    }
+    if (ui->msgmem_open == 1) {
+        displink_tx_39();
+        return;
+    }
+    if (ui->dl_req_3f == 1) {
+        displink_tx_3F();
+        return;
+    }
+    if (ui->dl_req_40 == 1) {
+        if (swtimer_expired(TMR_DL_MENU_PAGE) != 1)
+            return;
+        swtimer_start(TMR_DL_MENU_PAGE, 100);
+        displink_tx_40();
+        return;
+    }
+    if (ui->dl_req_37 == 1) {
+        displink_tx_37();
+        return;
+    }
+    if (ui->memlist_open != 1)
+        displink_tx_20_status();
+    else
+        displink_tx_41();
+}
+
+/* --- frame F0, the DISPLAY's hello (round 5) --- */
+
+void FUN_fff94bfd(const uint8_t *text);     /* takes the DISPLAY version text "Vxy-zz" */
+void ver_display_date_set(const uint8_t *text);
+void align_load_preset(void);
+uint16_t dest_code_get(void);
+void dest_code_set(uint16_t code);
+void dest_jumper_apply(void);
+
+/* power_on_reason (F0 byte 7): the key the DISPLAY saw held at its power-on (display-link.md "F0") */
+enum dl_boot_code {
+    BOOT_RESET = 1,               /* full reset of the settings */
+    BOOT_ALIGN = 2,               /* factory alignment mode */
+    BOOT_NUMENTRY = 4,            /* numeric-entry / adjust mode */
+    BOOT_TTBF = 5,                /* toggles dest_code[2]; off: TX BPF SEL above 4 back to 1 */
+    BOOT_LOADER = 6,              /* the DISPLAY's loader screen: the link stays down */
+    BOOT_DEST_SWAP = 7,           /* the other region code */
+    BOOT_WARM = 0x10,             /* a restart: back on only with AUTO POWER ON (set before a reset) */
+};
+
+/* the destination codes boot code 7 swaps [fact: 0xFFF956E0..0xFFF95748] */
+#define DEST_A983 0xA983u
+#define DEST_B5A7 0xB5A7u
+#define DEST_D950 0xD950u
+#define DEST_A4C5 0xA4C5u
+
+/* one BCD byte as two characters, the low digit masked with 0x3F as the image does [fact: 0xFFF95541] */
+static uint8_t put_bcd(uint8_t *text, uint8_t i, uint8_t b)
+{
+    text[i++] = (uint8_t)(b >> 4 | '0');
+    text[i++] = (uint8_t)((b & 0x3F) | '0');
+    return i;
+}
+
+static void text_clear(uint8_t *text)
+{
+    for (unsigned k = 0; k < sizeof dl_hello_text; k++)
+        text[k] = 0;
+}
+
+/* displink_rx_F0_hello 0xFFF9546A: the DISPLAY's hello. Bytes 1, 2: its version as "V" + 2 hex digits + "-" + 2 BCD
+ * digits (FUN_fff94bfd), bytes 4..6: its date "yy-mm-dd" (ver_display_date_set), both built in dl_hello_text
+ * (0x199F, 32 bytes cleared first); byte 7: the boot code. Then the link and the radio are on, an ACK and the 0x60
+ * hello reply are due, and the boot code acts. */
+void displink_rx_F0_hello(const uint8_t *f)
+{
+    struct ui_state *ui = (struct ui_state *)g_ui_ptr;
+    uint8_t *text = dl_hello_text;
+    uint8_t i = 0;
+
+    text_clear(text);
+    text[i++] = 'V';
+    for (int shift = 4; shift >= 0; shift -= 4) {
+        uint8_t d = (uint8_t)((f[1] >> shift) & 0xF);
+        text[i++] = (uint8_t)(d >= 10 ? d + 'A' - 10 : d + '0');
+    }
+    text[i++] = '-';
+    put_bcd(text, i, f[2]);
+    FUN_fff94bfd(text);
+
+    text_clear(text);
+    i = put_bcd(text, 0, f[4]);
+    text[i++] = '-';
+    i = put_bcd(text, i, f[5]);
+    text[i++] = '-';
+    put_bcd(text, i, f[6]);
+    ver_display_date_set(text);
+
+    ui->power_on_reason = f[7];
+    ui->link_tx_enabled = 1;
+    displink_ack_req = 1;
+    dl_hello_req = 1;
+    ui->radio_on = 1;
+
+    switch (ui->power_on_reason) {
+    case BOOT_WARM:
+        if (g_opstate.auto_power_on == 0)
+            ui->radio_on = 0;
+        break;
+    case BOOT_ALIGN:
+        ui->zz_align_mode = 1;
+        align_load_preset();
+        break;
+    case BOOT_NUMENTRY:
+        ui->numentry_mode = 1;
+        ui->lamp_map = 0;
+        break;
+    case BOOT_TTBF:
+        if (dest_code[2] == 0) {
+            dest_code[2] = 1;
+        } else {
+            dest_code[2] = 0;
+            if (g_opstate.ex010113_tx_bpf_sel > 4)
+                g_opstate.ex010113_tx_bpf_sel = 1;
+        }
+        break;
+    case BOOT_LOADER:
+        ui->link_tx_enabled = 0;
+        dl_hello_req = 0;
+        break;
+    case BOOT_DEST_SWAP: {
+        uint16_t code = dest_code_get();
+        if (code == DEST_A983 || code == DEST_B5A7)
+            dest_code_set(DEST_D950);
+        else if (code == DEST_D950 || code == DEST_A4C5)
+            dest_code_set(DEST_A983);
+        dest_jumper_apply();
+        break;
+    }
+    case BOOT_RESET:
+        settings_defaults(0);
+        g_ui.defaults_loaded = 1;
+        dest_jumper_apply();
+        break;
+    default:
+        break;
+    }
+}

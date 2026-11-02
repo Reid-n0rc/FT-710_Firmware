@@ -1,0 +1,34 @@
+# Variables of the HiFi4 image that the recreated source names (T24): the harness places each recreated variable
+# (its own .data/.bss section) at this address and defines extern names there. Evidence per row.
+name	address	evidence
+_impure_ptr	00237f00	__errno 0x22BA13 loads it (l32r 0x2078CC = 0x237F00) and returns its value, newlib errno.c: &_REENT->_errno with _errno first in struct _reent
+env_init_counter	00239090	env_init 0x21AA93 / env_deinit 0x21AAC3 load it (l32r 0x206BBC = 0x239090), rpmsg_env_bm.c env_init_counter
+isr_table	002390a0	env_register_isr 0x21ABB9, env_unregister_isr 0x21ABCD, env_isr 0x21AC1A (l32r 0x206BC0 = 0x2390A0), rpmsg_env_bm.c isr_table[12]
+master_vq_ops	002008d0	rpmsg_lite_master_init stores 0x2008D0 as vq_ops (decomp PTR_vq_tx_master_002008d0), rpmsg_lite.c master_vq_ops
+remote_vq_ops	002008e0	rpmsg_lite_remote_init 0x21B544 stores 0x2008E0 as vq_ops (decomp PTR_vq_tx_remote_002008e0), rpmsg_lite.c remote_vq_ops
+capture_buf	002390e0	regfile_capture_init 0x21C090 stores 0x2007E000 and 0x2007F000 to 0x2390E0/0x2390E4; regfile_capture_clear/_set_ctrl/_append index it
+clib_malloc_lock	002cd6b0	__malloc_lock 0x228DC3 / __malloc_unlock 0x228DF3 (l32r 0x2078D8 = 0x2CD6B0): mutex at +0, count +32, ready flag +36
+clib_heap_ptr	002cd6d8	_sbrk_r 0x228E37 (l32r 0x2078DC = 0x2CD6D8): the heap break, 0 until the first call
+xos_curr_thread	00237858	__malloc_lock 0x228DC6 (l32r 0x2077A8 = 0x237858): the running thread, compared with the mutex owner
+apf_state	00244510	apf_init 0x21C603 (l32r 0x206CFC = 0x244510): two words cleared; apf_config reads it
+nlms_auto_notch_state	00245420	nlms_auto_notch_init 0x21C893: memset(0x245420, 0, 0xC98), then 1.0 at 0x2460AC
+contour_state	002464a0	contour_init 0x21CC53: six words cleared at 0x2464A0
+goertzel_bins	00246cc8	zeroin_goertzel_reset 0x21D0AB: 0.0 to 0x246CD8 - 16/-12, three times with a 28-byte step
+am_demod_state	00246eb0	am_demod_init 0x21D5B3: 0.0 to +0 and +4, hilbert_iq_init(+8)
+lms_ale_nr_state	00247dd0	lms_ale_nr_init 0x21DBB3: memset(0x247DD0, 0, 0x6E4), 1.0 at 0x2484A4, 0x2484AC, 0x2484B0
+manual_notch_state	00250b40	manual_notch_init 0x21E523: two words cleared
+branch_b_delay_line	00250cd0	branch_b_delay_init 0x21E6B3: memset(0x250CD0, 0, 0x12C8)
+aess_lowpass_fir_state	00251fa0	aess_lowpass_fir_init 0x21E743: memset(0x251FA0, 0, 0x210)
+af_locut_state	00252ac0	af_locut_init 0x21E893: memset(0x252AC0, 0, 112), 71 at +0, 85 at +56
+af_hicut_state	00252b30	af_hicut_init 0x21EC23: memset(0x252B30, 0, 112), 70 at +0, 84 at +56
+rx_audio_mode_cache	002576e4	rx_audio_init 0x220C6B: 0xFFFF to 0x2576E4 + 252
+tx_bpf_selected	0025b810	tx_bpf_init 0x2221C3: 16-bit 0 to 0x25B810
+soft_knee_compressor_state	0025b9c0	soft_knee_compressor_init 0x222233: memset(0x25B9C0, 0, 52)
+fm_tx_hpf_handle	0025bff0	fm_tx_hpf_init 0x222DE6 stores the iir_cascade_init result; fm_tx_hpf_process 0x222DF3 reads it
+fm_tx_hpf_mem	0025c030	fm_tx_hpf_init 0x222DD7: iir_cascade_init's first argument
+fm_tx_hpf_coef	002371f0	fm_tx_hpf_init 0x222DDA: iir_cascade_init's third argument (coefficients in .data)
+fm_post_lpf_handle	0025c230	fm_post_lpf_init 0x223092 stores the iir_cascade_init result
+fm_post_lpf_mem	0025c240	fm_post_lpf_init 0x223083: iir_cascade_init's first argument
+fm_post_lpf_coef	002372e0	fm_post_lpf_init 0x223086: iir_cascade_init's third argument
+vox_detector_state	0025c480	vox_state 0x223A77 reads 0x25C480 + 36
+antivox_detector_state	0025c6ac	vox_state 0x223A7A reads 0x25C6AC + 252

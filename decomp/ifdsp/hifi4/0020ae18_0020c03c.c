@@ -425,19 +425,25 @@ void DMIC_ResetChannelDecimator(int param_1,uint param_2,int param_3)
 {
   uint uVar1;
   
-  uVar1 = 0;
+  uVar1 = (uint)((param_2 & 3) != 0);
   if ((param_2 & 0xc) != 0) {
-    uVar1 = (param_2 & 3) != 0 | 2;
+    uVar1 = uVar1 | 2;
+  }
+  if ((param_2 & 0x30) != 0) {
+    uVar1 = uVar1 | 4;
+  }
+  if ((param_2 & 0xc0) != 0) {
+    uVar1 = uVar1 | 8;
   }
   if (param_3 != 0) {
     memw();
     memw();
-    *(uint *)(param_1 + 0xf1c) = *(uint *)(param_1 + 0xf1c) | uVar1 | 0xc;
+    *(uint *)(param_1 + 0xf1c) = *(uint *)(param_1 + 0xf1c) | uVar1;
     return;
   }
   memw();
   memw();
-  *(uint *)(param_1 + 0xf1c) = *(uint *)(param_1 + 0xf1c) & ((uVar1 | 0xc) ^ 0xffffffff);
+  *(uint *)(param_1 + 0xf1c) = *(uint *)(param_1 + 0xf1c) & (uVar1 ^ 0xffffffff);
   return;
 }
 
@@ -591,8 +597,8 @@ undefined * DMIC_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3,
   bool bVar1;
   undefined *puVar2;
   int iVar3;
-  undefined4 *puVar4;
-  uint uVar5;
+  int iVar4;
+  undefined4 *puVar5;
   uint uVar6;
   uint uVar7;
   int iVar8;
@@ -609,24 +615,24 @@ undefined * DMIC_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3,
   uint uStack_28;
   
   memcpy(auStack_60,&DAT_002001b8,0x18);
-  iVar3 = *(int *)(param_2 + 0x18);
-  puVar4 = (undefined4 *)param_3[4];
-  uVar7 = iVar3 + 0x10;
-  if (iVar3 == 0) {
-    uVar7 = 0;
+  iVar4 = *(int *)(param_2 + 0x18);
+  puVar5 = (undefined4 *)param_3[4];
+  iVar8 = iVar4 + 0x10;
+  if (iVar4 == 0) {
+    iVar8 = 0;
   }
-  if ((puVar4 != (undefined4 *)0x0) && (iVar3 == 0)) {
+  if ((puVar5 != (undefined4 *)0x0) && (iVar4 == 0)) {
     return (undefined *)0x4;
   }
   memw();
-  uVar6 = 3;
+  uVar7 = 3;
   if (*(char *)(param_2 + 0x14) == '\x01') goto LAB_0020b710;
   uStack_48 = param_4;
-  if (puVar4 == (undefined4 *)0x0) {
+  if (puVar5 == (undefined4 *)0x0) {
     iStack_40 = param_4 * 0x100;
-    iVar8 = iStack_40 + param_1 + 0x88;
+    iVar4 = iStack_40 + param_1 + 0x88;
     bVar1 = true;
-    iVar3 = 0;
+    iVar8 = 0;
   }
   else {
     iStack_40 = param_4 * 0x100;
@@ -635,40 +641,34 @@ undefined * DMIC_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3,
     iStack_38 = 0;
     iStack_44 = iStack_40 + param_1 + 0x88;
     iVar3 = 0;
-    uStack_28 = uVar6;
-    uVar5 = 1;
+    uStack_28 = uVar7;
     do {
-      uVar6 = (uint)*(byte *)(puVar4 + 1);
-      uStack_30 = uVar5;
-      if (puVar4[4] != 0) {
+      uVar7 = (uint)*(byte *)(puVar5 + 1);
+      uStack_30 = 1;
+      if (puVar5[4] != 0) {
         uStack_30 = uStack_28;
       }
-      if (uVar6 == 4) {
-        uVar5 = 0x200;
+      if (uVar7 == 4) {
+        uVar6 = 0x200;
       }
       else {
-        uVar5 = (uVar6 - 1) * 0x100 & 0x300;
+        uVar6 = (uVar7 - 1) * 0x100 & 0x300;
       }
-      if (*(byte *)(puVar4 + 3) == 4) {
+      if (*(byte *)(puVar5 + 3) == 4) {
         uVar9 = 0xc000;
       }
       else {
-        uVar9 = (*(byte *)(puVar4 + 3) & 3) << 0xe;
-      }
-      uVar10 = (uint)puVar4[2] / uVar6 - 1;
-      uVar6 = uVar10;
-      if (!bVar1) {
-        uVar6 = 1;
+        uVar9 = (*(byte *)(puVar5 + 3) & 3) << 0xe;
       }
       DMA_SetupDescriptor(*(int *)(param_2 + 0x18) + iVar3,
-                          uVar9 | uVar10 * 0x10000 & 0x3ff0000 |
-                          uStack_30 | (uint)bVar1 << 4 | uVar5 | (uVar6 & 1) << 5,iStack_44,*puVar4,
-                          uVar7);
+                          uVar9 | ((uint)puVar5[2] / uVar7 - 1) * 0x10000 & 0x3ff0000 |
+                          uStack_30 | (uint)bVar1 << 4 | uVar6 | (uint)!bVar1 << 5,iStack_44,*puVar5
+                          ,iVar8);
       bVar1 = !bVar1;
-      iVar8 = iStack_44;
-      uVar6 = uStack_28;
+      iVar4 = iStack_44;
+      uVar7 = uStack_28;
       if (iStack_34 != 0) {
-        iVar3 = param_3[4];
+        iVar8 = param_3[4];
         goto LAB_0020b620;
       }
       iStack_38 = iStack_38 + 1;
@@ -676,57 +676,56 @@ undefined * DMIC_TransferReceiveDMA(int param_1,int param_2,undefined4 *param_3,
       if (*(int *)(param_2 + 0x1c) == iStack_38) {
         return (undefined *)0x1;
       }
-      puVar4 = (undefined4 *)puVar4[4];
-      uVar7 = *(uint *)(param_2 + 0x18) + iVar3 + 0x10;
-      if (param_3 == puVar4) {
+      puVar5 = (undefined4 *)puVar5[4];
+      iVar8 = *(int *)(param_2 + 0x18) + iVar3 + 0x10;
+      if (param_3 == puVar5) {
         iStack_34 = 1;
-        uVar7 = *(uint *)(param_2 + 0x18);
+        iVar8 = *(int *)(param_2 + 0x18);
       }
-      uVar5 = uVar7;
-    } while (puVar4 != (undefined4 *)0x0);
-    iVar3 = param_3[4];
+    } while (puVar5 != (undefined4 *)0x0);
+    iVar8 = param_3[4];
   }
 LAB_0020b620:
   uStack_3c = param_3[2];
-  uVar5 = (uint)*(byte *)(param_3 + 1);
+  uVar9 = (uint)*(byte *)(param_3 + 1);
   *(uint *)(param_2 + 0x10) = *(int *)(param_2 + 0x10) + uStack_3c;
-  uVar7 = (uint)*(byte *)(param_3 + 3);
-  if ((uVar5 != 2) && (uVar5 != 4)) {
+  uVar6 = (uint)*(byte *)(param_3 + 3);
+  if ((uVar9 != 2) && (uVar9 != 4)) {
     *(undefined1 *)(param_3 + 1) = 2;
-    uVar5 = 2;
+    uVar9 = 2;
   }
-  if ((uVar7 == 0) || (4 < uVar7)) {
+  if ((uVar6 == 0) || (4 < uVar6)) {
     *(undefined1 *)(param_3 + 3) = 1;
     uVar6 = 1;
+  }
+  if (iVar8 == 0) {
     uVar7 = 1;
   }
-  if (iVar3 == 0) {
-    uVar6 = 1;
-  }
-  if (uVar5 == 4) {
-    uVar9 = 0x200;
-    if (uVar7 == 4) goto LAB_0020b720;
+  if (uVar9 == 4) {
+    uVar10 = 0x200;
+    if (uVar6 == 4) goto LAB_0020b720;
 LAB_0020b674:
-    uVar7 = (uVar7 & 3) << 0xe;
+    uVar6 = (uVar6 & 3) << 0xe;
   }
   else {
-    uVar9 = (uVar5 - 1) * 0x100 & 0x300;
-    if (uVar7 != 4) goto LAB_0020b674;
+    uVar10 = (uVar9 - 1) * 0x100 & 0x300;
+    if (uVar6 != 4) goto LAB_0020b674;
 LAB_0020b720:
-    uVar7 = (uVar7 - 1) * 0x4000 & (uint)&DAT_0000c000;
+    uVar6 = (uVar6 - 1) * 0x4000 & (uint)&DAT_0000c000;
   }
   DMA_PrepareChannelTransfer
-            (auStack_60,iVar8,*param_3,
-             uVar7 | (uStack_3c / uVar5 - 1) * 0x10000 & 0x3ff0000 |
-             uVar6 | (uint)bVar1 << 4 | uVar9 | 0x20,1,0,*(undefined4 *)(param_2 + 0x18));
+            (auStack_60,iVar4,*param_3,
+             uVar6 | (uStack_3c / uVar9 - 1) * 0x10000 & 0x3ff0000 |
+             uVar7 | (uint)bVar1 << 4 | uVar10 | (uint)!bVar1 << 5,1,0,
+             *(undefined4 *)(param_2 + 0x18));
   puVar2 = (undefined *)DMA_SubmitChannelTransfer(*(undefined4 *)(param_2 + 4),auStack_60);
-  iVar3 = iStack_40;
+  iVar8 = iStack_40;
   if (puVar2 != &DAT_00001388) {
     DMIC_EnableChannnel(&DMIC0_CHANNEL0_OSR,1 << 0x20 - (0x20 - (uStack_48 & 0x1f)));
     memw();
     memw();
-    *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar3) =
-         *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar3) | 8;
+    *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar8) =
+         *(uint *)((int)&DMIC0_CHANNEL0_FIFO_CTRL + iVar8) | 8;
     DMA_StartTransfer(*(undefined4 *)(param_2 + 4));
     memw();
     *(undefined1 *)(param_2 + 0x14) = 1;
@@ -1330,48 +1329,54 @@ void FLEXSPI_UpdateDllValue(uint *param_1,uint *param_2,uint param_3)
   uint uVar1;
   uint uVar2;
   uint uVar3;
+  undefined *puVar4;
   
   memw();
   if ((param_1[0x38] & 2) == 0) goto LAB_0020bf6d;
   memw();
-  uVar2 = param_1[0x38];
-  while ((uVar2 & 1) == 0) {
+  uVar1 = param_1[0x38];
+  while ((uVar1 & 1) == 0) {
 LAB_0020bf6d:
     do {
       memw();
     } while ((param_1[0x38] & 2) == 0);
     memw();
-    uVar2 = param_1[0x38];
+    uVar1 = param_1[0x38];
   }
   memw();
-  uVar2 = (*param_1 & 0x30) >> 4;
-  if ((((uVar2 == 0) || (uVar2 == 1)) || (uVar2 == 2)) ||
-     ((uVar2 != 3 || ((char)param_2[1] != '\0')))) {
-    uVar2 = 0x100;
+  uVar1 = (*param_1 & 0x30) >> 4;
+  if ((((uVar1 == 0) || (uVar1 == 1)) || (uVar1 == 2)) ||
+     ((uVar1 != 3 || ((char)param_2[1] != '\0')))) {
+    uVar1 = 0x100;
   }
   else if (*param_2 < 100000000) {
     uVar3 = (short)(ushort)(byte)param_2[5] * 1000;
-    uVar1 = uVar3 / 0x4b;
-    uVar2 = uVar1 + 1;
-    if (uVar3 <= uVar1 * 0x4b) {
-      uVar2 = uVar1;
+    uVar2 = uVar3 / 0x4b;
+    uVar1 = uVar2 + 1;
+    if (uVar3 <= uVar2 * 0x4b) {
+      uVar1 = uVar2;
     }
-    uVar2 = (uVar2 & 0x3f) << 9 | 0x100;
+    uVar1 = (uVar1 & 0x3f) << 9 | 0x100;
   }
   else {
-    uVar2 = 0x79;
+    uVar1 = 0x79;
   }
+  uVar2 = param_3 >> 1 & 0x7f;
   memw();
-  param_1[(param_3 >> 1 & 0x7f) + 0x30] = uVar2;
+  param_1[uVar2 + 0x30] = uVar1;
   memw();
   memw();
   *param_1 = *param_1 & 0xfffffffd;
-  if ((uVar2 & 1) != 0) {
+  puVar4 = &DAT_00030000;
+  if (uVar2 == 0) {
+    puVar4 = (undefined *)0x3;
+  }
+  if ((uVar1 & 1) != 0) {
     memw();
-    uVar2 = param_1[0x3a];
-    while ((~uVar2 & 3) != 0) {
+    uVar1 = param_1[0x3a];
+    while ((~uVar1 & (uint)puVar4) != 0) {
       memw();
-      uVar2 = param_1[0x3a];
+      uVar1 = param_1[0x3a];
     }
   }
   return;

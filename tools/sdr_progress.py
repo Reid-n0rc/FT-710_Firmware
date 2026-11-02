@@ -18,14 +18,19 @@ Usage:
 Block map columns (tab-separated, '#' comments, rows in priority order: a cell belongs to the first row that claims it):
   block     short name, unique
   seeds     comma-separated: a cell (SLICE_X1Y92/AFF), a site (SLICE_X1Y93, DSP48_X1Y26: every cell in it), a site
-            rectangle (SLICE_X0..X2Y107..Y111, SLICE_X14Y50..X14Y54, RAMB18_X0Y50..Y59), optionally with /BEL, or
-            type:IDDR (every cell of a type)
+            rectangle (SLICE_X0..X2Y107..Y111, SLICE_X14Y50..X14Y54, RAMB18_X0Y50..Y59), optionally with /BEL,
+            type:IDDR (every cell of a type), or ffs-fed:D=CELL+CELL...&CE=CELL+... (every flip-flop whose D pin,
+            and CE pin, reach one of the listed cells through LUT/CARRY/MUX logic, following only the LUT inputs the
+            used LUT output depends on; CE=- means a constant CE; T=FDRE+FDSE limits the cell types; any part may
+            be left out)
   back      fan-in depth in register stages: '-' = seeds only; 'slice:N' = exactly the sub-netlist that
             `tools/xc7_netlist_verilog.py slice --depth N` cuts (the slice an RTL file was verified against); a number N =
             fan-in through LUT/CARRY/MUX logic and at most N fabric registers (clock pins and register-driven resets are not
             followed; DSP/BRAM/MMCM/clock buffers end the cone and are only counted when they are seeds)
   fwd       fan-out depth in register stages ('-' = none), same rules, from the seeds' outputs
-  stop      comma-separated cells/sites/rectangles the cones do not enter ('-' = none)
+  stop      comma-separated cells/sites/rectangles the cones do not enter ('-' = none); the token other-ffs adds every
+            flip-flop that is not a seed (for slice:N rows: the slice then holds the seeds' own logic, and every other
+            register it reads becomes a slice input)
   within    comma-separated cells/sites/rectangles/types the cones stay inside ('-' = anywhere); seeds always count
   doc       the documentation section (path#anchor, relative to the repo root)
   rtl       hand-written RTL in hdl/sdr/ that re-implements the block ('-' = none)
@@ -99,6 +104,10 @@ class Index:
         for s in [x.strip() for x in spec.split(',') if x.strip() and x.strip() != '-']:
             if s.startswith('type:'):
                 got = list(self.by_type.get(s[5:], []))
+            elif s.startswith('ffs-fed:'):
+                got = self.ffs_fed(s[8:], where)
+            elif s == 'other-ffs':
+                continue                      # resolved by stop_cells (needs the seeds)
             elif s in self.g.cells:
                 got = [s]
             elif s in self.by_site:
@@ -118,6 +127,83 @@ class Index:
                 sys.exit(f'sdr_progress: {where}: seed {s!r} matches no cell')
             out += got
         return out
+
+
+    def ffs_fed(self, spec, where):
+        """Flip-flops whose D (and CE) reach the given cells through combinational logic (see the docstring)."""
+        want, types = {}, None
+        for part in spec.split('&'):
+            k, _, v = part.partition('=')
+            if k == 'T':
+                types = v.split('+')
+                continue
+            if k not in ('D', 'CE'):
+                sys.exit(f'sdr_progress: {where}: bad ffs-fed part {part!r}')
+            want[k] = None if v == '-' else set(self.resolve(v.replace('+', ','), where))
+        out = []
+        for c in self.by_type_ffs():
+            if types and self.g.ctype(c) not in types:
+                continue
+            ok = True
+            for k, cells in want.items():
+                n = self.g.cells[c]['pins'].get(k, ["1'b1"])[0]
+                if cells is None:
+                    ok = ok and n.startswith("1'b")
+                else:
+                    ok = ok and not n.startswith("1'b") and bool(comb_leaves(self.g, n) & cells)
+            if ok:
+                out.append(c)
+        return sorted(out)
+
+    def by_type_ffs(self):
+        return [c for t in xc7_blocks.FF for c in self.by_type.get(t, [])]
+
+
+_LUTDEP = {}
+
+
+def comb_leaves(g, net):
+    """Cells (registers, hard blocks, IOs) that a net reaches backwards through LUT/CARRY4/MUXF logic; a LUT6_2
+    output follows only the inputs it depends on, a CARRY4 output only the stages below it."""
+    seen, leaves, todo = set(), set(), [net]
+    while todo:
+        n = todo.pop()
+        dr = g.driver(n)
+        if not dr:
+            continue
+        c, p = dr
+        t = g.ctype(c)
+        if t not in ('LUT6', 'LUT6_2', 'CARRY4', 'MUXF7', 'MUXF8'):
+            leaves.add(c)
+            continue
+        if (c, p) in seen:
+            continue
+        seen.add((c, p))
+        if t in ('LUT6', 'LUT6_2'):
+            key = (c, p)
+            if key not in _LUTDEP:
+                _LUTDEP[key] = [q for q, _ in xc7_blocks.lut_function(g.cells[c], p if t == 'LUT6_2' else 'O')[0]]
+            pins = _LUTDEP[key]
+        elif t == 'CARRY4':
+            k = int(p[p.index('[') + 1])
+            pins = ['CI', 'CYINIT'] + ['S[%d]' % j for j in range(k + 1)] + \
+                   ['DI[%d]' % j for j in range(k + (1 if p.startswith('CO') else 0))]
+        else:
+            pins = ['I0', 'I1', 'S']
+        for q in pins:
+            v = g.cells[c]['pins'].get(q)
+            if v and v[1] == 'I' and not v[0].startswith("1'b"):
+                todo.append(v[0])
+    return leaves
+
+
+def stop_cells(g, idx, row, seeds, where):
+    stop = set(idx.resolve(row['stop'], where + ' stop')) if row['stop'].strip() not in ('', '-') else set()
+    if 'other-ffs' in [x.strip() for x in row['stop'].split(',')]:
+        stop |= set(idx.by_type_ffs()) - set(seeds)
+    if row['within'].strip() not in ('', '-'):
+        stop |= set(g.cells) - set(idx.resolve(row['within'], where + ' within'))
+    return stop
 
 
 def cone(g, seeds, depth, forward, stop):
@@ -166,9 +252,7 @@ def cone(g, seeds, depth, forward, stop):
 def block_cells(g, idx, row):
     where = 'block ' + row['block']
     seeds = idx.resolve(row['seeds'], where)
-    stop = set(idx.resolve(row['stop'], where + ' stop')) if row['stop'].strip() not in ('', '-') else set()
-    if row['within'].strip() not in ('', '-'):
-        stop |= set(g.cells) - set(idx.resolve(row['within'], where + ' within'))
+    stop = stop_cells(g, idx, row, seeds, where)
     cells = set(seeds)
     back, fwd = row['back'].strip(), row['fwd'].strip()
     if back.startswith('slice:'):
@@ -246,11 +330,10 @@ def write_slice(g, path, rows, block, out):
     import xc7_netlist_verilog
     idx = Index(g)
     where = 'block ' + block
-    stop = idx.resolve(row['stop'], where + ' stop') if row['stop'].strip() not in ('', '-') else []
-    if row['within'].strip() not in ('', '-'):
-        stop = sorted(set(stop) | (set(g.cells) - set(idx.resolve(row['within'], where + ' within'))))
-    xc7_netlist_verilog.cmd_slice(path, out, idx.resolve(row['seeds'], where), int(row['back'][6:]),
-                                  'xc7a50tcsg324-1', xc7_blocks.DEFAULT_DB, stop)
+    seeds = idx.resolve(row['seeds'], where)
+    stop = sorted(stop_cells(g, idx, row, seeds, where))
+    xc7_netlist_verilog.cmd_slice(path, out, seeds, int(row['back'][6:]), 'xc7a50tcsg324-1', xc7_blocks.DEFAULT_DB,
+                                  stop)
     return 0
 
 
@@ -258,8 +341,8 @@ def selftest():
     nl = {'cells': [
         {'name': 'S_X0Y0/AFF', 'type': 'FDRE', 'site': 'S_X0Y0', 'params': {},
          'pins': {'C': ['clk', 'I'], 'D': ['n1', 'I'], 'Q': ['n2', 'O']}},
-        {'name': 'S_X0Y0/ALUT', 'type': 'LUT6', 'site': 'S_X0Y0', 'params': {'INIT': 1},
-         'pins': {'A1': ['n3', 'I'], 'O6': ['n1', 'O']}},
+        {'name': 'S_X0Y0/ALUT', 'type': 'LUT6', 'site': 'S_X0Y0', 'params': {'INIT': 1 << 63},
+         'pins': {'I0': ['n3', 'I'], 'O6': ['n1', 'O']}},
         {'name': 'S_X1Y0/AFF', 'type': 'FDRE', 'site': 'S_X1Y0', 'params': {},
          'pins': {'C': ['clk', 'I'], 'D': ['n4', 'I'], 'Q': ['n3', 'O']}},
         {'name': 'S_X2Y0/AFF', 'type': 'FDRE', 'site': 'S_X2Y0', 'params': {},
@@ -269,7 +352,7 @@ def selftest():
         'clk': {'drivers': ['B_X0Y0.O'], 'sinks': ['S_X0Y0/AFF.C', 'S_X1Y0/AFF.C', 'S_X2Y0/AFF.C']},
         'n1': {'drivers': ['S_X0Y0/ALUT.O6'], 'sinks': ['S_X0Y0/AFF.D']},
         'n2': {'drivers': ['S_X0Y0/AFF.Q'], 'sinks': ['S_X2Y0/AFF.D']},
-        'n3': {'drivers': ['S_X1Y0/AFF.Q'], 'sinks': ['S_X0Y0/ALUT.A1']},
+        'n3': {'drivers': ['S_X1Y0/AFF.Q'], 'sinks': ['S_X0Y0/ALUT.I0']},
         'n4': {'drivers': [], 'sinks': ['S_X1Y0/AFF.D']},
         'n5': {'drivers': ['S_X2Y0/AFF.Q'], 'sinks': []},
     }}
@@ -277,6 +360,8 @@ def selftest():
     idx = Index(g)
     assert sorted(idx.resolve('S_X0..X1Y0', 't')) == ['S_X0Y0/AFF', 'S_X0Y0/ALUT', 'S_X1Y0/AFF'], idx.resolve('S_X0..X1Y0', 't')
     assert idx.resolve('S_X0Y0/AFF', 't') == ['S_X0Y0/AFF']
+    assert idx.resolve('ffs-fed:D=S_X1Y0/AFF', 't') == ['S_X0Y0/AFF'], idx.resolve('ffs-fed:D=S_X1Y0/AFF', 't')
+    assert idx.resolve('ffs-fed:D=S_X0Y0/AFF&CE=-', 't') == ['S_X2Y0/AFF']
     assert sorted(idx.resolve('S_X0Y0..X2Y0/AFF', 't')) == ['S_X0Y0/AFF', 'S_X1Y0/AFF', 'S_X2Y0/AFF']
     assert cone(g, ['S_X0Y0/AFF'], 0, False, set()) == {'S_X0Y0/AFF', 'S_X0Y0/ALUT'}
     assert cone(g, ['S_X0Y0/AFF'], 1, False, set()) == {'S_X0Y0/AFF', 'S_X0Y0/ALUT', 'S_X1Y0/AFF'}

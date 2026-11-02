@@ -544,9 +544,11 @@ are not affected by an SRL delay, so they stand, but they were not re-run.
   (channel A: `SLICE_X40Y72/C5FF` = bit 7, `X40Y72/DFF`, `X36Y60/BFF`, `X43Y72/BFF`, `X40Y72/CFF`, `X40Y72/BFF`,
   `X43Y72/DFF`, `X43Y72/CFF` = bit 0, all written through the enable `SLICE_X35Y67/CLUT`; channel B: `SLICE_X36Y60/C5FF`,
   `X36Y60/B5FF`, `X36Y60/A5FF`, `X36Y60/DFF`, `X32Y66/BFF`, `X32Y66/AFF`, `X36Y60/CFF`, `X36Y60/AFF`), so a constant can
-  be fed into each channel's mixers instead of the ADC (a test or calibration input **[inference]**). Open: which MAIN
-  register holds the two fields; would be settled by a one-bit-at-a-time register sweep in the whole netlist, as for reg
-  0x04.
+  be fed into each channel's mixers instead of the ADC (a test or calibration input **[inference]**). Both fields are
+  **register 0x07**: channel A = bits 15..8, channel B = bits 7..0, in the bit order listed **[fact, T24 SDR round 2: the
+  enable `SLICE_X35Y67/CLUT` decodes address 0x0007 with the write strobe (exhaustive evaluation of its LUT cone), the
+  flip-flops take write-data bits 15..0, and the read mux returns them at 0x0007 in that order; section 5.2]**. MAIN
+  never writes 0x07 ([main/sdr-link.md](../main/sdr-link.md)), and it resets to 0, so both channels pass the ADC.
 - **Combine.** The four operand words are registers with the 5 MSPS strobe as clock enable (`SLICE_X52Y107/DLUT`) and a
   synchronous reset that wins over it (`SLICE_X50Y112/A5FF`, INIT 1); the output words load on the same strobe. In the
   A x 8 row bits 0..2 are cleared through the flip-flops' reset pin (`SLICE_X56Y98/DLUT = srst | s & u & ~t & ce`). The
@@ -1246,6 +1248,127 @@ Recovered by simulation and confirmed by the RTL co-simulation (`hdl/sdr/uart_li
   0x8800, 0x04 = 0x8810, 0x05 = 0, 0x06 = 0x020A, 0x07 = 0, 0x0A = 0, 0x15 = 0x1FFF, 0x30 = 0x0023, 0x32/0x33/0x37 = 0.
   Unmapped addresses tried read 0xCCCC (0x00FF, 0xA8B2, 0xB837, 0xFFFF) or 0 (0x0100, 0x90E4). Write and read-back
   work for 0x03, 0x15, 0x30, 0x31. MAIN's 0x37 = 0xBCC5 unlock is ACKed and reads back 0.
+
+#### Register file: write side and address map (T24 SDR round 2) [fact unless marked]
+
+**The bus.** UART B's link and UART A's console share one set of bus flip-flops in `SLICE_X8..X15Y83..Y94`; each is a
+2:1 mux of the two masters selected by `SLICE_X21Y108/AFF` (1 = the link) **[fact, LUT equations]**. Between
+transactions every bus flip-flop is 0; a link write holds address and data for three clocks and pulses the write
+strobe `SLICE_X13Y86/A5FF` in the middle one; a read pulses `SLICE_X14Y86/D5FF` instead **[fact, whole-netlist
+simulation, `hdl/sdr/sim/regmap_main.cpp`]**. Address bits: a0 = `SLICE_X13Y86/AFF` (copies `X11Y85/DFF`, `X14Y86/A5FF`,
+`X14Y86/AFF`), a1 = `X14Y86/DFF` (copies `X14Y84/A5FF`, `X11Y89/CFF`, `X14Y84/BFF`), a2 = `X15Y85/A5FF` (copy
+`X15Y85/DFF`), a3 = `X8Y83/AFF`, a4 = `X10Y87/CFF`, a5 = `X12Y89/BFF`; the other ten (`X11Y85/BFF`, `X12Y89/CFF`,
+`X10Y87/AFF`, `X13Y86/BFF`, `X13Y83/AFF`, `X13Y84/DFF`, `X12Y89/AFF`, `X11Y85/CFF`, `X12Y89/DFF`, `X11Y89/AFF`) are
+a6..a15 in an order not settled bit by bit. Data bits d0..d15: `X11Y89/BFF`, `X11Y89/B5FF`, `X13Y86/B5FF`,
+`X13Y84/D5FF`, `X10Y87/A5FF`, `X8Y94/AFF`, `X12Y89/A5FF`, `X11Y89/A5FF`, `X11Y85/C5FF`, `X12Y89/D5FF`, `X12Y89/C5FF`,
+`X11Y85/B5FF`, `X12Y89/B5FF`, `X15Y85/D5FF`, `X10Y87/C5FF`, `X8Y94/BFF`. a0, a1, a2, a4, d0, d1 and d3 were seen pulse
+in the whole-netlist frames (w0001/w0002/w0004/w0015 with data 0001/0002/0008); the data order follows from register
+0x15, whose flip-flops take write-data bit k and are read back at read-data bit k (read-data order from T15e)
+**[fact]**; a3 and a5 are the remaining flip-flops of the nibble registers that hold a0..a3 and a4..a7 in the link, and
+a5 is the only upper bit that registers 0x20..0x37 decode **[inference]**.
+
+**The registers.** 598 flip-flops (`ffs-fed:` seed of the `regfile` row in `tools/sdr_blocks.tsv`) have a D pin that is
+one write-data bit and a CE pin that reaches the strobe. They sit under 42 write enables; evaluating each enable's LUT
+cone over all 2^16 address values with the strobe set gives exactly one address for each **[fact, exhaustive
+evaluation]**. Every bit takes write-data bit k as register bit k, has the global synchronous reset `SLICE_X10Y76/BFF`
+(FDRE resets to 0, FDSE to 1), except register 0x27, which has no reset and whose enable is blocked while the reset is
+high **[fact, LUT cones; checked on every clock, below]**. The reset values agree with the values read after reset in
+the list above (0x03, 0x04, 0x06, 0x15, 0x30).
+
+| Address | Bits | Reset | FFs | Enable (driver) | Example bit-0 cell |
+|---|---|---|---|---|---|
+| 0x03 | 0xFFFF | 0x8800 | 16 | `SLICE_X35Y67/BLUT` | `SLICE_X32Y73/AFF` |
+| 0x04 | 0xFFFF | 0x8810 | 16 | `SLICE_X35Y70/CLUT` | `SLICE_X33Y73/AFF` |
+| 0x05 | 0xFFFF | 0x0000 | 16 | `SLICE_X47Y67/CLUT` | `SLICE_X36Y46/AFF` |
+| 0x06 | 0xFFFF | 0x020A | 16 | `SLICE_X35Y72/DLUT` | `SLICE_X37Y60/AFF` |
+| 0x07 | 0xFFFF | 0x0000 | 16 | `SLICE_X35Y67/CLUT` | `SLICE_X32Y66/AFF` |
+| 0x08 | 0xFFFF | 0x00D5 | 16 | `SLICE_X33Y76/CLUT` | `SLICE_X43Y76/BFF` |
+| 0x09 | 0xFFFF | 0x9F80 | 16 | `SLICE_X43Y79/CLUT` | `SLICE_X43Y79/A5FF` |
+| 0x0A | 0xFFFF | 0x0000 | 16 | `SLICE_X33Y76/DLUT` | `SLICE_X46Y70/BFF` |
+| 0x0B | 0x00FF | 0x0058 | 8 | `SLICE_X58Y81/CLUT` | `SLICE_X59Y81/A5FF` |
+| 0x0C | 0xFFFF | 0x220E | 16 | `SLICE_X30Y77/ALUT` | `SLICE_X30Y77/AFF` |
+| 0x0D | 0x00FF | 0x000E | 8 | `SLICE_X58Y78/BLUT` | `SLICE_X58Y78/A5FF` |
+| 0x0E | 0xFFFF | 0x1200 | 16 | `SLICE_X30Y77/BLUT` | `SLICE_X38Y73/AFF` |
+| 0x0F | 0xFFFF | 0x1000 | 16 | `SLICE_X41Y69/BLUT` | `SLICE_X41Y77/AFF` |
+| 0x10 | 0xFF00 | 0xFF00 | 8 | `SLICE_X28Y77/ALUT` | `SLICE_X28Y77/AFF` |
+| 0x11 | 0xFF00 | 0xFF00 | 8 | `SLICE_X14Y71/ALUT` | `SLICE_X14Y71/AFF` |
+| 0x12 | 0xFFFF | 0x8000 | 16 | `SLICE_X29Y66/BLUT` | `SLICE_X29Y66/A5FF` |
+| 0x13 | 0xFFFF | 0x8000 | 16 | `SLICE_X14Y71/BLUT` | `SLICE_X14Y63/AFF` |
+| 0x14 | 0xFFFF | 0x2000 | 16 | `SLICE_X29Y70/CLUT` | `SLICE_X29Y67/A5FF` |
+| 0x15 | 0xFFFF | 0x1FFF | 16 | `SLICE_X29Y66/CLUT` | `SLICE_X30Y66/BFF` |
+| 0x16 | 0x00FF | 0x0010 | 8 | `SLICE_X14Y70/CLUT` | `SLICE_X14Y62/A5FF` |
+| 0x17 | 0xFFFF | 0x2000 | 16 | `SLICE_X15Y80/DLUT` | `SLICE_X14Y80/AFF` |
+| 0x18 | 0xFFFF | 0x0089 | 16 | `SLICE_X13Y73/DLUT` | `SLICE_X12Y67/AFF` |
+| 0x19 | 0xFFFF | 0x5440 | 16 | `SLICE_X28Y77/DLUT` | `SLICE_X12Y63/A5FF` |
+| 0x1A | 0xFFFF | 0x0000 | 16 | `SLICE_X13Y64/BLUT` | `SLICE_X14Y55/BFF` |
+| 0x1B | 0xFFFF | 0x0000 | 16 | `SLICE_X14Y71/CLUT` | `SLICE_X13Y60/BFF` |
+| 0x1C | 0x000F | 0x0000 | 4 | `SLICE_X13Y64/CLUT` | `SLICE_X13Y65/AFF` |
+| 0x1D | 0xFFFF | 0x0000 | 16 | `SLICE_X13Y77/CLUT` | `SLICE_X12Y55/AFF` |
+| 0x1E | 0xFFFF | 0x0000 | 16 | `SLICE_X13Y64/DLUT` | `SLICE_X11Y58/A5FF` |
+| 0x1F | 0xFFFF | 0x0190 | 16 | `SLICE_X10Y64/DLUT` | `SLICE_X3Y57/AFF` |
+| 0x20 | 0xFFFF | 0x00D5 | 16 | `SLICE_X11Y84/ALUT` | `SLICE_X0Y85/AFF` |
+| 0x21 | 0xFFFF | 0x9F80 | 16 | `SLICE_X14Y83/ALUT` | `SLICE_X2Y85/A5FF` |
+| 0x22 | 0xFFFF | 0x03E8 | 16 | `SLICE_X14Y83/BLUT` | `SLICE_X10Y89/BFF` |
+| 0x23 | 0xFFFF | 0x8000 | 16 | `SLICE_X14Y83/CLUT` | `SLICE_X10Y90/A5FF` |
+| 0x24 | 0x03FF | 0x0317 | 10 | `SLICE_X11Y84/BLUT` | `SLICE_X10Y85/AFF` |
+| 0x25 | 0x0FFF | 0x03FF | 12 | `SLICE_X15Y80/BLUT` | `SLICE_X10Y86/AFF` |
+| 0x26 | 0xFFFF | 0x0610 | 16 | `SLICE_X15Y81/DLUT` | `SLICE_X14Y83/AFF` |
+| 0x27 | 0xFFFF | none (0) | 16 | `SLICE_X15Y82/CLUT` | `SLICE_X10Y81/AFF` |
+| 0x2E | 0xFFFF | 0x0001 | 16 | `SLICE_X14Y75/ALUT` | `SLICE_X10Y71/A5FF` |
+| 0x30 | 0xFFFF | 0x0023 | 16 | `SLICE_X13Y75/CLUT` | `SLICE_X0Y73/AFF` |
+| 0x31 | 0xFFFF | 0x0000 | 16 | `SLICE_X13Y77/DLUT` | `SLICE_X1Y72/AFF` |
+| 0x32 | 0x000F | 0x0000 | 4 | `SLICE_X11Y75/CLUT` | `SLICE_X10Y75/AFF` |
+| 0x37 | 0xFFFF | 0x0000 | 16 | `SLICE_X14Y75/CLUT` | `SLICE_X11Y74/AFF` |
+
+- Not written by the bus: 0x00..0x02, 0x2F, 0x33, 0x38..0x3F (read-only words, below) and 0x28..0x2D, 0x34..0x36
+  (nothing there; they read 0xCCCC). A 43rd enable, `SLICE_X46Y79/ALUT` (8 FDPE in `SLICE_X43Y80`, `X46Y79`, `X47Y79`), decodes only one upper
+  address bit and loads data that also depends on address bits, with 17 more address-loaded flip-flops next to it
+  (`SLICE_X43Y80..X47Y82`). Open: what that block is (an address-indexed table loader is one reading); would be settled
+  by tracing its outputs.
+- **Override fields of the gain stage** (3.7): register 0x07, channel A bits 15..8, channel B bits 7..0.
+- **Scope writer** (5.6): the 16-bit `lvl` of `hdl/sdr/scope_wr_data.v` is a copy of register 0x26 (`SLICE_X30Y76`,
+  `X32Y75`, ... loaded from the 0x26 flip-flops under `SLICE_X29Y120/ALUT.O5`, a writer sequencer state), `ref` is
+  register 0x27 bits 7..0 (copied the same way) and `g` is register 0x27 bit 15 directly **[fact, D cones]**. So the
+  scope byte is about 0x27[7:0] − (0x26 + sample)/16 when 0x27 bit 15 is set (MAIN's 0x8044), /32 when clear; reg 0x27
+  = 0x8080 instead of 0x8044 adds 0x3C to every byte, as the frames of 5.6 showed.
+
+**Read side [fact, evaluation of the read mux with a stable address, sync resets included].** The read data are 16
+flip-flops (`SLICE_X9..X14Y63..Y70`; the 16th is `SLICE_X11Y63/AFF`, passed by `SLICE_X7Y101/BLUT`) behind 68
+first-stage flip-flops: stage 1 selects within a register group with the full address (several groups are cleared by
+a synchronous reset decoded from the address), stage 2 selects the group with a4..a15, so a word appears two clocks
+after its address. For 0x0000..0x003F:
+
+| Address | Read value |
+|---|---|
+| 0x00 | constant 0x0104 (the version, built from first-stage reset/set values) |
+| 0x01, 0x02 | status bits of other blocks (0x01: 4 bits such as `SLICE_X39Y62/BFF`, `X31Y67/CFF`, `X33Y75/AFF`; 0x02: 3 bits including `X1Y41/AFF`, the synchronized R15 of 5.6, and `X41Y70/A5FF`), the rest 0 |
+| the 42 registers | their own flip-flops at their own bit positions, unimplemented bits 0; 0x32: bits 3..0 the register, 4 more bits status (`SLICE_X11Y77/AFF`, `X9Y75/A5FF`, `X9Y75/AFF`, ...) |
+| 0x28..0x2D, 0x34..0x36 | constant 0xCCCC (the value of every unmapped address) |
+| 0x2F, 0x33, 0x38..0x3F | 16 (0x3D: 12, 0x3E/0x3F: 13) status bits of other blocks; 0x2F = `SLICE_X1Y55..X1Y57`, `X2Y54/B5FF` |
+
+Above 0x003F the word is 0xCCCC except two windows: one passes the ADC capture RAMs (`RAMB18_X0Y22..X0Y27`, e.g.
+`RAMB18_X0Y24.DO16..23` and `X0Y25.DOBDO0..7` interleaved; reached in the samples tried whenever the upper address
+flip-flop `SLICE_X13Y86/BFF` was set), and one passes the seven `SLICE_X12Y61` flip-flops and `SLICE_X13Y78/AFF` in the low
+byte, high byte 0 (sample: only `SLICE_X12Y89/DFF` set); 16 other samples (0x0040, 0x007F, ..., 0xFFFF) read 0xCCCC. The 0x37 flip-flops are passed
+to the read data at 0x37 in this evaluation, and in the whole netlist they hold a written 0xB64C (trace check below);
+T15e read 0 after MAIN's 0xBCC5, on the netlist before the netlist-tool fixes. Open: the exact address windows of the
+RAM and status reads (they depend on a6..a15, whose order is open), and what 0x37 reads back on the current netlist;
+would be settled by the one-hot upper-address frames and an `r0037` frame in the whole netlist.
+
+**Checks.** `hdl/sdr/regfile.v` re-implements the write side (42 registers, 598 flip-flops):
+- against the `regfile` slice (884 cells; bus, reset and every other register as inputs), new random bus values on
+  every clock (3/4 of them register addresses), random bits on the 134 other inputs, all 598 flip-flops compared on
+  every clock: `tb_regfile.v -DSTRUCT`, 2,000,000 clocks, 0 mismatching clocks **[fact, Icarus 11]**;
+- against the whole netlist: `regmap_main.cpp` logs the 598 flip-flops and the bus flip-flops on every change while
+  MAIN-style frames arrive on UART B; `tools/sdr_regfile_trace.py trace` turns the log into a clock-by-clock trace,
+  and `tb_regfile.v -DTRACE` drives the RTL with the netlist's bus flip-flops and compares all 598 flip-flops on every
+  clock: four runs (smoke, FFFF writes, one-hot data, random values to 32 registers; 55 write strobes, about 8 M
+  clocks), 0 mismatching clocks **[fact, Icarus 11]**. Runs: [T24, SDR round 2](../../tasks/T24-source-recreation.md#sdr-rtl-round-2-2026-11-02).
+
+The write-enable pulses per frame (`tools/sdr_regfile_trace.py enables`) agree with the static map for every
+whole-netlist frame logged: each write to a mapped address pulses that register's enable and changes only its
+flip-flops; writes to unmapped addresses (0x0000..0x0002, 0x0056..0x0058, 0x00AC..0x00AE tried) change no register
+(57 frames, 41 addresses, 34 of them registers) **[fact]**.
 
 ### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
 

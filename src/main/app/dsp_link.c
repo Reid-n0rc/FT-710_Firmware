@@ -242,7 +242,7 @@ void dsp_set_peq_freq(uint8_t band)
 
     if ((uint8_t)(m - 2u) < 2u || (uint8_t)(m - 8u) < 7u)
         on = 0;
-    t = FUN_fffb2dfe();
+    t = beep_pattern_get();
     if ((t == 4u || (uint8_t)(t - 9u) < 3u) && g_ui.transmitting != 0)
         on = 0;
     if (g_ui.dvs_lm1_flag != 0)

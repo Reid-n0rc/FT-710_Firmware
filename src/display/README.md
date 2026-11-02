@@ -40,6 +40,13 @@ and results: [docs/tasks/T24-source-recreation.md](../../docs/tasks/T24-source-r
 | `drivers/vdc5_int.c` | the VDC5 interrupt part: `r_vdc5_callback_isr` and the 46 per-source handlers |
 | `drivers/vdc5_reg.c` | the VDC5 register layer: clocks and LVDS PLL, video input, sync, TCON and output, colour matrices, write data control (scaling down) and its change, the read side's helpers (cascade, VIN layer, scaling up, start pixel, enlargement), layer start/stop/release, noise reduction, image enhancement (sharpness, LTI), black stretch, alpha and alpha rectangle, chroma key, CLUT, calibration, gamma; round 7 the register parts of read data control and of its change (0x2011AF34, 0x2011B498, from the disassembly) and the change path's VIN set-up 0x2011B374 |
 | `app/gui_vdc5.c` | the GUI's VDC5 set-up: module clock, TFT and DVI timing tables, LVDS PLL block, sync and output parameters, the graphics-3 line interrupt that paces the GUI, the frame-buffer addresses, the four graphics layers (`vdc5_layers_setup`, the cursor window), layers stop and channel shutdown |
+| `drivers/usb_host.c` | the USB host stack's small parts (USB track, 2026-11-01): the standard requests (GET_DESCRIPTOR device / configuration / hub, SET_ADDRESS, SET_CONFIGURATION) through `usbh_control_req`, the port context, the bounce test, the USBI0/USBI1 entries, the pipe transfer switch, the pipe-done mark, the critical section |
+| `drivers/usb_hid.c` | the HID class driver's report field extract `hid_report_bits_get`, the short-item reader `hid_item_data` (size code 3 reads two bytes and skips four), `usbhid_find_int_in`, `usbhid_pipe_read` |
+| `drivers/usb_kbd.c`, `drivers/usb_kbd_layout.c` | the keyboard objects' methods (`kbdobj_*`), `usbkbd_active`, `usbkbd_set_layout` & co.; the eleven KEYBOARD LANGUAGE tables as data (the builders' stores, extracted by emulation), `kbd_layout_base_fill`, `kbd_layout_tables_init`, `kbd_char_lookup` |
+| `app/scope_rings.c` | the ring indices of the AF-FFT (100), waterfall (133), history (20) and 3DSS (30) rings, the 32-entry ring, the 3DSS widths, the 16-slot pointer ring of the keyboard objects |
+| `app/scope_obj.c` | the scope object (C++ class as C) at 0x2047963C: bank select and clears, the record store, flags, layout, the scale and row lookups, the palette and the initialisation, and the GUI's thunks to it (16 methods had no Ghidra entry: `tools/ghidra/entries_display.T24usb.tsv`) |
+| `app/textterm.c` | the SCIF4 scope-area text terminal's state clear, answer ring and "send all settings" loop |
+| `lib/norti_knl.c` | NORTi helpers in C: the first-fit free list (`knl_freelist_alloc` / `_free`) and its pool wrappers, the message-buffer ring copy (`knl_mbf_get` / `_put`), `knl_memcpy`, `msgbuf_init`, `os_mbx_create_fifo`, `os_mbx_send` |
 | `include/vdc5.h`, `include/vdc5_regs.h` | the VDC5 parameter structures with armcc's one-byte enums, the shared-parameter tables, the register-address tables |
 | `startup/vectors.S` | exception vectors, `Reset_Handler`, `reset_in_ram`, the SVC and IRQ entries (assembly, byte-identical); with `-DRAM2_LOAD` (hybrid link only) `reset_in_ram` also copies RAM2 from flash |
 | `startup/rt_entry.S` | `__main`, `__scatterload`, `__decompress`, `__scatterload_zeroinit`, `__rt_lib_init`, `__rt_entry` (assembly) |
@@ -67,6 +74,7 @@ Install: docs/tooling.md "Source recreation".
 make                                      # the pinned compiler; XPACK=<dir> or CROSS=<prefix> elsewhere
 make check                                # = python3 -I ../../tools/equiv_display_emu.py status -> status.tsv
 python3 -I ../../tools/equiv_display_emu.py check strcmp gpio_cfg_alt   # one or more functions
+python3 -I ../../tools/equiv_display_emu.py status --object app/scope_obj.o   # those rows of status.tsv only (or FUNCTION...)
 ```
 
 ```sh

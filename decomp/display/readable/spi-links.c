@@ -2474,7 +2474,7 @@ void sdr_rx_done_cb(void)
     sdr_rx_buf_ret[0x1a8] = cVar1;
     sdr_rx_buf_ret[0x1a9] = cVar1;
   }
-  scope_store_frame((uint)sdr_rx_buf_ret);
+  scope_store_frame(sdr_rx_buf_ret);
   dmac5_disable();
   rspi_stop(2);
   rspi_reset_buffers(2);
@@ -2605,67 +2605,37 @@ void sdr_dsp_link_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope_store_frame @ 201342ec  (168 bytes, 1 callers, export file 20133418_20134304.c)
+ * scope_store_frame @ 201342ec  (12 bytes, 1 callers, export file 20133418_20134304.c)
  * Purpose: 850-byte scope record 0x204832BB [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
  */
-// ===== scope_store_frame @ 201342ec (168 bytes)
+// ===== scope_store_frame @ 201342ec (12 bytes)
 
 /* 850 B -> 0x204832BB */
 
-void scope_store_frame(uint param_1)
+void scope_store_frame(undefined4 param_1)
 
 {
-  if (DAT_204832b8 == '\0') {
-    if ((DAT_208004a0 == '\0') && (DAT_204832ba == '\0')) {
-      memcpy(&DAT_204832bb,param_1,0x352);
-    }
-    else {
-      __aeabi_memset(&DAT_204832bb,0x352,0xff);
-    }
-    if (((ushort)DAT_20808a84 & 0x400) != 0) {
-      __aeabi_memcpy4(&DAT_204832d4,&DAT_203d9b14,800);
-      return;
-    }
-  }
-  else if (DAT_204832ba != '\0') {
-    __aeabi_memset_veneer(&DAT_204832bb,0x352,0xff);
-    return;
-  }
+  scope_obj_store_record(&DAT_2047963c,param_1);
   return;
 }
 
 
 /* -----------------------------------------------------------------------------
- * scope_history_push @ 20134348  (212 bytes, 6 callers, export file 20134310_2013512c.c)
+ * scope_history_push @ 20134348  (16 bytes, 6 callers, export file 20134310_2013512c.c)
  * Purpose: Appends the 800 points to the waterfall/3D history ring 0x20490894 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/spi-links.md
  */
-// ===== scope_history_push @ 20134348 (212 bytes)
+// ===== scope_history_push @ 20134348 (16 bytes)
 
 /* 800 points -> ring 0x20490894 (inference) */
 
-void scope_history_push(int param_1,void *param_2)
+void scope_history_push(undefined4 param_1,undefined4 param_2)
 
 {
-  int iVar1;
-  
-  if ((((DAT_20800498 == '\0') && (DAT_204832b8 == '\0')) && (DAT_204832b9 == '\0')) &&
-     (DAT_204832ba == '\0')) {
-                    /* returns idx and advances it [doc] */
-    ring20_advance();
-    iVar1 = ring20_offset(&DAT_20494768,0);
-                    /* n/4 words dst = ~src [doc] */
-    copy_inverted_words_b(&DAT_2047963c,&DAT_20490894 + iVar1 * 800,&DAT_204832d4,800);
-    *(undefined2 *)(&DAT_20494718 + iVar1 * 4) = *(undefined2 *)param_2;
-    *(undefined2 *)(&DAT_2049471a + iVar1 * 4) = *(undefined2 *)((int)param_2 + 2);
-    DAT_20494714 = DAT_20494714 + 1;
-    if (param_1 <= DAT_20494714) {
-      DAT_20494714 = param_1;
-    }
-  }
+  scope_obj_history_push(&DAT_2047963c,param_1,param_2);
   return;
 }
 

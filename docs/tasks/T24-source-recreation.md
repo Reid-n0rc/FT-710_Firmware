@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 23.54 % re-implemented, round 9; MAIN 19.98 % re-implemented, round 4; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (798 of 798) and boots in emulation as far as the original, with a synthetic SD card too) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 23.54 % re-implemented, round 9 (USB track merged after it); MAIN 19.98 % re-implemented, round 4; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (798 of 798 in round 9) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -16,7 +16,7 @@ firmware does: byte for byte where we have the same compiler, otherwise by a dif
 | Image | Original toolchain and libraries | Route | Check |
 |---|---|---|---|
 | IFDSP M33 (RT685 Cortex-M33) | GCC 10.2.1 (Arm 10-2020-q4-major) from an MCUXpresso IDE project: MCUXpresso SDK drivers, FreeRTOS 10.3.0, rpmsg-lite, Redlib (found in this task, below) | vendor files unmodified where they match, recreated board/application code, stand-ins for the closed Redlib | byte match (same compiler), else differential emulation in Unicorn |
-| IFDSP HiFi4 | Cadence Xtensa compiler (XCC), NatureDSP, XOS, newlib, rpmsg-lite v3.1.1 (`docs/code/ifdsp/hifi4-libraries.md`) | vendor libraries where public (rpmsg-lite, newlib); recreated application; XCC is proprietary, so byte match is out of reach without a licence | differential emulation with Ghidra's p-code emulator on our `Xtensa:LE:32:rt600hifi4` language (T21a); the recreated code built with the Zephyr SDK GCC for Xtensa |
+| IFDSP HiFi4 | Cadence Xtensa compiler (XCC), NatureDSP, XOS, newlib, rpmsg-lite v3.1.0 (`docs/code/ifdsp/hifi4-libraries.md`; v3.1.1 before HiFi4 round 1) | vendor libraries where public (rpmsg-lite, newlib); recreated application; XCC is proprietary, so byte match is out of reach without a licence | differential emulation with Ghidra's p-code emulator on our `Xtensa:LE:32:rt600hifi4` language (T21a; `tools/equiv_hifi4_emu.py`, "IFDSP HiFi4, round 1"); the recreated code built with the Zephyr SDK GCC 12.2 for this core (base ISA, soft float) |
 | MAIN (RX651) | Renesas CC-RX, optimization level 0, RXv2 with FPU, 32-bit double; Code Generator `r_cg_*` drivers ("MAIN, round 1" below) | recreated C built with GCC 13.3.0 for RX: CC-RX could not be obtained (renesas.com refused by the proxy), *Open: the CC-RX version; would be settled by compiling the `r_cg_*` modules with candidate versions as done here for the M33* | p-code emulation on Ghidra's RX language (`tools/equiv_main_emu.py`); byte match only for trivial functions |
 | DISPLAY (RZ/A1H Cortex-A9) | armcc (ARM Compiler 5), NORTi µITRON (T23d) | recreated C on GCC; NORTi is proprietary, so its calls need a stand-in kernel or an RTOS shim | differential emulation (Unicorn ARM, A32/Thumb) |
 | SDR (Artix-7) | Vivado design | hand-written RTL in `hdl/sdr/`, verified against the recovered netlist (T15e) | netlist simulation (already in place; its own "Re-implemented" column) |
@@ -109,7 +109,7 @@ byte-identical to the image (relocation-aware: `tools/equiv_m33.py`):
 | SDK drivers, device files | **mcux-sdk MCUX_2.11.0** (34e07791) | 88 identical functions vs 72 (2.9.0), 83 (2.10.0), 82 (2.12.0), 81 (2.13.0), 75 (2.14.0), 73 (8a289764, the commit the docs cite). `DMA_IRQHandle`, `GPIO_PinInit`, `SCTIMER_*`, `SEMA42_Lock` match only up to 2.11; `POWER_CalculateSafetyCount`, `deinitXip`, `POWER_UpdateOscSettlingTime` only from 2.11: 2.11.0 is the only tag that matches both [fact] |
 | MCUXpresso startup | **mcux-sdk MCUX_2.9.0** `mcuxpresso/startup_mimxrt685s.c` | from 2.10.0 `ResetISR` is `naked`; the image's pushes r3-r5, lr like 2.9's [fact: 0x080011A8]; the 2.9 vector names (`SECUREVIOLATION_IRQHandler`, `USB_IRQHandler`, ...) differ from Ghidra's later names (aliases.tsv) |
 | FreeRTOS | **FreeRTOS-Kernel MCUX_2.9.0** (NXP fork, 4dc0fb65) = V10.3.0 | identical results to upstream V10.3.0 (T23d's version) on every function; the NXP fork is what the SDK of that time shipped |
-| rpmsg-lite | **v3.1.0** (cb56a06c) | `platform_init_interrupt`, `platform_notify` match only v3.1.0; the library files match v3.1.0..v3.2.0 alike. (The HiFi4 side was identified as v3.1.1, docs/code/ifdsp/hifi4-libraries.md; *Open: whether the two cores really use different releases; would be settled by a function that differs between 3.1.0 and 3.1.1 on the HiFi4*) |
+| rpmsg-lite | **v3.1.0** (cb56a06c) | `platform_init_interrupt`, `platform_notify` match only v3.1.0; the library files match v3.1.0..v3.2.0 alike. (The HiFi4 side was identified as v3.1.1, docs/code/ifdsp/hifi4-libraries.md; settled in HiFi4 round 1: the HiFi4 also has v3.1.0, by its link-id check) |
 | FreeRTOSConfig.h, rpmsg_config.h | recreated | every value marked [fact] in `src/ifdsp_m33/config/` was set by a byte difference (task name length 10, TCB fields, heap 100 KB, timer task priority 2, `configRUN_FREERTOS_SECURE_ONLY 1`, `INCLUDE_vTaskDelete 0`, 2 rpmsg buffers of 496 bytes) |
 
 Deltas from the vendor files: none in the vendor sources themselves. The FT-710 board files are Yaesu's versions of the
@@ -1782,6 +1782,126 @@ a branch without this patch then refuses to bootstrap that Ghidra, as with round
   (`cat_ai_IF_OI` 1,333, `cat_ai_SS` 1,121, `cat_ai_poll` 979), the extended CAT commands (`cat_ext_PE` 1,166,
   `cat_ext_EO` 847, `cat_ext_JP` 822), `keyer_output_step` (1,397) and `keyer_elekey` (1,225).
 
+## DISPLAY, USB track (2026-11-01)
+
+A track parallel to DISPLAY round 9 (which takes the FAT file system, the MAIN link, the update code, the GUI building
+blocks and the SD presets). This track takes USB, the scope object, the SCIF4 text terminal and the NORTi helpers that
+are plain C, in new files only, and writes only its own rows of `status.tsv`.
+
+### Plan (USB track)
+
+1. `tools/equiv_display_emu.py status FUNCTION… / --object OBJ`: check only those and keep every other row of
+   `status.tsv`, so two sessions can add their own objects without re-running each other's.
+2. Code, the self-contained parts first: the keyboard layout tables (large, pure stores), the ring indices, the scope
+   object's methods and thunks, the NORTi free lists and message-buffer ring, the USB host's requests and small helpers,
+   the HID helpers, the keyboard objects, the text terminal's ring.
+3. Presets where random arguments miss the paths; a mutation per non-trivial function.
+4. Ghidra entries for the tail-call targets without one, proved on a copy.
+
+### Harness (USB track)
+
+- `status` takes function names and `--object` (repeatable). The other rows are read back from `status.tsv` and kept as
+  they are; the totals are computed over the whole table. A run with one function left the file byte-identical
+  **[fact: diff after `status crc16_xmodem`]**.
+- Presets (one block in `PRESETS`, `scope_args`, `knl_list_args`, `knl_mbf_args`, `hid_args`, `textterm_args`): the scope
+  methods get the real instance 0x2047963C (a random pointer would put the 0x82FB8-byte object's fields in other
+  arguments' buffers), COLOR 0..10, bank 0..3, mode 8/9/other; a valid address-ordered free list with requests that fit,
+  merge and overlap; a message-buffer control block with a length at the read index and sizes around the free count;
+  HID items of every size code, report bit fields, configuration records with 0..8 endpoints; the text terminal's
+  answer ring.
+
+### Code (USB track)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `drivers/usb_kbd_layout.c` (new) | 15 | the eleven layout builders as tables (the words each writes, extracted by running it in Unicorn on tables of 0x00 and 0xFF), `kbd_layout_base_fill`, `kbd_layout_jpn_init`, `kbd_layout_tables_init`, `kbd_char_lookup` |
+| `app/scope_rings.c` (new) | 21 | ring100/133/20/30 offset, next, advance; ring133_reset; ring32; `scope3d_widths_init`; the ring16 pointer ring |
+| `app/scope_obj.c` (new) | 45 | the scope object's methods (16 without a Ghidra entry) and the GUI's thunks to the instance |
+| `lib/norti_knl.c` (new) | 14 | free-list alloc/free and the five pool wrappers, `knl_mbf_get` / `_put`, `knl_memcpy`, `msgbuf_init`, `os_mbx_create_fifo`, `os_mbx_send` |
+| `drivers/usb_host.c` (new) | 13 | the standard requests, `usbh_control_req`, port context, bounce test, USBI0/1 entries, pipe transfer switch, pipe-done mark, `usbh_loc_cpu` |
+| `drivers/usb_hid.c` (new) | 4 | `hid_report_bits_get`, `hid_item_data`, `usbhid_find_int_in`, `usbhid_pipe_read` |
+| `drivers/usb_kbd.c` (new) | 9 | `kbdobj_*`, `usbkbd_active`, `usbkbd_set_layout`, `usbkbd_reset`, `usbkbd_last_key`, `kbd_set_current` |
+| `app/textterm.c` (new) | 5 | state clear, answer ring push / clear / expect, send-all loop |
+
+Findings are in docs/code/display/gui.md "Scope object methods, recreated", input.md "USB host, HID and keyboard
+parts, recreated" and boot-rtos.md "NORTi helpers, recreated". In short **[fact]**: `hid_item_data` reads a four-byte
+item as two bytes; `usbhid_find_int_in` never looks at endpoint entry 0; `usbh_get_hub_descriptor` sends wValue 0;
+`scope_record_hold_copy` is a pass-through to `scope_obj_levels_get`, not a copy; `scope_wf_bank_set(obj, 1)` selects bank
+1 without clearing it; the kernel's two optional pool areas are configured off (0x20165A30 / 0x20165A34 are 0).
+
+Mutations reported as differing: one character of the US table, the free-list merge size, the ring's free count in
+`knl_mbf_get`, `free < len + 2` → `<=` in `knl_mbf_put`, the four-byte skip of `hid_item_data`, the lead shift of
+`hid_report_bits_get`, the max-packet bound of `usbhid_find_int_in`. A defect the check found: `scope_obj_layout_set`
+first let GCC move the scale-pointer stores ahead of the byte stores, so a trial that faulted on the first byte store
+left different memory; the struct is now volatile, as the image's order is.
+
+### Results (status.tsv, USB track)
+
+Partial runs (`status --object …` for the eight new objects; every other row unchanged **[fact: compared with the
+round-8 table]**), pinned xPack GCC 10.2.1, 200 trials per function. 126 recreated functions:
+
+| Verdict | Rows with a Ghidra function | Bytes | Rows without one (new entries) |
+|---|---:|---:|---:|
+| identical | 5 | 68 | 1 |
+| equivalent | 106 | 11,840 | 9 |
+| not yet | 3 | 0 | 2 |
+
+**Re-implemented: 22.00 %** of the table (87,196 of 396,256 bytes; round 8 after its re-export: 19.00 %), this track
+11,908 bytes. Bytes count with the Ghidra sizes of the round-8 export; with the sizes of the proved copy (below), where
+the thunks count only their own code and the new methods their own rows, this track's passing rows come to 11,804 bytes
+**[fact: the sizes of modes.tsv there]**. Not yet: `scope_objects_init`, `scope_obj_init` (budget), `scope_palette_set`
+and `scope_obj_palette_set` (no trial returns normally; *open: where the image's ramp methods end; would be settled by
+a trial trace of `scope_obj_palette_set` with the instance's start contents*),
+`textterm_send_all` (the UART object, below).
+
+### Ghidra (USB track)
+
+`tools/ghidra/entries_display.T24usb.tsv` has 16 new entries, the scope object's methods that the thunks
+0x201342B4..0x201344AF tail-call (also appended to `entries_display.tsv`); `names_display.T24usb.tsv` 22 names with
+evidence (also in `names_display.tsv`): the 16 entries and `FUN_20162d48` → `scope_obj_set_2e04`, `FUN_201584f8` →
+`scope_obj_set_2e00`, `FUN_20158544` → `scope_obj_set_2e02`, `FUN_20134444` → `scope_set_2e04_2e00`, `FUN_20134468` →
+`scope_set_2e00`, `FUN_20134474` → `scope_set_2e02` (structural names: they say which fields the functions write).
+Proved on a copy (`/home/user/ghidra_tasks/t24usb/disp`, OWNER root) **[fact: apply.log, modes_before.tsv and modes.tsv
+there]**: FixFuncEntries 16 created, 0 failed, 15 branches marked as tail calls; ApplyNames 1,961 applied, 0 failed;
+ExportFuncModes 2,288 functions (was 2,273), all A32; the thunks shrink to their own code (`scope_objects_init` 448 → 28,
+`scope_palette_set` 256 → 16, `scope3d_add_line` 588 → 20, `scope3d_redraw_history` 452 → 16, `scope_history_push` 212
+→ 16, `scope_store_frame` 168 → 12, `scope3d_layout_set` 120 → 12, `scope_wf_row_addr` 116 → 16), `FUN_201584f8` 88 → 68
+and `FUN_20158544` 136 → 28; 0x201578C4 was listed as `thunk_FUN_20162d48` and becomes `scope_obj_set_2e04_thunk`. No
+other entry, size or mode changes. Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24usb.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the thunks count their own bytes and the 16 methods their own rows. The alias rows of this track
+that give addresses become redundant; those that give FUN_ names fall back to the source name, which the rename makes
+the Ghidra name (round 7's resolver rule), so the build keeps resolving. If round 9's rows are applied in the same run,
+apply both entries files before ApplyNames.
+
+### Blockers and next steps (USB track)
+
+- Not linked or boot-checked: this track ran no `make link` / `linkcheck` / `bootcheck`, to leave the long runs to round
+  9 (the gap has about 14 KB left after round 8, so the new code would go to RAM2). *Open: whether the hybrid with these
+  objects still boots like the original; would be settled by `make bootcheck` and `make linkcheck` after the merge.*
+- `scope_obj_init` and `scope_objects_init`: every trial runs out of the budget (see gui.md); `textterm_send_all`: no
+  trial returns, because `textterm_send_setting` uses the SCIF4 UART object that the C++ constructors build and the
+  harness's start state does not run them. *Open: would be settled by a preset that constructs the UART object
+  (`scif_uarts_ctor`) before the trial.*
+- Next, in this area: the USB port, BRDY and enumeration tasks and the pipe read/write paths (they wait on event
+  flags: the stubs' seeded returns reach them), `hid_report_desc_parse` (1,540 bytes, needs a report-descriptor preset),
+  `usbhid_device_task`, the keyboard report and FIFO, `textterm_send_setting` / `textterm_tx_poll`, the scope object's
+  history and waterfall methods, the AF-FFT object and its level maps, and the NORTi tick processing.
+
 ## SDR RTL, round 1 (2026-11-01)
 
 ### Plan (SDR round 1)
@@ -1818,6 +1938,55 @@ thresholds) are in [netlist.md 3.7](../code/sdr/netlist.md#37-adc-capture-two-14
   ROMs, the scope RAM), so the Icarus slice runs need `hdl/sdr/sim/xc7_bram_vl.v` in place of the Yosys RAMB18E1 and
   stops on the BRAM outputs or the BRAMs as seeds; not started.
 - **Override fields of the gain stage.** Open: which MAIN register holds them; would be settled by a register sweep.
+
+## SDR RTL, round 2 (2026-11-02)
+
+### Plan (SDR round 2)
+
+Continue round 1 with the blocks it left open: the register file (map every write enable to its address with a
+whole-netlist write sweep over UART B, write the RTL, check it on every clock against its slice and against the whole
+netlist), the scope writer (cut at the scope RAM's port-A pins: the RTL drives what the netlist drives into
+RAMB18_X2Y21, so neither side needs a block-RAM model), and the decimator stages if time allows.
+
+### SDR: results (round 2)
+
+| Block (tsv row) | RTL | Cells | Check [fact] |
+|---|---|---|---|
+| `regfile` | `hdl/sdr/regfile.v` | 882 | slice: `tb_regfile.v -DSTRUCT`, 2,000,000 clocks, 598 flip-flops, 0 mismatching clocks (Icarus 11); whole netlist: `tb_regfile.v -DTRACE` on four UART B runs (55 write strobes, about 8 M clocks), 0 mismatching clocks |
+| `scope_wr_data` | `hdl/sdr/scope_wr_data.v` | 69 | `tb_scope_wr_data.v -DSTRUCT`: 1,000,000 clocks, 0 mismatching clocks |
+
+SDR re-implemented: **5.0 % -> 6.5 %** of 63,735 cells (3,182 -> 4,133; `decomp/sdr/progress.tsv`).
+
+- **Register map** (netlist.md [5.2, register file](../code/sdr/netlist.md#register-file-write-side-and-address-map-t24-sdr-round-2-fact-unless-marked)):
+  42 write enables, one address each (0x03..0x27, 0x2E, 0x30..0x32, 0x37), 598 flip-flops, reset values matching the
+  T15e reads. Round 1's "974 bits under 86 enables" counted every flip-flop whose cone touched a bus flip-flop through
+  either half of a shared LUT6_2; following only the inputs a LUT output depends on (`tools/sdr_progress.py`
+  `comb_leaves`) leaves 598 register bits, 84 read-mux flip-flops and 25 address-loaded flip-flops of one other block.
+- **Method.** The enables were mapped two ways: exhaustively (each enable's LUT cone evaluated over all 2^16 addresses
+  with the strobe) and in the whole netlist (`hdl/sdr/sim/regmap_main.cpp`, 1,478 probes): 57 whole-netlist
+  frames over UART B, each write pulsing exactly the predicted enable and changing only that register's flip-flops.
+  (41 addresses, 34 of them registers; logs of the smoke run, the FFFF sweep 0x0000..0x000A, 0x0056..0x0058,
+  0x00AC..0x00AE, the one-hot data run and 32 of 42 random writes). The planned 256-address FFFF sweep (4 x 86 frames)
+  did not finish: the shared machine gave each simulation 13-45 % of a core (about 3,000 clocks/s, 45 s per frame) and
+  the background jobs hit their time limit; the exhaustive evaluation covers every address. Open: the one-hot
+  upper-address frames of the mapping run (a6..a15 order) were cut off with it.
+- **Override fields of the gain stage** (round 1's open point): register 0x07, channel A = bits 15..8, channel B = bits
+  7..0 (netlist.md 3.7).
+- **Scope writer.** Cut at RAMB18_X2Y21 port A. Done: the data path into DIADI0..7 (`scope_wr_data.v`); its inputs are
+  copies of reg 0x26 (`lvl`) and reg 0x27[7:0] (`ref`) plus reg 0x27 bit 15 (`g`), so the byte is about
+  0x27[7:0] - (0x26 + sample)/16 (netlist.md 5.6).
+
+### SDR: blockers and next steps (round 2)
+
+- **Read side of the register file**: mapped for 0x0000..0x003F with a stable address (the 42 registers read back at
+  their own address, status words of other blocks elsewhere, 0xCCCC above 0x3F except a capture-RAM window and a
+  status window) but not written as RTL: the two-stage read mux changes on the transaction's address edges in a way
+  that depends on synthesis don't-cares, so a per-clock check needs either that structure or a compare only at stable
+  addresses. Open: the address windows of the capture-RAM and status reads; would be settled by the one-hot
+  upper-address frames (`w0100FFFF` .. `w8000FFFF`, part of the mapping run) in the whole netlist.
+- **Scope writer, address and write-enable side** (two 10-bit index counters, the bank bit, the 16-bit counter
+  sequencer `SLICE_X30Y125..X33Y124` with 117 external inputs): not started. Its cut is the port-A address and WE pins.
+- **Decimator stages** (`rx_fir_operand_mux`, `rx_out_mac`): not started.
 
 ## MAIN, UI track (2026-11-01; parallel to MAIN round 5)
 
@@ -1900,6 +2069,384 @@ python3 -I tools/readability_stats.py readme
 
 After the re-export the 21 functions carry their new names in `decomp/main/functions.tsv`; the rows in
 `src/main/aliases.tsv` then name the same addresses and can be removed.
+
+## MAIN, round 5 (2026-11-01)
+
+### Plan (MAIN round 5)
+
+1. FPU semantics: FADD/FSUB/FMUL/FDIV/FCMP/FSQRT/ITOF/UTOF (and the round-4 conversions) against the RXv2 manual,
+   rounding modes, FPSW flags, denormals and NaNs, the way `rx_fpconv_check.py` and T22a did; fix the module in a new
+   `rx62t-*-fix.patch` and/or the engine; then `beep_task` and the other float users.
+2. Code, biggest first: CAT handlers, tasks and DISPLAY-link handlers, menu, band/VFO/memory, TX protection.
+3. Coverage of `sdr_task` (52 %), `cat_EM` (66 %), `cat_GT` (68 %); the inconclusive `io_task` trials; `main_loop` for
+   one pass.
+4. `status.tsv`, the README block, Ghidra rows with the apply commands.
+
+### MAIN: the FPU (round 5)
+
+MAIN uses FADD 31, FSUB 18 (one 3-operand, `signal_level_squelch` 0xFFFB7ECD), FMUL 28, FDIV 25, FCMP 40, ITOF 42 and
+FTOU 12 times, in 23 functions; no FSQRT, FTOI, ROUND or UTOF **[fact: rx-elf-objdump of 0xFFF8FBDB..0xFFFEE2B7]**. FPSW is
+0x100 (RM 0, DN 1, all exceptions masked) from 0xFFF8FBFF on; the only `R_BSP_InterruptControl(…, 1, …)` call enables
+vector 0xB, not the FPU's 3 **[inference from the call sites; docs/tooling.md "The other FPU instructions"]**.
+
+- **Engine.** `EquivMainEmu.java` executes every FPU instruction itself (`RxFpu`): exact arithmetic on (sign, BigInteger,
+  exponent) with one rounding by FPSW.RM; DN = 1 reads a denormal as a zero of its sign and returns 0 for an underflow,
+  DN = 0 starts unimplemented processing; Table 1.6 NaN results (the QNaN operand, an SNaN made quiet, 7FFFFFFFh for an
+  invalid operation without a NaN); overflow by RM (Table 1.1); division by zero; FCMP's Z/S/O; FPSW cause and
+  accumulated flags (Fj only while Ej = 0, FS); an enabled exception ends the run as a fault with the destination
+  unchanged. The memory operand goes through the same load path as the module's p-code (I/O recorded, tracked bytes).
+  The result carries FPSW; `compare` checks its mode bits (RM, DN, EV..EX), not the flags (MAIN reads them only in the FPU
+  exception handler, which never runs, and GCC folds constant FDIVs whose inexact flag the original sets: `meter_comp`).
+- **Check.** `tools/rx_fpu_check.py` runs 11,950 cases (every form: #imm, Rs, [Rs].L, dsp:8, dsp:16, 3-operand; ITOF/UTOF
+  every memex; specials, ties, limits, random values; RM 0..3, DN 0/1, enable bits) against a model written from the
+  manual in Python fractions: **11,950 / 11,950 agree**. `rx_fpconv_check.py`: 84 / 84 still.
+- **The module (`rx_fpu_check.py module`)** disagrees on 4,136 of 11,553 returning cases **[fact]**: FCMP never writes O
+  (and FCMP #imm compared through `Rs f- imm`), S of a float result is `f< 0` (clear for -0), UTOF does not decode (FC 54..57)
+  and converts 2^31.. as negative, plus the host-arithmetic classes it cannot change (DN, NaN payloads, RM, the invalid
+  NaN). The O flag matters for MAIN: 17 BLT and 1 BGE follow an FCMP, and a stale O from an earlier ADD inverted them in
+  the emulator and the decompile (`swr_meter_protect`: `10.0 < (float)uVar6 == bVar1` with `bVar1 = SCARRY4(...)`).
+  `rx62t-fpu-fix.patch` (tenth `--only rx` stage) fixes the first three; then only DN 599, NaN 953, RM 381 and invalid 426
+  disagree, none with MAIN's FPSW and normal operands.
+- **GCC and NaN [fact: the objects].** GCC for RX tests a float compare with S alone (`a < b` BN, `a >= b` BPZ), so a NaN
+  passes `a >= b`, and it drops a `v != v` next to such a compare as redundant. CC-RX's BLT/BGE read O. `swr_meter_protect`
+  gets 0 / 0 with no RF (both ADC readings 0), which the image counts as in range; the recreation tests the NaN on the bits
+  (`app/fpu_conv.h` `is_nan`), and `ftou()` writes CC-RX's FTOU in C (GCC's unsigned cast calls `__fixunssfsi`).
+- **MIN / MAX [fact].** All six constructors were an unsigned minimum, MAX too (found in parallel by the UI track).
+  `rx62t-minmax-fix.patch` (eleventh stage) makes them signed with MAX keeping the larger value; `rx_semcheck.py` models
+  MIN/MAX, and the forms check gains MIN/MAX #imm, Rs and memory forms, SCGE.L, SCLT.L: **5,960 / 5,960** with the patch,
+  807 failures without. This settles the UI track's two Open points on MIN/MAX: the fix is a SLEIGH stage, and the objects
+  using MIN (`cat_SS`, `displink_build_41`, `keyer_task`, the meters, `swr_meter_protect`) were rerun in the status below
+  with the patched module.
+- Open (both readings are the model's and the engine's): whether underflow is decided before rounding (p. 24 does not say),
+  and whether "the S and Z flags do not change when an exception is generated" also covers a masked exception such as
+  inexact; would be settled by FADD of a result just below 2^-126 and of 0.1f + 0.2f on an RX651, reading the
+  destination and PSW. MAIN never branches on S/Z after an FPU arithmetic instruction [fact: the instructions after each].
+
+### MAIN: harness changes (round 5)
+
+- `stub_sets` (a stubbed callee writes one RAM byte, drawn from the seeded sequence) and `stop_after` / `FUNC_STOP` (the run
+  ends "stop" at the n-th call of a stubbed callee): `main_loop` is checked for one pass, its 16 tasks stubbed, stopping at
+  the second `wdt_kick`; a mutation swapping two tasks differs at stub call 5.
+- Coverage: `sdr_task` 100 % of 86 blocks (every updater stubbed and setting `sdr_busy_write` one time in eight; was
+  52 %), `cat_EM` 100 % of 59 (slot digits, ';', 0xFE end marks; was 66 %), `cat_GT` 91 % of 104 (`vfo_mode` over all 16
+  codes, 600 trials; was 68 %), `io_task` 0 inconclusive (meters, GPIO poll, lamps and the save path stubbed; was 137 of
+  200), 100 %.
+- `beep_task` stubs `tone_set`, so the tone's float bits are compared (a mutation 1046.502 → 1046.5 passed through
+  `tone_set`, which only shows the truncated TPU period); `STUB_WIDTHS` for its 16-bit duration.
+- The FPU mnemonics are no longer listed as "forms not checked by T22a" (`rx_fpu_check.py` checks them).
+
+### MAIN: recreated (src/main, round 5)
+
+- `app/beep.c`: `beep_task` (the eleven patterns, docs/code/main/peripherals.md); the request / stop / tone functions are
+  the UI track's `ui_beep.c`.
+- `app/swr_squelch.c`: `swr_meter_protect`, `fm_noise_squelch`, `signal_level_squelch`. Found **[fact]**: the meter is pinned
+  only when both readings are <= 10 counts (tx-protection.md said "or"), and SWR = +inf (ρ = 1) is not pinned.
+- `app/sdr_link.c`: `sdr_upd_r25_tx_drive` (the band's TX gain row interpolated between the power points).
+- `app/display_link.c`: `displink_tx_schedule` (the send priority list) and `displink_rx_F0_hello` (the DISPLAY's version and
+  date texts in 0x199F, the boot codes).
+- `app/keys.c`: `ladder_key_task`, the remote-keypad dispatch over three action tables.
+- `app/main_loop.c`: `main_loop` (a file of its own, so GCC inlines none of the tasks).
+- The UI track recreated `meter_vdd`, `meter_po`, `meter_comp`, `meter_s`, `vdd_scale_calc` and the beep request functions in
+  parallel; round 5's versions were dropped at the merge.
+
+### MAIN: results (status.tsv, round 5)
+
+`equiv_main_emu.py status --trials 200 --jobs 3` on every object, after merging the UI track (#266), with `GHIDRA_HEADLESS`
+on a private Ghidra copy that has `rx62t-fpu-fix.patch` and `rx62t-minmax-fix.patch` (about an hour), then
+`status --object app/dsp_link.o --object app/keyer.o` (the first run could not link `dsp_set_peq_freq` and `keyer_task`:
+they called `FUN_fffb2dfe`, which the UI track renamed `beep_pattern_get`):
+
+| Verdict | Ghidra functions | Bytes (of 387,059) |
+|---|---:|---:|
+| identical | 56 | 344 |
+| equivalent | 499 | 95,657 |
+| differs | 0 | 0 |
+| not yet | 3,239 | 291,312 |
+
+**Re-implemented: 24.80 %** (19.98 % after round 4, 23.47 % after the UI track). Round 5 added 9 functions (5,143
+bytes): `beep_task` 1,220, `displink_rx_F0_hello` 892, `ladder_key_task` 699, `displink_tx_schedule` 689,
+`swr_meter_protect` 557, `sdr_upd_r25_tx_drive` 377, `fm_noise_squelch` 373, `signal_level_squelch` 270, `main_loop` 66.
+Every function of rounds 1..4 and of the UI track is still equivalent or identical with the FPU executed by `RxFpu` and
+the signed MIN/MAX, among them the MIN users `cat_SS` (88 %), `displink_build_41` (90 %), `keyer_task` (93 %),
+`meter_vdd`, `meter_comp` and the float users of the UI track (`meter_po`, `meter_comp`, `meter_s`, `meter_vdd`,
+`tone_set`, `funcknob_peak_step`).
+
+### MAIN: Ghidra (round 5)
+
+- `tools/ghidra/names_main.tsv`: 21 RAM labels of round 5 (beep state, the SWR counters, `fm_sql_last_mode`, `dl_hello_req`,
+  `dl_hello_text`, `ladder_key_last`, `ladder_delay_armed`, ...), each with its instruction. Proved on a copy of
+  `/home/user/ghidra_tasks/t24main/proj` with the UI track's 30 names merged: **ApplyNames 2,905 applied, 0 failed**.
+- `tools/ghidra/rx62t-fpu-fix.patch` and `rx62t-minmax-fix.patch`: the tenth and eleventh `bootstrap.sh --only rx` stages
+  (`f4688bc6…f403` → `ff99d4e8…cd25` → `8b7bc4f0…bb2c`), checked on a private Ghidra copy and with `RX_MODULE_DIR` on a copy
+  of the round-4 module. They change the decompile at the FCMP sites (16 functions) and the S flag after FPU arithmetic (23 functions), nothing else in MAIN (MAIN has
+  no MIN, MAX or UTOF), so `decomp/main` should be re-exported after installing them.
+
+Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+tools/bootstrap.sh --only rx                                   # rx62t-fpu-fix.patch, rx62t-minmax-fix.patch, sleigh
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/rx_fpu_check.py module     # with the patches: only the DN / NaN / RM / invalid classes remain
+sh tools/rx_semcheck_forms.sh /tmp/semforms # 5,960 / 5,960
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+`bootstrap.sh --only rx` changes the shared Ghidra's `rx62t.sinc` hash, so a branch without these patches then refuses to
+bootstrap that Ghidra, as with rounds 2 and 4.
+
+### MAIN: blockers and next steps (round 5)
+
+- **CC-RX** is still not obtainable from the container ("MAIN, round 1").
+- **The shared Ghidra has neither round-5 patch.** The round-5 status ran with `GHIDRA_HEADLESS` on a private Ghidra copy
+  that has both; the FPU results do not depend on them (the engine executes the FPU), the GCC `MIN` results do.
+- Not done this round (step 2 of the plan): the remaining CAT handlers (`cat_ext_PE`, `_EO`, `_JP`, the `cat_ai_*` change
+  detectors), `key_task`, `dsp_link_poll`, the menu/settings code, the band/VFO/memory logic, `keyer_output_step`,
+  `keyer_elekey`; the float users `cat_ai_SQ`, `pa_dac_update`, `align_store_ui8_scaled` and the seven unnamed FPU
+  functions 0xFFFEC8A1..0xFFFEDA3B.
+
+## IFDSP HiFi4, round 1 (2026-11-01/02)
+
+### Plan (HiFi4 round 1)
+
+1. Toolchain: what the free Xtensa GCC for this core (Zephyr SDK 0.17.0, `xtensa-nxp_rt600_adsp_zephyr-elf`) can emit;
+   what the image says about its compiler and options.
+2. A differential-emulation harness on Ghidra's p-code emulator and the generated language
+   `Xtensa:LE:32:rt600hifi4` (T21a), modelled on `EquivMainEmu.java`, with the windowed ABI handled; a semantics check
+   of the instruction forms the recreated code uses, against an independent implementation; generator fixes for
+   what the checks find.
+3. First functions in `src/ifdsp_hifi4/`: newlib (exact public sources), rpmsg-lite, the XOS C-library glue, the
+   register file, simple chain blocks; `status.tsv` in the README "Re-implemented" column.
+
+### HiFi4: toolchain
+
+**The Zephyr SDK GCC emits base Xtensa only [fact].** `xtensa-nxp_rt600_adsp_zephyr-elf-gcc` is GCC 12.2.0 (Zephyr SDK
+0.17.0). Its built-in core configuration (`lib/gcc/.../plugin/include/xtensa-config.h`) has the windowed ABI, density,
+MUL16/MUL32/MUL32_HIGH, DIV32, NSA, MINMAX, SEXT, LOOPS, BOOLEANS, MAC16 and **`XCHAL_HAVE_FP 0`**, while the core's
+HAL header `xtensa/config/core-isa.h` in the same toolchain says `XCHAL_HAVE_FP 1`, `XCHAL_HAVE_HIFI4 1`,
+`XCHAL_HAVE_HIFI4_VFPU 1`. So GCC compiles `float` arithmetic to libgcc soft-float calls (`__mulsf3`, `__addsf3`;
+`-mhard-float` is not an option of this build) and never emits a HiFi4 (`ae_*`) operation or a FLIX bundle: none of
+the recreated objects contains a bundle [fact: `tools/xtensa_semcheck.py forms`]. Its assembler (binutils 2.38 with
+the RT600 overlay) does know all of them: `wfr aed0, a2`, `add.s aed2, aed0, aed1`, `ae_l32x2f24.i` and
+`{ ae_l32x2f24.i aed1, a4, 8; nop }` assemble [fact: test file], so hand-written assembly or inline `asm` can use
+them. **[inference]** for why `XCHAL_HAVE_FP` is 0 in GCC: this core's FP registers are the AE registers (`aed0..15`;
+the assembler refuses `f0`), which GCC's Xtensa FP support (registers `f0..f15`) cannot address.
+
+**The image was built with Cadence XCC [inference], with these options visible:**
+
+| Item | Finding | Evidence |
+|---|---|---|
+| Compiler | Cadence XCC | compiled C is FLIX-bundled (e.g. newlib's C `strncmp` 0x22C2E0: `{ mov.n a9, a4; l8ui a8, a3, 0 }`), which GCC never emits [fact]; rpmsg-lite's `MEM_BARRIER()` is the `__XCC__` branch of `rpmsg_compiler.h` ("nop": `env_mb` 0x21AB50 is `entry; nop.n; retw.n`) [fact]; the SDK's `fsl_common.h` includes `fsl_common_dsp.h` only under `__XCC__` |
+| Float convention | float arguments in `aed0`, `aed1`, ... (by float parameter), float result in `aed0`, integers and pointers in `a2..a7` independently | `fabsf` 0x22B680 stores `aed0` and returns through `aed0`; `copysignf` 0x22B810 reads `aed0` and `aed1`; `scalbnf` 0x22B720 takes its `int` in `a2` [fact]. GCC's convention (soft float) passes floats in `a2..a7` like integers, so **a GCC-built function is not call-compatible with an XCC one that takes or returns a float** [fact] |
+| Optimisation | -O2 or higher | locals in registers, zero-overhead loops in C code (`deinterleave2_u32` 0x21C560 `loopnez`), FLIX scheduling [inference]. *Open: -O2 or -O3; would be settled by XCC* |
+| Calls | direct `CALL8` | 2,313 `call8`, 141 `callx8` (function pointers), no `l32r`/`callx8` long-call pairs between functions [fact: `flix.dis`] |
+| Literals | separate `.literal` section | the L32R pools 0x206498–0x206FFF lie before `.text` [fact] (not `-mtext-section-literals`) |
+| Assembler | Cadence's: it bundles the `.begin schedule` regions of newlib's Tensilica assembly and puts `bnei aN, 1, +3; isync` before zero-overhead loops of assembly code | `strlen` 0x230E53 is bundled, `memcpy` 0x235D48, `memset` 0x235EEF have the `isync` [fact]; the newlib sources have neither [fact: newlib-4.4.0 `machine/xtensa/*.S`]. *Open: why the ISYNC (an erratum workaround is likely); would be settled by Cadence's assembler documentation* |
+| newlib | ≤ 3.1.0 for libm, Tensilica's `machine/xtensa` for the string functions | the libm wrappers with `matherr` and `_LIB_VERSION` (`sqrtf` 0x229A20, `matherr` 0x22B4D0), which newlib removed in 3.2.0 [fact: newlib-3.1.0 has `libm/common/s_matherr.c`, 3.2.0 not]; `strlen`/`memcpy`/`memset`/`strcmp`/`strncpy` follow newlib's Tensilica assembly instruction for instruction apart from the bundling and the ISYNC [fact: listings], and are equivalent to it (below) |
+| rpmsg-lite | **v3.1.0** (not v3.1.1) | `rpmsg_lite_master_init`/`_remote_init` accept link ids 0 and 1 (`bgeui a3, 2` 0x21B547): `RL_PLATFORM_HIGHEST_LINK_ID` 1, which v3.1.0's `imxrt600_hifi4` header has and v3.1.1 changed to 0; the remaining v3.1.0→v3.1.1 changes are under `RL_ALLOW_CONSUMED_BUFFERS_NOTIFICATION` (off) [fact]. This settles round 1's M33 open point: both cores use v3.1.0. `RL_USE_STATIC_API 1` (static context of 0xF4 bytes, `virtqueue_create_static`) [fact: 0x21B550] |
+
+So byte matches are out of reach (as planned) and the check is differential emulation. The recreated build:
+`src/ifdsp_hifi4/Makefile` (`-O2 -ffunction-sections -fdata-sections -mlongcalls`; newlib members with
+`-fno-builtin -fno-tree-loop-distribute-patterns`; rpmsg-lite with `-D__XCC__` so that `rpmsg_compiler.h` takes its
+HiFi4 branch, GCC's being the Arm `dsb`).
+
+### HiFi4: harness (`tools/equiv_hifi4_emu.py`, `tools/ghidra/EquivHifi4Emu.java`)
+
+- **Engine.** As `EquivMainEmu.java`: a headless Ghidra script serving JSON requests, a `PcodeEmulator` per run on the
+  program's language, callbacks for loads, stores, branches and missing user operations; one Ghidra per worker on its
+  own copy of the IFDSP project (`/home/user/ghidra_tasks/t24hifi4/proj`). A run of a small function takes 5 to 50 ms;
+  `status` (200 trials, 2 workers) about 50 minutes.
+- **Windowed ABI.** The language models CALLn/ENTRY/RETW for the decompiler (`swap8()`, `rotateRegWindow()`, a p-code
+  CALL), which the emulator cannot run, so the script executes them: CALLn/CALLXn write `a[4n] = n << 30 | return`
+  and set PS.CALLINC; ENTRY rotates WindowBase by CALLINC and writes the new `a[s] = old a1 - frame`; RETW/RETW.N
+  rotate back by `a0[31:30]` and return to `a0[29:0] | PC[31:30]` (Xtensa ISA, Windowed Register Option). The
+  physical register file is unbounded, so there are no window overflow/underflow exceptions; the spill code only
+  moves registers to and from the stack, which is not compared. The function under test is called as by a CALL8 from
+  a caller window (SP 0x1E0000, the return address a stop address with bits 31:30 = 2, arguments in the caller's
+  a10..a15); after the return the window and SP must be back.
+- **Zero-overhead loops.** The language's loop-back depends on a `globalset` disassembly context that the
+  emulator's decoder does not carry, so the script checks the loop end after every instruction: when the instruction
+  falls through to LEND (no branch taken) and LCOUNT ≠ 0, LCOUNT − 1 and continue at LBEG. A taken branch to LEND
+  leaves the loop: newlib's `strncpy.S` exits its byte loop with `beqz a8, 1f` where `1:` is LEND; the first version
+  of the harness looped back there and both builds copied past the NUL alike [fact: a single run, dst 0x180201].
+- **Floats.** The original gets its float arguments in `aed0..` (L element) and returns in `aed0`; the recreated
+  (soft-float) code gets them in the address registers and returns in `a2`; the harness maps each side. A recreated
+  function with a float in its signature is the callee of the other recreated functions (the image's would read
+  `aed0`); a recreated function that calls an image function with a float argument cannot be checked (none is
+  claimed).
+- **Linking.** Each function alone: literals 0x1B0000, code 0x1B8000, rodata 0x1C8000 (SRAM the DSP never uses,
+  within CALL8's ±512 KB of the image's `.text`); every other function name at its original address; each recreated
+  variable (one section per variable) placed at its image address from `src/ifdsp_hifi4/data_symbols.tsv`, not
+  loaded (the image's state is used); constant tables (`master_vq_ops`, `remote_vq_ops`) loaded at their image
+  address; a recreated variable without an address makes the function "not yet". `aliases.tsv` names the originals
+  Ghidra calls `FUN_…` (`add_to_list` 0x235370, `remove_from_list` 0x235398) or does not list (`__fp_lock`,
+  `__fp_unlock` inside `__sinit_lock_release`). A name both in `data_symbols.tsv` and in `functions.tsv` is refused
+  (round 1 hit `fm_post_lpf` and `branch_b_delay`, which are function names).
+- **Memory and inputs.** SRAM 0..0x47FFFF with the three DSP images where the M33 loader puts them, its alias
+  0x20000000.., the TCM, peripherals 0x40000000..0x4015FFFF (seeded random reads, every access recorded); stores into
+  the image's code/rodata or the scratch code fault (a random pointer rewrote `vq_ring_init`'s own code in one trial).
+  Arguments by DWARF type (pointers to random buffers, strings or float arrays; floats from special values and
+  ranges); RAM read before written in .data/.bss/heap and the register file 0x20070000.. filled with random words;
+  presets for the string and memory functions (shared prefixes, every alignment), the capture blocks, reg 0xC, the
+  interleave lengths.
+- **Compared.** The way the run ended (return, fault, budget, "hang" = a jump to itself, the `while (1);` assertion
+  traps), the return value, window and SP, RAM (argument buffers, 0x236800..0x2FFFFF, 0x20000000..0x2007FFFF; an
+  address of a recreated function stored as data counts as its original's address, since static callbacks such as
+  `rpmsg_ns_rx_cb` cannot be linked to the image's), peripheral accesses, stub calls, and AE/FP registers for the
+  functions that need it (none yet; the ABI keeps them caller-saved). Equivalent: every compared trial agrees, at
+  least 10 % of the trials return normally and the trials reach at least half of the original's basic blocks.
+  Trials where both builds fault (random pointers into unmapped memory, dereferenced in another order) or both run
+  out of budget are counted, not compared.
+- **Stubs.** The XOS calls (mutex, message queue, thread, interrupt registration), `xthal_set_region_attribute` (TLB
+  and cache attribute writes) and `platform_time_delay` (busy wait on CCOUNT) are recorded with their arguments.
+- **Operations the language leaves unnamed** that the checked code uses, executed by the script: `ae_s32.l.i/.ip/.x`
+  (store the L element), `ae_l32.i/.ip/.x` (load into both elements), `ae_mov`, `const.s 0/1` (0.0, 1.0), RSIL,
+  RSR.CCOUNT (seeded), plain special-register moves [inference for the AE ones: names and the language's lane model;
+  *Open: the H element after AE_L32.I and the other CONST.S immediates; would be settled by Cadence's HiFi4 ISA
+  reference*]. A trial where only the original reaches an operation that is not modelled makes the function "not
+  yet" (`scalbnf`: `const.s 2/3`; `matherr`: the double-precision assist `f64cmpl`).
+
+### HiFi4: SLEIGH semantics (`tools/xtensa_semcheck.py`) and generator fixes
+
+The reference: QEMU 8.2 (`qemu-system-xtensa -M sim`, core `de233_fpu`, the only one of its cores probed that runs
+every integer form used; installed for this task, docs/tooling.md), an independent implementation of the base ISA
+and its options. The encodings are the same for these forms on both cores (Cadence's `xtensa-modules.c` drives GNU
+as, the language and the RT600 overlay). MUL32_HIGH (`muluh`, `mulsh`) is in no QEMU core: those are checked
+against the ISA's definition (upper half of the unsigned/signed 64-bit product). The program: per case, load a0..a14
+and SAR from a state block, execute the instruction (or a zero-overhead loop with a two-instruction body, half of
+them ending in a branch to LEND), store a0..a14, SAR, the taken flag and a 64-byte data block; the same ELF runs in
+QEMU (semihosting write of the table) and in `EquivHifi4Emu.java` (stops at SIMCALL); every byte is compared.
+
+| Run (24 cases per mnemonic) | Mnemonics | Cases | Agree | Differ |
+|---|---:|---:|---:|---:|
+| language of T21a (before this round) | 96 integer and control | 2,304 | 2,286 | 18 (`nsa`) |
+| with the fixes below | 96 integer and control | 2,304 | **2,304** | **0** |
+| FPU forms of the original code (`add.s`, `sub.s`, `mul.s`, `madd.s`, `msub.s`, operands `x, x, x`) | 5 | 120 | 115 | 5 (`madd.s`, `msub.s`) |
+
+Fixes in `tools/xtensa_sleigh_gen.py` (regenerated `tools/ghidra/xtensa-rt600hifi4/`):
+
+1. **NSA** (stock constructor): `lzcount(~as)` is right for negative values only (NSA of 2 gave 0, not 29); now
+   `lzcount(as ^ (as s>> 31)) - 1` (31 for 0 and −1) [fact: 18 of 24 cases before, 0 after]. The image has 5 NSA.
+2. **Conditional moves in FLIX slots** (`moveqz`, `movnez`, `movltz`, `movgez`, `movt`, `movf`): the slot's result
+   goes through a staging register that the bundle commits unconditionally, and was left unset when the condition
+   failed; `{ moveqz a12, a13, a3; mov.n a15, a6 }` (0x21B5CB) cleared a12, so the original
+   `rpmsg_lite_remote_init` gave both vrings the same address in emulation, and the decompile shows it
+   (`local_40[2] = param_1` for both) [fact]. The staging register now starts as the destination.
+3. **HiFi4 16-bit AR operations** `ae_l16ui.n`, `ae_l16si.n`, `ae_s16i.n`, `ae_zext16`, `ae_sext16`, `ae_zext8` get real
+   p-code (they were named operations without a memory access; 176 + 143 uses in `flix.dis`) [inference: AR operand
+   files, the offset field (0 or 2) and the names; e.g. `regfile_capture_append` counts a uint16 with them].
+
+Not changed: **MADD.S/MSUB.S** round twice (product, then sum) in the language; QEMU's standard FP option fuses them
+(5 of 48 cases differ by one unit in the last place) [fact]. *Open: whether the HiFi4 VFPU's MADD.S is fused; would be
+settled by Cadence's HiFi4 ISA reference or a run on the radio.* Until then, a recreated filter that writes
+`acc + a * b` agrees with the original in emulation but may differ by one ulp on the hardware. Also seen: this core's
+FP operations take their operands from other instruction fields than the standard FP option (`mul.s aed2, aed0,
+aed12` is 0x2AC200: r = 12, s = 2, t = 0) [fact: 0x208878], so only `op x, x, x` means the same on QEMU; and inf − inf
+gives NaN 0xFFC00000 in the language, 0x7FC00000 in QEMU (the sign of a default NaN).
+
+### HiFi4: recreated (src/ifdsp_hifi4, round 1)
+
+| Source | Functions | Bytes counted | Origin |
+|---|---:|---:|---|
+| newlib `machine/xtensa`: `memcpy`, `memset`, `strlen`, `strcmp`, `strncpy` | 5 | 1,252 | newlib-4.4.0 (first upstream release with Tensilica's sources), unmodified |
+| newlib C: `strncmp`, `memchr`, `memmove`, `rand`, `srand`, `__errno`, `fabsf`, `copysignf`, `nanf`, `finitef`, `__fpclassifyf` | 11 | 932 | newlib-3.1.0, unmodified |
+| rpmsg-lite: 24 of `rpmsg_env_bm.c`, 4 of `rpmsg_lite.c` (both init functions, `send_nocopy`, `is_link_up`), 2 of `rpmsg_ns.c`, 8 of `virtqueue.c` | 38 | 2,072 | rpmsg-lite v3.1.0, unmodified; `include/rpmsg_config.h` recreated |
+| `libc/xos_clib.c`: `__malloc_lock`/`__malloc_unlock` (recursive XOS mutex, owner check), `_sbrk_r` (heap from 0x2CD860 to 0x480000, ENOMEM), the stdio lock hooks, `__fp_lock`/`__fp_unlock`, `_close_r`, `_lseek_r` (ESPIPE) | 11 (+2 not in Ghidra's list) | 264 | recreated |
+| `app/regfile.c`: `regfile_set_defaults` (the 125 defaults), the capture blocks (`init`, `clear`, `set_ctrl`, `append`), `regfile_gpio_sel` | 6 | 708 | recreated |
+| `app/dsp_blocks.c`: 14 chain state resets, `deinterleave2_u32`/`interleave2_u32`, `vox_state`, `fm_tx_hpf_init`/`fm_post_lpf_init`, `noise_gen_seed` (floats), the SPI buffer pointers | 21 | 572 | recreated |
+
+Found on the way **[fact]**: the register file is one array of 16-bit words, register n at 0x20070000 + 2n for both
+banks (0x4000 is 0x20078000; the capture blocks 0x7000/0x7800 are 0x2007E000/0x2007F000); the image accesses it
+without MEMW and the GPIO registers with one, so the original declares only the GPIO registers volatile
+[inference]; `regfile_capture_append` stops at 0x3FF samples unless the wrap bit is set; the C-library malloc lock is
+recursive with an owner check against the running thread (0x237858).
+
+### HiFi4: results (status.tsv, round 1)
+
+`equiv_hifi4_emu.py status --trials 200 --jobs 2` (Ghidra copy with this round's language):
+
+| Verdict | Ghidra functions | Bytes (of 180,186) |
+|---|---:|---:|
+| identical | 0 | 0 |
+| equivalent | 90 (+2 not in Ghidra's list) | 5,800 |
+| differs | 0 | 0 |
+| not yet | 991 | 174,386 |
+
+**Re-implemented: 3.22 %.** Not yet among the recreated functions (32), with the reason in `status.tsv`: 25 rpmsg-lite
+and llist functions whose random inputs are invalid structures (fewer than 10 % of the trials return; presets with a
+valid virtqueue and endpoint list would raise them), `rpmsg_lite_send`/`_alloc_tx_buffer`/`virtqueue_get_buffer`
+(coverage 20–30 %), `scalbnf` and `matherr` (unmodelled CONST.S immediates and double assist), `fm_tx_hpf_process`,
+`rx_audio_init` and `tx_chain_init` (their image callees use AE/FP operations the harness does not model). The static
+functions of the vendor files (`rpmsg_lite_rx_callback`, the `vq_*` ops, `rpmsg_ns_rx_cb`, ...) are not checked yet
+(the harness takes global functions).
+
+### HiFi4: mutation test
+
+A one-off script (not committed, as for MAIN): one source change, rebuild, `check` with 200 trials, restore.
+
+| Mutation | First run | With the presets |
+|---|---|---|
+| M1 `regfile_set_defaults`: reg 8 = 0x2032 instead of 0x2031 | differs (RAM 0x20070010) | |
+| M2 `regfile_capture_append`: wrap at `n > 0x3FF` instead of `>=` | differs (count at 0x2007F002) | |
+| M3 `deinterleave2_u32`: channels swapped | differs (RAM 0x180000) | |
+| M4 `_sbrk_r`: `next > limit` instead of `>=` | **passed** (random increments never end at the limit) | differs (trial 2: the original refuses, a2 = −1) |
+| M5 `vox_state`: `|` instead of `& ~` | differs (a2) | |
+| M6 `noise_gen_seed`: the two float arguments swapped | differs (RAM: the XCC aed0/aed1 and GCC a3/a4 mapping is checked) | |
+| M7 `__malloc_unlock`: unlock at count 1 instead of 0 | **passed** (random words never make the owner the running thread) | differs (stub calls: `xos_mutex_unlock`) |
+| M8 `regfile_gpio_sel`: top nibble 2 instead of 1 | differs (peripheral read 0x40100005 vs 0x40100004) | |
+
+The presets added for M4 and M7 (`sbrk_args`, `clib_lock_args`) keep the recreated originals equivalent (100 % of the
+blocks, 200 of 200 trials return). The windowed-ABI and loop-end handling of the script is exercised by every trial
+(and the semantics check covers the loop forms); its one bug found this round (a taken branch to LEND looped back) is
+above.
+
+### HiFi4: Ghidra
+
+No Ghidra script, name or entry changes this round; the language changed (the three fixes above). The canonical
+project and the shared Ghidra install keep the T21a language until the merge; the harness and the check ran on
+`/home/user/ghidra_tasks/t24hifi4/ghidra_12.1.4` (a copy with this branch's language). To bring the canonical
+project and `decomp/ifdsp/hifi4/` up to date (repository root, Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+tools/bootstrap.sh --only hifi4                                 # installs and compiles the regenerated language
+cp decomp/ifdsp/hifi4/quality.tsv /tmp/quality_hifi4_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_IFDSP -process FT-710_IFDSP_V0101_hifi4.bin -noanalysis -readOnly \
+  -scriptPath tools/ghidra -postScript ExportDecomp.java "$PWD/decomp/ifdsp/hifi4" 50
+python3 -I tools/decomp_quality.py compare /tmp/quality_hifi4_before.tsv decomp/ifdsp/hifi4/quality.tsv hifi4
+python3 -I tools/code_comments.py check hifi4 && python3 -I tools/readable_view.py build ifdsp/hifi4
+python3 -I tools/readability_stats.py readme
+```
+
+Expected: `rpmsg_lite_remote_init` and the other functions with a bundled conditional move decompile with the
+condition; the NSA and `ae_l16*`/`ae_s16i.n`/`ae_zext16` uses as arithmetic and memory accesses instead of calls.
+*Open: the decompile-quality change of the re-export; would be settled by running the commands above.*
+
+### HiFi4: blockers and next steps
+
+- **XCC is proprietary**: no byte match; and no **FPU in GCC** for this core, so recreated float code is soft-float
+  and not call-compatible with XCC code. A build that mixes recreated and original float functions needs either a
+  thunk per call (`wfr`/`rfr` or `ae_s32.l.i`/`ae_l32.i` around each call, in assembly) or the whole call chain
+  recreated. *Open: whether a later GCC or the Zephyr SDK can be configured with `XCHAL_HAVE_FP` on the AE registers;
+  would be settled by building GCC with this core's overlay and `XCHAL_HAVE_FP 1`.*
+- **HiFi4 operations** (`ae_*` arithmetic, aligning loads/stores, the FPU compares and conversions, CONST.S beyond 0/1)
+  have no executable semantics in the language; the NatureDSP kernels and most chain code call them, so their
+  originals cannot be emulated yet. Next: semantics for the operations the chain blocks use, from Cadence's ISA
+  reference if it can be obtained, otherwise from the NatureDSP C reference code (`ndsplib-hifi4` has portable C
+  versions of the kernels) as a cross-check.
+- **MADD.S fusing** (above).
+- Next functions: presets for the rpmsg-lite structures (a valid virtqueue, endpoint list), the static vendor
+  functions, the rest of the integer glue (handle_msg_*, the IPC thread pieces, the SPI and DMA FIFOs), then the
+  float blocks whose callees are recreated or modelled.
 
 ## DISPLAY, round 9 (2026-11-01)
 
@@ -2074,13 +2621,15 @@ After the re-export the round-9 alias rows (`fat_detect_superfloppy`, `fs_last_e
    Function addresses that the recreated code stores as data must be the image's entries (round 5: one alias,
    `vdc5_vline_cb_entry`); *Open: a general rule in display_link.py; would be settled by resolving the ABS32 and
    MOVW/MOVT references to linked functions from data stores to their original entries.*
-6. HiFi4 (Ghidra p-code): `tools/ghidra/EquivMainEmu.java` is the model (a headless p-code emulator server).
+6. HiFi4: started (round 1 above: harness, semantics check, 90 functions). Next: the canonical re-export with the fixed language (commands in "HiFi4: Ghidra"), presets for the rpmsg-lite structures, the static vendor functions, semantics for the HiFi4 operations the chain blocks use ("HiFi4: blockers and next steps").
 7. MAIN: apply the round-2 Ghidra entries and names (command block in "MAIN: Ghidra (round 2)"), install
    `rx62t-gccforms-fix.patch` (`bootstrap.sh --only rx`), the round-3 names ("MAIN: Ghidra (round 3)") and the
    round-4 names, signature and `rx62t-fpconv-fix.patch` ("MAIN: Ghidra (round 4)"), then the next functions ("MAIN:
-   blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1").
+   blockers and next steps (round 4)"), and the CC-RX version if the owner can obtain CC-RX ("MAIN, round 1"). Round 5:
+   `rx62t-fpu-fix.patch`, `rx62t-minmax-fix.patch` and the 21 names ("MAIN: Ghidra (round 5)"), then "MAIN: blockers and
+   next steps (round 5)".
 
 5. DISPLAY build: the hybrid image links in place, into the gap and RAM2 (round 6) and boots in emulation;
    `abicheck` covers calls through a register (round 7). Open: the functions the emulated boot does not reach; a source-only image needs the rest of the tree and the NORTi stand-in's port (IRQ entry and exit, the
    OSTM tick).
-6. HiFi4 (Ghidra p-code), MAIN (CC-RX check) after.
+6. MAIN (CC-RX check) after.

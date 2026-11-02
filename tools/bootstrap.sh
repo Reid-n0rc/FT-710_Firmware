@@ -18,7 +18,9 @@
 #           tools/ghidra/rx62t-rtsd-fix.patch (T21d), tools/ghidra/rx62t-mvfac-fix.patch (T21h),
 #           tools/ghidra/rx62t-semantics-fix.patch (T22a), tools/ghidra/rx62t-stringmem-fix.patch and
 #           tools/ghidra/rx62t-mvtac-fix.patch (T21i), tools/ghidra/rx62t-gccforms-fix.patch (T24),
-#           tools/ghidra/rx62t-fpconv-fix.patch (T24 MAIN round 4: FTOI/FTOU/ROUND) and compile it.
+#           tools/ghidra/rx62t-fpconv-fix.patch (T24 MAIN round 4: FTOI/FTOU/ROUND), tools/ghidra/rx62t-fpu-fix.patch
+#           (T24 MAIN round 5: FCMP O flag, S of float results, UTOF), tools/ghidra/rx62t-minmax-fix.patch (T24 MAIN
+#           round 5: MIN/MAX signed) and compile it.
 #           Skipped when already installed and patched.
 #   hifi4   install the generated SLEIGH language Xtensa:LE:32:rt600hifi4 (tools/ghidra/xtensa-rt600hifi4/, made by
 #           tools/xtensa_sleigh_gen.py from Cadence's MIT-licensed xtensa-modules.c, T21a) next to Ghidra's stock Xtensa
@@ -127,7 +129,9 @@ RX_SINC_SEMANTICS=c4d71924423d422d009e92c9cbfd88305a0b18430e18dd6ec2ab763caab8c3
 RX_SINC_STRINGMEM=30af4806a67cb4228f7559692cf70938ebcb5eec8cfd888df3f165a08850c69d
 RX_SINC_MVTAC=73d417d211f24d1b5101132c4df230ad2e6e840c492554d23a435575b9f08290
 RX_SINC_GCCFORMS=8451ead043aaa1e400539775cc986c0e0a8b4388247736046bbe6a3dff9c8ed7
-RX_SINC_FIXED=f4688bc6b5588ccf018a82cc40b333bbe1c21d326ebca96487fbe55ba049f403
+RX_SINC_FPCONV=f4688bc6b5588ccf018a82cc40b333bbe1c21d326ebca96487fbe55ba049f403
+RX_SINC_FPU=ff99d4e8e0a1f5b3c83dca2a14a11451a484f60d2f34cc8e9e2e1edc86facd25
+RX_SINC_FIXED=8b7bc4f0d9b8d27ef3d3786148958f53afce06dcce82a1f8f9928d86f0d1bb2c
 PRJXRAY_GIT=https://github.com/f4pga/prjxray
 PRJXRAY_COMMIT=c9f02d8576042325425824647ab5555b1bc77833
 PRJXRAY_DB_GIT=https://github.com/f4pga/prjxray-db
@@ -348,6 +352,14 @@ step_rx() {
     (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-fpconv-fix.patch")
     info "applied tools/ghidra/rx62t-fpconv-fix.patch (T24: FTOI/FTOU truncate to an integer, ROUND to nearest even)"
   fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FPCONV" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-fpu-fix.patch")
+    info "applied tools/ghidra/rx62t-fpu-fix.patch (T24: FCMP sets O and compares #imm directly, S is bit 31 of a float result, UTOF decodes and converts unsigned)"
+  fi
+  if [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FPU" ]; then
+    (cd "$RX_MODULE_DIR" && patch -s -p1 < "$REPO/tools/ghidra/rx62t-minmax-fix.patch")
+    info "applied tools/ghidra/rx62t-minmax-fix.patch (T24: MIN/MAX compare signed, MAX keeps the larger value)"
+  fi
   [ "$(sha256 "$lang/rx62t.sinc")" = "$RX_SINC_FIXED" ] || die "rx62t.sinc in $lang is neither the original nor a T17/T21c/T21d/T21h/T22a/T21i/T24-patched file"
   [ -f "$lang/rx62t.sla" ] && [ ! -f "$lang/rx62t.sla.orig-ea4cd204" ] && cp "$lang/rx62t.sla" "$lang/rx62t.sla.orig-ea4cd204"
   "$GHIDRA_INSTALL_DIR/support/sleigh" "$lang/rx62t.slaspec" > "$OUT/logs/sleigh.txt" 2>&1 \
@@ -411,7 +423,7 @@ build_main() {
 }
 build_display() {
   local bin=$BUILD/FT-710_DISPLAY_V0108.bin prog=FT-710_DISPLAY_V0108.bin
-  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/entries_display.T24r5.tsv" "$G/entries_display.T24r7.tsv" "$G/entries_display.T24r8.tsv" "$G/entries_display.T24r9.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
+  local st; st=$(stamp_of "$bin" "$G/DisplaySetup.java" "$G/DisplayFindCode.java" "$G/FixFuncEntries.java" "$G/entries_display.tsv" "$G/entries_display.T24r5.tsv" "$G/entries_display.T24r7.tsv" "$G/entries_display.T24r8.tsv" "$G/entries_display.T24usb.tsv" "$G/entries_display.T24r9.tsv" "$G/DisplayJumpTables.java" "$G/DisplayGaps.java" "$G/ApplyNames.java" "$G/names_display.tsv" "$G/ApplyData.java" "$G/data_display.tsv" \
     "$G/ApplySignatures.java" "$G/signatures_display.tsv" "$G/ApplySfr.java" "$G/sfr_rza1h.tsv" "$G/ApplyStructs.java" "$G/structs_display.h" "$G/NameVariables.java")
   if stamp_ok FT710_DISPLAY display "$st"; then info "FT710_DISPLAY up to date"; return; fi
   info "FT710_DISPLAY: import ARM:LE:32:v7 @ 0x20100000, DisplaySetup, analysis, DisplayFindCode x2, FixFuncEntries, DisplayJumpTables, DisplayGaps define, ApplyNames, ApplyData, ApplySignatures, ApplySfr, ApplyStructs, NameVariables"
@@ -427,6 +439,7 @@ build_display() {
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r5.tsv"
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r7.tsv"
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r8.tsv"
+  headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24usb.tsv"
   headless FT710_DISPLAY -process "$prog" -noanalysis -postScript FixFuncEntries.java "$G/entries_display.T24r9.tsv"
   # T21e (#97 B6, B8): repair the ARM jump tables the decompiler does not turn into switches; then define the undefined
   # fragments that are not code as data (reports next to the project)

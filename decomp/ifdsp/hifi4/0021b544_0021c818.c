@@ -12,8 +12,7 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
   int *piVar2;
   int *piVar3;
   code **ppcVar4;
-  undefined4 uVar5;
-  uint uVar6;
+  uint uVar5;
   char *pcStack_50;
   char *pcStack_4c;
   code *apcStack_48 [2];
@@ -28,7 +27,7 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
     if (iVar1 == 0) {
       ppcVar4 = apcStack_48;
       piVar3 = local_40;
-      uVar6 = param_1 + 0x800;
+      uVar5 = param_1 + 0x800;
       pcStack_50 = "tx_vq";
       pcStack_4c = "rx_vq";
       apcStack_48[0] = rpmsg_lite_tx_callback;
@@ -38,17 +37,21 @@ int * rpmsg_lite_remote_init(int param_1,uint param_2,undefined4 param_3,int *pa
       piVar2 = param_4 + 9;
       uStack_2c = param_2 << 1;
       i = 0;
-      if ((uVar6 & 3) != 0) {
-        uVar6 = (uVar6 & 0xfffffffc) + 4;
+      if ((uVar5 & 3) != 0) {
+        uVar5 = (uVar5 & 0xfffffffc) + 4;
       }
-      param_4[5] = uVar6;
+      param_4[5] = uVar5;
       do {
         uStack_30 = 2;
+        local_40[2] = 0x400;
+        if (i == 0) {
+          local_40[2] = 0;
+        }
         local_40[3] = 0x10;
-        uVar5 = ae_zext16(uStack_2c | i & 1);
-        local_40[2] = param_1;
+        local_40[2] = param_1 + local_40[2];
         iVar1 = virtqueue_create_static
-                          (uVar5,*ppcStack_28,local_40 + 2,*ppcVar4,virtqueue_notify,piVar3,piVar2);
+                          (uStack_2c & 0xffff | i & 1,*ppcStack_28,local_40 + 2,*ppcVar4,
+                           virtqueue_notify,piVar3,piVar2);
         if (iVar1 != 0) {
           return (int *)0x0;
         }
@@ -287,19 +290,16 @@ undefined4 virtqueue_add_buffer(int param_1,undefined2 param_2)
 
 {
   short sVar1;
-  uint uVar2;
-  int iVar3;
-  undefined4 uVar4;
   
   memw();
   memw();
-  uVar2 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
-  iVar3 = ae_zext16(uVar2 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
-  *(undefined2 *)(iVar3 * 2 + *(int *)(param_1 + 0x48) + 4) = param_2;
+  *(undefined2 *)
+   (((uint)*(ushort *)(*(int *)(param_1 + 0x48) + 2) &
+    (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 2 + *(int *)(param_1 + 0x48) + 4) =
+       param_2;
   env_wmb();
-  uVar4 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
   sVar1 = *(short *)(param_1 + 0x56);
-  *(short *)(*(int *)(param_1 + 0x48) + 2) = (short)uVar4 + 1;
+  *(short *)(*(int *)(param_1 + 0x48) + 2) = *(short *)(*(int *)(param_1 + 0x48) + 2) + 1;
   *(short *)(param_1 + 0x56) = sVar1 + 1;
   memw();
   return 0;
@@ -319,30 +319,27 @@ undefined4 virtqueue_fill_avail_buffers(int param_1,undefined4 param_2,undefined
   ushort uVar3;
   ushort uVar4;
   undefined4 uVar5;
-  int iVar6;
-  undefined4 *puVar7;
-  int iVar8;
+  undefined4 *puVar6;
+  int iVar7;
   
   memw();
   memw();
   uVar4 = *(ushort *)(param_1 + 0x58);
-  puVar7 = (undefined4 *)(*(int *)(param_1 + 0x44) + (uint)uVar4 * 0x10);
+  puVar6 = (undefined4 *)(*(int *)(param_1 + 0x44) + (uint)uVar4 * 0x10);
   uVar5 = env_map_vatopa(param_2);
-  puVar7[2] = param_3;
-  iVar8 = *(int *)(param_1 + 0x48);
+  puVar6[2] = param_3;
+  iVar7 = *(int *)(param_1 + 0x48);
   sVar2 = *(short *)(param_1 + 0x58);
-  *puVar7 = uVar5;
+  *puVar6 = uVar5;
   uVar3 = *(ushort *)(param_1 + 0x52);
-  uVar1 = *(ushort *)(iVar8 + 2);
-  puVar7[1] = 0;
-  *(undefined2 *)(puVar7 + 3) = 2;
-  iVar6 = ae_zext16((uint)uVar1 & (uint)(&DAT_0000ffff + uVar3));
+  uVar1 = *(ushort *)(iVar7 + 2);
+  puVar6[1] = 0;
+  *(undefined2 *)(puVar6 + 3) = 2;
   *(short *)(param_1 + 0x58) = sVar2 + 1;
-  *(ushort *)(iVar6 * 2 + iVar8 + 4) = uVar4;
+  *(ushort *)(((uint)uVar1 & (uint)(&DAT_0000ffff + uVar3)) * 2 + iVar7 + 4) = uVar4;
   env_wmb();
-  uVar5 = ae_l16ui_n(*(int *)(param_1 + 0x48),2);
   sVar2 = *(short *)(param_1 + 0x56);
-  *(short *)(*(int *)(param_1 + 0x48) + 2) = (short)uVar5 + 1;
+  *(short *)(*(int *)(param_1 + 0x48) + 2) = *(short *)(*(int *)(param_1 + 0x48) + 2) + 1;
   *(short *)(param_1 + 0x56) = sVar2 + 1;
   memw();
   return 0;
@@ -353,27 +350,26 @@ undefined4 virtqueue_fill_avail_buffers(int param_1,undefined4 param_2,undefined
 
 /* virtqueue.c order [inference] */
 
-undefined4 virtqueue_get_buffer(int param_1,undefined4 *param_2,int param_3)
+undefined4 virtqueue_get_buffer(int param_1,undefined4 *param_2,ushort *param_3)
 
 {
-  int iVar1;
-  uint uVar2;
+  ushort uVar1;
+  int iVar2;
   undefined4 uVar3;
   
   if (param_1 != 0) {
     if ((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) != (uint)*(ushort *)(param_1 + 0x5a)) {
-      iVar1 = ae_zext16((uint)*(ushort *)(param_1 + 0x5a) &
-                        (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
-      iVar1 = iVar1 * 8 + *(int *)(param_1 + 0x4c);
+      iVar2 = ((uint)*(ushort *)(param_1 + 0x5a) &
+              (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 8 + *(int *)(param_1 + 0x4c);
       env_rmb();
-      uVar2 = (uint)*(ushort *)(iVar1 + 4);
+      uVar1 = *(ushort *)(iVar2 + 4);
       if (param_2 != (undefined4 *)0x0) {
-        *param_2 = *(undefined4 *)(iVar1 + 8);
+        *param_2 = *(undefined4 *)(iVar2 + 8);
       }
-      if (param_3 != 0) {
-        ae_s16i_n(uVar2,param_3,0);
+      if (param_3 != (ushort *)0x0) {
+        *param_3 = uVar1;
       }
-      uVar3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + uVar2 * 0x10);
+      uVar3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + (uint)uVar1 * 0x10);
       *(short *)(param_1 + 0x5a) = *(short *)(param_1 + 0x5a) + 1;
       uVar3 = env_map_patova(uVar3);
       return uVar3;
@@ -432,25 +428,23 @@ void virtqueue_free_static(int param_1)
 
 /* virtqueue.c order [inference] */
 
-undefined4 virtqueue_get_available_buffer(int param_1,undefined4 param_2,undefined4 *param_3)
+undefined4 virtqueue_get_available_buffer(int param_1,ushort *param_2,undefined4 *param_3)
 
 {
   ushort uVar1;
   undefined4 uVar2;
-  int iVar3;
   
   uVar1 = *(ushort *)(param_1 + 0x5c);
   if ((uint)*(ushort *)(*(int *)(param_1 + 0x48) + 2) == (uint)uVar1) {
     return 0;
   }
-  iVar3 = ae_zext16((uint)uVar1 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
   *(ushort *)(param_1 + 0x5c) = uVar1 + 1;
-  ae_s16i_n((uint)*(ushort *)(iVar3 * 2 + *(int *)(param_1 + 0x48) + 4),param_2,0);
+  *param_2 = *(ushort *)
+              (((uint)uVar1 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 2 +
+               *(int *)(param_1 + 0x48) + 4);
   env_rmb();
-  iVar3 = ae_l16ui_n(param_2,0);
-  uVar2 = env_map_patova(*(undefined4 *)(*(int *)(param_1 + 0x44) + iVar3 * 0x10));
-  iVar3 = ae_l16ui_n(param_2,0);
-  *param_3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + iVar3 * 0x10 + 8);
+  uVar2 = env_map_patova(*(undefined4 *)(*(int *)(param_1 + 0x44) + (uint)*param_2 * 0x10));
+  *param_3 = *(undefined4 *)(*(int *)(param_1 + 0x44) + (uint)*param_2 * 0x10 + 8);
   return uVar2;
 }
 
@@ -462,21 +456,17 @@ undefined4 virtqueue_get_available_buffer(int param_1,undefined4 param_2,undefin
 undefined4 virtqueue_add_consumed_buffer(int param_1,uint param_2,undefined4 param_3)
 
 {
-  uint uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  int iVar1;
   
   if (*(ushort *)(param_1 + 0x52) < param_2) {
     return 0xfffff441;
   }
-  uVar1 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
-  iVar2 = ae_zext16(uVar1 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
-  iVar2 = iVar2 * 8 + *(int *)(param_1 + 0x4c);
-  *(uint *)(iVar2 + 4) = param_2;
-  *(undefined4 *)(iVar2 + 8) = param_3;
+  iVar1 = ((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) &
+          (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 8 + *(int *)(param_1 + 0x4c);
+  *(uint *)(iVar1 + 4) = param_2;
+  *(undefined4 *)(iVar1 + 8) = param_3;
   env_wmb();
-  uVar3 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
-  *(short *)(*(int *)(param_1 + 0x4c) + 2) = (short)uVar3 + 1;
+  *(short *)(*(int *)(param_1 + 0x4c) + 2) = *(short *)(*(int *)(param_1 + 0x4c) + 2) + 1;
   return 0;
 }
 
@@ -488,34 +478,33 @@ undefined4 virtqueue_add_consumed_buffer(int param_1,uint param_2,undefined4 par
 undefined4 virtqueue_fill_used_buffers(int param_1,int param_2,undefined4 param_3)
 
 {
-  uint uVar1;
-  uint uVar2;
-  undefined4 uVar3;
+  ushort uVar1;
+  undefined4 uVar2;
+  uint uVar3;
   undefined4 *puVar4;
   ushort uVar5;
   int iVar6;
   
   uVar5 = *(ushort *)(param_1 + 0x58);
-  uVar1 = (uint)uVar5;
+  uVar3 = (uint)uVar5;
   iVar6 = *(int *)(param_1 + 0x44);
   if (param_2 != 0) {
-    uVar3 = env_map_vatopa(param_2);
-    puVar4 = (undefined4 *)(iVar6 + uVar1 * 0x10);
+    uVar2 = env_map_vatopa(param_2);
+    puVar4 = (undefined4 *)(iVar6 + uVar3 * 0x10);
     puVar4[1] = 0;
     puVar4[2] = param_3;
-    *puVar4 = uVar3;
+    *puVar4 = uVar2;
     *(undefined2 *)(puVar4 + 3) = 2;
     uVar5 = uVar5 + 1;
   }
-  uVar2 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
-  iVar6 = ae_zext16(uVar2 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
+  uVar1 = *(ushort *)(*(int *)(param_1 + 0x4c) + 2);
   *(ushort *)(param_1 + 0x58) = uVar5;
-  iVar6 = iVar6 * 8 + *(int *)(param_1 + 0x4c);
-  *(uint *)(iVar6 + 4) = uVar1;
+  iVar6 = ((uint)uVar1 & (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 8 +
+          *(int *)(param_1 + 0x4c);
+  *(uint *)(iVar6 + 4) = uVar3;
   *(undefined4 *)(iVar6 + 8) = param_3;
   env_wmb();
-  uVar3 = ae_l16ui_n(*(int *)(param_1 + 0x4c),2);
-  *(short *)(*(int *)(param_1 + 0x4c) + 2) = (short)uVar3 + 1;
+  *(short *)(*(int *)(param_1 + 0x4c) + 2) = *(short *)(*(int *)(param_1 + 0x4c) + 2) + 1;
   return 0;
 }
 
@@ -541,17 +530,15 @@ undefined4 virtqueue_enable_cb(undefined4 param_1)
 void virtqueue_disable_cb(int param_1)
 
 {
-  uint uVar1;
-  int iVar2;
+  ushort *puVar1;
   
-  iVar2 = *(int *)(param_1 + 0x48);
+  puVar1 = *(ushort **)(param_1 + 0x48);
   if ((*(uint *)(param_1 + 0x20) >> 1 & 1) != 0) {
-    *(short *)(*(int *)(param_1 + 0x40) * 2 + iVar2 + 4) =
-         (*(short *)(param_1 + 0x5a) - *(short *)(param_1 + 0x52)) + -1;
+    puVar1[*(int *)(param_1 + 0x40) + 2] =
+         (*(short *)(param_1 + 0x5a) - *(short *)(param_1 + 0x52)) - 1;
     return;
   }
-  uVar1 = ae_l16ui_n(iVar2,0);
-  ae_s16i_n(uVar1 | 1,iVar2,0);
+  *puVar1 = *puVar1 | 1;
   return;
 }
 
@@ -563,23 +550,21 @@ void virtqueue_disable_cb(int param_1)
 void virtqueue_kick(int param_1)
 
 {
-  uint uVar1;
-  bool bVar2;
+  bool bVar1;
   
   env_mb();
   if ((*(uint *)(param_1 + 0x20) >> 1 & 1) == 0) {
-    uVar1 = ae_l16ui_n(*(int *)(param_1 + 0x4c),0);
-    bVar2 = false;
-    if ((uVar1 & 1) == 0) {
-      bVar2 = true;
+    bVar1 = false;
+    if ((**(ushort **)(param_1 + 0x4c) & 1) == 0) {
+      bVar1 = true;
     }
   }
   else {
-    uVar1 = ae_zext16(((uint)*(ushort *)(*(int *)(param_1 + 0x48) + 2) -
-                      *(int *)(*(int *)(param_1 + 0x40) * 8 + *(int *)(param_1 + 0x4c) + 4)) + -1);
-    bVar2 = uVar1 < *(ushort *)(param_1 + 0x56);
+    bVar1 = (((uint)*(ushort *)(*(int *)(param_1 + 0x48) + 2) -
+             *(int *)(*(ushort **)(param_1 + 0x4c) + *(int *)(param_1 + 0x40) * 4 + 2)) - 1 & 0xffff
+            ) < (uint)*(ushort *)(param_1 + 0x56);
   }
-  if ((bVar2) && (*(code **)(param_1 + 0x34) != (code *)0x0)) {
+  if ((bVar1) && (*(code **)(param_1 + 0x34) != (code *)0x0)) {
     (**(code **)(param_1 + 0x34))(param_1);
   }
   *(undefined2 *)(param_1 + 0x56) = 0;
@@ -594,22 +579,17 @@ void virtqueue_kick(int param_1)
 void virtqueue_dump(int param_1)
 
 {
-  undefined4 uVar1;
-  undefined4 uVar2;
-  undefined4 uVar3;
-  uint uVar4;
+  short sVar1;
   
   if (param_1 == 0) {
     return;
   }
-  uVar4 = (uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2);
-  uVar3 = ae_zext16(uVar4 - *(ushort *)(param_1 + 0x5a));
-  uVar2 = ae_l16ui_n(*(int *)(param_1 + 0x48),0);
-  uVar1 = ae_l16ui_n(*(int *)(param_1 + 0x4c),0);
+  sVar1 = (*(undefined2 **)(param_1 + 0x4c))[1];
   printf("VQ: %s - size=%d; used=%d; queued=%d; desc_head_idx=%d; avail.idx=%d; used_cons_idx=%d; used.idx=%d; avail.flags=0x%x; used.flags=0x%x\r\n"
-         ,param_1,*(undefined2 *)(param_1 + 0x52),uVar3,*(undefined2 *)(param_1 + 0x56),
-         *(undefined2 *)(param_1 + 0x58),*(undefined2 *)(*(int *)(param_1 + 0x48) + 2),
-         (uint)*(ushort *)(param_1 + 0x5a),uVar4,uVar2,uVar1);
+         ,param_1,*(undefined2 *)(param_1 + 0x52),sVar1 - *(short *)(param_1 + 0x5a),
+         *(undefined2 *)(param_1 + 0x56),*(undefined2 *)(param_1 + 0x58),
+         (*(undefined2 **)(param_1 + 0x48))[1],*(short *)(param_1 + 0x5a),sVar1,
+         **(undefined2 **)(param_1 + 0x48),**(undefined2 **)(param_1 + 0x4c));
   return;
 }
 
@@ -621,16 +601,15 @@ void virtqueue_dump(int param_1)
 undefined4 virtqueue_get_desc_size(int param_1)
 
 {
-  int iVar1;
-  
   if ((uint)*(ushort *)(*(int *)(param_1 + 0x48) + 2) == (uint)*(ushort *)(param_1 + 0x5c)) {
     return 0;
   }
-  iVar1 = ae_zext16((uint)*(ushort *)(param_1 + 0x5c) &
-                    (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52)));
   return *(undefined4 *)
           (*(int *)(param_1 + 0x44) +
-           (uint)*(ushort *)(iVar1 * 2 + *(int *)(param_1 + 0x48) + 4) * 0x10 + 8);
+           (uint)*(ushort *)
+                  (((uint)*(ushort *)(param_1 + 0x5c) &
+                   (uint)(&DAT_0000ffff + *(ushort *)(param_1 + 0x52))) * 2 +
+                   *(int *)(param_1 + 0x48) + 4) * 0x10 + 8);
 }
 
 
@@ -685,22 +664,18 @@ ulonglong vq_ring_init(uint param_1)
 undefined4 vq_ring_enable_interrupt(int param_1,uint param_2)
 
 {
-  int iVar1;
-  uint uVar2;
+  ushort *puVar1;
   
-  iVar1 = *(int *)(param_1 + 0x48);
+  puVar1 = *(ushort **)(param_1 + 0x48);
   if ((*(uint *)(param_1 + 0x20) >> 1 & 1) == 0) {
-    uVar2 = ae_l16ui_n(iVar1,0);
-    ae_s16i_n(uVar2 & (uint)&DAT_0000fffe,iVar1,0);
+    *puVar1 = *puVar1 & 0xfffe;
   }
   else {
-    *(short *)(*(int *)(param_1 + 0x40) * 2 + iVar1 + 4) =
-         *(short *)(param_1 + 0x5a) + (short)param_2;
+    puVar1[*(int *)(param_1 + 0x40) + 2] = *(short *)(param_1 + 0x5a) + (short)param_2;
   }
   env_mb();
-  uVar2 = ae_zext16((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) -
-                    (uint)*(ushort *)(param_1 + 0x5a));
-  if (param_2 < uVar2) {
+  if (param_2 < ((uint)*(ushort *)(*(int *)(param_1 + 0x4c) + 2) - (uint)*(ushort *)(param_1 + 0x5a)
+                & 0xffff)) {
     return 1;
   }
   return 0;
@@ -1030,13 +1005,13 @@ void regfile_capture_clear(uint param_1)
 
 /* *(u16 *)block[idx] = v (control word); no caller */
 
-void regfile_capture_set_ctrl(uint param_1,undefined4 param_2)
+void regfile_capture_set_ctrl(uint param_1,undefined2 param_2)
 
 {
   if (1 < param_1) {
     return;
   }
-  ae_s16i_n(param_2,(&DAT_002390e0)[param_1],0);
+  *(undefined2 *)(&DAT_002390e0)[param_1] = param_2;
   return;
 }
 
@@ -1049,26 +1024,21 @@ void regfile_capture_append(uint param_1,undefined4 param_2)
 
 {
   ushort *puVar1;
-  int iVar2;
-  uint uVar3;
-  uint uVar4;
+  ushort uVar2;
   
   if (param_1 < 2) {
     puVar1 = (ushort *)(&DAT_002390e0)[param_1];
-    uVar3 = ae_l16ui_n(puVar1,0);
-    uVar4 = ae_l16ui_n(puVar1,2);
-    if (((uVar3 & 1) != 0) && (uVar4 < 0x3ff)) {
-      *(undefined4 *)(puVar1 + uVar4 * 2 + 2) = param_2;
-      iVar2 = ae_l16ui_n(puVar1,2);
-      uVar3 = ae_zext16(iVar2 + 1);
-      if (0x3fe < uVar3) {
+    if (((*puVar1 & 1) != 0) && (puVar1[1] < 0x3ff)) {
+      *(undefined4 *)(puVar1 + (uint)puVar1[1] * 2 + 2) = param_2;
+      uVar2 = puVar1[1] + 1;
+      if (0x3fe < uVar2) {
         if ((*puVar1 & 2) != 0) {
-          uVar3 = 0;
+          uVar2 = 0;
         }
-        ae_s16i_n(uVar3,puVar1,2);
+        puVar1[1] = uVar2;
         return;
       }
-      ae_s16i_n(uVar3,puVar1,2);
+      puVar1[1] = uVar2;
       return;
     }
   }
@@ -1225,7 +1195,7 @@ void cpu_load_to_regs_2000(void)
 void Thread_Main_entry(void)
 
 {
-  uint uVar1;
+  ushort uVar1;
   
   audio_i2s_fc3_fc4_fc5_init();
   uVar1 = 0;
@@ -1234,7 +1204,7 @@ void Thread_Main_entry(void)
       __udivdi3(DAT_002cb680 * 100,(int)((ulonglong)DAT_002cb680 * 100 >> 0x20),1000,0);
       xos_thread_sleep();
       tx_gpio_to_reg4004();
-      uVar1 = ae_zext16(uVar1 + 1);
+      uVar1 = uVar1 + 1;
     } while (uVar1 < 10);
     cpu_load_to_regs_2000();
     uVar1 = 0;
@@ -1427,31 +1397,26 @@ void apf_init(void)
 void apf_config(void)
 
 {
-  uint uVar1;
-  int iVar2;
-  undefined4 uVar3;
+  short sVar1;
   undefined8 in_aed0;
-  undefined *puVar4;
+  ushort uVar2;
   
-  uVar1 = ae_l16ui_n(&DAT_00244510,0);
-  if (uVar1 != DAT_2007008a) {
+  if ((ushort)DAT_00244510 != DAT_2007008a) {
     DAT_00244510._0_2_ = DAT_2007008a;
-    puVar4 = (undefined *)(DAT_2007008a & 0xfff);
+    uVar2 = DAT_2007008a & 0xfff;
     if ((DAT_2007008a >> 0xc) - 1 < 4) {
-      ae_s16i_n((uint)(DAT_2007008a >> 0xc),&DAT_00244510,2);
-      if ((&DAT_0000176f < puVar4) || ((DAT_2007008a & 0xfff) != 0)) {
-        iVar2 = (uint)(puVar4 < &DAT_0000176f) * (int)puVar4 +
-                (uint)(puVar4 >= &DAT_0000176f) * (int)&DAT_0000176f;
+      if ((uVar2 < 6000) && ((DAT_2007008a & 0xfff) == 0)) {
+        sVar1 = 1;
       }
       else {
-        iVar2 = 1;
+        sVar1 = (uVar2 < 5999) * uVar2 + (ushort)(uVar2 >= 5999) * 5999;
       }
-      uVar3 = ae_zext16(iVar2);
-      scl_int2float(uVar3,0);
+      DAT_00244510._2_2_ = DAT_2007008a >> 0xc;
+      scl_int2float(sVar1,0);
       DAT_00244514 = ae_s32_l_i(in_aed0);
     }
     else {
-      ae_s16i_n(0,&DAT_00244510,2);
+      DAT_00244510._2_2_ = 0;
     }
     apf_design_iir();
     apf_design_fir();
@@ -1468,46 +1433,44 @@ void apf_design_iir(void)
   undefined4 uVar1;
   undefined4 uVar2;
   float fVar3;
-  int iVar4;
-  ulonglong uVar5;
-  float fVar6;
-  undefined8 uVar7;
+  ulonglong uVar4;
+  float fVar5;
+  undefined8 uVar6;
+  float fVar7;
   float fVar8;
   float fVar9;
   float fVar10;
-  float fVar11;
-  undefined8 uVar12;
+  undefined8 uVar11;
   
-  iVar4 = ae_l16ui_n(&DAT_00244510,2);
-  if (iVar4 != 1) {
+  if (DAT_00244510._2_2_ != 1) {
     return;
   }
-  uVar7 = ae_l32_i(DAT_00244514);
-  uVar5 = (ulonglong)(uint)((float)uVar7 * 3.1415927 * 8.333333e-05);
-  uVar12 = scl_tanf();
-  uVar1 = ae_s32_l_i(uVar5);
-  uVar7 = const_s(1);
-  fVar11 = (float)uVar7;
-  uVar7 = ae_mov(uVar5);
-  uVar2 = ae_s32_l_i((ulonglong)(uint)((float)uVar7 * (float)uVar7));
-  __divsf3((int)uVar12,(int)((ulonglong)uVar12 >> 0x20),0x3d088889);
-  uVar7 = ae_l32_i(uVar1);
-  fVar6 = (float)uVar7;
-  uVar7 = ae_l32_i(uVar2);
-  fVar8 = (float)uVar7;
-  uVar7 = ae_l32_i(0x3f800000);
-  fVar9 = (float)uVar7;
-  uVar7 = const_s(2);
-  fVar3 = (fVar8 + -1.0) * (float)uVar7 * fVar11;
-  uVar7 = ae_l32_i(0x3a83126f);
-  fVar10 = (float)uVar7;
+  uVar6 = ae_l32_i(DAT_00244514);
+  uVar4 = (ulonglong)(uint)((float)uVar6 * 3.1415927 * 8.333333e-05);
+  uVar11 = scl_tanf();
+  uVar1 = ae_s32_l_i(uVar4);
+  uVar6 = const_s(1);
+  fVar10 = (float)uVar6;
+  uVar6 = ae_mov(uVar4);
+  uVar2 = ae_s32_l_i((ulonglong)(uint)((float)uVar6 * (float)uVar6));
+  __divsf3((int)uVar11,(int)((ulonglong)uVar11 >> 0x20),0x3d088889);
+  uVar6 = ae_l32_i(uVar1);
+  fVar5 = (float)uVar6;
+  uVar6 = ae_l32_i(uVar2);
+  fVar7 = (float)uVar6;
+  uVar6 = ae_l32_i(0x3f800000);
+  fVar8 = (float)uVar6;
+  uVar6 = const_s(2);
+  fVar3 = (fVar7 + -1.0) * (float)uVar6 * fVar10;
+  uVar6 = ae_l32_i(0x3a83126f);
+  fVar9 = (float)uVar6;
   DAT_0023683c = ae_s32_l_i((ulonglong)(uint)fVar3);
-  DAT_00236834 = ae_s32_l_i((ulonglong)(uint)(fVar3 * fVar10));
-  DAT_00236840 = ae_s32_l_i((ulonglong)(uint)((fVar6 * -0.033333335 + fVar9 + fVar8) * fVar11));
-  DAT_00236830 = ae_s32_l_i((ulonglong)(uint)((fVar6 * 33.333336 + fVar9 + fVar8) * fVar11 * fVar10)
+  DAT_00236834 = ae_s32_l_i((ulonglong)(uint)(fVar3 * fVar9));
+  DAT_00236840 = ae_s32_l_i((ulonglong)(uint)((fVar5 * -0.033333335 + fVar8 + fVar7) * fVar10));
+  DAT_00236830 = ae_s32_l_i((ulonglong)(uint)((fVar5 * 33.333336 + fVar8 + fVar7) * fVar10 * fVar9))
+  ;
+  DAT_00236838 = ae_s32_l_i((ulonglong)(uint)((fVar5 * -33.333336 + fVar8 + fVar7) * fVar10 * fVar9)
                            );
-  DAT_00236838 = ae_s32_l_i((ulonglong)
-                            (uint)((fVar6 * -33.333336 + fVar9 + fVar8) * fVar11 * fVar10));
   DAT_00244518 = iir_cascade_init(&DAT_00244520,1,&DAT_00236830,0);
   return;
 }
@@ -1531,7 +1494,7 @@ void apf_design_fir(void)
   undefined8 uVar11;
   undefined4 *local_30;
   
-  uVar5 = ae_l16ui_n(&DAT_00244510,2);
+  uVar5 = (uint)DAT_00244510._2_2_;
   if ((1 < uVar5) && (uVar5 < 5)) {
     iVar9 = uVar5 - 2;
     uVar10 = ae_l32_i(DAT_00244514);
@@ -1583,21 +1546,21 @@ void apf_design_fir(void)
 void apf_peak_filter(undefined *param_1,undefined *param_2)
 
 {
-  int iVar1;
+  uint uVar1;
   
   apf_config();
-  iVar1 = ae_l16ui_n(&DAT_00244510,2);
-  if (iVar1 - 1U < 4) {
+  uVar1 = (uint)DAT_00244510._2_2_;
+  if (uVar1 - 1 < 4) {
     if (param_1 == param_2) {
       memcpy(&DAT_00245360,param_1,0xc0);
-      iVar1 = ae_l16ui_n(&DAT_00244510,2);
+      uVar1 = (uint)DAT_00244510._2_2_;
       param_1 = &DAT_00245360;
     }
-    if (iVar1 == 1) {
+    if (uVar1 == 1) {
       iir_cascade_process(DAT_00244518,param_2,param_1,0x30);
       return;
     }
-    if (iVar1 - 2U < 3) {
+    if (uVar1 - 2 < 3) {
       bkfiraf_process(DAT_0024451c,param_2,param_1,0x30);
       return;
     }

@@ -91,6 +91,11 @@ extern uint8_t displink_hello_sent;
 extern uint8_t displink_stage[];          /* staging buffer of most frames */
 extern uint8_t displink_stage_status[];   /* staging buffer of frame 0x20 */
 extern uint8_t *g_ui_ptr;                 /* pointer to the UI state (0x20B04) */
+extern uint8_t dl_hello_req;              /* 0x1B3D0: power-on pending, the scheduler sends the 0x60 hello */
+extern uint8_t *g_ui_ptr4;                /* 0x25D78: the same, used by ladder_key_task */
+extern uint8_t dl_hello_text[32];         /* 0x199F: the DISPLAY version / date text built from frame F0 */
+extern uint8_t ladder_key_last;           /* 0x1B554: the remote keypad code of ladder_key_task's last pass */
+extern uint8_t ladder_delay_armed;        /* 0x18871: ladder_key_delay has started soft timer 0x38 */
 extern uint8_t *g_ui_ptr2;                /* 0x25D70: the same, used by dispreq_e7_task */
 extern uint8_t *g_ui_ptr3;                /* 0x25D7C: the same, used by scan_task */
 extern uint8_t scan_state, scan_busy_wait, scan_resume_wait;   /* 0x18877, 0x18873, 0x18874 */
@@ -150,5 +155,25 @@ extern uint8_t pc_keying_active;          /* 0x12050: PC keying of a CW mode (pt
 extern uint8_t pc_key_last;               /* 0x12051: last P14 level seen by trx_sequencer in TX */
 extern uint32_t spk_route;                /* 0x20FCC: speaker route 0..4 (speaker_route); a 32-bit word: every access is MOV.L */
 extern uint8_t ptt_source;                /* 0x1204D: what keyed TX [fact: ptt_source_get 0xFFFB6EC7] */
+
+/* beeps and tones (app/beep.c, round 5) [fact: the addresses in beep_task / beep_request / tone_set] */
+extern uint8_t beep_state;                /* 0x12040: idle, start, playing, stop */
+extern uint8_t beep_pattern;              /* 0x12041: the requested pattern */
+extern uint8_t beep_step;                 /* 0x1B3E2: the pattern's next step */
+extern uint8_t beep_last_pattern;         /* 0x1B3E3: the pattern of the last pass (the RTTY tones hold) */
+extern float beep_cw_freq;                /* 0x25D40: the CW pitch tone playing, Hz */
+
+/* meters and squelch (app/meters.c, round 5) [fact: the addresses in meter_vdd .. signal_level_squelch] */
+extern float vdd_scale;                   /* 0x20FC0: supply meter scale (vdd_scale_calc) */
+extern float meter_swr_f;                 /* 0x20FC4: the SWR of the last pass */
+extern uint8_t meter_vdd_val;             /* 0x12043 */
+extern uint8_t meter_swr_val;             /* 0x12046 */
+extern uint8_t meter_swr_raw_val;         /* 0x12047 */
+extern uint8_t meter_po_val;              /* 0x12048 */
+extern uint8_t meter_comp_val;            /* 0x12049 */
+extern uint8_t meter_s_val;               /* 0x1204A */
+extern uint8_t swr_good_count;            /* 0x1B4C6 */
+extern uint8_t swr_bad_count;             /* 0x1B4C7 */
+extern uint8_t fm_sql_last_mode;          /* 0x1B4CB */
 
 #endif

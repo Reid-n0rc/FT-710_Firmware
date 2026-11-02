@@ -1,0 +1,60 @@
+--- a/data/languages/rx62t.sinc	2026-11-01 21:02:07.342097214 +0000
++++ b/data/languages/rx62t.sinc	2026-11-01 21:02:07.384362128 +0000
+@@ -1183,7 +1183,8 @@
+ # MAX - max value select
+ ## MAX #SIMM, Rd
+ :MAX liop, reg0_4    is op0_8 = 0xFD; op4_4 = 0x7 & li2_2 & op0_2 = 0b00; op4_4 = 0x4 & reg0_4; liop [ mode_li = li2_2; ] {
+-	if (liop > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 117: dest = src if src > dest, signed
++	if (!(liop s> reg0_4)) goto <skip>;
+ 		reg0_4 = liop;
+ 	<skip>
+ }
+@@ -1191,14 +1192,16 @@
+ ## MAX dsp[Rs], Rd
+ ## when memex == UB or src == Rs
+ :MAX ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b100 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+-	if (ld_src > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 117: dest = src if src > dest, signed
++	if (!(ld_src s> reg0_4)) goto <skip>;
+ 		reg0_4 = ld_src;
+ 	<skip>
+ }
+ 
+ ## when memex != UB
+ :MAX ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0b1000 & ld0_2; op0_8 = 0x04; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+-	if (ld_src > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 117: dest = src if src > dest, signed
++	if (!(ld_src s> reg0_4)) goto <skip>;
+ 		reg0_4 = ld_src;
+ 	<skip>
+ }
+@@ -1207,7 +1210,8 @@
+ # MIN
+ ## MIN #SIMM, Rd
+ :MIN liop, reg0_4    is op0_8 = 0xFD; op4_4 = 0x7 & li2_2 & op0_2 = 0b00; op4_4 = 0x5 & reg0_4; liop [ mode_li = li2_2; ] {
+-	if (liop > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 118: dest = src if src < dest, signed
++	if (!(liop s< reg0_4)) goto <skip>;
+ 		reg0_4 = liop;
+ 	<skip>
+ }
+@@ -1215,14 +1219,16 @@
+ ## MIN dsp[Rs], Rd
+ ## when memex == UB or src == Rs
+ :MIN ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+-	if (ld_src > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 118: dest = src if src < dest, signed
++	if (!(ld_src s< reg0_4)) goto <skip>;
+ 		reg0_4 = ld_src;
+ 	<skip>
+ }
+ 
+ ## when memex != UB
+ :MIN ld_src, reg0_4    is op0_8 = 0x06; mi6_2 & op2_4 = 0b1000 & ld0_2; op0_8 = 0x05; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+-	if (ld_src > reg0_4) goto <skip>;
++	# T24 fix: was "if (src > dest) skip; dest = src", an unsigned minimum for MAX and MIN alike; p. 118: dest = src if src < dest, signed
++	if (!(ld_src s< reg0_4)) goto <skip>;
+ 		reg0_4 = ld_src;
+ 	<skip>
+ }

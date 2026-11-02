@@ -10086,7 +10086,7 @@ int usbhid_class_attach(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * pointer_touch_poll @ 20159320  (28 bytes, 6 callers, export file 201576f4_20159d98.c)
+ * pointer_touch_poll @ 20159320  (28 bytes, 6 callers, export file 20159158_2015d958.c)
  * Purpose: pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog)
  *     [inference]
  * Tag: [inference]
@@ -10108,7 +10108,7 @@ void pointer_touch_poll(void)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_table @ 2015bf88  (184 bytes, 34 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_table @ 2015bf88  (184 bytes, 34 callers, export file 20159158_2015d958.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10162,7 +10162,7 @@ undefined2 touch_hit_table(uint param_1,uint param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_test @ 2015c048  (912 bytes, 2 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_test @ 2015c048  (912 bytes, 2 callers, export file 20159158_2015d958.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10315,7 +10315,7 @@ LAB_2015cc24:
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_text_list @ 2015c34c  (224 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_text_list @ 2015c34c  (224 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: touch_hit_test for screen 0x40 (text list): soft key of the touched row or button (rows through
  *     touch_hit_text_list_rows) [fact for the dispatch]
  * Tag: [fact]
@@ -10356,7 +10356,7 @@ int touch_hit_text_list(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_select_popup @ 2015c43c  (376 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_select_popup @ 2015c43c  (376 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: touch_hit_test for screen 0x30 (selection popup, payload byte 0 = popup type) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10433,7 +10433,7 @@ undefined4 touch_hit_select_popup(undefined4 param_1,undefined4 param_2,int para
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_rect @ 2015c6fc  (84 bytes, 3 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_rect @ 2015c6fc  (84 bytes, 3 callers, export file 20159158_2015d958.c)
  * Purpose: touch → soft key code (#212; new rows in `names_display.tsv`, shown as `FUN_` until the next re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10476,7 +10476,7 @@ ushort touch_hit_rect(uint param_1,uint param_2,ushort *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_sd_menu @ 2015c750  (500 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_sd_menu @ 2015c750  (500 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: touch_hit_test for screen 0x43 (SD-card menu) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10602,7 +10602,7 @@ LAB_2015d19c:
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_scope_drag @ 2015c81c  (344 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_scope_drag @ 2015c81c  (344 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: (x, y, table, n): scope-area touch with drag handling: sends E6 frames (mainlink_send_e6 0 / 2 / step)
  *     while the finger moves; called by touch_hit_scope [fact for the calls]
  * Tag: [fact]
@@ -10690,7 +10690,7 @@ LAB_2015c958:
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_dialog @ 2015ca14  (244 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_dialog @ 2015ca14  (244 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: touch_hit_test for screen 0x70 (dialog / confirm screen) [fact for the dispatch]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10757,7 +10757,7 @@ int touch_hit_dialog(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_text_list_rows @ 2015cdd4  (244 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * touch_hit_text_list_rows @ 2015cdd4  (244 bytes, 1 callers, export file 20159158_2015d958.c)
  * Purpose: (x, y): row index from (y - 0x2080060A) / row pitch 0x2080064E in the right pane; a "DONE" row
  *     (0x208F0C5B + 0x2D*row) gives its own code [fact]
  * Tag: [fact]
@@ -10818,7 +10818,7 @@ int touch_hit_text_list_rows(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_task_create @ 2015eff4  (72 bytes, 0 callers, export file 2015eb74_201606bc.c)
+ * mouse_cursor_task_create @ 2015eff4  (72 bytes, 0 callers, export file 2015da3c_2016040c.c)
  * Purpose: mouse task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10844,7 +10844,7 @@ void mouse_cursor_task_create(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_set_device @ 2015f098  (28 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * kbdobj_set_device @ 2015f098  (28 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: (obj, device, present): stores the present flag (+0x81) and the device (+0x84); clears the active flag
  *     +0x80 when not present; usbkbd_attach / usbkbd_detach [fact]
  * Tag: [fact]
@@ -10868,7 +10868,7 @@ void kbdobj_set_device(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_activate @ 2015f0b4  (16 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * kbdobj_activate @ 2015f0b4  (16 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: (obj): active flag +0x80 = 1 and resets the key ring at +0x88 (ring16_reset) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10887,7 +10887,7 @@ void kbdobj_activate(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_flush @ 2015f0c4  (8 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * kbdobj_flush @ 2015f0c4  (8 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: (obj): ring16_reset of the key ring at +0x88; usbkbd_flush_all [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10905,7 +10905,7 @@ void kbdobj_flush(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * kbdobj_ctor @ 2015f0cc  (20 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * kbdobj_ctor @ 2015f0cc  (20 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: (obj): constructs the key ring at +0x88 (ring16_ctor) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/input.md
@@ -10926,7 +10926,7 @@ int kbdobj_ctor(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_fwdbg @ 2015f0e0  (12 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * task_fwdbg @ 2015f0e0  (12 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -10993,7 +10993,7 @@ undefined4 task_fwdbg(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_verify_bank1 @ 2015f1f0  (332 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * fwdbg_verify_bank1 @ 2015f1f0  (332 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: `fw1up` / `fw1chk`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11055,7 +11055,7 @@ undefined4 fwdbg_verify_bank1(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_write_other_bank @ 2015f348  (512 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * fwdbg_write_other_bank @ 2015f348  (512 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: `fw1up` / `fw1chk`
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11164,7 +11164,7 @@ undefined4 fwdbg_write_other_bank(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_task_create @ 2015f55c  (200 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * fwdbg_task_create @ 2015f55c  (200 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11225,7 +11225,7 @@ undefined4 fwdbg_task_create(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * update_display_self @ 2015f62c  (1028 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * update_display_self @ 2015f62c  (1028 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: self-update worker
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11356,7 +11356,7 @@ LAB_2015f638:
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_move @ 2015fa54  (52 bytes, 3 callers, export file 2015eb74_201606bc.c)
+ * mouse_cursor_move @ 2015fa54  (52 bytes, 3 callers, export file 2015da3c_2016040c.c)
  * Purpose: cursor
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11375,7 +11375,7 @@ void mouse_cursor_move(int param_1,ushort param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_wheel_event @ 2015fac4  (360 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mouse_wheel_event @ 2015fac4  (360 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: wheel
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11464,7 +11464,7 @@ switchD_2015fb98_caseD_5:
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_obj_init @ 2015fcc4  (148 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mouse_cursor_obj_init @ 2015fcc4  (148 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: mouse task
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/input.md
@@ -11505,7 +11505,7 @@ void mouse_cursor_obj_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mouse_cursor_run @ 2015fd60  (500 bytes, 0 callers, export file 2015eb74_201606bc.c)
+ * mouse_cursor_run @ 2015fd60  (500 bytes, 0 callers, export file 2015da3c_2016040c.c)
  * Task (descriptor): mouse_cursor (0x201656E4/0x20165700)
  * Pri: 7
  * Wake-up: message box

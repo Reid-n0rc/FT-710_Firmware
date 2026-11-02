@@ -31,18 +31,18 @@ table at 0x206290 is not recovered). Undefined non-0xFF bytes: M33 5,162 → 4,3
 
 | Metric | M33 | HiFi4 |
 |---|---:|---:|
-| Functions exported (non-thunk) | 449 | 1,081 |
+| Functions exported (non-thunk) | 450 | 1,081 |
 | Decompile failures | 0 | 0 |
 | Decompiler warnings (all kinds) | 150 | 256 |
-| Functions with a warning | 87 | 98 |
+| Functions with a warning | 87 | 101 |
 | "Unable to track spacebase" | 0 | 0 |
-| "Removing unreachable block" | 16 | 187 |
+| "Removing unreachable block" | 16 | 182 |
 | `halt_baddata()` calls | 0 | 0 |
 | Functions with `halt_baddata()` | 0 | 0 |
-| Functions with `in_*` variables | 8 | 161 |
+| Functions with `in_*` variables | 8 | 160 |
 | Functions with `unaff_*` variables | 3 | 13 |
 | Functions with `extraout_*` variables | 13 | 10 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 17 | 171 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 17 | 170 |
 | Undefined non-0xFF bytes in executable blocks | 4,363 | 6,366 |
 | … in block `dsp_itcm` | 0 | 976 |
 | … in block `flexspi_xip` | 3,688 | 0 |
@@ -53,9 +53,9 @@ table at 0x206290 is not recovered). Undefined non-0xFF bytes: M33 5,162 → 4,3
 | warning: Could not recover jumptable at #. Too many branches | 24 | 4 |
 | warning: Do nothing block with infinite loop | 85 | 20 |
 | warning: Does not return | 0 | 3 |
-| warning: Globals starting with '_' overlap smaller symbols at the same address | 1 | 26 |
+| warning: Globals starting with '_' overlap smaller symbols at the same address | 1 | 31 |
 | warning: Possible PIC construction at #: Changing call to branch | 0 | 4 |
-| warning: Removing unreachable block (#) | 16 | 187 |
+| warning: Removing unreachable block (#) | 16 | 182 |
 | warning: This function may have set the stack pointer | 0 | 1 |
 | warning: Treating indirect jump as call | 24 | 4 |
 | warning: Type propagation algorithm not settling | 0 | 7 |

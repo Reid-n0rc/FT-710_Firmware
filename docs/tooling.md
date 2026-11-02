@@ -297,6 +297,51 @@ engine executes the three after the manual itself, NaN and range included (`Equi
 no function checked before round 4 uses one of the three (the GCC objects have no FPU instruction before `cat_SQ`; libgcc's
 `__fixunssfsi` has FTOI).
 
+### The other FPU instructions (T24 MAIN round 5, 2026-11-01): `tools/ghidra/rx62t-fpu-fix.patch`, `tools/rx_fpu_check.py`
+
+MAIN uses FADD 31, FSUB 18, FMUL 28, FDIV 25, FCMP 40, ITOF 42 and FTOU 12 times, in 23 functions, and no FSQRT, FTOI,
+ROUND or UTOF and no 3-operand FPU form [fact: `rx-elf-objdump` of 0xFFF8FBDB..0xFFFEE2B7]. FPSW is written at
+0xFFF8FBFF (0x100: RM = 0, DN = 1, every exception masked), in the FPU exception handler 0xFFF905F2 (clears the cause
+flags) and in `FUN_fff916ac` (vector 3: EV..EX on or off); `R_BSP_InterruptControl(…, 1, …)` is called once, for vector
+0xB (bus error, fff8f658_fff9086c.c line 462), so the FPU exceptions stay masked **[inference from these call sites]**.
+The module's p-code for the arithmetic uses the host's IEEE single precision with round to nearest, which is right for
+normal operands and results, and differs from the RXv2 manual R01US0071EJ0100 in these ways **[fact:
+`tools/rx_fpu_check.py module`, 11,553 cases]**:
+
+| Module | Manual | Matters for MAIN |
+|---|---|---|
+| FCMP leaves O unchanged; FCMP #imm sets Z/S from `Rs f- imm` (Z clear for equal infinities) | O = 1 for an unordered pair, else 0; Z = (src2 == src), S = (src2 < src) (p. 90) | **yes**: 17 BLT and 1 BGE (S ^ O) follow an FCMP; a stale O from an earlier ADD/SUB inverted the branch. The decompile of `swr_meter_protect` showed `10.0 < (float)uVar6 == bVar1` with `bVar1 = SCARRY4(...)` |
+| S = (result f< 0): clear for -0 and a negative NaN | S = bit 31 of the result (p. 87 ...) | no branch reads S/Z after an FPU arithmetic instruction in MAIN [fact: the instructions after each one] |
+| UTOF: FC 54..57 (Rs and .UB) do not decode; 2^31..2^32-1 convert as negative; memex B/W zero-extended | unsigned conversion (p. 201), memex B and W sign-extended (p. 55) | no (no UTOF) |
+| DN ignored: denormal operands are values, results can be denormal | DN = 1: a denormal operand is a zero of its sign (p. 21), an underflow returns 0 (Table 1.2) | random RAM words read as floats (1 in 256 has exponent 0) |
+| host NaNs (7FC00000h) | Table 1.6: the QNaN operand, an SNaN made quiet, 7FFFFFFFh for an invalid operation without a NaN operand | the same, 1 in 256 |
+| RM ignored (always nearest), no FPSW | RM rounding, FPSW cause / accumulated flags (p. 20/21) | no (RM = 0; FPSW is not read outside the handler) |
+
+`rx62t-fpu-fix.patch` (tenth `bootstrap.sh --only rx` stage, `RX_SINC_FPCONV` `f4688bc6…f403` → `RX_SINC_FIXED`
+`ff99d4e8…cd25`) fixes the first three rows for the decompiler; with it the module agrees on every case that has no NaN,
+no denormal, no invalid operation and RM = 0 (`by case: DN 599, NaN operand 953, RM 381, invalid 426`; without it also
+`plain 1233, infinity 133`), and `swr_meter_protect` decompiles as `if ((local_18 < 1.0) || (5.0 <= local_18))`. Checked
+on a private Ghidra copy (patch, `sleigh` with the 6 NOP warnings, `bootstrap.sh --only rx` with `RX_MODULE_DIR` on a copy
+of the round-4 module, and the idempotent second run). **Not installed into the container's shared Ghidra.** The rest is
+host arithmetic, which SLEIGH cannot change; the MAIN equivalence engine executes every FPU instruction itself
+(`EquivMainEmu.java` `RxFpu`: exact arithmetic on BigInteger, one rounding by RM, DN, Table 1.6, the O flag, FPSW, and the
+exception start as a fault), and `tools/rx_fpu_check.py` checks it against a separate model written from the manual
+(Python fractions): **11,950 / 11,950 agree**, FPSW 0x100 and RM 1..3, DN 0 and the enable bits. Two readings of the
+manual are the model's and stay open: underflow is decided on the exact result (before rounding), and "the S and Z
+flags do not change when an exception is generated" also covers a masked exception (*Open: both; would be settled by
+FADD of a result just below 2^-126 and of 0.1f + 0.2f on an RX651, reading the destination and PSW*).
+
+### MIN and MAX (T24 MAIN round 5): `tools/ghidra/rx62t-minmax-fix.patch`
+
+The module's six MIN/MAX constructors all read `if (src > dest) skip; dest = src`, an **unsigned minimum** for MIN and
+MAX alike; the manual (MIN p. 118, MAX p. 117) compares signed and MAX keeps the larger value. `rx_semcheck.py` now models
+MIN/MAX, and `rx_semcheck_forms.sh` adds MIN #imm (GCC's clamp `min #255`), MIN/MAX Rs and #imm, SCGE.L and SCLT.L: 318 of
+5,000 cases failed (MIN 217, MAX 101), **5,000 / 5,000** agree with the patch; with the MIN/MAX memory forms added, 807 of 5,960 fail without and **5,960 / 5,960** agree with it **[fact: the check, run on a private Ghidra copy]**.
+MAIN has no MIN or MAX [fact: `rx-elf-objdump`]; GCC uses `min` in `cat_SS`, `display_link.o`, `keyer.o` and `meters.o`;
+their functions are equivalent in the round-5 status run, which used the patched module. The patch is the eleventh
+`bootstrap.sh --only rx` stage (`RX_SINC_FPU` `ff99d4e8…cd25` → `RX_SINC_FIXED` `8b7bc4f0…bb2c`; checked with `RX_MODULE_DIR` on
+a copy of the round-4 module, both stages and the compile). **Not installed into the container's shared Ghidra.**
+
 ## Bootstrap (T20)
 
 `tools/bootstrap.sh` scripts every install and build step above that was done by hand: the Ghidra 12.1.4 + Temurin JDK 21.0.13+9
@@ -480,7 +525,7 @@ directory of the cloud session (not kept), so redo with the commits below.
 | Library | Source and commit | How it was used |
 |---|---|---|
 | NXP MCUXpresso SDK drivers | https://github.com/nxp-mcuxpresso/mcux-sdk tag **MCUX_2.10.0** = `1e97870ccc900b4431c91f229e83c65f17d8376f` (`drivers/`, `devices/MIMXRT685S/drivers/`). Compared: MCUX_2.9.0 `f3923a74d187cf8d4d62d56d851794cf610cc960` (no `I2C_MasterSetTimeoutValue`), MCUX_2.11.0 `34e0779171551fc9e4a20f7993ca8fa037a0bc63` (adds the I2S loop-DMA functions the image lacks); Zephyr `hal_nxp` commits `06f57f87`/`4b5b3c74`/`56915d29` (SDK 2.8.0/2.8.2/2.8.3, no overflow check in `SDK_Malloc`) | the image links every RT685 `fsl_*.c` in file-name order; function order, peripheral bases, status codes and callers per file |
-| rpmsg-lite | https://github.com/nxp-mcuxpresso/rpmsg-lite tag **v3.1.1** = `f12ffe998a9b52f0327e109b5b3005a2ef787770` (env `rpmsg_env_bm.c`, platform `imxrt600_hifi4`) | one-to-one source order of env, platform, `rpmsg_lite.c`, `rpmsg_ns.c`, `virtqueue.c` |
+| rpmsg-lite | https://github.com/nxp-mcuxpresso/rpmsg-lite tag **v3.1.1** = `f12ffe998a9b52f0327e109b5b3005a2ef787770`; T24 HiFi4 settled the version as **v3.1.0** = `cb56a06c66dd7d85e72a9cc7e8e5bf3c8773df6b` (link-id check, hifi4-libraries.md) (env `rpmsg_env_bm.c`, platform `imxrt600_hifi4`) | one-to-one source order of env, platform, `rpmsg_lite.c`, `rpmsg_ns.c`, `virtqueue.c` |
 | Cadence NatureDSP HiFi4 | https://github.com/foss-xtensa/ndsplib-hifi4 commit `8ec7552f670456b46249ee30be96dc6003b1285f`, `NDSP_HiFi4/NDSP_HiFi4_v430.zip` (SHA-256 `9e966f0c625cb9462f68cb5a21b57bfd3f52fd76edc3f8fc6f2a24b2e63efb57`), extracted read-only | the rodata tables 0x200650..0x2008BF equal NDSP's `library/tables/*.c` and local tables word for word; code is in NDSP file-name order |
 | newlib, libgcc | the Zephyr SDK 0.17.0 RT600 toolchain above (`xtensa-nxp_rt600_adsp_zephyr-elf/lib/libc.a`, `libm.a`, GCC 12.2.0 `libgcc.a`): a 40-line C file referencing ~110 libc/libm functions, linked `-nostartfiles -nostdlib` with stub syscalls, then `objdump -d` / `-s` | distinctive literal constants per function (e.g. `__ieee754_powf` 36 of 43, `_dtoa_r` 14 of 15) and instruction-sequence similarity for the tiny ones |
 
@@ -588,6 +633,16 @@ reachable), C only, without a C library (the recreated code is freestanding):
 `tools/equiv_main_emu.py` needs no new Python package (pyelftools, above). Ghidra's p-code emulator API used by
 `tools/ghidra/EquivMainEmu.java` is `ghidra.pcode.emu.PcodeEmulator` with `PcodeEmulationCallbacks` (Ghidra 12.1.4,
 `Ghidra/Framework/Emulation/lib/Emulation.jar`).
+
+### IFDSP HiFi4 (T24 HiFi4, 2026-11-01)
+
+| Item | Value |
+|---|---|
+| Compiler | the Zephyr SDK 0.17.0 toolchain above (`xtensa-nxp_rt600_adsp_zephyr-elf-gcc`, GCC 12.2.0, binutils 2.38 with the RT600 overlay), already in `/root/opt/zephyr-sdk-0.17.0/`; nothing new to install. What it can and cannot emit: docs/tasks/T24-source-recreation.md, "IFDSP HiFi4" |
+| QEMU | `qemu-system-misc` 1:8.2.2+ds-0ubuntu1.18 (Ubuntu 24.04 archive), `apt-get install --no-install-recommends qemu-system-misc` (system-wide, in the container only); `qemu-system-xtensa` is the reference of `tools/xtensa_semcheck.py` (cores `de233_fpu` and the others it lists). Remove: `apt-get remove qemu-system-misc` |
+| Ghidra copy | `/home/user/ghidra_tasks/t24hifi4/ghidra_12.1.4/` = `cp -a` of `/root/opt/ghidra_12.1.4_PUBLIC` with the regenerated `xtensa_rt600hifi4*` files of this round and their `.sla` compiled by its `support/sleigh`, so the shared Ghidra (which other sessions' bootstraps check) stays unchanged until the merge; the harness and the semantics check use it through `GHIDRA_HEADLESS=/home/user/ghidra_tasks/t24hifi4/ghidra_12.1.4/support/analyzeHeadless`. Remove: `rm -rf /home/user/ghidra_tasks/t24hifi4/ghidra_12.1.4` |
+| Generator input | `xtensa-modules.c` (sdk-ng `15daabb5`, SHA-256 `9e218b19…f372`, as above) fetched to the session's scratch directory to regenerate `tools/ghidra/xtensa-rt600hifi4/` (`tools/bootstrap.sh` does the same with `HIFI4_REGEN=1`) |
+| Vendor sources | fetched by `src/ifdsp_hifi4/vendor.sh` from raw.githubusercontent.com (newlib from the `mirror/newlib-cygwin` GitHub mirror: sourceware.org is refused by the proxy; rpmsg-lite from `nxp-mcuxpresso/rpmsg-lite`) into `src/ifdsp_hifi4/vendor/` (ignored) |
 
 ## Commit signing (2026-10-28)
 
