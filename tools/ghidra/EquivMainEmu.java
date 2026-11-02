@@ -244,7 +244,10 @@ public class EquivMainEmu extends GhidraScript {
                     n--;
                     if (until ? (cur == (v & mask)) : (cur != (v & mask))) break;
                 }
-                setReg("R3", n);
+                // R3 is not set here: the module's SUNTIL/SWHILE constructors (rx62t-rxv2-fix.patch) reduce R3 by the
+                // number of elements from the returned pointer themselves, so setting it here counted every compare
+                // twice (T24 MAIN UI track: dl50_memory_name's title copy, SUNTIL.B then SMOVF of -2 - R3 bytes, copied
+                // 23 bytes of "MEMORY NAME" instead of 11; the six SUNTIL/SWHILE of MAIN are all in the dl50_* builders)
                 res = a;
             } else {
                 throw new Fault("unimplemented pcodeop " + name);

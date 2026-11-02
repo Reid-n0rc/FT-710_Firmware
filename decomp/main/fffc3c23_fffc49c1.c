@@ -420,7 +420,7 @@ void key_slot_press(byte param_1)
     (*(code *)(&PTR_key_nop_fff8e0cc)[uVar1])();
     return;
   }
-  (*(code *)(&key_press_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_press_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -440,7 +440,7 @@ void key_slot_short(byte param_1)
     (*(code *)(&PTR_FUN_fff8e0ec)[uVar1])();
     return;
   }
-  (*(code *)(&key_short_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_short_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -460,7 +460,7 @@ void key_slot_long(byte param_1)
     (*(code *)(&PTR_FUN_fff8e10c)[uVar1])();
     return;
   }
-  (*(code *)(&key_long_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_long_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -480,7 +480,7 @@ void key_slot_repeat(byte param_1)
     (*(code *)(&PTR_FUN_fff8e12c)[uVar1])();
     return;
   }
-  (*(code *)(&key_repeat_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_repeat_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -500,7 +500,7 @@ void key_slot_release(byte param_1)
     (*(code *)(&PTR_FUN_fff8e14c)[uVar1])();
     return;
   }
-  (*(code *)(&key_release_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_release_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 

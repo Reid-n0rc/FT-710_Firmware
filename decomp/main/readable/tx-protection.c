@@ -1493,13 +1493,13 @@ void audio_level_update(void)
 {
   uint uVar1;
   byte bVar2;
-  byte bVar3;
+  byte beep_pattern_get_ret;
   char tx_mod_source_ret;
+  bool bVar3;
   bool bVar4;
-  bool bVar5;
-  byte bVar6;
+  byte bVar5;
   uint audio_route_state_ret;
-  int iVar7;
+  int iVar6;
   byte bStack_f;
   byte bStack_e;
   byte bStack_d;
@@ -1512,10 +1512,10 @@ void audio_level_update(void)
                     /* Returns the audio-route state 0..14 [doc] */
   audio_route_state_ret = audio_route_state();
   bVar2 = vfo_mode(0);
-  bVar3 = FUN_fffb2dfe();
+  beep_pattern_get_ret = beep_pattern_get();
   tx_mod_source(bVar2);
-  bVar6 = g_ui.transmitting;
-  bVar5 = false;
+  bVar5 = g_ui.transmitting;
+  bVar4 = false;
   bStack_e = 0;
   bStack_d = 0;
   bStack_b = 0;
@@ -1669,37 +1669,37 @@ LAB_fffb6009:
     }
   }
 LAB_fffb612b:
-  bVar2 = FUN_fffb418a(bVar6);
-  bVar6 = g_ui.af_gain;
+  bVar2 = FUN_fffb418a(bVar5);
+  bVar5 = g_ui.af_gain;
   switch(audio_route_state_ret) {
   case 0:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 1:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 2:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1708,10 +1708,10 @@ LAB_fffb612b:
     bStack_e = bVar2;
     break;
   case 3:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1720,10 +1720,10 @@ LAB_fffb612b:
     bStack_e = bVar2;
     break;
   case 4:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1737,10 +1737,10 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x32);
     break;
   case 6:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1755,29 +1755,29 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x1a);
     break;
   case 8:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar6 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar6);
-    bVar5 = true;
+    bVar5 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar5);
+    bVar4 = true;
     break;
   case 9:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 10:
     bStack_8 = FUN_fffb34f9(bVar2);
@@ -1790,60 +1790,60 @@ LAB_fffb612b:
     break;
   case 0xd:
     bStack_8 = FUN_fffb34f9(bVar2);
-    bVar6 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar6);
+    bVar5 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar5);
     break;
   case 0xe:
     bStack_8 = g_opstate.play_volume;
     bStack_b = FUN_fffb350e(g_opstate.level_9dc2);
   }
-  if ((bVar3 - 1 < 3) || (bVar3 - 5 < 4)) {
+  if ((beep_pattern_get_ret - 1 < 3) || (beep_pattern_get_ret - 5 < 4)) {
     bStack_d = 0;
     bStack_e = g_opstate.ex030101_beep_level;
     if (g_opstate.ex030101_beep_level != 0) goto LAB_fffb6432;
   }
   if (g_ui.af_gain == 0) {
     if ((audio_route_state_ret == 4) || (audio_route_state_ret == 7)) {
-      bVar4 = true;
+      bVar3 = true;
     }
     else {
-      bVar4 = false;
+      bVar3 = false;
     }
-    if (bVar4) {
-      iVar7 = FUN_fffb418a(g_ui.transmitting);
-      if (iVar7 == 0) {
+    if (bVar3) {
+      iVar6 = FUN_fffb418a(g_ui.transmitting);
+      if (iVar6 == 0) {
         FUN_fffb71f5();
       }
     }
-    else if (bVar5) {
+    else if (bVar4) {
       FUN_fffb71f5();
     }
   }
 LAB_fffb6432:
-  if ((g_ui.trx_state < 3) && (bVar6 = swtimer_expired(0xe), bVar6 != 1)) {
-    bVar5 = true;
+  if ((g_ui.trx_state < 3) && (bVar5 = swtimer_expired(0xe), bVar5 != 1)) {
+    bVar4 = true;
   }
   else {
-    bVar5 = false;
+    bVar4 = false;
   }
-  if ((!bVar5) && (g_ui.tx_lamp != 2)) {
+  if ((!bVar4) && (g_ui.tx_lamp != 2)) {
     if ((DAT_00020fbd == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar5 = false;
+      bVar4 = false;
     }
     else {
-      bVar5 = true;
+      bVar4 = true;
     }
-    if (bVar5) {
+    if (bVar4) {
       sst2_write12('\x01',bStack_8);
       DAT_00020fbd = bStack_8;
     }
     if ((DAT_00020fbc == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar5 = false;
+      bVar4 = false;
     }
     else {
-      bVar5 = true;
+      bVar4 = true;
     }
-    if (bVar5) {
+    if (bVar4) {
       sst2_write12('\x05',bStack_8);
       DAT_00020fbc = bStack_8;
     }
@@ -1853,64 +1853,64 @@ LAB_fffb6432:
     bStack_7 = 0;
   }
   if ((DAT_00020fb8 == bStack_7) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x02',bStack_7);
     DAT_00020fb8 = bStack_7;
   }
-  bVar6 = FUN_fffb34f9(bStack_a);
-  if ((DAT_00020fb9 == bVar6) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+  bVar5 = FUN_fffb34f9(bStack_a);
+  if ((DAT_00020fb9 == bVar5) && (DAT_00012042 != '\0')) {
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
-    sst2_write12('\x03',bVar6);
-    DAT_00020fb9 = bVar6;
+  if (bVar4) {
+    sst2_write12('\x03',bVar5);
+    DAT_00020fb9 = bVar5;
   }
   if ((DAT_00020fba == bStack_b) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x04',bStack_b);
     DAT_00020fba = bStack_b;
   }
   if ((DAT_00020fbe == bStack_d) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x06',bStack_d);
     DAT_00020fbe = bStack_d;
   }
-  bVar6 = FUN_fffb34f9(bStack_e);
-  if ((DAT_00020fbf == bVar6) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+  bVar5 = FUN_fffb34f9(bStack_e);
+  if ((DAT_00020fbf == bVar5) && (DAT_00012042 != '\0')) {
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
-    sst2_write12('\a',bVar6);
-    DAT_00020fbf = bVar6;
+  if (bVar4) {
+    sst2_write12('\a',bVar5);
+    DAT_00020fbf = bVar5;
   }
   if ((DAT_00020fbb == bStack_f) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\b',bStack_f);
     DAT_00020fbb = bStack_f;
     return;
@@ -2557,16 +2557,18 @@ byte meter_get_swr_raw(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6e4e @ fffb6e4e  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
+ * meter_get_swr_f @ fffb6e4e  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
-// ===== FUN_fffb6e4e @ fffb6e4e (14 bytes)
+// ===== meter_get_swr_f @ fffb6e4e (14 bytes)
 
-void FUN_fffb6e4e(void)
+/* Returns the float SWR word 0x20FC4 [fact: fffb6e4e] */
+
+void meter_get_swr_f(void)
 
 {
   return;
@@ -2574,16 +2576,18 @@ void FUN_fffb6e4e(void)
 
 
 /* -----------------------------------------------------------------------------
- * FUN_fffb6e5c @ fffb6e5c  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
+ * meter_get_swr_avg_f @ fffb6e5c  (14 bytes, 3 callers, export file fffb4c45_fffb7098.c)
  * Inferred name: *meter_get_vdd/idd/alc/swr/swr_raw/po/comp/s*, `remote_key_get`
  * (The page describes the range 0xFFFB6E03..0xFFFB6EB6 in one row.)
  * Purpose: getters
  * Tag: none in the table row
  * Doc: ../../../docs/code/main/tx-protection.md
  */
-// ===== FUN_fffb6e5c @ fffb6e5c (14 bytes)
+// ===== meter_get_swr_avg_f @ fffb6e5c (14 bytes)
 
-void FUN_fffb6e5c(void)
+/* Returns the float SWR average 0x20FC8 [fact: fffb6e5c] */
+
+void meter_get_swr_avg_f(void)
 
 {
   return;
@@ -3029,7 +3033,7 @@ void meter_vdd(void)
   if (0xff < uStack_4) {
     uStack_4 = 0xff;
   }
-  DAT_00012043 = FUN_fffb92e7((undefined1)uStack_4);
+  DAT_00012043 = meter_avg_vdd((undefined1)uStack_4);
   return;
 }
 
@@ -3057,7 +3061,7 @@ void meter_idd(void)
   if (0xff < uVar1) {
     local_6 = 0xff;
   }
-  DAT_00012044 = FUN_fffb9350(local_6);
+  DAT_00012044 = meter_avg_idd(local_6);
   return;
 }
 
@@ -3085,7 +3089,7 @@ void meter_alc(void)
   if (0xff < uVar1) {
     local_6 = 0xff;
   }
-  DAT_00012045 = FUN_fffb93b9(local_6);
+  DAT_00012045 = meter_avg_alc(local_6);
   return;
 }
 
@@ -3181,7 +3185,7 @@ void swr_meter_protect(void)
       }
     }
     DAT_00020fc4 = local_18;
-    FUN_fffb948b(local_18);
+    meter_avg_swr_f(local_18);
     if (1.5 < local_18 == (bool)((byte)(uVar6 >> 3) & 1)) {
       fStack_1c = (float)uVar3 / 1.5;
       fStack_20 = -fStack_1c;
@@ -3207,7 +3211,7 @@ void swr_meter_protect(void)
       uStack_22 = 0xff;
     }
     DAT_00012047 = (undefined1)uStack_22;
-    DAT_00012046 = FUN_fffb9422((undefined1)uStack_22);
+    DAT_00012046 = meter_avg_swr((undefined1)uStack_22);
     return;
   }
   g_ui.hi_swr = 0;
@@ -3258,7 +3262,7 @@ LAB_fffb7837:
       if (255.0 < fStack_1c) {
         fStack_1c = 255.0;
       }
-      DAT_00012048 = FUN_fffb94f9((uint)(longlong)fStack_1c & 0xff);
+      DAT_00012048 = meter_avg_po((uint)(longlong)fStack_1c & 0xff);
       return;
     }
     iVar4 = (uint)i * 0xc;
@@ -3373,7 +3377,7 @@ LAB_fffb79e0:
         DAT_0001204a = 0;
         return;
       }
-      DAT_0001204a = FUN_fffb959c((uint)(longlong)fStack_18 & 0xff);
+      DAT_0001204a = meter_avg_s((uint)(longlong)fStack_18 & 0xff);
       return;
     }
     iVar2 = (uint)i * 0xc;

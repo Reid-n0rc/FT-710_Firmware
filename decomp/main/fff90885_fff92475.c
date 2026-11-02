@@ -53,7 +53,7 @@ uint R_BSP_SoftwareInterruptOpen(int param_1)
       (&DAT_00001432)[local_4] = 1;
       for (bStack_11 = 0; bStack_11 < 9; bStack_11 = bStack_11 + 1) {
         *(undefined4 *)(&DAT_00020318 + (uint)bStack_11 * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)bStack_11 * 0xc + 0x20320) = 0x10000000;
       }
       (&DAT_0000142e)[local_4] = 0;
@@ -84,7 +84,7 @@ void R_BSP_SoftwareInterruptClose(int param_1)
     R_BSP_SoftwareInterruptControl(param_1,5,(char *)0x10000000);
     for (i = 0; i < 9; i = i + 1) {
       *(undefined4 *)(&DAT_00020318 + (uint)i * 0xc + param_1 * 0x6c) = 0;
-      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &LAB_fff910bc;
+      *(undefined1 **)(param_1 * 0x6c + (uint)i * 0xc + 0x2031c) = &bsp_swint_dummy_task;
       *(undefined4 *)(param_1 * 0x6c + (uint)i * 0xc + 0x20320) = 0x10000000;
     }
     (&DAT_0000142e)[param_1] = 0;
@@ -394,7 +394,7 @@ uint bsp_swint_clear_task(int param_1,byte *param_2)
       }
       else {
         *(undefined4 *)(&DAT_00020318 + (uint)*local_8 * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)*local_8 * 0xc + 0x20320) = 0x10000000;
         uStack_10 = 0;
       }
@@ -441,7 +441,7 @@ uint bsp_swint_clear_all_task(int param_1)
     if (uStack_c == 0) {
       for (bStack_d = 0; bStack_d < 9; bStack_d = bStack_d + 1) {
         *(undefined4 *)(&DAT_00020318 + (uint)bStack_d * 0xc + local_4 * 0x6c) = 0;
-        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x2031c) = &LAB_fff910bc;
+        *(undefined1 **)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x2031c) = &bsp_swint_dummy_task;
         *(undefined4 *)(local_4 * 0x6c + (uint)bStack_d * 0xc + 0x20320) = 0x10000000;
       }
       (&DAT_0000142e)[local_4] = 0;
@@ -600,7 +600,7 @@ void bsp_swint_execute_task(int param_1)
                     /* Exchanges back into 0x20310[unit] [doc] */
     bsp_swint_release_access_control(local_4,&local_8);
     if ((&DAT_00001432)[local_4] == '\x01') {
-      FUN_fff8fd84();
+      R_BSP_InterruptsEnable();
     }
     local_8 = 0;
     bsp_swint_get_access_control(local_4,&local_8);
@@ -1063,9 +1063,12 @@ void clock_source_select(void)
 }
 
 
-// ===== FUN_fff91608 @ fff91608 (164 bytes)
+// ===== bsp_non_existent_port_init @ fff91608 (164 bytes)
 
-void FUN_fff91608(void)
+/* Sets the PDR bits of the pins the package lacks (P0 |= 0x50 ... PG = 0xFF, PJ |= 0xD7) [fact:
+   fff91608]; FIT name [inference] */
+
+void bsp_non_existent_port_init(void)
 
 {
   byte bVar1;
@@ -1129,9 +1132,13 @@ void FUN_fff91608(void)
 }
 
 
-// ===== FUN_fff916ac @ fff916ac (158 bytes)
+// ===== bsp_interrupt_enable_disable @ fff916ac (158 bytes)
 
-uint FUN_fff916ac(int param_1,char param_2)
+/* (vector, enable): R_BSP_InterruptControl commands 1/2 for NMI pin (2), FPU exceptions FPSW 0x7C00
+   (3), bus error IR016/IPR000/BEREN (11); 3 = not supported [fact: fff916ac]; FIT name [inference]
+    */
+
+uint bsp_interrupt_enable_disable(int param_1,char param_2)
 
 {
   byte bVar1;

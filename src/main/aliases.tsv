@@ -1,3 +1,24 @@
 # MAIN: recreated functions whose source name is not the Ghidra name, or whose address Ghidra's list lacks (T24):
 # source name -> original address, with the evidence. tools/equiv_main_emu.py checks the function against that address.
 name	address	evidence
+R_BSP_GetVersion	fff8fc3f	FUN_fff8fc3f returns 0x50040, the FIT R_BSP_GetVersion form (major << 16 | minor) [inference]
+R_BSP_InterruptsDisable	fff8fd6d	FUN_fff8fd6d: CLRPSW I unless PSW.PM [fact]; FIT r_bsp_cpu.c name [inference]
+R_BSP_InterruptsEnable	fff8fd84	FUN_fff8fd84: SETPSW I unless PSW.PM [fact]; called by bsp_swint_execute_task for nesting
+R_BSP_CpuInterruptLevelRead	fff8fd9b	FUN_fff8fd9b: (PSW & 0x0F000000) >> 24 [fact]
+R_BSP_CpuInterruptLevelWrite	fff8fdb8	FUN_fff8fdb8: MVTIPL #level through a 16-entry table [fact]
+bsp_register_protect_open	fff8ff3d	FUN_fff8ff3d clears the four counters 0x1B5FC of R_BSP_RegisterProtect* [fact]
+R_BSP_InterruptRead	fff90046	FUN_fff90046 copies the callback of 0x20194[vector] to *out [fact]
+bsp_fit_interrupts_control	fff90181	FUN_fff90181: R_BSP_InterruptControl commands 5/6, IPL save/raise/restore [fact]
+bsp_interrupt_enable_disable	fff916ac	FUN_fff916ac: R_BSP_InterruptControl commands 1/2 for NMI, FPU, bus error [fact]
+bsp_non_existent_port_init	fff91608	FUN_fff91608 sets PDR bits of all ports [fact]; FIT name [inference]
+meter_get_swr_f	fffb6e4e	FUN_fffb6e4e returns the word 0x20FC4 (the float SWR of swr_meter_protect) [fact]
+meter_get_swr_avg_f	fffb6e5c	FUN_fffb6e5c returns the word 0x20FC8 (the SWR average of FUN_fffb948b) [fact]
+meter_avg_vdd	fffb92e7	FUN_fffb92e7: 16-sample moving average of the VDD meter (meter_vdd) [fact]
+meter_avg_idd	fffb9350	FUN_fffb9350: the same for IDD (meter_idd) [fact]
+meter_avg_alc	fffb93b9	FUN_fffb93b9: the same for ALC (meter_alc) [fact]
+meter_avg_swr	fffb9422	FUN_fffb9422: the same for SWR (swr_meter_protect) [fact]
+meter_avg_swr_f	fffb948b	FUN_fffb948b: float SWR average into 0x20FC8 [fact]
+meter_avg_po	fffb94f9	FUN_fffb94f9: PO average and peak 0x1204B [fact]
+meter_avg_s	fffb959c	FUN_fffb959c: the same for S (meter_s) [fact]
+ch_step_scale	fffc648c	FUN_fffc648c: x10 of a channel step with FAST unless 0x1B4E5 = 1 [fact]
+beep_pattern_get	fffb2dfe	FUN_fffb2dfe returns beep_pattern 0x12041 [fact]

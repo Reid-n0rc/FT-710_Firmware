@@ -26,77 +26,77 @@ fff8facd	write	140			not yet	0
 fff8fb59	FUN_fff8fb59	113			not yet	0	
 fff8fbca	FUN_fff8fbca	17			not yet	0	
 fff8fbdb	PowerON_Reset	100			not yet	0	
-fff8fc3f	FUN_fff8fc3f	14			not yet	0	
-fff8fc4d	R_BSP_GetIClkFreqHz	10			not yet	0	
-fff8fc57	R_BSP_SoftwareDelay	277			not yet	0	
-fff8fd6d	FUN_fff8fd6d	23			not yet	0	
-fff8fd84	FUN_fff8fd84	23			not yet	0	
-fff8fd9b	FUN_fff8fd9b	29			not yet	0	
-fff8fdb8	FUN_fff8fdb8	132			not yet	0	
-fff8fe3c	R_BSP_RegisterProtectEnable	132			not yet	0	
-fff8fec0	R_BSP_RegisterProtectDisable	108			not yet	0	
-fff8ff3d	FUN_fff8ff3d	34			not yet	0	
-fff8ff5f	bsp_callbacks_clear	35			not yet	0	
+fff8fc3f	FUN_fff8fc3f	14	R_BSP_GetVersion	bsp/r_bsp_sys.o	equivalent	14	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff8fc4d	R_BSP_GetIClkFreqHz	10	R_BSP_GetIClkFreqHz	bsp/r_bsp_sys.o	equivalent	10	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+fff8fc57	R_BSP_SoftwareDelay	277	R_BSP_SoftwareDelay	bsp/r_bsp_sys.o	equivalent	278	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 69% of 36 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): emulu r, r, mul r, r, r
+fff8fd6d	FUN_fff8fd6d	23	R_BSP_InterruptsDisable	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+fff8fd84	FUN_fff8fd84	23	R_BSP_InterruptsEnable	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+fff8fd9b	FUN_fff8fd9b	29	R_BSP_CpuInterruptLevelRead	bsp/r_bsp_sys.o	equivalent	29	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff8fdb8	FUN_fff8fdb8	132	R_BSP_CpuInterruptLevelWrite	bsp/r_bsp_sys.o	equivalent	132	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 70% of 23 blocks reached)
+fff8fe3c	R_BSP_RegisterProtectEnable	132	R_BSP_RegisterProtectEnable	bsp/r_bsp_sys.o	equivalent	132	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+fff8fec0	R_BSP_RegisterProtectDisable	108	R_BSP_RegisterProtectDisable	bsp/r_bsp_sys.o	equivalent	125	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fff8ff3d	FUN_fff8ff3d	34	bsp_register_protect_open	bsp/r_bsp_sys.o	equivalent	34	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+fff8ff5f	bsp_callbacks_clear	35	bsp_callbacks_clear	bsp/r_bsp_sys.o	equivalent	35	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 fff8ff82	R_BSP_InterruptRequestEnable	33	R_BSP_InterruptRequestEnable	bsp/r_bsp.o	equivalent	33	differential emulation (Ghidra p-code): 200 trials agree (103 returned normally, 100% of 1 blocks reached)
 fff8ffa3	R_BSP_InterruptRequestDisable	33	R_BSP_InterruptRequestDisable	bsp/r_bsp.o	equivalent	33	differential emulation (Ghidra p-code): 200 trials agree (103 returned normally, 100% of 1 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): rotl r, r
-fff8ffc4	bsp_interrupt_open	55			not yet	0	
-fff8fffb	R_BSP_InterruptWrite	75			not yet	0	
-fff90046	FUN_fff90046	81			not yet	0	
-fff90097	R_BSP_InterruptControl	234			not yet	0	
-fff90181	FUN_fff90181	119			not yet	0	
-fff901f8	bsp_interrupt_group_enable_disable	949			not yet	0	
-fff905ad	SuperVisorInst	23			not yet	0	
-fff905c4	AccessExc	23			not yet	0	
-fff905db	UndefinedInst	23			not yet	0	
-fff905f2	FloatingPoint	41			not yet	0	
+fff8ffc4	bsp_interrupt_open	55	bsp_interrupt_open	bsp/r_bsp_sys.o	equivalent	55	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fff8fffb	R_BSP_InterruptWrite	75	R_BSP_InterruptWrite	bsp/r_bsp_sys.o	equivalent	75	differential emulation (Ghidra p-code): 200 trials agree (77 returned normally, 100% of 8 blocks reached)
+fff90046	FUN_fff90046	81	R_BSP_InterruptRead	bsp/r_bsp_sys.o	equivalent	81	differential emulation (Ghidra p-code): 200 trials agree (83 returned normally, 100% of 8 blocks reached)
+fff90097	R_BSP_InterruptControl	234	R_BSP_InterruptControl	bsp/r_bsp_sys.o	equivalent	234	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 77% of 35 blocks reached)
+fff90181	FUN_fff90181	119	bsp_fit_interrupts_control	bsp/r_bsp_sys.o	equivalent	119	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 89% of 18 blocks reached)
+fff901f8	bsp_interrupt_group_enable_disable	949	bsp_interrupt_group_enable_disable	bsp/r_bsp_sys.o	equivalent	949	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 87% of 115 blocks reached)
+fff905ad	SuperVisorInst	23	SuperVisorInst	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
+fff905c4	AccessExc	23	AccessExc	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
+fff905db	UndefinedInst	23	UndefinedInst	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
+fff905f2	FloatingPoint	41	FloatingPoint	bsp/r_bsp_sys.o	equivalent	41	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
 fff9061b	NMI	487			not yet	0	
-fff90802	Undefined_0xD8	23			not yet	0	
-fff90819	vec016_BSC_BUSERR	30			not yet	0	
-fff90837	R_BSP_SoftwareLock	39			not yet	0	
-fff9085e	R_BSP_SoftwareUnlock	14			not yet	0	
-fff9086c	R_BSP_HardwareLock	25			not yet	0	
-fff90885	R_BSP_HardwareUnlock	25			not yet	0	
-fff9089e	R_BSP_SoftwareInterruptOpen	273			not yet	0	
-fff909af	R_BSP_SoftwareInterruptClose	231			not yet	0	
-fff90a96	R_BSP_SoftwareInterruptSetTask	272			not yet	0	
-fff90ba6	bsp_swint_get_interrupt_information	144			not yet	0	
-fff90c36	bsp_swint_enable_interrupt	32			not yet	0	
-fff90c56	bsp_swint_disable_interrupt	32			not yet	0	
-fff90c76	bsp_swint_set_interrupt_priority	171			not yet	0	
-fff90d21	bsp_swint_set_interrupt_request	33			not yet	0	
-fff90d42	bsp_swint_clear_interrupt_request	33			not yet	0	
-fff90d63	bsp_swint_enable_nested_interrupt	17			not yet	0	
-fff90d74	bsp_swint_disable_nested_interrupt	17			not yet	0	
-fff90d85	bsp_swint_clear_task	183			not yet	0	
-fff90e3c	bsp_swint_clear_all_task	244			not yet	0	
-fff90f30	bsp_swint_get_all_task_status	107			not yet	0	
-fff90f9b	R_BSP_SoftwareInterruptControl	190			not yet	0	
-fff91059	bsp_swint_get_access_control	46			not yet	0	
-fff91087	bsp_swint_release_access_control	53			not yet	0	
-fff910c3	bsp_swint_execute_task	327			not yet	0	
-fff9120a	vec027_ICU_SWINT	15			not yet	0	
-fff91219	vec026_ICU_SWINT2	15			not yet	0	
-fff91228	chg_pmusr	32			not yet	0	
-fff91248	set_bpsw	4			not yet	0	
+fff90802	Undefined_0xD8	23	Undefined_0xD8	bsp/r_bsp_sys.o	equivalent	23	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
+fff90819	vec016_BSC_BUSERR	30	vec016_BSC_BUSERR	bsp/r_bsp_sys.o	equivalent	30	differential emulation (Ghidra p-code): 200 trials agree (25 returned normally, 100% of 2 blocks reached)
+fff90837	R_BSP_SoftwareLock	39	R_BSP_SoftwareLock	bsp/r_bsp_sys.o	equivalent	39	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+fff9085e	R_BSP_SoftwareUnlock	14	R_BSP_SoftwareUnlock	bsp/r_bsp_sys.o	equivalent	14	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff9086c	R_BSP_HardwareLock	25	R_BSP_HardwareLock	bsp/r_bsp_sys.o	equivalent	25	differential emulation (Ghidra p-code): 200 trials agree (92 returned normally, 100% of 2 blocks reached)
+fff90885	R_BSP_HardwareUnlock	25	R_BSP_HardwareUnlock	bsp/r_bsp_sys.o	equivalent	25	differential emulation (Ghidra p-code): 200 trials agree (95 returned normally, 100% of 2 blocks reached)
+fff9089e	R_BSP_SoftwareInterruptOpen	273	R_BSP_SoftwareInterruptOpen	bsp/r_bsp_sys.o	equivalent	273	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 19 blocks reached)
+fff909af	R_BSP_SoftwareInterruptClose	231	R_BSP_SoftwareInterruptClose	bsp/r_bsp_sys.o	equivalent	231	differential emulation (Ghidra p-code): 200 trials agree (154 returned normally, 94% of 18 blocks reached)
+fff90a96	R_BSP_SoftwareInterruptSetTask	272	R_BSP_SoftwareInterruptSetTask	bsp/r_bsp_sys.o	equivalent	272	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 22 blocks reached)
+fff90ba6	bsp_swint_get_interrupt_information	144	bsp_swint_get_interrupt_information	bsp/r_bsp_sys.o	equivalent	144	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+fff90c36	bsp_swint_enable_interrupt	32	bsp_swint_enable_interrupt	bsp/r_bsp_sys.o	equivalent	32	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fff90c56	bsp_swint_disable_interrupt	32	bsp_swint_disable_interrupt	bsp/r_bsp_sys.o	equivalent	32	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fff90c76	bsp_swint_set_interrupt_priority	171	bsp_swint_set_interrupt_priority	bsp/r_bsp_sys.o	equivalent	171	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 15 blocks reached)
+fff90d21	bsp_swint_set_interrupt_request	33	bsp_swint_set_interrupt_request	bsp/r_bsp_sys.o	equivalent	33	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+fff90d42	bsp_swint_clear_interrupt_request	33	bsp_swint_clear_interrupt_request	bsp/r_bsp_sys.o	equivalent	33	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+fff90d63	bsp_swint_enable_nested_interrupt	17	bsp_swint_enable_nested_interrupt	bsp/r_bsp_sys.o	equivalent	17	differential emulation (Ghidra p-code): 200 trials agree (103 returned normally, 100% of 1 blocks reached)
+fff90d74	bsp_swint_disable_nested_interrupt	17	bsp_swint_disable_nested_interrupt	bsp/r_bsp_sys.o	equivalent	17	differential emulation (Ghidra p-code): 200 trials agree (103 returned normally, 100% of 1 blocks reached)
+fff90d85	bsp_swint_clear_task	183	bsp_swint_clear_task	bsp/r_bsp_sys.o	equivalent	183	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 12 blocks reached)
+fff90e3c	bsp_swint_clear_all_task	244	bsp_swint_clear_all_task	bsp/r_bsp_sys.o	equivalent	244	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 18 blocks reached)
+fff90f30	bsp_swint_get_all_task_status	107	bsp_swint_get_all_task_status	bsp/r_bsp_sys.o	equivalent	107	differential emulation (Ghidra p-code): 200 trials agree (81 returned normally, 100% of 4 blocks reached)
+fff90f9b	R_BSP_SoftwareInterruptControl	190	R_BSP_SoftwareInterruptControl	bsp/r_bsp_sys.o	equivalent	190	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 33 blocks reached)
+fff91059	bsp_swint_get_access_control	46	bsp_swint_get_access_control	bsp/r_bsp_sys.o	equivalent	46	differential emulation (Ghidra p-code): 200 trials agree (83 returned normally, 75% of 4 blocks reached)
+fff91087	bsp_swint_release_access_control	53	bsp_swint_release_access_control	bsp/r_bsp_sys.o	equivalent	60	differential emulation (Ghidra p-code): 200 trials agree (83 returned normally, 75% of 4 blocks reached)
+fff910c3	bsp_swint_execute_task	327	bsp_swint_execute_task	bsp/r_bsp_sys.o	equivalent	327	differential emulation (Ghidra p-code): 200 trials agree (199 returned normally, 100% of 22 blocks reached)
+fff9120a	vec027_ICU_SWINT	15	vec027_ICU_SWINT	bsp/r_bsp_sys.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (195 returned normally, 100% of 2 blocks reached)
+fff91219	vec026_ICU_SWINT2	15	vec026_ICU_SWINT2	bsp/r_bsp_sys.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (196 returned normally, 100% of 2 blocks reached)
+fff91228	chg_pmusr	32	chg_pmusr	bsp/r_bsp_sys.o	identical	32	byte-identical at the original address (32 bytes)
+fff91248	set_bpsw	4	set_bpsw	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
 fff9124c	get_bpsw	19	get_bpsw	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff9125f	set_bpc	4			not yet	0	
+fff9125f	set_bpc	4	set_bpc	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
 fff91263	get_bpc	19	get_bpc	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff91276	set_extb	4			not yet	0	
+fff91276	set_extb	4	set_extb	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
 fff9127a	get_extb	19	get_extb	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff9128d	set_acc_hi	4			not yet	0	
-fff91291	set_acc_lo	4			not yet	0	
+fff9128d	set_acc_hi	4	set_acc_hi	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
+fff91291	set_acc_lo	4	set_acc_lo	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
 fff91295	get_acc_hi	19	get_acc_hi	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fff912a8	get_acc_mi	19	get_acc_mi	bsp/r_bsp.o	equivalent	19	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-fff912bb	byte_bset	4			not yet	0	
-fff912bf	byte_bclr	4			not yet	0	
-fff912c3	byte_bnot	4			not yet	0	
+fff912bb	byte_bset	4	byte_bset	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
+fff912bf	byte_bclr	4	byte_bclr	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
+fff912c3	byte_bnot	4	byte_bnot	bsp/r_bsp_sys.o	identical	4	byte-identical at the original address (4 bytes)
 fff912c7	sbrk	60	sbrk	lib/runtime.o	equivalent	60	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
-fff91303	get_iclk_freq_hz	212			not yet	0	
-fff913d7	hw_init_clock	4			not yet	0	
-fff913db	mcu_clock_setup	186			not yet	0	
-fff91495	clock_source_select	371			not yet	0	
-fff91608	FUN_fff91608	164			not yet	0	
-fff916ac	FUN_fff916ac	158			not yet	0	
+fff91303	get_iclk_freq_hz	212	get_iclk_freq_hz	bsp/r_bsp_sys.o	equivalent	212	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 14 blocks reached)
+fff913d7	hw_init_clock	4	hw_init_clock	bsp/r_bsp_sys.o	equivalent	4	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+fff913db	mcu_clock_setup	186	mcu_clock_setup	bsp/r_bsp_sys.o	equivalent	186	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 67% of 9 blocks reached)
+fff91495	clock_source_select	371	clock_source_select	bsp/r_bsp_sys.o	equivalent	371	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 97% of 34 blocks reached)
+fff91608	FUN_fff91608	164	bsp_non_existent_port_init	bsp/r_bsp_sys.o	equivalent	164	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff916ac	FUN_fff916ac	158	bsp_interrupt_enable_disable	bsp/r_bsp_sys.o	equivalent	158	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 56% of 16 blocks reached)
 fff9174a	vec110_GROUPBL0	884			not yet	0	
 fff91abe	vec111_GROUPBL1	736			not yet	0	
 fff91d9e	vec107_GROUPBL2	46			not yet	0	
@@ -386,17 +386,17 @@ fff9a17d	displink_tx_24	42	displink_tx_24	app/display_link.o	equivalent	42	diffe
 fff9a1a7	displink_build_24	298			not yet	0	
 fff9a2d1	displink_tx_50	42	displink_tx_50	app/display_link.o	equivalent	42	differential emulation (Ghidra p-code): 200 trials agree (145 returned normally, 83% of 6 blocks reached)
 fff9a2fb	displink_build_50	105			not yet	0	
-fff9a364	dl50_mycall	203			not yet	0	
-fff9a42f	dl50_memory_name	197			not yet	0	
-fff9a4f4	dl50_cw_text	106			not yet	0	
-fff9a55e	dl50_rtty_text	106			not yet	0	
-fff9a5c8	dl50_psk_text	135			not yet	0	
-fff9a64f	dl50_file_name	170			not yet	0	
-fff9a6f9	dl50_preset_name	169			not yet	0	
-fff9a7a2	kbd_fmt_char_pos	98			not yet	0	
-fff9a804	kbd_copy_text	55			not yet	0	
-fff9a83b	dl50_slot_label	46			not yet	0	
-fff9a869	dl50_msg_text	50			not yet	0	
+fff9a364	dl50_mycall	203	dl50_mycall	app/ui_kbd.o	equivalent	203	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a42f	dl50_memory_name	197	dl50_memory_name	app/ui_kbd.o	equivalent	197	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 9 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a4f4	dl50_cw_text	106	dl50_cw_text	app/ui_kbd.o	equivalent	106	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a55e	dl50_rtty_text	106	dl50_rtty_text	app/ui_kbd.o	equivalent	106	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a5c8	dl50_psk_text	135	dl50_psk_text	app/ui_kbd.o	equivalent	135	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a64f	dl50_file_name	170	dl50_file_name	app/ui_kbd.o	equivalent	170	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a6f9	dl50_preset_name	169	dl50_preset_name	app/ui_kbd.o	equivalent	169	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 8 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fff9a7a2	kbd_fmt_char_pos	98	kbd_fmt_char_pos	app/ui_kbd.o	equivalent	98	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff9a804	kbd_copy_text	55	kbd_copy_text	app/ui_kbd.o	equivalent	55	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 3 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b r, [r+]
+fff9a83b	dl50_slot_label	46	dl50_slot_label	app/ui_kbd.o	equivalent	46	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fff9a869	dl50_msg_text	50	dl50_msg_text	app/ui_kbd.o	equivalent	50	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 fff9a89b	displink_tx_3F	72			not yet	0	
 fff9a8e3	displink_tx_3A	66			not yet	0	
 fff9a925	displink_build_3A	392			not yet	0	
@@ -845,11 +845,11 @@ fffb2894	adc1_done	10			not yet	0
 fffb289e	adc_scan_done	51			not yet	0	
 fffb28d1	dac_init_idle	17			not yet	0	
 fffb28e2	beep_task	1220			not yet	0	
-fffb2da6	beep_request	78			not yet	0	
-fffb2df4	beep_stop	10			not yet	0	
-fffb2dfe	FUN_fffb2dfe	15			not yet	0	
-fffb2e0d	tone_idle	17			not yet	0	
-fffb2e1e	tone_set	126			not yet	0	
+fffb2da6	beep_request	78	beep_request	app/ui_beep.o	equivalent	78	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 78% of 9 blocks reached)
+fffb2df4	beep_stop	10	beep_stop	app/ui_beep.o	identical	10	byte-identical at the original address (10 bytes)
+fffb2dfe	FUN_fffb2dfe	15	beep_pattern_get	app/ui_beep.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb2e0d	tone_idle	17	tone_idle	app/ui_beep.o	equivalent	17	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+fffb2e1e	tone_set	126	tone_set	app/ui_beep.o	equivalent	126	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 10 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): fsub n, r
 fffb2e9c	nib2hex	27			not yet	0	
 fffb2eb7	byte2hex	48			not yet	0	
 fffb2ee7	word2hex	32			not yet	0	
@@ -926,17 +926,17 @@ fffb5d68	audio_level_update	2322			not yet	0
 fffb667a	pa_falc_interp	1636			not yet	0	
 fffb6cde	trx_init	120			not yet	0	
 fffb6d56	io_task	173	io_task	app/tasks.o	equivalent	173	differential emulation (Ghidra p-code): 200 trials agree (63 returned normally, 92% of 26 blocks reached, 137 trials inconclusive)
-fffb6e03	meter_get_vdd	15			not yet	0	
-fffb6e12	meter_get_idd	15			not yet	0	
-fffb6e21	meter_get_alc	15			not yet	0	
-fffb6e30	meter_get_swr	15			not yet	0	
-fffb6e3f	meter_get_swr_raw	15			not yet	0	
-fffb6e4e	FUN_fffb6e4e	14			not yet	0	
-fffb6e5c	FUN_fffb6e5c	14			not yet	0	
-fffb6e6a	meter_get_po	46			not yet	0	
-fffb6e98	meter_get_comp	15			not yet	0	
-fffb6ea7	meter_get_s	15			not yet	0	
-fffb6eb6	remote_key_get	15			not yet	0	
+fffb6e03	meter_get_vdd	15	meter_get_vdd	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e12	meter_get_idd	15	meter_get_idd	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e21	meter_get_alc	15	meter_get_alc	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e30	meter_get_swr	15	meter_get_swr	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e3f	meter_get_swr_raw	15	meter_get_swr_raw	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e4e	FUN_fffb6e4e	14	meter_get_swr_f	app/meters.o	equivalent	14	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e5c	FUN_fffb6e5c	14	meter_get_swr_avg_f	app/meters.o	equivalent	14	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6e6a	meter_get_po	46	meter_get_po	app/meters.o	equivalent	46	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+fffb6e98	meter_get_comp	15	meter_get_comp	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6ea7	meter_get_s	15	meter_get_s	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb6eb6	remote_key_get	15	remote_key_get	app/meters.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fffb6ec5	ptt_source_get	15	ptt_source_get	app/trx_lines.o	equivalent	15	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 fffb6ed4	ckey_det	31			not yet	0	
 fffb6ef3	ckey_dot	24			not yet	0	
@@ -978,17 +978,17 @@ fffb7243	af_mute_set	199			not yet	0
 fffb730a	ear_det	24			not yet	0	
 fffb7322	speaker_switch_set	132			not yet	0	
 fffb73a6	power_off_io	55			not yet	0	
-fffb73dd	meter_task	65			not yet	0	
-fffb741e	adc_scan_blocking	13			not yet	0	
-fffb742b	vdd_scale_calc	81			not yet	0	
-fffb747c	meter_vdd	60			not yet	0	
-fffb74b8	meter_idd	71			not yet	0	
-fffb74ff	meter_alc	70			not yet	0	
+fffb73dd	meter_task	65	meter_task	app/meters.o	equivalent	65	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 82% of 17 blocks reached)
+fffb741e	adc_scan_blocking	13	adc_scan_blocking	app/meters.o	equivalent	13	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+fffb742b	vdd_scale_calc	81	vdd_scale_calc	app/meters.o	equivalent	81	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+fffb747c	meter_vdd	60	meter_vdd	app/meters.o	equivalent	60	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): min n, r
+fffb74b8	meter_idd	71	meter_idd	app/meters.o	equivalent	71	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+fffb74ff	meter_alc	70	meter_alc	app/meters.o	equivalent	70	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 fffb7545	swr_meter_protect	557			not yet	0	
-fffb7772	meter_po	247			not yet	0	
-fffb7869	meter_comp	240			not yet	0	
-fffb7959	meter_s	231			not yet	0	
-fffb7a40	remote_keypad_scan	259			not yet	0	
+fffb7772	meter_po	247	meter_po	app/meters.o	equivalent	247	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 92% of 13 blocks reached)
+fffb7869	meter_comp	240	meter_comp	app/meters.o	equivalent	240	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 93% of 15 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): min n, r
+fffb7959	meter_s	231	meter_s	app/meters.o	equivalent	231	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 17 blocks reached)
+fffb7a40	remote_keypad_scan	259	remote_keypad_scan	app/meters.o	equivalent	259	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 21 blocks reached)
 fffb7b43	io_poll	34			not yet	0	
 fffb7b65	af_mute_update	391			not yet	0	
 fffb7cec	fm_noise_squelch	373			not yet	0	
@@ -1002,13 +1002,13 @@ fffb8a8c	speaker_route	747			not yet	0
 fffb8d77	lamp_map_update	518			not yet	0	
 fffb8f7d	linear_band_data	481			not yet	0	
 fffb915e	rtty_fsk_keying	393			not yet	0	
-fffb92e7	FUN_fffb92e7	105			not yet	0	
-fffb9350	FUN_fffb9350	105			not yet	0	
-fffb93b9	FUN_fffb93b9	105			not yet	0	
-fffb9422	FUN_fffb9422	105			not yet	0	
-fffb948b	FUN_fffb948b	110			not yet	0	
-fffb94f9	FUN_fffb94f9	163			not yet	0	
-fffb959c	FUN_fffb959c	105			not yet	0	
+fffb92e7	FUN_fffb92e7	105	meter_avg_vdd	app/meters.o	equivalent	105	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+fffb9350	FUN_fffb9350	105	meter_avg_idd	app/meters.o	equivalent	105	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+fffb93b9	FUN_fffb93b9	105	meter_avg_alc	app/meters.o	equivalent	105	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+fffb9422	FUN_fffb9422	105	meter_avg_swr	app/meters.o	equivalent	105	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+fffb948b	FUN_fffb948b	110	meter_avg_swr_f	app/meters.o	equivalent	110	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+fffb94f9	FUN_fffb94f9	163	meter_avg_po	app/meters.o	equivalent	163	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 11 blocks reached); instruction forms the MAIN image does not use (semantics not checked by T22a): mov.b [r+], r
+fffb959c	FUN_fffb959c	105	meter_avg_s	app/meters.o	equivalent	105	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 fffb9605	FUN_fffb9605	367			not yet	0	
 fffb9774	pc_keying	340			not yet	0	
 fffb98c8	keyer_init	33	keyer_init	app/keyer.o	equivalent	33	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 1 blocks reached)
@@ -1047,17 +1047,17 @@ fffbbc8e	align_store_ui2	42			not yet	0
 fffbbcb8	align_store_dsp_async	71			not yet	0	
 fffbbcff	align_store_ui8_scaled	83			not yet	0	
 fffbbd52	align_store_nop	1			not yet	0	
-fffbbd53	key_task_init	5			not yet	0	
+fffbbd53	key_task_init	5	key_task_init	app/ui_keys.o	identical	5	byte-identical at the original address (5 bytes)
 fffbbd58	key_task	939			not yet	0	
 fffbc103	key_cancel_check	205			not yet	0	
-fffbc1d0	key_class_of	85			not yet	0	
-fffbc225	key_assign_slot	122			not yet	0	
+fffbc1d0	key_class_of	85	key_class_of	app/ui_keys.o	equivalent	85	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+fffbc225	key_assign_slot	122	key_assign_slot	app/ui_keys.o	equivalent	122	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 13 blocks reached)
 fffbc29f	scope_cursor_follow	192			not yet	0	
-fffbc35f	key_call_press	47			not yet	0	
-fffbc38e	key_call_short	47			not yet	0	
-fffbc3bd	key_call_long	73			not yet	0	
-fffbc406	key_call_repeat	47			not yet	0	
-fffbc435	key_call_release	47			not yet	0	
+fffbc35f	key_call_press	47	key_call_press	app/ui_keys.o	equivalent	47	differential emulation (Ghidra p-code): 200 trials agree (140 returned normally, 80% of 5 blocks reached)
+fffbc38e	key_call_short	47	key_call_short	app/ui_keys.o	equivalent	47	differential emulation (Ghidra p-code): 200 trials agree (143 returned normally, 80% of 5 blocks reached)
+fffbc3bd	key_call_long	73	key_call_long	app/ui_keys.o	equivalent	73	differential emulation (Ghidra p-code): 200 trials agree (148 returned normally, 67% of 9 blocks reached)
+fffbc406	key_call_repeat	47	key_call_repeat	app/ui_keys.o	equivalent	47	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 80% of 5 blocks reached)
+fffbc435	key_call_release	47	key_call_release	app/ui_keys.o	equivalent	47	differential emulation (Ghidra p-code): 200 trials agree (168 returned normally, 80% of 5 blocks reached)
 fffbc464	key_touch_scope_tune	405			not yet	0	
 fffbc5f9	FUN_fffbc5f9	4			not yet	0	
 fffbc5fd	FUN_fffbc5fd	4			not yet	0	
@@ -1209,9 +1209,9 @@ fffbdb40	width_reset_beep	35			not yet	0
 fffbdb63	dsp_knob_notch_toggle	298			not yet	0	
 fffbdc8d	notch_reset_beep	35			not yet	0	
 fffbdcb0	dsp_knob_contour_toggle	389			not yet	0	
-fffbde35	contour_reset_beep	35			not yet	0	
+fffbde35	contour_reset_beep	35	contour_reset_beep	app/ui_keys.o	equivalent	35	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 fffbde58	dsp_knob_apf_toggle	285			not yet	0	
-fffbdf75	apf_reset_beep	35			not yet	0	
+fffbdf75	apf_reset_beep	35	apf_reset_beep	app/ui_keys.o	equivalent	35	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 6 blocks reached)
 fffbdf98	FUN_fffbdf98	416			not yet	0	
 fffbe138	FUN_fffbe138	7			not yet	0	
 fffbe13f	FUN_fffbe13f	7			not yet	0	
@@ -1569,11 +1569,11 @@ fffc3f40	vfo_bk_in_bit_toggle	92			not yet	0
 fffc3f9c	func_txw_toggle	83			not yet	0	
 fffc3fef	FUN_fffc3fef	117			not yet	0	
 fffc4064	FUN_fffc4064	115			not yet	0	
-fffc40d7	key_slot_press	51			not yet	0	
-fffc410a	key_slot_short	51			not yet	0	
-fffc413d	key_slot_long	51			not yet	0	
-fffc4170	key_slot_repeat	51			not yet	0	
-fffc41a3	key_slot_release	51			not yet	0	
+fffc40d7	key_slot_press	51	key_slot_press	app/ui_keys.o	equivalent	51	differential emulation (Ghidra p-code): 200 trials agree (170 returned normally, 100% of 5 blocks reached)
+fffc410a	key_slot_short	51	key_slot_short	app/ui_keys.o	equivalent	51	differential emulation (Ghidra p-code): 200 trials agree (172 returned normally, 100% of 5 blocks reached)
+fffc413d	key_slot_long	51	key_slot_long	app/ui_keys.o	equivalent	51	differential emulation (Ghidra p-code): 200 trials agree (193 returned normally, 100% of 5 blocks reached)
+fffc4170	key_slot_repeat	51	key_slot_repeat	app/ui_keys.o	equivalent	51	differential emulation (Ghidra p-code): 200 trials agree (198 returned normally, 100% of 5 blocks reached)
+fffc41a3	key_slot_release	51	key_slot_release	app/ui_keys.o	equivalent	51	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 fffc41d6	FUN_fffc41d6	98			not yet	0	
 fffc4238	FUN_fffc4238	81			not yet	0	
 fffc4289	FUN_fffc4289	66			not yet	0	
@@ -1606,7 +1606,7 @@ fffc4924	FUN_fffc4924	88			not yet	0
 fffc497c	FUN_fffc497c	69			not yet	0	
 fffc49c1	FUN_fffc49c1	134			not yet	0	
 fffc4a47	FUN_fffc4a47	70			not yet	0	
-fffc4a8d	key_nop	1			not yet	0	
+fffc4a8d	key_nop	1	key_nop	app/ui_keys.o	identical	1	byte-identical at the original address (1 bytes)
 fffc4a8e	FUN_fffc4a8e	103			not yet	0	
 fffc4af5	FUN_fffc4af5	72			not yet	0	
 fffc4b3d	vfo_filter_byte_ptr	152			not yet	0	
@@ -1657,10 +1657,10 @@ fffc5f2c	FUN_fffc5f2c	113			not yet	0
 fffc5f9d	FUN_fffc5f9d	214			not yet	0	
 fffc6073	FUN_fffc6073	144			not yet	0	
 fffc6103	FUN_fffc6103	107			not yet	0	
-fffc616e	dial_step_hz	320			not yet	0	
-fffc62ae	dial_step_mode_hz	312			not yet	0	
-fffc63e6	ch_step_hz	166			not yet	0	
-fffc648c	FUN_fffc648c	52			not yet	0	
+fffc616e	dial_step_hz	320	dial_step_hz	app/ui_dial.o	equivalent	320	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 50 blocks reached)
+fffc62ae	dial_step_mode_hz	312	dial_step_mode_hz	app/ui_dial.o	equivalent	312	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 95% of 38 blocks reached)
+fffc63e6	ch_step_hz	166	ch_step_hz	app/ui_dial.o	equivalent	166	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 19 blocks reached)
+fffc648c	FUN_fffc648c	52	ch_step_scale	app/ui_dial.o	equivalent	52	differential emulation (Ghidra p-code): 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 fffc64c0	enc2_step	213			not yet	0	
 fffc6595	playback_knob_turn	376			not yet	0	
 fffc670d	FUN_fffc670d	243			not yet	0	
@@ -1679,53 +1679,53 @@ fffc6d28	FUN_fffc6d28	100			not yet	0
 fffc6d8c	FUN_fffc6d8c	81			not yet	0	
 fffc6ddd	funcknob_popup_step	308			not yet	0	
 fffc6f11	funcknob_step	237			not yet	0	
-fffc6ffe	funcknob_scope_level	24			not yet	0	
-fffc7016	funcknob_scope_level_step	61			not yet	0	
-fffc7053	funcknob_peak	24			not yet	0	
-fffc706b	funcknob_peak_step	68			not yet	0	
-fffc70af	funcknob_color_popup	44			not yet	0	
-fffc70db	funcknob_contrast	24			not yet	0	
-fffc70f3	funcknob_contrast_step	82			not yet	0	
-fffc7145	funcknob_dimmer	24			not yet	0	
-fffc715d	funcknob_dimmer_step	82			not yet	0	
+fffc6ffe	funcknob_scope_level	24	funcknob_scope_level	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (104 returned normally, 100% of 2 blocks reached)
+fffc7016	funcknob_scope_level_step	61	funcknob_scope_level_step	app/ui_funcknob.o	equivalent	61	differential emulation (Ghidra p-code): 200 trials agree (143 returned normally, 100% of 8 blocks reached)
+fffc7053	funcknob_peak	24	funcknob_peak	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc706b	funcknob_peak_step	68	funcknob_peak_step	app/ui_funcknob.o	equivalent	68	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc70af	funcknob_color_popup	44	funcknob_color_popup	app/ui_funcknob.o	equivalent	44	differential emulation (Ghidra p-code): 200 trials agree (100 returned normally, 100% of 3 blocks reached)
+fffc70db	funcknob_contrast	24	funcknob_contrast	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc70f3	funcknob_contrast_step	82	funcknob_contrast_step	app/ui_funcknob.o	equivalent	82	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 7 blocks reached)
+fffc7145	funcknob_dimmer	24	funcknob_dimmer	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc715d	funcknob_dimmer_step	82	funcknob_dimmer_step	app/ui_funcknob.o	equivalent	82	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 7 blocks reached)
 fffc71af	funcknob_mgroup	24			not yet	0	
 fffc71c7	funcknob_mgroup_step	213			not yet	0	
 fffc729c	FUN_fffc729c	246			not yet	0	
 fffc7392	FUN_fffc7392	45			not yet	0	
 fffc73bf	FUN_fffc73bf	32			not yet	0	
 fffc73df	FUN_fffc73df	271			not yet	0	
-fffc74ee	funcknob_mic_gain	24			not yet	0	
-fffc7506	funcknob_mic_gain_step	69			not yet	0	
+fffc74ee	funcknob_mic_gain	24	funcknob_mic_gain	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (95 returned normally, 100% of 2 blocks reached)
+fffc7506	funcknob_mic_gain_step	69	funcknob_mic_gain_step	app/ui_funcknob.o	equivalent	69	differential emulation (Ghidra p-code): 200 trials agree (122 returned normally, 100% of 10 blocks reached)
 fffc754b	funcknob_mic_eq_step	113			not yet	0	
-fffc75bc	funcknob_proc_level	24			not yet	0	
-fffc75d4	funcknob_proc_level_step	69			not yet	0	
-fffc7619	funcknob_amc_level	24			not yet	0	
-fffc7631	funcknob_amc_level_step	67			not yet	0	
-fffc7674	funcknob_vox_gain	24			not yet	0	
-fffc768c	funcknob_vox_gain_step	69			not yet	0	
-fffc76d1	funcknob_vox_delay	24			not yet	0	
-fffc76e9	funcknob_vox_delay_step	99			not yet	0	
-fffc774c	funcknob_anti_vox	24			not yet	0	
-fffc7764	funcknob_anti_vox_step	99			not yet	0	
+fffc75bc	funcknob_proc_level	24	funcknob_proc_level	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc75d4	funcknob_proc_level_step	69	funcknob_proc_level_step	app/ui_funcknob.o	equivalent	69	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc7619	funcknob_amc_level	24	funcknob_amc_level	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc7631	funcknob_amc_level_step	67	funcknob_amc_level_step	app/ui_funcknob.o	equivalent	67	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc7674	funcknob_vox_gain	24	funcknob_vox_gain	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc768c	funcknob_vox_gain_step	69	funcknob_vox_gain_step	app/ui_funcknob.o	equivalent	69	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc76d1	funcknob_vox_delay	24	funcknob_vox_delay	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (109 returned normally, 100% of 2 blocks reached)
+fffc76e9	funcknob_vox_delay_step	99	funcknob_vox_delay_step	app/ui_funcknob.o	equivalent	99	differential emulation (Ghidra p-code): 200 trials agree (158 returned normally, 100% of 10 blocks reached)
+fffc774c	funcknob_anti_vox	24	funcknob_anti_vox	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (109 returned normally, 100% of 2 blocks reached)
+fffc7764	funcknob_anti_vox_step	99	funcknob_anti_vox_step	app/ui_funcknob.o	equivalent	99	differential emulation (Ghidra p-code): 200 trials agree (158 returned normally, 100% of 10 blocks reached)
 fffc77c7	funcknob_rf_power	24			not yet	0	
 fffc77df	funcknob_rf_power_step	72			not yet	0	
 fffc7827	rf_power_ptr	228			not yet	0	
-fffc790b	funcknob_moni_level	24			not yet	0	
-fffc7923	funcknob_moni_level_step	82			not yet	0	
-fffc7975	funcknob_keyer_step	67			not yet	0	
+fffc790b	funcknob_moni_level	24	funcknob_moni_level	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (100 returned normally, 100% of 2 blocks reached)
+fffc7923	funcknob_moni_level_step	82	funcknob_moni_level_step	app/ui_funcknob.o	equivalent	82	differential emulation (Ghidra p-code): 200 trials agree (90 returned normally, 100% of 10 blocks reached)
+fffc7975	funcknob_keyer_step	67	funcknob_keyer_step	app/ui_funcknob.o	equivalent	67	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 88% of 8 blocks reached)
 fffc79b8	funcknob_bk_in_step	215			not yet	0	
-fffc7a8f	funcknob_cw_speed	24			not yet	0	
-fffc7aa7	funcknob_cw_speed_step	67			not yet	0	
-fffc7aea	funcknob_cw_pitch	24			not yet	0	
-fffc7b02	funcknob_cw_pitch_step	69			not yet	0	
-fffc7b47	funcknob_bk_delay	24			not yet	0	
-fffc7b5f	funcknob_bk_delay_step	69			not yet	0	
-fffc7ba4	funcknob_aess_level	24			not yet	0	
-fffc7bbc	funcknob_aess_level_step	65			not yet	0	
-fffc7bfd	funcknob_aess_cf	24			not yet	0	
-fffc7c15	funcknob_aess_cf_step	64			not yet	0	
+fffc7a8f	funcknob_cw_speed	24	funcknob_cw_speed	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc7aa7	funcknob_cw_speed_step	67	funcknob_cw_speed_step	app/ui_funcknob.o	equivalent	67	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc7aea	funcknob_cw_pitch	24	funcknob_cw_pitch	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc7b02	funcknob_cw_pitch_step	69	funcknob_cw_pitch_step	app/ui_funcknob.o	equivalent	69	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc7b47	funcknob_bk_delay	24	funcknob_bk_delay	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (102 returned normally, 100% of 2 blocks reached)
+fffc7b5f	funcknob_bk_delay_step	69	funcknob_bk_delay_step	app/ui_funcknob.o	equivalent	69	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
+fffc7ba4	funcknob_aess_level	24	funcknob_aess_level	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (90 returned normally, 100% of 2 blocks reached)
+fffc7bbc	funcknob_aess_level_step	65	funcknob_aess_level_step	app/ui_funcknob.o	equivalent	65	differential emulation (Ghidra p-code): 200 trials agree (134 returned normally, 100% of 8 blocks reached)
+fffc7bfd	funcknob_aess_cf	24	funcknob_aess_cf	app/ui_funcknob.o	equivalent	24	differential emulation (Ghidra p-code): 200 trials agree (90 returned normally, 100% of 2 blocks reached)
+fffc7c15	funcknob_aess_cf_step	64	funcknob_aess_cf_step	app/ui_funcknob.o	equivalent	64	differential emulation (Ghidra p-code): 200 trials agree (134 returned normally, 100% of 8 blocks reached)
 fffc7c55	func_menu_cursor_step	168			not yet	0	
-fffc7cfd	funcknob_nb_level_step	68			not yet	0	
+fffc7cfd	funcknob_nb_level_step	68	funcknob_nb_level_step	app/ui_funcknob.o	equivalent	68	differential emulation (Ghidra p-code): 200 trials agree (137 returned normally, 100% of 7 blocks reached)
 fffc7d41	funcknob_dnr_level_step	110			not yet	0	
 fffc7daf	enc3_step	316			not yet	0	
 fffc7eeb	FUN_fffc7eeb	225			not yet	0	
