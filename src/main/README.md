@@ -30,11 +30,11 @@ original addresses. What the code does: [docs/code/main/](../../docs/code/main/R
 | `app/tasks.c` | the small main-loop tasks `wdt_kick`, `rf_ctrl_task`, `io_task`, `scan_task`, `dispreq_e8_task` (round 4) |
 | `app/trx_lines.c` | the TX/RX sequencer's lines: `tx_line_get`, `rx_line_get`, `send_a_get`, `send_a_set`/`send_b_set` (gated by ETUN_TXINH_REQ and TX), `ptt_source_get` (round 2); `trx_sequencer`, the RX->TX / TX->RX state machine (round 3) |
 | `app/cat_parse.c` | `cat_parse` (ring and E9 slot, mnemonic lookup, power-off gate, reply), `cat_dispatch` with one case per `enum cat_cmd` index (echo, length test, handler; decomp/main/cat_dispatch.tsv), `cat_dispatch_ext`, `cat_ext_SP` (round 3) |
-| `app/cat_handlers.c` | the CAT read/set handlers AG AI AO AV BA BC BI CS CT DN EX FN GP KP KR KS LK MA MB MS MX NB NL NR PA PL PR PS RA RG RL SC SD SM ST TX UP VD VG VX ZI (round 3); SQ, SF, DT, EM, KM (round 4); AB, AM, BM (round 6) |
+| `app/cat_handlers.c` | the CAT read/set handlers AG AI AO AV BA BC BI CS CT DN EX FN GP KP KR KS LK MA MB MS MX NB NL NR PA PL PR PS RA RG RL SC SD SM ST TX UP VD VG VX ZI (round 3); SQ, SF, DT, EM, KM (round 4); AB, AM, BM, RM (round 6) |
 | `app/cat_util.h` | the helpers the CAT handler files share: the reply end, the key filter, decimal print and parse in 8, 16 bits, the mode -> per-mode block selector, big-endian u16 (round 4) |
 | `app/cat_scope.c` | `cat_SS`, the scope settings (round 4) |
 | `app/cat_dsp.c` | `cat_CO`, `cat_BP`, `cat_SH`, `cat_GT`: CONTOUR/APF, NOTCH, WIDTH, AGC on the per-mode block (round 4) |
-| `app/cat_vfo.c` | `cat_FA_FB`, `cat_IF_OI`, `cat_CF`, `cat_MR`, `cat_MW`, `cat_MC`, `cat_VM`: VFO frequency, information, clarifier, memory read/write/recall, V/M (round 4) |
+| `app/cat_vfo.c` | `cat_FA_FB`, `cat_IF_OI`, `cat_CF`, `cat_MR`, `cat_MW`, `cat_MC`, `cat_VM`, `cat_SV` (round 6): VFO frequency, information, clarifier, memory read/write/recall, V/M (round 4) |
 | `app/tuner.c`, `app/keyer.c` | `tuner_task` (dispatch by TUNER SELECT), `tuner_init`, `atu_ac_get`/`atu_tc_get`; `keyer_init`, `keyer_state_clear`, `keyer_ring_next`, `keyer_sidetone_off` (round 2); `keyer_task`, the keyer and message-memory state machine; `tuner_int_task`, `tuner_ext_task`, `tuner_atas_task`, `tuner_rearm` (round 4) |
 | `app/beep.c` | `beep_task`, the beep patterns on soft timer 0x16 (round 5; the request, stop and tone functions are in `ui_beep.c`) |
 | `app/swr_squelch.c` | `swr_meter_protect` (SWR, HI-SWR alarm, pinning), `fm_noise_squelch`, `signal_level_squelch`: the float code step for step in the image's order (round 5) |

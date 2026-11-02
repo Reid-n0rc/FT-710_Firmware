@@ -460,6 +460,20 @@ static int vm_busy(void)
 /* cat_VM 0xFFFAFADB: "VM;" = the V/M key; VM0 reads the active VFO's kind as two hex digits (00 VFO, 10 memory tune,
  * 11 memory 001..099, 20 PMS, 21 P1L..P9U, 51 60 m channels, 91 EMG); "VM000;" returns to the VFO (one V/M press,
  * and a second when the first did not reach the VFO). Gated by the V/M key's filter (0x309) and vm_busy. */
+void vfo_ab_toggle(void);                       /* A/B: swap the active VFO (radio-control.md) */
+
+/* cat_SV 0xFFFAF46E: "SV;" = the A/B key (key 0x30A), refused in the states VM refuses (round 6) */
+void cat_SV(const uint8_t *text, uint8_t set)
+{
+    if (!key_allowed(0x30A, 0))
+        return;
+    if (vm_busy()) {
+        cat_error = 1;
+        return;
+    }
+    vfo_ab_toggle();
+}
+
 void cat_VM(const uint8_t *text, uint16_t len)
 {
     uint8_t state, ch, code;

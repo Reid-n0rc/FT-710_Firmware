@@ -9,7 +9,7 @@ An analysis of the Yaesu FT-710 firmware. The goals are to understand the radio,
 
 | Image | Functions | Code | Decompiled | Named | Documented | Calls named | Registers named | Variables named | Commented | Re-implemented |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| MAIN (RX651) | 2,812 / 3,794 | 378 KB | 100.0 % | 87.0 % | 86.3 % | 84.7 % | 99.8 % | 13.8 % | 27.8 % | 35.0 % |
+| MAIN (RX651) | 2,812 / 3,794 | 378 KB | 100.0 % | 87.0 % | 86.3 % | 84.7 % | 99.8 % | 13.8 % | 27.8 % | 35.2 % |
 | DISPLAY (RZ/A1H) | 1,955 / 2,245 | 387 KB | 100.0 % | 93.7 % | 89.7 % | 94.0 % | 99.5 % | 6.8 % | 31.4 % | 22.0 % |
 | IFDSP M33 (RT685) | 450 / 450 | 29 KB | 100.0 % | 100.0 % | 100.0 % | 100.0 % | 100.0 % | 9.6 % | 30.2 % | 100.0 % |
 | IFDSP HiFi4 (RT685) | 954 / 1,081 | 176 KB | 100.0 % | 94.3 % | 92.9 % | 90.0 % | 99.6 % | 0.4 % | 17.9 % | 3.2 % |

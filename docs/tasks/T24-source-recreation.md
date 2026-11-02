@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-02; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 35.04 % re-implemented, round 6; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-02; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 35.22 % re-implemented, round 6; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -2233,7 +2233,7 @@ bootstrap that Ghidra, as with rounds 2 and 4.
 | `app/cat_ai_ex.c` | 318 (1 identical) | 22,221 | `cat_ai_ex_scan`, `cat_ai_ex`, `cat_ai_ex_holdoff`, `ai_ex_fmt_u8`, `ai_ex_fmt_u16_4`, the 295 recreated `ai_ex*` detectors (one macro per shape: 2- or 3-digit / signed, one digit, AGC delay, PRESET stub) and the 18 PRESET-row detectors |
 | `app/cat_ai.c` | 54 | 14,722 | `cat_ai_poll` (checked with every detector stubbed, so the order is compared) and the detectors AC .. VX, FD, IF/OI |
 | `app/cat_ext.c` | 2 | 1,669 | `cat_ext_JP` (region code), `cat_ext_EO` (frequency / encoder steps) |
-| `app/cat_handlers.c` | +3 | 1,017 | `cat_AB`, `cat_AM`, `cat_BM` |
+| `app/cat_handlers.c`, `app/cat_vfo.c` | +5 | 1,707 | `cat_AB`, `cat_AM`, `cat_BM`, `cat_RM` (meter reading); `cat_SV` (the A/B key) in `cat_vfo.c` |
 
 `cat_vfo.c`'s IF/OI helpers (`put_dec32`, `put_channel`, `put_clar_offset`, the table externs) moved to `cat_util.h`; its
 functions were rerun and stay equivalent. Not recreated, because the image reads an uninitialised stack location and no C
@@ -2261,17 +2261,17 @@ data), M5 AG's `||` as `&&` in the jitter filter (`cat_ai_AG`, R1), M6 a 3-digit
 ### MAIN: results (status.tsv, round 6)
 
 `equiv_main_emu.py status --jobs 2 --object` for `app/cat_ai_ex.o`, `app/cat_ai.o`, `app/cat_handlers.o`, `app/cat_vfo.o`
-(about 20 minutes), then `--object app/cat_ext.o`, on the shared Ghidra (which has `rx62t-fpu-fix.patch` and
+(about 20 minutes), then `--object app/cat_ext.o` and, after `cat_RM` and `cat_SV`, `--object app/cat_handlers.o --object app/cat_vfo.o --object app/cat_ai.o`, on the shared Ghidra (which has `rx62t-fpu-fix.patch` and
 `rx62t-minmax-fix.patch` since round 5) with the harness project copy `/home/user/ghidra_tasks/t24main/proj`:
 
 | Verdict | Ghidra functions | Bytes (of 387,059) |
 |---|---:|---:|
 | identical | 57 | 364 |
-| equivalent | 875 | 135,266 |
+| equivalent | 877 | 135,956 |
 | differs | 0 | 0 |
-| not yet | 2,862 | 251,429 |
+| not yet | 2,860 | 250,739 |
 
-**Re-implemented: 35.04 %** (24.80 % after round 5). Round 6 added 377 functions (39,629 bytes counted).
+**Re-implemented: 35.22 %** (24.80 % after round 5). Round 6 added 379 functions (40,319 bytes counted).
 
 ### MAIN: Ghidra (round 6)
 
@@ -2303,8 +2303,8 @@ python3 -I tools/readability_stats.py readme
   reads the same stack slot does not exist. *Open: whether the stack holds 0 there in the radio; would be settled by an
   emulated pass of the callers (`cat_ai_ex_scan`, `cat_ai_poll`, `cat_parse` with a `PE` set) or by AI and `PE` on a radio.*
   If it does, recreating them with the value 0 would be the same code on the radio, but not provably so by this harness.
-- Not done this round: `cat_ai_SS` (1,121 B) and 39 other CAT handlers (`cat_ML`, `DA`, `MD`, `BD`, `AC`, `LM`, `BU`, ...,
-  `cat_ext_FD`, the `cat_SP_*` service dumps, 18.1 KB), `key_task`, `dsp_link_poll`, the menu and settings code, the
+- Not done this round: `cat_ai_SS` (1,121 B) and 36 other CAT functions besides `cat_ext_PE` (`cat_ML`, `DA`, `MD`, `BD`, `AC`, `LM`, `BU`, ...,
+  `cat_ext_FD`, the `cat_SP_*` service dumps, `cat_rx_complete`, `cat_rx_byte_hook`; 16.8 KB with PE), `key_task`, `dsp_link_poll`, the menu and settings code, the
   band/VFO/memory logic, `keyer_output_step`/`keyer_elekey`, the float users `pa_dac_update`, `align_store_ui8_scaled` and
   the seven unnamed FPU functions 0xFFFEC8A1..0xFFFEDA3B, and the UI-track items (`key_event_filter`, `enc_*`, the complex
   `funcknob_*` steps, `kbd_edit_*`, `R_Systeminit`, the group-interrupt dispatchers).
