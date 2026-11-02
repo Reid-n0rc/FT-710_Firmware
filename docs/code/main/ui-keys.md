@@ -229,6 +229,24 @@ multi-function knobs **[inference]**; matching them to the FUNC and MULTI knobs 
 | 0x1B4DB / 0x1B4DC | u8 | | long-press timer armed (timer 0x3F) / repeat armed (timer 0x40) |
 | 0x9AC8..0x9ACD | u8 × 6 | | assignable-key settings |
 
+## Found by the source recreation (T24 MAIN UI track)
+
+`src/main/app/ui_keys.c`, `ui_funcknob.c`, `ui_kbd.c`, `ui_dial.c` recreate the key dispatch helpers, the FUNC-knob
+pop-ups, the frame-0x50 keyboard builders and the dial steps (src/main/status.tsv). Points they settled **[fact]**:
+
+- `key_class_of` reads the class of slots 13..20 at 0xFFF834C3 + slot - 13, which is 0xFFF834B6 indexed by the slot
+  (0xFFFBC20D), so the class bytes of those slots are 0xFFF834C3..0xFFF834CA.
+- `key_call_long` also runs the handler when `key_dest_allowed` refuses, for LOCK/PWR (0x300) only (0xFFFBC3DD); every
+  `key_call_*` JSR passes the `key_dest_allowed` result in R1, and `key_slot_*` pass the slot (0..12) or the entry's
+  address (13..20).
+- Every FUNC-knob step (`funcknob_*_step`) re-opens its pop-up for its POP-UP TIME and clamps setting + steps as a
+  signed 16-bit value: AMC level 1..100, CW speed 4..60, CW pitch 0..75, BK delay and VOX delay 0..33, scope level
+  0..120, PEAK 0..4, contrast / dimmer 0..20 (then the frame-0x24 request), NB level 0..10, the AESS pair 0..20 / 0..1,
+  the others 0..100; `funcknob_keyer_step` only switches KEYER on (step > 0) or off.
+- `dial_step_mode_hz` has no case for mode code 15 and returns an unset stack word there (0xFFFC63DE).
+  *Open: whether a mode code 15 occurs; would be settled by the writers of the mode nibble.*
+- The frame-0x50 titles are copied without their NUL (SUNTIL.B, then SMOVF of -2 - R3 bytes).
+
 ## Further functions (T23g)
 
 Named functions of this subsystem that the tables above did not list yet, one row each (T23g, found with `tools/doc_table_gaps.py`). The purpose is the plate comment of the name in `tools/ghidra/names_*.tsv` (or the `Ifdsp*Names.java` / `*.lib.tsv` entry); rows marked *code shape* have no comment there and give what the decompile shows: the direct callees, the first string, the size and the caller count. Tags as in the names files; a comment without a tag is an inference from the code.

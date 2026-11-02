@@ -1782,6 +1782,125 @@ a branch without this patch then refuses to bootstrap that Ghidra, as with round
   (`cat_ai_IF_OI` 1,333, `cat_ai_SS` 1,121, `cat_ai_poll` 979), the extended CAT commands (`cat_ext_PE` 1,166,
   `cat_ext_EO` 847, `cat_ext_JP` 822), `keyer_output_step` (1,397) and `keyer_elekey` (1,225).
 
+## SDR RTL, round 1 (2026-11-01)
+
+### Plan (SDR round 1)
+
+Re-implement the RX front end that #172/#193 traced, block by block, each against a netlist slice whose cell set is a
+`slice:N` row of `tools/sdr_blocks.tsv` (so the verified cells and the counted cells are the same): the DC removal of
+both ADC channels, the gain/round/clamp stage of both, then the A + B combine. Slice boundaries go on registers with a
+clear meaning (IDDR outputs, the y register, register-bank bits, the operand registers' D nets); every other slice
+input is driven with random bits. Then the register file, the scope writer and the decimator stages, as far as the
+round goes.
+
+### SDR: results (round 1)
+
+| Block (tsv row) | RTL | Cells | Check [fact, Icarus 11] |
+|---|---|---|---|
+| `adc_dc_a`, `adc_dc_b` | `hdl/sdr/adc_dc.v` | 227 + 225 | `tb_adc_dc.v -DSTRUCT` (`-DCHB`): 4,000,000 clocks each, 0 mismatching clocks |
+| `adc_gain_a`, `adc_gain_b` | `hdl/sdr/adc_gain.v` | 190 + 189 | `tb_adc_gain.v -DSTRUCT` (`-DCHB`): 2,000,000 clocks each, 0 mismatching clocks |
+| `adc_combine_mux` | `hdl/sdr/adc_combine.v` | 378 | `tb_adc_combine.v -DSTRUCT`: 2,000,000 clocks, 0 mismatching clocks |
+
+SDR re-implemented: **3.1 % -> 5.0 %** of 63,735 cells (1,973 -> 3,182; `decomp/sdr/progress.tsv`). New
+`tools/sdr_progress.py --slice BLOCK OUT.v` writes the slice of a `slice:N` row. Findings (rounding half away from zero,
+symmetric clamp, gain 0x8000 = unity, the 8-bit override fields, the combine's strobe/reset and the level flag's
+thresholds) are in [netlist.md 3.7](../code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172).
+
+### SDR: blockers and next steps (round 1)
+
+- **Register file** (`register_bank`, 1,597 cells): not a block with one boundary. A scan for flip-flops whose D comes
+  from the link's nibble registers finds 974 register bits under 86 write enables spread over the die, with the read
+  mux in `SLICE_X9..X14Y63..Y70`. A slice from the read-data flops back pulls in most of the link; it needs the
+  `uart_link.v` style of check (whole-netlist co-simulation, writes checked through read-back and through the register
+  bits' Q), plus the address map of every bit. Open: the address of each write enable; would be settled by a
+  write-one-register-at-a-time sweep in the whole netlist that logs which enables pulse (as #193 did for reg 0x0A).
+- **Scope writer** (1,948 cells) and **decimator stages**: their slices reach block RAMs (delay lines, coefficient
+  ROMs, the scope RAM), so the Icarus slice runs need `hdl/sdr/sim/xc7_bram_vl.v` in place of the Yosys RAMB18E1 and
+  stops on the BRAM outputs or the BRAMs as seeds; not started.
+- **Override fields of the gain stage.** Open: which MAIN register holds them; would be settled by a register sweep.
+
+## MAIN, UI track (2026-11-01; parallel to MAIN round 5)
+
+### Plan (UI track)
+
+A second MAIN worker on areas round 5 does not touch: the BSP and system code not done yet, the meters, the dial-step
+helpers, the beep requests outside `beep_task`, the FUNC knob and key dispatch, the frame-0x50 keyboard builders.
+Own Ghidra copy `/home/user/ghidra_tasks/t24main_ui/`, own files (`bsp/r_bsp_sys.c`, `app/meters.c`, `app/ui_*.c`,
+`include/ui.h`), own preset block in `equiv_main_emu.py` (`UI_PRESETS`).
+
+### MAIN: recreated (UI track)
+
+| File | Functions | Bytes counted | What |
+|---|---:|---:|---|
+| `bsp/r_bsp_sys.c` | 62 (9 identical) | 6,215 | FIT locks, PSW helpers, register protection, `R_BSP_SoftwareDelay`, the callback table and `R_BSP_InterruptControl` with its helpers, group enables, five exception vectors and the bus-error vector, the software-interrupt queue and its ISRs, the clocks, `bsp_non_existent_port_init`; the CC-RX setters and `chg_pmusr` as naked transcriptions (byte-identical) |
+| `app/meters.c` | 28 | 2,329 | VDD, IDD, ALC, PO, COMP, S, the 16-sample averages, getters, `meter_task`, `adc_scan_blocking`, `vdd_scale_calc`, `remote_keypad_scan` |
+| `app/ui_funcknob.c` | 35 | 1,744 | the FUNC-knob entries and steps (one clamp helper; ui-keys.md "Found by the source recreation") |
+| `app/ui_kbd.c` | 11 | 1,335 | `dl50_*`, `kbd_fmt_char_pos`, `kbd_copy_text` |
+| `app/ui_dial.c` | 4 | 850 | `dial_step_hz`, `dial_step_mode_hz`, `ch_step_hz`, `ch_step_scale` |
+| `app/ui_keys.c` | 16 (2 identical) | 799 | `key_class_of`, `key_assign_slot`, `key_call_*`, `key_slot_*`, `key_nop`, `key_task_init`, CONTOUR / APF reset |
+| `app/ui_beep.c` | 5 (1 identical) | 246 | `beep_request`, `beep_stop`, `beep_pattern_get`, `tone_idle`, `tone_set` |
+
+Not done, with the reason: `NMI` (ends in an endless loop), `R_Systeminit`, the six group-interrupt dispatchers
+(`vec106`..`vec113`, 2.2 KB), `swr_meter_protect` (SWR and the HI-SWR protection: TX protection is round 5's),
+`key_task`, `key_event_filter`, `key_touch_scope_tune`, `enc_*`, the physical-key handlers, `funcknob_step` /
+`_popup_step` / `_mgroup_step` / `_mic_eq_step` / `_rf_power_step` / `_bk_in_step` / `_dnr_level_step`, `kbd_edit_*`,
+`ladder_key_task`, `displink_rx_E6_beep` (a DISPLAY-link receive handler, round 5's), `keyer_sidetone_on` (its name is
+also the RAM flag 0x1215E of `keyer.c`; one of the two needs another name first).
+
+### MAIN: harness findings (UI track)
+
+- **SUNTIL / SWHILE counted twice [fact].** `EquivMainEmu.java` set R3 in its `suntil`/`swhile` pcodeop, and the
+  module's constructors (rx62t-rxv2-fix.patch) reduce R3 from the returned pointer again, so `dl50_memory_name`'s title
+  copy (SUNTIL.B, SMOVF of -2 - R3 bytes) copied 23 bytes of "MEMORY NAME" instead of 11. Fixed in the engine (R3 is
+  left to the module). MAIN has six SUNTIL/SWHILE, all in the `dl50_*` builders [fact: rx-elf-objdump of the image],
+  so no earlier verdict depended on it.
+- **MAX #imm is MIN in the module [fact].** rx62t.sinc's `MAX liop, reg0_4` (and the `MAX dsp[Rs]` forms) is
+  `if (src > Rd) skip; Rd = src`, the same body as MIN, and both compare unsigned where the RXv2 manual's MAX / MIN
+  compare signed. MAIN uses neither [fact: the forms list], so the decompile is unaffected; GCC does. Found with
+  `funcknob_peak_step`, whose clamp GCC folded into `MAX #0` / `MIN #4` and the emulation then stored the setting
+  unchanged; the recreation now keeps compare-and-branch. The other recreated objects use only MIN (`cat_SS`,
+  `displink_build_41`, `keyer_task`, `meter_vdd`, `meter_comp`), and their checks pass; *Open: whether a negative
+  operand reaches one of those MINs; would be settled by the module fix and a rerun of their objects.* *Open: the SLEIGH fix
+  (`s>`/`s<` and MAX's direction) as a tenth `--only rx` stage, or an engine override like JMP; would be settled by
+  `rx_semcheck.py forms` cases for MAX/MIN with negative operands.*
+- **FTOU from GCC code.** GCC for RXv1 has no FTOU and its unsigned cast calls `__fixunssfsi`, so the meters and
+  `tone_set` write FTOU as its encoding (`FC A7 rs:rd`), which the engine executes after the manual.
+- Presets in `UI_PRESETS` (software-interrupt slots with the image's dummy task, the BSP vector and region ranges,
+  the dial-step flags through 0x25D58, key codes inside the 863-entry tables: a random code read past the table into
+  `Undefined_0xD8`, whose RTE popped the caller's frame), and `adc_scan_blocking` with its two driver calls stubbed.
+- The float meters (PO, COMP, S, VDD) and `tone_set` are compared on the module's FADD/FSUB/FMUL/FDIV/FCMP, which round
+  5 checks; their verdicts should be rerun after that check (`status --object app/meters.o --object app/ui_beep.o`).
+
+### MAIN: results (UI track)
+
+`equiv_main_emu.py status --jobs 2 --object` for the seven objects, 200 trials, after merging origin/main: **161 functions, 13,518 bytes counted: 12 identical (80 bytes), 149 equivalent (13,438), 0
+differs.** MAIN total: identical 56, equivalent 490, not yet 3,248; **23.47 %** (19.98 % after round 4).
+
+### MAIN: Ghidra (UI track)
+
+`tools/ghidra/names_main.T24ui.tsv` (also appended to `names_main.tsv`): 21 function names for `FUN_` entries (the FIT
+helpers, the meter averages, `ch_step_scale`, `beep_pattern_get`) and 9 labels (BSP, meter and channel-step tables), each
+with its evidence. Proved on a copy of `/home/user/ghidra_tasks/t24main_ui` [fact: the script log]: ApplyNames **2,884
+applied, 0 failed** (2,854 + 30). Commands for the canonical project (repository root; Ghidra closed):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/main/quality.tsv /tmp/quality_main_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript ApplyNames.java tools/ghidra/names_main.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_MAIN -process FT-710_MAIN_V0112.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/main" 50 \
+  -postScript CatDispatch.java "$PWD/decomp/main/cat_dispatch.tsv" 0xFFF805EC 104 0xFFF8F014 0xFFFA3B8A 0xFFF806BC 10 0xFFFA3A2A
+python3 -I tools/decomp_quality.py compare /tmp/quality_main_before.tsv decomp/main/quality.tsv main
+rm -rf /home/user/ghidra_tasks/t24main/proj/FT710_MAIN.rep    # refresh the harness copy
+cp -r ghidra/FT710_MAIN.gpr ghidra/FT710_MAIN.rep /home/user/ghidra_tasks/t24main/proj/
+python3 -I tools/equiv_main_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the 21 functions carry their new names in `decomp/main/functions.tsv`; the rows in
+`src/main/aliases.tsv` then name the same addresses and can be removed.
+
 ## DISPLAY, round 9 (2026-11-01)
 
 ### Plan (round 9)

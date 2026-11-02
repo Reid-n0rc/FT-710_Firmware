@@ -498,7 +498,8 @@ flowchart LR
   (s = 1, t = 0, u = 0) the RX words on M17 depend on channel B only: the A-only run gives the same words as the
   silent run, and the A+B run the same words as the B-only run **[fact, simulation]**.
 - **u is a hysteresis flag on a B level [fact, equations; inference for the use].** `u` is set by the carry out of
-  comparator `SLICE_X50Y85..86` and cleared by comparator `SLICE_X48Y85..86`; both compare a word from
+  comparator `SLICE_X50Y85..86` (level above twice the threshold) and cleared by comparator `SLICE_X48Y85..86` (level
+  below the threshold; RTL paragraph below); both compare a word from
   `SLICE_X51Y102..104` (B-only, from DSP48_X1Y28/29, which channel B reaches through DSP48_X0Y40/41) with register
   bits (`SLICE_X38Y76`, `X28Y79`, `X14Y80`). So mode s = 1 is an **overload switch**: channel B normally, A × 8 while
   B's level is above a threshold. Which channel is the less sensitive one on the board is not in the netlist. With a
@@ -521,6 +522,37 @@ flowchart LR
 channel, the adders, the mux and the reg 0x04 bits. The constant and decaying-input results earlier in 3.7 (1000 /
 −2000 read back, the DC tracker, the gain registers 0x12/0x13) were simulated before the fix; constant and slow inputs
 are not affected by an SRL delay, so they stand, but they were not re-run.
+
+**RTL of the front end (T24) [fact, slice simulation; equations].** `hdl/sdr/adc_dc.v`, `adc_gain.v` and
+`adc_combine.v` re-implement the stages above and match their netlist slices on every clock (counts in
+[hdl/sdr/README.md](../../../hdl/sdr/README.md); slices = the blocks `adc_dc_a/b`, `adc_gain_a/b`, `adc_combine_mux` of
+`tools/sdr_blocks.tsv`). Writing them settled these details:
+
+- **Capture latency.** From the IDDR outputs to the x register: SRL tap 1 (2 clocks), one flip-flop, then the x register
+  with the synchronous reset `SLICE_X4Y43/CFF`; x, the 44-bit accumulator and y share that reset. Both channels have the
+  same structure and latency. The accumulator adds the sign-extended 24-bit d (`acc += sext(d)`): its upper 20 bits use
+  an inverted-carry form of the sign extension in the LUTs (`SLICE_X47Y60..Y64`), equivalent to the plain sum on
+  4,000,000 random and full-scale clocks.
+- **Gain stage.** The gain DSP computes `P = a * b` with A and B registered once (y and the 16 gain bits, B[17:16] = 0),
+  so the gain is unsigned and **0x8000 is unity** (P = y * 2^15). The 42-bit product is registered (FDCE, asynchronous
+  clear `SLICE_X4Y43/BFF`) and rounded at bit 15 **half away from zero**: the increment is pr[14] for a positive product
+  and pr[14] & (pr[13:0] != 0) for a negative one, suppressed when pr[40:15] is all ones (unreachable with a 24 x 16-bit
+  product). The 27-bit result is **clamped symmetrically to +/-(2^23 - 1)**: -2^23 itself becomes -(2^23 - 1)
+  (`SLICE_X37Y72/BLUT` detects it). The 24-bit result goes to the mixers' B ports, bits 16..0 to the low DSP and 23..17
+  (sign repeated in B17..B6) to the high one.
+- **Override field.** After the clamp a mux replaces the word by `{v, 16'h0}` while an 8-bit register field v is non-zero
+  (channel A: `SLICE_X40Y72/C5FF` = bit 7, `X40Y72/DFF`, `X36Y60/BFF`, `X43Y72/BFF`, `X40Y72/CFF`, `X40Y72/BFF`,
+  `X43Y72/DFF`, `X43Y72/CFF` = bit 0, all written through the enable `SLICE_X35Y67/CLUT`; channel B: `SLICE_X36Y60/C5FF`,
+  `X36Y60/B5FF`, `X36Y60/A5FF`, `X36Y60/DFF`, `X32Y66/BFF`, `X32Y66/AFF`, `X36Y60/CFF`, `X36Y60/AFF`), so a constant can
+  be fed into each channel's mixers instead of the ADC (a test or calibration input **[inference]**). Open: which MAIN
+  register holds the two fields; would be settled by a one-bit-at-a-time register sweep in the whole netlist, as for reg
+  0x04.
+- **Combine.** The four operand words are registers with the 5 MSPS strobe as clock enable (`SLICE_X52Y107/DLUT`) and a
+  synchronous reset that wins over it (`SLICE_X50Y112/A5FF`, INIT 1); the output words load on the same strobe. In the
+  A x 8 row bits 0..2 are cleared through the flip-flops' reset pin (`SLICE_X56Y98/DLUT = srst | s & u & ~t & ce`). The
+  level flag is `u <= (l[16:1] > thr) | u & ~(l[15:0] < thr)`: set when the 17-bit level l (registered from the carry
+  chain `SLICE_X51Y100..Y104`) exceeds twice the 16-bit threshold, cleared when it falls below the threshold. The
+  threshold bit order, read off the 2-bit comparator LUTs, is in `hdl/sdr/tb_adc_combine.v`.
 
 **Open.** (1) What triggers `u` in practice: the thresholds' register (the bits at `SLICE_X38Y76`, `X28Y79`, `X14Y80`)
 and the meaning of the level from DSP48_X1Y28/29; would be settled by a register sweep with a large tone on B, as for

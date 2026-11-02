@@ -8564,7 +8564,7 @@ undefined2 popup_duration_get(byte param_1)
                (uint)g_opstate.ex040103_pop_up_time * 2);
   }
   else {
-    local_a = *(undefined2 *)(BYTE_ARRAY_fff88514 + (uint)g_opstate.ex040103_pop_up_time * 2 + 100);
+    local_a = *(undefined2 *)(ch_step_table + (uint)g_opstate.ex040103_pop_up_time * 2 + 100);
   }
   return local_a;
 }

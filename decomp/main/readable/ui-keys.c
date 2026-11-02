@@ -655,7 +655,7 @@ byte key_class_of(ushort param_1)
     uVar1 = (uint)key_assign_slot_ret;
     if (uVar1 < 0xd) {
       bStack_5 = *(byte *)((int)&key_class_table +
-                          (uint)*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20));
+                          (uint)*(ushort *)(ch_step_table + uVar1 * 2 + 0x20));
     }
     else {
       bStack_5 = BYTE_ARRAY_fff834b3[uVar1 + 3];
@@ -5057,7 +5057,7 @@ void key_slot_press(byte param_1)
     (*(code *)(&PTR_key_nop_fff8e0cc)[uVar1])();
     return;
   }
-  (*(code *)(&key_press_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_press_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5083,7 +5083,7 @@ void key_slot_short(byte param_1)
     (*(code *)(&PTR_FUN_fff8e0ec)[uVar1])();
     return;
   }
-  (*(code *)(&key_short_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_short_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5109,7 +5109,7 @@ void key_slot_long(byte param_1)
     (*(code *)(&PTR_FUN_fff8e10c)[uVar1])();
     return;
   }
-  (*(code *)(&key_long_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_long_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5135,7 +5135,7 @@ void key_slot_repeat(byte param_1)
     (*(code *)(&PTR_FUN_fff8e12c)[uVar1])();
     return;
   }
-  (*(code *)(&key_repeat_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_repeat_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5161,7 +5161,7 @@ void key_slot_release(byte param_1)
     (*(code *)(&PTR_FUN_fff8e14c)[uVar1])();
     return;
   }
-  (*(code *)(&key_release_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_release_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5718,7 +5718,7 @@ uint ch_step_hz(byte param_1)
       if (5 < g_opstate.ex030504_am_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 8));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 8));
       return uVar1;
     }
     if (uVar1 - 6 < 2) {
@@ -5727,7 +5727,7 @@ LAB_fffc6462:
       if (5 < g_opstate.ex030505_fm_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 0x14));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 0x14));
       return uVar1;
     }
     if (1 < uVar1 - 8) {
@@ -5741,7 +5741,7 @@ LAB_fffc6462:
   if (3 < g_opstate.ex030503_ch_step) {
     local_d = 0;
   }
-  uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2));
+  uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2));
   return uVar1;
 }
 

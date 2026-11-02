@@ -10,6 +10,9 @@ counts only, no netlist data). tools/readability_stats.py turns that file into t
 Usage:
   python3 -I tools/sdr_progress.py [NETLIST.json] [--map tools/sdr_blocks.tsv] [--out decomp/sdr/progress.tsv]
   python3 -I tools/sdr_progress.py NETLIST.json --show BLOCK      also list the block's cells (stdout only)
+  python3 -I tools/sdr_progress.py NETLIST.json --slice BLOCK OUT.v
+                                  write the netlist slice of a 'slice:N' block (tools/xc7_netlist_verilog.py slice with
+                                  the row's seeds, depth and stop list): the sub-netlist its RTL testbench runs against
   python3 -I tools/sdr_progress.py selftest
 
 Block map columns (tab-separated, '#' comments, rows in priority order: a cell belongs to the first row that claims it):
@@ -235,6 +238,22 @@ def write_tsv(path, total, out):
     return rec, rei
 
 
+def write_slice(g, path, rows, block, out):
+    """The Verilog slice of a 'slice:N' block, cut exactly as block_cells counts it."""
+    row = {r['block']: r for r in rows}.get(block)
+    if not row or not row['back'].startswith('slice:') or not out:
+        sys.exit(f'sdr_progress: --slice needs a block with back = slice:N and an output file ({block!r})')
+    import xc7_netlist_verilog
+    idx = Index(g)
+    where = 'block ' + block
+    stop = idx.resolve(row['stop'], where + ' stop') if row['stop'].strip() not in ('', '-') else []
+    if row['within'].strip() not in ('', '-'):
+        stop = sorted(set(stop) | (set(g.cells) - set(idx.resolve(row['within'], where + ' within'))))
+    xc7_netlist_verilog.cmd_slice(path, out, idx.resolve(row['seeds'], where), int(row['back'][6:]),
+                                  'xc7a50tcsg324-1', xc7_blocks.DEFAULT_DB, stop)
+    return 0
+
+
 def selftest():
     nl = {'cells': [
         {'name': 'S_X0Y0/AFF', 'type': 'FDRE', 'site': 'S_X0Y0', 'params': {},
@@ -283,6 +302,8 @@ def main(argv):
     for a in it:
         if a in ('--map', '--out', '--show'):
             opts[a] = next(it, None)
+        elif a == '--slice':
+            opts[a] = (next(it, None), next(it, None))
         elif a.startswith('-'):
             sys.exit(__doc__)
         else:
@@ -292,6 +313,8 @@ def main(argv):
         sys.exit(f'sdr_progress: no {path} (tools/bootstrap.sh --only sdr builds it)')
     rows = read_map(opts.get('--map') or MAP)
     g = xc7_blocks.load(path)
+    if opts.get('--slice'):
+        return write_slice(g, path, rows, *opts['--slice'])
     claim = attribute(g, rows)
     total, out = summarize(g, rows, claim)
     if opts.get('--show'):

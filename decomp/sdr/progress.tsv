@@ -2,23 +2,28 @@
 # tools/sdr_blocks.tsv; counts only. Read by tools/readability_stats.py for the README progress block.
 # total_cells	63735
 # recognized_cells	22749
-# reimplemented_cells	1973
+# reimplemented_cells	3182
 block	cells	luts	ffs	dsp	bram	recognized	reimplemented	rtl	doc
 uart_a_rx	76	30	42	0	0	yes	yes	hdl/sdr/uart_rx.v	docs/code/sdr/netlist.md#42-simulation-of-the-uart-receiver
 uart_b_link	1242	888	317	0	0	yes	yes	hdl/sdr/uart_link.v	docs/code/sdr/netlist.md#52-register-link-uart-b-fact-unless-marked
 uart_a_console	536	338	184	0	0	yes	yes	hdl/sdr/uart_console.v	docs/code/sdr/netlist.md#53-debug-console-uart-a-m18l18-fact-unless-marked
 scope_serializer	119	71	42	0	0	yes	yes	hdl/sdr/scope_spi.v	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186
+adc_dc_a	227	94	96	0	0	yes	yes	hdl/sdr/adc_dc.v	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_dc_b	225	92	96	0	0	yes	yes	hdl/sdr/adc_dc.v	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_gain_a	190	92	90	1	0	yes	yes	hdl/sdr/adc_gain.v	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_gain_b	189	91	90	1	0	yes	yes	hdl/sdr/adc_gain.v	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_combine_mux	378	146	212	0	0	yes	yes	hdl/sdr/adc_combine.v	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
 clocks_reset	34	1	1	0	0	yes	no	-	docs/code/sdr/netlist.md#32-clocks
-scope_writer	1949	1221	530	0	1	yes	no	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186
+scope_writer	1948	1220	530	0	1	yes	no	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186
 scope_update_slave	176	111	40	0	0	yes	no	-	docs/code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186
 flash_qspi	381	272	92	0	0	yes	no	-	docs/code/sdr/netlist.md#33-pin-map-by-bank
 i2s_port	94	38	48	0	0	yes	no	-	docs/code/sdr/netlist.md#55-what-starts-the-scope-spi-145
 powerup_spi	70	33	29	0	0	yes	no	-	docs/code/sdr/netlist.md#33-pin-map-by-bank
 adc_config_spi	239	134	92	0	0	yes	no	-	docs/code/sdr/netlist.md#33-pin-map-by-bank
-adc_capture	1295	716	353	0	4	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
-adc_dc_gain	2034	1167	682	2	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
-ddc_mixers	2637	1378	978	14	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
-adc_combine	2152	1053	902	2	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_capture	816	501	169	0	4	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_dc_gain	1685	982	536	0	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+ddc_mixers	2581	1371	929	14	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
+adc_combine	1828	946	697	2	0	yes	no	-	docs/code/sdr/netlist.md#37-adc-capture-two-14-bit-channels-dc-removal-and-per-channel-gain-172
 rx_fir_operand_mux	1664	904	646	0	0	yes	no	-	docs/code/sdr/netlist.md#39-rx-decimator-where-the-signal-stops-being-linear-232
 rx_out_mac	126	55	55	2	0	yes	no	-	docs/code/sdr/netlist.md#310-rx-output-word-and-level-246
 nco_cosine	251	112	136	1	2	yes	no	-	docs/code/sdr/netlist.md#36-routing-ties-adcdac-pins-and-block-ram-tables-to-their-logic-146
