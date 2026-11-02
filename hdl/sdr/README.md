@@ -17,9 +17,16 @@ in `build/` (never committed).
 | `adc_combine.v` | `ft710_adc_combine`: **A + B combine at 5 MSPS**: operand registers (strobe, reset), the two 32-bit adders, the output mux under reg 0x04 bits 11/10 (A + B, A * 8, B) and the level flag u (set when l[16:1] > thr, cleared when l[15:0] < thr) | **matches the netlist slice cycle by cycle** (`tb_adc_combine.v -DSTRUCT`: 2,000,000 clocks, 0 mismatching clocks) |
 | `regfile.v` | `ft710_regfile`: **write side of the register file** (T24 round 2; netlist.md 5.2): 42 registers (0x03..0x37) at the addresses, bit masks and reset values found in the netlist, written from the shared bus (16-bit address, 16-bit data, one-clock strobe), global synchronous reset (0x27 has none) | **matches the netlist slice cycle by cycle** (`tb_regfile.v -DSTRUCT`: 2,000,000 clocks, 598 flip-flops, 0 mismatching clocks) **and the whole netlist** (`tb_regfile.v -DTRACE` on UART B runs, below) |
 | `scope_wr_data.v` | `ft710_scope_wr_data`: **data path of the scope RAM writer** (netlist.md 5.6): sample + reg 0x26 copy, reference reg 0x27[7:0] minus half of it, scale bit 0x27[15], sign clamp, rounding, byte clamp to 0xFE; the byte written into RAMB18_X2Y21 port A | **matches the netlist slice cycle by cycle** (`tb_scope_wr_data.v -DSTRUCT`: 1,000,000 clocks, 0 mismatching clocks) |
+| `regread.v` | `ft710_regread`: **read side of the register file** (T24 round 3; netlist.md 5.2): four 16-bit group registers for 0x00..0x3F (0xCCCC outside their window), then the read-data mux: groups, status window 0x0100..0x01FF, capture-RAM windows 0x3000..0x3FFF, 0x8000..0x9FFF, 0xC000..0xDFFF, 0xCCCC elsewhere; the word of every address 0x00..0x3F | **matches the netlist slice cycle by cycle** (`tb_regread.v -DSTRUCT`: 2,000,000 clocks, 80 flip-flops, 0 mismatching clocks) |
+| `scope_wr_addr.v` | `ft710_scope_wr_addr`: **scope RAM writer, address and write-enable side** (netlist.md 5.6): the two index counters (load 425, up/down), port-A index mux, bank bit, write enable, all decoded from single sequencer states | **matches the netlist slice cycle by cycle** (`tb_scope_wr_addr.v -DSTRUCT`: 2,000,000 clocks, 32 flip-flops, 0 mismatching clocks) |
+| `scope_wr_seq.v` | `ft710_scope_wr_seq`: **scope RAM writer sequencer** (netlist.md 5.6): 16-bit state counter with reset/hold, idle state 0xFFFF and the jumps at 0x0072, 0x0098, 0x00B2 | **matches the netlist slice cycle by cycle** (`tb_scope_wr_seq.v -DSTRUCT`: 2,000,000 clocks, 65,475 distinct states, 0 mismatching clocks) |
+| `rx_fir_operand_mux.v` | `ft710_rx_fir_operand_mux`: **RX second stage operand**: four signed 32-bit pre-adders on the delay-line RAM words, AND-OR mux with eight register sources, b register and its delayed copy (SRL for b[32:17]) (netlist.md 3.9) | **matches the netlist slice cycle by cycle** (`tb_rx_fir_operand_mux.v -DSTRUCT`: 2,000,000 clocks, 66 flip-flops, 0 mismatching clocks) |
+| `rx_window_sum.v` | `ft710_rx_window_sum`: **RX second stage integrator and snapshot difference** (73-bit acc + x; sa - sb, bits 71..25) (netlist.md 3.9) | **matches the netlist slice cycle by cycle** (`tb_rx_window_sum.v -DSTRUCT`: 2,000,000 clocks, 266 flip-flops, 0 mismatching clocks) |
+| `rx_out_mac.v` | `ft710_rx_out_mac`: **RX output accumulator** (55 bits; load at phase 24, add at phase 32 of a strobe-cleared counter) (netlist.md 3.10) | **matches the netlist slice cycle by cycle** (`tb_rx_out_mac.v -DSTRUCT`: 2,000,000 clocks, 84 flip-flops, 0 mismatching clocks) |
+| `tb_regread.v`, `tb_scope_wr_addr.v`, `tb_scope_wr_seq.v`, `tb_rx_fir_operand_mux.v`, `tb_rx_window_sum.v`, `tb_rx_out_mac.v` and their `*_ports.vh` (+ `tb_regread_mask.vh`) | round-3 testbenches; the port lists map each slice input to the RTL signal or a junk bit (generated in round 3, cell names only) | PASS (Icarus) |
 | `tb_regfile.v`, `tb_regfile_ports.vh`, `tb_regfile_map.vh` | register-file testbench (slice and whole-netlist trace); the two lists name the slice ports and the 598 flip-flops (generated in round 2, cell names only) | PASS |
 | `tb_scope_wr_data.v` | writer data path testbench (integer reference; with `-DSTRUCT` against the slice) | PASS |
-| `sim/regmap_main.cpp` | Register-map harness for the whole netlist (T24 round 2): MAIN frames on UART B, logs every change of a probed net (write enables, register flip-flops, bus flip-flops) that is quiet before the first frame | gave the write-enable pulses per frame and the traces for `tb_regfile.v -DTRACE` |
+| `sim/regmap_main.cpp` | Register-map harness for the whole netlist (T24 round 2): MAIN frames on UART B, logs every change of a probed net (write enables, register flip-flops, bus flip-flops) that is quiet before the first frame | gave the write-enable pulses per frame and the traces for `tb_regfile.v -DTRACE`; in round 3 (34 probes: address, strobes, read data) the order of a6..a15 and the read windows (netlist.md 5.2) |
 | `tb_adc_dc.v`, `tb_adc_gain.v`, `tb_adc_combine.v` | testbenches for the three: RTL alone (behaviour and a reference model) and with `-DSTRUCT` against the slices | PASS (Icarus) |
 | `tb_scope_spi.v` | serializer testbench: RAM model, frame decoder (length, period, bank, contents, test mode, disable), with `-DSTRUCT` against the slice | PASS (Icarus, 35 s) |
 | `sim/scope_main.cpp` | Whole-netlist harness for the scope port (#186): holds R15 high (pins driven), copies the three output flops onto their pads, decodes frames, prints the enable/mode flops. Needs a probed netlist (command in the file) | |
@@ -128,6 +135,25 @@ python3 -I tools/sdr_progress.py build/sdr/netlist.json --slice scope_wr_data bu
 iverilog -g2012 -DSTRUCT -DCYCLES=1000000 -o /tmp/sw.vvp hdl/sdr/tb_scope_wr_data.v hdl/sdr/scope_wr_data.v \
   build/sdr/sim/scope_wr_data.v /usr/share/yosys/xilinx/cells_sim.v && vvp -n /tmp/sw.vvp
 ```
+
+Round 3 (T24): read side, scope writer address side and sequencer, three RX decimator parts. Each slice is the row of
+the same name in `tools/sdr_blocks.tsv` (the read mux, writer and decimator rows stop at their control LUTs, listed in
+the row):
+
+```sh
+for b in regread scope_wr_addr scope_wr_seq rx_fir_operand rx_window_sum rx_out_mac; do
+  python3 -I tools/sdr_progress.py build/sdr/netlist.json --slice $b build/sdr/sim/$b.v; done
+C=/usr/share/yosys/xilinx/cells_sim.v
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/rr.vvp hdl/sdr/tb_regread.v hdl/sdr/regread.v build/sdr/sim/regread.v $C && vvp -n /tmp/rr.vvp
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/wa.vvp hdl/sdr/tb_scope_wr_addr.v hdl/sdr/scope_wr_addr.v build/sdr/sim/scope_wr_addr.v $C && vvp -n /tmp/wa.vvp
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/sq.vvp hdl/sdr/tb_scope_wr_seq.v hdl/sdr/scope_wr_seq.v build/sdr/sim/scope_wr_seq.v $C && vvp -n /tmp/sq.vvp
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/om.vvp hdl/sdr/tb_rx_fir_operand_mux.v hdl/sdr/rx_fir_operand_mux.v build/sdr/sim/rx_fir_operand.v $C && vvp -n /tmp/om.vvp
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/ws.vvp hdl/sdr/tb_rx_window_sum.v hdl/sdr/rx_window_sum.v build/sdr/sim/rx_window_sum.v $C && vvp -n /tmp/ws.vvp
+iverilog -g2012 -DSTRUCT -DCYCLES=2000000 -I hdl/sdr -o /tmp/ma.vvp hdl/sdr/tb_rx_out_mac.v hdl/sdr/rx_out_mac.v build/sdr/sim/rx_out_mac.v $C && vvp -n /tmp/ma.vvp
+```
+
+Without `-DSTRUCT` each testbench runs the RTL alone against its integer reference (`tb_scope_wr_addr.v` then checks
+the centre-out index order 425, 425, 424, 426, ...).
 
 Whole-netlist register runs: probe the bus flip-flops, the register-file candidates and their enables (1,478 probes,
 47 words; the list is every flip-flop whose D or CE fan-in reaches a bus flip-flop, plus those flip-flops' CE drivers),
