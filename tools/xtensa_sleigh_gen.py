@@ -510,6 +510,13 @@ SEM = {
     "l8ui": "{w0} = zext(*:1 ({r1} + {r2}));",
     "s32i": "*:4 ({r1} + {r2}) = {r0};", "s32i.n": "*:4 ({r1} + {r2}) = {r0};",
     "s16i": "*:2 ({r1} + {r2}) = {r0}:2;", "s8i": "*:1 ({r1} + {r2}) = {r0}:1;",
+    # T24 HiFi4: the HiFi4 16-bit (density-format) address-register operations, which were named p-code operations
+    # without a memory access: operands AR, AR, offset 0 or 2 (bit 12 << 1); the semantics of the base L16UI/L16SI/S16I
+    # and of a 16/8-bit zero/sign extension [inference: AR operand files, the names, and every use in the image, e.g.
+    # regfile_capture_append 0x21C0E8 counts a uint16 index with ae_l16ui.n / ae_zext16 / ae_s16i.n]
+    "ae_l16ui.n": "{w0} = zext(*:2 ({r1} + {r2}));", "ae_l16si.n": "{w0} = sext(*:2 ({r1} + {r2}));",
+    "ae_s16i.n": "*:2 ({r1} + {r2}) = {r0}:2;",
+    "ae_zext16": "{w0} = zext({r1}:2);", "ae_sext16": "{w0} = sext({r1}:2);", "ae_zext8": "{w0} = zext({r1}:1);",
     # FPU on the AE_DR registers (single precision in the low 32 bits) [inference: operand register files];
     # the upper half of the destination is written as zero. Open: the ISA reference for these ops would settle whether
     # the hardware zeroes or keeps the upper half; only the decompiler's view of the upper half depends on it.
@@ -1118,6 +1125,10 @@ def generate(M, stock_dir, outdir, staged=True):
     drop |= set(EXTRA_DROP)
     keep = set(heads) - drop
     filtered, dropped = filter_stock_instructions(stock_ins, drop)
+    for old, new in STOCK_SEMANTIC_FIXES:
+        if filtered.count(old) != 1:
+            sys.exit(f"xtensa_sleigh_gen: stock fix target not found once: {old!r}")
+        filtered = filtered.replace(old, new)
 
     E = Emitter(M, staged=staged)
     flix_lines, root, base_lines = E.emit(stock_dir, outdir, keep)
@@ -1229,6 +1240,13 @@ EXTRA_DROP = ["mula.da.hh.ldinc", "mula.da.hl.ldinc", "mula.da.lh.ldinc", "mula.
               # T21b oracle (decode mode): wrong value, trailing comma, shadowing or missing encodings in stock
               "movi.n", "remu", "rems", "quou", "quos", "bgeui", "bltui", "ret", "jx", "licw", "mul.dd.lh",
               "ret.n", "any4", "all4", "any8", "all8"]
+
+# Stock constructors kept, with their p-code corrected (T24 HiFi4, tools/xtensa_semcheck.py against QEMU 8.2):
+# NSA is the number of redundant sign bits (31 for 0 and -1); stock's lzcount(~as) is right for negative values only
+# (nsa of 2 gave 0 instead of 29; 18 of 24 random cases differed).
+STOCK_SEMANTIC_FIXES = [
+    ("    at = lzcount(~as);\n", "    at = lzcount(as ^ (as s>> 31)) - 1;\n"),
+]
 
 
 if __name__ == "__main__":
