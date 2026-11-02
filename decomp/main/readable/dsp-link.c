@@ -5558,15 +5558,15 @@ undefined1 ladder_key_delay(void)
   byte swtimer_expired_ret;
   undefined1 local_2;
   
-  if (DAT_00018871 == '\0') {
-    DAT_00018871 = '\x01';
+  if (ladder_delay_armed == '\0') {
+    ladder_delay_armed = '\x01';
     swtimer_start(0x38,200);
     local_2 = 0;
   }
-  else if (DAT_00018871 == '\x01') {
+  else if (ladder_delay_armed == '\x01') {
     swtimer_expired_ret = swtimer_expired(0x38);
     if (swtimer_expired_ret == 1) {
-      DAT_00018871 = '\0';
+      ladder_delay_armed = '\0';
       local_2 = 1;
     }
     else {

@@ -6,6 +6,7 @@
 #include "ft710_state.h"
 #include "r_cg_sci.h"
 #include "reglink.h"
+#include "fpu_conv.h"
 
 #define SDR_REPLY_TIMER 2    /* soft timer of the reply timeout [fact: swtimer_start(2, 6), 0xFFFA31A8] */
 #define SDR_RX_MAX      7u   /* a reply is at most "r" + 4 hex + 2 hex [fact: sdr_send_cmd 0xFFFB1B42] */
@@ -13,7 +14,7 @@
 /* sdr_shadow (RAM 0x1B736, uint16 each): slot of each register [fact: the offset each updater compares] */
 enum sdr_shadow_slot {
     SH_R03 = 2, SH_R04 = 3, SH_R0D = 9, SH_R0E = 10, SH_R12 = 12, SH_R13 = 13, SH_R15 = 15, SH_R1C = 21,
-    SH_R23 = 28, SH_R24 = 29,
+    SH_R23 = 28, SH_R24 = 29, SH_R25 = 30,      /* r25: round 5 */
     SH_R18 = 17, SH_R19 = 18, SH_R1D = 22, SH_R1E = 23,   /* round 3 */
 };
 
@@ -147,6 +148,64 @@ void sdr_upd_r1c(void)
     else
         v = 5;
     sdr_write_if_changed(0x1Cu, SH_R1C, v);
+}
+
+/* the TX power set point in watts, 5..100 (FUN_fffb4062 0xFFFB4062; its callers convert it with ITOF) */
+int32_t FUN_fffb4062(void);
+uint8_t tx_band_of_freq(uint32_t freq);
+/* @tx_row_ptrs ROM 0xFFF8861C: the cfg105 TX row of each band (names_main.tsv); +2/+5/+8/+11/+14 are the TX gain
+ * for 100 / 50 / 20 / 10 / 5 W */
+extern uint8_t *const tx_row_ptrs[11];
+
+/* sdr_upd_r25_tx_drive 0xFFFA2A16: register 0x25, the TX drive, << 4: the band's TX gain row interpolated linearly
+ * between the two power points around the set power (100 W exactly: the 100 W point, 50 W on 50 MHz and above,
+ * band index > 9). The float steps are the image's [fact: 0xFFFA2B3B..0xFFFA2B54]. */
+void sdr_upd_r25_tx_drive(uint8_t tx)
+{
+    float watts = (float)FUN_fffb4062();
+    uint8_t band = tx_band_of_freq(g_ui.freq_tx);
+    const uint8_t *row = tx_row_ptrs[band];
+    float x0, x1, y0, y1;          /* the points (x0, y0) .. (x1, y1) */
+
+    if (watts == 100.0f) {
+        if (band <= 9) {
+            y0 = y1 = (float)row[2];
+            x0 = 100.0f;
+            x1 = 101.0f;
+        } else {
+            y0 = y1 = (float)row[5];
+            x0 = 50.0f;
+            x1 = 51.0f;
+        }
+    } else if (watts >= 50.0f) {
+        y0 = (float)row[5];
+        if (band <= 9) {
+            y1 = (float)row[2];
+            x0 = 50.0f;
+            x1 = 100.0f;
+        } else {
+            y1 = y0;
+            x0 = 50.0f;
+            x1 = 51.0f;
+        }
+    } else if (watts >= 20.0f) {
+        y0 = (float)row[8];
+        y1 = (float)row[5];
+        x0 = 20.0f;
+        x1 = 50.0f;
+    } else if (watts >= 10.0f) {
+        y0 = (float)row[11];
+        y1 = (float)row[8];
+        x0 = 10.0f;
+        x1 = 20.0f;
+    } else {
+        y0 = (float)row[14];
+        y1 = (float)row[11];
+        x0 = 5.0f;
+        x1 = 10.0f;
+    }
+    uint16_t drive = (uint16_t)ftou((watts - x0) * (y1 - y0) / (x1 - x0) + y0);
+    sdr_write_if_changed(0x25u, SH_R25, (uint16_t)(drive << 4));
 }
 
 /* sdr_upd_r23 0xFFFA2992: 0x7000 / 0x5000 / 0x8000 from the scope RBW setting (0x9B14: 1, 2, other) */

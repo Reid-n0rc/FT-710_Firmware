@@ -271,7 +271,7 @@ void displink_tx_schedule(void)
   bool bVar1;
   byte swtimer_expired_ret;
   
-  if (DAT_0001b3d0 == '\x01') {
+  if (dl_hello_req == '\x01') {
                     /* 1: 0x60 hello reply with the four versions [fact: display-link.md] */
     displink_tx_60_hello();
     return;

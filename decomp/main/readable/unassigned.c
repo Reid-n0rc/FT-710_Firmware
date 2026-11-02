@@ -2040,7 +2040,7 @@ void FUN_fffb2210(uint param_1)
 byte beep_pattern_get(void)
 
 {
-  return DAT_00012041;
+  return beep_pattern;
 }
 
 
@@ -18648,16 +18648,14 @@ void FUN_fffec8a1(void)
 
 {
   byte swtimer_expired_ret;
-  uint uVar1;
   
   swtimer_expired_ret = swtimer_expired(0x27);
-  uVar1 = 0;
   if (swtimer_expired_ret == 0) {
     return;
   }
   DAT_00025d04 = (float)meter_get_swr_avg_f();
   if (DAT_00025d04 <= 4.3) {
-    if (1.1 < DAT_00025d04 != (bool)((byte)(uVar1 >> 3) & 1)) {
+    if (1.1 < DAT_00025d04) {
       send_a_set(0);
       send_b_set(0);
       swtimer_start(0x27,5);
@@ -18787,15 +18785,13 @@ void FUN_fffeca7e(void)
   bool bVar1;
   byte swtimer_expired_ret;
   float fVar2;
-  uint uVar3;
   
   swtimer_expired_ret = swtimer_expired(0x27);
-  uVar3 = 0;
   if (swtimer_expired_ret == 0) {
     return;
   }
   fVar2 = (float)meter_get_swr_f();
-  if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
+  if ((fVar2 < 1.0) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
   else {
@@ -18839,7 +18835,7 @@ void FUN_fffecba2(void)
 {
   byte local_1;
   
-  if (4.0 < DAT_00025cfc == SBORROW4((int)&stack0x00000000,8)) {
+  if (DAT_00025cfc <= 4.0) {
     DAT_00025cfc = 255.0;
     DAT_0001b3b4 = BYTE_ARRAY_fff87bf2[(uint)DAT_0001b3bb * 4 + 0xd];
     if (DAT_0001b3bb < 2) {
@@ -18894,15 +18890,13 @@ void FUN_fffecce7(void)
   bool bVar1;
   byte swtimer_expired_ret;
   float fVar2;
-  uint uVar3;
   
   swtimer_expired_ret = swtimer_expired(0x27);
-  uVar3 = 0;
   if (swtimer_expired_ret == 0) {
     return;
   }
   fVar2 = (float)meter_get_swr_f();
-  if ((fVar2 - 1.0 < 0.0 != (bool)((byte)(uVar3 >> 3) & 1)) || (DAT_00025cfc <= fVar2)) {
+  if ((fVar2 < 1.0) || (DAT_00025cfc <= fVar2)) {
     bVar1 = false;
   }
   else {
@@ -19286,11 +19280,9 @@ void FUN_fffed50f(void)
 {
   byte swtimer_expired_ret;
   float fVar1;
-  uint uVar2;
   
-  uVar2 = (uint)SBORROW4((int)&stack0x00000000,4) << 3;
   fVar1 = (float)meter_get_swr_f();
-  if (2.0 < fVar1 == (bool)((byte)(uVar2 >> 3) & 1)) {
+  if (fVar1 <= 2.0) {
     if (DAT_00025d10 < fVar1) {
       DAT_0001b3c2 = DAT_0001b3c2 + 1;
     }

@@ -998,7 +998,7 @@ byte adc_scan_done(void)
 void dac_init_idle(void)
 
 {
-  dac0_write(DAT_0001ff1c);
+  dac0_write(tone_idle_level);
   R_DA0_Start();
   return;
 }
@@ -1015,109 +1015,109 @@ void beep_task(void)
   float fVar1;
   float fStack_4;
   
-  if (DAT_00012040 == '\x01') {
+  if (beep_state == '\x01') {
     tone_idle();
-    DAT_0001b3e2 = 0;
-    DAT_00012040 = 2;
+    beep_step = 0;
+    beep_state = 2;
     return;
   }
-  if (DAT_00012040 == '\x02') {
+  if (beep_state == '\x02') {
     swtimer_expired_ret = swtimer_expired(0x16);
     if (swtimer_expired_ret == 1) {
-      switch(DAT_00012041) {
+      switch(beep_pattern) {
       case 1:
-        if (DAT_0001b3e2 == '\0') {
+        if (beep_step == '\0') {
           tone_set(880.0,100);
-          DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+          beep_step = beep_step + '\x01';
         }
         else {
           beep_stop();
         }
         break;
       case 2:
-        if (DAT_0001b3e2 == '\x02') {
+        if (beep_step == '\x02') {
           tone_set(880.0,100);
         }
-        else if (DAT_0001b3e2 == '\x01') {
+        else if (beep_step == '\x01') {
           tone_set(0.0,10);
         }
-        else if (DAT_0001b3e2 == '\0') {
+        else if (beep_step == '\0') {
           tone_set(880.0,100);
         }
         else {
           beep_stop();
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 3:
-        if (DAT_0001b3e2 == '\x04') {
+        if (beep_step == '\x04') {
           tone_set(1046.502,100);
         }
-        else if (DAT_0001b3e2 == '\x01') {
+        else if (beep_step == '\x01') {
           tone_set(0.0,100);
         }
-        else if (DAT_0001b3e2 == '\x02') {
+        else if (beep_step == '\x02') {
           tone_set(1046.502,100);
         }
-        else if (DAT_0001b3e2 == '\x03') {
+        else if (beep_step == '\x03') {
           tone_set(0.0,100);
         }
-        else if (DAT_0001b3e2 == '\0') {
+        else if (beep_step == '\0') {
           tone_set(1046.502,100);
         }
         else {
           beep_stop();
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 4:
         fVar1 = (float)g_opstate.cw_pitch * 10.0 + 300.0;
-        if (DAT_00025d40 == fVar1) {
+        if (beep_cw_freq == fVar1) {
           swtimer_start(0x16,100);
         }
         else {
-          DAT_00025d40 = fVar1;
+          beep_cw_freq = fVar1;
           tone_set(fVar1,100);
         }
         break;
       case 5:
-        if (DAT_0001b3e2 == '\x04') {
+        if (beep_step == '\x04') {
           tone_set(1567.982,100);
         }
-        else if (DAT_0001b3e2 == '\x01') {
+        else if (beep_step == '\x01') {
           tone_set(0.0,10);
         }
-        else if (DAT_0001b3e2 == '\x02') {
+        else if (beep_step == '\x02') {
           tone_set(1318.51,100);
         }
-        else if (DAT_0001b3e2 == '\x03') {
+        else if (beep_step == '\x03') {
           tone_set(0.0,10);
         }
-        else if (DAT_0001b3e2 == '\0') {
+        else if (beep_step == '\0') {
           tone_set(1046.502,100);
         }
         else {
           beep_stop();
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 6:
-        if (DAT_0001b3e2 == '\x02') {
+        if (beep_step == '\x02') {
           tone_set(659.255,100);
         }
-        else if (DAT_0001b3e2 == '\x01') {
+        else if (beep_step == '\x01') {
           tone_set(0.0,10);
         }
-        else if (DAT_0001b3e2 == '\0') {
+        else if (beep_step == '\0') {
           tone_set(783.991,100);
         }
         else {
           beep_stop();
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 7:
-        switch(DAT_0001b3e2) {
+        switch(beep_step) {
         case '\0':
           tone_set(1318.51,100);
           break;
@@ -1148,35 +1148,35 @@ void beep_task(void)
         default:
           beep_stop();
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 8:
-        if (DAT_0001b3e2 == '\x05') {
+        if (beep_step == '\x05') {
           tone_idle();
         }
-        else if (DAT_0001b3e2 == '\x01') {
+        else if (beep_step == '\x01') {
           tone_set(0.0,0x46);
         }
-        else if (DAT_0001b3e2 == '\x02') {
+        else if (beep_step == '\x02') {
           tone_set(1046.502,100);
         }
-        else if (DAT_0001b3e2 == '\x03') {
+        else if (beep_step == '\x03') {
           tone_set(0.0,0x46);
         }
-        else if (DAT_0001b3e2 == '\x04') {
+        else if (beep_step == '\x04') {
           tone_set(1046.502,100);
         }
-        else if (DAT_0001b3e2 == '\0') {
+        else if (beep_step == '\0') {
           tone_set(1046.502,100);
         }
         else {
           beep_stop();
           g_ui.restart_req = 1;
         }
-        DAT_0001b3e2 = DAT_0001b3e2 + '\x01';
+        beep_step = beep_step + '\x01';
         break;
       case 9:
-        if (DAT_0001b3e3 == '\t') {
+        if (beep_last_pattern == '\t') {
           swtimer_start(0x16,0xffff);
         }
         else {
@@ -1190,7 +1190,7 @@ void beep_task(void)
         }
         break;
       case 10:
-        if (DAT_0001b3e3 == '\n') {
+        if (beep_last_pattern == '\n') {
           swtimer_start(0x16,0xffff);
         }
         else {
@@ -1210,7 +1210,7 @@ void beep_task(void)
         }
         break;
       case 0xb:
-        if (DAT_0001b3e3 == '\v') {
+        if (beep_last_pattern == '\v') {
           swtimer_start(0x16,0xffff);
         }
         else {
@@ -1238,16 +1238,16 @@ void beep_task(void)
       default:
         beep_stop();
       }
-      DAT_0001b3e3 = DAT_00012041;
+      beep_last_pattern = beep_pattern;
       return;
     }
   }
-  else if (DAT_00012040 == '\x03') {
+  else if (beep_state == '\x03') {
     tone_idle();
-    DAT_00012040 = 0;
-    DAT_00012041 = 0;
-    DAT_00025d40 = 0.0;
-    DAT_0001b3e3 = 0;
+    beep_state = 0;
+    beep_pattern = 0;
+    beep_cw_freq = 0.0;
+    beep_last_pattern = 0;
     return;
   }
   return;
@@ -1263,16 +1263,16 @@ void beep_request(int param_1)
 {
   if (param_1 != 8) {
     if (param_1 - 9U < 3) {
-      if (DAT_00012041 == '\x04') {
+      if (beep_pattern == '\x04') {
         return;
       }
     }
-    else if (DAT_00012041 != '\0') {
+    else if (beep_pattern != '\0') {
       return;
     }
   }
-  DAT_00012041 = (char)param_1;
-  DAT_00012040 = 1;
+  beep_pattern = (char)param_1;
+  beep_state = 1;
   return;
 }
 
@@ -1282,7 +1282,7 @@ void beep_request(int param_1)
 void beep_stop(void)
 
 {
-  DAT_00012040 = 3;
+  beep_state = 3;
   return;
 }
 
@@ -1294,7 +1294,7 @@ void beep_stop(void)
 byte beep_pattern_get(void)
 
 {
-  return DAT_00012041;
+  return beep_pattern;
 }
 
 
@@ -1304,7 +1304,7 @@ void tone_idle(void)
 
 {
   tone_stop();
-  dac0_write(DAT_0001ff1c);
+  dac0_write(tone_idle_level);
   return;
 }
 
@@ -1318,8 +1318,8 @@ void tone_set(float param_1,ushort param_2)
 {
   bool bVar1;
   
-  if (param_1 - 0.0 != 0.0) {
-    if ((param_1 - 30.0 < 0.0) || (20000.0 < param_1)) {
+  if (param_1 != 0.0) {
+    if ((param_1 < 30.0) || (20000.0 < param_1)) {
       bVar1 = true;
     }
     else {

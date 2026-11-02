@@ -1,0 +1,76 @@
+--- a/data/languages/rx62t.sinc	2026-11-01 20:36:56.094581291 +0000
++++ b/data/languages/rx62t.sinc	2026-11-01 20:38:23.773880350 +0000
+@@ -189,7 +189,9 @@
+ 
+ macro setFloatResultFlags(result) {
+     $(Z_flag) = (result f== 0);
+-    $(S_flag) = (result f< 0);
++    # T24 fix: was "result f< 0", clear for -0 and a negative NaN; the manual (FADD p. 87 and the other FPU pages):
++    # S is bit 31 of the result
++    $(S_flag) = (result s< 0);
+ }
+ 
+ macro push32(val32) {
+@@ -1011,18 +1013,23 @@
+ # FCMP
+ ## FCMP #IMM:32, Rs
+ :FCMP "#"^simm32, reg0_4    is op0_8 = 0xFD; op0_8 = 0x72; op4_4 = 0x1 & reg0_4; simm32 {
+-    #$(Z_flag) = (reg0_4 f== simm32);
+-    #$(S_flag) = (reg0_4 f< simm32);
+-    # TODO: O flag and FPSW flags
+-    local tmp = reg0_4 f- simm32;
+-    setFloatResultFlags(tmp);
++    # T24 fix: was the flags of "Rs f- imm" (+inf - +inf is NaN, so Z stayed clear for equal infinities) and no O.
++    # p. 90: Z = (src2 == src), S = (src2 < src), O = 1 when the pair is unordered (a NaN); the CC-RX code branches
++    # with BLT / BGE (S ^ O) after FCMP, so a stale O inverted the branch
++    local src:4 = simm32;
++    $(Z_flag) = (reg0_4 f== src);
++    $(S_flag) = (reg0_4 f< src);
++    $(O_flag) = nan(reg0_4) || nan(src);
++    # TODO: FPSW flags
+ }
+ 
+ ## FCMP dsp[Rs], Rs2
+ :FCMP ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b100001 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 0x2; ] {
+     $(Z_flag) = (reg0_4 f== ld_src);
+     $(S_flag) = (reg0_4 f< ld_src);
+-    # TODO: O flag and FPSW flags
++    # T24 fix: O was not written (p. 90: O = 1 for an unordered pair; BLT / BGE after FCMP test S ^ O)
++    $(O_flag) = nan(reg0_4) || nan(ld_src);
++    # TODO: FPSW flags
+ }
+ 
+ 
+@@ -2461,18 +2468,26 @@
+ 
+ 
+ ### UTOF - integer to float p. 201
++### T24 fix: ldu_src has no UB entry and no register form for mode_mi 4, so FC 54..57 (UTOF Rs, Rd and [Rs].UB) did not
++### decode, and int2float of the 32-bit source converted 2^31..2^32-1 as negative numbers; the memex B and W forms
++### zero-extended where the manual's memex rule (p. 55) sign-extends. Now ld_src (as ITOF) and an unsigned conversion
++### through 64 bits; flags p. 201: Z = (result == 0), S = 0
+ ### when memex == UB or src == Rs
+-:UTOF ldu_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10101 & ld0_2; reg0_4 ... & ldu_src [ mode_ld = ld0_2; mode_mi = 4; ] {
++:UTOF ld_src, reg0_4    is op0_8 = 0xFC; op2_6 = 0b10101 & ld0_2; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = 4; ] {
+     # TODO: FPSW
+-    reg0_4 = int2float(ldu_src);
+-    setFloatResultFlags(reg0_4);
++    local u:8 = zext(ld_src);
++    reg0_4 = int2float(u);
++    $(Z_flag) = (reg0_4 == 0);
++    $(S_flag) = 0;
+ }
+ 
+ ### when memex != UB
+-:UTOF ldu_src, reg0_4    is op0_8 = 0x6; mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x15; reg0_4 ... & ldu_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
++:UTOF ld_src, reg0_4    is op0_8 = 0x6; mi6_2 & op2_4 = 0x8 & ld0_2 != 0b11 & ld0_2; op0_8 = 0x15; reg0_4 ... & ld_src [ mode_ld = ld0_2; mode_mi = mi6_2; ] {
+     # TODO: FPSW
+-    reg0_4 = int2float(ldu_src);
+-    setFloatResultFlags(reg0_4);
++    local u:8 = zext(ld_src);
++    reg0_4 = int2float(u);
++    $(Z_flag) = (reg0_4 == 0);
++    $(S_flag) = 0;
+ }
+ 
+ 

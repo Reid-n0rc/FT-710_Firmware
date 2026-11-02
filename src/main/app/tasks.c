@@ -1,6 +1,5 @@
 /* Small main-loop tasks of the MAIN image (T24 round 4; docs/code/main/README.md "Main loop"): the watchdog kick,
- * the RF control pass, the I/O and power supervisor, the scan and the E8 request task. main_loop itself (0xFFF94B8B, the
- * 16 tasks in an endless loop) is not recreated: it never returns, so the equivalence check cannot decide it. */
+ * the RF control pass, the I/O and power supervisor, the scan and the E8 request task. main_loop is in main_loop.c. */
 #include "main.h"
 #include "main_ram.h"
 #include "ft710_state.h"

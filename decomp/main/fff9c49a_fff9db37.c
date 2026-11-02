@@ -432,7 +432,7 @@ void power_on_request(void)
 
 {
   PTR_g_ui_00025d38->link_tx_enabled = 1;
-  DAT_0001b3d0 = 1;
+  dl_hello_req = 1;
   return;
 }
 

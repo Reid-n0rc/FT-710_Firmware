@@ -36,12 +36,14 @@ CONDS = {"EQ": lambda f: f["Z"], "NE": lambda f: not f["Z"], "GEU": lambda f: f[
          "LT": lambda f: f["S"] ^ f["O"], "GT": lambda f: not ((f["S"] ^ f["O"]) or f["Z"]),
          "LE": lambda f: (f["S"] ^ f["O"]) or f["Z"], "O": lambda f: f["O"], "NO": lambda f: not f["O"]}
 CONDS.update(C=CONDS["GEU"], NC=CONDS["LTU"], Z=CONDS["EQ"], NZ=CONDS["NE"])   # aliases, SCCnd table p. 182
-ALU2 = ("ADD", "SUB", "CMP", "AND", "OR", "MUL", "DIVU", "DIV", "TST", "XOR")
+ALU2 = ("ADD", "SUB", "CMP", "AND", "OR", "MUL", "DIVU", "DIV", "TST", "XOR", "MIN", "MAX")
 MODELLED = set(ALU2) | {"MOV.B", "MOV.W", "MOV.L", "MOVU.B", "MOVU.W", "SHLL", "SHLR", "SHAR", "BSET", "BCLR", "BTST",
                         "BNOT", "NOT", "NEG", "RTS", "RTSD", "JSR", "BRA.L", "PUSH.L", "PUSHM", "POPM", "XCHG", "SMOVF",
                         "SSTR.B", "SCMPU", "SUNTIL.B", "NOP", "ADC", "SBB", "ROLC", "RORC", "STZ", "STNZ", "ITOF",
                         # T24 MAIN round 2: forms only the GCC-built code uses (rx_semcheck.py forms)
-                        "ROTL", "ROTR", "ABS", "REVL", "REVW", "EMUL", "EMULU", "JMP"}
+                        "ROTL", "ROTR", "ABS", "REVL", "REVW", "EMUL", "EMULU", "JMP",
+                        # T24 MAIN round 5: MIN / MAX (p. 117 / p. 118: signed, no flags), SCGE.L
+                        "MIN", "MAX"}
 
 
 class Unmodelled(Exception):
@@ -222,6 +224,9 @@ def model(st, addr, ln, mn, ops_txt):
             set_zs(st, res)
         elif base == "MUL":
             res = (a * b) & M32
+        elif base in ("MIN", "MAX"):        # p. 118 / p. 117: if (src < dest) dest = src (signed); no flag changes
+            sa, sb = sext(a, 32), sext(b, 32)
+            res = b if (sb < sa if base == "MIN" else sb > sa) else a
         elif base == "DIVU":
             if b == 0:
                 st.f["O"] = 1
@@ -698,6 +703,11 @@ GCC_FORMS = [
     "abs {a}, {b}", "abs {a}", "neg {a}, {b}", "not {a}, {b}", "revl {a}, {b}", "revl {a}, {a}", "revw {a}, {b}",
     "revw {a}, {a}", "xor {a}, {b}",
     "emul {a}, {b}", "emulu {a}, {b}", "bnot {a}, {b}",
+    # T24 MAIN round 5 (meters.c, the GCC objects): MIN #imm (GCC's clamp to 255), MIN/MAX Rs, SCGE.L
+    "min #255, {a}", "min #{n}, {a}", "min #-{n}, {a}", "min #0x1234, {a}", "min {a}, {b}", "max {a}, {b}",
+    "max #{n}, {a}", "scge.l {a}", "sclt.l {a}",
+    "min [{a}].l, {b}", "max [{a}].l, {b}", "min 4[{a}].l, {b}", "max 8[{a}].w, {b}", "min [{a}].b, {b}",
+    "max 2[{a}].uw, {b}", "min 3[{a}].ub, {b}", "max [{a}].ub, {b}", "max #-{n}, {a}", "max #0x1234, {a}",
 ]
 
 

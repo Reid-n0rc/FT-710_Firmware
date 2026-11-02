@@ -2484,7 +2484,7 @@ void io_task(void)
 byte meter_get_vdd(void)
 
 {
-  return DAT_00012043;
+  return meter_vdd_val;
 }
 
 
@@ -2535,7 +2535,7 @@ byte meter_get_alc(void)
 byte meter_get_swr(void)
 
 {
-  return DAT_00012046;
+  return meter_swr_val;
 }
 
 
@@ -2552,7 +2552,7 @@ byte meter_get_swr(void)
 byte meter_get_swr_raw(void)
 
 {
-  return DAT_00012047;
+  return meter_swr_raw_val;
 }
 
 
@@ -2610,7 +2610,7 @@ byte meter_get_po(void)
   undefined1 local_3;
   
   if (g_opstate.ex030408_meter_detector == 0) {
-    local_3 = DAT_00012048;
+    local_3 = meter_po_val;
   }
   else {
     local_3 = DAT_0001204b;
@@ -2632,7 +2632,7 @@ byte meter_get_po(void)
 byte meter_get_comp(void)
 
 {
-  return DAT_00012049;
+  return meter_comp_val;
 }
 
 
@@ -2649,7 +2649,7 @@ byte meter_get_comp(void)
 byte meter_get_s(void)
 
 {
-  return DAT_0001204a;
+  return meter_s_val;
 }
 
 
@@ -3006,8 +3006,8 @@ void meter_task(void)
 void vdd_scale_calc(void)
 
 {
-  DAT_00020fc0 = ((float)g_cfg105.a001_gn_vdd_mtr / 192.0) *
-                 (0.07176471 / (13.8 / (float)g_cfg105.a015_mt_vdd_mtr_pos));
+  vdd_scale = ((float)g_cfg105.a001_gn_vdd_mtr / 192.0) *
+              (0.07176471 / (13.8 / (float)g_cfg105.a015_mt_vdd_mtr_pos));
   return;
 }
 
@@ -3029,11 +3029,11 @@ void meter_vdd(void)
   
   uVar1 = g_ui.adc_pa_vdd >> 4;
   vdd_scale_calc();
-  uStack_4 = (ushort)(longlong)((float)(byte)uVar1 * DAT_00020fc0);
+  uStack_4 = (ushort)(longlong)((float)(byte)uVar1 * vdd_scale);
   if (0xff < uStack_4) {
     uStack_4 = 0xff;
   }
-  DAT_00012043 = meter_avg_vdd((undefined1)uStack_4);
+  meter_vdd_val = meter_avg_vdd((undefined1)uStack_4);
   return;
 }
 
@@ -3107,40 +3107,38 @@ void meter_alc(void)
 void swr_meter_protect(void)
 
 {
-  bool bVar1;
+  uint uVar1;
   uint uVar2;
   uint uVar3;
   uint uVar4;
+  bool bVar5;
   byte blink_phase_ret;
-  float fVar5;
-  uint uVar6;
+  float fVar6;
   ushort uStack_22;
   float fStack_20;
   float fStack_1c;
   float local_18;
   
-  uVar6 = (uint)g_ui.adc_mcup_rvs;
+  uVar1 = (uint)g_ui.adc_mcup_rvs;
   uVar2 = (uint)g_ui.adc_mcup_for;
   uVar3 = (uint)g_cfg105.a017_mt_swr_1_5_mtr_pos;
   fStack_20 = (float)g_cfg105.a018_mt_swr_2_0_mtr_pos;
   uVar4 = (uint)g_cfg105.a019_mt_swr_3_0_mtr_pos;
-  fVar5 = (float)uVar6 / (float)uVar2;
-  local_18 = (fVar5 + 1.0) / (1.0 - fVar5);
+  fVar6 = (float)uVar1 / (float)uVar2;
+  local_18 = (fVar6 + 1.0) / (1.0 - fVar6);
   if (g_ui.transmitting != 0) {
-    if ((local_18 - 1.0 < 0.0) || (0.0 <= local_18 - 5.0)) {
-      bVar1 = true;
+    if ((local_18 < 1.0) || (5.0 <= local_18)) {
+      bVar5 = true;
     }
     else {
-      bVar1 = false;
+      bVar5 = false;
     }
-    if (bVar1) {
-      if (DAT_0001b4c7 < 9) {
-        bVar1 = SCARRY4((uint)DAT_0001b4c7,1);
-        DAT_0001b4c7 = DAT_0001b4c7 + 1;
+    if (bVar5) {
+      if (swr_bad_count < 9) {
+        swr_bad_count = swr_bad_count + 1;
       }
       else {
         blink_phase_ret = blink_phase(1);
-        bVar1 = false;
         if (blink_phase_ret == 0) {
           g_ui.hi_swr = 1;
         }
@@ -3148,35 +3146,31 @@ void swr_meter_protect(void)
           g_ui.hi_swr = 2;
         }
       }
-      DAT_0001b4c6 = 0;
+      swr_good_count = 0;
     }
     else {
-      bVar1 = SBORROW4((uint)DAT_0001b4c6,8);
-      if (DAT_0001b4c6 < 9) {
-        bVar1 = SCARRY4((uint)DAT_0001b4c6,1);
-        DAT_0001b4c6 = DAT_0001b4c6 + 1;
+      if (swr_good_count < 9) {
+        swr_good_count = swr_good_count + 1;
       }
       else {
         g_ui.hi_swr = 0;
       }
-      DAT_0001b4c7 = 0;
+      swr_bad_count = 0;
     }
-    if ((10.0 < (float)uVar6 == bVar1) && (10.0 < (float)uVar2 == bVar1)) {
-      bVar1 = true;
-    }
-    else {
-      bVar1 = false;
-    }
-    if ((bVar1) || (local_18 - 1.0 < 0.0)) {
-      bVar1 = true;
+    if ((10.0 < (float)uVar1) || (10.0 < (float)uVar2)) {
+      bVar5 = false;
     }
     else {
-      bVar1 = false;
+      bVar5 = true;
     }
-    uVar6 = 0;
-    if (bVar1) {
+    if ((bVar5) || (local_18 < 1.0)) {
+      bVar5 = true;
+    }
+    else {
+      bVar5 = false;
+    }
+    if (bVar5) {
       g_ui.hi_swr = 0;
-      uVar6 = (uint)SBORROW4((uint)g_ui.tune_cycle_3d,2) << 3;
       if (g_ui.tune_cycle_3d == 2) {
         local_18 = 255.0;
       }
@@ -3184,20 +3178,20 @@ void swr_meter_protect(void)
         local_18 = 1.0;
       }
     }
-    DAT_00020fc4 = local_18;
+    meter_swr_f = local_18;
     meter_avg_swr_f(local_18);
-    if (1.5 < local_18 == (bool)((byte)(uVar6 >> 3) & 1)) {
+    if (local_18 <= 1.5) {
       fStack_1c = (float)uVar3 / 1.5;
       fStack_20 = -fStack_1c;
     }
     else {
-      if ((local_18 <= 1.5) || (2.0 < local_18 != (bool)((byte)(uVar6 >> 3) & 1))) {
-        bVar1 = false;
+      if ((local_18 <= 1.5) || (2.0 < local_18)) {
+        bVar5 = false;
       }
       else {
-        bVar1 = true;
+        bVar5 = true;
       }
-      if (bVar1) {
+      if (bVar5) {
         fStack_1c = (fStack_20 - (float)uVar3) / 0.5;
         fStack_20 = fStack_1c * -2.0 + fStack_20;
       }
@@ -3210,8 +3204,8 @@ void swr_meter_protect(void)
     if (0xff < uStack_22) {
       uStack_22 = 0xff;
     }
-    DAT_00012047 = (undefined1)uStack_22;
-    DAT_00012046 = meter_avg_swr((undefined1)uStack_22);
+    meter_swr_raw_val = (undefined1)uStack_22;
+    meter_swr_val = meter_avg_swr((undefined1)uStack_22);
     return;
   }
   g_ui.hi_swr = 0;
@@ -3235,7 +3229,6 @@ void meter_po(void)
   char cVar1;
   float fVar2;
   float fVar3;
-  int iVar4;
   byte i;
   float fStack_28;
   float fStack_24;
@@ -3262,11 +3255,10 @@ LAB_fffb7837:
       if (255.0 < fStack_1c) {
         fStack_1c = 255.0;
       }
-      DAT_00012048 = meter_avg_po((uint)(longlong)fStack_1c & 0xff);
+      meter_po_val = meter_avg_po((uint)(longlong)fStack_1c & 0xff);
       return;
     }
-    iVar4 = (uint)i * 0xc;
-    if (fVar2 < *(float *)(BYTE_ARRAY_fff88c70 + iVar4 + 4) == SCARRY4(iVar4,-0x7738c)) {
+    if (*(float *)(BYTE_ARRAY_fff88c70 + (uint)i * 0xc + 4) <= fVar2) {
       fStack_20 = *(float *)(BYTE_ARRAY_fff88c70 + (uint)i * 0xc + 8);
       fStack_24 = *(float *)(BYTE_ARRAY_fff88c70 + (uint)i * 0xc + 0xc);
       goto LAB_fffb7837;
@@ -3289,35 +3281,31 @@ void meter_comp(void)
 
 {
   ushort uVar1;
-  uint uVar2;
   undefined2 uStack_1a;
   undefined4 uStack_18;
   undefined4 uStack_14;
   undefined4 uStack_10;
   
-  uVar2 = 0;
   if (g_opstate.proc_level == 0) {
     uVar1 = dsp_comp_level();
     uVar1 = uVar1 >> 8;
-    uVar2 = uVar2 & 0xfffffff8;
   }
   else {
     uVar1 = dsp_comp_level();
     uVar1 = uVar1 & 0xff;
-    uVar2 = uVar2 & 0xfffffff9;
   }
   uStack_10 = (float)uVar1;
-  if (10.0 < uStack_10 == (bool)((byte)(uVar2 >> 3) & 1)) {
+  if (uStack_10 <= 10.0) {
     uStack_14 = 10.3;
     uStack_18 = 0.0;
   }
-  else if (20.0 < uStack_10 == (bool)((byte)(uVar2 >> 3) & 1)) {
+  else if (uStack_10 <= 20.0) {
     uStack_14 = 8.7;
     uStack_18 = 16.0;
   }
   else {
     uStack_14 = 5.8;
-    if (30.0 < uStack_10 == (bool)((byte)(uVar2 >> 3) & 1)) {
+    if (uStack_10 <= 30.0) {
       uStack_18 = 74.0;
     }
     else {
@@ -3328,7 +3316,7 @@ void meter_comp(void)
   if (0xff < uStack_1a) {
     uStack_1a = 0xff;
   }
-  DAT_00012049 = (undefined1)uStack_1a;
+  meter_comp_val = (undefined1)uStack_1a;
   return;
 }
 
@@ -3348,7 +3336,6 @@ void meter_s(void)
   uint uVar1;
   byte swtimer_expired_ret;
   ushort dsp_signal_level_ret;
-  int iVar2;
   byte i;
   float fStack_18;
   float fStack_10;
@@ -3367,22 +3354,20 @@ void meter_s(void)
     if (9 < i) {
 LAB_fffb79e0:
       fStack_18 = ((float)uVar1 - (float)(byte)dsp_signal_level_ret) * fStack_c + fStack_10;
-      if (fStack_18 - 0.0 < 0.0) {
+      if (fStack_18 < 0.0) {
         fStack_18 = 0.0;
       }
       else if (255.0 < fStack_18) {
         fStack_18 = 255.0;
       }
       if (g_ui.tx_lamp != 0) {
-        DAT_0001204a = 0;
+        meter_s_val = 0;
         return;
       }
-      DAT_0001204a = meter_avg_s((uint)(longlong)fStack_18 & 0xff);
+      meter_s_val = meter_avg_s((uint)(longlong)fStack_18 & 0xff);
       return;
     }
-    iVar2 = (uint)i * 0xc;
-    if (*(float *)("@-D" + iVar2 + 3) < (float)uVar1 - (float)(byte)dsp_signal_level_ret ==
-        SCARRY4(iVar2,-0x77404)) {
+    if ((float)uVar1 - (float)(byte)dsp_signal_level_ret <= *(float *)("@-D" + (uint)i * 0xc + 3)) {
       fStack_c = *(float *)(BYTE_ARRAY_fff88aca + (uint)i * 0xc + 0x132);
       fStack_10 = *(float *)(BYTE_ARRAY_fff88aca + (uint)i * 0xc + 0x136);
       goto LAB_fffb79e0;
@@ -3660,7 +3645,7 @@ void fm_noise_squelch(void)
     else {
       fStack_1c = 25.0;
     }
-    DAT_0001b4cb = vfo_mode_ret;
+    fm_sql_last_mode = vfo_mode_ret;
     bVar2 = dsp_fm_noise();
     if ((float)bVar2 < fStack_18) {
       g_ui.squelch_open = 1;
@@ -3680,9 +3665,9 @@ void fm_noise_squelch(void)
     }
   }
   else {
-    uVar1 = (uint)DAT_0001b4cb;
+    uVar1 = (uint)fm_sql_last_mode;
     if (((uVar1 - 6 < 2) || (uVar1 == 10 || uVar1 == 0xb)) &&
-       (DAT_0001b4cb = vfo_mode_ret, bVar3 = af_mute_get(), bVar3)) {
+       (fm_sql_last_mode = vfo_mode_ret, bVar3 = af_mute_get(), bVar3)) {
       af_mute_set('\0');
       return;
     }
