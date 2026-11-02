@@ -21,7 +21,8 @@ Block map columns (tab-separated, '#' comments, rows in priority order: a cell b
             rectangle (SLICE_X0..X2Y107..Y111, SLICE_X14Y50..X14Y54, RAMB18_X0Y50..Y59), optionally with /BEL,
             type:IDDR (every cell of a type), or ffs-fed:D=CELL+CELL...&CE=CELL+... (every flip-flop whose D pin,
             and CE pin, reach one of the listed cells through LUT/CARRY/MUX logic, following only the LUT inputs the
-            used LUT output depends on; CE=- means a constant CE; either part may be left out)
+            used LUT output depends on; CE=- means a constant CE; T=FDRE+FDSE limits the cell types; any part may
+            be left out)
   back      fan-in depth in register stages: '-' = seeds only; 'slice:N' = exactly the sub-netlist that
             `tools/xc7_netlist_verilog.py slice --depth N` cuts (the slice an RTL file was verified against); a number N =
             fan-in through LUT/CARRY/MUX logic and at most N fabric registers (clock pins and register-driven resets are not
@@ -130,14 +131,19 @@ class Index:
 
     def ffs_fed(self, spec, where):
         """Flip-flops whose D (and CE) reach the given cells through combinational logic (see the docstring)."""
-        want = {}
+        want, types = {}, None
         for part in spec.split('&'):
             k, _, v = part.partition('=')
+            if k == 'T':
+                types = v.split('+')
+                continue
             if k not in ('D', 'CE'):
                 sys.exit(f'sdr_progress: {where}: bad ffs-fed part {part!r}')
             want[k] = None if v == '-' else set(self.resolve(v.replace('+', ','), where))
         out = []
         for c in self.by_type_ffs():
+            if types and self.g.ctype(c) not in types:
+                continue
             ok = True
             for k, cells in want.items():
                 n = self.g.cells[c]['pins'].get(k, ["1'b1"])[0]
