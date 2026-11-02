@@ -2,15 +2,15 @@ metric	value
 functions	1081
 decompile_failures	0
 warnings	256
-functions_with_warnings	98
+functions_with_warnings	101
 spacebase_warnings	0
-unreachable_block_warnings	187
+unreachable_block_warnings	182
 halt_baddata	0
 functions_with_halt_baddata	0
-functions_with_in_vars	161
+functions_with_in_vars	160
 functions_with_unaff_vars	13
 functions_with_extraout_vars	10
-functions_with_in_unaff_extraout	171
+functions_with_in_unaff_extraout	170
 undefined_nonff_bytes	6366
 undefined_nonff_bytes:sram_dsp_text	5390
 undefined_nonff_bytes:dsp_itcm	976
@@ -19,9 +19,9 @@ bookmarks_bad_instruction	0
 warning:Could not recover jumptable at #. Too many branches	4
 warning:Do nothing block with infinite loop	20
 warning:Does not return	3
-warning:Globals starting with '_' overlap smaller symbols at the same address	26
+warning:Globals starting with '_' overlap smaller symbols at the same address	31
 warning:Possible PIC construction at #: Changing call to branch	4
-warning:Removing unreachable block (#)	187
+warning:Removing unreachable block (#)	182
 warning:This function may have set the stack pointer	1
 warning:Treating indirect jump as call	4
 warning:Type propagation algorithm not settling	7

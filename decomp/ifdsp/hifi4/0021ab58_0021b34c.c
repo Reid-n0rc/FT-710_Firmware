@@ -880,7 +880,6 @@ int rpmsg_lite_alloc_tx_buffer(int param_1,int *param_2,uint param_3)
   int iVar1;
   uint i;
   int iVar2;
-  undefined4 uVar3;
   undefined1 auStack_30 [48];
   
   if (param_2 == (int *)0x0) {
@@ -895,10 +894,9 @@ int rpmsg_lite_alloc_tx_buffer(int param_1,int *param_2,uint param_3)
                     (*(undefined4 *)(param_1 + 4),param_2,auStack_30);
   env_unlock_mutex(*(undefined4 *)(param_1 + 0xc));
   if (iVar1 != 0) {
-    uVar3 = ae_l16ui_n(auStack_30,0);
     iVar2 = *param_2;
-    *(char *)(iVar1 + 10) = (char)uVar3;
-    *(char *)(iVar1 + 0xb) = (char)((uint)uVar3 >> 8);
+    *(char *)(iVar1 + 10) = (char)auStack_30._0_2_;
+    *(char *)(iVar1 + 0xb) = SUB21(auStack_30._0_2_,1);
     *param_2 = iVar2 + -0x10;
     return iVar1 + 0x10;
   }
@@ -920,10 +918,9 @@ LAB_0021b230:
       break;
     }
   } while (iVar1 == 0);
-  uVar3 = ae_l16ui_n(auStack_30,0);
   iVar2 = *param_2;
-  *(char *)(iVar1 + 10) = (char)uVar3;
-  *(char *)(iVar1 + 0xb) = (char)((uint)uVar3 >> 8);
+  *(char *)(iVar1 + 10) = (char)auStack_30._0_2_;
+  *(char *)(iVar1 + 0xb) = SUB21(auStack_30._0_2_,1);
   *param_2 = iVar2 + -0x10;
   return iVar1 + 0x10;
 }
@@ -1007,9 +1004,8 @@ int * rpmsg_lite_master_init(int param_1,int param_2,uint param_3,undefined4 par
   int *piVar6;
   int iVar7;
   uint uVar8;
-  undefined4 uVar9;
-  int iVar10;
-  uint uVar11;
+  int iVar9;
+  uint uVar10;
   char *pcStack_60;
   char *pcStack_5c;
   code *apcStack_58 [2];
@@ -1018,16 +1014,16 @@ int * rpmsg_lite_master_init(int param_1,int param_2,uint param_3,undefined4 par
   uint uStack_3c;
   char **ppcStack_38;
   
-  uVar11 = param_2 - 0x800;
-  if ((uVar11 & 3) == 0) {
+  uVar10 = param_2 - 0x800;
+  if ((uVar10 & 3) == 0) {
     bVar1 = true;
-    if (0x7ff < uVar11) {
+    if (0x7ff < uVar10) {
       bVar1 = false;
     }
   }
   else {
     bVar1 = true;
-    if (0x7ff < (uVar11 & 0xfffffffc)) goto LAB_0021b36c;
+    if (0x7ff < (uVar10 & 0xfffffffc)) goto LAB_0021b36c;
   }
   if (bVar1) {
     return (int *)0x0;
@@ -1043,8 +1039,8 @@ LAB_0021b36c:
       }
       param_5[5] = uVar8;
       uStack_3c = param_3 << 1;
-      param_5[6] = uVar11 >> 9;
-      param_5[7] = uVar11 >> 9;
+      param_5[6] = uVar10 >> 9;
+      param_5[7] = uVar10 >> 9;
       ppcStack_38 = &pcStack_60;
       param_5[8] = (int)&PTR_vq_tx_master_002008d0;
       pcStack_60 = "rx_vq";
@@ -1054,19 +1050,19 @@ LAB_0021b36c:
       piVar4 = local_50;
       piVar6 = param_5 + 9;
       apcStack_58[1] = rpmsg_lite_tx_callback;
-      uVar11 = 0;
+      uVar10 = 0;
       do {
         local_50[3] = 0x10;
-        local_50[2] = 0x400;
         uStack_40 = 2;
-        if (uVar11 == 0) {
+        local_50[2] = 0x400;
+        if (uVar10 == 0) {
           local_50[2] = 0;
         }
         local_50[2] = param_1 + local_50[2];
         env_memset(local_50[2],0,0x4e);
-        uVar9 = ae_zext16(uStack_3c | uVar11 & 1);
         iVar2 = virtqueue_create_static
-                          (uVar9,*ppcStack_38,local_50 + 2,*ppcVar5,virtqueue_notify,piVar4,piVar6);
+                          (uStack_3c & 0xffff | uVar10 & 1,*ppcStack_38,local_50 + 2,*ppcVar5,
+                           virtqueue_notify,piVar4,piVar6);
         if (iVar2 != 0) {
           return (int *)0x0;
         }
@@ -1076,9 +1072,9 @@ LAB_0021b36c:
         piVar6 = piVar6 + 0x1a;
         *(int **)(*piVar4 + 100) = param_5;
         ppcStack_38 = ppcStack_38 + 1;
-        uVar11 = uVar11 + 1;
+        uVar10 = uVar10 + 1;
         piVar4 = piVar4 + 1;
-      } while (uVar11 != 2);
+      } while (uVar10 != 2);
       iVar2 = env_create_mutex(param_5 + 3,1);
       if (iVar2 == 0) {
         param_5[1] = local_50[1];
@@ -1086,7 +1082,7 @@ LAB_0021b36c:
         *param_5 = local_50[0];
         iVar2 = 0;
         do {
-          if ((*(short *)(*piVar4 + 0x52) != 0) && (uVar11 = param_5[7], uVar11 != 0)) {
+          if ((*(short *)(*piVar4 + 0x52) != 0) && (uVar10 = param_5[7], uVar10 != 0)) {
             uVar8 = 0;
             do {
               iVar7 = param_5[6];
@@ -1097,18 +1093,18 @@ LAB_0021b537:
                 } while( true );
               }
               param_5[6] = iVar7 + -1;
-              iVar7 = param_5[5] + (uVar11 - iVar7) * 0x200;
+              iVar7 = param_5[5] + (uVar10 - iVar7) * 0x200;
               if (iVar7 == 0) goto LAB_0021b537;
               env_memset(iVar7,0,0x200);
-              iVar10 = *piVar4;
-              if (*param_5 == iVar10) {
-                iVar3 = virtqueue_fill_avail_buffers(iVar10,iVar7,0x200);
+              iVar9 = *piVar4;
+              if (*param_5 == iVar9) {
+                iVar3 = virtqueue_fill_avail_buffers(iVar9,iVar7,0x200);
                 iVar2 = 0;
               }
               else {
                 iVar3 = iVar2;
-                if (param_5[1] == iVar10) {
-                  iVar2 = virtqueue_fill_used_buffers(iVar10,iVar7,0x200);
+                if (param_5[1] == iVar9) {
+                  iVar2 = virtqueue_fill_used_buffers(iVar9,iVar7,0x200);
                   iVar3 = iVar2;
                 }
               }
@@ -1117,7 +1113,7 @@ LAB_0021b537:
                 return (int *)0x0;
               }
               uVar8 = uVar8 + 1;
-            } while ((uVar8 < *(ushort *)(*piVar4 + 0x52)) && (uVar11 = param_5[7], uVar8 < uVar11))
+            } while ((uVar8 < *(ushort *)(*piVar4 + 0x52)) && (uVar10 = param_5[7], uVar8 < uVar10))
             ;
           }
           piVar4 = piVar4 + 1;

@@ -46,7 +46,7 @@ void I2S_AddTransferDMA(int param_1,int *param_2)
       iVar9 = *piVar2;
     }
     uVar10 = (uint)!bVar12;
-    uVar4 = (uint)bVar12;
+    uVar5 = (uint)bVar12;
     memw();
     uVar11 = (uint)DAT_00238c7f;
     memw();
@@ -60,15 +60,15 @@ void I2S_AddTransferDMA(int param_1,int *param_2)
       memw();
       if (*(undefined **)(&DAT_00238c88 + iVar1) < (undefined *)0x1001) {
         memw();
-        puVar3 = (undefined *)ae_zext16(*(undefined4 *)(&DAT_00238c88 + iVar1));
+        puVar3 = (undefined *)(*(uint *)(&DAT_00238c88 + iVar1) & 0xffff);
       }
       else {
         memw();
-        uVar5 = 0;
+        uVar4 = *(uint *)(&DAT_00238c88 + iVar1) >> 1;
         if ((*(uint *)(&DAT_00238c88 + iVar1) >> 1 & 3) != 0) {
-          uVar5 = *(uint *)(&DAT_00238c88 + iVar1) >> 1 & (uint)&DAT_0000fffc;
+          uVar4 = uVar4 & (uint)&DAT_0000fffc;
         }
-        puVar3 = (undefined *)ae_zext16(uVar5);
+        puVar3 = (undefined *)(uVar4 & 0xffff);
       }
     }
     memw();
@@ -77,28 +77,28 @@ void I2S_AddTransferDMA(int param_1,int *param_2)
     memw();
     DAT_00238c7d = DAT_00238c7d + 1 & 1;
     memw();
-    uVar5 = 0x200;
+    uVar4 = 0x200;
     if ((char)param_2[1] == '\x04') {
-      if (uVar4 == 4) goto LAB_002103e0;
+      if (uVar5 == 4) goto LAB_002103e0;
 LAB_0021027a:
-      uVar4 = uVar4 << 0xc;
+      uVar5 = uVar5 << 0xc;
       if (uVar10 != 4) goto LAB_00210288;
 LAB_002103f0:
       uVar10 = (uVar10 - 1) * 0x4000 & (uint)&DAT_0000c000;
     }
     else {
-      uVar5 = (*(byte *)(param_2 + 1) - 1) * 0x100 & 0x300;
-      if (uVar4 != 4) goto LAB_0021027a;
+      uVar4 = (*(byte *)(param_2 + 1) - 1) * 0x100 & 0x300;
+      if (uVar5 != 4) goto LAB_0021027a;
 LAB_002103e0:
-      uVar4 = (uVar4 - 1) * 0x1000 & (uint)&DAT_00003000;
+      uVar5 = (uVar5 - 1) * 0x1000 & (uint)&DAT_00003000;
       if (uVar10 == 4) goto LAB_002103f0;
 LAB_00210288:
       uVar10 = uVar10 << 0xe;
     }
     DMA_SetupDescriptor(&DAT_20060610 + uVar11 * 0x10,
                         ((uint)puVar3 / (uint)*(byte *)(param_2 + 1) - 1) * 0x10000 & 0x3ff0000 |
-                        uVar5 | (uVar7 & 1) << 5 | 0x10 | uVar4 | uVar10 | 3,iVar8,iVar9,
-                        &DAT_20060610 + uVar6 * 0x10);
+                        uVar4 | (uint)(uVar7 == 0) << 4 | (uVar7 & 1) << 5 | uVar5 | uVar10 | 3,
+                        iVar8,iVar9,&DAT_20060610 + uVar6 * 0x10);
     memw();
     DAT_00238c7e = DAT_00238c7e + 1;
     memw();
@@ -633,15 +633,10 @@ undefined * I3C_CheckForBusyBus(int param_1)
 
 {
   undefined *puVar1;
-  uint uVar2;
   
   memw();
   puVar1 = &DAT_00001edc;
-  uVar2 = *(uint *)(param_1 + 0x88) & 7;
-  if (uVar2 == 0) {
-    uVar2 = 1;
-  }
-  if (uVar2 != 0) {
+  if ((*(uint *)(param_1 + 0x88) & 7) == 0) {
     puVar1 = (undefined *)0x0;
   }
   return puVar1;
@@ -971,7 +966,7 @@ void I3C_MasterSetBaudRate(uint *param_1,uint *param_2,uint param_3)
   uVar4 = param_2[2];
   uVar5 = param_2[1];
   param_3 = param_3 >> 1;
-  uVar3 = 0x28;
+  uVar3 = 1;
   if (param_3 / uVar5 != 0) {
     uVar3 = param_3 / uVar5;
   }
@@ -1021,8 +1016,7 @@ void I3C_MasterSetBaudRate(uint *param_1,uint *param_2,uint param_3)
 
 /* fsl_i3c.c: GetState, then I3C_MasterRepeatedStart [inference] */
 
-undefined *
-I3C_MasterStart(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
+undefined * I3C_MasterStart(undefined4 param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 {
   int iVar1;
@@ -1030,11 +1024,15 @@ I3C_MasterStart(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefin
   
                     /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
-  if ((iVar1 != 0) && (iVar1 != 3)) {
-    return &DAT_00001edc;
+  if (param_2 == 2) {
+    if (((iVar1 == 0) || (iVar1 == 3)) || (iVar1 == 4)) goto LAB_00210e67;
   }
-  puVar2 = (undefined *)I3C_MasterRepeatedStart(param_1,param_2,param_3,param_4);
-  return puVar2;
+  else if ((iVar1 == 0) || (iVar1 == 3)) {
+LAB_00210e67:
+    puVar2 = (undefined *)I3C_MasterRepeatedStart(param_1,param_2,param_3,param_4);
+    return puVar2;
+  }
+  return &DAT_00001edc;
 }
 
 
@@ -1231,8 +1229,15 @@ int I3C_MasterSend(int param_1,byte *param_2,uint param_3,uint param_4)
   int iVar3;
   uint uVar4;
   uint uVar5;
+  uint uVar6;
+  uint uVar7;
   
-  for (; param_3 != 0; param_3 = param_3 - 2) {
+  uVar6 = param_4 & 8;
+  uVar7 = 1;
+  if (uVar6 != 0) {
+    uVar7 = 2;
+  }
+  for (; param_3 != 0; param_3 = param_3 - uVar7) {
     memw();
     uVar5 = *(uint *)(param_1 + 0x60);
     do {
@@ -1244,27 +1249,27 @@ int I3C_MasterSend(int param_1,byte *param_2,uint param_3,uint param_4)
         return iVar3;
       }
     } while ((2 << 0x20 - (0x20 - ((uVar5 & 0xc000000) >> 0x1a))) -
-             ((uVar4 & (uint)&DAT_001f0000) >> 0x10) < 2);
+             ((uVar4 & (uint)&DAT_001f0000) >> 0x10) < uVar7);
     bVar1 = *param_2;
-    if (param_3 < 3) {
-      if ((param_4 & 8) == 0) {
+    if (uVar7 < param_3) {
+      if (uVar6 == 0) {
         memw();
-        *(uint *)(param_1 + 0xb4) = (uint)bVar1;
+        *(uint *)(param_1 + 0xb0) = (uint)bVar1;
       }
       else {
         memw();
-        *(uint *)(param_1 + 0xbc) = (uint)CONCAT11(param_2[1],bVar1);
+        *(uint *)(param_1 + 0xb8) = (uint)CONCAT11(param_2[1],bVar1);
       }
     }
-    else if ((param_4 & 8) == 0) {
+    else if (uVar6 == 0) {
       memw();
-      *(uint *)(param_1 + 0xb0) = (uint)bVar1;
+      *(uint *)(param_1 + 0xb4) = (uint)bVar1;
     }
     else {
       memw();
-      *(uint *)(param_1 + 0xb8) = (uint)CONCAT11(param_2[1],bVar1);
+      *(uint *)(param_1 + 0xbc) = (uint)CONCAT11(param_2[1],bVar1);
     }
-    param_2 = param_2 + 2;
+    param_2 = param_2 + uVar7;
   }
   iVar3 = I3C_MasterWaitForTxReady(param_1,0);
   if ((iVar3 == 0) && ((param_4 & 4) == 0)) {
@@ -1395,7 +1400,11 @@ undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
   uVar5 = param_2[2];
                     /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
-  if ((iVar1 != 0) && (iVar1 != 3)) {
+  if (param_2[7] == 2) {
+    if (((iVar1 != 0) && (iVar1 != 3)) && (iVar1 != 4)) goto LAB_002113b2;
+  }
+  else if ((iVar1 != 0) && (iVar1 != 3)) {
+LAB_002113b2:
     return &DAT_00001edc;
   }
   memw();
@@ -1438,7 +1447,7 @@ undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
       do {
         uVar4 = param_2[3] >> (uVar5 & 0x1f) & 0xff;
         puVar3 = (undefined *)I3C_MasterWaitForCtrlDone(param_1,1);
-        if ((uVar5 == 0) && (((param_2[2] == 1 || (param_2[6] == 0)) && (param_2[7] != 2)))) {
+        if (((uVar5 == 0) && ((param_2[2] == 1 || (param_2[6] == 0)))) && (param_2[7] != 2)) {
           memw();
           *(uint *)(param_1 + 0xb4) = uVar4;
           puVar2 = (undefined *)I3C_MasterWaitForTxReady(param_1,0);
@@ -1462,7 +1471,7 @@ undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
     }
     if (param_2[7] != 2) {
       uVar5 = param_2[2];
-      if ((param_2[6] == 0) || (uVar5 != 1)) goto joined_r0x002114a4;
+      if ((param_2[6] == 0) || (uVar5 != 1)) goto joined_r0x002114d2;
       puVar2 = (undefined *)I3C_MasterRepeatedStart(param_1,param_2[7],(char)param_2[1],1);
       puVar3 = (undefined *)0x0;
       if (puVar2 != (undefined *)0x0) {
@@ -1474,7 +1483,7 @@ undefined * I3C_MasterTransferBlocking(int param_1,uint *param_2)
     }
     uVar5 = param_2[2];
   }
-joined_r0x002114a4:
+joined_r0x002114d2:
   if ((uVar5 == 0) && (param_2[6] != 0)) {
     puVar3 = (undefined *)I3C_MasterSend(param_1,param_2[5],param_2[6],*param_2);
   }
@@ -1521,7 +1530,6 @@ void I3C_MasterTransferCreateHandle(int param_1,int param_2,undefined4 *param_3,
 
 // ===== I3C_MasterTransferNonBlocking @ 002115f8 (325 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x002116da) */
 /* fsl_i3c.c order [inference] */
 
 undefined * I3C_MasterTransferNonBlocking(int param_1,char *param_2,int param_3)
@@ -1533,9 +1541,14 @@ undefined * I3C_MasterTransferNonBlocking(int param_1,char *param_2,int param_3)
   
                     /* state table 0x200420 [doc, inference] */
   iVar1 = I3C_MasterGetState(param_1);
-  if ((*param_2 != '\0') || ((iVar1 != 0 && (iVar1 != 3)))) {
+  if (*param_2 != '\0') {
+LAB_00211605:
     return &DAT_00001edc;
   }
+  if (*(int *)(param_3 + 0x1c) == 2) {
+    if (((iVar1 != 0) && (iVar1 != 3)) && (iVar1 != 4)) goto LAB_00211605;
+  }
+  else if ((iVar1 != 0) && (iVar1 != 3)) goto LAB_00211605;
   I3C_MasterDisableInterrupts(param_1,&DAT_0008af00);
   memcpy(param_2 + 8,param_3,0x24);
   *(undefined4 *)(param_2 + 4) = *(undefined4 *)(param_3 + 0x18);
@@ -1586,10 +1599,10 @@ undefined * I3C_MasterTransferNonBlocking(int param_1,char *param_2,int param_3)
   }
 LAB_00211707:
   I3C_MasterEnableInterrupts(param_1,&DAT_0008af00);
-  if (*(int *)(param_3 + 8) == 0) {
-    I3C_MasterEnableInterrupts(param_1,&DAT_00001000);
+  if (*(int *)(param_3 + 8) != 0) {
     return (undefined *)0x0;
   }
+  I3C_MasterEnableInterrupts(param_1,&DAT_00001000);
   return (undefined *)0x0;
 }
 
@@ -1940,7 +1953,7 @@ void I3C_SlaveGetDefaultConfig(undefined4 *param_1)
   *(undefined1 *)((int)param_1 + 0xf) = 0;
   *(undefined1 *)((int)param_1 + 0x11) = 0;
   *(undefined1 *)((int)param_1 + 0x12) = 0;
-  ae_s16i_n(0x11b,param_1,2);
+  *(undefined2 *)((int)param_1 + 2) = 0x11b;
   return;
 }
 
@@ -2014,10 +2027,9 @@ void I3C_SlaveInit(int param_1,byte *param_2,uint param_3)
   memw();
   memw();
   *(uint *)(param_1 + 0x74) = *(uint *)(param_1 + 0x74) & 0xffff8000;
-  uVar11 = ae_l16ui_n(param_2,2);
   memw();
   memw();
-  *(uint *)(param_1 + 0x74) = *(uint *)(param_1 + 0x74) | uVar11 & 0x7fff;
+  *(uint *)(param_1 + 0x74) = *(uint *)(param_1 + 0x74) | *(ushort *)(param_2 + 2) & 0x7fff;
   if (bVar3 == 0) {
     memw();
     *(undefined4 *)(param_1 + 0x6c) = *(undefined4 *)(param_2 + 8);

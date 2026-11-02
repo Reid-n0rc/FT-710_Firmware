@@ -361,63 +361,63 @@ void WWDT_Init(dword *param_1,byte *param_2)
 
 {
   byte bVar1;
-  byte bVar2;
-  byte bVar3;
-  uint uVar4;
-  int iVar5;
-  dword dVar6;
-  uint uVar7;
+  uint uVar2;
+  int iVar3;
+  dword dVar4;
+  uint uVar5;
   
-  iVar5 = 0;
+  iVar3 = 0;
   if (param_1 != &WWDT0_MOD) {
-    iVar5 = 4;
+    iVar3 = 4;
   }
-  uVar4 = *(uint *)((int)&DAT_00200628 + iVar5);
-  uVar7 = uVar4 >> 8 & 0xff;
-  if (uVar7 == 0) {
+  uVar2 = *(uint *)((int)&DAT_00200628 + iVar3);
+  uVar5 = uVar2 >> 8 & 0xff;
+  if (uVar5 == 0) {
     memw();
                     /* clock set 0 [sfr] */
-    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL0_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  else if (uVar7 == 1) {
+  else if (uVar5 == 1) {
     memw();
                     /* clock set 1 [sfr] */
-    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL0_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  else if (uVar7 == 2) {
+  else if (uVar5 == 2) {
     memw();
                     /* clock set 2 [sfr] */
-    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL0_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  else if (uVar7 == 3) {
+  else if (uVar5 == 3) {
     memw();
                     /* clock set 0 [sfr] */
-    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL1_PSCCTL0_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  else if (uVar7 == 4) {
+  else if (uVar5 == 4) {
     memw();
                     /* clock set 1 [sfr] */
-    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL1_PSCCTL1_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  else if (uVar7 == 5) {
+  else if (uVar5 == 5) {
     memw();
                     /* clock set 2 [sfr] */
-    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar4 & 0x1f));
+    CLKCTL1_PSCCTL2_SET = 1 << 0x20 - (0x20 - (uVar2 & 0x1f));
   }
-  iVar5 = 0;
+  iVar3 = 0;
   if (param_1 != &WWDT0_MOD) {
-    iVar5 = 4;
+    iVar3 = 4;
   }
                     /* set then clear [doc, inference] */
-  RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200630 + iVar5));
-  bVar2 = param_2[1];
-  bVar3 = param_2[3];
+  RESET_PeripheralReset(*(undefined4 *)((int)&DAT_00200630 + iVar3));
   bVar1 = *param_2;
+  uVar2 = (param_2[3] & 1) << 5 | (uint)bVar1 | (param_2[1] & 1) << 1;
   memw();
+  if ((*param_1 >> 3 & 1) != 0) {
+    uVar2 = uVar2 | 8;
+  }
   memw();
   param_1[1] = *(uint *)(param_2 + 8) & 0xffffff;
   memw();
-  *param_1 = (bVar3 & 1) << 5 | (uint)bVar1 | (bVar2 & 1) << 1 | 8;
+  *param_1 = uVar2;
   memw();
   param_1[6] = *(uint *)(param_2 + 4) & 0xffffff;
   memw();
@@ -428,10 +428,10 @@ void WWDT_Init(dword *param_1,byte *param_2)
   param_1[2] = 0x55;
   if (bVar1 != 0) {
     memw();
-    dVar6 = param_1[3];
-    while (dVar6 == 0xff) {
+    dVar4 = param_1[3];
+    while (dVar4 == 0xff) {
       memw();
-      dVar6 = param_1[3];
+      dVar4 = param_1[3];
     }
   }
   if ((param_2[2] != 0) && (memw(), (*param_1 & 0x10) == 0)) {
@@ -1376,7 +1376,7 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
     fVar18 = (float)uVar37 + (float)uVar30;
     uVar19 = ae_s32x2_x((ulonglong)(uint)(fVar14 + (float)uVar20));
     *puVar10 = uVar19;
-    uVar26 = 0x80000000 >> (0x20U - LZCOUNT(~uVar22) & 0x1f);
+    uVar26 = 0x80000000 >> (0x20U - (LZCOUNT(uVar22 ^ param_5 >> 0x1f) + -1) & 0x1f);
     uVar19 = ae_s32x2_x((ulonglong)(uint)(fVar14 - (float)uVar20));
     *puVar8 = uVar19;
     iVar27 = ae_addbrba32(0,uVar26);
@@ -1591,7 +1591,8 @@ fft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,undefin
     fVar16 = (float)uVar29 + fVar1;
     uVar19 = ae_s32x2_x((ulonglong)(uint)(fVar15 - fVar13 * fVar12));
     puVar25[iVar23] = uVar19;
-    iVar24 = ae_addbrba32(0,(0x80000000U >> (0x20U - LZCOUNT(~uVar22) & 0x1f)) << 1);
+    iVar24 = ae_addbrba32(0,(0x80000000U >>
+                            (0x20U - (LZCOUNT(uVar22 ^ param_5 >> 0x1f) + -1) & 0x1f)) << 1);
     fVar13 = (float)uVar35 - fVar3;
     uVar34 = (ulonglong)(uint)(fVar28 - (float)uVar20);
     uVar19 = ae_s32x2_x((ulonglong)(uint)(fVar17 - fVar2));
@@ -1654,8 +1655,8 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   uint uVar19;
   int iVar20;
   undefined8 *puVar21;
-  uint uVar22;
-  int iVar23;
+  int iVar22;
+  uint uVar23;
   undefined8 uVar24;
   undefined8 uVar25;
   undefined8 uVar26;
@@ -1683,7 +1684,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   wur_ae_cbegin0(param_3);
   wur_ae_cend0(param_3 + uVar19 * param_4 * 3);
   iVar13 = param_5 >> 3;
-  uVar22 = uVar19;
+  uVar23 = uVar19;
   if (param_5 == 0x10) {
     uVar24 = ae_l32x2_ip(param_2[4]);
     uVar16 = ae_l32x2_ip(param_2[0xc]);
@@ -1789,30 +1790,30 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     uVar24 = ae_l32x2_ip(param_2[3]);
     uVar31 = ae_l32x2_ip(param_2[1]);
     uVar28 = (ulonglong)(uint)((float)uVar31 - (float)uVar24);
-    uVar36 = (ulonglong)(uint)(((float)uVar26 - (float)uVar16) * 2.3283064e-10);
+    uVar36 = (ulonglong)(uint)(((float)uVar26 - (float)uVar16) * 0.0625);
     uVar25 = ae_l32x2_ip(param_2[7]);
     uVar32 = ae_l32x2_ip(param_2[5]);
     uVar30 = (ulonglong)(uint)((float)uVar31 + (float)uVar24);
-    uVar37 = (ulonglong)(uint)(((float)uVar26 + (float)uVar16) * 2.3283064e-10);
+    uVar37 = (ulonglong)(uint)(((float)uVar26 + (float)uVar16) * 0.0625);
     uVar34 = (ulonglong)(uint)((float)uVar32 + (float)uVar25);
-    uVar39 = (ulonglong)(uint)(((float)uVar29 + (float)uVar17) * 2.3283064e-10);
+    uVar39 = (ulonglong)(uint)(((float)uVar29 + (float)uVar17) * 0.0625);
     uVar35 = (ulonglong)(uint)((float)uVar32 - (float)uVar25);
-    uVar40 = (ulonglong)(uint)(((float)uVar29 - (float)uVar17) * 2.3283064e-10);
+    uVar40 = (ulonglong)(uint)(((float)uVar29 - (float)uVar17) * 0.0625);
     uVar17 = ae_mov(uVar36);
-    uVar16 = maddmux_s(uVar36,0x2f800000,uVar28,3);
+    uVar16 = maddmux_s(uVar36,0x3d800000,uVar28,3);
     uVar24 = ae_mov(uVar37);
-    uVar29 = maddmux_s(uVar37,0x2f800000,uVar30,2);
+    uVar29 = maddmux_s(uVar37,0x3d800000,uVar30,2);
     uVar25 = ae_mov(uVar39);
-    uVar31 = maddmux_s(uVar39,0x2f800000,uVar34,2);
+    uVar31 = maddmux_s(uVar39,0x3d800000,uVar34,2);
     uVar26 = ae_mov(uVar40);
-    uVar32 = maddmux_s(uVar40,0x2f800000,uVar35,3);
+    uVar32 = maddmux_s(uVar40,0x3d800000,uVar35,3);
     uVar16 = ae_s32x2_x(uVar16);
     *puVar7 = uVar16;
-    uVar24 = maddmux_s(uVar24,0x2f800000,uVar30,0);
+    uVar24 = maddmux_s(uVar24,0x3d800000,uVar30,0);
     uVar16 = ae_s32x2_x(uVar29);
     *puVar27 = uVar16;
     iVar13 = ae_addbrba32(0,0x8000000);
-    uVar17 = maddmux_s(uVar17,0x2f800000,uVar28,1);
+    uVar17 = maddmux_s(uVar17,0x3d800000,uVar28,1);
     uVar16 = ae_s32x2_x(uVar31);
     *(undefined8 *)((int)puVar27 + iVar13) = uVar16;
     uVar16 = ae_s32x2_x(uVar32);
@@ -1821,8 +1822,8 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     *param_1 = uVar16;
     uVar16 = ae_s32x2_x(uVar17);
     *puVar18 = uVar16;
-    uVar33 = maddmux_s(uVar25,0x2f800000,uVar34,0);
-    uVar38 = maddmux_s(uVar26,0x2f800000,uVar35,1);
+    uVar33 = maddmux_s(uVar25,0x3d800000,uVar34,0);
+    uVar38 = maddmux_s(uVar26,0x3d800000,uVar35,1);
     iVar20 = ae_addbrba32(iVar13,0x8000000);
     uVar16 = ae_l32x2_ip(param_2[10]);
     uVar26 = ae_l32x2_ip(param_2[8]);
@@ -1831,32 +1832,32 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     uVar30 = (ulonglong)(uint)((float)uVar29 + (float)uVar17);
     uVar24 = ae_l32x2_ip(param_2[0xf]);
     uVar31 = ae_l32x2_ip(param_2[0xe]);
-    uVar28 = (ulonglong)(uint)(((float)uVar26 + (float)uVar16) * 2.3283064e-10);
+    uVar28 = (ulonglong)(uint)(((float)uVar26 + (float)uVar16) * 0.0625);
     uVar25 = ae_l32x2_ip(param_2[0xc]);
     uVar32 = ae_l32x2_ip(param_2[0xd]);
     uVar36 = (ulonglong)(uint)((float)uVar32 + (float)uVar24);
     uVar34 = (ulonglong)(uint)((float)uVar32 - (float)uVar24);
     uVar37 = (ulonglong)(uint)((float)uVar29 - (float)uVar17);
     uVar17 = ae_mov(uVar28);
-    uVar29 = maddmux_s(uVar28,0x2f800000,uVar30,2);
-    uVar35 = (ulonglong)(uint)(((float)uVar26 - (float)uVar16) * 2.3283064e-10);
-    uVar28 = (ulonglong)(uint)(((float)uVar25 + (float)uVar31) * 2.3283064e-10);
+    uVar29 = maddmux_s(uVar28,0x3d800000,uVar30,2);
+    uVar35 = (ulonglong)(uint)(((float)uVar26 - (float)uVar16) * 0.0625);
+    uVar28 = (ulonglong)(uint)(((float)uVar25 + (float)uVar31) * 0.0625);
     uVar24 = ae_mov(uVar35);
-    uVar17 = maddmux_s(uVar17,0x2f800000,uVar30,0);
-    uVar30 = (ulonglong)(uint)(((float)uVar25 - (float)uVar31) * 2.3283064e-10);
+    uVar17 = maddmux_s(uVar17,0x3d800000,uVar30,0);
+    uVar30 = (ulonglong)(uint)(((float)uVar25 - (float)uVar31) * 0.0625);
     uVar16 = ae_s32x2_x(uVar29);
     *(undefined8 *)((int)puVar27 + iVar20) = uVar16;
-    uVar24 = maddmux_s(uVar24,0x2f800000,uVar37,1);
+    uVar24 = maddmux_s(uVar24,0x3d800000,uVar37,1);
     uVar16 = ae_s32x2_x(uVar38);
     *(undefined8 *)((int)puVar18 + iVar13) = uVar16;
-    uVar25 = maddmux_s(uVar35,0x2f800000,uVar37,3);
+    uVar25 = maddmux_s(uVar35,0x3d800000,uVar37,3);
     uVar16 = ae_s32x2_x(uVar33);
     *(undefined8 *)((int)param_1 + iVar13) = uVar16;
-    uVar26 = maddmux_s(uVar28,0x2f800000,uVar36,2);
+    uVar26 = maddmux_s(uVar28,0x3d800000,uVar36,2);
     uVar29 = ae_mov(uVar28);
     uVar16 = ae_s32x2_x(uVar17);
     *(undefined8 *)((int)param_1 + iVar20) = uVar16;
-    uVar17 = maddmux_s(uVar30,0x2f800000,uVar34,3);
+    uVar17 = maddmux_s(uVar30,0x3d800000,uVar34,3);
     uVar31 = ae_mov(uVar30);
     uVar16 = ae_s32x2_x(uVar24);
     *(undefined8 *)((int)puVar18 + iVar20) = uVar16;
@@ -1867,8 +1868,8 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     *(undefined8 *)((int)puVar27 + iVar13) = uVar16;
     uVar16 = ae_s32x2_x(uVar17);
     *(undefined8 *)((int)puVar7 + iVar13) = uVar16;
-    uVar16 = maddmux_s(uVar29,0x2f800000,uVar36,0);
-    uVar17 = maddmux_s(uVar31,0x2f800000,uVar34,1);
+    uVar16 = maddmux_s(uVar29,0x3d800000,uVar36,0);
+    uVar17 = maddmux_s(uVar31,0x3d800000,uVar34,1);
     uVar16 = ae_s32x2_x(uVar16);
     *(undefined8 *)((int)param_1 + iVar13) = uVar16;
     uVar16 = ae_s32x2_x(uVar17);
@@ -1879,15 +1880,15 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     auVar4._12_4_ = 0;
     return auVar4 << 0x20;
   }
-  for (; 2 < (int)uVar22; uVar22 = (int)uVar22 >> 2) {
+  for (; 2 < (int)uVar23; uVar23 = (int)uVar23 >> 2) {
     iVar20 = param_4 * 0x18 + -0x10;
     iStack_3c = 0;
     puVar18 = param_2;
     do {
-      puVar8 = puVar18 + uVar22;
+      puVar8 = puVar18 + uVar23;
       uVar25 = ae_l32x2_ip(*puVar18);
-      puVar9 = puVar8 + uVar22;
-      puVar10 = puVar9 + uVar22;
+      puVar9 = puVar8 + uVar23;
+      puVar10 = puVar9 + uVar23;
       uVar24 = ae_l32x2_ip(*puVar8);
       uVar16 = ae_l32x2_ip(*puVar10);
       uVar17 = ae_l32x2_ip(*puVar9);
@@ -1924,7 +1925,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
       uVar30 = uVar37;
       uVar16 = uVar31;
       fVar15 = fVar3;
-      if (0 < (int)(uVar22 - 2)) {
+      if (0 < (int)(uVar23 - 2)) {
         uVar16 = ae_l32x2_ip(puVar10[2]);
         uVar33 = mulmux_s(uVar34,uVar26,1);
         uVar32 = ae_l32x2_ip(puVar8[2]);
@@ -2000,12 +2001,13 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
       uVar16 = ae_s32x2_ip(uVar24);
       puVar10[1] = uVar16;
       puVar18 = puVar10 + 2;
-      iStack_3c = iStack_3c + uVar22;
+      iStack_3c = iStack_3c + uVar23;
     } while (iStack_3c < (int)uVar19);
     param_4 = param_4 << 2;
   }
-  if ((int)uVar22 < 2) {
-    fVar15 = (float)((LZCOUNT(~uVar19) + 0x5f) * 0x800000);
+  if ((int)uVar23 < 2) {
+    iVar20 = LZCOUNT(uVar19 ^ param_5 >> 0x1f);
+    fVar15 = (float)((iVar20 + 0x5e) * 0x800000);
     uVar35 = (ulonglong)(uint)fVar15;
     uVar16 = ae_l32x2_ip(*param_2);
     uVar25 = ae_l32x2_ip(param_2[2]);
@@ -2018,7 +2020,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     uVar40 = (ulonglong)(uint)(((float)uVar16 + (float)uVar25) * fVar15);
     uVar37 = (ulonglong)(uint)((float)uVar26 - (float)uVar17);
     puVar7 = param_1 + uVar19;
-    iVar20 = 0;
+    iVar22 = 0;
     uVar17 = ae_l32x2_ip(param_2[7]);
     uVar26 = ae_l32x2_ip(param_2[5]);
     puVar27 = param_2 + 9;
@@ -2032,11 +2034,11 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     uVar16 = maddmux_s(uVar40,uVar35,uVar36,2);
     uVar17 = ae_mov(uVar40);
     uVar25 = ae_mov(uVar39);
-    uVar22 = 0x80000000 >> (0x20U - LZCOUNT(~uVar19) & 0x1f);
+    uVar23 = 0x80000000 >> (0x20U - (iVar20 + -1) & 0x1f);
     uVar17 = maddmux_s(uVar17,uVar35,uVar36,0);
     uVar24 = maddmux_s(uVar39,uVar35,uVar37,3);
     uVar26 = ae_mov(uVar43);
-    iVar23 = ae_addbrba32(0,uVar22);
+    iVar20 = ae_addbrba32(0,uVar23);
     uVar29 = maddmux_s(uVar43,uVar35,uVar28,2);
     uVar25 = maddmux_s(uVar25,uVar35,uVar37,1);
     uVar31 = ae_mov(uVar34);
@@ -2058,10 +2060,10 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
       puVar18 = param_2 + 0x10;
       uVar31 = maddmux_s(uVar31,uVar35,uVar30,1);
       uVar16 = ae_s32x2_x(uVar44);
-      *(undefined8 *)((int)param_1 + iVar23) = uVar16;
+      *(undefined8 *)((int)param_1 + iVar20) = uVar16;
       uVar26 = ae_l32x2_ip(param_2[0xf]);
       uVar16 = ae_s32x2_x(uVar29);
-      *(undefined8 *)((int)puVar9 + iVar23) = uVar16;
+      *(undefined8 *)((int)puVar9 + iVar20) = uVar16;
       uVar29 = ae_l32x2_ip(param_2[0xd]);
       puVar27 = param_2 + 0x11;
       uVar30 = (ulonglong)(uint)(((float)uVar33 + (float)uVar32) * fVar15);
@@ -2071,9 +2073,9 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
       uVar28 = (ulonglong)(uint)((float)uVar29 + (float)uVar26);
       uVar16 = ae_s32x2_x(uVar25);
       *puVar7 = uVar16;
-      iVar20 = ae_addbrba32(iVar23,uVar22);
+      iVar22 = ae_addbrba32(iVar20,uVar23);
       uVar16 = ae_s32x2_x(uVar42);
-      *(undefined8 *)((int)puVar8 + iVar23) = uVar16;
+      *(undefined8 *)((int)puVar8 + iVar20) = uVar16;
       uVar39 = (ulonglong)(uint)(((float)uVar17 + (float)uVar41) * fVar15);
       uVar34 = (ulonglong)(uint)(((float)uVar17 - (float)uVar41) * fVar15);
       uVar17 = ae_mov(uVar30);
@@ -2083,43 +2085,44 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
       uVar24 = maddmux_s(uVar37,uVar35,uVar40,3);
       uVar17 = maddmux_s(uVar17,uVar35,uVar36,0);
       uVar25 = ae_s32x2_x(uVar31);
-      *(undefined8 *)((int)puVar7 + iVar23) = uVar25;
-      iVar23 = ae_addbrba32(iVar20,uVar22);
+      *(undefined8 *)((int)puVar7 + iVar20) = uVar25;
+      iVar20 = ae_addbrba32(iVar22,uVar23);
       uVar25 = maddmux_s(uVar26,uVar35,uVar40,1);
       uVar26 = ae_mov(uVar39);
       uVar31 = ae_mov(uVar34);
       uVar29 = maddmux_s(uVar39,uVar35,uVar28,2);
     }
     uVar25 = ae_s32x2_x(uVar25);
-    *(undefined8 *)((int)puVar7 + iVar20) = uVar25;
+    *(undefined8 *)((int)puVar7 + iVar22) = uVar25;
     uVar17 = ae_s32x2_x(uVar17);
-    *(undefined8 *)((int)param_1 + iVar20) = uVar17;
+    *(undefined8 *)((int)param_1 + iVar22) = uVar17;
     uVar25 = maddmux_s(uVar34,uVar35,uVar30,3);
     uVar17 = ae_s32x2_x(uVar24);
-    *(undefined8 *)((int)puVar8 + iVar20) = uVar17;
+    *(undefined8 *)((int)puVar8 + iVar22) = uVar17;
     uVar17 = maddmux_s(uVar26,uVar35,uVar28,0);
     uVar16 = ae_s32x2_x(uVar16);
-    *(undefined8 *)((int)puVar9 + iVar20) = uVar16;
+    *(undefined8 *)((int)puVar9 + iVar22) = uVar16;
     uVar24 = maddmux_s(uVar31,uVar35,uVar30,1);
     uVar16 = ae_s32x2_x(uVar29);
-    *(undefined8 *)((int)puVar9 + iVar23) = uVar16;
+    *(undefined8 *)((int)puVar9 + iVar20) = uVar16;
     uVar16 = ae_s32x2_x(uVar25);
-    *(undefined8 *)((int)puVar8 + iVar23) = uVar16;
+    *(undefined8 *)((int)puVar8 + iVar20) = uVar16;
     uVar16 = ae_s32x2_x(uVar17);
-    *(undefined8 *)((int)param_1 + iVar23) = uVar16;
+    *(undefined8 *)((int)param_1 + iVar20) = uVar16;
     uVar16 = ae_s32x2_x(uVar24);
-    *(undefined8 *)((int)puVar7 + iVar23) = uVar16;
+    *(undefined8 *)((int)puVar7 + iVar20) = uVar16;
     auVar6._0_8_ = ZEXT48(puVar18) << 0x20;
     auVar6._8_4_ = 0x80000000;
     auVar6._12_4_ = puVar27;
     return auVar6;
   }
+  iVar20 = LZCOUNT(uVar19 ^ param_5 >> 0x1f);
   uVar16 = ae_l32x2_ip(*param_2);
   uVar17 = ae_l32x2_i(param_2[1]);
   uVar24 = ae_l32x2_i(param_2[2]);
   uVar29 = ae_l32x2_ip(param_2[4]);
   uVar25 = ae_l32x2_i(param_2[6]);
-  fVar14 = (float)((LZCOUNT(~uVar19) + 0x5f) * 0x800000);
+  fVar14 = (float)((iVar20 + 0x5e) * 0x800000);
   uVar31 = ae_l32x2_i(param_2[5]);
   fVar15 = (float)uVar16 + (float)uVar29;
   fVar1 = (float)uVar24 + (float)uVar25;
@@ -2149,7 +2152,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   fVar3 = fVar3 - (float)uVar16;
   uVar30 = (ulonglong)(uint)fVar3;
   uVar34 = (ulonglong)(uint)((fVar15 - fVar1) * fVar14);
-  iVar20 = 0;
+  iVar22 = 0;
   uVar24 = ae_mov(uVar35);
   puVar21 = puVar8 + iVar13;
   uVar17 = maddmux_s(uVar35,uVar37,uVar36,2);
@@ -2205,7 +2208,7 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
     *puVar7 = uVar16;
     uVar16 = ae_s32x2_x(uVar29);
     puVar21[iVar13] = uVar16;
-    iVar20 = ae_addbrba32(0,(0x80000000U >> (0x20U - LZCOUNT(~uVar19) & 0x1f)) << 1);
+    iVar22 = ae_addbrba32(0,(0x80000000U >> (0x20U - (iVar20 + -1) & 0x1f)) << 1);
     uVar16 = conjc_s((ulonglong)(uint)((float)uVar17 - (float)uVar24));
     uVar43 = (ulonglong)(uint)((fVar15 + fVar12) * fVar14);
     uVar16 = ae_sel16i(uVar16,uVar16,0);
@@ -2231,27 +2234,27 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
   uVar26 = ae_mov(uVar36);
   uVar25 = maddmux_s(uVar25,uVar37,uVar28,3);
   uVar16 = ae_s32x2_x(uVar17);
-  *(undefined8 *)((int)puVar10 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar10 + iVar22) = uVar16;
   uVar17 = maddmux_s(uVar26,uVar39,uVar40,0);
   uVar16 = ae_s32x2_x(uVar24);
-  *(undefined8 *)((int)param_1 + iVar20) = uVar16;
+  *(undefined8 *)((int)param_1 + iVar22) = uVar16;
   uVar24 = ae_mov(uVar35);
   uVar26 = maddmux_s(uVar36,uVar39,uVar40,2);
   uVar16 = ae_s32x2_x(uVar29);
-  *(undefined8 *)((int)puVar9 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar9 + iVar22) = uVar16;
   uVar24 = maddmux_s(uVar24,uVar39,uVar30,0);
   uVar16 = ae_s32x2_x(uVar25);
-  *(undefined8 *)((int)puVar21 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar21 + iVar22) = uVar16;
   uVar25 = maddmux_s(uVar35,uVar39,uVar30,2);
   uVar16 = ae_s32x2_x(uVar17);
-  *(undefined8 *)((int)puVar27 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar27 + iVar22) = uVar16;
   uVar16 = ae_s32x2_x(uVar26);
-  *(undefined8 *)((int)puVar8 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar8 + iVar22) = uVar16;
   uVar16 = ae_s32x2_x(uVar24);
-  *(undefined8 *)((int)puVar7 + iVar20) = uVar16;
+  *(undefined8 *)((int)puVar7 + iVar22) = uVar16;
   uVar16 = ae_s32x2_x(uVar25);
-  *(undefined8 *)((int)(puVar21 + iVar13) + iVar20) = uVar16;
-  auVar5._4_4_ = iVar20;
+  *(undefined8 *)((int)(puVar21 + iVar13) + iVar22) = uVar16;
+  auVar5._4_4_ = iVar22;
   auVar5._0_4_ = puVar18;
   auVar5._8_4_ = param_1;
   auVar5._12_4_ = 0;
@@ -2261,11 +2264,6 @@ ifft_cplxf_ie(undefined8 *param_1,undefined8 *param_2,undefined8 *param_3,int pa
 
 // ===== fft_spectrumf @ 00218640 (1314 bytes)
 
-/* WARNING: Removing unreachable block (ram,0x00218738) */
-/* WARNING: Removing unreachable block (ram,0x0021880c) */
-/* WARNING: Removing unreachable block (ram,0x002188d0) */
-/* WARNING: Removing unreachable block (ram,0x00218986) */
-/* WARNING: Removing unreachable block (ram,0x002189a6) */
 /* NDSP fft/fft_spectrum: (y, x, N, mode): returns at once unless N is a power of 2 and mode is 0
    (power) or 1 (magnitude, sqrt0.s) [fact for the checks] */
 
@@ -2273,181 +2271,387 @@ void fft_spectrumf(int param_1,int param_2,uint param_3,int param_4)
 
 {
   float fVar1;
-  int iVar2;
-  undefined2 uVar3;
-  ulonglong uVar4;
-  undefined8 uVar5;
-  undefined8 uVar6;
-  undefined8 uVar7;
-  undefined8 uVar8;
-  undefined8 uVar9;
-  undefined8 uVar10;
-  undefined4 uVar11;
-  uint uVar12;
+  float fVar2;
+  undefined8 *puVar3;
+  undefined8 *puVar4;
+  int iVar5;
+  int iVar6;
+  undefined2 uVar7;
+  float fVar8;
+  ulonglong uVar9;
+  float fVar10;
+  float fVar11;
+  undefined2 uVar12;
   uint uVar13;
   undefined8 uVar14;
   undefined8 uVar15;
   undefined8 uVar16;
   undefined8 uVar17;
   undefined8 uVar18;
-  undefined8 uVar19;
-  undefined8 uVar20;
-  undefined8 uVar21;
+  int iVar19;
+  undefined4 uVar20;
+  undefined4 uVar21;
   undefined8 uVar22;
-  ulonglong uVar23;
-  undefined8 uVar24;
+  undefined8 uVar23;
+  ulonglong uVar24;
   undefined8 uVar25;
-  float fVar26;
+  undefined8 uVar26;
+  undefined8 uVar27;
+  undefined8 uVar28;
+  undefined8 uVar29;
+  undefined8 uVar30;
+  undefined8 uVar31;
+  undefined8 uVar32;
+  undefined8 uVar33;
+  undefined8 uVar34;
   undefined8 local_230;
-  undefined8 uStack_228;
+  undefined8 auStack_228 [64];
   undefined8 uStack_28;
   
   if (((1 < (int)param_3) && ((param_3 & param_3 - 1) == 0)) && ((param_4 == 0 || (param_4 == 1))))
   {
-    uVar12 = param_3 + 1;
+    uVar13 = param_3 + 1;
     if (-1 < (int)param_3) {
-      uVar12 = param_3;
+      uVar13 = param_3;
     }
-    uVar6 = ae_movda32((param_4 + LZCOUNT(~param_3) + 0x61) * 0x800000);
-    uVar12 = ((int)uVar12 >> 1) + 1;
-    uStack_28 = ae_s32x2_i(uVar6);
-    if (0 < (int)uVar12) {
-      uVar6 = ae_zalign64();
-      uVar17 = ae_movi(0);
+    uVar14 = ae_movda32((param_4 + LZCOUNT(param_3 ^ (int)param_3 >> 0x1f) + 0x60) * 0x800000);
+    uStack_28 = ae_s32x2_i(uVar14);
+    if (param_4 != 0) {
+      param_3 = ((int)uVar13 >> 1) + 1;
+    }
+    if (0 < (int)param_3) {
+      uVar14 = ae_zalign64();
+      uVar25 = ae_movi(0);
       do {
-        uVar7 = ae_movalign(uVar6);
-        uVar13 = (uint)((uVar12 & 1) != 0);
-        uVar8 = ae_la64_pp(param_2);
-        iVar2 = param_1;
-        uVar10 = uVar7;
-        if ((uVar13 != 0) && (uVar13 + 1 >> 1 != 0)) {
-          uVar10 = ae_la32x2_ip(uVar8,param_2);
-          uVar9 = ae_la32x2_ip_1(uVar8,param_2);
-          uVar11 = ae_la32x2_ip_2(uVar8,param_2);
-          uVar8 = ae_la32x2_ip(uVar9,uVar11);
-          ae_la32x2_ip_1(uVar9,uVar11);
-          ae_la32x2_ip_2(uVar9,uVar11);
-          uVar9 = ae_sel16i(uVar10,uVar8,1);
-          uVar14 = ae_movda32(0xff);
-          uVar18 = ae_sel16i_n(uVar10,uVar8,3);
-          uVar10 = ae_srli32(uVar18,0x17);
-          uVar8 = ae_srli32(uVar9,0x17);
-          uVar8 = ae_and(uVar8,uVar14);
-          uVar15 = ae_movda32(0x7f);
-          uVar10 = ae_and(uVar10,uVar14);
-          uVar10 = ae_sub32(uVar10,uVar15);
-          uVar8 = ae_sub32(uVar8,uVar15);
-          uVar10 = ae_max32(uVar8,uVar10);
-          uVar3 = ae_lt32(uVar15,uVar10);
-          uVar8 = ae_movt32x2(uVar10,uVar15,uVar3);
-          uVar10 = ae_sub32(uVar15,uVar8);
-          uVar3 = ae_eq32(uVar10,uVar17);
-          uVar14 = ae_movda32(&DAT_00400000);
-          uVar10 = ae_slai32(uVar10,0x17);
-          uVar10 = ae_movt32x2(uVar10,uVar14,uVar3);
-          fVar1 = (float)uVar9 * (float)uVar10;
-          fVar26 = (float)uVar18 * (float)uVar10;
-          uVar10 = ae_sa32x2_ip(uVar8,uVar7,param_1);
-          iVar2 = ae_sa32x2_ip_1(uVar8,uVar7,param_1);
-          local_230 = ae_s32x2_ip((ulonglong)(uint)(fVar1 * fVar1 + fVar26 * fVar26));
+        uVar15 = ae_movalign(uVar14);
+        uVar13 = param_3;
+        if (0x80 < (int)param_3) {
+          uVar13 = 0x80;
         }
-        ae_sa64pos_fp(uVar10,iVar2);
-        uVar10 = ae_movalign(uVar6);
-        uVar7 = ae_la64_pp(param_1);
-        iVar2 = param_1;
-        if (uVar13 != 0) {
-          uVar14 = ae_l32x2_ip(local_230);
-          uVar15 = sqrt0_s(uVar14);
-          uVar8 = const_s(0);
-          uVar9 = maddn_s(uVar8,uVar15,uVar15);
-          uVar18 = nexp01_s(uVar14);
-          uVar8 = const_s(3);
-          uVar18 = addexp_s(uVar18,uVar8);
-          uVar8 = maddn_s(uVar8,uVar9,uVar18);
-          uVar5 = maddn_s(uVar15,uVar8,uVar15);
-          uVar8 = const_s(0);
-          uVar9 = ae_mov(uVar8);
-          uVar15 = ae_mov(uVar9);
-          uVar19 = const_s(3);
-          uVar15 = maddn_s(uVar15,uVar5,uVar18);
-          uVar20 = nexp01_s(uVar14);
-          uVar21 = nexp01_s(uVar14);
-          uVar22 = maddn_s(uVar9,uVar19,uVar5);
-          uVar18 = msubn_s(uVar8,uVar20,uVar5);
-          uVar8 = ae_la32x2_ip(uVar7,param_1);
-          uVar9 = ae_la32x2_ip_1(uVar7,param_1);
-          uVar11 = ae_la32x2_ip_2(uVar7,param_1);
-          uVar15 = maddn_s(uVar19,uVar15,uVar5);
-          uVar19 = ae_movda32(0x7f);
-          uVar5 = ae_l32x2_i(uStack_28);
-          uVar14 = mksadj_s(uVar14);
-          uVar7 = ae_add32(uVar19,uVar8);
-          uVar3 = ae_eq32(uVar7,uVar17);
-          uVar16 = ae_movda32(&DAT_00400000);
-          uVar8 = maddn_s(uVar20,uVar18,uVar18);
-          uVar7 = ae_slai32(uVar7,0x17);
-          uStack_28 = ae_s32x2_i(uVar5);
-          uVar23 = (ulonglong)(uint)-(float)uVar22;
-          uVar7 = ae_movt32x2(uVar7,uVar16,uVar3);
-          fVar26 = (float)uVar7;
-          uVar7 = uVar10;
-          if (0 < ((int)(uVar13 + 1) >> 1) + -1) {
-            uVar20 = ae_l32x2_ip(uStack_228);
-            uVar24 = const_s(0);
-            uVar7 = ae_la32x2_ip(uVar9,uVar11);
-            ae_la32x2_ip_1(uVar9,uVar11);
-            ae_la32x2_ip_2(uVar9,uVar11);
-            uVar25 = sqrt0_s(uVar20);
-            uVar9 = maddn_s(uVar18,uVar8,uVar23);
-            uVar18 = ae_add32(uVar19,uVar7);
-            uVar22 = maddn_s(uVar22,uVar15,uVar22);
-            uVar3 = ae_eq32(uVar18,uVar17);
-            uVar19 = nexp01_s(uVar20);
-            uVar7 = maddn_s(uVar24,uVar25,uVar25);
-            uVar8 = const_s(3);
-            uVar24 = nexp01_s(uVar20);
-            uVar15 = maddn_s(uVar21,uVar9,uVar9);
-            uVar19 = addexp_s(uVar19,uVar8);
-            uVar7 = maddn_s(uVar8,uVar7,uVar19);
-            uVar8 = addexpm_s(uVar9,uVar14);
-            uVar9 = addexp_s((ulonglong)(uint)-(float)uVar22,uVar14);
-            uVar8 = divn_s(uVar8,uVar15,uVar9);
-            uVar7 = maddn_s(uVar25,uVar7,uVar25);
-            uVar21 = nexp01_s(uVar20);
-            uVar14 = mksadj_s(uVar20);
-            uVar9 = ae_slai32(uVar18,0x17);
-            uVar15 = const_s(0);
-            fVar1 = (float)uVar8 * fVar26;
-            uVar8 = ae_mov(uVar15);
-            uVar20 = const_s(3);
-            uVar18 = msubn_s(uVar15,uVar24,uVar7);
-            uVar15 = ae_mov(uVar8);
-            uVar22 = maddn_s(uVar8,uVar20,uVar7);
-            uVar8 = ae_movt32x2(uVar9,uVar16,uVar3);
-            fVar26 = (float)uVar8;
-            uVar9 = maddn_s(uVar15,uVar7,uVar19);
-            uVar4 = (ulonglong)(uint)(fVar1 * (float)uVar5);
-            uVar8 = maddn_s(uVar24,uVar18,uVar18);
-            uVar23 = (ulonglong)(uint)-(float)uVar22;
-            uVar15 = maddn_s(uVar20,uVar9,uVar7);
-            uVar7 = ae_sa32x2_ip(uVar4,uVar10,param_1);
-            iVar2 = ae_sa32x2_ip_1(uVar4,uVar10,param_1);
+        if ((param_3 & 1) != 0) {
+          uVar13 = 1;
+        }
+        uVar16 = ae_la64_pp(param_2);
+        iVar19 = param_1;
+        if (0 < (int)uVar13) {
+          puVar3 = &local_230;
+          iVar5 = param_2;
+          if ((uVar13 + 1 >> 1 & 1) != 0) {
+            uVar18 = ae_la32x2_ip(uVar16,param_2);
+            uVar17 = ae_la32x2_ip_1(uVar16,param_2);
+            uVar20 = ae_la32x2_ip_2(uVar16,param_2);
+            uVar30 = ae_la32x2_ip(uVar17,uVar20);
+            uVar16 = ae_la32x2_ip_1(uVar17,uVar20);
+            iVar5 = ae_la32x2_ip_2(uVar17,uVar20);
+            uVar17 = ae_sel16i(uVar18,uVar30,1);
+            uVar22 = ae_movda32(0xff);
+            uVar26 = ae_sel16i_n(uVar18,uVar30,3);
+            uVar18 = ae_srli32(uVar26,0x17);
+            uVar30 = ae_srli32(uVar17,0x17);
+            uVar30 = ae_and(uVar30,uVar22);
+            uVar23 = ae_movda32(0x7f);
+            uVar18 = ae_and(uVar18,uVar22);
+            uVar18 = ae_sub32(uVar18,uVar23);
+            uVar30 = ae_sub32(uVar30,uVar23);
+            uVar18 = ae_max32(uVar30,uVar18);
+            uVar7 = ae_lt32(uVar23,uVar18);
+            uVar30 = ae_movt32x2(uVar18,uVar23,uVar7);
+            uVar18 = ae_sub32(uVar23,uVar30);
+            uVar7 = ae_eq32(uVar18,uVar25);
+            uVar22 = ae_movda32(&DAT_00400000);
+            uVar18 = ae_slai32(uVar18,0x17);
+            uVar18 = ae_movt32x2(uVar18,uVar22,uVar7);
+            fVar11 = (float)uVar17 * (float)uVar18;
+            fVar10 = (float)uVar26 * (float)uVar18;
+            uVar18 = ae_sa32x2_ip(uVar30,uVar15,param_1);
+            iVar19 = ae_sa32x2_ip_1(uVar30,uVar15,param_1);
+            local_230 = ae_s32x2_ip((ulonglong)(uint)(fVar11 * fVar11 + fVar10 * fVar10));
+            puVar3 = auStack_228;
+            uVar15 = uVar18;
           }
-          uVar10 = maddn_s(uVar18,uVar8,uVar23);
-          uVar8 = maddn_s(uVar22,uVar15,uVar22);
-          uVar9 = maddn_s(uVar21,uVar10,uVar10);
-          uVar8 = addexp_s((ulonglong)(uint)-(float)uVar8,uVar14);
-          uVar10 = addexpm_s(uVar10,uVar14);
-          uVar10 = divn_s(uVar10,uVar9,uVar8);
-          uVar23 = (ulonglong)(uint)((float)uVar10 * fVar26 * (float)uVar5);
-          uVar10 = ae_sa32x2_ip(uVar23,uVar7,iVar2);
-          iVar2 = ae_sa32x2_ip_1(uVar23,uVar7,iVar2);
+          iVar6 = (int)(uVar13 + 1) >> 2;
+          if (iVar6 != 0) {
+            uVar18 = ae_la32x2_ip(uVar16,iVar5);
+            uVar30 = ae_la32x2_ip_1(uVar16,iVar5);
+            uVar20 = ae_la32x2_ip_2(uVar16,iVar5);
+            uVar17 = ae_la32x2_ip(uVar30,uVar20);
+            uVar22 = ae_la32x2_ip_1(uVar30,uVar20);
+            uVar20 = ae_la32x2_ip_2(uVar30,uVar20);
+            uVar16 = ae_la32x2_ip(uVar22,uVar20);
+            uVar30 = ae_la32x2_ip_1(uVar22,uVar20);
+            uVar20 = ae_la32x2_ip_2(uVar22,uVar20);
+            uVar26 = ae_sel16i_n(uVar18,uVar17,3);
+            uVar31 = ae_sel16i(uVar18,uVar17,1);
+            uVar18 = ae_la32x2_ip(uVar30,uVar20);
+            uVar17 = ae_la32x2_ip_1(uVar30,uVar20);
+            uVar21 = ae_la32x2_ip_2(uVar30,uVar20);
+            uVar22 = ae_movda32(0xff);
+            uVar23 = ae_srli32(uVar31,0x17);
+            uVar30 = ae_srli32(uVar26,0x17);
+            uVar32 = ae_and(uVar23,uVar22);
+            uVar30 = ae_and(uVar30,uVar22);
+            uVar23 = ae_movda32(0x7f);
+            uVar27 = ae_sel16i_n(uVar16,uVar18,1);
+            uVar33 = ae_sel16i(uVar16,uVar18,3);
+            uVar16 = ae_sub32(uVar30,uVar23);
+            uVar30 = ae_sub32(uVar32,uVar23);
+            uVar32 = ae_srli32(uVar33,0x17);
+            uVar18 = ae_srli32(uVar27,0x17);
+            uVar34 = ae_max32(uVar30,uVar16);
+            uVar16 = ae_and(uVar18,uVar22);
+            uVar18 = ae_and(uVar32,uVar22);
+            uVar7 = ae_lt32(uVar23,uVar34);
+            uVar30 = ae_sub32(uVar18,uVar23);
+            uVar16 = ae_sub32(uVar16,uVar23);
+            uVar18 = ae_movt32x2(uVar34,uVar23,uVar7);
+            uVar30 = ae_max32(uVar16,uVar30);
+            uVar7 = ae_lt32(uVar23,uVar30);
+            uVar16 = ae_sub32(uVar23,uVar18);
+            uVar12 = ae_eq32(uVar16,uVar25);
+            uVar22 = ae_movda32(&DAT_00400000);
+            uVar16 = ae_slai32(uVar16,0x17);
+            uVar30 = ae_movt32x2(uVar30,uVar23,uVar7);
+            uVar32 = ae_movt32x2(uVar16,uVar22,uVar12);
+            uVar16 = ae_sub32(uVar23,uVar30);
+            fVar10 = (float)uVar31 * (float)uVar32;
+            uVar7 = ae_eq32(uVar16,uVar25);
+            uVar16 = ae_slai32(uVar16,0x17);
+            uVar16 = ae_movt32x2(uVar16,uVar22,uVar7);
+            fVar2 = (float)uVar27 * (float)uVar16;
+            fVar11 = (float)uVar26 * (float)uVar32;
+            fVar8 = (float)uVar33 * (float)uVar16;
+            uVar16 = ae_sa32x2_ip(uVar18,uVar15,iVar19);
+            uVar20 = ae_sa32x2_ip_1(uVar18,uVar15,iVar19);
+            uVar15 = ae_sa32x2_ip(uVar30,uVar16,uVar20);
+            iVar19 = ae_sa32x2_ip_1(uVar30,uVar16,uVar20);
+            uVar24 = (ulonglong)(uint)(fVar2 * fVar2 + fVar8 * fVar8);
+            uVar16 = ae_s32x2_ip((ulonglong)(uint)(fVar10 * fVar10 + fVar11 * fVar11));
+            *puVar3 = uVar16;
+            puVar4 = puVar3 + 2;
+            if (1 < iVar6) {
+              uVar30 = ae_la32x2_ip(uVar17,uVar21);
+              uVar16 = ae_la32x2_ip_1(uVar17,uVar21);
+              uVar20 = ae_la32x2_ip_2(uVar17,uVar21);
+              uVar17 = ae_la32x2_ip(uVar16,uVar20);
+              uVar18 = ae_la32x2_ip_1(uVar16,uVar20);
+              uVar20 = ae_la32x2_ip_2(uVar16,uVar20);
+              uVar22 = ae_la32x2_ip(uVar18,uVar20);
+              uVar23 = ae_la32x2_ip_1(uVar18,uVar20);
+              uVar20 = ae_la32x2_ip_2(uVar18,uVar20);
+              uVar16 = ae_la32x2_ip(uVar23,uVar20);
+              uVar18 = ae_la32x2_ip_1(uVar23,uVar20);
+              uVar21 = ae_la32x2_ip_2(uVar23,uVar20);
+              uVar31 = ae_sel16i_n(uVar30,uVar17,3);
+              uVar32 = ae_sel16i(uVar30,uVar17,1);
+              uVar23 = ae_srli32(uVar31,0x17);
+              uVar26 = ae_movda32(0xff);
+              uVar27 = ae_srli32(uVar32,0x17);
+              uVar30 = ae_sel16i(uVar22,uVar16,1);
+              uVar17 = ae_sel16i_n(uVar22,uVar16,3);
+              uVar33 = ae_and(uVar27,uVar26);
+              uVar16 = ae_srli32(uVar17,0x17);
+              uVar22 = ae_srli32(uVar30,0x17);
+              uVar22 = ae_and(uVar22,uVar26);
+              uVar27 = ae_movda32(0x7f);
+              uVar16 = ae_and(uVar16,uVar26);
+              uVar16 = ae_sub32(uVar16,uVar27);
+              uVar22 = ae_sub32(uVar22,uVar27);
+              uVar23 = ae_and(uVar23,uVar26);
+              uVar16 = ae_max32(uVar22,uVar16);
+              uVar22 = ae_sub32(uVar23,uVar27);
+              uVar23 = ae_sub32(uVar33,uVar27);
+              uVar7 = ae_lt32(uVar27,uVar16);
+              uVar22 = ae_max32(uVar23,uVar22);
+              uVar12 = ae_lt32(uVar27,uVar22);
+              uVar33 = ae_movt32x2(uVar16,uVar27,uVar7);
+              uVar16 = ae_sub32(uVar27,uVar33);
+              uVar34 = ae_movt32x2(uVar22,uVar27,uVar12);
+              uVar7 = ae_eq32(uVar16,uVar25);
+              uVar22 = ae_movda32(&DAT_00400000);
+              uVar16 = ae_slai32(uVar16,0x17);
+              uVar16 = ae_movt32x2(uVar16,uVar22,uVar7);
+              uVar23 = ae_sub32(uVar27,uVar34);
+              fVar8 = (float)uVar16;
+              uVar7 = ae_eq32(uVar23,uVar25);
+              uVar23 = ae_slai32(uVar23,0x17);
+              uVar16 = ae_sa32x2_ip(uVar34,uVar15,iVar19);
+              uVar20 = ae_sa32x2_ip_1(uVar34,uVar15,iVar19);
+              uVar23 = ae_movt32x2(uVar23,uVar22,uVar7);
+              uVar15 = ae_sa32x2_ip(uVar33,uVar16,uVar20);
+              iVar19 = ae_sa32x2_ip_1(uVar33,uVar16,uVar20);
+              fVar10 = (float)uVar32 * (float)uVar23;
+              fVar11 = (float)uVar31 * (float)uVar23;
+              if (0 < iVar6 + -2) {
+                uVar16 = ae_la32x2_ip(uVar18,uVar21);
+                uVar23 = ae_la32x2_ip_1(uVar18,uVar21);
+                uVar20 = ae_la32x2_ip_2(uVar18,uVar21);
+                fVar2 = (float)uVar30 * fVar8;
+                fVar8 = (float)uVar17 * fVar8;
+                uVar18 = ae_s32x2_i(uVar24);
+                puVar3[1] = uVar18;
+                uVar31 = ae_la32x2_ip(uVar23,uVar20);
+                uVar18 = ae_la32x2_ip_1(uVar23,uVar20);
+                uVar20 = ae_la32x2_ip_2(uVar23,uVar20);
+                uVar17 = ae_la32x2_ip(uVar18,uVar20);
+                uVar30 = ae_la32x2_ip_1(uVar18,uVar20);
+                uVar20 = ae_la32x2_ip_2(uVar18,uVar20);
+                fVar1 = fVar10 * fVar10;
+                uVar18 = ae_la32x2_ip(uVar30,uVar20);
+                ae_la32x2_ip_1(uVar30,uVar20);
+                ae_la32x2_ip_2(uVar30,uVar20);
+                uVar32 = ae_sel16i_n(uVar16,uVar31,1);
+                uVar31 = ae_sel16i(uVar16,uVar31,3);
+                uVar16 = ae_srli32(uVar31,0x17);
+                uVar30 = ae_srli32(uVar32,0x17);
+                uVar23 = ae_and(uVar30,uVar26);
+                uVar30 = ae_sel16i_n(uVar17,uVar18,1);
+                uVar16 = ae_and(uVar16,uVar26);
+                uVar16 = ae_sub32(uVar16,uVar27);
+                uVar23 = ae_sub32(uVar23,uVar27);
+                uVar17 = ae_sel16i(uVar17,uVar18,3);
+                uVar18 = ae_srli32(uVar17,0x17);
+                uVar33 = ae_srli32(uVar30,0x17);
+                uVar16 = ae_max32(uVar23,uVar16);
+                uVar24 = (ulonglong)(uint)(fVar2 * fVar2 + fVar8 * fVar8);
+                uVar23 = ae_and(uVar33,uVar26);
+                uVar7 = ae_lt32(uVar27,uVar16);
+                uVar23 = ae_sub32(uVar23,uVar27);
+                uVar26 = ae_and(uVar18,uVar26);
+                uVar18 = ae_movt32x2(uVar16,uVar27,uVar7);
+                uVar26 = ae_sub32(uVar26,uVar27);
+                uVar16 = ae_sa32x2_ip(uVar18,uVar15,iVar19);
+                uVar20 = ae_sa32x2_ip_1(uVar18,uVar15,iVar19);
+                uVar15 = ae_sub32(uVar27,uVar18);
+                uVar18 = ae_max32(uVar23,uVar26);
+                uVar7 = ae_lt32(uVar27,uVar18);
+                uVar23 = ae_slai32(uVar15,0x17);
+                uVar12 = ae_eq32(uVar15,uVar25);
+                uVar18 = ae_movt32x2(uVar18,uVar27,uVar7);
+                uVar15 = ae_sa32x2_ip(uVar18,uVar16,uVar20);
+                iVar19 = ae_sa32x2_ip_1(uVar18,uVar16,uVar20);
+                uVar16 = ae_sub32(uVar27,uVar18);
+                uVar18 = ae_movt32x2(uVar23,uVar22,uVar12);
+                uVar7 = ae_eq32(uVar16,uVar25);
+                fVar10 = (float)uVar32 * (float)uVar18;
+                uVar23 = ae_slai32(uVar16,0x17);
+                uVar16 = ae_s32x2_ip((ulonglong)(uint)(fVar1 + fVar11 * fVar11));
+                *puVar4 = uVar16;
+                puVar4 = puVar3 + 4;
+                fVar11 = (float)uVar31 * (float)uVar18;
+                uVar16 = ae_movt32x2(uVar23,uVar22,uVar7);
+                fVar8 = (float)uVar16;
+              }
+              fVar2 = (float)uVar30 * fVar8;
+              uVar16 = ae_mov(uVar24);
+              fVar8 = (float)uVar17 * fVar8;
+              uVar24 = (ulonglong)(uint)(fVar2 * fVar2 + fVar8 * fVar8);
+              uVar16 = ae_s32x2_i(uVar16);
+              puVar4[-1] = uVar16;
+              uVar16 = ae_s32x2_ip((ulonglong)(uint)(fVar10 * fVar10 + fVar11 * fVar11));
+              *puVar4 = uVar16;
+              puVar4 = puVar4 + 2;
+            }
+            uVar16 = ae_s32x2_i(uVar24);
+            puVar4[-1] = uVar16;
+          }
+        }
+        ae_sa64pos_fp(uVar15,iVar19);
+        uVar15 = ae_movalign(uVar14);
+        uVar16 = ae_la64_pp(param_1);
+        iVar19 = param_1;
+        if (0 < (int)uVar13) {
+          uVar17 = ae_l32x2_ip(local_230);
+          uVar22 = sqrt0_s(uVar17);
+          uVar18 = const_s(0);
+          uVar30 = maddn_s(uVar18,uVar22,uVar22);
+          uVar23 = nexp01_s(uVar17);
+          uVar18 = const_s(3);
+          uVar23 = addexp_s(uVar23,uVar18);
+          uVar18 = maddn_s(uVar18,uVar30,uVar23);
+          uVar31 = maddn_s(uVar22,uVar18,uVar22);
+          uVar18 = const_s(0);
+          uVar30 = ae_mov(uVar18);
+          uVar22 = ae_mov(uVar30);
+          uVar32 = const_s(3);
+          uVar22 = maddn_s(uVar22,uVar31,uVar23);
+          uVar34 = nexp01_s(uVar17);
+          uVar27 = nexp01_s(uVar17);
+          uVar26 = maddn_s(uVar30,uVar32,uVar31);
+          uVar23 = msubn_s(uVar18,uVar34,uVar31);
+          uVar18 = ae_la32x2_ip(uVar16,param_1);
+          uVar30 = ae_la32x2_ip_1(uVar16,param_1);
+          uVar20 = ae_la32x2_ip_2(uVar16,param_1);
+          uVar22 = maddn_s(uVar32,uVar22,uVar31);
+          uVar32 = ae_movda32(0x7f);
+          uVar31 = ae_l32x2_i(uStack_28);
+          uVar17 = mksadj_s(uVar17);
+          uVar16 = ae_add32(uVar32,uVar18);
+          uVar7 = ae_eq32(uVar16,uVar25);
+          uVar33 = ae_movda32(&DAT_00400000);
+          uVar18 = maddn_s(uVar34,uVar23,uVar23);
+          uVar16 = ae_slai32(uVar16,0x17);
+          uStack_28 = ae_s32x2_i(uVar31);
+          uVar24 = (ulonglong)(uint)-(float)uVar26;
+          uVar16 = ae_movt32x2(uVar16,uVar33,uVar7);
+          fVar10 = (float)uVar16;
+          uVar16 = uVar15;
+          if (0 < ((int)(uVar13 + 1) >> 1) + -1) {
+            uVar34 = ae_l32x2_ip(auStack_228[0]);
+            uVar28 = const_s(0);
+            uVar16 = ae_la32x2_ip(uVar30,uVar20);
+            ae_la32x2_ip_1(uVar30,uVar20);
+            ae_la32x2_ip_2(uVar30,uVar20);
+            uVar29 = sqrt0_s(uVar34);
+            uVar30 = maddn_s(uVar23,uVar18,uVar24);
+            uVar23 = ae_add32(uVar32,uVar16);
+            uVar26 = maddn_s(uVar26,uVar22,uVar26);
+            uVar7 = ae_eq32(uVar23,uVar25);
+            uVar32 = nexp01_s(uVar34);
+            uVar16 = maddn_s(uVar28,uVar29,uVar29);
+            uVar18 = const_s(3);
+            uVar28 = nexp01_s(uVar34);
+            uVar22 = maddn_s(uVar27,uVar30,uVar30);
+            uVar32 = addexp_s(uVar32,uVar18);
+            uVar16 = maddn_s(uVar18,uVar16,uVar32);
+            uVar18 = addexpm_s(uVar30,uVar17);
+            uVar30 = addexp_s((ulonglong)(uint)-(float)uVar26,uVar17);
+            uVar18 = divn_s(uVar18,uVar22,uVar30);
+            uVar16 = maddn_s(uVar29,uVar16,uVar29);
+            uVar27 = nexp01_s(uVar34);
+            uVar17 = mksadj_s(uVar34);
+            uVar30 = ae_slai32(uVar23,0x17);
+            uVar22 = const_s(0);
+            fVar11 = (float)uVar18 * fVar10;
+            uVar18 = ae_mov(uVar22);
+            uVar34 = const_s(3);
+            uVar23 = msubn_s(uVar22,uVar28,uVar16);
+            uVar22 = ae_mov(uVar18);
+            uVar26 = maddn_s(uVar18,uVar34,uVar16);
+            uVar18 = ae_movt32x2(uVar30,uVar33,uVar7);
+            fVar10 = (float)uVar18;
+            uVar30 = maddn_s(uVar22,uVar16,uVar32);
+            uVar9 = (ulonglong)(uint)(fVar11 * (float)uVar31);
+            uVar18 = maddn_s(uVar28,uVar23,uVar23);
+            uVar24 = (ulonglong)(uint)-(float)uVar26;
+            uVar22 = maddn_s(uVar34,uVar30,uVar16);
+            uVar16 = ae_sa32x2_ip(uVar9,uVar15,param_1);
+            iVar19 = ae_sa32x2_ip_1(uVar9,uVar15,param_1);
+          }
+          uVar15 = maddn_s(uVar23,uVar18,uVar24);
+          uVar18 = maddn_s(uVar26,uVar22,uVar26);
+          uVar30 = maddn_s(uVar27,uVar15,uVar15);
+          uVar18 = addexp_s((ulonglong)(uint)-(float)uVar18,uVar17);
+          uVar15 = addexpm_s(uVar15,uVar17);
+          uVar15 = divn_s(uVar15,uVar30,uVar18);
+          uVar24 = (ulonglong)(uint)((float)uVar15 * fVar10 * (float)uVar31);
+          uVar15 = ae_sa32x2_ip(uVar24,uVar16,iVar19);
+          iVar19 = ae_sa32x2_ip_1(uVar24,uVar16,iVar19);
         }
         param_1 = uVar13 * 4 + param_1;
-        ae_sa64pos_fp(uVar10,iVar2);
-        uVar12 = uVar12 - uVar13;
+        ae_sa64pos_fp(uVar15,iVar19);
+        param_3 = param_3 - uVar13;
         param_2 = uVar13 * 8 + param_2;
-      } while (0 < (int)uVar12);
+      } while (0 < (int)param_3);
     }
   }
   return;
@@ -2473,6 +2677,7 @@ void scl_antilog10f(void)
   undefined1 in_st_AE_OVERFLOW;
   undefined1 uVar8;
   byte bVar9;
+  undefined4 uVar10;
   undefined8 uVar11;
   undefined8 uVar12;
   undefined8 uVar13;
@@ -2482,7 +2687,6 @@ void scl_antilog10f(void)
   undefined8 uVar17;
   undefined8 uVar18;
   undefined8 uVar19;
-  undefined4 uVar10;
   
   uVar2 = un_s(in_aed0,in_aed0);
   if (SUB21(uVar2,0)) {
@@ -2546,11 +2750,11 @@ void scl_antilog10f(void)
   uVar11 = const_s(1);
   bVar9 = (byte)((ushort)uVar2 >> 8);
   bVar9 = bVar9 & (bVar9 ^ 1);
-  uVar10 = (undefined4)CONCAT71((int7)((ulonglong)uVar7 >> 8),bVar9);
   uVar7 = ae_mov(uVar11);
   uVar13 = movt_s(uVar7,(ulonglong)(uint)-(float)uVar11,bVar9);
   uVar7 = ae_s32x2_i(uVar6);
   rsqrt0_s(uVar13);
+  uVar10 = 1;
   if (bVar9 != 0) {
     uVar10 = 0x7f7f7f7f;
   }
@@ -2593,13 +2797,13 @@ void scl_antilognf(void)
   undefined1 in_st_AE_OVERFLOW;
   undefined1 uVar8;
   byte bVar9;
+  undefined4 uVar10;
   undefined8 uVar11;
   undefined8 uVar12;
   undefined8 uVar13;
   undefined8 uVar14;
   undefined8 uVar15;
   undefined8 uVar16;
-  undefined4 uVar10;
   
   uVar2 = un_s(in_aed0,in_aed0);
   uVar11 = ae_movda32(0xfe);
@@ -2657,11 +2861,11 @@ void scl_antilognf(void)
   uVar15 = const_s(1);
   bVar9 = (byte)((ushort)uVar2 >> 8);
   bVar9 = bVar9 & (bVar9 ^ 1);
-  uVar10 = (undefined4)CONCAT71((int7)((ulonglong)uVar11 >> 8),bVar9);
   uVar11 = ae_mov(uVar15);
   uVar7 = movt_s(uVar11,(ulonglong)(uint)-(float)uVar15,bVar9);
   uVar11 = ae_s32x2_i(uVar6);
   rsqrt0_s(uVar7);
+  uVar10 = 1;
   if (bVar9 != 0) {
     uVar10 = 0x7f7f7f7f;
   }
@@ -2891,11 +3095,12 @@ undefined4 scl_log10f(undefined4 param_1)
   undefined4 *puVar2;
   bool bVar3;
   undefined2 uVar4;
-  undefined2 uVar5;
+  byte bVar5;
+  undefined2 uVar6;
   undefined2 in_br2_10;
   undefined8 in_aed0;
-  byte bVar6;
   byte bVar7;
+  undefined4 uVar8;
   ulonglong uVar9;
   undefined8 uVar10;
   undefined8 uVar11;
@@ -2907,11 +3112,9 @@ undefined4 scl_log10f(undefined4 param_1)
   ulonglong uVar17;
   undefined8 uVar18;
   undefined8 uVar19;
-  undefined4 uVar8;
   
-  bVar6 = (byte)((ushort)in_br2_10 >> 8);
+  bVar5 = (byte)((ushort)in_br2_10 >> 8);
   uVar4 = un_s(in_aed0,in_aed0);
-  uVar15 = 0;
   uVar12 = const_s(0);
   if (SUB21(uVar4,0)) {
     puVar2 = (undefined4 *)__errno();
@@ -2919,17 +3122,16 @@ undefined4 scl_log10f(undefined4 param_1)
     ae_l32_i(0x7fc00000);
     return param_1;
   }
-  uVar5 = olt_s(in_aed0,uVar12);
-  if (SUB21(uVar5,0)) {
+  uVar6 = olt_s(in_aed0,uVar12);
+  if (SUB21(uVar6,0)) {
     puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     uVar12 = const_s(1);
-    bVar6 = bVar6 | bVar6 ^ 1;
-    uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar6);
     uVar15 = ae_mov(uVar12);
-    uVar15 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar6);
+    uVar15 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar5 | bVar5 ^ 1);
     rsqrt0_s(uVar15);
     bVar3 = SUB21(uVar4,0) && !SUB21(uVar4,0);
+    uVar8 = 1;
     if (bVar3) {
       uVar8 = 0x7f7f7f7f;
     }
@@ -2948,89 +3150,88 @@ undefined4 scl_log10f(undefined4 param_1)
     ae_l32_i(0x7fc00000);
     return 0x7f7f7f7f;
   }
-  uVar5 = oeq_s(in_aed0,uVar12);
-  uVar15 = 0x4b000000;
+  uVar6 = oeq_s(in_aed0,uVar12);
   uVar12 = ae_movda32(0x800000);
-  if (SUB21(uVar5,0)) {
+  if (SUB21(uVar6,0)) {
     puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x22;
     bVar7 = (byte)uVar4 & ((byte)uVar4 ^ 1);
-    uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar7);
-    uVar15 = const_s(1);
-    bVar6 = (byte)((ushort)uVar4 >> 8);
+    uVar12 = const_s(1);
+    bVar5 = (byte)((ushort)uVar4 >> 8);
+    uVar8 = 1;
     if (bVar7 != 0) {
       uVar8 = 0x7f7f7f7f;
     }
-    uVar12 = ae_movda32(0x7f7f7f7f);
-    uVar12 = ae_sel16i_n(uVar12,uVar12,3);
-    uVar11 = ae_mov(uVar15);
-    movt_s(uVar15,uVar12,bVar7);
-    uVar12 = ae_mov(uVar11);
-    uVar15 = movt_s(uVar12,(ulonglong)(uint)-(float)uVar15,bVar7);
+    uVar15 = ae_movda32(0x7f7f7f7f);
+    uVar15 = ae_sel16i_n(uVar15,uVar15,3);
+    uVar11 = ae_mov(uVar12);
+    movt_s(uVar12,uVar15,bVar7);
+    uVar15 = ae_mov(uVar11);
+    uVar12 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar7);
     uVar10 = ae_movi(1);
-    uVar12 = const_s(0);
+    uVar15 = const_s(0);
     uVar19 = ae_mov(uVar11);
-    uVar12 = movt_s(uVar19,uVar12,bVar6 | bVar6 ^ 1);
+    uVar15 = movt_s(uVar19,uVar15,bVar5 | bVar5 ^ 1);
     uVar10 = ae_sel16i_n(uVar10,uVar10,3);
     movt_s(uVar11,uVar10,bVar7);
-    rsqrt0_s(uVar15);
-    recip0_s(uVar12);
+    rsqrt0_s(uVar12);
+    recip0_s(uVar15);
     float_s(uVar8,0);
     ae_l32_i(0xff800000);
     return 0x7f7f7f7f;
   }
-  uVar5 = olt_s(in_aed0,uVar12);
-  uVar15 = ae_movda32(0x4b000000);
-  uVar12 = const_s(1);
-  uVar15 = ae_movt32x2(uVar12,uVar15,uVar5);
-  uVar10 = ae_mov(uVar12);
+  uVar6 = olt_s(in_aed0,uVar12);
+  uVar12 = ae_movda32(0x4b000000);
+  uVar15 = const_s(1);
+  uVar12 = ae_movt32x2(uVar15,uVar12,uVar6);
+  uVar10 = ae_mov(uVar15);
   uVar19 = ae_movvfcrfsr();
-  uVar16 = (ulonglong)(uint)((float)in_aed0 * (float)uVar15);
-  uVar15 = ae_movda32(0x7fffff);
-  uVar15 = ae_and(uVar16,uVar15);
-  uVar12 = ae_movda32(0x3f000000);
-  uVar12 = ae_or(uVar15,uVar12);
+  uVar16 = (ulonglong)(uint)((float)in_aed0 * (float)uVar12);
+  uVar12 = ae_movda32(0x7fffff);
+  uVar12 = ae_and(uVar16,uVar12);
+  uVar15 = ae_movda32(0x3f000000);
+  uVar15 = ae_or(uVar12,uVar15);
   uVar11 = const_s(2);
-  uVar15 = ae_l32_i(0x3f3504f3);
-  uVar4 = olt_s(uVar12,uVar15);
-  uVar15 = ae_movt32x2(uVar12,(ulonglong)(uint)((float)uVar12 * (float)uVar11),uVar4);
-  fVar1 = (float)uVar10 - (float)uVar15;
+  uVar12 = ae_l32_i(0x3f3504f3);
+  uVar4 = olt_s(uVar15,uVar12);
+  uVar12 = ae_movt32x2(uVar15,(ulonglong)(uint)((float)uVar15 * (float)uVar11),uVar4);
+  fVar1 = (float)uVar10 - (float)uVar12;
   uVar9 = (ulonglong)(uint)fVar1;
-  uVar15 = ae_l32_i(0xbd7c887e);
-  uVar12 = ae_l32_i(0xbd849a5b);
-  uVar11 = maddn_s(uVar12,uVar15,uVar9);
+  uVar12 = ae_l32_i(0xbd7c887e);
+  uVar15 = ae_l32_i(0xbd849a5b);
+  uVar11 = maddn_s(uVar15,uVar12,uVar9);
   uVar17 = (ulonglong)(uint)(fVar1 * fVar1);
-  uVar15 = ae_l32_i(0xbd937f39);
+  uVar12 = ae_l32_i(0xbd937f39);
   uVar10 = ae_l32_i(0xbdb18ed5);
-  uVar12 = ae_l32_i(0xbd199153);
-  uVar13 = maddn_s(uVar10,uVar15,uVar9);
-  uVar15 = maddn_s(uVar11,uVar12,uVar17);
-  uVar12 = ae_l32_i(0xbdde5eef);
+  uVar15 = ae_l32_i(0xbd199153);
+  uVar13 = maddn_s(uVar10,uVar12,uVar9);
+  uVar12 = maddn_s(uVar11,uVar15,uVar17);
+  uVar15 = ae_l32_i(0xbdde5eef);
   uVar11 = ae_l32_i(0xbe143dfd);
   uVar10 = ae_l32_i(0xbe5e5bd7);
-  uVar14 = maddn_s(uVar11,uVar12,uVar9);
-  uVar12 = ae_movda32(0x95);
+  uVar14 = maddn_s(uVar11,uVar15,uVar9);
+  uVar15 = ae_movda32(0x95);
   uVar11 = ae_movda32(0x7e);
-  uVar13 = maddn_s(uVar13,uVar15,uVar17);
-  uVar15 = ae_srli32(uVar16,0x17);
-  uVar18 = ae_movt32x2(uVar11,uVar12,uVar5);
-  uVar12 = ae_l32_i(0xbede5bd8);
+  uVar13 = maddn_s(uVar13,uVar12,uVar17);
+  uVar12 = ae_srli32(uVar16,0x17);
+  uVar18 = ae_movt32x2(uVar11,uVar15,uVar6);
+  uVar15 = ae_l32_i(0xbede5bd8);
   uVar11 = ae_movi(1);
-  uVar18 = ae_sub32(uVar15,uVar18);
-  uVar15 = ae_sub32(uVar18,uVar11);
-  uVar10 = maddn_s(uVar12,uVar10,uVar9);
-  uVar15 = ae_movt32x2(uVar18,uVar15,uVar4);
+  uVar18 = ae_sub32(uVar12,uVar18);
+  uVar12 = ae_sub32(uVar18,uVar11);
+  uVar10 = maddn_s(uVar15,uVar10,uVar9);
+  uVar12 = ae_movt32x2(uVar18,uVar12,uVar4);
   uVar11 = maddn_s(uVar14,uVar13,uVar17);
-  uVar12 = float_sx2(uVar15,2);
-  uVar15 = ae_l32_i(0x3e5104d4);
-  uVar15 = maddn_s(uVar12,uVar12,uVar15);
-  uVar12 = maddn_s(uVar10,uVar11,uVar17);
-  uVar15 = maddn_s(uVar15,uVar12,uVar9);
-  uVar12 = ae_l32_i(0x7f800000);
+  uVar15 = float_sx2(uVar12,2);
+  uVar12 = ae_l32_i(0x3e5104d4);
+  uVar12 = maddn_s(uVar15,uVar15,uVar12);
+  uVar15 = maddn_s(uVar10,uVar11,uVar17);
+  uVar12 = maddn_s(uVar12,uVar15,uVar9);
+  uVar15 = ae_l32_i(0x7f800000);
   ae_movfcrfsrv(uVar19);
-  uVar4 = oeq_s(in_aed0,uVar12);
-  uVar15 = ae_movt32x2(uVar15,uVar12,uVar4);
-  ae_sel16i(uVar15,uVar15,1);
+  uVar4 = oeq_s(in_aed0,uVar15);
+  uVar12 = ae_movt32x2(uVar12,uVar15,uVar4);
+  ae_sel16i(uVar12,uVar12,1);
   return 0x7f7f7f7f;
 }
 
@@ -3048,11 +3249,12 @@ undefined4 scl_lognf(undefined4 param_1)
   undefined4 *puVar2;
   bool bVar3;
   undefined2 uVar4;
-  undefined2 uVar5;
+  byte bVar5;
+  undefined2 uVar6;
   undefined2 in_br2_10;
   undefined8 in_aed0;
-  byte bVar6;
   byte bVar7;
+  undefined4 uVar8;
   ulonglong uVar9;
   undefined8 uVar10;
   undefined8 uVar11;
@@ -3063,11 +3265,9 @@ undefined4 scl_lognf(undefined4 param_1)
   ulonglong uVar16;
   ulonglong uVar17;
   undefined8 uVar18;
-  undefined4 uVar8;
   
-  bVar6 = (byte)((ushort)in_br2_10 >> 8);
+  bVar5 = (byte)((ushort)in_br2_10 >> 8);
   uVar4 = un_s(in_aed0,in_aed0);
-  uVar15 = 0;
   uVar12 = const_s(0);
   if (SUB21(uVar4,0)) {
     puVar2 = (undefined4 *)__errno();
@@ -3075,17 +3275,16 @@ undefined4 scl_lognf(undefined4 param_1)
     ae_l32_i(0x7fc00000);
     return param_1;
   }
-  uVar5 = olt_s(in_aed0,uVar12);
-  if (SUB21(uVar5,0)) {
+  uVar6 = olt_s(in_aed0,uVar12);
+  if (SUB21(uVar6,0)) {
     puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x21;
     uVar12 = const_s(1);
-    bVar6 = bVar6 | bVar6 ^ 1;
-    uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar6);
     uVar15 = ae_mov(uVar12);
-    uVar15 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar6);
+    uVar15 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar5 | bVar5 ^ 1);
     rsqrt0_s(uVar15);
     bVar3 = SUB21(uVar4,0) && !SUB21(uVar4,0);
+    uVar8 = 1;
     if (bVar3) {
       uVar8 = 0x7f7f7f7f;
     }
@@ -3104,87 +3303,86 @@ undefined4 scl_lognf(undefined4 param_1)
     ae_l32_i(0x7fc00000);
     return 0x7f7f7f7f;
   }
-  uVar5 = oeq_s(in_aed0,uVar12);
-  uVar15 = 0x4b000000;
+  uVar6 = oeq_s(in_aed0,uVar12);
   uVar12 = ae_movda32(0x800000);
-  if (SUB21(uVar5,0)) {
+  if (SUB21(uVar6,0)) {
     puVar2 = (undefined4 *)__errno();
     *puVar2 = 0x22;
     bVar7 = (byte)uVar4 & ((byte)uVar4 ^ 1);
-    uVar8 = (undefined4)CONCAT71((int7)((ulonglong)uVar15 >> 8),bVar7);
-    uVar15 = const_s(1);
-    bVar6 = (byte)((ushort)uVar4 >> 8);
+    uVar12 = const_s(1);
+    bVar5 = (byte)((ushort)uVar4 >> 8);
+    uVar8 = 1;
     if (bVar7 != 0) {
       uVar8 = 0x7f7f7f7f;
     }
-    uVar12 = ae_movda32(0x7f7f7f7f);
-    uVar12 = ae_sel16i_n(uVar12,uVar12,3);
-    uVar11 = ae_mov(uVar15);
-    movt_s(uVar15,uVar12,bVar7);
-    uVar12 = ae_mov(uVar11);
-    uVar15 = movt_s(uVar12,(ulonglong)(uint)-(float)uVar15,bVar7);
+    uVar15 = ae_movda32(0x7f7f7f7f);
+    uVar15 = ae_sel16i_n(uVar15,uVar15,3);
+    uVar11 = ae_mov(uVar12);
+    movt_s(uVar12,uVar15,bVar7);
+    uVar15 = ae_mov(uVar11);
+    uVar12 = movt_s(uVar15,(ulonglong)(uint)-(float)uVar12,bVar7);
     uVar10 = ae_movi(1);
-    uVar12 = const_s(0);
+    uVar15 = const_s(0);
     uVar18 = ae_mov(uVar11);
-    uVar12 = movt_s(uVar18,uVar12,bVar6 | bVar6 ^ 1);
+    uVar15 = movt_s(uVar18,uVar15,bVar5 | bVar5 ^ 1);
     uVar10 = ae_sel16i_n(uVar10,uVar10,3);
     movt_s(uVar11,uVar10,bVar7);
-    rsqrt0_s(uVar15);
-    recip0_s(uVar12);
+    rsqrt0_s(uVar12);
+    recip0_s(uVar15);
     float_s(uVar8,0);
     ae_l32_i(0xff800000);
     return 0x7f7f7f7f;
   }
-  uVar5 = olt_s(in_aed0,uVar12);
-  uVar15 = ae_movda32(0x4b000000);
-  uVar12 = const_s(1);
-  uVar15 = ae_movt32x2(uVar12,uVar15,uVar5);
-  uVar18 = ae_mov(uVar12);
+  uVar6 = olt_s(in_aed0,uVar12);
+  uVar12 = ae_movda32(0x4b000000);
+  uVar15 = const_s(1);
+  uVar12 = ae_movt32x2(uVar15,uVar12,uVar6);
+  uVar18 = ae_mov(uVar15);
   uVar13 = ae_movvfcrfsr();
-  uVar16 = (ulonglong)(uint)((float)in_aed0 * (float)uVar15);
-  uVar15 = ae_movda32(0x7fffff);
-  uVar15 = ae_and(uVar16,uVar15);
-  uVar12 = ae_movda32(0x3f000000);
-  uVar12 = ae_or(uVar15,uVar12);
+  uVar16 = (ulonglong)(uint)((float)in_aed0 * (float)uVar12);
+  uVar12 = ae_movda32(0x7fffff);
+  uVar12 = ae_and(uVar16,uVar12);
+  uVar15 = ae_movda32(0x3f000000);
+  uVar15 = ae_or(uVar12,uVar15);
   uVar10 = const_s(2);
-  uVar15 = ae_l32_i(0x3f3504f3);
-  uVar4 = olt_s(uVar12,uVar15);
-  uVar15 = ae_movt32x2(uVar12,(ulonglong)(uint)((float)uVar12 * (float)uVar10),uVar4);
-  fVar1 = (float)uVar18 - (float)uVar15;
+  uVar12 = ae_l32_i(0x3f3504f3);
+  uVar4 = olt_s(uVar15,uVar12);
+  uVar12 = ae_movt32x2(uVar15,(ulonglong)(uint)((float)uVar15 * (float)uVar10),uVar4);
+  fVar1 = (float)uVar18 - (float)uVar12;
   uVar9 = (ulonglong)(uint)fVar1;
-  uVar15 = ae_l32_i(0xbdb0cd23);
+  uVar12 = ae_l32_i(0xbdb0cd23);
   uVar10 = ae_l32_i(0xbe115eaa);
-  uVar12 = ae_l32_i(0xbe18aa2f);
+  uVar15 = ae_l32_i(0xbe18aa2f);
   uVar11 = ae_l32_i(0xbe29cfe9);
-  uVar10 = maddn_s(uVar10,uVar15,uVar9);
-  uVar11 = maddn_s(uVar11,uVar12,uVar9);
+  uVar10 = maddn_s(uVar10,uVar12,uVar9);
+  uVar11 = maddn_s(uVar11,uVar15,uVar9);
   uVar17 = (ulonglong)(uint)(fVar1 * fVar1);
-  uVar15 = ae_l32_i(0xbe4c6bcf);
-  uVar12 = ae_l32_i(0xbe8001c7);
-  uVar12 = maddn_s(uVar12,uVar15,uVar9);
+  uVar12 = ae_l32_i(0xbe4c6bcf);
+  uVar15 = ae_l32_i(0xbe8001c7);
+  uVar15 = maddn_s(uVar15,uVar12,uVar9);
   uVar10 = maddn_s(uVar11,uVar10,uVar17);
-  uVar15 = ae_l32_i(0xbeaaab8a);
+  uVar12 = ae_l32_i(0xbeaaab8a);
   uVar11 = ae_l32_i(0xbefffffe);
-  uVar15 = maddn_s(uVar11,uVar15,uVar9);
-  uVar14 = maddn_s(uVar12,uVar10,uVar17);
-  uVar12 = ae_movda32(0x95);
+  uVar12 = maddn_s(uVar11,uVar12,uVar9);
+  uVar14 = maddn_s(uVar15,uVar10,uVar17);
+  uVar15 = ae_movda32(0x95);
   uVar11 = ae_movda32(0x7e);
   uVar10 = ae_srli32(uVar16,0x17);
-  uVar11 = ae_movt32x2(uVar11,uVar12,uVar5);
-  uVar12 = ae_movi(1);
+  uVar11 = ae_movt32x2(uVar11,uVar15,uVar6);
+  uVar15 = ae_movi(1);
   uVar10 = ae_sub32(uVar10,uVar11);
-  uVar12 = ae_sub32(uVar10,uVar12);
-  uVar11 = maddn_s(uVar15,uVar14,uVar17);
-  uVar15 = ae_movt32x2(uVar10,uVar12,uVar4);
-  uVar12 = float_sx2(uVar15,0);
-  uVar15 = ae_l32_i(0x3f317218);
+  uVar15 = ae_sub32(uVar10,uVar15);
+  uVar11 = maddn_s(uVar12,uVar14,uVar17);
+  uVar12 = ae_movt32x2(uVar10,uVar15,uVar4);
+  uVar15 = float_sx2(uVar12,0);
+  uVar12 = ae_l32_i(0x3f317218);
   uVar10 = msubn_s(uVar18,uVar11,uVar9);
-  uVar12 = msubn_s((ulonglong)(uint)((float)uVar12 * (float)uVar15),uVar10,uVar9);
-  uVar15 = ae_l32_i(0x7f800000);
+  uVar15 = msubn_s((ulonglong)(uint)((float)uVar15 * (float)uVar12),uVar10,uVar9);
+  uVar12 = ae_l32_i(0x7f800000);
   ae_movfcrfsrv(uVar13);
-  uVar4 = oeq_s(in_aed0,uVar15);
-  uVar15 = ae_movt32x2(uVar12,uVar15,uVar4);
-  ae_sel16i(uVar15,uVar15,1);
+  uVar4 = oeq_s(in_aed0,uVar12);
+  uVar12 = ae_movt32x2(uVar15,uVar12,uVar4);
+  ae_sel16i(uVar12,uVar12,1);
   return 0x7f7f7f7f;
 }
 
@@ -3708,7 +3906,7 @@ void vec_atan2f(undefined4 *param_1,undefined4 *param_2,undefined4 *param_3,uint
         }
         param_4 = param_4 - 0x80;
         uVar23 = ae_la64_pp(param_3);
-        uVar35 = param_4;
+        uVar35 = uVar34 + 1;
         if (-1 < (int)uVar34) {
           uVar35 = uVar34;
         }
