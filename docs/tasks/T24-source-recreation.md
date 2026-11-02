@@ -1988,6 +1988,72 @@ SDR re-implemented: **5.0 % -> 6.5 %** of 63,735 cells (3,182 -> 4,133; `decomp/
   sequencer `SLICE_X30Y125..X33Y124` with 117 external inputs): not started. Its cut is the port-A address and WE pins.
 - **Decimator stages** (`rx_fir_operand_mux`, `rx_out_mac`): not started.
 
+## SDR RTL, round 3 (2026-11-02)
+
+### Plan (SDR round 3)
+
+Continue round 2: (1) the read side of the register file, with the address windows settled by the one-hot
+upper-address read frames in the whole netlist and the structure of the two-stage mux taken from an exhaustive
+evaluation of its cones, so that the slice check can run with a new address on every clock; (2) the scope writer's
+address side and its sequencer; (3) the decimator stages `rx_fir_operand_mux`, the integrate-and-difference window sum
+and `rx_out_mac`. Every block gets a `slice:1` row in `tools/sdr_blocks.tsv` (the slice its testbench runs against) and
+is cut at registers or at named control LUTs; slice simulations (Icarus) wherever possible, one short whole-netlist run
+(the shared machine gave round 2 about 3,000 clocks/s).
+
+### SDR: results (round 3)
+
+| Block (tsv row) | RTL | Cells | Check [fact, Icarus 11, 2,000,000 clocks each, 0 mismatching clocks] |
+|---|---|---|---|
+| `regread` | `hdl/sdr/regread.v` | 499 | `tb_regread.v -DSTRUCT`: 80 flip-flops (16 read data, 64 group) on every clock; the address new on half of the clocks; 1,115,364 clocks with a stable address also against the read-map reference |
+| `scope_wr_addr` | `hdl/sdr/scope_wr_addr.v` | 120 | `tb_scope_wr_addr.v -DSTRUCT`: 32 flip-flops (port-A index, bank, write enable, both index counters); RTL alone: index order 425, 425, 424, 426, 423, 427, ... |
+| `scope_wr_seq` | `hdl/sdr/scope_wr_seq.v` | 74 | `tb_scope_wr_seq.v -DSTRUCT`: the 16 state flip-flops, 65,475 distinct states visited |
+| `rx_fir_operand` | `hdl/sdr/rx_fir_operand_mux.v` | 425 | `tb_rx_fir_operand_mux.v -DSTRUCT`: 66 flip-flops (b and its delayed copy) |
+| `rx_window_sum` | `hdl/sdr/rx_window_sum.v` | 504 | `tb_rx_window_sum.v -DSTRUCT`: 266 flip-flops (integrator, two snapshots, difference) |
+| `rx_out_mac` | `hdl/sdr/rx_out_mac.v` | 184 | `tb_rx_out_mac.v -DSTRUCT`: 84 flip-flops (accumulator, pipeline, phase counter) |
+
+SDR re-implemented: **6.5 % -> 9.3 %** of 63,735 cells (4,133 -> 5,939; recognized 36.4 % -> 37.2 %;
+`decomp/sdr/progress.tsv`). The old broad rows `rx_fir_operand_mux` and `rx_out_mac` stay as recognized-only rows
+(the second renamed `rx_out_word`); the verified rows come first and claim their slices.
+
+- **Read map** (netlist.md [5.2](../code/sdr/netlist.md#52-register-link-uart-b-fact-unless-marked)): a6..a15 settled
+  by one whole-netlist run (`regmap_main.cpp`, 34 probes, 13 frames, 2.7 M clocks): `r0040` .. `r8000` each pulsed
+  exactly one upper address flip-flop. Windows from the exhaustive evaluation of both mux stages over all 2^16
+  addresses: 0x0000..0x003F the four group registers; 0x0100..0x01FF a status byte (8 FDPE of the address-loaded
+  block); 0x3000..0x3FFF, 0x8000..0x9FFF, 0xC000..0xDFFF three capture-RAM pairs (two bytes interleaved bit by bit);
+  0xCCCC everywhere else. The word of each address 0x00..0x3F (0x00 = 0x0104, the status words of 0x01, 0x02, 0x2F,
+  0x32, 0x33, 0x38..0x3F with their cells, 0xCCCC at 0x28..0x2D, 0x34..0x36). **0x37 reads back what was written**
+  (0xBCC5 after MAIN's unlock frame). Round 2's "per-clock check needs that structure": each group register holds one
+  fixed out-of-window value (0xCCCC for all four groups), so the structure is simple and the slice check runs with a
+  new address on every clock.
+- **Scope writer** (netlist.md [5.6](../code/sdr/netlist.md#56-scope-frame-serializer-the-displays-rspi2-link-186)): the
+  "16-bit counter sequencer" is a 16-bit state counter (reset, hold, idle at 0xFFFF, jumps at 0x0072, 0x0098, 0x00B2,
+  else + 1), from an exhaustive evaluation of its next-state cones over all 2^16 states and 2^8 condition values. The
+  address side decodes four single states (0x0082 load 425, 0x00A4 / 0x00AA write the down / up counter, 0x00B1
+  step) and the write enable two set states and 23 hold states. The "117 external inputs" of round 2 reduce to two
+  flip-flops (i0, i1) and five condition nets, compares of four other counters.
+- **Decimator** (netlist.md [3.9](../code/sdr/netlist.md#39-rx-decimator-where-the-signal-stops-being-linear-232),
+  [3.10](../code/sdr/netlist.md#310-rx-output-word-and-level-246)): the pre-adders are signed 33-bit sums (bit 31's
+  DI = ~a31, inverted again in the select LUTs); the b copy for DSP48_X1Y3 goes through an SRLC32E (two clocks for
+  b[32:17]); the "difference" subtracts two snapshots of the product, not of the integrator; the output accumulator
+  loads at phase 24 and adds at phase 32 of a strobe-cleared 12-bit counter.
+- **Method.** Mux and decode functions were taken from bit-parallel evaluations of the LUT/CARRY4 cones (each signal a
+  Python integer, one bit per address or state), slice port lists generated from the netlist (committed as
+  `hdl/sdr/tb_*_ports.vh`, cell names only), and every block run in Icarus with random bits on every input the RTL does
+  not model. The derived scripts and files stayed in `build/sdr/vl/r3` (deleted).
+
+### SDR: blockers and next steps (round 3)
+
+- **Scope writer, rest**: the four counters behind the sequencer's conditions (`SLICE_X31Y122..Y124`,
+  `X10Y119..Y121`, `X8Y121/Y122` + `X9Y124`, the 12-bit copy `X28Y74..Y76`) and the two control flip-flops i0
+  (`SLICE_X10Y117/D5FF`) and i1 (`SLICE_X31Y112/AFF`). Open: their loads and enables and what i0/i1 follow; would be
+  settled by the same exhaustive evaluation of their cones (the decodes are likely again single states of s).
+- **Decimator control**: the second-stage sequencer (`SLICE_X12..X15Y3..Y22`) that drives the 12 operand selects, the
+  b enable/reset and the four window-sum enables, the rounding/clamp (`SLICE_X42Y7..Y17`, `X40Y15/BLUT`) and write
+  registers, and the output word latch and mux of 3.10 (`SLICE_X29Y19/AFF`, `X43Y42`..): not started.
+- **Status bits** of the read map: the cells are named, their blocks are open (would be settled by tracing each D cone).
+- Not done this round: a whole-netlist trace check of the read side (the slice check covers every clock; the
+  whole-netlist run gave the read values of 13 frames).
+
 ## MAIN, UI track (2026-11-01; parallel to MAIN round 5)
 
 ### Plan (UI track)
