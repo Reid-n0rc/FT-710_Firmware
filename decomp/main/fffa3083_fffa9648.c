@@ -2127,6 +2127,9 @@ void cat_ext_VE(char param_1)
 // ===== cat_ext_JP @ fffa556b (822 bytes)
 
 /* WARNING: Removing unreachable block (ram,0xfffa5810) */
+/* JP0710 + region code (4 hex) + complement (4 hex) + EEPROM header stamp (10 hex); the set checks
+   the complement, maps 0x306F->0xD32D, 0xB5A7->0xA983, 0x9CF7->0x7753, 0xA4C5->0xD950,
+   0x50E2->0x315B, stamps the header with the clock and calls dest_code_set [fact: fffa556b] */
 
 void cat_ext_JP(uint param_1,char param_2)
 
@@ -2477,6 +2480,10 @@ void cat_ext_FD(int param_1,char param_2)
 /* WARNING: Removing unreachable block (ram,0xfffa5f4e) */
 /* WARNING: Removing unreachable block (ram,0xfffa5e8a) */
 /* WARNING: Removing unreachable block (ram,0xfffa5d68) */
+/* EO P1 P2 P3 P4 P5..P7: closes the pop-ups, then P2 0 moves VFO 0 by P5..P7 x 1 Hz / 1 kHz / 1 MHz
+   (P4 0/1/2) up (P3 +) or down (-), clamped to 30 kHz..75 MHz; P2 1/2 turns encoder 2/3 (enc2_step,
+   enc3_step). Another P4 moves by an uninitialised stack word (0xFFFA5D7C..0xFFFA5DAC) [fact:
+   fffa5c90] */
 
 void cat_ext_EO(int param_1,byte param_2)
 
@@ -2649,6 +2656,11 @@ void cat_ext_EO(int param_1,byte param_2)
 /* WARNING: Removing unreachable block (ram,0xfffa6224) */
 /* WARNING: Removing unreachable block (ram,0xfffa646a) */
 /* WARNING: Removing unreachable block (ram,0xfffa6327) */
+/* PE P1 P2 P3 (parametric EQ EX030302..EX030319): P1 0 = EQ, 2 = PROC EQ; P2 band 0..2; P3 0 freq,
+   1 level (sign + 2 digits), 2 width. The set form adds the digits to the uninitialised stack byte
+   10[r0] (no store to it before 0xFFFA638C / 0xFFFA63FC), so the stored value is that byte + P4..;
+   a P1 or P2 outside those values reads or writes through an uninitialised pointer [fact: fffa5fdf]
+    */
 
 void cat_ext_PE(int param_1,char param_2)
 
