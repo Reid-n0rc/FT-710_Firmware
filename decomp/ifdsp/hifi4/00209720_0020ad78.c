@@ -7,9 +7,8 @@
 void CLOCK_InitSysPll(undefined4 *param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
-  uint uVar3;
   
   memw();
                     /* Run configuration 0 set [sfr] */
@@ -26,74 +25,72 @@ void CLOCK_InitSysPll(undefined4 *param_1)
   CLKCTL0_SYSPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00100000;
   }
   else if (iVar2 == 1) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00110000;
   }
   else if (iVar2 == 2) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00120000;
   }
   else if (iVar2 == 3) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00130000;
   }
   else if (iVar2 == 4) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00140000;
   }
   else if (iVar2 == 5) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00150000;
   }
   else if (iVar2 == 6) {
     memw();
-    uVar3 = CLKCTL0_SYSPLL0CTL0;
+    uVar1 = CLKCTL0_SYSPLL0CTL0;
     memw();
-    CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
+    CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
                     /* system pll0 control0 [sfr] */
-  uVar3 = CLKCTL0_SYSPLL0CTL0;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xfffffffd;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xfffffffd;
   memw();
                     /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00060000;
   memw();
                     /* system pll0 lock time [sfr] */
-  uVar3 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
-  SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
+  uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
+  SDK_DelayAtLeastUs(uVar1 >> 1 & 0x7fff,600000000);
   memw();
-  uVar3 = CLKCTL0_SYSPLL0CTL0;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  CLKCTL0_SYSPLL0CTL0 = uVar3 | (uint)&DAT_00002000;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 | (uint)&DAT_00002000;
   memw();
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
-  uVar3 = ae_zext16(uVar1);
-  SDK_DelayAtLeastUs(uVar3 / 6,600000000);
+  SDK_DelayAtLeastUs((uVar1 & 0xffff) / 6,600000000);
   memw();
-  uVar3 = CLKCTL0_SYSPLL0CTL0;
+  uVar1 = CLKCTL0_SYSPLL0CTL0;
   memw();
-  CLKCTL0_SYSPLL0CTL0 = uVar3 & 0xffffdfff;
+  CLKCTL0_SYSPLL0CTL0 = uVar1 & 0xffffdfff;
   memw();
   uVar1 = CLKCTL0_SYSPLL0LOCKTIMEDIV2;
-  uVar3 = ae_zext16(uVar1);
-  SDK_DelayAtLeastUs(uVar3 / 3,600000000);
+  SDK_DelayAtLeastUs((uVar1 & 0xffff) / 3,600000000);
   return;
 }
 
@@ -139,9 +136,8 @@ void CLOCK_InitSysPfd(int param_1,uint param_2)
 void CLOCK_InitAudioPll(undefined4 *param_1)
 
 {
-  undefined4 uVar1;
+  uint uVar1;
   int iVar2;
-  uint uVar3;
   
   memw();
                     /* Run configuration 0 set [sfr] */
@@ -158,74 +154,72 @@ void CLOCK_InitAudioPll(undefined4 *param_1)
   CLKCTL1_AUDIOPLL0DENOM = param_1[2];
   if (iVar2 == 0) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00100000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00100000;
   }
   else if (iVar2 == 1) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00110000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00110000;
   }
   else if (iVar2 == 2) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00120000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00120000;
   }
   else if (iVar2 == 3) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00130000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00130000;
   }
   else if (iVar2 == 4) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00140000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00140000;
   }
   else if (iVar2 == 5) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00150000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00150000;
   }
   else if (iVar2 == 6) {
     memw();
-    uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+    uVar1 = CLKCTL1_AUDIOPLL0CTL0;
     memw();
-    CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xff00ffff | (uint)&DAT_00160000;
+    CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xff00ffff | (uint)&DAT_00160000;
   }
   memw();
                     /* audio pll0 control0 [sfr] */
-  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xfffffffd;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xfffffffd;
   memw();
                     /* Run configuration 0 clear [sfr] */
   SYSCTL0_PDRUNCFG0_CLR = &DAT_00180000;
   memw();
                     /* audio pll0 lock time [sfr] */
-  uVar3 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
-  SDK_DelayAtLeastUs(uVar3 >> 1 & 0x7fff,600000000);
+  uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
+  SDK_DelayAtLeastUs(uVar1 >> 1 & 0x7fff,600000000);
   memw();
-  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  CLKCTL1_AUDIOPLL0CTL0 = uVar3 | (uint)&DAT_00002000;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 | (uint)&DAT_00002000;
   memw();
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
-  uVar3 = ae_zext16(uVar1);
-  SDK_DelayAtLeastUs(uVar3 / 6,600000000);
+  SDK_DelayAtLeastUs((uVar1 & 0xffff) / 6,600000000);
   memw();
-  uVar3 = CLKCTL1_AUDIOPLL0CTL0;
+  uVar1 = CLKCTL1_AUDIOPLL0CTL0;
   memw();
-  CLKCTL1_AUDIOPLL0CTL0 = uVar3 & 0xffffdfff;
+  CLKCTL1_AUDIOPLL0CTL0 = uVar1 & 0xffffdfff;
   memw();
   uVar1 = CLKCTL1_AUDIOPLL0LOCKTIMEDIV2;
-  uVar3 = ae_zext16(uVar1);
-  SDK_DelayAtLeastUs(uVar3 / 3,600000000);
+  SDK_DelayAtLeastUs((uVar1 & 0xffff) / 3,600000000);
   return;
 }
 
@@ -409,8 +403,8 @@ uint SDK_Malloc(uint param_1,int param_2)
     iVar1 = malloc(uVar2 + param_2 + 4);
     if (iVar1 != 0) {
       uVar2 = -param_2 & iVar1 + param_2 + 3U;
-      ae_s16i_n(uVar2 - iVar1,uVar2 - 4,2);
-      ae_s16i_n(&DAT_00003039,uVar2 - 4,0);
+      *(short *)(uVar2 - 2) = (short)uVar2 - (short)iVar1;
+      *(undefined2 *)(uVar2 - 4) = 0x3039;
       return uVar2;
     }
   }
@@ -813,10 +807,9 @@ CTIMER_SetupPwmPeriod(uint *param_1,uint param_2,uint param_3,uint param_4,uint 
   memw();
   param_1[0x1d] = param_1[0x1d] | uVar1;
   memw();
-  uVar2 = 2;
+  uVar2 = param_1[5] & (7 << 0x20 - (0x20 - (param_3 * 3 & 0x1f)) ^ 0xffffffffU);
   if (param_6 != 0) {
-    uVar2 = param_1[5] & (7 << 0x20 - (0x20 - (param_3 * 3 & 0x1f)) ^ 0xffffffffU) |
-            1 << 0x20 - (0x20 - (param_3 * 3 & 0x1f));
+    uVar2 = uVar2 | 1 << 0x20 - (0x20 - (param_3 * 3 & 0x1f));
   }
   memw();
   param_1[5] = uVar2 | 2 << 0x20 - (0x20 - (param_2 * 3 & 0x1f));
@@ -1308,8 +1301,8 @@ void DMA_SetupDescriptor(uint *param_1,uint param_2,uint param_3,uint param_4,ui
 {
   uint uVar1;
   int iVar2;
-  int iVar3;
-  int iVar4;
+  uint uVar3;
+  uint uVar4;
   
   uVar1 = param_2 >> 8 & 3;
   if (uVar1 == 2) {
@@ -1322,21 +1315,20 @@ void DMA_SetupDescriptor(uint *param_1,uint param_2,uint param_3,uint param_4,ui
     uVar1 = uVar1 + 1;
     if (((param_3 != 0) && (param_3 % uVar1 == 0)) && ((param_4 != 0 && (param_4 % uVar1 == 0)))) {
 LAB_0020a7d3:
-      iVar2 = (param_2 >> 0xe & 3) - 3;
-      iVar4 = (param_2 >> 0xc & 3) - 3;
-      iVar3 = iVar2;
-      if (iVar4 == 0) {
-        iVar3 = 4;
+      uVar3 = param_2 >> 0xc & 3;
+      uVar4 = param_2 >> 0xe & 3;
+      if (uVar3 == 3) {
+        uVar3 = 4;
       }
-      if (iVar2 == 0) {
-        iVar4 = 4;
+      if (uVar4 == 3) {
+        uVar4 = 4;
       }
       memw();
       *param_1 = param_2;
       iVar2 = uVar1 * ((param_2 >> 0x10 & 0x3ff) + 1);
       param_1[3] = param_5;
-      param_1[1] = (param_3 + iVar2 * iVar3) - iVar3 * uVar1;
-      param_1[2] = (param_4 + iVar2 * iVar4) - iVar4 * uVar1;
+      param_1[1] = (param_3 + iVar2 * uVar3) - uVar3 * uVar1;
+      param_1[2] = (param_4 + iVar2 * uVar4) - uVar4 * uVar1;
       return;
     }
   }
@@ -1357,20 +1349,19 @@ void DMA_SetupChannelDescriptor
                ,uint param_7)
 
 {
-  uint uVar1;
-  int iVar2;
-  int iVar3;
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
   uint uVar4;
-  int iVar5;
   
-  uVar1 = param_2 >> 8 & 3;
-  uVar4 = uVar1 + 1;
-  if (uVar1 == 2) {
+  uVar2 = param_2 >> 8 & 3;
+  uVar3 = uVar2 + 1;
+  if (uVar2 == 2) {
     if ((((param_3 == 0) || ((param_3 & 3) != 0)) || (param_4 == 0)) || ((param_4 & 3) != 0))
     goto LAB_0020a875;
-    uVar4 = 4;
+    uVar3 = 4;
   }
-  else if (((param_3 == 0) || (param_3 % uVar4 != 0)) || ((param_4 == 0 || (param_4 % uVar4 != 0))))
+  else if (((param_3 == 0) || (param_3 % uVar3 != 0)) || ((param_4 == 0 || (param_4 % uVar3 != 0))))
   {
 LAB_0020a875:
     memw();
@@ -1379,38 +1370,37 @@ LAB_0020a875:
     param_1[2] = 0;
     return;
   }
-  iVar2 = (param_2 >> 0xc & 3) - 3;
-  iVar5 = (param_2 >> 0xe & 3) - 3;
-  iVar3 = iVar2;
-  if (iVar5 == 0) {
-    iVar3 = 4;
+  uVar2 = param_2 >> 0xe & 3;
+  uVar4 = param_2 >> 0xc & 3;
+  if (uVar2 == 3) {
+    uVar2 = 4;
   }
-  if (iVar2 == 0) {
-    iVar5 = 4;
+  if (uVar4 == 3) {
+    uVar4 = 4;
   }
   memw();
   *param_1 = param_2;
   if (param_6 == (undefined *)0x0) {
-    iVar2 = uVar4 * ((param_2 >> 0x10 & 0x3ff) + 1);
-    param_1[1] = (param_3 + iVar2 * iVar5) - iVar5 * uVar4;
-    param_1[2] = (param_4 + iVar2 * iVar3) - iVar3 * uVar4;
+    iVar1 = uVar3 * ((param_2 >> 0x10 & 0x3ff) + 1);
+    param_1[1] = (param_3 + iVar1 * uVar4) - uVar4 * uVar3;
+    param_1[2] = (param_4 + iVar1 * uVar2) - uVar2 * uVar3;
   }
   if (param_6 == &DAT_00004000) {
-    param_1[2] = (param_4 + iVar3 * uVar4 * ((param_2 >> 0x10 & 0x3ff) + 1)) - iVar3 * uVar4;
-    param_1[1] = param_3 + iVar5 * uVar4 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
+    param_1[2] = (param_4 + uVar2 * uVar3 * ((param_2 >> 0x10 & 0x3ff) + 1)) - uVar2 * uVar3;
+    param_1[1] = param_3 + uVar4 * uVar3 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
   }
   if (param_6 == &DAT_00008000) {
-    param_1[1] = (param_3 + iVar5 * uVar4 * ((param_2 >> 0x10 & 0x3ff) + 1)) - iVar5 * uVar4;
-    param_1[2] = param_4 + iVar3 * uVar4 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
+    param_1[1] = (param_3 + uVar4 * uVar3 * ((param_2 >> 0x10 & 0x3ff) + 1)) - uVar4 * uVar3;
+    param_1[2] = param_4 + uVar2 * uVar3 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
   }
   if (param_6 != &DAT_0000c000) {
     param_1[3] = param_5;
     return;
   }
-  iVar2 = uVar4 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
+  iVar1 = uVar3 * ((1 << 0x20 - (0x20 - (param_7 & 0x1f))) + -1);
   param_1[3] = param_5;
-  param_1[1] = param_3 + iVar2 * iVar5;
-  param_1[2] = param_4 + iVar2 * iVar3;
+  param_1[1] = param_3 + iVar1 * uVar4;
+  param_1[2] = param_4 + iVar1 * uVar2;
   return;
 }
 
@@ -1604,7 +1594,7 @@ void DMA_PrepareTransfer(undefined4 *param_1,undefined4 param_2,undefined4 param
   *(undefined1 *)((int)param_1 + 0x13) = 0;
   param_1[2] = param_7;
   *(short *)((int)param_1 + 0x16) = (short)(param_5 / param_4);
-  *(undefined1 *)((int)param_1 + 0xd) = 1;
+  *(bool *)((int)param_1 + 0xd) = param_7 != 0;
   return;
 }
 

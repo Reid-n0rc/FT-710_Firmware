@@ -913,9 +913,9 @@ void LPADC_SetConvTriggerConfig(int param_1,int param_2,uint *param_3)
 {
   uint uVar1;
   
-  uVar1 = 1;
+  uVar1 = (param_3[2] & 0xf) << 8 | (*param_3 & 0xf) << 0x18 | (param_3[1] & 0xf) << 0x10;
   if ((char)param_3[3] != '\0') {
-    uVar1 = (param_3[2] & 0xf) << 8 | (*param_3 & 0xf) << 0x18 | (param_3[1] & 0xf) << 0x10 | 1;
+    uVar1 = uVar1 | 1;
   }
   memw();
   *(uint *)(param_2 * 4 + param_1 + 0xc0) = uVar1;
