@@ -2180,6 +2180,33 @@ def fmt_edge_args(rng, args):
 PRESETS['fat_format_layout'] = fmt_edge_args
 
 
+def fs_path_args(rng, args, skip=0):
+    """A drive path for the FAT layer's path helpers (round 9): "I:" then components "\\name" of ASCII and
+    Shift-JIS pairs (lead 0x81..0x9F / 0xE0..0xFC, a trail byte that may be '\\' 0x5C), sometimes ending with '\\';
+    r0 points at it (skip bytes in, past the "I:"), r1 at an output buffer."""
+    comps = []
+    for _ in range(rng.randrange(0, 4)):
+        c = b''
+        for _ in range(rng.randrange(0, 9)):
+            if rng.random() < 0.25:
+                c += bytes([rng.choice([0x81, 0x93, 0x9F, 0xE0, 0xFC]), rng.choice([0x40, 0x5C, 0x9F, 0xFC])])
+            else:
+                c += bytes([rng.choice(b'ABCxyz019_.~ ')])
+        comps.append(c)
+    path = b'I:' + b''.join(b'\\' + c for c in comps) + rng.choice([b'', b'\\'])
+    if rng.random() < 0.1:
+        path = b'I:' + bytes(rng.getrandbits(8) for _ in range(6))
+    at, out = SCRATCH_ARGS + 0x4000, SCRATCH_ARGS + 0x6000
+    args['buffers'] = [b for b in args['buffers'] if b[0] not in (at, out)] + \
+        [(at, path + b'\0' + bytes(16)), (out, bytes(rng.getrandbits(8) for _ in range(0x200)))]
+    args['regs'][0], args['regs'][1] = at + skip, out
+    return []
+
+
+PRESETS['path_next_component'] = lambda rng, args: fs_path_args(rng, args, 2)
+PRESETS['path_components_len'] = fs_path_args
+
+
 def byte_check(res, obj, fname, shndx, off, oaddr):
     """identical: the section linked so that the function lands at its original address gives the image's bytes over
     the whole function symbol (code and its literals), which must cover at least the Ghidra function. In practice
