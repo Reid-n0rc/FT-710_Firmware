@@ -1,5 +1,45 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== __user_setup_stackheap @ 201561c0 (74 bytes)
+
+/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): gets __user_perproc_libspace, calls
+   __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry
+   [inference] */
+
+void __user_setup_stackheap(void)
+
+{
+  uint uVar1;
+  undefined4 *puVar2;
+  undefined4 unaff_lr;
+  uint *puVar3;
+  
+  uVar1 = __user_perproc_libspace();
+  *(undefined4 *)((uVar1 & 0xfffffff8) + 0x5c) = unaff_lr;
+  puVar3 = (uint *)((uVar1 & 0xfffffff8) + 0x58);
+  *puVar3 = uVar1;
+  __user_initial_stackheap();
+  puVar2 = (undefined4 *)*puVar3;
+  *puVar2 = 0;
+  puVar2[1] = 0;
+  puVar2[2] = 0;
+  puVar2[3] = 0;
+  puVar2[4] = 0;
+  puVar2[5] = 0;
+  puVar2[6] = 0;
+  puVar2[7] = 0;
+  puVar2[8] = 0;
+  puVar2[9] = 0;
+  puVar2[10] = 0;
+  puVar2[0xb] = 0;
+  puVar2[0xc] = 0;
+  puVar2[0xd] = 0;
+  puVar2[0xe] = 0;
+  puVar2[0xf] = 0;
+  return;
+}
+
+
 // ===== exit @ 2015620a (18 bytes)
 
 /* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.800): called by __rt_entry with main()s result
@@ -1457,51 +1497,6 @@ void FUN_20157604(int param_1)
 {
   *(undefined4 *)(param_1 + 0x13cd8) = 0;
   *(int *)(param_1 + 0xb5c) = param_1 + 0x900;
-  return;
-}
-
-
-// ===== FUN_20157634 @ 20157634 (188 bytes)
-
-void FUN_20157634(int param_1,int param_2,byte *param_3)
-
-{
-  byte bVar1;
-  uint uVar2;
-  int iVar3;
-  uint uVar4;
-  uint n;
-  ulonglong __aeabi_idivmod_ret;
-  
-  iVar3 = 0;
-  do {
-    *(undefined1 *)(param_1 + iVar3) = 0;
-    iVar3 = iVar3 + 1;
-  } while (iVar3 < 0x100);
-  uVar4 = (uint)*param_3;
-  n = param_2 * 10000;
-  uVar2 = (uint)param_3[1];
-  if (uVar4 <= uVar2) {
-    do {
-      bVar1 = *param_3;
-      __aeabi_idivmod_ret = __aeabi_idivmod(n,(uVar2 - bVar1) + 1);
-      iVar3 = (int)__aeabi_idivmod_ret * ((uVar4 - bVar1) + 1) + 0x26ac;
-      *(char *)(param_1 + uVar4) =
-           ((char)(iVar3 / 10000) + (char)(iVar3 >> 0x1f)) -
-           (char)((longlong)iVar3 * 0x68db8bad >> 0x3f);
-      uVar4 = uVar4 + 1;
-      uVar2 = (uint)param_3[1];
-    } while ((int)uVar4 <= (int)uVar2);
-  }
-  uVar2 = uVar2 + 1;
-  if (uVar2 < 0x100) {
-    do {
-      *(char *)(param_1 + uVar2) =
-           ((char)((int)n / 10000) + (char)((int)n >> 0x1f)) -
-           (char)((longlong)(int)n * 0x68db8bad >> 0x3f);
-      uVar2 = uVar2 + 1;
-    } while ((int)uVar2 < 0x100);
-  }
   return;
 }
 

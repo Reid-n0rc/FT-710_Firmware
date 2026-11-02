@@ -722,6 +722,51 @@ uint fs_wstrnicmp_ucs2(short *param_1,short *param_2,uint param_3)
 }
 
 
+// ===== fat_detect_superfloppy @ 20148e80 (160 bytes)
+
+/* [fact] (drive, sector 0): a volume without a partition table: first sector 0, the type from the
+   boot-sector names (EXFAT at +3, FAT32 at +0x52, FAT12/FAT16 at +0x36); 0, or -1 for exFAT and an
+   unknown type; fat_find_volume's tail call at 0x2014918C; new entry (T24 round 9,
+   src/display/fs/fat_volume.c) */
+
+undefined4 fat_detect_superfloppy(int param_1,int param_2)
+
+{
+  char cVar1;
+  int iVar2;
+  
+  *(undefined4 *)(param_1 + 0x30) = 0;
+  iVar2 = memcmp(param_2 + 3,"EXFAT",5);
+  if (iVar2 == 0) {
+    cVar1 = '@';
+  }
+  else {
+    iVar2 = memcmp(param_2 + 0x52,"FAT32",5);
+    if (iVar2 == 0) {
+      cVar1 = ' ';
+    }
+    else {
+      iVar2 = memcmp(param_2 + 0x36,"FAT12",5);
+      if (iVar2 == 0) {
+        cVar1 = '\f';
+      }
+      else {
+        iVar2 = memcmp(param_2 + 0x36,"FAT16",5);
+        if (iVar2 != 0) {
+          return 0xffffffff;
+        }
+        cVar1 = '\x10';
+      }
+    }
+  }
+  *(char *)(param_1 + 0x10) = cVar1;
+  if (cVar1 == '@') {
+    return 0xffffffff;
+  }
+  return 0;
+}
+
+
 // ===== fat32_fsinfo_read @ 20148f40 (124 bytes)
 
 /* (vol, sector): checks the FSInfo signatures "RRaA" / "rrAa" and takes the free count and
@@ -816,7 +861,7 @@ uint fat_mount(int param_1,int param_2)
 }
 
 
-// ===== fat_find_volume @ 201490f8 (324 bytes)
+// ===== fat_find_volume @ 201490f8 (164 bytes)
 
 /* (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT",
    identifies "FAT32" / "FAT12" / "FAT16" by the type strings [fact] */
@@ -827,66 +872,35 @@ undefined4 fat_find_volume(int param_1,int param_2)
   char cVar1;
   undefined1 uVar2;
   int iVar3;
-  undefined4 extraout_r3;
-  undefined4 extraout_r3_00;
-  undefined4 extraout_r3_01;
-  undefined4 extraout_r3_02;
-  undefined4 unaff_r4;
-  undefined4 unaff_r5;
-  undefined4 unaff_r6;
-  undefined4 unaff_lr;
+  undefined4 uVar4;
   
   if ((*(char *)(param_2 + 0x1fe) != 'U') || (*(char *)(param_2 + 0x1ff) != -0x56)) {
     return 0xffffffff;
   }
+                    /* 32-bit field read from an on-disk structure [doc] */
   iVar3 = fat_ld_dword(param_2 + 0x1c6);
   *(int *)(param_1 + 0x30) = iVar3;
   if (iVar3 == 0) {
-LAB_20148e80:
-    *(undefined4 *)(param_1 + 0x30) = 0;
-    iVar3 = memcmp(param_2 + 3,"EXFAT",5,extraout_r3_02,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-    if (iVar3 == 0) {
-      cVar1 = '@';
-    }
-    else {
-      iVar3 = memcmp(param_2 + 0x52,"FAT32",5,extraout_r3,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-      if (iVar3 == 0) {
-        cVar1 = ' ';
-      }
-      else {
-        iVar3 = memcmp(param_2 + 0x36,"FAT12",5,extraout_r3_00,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-        if (iVar3 == 0) {
-          cVar1 = '\f';
-        }
-        else {
-          iVar3 = memcmp(param_2 + 0x36,"FAT16",5,extraout_r3_01,unaff_r4,unaff_r5,unaff_r6,unaff_lr
-                        );
-          if (iVar3 != 0) {
-            return 0xffffffff;
-          }
-          cVar1 = '\x10';
-        }
-      }
-    }
-    *(char *)(param_1 + 0x10) = cVar1;
-    if (cVar1 == '@') {
-      return 0xffffffff;
-    }
-    return 0;
+LAB_20149180:
+    uVar4 = fat_detect_superfloppy(param_1,param_2);
+    return uVar4;
   }
   cVar1 = *(char *)(param_2 + 0x1c2);
+  uVar2 = (undefined1)iVar3;
   if (cVar1 == '\a') {
     uVar2 = 0x40;
   }
   else if (cVar1 == '\x01') {
     uVar2 = 0xc;
   }
-  else if ((cVar1 == '\x04' || cVar1 == '\x06') || cVar1 == '\x0e') {
-    uVar2 = 0x10;
-  }
   else {
-    if (cVar1 != '\v' && cVar1 != '\f') goto LAB_20148e80;
-    uVar2 = 0x20;
+    if ((cVar1 == '\x04' || cVar1 == '\x06') || cVar1 == '\x0e') {
+      uVar2 = 0x10;
+    }
+    if ((cVar1 != '\x04' && cVar1 != '\x06') && cVar1 != '\x0e') {
+      if (cVar1 != '\v' && cVar1 != '\f') goto LAB_20149180;
+      uVar2 = 0x20;
+    }
   }
   *(undefined1 *)(param_1 + 0x10) = uVar2;
   return 0;
@@ -2147,11 +2161,12 @@ LAB_2014a774:
 }
 
 
-// ===== fs_drive_attach_thunk @ 2014a818 (36 bytes)
+// ===== fs_drive_attach_512 @ 2014a818 (36 bytes)
 
-/* Tail call to fs_drive_attach [fact] */
+/* [fact] fs_drive_attach with the sixth argument (bytes per sector) 0x200 (mov ip, #0x200 at
+   0x2014A81C); was fs_drive_attach_thunk (T24 round 9, fs/fat_volume.c) */
 
-void fs_drive_attach_thunk(void)
+void fs_drive_attach_512(void)
 
 {
   fs_drive_attach();
@@ -2462,45 +2477,5 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
   uVar3 = fat_ld_dword(auStack_2c);
   *(undefined4 *)(param_2 + 0x34) = uVar3;
   return 0;
-}
-
-
-// ===== fs_stat_work @ 2014ae1c (172 bytes)
-
-/* fs_stat with a caller work buffer: copies and normalises the path (0x2014CD68), fs_path_lookup
-   [fact] */
-
-void fs_stat_work(int param_1,int param_2,int param_3)
-
-{
-  int iVar1;
-  int iVar2;
-  undefined4 uVar3;
-  
-  iVar1 = fs_check_ready();
-  if (iVar1 == 0) {
-    if (param_1 == 0) {
-      fs_set_error(0xffffffff,0);
-      return;
-    }
-    if (param_2 == 0) {
-      fs_set_error(0xfffffff3,0);
-      return;
-    }
-    iVar1 = fs_path_validate(param_1);
-    if (iVar1 == 0) {
-                    /* Byte-wise string length [doc] */
-      iVar1 = fs_strlen(param_1);
-      iVar2 = param_3 + 0x100c;
-      fs_strncpy(iVar2,param_1,iVar1 + 1);
-                    /* Rewrites NEC/IBM extension codes in a path [doc, inference] */
-      sjis_map_ext_chars(iVar2);
-      uVar3 = fs_path_lookup(iVar2,param_2,param_3);
-      fs_set_error(uVar3,0);
-      return;
-    }
-  }
-  fs_set_error(iVar1,0);
-  return;
 }
 

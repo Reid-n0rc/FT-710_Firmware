@@ -1,5 +1,19 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_201635b8 @ 201635b8 (44 bytes)
+
+void FUN_201635b8(int param_1,undefined1 *param_2)
+
+{
+  *param_2 = *(undefined1 *)(param_1 + 0xe);
+  param_2[1] = *(undefined1 *)(param_1 + 0xf);
+  param_2[2] = *(undefined1 *)(param_1 + 0x11);
+  param_2[3] = *(undefined1 *)(param_1 + 0x12);
+  param_2[4] = 0;
+  return;
+}
+
+
 // ===== fwobj_version_text @ 201635e4 (24 bytes)
 
 /* (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
@@ -45,9 +59,12 @@ byte scif_has_flag(scif_uart *uart)
 }
 
 
-// ===== FUN_20163668 @ 20163668 (28 bytes)
+// ===== ml_enc_entry_clear @ 20163668 (28 bytes)
 
-void FUN_20163668(undefined2 *param_1)
+/* [fact] mainlink_tx_reset calls it for each 5-byte entry 0x2045F0C5 + 5 j + 0x32 i of the encoder
+   queue (7 x 10); Ghidra FUN_20163668 (T24 round 9, app/mainlink.c) */
+
+void ml_enc_entry_clear(undefined2 *param_1)
 
 {
   undefined2 *puVar1;
@@ -127,9 +144,12 @@ void copy5(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-// ===== FUN_201636f8 @ 201636f8 (52 bytes)
+// ===== ml_settings24_copy @ 201636f8 (52 bytes)
 
-void FUN_201636f8(undefined1 *param_1,undefined1 *param_2)
+/* [fact] mainlink_get_settings24 passes (out, 0x2045006D), the settings of the last 0x24 frame;
+   Ghidra FUN_201636f8 (T24 round 9, app/mainlink.c) */
+
+void ml_settings24_copy(undefined1 *param_1,undefined1 *param_2)
 
 {
   *param_1 = *param_2;
@@ -964,15 +984,5 @@ undefined4 ring100_advance(undefined4 *param_1)
   uVar1 = ring100_next();
   *param_1 = uVar1;
   return uVar2;
-}
-
-
-// ===== FUN_2016437c @ 2016437c (12 bytes)
-
-void FUN_2016437c(undefined4 *param_1)
-
-{
-  *param_1 = 0;
-  return;
 }
 

@@ -1,5 +1,15 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_2016040c @ 2016040c (12 bytes)
+
+void FUN_2016040c(int param_1)
+
+{
+  *(undefined1 *)(param_1 + 0x57) = 0;
+  return;
+}
+
+
 // ===== fwobj_match_name @ 20160418 (132 bytes)
 
 /* keeps the highest matching file name per object */
@@ -1344,19 +1354,5 @@ undefined2 scope_obj_line_offset(undefined4 param_1,int param_2,int param_3,int 
     uVar1 = 0;
   }
   return uVar1;
-}
-
-
-// ===== FUN_201635b8 @ 201635b8 (44 bytes)
-
-void FUN_201635b8(int param_1,undefined1 *param_2)
-
-{
-  *param_2 = *(undefined1 *)(param_1 + 0xe);
-  param_2[1] = *(undefined1 *)(param_1 + 0xf);
-  param_2[2] = *(undefined1 *)(param_1 + 0x11);
-  param_2[3] = *(undefined1 *)(param_1 + 0x12);
-  param_2[4] = 0;
-  return;
 }
 

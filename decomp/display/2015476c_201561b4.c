@@ -1,5 +1,20 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== knl_sys_alloc @ 2015476c (36 bytes)
+
+/* WARNING: Removing unreachable block (ram,0x20154780) */
+/* knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their
+   control blocks here [fact] */
+
+void knl_sys_alloc(undefined4 param_1)
+
+{
+                    /* First-fit allocator on a free list {next, size} [doc] */
+  knl_freelist_alloc(0x208003fc,param_1);
+  return;
+}
+
+
 // ===== knl_sys_free @ 20154790 (40 bytes)
 
 /* WARNING: Removing unreachable block (ram,0x201547a8) */
@@ -3005,45 +3020,5 @@ void _sys_exit(void)
   do {
                     /* WARNING: Do nothing block with infinite loop */
   } while( true );
-}
-
-
-// ===== __user_setup_stackheap @ 201561c0 (74 bytes)
-
-/* T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): gets __user_perproc_libspace, calls
-   __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry
-   [inference] */
-
-void __user_setup_stackheap(void)
-
-{
-  uint uVar1;
-  undefined4 *puVar2;
-  undefined4 unaff_lr;
-  uint *puVar3;
-  
-  uVar1 = __user_perproc_libspace();
-  *(undefined4 *)((uVar1 & 0xfffffff8) + 0x5c) = unaff_lr;
-  puVar3 = (uint *)((uVar1 & 0xfffffff8) + 0x58);
-  *puVar3 = uVar1;
-  __user_initial_stackheap();
-  puVar2 = (undefined4 *)*puVar3;
-  *puVar2 = 0;
-  puVar2[1] = 0;
-  puVar2[2] = 0;
-  puVar2[3] = 0;
-  puVar2[4] = 0;
-  puVar2[5] = 0;
-  puVar2[6] = 0;
-  puVar2[7] = 0;
-  puVar2[8] = 0;
-  puVar2[9] = 0;
-  puVar2[10] = 0;
-  puVar2[0xb] = 0;
-  puVar2[0xc] = 0;
-  puVar2[0xd] = 0;
-  puVar2[0xe] = 0;
-  puVar2[0xf] = 0;
-  return;
 }
 

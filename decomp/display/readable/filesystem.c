@@ -6953,13 +6953,14 @@ int fs_fatcache_setup(int param_1,uint param_2,uint param_3,int param_4)
 
 /* -----------------------------------------------------------------------------
  * fs_fatcache_setup_a @ 20143c1c  (24 bytes, 0 callers, export file 20141b08_20144970.c)
- * Purpose: fs_fatcache_setup and fs_set_error [fact]
+ * Purpose: fs_fatcache_setup with one sector per slot (mov r3, #1), then fs_set_error [fact, T24 round 9]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
 // ===== fs_fatcache_setup_a @ 20143c1c (24 bytes)
 
-/* fs_fatcache_setup and fs_set_error [fact] */
+/* [fact] fs_fatcache_setup with one sector per slot (mov r3, #1), the result through fs_set_error
+   (T24 round 9) */
 
 void fs_fatcache_setup_a(void)
 
@@ -11247,7 +11248,7 @@ root_dir_add_entry_locked
 }
 
 /* -----------------------------------------------------------------------------
- * subdir_add_entry @ 20148150  (2048 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * subdir_add_entry @ 20148150  (2048 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: Sub-directory counterpart of root_dir_add_entry: checks the '.' entry, then scans the cluster chain for
  *     a run of free entries (0xE5 / end) for the long-name count, allocates a cluster if needed
  *     (dir_cluster_alloc_zeroed) and writes the entries (subdir_write_lfn) [inference: the calls and the free-slot
@@ -11586,7 +11587,7 @@ LAB_20148520:
 
 
 /* -----------------------------------------------------------------------------
- * subdir_add_entry_locked @ 20148990  (124 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * subdir_add_entry_locked @ 20148990  (124 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: fs_lock_a, subdir_add_entry, fs_unlock_a [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -11626,7 +11627,7 @@ subdir_add_entry_locked
 
 
 /* -----------------------------------------------------------------------------
- * wpath_next_component @ 20148a0c  (124 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * wpath_next_component @ 20148a0c  (124 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: (path, out): copies the next UCS-2 path component up to '\' or the end [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -11668,7 +11669,7 @@ joined_r0x20148a4c:
 
 
 /* -----------------------------------------------------------------------------
- * wpath_dir_len @ 20148a88  (136 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * wpath_dir_len @ 20148a88  (136 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: (path record): byte length of the UCS-2 directory part of the path at +4 (all components but the last,
  *     with separators) plus 6 [fact for the loop]
  * Tag: [fact]
@@ -11702,7 +11703,7 @@ int wpath_dir_len(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * lfn_name_valid @ 20148b10  (160 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * lfn_name_valid @ 20148b10  (160 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (UCS-2 name): rejects characters of the invalid set *0x20808BA8 and a trailing '.' or ' ' [fact for the
  *     checks]
  * Tag: [fact]
@@ -11747,7 +11748,7 @@ undefined4 lfn_name_valid(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrlen_max @ 20148c5c  (56 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * fs_wstrlen_max @ 20148c5c  (56 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: (UCS-2 string): length in bytes, at most 0x204 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -11778,7 +11779,7 @@ undefined4 fs_wstrlen_max(short *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ucs2_to_upper @ 20148c94  (224 bytes, 4 callers, export file 201480b4_2014ae1c.c)
+ * ucs2_to_upper @ 20148c94  (224 bytes, 4 callers, export file 201480b4_2014ac30.c)
  * Purpose: (code): upper-case of a UCS-2 code for ASCII, full-width, Greek and Cyrillic letters (the pages of
  *     ucs2_eq_nocase) [fact]
  * Tag: [fact]
@@ -11839,7 +11840,7 @@ LAB_20148cdc:
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstricmp_ucs2 @ 20148d74  (120 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_wstricmp_ucs2 @ 20148d74  (120 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (a, b): case-insensitive UCS-2 string compare through ucs2_to_upper (also Greek, Cyrillic, full-width;
  *     fs_wstricmp 0x2014D3F8 folds only < 0x100); file_sync_shared uses it [fact]
  * Tag: [fact]
@@ -11881,7 +11882,7 @@ uint fs_wstricmp_ucs2(short *param_1,short *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrnicmp_ucs2 @ 20148dec  (144 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * fs_wstrnicmp_ucs2 @ 20148dec  (144 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: (a, b, n): bounded variant of fs_wstricmp_ucs2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -11928,7 +11929,7 @@ uint fs_wstrnicmp_ucs2(short *param_1,short *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fat32_fsinfo_read @ 20148f40  (124 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat32_fsinfo_read @ 20148f40  (124 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (vol, sector): checks the FSInfo signatures "RRaA" / "rrAa" and takes the free count and next-free
  *     cluster [fact]
  * Tag: [fact]
@@ -11960,7 +11961,7 @@ undefined4 fat32_fsinfo_read(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_mount @ 20148fcc  (300 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat_mount @ 20148fcc  (300 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: FAT12/16/32/EXFAT detection [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12035,13 +12036,13 @@ uint fat_mount(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_find_volume @ 201490f8  (324 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat_find_volume @ 201490f8  (164 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT",
  *     identifies "FAT32" / "FAT12" / "FAT16" by the type strings [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== fat_find_volume @ 201490f8 (324 bytes)
+// ===== fat_find_volume @ 201490f8 (164 bytes)
 
 /* (vol, sector 0): partition start from the MBR (+0x1C6) or a boot sector at 0; rejects "EXFAT",
    identifies "FAT32" / "FAT12" / "FAT16" by the type strings [fact] */
@@ -12052,66 +12053,35 @@ undefined4 fat_find_volume(int param_1,int param_2)
   char cVar1;
   undefined1 uVar2;
   int iVar3;
-  undefined4 extraout_r3;
-  undefined4 extraout_r3_00;
-  undefined4 extraout_r3_01;
-  undefined4 extraout_r3_02;
-  undefined4 unaff_r4;
-  undefined4 unaff_r5;
-  undefined4 unaff_r6;
-  undefined4 unaff_lr;
+  undefined4 uVar4;
   
   if ((*(char *)(param_2 + 0x1fe) != 'U') || (*(char *)(param_2 + 0x1ff) != -0x56)) {
     return 0xffffffff;
   }
+                    /* 32-bit field read from an on-disk structure [doc] */
   iVar3 = fat_ld_dword(param_2 + 0x1c6);
   *(int *)(param_1 + 0x30) = iVar3;
   if (iVar3 == 0) {
-LAB_20148e80:
-    *(undefined4 *)(param_1 + 0x30) = 0;
-    iVar3 = memcmp(param_2 + 3,"EXFAT",5,extraout_r3_02,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-    if (iVar3 == 0) {
-      cVar1 = '@';
-    }
-    else {
-      iVar3 = memcmp(param_2 + 0x52,"FAT32",5,extraout_r3,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-      if (iVar3 == 0) {
-        cVar1 = ' ';
-      }
-      else {
-        iVar3 = memcmp(param_2 + 0x36,"FAT12",5,extraout_r3_00,unaff_r4,unaff_r5,unaff_r6,unaff_lr);
-        if (iVar3 == 0) {
-          cVar1 = '\f';
-        }
-        else {
-          iVar3 = memcmp(param_2 + 0x36,"FAT16",5,extraout_r3_01,unaff_r4,unaff_r5,unaff_r6,unaff_lr
-                        );
-          if (iVar3 != 0) {
-            return 0xffffffff;
-          }
-          cVar1 = '\x10';
-        }
-      }
-    }
-    *(char *)(param_1 + 0x10) = cVar1;
-    if (cVar1 == '@') {
-      return 0xffffffff;
-    }
-    return 0;
+LAB_20149180:
+    uVar4 = fat_detect_superfloppy(param_1,param_2);
+    return uVar4;
   }
   cVar1 = *(char *)(param_2 + 0x1c2);
+  uVar2 = (undefined1)iVar3;
   if (cVar1 == '\a') {
     uVar2 = 0x40;
   }
   else if (cVar1 == '\x01') {
     uVar2 = 0xc;
   }
-  else if ((cVar1 == '\x04' || cVar1 == '\x06') || cVar1 == '\x0e') {
-    uVar2 = 0x10;
-  }
   else {
-    if (cVar1 != '\v' && cVar1 != '\f') goto LAB_20148e80;
-    uVar2 = 0x20;
+    if ((cVar1 == '\x04' || cVar1 == '\x06') || cVar1 == '\x0e') {
+      uVar2 = 0x10;
+    }
+    if ((cVar1 != '\x04' && cVar1 != '\x06') && cVar1 != '\x0e') {
+      if (cVar1 != '\v' && cVar1 != '\f') goto LAB_20149180;
+      uVar2 = 0x20;
+    }
   }
   *(undefined1 *)(param_1 + 0x10) = uVar2;
   return 0;
@@ -12119,7 +12089,7 @@ LAB_20148e80:
 
 
 /* -----------------------------------------------------------------------------
- * fat_table_sector_get @ 2014919c  (220 bytes, 10 callers, export file 201480b4_2014ae1c.c)
+ * fat_table_sector_get @ 2014919c  (220 bytes, 10 callers, export file 201480b4_2014ac30.c)
  * Purpose: (vol, FAT sector, *ptr): pointer to a sector of the FAT through the FAT cache (or a direct read without
  *     cache), -11 beyond the FAT size [fact]
  * Tag: [fact]
@@ -12177,7 +12147,7 @@ int fat_table_sector_get(int param_1,uint param_2,int *param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fat_table_sector_dirty @ 20149278  (196 bytes, 4 callers, export file 201480b4_2014ae1c.c)
+ * fat_table_sector_dirty @ 20149278  (196 bytes, 4 callers, export file 201480b4_2014ac30.c)
  * Purpose: After a FAT change: sets the dirty bit of the FAT cache slot, or without cache writes the sector
  *     (fs_dev_op2) to the first and, with two FATs, the second FAT; -0x45 when the sector is not cached [fact]
  * Tag: [fact]
@@ -12233,7 +12203,7 @@ int fat_table_sector_dirty(int param_1,uint param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fat32_entry_get @ 2014933c  (120 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat32_entry_get @ 2014933c  (120 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: FAT32 entry: FAT sector cluster/(bps/4) via fat_table_sector_get, fat_ld_dword [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12271,7 +12241,7 @@ undefined4 fat32_entry_get(int param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fat32_entry_set @ 201493b4  (108 bytes, 3 callers, export file 201480b4_2014ae1c.c)
+ * fat32_entry_set @ 201493b4  (108 bytes, 3 callers, export file 201480b4_2014ac30.c)
  * Purpose: FAT32 entry store and fat_table_sector_dirty [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12311,7 +12281,7 @@ void fat32_entry_set(int param_1,undefined4 param_2,undefined4 param_3,undefined
 
 
 /* -----------------------------------------------------------------------------
- * fat_entry_rw @ 20149420  (636 bytes, 9 callers, export file 201480b4_2014ae1c.c)
+ * fat_entry_rw @ 20149420  (636 bytes, 9 callers, export file 201480b4_2014ac30.c)
  * Purpose: (vol, cluster, value, 'r'/'w'): reads or writes a FAT12 (packed 12-bit, may cross a sector), FAT16 or
  *     FAT32 entry; >= 0xFF8 / 0xFFF8 return 0x0FFFFFFF (end of chain) [fact]
  * Tag: [fact]
@@ -12432,7 +12402,7 @@ LAB_20149684:
 
 
 /* -----------------------------------------------------------------------------
- * clmap_clear @ 2014969c  (32 bytes, 3 callers, export file 201480b4_2014ae1c.c)
+ * clmap_clear @ 2014969c  (32 bytes, 3 callers, export file 201480b4_2014ac30.c)
  * Purpose: Clears a cluster's bit in the volume's cluster-use bitmap +0x58 (bit masks 0x20808BAC) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12451,7 +12421,7 @@ void clmap_clear(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_chain_free @ 201496bc  (204 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat_chain_free @ 201496bc  (204 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: Frees a cluster chain: writes 0 to each entry, clears the cluster-map bit, FAT32 free count +0x3C ++,
  *     keeps the first freed cluster as hint +0x2C; -61 on a bad chain [fact]
  * Tag: [fact]
@@ -12497,7 +12467,7 @@ undefined4 fat_chain_free(int param_1,uint param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fat_chain_free_locked @ 20149788  (68 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * fat_chain_free_locked @ 20149788  (68 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: fat_chain_free under fs_lock_b (-34 on lock failure) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12525,7 +12495,7 @@ undefined4 fat_chain_free_locked(undefined4 param_1,undefined4 param_2,undefined
 
 
 /* -----------------------------------------------------------------------------
- * fat_entry_rw_locked @ 201497cc  (88 bytes, 7 callers, export file 201480b4_2014ae1c.c)
+ * fat_entry_rw_locked @ 201497cc  (88 bytes, 7 callers, export file 201480b4_2014ac30.c)
  * Purpose: fat_entry_rw under fs_lock_b, result to *out [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12558,7 +12528,7 @@ fat_entry_rw_locked(undefined4 param_1,undefined4 *param_2,undefined4 param_3,un
 
 
 /* -----------------------------------------------------------------------------
- * clmap_set @ 20149824  (32 bytes, 7 callers, export file 201480b4_2014ae1c.c)
+ * clmap_set @ 20149824  (32 bytes, 7 callers, export file 201480b4_2014ac30.c)
  * Purpose: Sets a cluster's bit in the bitmap +0x58 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12577,7 +12547,7 @@ void clmap_set(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * clmap_test @ 20149844  (28 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * clmap_test @ 20149844  (28 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: Tests a cluster's bit in the bitmap +0x58 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12594,7 +12564,7 @@ byte clmap_test(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * clmap_find_free @ 20149860  (224 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * clmap_find_free @ 20149860  (224 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: First clear bitmap bit from the hint +0x28 (or the freed hint +0x2C), wraps to cluster 2; sets the bit
  *     and the next hint; -99 when full [fact]
  * Tag: [fact]
@@ -12666,7 +12636,7 @@ LAB_20149908:
 
 
 /* -----------------------------------------------------------------------------
- * fat32_find_free @ 20149940  (320 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * fat32_find_free @ 20149940  (320 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: Scans the FAT32 table from hint +0x28 to the last cluster for a 0 entry [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12744,7 +12714,7 @@ LAB_201499a0:
 
 
 /* -----------------------------------------------------------------------------
- * fat32_alloc_cluster @ 20149a80  (268 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat32_alloc_cluster @ 20149a80  (268 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: Finds a free cluster (bitmap or FAT scan), marks it end-of-chain 0x0FFFFFFF, links it from the previous
  *     cluster, free count +0x3C -- [fact]
  * Tag: [fact]
@@ -12801,7 +12771,7 @@ LAB_20149af8:
 
 
 /* -----------------------------------------------------------------------------
- * fat_alloc_cluster @ 20149b8c  (608 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat_alloc_cluster @ 20149b8c  (608 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (vol, previous cluster): allocates a cluster on FAT12/16 (end mark 0xFFFF, links the previous one),
  *     FAT32 through fat32_alloc_cluster; 0 when the disk is full [fact]
  * Tag: [fact]
@@ -12909,7 +12879,7 @@ LAB_20149c58:
 
 
 /* -----------------------------------------------------------------------------
- * fat_alloc_cluster_locked @ 20149dec  (92 bytes, 4 callers, export file 201480b4_2014ae1c.c)
+ * fat_alloc_cluster_locked @ 20149dec  (92 bytes, 4 callers, export file 201480b4_2014ac30.c)
  * Purpose: fat_alloc_cluster under fs_lock_b [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12942,7 +12912,7 @@ uint fat_alloc_cluster_locked
 
 
 /* -----------------------------------------------------------------------------
- * fat_next_cluster @ 20149e48  (96 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat_next_cluster @ 20149e48  (96 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: fat_entry_rw(vol, cluster, 0, 'r') under fs_lock_b; end-of-chain values give 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -12977,7 +12947,7 @@ undefined4 fat_next_cluster(undefined4 param_1,undefined4 param_2,uint *param_3,
 
 
 /* -----------------------------------------------------------------------------
- * fat_next_sector_alloc @ 20149eb0  (184 bytes, 4 callers, export file 201480b4_2014ae1c.c)
+ * fat_next_sector_alloc @ 20149eb0  (184 bytes, 4 callers, export file 201480b4_2014ac30.c)
  * Purpose: Like fat_next_sector, but at the end of the chain allocates and links a new cluster
  *     (fat_alloc_cluster_locked); used when writing [fact]
  * Tag: [fact]
@@ -13028,7 +12998,7 @@ int fat_next_sector_alloc(int param_1,int param_2,int *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fat_next_sector @ 20149f68  (184 bytes, 10 callers, export file 201480b4_2014ae1c.c)
+ * fat_next_sector @ 20149f68  (184 bytes, 10 callers, export file 201480b4_2014ac30.c)
  * Purpose: Next sector of a cluster chain: sector + 1 inside the cluster, else the first sector of the next cluster
  *     (0 at the end) [fact]
  * Tag: [fact]
@@ -13078,7 +13048,7 @@ int fat_next_sector(int param_1,int param_2,int *param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fat32_fsinfo_write @ 2014a020  (132 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fat32_fsinfo_write @ 2014a020  (132 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: FAT32: reads the FSInfo sector (+0x3A), stores free count (+0x3C) at 0x1E8 and next-free hint (+0x28) at
  *     0x1EC, writes it back [fact]
  * Tag: [fact]
@@ -13114,7 +13084,7 @@ int fat32_fsinfo_write(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat32_fsinfo_write_locked @ 2014a0a4  (60 bytes, 3 callers, export file 201480b4_2014ae1c.c)
+ * fat32_fsinfo_write_locked @ 2014a0a4  (60 bytes, 3 callers, export file 201480b4_2014ac30.c)
  * Purpose: fat32_fsinfo_write under fs_lock_b [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13143,7 +13113,7 @@ undefined4 fat32_fsinfo_write_locked(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_clmap_attach @ 2014a0e0  (548 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_clmap_attach @ 2014a0e0  (548 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (drive, buffer, size, work, scan): gives a drive a cluster-use bitmap (+0x58/+0x5C, clusters covered
  *     +0x60, FAT entries +0x64) and optionally fills it from the FAT [fact]
  * Tag: [fact]
@@ -13246,7 +13216,7 @@ LAB_2014a14c:
 
 
 /* -----------------------------------------------------------------------------
- * fs_clmap_attach_scan @ 2014a304  (92 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_clmap_attach_scan @ 2014a304  (92 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: fs_clmap_attach with a work buffer and scan = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13276,7 +13246,7 @@ undefined4 fs_clmap_attach_scan(undefined4 param_1,undefined4 param_2,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * fs_clmap_size @ 2014a360  (320 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * fs_clmap_size @ 2014a360  (320 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: Bytes a drive's cluster bitmap needs: (clusters + 7) / 8, clusters = min(FAT entries, data clusters + 2)
  *     [fact]
  * Tag: [fact]
@@ -13347,7 +13317,7 @@ LAB_2014a3b8:
 
 
 /* -----------------------------------------------------------------------------
- * fs_check_ready @ 2014a4a4  (44 bytes, 27 callers, export file 201480b4_2014ae1c.c)
+ * fs_check_ready @ 2014a4a4  (44 bytes, 27 callers, export file 201480b4_2014ac30.c)
  * Purpose: -18 when the FS is not initialised (0x20808B90), -17 without a drive list (0x20808BA0), else 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13376,7 +13346,7 @@ undefined4 fs_check_ready(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_init @ 2014a4d0  (268 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_init @ 2014a4d0  (268 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: (drive table, n, file table, m): clears the 0x450-byte drive and 0x24C-byte file tables
  *     (0x20808B90..9C), creates the pools and semaphores; errors -30/-36/-33/-39/-42 [fact]
  * Tag: [fact]
@@ -13436,7 +13406,7 @@ void fs_init(undefined4 param_1,short param_2,undefined4 param_3,short param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_attach @ 2014a5dc  (572 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * fs_drive_attach @ 2014a5dc  (572 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: (drv, letter, driver fn, ctx, no_mount, sector size): links a drive into the list 0x20808BA0, calls the
  *     driver (op 5 init, op 7 mount), sets up the caches [fact]
  * Tag: [fact]
@@ -13549,16 +13519,17 @@ LAB_2014a774:
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_attach_thunk @ 2014a818  (36 bytes, 0 callers, export file 201480b4_2014ae1c.c)
- * Purpose: Tail call to fs_drive_attach [fact]
+ * fs_drive_attach_512 @ 2014a818  (36 bytes, 0 callers, export file 201480b4_2014ac30.c)
+ * Purpose: fs_drive_attach with 512-byte sectors [fact, T24 round 9]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
-// ===== fs_drive_attach_thunk @ 2014a818 (36 bytes)
+// ===== fs_drive_attach_512 @ 2014a818 (36 bytes)
 
-/* Tail call to fs_drive_attach [fact] */
+/* [fact] fs_drive_attach with the sixth argument (bytes per sector) 0x200 (mov ip, #0x200 at
+   0x2014A81C); was fs_drive_attach_thunk (T24 round 9, fs/fat_volume.c) */
 
-void fs_drive_attach_thunk(void)
+void fs_drive_attach_512(void)
 
 {
   fs_drive_attach();
@@ -13567,7 +13538,7 @@ void fs_drive_attach_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_exit @ 2014a83c  (352 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * fs_exit @ 2014a83c  (352 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: Reverse of fs_init: clears the tables, deletes the drive semaphores, pools and semaphores (errors
  *     -53..-48) [fact]
  * Tag: [fact]
@@ -13640,7 +13611,7 @@ void fs_exit(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_vol_clear_geometry @ 2014a99c  (56 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_vol_clear_geometry @ 2014a99c  (56 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: Zeroes the BPB fields of a drive (type, sectors/cluster, reserved, FATs, root entries, sizes, root
  *     cluster, FSInfo) [fact]
  * Tag: [fact]
@@ -13671,7 +13642,7 @@ void fs_vol_clear_geometry(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_mount @ 2014a9d4  (284 bytes, 2 callers, export file 201480b4_2014ae1c.c)
+ * fs_drive_mount @ 2014a9d4  (284 bytes, 2 callers, export file 201480b4_2014ac30.c)
  * Purpose: Driver op 7 (mount) on a drive, re-reads the geometry, FAT32 free count via 0x2014B730 when unknown,
  *     sets mounted bit 0x80 of +0x68; -16 for clusters > 128 KB [fact]
  * Tag: [fact]
@@ -13736,7 +13707,7 @@ LAB_2014aa68:
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_unmount @ 2014aaf0  (132 bytes, 3 callers, export file 201480b4_2014ae1c.c)
+ * fs_drive_unmount @ 2014aaf0  (132 bytes, 3 callers, export file 201480b4_2014ac30.c)
  * Purpose: Removable drive (+0x68 bit 0): driver op 8, clears the mounted bit; -16 when not removable [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13772,7 +13743,7 @@ void fs_drive_unmount(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_detach @ 2014ab74  (168 bytes, 0 callers, export file 201480b4_2014ae1c.c)
+ * fs_drive_detach @ 2014ab74  (168 bytes, 0 callers, export file 201480b4_2014ac30.c)
  * Purpose: Unlinks a removable drive from the drive list 0x20808BA0 and deletes its semaphore [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13823,7 +13794,7 @@ void fs_drive_detach(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_path_lookup @ 2014ac30  (492 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_path_lookup @ 2014ac30  (492 bytes, 1 callers, export file 201480b4_2014ac30.c)
  * Purpose: Resolves "X:\\dir\\..\\name" component by component from the root (FAT12/16 root area or FAT32 root
  *     cluster +0x34) to its directory entry [fact]
  * Tag: [fact]
@@ -13911,9 +13882,8 @@ int fs_path_lookup(char *param_1,char *param_2,char *param_3)
   return 0;
 }
 
-
 /* -----------------------------------------------------------------------------
- * fs_stat_work @ 2014ae1c  (172 bytes, 1 callers, export file 201480b4_2014ae1c.c)
+ * fs_stat_work @ 2014ae1c  (172 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: fs_stat with a caller work buffer: copies and normalises the path (0x2014CD68), fs_path_lookup [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -13957,8 +13927,9 @@ void fs_stat_work(int param_1,int param_2,int param_3)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * fs_stat @ 2014aec8  (76 bytes, 3 callers, export file 2014aec8_2014d38c.c)
+ * fs_stat @ 2014aec8  (76 bytes, 3 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (path, *entry): directory entry of a path, 0 when it exists; sdmenu_load_file checks a size there before
  *     fs_fopen, update_display_self waits for the loader file with it [fact]
  * Tag: [fact]
@@ -13990,7 +13961,7 @@ undefined4 fs_stat(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_get_attr @ 2014af14  (48 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_get_attr @ 2014af14  (48 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Attribute byte (entry byte 11) of a path from fs_stat; sdmenu_file_exists [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14017,7 +13988,7 @@ int fs_get_attr(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_file_size_copy @ 2014af44  (32 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_file_size_copy @ 2014af44  (32 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Copies the 4-byte size at file +0x2C [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14035,7 +14006,7 @@ undefined4 fs_file_size_copy(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_fsize @ 2014af64  (100 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_fsize @ 2014af64  (100 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (fd, *size): file size; the firmware loaders compare it with image sizes (0x43075A in fwobj_sdr_run, <
  *     0x242 in fwobj_display_run) [fact]
  * Tag: [fact]
@@ -14069,15 +14040,16 @@ void fs_fsize(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_split_sectors @ 2014afcc  (84 bytes, 3 callers, export file 2014aec8_2014d38c.c)
- * Purpose: Splits a sector count into whole 8 MB units and a byte remainder for a sector size [fact]
+ * fs_split_sectors @ 2014afcc  (84 bytes, 3 callers, export file 2014ae1c_2014d374.c)
+ * Purpose: (sectors, *hi, *lo, bps): whole units of 0x800000 / (bps / 512) sectors (4 GiB of 512-byte sectors) and
+ *     the rest in bytes [fact, T24 round 9]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
 // ===== fs_split_sectors @ 2014afcc (84 bytes)
 
-/* Splits a sector count into whole 8 MB units and a byte remainder for a sector size [fact for the
-   arithmetic] */
+/* [fact] (sectors, *hi, *lo, bytes per sector): *hi whole units of 0x800000 / (bps / 512) sectors
+   (4 GiB of 512-byte sectors), *lo the rest in bytes (T24 round 9; was "8 MB units") */
 
 void fs_split_sectors(uint param_1,undefined4 *param_2,int *param_3,uint param_4)
 
@@ -14101,7 +14073,7 @@ void fs_split_sectors(uint param_1,undefined4 *param_2,int *param_3,uint param_4
 
 
 /* -----------------------------------------------------------------------------
- * fs_disk_total_calc @ 2014b020  (288 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_disk_total_calc @ 2014b020  (288 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Total data size of a drive: (clusters - 2) * sectors per cluster, split by fs_split_sectors; -17 for an
  *     unknown drive [fact]
  * Tag: [fact]
@@ -14156,13 +14128,14 @@ undefined4 fs_disk_total_calc(undefined4 param_1,undefined4 param_2,undefined4 p
   if (iVar3 + 2U < uVar6) {
     uVar6 = iVar3 + 2U;
   }
+                    /* whole units of 0x800000 / [doc] */
   fs_split_sectors((uint)uVar1 * (uVar6 - 2),param_2,param_3,iVar4);
   return 0;
 }
 
 
 /* -----------------------------------------------------------------------------
- * fs_disk_size @ 2014b140  (156 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_disk_size @ 2014b140  (156 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (letter, *hi, *lo): checked wrapper of fs_disk_total_calc; sd_info_screen [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14204,7 +14177,7 @@ LAB_2014b1b0:
 
 
 /* -----------------------------------------------------------------------------
- * fat32_count_free @ 2014b1e0  (436 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat32_count_free @ 2014b1e0  (436 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Counts the zero FAT32 entries (free clusters) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14249,6 +14222,7 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
   local_2c = param_3;
   local_28 = param_4;
   if ((param_5 != 0) && (*(int *)(param_1 + 0x3c) != -1)) {
+                    /* whole units of 0x800000 / [doc] */
     fs_split_sectors(*(int *)(param_1 + 0x3c) * (uint)uVar1,param_2,param_3,
                      *(uint *)(param_1 + 0x6c));
     return 0;
@@ -14314,7 +14288,7 @@ LAB_2014b36c:
 
 
 /* -----------------------------------------------------------------------------
- * fat32_count_free_locked @ 2014b394  (84 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat32_count_free_locked @ 2014b394  (84 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: fat32_count_free under fs_lock_b [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14345,7 +14319,7 @@ fat32_count_free_locked
 
 
 /* -----------------------------------------------------------------------------
- * fat16_count_free @ 2014b3e8  (272 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat16_count_free @ 2014b3e8  (272 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Counts the zero FAT16 entries over the FAT sectors, split into size units [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14415,7 +14389,7 @@ int fat16_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * fat16_count_free_locked @ 2014b500  (76 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat16_count_free_locked @ 2014b500  (76 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: fat16_count_free under fs_lock_b [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14444,7 +14418,7 @@ fat16_count_free_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * fat12_count_free @ 2014b54c  (408 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat12_count_free @ 2014b54c  (408 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: FAT12 version of the free-cluster count [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14538,7 +14512,7 @@ int fat12_count_free(int param_1,undefined4 *param_2,int *param_3,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * fat12_count_free_locked @ 2014b6e4  (76 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fat12_count_free_locked @ 2014b6e4  (76 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: fat12_count_free under fs_lock_b [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14567,7 +14541,7 @@ fat12_count_free_locked(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * fs_count_free @ 2014b730  (172 bytes, 3 callers, export file 2014aec8_2014d38c.c)
+ * fs_count_free @ 2014b730  (172 bytes, 3 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Free space of a drive by FAT type (FAT12/16/32 counters); fs_drive_mount uses it for an unknown FAT32
  *     free count [fact]
  * Tag: [fact]
@@ -14612,7 +14586,7 @@ void fs_count_free(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
 
 
 /* -----------------------------------------------------------------------------
- * fs_disk_free_work @ 2014b7dc  (164 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_disk_free_work @ 2014b7dc  (164 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Checked wrapper of fs_count_free with a work buffer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14654,7 +14628,7 @@ LAB_2014b850:
 
 
 /* -----------------------------------------------------------------------------
- * fs_disk_free @ 2014b880  (84 bytes, 3 callers, export file 2014aec8_2014d38c.c)
+ * fs_disk_free @ 2014b880  (84 bytes, 3 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (letter, *hi, *lo): free space; sd_is_full, sd_info_screen, screen_capture_bmp [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14684,7 +14658,7 @@ undefined4 fs_disk_free(undefined4 param_1,undefined4 param_2,undefined4 param_3
 
 
 /* -----------------------------------------------------------------------------
- * dirent_init @ 2014b8d4  (104 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * dirent_init @ 2014b8d4  (104 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Builds a 32-byte directory entry: 8.3 name, attribute, time stamps (dirent_set_time mask 7), first
  *     cluster, size 0 [fact]
  * Tag: [fact]
@@ -14711,7 +14685,7 @@ void dirent_init(int param_1,undefined4 param_2,undefined1 param_3,undefined4 pa
 
 
 /* -----------------------------------------------------------------------------
- * dir_init_dot_entries @ 2014b93c  (300 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dir_init_dot_entries @ 2014b93c  (300 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Writes the "." and ".." entries (attribute 0x10) into a new directory cluster and zeroes the other
  *     sectors [fact]
  * Tag: [fact]
@@ -14741,7 +14715,6 @@ int dir_init_dot_entries(int param_1,undefined4 param_2,undefined4 param_3,int p
   local_28 = 0x2e;
                     /* Builds a 32-byte directory entry [doc] */
   dirent_init(auStack_48,&local_28,0x10,param_2,param_1);
-                    /* Byte copy that copies backwards when the areas overlap [doc] */
   fs_memmove(iVar4,auStack_48,0x20);
   local_27 = 0x2e;
   dirent_init(auStack_48,&local_28,0x10,param_3,param_1);
@@ -14766,7 +14739,7 @@ int dir_init_dot_entries(int param_1,undefined4 param_2,undefined4 param_3,int p
 
 
 /* -----------------------------------------------------------------------------
- * dir_create_core @ 2014ba68  (956 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dir_create_core @ 2014ba68  (956 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Directory creation body behind fs_mkdir_work [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14913,7 +14886,7 @@ joined_r0x2014be00:
 
 
 /* -----------------------------------------------------------------------------
- * fs_mkdir_work @ 2014be24  (200 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_mkdir_work @ 2014be24  (200 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Validates and normalises the path, creates the directory (0x2014BA68), fs_flush [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14964,7 +14937,7 @@ LAB_2014bee4:
 
 
 /* -----------------------------------------------------------------------------
- * fs_mkdir @ 2014beec  (68 bytes, 15 callers, export file 2014aec8_2014d38c.c)
+ * fs_mkdir @ 2014beec  (68 bytes, 15 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (path): creates a directory; sd_make_dirs makes the FT-710 folders with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -14994,7 +14967,7 @@ undefined4 fs_mkdir(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dir_open_core @ 2014bf30  (812 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * dir_open_core @ 2014bf30  (812 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Opens a directory by path for fs_opendir_work [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15144,7 +15117,7 @@ LAB_2014c04c:
 
 
 /* -----------------------------------------------------------------------------
- * fs_opendir_work @ 2014c31c  (424 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_opendir_work @ 2014c31c  (424 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: fs_opendir body: copies and normalises the path, opens the root or a subdirectory (0x2014BF30) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15235,7 +15208,7 @@ LAB_2014c3d0:
 
 
 /* -----------------------------------------------------------------------------
- * fs_opendir @ 2014c410  (68 bytes, 7 callers, export file 2014aec8_2014d38c.c)
+ * fs_opendir @ 2014c410  (68 bytes, 7 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (path): directory handle, 0 on error; wav_list_dir, fwfile_status_text, sdmenu_save_file,
  *     screen_capture_bmp [fact]
  * Tag: [fact]
@@ -15267,7 +15240,7 @@ undefined4 fs_opendir(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dir_close @ 2014c454  (32 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dir_close @ 2014c454  (32 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Clears the handle's open flag +4, -13 when it was not open [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15293,7 +15266,7 @@ undefined4 dir_close(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_closedir @ 2014c474  (68 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_closedir @ 2014c474  (68 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Checked dir_close [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15320,7 +15293,7 @@ void fs_closedir(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * dirent_read @ 2014c4bc  (80 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dirent_read @ 2014c4bc  (80 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Copies 32-byte entry n of a directory sector (dir_sector_get) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15346,7 +15319,7 @@ int dirent_read(undefined4 param_1,undefined4 param_2,int param_3,undefined4 par
 
 
 /* -----------------------------------------------------------------------------
- * dir_next_entry @ 2014c50c  (380 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dir_next_entry @ 2014c50c  (380 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Advances a directory handle (+0xC sector, +6 index) to the next 32-byte entry, through the cluster chain
  *     [inference]
  * Tag: [inference]
@@ -15436,7 +15409,7 @@ LAB_2014c574:
 
 
 /* -----------------------------------------------------------------------------
- * dir_read_core @ 2014c688  (812 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * dir_read_core @ 2014c688  (812 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: readdir body: next used entry, long name (UTF-16 to 8-bit by 0x2014CC1C) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15581,7 +15554,7 @@ LAB_2014c83c:
 
 
 /* -----------------------------------------------------------------------------
- * fs_readdir_work @ 2014ca08  (148 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * fs_readdir_work @ 2014ca08  (148 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Checked readdir under fs_lock_a [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15624,7 +15597,7 @@ undefined4 fs_readdir_work(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_readdir @ 2014ca4c  (68 bytes, 3 callers, export file 2014aec8_2014d38c.c)
+ * fs_readdir @ 2014ca4c  (68 bytes, 3 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (dir): next directory entry or 0 at the end; callers read the attribute at entry +0x0B [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15655,7 +15628,7 @@ undefined4 fs_readdir(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sjis_is_lead @ 2014ca90  (40 bytes, 16 callers, export file 2014aec8_2014d38c.c)
+ * sjis_is_lead @ 2014ca90  (40 bytes, 16 callers, export file 2014ae1c_2014d374.c)
  * Purpose: 1 for Shift-JIS lead bytes 0x81..0x9F and 0xE0..0xFC [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15678,7 +15651,7 @@ undefined4 sjis_is_lead(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sjis_to_ucs2_char @ 2014cab8  (204 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * sjis_to_ucs2_char @ 2014cab8  (204 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Shift-JIS character to UTF-16 (byte-swapped) via the tables 0x20420756 (0x81..0x9F) and 0x204244D0
  *     (0xE0..0xFC); ASCII and half-width kana directly [fact]
  * Tag: [fact]
@@ -15726,7 +15699,7 @@ uint sjis_to_ucs2_char(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sjis_to_ucs2_str @ 2014cb84  (152 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * sjis_to_ucs2_str @ 2014cb84  (152 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Shift-JIS string to UTF-16, returns the length, sets *flag when there is a double-byte character [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15774,7 +15747,7 @@ int sjis_to_ucs2_str(char *param_1,undefined1 *param_2,undefined1 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ucs2_to_ascii_char @ 2014cc1c  (332 bytes, 1 callers, export file 2014aec8_2014d38c.c)
+ * ucs2_to_ascii_char @ 2014cc1c  (332 bytes, 1 callers, export file 2014ae1c_2014d374.c)
  * Purpose: One UTF-16 character to 8 bits, same mapping as fs_ucs2_to_ascii_upper without upper-casing [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15838,7 +15811,7 @@ undefined4 ucs2_to_ascii_char(byte *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * sjis_map_ext_chars @ 2014cd68  (652 bytes, 5 callers, export file 2014aec8_2014d38c.c)
+ * sjis_map_ext_chars @ 2014cd68  (652 bytes, 5 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Rewrites NEC/IBM extension codes in a path (0xED40.., 0x8790..) to one form before a lookup [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15953,7 +15926,7 @@ LAB_2014cfe4:
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrcpy_len @ 2014cff4  (92 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_wstrcpy_len @ 2014cff4  (92 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Copies a 0-terminated UTF-16 string, returns its length in characters, sets *flag = 1 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -15982,7 +15955,7 @@ int fs_wstrcpy_len(char *param_1,char *param_2,undefined1 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_ucs2_to_ascii_upper @ 2014d050  (196 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_ucs2_to_ascii_upper @ 2014d050  (196 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: UTF-16 name to 8-bit upper case: 0x00A5 -> '\\', 0x203E -> '~', U+FF61..FF9F -> half-width kana
  *     0xA1..0xDF, 0 for any other character outside 0x20..0x7E [fact]
  * Tag: [fact]
@@ -16042,7 +16015,7 @@ int fs_ucs2_to_ascii_upper(char *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_memcpy @ 2014d128  (32 bytes, 54 callers, export file 2014aec8_2014d38c.c)
+ * fs_memcpy @ 2014d128  (32 bytes, 54 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (dst, src, n): byte copy [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16064,7 +16037,7 @@ void fs_memcpy(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_memset @ 2014d148  (124 bytes, 56 callers, export file 2014aec8_2014d38c.c)
+ * fs_memset @ 2014d148  (124 bytes, 56 callers, export file 2014ae1c_2014d374.c)
  * Purpose: (dst, c, n): word fill for aligned 0x200-byte blocks, else bytes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16108,14 +16081,17 @@ void fs_memset(undefined4 *param_1,undefined1 param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fs_memmove @ 2014d1c4  (92 bytes, 2 callers, export file 2014aec8_2014d38c.c)
- * Purpose: Byte copy that copies backwards when the areas overlap [fact]
+ * fs_memmove @ 2014d1c4  (92 bytes, 2 callers, export file 2014ae1c_2014d374.c)
+ * Purpose: Byte move; backwards for an overlap, but from src[n] down to src[1] (one byte too high) [fact, T24 round
+ *     9]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
  */
 // ===== fs_memmove @ 2014d1c4 (92 bytes)
 
-/* Byte copy that copies backwards when the areas overlap [fact] */
+/* [fact] byte move; for dst above src inside the area it copies backwards from src[n] down to
+   src[1], one byte above the area (ldrb r2, [ip], #-1 with ip = src + n at 0x2014D1EC), so an
+   overlapping move shifts the wrong bytes (T24 round 9) */
 
 void fs_memmove(undefined1 *param_1,undefined1 *param_2,int param_3)
 
@@ -16146,7 +16122,7 @@ void fs_memmove(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strlen @ 2014d220  (40 bytes, 13 callers, export file 2014aec8_2014d38c.c)
+ * fs_strlen @ 2014d220  (40 bytes, 13 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Byte-wise string length [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16173,7 +16149,7 @@ int fs_strlen(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrlen_bytes @ 2014d248  (40 bytes, 3 callers, export file 2014aec8_2014d38c.c)
+ * fs_wstrlen_bytes @ 2014d248  (40 bytes, 3 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Length of a UTF-16 string in bytes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16200,7 +16176,7 @@ int fs_wstrlen_bytes(short *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strcpy @ 2014d270  (24 bytes, 4 callers, export file 2014aec8_2014d38c.c)
+ * fs_strcpy @ 2014d270  (24 bytes, 4 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Byte string copy including the terminator [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16225,7 +16201,7 @@ void fs_strcpy(char *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strncpy @ 2014d288  (68 bytes, 6 callers, export file 2014aec8_2014d38c.c)
+ * fs_strncpy @ 2014d288  (68 bytes, 6 callers, export file 2014ae1c_2014d374.c)
  * Purpose: Copies up to n bytes, pads with 0 after the terminator [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16259,7 +16235,7 @@ void fs_strncpy(char *param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrncpy @ 2014d2cc  (108 bytes, 0 callers, export file 2014aec8_2014d38c.c)
+ * fs_wstrncpy @ 2014d2cc  (108 bytes, 0 callers, export file 2014ae1c_2014d374.c)
  * Purpose: UTF-16 version of fs_strncpy [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16297,7 +16273,7 @@ void fs_wstrncpy(char *param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strchr @ 2014d338  (36 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_strchr @ 2014d338  (36 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: First occurrence of a character, 0 when missing [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16321,7 +16297,7 @@ char * fs_strchr(char *param_1,char param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_toupper @ 2014d35c  (24 bytes, 38 callers, export file 2014aec8_2014d38c.c)
+ * fs_toupper @ 2014d35c  (24 bytes, 38 callers, export file 2014ae1c_2014d374.c)
  * Purpose: 'a'..'z' -> 'A'..'Z' [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16341,7 +16317,7 @@ int fs_toupper(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_tolower @ 2014d374  (24 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_tolower @ 2014d374  (24 bytes, 2 callers, export file 2014ae1c_2014d374.c)
  * Purpose: 'A'..'Z' -> 'a'..'z' (pair of fs_toupper) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16359,9 +16335,8 @@ int fs_tolower(int param_1)
   return param_1;
 }
 
-
 /* -----------------------------------------------------------------------------
- * fs_stricmp @ 2014d38c  (108 bytes, 2 callers, export file 2014aec8_2014d38c.c)
+ * fs_stricmp @ 2014d38c  (108 bytes, 2 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Case-insensitive string compare (fs_toupper on both) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16401,8 +16376,9 @@ int fs_stricmp(byte *param_1,byte *param_2)
   return (int)(char)(cVar2 - cVar3);
 }
 
+
 /* -----------------------------------------------------------------------------
- * fs_wstricmp @ 2014d3f8  (148 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_wstricmp @ 2014d3f8  (148 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Case-insensitive compare of UTF-16 strings (folds only characters < 0x100) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16466,7 +16442,7 @@ int fs_wstricmp(ushort *param_1,ushort *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strnicmp @ 2014d48c  (124 bytes, 2 callers, export file 2014d3f8_2014e178.c)
+ * fs_strnicmp @ 2014d48c  (124 bytes, 2 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Case-insensitive compare of at most n bytes [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16510,7 +16486,7 @@ int fs_strnicmp(char *param_1,char *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstrnicmp @ 2014d508  (172 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_wstrnicmp @ 2014d508  (172 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: UTF-16 version of fs_strnicmp [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16580,7 +16556,7 @@ int fs_wstrnicmp(ushort *param_1,ushort *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strlwr_sjis @ 2014d5b4  (76 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_strlwr_sjis @ 2014d5b4  (76 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Lower-cases a string in place, skipping Shift-JIS pairs [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16613,7 +16589,7 @@ byte * fs_strlwr_sjis(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_atoi @ 2014d600  (48 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_atoi @ 2014d600  (48 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Decimal digits to int (no sign, no checks) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16640,7 +16616,7 @@ int fs_atoi(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_utoa_digits @ 2014d630  (72 bytes, 3 callers, export file 2014d3f8_2014e178.c)
+ * fs_utoa_digits @ 2014d630  (72 bytes, 3 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Recursive digit writer for radix 2..36 ('a'.. for 10+), returns the end pointer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16673,7 +16649,7 @@ char * fs_utoa_digits(uint param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_itoa @ 2014d678  (80 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_itoa @ 2014d678  (80 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: (value, buf, radix 2..36): '-' for negative decimal, 0-terminated; empty for a bad radix [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16707,7 +16683,7 @@ char * fs_itoa(uint param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_stricmp_sjis @ 2014d6c8  (168 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_stricmp_sjis @ 2014d6c8  (168 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Case-insensitive compare that compares the trail byte of a Shift-JIS pair exactly (sjis_is_lead) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16774,7 +16750,7 @@ int fs_stricmp_sjis(char *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fs_strnicmp_sjis @ 2014d770  (196 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fs_strnicmp_sjis @ 2014d770  (196 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Length-limited version of fs_stricmp_sjis [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16840,7 +16816,7 @@ joined_r0x2014d7ec:
 
 
 /* -----------------------------------------------------------------------------
- * fs_atoi_2 @ 2014d834  (48 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_atoi_2 @ 2014d834  (48 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Second identical copy of fs_atoi [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16867,7 +16843,7 @@ int fs_atoi_2(char *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_itoa_2 @ 2014d864  (80 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_itoa_2 @ 2014d864  (80 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Second identical copy of fs_itoa [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16900,7 +16876,7 @@ char * fs_itoa_2(uint param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fs_wstr_store_le @ 2014d8c8  (36 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_wstr_store_le @ 2014d8c8  (36 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Copies a 0-terminated UTF-16 string to bytes, little-endian, including the terminator [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16927,7 +16903,7 @@ void fs_wstr_store_le(undefined1 *param_1,short *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_st_word @ 2014d8ec  (20 bytes, 25 callers, export file 2014d3f8_2014e178.c)
+ * fat_st_word @ 2014d8ec  (20 bytes, 25 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Stores a 16-bit value little-endian at an unaligned address (pair of fat_ld_word) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16946,7 +16922,7 @@ void fat_st_word(undefined1 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_ld_word @ 2014d900  (24 bytes, 20 callers, export file 2014d3f8_2014e178.c)
+ * fat_ld_word @ 2014d900  (24 bytes, 20 callers, export file 2014d38c_2014e14c.c)
  * Purpose: 16-bit field read from an on-disk structure (fat_mount) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16963,7 +16939,7 @@ undefined2 fat_ld_word(undefined2 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fat_st_dword @ 2014d918  (36 bytes, 15 callers, export file 2014d3f8_2014e178.c)
+ * fat_st_dword @ 2014d918  (36 bytes, 15 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Stores a 32-bit value little-endian at an unaligned address (pair of fat_ld_dword) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -16984,7 +16960,7 @@ void fat_st_dword(undefined1 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fat_ld_dword @ 2014d93c  (32 bytes, 13 callers, export file 2014d3f8_2014e178.c)
+ * fat_ld_dword @ 2014d93c  (32 bytes, 13 callers, export file 2014d38c_2014e14c.c)
  * Purpose: 32-bit field read from an on-disk structure (fat_mount) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17001,7 +16977,7 @@ undefined4 fat_ld_dword(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_task_ctx_get @ 2014d95c  (48 bytes, 23 callers, export file 2014d3f8_2014e178.c)
+ * fs_task_ctx_get @ 2014d95c  (48 bytes, 23 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Per-task FS context 0x2091D0BC[tskid] (itron_get_tid), -72 for an ID out of range [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17030,7 +17006,7 @@ uint fs_task_ctx_get(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_task_err_set @ 2014d98c  (48 bytes, 3 callers, export file 2014d3f8_2014e178.c)
+ * fs_task_err_set @ 2014d98c  (48 bytes, 3 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Stores the last error of the calling task in 0x2091D0BC[tskid] (itron_get_tid, ids 1..256); fs_set_error
  *     calls it [fact]
  * Tag: [fact]
@@ -17056,7 +17032,7 @@ void fs_task_err_set(undefined4 param_1,undefined4 param_2,undefined4 param_3,in
 
 
 /* -----------------------------------------------------------------------------
- * fs_lock_a @ 2014d9c0  (164 bytes, 10 callers, export file 2014d3f8_2014e178.c)
+ * fs_lock_a @ 2014d9c0  (164 bytes, 10 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Locks the per-drive semaphore of table 0x2091D4C0 (itron_twai_sem, 300 ms); -37 without one [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17104,7 +17080,7 @@ joined_r0x2014da50:
 
 
 /* -----------------------------------------------------------------------------
- * fs_unlock_a @ 2014da64  (108 bytes, 10 callers, export file 2014d3f8_2014e178.c)
+ * fs_unlock_a @ 2014da64  (108 bytes, 10 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Releases it (itron_sig_sem); -38 without one [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17140,7 +17116,7 @@ int fs_unlock_a(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_a_create @ 2014dad0  (76 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_a_create @ 2014dad0  (76 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Creates the five semaphores of table 0x2091D4C0 (os_create_sem_named, signalled once) used by fs_lock_a
  *     [fact]
  * Tag: [fact]
@@ -17174,7 +17150,7 @@ void fs_sem_a_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_a_delete @ 2014db2c  (64 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_a_delete @ 2014db2c  (64 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Deletes them (itron_del_sem) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17203,7 +17179,7 @@ undefined4 fs_sem_a_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_lock_b @ 2014db6c  (164 bytes, 10 callers, export file 2014d3f8_2014e178.c)
+ * fs_lock_b @ 2014db6c  (164 bytes, 10 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Same for the second table 0x2091D4E8 (-34) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17250,7 +17226,7 @@ joined_r0x2014dbfc:
 
 
 /* -----------------------------------------------------------------------------
- * fs_unlock_b @ 2014dc10  (108 bytes, 10 callers, export file 2014d3f8_2014e178.c)
+ * fs_unlock_b @ 2014dc10  (108 bytes, 10 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Same release for 0x2091D4E8 (-35) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17286,7 +17262,7 @@ int fs_unlock_b(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_b_create @ 2014dc7c  (76 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_b_create @ 2014dc7c  (76 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Same for table 0x2091D4E8 (fs_lock_b) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17318,7 +17294,7 @@ void fs_sem_b_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_b_delete @ 2014dcd8  (64 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_b_delete @ 2014dcd8  (64 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Deletes them [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17347,7 +17323,7 @@ undefined4 fs_sem_b_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_wait_1s @ 2014dd18  (28 bytes, 2 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_wait_1s @ 2014dd18  (28 bytes, 2 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_twai_sem(id, 1000), E_NOEXS (-42) for id <= 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17370,7 +17346,7 @@ undefined4 fs_sem_wait_1s(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem_signal @ 2014dd34  (24 bytes, 2 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem_signal @ 2014dd34  (24 bytes, 2 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_sig_sem(id), E_NOEXS (-42) for id <= 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17393,7 +17369,7 @@ undefined4 fs_sem_signal(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_sem_create @ 2014dd4c  (112 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_drive_sem_create @ 2014dd4c  (112 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Gives the drive (+0x70) the semaphore of another drive on the same device (+0x18) or creates one [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17430,7 +17406,7 @@ uint fs_drive_sem_create(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_drive_sem_delete @ 2014ddd0  (96 bytes, 4 callers, export file 2014d3f8_2014e178.c)
+ * fs_drive_sem_delete @ 2014ddd0  (96 bytes, 4 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Deletes the drive semaphore and clears it in the drives that share the device [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17464,7 +17440,7 @@ undefined4 fs_drive_sem_delete(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem1_wait @ 2014de30  (44 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem1_wait @ 2014de30  (44 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_twai_sem(0x20808BB4, 300) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17487,7 +17463,7 @@ undefined4 fs_sem1_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem1_signal @ 2014de5c  (40 bytes, 5 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem1_signal @ 2014de5c  (40 bytes, 5 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_sig_sem(0x20808BB4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17510,7 +17486,7 @@ undefined4 fs_sem1_signal(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem1_create @ 2014de84  (52 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem1_create @ 2014de84  (52 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Creates semaphore 0x20808BB4 (os_create_sem_named) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17536,7 +17512,7 @@ void fs_sem1_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem1_delete @ 2014decc  (40 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem1_delete @ 2014decc  (40 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_del_sem(0x20808BB4) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17559,7 +17535,7 @@ undefined4 fs_sem1_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem2_wait @ 2014def4  (44 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem2_wait @ 2014def4  (44 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_twai_sem(0x20808BB8, 300) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17582,7 +17558,7 @@ undefined4 fs_sem2_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem2_signal @ 2014df20  (40 bytes, 2 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem2_signal @ 2014df20  (40 bytes, 2 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_sig_sem(0x20808BB8) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17605,7 +17581,7 @@ undefined4 fs_sem2_signal(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem2_create @ 2014df48  (52 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem2_create @ 2014df48  (52 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Creates semaphore 0x20808BB8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17631,7 +17607,7 @@ void fs_sem2_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_sem2_delete @ 2014df8c  (40 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_sem2_delete @ 2014df8c  (40 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_del_sem(0x20808BB8) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17654,7 +17630,7 @@ undefined4 fs_sem2_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fsys_sem_wait @ 2014dfb4  (40 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fsys_sem_wait @ 2014dfb4  (40 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_twai_sem on the fsys semaphore 0x20808BBC (fsys_init_sem), result in 0x20808BC0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17674,7 +17650,7 @@ void fsys_sem_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * fsys_sem_signal @ 2014dfdc  (36 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fsys_sem_signal @ 2014dfdc  (36 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_sig_sem on 0x20808BBC, result in 0x20808BC0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17694,7 +17670,7 @@ void fsys_sem_signal(void)
 
 
 /* -----------------------------------------------------------------------------
- * fsys_init_sem @ 2014e000  (52 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fsys_init_sem @ 2014e000  (52 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: fsys_sem [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17720,7 +17696,7 @@ void fsys_init_sem(void)
 
 
 /* -----------------------------------------------------------------------------
- * fsys_sem_delete @ 2014e044  (40 bytes, 0 callers, export file 2014d3f8_2014e178.c)
+ * fsys_sem_delete @ 2014e044  (40 bytes, 0 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_del_sem(0x20808BBC) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17743,7 +17719,7 @@ undefined4 fsys_sem_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_mpf_alloc @ 2014e06c  (64 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_mpf_alloc @ 2014e06c  (64 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Block from pool 0x20808BC4 (itron_tget_mpf, no wait) for sizes <= 0x10000, 0 otherwise [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17770,7 +17746,7 @@ undefined4 fs_mpf_alloc(uint param_1,undefined4 param_2,undefined4 param_3,undef
 
 
 /* -----------------------------------------------------------------------------
- * fs_mpf_free @ 2014e0ac  (28 bytes, 3 callers, export file 2014d3f8_2014e178.c)
+ * fs_mpf_free @ 2014e0ac  (28 bytes, 3 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_rel_mpf to pool 0x20808BC4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17791,7 +17767,7 @@ void fs_mpf_free(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_mpf_create @ 2014e0c8  (36 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_mpf_create @ 2014e0c8  (36 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: Creates the "fsys_mpf" fixed pool 0x20808BC4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17812,7 +17788,7 @@ void fs_mpf_create(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_mpf_delete @ 2014e100  (24 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_mpf_delete @ 2014e100  (24 bytes, 1 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_del_mpf of pool 0x20808BC4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17833,7 +17809,7 @@ void fs_mpf_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_work_alloc @ 2014e118  (52 bytes, 16 callers, export file 2014d3f8_2014e178.c)
+ * fs_work_alloc @ 2014e118  (52 bytes, 16 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_tget_mpf from pool 0x20808BC8, 0 on failure [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17858,7 +17834,7 @@ undefined4 fs_work_alloc(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_work_free @ 2014e14c  (44 bytes, 16 callers, export file 2014d3f8_2014e178.c)
+ * fs_work_free @ 2014e14c  (44 bytes, 16 callers, export file 2014d38c_2014e14c.c)
  * Purpose: itron_rel_mpf to pool 0x20808BC8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17879,9 +17855,8 @@ undefined4 fs_work_free(undefined4 param_1)
   return uVar1;
 }
 
-
 /* -----------------------------------------------------------------------------
- * fs_work_pool_create @ 2014e178  (44 bytes, 1 callers, export file 2014d3f8_2014e178.c)
+ * fs_work_pool_create @ 2014e178  (44 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: Creates the "FSYS Work" pool 0x20808BC8 used by fs_work_alloc [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17906,8 +17881,9 @@ int fs_work_pool_create(void)
   return iVar1;
 }
 
+
 /* -----------------------------------------------------------------------------
- * fs_work_pool_delete @ 2014e1b4  (40 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * fs_work_pool_delete @ 2014e1b4  (40 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: itron_del_mpf of pool 0x20808BC8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17930,7 +17906,7 @@ undefined4 fs_work_pool_delete(void)
 
 
 /* -----------------------------------------------------------------------------
- * fs_get_time_tm @ 2014e1dc  (16 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * fs_get_time_tm @ 2014e1dc  (16 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: rtc_get_tm into the caller's struct tm, returns 1 (time stamps of FAT entries) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md
@@ -17948,7 +17924,7 @@ undefined4 fs_get_time_tm(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fs_get_tick @ 2014e1ec  (28 bytes, 4 callers, export file 2014e1b4_20151520.c)
+ * fs_get_tick @ 2014e1ec  (28 bytes, 4 callers, export file 2014e178_20151308.c)
  * Purpose: Low word of itron_get_tim [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/filesystem.md

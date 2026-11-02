@@ -1,5 +1,41 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fs_stricmp @ 2014d38c (108 bytes)
+
+/* Case-insensitive string compare (fs_toupper on both) [fact] */
+
+int fs_stricmp(byte *param_1,byte *param_2)
+
+{
+  byte bVar1;
+  char cVar2;
+  char cVar3;
+  int iVar4;
+  byte *extraout_r2;
+  byte *extraout_r3;
+  undefined4 extraout_r12;
+  
+  do {
+    bVar1 = *param_1;
+    iVar4 = (int)(char)(bVar1 | *param_2);
+    if (iVar4 == 0) {
+      return 0;
+    }
+    if ((char)bVar1 == 0) {
+      return -1;
+    }
+    if (*param_2 == 0) {
+      return 1;
+    }
+    cVar2 = fs_toupper((int)(char)bVar1,iVar4,param_2 + 1,param_1 + 1);
+    cVar3 = fs_toupper(extraout_r12);
+    param_2 = extraout_r2;
+    param_1 = extraout_r3;
+  } while ((char)(cVar2 - cVar3) == 0);
+  return (int)(char)(cVar2 - cVar3);
+}
+
+
 // ===== fs_wstricmp @ 2014d3f8 (148 bytes)
 
 /* Case-insensitive compare of UTF-16 strings (folds only characters < 0x100) [fact] */
@@ -432,9 +468,12 @@ char * fs_itoa_2(uint param_1,char *param_2,uint param_3)
 }
 
 
-// ===== FUN_2014d8b4 @ 2014d8b4 (20 bytes)
+// ===== fs_byte_pair_sum @ 2014d8b4 (20 bytes)
 
-int FUN_2014d8b4(undefined4 param_1)
+/* [fact] the signed byte sum of the two low bytes of its argument (sbfx, sxtab, sxtb); no caller
+   found; Ghidra FUN_2014d8b4 (T24 round 9, fs/fs_string.c) */
+
+int fs_byte_pair_sum(undefined4 param_1)
 
 {
   return (int)(char)((char)((uint)param_1 >> 8) + (char)param_1);
@@ -1195,26 +1234,5 @@ undefined4 fs_work_free(undefined4 param_1)
     uVar1 = itron_rel_mpf(DAT_20808bc8,param_1);
   }
   return uVar1;
-}
-
-
-// ===== fs_work_pool_create @ 2014e178 (44 bytes)
-
-/* Creates the "FSYS Work" pool 0x20808BC8 used by fs_work_alloc [fact] */
-
-int fs_work_pool_create(void)
-
-{
-  int iVar1;
-  
-  iVar1 = os_create_mpf_named(&DAT_20427ec0,"FSYS Work");
-  if (iVar1 < 1) {
-    DAT_20808bc8 = 0;
-  }
-  else {
-    iVar1 = 0;
-    DAT_20808bc8 = iVar1;
-  }
-  return iVar1;
 }
 

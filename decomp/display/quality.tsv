@@ -1,5 +1,5 @@
 metric	value
-functions	2245
+functions	2246
 decompile_failures	0
 warnings	209
 functions_with_warnings	67
@@ -8,9 +8,9 @@ unreachable_block_warnings	144
 halt_baddata	4
 functions_with_halt_baddata	4
 functions_with_in_vars	60
-functions_with_unaff_vars	36
-functions_with_extraout_vars	65
-functions_with_in_unaff_extraout	151
+functions_with_unaff_vars	35
+functions_with_extraout_vars	64
+functions_with_in_unaff_extraout	150
 undefined_nonff_bytes	86
 undefined_nonff_bytes:.text	86
 bookmarks_error	1

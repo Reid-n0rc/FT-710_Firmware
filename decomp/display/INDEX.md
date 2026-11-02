@@ -62,7 +62,7 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 
 | Metric | DISPLAY |
 |---|---:|
-| Functions exported (non-thunk) | 2,245 |
+| Functions exported (non-thunk) | 2,246 |
 | Decompile failures | 0 |
 | Decompiler warnings (all kinds) | 209 |
 | Functions with a warning | 67 |
@@ -71,9 +71,9 @@ Counts that `tools/ghidra/ExportDecomp.java` writes to `quality.tsv` in the same
 | `halt_baddata()` calls | 4 |
 | Functions with `halt_baddata()` | 4 |
 | Functions with `in_*` variables | 60 |
-| Functions with `unaff_*` variables | 36 |
-| Functions with `extraout_*` variables | 65 |
-| Functions with any of `in_`/`unaff_`/`extraout_` | 151 |
+| Functions with `unaff_*` variables | 35 |
+| Functions with `extraout_*` variables | 64 |
+| Functions with any of `in_`/`unaff_`/`extraout_` | 150 |
 | Undefined non-0xFF bytes in executable blocks | 86 |
 | … in block `.text` | 86 |
 | Error bookmarks | 1 |

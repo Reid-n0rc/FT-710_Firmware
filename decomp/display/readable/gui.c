@@ -19750,7 +19750,7 @@ void dmac8_m2m_start(uint param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_obj_clear @ 201571e8  (36 bytes, 3 callers, export file 2015620a_20157634.c)
+ * afscope_obj_clear @ 201571e8  (36 bytes, 3 callers, export file 201561c0_20157604.c)
  * Purpose: (obj 0x208DCE3C): clears 0x13178 bytes of history at +0xB60 and resets the ring index +0x13CD8 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -19770,7 +19770,7 @@ void afscope_obj_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy_inverted_words @ 20157214  (36 bytes, 4 callers, export file 2015620a_20157634.c)
+ * copy_inverted_words @ 20157214  (36 bytes, 4 callers, export file 201561c0_20157604.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src; used to read the AF-FFT record [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -19792,7 +19792,7 @@ void copy_inverted_words(undefined4 param_1,uint *param_2,uint *param_3,uint par
 
 
 /* -----------------------------------------------------------------------------
- * scope_wf_bank_set @ 201576f4  (108 bytes, 4 callers, export file 201576f4_20159058.c)
+ * scope_wf_bank_set @ 201576f4  (108 bytes, 4 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 = 0), 1
  *     selects bank 1, 2 clears both banks [fact]
  * Tag: [fact]
@@ -19825,7 +19825,7 @@ void scope_wf_bank_set(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_history_clear @ 20157778  (116 bytes, 4 callers, export file 201576f4_20159058.c)
+ * scope_obj_history_clear @ 20157778  (116 bytes, 4 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): scope record and hold copy to 0xFF, clears the history and 3D work buffers of the scope object
  *     [fact]
  * Tag: [fact]
@@ -19851,7 +19851,7 @@ void scope_obj_history_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy_inverted_words_b @ 201577f8  (36 bytes, 2 callers, export file 201576f4_20159058.c)
+ * copy_inverted_words_b @ 201577f8  (36 bytes, 2 callers, export file 20157634_20158fd0.c)
  * Purpose: (this, dst, src, n): n/4 words dst = ~src (second copy of copy_inverted_words); scope_history_push uses
  *     it [fact]
  * Tag: [fact]
@@ -19875,7 +19875,7 @@ void copy_inverted_words_b(undefined4 param_1,uint *param_2,uint *param_3,uint p
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_store_record @ 2015781c  (156 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_store_record @ 2015781c  (156 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_store_frame`
  * What: the 850-byte record into +0x9C7F unless frozen (+0x9C7C); blank while 0x208004A0 or +0x9C7E; the 800
  *     default bytes 0x203D9B14 at +0x9C98 with 0x20808A84 bit 10 [fact]
@@ -19915,7 +19915,7 @@ void scope_obj_store_record(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_reset_bank0 @ 201578c8  (40 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_reset_bank0 @ 201578c8  (40 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(0) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -19936,7 +19936,7 @@ void scope_obj_reset_bank0(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_freeze_b_set @ 201578f0  (12 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_freeze_b_set @ 201578f0  (12 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_freeze_b_set` / `_a_set`
  * What: bytes +0x9C7D / +0x9C7C [fact]
  * Tag: [fact]
@@ -19955,7 +19955,7 @@ void scope_obj_freeze_b_set(int param_1,undefined1 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_palette_set @ 201578fc  (240 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_palette_set @ 201578fc  (240 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_palette_set`
  * What: the colour ramps of COLOR a and b (pointer tables 0x203D9A54, +104, +148) into the four ramp sub-objects
  *     and the two 3D objects [fact]
@@ -19991,7 +19991,7 @@ void scope_obj_palette_set(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_redraw_history @ 20157a00  (436 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_redraw_history @ 20157a00  (436 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope3d_redraw_history`
  * What: not recreated
  * Tag: none in the table row
@@ -20067,7 +20067,7 @@ LAB_20157b88:
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_freeze_a_set @ 20157bc4  (12 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_freeze_a_set @ 20157bc4  (12 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Name on the doc page: _a_set
  * Thunk: `scope_freeze_b_set` / `_a_set`
  * What: bytes +0x9C7D / +0x9C7C [fact]
@@ -20087,7 +20087,7 @@ void scope_obj_freeze_a_set(int param_1,undefined1 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_layout_set @ 20157bd0  (108 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_layout_set @ 20157bd0  (108 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope3d_layout_set`
  * What: the flag into the four ramp sub-objects and the mode-8/9 scale pointers 0x20450278/7C [fact]
  * Tag: [fact]
@@ -20126,7 +20126,7 @@ void scope_obj_layout_set(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_levels_get @ 20157c50  (224 bytes, 2 callers, export file 201576f4_20159058.c)
+ * scope_obj_levels_get @ 20157c50  (224 bytes, 2 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj, mode, out, ...): per-column levels for mode 8 / 9 / other from the live record or, while SPEED
  *     STOP (0x20800498), from the hold copy, scaled by the 3D sub-object of the mode (method behind
  *     scope_levels_get) [fact]
@@ -20170,7 +20170,7 @@ LAB_20157cc4:
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_wf_add_row @ 20157d3c  (552 bytes, 2 callers, export file 201576f4_20159058.c)
+ * scope_obj_wf_add_row @ 20157d3c  (552 bytes, 2 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj, record, mode): adds a waterfall row: takes the newest history rows (ring index obj+0x17254), adds
  *     the level offset to each point (clamp_add_u8, 0..255) into the current waterfall bank (gui.md:
  *     scope_wf_add_row) [fact for the calls]
@@ -20272,7 +20272,7 @@ void scope_obj_wf_add_row(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_history_push @ 20158010  (196 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_history_push @ 20158010  (196 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_history_push` / `scope3d_add_line`
  * What: not recreated
  * Tag: none in the table row
@@ -20309,7 +20309,7 @@ void scope_obj_history_push(int param_1,int param_2,undefined2 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_add_line @ 201580e0  (568 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_add_line @ 201580e0  (568 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_history_push` / `scope3d_add_line`
  * What: not recreated
  * Tag: none in the table row
@@ -20406,7 +20406,7 @@ LAB_201582f8:
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_init @ 20158330  (420 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_init @ 20158330  (420 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Thunk: `scope_objects_init`
  * What: the object's initialisation after the 0x82FB8-byte clear [fact]
  * Tag: [fact]
@@ -20461,7 +20461,7 @@ void scope_obj_init(int param_1,undefined4 param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_reset_bank1 @ 20158568  (40 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_reset_bank1 @ 20158568  (40 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): clears +0x9C7E, scope_obj_history_clear, scope_wf_bank_set(1) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20482,7 +20482,7 @@ void scope_obj_reset_bank1(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_indices_clear @ 20158590  (104 bytes, 1 callers, export file 201576f4_20159058.c)
+ * scope_obj_indices_clear @ 20158590  (104 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): zeroes the four ring indices +0x17254, +0x1B12C, +0x82FB0, +0x82FB4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20503,7 +20503,7 @@ int scope_obj_indices_clear(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_obj_init @ 201587fc  (60 bytes, 2 callers, export file 201576f4_20159058.c)
+ * scope3d_obj_init @ 201587fc  (60 bytes, 2 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): resets the three sub-objects (+0x10, +0x9C, +0x38E8) and byte 0; used for the 3D objects
  *     0x20470294 / 0x20474C68 by scope_objects_init [fact]
  * Tag: [fact]
@@ -20526,7 +20526,7 @@ void scope3d_obj_init(undefined1 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * touch_wait_tap @ 20158fd0  (132 bytes, 2 callers, export file 201576f4_20159058.c)
+ * touch_wait_tap @ 20158fd0  (132 bytes, 2 callers, export file 20157634_20158fd0.c)
  * Purpose: Waits for a touch: polls pointer_get_event / touch_cal_apply every tick until a press (event 2 or 4), a
  *     release (5 or 6) or the power-key flag 0x20800493; fwupdate_screen and fwupdate_insert_sd_screen wait with it
  *     [fact]
@@ -20565,9 +20565,8 @@ void touch_wait_tap(void)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope3d_line_render @ 2015b8f8  (176 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope3d_line_render @ 2015b8f8  (176 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: (buf, i, y, x0, mode, ...): one 3DSS line: levels (FUN_201343c4), colour ramp scope_ramp_get, markers
  *     scope3d_line_markers, scale scope3d_vscale, then scope3d_draw_line at x = 5i + x0, width 0x317 - 10i (gui.md
  *     3DSS step 4) [fact]
@@ -20611,7 +20610,7 @@ void scope3d_line_render(undefined4 param_1,int param_2,undefined4 param_3,int p
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_history_clear @ 2015b9a8  (28 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope3d_history_clear @ 2015b9a8  (28 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: Resets the history (0x20134310) and clears 0x6B080 bytes of the 3D buffer *0x208085B4 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -20630,7 +20629,7 @@ void scope3d_history_clear(void)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_large @ 2015b9cc  (240 bytes, 1 callers, export file 20159158_2015d958.c)
+ * scope3d_render_large @ 2015b9cc  (240 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: mode 8: 29 lines, 222/274 rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20693,7 +20692,7 @@ void scope3d_render_large(void *param_1,uint n,int param_3,ushort *param_4,uint 
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_line_render_alt @ 2015bacc  (176 bytes, 0 callers, export file 20159158_2015d958.c)
+ * scope3d_line_render_alt @ 2015bacc  (176 bytes, 0 callers, export file 20159058_2015d874.c)
  * Purpose: Identical copy of scope3d_line_render that scope3d_render_large uses when its third argument is non-zero
  *     [fact]
  * Tag: [fact]
@@ -20736,7 +20735,7 @@ void scope3d_line_render_alt
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_render_small @ 2015bb7c  (236 bytes, 1 callers, export file 20159158_2015d958.c)
+ * scope3d_render_small @ 2015bb7c  (236 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: mode 9: 14 lines, 104/156 rows [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20792,7 +20791,7 @@ void scope3d_render_small(void *param_1,uint n,int param_3,ushort *param_4,uint 
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_draw_line @ 2015bc6c  (484 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope3d_draw_line @ 2015bc6c  (484 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: line i at x = 5i+4, width 791-10i [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/gui.md
@@ -20900,7 +20899,7 @@ void scope3d_draw_line(int param_1,int param_2,int param_3,int param_4,int param
 
 
 /* -----------------------------------------------------------------------------
- * touch_hit_scope @ 2015c558  (304 bytes, 1 callers, export file 20159158_2015d958.c)
+ * touch_hit_scope @ 2015c558  (304 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: Touch hit test of the scope area: hit table chosen by layout (byte 1) and scope mode (byte 2), expanded
  *     flag; input.md lists it for soft keys 0x1016..0x1019 [fact]
  * Tag: [fact]
@@ -20984,7 +20983,7 @@ undefined4 touch_hit_scope(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_set_speed @ 2015d1c4  (204 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_set_speed @ 2015d1c4  (204 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21044,7 +21043,7 @@ void scope2d_set_speed(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_set_color @ 2015d2a8  (92 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_set_color @ 2015d2a8  (92 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21089,7 +21088,7 @@ void scope2d_set_color(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * multi_panel_draw @ 2015d334  (128 bytes, 2 callers, export file 20159158_2015d958.c)
+ * multi_panel_draw @ 2015d334  (128 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21114,7 +21113,7 @@ void multi_panel_draw(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_normal @ 2015d3b8  (212 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_draw_normal @ 2015d3b8  (212 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21156,7 +21155,7 @@ void scope2d_draw_normal(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_front_large @ 2015d49c  (104 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope3d_front_large @ 2015d49c  (104 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21187,7 +21186,7 @@ void scope3d_front_large(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_multi @ 2015d508  (208 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_draw_multi @ 2015d508  (208 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21229,7 +21228,7 @@ void scope2d_draw_multi(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope3d_front_small @ 2015d5e8  (100 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope3d_front_small @ 2015d5e8  (100 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21260,7 +21259,7 @@ void scope3d_front_small(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * osc_draw @ 2015d650  (188 bytes, 1 callers, export file 20159158_2015d958.c)
+ * osc_draw @ 2015d650  (188 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21303,7 +21302,7 @@ void osc_draw(int param_1,int param_2,int param_3,undefined4 param_4,int param_5
 
 
 /* -----------------------------------------------------------------------------
- * scope_front_trace_draw @ 2015d70c  (360 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope_front_trace_draw @ 2015d70c  (360 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 3DSS front trace (#178; names pending re-export)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21389,7 +21388,7 @@ void scope_front_trace_draw
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_draw_size0 @ 2015d874  (212 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_draw_size0 @ 2015d874  (212 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21429,9 +21428,8 @@ void scope2d_draw_size0(int param_1,undefined4 param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope2d_draw_expand @ 2015d958  (212 bytes, 2 callers, export file 20159158_2015d958.c)
+ * scope2d_draw_expand @ 2015d958  (212 bytes, 2 callers, export file 2015d958_201603f4.c)
  * Purpose: 2D spectrum + waterfall per layout (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21471,8 +21469,9 @@ void scope2d_draw_expand(int param_1,undefined4 param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * affft_waterfall_blit @ 2015da3c  (96 bytes, 1 callers, export file 2015da3c_2016040c.c)
+ * affft_waterfall_blit @ 2015da3c  (96 bytes, 1 callers, export file 2015d958_201603f4.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21495,7 +21494,7 @@ void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int pa
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_waterfall_blit @ 2015da9c  (228 bytes, 4 callers, export file 2015da3c_2016040c.c)
+ * scope2d_waterfall_blit @ 2015da9c  (228 bytes, 4 callers, export file 2015d958_201603f4.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21529,7 +21528,7 @@ void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,u
 
 
 /* -----------------------------------------------------------------------------
- * scope2d_spectrum_fill @ 2015db80  (268 bytes, 4 callers, export file 2015da3c_2016040c.c)
+ * scope2d_spectrum_fill @ 2015db80  (268 bytes, 4 callers, export file 2015d958_201603f4.c)
  * Purpose: 2D parts (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21611,7 +21610,7 @@ void scope2d_spectrum_fill
 
 
 /* -----------------------------------------------------------------------------
- * affft_spectrum_draw @ 2015dc90  (156 bytes, 1 callers, export file 2015da3c_2016040c.c)
+ * affft_spectrum_draw @ 2015dc90  (156 bytes, 1 callers, export file 2015d958_201603f4.c)
  * Purpose: MULTI oscilloscope / AF-FFT panel (#178)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/gui.md
@@ -21663,7 +21662,7 @@ void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefin
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map0_init @ 20160c70  (124 bytes, 1 callers, export file 20160418_201635b8.c)
+ * afscope_map0_init @ 20160c70  (124 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: Map 0 (obj +0x000): levels 0x81..0xFA -> (i - 0x81) * 0.3223 + 0.99 pixels, below 0, from 0xFB on 0x27
  *     (39, the AF-FFT spectrum height of gui.md) [fact]
  * Tag: [fact]
@@ -21708,7 +21707,7 @@ void afscope_map0_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map2_init @ 20160cf0  (92 bytes, 1 callers, export file 20160418_201635b8.c)
+ * afscope_map2_init @ 20160cf0  (92 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: Map 2 (obj +0x200): level i -> i * 0.3098 + 0.85 for 1..255 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21742,7 +21741,7 @@ void afscope_map2_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map1_init @ 20160d50  (144 bytes, 1 callers, export file 20160418_201635b8.c)
+ * afscope_map1_init @ 20160d50  (144 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: Map 1 (obj +0x100): the same curve as map 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21787,7 +21786,7 @@ void afscope_map1_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map3_init @ 20160de4  (92 bytes, 1 callers, export file 20160418_201635b8.c)
+ * afscope_map3_init @ 20160de4  (92 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: Map 3 (obj +0x300): the same curve as map 2 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -21821,7 +21820,7 @@ void afscope_map3_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * afscope_map4_init @ 20160e44  (144 bytes, 1 callers, export file 20160418_201635b8.c)
+ * afscope_map4_init @ 20160e44  (144 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: Map 4 (obj +0x400): levels 0x81..0xFA -> (i - 0x81) * 0.3636 + 0.99, from 0xFB on 0x2C (44, the bar
  *     height affft_bins_get returns) [fact]
  * Tag: [fact]
@@ -21868,7 +21867,7 @@ void afscope_map4_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_apply_2e00 @ 20162d54  (20 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_apply_2e00 @ 20162d54  (20 bytes, 1 callers, export file 2016040c_20163564.c)
  * Thunk: (tail calls of `scope_obj_set_2e00` / `_2e02`)
  * What: the first recreated, the second not
  * Tag: none in the table row
@@ -21888,7 +21887,7 @@ void scope_obj_apply_2e00(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_apply_2e02 @ 20162d68  (108 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_apply_2e02 @ 20162d68  (108 bytes, 1 callers, export file 2016040c_20163564.c)
  * Name on the doc page: _2e02
  * Thunk: (tail calls of `scope_obj_set_2e00` / `_2e02`)
  * What: the first recreated, the second not
@@ -21922,7 +21921,7 @@ void scope_obj_apply_2e02(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_line_markers @ 2016340c  (24 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_line_markers @ 2016340c  (24 bytes, 1 callers, export file 2016040c_20163564.c)
  * Thunk: `scope3d_line_markers`
  * What: obj + 0x100E4 + 0x54·i [fact]
  * Tag: [fact]
@@ -21941,7 +21940,7 @@ int scope_obj_line_markers(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_vscale @ 201634b8  (52 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_vscale @ 201634b8  (52 bytes, 1 callers, export file 2016040c_20163564.c)
  * Thunk: `scope3d_vscale`
  * What: halfword i of the selected mode-8/9 scale, else 0 [fact]
  * Tag: [fact]
@@ -21971,7 +21970,7 @@ undefined2 scope_obj_vscale(undefined4 param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_wf_row_addr @ 201634f0  (100 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_wf_row_addr @ 201634f0  (100 bytes, 1 callers, export file 2016040c_20163564.c)
  * Thunk: `scope_wf_row_addr`
  * What: row ring133_offset(index, ~i) of the selected bank [fact]
  * Tag: [fact]
@@ -21996,7 +21995,7 @@ int scope_obj_wf_row_addr(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * scope_obj_line_offset @ 20163564  (68 bytes, 1 callers, export file 20160418_201635b8.c)
+ * scope_obj_line_offset @ 20163564  (68 bytes, 1 callers, export file 2016040c_20163564.c)
  * Thunk: `scope3d_line_offset`
  * What: halfword i of the ROM scale of the layout (not the selected one), else 0 [fact]
  * Tag: [fact]
@@ -22037,9 +22036,8 @@ undefined2 scope_obj_line_offset(undefined4 param_1,int param_2,int param_3,int 
   return uVar1;
 }
 
-
 /* -----------------------------------------------------------------------------
- * scope3d_widths_init @ 20164334  (44 bytes, 2 callers, export file 201635e4_2016437c.c)
+ * scope3d_widths_init @ 20164334  (44 bytes, 2 callers, export file 201635b8_20164360.c)
  * Purpose: (table, ...): fills the 3DSS line width table 0x317 - 10*i (gui.md: line i is 791 - 10i wide) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22070,7 +22068,7 @@ void scope3d_widths_init(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_advance @ 20164360  (28 bytes, 1 callers, export file 201635e4_2016437c.c)
+ * ring100_advance @ 20164360  (28 bytes, 1 callers, export file 201635b8_20164360.c)
  * Purpose: (idx): returns *idx and advances it with ring100_next; affft_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22092,9 +22090,8 @@ undefined4 ring100_advance(undefined4 *param_1)
   return uVar2;
 }
 
-
 /* -----------------------------------------------------------------------------
- * ring133_advance @ 20164388  (28 bytes, 2 callers, export file 20164388_20164fa4.c)
+ * ring133_advance @ 20164388  (28 bytes, 2 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): returns *idx and advances it; scope_obj_wf_add_row [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22118,7 +22115,7 @@ undefined4 ring133_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_reset @ 201643a4  (12 bytes, 3 callers, export file 20164388_20164fa4.c)
+ * ring133_reset @ 201643a4  (12 bytes, 3 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): *idx = 0; scope_wf_bank_set clears the waterfall ring index with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22136,7 +22133,7 @@ void ring133_reset(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_advance @ 201643b0  (28 bytes, 2 callers, export file 20164388_20164fa4.c)
+ * ring20_advance @ 201643b0  (28 bytes, 2 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): returns *idx and advances it; scope_history_push [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22160,7 +22157,7 @@ undefined4 ring20_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_advance @ 201643cc  (28 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring30_advance @ 201643cc  (28 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): returns *idx and advances it; scope3d_redraw_history [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22184,7 +22181,7 @@ undefined4 ring30_advance(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_offset @ 20164758  (44 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring100_offset @ 20164758  (44 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 100) % 100; affft_wf_row_addr uses it for the 100-row AF-FFT ring [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22201,7 +22198,7 @@ int ring100_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring100_next @ 20164788  (20 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring100_next @ 20164788  (20 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 100 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22224,7 +22221,7 @@ int ring100_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_offset @ 2016479c  (48 bytes, 2 callers, export file 20164388_20164fa4.c)
+ * ring133_offset @ 2016479c  (48 bytes, 2 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 133) % 133; scope_wf_row_addr (133 waterfall rows per bank, gui.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22247,7 +22244,7 @@ int ring133_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring133_next @ 201647d0  (20 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring133_next @ 201647d0  (20 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 133 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22270,7 +22267,7 @@ int ring133_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_offset @ 201647e4  (44 bytes, 8 callers, export file 20164388_20164fa4.c)
+ * ring20_offset @ 201647e4  (44 bytes, 8 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 20) % 20; the 20-row history ring (scope_history_push, scope3d_add_line) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22288,7 +22285,7 @@ int ring20_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring20_next @ 20164814  (20 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring20_next @ 20164814  (20 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 20 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22311,7 +22308,7 @@ int ring20_next(int *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_offset @ 20164828  (48 bytes, 4 callers, export file 20164388_20164fa4.c)
+ * ring30_offset @ 20164828  (48 bytes, 4 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx, d): (*idx + d + 30) % 30; the 30-line 3DSS ring (scope3d_add_line, scope3d_redraw_history) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md
@@ -22334,7 +22331,7 @@ int ring30_offset(int *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring30_next @ 2016485c  (20 bytes, 1 callers, export file 20164388_20164fa4.c)
+ * ring30_next @ 2016485c  (20 bytes, 1 callers, export file 2016437c_20164fa4.c)
  * Purpose: (idx): *idx + 1, wrapping at 30 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/gui.md

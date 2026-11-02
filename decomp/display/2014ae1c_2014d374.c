@@ -1,5 +1,45 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== fs_stat_work @ 2014ae1c (172 bytes)
+
+/* fs_stat with a caller work buffer: copies and normalises the path (0x2014CD68), fs_path_lookup
+   [fact] */
+
+void fs_stat_work(int param_1,int param_2,int param_3)
+
+{
+  int iVar1;
+  int iVar2;
+  undefined4 uVar3;
+  
+  iVar1 = fs_check_ready();
+  if (iVar1 == 0) {
+    if (param_1 == 0) {
+      fs_set_error(0xffffffff,0);
+      return;
+    }
+    if (param_2 == 0) {
+      fs_set_error(0xfffffff3,0);
+      return;
+    }
+    iVar1 = fs_path_validate(param_1);
+    if (iVar1 == 0) {
+                    /* Byte-wise string length [doc] */
+      iVar1 = fs_strlen(param_1);
+      iVar2 = param_3 + 0x100c;
+      fs_strncpy(iVar2,param_1,iVar1 + 1);
+                    /* Rewrites NEC/IBM extension codes in a path [doc, inference] */
+      sjis_map_ext_chars(iVar2);
+      uVar3 = fs_path_lookup(iVar2,param_2,param_3);
+      fs_set_error(uVar3,0);
+      return;
+    }
+  }
+  fs_set_error(iVar1,0);
+  return;
+}
+
+
 // ===== fs_stat @ 2014aec8 (76 bytes)
 
 /* (path, *entry): directory entry of a path, 0 when it exists; sdmenu_load_file checks a size there
@@ -87,8 +127,8 @@ void fs_fsize(undefined4 param_1,int param_2)
 
 // ===== fs_split_sectors @ 2014afcc (84 bytes)
 
-/* Splits a sector count into whole 8 MB units and a byte remainder for a sector size [fact for the
-   arithmetic] */
+/* [fact] (sectors, *hi, *lo, bytes per sector): *hi whole units of 0x800000 / (bps / 512) sectors
+   (4 GiB of 512-byte sectors), *lo the rest in bytes (T24 round 9; was "8 MB units") */
 
 void fs_split_sectors(uint param_1,undefined4 *param_2,int *param_3,uint param_4)
 
@@ -160,6 +200,7 @@ undefined4 fs_disk_total_calc(undefined4 param_1,undefined4 param_2,undefined4 p
   if (iVar3 + 2U < uVar6) {
     uVar6 = iVar3 + 2U;
   }
+                    /* whole units of 0x800000 / [doc] */
   fs_split_sectors((uint)uVar1 * (uVar6 - 2),param_2,param_3,iVar4);
   return 0;
 }
@@ -241,6 +282,7 @@ int fat32_count_free(int param_1,undefined4 param_2,undefined4 param_3,undefined
   local_2c = param_3;
   local_28 = param_4;
   if ((param_5 != 0) && (*(int *)(param_1 + 0x3c) != -1)) {
+                    /* whole units of 0x800000 / [doc] */
     fs_split_sectors(*(int *)(param_1 + 0x3c) * (uint)uVar1,param_2,param_3,
                      *(uint *)(param_1 + 0x6c));
     return 0;
@@ -670,7 +712,6 @@ int dir_init_dot_entries(int param_1,undefined4 param_2,undefined4 param_3,int p
   local_28 = 0x2e;
                     /* Builds a 32-byte directory entry [doc] */
   dirent_init(auStack_48,&local_28,0x10,param_2,param_1);
-                    /* Byte copy that copies backwards when the areas overlap [doc] */
   fs_memmove(iVar4,auStack_48,0x20);
   local_27 = 0x2e;
   dirent_init(auStack_48,&local_28,0x10,param_3,param_1);
@@ -1902,7 +1943,9 @@ void fs_memset(undefined4 *param_1,undefined1 param_2,uint param_3,uint param_4)
 
 // ===== fs_memmove @ 2014d1c4 (92 bytes)
 
-/* Byte copy that copies backwards when the areas overlap [fact] */
+/* [fact] byte move; for dst above src inside the area it copies backwards from src[n] down to
+   src[1], one byte above the area (ldrb r2, [ip], #-1 with ip = src + n at 0x2014D1EC), so an
+   overlapping move shifts the wrong bytes (T24 round 9) */
 
 void fs_memmove(undefined1 *param_1,undefined1 *param_2,int param_3)
 
@@ -2096,41 +2139,5 @@ int fs_tolower(int param_1)
     param_1 = (int)(char)((char)param_1 + ' ');
   }
   return param_1;
-}
-
-
-// ===== fs_stricmp @ 2014d38c (108 bytes)
-
-/* Case-insensitive string compare (fs_toupper on both) [fact] */
-
-int fs_stricmp(byte *param_1,byte *param_2)
-
-{
-  byte bVar1;
-  char cVar2;
-  char cVar3;
-  int iVar4;
-  byte *extraout_r2;
-  byte *extraout_r3;
-  undefined4 extraout_r12;
-  
-  do {
-    bVar1 = *param_1;
-    iVar4 = (int)(char)(bVar1 | *param_2);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    if ((char)bVar1 == 0) {
-      return -1;
-    }
-    if (*param_2 == 0) {
-      return 1;
-    }
-    cVar2 = fs_toupper((int)(char)bVar1,iVar4,param_2 + 1,param_1 + 1);
-    cVar3 = fs_toupper(extraout_r12);
-    param_2 = extraout_r2;
-    param_1 = extraout_r3;
-  } while ((char)(cVar2 - cVar3) == 0);
-  return (int)(char)(cVar2 - cVar3);
 }
 

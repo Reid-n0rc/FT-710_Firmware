@@ -1,5 +1,50 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== FUN_20157634 @ 20157634 (188 bytes)
+
+void FUN_20157634(int param_1,int param_2,byte *param_3)
+
+{
+  byte bVar1;
+  uint uVar2;
+  int iVar3;
+  uint uVar4;
+  uint n;
+  ulonglong __aeabi_idivmod_ret;
+  
+  iVar3 = 0;
+  do {
+    *(undefined1 *)(param_1 + iVar3) = 0;
+    iVar3 = iVar3 + 1;
+  } while (iVar3 < 0x100);
+  uVar4 = (uint)*param_3;
+  n = param_2 * 10000;
+  uVar2 = (uint)param_3[1];
+  if (uVar4 <= uVar2) {
+    do {
+      bVar1 = *param_3;
+      __aeabi_idivmod_ret = __aeabi_idivmod(n,(uVar2 - bVar1) + 1);
+      iVar3 = (int)__aeabi_idivmod_ret * ((uVar4 - bVar1) + 1) + 0x26ac;
+      *(char *)(param_1 + uVar4) =
+           ((char)(iVar3 / 10000) + (char)(iVar3 >> 0x1f)) -
+           (char)((longlong)iVar3 * 0x68db8bad >> 0x3f);
+      uVar4 = uVar4 + 1;
+      uVar2 = (uint)param_3[1];
+    } while ((int)uVar4 <= (int)uVar2);
+  }
+  uVar2 = uVar2 + 1;
+  if (uVar2 < 0x100) {
+    do {
+      *(char *)(param_1 + uVar2) =
+           ((char)((int)n / 10000) + (char)((int)n >> 0x1f)) -
+           (char)((longlong)(int)n * 0x68db8bad >> 0x3f);
+      uVar2 = uVar2 + 1;
+    } while ((int)uVar2 < 0x100);
+  }
+  return;
+}
+
+
 // ===== scope_wf_bank_set @ 201576f4 (108 bytes)
 
 /* (obj, 0/1/2): 0 clears waterfall bank 0 (0x33F40 B at obj+0x1B130) and selects it (0x20450280 =
@@ -1297,41 +1342,6 @@ void touch_wait_tap(void)
     }
     itron_tslp_tsk(0xffffffff);
   }
-  return;
-}
-
-
-// ===== bootloader_entry_screen @ 20159058 (232 bytes)
-
-/* Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT
-   ERROR" forever, else bootloader_screen (update.md) [fact] */
-
-void bootloader_entry_screen(undefined4 param_1,int param_2)
-
-{
-  int iVar1;
-  uint uVar2;
-  
-  iVar1 = fb_get_layer_addr(DAT_208085b8);
-  fb_clear_rect(iVar1,0,0,800,0x1e0);
-  iVar1 = fb_get_layer_addr(DAT_208085bc);
-  fb_clear_rect(iVar1,0,0,800,0x1e0);
-  gui_update_layers();
-  if (*(int *)(param_2 + 8) != 2) {
-    uVar2 = fb_get_layer_addr(DAT_208085bc);
-    fb_clear_rect(uVar2,0,0,800,0x1e0);
-    gui_draw_text_centered(uVar2,0x204280a8,100,400,0xc,0x208038c0);
-    do {
-                    /* Radio off from the GUI side [doc] */
-      if (DAT_20800493 != '\0') {
-        display_power_down();
-      }
-      gui_update_layers();
-      fb_get_layer_addr(DAT_208085bc);
-      itron_tslp_tsk(0xffffffff);
-    } while( true );
-  }
-  bootloader_screen(param_1,param_2);
   return;
 }
 

@@ -4885,7 +4885,7 @@ uint usbh_create_objects(int param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strcasecmp @ 2014e208  (72 bytes, 9 callers, export file 2014e1b4_20151520.c)
+ * strcasecmp @ 2014e208  (72 bytes, 9 callers, export file 2014e178_20151308.c)
  * Purpose: Case-insensitive compare with tolower; cli_run_file, wav_list_dir [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -4917,7 +4917,7 @@ int strcasecmp(undefined1 *param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strncasecmp @ 2014e250  (84 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * strncasecmp @ 2014e250  (84 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: Length-limited strcasecmp; fwname_pattern_match [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -4956,7 +4956,7 @@ int strncasecmp(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * strncmp @ 2014e2a4  (64 bytes, 7 callers, export file 2014e1b4_20151520.c)
+ * strncmp @ 2014e2a4  (64 bytes, 7 callers, export file 2014e178_20151308.c)
  * Purpose: names-file group "startup / armcc runtime"; no direct calls; 64 B, callers: 7 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -4988,7 +4988,7 @@ int strncmp(byte *param_1,byte *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * strncpy @ 2014e2e4  (60 bytes, 6 callers, export file 2014e1b4_20151520.c)
+ * strncpy @ 2014e2e4  (60 bytes, 6 callers, export file 2014e178_20151308.c)
  * Purpose: Copies up to n bytes and pads with 0 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5033,7 +5033,7 @@ char * strncpy(char *param_1,char *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * strtok_r @ 2014e320  (164 bytes, 15 callers, export file 2014e1b4_20151520.c)
+ * strtok_r @ 2014e320  (164 bytes, 15 callers, export file 2014e178_20151308.c)
  * Purpose: (s, delims, &save): next token, 0 at the end; sfl_read_header, sdmenu_load_file, task_keycode [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5091,7 +5091,7 @@ char * strtok_r(char *param_1,char *param_2,undefined4 *param_3)
 
 
 /* -----------------------------------------------------------------------------
- * str_to_long @ 2014e3c4  (448 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * str_to_long @ 2014e3c4  (448 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: strtol/strtoul body: skips ctype spaces (__rt_ctype_table), sign, base 0 or 2..36 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5227,7 +5227,7 @@ LAB_2014e52c:
 
 
 /* -----------------------------------------------------------------------------
- * os_create_sem_named @ 2014e584  (44 bytes, 12 callers, export file 2014e1b4_20151520.c)
+ * os_create_sem_named @ 2014e584  (44 bytes, 12 callers, export file 2014e178_20151308.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -5251,7 +5251,7 @@ uint os_create_sem_named(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_tsk_named @ 2014e5b0  (52 bytes, 6 callers, export file 2014e1b4_20151520.c)
+ * os_create_tsk_named @ 2014e5b0  (52 bytes, 6 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): copies a 6-word T_CTSK and
  *     appends the name, then itron_acre_tsk(0, ..); same shape as os_create_sem_named [inference]
  * Tag: [inference]
@@ -5286,7 +5286,7 @@ void os_create_tsk_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_flg_named @ 2014e5e4  (44 bytes, 6 callers, export file 2014e1b4_20151520.c)
+ * os_create_flg_named @ 2014e5e4  (44 bytes, 6 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_flg [inference]
  * Tag: [inference]
@@ -5313,7 +5313,7 @@ void os_create_flg_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_mbf_named @ 2014e610  (40 bytes, 0 callers, export file 2014e1b4_20151520.c)
+ * os_create_mbf_named @ 2014e610  (40 bytes, 0 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_mbf [inference]
  * Tag: [inference]
@@ -5344,7 +5344,7 @@ void os_create_mbf_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_mbx_named @ 2014e638  (44 bytes, 0 callers, export file 2014e1b4_20151520.c)
+ * os_create_mbx_named @ 2014e638  (44 bytes, 0 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_mbx [inference]
  * Tag: [inference]
@@ -5373,7 +5373,7 @@ void os_create_mbx_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_mtx_named @ 2014e664  (44 bytes, 0 callers, export file 2014e1b4_20151520.c)
+ * os_create_mtx_named @ 2014e664  (44 bytes, 0 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_mtx [inference]
  * Tag: [inference]
@@ -5398,7 +5398,7 @@ void os_create_mtx_named(uint *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_mpf_named @ 2014e690  (40 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * os_create_mpf_named @ 2014e690  (40 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_mpf [inference]
  * Tag: [inference]
@@ -5425,7 +5425,7 @@ void os_create_mpf_named(uint *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_mpl_named @ 2014e6b8  (44 bytes, 0 callers, export file 2014e1b4_20151520.c)
+ * os_create_mpl_named @ 2014e6b8  (44 bytes, 0 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_mpl [inference]
  * Tag: [inference]
@@ -5454,7 +5454,7 @@ void os_create_mpl_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * os_create_dtq_named @ 2014e6e4  (44 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * os_create_dtq_named @ 2014e6e4  (44 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by wrapper (score 0.850, T23d): same wrapper around
  *     itron_acre_dtq [inference]
  * Tag: [inference]
@@ -5483,7 +5483,7 @@ void os_create_dtq_named(undefined4 *param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * knl_current_task_id @ 2014e710  (36 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * knl_current_task_id @ 2014e710  (36 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: Running task id 0x208DC18C, 0 when it is the idle task (0x201659D0 + 1); task_root [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5506,7 +5506,7 @@ byte knl_current_task_id(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_act_tsk @ 2014e73c  (292 bytes, 6 callers, export file 2014e1b4_20151520.c)
+ * itron_act_tsk @ 2014e73c  (292 bytes, 6 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): TCB table
  *     0x208DBBA0, id 0 = self; dormant -> start like sta_tsk with exinf, else activation count +0x26 ++ (E_QOVR)
  *     [inference]
@@ -5580,7 +5580,7 @@ code * itron_act_tsk(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_chg_pri @ 2014e884  (736 bytes, 14 callers, export file 2014e1b4_20151520.c)
+ * itron_chg_pri @ 2014e884  (736 bytes, 14 callers, export file 2014e178_20151308.c)
  * Purpose: ready queues 0x208DC18C per priority 1..8 (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5729,7 +5729,7 @@ LAB_2014e9e4:
 
 
 /* -----------------------------------------------------------------------------
- * itron_clr_flg @ 2014eb94  (132 bytes, 13 callers, export file 2014e1b4_20151520.c)
+ * itron_clr_flg @ 2014eb94  (132 bytes, 13 callers, export file 2014e178_20151308.c)
  * Purpose: flag table 0x208DBDA4; callers pass `~ptn` (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -5767,7 +5767,7 @@ code * itron_clr_flg(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_cyc @ 2014ec30  (424 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_cyc @ 2014ec30  (424 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): object table
  *     0x208DBF64, max id 8; 0x20-byte block, cycatr/exinf/cychdr/cyctim/cycphs, TA_STA starts it on timer queue
  *     0x208003C4; id 0 = auto … [inference]
@@ -5861,7 +5861,7 @@ uint itron_acre_cyc(uint param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_dtq @ 2014edf4  (496 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_dtq @ 2014edf4  (496 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table
  *     0x208DBFA4, max id 8; id 0 = auto (E_NOID); same table as tsnd_dtq/trcv_dtq [inference]
  * Tag: [inference]
@@ -5986,7 +5986,7 @@ LAB_2014efa4:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_flg @ 2014effc  (404 bytes, 16 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_flg @ 2014effc  (404 bytes, 16 callers, export file 2014e178_20151308.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -6090,7 +6090,7 @@ LAB_2014f130:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_isr @ 2014f1a8  (536 bytes, 41 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_isr @ 2014f1a8  (536 bytes, 41 callers, export file 2014e178_20151308.c)
  * Purpose: T_CISR `{attr, exinf, intno, isr}`; IDs count down from 0x40
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -6198,7 +6198,7 @@ uint itron_acre_isr(uint param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_mbf @ 2014f3e4  (640 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_mbf @ 2014f3e4  (640 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table
  *     0x208DBEC4, max id 8; allocates the buffer (E_NOMEM); same table as tsnd_mbf/trcv_mbf [inference]
  * Tag: [inference]
@@ -6353,7 +6353,7 @@ LAB_2014f5f8:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_mbx @ 2014f67c  (544 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_mbx @ 2014f67c  (544 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table
  *     0x208DBEA4, max id 8; same table as snd_mbx/trcv_mbx [inference]
  * Tag: [inference]
@@ -6494,7 +6494,7 @@ LAB_2014f830:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_mpf @ 2014f8b8  (564 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_mpf @ 2014f8b8  (564 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table
  *     0x208DBF24, max id 16; E_PAR on block count/size, E_NOMEM; same table as tget_mpf/rel_mpf [inference]
  * Tag: [inference]
@@ -6630,7 +6630,7 @@ LAB_2014faac:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_mpl @ 2014fb04  (520 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_mpl @ 2014fb04  (520 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.800, T23d): object table
  *     0x208DBF04, max id 8; pool memory from pk+8 or the kernel heap (E_NOMEM); id 0 = auto [inference]
  * Tag: [inference]
@@ -6752,7 +6752,7 @@ LAB_2014fccc:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_mtx @ 2014fd24  (496 bytes, 7 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_mtx @ 2014fd24  (496 bytes, 7 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): object table
  *     0x208DBFC4, max id 32; E_RSATR, ceiling priority; same table as tloc_mtx/unl_mtx [inference]
  * Tag: [inference]
@@ -6881,7 +6881,7 @@ LAB_2014fe9c:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_sem @ 2014ff2c  (432 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_sem @ 2014ff2c  (432 bytes, 1 callers, export file 2014e178_20151308.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -6988,7 +6988,7 @@ LAB_2015007c:
 
 
 /* -----------------------------------------------------------------------------
- * itron_acre_tsk @ 201500f4  (488 bytes, 31 callers, export file 2014e1b4_20151520.c)
+ * itron_acre_tsk @ 201500f4  (488 bytes, 31 callers, export file 2014e178_20151308.c)
  * Purpose: T_CTSK `{attr, exinf, entry, prio, stksz, stk, name}` (0x1C bytes), ID auto-assigned; TCBs at 0x208DBBA0
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7102,7 +7102,7 @@ uint itron_acre_tsk(uint param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_del_mpf @ 201502f4  (436 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_del_mpf @ 201502f4  (436 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.800, T23d): mpf table
  *     0x208DBF24: releases waiting tasks with E_DLT, frees the block and the pool [inference]
  * Tag: [inference]
@@ -7191,7 +7191,7 @@ code * itron_del_mpf(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_del_sem @ 201504d0  (384 bytes, 6 callers, export file 2014e1b4_20151520.c)
+ * itron_del_sem @ 201504d0  (384 bytes, 6 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): sem table
  *     0x208DBCA4: releases waiting tasks with E_DLT, frees the block [inference]
  * Tag: [inference]
@@ -7275,7 +7275,7 @@ code * itron_del_sem(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_dis_dsp @ 20150678  (164 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_dis_dsp @ 20150678  (164 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): E_CTX in
  *     ISR/CPU-locked; sets the dispatch-disabled bits (|= 9) of 0x208003DB [inference]
  * Tag: [inference]
@@ -7309,7 +7309,7 @@ code * itron_dis_dsp(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_dly_tsk @ 20150740  (172 bytes, 165 callers, export file 2014e1b4_20151520.c)
+ * itron_dly_tsk @ 20150740  (172 bytes, 165 callers, export file 2014e178_20151308.c)
  * Purpose: ms argument [inference: 10 ms debounce loops use 10]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7345,7 +7345,7 @@ undefined4 itron_dly_tsk(int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_ena_dsp @ 2015080c  (184 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_ena_dsp @ 2015080c  (184 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): clears the
  *     dispatch-disabled bits of 0x208003DB, dispatches when a switch is pending (0x208003D9) [inference]
  * Tag: [inference]
@@ -7384,7 +7384,7 @@ code * itron_ena_dsp(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_ext_tsk @ 201508ec  (264 bytes, 4 callers, export file 2014e1b4_20151520.c)
+ * itron_ext_tsk @ 201508ec  (264 bytes, 4 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): current task: back
  *     to the initial priority, unlocks its mutexes, dormant or restarts when the activation count +0x26 > 0
  *     [inference]
@@ -7445,7 +7445,7 @@ code * itron_ext_tsk(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_get_pri @ 20150aac  (212 bytes, 5 callers, export file 2014e1b4_20151520.c)
+ * itron_get_pri @ 20150aac  (212 bytes, 5 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.950, T23d): (tskid, p_tskpri):
  *     id 0 = self, E_OBJ when dormant, *p = TCB+4 [inference]
  * Tag: [inference]
@@ -7491,7 +7491,7 @@ code * itron_get_pri(uint param_1,int *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_get_tid @ 20150ba0  (44 bytes, 4 callers, export file 2014e1b4_20151520.c)
+ * itron_get_tid @ 20150ba0  (44 bytes, 4 callers, export file 2014e178_20151308.c)
  * Purpose: [inference] (T23e)
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7517,7 +7517,7 @@ undefined4 itron_get_tid(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_get_tim @ 20150bd4  (88 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_get_tim @ 20150bd4  (88 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (p_systim): SYSTIM
  *     {H utime, UW ltime} from 0x208003BC..C8 with carry [inference]
  * Tag: [inference]
@@ -7548,7 +7548,7 @@ code * itron_get_tim(short *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_loc_cpu @ 20150c3c  (44 bytes, 3 callers, export file 2014e1b4_20151520.c)
+ * itron_loc_cpu @ 20150c3c  (44 bytes, 3 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): masks interrupts and
  *     sets the CPU-locked state 0x13/0x1B in 0x208003DB [inference]
  * Tag: [inference]
@@ -7574,7 +7574,7 @@ undefined4 itron_loc_cpu(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_rel_mpf @ 20150c70  (320 bytes, 2 callers, export file 2014e1b4_20151520.c)
+ * itron_rel_mpf @ 20150c70  (320 bytes, 2 callers, export file 2014e178_20151308.c)
  * Purpose: fixed-size pools 0x208DBF24 (IDs 1..0x10); the FS work buffers (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7643,7 +7643,7 @@ code * itron_rel_mpf(uint param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_rot_rdq @ 20150dcc  (276 bytes, 16 callers, export file 2014e1b4_20151520.c)
+ * itron_rot_rdq @ 20150dcc  (276 bytes, 16 callers, export file 2014e178_20151308.c)
  * Purpose: ready queues 0x208DC18C per priority 1..8 (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7704,7 +7704,7 @@ code * itron_rot_rdq(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_set_flg @ 20150f00  (704 bytes, 40 callers, export file 2014e1b4_20151520.c)
+ * itron_set_flg @ 20150f00  (704 bytes, 40 callers, export file 2014e178_20151308.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -7852,7 +7852,7 @@ LAB_2015116c:
 
 
 /* -----------------------------------------------------------------------------
- * itron_sig_sem @ 201511e8  (260 bytes, 38 callers, export file 2014e1b4_20151520.c)
+ * itron_sig_sem @ 201511e8  (260 bytes, 38 callers, export file 2014e178_20151308.c)
  * Purpose: semaphore table 0x208DBCA4, IDs 1..0x40 (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -7918,7 +7918,7 @@ code * itron_sig_sem(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_tsnd_dtq @ 20151308  (484 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_tsnd_dtq @ 20151308  (484 bytes, 1 callers, export file 2014e178_20151308.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (dtqid, data,
  *     tmout): dtq table 0x208DBFA4, hands data to a receiver or the ring buffer, E_TMOUT on polling, waits
  *     otherwise [inference]
@@ -8010,9 +8010,8 @@ code * itron_tsnd_dtq(uint param_1,uint param_2,int tmout)
   return (code *)knl_sys.last_ercd;
 }
 
-
 /* -----------------------------------------------------------------------------
- * itron_snd_mbx @ 20151520  (324 bytes, 1 callers, export file 2014e1b4_20151520.c)
+ * itron_snd_mbx @ 20151520  (324 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (mbxid, pk_msg): mbx
  *     table 0x208DBEA4, priority queues by msgpri (E_PAR), or wakes a receiver [inference]
  * Tag: [inference]
@@ -8105,8 +8104,9 @@ code * itron_snd_mbx(uint param_1,undefined4 *param_2)
   return pcVar3;
 }
 
+
 /* -----------------------------------------------------------------------------
- * itron_sta_cyc @ 20151680  (204 bytes, 4 callers, export file 20151680_2015476c.c)
+ * itron_sta_cyc @ 20151680  (204 bytes, 4 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): cyc table
  *     0x208DBF64: (re)inserts the handler into timer queue 0x208003C4, sets TCYC_STA [inference]
  * Tag: [inference]
@@ -8153,7 +8153,7 @@ code * itron_sta_cyc(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_sta_tsk @ 20151768  (244 bytes, 29 callers, export file 20151680_2015476c.c)
+ * itron_sta_tsk @ 20151768  (244 bytes, 29 callers, export file 20151520_20154744.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -8210,7 +8210,7 @@ uint itron_sta_tsk(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_stp_cyc @ 20151878  (164 bytes, 4 callers, export file 20151680_2015476c.c)
+ * itron_stp_cyc @ 20151878  (164 bytes, 4 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): cyc table
  *     0x208DBF64: removes it from the timer queue, clears TCYC_STA [inference]
  * Tag: [inference]
@@ -8250,7 +8250,7 @@ code * itron_stp_cyc(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_sus_tsk @ 20151934  (328 bytes, 2 callers, export file 20151680_2015476c.c)
+ * itron_sus_tsk @ 20151934  (328 bytes, 2 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): id 0 = self, E_OBJ
  *     dormant, suspend count TCB+9 ++ (E_QOVR at 255), E_CTX for self with dispatch disabled [inference]
  * Tag: [inference]
@@ -8317,7 +8317,7 @@ code * itron_sus_tsk(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_tget_mpf @ 20151aa4  (356 bytes, 2 callers, export file 20151680_2015476c.c)
+ * itron_tget_mpf @ 20151aa4  (356 bytes, 2 callers, export file 20151520_20154744.c)
  * Purpose: fixed-size pools 0x208DBF24 (IDs 1..0x10); the FS work buffers (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -8392,7 +8392,7 @@ code * itron_tget_mpf(uint param_1,undefined4 *param_2,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_tloc_mtx @ 20151c3c  (504 bytes, 9 callers, export file 20151680_2015476c.c)
+ * itron_tloc_mtx @ 20151c3c  (504 bytes, 9 callers, export file 20151520_20154744.c)
  * Purpose: mutex table 0x208DBFC4 (IDs 1..0x20, E_ILUSE); the RTC I2C lock (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -8493,7 +8493,7 @@ code * itron_tloc_mtx(uint param_1,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_trcv_dtq @ 20151e68  (536 bytes, 1 callers, export file 20151680_2015476c.c)
+ * itron_trcv_dtq @ 20151e68  (536 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (dtqid, p_data,
  *     tmout): dtq table 0x208DBFA4, takes from the ring buffer or a sender, E_TMOUT [inference]
  * Tag: [inference]
@@ -8602,7 +8602,7 @@ code * itron_trcv_dtq(uint param_1,undefined4 *param_2,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * knl_mbf_get @ 201520b0  (248 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_mbf_get @ 201520b0  (248 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: (mbf, buf): copies the next message out of the message-buffer ring (16-bit length prefix, wrap at the
  *     ring size) and returns its size; itron_trcv_mbf calls it (boot-rtos.md) [fact]
  * Tag: [fact]
@@ -8674,7 +8674,7 @@ uint knl_mbf_get(int param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * itron_trcv_mbf @ 201521a8  (600 bytes, 7 callers, export file 20151680_2015476c.c)
+ * itron_trcv_mbf @ 201521a8  (600 bytes, 7 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): (mbfid, msg, tmout):
  *     mbf table 0x208DBEC4, copies a message out of the ring (0x201520B0), returns its size [inference]
  * Tag: [inference]
@@ -8780,7 +8780,7 @@ int itron_trcv_mbf(uint param_1,uint param_2,int tmout,undefined4 param_4)
 
 
 /* -----------------------------------------------------------------------------
- * itron_trcv_mbx @ 20152434  (400 bytes, 5 callers, export file 20151680_2015476c.c)
+ * itron_trcv_mbx @ 20152434  (400 bytes, 5 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.900, T23d): (mbxid, ppk_msg,
  *     tmout): mbx table 0x208DBEA4, takes the first queued message, E_TMOUT [inference]
  * Tag: [inference]
@@ -8868,7 +8868,7 @@ code * itron_trcv_mbx(uint param_1,int *param_2,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_tslp_tsk @ 201525f8  (216 bytes, 53 callers, export file 20151680_2015476c.c)
+ * itron_tslp_tsk @ 201525f8  (216 bytes, 53 callers, export file 20151520_20154744.c)
  * Purpose: (tmout); E_CTX outside a task; TMO_FEVR at 40 call sites (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -8921,7 +8921,7 @@ code * itron_tslp_tsk(int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_tsnd_mbf @ 201526f4  (604 bytes, 1 callers, export file 20151680_2015476c.c)
+ * itron_tsnd_mbf @ 201526f4  (604 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): (mbfid, msg, msgsz,
  *     tmout): mbf table 0x208DBEC4, E_PAR when msgsz > maxmsz, copies to a receiver or the ring [inference]
  * Tag: [inference]
@@ -9028,7 +9028,7 @@ code * itron_tsnd_mbf(uint param_1,uint param_2,uint param_3,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_twai_flg @ 20152988  (496 bytes, 27 callers, export file 20151680_2015476c.c)
+ * itron_twai_flg @ 20152988  (496 bytes, 27 callers, export file 20151520_20154744.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
  */
@@ -9114,7 +9114,7 @@ LAB_20152a7c:
 
 
 /* -----------------------------------------------------------------------------
- * itron_twai_sem @ 20152bb0  (328 bytes, 29 callers, export file 20151680_2015476c.c)
+ * itron_twai_sem @ 20152bb0  (328 bytes, 29 callers, export file 20151520_20154744.c)
  * Purpose: semaphore table 0x208DBCA4, IDs 1..0x40 (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -9185,7 +9185,7 @@ code * itron_twai_sem(uint param_1,int tmout)
 
 
 /* -----------------------------------------------------------------------------
- * itron_unl_cpu @ 20152d28  (164 bytes, 4 callers, export file 20151680_2015476c.c)
+ * itron_unl_cpu @ 20152d28  (164 bytes, 4 callers, export file 20151520_20154744.c)
  * Purpose: NORTi uITRON 4.0 library function, matched by uitron_api_shape (score 0.850, T23d): clears the
  *     CPU-locked state of 0x208003DB and dispatches when pending [inference]
  * Tag: [inference]
@@ -9218,7 +9218,7 @@ code * itron_unl_cpu(void)
 
 
 /* -----------------------------------------------------------------------------
- * itron_unl_mtx @ 20152df4  (392 bytes, 9 callers, export file 20151680_2015476c.c)
+ * itron_unl_mtx @ 20152df4  (392 bytes, 9 callers, export file 20151520_20154744.c)
  * Purpose: mutex table 0x208DBFC4 (IDs 1..0x20, E_ILUSE); the RTC I2C lock (T23e)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -9312,7 +9312,7 @@ code * itron_unl_mtx(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * itron_iwup_tsk @ 20152fac  (284 bytes, 4 callers, export file 20151680_2015476c.c)
+ * itron_iwup_tsk @ 20152fac  (284 bytes, 4 callers, export file 20151520_20154744.c)
  * Purpose: called from `periodic_wakeup_isr` [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -9379,7 +9379,7 @@ code * itron_iwup_tsk(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * knl_sys_init @ 201530fc  (1208 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_sys_init @ 201530fc  (1208 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: Kernel start-up called by kernel_heap_init: sets the NORTi system variables 0x208003A8..
  *     (structs_display.h knl_sys: all set by knl_sys_init) and ends with svc 0 [fact]
  * Tag: [fact]
@@ -9555,7 +9555,7 @@ undefined4 knl_sys_init(uint *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * knl_tick_table_dbf84 @ 20153620  (256 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_tick_table_dbf84 @ 20153620  (256 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: Per tick: the same wheel walk for the objects of table 0x208DBF84 (wheel slots 0x20800402, mask
  *     tmo_mask_2) [fact]; which uITRON object kind the table holds is open (it sits between the cyc table
  *     0x208DBF64 and the dtq table 0x208DBFA4)
@@ -9632,7 +9632,7 @@ void knl_tick_table_dbf84(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_tick_cyclic @ 20153788  (332 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_tick_cyclic @ 20153788  (332 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: Per tick: walks the cyclic-handler wheel slot 0x20800401[tick_lo & tmo_mask_1] of the cyc table
  *     0x208DBF64 (itron_acre_cyc), re-arms each due handler by its period and runs it [fact for the wheel walk and
  *     the re-arm]
@@ -9728,7 +9728,7 @@ void knl_tick_cyclic(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_queue_remove @ 201539ec  (76 bytes, 11 callers, export file 20151680_2015476c.c)
+ * knl_queue_remove @ 201539ec  (76 bytes, 11 callers, export file 20151520_20154744.c)
  * Purpose: Unlinks TCB param_1 (id param_2) from its ring (+6/+7 links, head at +0x10), the first half of
  *     knl_queue_move [fact]
  * Tag: [fact]
@@ -9764,7 +9764,7 @@ void knl_queue_remove(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_queue_move @ 20153a38  (156 bytes, 13 callers, export file 20151680_2015476c.c)
+ * knl_queue_move @ 20153a38  (156 bytes, 13 callers, export file 20151520_20154744.c)
  * Purpose: Unlinks TCB param_2 (id param_3) from the id-linked ring it is in (+6 prev / +7 next, head byte at
  *     +0x10) and appends it to ring head param_1; TCB table 0x208DBBA0; used by the wait and ready paths of itron_*
  *     [fact]
@@ -9817,7 +9817,7 @@ void knl_queue_move(byte *queue,knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_timeout_remove @ 20153ad4  (96 bytes, 13 callers, export file 20151680_2015476c.c)
+ * knl_timeout_remove @ 20153ad4  (96 bytes, 13 callers, export file 20151520_20154744.c)
  * Purpose: (tcb, tskid): unlinks the TCB from its timer-wheel slot [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -9851,7 +9851,7 @@ void knl_timeout_remove(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_freelist_alloc @ 20153b34  (88 bytes, 6 callers, export file 20151680_2015476c.c)
+ * knl_freelist_alloc @ 20153b34  (88 bytes, 6 callers, export file 20151520_20154744.c)
  * Purpose: First-fit allocator on a free list {next, size}: rounds the size up to 8, splits or unlinks the block
  *     [fact]
  * Tag: [fact]
@@ -9897,7 +9897,7 @@ void knl_freelist_alloc(undefined4 *param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * knl_mbf_put @ 20153cd4  (280 bytes, 2 callers, export file 20151680_2015476c.c)
+ * knl_mbf_put @ 20153cd4  (280 bytes, 2 callers, export file 20151520_20154744.c)
  * Purpose: (mbf, msg, size): puts a message into the message-buffer ring: one byte when the maximum message size is
  *     1, else a 16-bit length and the bytes with wrap-around; 0 when there is no room [fact]
  * Tag: [fact]
@@ -9973,7 +9973,7 @@ undefined4 knl_mbf_put(int param_1,undefined1 *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * knl_tick_task_timeouts @ 201540c4  (492 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_tick_task_timeouts @ 201540c4  (492 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: Per tick: walks the task time-out wheel slot 0x20800400[tick_lo & tmo_mask], unlinks every TCB whose
  *     tmo_due is now and releases it (with E_TMOUT; mutex waits adjust the owner's priority) [fact for the wheel
  *     walk]
@@ -10081,7 +10081,7 @@ code * knl_tick_task_timeouts(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_timeout_add @ 20154498  (112 bytes, 11 callers, export file 20151680_2015476c.c)
+ * knl_timeout_add @ 20154498  (112 bytes, 11 callers, export file 20151520_20154744.c)
  * Purpose: (tmout, tcb, tskid): due time = tmout + system time 0x208003C8, links the TCB into the timer wheel
  *     0x20800400 (mask 0x208003E0) [fact]
  * Tag: [fact]
@@ -10118,7 +10118,7 @@ void knl_timeout_add(int tmout,knl_tcb *tcb,byte tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_ready_requeue @ 20154508  (28 bytes, 2 callers, export file 20151680_2015476c.c)
+ * knl_ready_requeue @ 20154508  (28 bytes, 2 callers, export file 20151520_20154744.c)
  * Purpose: (tcb, id): knl_queue_move into the ready queue of the task's priority; itron_del_mpf / del_sem use it
  *     for released waiters [fact]
  * Tag: [fact]
@@ -10138,7 +10138,7 @@ void knl_ready_requeue(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_release_suspended @ 20154524  (20 bytes, 8 callers, export file 20151680_2015476c.c)
+ * knl_release_suspended @ 20154524  (20 bytes, 8 callers, export file 20151520_20154744.c)
  * Purpose: Unlinks the woken task from the wait queue and returns without dispatch; itron_sig_sem takes this path
  *     when TCB +9 (suspend count) is non-zero [fact]
  * Tag: [fact]
@@ -10159,7 +10159,7 @@ code * knl_release_suspended(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_make_ready @ 20154580  (72 bytes, 7 callers, export file 20151680_2015476c.c)
+ * knl_make_ready @ 20154580  (72 bytes, 7 callers, export file 20151520_20154744.c)
  * Purpose: Appends the TCB to ready queue 0x208DC18C + priority (TCB +4) and returns the dispatcher 0x2015655C if
  *     it beats the running priority 0x208003DF, else the plain return 0x201567F4; called by
  *     itron_sig_sem/set_flg/snd_mbx when a … [fact]
@@ -10189,7 +10189,7 @@ code * knl_make_ready(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_wait_self @ 201545c8  (20 bytes, 3 callers, export file 20151680_2015476c.c)
+ * knl_wait_self @ 201545c8  (20 bytes, 3 callers, export file 20151520_20154744.c)
  * Purpose: (tcb, id): removes the running task from its ready queue (knl_queue_remove), svc 0 and continues at
  *     knl_resched; the tail of itron_dly_tsk, sus_tsk and tslp_tsk [fact]
  * Tag: [fact]
@@ -10210,7 +10210,7 @@ code * knl_wait_self(knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_wait_enter @ 201545dc  (20 bytes, 9 callers, export file 20151680_2015476c.c)
+ * knl_wait_enter @ 201545dc  (20 bytes, 9 callers, export file 20151520_20154744.c)
  * Purpose: Moves the running task into an object's wait queue (knl_queue_move) and returns through 0x201566F0; the
  *     tail of every blocking itron_t* call (twai_sem, twai_flg, trcv_*, tsnd_*, tget_mpf, tloc_mtx) [fact]
  * Tag: [fact]
@@ -10232,7 +10232,7 @@ code * knl_wait_enter(byte *queue,knl_tcb *tcb,uint tskid)
 
 
 /* -----------------------------------------------------------------------------
- * knl_memcpy @ 201545f0  (28 bytes, 12 callers, export file 20151680_2015476c.c)
+ * knl_memcpy @ 201545f0  (28 bytes, 12 callers, export file 20151520_20154744.c)
  * Purpose: Byte copy used by the acre_* calls to copy the creation packet [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -10254,7 +10254,7 @@ void knl_memcpy(undefined1 *param_1,undefined1 *param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * knl_freelist_free @ 2015460c  (176 bytes, 5 callers, export file 20151680_2015476c.c)
+ * knl_freelist_free @ 2015460c  (176 bytes, 5 callers, export file 20151520_20154744.c)
  * Purpose: (list, block, size): returns a block to an address-ordered free list {next, size}, merging with the
  *     neighbours; -17 when it overlaps a free block [fact]; the counterpart of knl_freelist_alloc
  * Tag: [fact]
@@ -10319,7 +10319,7 @@ LAB_2015463c:
 
 
 /* -----------------------------------------------------------------------------
- * knl_stack_alloc @ 20154704  (12 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_stack_alloc @ 20154704  (12 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: knl_freelist_alloc on the system pool 0x208003FC; itron_acre_tsk takes the task stack with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -10339,7 +10339,7 @@ void knl_stack_alloc(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * knl_sys_free_a @ 20154710  (16 bytes, 0 callers, export file 20151680_2015476c.c)
+ * knl_sys_free_a @ 20154710  (16 bytes, 0 callers, export file 20151520_20154744.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC (no caller in the image) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -10357,7 +10357,7 @@ void knl_sys_free_a(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * knl_pool_alloc @ 20154720  (36 bytes, 3 callers, export file 20151680_2015476c.c)
+ * knl_pool_alloc @ 20154720  (36 bytes, 3 callers, export file 20151520_20154744.c)
  * Purpose: knl_freelist_alloc on the system pool 0x208003FC for the buffers of itron_acre_mbf / acre_mpf / acre_mpl
  *     [fact]
  * Tag: [fact]
@@ -10379,7 +10379,7 @@ void knl_pool_alloc(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * knl_pool_free @ 20154744  (40 bytes, 1 callers, export file 20151680_2015476c.c)
+ * knl_pool_free @ 20154744  (40 bytes, 1 callers, export file 20151520_20154744.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC; itron_del_mpf frees the pool memory with it [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -10397,9 +10397,8 @@ void knl_pool_free(undefined4 param_1,undefined4 param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * knl_sys_alloc @ 2015476c  (36 bytes, 12 callers, export file 20151680_2015476c.c)
+ * knl_sys_alloc @ 2015476c  (36 bytes, 12 callers, export file 2015476c_201561b4.c)
  * Purpose: knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their control
  *     blocks here [fact]
  * Tag: [fact]
@@ -10419,8 +10418,9 @@ void knl_sys_alloc(undefined4 param_1)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * knl_sys_free @ 20154790  (40 bytes, 5 callers, export file 20154790_201561c0.c)
+ * knl_sys_free @ 20154790  (40 bytes, 5 callers, export file 2015476c_201561b4.c)
  * Purpose: knl_freelist_free on the system pool 0x208003FC; itron_acre_isr / acre_tsk (error paths), del_mpf and
  *     del_sem free control blocks with it [fact]
  * Tag: [fact]
@@ -10441,7 +10441,7 @@ void knl_sys_free(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __rt_ctype_table @ 20154974  (10 bytes, 2 callers, export file 20154790_201561c0.c)
+ * __rt_ctype_table @ 20154974  (10 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): returns __rt_locale()+4; tolower indexes
  *     the table it points to [inference]
  * Tag: [inference]
@@ -10463,7 +10463,7 @@ int __rt_ctype_table(void)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_ldivmod @ 20154984  (96 bytes, 2 callers, export file 20154790_201561c0.c)
+ * __aeabi_ldivmod @ 20154984  (96 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.950, T23d): A32: takes signs of r1/r3, negates
  *     64-bit pairs (rsbs/rsc), bl __aeabi_uldivmod, fixes quotient and remainder signs [inference]
  * Tag: [inference]
@@ -10509,7 +10509,7 @@ int __aeabi_ldivmod(int param_1,int param_2,int param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * tolower @ 201549e4  (26 bytes, 4 callers, export file 20154790_201561c0.c)
+ * tolower @ 201549e4  (26 bytes, 4 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): ctype bit 0x10 (upper) -> c+32
  *     [inference]
  * Tag: [inference]
@@ -10534,7 +10534,7 @@ int tolower(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * sprintf_veneer @ 20154a00  (8 bytes, 2 callers, export file 20154790_201561c0.c)
+ * sprintf_veneer @ 20154a00  (8 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip ->
  *     Thumb sprintf 0x20154A08 [inference]
  * Tag: [inference]
@@ -10564,7 +10564,7 @@ void sprintf_veneer(undefined4 param_1,undefined4 param_2,undefined4 param_3,und
 
 
 /* -----------------------------------------------------------------------------
- * sprintf @ 20154a08  (34 bytes, 71 callers, export file 20154790_201561c0.c)
+ * sprintf @ 20154a08  (34 bytes, 71 callers, export file 2015476c_201561b4.c)
  * Purpose: names-file group "startup / armcc runtime"; calls `_sprintf_body`, `_sputc`; 34 B, callers: 71 [fact]
  *     (code shape)
  * Tag: [fact]
@@ -10591,7 +10591,7 @@ void sprintf(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4
 
 
 /* -----------------------------------------------------------------------------
- * snprintf @ 20154a30  (48 bytes, 15 callers, export file 20154790_201561c0.c)
+ * snprintf @ 20154a30  (48 bytes, 15 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): (buf, n, fmt, ...): end = buf+n-1,
  *     output fn _snputc 0x20155FA3, NUL-terminates when n != 0 [inference]
  * Tag: [inference]
@@ -10624,7 +10624,7 @@ void snprintf(int param_1,int param_2,undefined4 param_3,undefined4 param_4)
 
 
 /* -----------------------------------------------------------------------------
- * _printf_pre_padding @ 20154a64  (44 bytes, 6 callers, export file 20154790_201561c0.c)
+ * _printf_pre_padding @ 20154a64  (44 bytes, 6 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): emits width-1.. pad chars (0x30 if the 0
  *     flag, else 0x20) unless the - flag (bit 0), counts in +0x20 [inference]
  * Tag: [inference]
@@ -10660,7 +10660,7 @@ void _printf_pre_padding(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _printf_post_padding @ 20154a90  (34 bytes, 4 callers, export file 20154790_201561c0.c)
+ * _printf_post_padding @ 20154a90  (34 bytes, 4 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): emits trailing spaces when the - flag
  *     (bit 0) is set [inference]
  * Tag: [inference]
@@ -10689,7 +10689,7 @@ void _printf_post_padding(byte *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * _printf_core @ 20154c48  (388 bytes, 1 callers, export file 20154790_201561c0.c)
+ * _printf_core @ 20154c48  (388 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: Format loop called by the sprintf family (through 0x20155F72): reads the format string and dispatches
  *     conversions, floating point through _printf_fp_dec [inference: armcc C library __printf]
  * Tag: [inference]
@@ -10823,7 +10823,7 @@ LAB_20154c6c:
 
 
 /* -----------------------------------------------------------------------------
- * qsort_partition @ 20154dea  (480 bytes, 1 callers, export file 20154790_201561c0.c)
+ * qsort_partition @ 20154dea  (480 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: (base, n, size, cmp): the quicksort stage of qsort for n > 10 [inference: only caller qsort, swaps
  *     elements by size around a pivot]
  * Tag: [inference]
@@ -11082,7 +11082,7 @@ LAB_20154fbc:
 
 
 /* -----------------------------------------------------------------------------
- * qsort @ 20154fca  (134 bytes, 2 callers, export file 20154790_201561c0.c)
+ * qsort @ 20154fca  (134 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: (base, n, size, cmp): insertion sort, with a quicksort pass (qsort_partition) first when n > 10;
  *     wav_list_dir and sdmenu_list_files sort file names with strcasecmp through it [fact for the code; the C
  *     library name is an inference from the signature]
@@ -11148,7 +11148,7 @@ void qsort(uint param_1,uint param_2,uint param_3,code *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * strstr @ 20155058  (36 bytes, 2 callers, export file 20154790_201561c0.c)
+ * strstr @ 20155058  (36 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): restarting byte compare of needle
  *     against haystack, returns start or 0 [inference]
  * Tag: [inference]
@@ -11192,7 +11192,7 @@ LAB_2015506e:
 
 
 /* -----------------------------------------------------------------------------
- * memcmp @ 2015507c  (88 bytes, 52 callers, export file 20154790_201561c0.c)
+ * memcmp @ 2015507c  (88 bytes, 52 callers, export file 2015476c_201561b4.c)
  * Purpose: (a, b, n): word compare when both are aligned, byte compare otherwise, returns the difference ; T23d
  *     armcc C library RVCT/ARM Compiler 5 (idiom 0.900): word compare when both aligned (rev for ordering), then
  *     byte compare, returns … [fact]
@@ -11261,7 +11261,7 @@ LAB_201550b4:
 
 
 /* -----------------------------------------------------------------------------
- * strcpy_veneer @ 201550d4  (8 bytes, 2 callers, export file 20154790_201561c0.c)
+ * strcpy_veneer @ 201550d4  (8 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip ->
  *     Thumb strcpy 0x201550DC [inference]
  * Tag: [inference]
@@ -11323,7 +11323,7 @@ void strcpy_veneer(uint *param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strcpy @ 201550dc  (70 bytes, 15 callers, export file 20154790_201561c0.c)
+ * strcpy @ 201550dc  (70 bytes, 15 callers, export file 2015476c_201561b4.c)
  * Purpose: (dst, src): word copy while aligned, then bytes up to the NUL ; T23d armcc C library RVCT/ARM Compiler 5
  *     (idiom 0.900): word copy while no zero byte (uqsub8 test), then byte tail; returns nothing used [inference]
  * Tag: [inference]
@@ -11386,7 +11386,7 @@ void strcpy(uint *param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * strlen @ 20155122  (58 bytes, 46 callers, export file 20154790_201561c0.c)
+ * strlen @ 20155122  (58 bytes, 46 callers, export file 2015476c_201561b4.c)
  * Purpose: Word-at-a-time string length ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): byte loop to
  *     alignment, word loop with uqsub8 zero test, position of the zero byte [fact]
  * Tag: [fact]
@@ -11447,7 +11447,7 @@ int strlen(uint *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * strcat @ 2015515c  (36 bytes, 13 callers, export file 20154790_201561c0.c)
+ * strcat @ 2015515c  (36 bytes, 13 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): scan dst to NUL, copy src including NUL
  *     [inference]
  * Tag: [inference]
@@ -11479,7 +11479,7 @@ void strcat(int param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * memcpy @ 20155180  (212 bytes, 168 callers, export file 20154790_201561c0.c)
+ * memcpy @ 20155180  (212 bytes, 168 callers, export file 2015476c_201561b4.c)
  * Purpose: names-file group "startup / armcc runtime"; no direct calls; 212 B, callers: 168 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -11728,7 +11728,7 @@ undefined8 memcpy(uint *param_1,uint *param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memset_veneer @ 20155254  (8 bytes, 3 callers, export file 20154790_201561c0.c)
+ * __aeabi_memset_veneer @ 20155254  (8 bytes, 3 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip ->
  *     Thumb __aeabi_memset 0x2015525C [inference]
  * Tag: [inference]
@@ -11834,7 +11834,7 @@ undefined4 * __aeabi_memset_veneer(undefined4 *param_1,uint param_2,undefined1 p
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memset @ 2015525c  (16 bytes, 27 callers, export file 20154790_201561c0.c)
+ * __aeabi_memset @ 2015525c  (16 bytes, 27 callers, export file 2015476c_201561b4.c)
  * Purpose: (dst, n, c): replicates c into a word and joins the fill loop of __aeabi_memclr ; armcc argument order ;
  *     T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): (dst, n, c): replicates c (and #0xff, orr lsl 8/16)
  *     then joins … [fact]
@@ -11942,7 +11942,7 @@ undefined4 * __aeabi_memset(undefined4 *param_1,uint param_2,undefined1 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memclr_veneer @ 2015526c  (8 bytes, 2 callers, export file 20154790_201561c0.c)
+ * __aeabi_memclr_veneer @ 2015526c  (8 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip ->
  *     Thumb __aeabi_memclr 0x20155274 [inference]
  * Tag: [inference]
@@ -12044,7 +12044,7 @@ undefined4 * __aeabi_memclr_veneer(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memclr @ 20155274  (68 bytes, 29 callers, export file 20154790_201561c0.c)
+ * __aeabi_memclr @ 20155274  (68 bytes, 29 callers, export file 2015476c_201561b4.c)
  * Purpose: (dst, n): zero fill with alignment fix-up, 32-byte blocks ; T23d armcc C library RVCT/ARM Compiler 5
  *     (idiom 0.950): mov.w r2,#0 then _memset: byte/halfword head, word fill, tail via lsls #31 flags [fact]
  * Tag: [fact]
@@ -12147,7 +12147,7 @@ undefined4 * __aeabi_memclr(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memclr4_veneer @ 201552b8  (8 bytes, 4 callers, export file 20154790_201561c0.c)
+ * __aeabi_memclr4_veneer @ 201552b8  (8 bytes, 4 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by veneer_pattern (score 1.000, T23d): A32 add ip,pc,#1; bx ip ->
  *     Thumb __aeabi_memclr4 0x201552C0 [inference]
  * Tag: [inference]
@@ -12219,7 +12219,7 @@ undefined4 * __aeabi_memclr4_veneer(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memclr4 @ 201552c0  (78 bytes, 87 callers, export file 20154790_201561c0.c)
+ * __aeabi_memclr4 @ 201552c0  (78 bytes, 87 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.950, T23d): renamed; r2=0, 32-byte stmia loop of
  *     {r2,r3,ip,lr}, tail by lsls #28/#2 flags (rt_memclr_w); aliases __aeabi_memclr8, __rt_memclr_w [inference]
  * Tag: [inference]
@@ -12292,7 +12292,7 @@ undefined4 * __aeabi_memclr4(undefined4 *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_memcpy4 @ 20155310  (124 bytes, 58 callers, export file 20154790_201561c0.c)
+ * __aeabi_memcpy4 @ 20155310  (124 bytes, 58 callers, export file 2015476c_201561b4.c)
  * Purpose: (dst, src, n): word copy in 32-byte blocks with preload, no alignment check ; the aligned memcpy entry ;
  *     T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.900): aligned path of memcpy 0x20155180 (beq when src word
  *     aligned): pld + … [fact]
@@ -12432,7 +12432,7 @@ undefined8 __aeabi_memcpy4(undefined4 *param_1,byte *param_2,uint param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * strcmp @ 2015538c  (240 bytes, 42 callers, export file 20154790_201561c0.c)
+ * strcmp @ 2015538c  (240 bytes, 42 callers, export file 2015476c_201561b4.c)
  * Purpose: names-file group "startup / armcc runtime"; no direct calls; 240 B, callers: 42 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -12554,7 +12554,7 @@ LAB_20155474:
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_idivmod @ 20155480  (556 bytes, 30 callers, export file 20154790_201561c0.c)
+ * __aeabi_idivmod @ 20155480  (556 bytes, 30 callers, export file 2015476c_201561b4.c)
  * Purpose: Signed divide: negates negative operands ((a | b) < 0), then the shared unsigned loop ; was named
  *     __aeabi_uidivmod, which is the unsigned entry 0x20156260 ; T23d armcc C library RVCT/ARM Compiler 5 (idiom
  *     0.950): orrs r3,r0,r1; … [fact]
@@ -12775,7 +12775,7 @@ LAB_2015550c:
 
 
 /* -----------------------------------------------------------------------------
- * __cpp_initialize__aeabi_ @ 201556ac  (26 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __cpp_initialize__aeabi_ @ 201556ac  (26 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): walks a table of self-relative offsets
  *     and calls each (C++ static constructors); called by __rt_lib_init [inference]
  * Tag: [inference]
@@ -12800,7 +12800,7 @@ void __cpp_initialize__aeabi_(void)
 
 
 /* -----------------------------------------------------------------------------
- * __rt_locale @ 201556d0  (4 bytes, 3 callers, export file 20154790_201561c0.c)
+ * __rt_locale @ 201556d0  (4 bytes, 3 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): returns 0x2091D530 (C library libspace);
  *     used by __rt_ctype_table and __rt_lib_init [inference]
  * Tag: [inference]
@@ -12819,7 +12819,7 @@ undefined * __rt_locale(void)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_uldivmod @ 201556e0  (752 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __aeabi_uldivmod @ 201556e0  (752 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): (u64 n in r0:r1, u64 d in r2:r3) ->
  *     quotient r0:r1, remainder r2:r3; called by __aeabi_ldivmod [inference]
  * Tag: [inference]
@@ -13008,7 +13008,7 @@ ulonglong __aeabi_uldivmod(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * _ll_udiv10 @ 20155a10  (152 bytes, 3 callers, export file 20154790_201561c0.c)
+ * _ll_udiv10 @ 20155a10  (152 bytes, 3 callers, export file 2015476c_201561b4.c)
  * Purpose: 64-bit unsigned divide by 10 by shifts and adds (quotient in r0:r1) [fact for the arithmetic]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -13050,7 +13050,7 @@ undefined8 _ll_udiv10(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _fp_digits @ 20155b5c  (430 bytes, 3 callers, export file 20154790_201561c0.c)
+ * _fp_digits @ 20155b5c  (430 bytes, 3 callers, export file 2015476c_201561b4.c)
  * Purpose: (out, buf, *exp, ...): decimal digit generation for _printf_fp_dec using the soft-float helpers and
  *     _ll_udiv10 [inference: callers and callees]
  * Tag: [inference]
@@ -13220,7 +13220,7 @@ LAB_20155cee:
 
 
 /* -----------------------------------------------------------------------------
- * _sprintf_body @ 20155f72  (32 bytes, 2 callers, export file 20154790_201561c0.c)
+ * _sprintf_body @ 20155f72  (32 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: Builds the string-output descriptor with the _sputc callback 0x20155F69 and runs _printf_core; sprintf,
  *     sprintf_veneer and snprintf call it [fact]
  * Tag: [fact]
@@ -13253,7 +13253,7 @@ void _sprintf_body(undefined4 param_1,undefined4 param_2,undefined4 param_3,unde
 
 
 /* -----------------------------------------------------------------------------
- * _sputc @ 20155f98  (10 bytes, 2 callers, export file 20154790_201561c0.c)
+ * _sputc @ 20155f98  (10 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): *(*p)++ = c; the sprintf output function
  *     [inference]
  * Tag: [inference]
@@ -13277,7 +13277,7 @@ void _sputc(undefined1 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _snputc @ 20155fa2  (16 bytes, 0 callers, export file 20154790_201561c0.c)
+ * _snputc @ 20155fa2  (16 bytes, 0 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): stores c only while p < end; the
  *     snprintf output function [inference]
  * Tag: [inference]
@@ -13303,7 +13303,7 @@ void _snputc(undefined1 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __cxa_pure_virtual @ 20155fde  (24 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __cxa_pure_virtual @ 20155fde  (24 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): __rt_SIGPVFN, then _sys_exit [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -13328,7 +13328,7 @@ void __cxa_pure_virtual(void)
 
 
 /* -----------------------------------------------------------------------------
- * __rt_udiv10 @ 20155fec  (44 bytes, 2 callers, export file 20154790_201561c0.c)
+ * __rt_udiv10 @ 20155fec  (44 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): n - n/4, +>>4, +>>8, +>>16, >>3,
  *     remainder fix-up: quotient and remainder of n/10 [inference]
  * Tag: [inference]
@@ -13361,7 +13361,7 @@ undefined8 __rt_udiv10(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __user_perproc_libspace @ 20156018  (4 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __user_perproc_libspace @ 20156018  (4 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): returns 0x2091D510; called by
  *     __user_setup_stackheap [inference]
  * Tag: [inference]
@@ -13380,7 +13380,7 @@ undefined * __user_perproc_libspace(void)
 
 
 /* -----------------------------------------------------------------------------
- * _printf_infnan @ 20156020  (112 bytes, 1 callers, export file 20154790_201561c0.c)
+ * _printf_infnan @ 20156020  (112 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): prints inf/INF/nan/NAN with padding
  *     [inference]
  * Tag: [inference]
@@ -13441,7 +13441,7 @@ void _printf_infnan(uint *param_1,undefined4 param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * __rt_SIGPVFN @ 20156184  (14 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __rt_SIGPVFN @ 20156184  (14 bytes, 1 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): shows "SIGPVFN: Pure virtual fn called"
  *     and returns 1 [inference]
  * Tag: [inference]
@@ -13461,7 +13461,7 @@ undefined4 __rt_SIGPVFN(void)
 
 
 /* -----------------------------------------------------------------------------
- * _sys_exit @ 201561b4  (8 bytes, 2 callers, export file 20154790_201561c0.c)
+ * _sys_exit @ 201561b4  (8 bytes, 2 callers, export file 2015476c_201561b4.c)
  * Purpose: armcc C library function, matched by idiom (score 0.850, T23d): semihosting svc 0xAB then b . (no
  *     return) [inference]
  * Tag: [inference]
@@ -13481,9 +13481,8 @@ void _sys_exit(void)
   } while( true );
 }
 
-
 /* -----------------------------------------------------------------------------
- * __user_setup_stackheap @ 201561c0  (74 bytes, 1 callers, export file 20154790_201561c0.c)
+ * __user_setup_stackheap @ 201561c0  (74 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: armcc C library function, matched by idiom (score 0.900, T23d): gets __user_perproc_libspace, calls
  *     __user_initial_stackheap (0x201172EC), zeroes 64 B of libspace; first call of __rt_entry [inference]
  * Tag: [inference]
@@ -13528,8 +13527,9 @@ void __user_setup_stackheap(void)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * exit @ 2015620a  (18 bytes, 1 callers, export file 2015620a_20157634.c)
+ * exit @ 2015620a  (18 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): called by __rt_entry with main()s result
  *     (blx main; bl exit) [inference]
  * Tag: [inference]
@@ -13565,7 +13565,7 @@ uint exit(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __default_signal_display @ 2015621c  (50 bytes, 1 callers, export file 2015620a_20157634.c)
+ * __default_signal_display @ 2015621c  (50 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): writes a newline, the message and the
  *     extra string with _ttywrch [inference]
  * Tag: [inference]
@@ -13594,7 +13594,7 @@ undefined8 __default_signal_display(char *param_1,char *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * _ttywrch @ 2015624e  (14 bytes, 2 callers, export file 2015620a_20157634.c)
+ * _ttywrch @ 2015624e  (14 bytes, 2 callers, export file 201561c0_20157604.c)
  * Purpose: armcc C library function, matched by idiom (score 0.800, T23d): semihosting SYS_WRITEC (r0=3, svc 0xAB)
  *     of one character [inference]
  * Tag: [inference]
@@ -13616,7 +13616,7 @@ undefined8 _ttywrch(void)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_uidivmod @ 20156260  (48 bytes, 145 callers, export file 2015620a_20157634.c)
+ * __aeabi_uidivmod @ 20156260  (48 bytes, 145 callers, export file 201561c0_20157604.c)
  * Purpose: Unsigned 32-bit divide returning quotient and remainder (r0:r1): shift-subtract that joins the shared
  *     loop at 0x201554DC ; the 71-caller divide ; T23d armcc C library RVCT/ARM Compiler 5 (idiom 0.950): movs
  *     r2,#0 then the rsbs … [fact]
@@ -13745,7 +13745,7 @@ LAB_2015550c:
 
 
 /* -----------------------------------------------------------------------------
- * kernel_heap_init @ 201562b4  (92 bytes, 1 callers, export file 2015620a_20157634.c)
+ * kernel_heap_init @ 201562b4  (92 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: `main` set-up
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -13771,7 +13771,7 @@ void kernel_heap_init(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_irq_enter @ 2015632c  (192 bytes, 1 callers, export file 2015620a_20157634.c)
+ * knl_irq_enter @ 2015632c  (192 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: IRQ_Handler entry helper: decrements the interrupt nesting count knl_sys.ctx_isr; on the outermost
  *     interrupt saves the running task's SP into its TCB and switches to the interrupt stack knl_sys.isr_area
  *     [fact]
@@ -13804,7 +13804,7 @@ ulonglong knl_irq_enter(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * knl_irq_exit @ 201563ec  (368 bytes, 0 callers, export file 2015620a_20157634.c)
+ * knl_irq_exit @ 201563ec  (368 bytes, 0 callers, export file 201561c0_20157604.c)
  * Purpose: Interrupt exit: svc 0, gic_irq_exit, increments the nesting count; when back at task level with dispatch
  *     allowed and a higher task ready (knl_rdq), saves r4-r11 of the running task and returns the new task's
  *     context, else the old one [fact]
@@ -13884,7 +13884,7 @@ LAB_2015650c:
 
 
 /* -----------------------------------------------------------------------------
- * knl_dispatch @ 2015655c  (404 bytes, 11 callers, export file 2015620a_20157634.c)
+ * knl_dispatch @ 2015655c  (404 bytes, 11 callers, export file 201561c0_20157604.c)
  * Purpose: Scheduler: if dispatch is enabled (0x208003D8, not CPU-locked 0x208003CC bit 7) picks the first
  *     non-empty ready queue 0x208DC18C.. and switches the saved context of the TCBs [fact]
  * Tag: [fact]
@@ -13937,7 +13937,7 @@ longlong knl_dispatch(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_resched @ 201566f0  (88 bytes, 4 callers, export file 2015620a_20157634.c)
+ * knl_resched @ 201566f0  (88 bytes, 4 callers, export file 201561c0_20157604.c)
  * Purpose: Dispatcher tail of the blocking service calls: picks the highest ready queue (knl_rdq), saves the
  *     running SP into its TCB and returns the new task's context (boot-rtos.md knl_wait_enter) [fact]
  * Tag: [fact]
@@ -13989,7 +13989,7 @@ longlong knl_resched(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_svc_return @ 201567f4  (32 bytes, 41 callers, export file 2015620a_20157634.c)
+ * knl_svc_return @ 201567f4  (32 bytes, 41 callers, export file 201561c0_20157604.c)
  * Purpose: Returns from a service call with the saved PSR bits restored (0x208003CC | spsr & ~0xC0); the
  *     no-dispatch exit of the itron_* calls [fact]
  * Tag: [fact]
@@ -14010,7 +14010,7 @@ longlong knl_svc_return(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_int_disable @ 2015686c  (12 bytes, 7 callers, export file 2015620a_20157634.c)
+ * knl_int_disable @ 2015686c  (12 bytes, 7 callers, export file 201561c0_20157604.c)
  * Purpose: Service call return that sets the I bit in the saved PSR (0x20156878); gic_enable_irq / gic_disable_irq
  *     / gic_def_inh wrap their register writes with it [inference]
  * Tag: [inference]
@@ -14030,7 +14030,7 @@ code * knl_int_disable(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_psr_set_i @ 20156878  (20 bytes, 1 callers, export file 2015620a_20157634.c)
+ * knl_psr_set_i @ 20156878  (20 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: Service-call return helper: saved PSR with bit 7 (I) set (boot-rtos.md knl_int_disable) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14049,7 +14049,7 @@ ulonglong knl_psr_set_i(void)
 
 
 /* -----------------------------------------------------------------------------
- * knl_int_restore @ 2015688c  (16 bytes, 6 callers, export file 2015620a_20157634.c)
+ * knl_int_restore @ 2015688c  (16 bytes, 6 callers, export file 201561c0_20157604.c)
  * Purpose: Service call return through 0x2015689C, which clears the I/F bits again [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14067,7 +14067,7 @@ undefined8 knl_int_restore(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * knl_psr_clear_if @ 2015689c  (20 bytes, 1 callers, export file 2015620a_20157634.c)
+ * knl_psr_clear_if @ 2015689c  (20 bytes, 1 callers, export file 201561c0_20157604.c)
  * Purpose: Service-call return helper: saved PSR with the I and F bits cleared (boot-rtos.md knl_int_restore)
  *     [fact]
  * Tag: [fact]
@@ -14088,7 +14088,7 @@ uint knl_psr_clear_if(void)
 
 
 /* -----------------------------------------------------------------------------
- * msgbuf_init @ 20158618  (24 bytes, 4 callers, export file 201576f4_20159058.c)
+ * msgbuf_init @ 20158618  (24 bytes, 4 callers, export file 20157634_20158fd0.c)
  * Purpose: (obj): clears the two u16 indices +4/+6 and the 0x80-byte buffer at +8; used by the same TX objects
  *     [fact]
  * Tag: [fact]
@@ -14110,7 +14110,7 @@ void msgbuf_init(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_tx @ 201586ac  (152 bytes, 0 callers, export file 201576f4_20159058.c)
+ * task_mainlink_tx @ 201586ac  (152 bytes, 0 callers, export file 20157634_20158fd0.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14151,7 +14151,7 @@ void task_mainlink_tx(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_rx @ 2015ec40  (512 bytes, 0 callers, export file 2015da3c_2016040c.c)
+ * task_mainlink_rx @ 2015ec40  (512 bytes, 0 callers, export file 2015d958_201603f4.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14272,7 +14272,7 @@ LAB_2015edf4:
 
 
 /* -----------------------------------------------------------------------------
- * fwdbg_cmd @ 2015f0ec  (240 bytes, 1 callers, export file 2015da3c_2016040c.c)
+ * fwdbg_cmd @ 2015f0ec  (240 bytes, 1 callers, export file 2015d958_201603f4.c)
  * Purpose: self-update commands
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14329,7 +14329,7 @@ undefined4 fwdbg_cmd(undefined4 *param_1,uint *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * task_mainlink_dispatch @ 201600a8  (440 bytes, 0 callers, export file 2015da3c_2016040c.c)
+ * task_mainlink_dispatch @ 201600a8  (440 bytes, 0 callers, export file 2015d958_201603f4.c)
  * Descriptor: 0x20165900 / 0x2016591C / 0x20165938
  * Task name: uart (x3)
  * Pri: 3 / 4 / 4
@@ -14386,7 +14386,7 @@ void task_mainlink_dispatch(int param_1)
     }
     else if (bVar1 == 0x24) {
                     /* 0x24: display settings from +0x98 [fact: mainlink.md] */
-      FUN_201636f8(g_ml.settings24,aiStack_8[0] + 0xa0);
+      ml_settings24_copy(g_ml.settings24,aiStack_8[0] + 0xa0);
       g_ml.got24 = 1;
     }
     else if (bVar1 == 0x43) {
@@ -14414,7 +14414,7 @@ void task_mainlink_dispatch(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * cpp_task_thunk @ 20162d04  (12 bytes, 0 callers, export file 20160418_201635b8.c)
+ * cpp_task_thunk @ 20162d04  (12 bytes, 0 callers, export file 2016040c_20163564.c)
  * Purpose: task entry for C++ objects: `exinf` = object, calls `obj->vtbl[0]` (tasks `uart`, `uart4`,
  *     `mouse_cursor`)
  * Tag: none in the table row
@@ -14435,7 +14435,7 @@ void cpp_task_thunk(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * os_mbx_create_fifo @ 20162d10  (40 bytes, 5 callers, export file 20160418_201635b8.c)
+ * os_mbx_create_fifo @ 20162d10  (40 bytes, 5 callers, export file 2016040c_20163564.c)
  * Purpose: itron_acre_mbx with a zeroed T_CMBX (mbxatr 0, maxmpri 1); used by mainlink_tx_init, uart4_tx_init,
  *     mainlink_disp_init, mouse_cursor_obj_init [fact]
  * Tag: [fact]
@@ -14464,7 +14464,7 @@ void os_mbx_create_fifo(void)
 
 
 /* -----------------------------------------------------------------------------
- * os_mbx_send @ 20162d3c  (12 bytes, 4 callers, export file 20160418_201635b8.c)
+ * os_mbx_send @ 20162d3c  (12 bytes, 4 callers, export file 2016040c_20163564.c)
  * Purpose: (this, mbxid, msg): itron_snd_mbx(mbxid, msg) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14482,7 +14482,7 @@ void os_mbx_send(undefined4 param_1,undefined4 param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_version_text @ 201635e4  (24 bytes, 4 callers, export file 201635e4_2016437c.c)
+ * fwobj_version_text @ 201635e4  (24 bytes, 4 callers, export file 201635b8_20164360.c)
  * Purpose: (obj, buf): sprintf "%-8s : V%s " (0x20428286) of the object's name (+4) and version (+0xE);
  *     fwfile_check_versions, fwfile_status_text and fwupdate_poll use it [fact]
  * Tag: [fact]
@@ -14502,7 +14502,7 @@ void fwobj_version_text(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fill8 @ 201637f0  (24 bytes, 1 callers, export file 201635e4_2016437c.c)
+ * fill8 @ 201637f0  (24 bytes, 1 callers, export file 201635b8_20164360.c)
  * Purpose: (dst, byte): fills 8 bytes with byte; vfo_clar_draw blanks its text buffer with spaces [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14525,7 +14525,7 @@ void fill8(uint *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fp_classify_double @ 20163808  (40 bytes, 1 callers, export file 201635e4_2016437c.c)
+ * fp_classify_double @ 20163808  (40 bytes, 1 callers, export file 201635b8_20164360.c)
  * Purpose: (lo, hi): class bits of a double for _printf_fp_dec (zero / normal / infinity-NaN from the exponent 0 /
  *     0x7FF and the mantissa) [fact for the tests]
  * Tag: [fact]
@@ -14559,7 +14559,7 @@ uint fp_classify_double(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * is_decimal_digit @ 20163864  (14 bytes, 2 callers, export file 201635e4_2016437c.c)
+ * is_decimal_digit @ 20163864  (14 bytes, 2 callers, export file 201635b8_20164360.c)
  * Purpose: (c): 1 for '0'..'9'; _printf_core uses it for widths [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14579,7 +14579,7 @@ undefined4 is_decimal_digit(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * copy10 @ 201640ec  (24 bytes, 8 callers, export file 201635e4_2016437c.c)
+ * copy10 @ 201640ec  (24 bytes, 8 callers, export file 201635b8_20164360.c)
  * Purpose: (dst, src): memcpy of 10 bytes, returns dst; firmware-object version fields (fwfile_check_versions,
  *     fwobj_*) [fact]
  * Tag: [fact]
@@ -14599,7 +14599,7 @@ undefined4 copy10(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * copy32 @ 20164104  (24 bytes, 4 callers, export file 201635e4_2016437c.c)
+ * copy32 @ 20164104  (24 bytes, 4 callers, export file 201635b8_20164360.c)
  * Purpose: (dst, src): memcpy of 0x20 bytes, returns dst; firmware-object name fields [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14617,7 +14617,7 @@ undefined4 copy32(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * copy48 @ 2016411c  (24 bytes, 1 callers, export file 201635e4_2016437c.c)
+ * copy48 @ 2016411c  (24 bytes, 1 callers, export file 201635b8_20164360.c)
  * Purpose: (dst, src): memcpy of 0x30 bytes, returns dst; fwobj_base_ctor [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -14635,7 +14635,7 @@ undefined4 copy48(undefined4 param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dadd @ 20164888  (316 bytes, 24 callers, export file 20164388_20164fa4.c)
+ * __aeabi_dadd @ 20164888  (316 bytes, 24 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double add: start + span*fraction in progress_scale, + 0.5 (0x3FE00000) rounding in touch_cal_apply
  *     [inference]
  * Tag: [inference]
@@ -14894,7 +14894,7 @@ LAB_2016491c:
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_ddiv @ 201649d8  (538 bytes, 41 callers, export file 20164388_20164fa4.c)
+ * __aeabi_ddiv @ 201649d8  (538 bytes, 41 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double divide: Z2/Z1 and X/4096.0 (0x40B00000) in tsc2007_pressure, sum/5.0 (0x40140000) in
  *     touch_cal_fit [inference]
  * Tag: [inference]
@@ -15031,7 +15031,7 @@ uint __aeabi_ddiv(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_d2iz @ 20164c90  (92 bytes, 11 callers, export file 20164388_20164fa4.c)
+ * __aeabi_d2iz @ 20164c90  (92 bytes, 11 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double to signed int, truncating with saturation (0x7FFFFFFF ^ sign); follows "+ 0.5" in touch_cal_apply
  *     [fact]
  * Tag: [fact]
@@ -15081,7 +15081,7 @@ uint __aeabi_d2iz(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_d2uiz @ 20164cf0  (88 bytes, 3 callers, export file 20164388_20164fa4.c)
+ * __aeabi_d2uiz @ 20164cf0  (88 bytes, 3 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double to unsigned int: negative gives 0, overflow 0xFFFFFFFF; tsc2007_pressure result [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15129,7 +15129,7 @@ uint __aeabi_d2uiz(uint param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_i2d @ 20164d54  (46 bytes, 29 callers, export file 20164388_20164fa4.c)
+ * __aeabi_i2d @ 20164d54  (46 bytes, 29 callers, export file 2016437c_20164fa4.c)
  * Purpose: int -> IEEE double (sign, exponent 0x41D - clz, mantissa) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15157,7 +15157,7 @@ undefined8 __aeabi_i2d(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_ui2d @ 20164d82  (38 bytes, 19 callers, export file 20164388_20164fa4.c)
+ * __aeabi_ui2d @ 20164d82  (38 bytes, 19 callers, export file 2016437c_20164fa4.c)
  * Purpose: unsigned int -> IEEE double [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15180,7 +15180,7 @@ undefined8 __aeabi_ui2d(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dmul @ 20164da8  (300 bytes, 49 callers, export file 20164388_20164fa4.c)
+ * __aeabi_dmul @ 20164da8  (300 bytes, 49 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double multiply: 400.0 (0x40790000) * x in tsc2007_pressure, span * fraction in progress_scale, x *
  *     100.0 in sd_format_request [inference]
  * Tag: [inference]
@@ -15293,7 +15293,7 @@ longlong __aeabi_dmul(uint param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fp_nan_handler @ 20164efc  (152 bytes, 6 callers, export file 20164388_20164fa4.c)
+ * fp_nan_handler @ 20164efc  (152 bytes, 6 callers, export file 2016437c_20164fa4.c)
  * Purpose: Shared NaN/Inf path of the double routines: picks the result by a 3-bit code table after the caller's
  *     return address; armcc fplib internal [fact]
  * Tag: [fact]
@@ -15362,7 +15362,7 @@ switchD_20164f68_caseD_5:
 
 
 /* -----------------------------------------------------------------------------
- * fp_exception_stub @ 20164f98  (12 bytes, 7 callers, export file 20164388_20164fa4.c)
+ * fp_exception_stub @ 20164f98  (12 bytes, 7 callers, export file 2016437c_20164fa4.c)
  * Purpose: Empty 12-byte routine the NaN path calls (fplib exception hook, no handler installed) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md
@@ -15380,7 +15380,7 @@ void fp_exception_stub(void)
 
 
 /* -----------------------------------------------------------------------------
- * __aeabi_dsub @ 20164fa4  (464 bytes, 24 callers, export file 20164388_20164fa4.c)
+ * __aeabi_dsub @ 20164fa4  (464 bytes, 24 callers, export file 2016437c_20164fa4.c)
  * Purpose: Double subtract: Z2/Z1 - 1.0 (0x3FF00000) in tsc2007_pressure [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/boot-rtos.md

@@ -1,4 +1,14 @@
-// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 45 functions
+// FT-710_DISPLAY_V0108.bin — Ghidra decompile, 46 functions
+
+// ===== FUN_2016437c @ 2016437c (12 bytes)
+
+void FUN_2016437c(undefined4 *param_1)
+
+{
+  *param_1 = 0;
+  return;
+}
+
 
 // ===== ring133_advance @ 20164388 (28 bytes)
 

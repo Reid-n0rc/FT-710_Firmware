@@ -1,5 +1,93 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== itron_snd_mbx @ 20151520 (324 bytes)
+
+/* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): (mbxid, pk_msg): mbx
+   table 0x208DBEA4, priority queues by msgpri (E_PAR), or wakes a receiver [inference] */
+
+code * itron_snd_mbx(uint param_1,undefined4 *param_2)
+
+{
+  int iVar1;
+  byte *pbVar2;
+  code *pcVar3;
+  int *piVar4;
+  int iVar5;
+  undefined4 *puVar6;
+  uint uVar7;
+  uint uVar8;
+  knl_tcb *tcb;
+  bool bVar9;
+  
+  if ((param_1 == 0) || (8 < param_1)) {
+    knl_sys.last_ercd = -0x12;
+    return (code *)0xffffffee;
+  }
+  software_interrupt(0);
+  puVar6 = *(undefined4 **)(&DAT_208dbea4 + param_1 * 4);
+  if (puVar6 == (undefined4 *)0x0) {
+    software_interrupt(0);
+    return (code *)0xffffffd6;
+  }
+  pbVar2 = (byte *)((int)puVar6 + 7);
+  do {
+    uVar8 = (uint)*pbVar2;
+    pbVar2 = pbVar2 + 1;
+  } while (uVar8 == 0);
+  if (0xfd < uVar8) {
+    uVar8 = (uint)*(byte *)((int)puVar6 + 6);
+    if (uVar8 != 0) {
+      piVar4 = (int *)(uVar8 + (int)puVar6);
+    }
+    else {
+      piVar4 = (int *)*puVar6;
+    }
+    uVar7 = (uint)*(byte *)(puVar6 + 1);
+    if (uVar8 == 0) {
+      piVar4 = (int *)piVar4[2];
+    }
+    if (1 < uVar7) {
+      iVar5 = param_2[1];
+      bVar9 = SBORROW4(uVar7,iVar5);
+      iVar1 = uVar7 - iVar5;
+      if (iVar5 <= (int)uVar7) {
+        bVar9 = SBORROW4(iVar5,1);
+        iVar1 = iVar5 + -1;
+      }
+      if (iVar1 < 0 != bVar9) {
+        software_interrupt(0);
+        return (code *)0xffffffef;
+      }
+      piVar4 = piVar4 + iVar5 * 2 + -2;
+    }
+    if (*piVar4 == 0) {
+      *piVar4 = (int)param_2;
+    }
+    else {
+      *(undefined4 **)piVar4[1] = param_2;
+    }
+    piVar4[1] = (int)param_2;
+    *param_2 = 0;
+    software_interrupt(0);
+    return knl_svc_return;
+  }
+  tcb = knl_tsk_tab[uVar8];
+  **(undefined4 **)(tcb->sp + 0xc) = param_2;
+  if ((tcb->state & 2) != 0) {
+                    /* unlinks the TCB from its timer-wheel slot [doc] */
+    knl_timeout_remove(tcb,uVar8);
+  }
+  tcb->state = 0x10;
+  if (tcb->f_0x09_u8 == 0) {
+                    /* Appends the TCB to ready queue 0x208DC18C + priority [doc] */
+    pcVar3 = (code *)knl_make_ready(tcb,uVar8);
+    return pcVar3;
+  }
+  pcVar3 = (code *)knl_release_suspended();
+  return pcVar3;
+}
+
+
 // ===== itron_sta_cyc @ 20151680 (204 bytes)
 
 /* T23d NORTi uITRON 4.0 NORTi Version 4 (MiSPO) (uitron_api_shape 0.900): cyc table 0x208DBF64:
@@ -2468,21 +2556,6 @@ void knl_pool_free(undefined4 param_1,undefined4 param_2)
 
 {
   knl_freelist_free(0x208003fc,param_1,param_2);
-  return;
-}
-
-
-// ===== knl_sys_alloc @ 2015476c (36 bytes)
-
-/* WARNING: Removing unreachable block (ram,0x20154780) */
-/* knl_freelist_alloc on the kernel's system pool 0x208003FC; the 11 itron_acre_* calls get their
-   control blocks here [fact] */
-
-void knl_sys_alloc(undefined4 param_1)
-
-{
-                    /* First-fit allocator on a free list {next, size} [doc] */
-  knl_freelist_alloc(0x208003fc,param_1);
   return;
 }
 

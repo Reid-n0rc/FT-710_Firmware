@@ -668,7 +668,7 @@ byte mainlink_got_frame60(void)
 byte mainlink_get_settings24(uint param_1)
 
 {
-  FUN_201636f8(param_1,0x2045006d);
+  ml_settings24_copy(param_1,0x2045006d);
   return g_ml.got24;
 }
 
@@ -835,7 +835,7 @@ void mainlink_submit(uint param_1,uint param_2)
         uVar2 = g_ml.e0_wr + 1 & 0xff;
         g_ml.e0_wr = (byte)(uVar2 % 10);
         iVar3 = (uVar2 % 10) * 5;
-        FUN_20163668(iVar3 + 0x20470117,(uVar2 / 10) * -5,uVar2 * -0x33333333);
+        ml_enc_entry_clear(iVar3 + 0x20470117,(uVar2 / 10) * -5,uVar2 * -0x33333333);
                     /* E0 keys park in a 10-entry ring [fact: mainlink.md] */
         memcpy(iVar3 + 0x20470117,param_1,param_2);
         DAT_2045f244 = 1;
@@ -1352,7 +1352,7 @@ void mainlink_flush_parked(void)
     g_ml.e0_rd = (byte)uVar1;
     mainlink_submit(uVar1 * 5 + 0x20470117,5);
     uVar1 = (uint)g_ml.e0_rd;
-    FUN_20163668(uVar1 * 5 + 0x20470117);
+    ml_enc_entry_clear(uVar1 * 5 + 0x20470117);
     if (g_ml.e0_wr == uVar1) {
       DAT_2045f244 = '\0';
     }
@@ -1435,7 +1435,7 @@ void mainlink_flush_enc(void)
   } while ((int)uVar1 < 7);
   if (7 < (int)uVar2) {
     g_ml.enc_queue_mask = 0;
-    FUN_20163668(&DAT_2045f0c5 + (&DAT_2045f224)[uVar2] * 5 + uVar2 * 0x32);
+    ml_enc_entry_clear(&DAT_2045f0c5 + (&DAT_2045f224)[uVar2] * 5 + uVar2 * 0x32);
     return;
   }
                     /* Copies 5 bytes [doc] */
@@ -1538,7 +1538,7 @@ void mainlink_tx_reset(void)
   do {
     j = 0;
     do {
-      FUN_20163668(&DAT_2045f0c5 + j * 5 + i * 0x32);
+      ml_enc_entry_clear(&DAT_2045f0c5 + j * 5 + i * 0x32);
       j = j + 1;
     } while (j < 10);
     i = i + 1;

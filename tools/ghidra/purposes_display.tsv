@@ -316,7 +316,7 @@
 201437a4	file_remove_core	Removes a directory entry and frees its clusters	inference	filesystem.md
 20143b20	fs_remove	deletes a file	fact	filesystem.md
 20143b70	fs_fatcache_setup	FAT cache in a caller buffer	fact	filesystem.md
-20143c1c	fs_fatcache_setup_a	fs_fatcache_setup and fs_set_error	fact	filesystem.md
+20143c1c	fs_fatcache_setup_a	fs_fatcache_setup with one sector per slot	fact	filesystem.md
 20143cbc	fatcache_load	Evicts the oldest FAT cache slot	fact	filesystem.md
 20144000	dircache_load	Evicts the oldest directory cache slot	fact	filesystem.md
 2014440c	dircache_flush	Writes every dirty directory cache slot back	fact	filesystem.md
@@ -369,12 +369,14 @@
 2014a304	fs_clmap_attach_scan	fs_clmap_attach with a work buffer and scan = 1	fact	filesystem.md
 2014a360	fs_clmap_size	Bytes a drive's cluster bitmap needs	fact	filesystem.md
 2014a4d0	fs_init	clears the 0x450-byte drive and 0x24C-byte file tables	fact	filesystem.md
+2014a818	fs_drive_attach_512	fs_drive_attach with 512-byte sectors	fact	filesystem.md
 2014a83c	fs_exit	Reverse of fs_init	fact	filesystem.md
 2014a99c	fs_vol_clear_geometry	Zeroes the BPB fields of a drive	fact	filesystem.md
 2014a9d4	fs_drive_mount	Driver op 7	fact	filesystem.md
 2014ae1c	fs_stat_work	fs_stat with a caller work buffer	fact	filesystem.md
 2014aec8	fs_stat	directory entry of a path, 0 when it exists	fact	filesystem.md
 2014af44	fs_file_size_copy	Copies the 4-byte size at file +0x2C	fact	filesystem.md
+2014afcc	fs_split_sectors	whole units of 0x800000 /	fact	filesystem.md
 2014b020	fs_disk_total_calc	Total data size of a drive	fact	filesystem.md
 2014b140	fs_disk_size	checked wrapper of fs_disk_total_calc	fact	filesystem.md
 2014b394	fat32_count_free_locked	fat32_count_free under fs_lock_b	fact	filesystem.md
@@ -397,7 +399,6 @@
 2014cd68	sjis_map_ext_chars	Rewrites NEC/IBM extension codes in a path	inference	filesystem.md
 2014d050	fs_ucs2_to_ascii_upper	UTF-16 name to 8-bit upper case	fact	filesystem.md
 2014d148	fs_memset	word fill for aligned 0x200-byte blocks, else bytes	fact	filesystem.md
-2014d1c4	fs_memmove	Byte copy that copies backwards when the areas overlap	fact	filesystem.md
 2014d220	fs_strlen	Byte-wise string length	fact	filesystem.md
 2014d248	fs_wstrlen_bytes	Length of a UTF-16 string in bytes	fact	filesystem.md
 2014d270	fs_strcpy	Byte string copy including the terminator	fact	filesystem.md

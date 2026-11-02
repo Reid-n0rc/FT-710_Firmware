@@ -6230,7 +6230,7 @@ void fwupdate_title_screen_thunk(void)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ui_e2 @ 20158ec0  (96 bytes, 1 callers, export file 201576f4_20159058.c)
+ * mainlink_send_ui_e2 @ 20158ec0  (96 bytes, 1 callers, export file 20157634_20158fd0.c)
  * Purpose: 0xE2 UI frame to MAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6259,7 +6259,7 @@ void mainlink_send_ui_e2(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ui_c3 @ 20158f28  (120 bytes, 5 callers, export file 201576f4_20159058.c)
+ * mainlink_send_ui_c3 @ 20158f28  (120 bytes, 5 callers, export file 20157634_20158fd0.c)
  * Purpose: 0xC3 UI state frame to MAIN [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6287,7 +6287,7 @@ void mainlink_send_ui_c3(void *param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_entry_screen @ 20159058  (232 bytes, 1 callers, export file 201576f4_20159058.c)
+ * bootloader_entry_screen @ 20159058  (232 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT ERROR"
  *     forever, else bootloader_screen (update.md) [fact]
  * Tag: [fact]
@@ -6327,8 +6327,9 @@ void bootloader_entry_screen(undefined4 param_1,int param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * update_error_screen @ 20159158  (428 bytes, 2 callers, export file 20159158_2015d958.c)
+ * update_error_screen @ 20159158  (428 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -6422,7 +6423,7 @@ void update_error_screen(void)
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_screen @ 2015938c  (552 bytes, 2 callers, export file 20159158_2015d958.c)
+ * bootloader_screen @ 2015938c  (552 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: YAESU FT-710 BOOT LOADER V01-02 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6487,7 +6488,7 @@ void bootloader_screen(undefined4 param_1,undefined4 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fw_installed_versions_set @ 201595f0  (64 bytes, 1 callers, export file 20159158_2015d958.c)
+ * fw_installed_versions_set @ 201595f0  (64 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6514,7 +6515,7 @@ void fw_installed_versions_set(ushort *param_1,byte *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * pointer_idle_loop @ 20159630  (220 bytes, 1 callers, export file 20159158_2015d958.c)
+ * pointer_idle_loop @ 20159630  (220 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor,
  *     gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it [fact]
  * Tag: [fact]
@@ -6564,7 +6565,7 @@ void pointer_idle_loop(void)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_screen @ 20159714  (1376 bytes, 1 callers, export file 20159158_2015d958.c)
+ * fwupdate_screen @ 20159714  (1376 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -6743,7 +6744,7 @@ LAB_20159c44:
 
 
 /* -----------------------------------------------------------------------------
- * bootloader_unlock_wait @ 20159cb0  (216 bytes, 1 callers, export file 20159158_2015d958.c)
+ * bootloader_unlock_wait @ 20159cb0  (216 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -6788,7 +6789,7 @@ uint bootloader_unlock_wait(void)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_ui_run @ 20159d98  (956 bytes, 3 callers, export file 20159158_2015d958.c)
+ * fwupdate_ui_run @ 20159d98  (956 bytes, 3 callers, export file 20159058_2015d874.c)
  * Purpose: Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE
  *     UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation (fwupdate_confirm_loop), then
  *     fwupdate_progress_screen; card-missing and error texts [fact]
@@ -6936,7 +6937,7 @@ LAB_2015a100:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_confirm_loop @ 2015a17c  (832 bytes, 1 callers, export file 20159158_2015d958.c)
+ * fwupdate_confirm_loop @ 2015a17c  (832 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with
  *     fwupdate_confirm_draw [fact]
  * Tag: [fact]
@@ -7115,7 +7116,7 @@ undefined4 fwupdate_confirm_loop(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_menu_screen @ 2015a500  (964 bytes, 2 callers, export file 20159158_2015d958.c)
+ * fwupdate_menu_screen @ 2015a500  (964 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -7266,7 +7267,7 @@ void fwupdate_menu_screen(int param_1,undefined4 param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_screen @ 2015a8dc  (52 bytes, 1 callers, export file 20159158_2015d958.c)
+ * fwupdate_select_screen @ 2015a8dc  (52 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: Update-UI method (thunk 0x201322D8), packet step 1: four target rows with tick boxes and the OK/CANCEL
  *     keys; 2: "UPDATE?"; 3: runs fwupdate_poll with per-row progress bars, then update_error_screen on failure and
  *     system_reboot [fact]
@@ -7437,7 +7438,7 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_loop @ 2015a910  (1628 bytes, 2 callers, export file 20159158_2015d958.c)
+ * fwupdate_select_loop @ 2015a910  (1628 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: Touch/mouse loop of the target list (pointer_get_event, touch_cal_apply, mouse cursor): toggles the tick
  *     boxes of the four rows, OK / CANCEL keys, redraws with fwupdate_select_draw, mirrors the state to MAIN
  *     (mainlink_send_ui_c3, E6) [fact]
@@ -7790,7 +7791,7 @@ LAB_2015aec4:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_insert_sd_screen @ 2015afb0  (356 bytes, 1 callers, export file 20159158_2015d958.c)
+ * fwupdate_insert_sd_screen @ 2015afb0  (356 bytes, 1 callers, export file 20159058_2015d874.c)
  * Purpose: INSERT FIRMWARE SD CARD screen (MAIN timeout path, docs/code/display/gui.md) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -7852,7 +7853,7 @@ void fwupdate_insert_sd_screen(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_progress_screen @ 2015b134  (764 bytes, 2 callers, export file 20159158_2015d958.c)
+ * fwupdate_progress_screen @ 2015b134  (764 bytes, 2 callers, export file 20159058_2015d874.c)
  * Purpose: GUI
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -7945,7 +7946,7 @@ LAB_2015b360:
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_select_draw @ 2015b450  (708 bytes, 6 callers, export file 20159158_2015d958.c)
+ * fwupdate_select_draw @ 2015b450  (708 bytes, 6 callers, export file 20159058_2015d874.c)
  * Purpose: (ui, state, title): title bar, four target rows (name, status text, tick sprite 0x203A5684/94, cursor
  *     frame) and the OK / CANCEL buttons [fact]
  * Tag: [fact]
@@ -8021,7 +8022,7 @@ void fwupdate_select_draw(int param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwupdate_confirm_draw @ 2015b748  (392 bytes, 4 callers, export file 20159158_2015d958.c)
+ * fwupdate_confirm_draw @ 2015b748  (392 bytes, 4 callers, export file 20159058_2015d874.c)
  * Purpose: (ui, state): "UPDATE?" box with the YES / NO buttons and the cursor frame [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/update.md
@@ -8058,7 +8059,7 @@ void fwupdate_confirm_draw(undefined4 param_1,int param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_sdr_run @ 201602ac  (288 bytes, 0 callers, export file 2015da3c_2016040c.c)
+ * fwobj_sdr_run @ 201602ac  (288 bytes, 0 callers, export file 2015d958_201603f4.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8120,7 +8121,7 @@ undefined4 fwobj_sdr_run(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_sdr_ctor @ 201603d4  (28 bytes, 1 callers, export file 2015da3c_2016040c.c)
+ * fwobj_sdr_ctor @ 201603d4  (28 bytes, 1 callers, export file 2015d958_201603f4.c)
  * Purpose: SDR object, vtable 0x20428070, +0xAB flag [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8143,7 +8144,7 @@ uint fwobj_sdr_ctor(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_build_path @ 201603f4  (20 bytes, 1 callers, export file 2015da3c_2016040c.c)
+ * fwobj_build_path @ 201603f4  (20 bytes, 1 callers, export file 2015d958_201603f4.c)
  * Purpose: "%s%s" dir + file name [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8159,9 +8160,8 @@ void fwobj_build_path(int param_1,uint param_2)
   return;
 }
 
-
 /* -----------------------------------------------------------------------------
- * fwobj_match_name @ 20160418  (132 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_match_name @ 20160418  (132 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8200,7 +8200,7 @@ uint fwobj_match_name(int param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_set_status @ 2016049c  (44 bytes, 7 callers, export file 20160418_201635b8.c)
+ * fwobj_set_status @ 2016049c  (44 bytes, 7 callers, export file 2016040c_20163564.c)
  * Purpose: status text (Ready, failed, ...) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8223,7 +8223,7 @@ void fwobj_set_status(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_version_from_name @ 201604c8  (20 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_version_from_name @ 201604c8  (20 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8241,7 +8241,7 @@ void fwobj_version_from_name(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_select @ 201604dc  (24 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_select @ 201604dc  (24 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: marks the object selected for update [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8261,7 +8261,7 @@ void fwobj_select(int param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_base_ctor @ 201604f4  (88 bytes, 4 callers, export file 20160418_201635b8.c)
+ * fwobj_base_ctor @ 201604f4  (88 bytes, 4 callers, export file 2016040c_20163564.c)
  * Purpose: base update-object constructor, vtable 0x2042807C [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8290,7 +8290,7 @@ int fwobj_base_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwname_pattern_init @ 20160558  (80 bytes, 4 callers, export file 20160418_201635b8.c)
+ * fwname_pattern_init @ 20160558  (80 bytes, 4 callers, export file 2016040c_20163564.c)
  * Purpose: builds the name pattern (prefix, "NNNN", suffix) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8319,7 +8319,7 @@ void fwname_pattern_init(int *param_1,int param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_main_run @ 201605ac  (244 bytes, 0 callers, export file 20160418_201635b8.c)
+ * fwobj_main_run @ 201605ac  (244 bytes, 0 callers, export file 2016040c_20163564.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8380,7 +8380,7 @@ undefined4 fwobj_main_run(int param_1,uint param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_main_ctor @ 201606a4  (20 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_main_ctor @ 201606a4  (20 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: MAIN object, vtable 0x20428088 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8402,7 +8402,7 @@ uint fwobj_main_ctor(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_ifdsp_run @ 201606bc  (264 bytes, 0 callers, export file 20160418_201635b8.c)
+ * fwobj_ifdsp_run @ 201606bc  (264 bytes, 0 callers, export file 2016040c_20163564.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8455,7 +8455,7 @@ undefined4 fwobj_ifdsp_run(int param_1,uint param_2,int param_3)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_ifdsp_ctor @ 201607c8  (28 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_ifdsp_ctor @ 201607c8  (28 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: IFDSP object, vtable 0x20428094, +0xAB flag [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8478,7 +8478,7 @@ uint fwobj_ifdsp_ctor(uint param_1,byte param_2)
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_display_run @ 201607e8  (1032 bytes, 0 callers, export file 20160418_201635b8.c)
+ * fwobj_display_run @ 201607e8  (1032 bytes, 0 callers, export file 2016040c_20163564.c)
  * Purpose: run: MAIN / DISPLAY / IFDSP / SDR
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md
@@ -8671,7 +8671,7 @@ LAB_20160ac8:
 
 
 /* -----------------------------------------------------------------------------
- * fwobj_display_ctor @ 20160c10  (20 bytes, 1 callers, export file 20160418_201635b8.c)
+ * fwobj_display_ctor @ 20160c10  (20 bytes, 1 callers, export file 2016040c_20163564.c)
  * Purpose: DISPLAY object, vtable 0x204280A0 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/update.md
@@ -8693,7 +8693,7 @@ uint fwobj_display_ctor(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * fwname_pattern_match @ 20163600  (84 bytes, 1 callers, export file 201635e4_2016437c.c)
+ * fwname_pattern_match @ 20163600  (84 bytes, 1 callers, export file 201635b8_20164360.c)
  * Purpose: name match / keep highest / version text
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/update.md

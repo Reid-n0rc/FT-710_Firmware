@@ -1489,7 +1489,8 @@ int fs_fatcache_setup(int param_1,uint param_2,uint param_3,int param_4)
 
 // ===== fs_fatcache_setup_a @ 20143c1c (24 bytes)
 
-/* fs_fatcache_setup and fs_set_error [fact] */
+/* [fact] fs_fatcache_setup with one sector per slot (mov r3, #1), the result through fs_set_error
+   (T24 round 9) */
 
 void fs_fatcache_setup_a(void)
 
@@ -2194,9 +2195,12 @@ void fs_cache_invalidate(int param_1)
 }
 
 
-// ===== FUN_201447f4 @ 201447f4 (12 bytes)
+// ===== fs_last_error_get @ 201447f4 (12 bytes)
 
-undefined4 FUN_201447f4(void)
+/* [fact] returns the layer's last error 0x20808BA4 (what fs_set_error stores); Ghidra FUN_201447f4
+   (T24 round 9, fs/fat_table.c) */
+
+undefined4 fs_last_error_get(void)
 
 {
   return DAT_20808ba4;

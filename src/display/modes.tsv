@@ -1572,7 +1572,7 @@ entry	name	size	mode
 20144688	fs_flush	104	arm
 201446bc	fs_sync	20	arm
 201446d0	fs_cache_invalidate	292	arm
-201447f4	FUN_201447f4	12	arm
+201447f4	fs_last_error_get	12	arm
 20144800	fs_set_error	52	arm
 20144834	fs_set_error_m2	40	arm
 2014485c	fs_set_error_ret	28	arm
@@ -1644,9 +1644,10 @@ entry	name	size	mode
 20148c94	ucs2_to_upper	224	arm
 20148d74	fs_wstricmp_ucs2	120	arm
 20148dec	fs_wstrnicmp_ucs2	144	arm
+20148e80	fat_detect_superfloppy	160	arm
 20148f40	fat32_fsinfo_read	124	arm
 20148fcc	fat_mount	300	arm
-201490f8	fat_find_volume	324	arm
+201490f8	fat_find_volume	164	arm
 2014919c	fat_table_sector_get	220	arm
 20149278	fat_table_sector_dirty	196	arm
 2014933c	fat32_entry_get	120	arm
@@ -1674,7 +1675,7 @@ entry	name	size	mode
 2014a4a4	fs_check_ready	44	arm
 2014a4d0	fs_init	268	arm
 2014a5dc	fs_drive_attach	572	arm
-2014a818	fs_drive_attach_thunk	36	arm
+2014a818	fs_drive_attach_512	36	arm
 2014a83c	fs_exit	352	arm
 2014a99c	fs_vol_clear_geometry	56	arm
 2014a9d4	fs_drive_mount	284	arm
@@ -1746,7 +1747,7 @@ entry	name	size	mode
 2014d770	fs_strnicmp_sjis	196	arm
 2014d834	fs_atoi_2	48	arm
 2014d864	fs_itoa_2	80	arm
-2014d8b4	FUN_2014d8b4	20	arm
+2014d8b4	fs_byte_pair_sum	20	arm
 2014d8c8	fs_wstr_store_le	36	arm
 2014d8ec	fat_st_word	20	arm
 2014d900	fat_ld_word	24	arm
@@ -2191,12 +2192,12 @@ entry	name	size	mode
 20163600	fwname_pattern_match	84	arm
 20163654	scif_has_flag	16	arm
 20163664	strstr	4	arm
-20163668	FUN_20163668	28	arm
+20163668	ml_enc_entry_clear	28	arm
 20163684	FUN_20163684	36	arm
 201636a8	FUN_201636a8	16	arm
 201636b8	FUN_201636b8	20	arm
 201636cc	copy5	44	arm
-201636f8	FUN_201636f8	52	arm
+201636f8	ml_settings24_copy	52	arm
 2016372c	FUN_2016372c	68	arm
 20163770	FUN_20163770	28	arm
 2016378c	FUN_2016378c	20	arm

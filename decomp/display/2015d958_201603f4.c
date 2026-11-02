@@ -1,5 +1,41 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== scope2d_draw_expand @ 2015d958 (212 bytes)
+
+/* 2D spectrum + waterfall 140/213 px (size 2 EXPAND) */
+
+void scope2d_draw_expand(int param_1,undefined4 param_2)
+
+{
+  undefined4 uVar1;
+  undefined2 extraout_r1;
+  int iVar2;
+  int iVar3;
+  
+  uVar1 = fb_get_layer_addr(DAT_208085b8);
+  if (param_1 == 0) {
+    iVar2 = 2;
+    iVar3 = 0x8c;
+  }
+  else {
+    iVar2 = 5;
+    iVar3 = 0xd5;
+  }
+  scope2d_spectrum_fill
+            (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
+             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
+  scope_history_push(DAT_208084d2,param_2);
+  if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
+    scope_wf_add_row(DAT_208084d2);
+  }
+                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
+  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
+  DAT_208084d0 = extraout_r1;
+  scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
+  return;
+}
+
+
 // ===== affft_waterfall_blit @ 2015da3c (96 bytes)
 
 /* AF-FFT waterfall 39 rows at (405, 365) */
@@ -1992,7 +2028,7 @@ void task_mainlink_dispatch(int param_1)
     }
     else if (bVar1 == 0x24) {
                     /* 0x24: display settings from +0x98 [fact: mainlink.md] */
-      FUN_201636f8(g_ml.settings24,aiStack_8[0] + 0xa0);
+      ml_settings24_copy(g_ml.settings24,aiStack_8[0] + 0xa0);
       g_ml.got24 = 1;
     }
     else if (bVar1 == 0x43) {
@@ -2125,16 +2161,6 @@ void fwobj_build_path(int param_1,uint param_2)
 
 {
   sprintf_veneer(param_1 + 0x58,&DAT_204281f0,param_2,param_1 + 0x37);
-  return;
-}
-
-
-// ===== FUN_2016040c @ 2016040c (12 bytes)
-
-void FUN_2016040c(int param_1)
-
-{
-  *(undefined1 *)(param_1 + 0x57) = 0;
   return;
 }
 

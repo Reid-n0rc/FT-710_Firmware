@@ -1,5 +1,40 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== bootloader_entry_screen @ 20159058 (232 bytes)
+
+/* Update-UI method (thunk 0x201322E4): clears both layers; boot-info word +8 != 2 -> "FIRMWARE BOOT
+   ERROR" forever, else bootloader_screen (update.md) [fact] */
+
+void bootloader_entry_screen(undefined4 param_1,int param_2)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  iVar1 = fb_get_layer_addr(DAT_208085b8);
+  fb_clear_rect(iVar1,0,0,800,0x1e0);
+  iVar1 = fb_get_layer_addr(DAT_208085bc);
+  fb_clear_rect(iVar1,0,0,800,0x1e0);
+  gui_update_layers();
+  if (*(int *)(param_2 + 8) != 2) {
+    uVar2 = fb_get_layer_addr(DAT_208085bc);
+    fb_clear_rect(uVar2,0,0,800,0x1e0);
+    gui_draw_text_centered(uVar2,0x204280a8,100,400,0xc,0x208038c0);
+    do {
+                    /* Radio off from the GUI side [doc] */
+      if (DAT_20800493 != '\0') {
+        display_power_down();
+      }
+      gui_update_layers();
+      fb_get_layer_addr(DAT_208085bc);
+      itron_tslp_tsk(0xffffffff);
+    } while( true );
+  }
+  bootloader_screen(param_1,param_2);
+  return;
+}
+
+
 // ===== update_error_screen @ 20159158 (428 bytes)
 
 /* "UPDATE ERROR", waits for a touch */
@@ -3241,42 +3276,6 @@ void scope2d_draw_size0(int param_1,undefined4 param_2)
   else {
     iVar2 = 4;
     iVar3 = 0x3f;
-  }
-  scope2d_spectrum_fill
-            (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
-             (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push(DAT_208084d2,param_2);
-  if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
-    scope_wf_add_row(DAT_208084d2);
-  }
-                    /* Unsigned 32-bit divide returning quotient and remainder [doc] */
-  __aeabi_uidivmod(DAT_208084d0 + 1,DAT_208084ce);
-  DAT_208084d0 = extraout_r1;
-  scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
-  return;
-}
-
-
-// ===== scope2d_draw_expand @ 2015d958 (212 bytes)
-
-/* 2D spectrum + waterfall 140/213 px (size 2 EXPAND) */
-
-void scope2d_draw_expand(int param_1,undefined4 param_2)
-
-{
-  undefined4 uVar1;
-  undefined2 extraout_r1;
-  int iVar2;
-  int iVar3;
-  
-  uVar1 = fb_get_layer_addr(DAT_208085b8);
-  if (param_1 == 0) {
-    iVar2 = 2;
-    iVar3 = 0x8c;
-  }
-  else {
-    iVar2 = 5;
-    iVar3 = 0xd5;
   }
   scope2d_spectrum_fill
             (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,

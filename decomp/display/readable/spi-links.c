@@ -3301,7 +3301,7 @@ void dmac10_set_callback(uint param_1)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw8 @ 20157138  (20 bytes, 157 callers, export file 2015620a_20157634.c)
+ * reg_rmw8 @ 20157138  (20 bytes, 157 callers, export file 201561c0_20157604.c)
  * Purpose: (reg, val, shift, mask): *reg = *reg & ~mask | val << shift, 8-bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3319,7 +3319,7 @@ void reg_rmw8(byte *param_1,int param_2,uint param_3,byte param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw16 @ 2015714c  (20 bytes, 49 callers, export file 2015620a_20157634.c)
+ * reg_rmw16 @ 2015714c  (20 bytes, 49 callers, export file 201561c0_20157604.c)
  * Purpose: 16-bit read-modify-write, same arguments (spi-links.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3337,7 +3337,7 @@ void reg_rmw16(ushort *param_1,int param_2,uint param_3,ushort param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_rmw32 @ 20157160  (20 bytes, 122 callers, export file 2015620a_20157634.c)
+ * reg_rmw32 @ 20157160  (20 bytes, 122 callers, export file 201561c0_20157604.c)
  * Purpose: 32-bit read-modify-write, same arguments [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3355,7 +3355,7 @@ void reg_rmw32(uint *param_1,int param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * reg_read8 @ 20157174  (16 bytes, 38 callers, export file 2015620a_20157634.c)
+ * reg_read8 @ 20157174  (16 bytes, 38 callers, export file 201561c0_20157604.c)
  * Purpose: (reg, shift, mask): (*reg & mask) >> shift, 8-bit [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
@@ -3372,7 +3372,7 @@ byte reg_read8(byte *param_1,uint param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * reg_read16 @ 20157184  (16 bytes, 5 callers, export file 2015620a_20157634.c)
+ * reg_read16 @ 20157184  (16 bytes, 5 callers, export file 201561c0_20157604.c)
  * Purpose: 16-bit field read (spi-links.md) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/spi-links.md
