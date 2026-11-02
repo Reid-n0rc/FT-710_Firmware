@@ -253,7 +253,7 @@ void displink_tx_poll(void)
     DAT_0001b3ce = '\0';
     if (DAT_0001b3d1 == '\x01') {
       DAT_0001b3d1 = 0;
-      DAT_0001b3d0 = 0;
+      dl_hello_req = 0;
       PTR_g_ui_00025d38->link_tx_enabled = 0;
       return;
     }
@@ -440,7 +440,7 @@ void displink_rx_ack(void)
     DAT_0001b3cf = 0;
     if (DAT_0001b3d1 == '\x01') {
       DAT_0001b3d1 = 0;
-      DAT_0001b3d0 = 0;
+      dl_hello_req = 0;
       PTR_g_ui_00025d38->dl_req_24 = 1;
       return;
     }
@@ -917,7 +917,7 @@ void displink_tx_schedule(void)
   bool bVar1;
   byte swtimer_expired_ret;
   
-  if (DAT_0001b3d0 == '\x01') {
+  if (dl_hello_req == '\x01') {
                     /* 1: 0x60 hello reply with the four versions [fact: display-link.md] */
     displink_tx_60_hello();
     return;
@@ -8259,16 +8259,16 @@ void beep_request(int param_1)
 {
   if (param_1 != 8) {
     if (param_1 - 9U < 3) {
-      if (DAT_00012041 == '\x04') {
+      if (beep_pattern == '\x04') {
         return;
       }
     }
-    else if (DAT_00012041 != '\0') {
+    else if (beep_pattern != '\0') {
       return;
     }
   }
-  DAT_00012041 = (char)param_1;
-  DAT_00012040 = 1;
+  beep_pattern = (char)param_1;
+  beep_state = 1;
   return;
 }
 

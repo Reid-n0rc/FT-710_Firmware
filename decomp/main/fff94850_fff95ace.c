@@ -953,7 +953,7 @@ void displink_tx_poll(void)
     DAT_0001b3ce = '\0';
     if (DAT_0001b3d1 == '\x01') {
       DAT_0001b3d1 = 0;
-      DAT_0001b3d0 = 0;
+      dl_hello_req = 0;
       PTR_g_ui_00025d38->link_tx_enabled = 0;
       return;
     }
@@ -1121,7 +1121,7 @@ void displink_rx_ack(void)
     DAT_0001b3cf = 0;
     if (DAT_0001b3d1 == '\x01') {
       DAT_0001b3d1 = 0;
-      DAT_0001b3d0 = 0;
+      dl_hello_req = 0;
       PTR_g_ui_00025d38->dl_req_24 = 1;
       return;
     }
@@ -1160,10 +1160,10 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019ab = 0;
   DAT_000019a7 = 0;
   DAT_000019a3 = 0;
-  DAT_0000199f = 0;
+  dl_hello_text = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
                     /* b1, b2: DISPLAY version string "Vxx-yy" [fact: display-link.md] */
-  DAT_0000199f._0_1_ = 0x56;
+  dl_hello_text._0_1_ = 0x56;
   bVar2 = *(byte *)(param_1 + 1) >> 4;
   if ((bVar2 < 10) || (0xf < bVar2)) {
     bVar1 = false;
@@ -1173,11 +1173,11 @@ void displink_rx_F0_hello(int param_1)
   }
   if (bVar1) {
                     /* WARNING: Ignoring partial resolution of indirect */
-    DAT_0000199f._1_1_ = bVar2 + 0x37;
+    dl_hello_text._1_1_ = bVar2 + 0x37;
   }
   else {
                     /* WARNING: Ignoring partial resolution of indirect */
-    DAT_0000199f._1_1_ = bVar2 + 0x30;
+    dl_hello_text._1_1_ = bVar2 + 0x30;
   }
   bVar2 = *(byte *)(param_1 + 1) & 0xf;
   if ((bVar2 < 10) || (0xf < bVar2)) {
@@ -1188,19 +1188,19 @@ void displink_rx_F0_hello(int param_1)
   }
   if (bVar1) {
                     /* WARNING: Ignoring partial resolution of indirect */
-    DAT_0000199f._2_1_ = bVar2 + 0x37;
+    dl_hello_text._2_1_ = bVar2 + 0x37;
   }
   else {
                     /* WARNING: Ignoring partial resolution of indirect */
-    DAT_0000199f._2_1_ = bVar2 + 0x30;
+    dl_hello_text._2_1_ = bVar2 + 0x30;
   }
                     /* WARNING: Ignoring partial resolution of indirect */
-  DAT_0000199f._3_1_ = 0x2d;
+  dl_hello_text._3_1_ = 0x2d;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._0_1_ = *(byte *)(param_1 + 2) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._1_1_ = *(byte *)(param_1 + 2) & 0x3f | 0x30;
-  FUN_fff94bfd(&DAT_0000199f);
+  FUN_fff94bfd(&dl_hello_text);
   DAT_000019bb = 0;
   DAT_000019b7 = 0;
   DAT_000019b3 = 0;
@@ -1208,16 +1208,16 @@ void displink_rx_F0_hello(int param_1)
   DAT_000019ab = 0;
   DAT_000019a7 = 0;
   DAT_000019a3 = 0;
-  DAT_0000199f = 0;
+  dl_hello_text = 0;
                     /* WARNING: Ignoring partial resolution of indirect */
                     /* b4..b6: DISPLAY date "yy-mm-dd" [fact: display-link.md] */
-  DAT_0000199f._0_1_ = *(byte *)(param_1 + 4) >> 4 | 0x30;
+  dl_hello_text._0_1_ = *(byte *)(param_1 + 4) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
-  DAT_0000199f._1_1_ = *(byte *)(param_1 + 4) & 0x3f | 0x30;
+  dl_hello_text._1_1_ = *(byte *)(param_1 + 4) & 0x3f | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
-  DAT_0000199f._2_1_ = 0x2d;
+  dl_hello_text._2_1_ = 0x2d;
                     /* WARNING: Ignoring partial resolution of indirect */
-  DAT_0000199f._3_1_ = *(byte *)(param_1 + 5) >> 4 | 0x30;
+  dl_hello_text._3_1_ = *(byte *)(param_1 + 5) >> 4 | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._0_1_ = *(byte *)(param_1 + 5) & 0x3f | 0x30;
                     /* WARNING: Ignoring partial resolution of indirect */
@@ -1227,12 +1227,12 @@ void displink_rx_F0_hello(int param_1)
                     /* WARNING: Ignoring partial resolution of indirect */
   DAT_000019a3._3_1_ = *(byte *)(param_1 + 6) & 0x3f | 0x30;
                     /* Stores the 8-char DISPLAY date "yy-mm-dd" [doc] */
-  ver_display_date_set(&DAT_0000199f);
+  ver_display_date_set(&dl_hello_text);
                     /* b7: boot code (key held at the DISPLAY's power-on) [fact: display-link.md] */
   PTR_g_ui_00025d38->power_on_reason = *(byte *)(param_1 + 7);
   PTR_g_ui_00025d38->link_tx_enabled = 1;
   displink_ack_req = 1;
-  DAT_0001b3d0 = 1;
+  dl_hello_req = 1;
                     /* Power on: link up, hello reply pending [fact: display-link.md] */
   PTR_g_ui_00025d38->radio_on = 1;
   bVar2 = PTR_g_ui_00025d38->power_on_reason;
@@ -1271,7 +1271,7 @@ void displink_rx_F0_hello(int param_1)
       if (bVar2 == 6) {
                     /* Boot code 6: DISPLAY loader screen, link down [fact: display-link.md] */
         PTR_g_ui_00025d38->link_tx_enabled = 0;
-        DAT_0001b3d0 = 0;
+        dl_hello_req = 0;
         return;
       }
       if (bVar2 == 7) {

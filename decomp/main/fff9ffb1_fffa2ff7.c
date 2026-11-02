@@ -2696,20 +2696,17 @@ void sdr_upd_r25_tx_drive(byte param_1)
   short sVar3;
   int iVar4;
   float fVar5;
-  uint uVar6;
   float fStack_28;
   float fStack_24;
   float fStack_1c;
   float fStack_18;
   
-  uVar6 = (uint)SCARRY4((int)&stack0x00000000,-0x28) << 3;
   iVar4 = FUN_fffb4062();
   fVar5 = (float)iVar4;
-  uVar6 = uVar6 & 0xfffffff9;
                     /* index 0..10 of the first bound in ROM 0xFFF8870C [doc] */
   bVar2 = tx_band_of_freq(g_ui.freq_tx);
   puVar1 = (&tx_row_ptrs)[bVar2];
-  if (fVar5 - 100.0 == 0.0) {
+  if (fVar5 == 100.0) {
     if (bVar2 < 10) {
       fStack_1c = (float)(byte)puVar1[2];
       fStack_24 = 100.0;
@@ -2723,7 +2720,7 @@ void sdr_upd_r25_tx_drive(byte param_1)
       fStack_18 = fStack_1c;
     }
   }
-  else if (fVar5 - 50.0 < 0.0 == (bool)((byte)(uVar6 >> 3) & 1)) {
+  else if (50.0 <= fVar5) {
     fStack_18 = (float)(byte)puVar1[5];
     if (bVar2 < 10) {
       fStack_1c = (float)(byte)puVar1[2];
@@ -2736,13 +2733,13 @@ void sdr_upd_r25_tx_drive(byte param_1)
       fStack_1c = fStack_18;
     }
   }
-  else if (fVar5 - 20.0 < 0.0 == (bool)((byte)(uVar6 >> 3) & 1)) {
+  else if (20.0 <= fVar5) {
     fStack_18 = (float)(byte)puVar1[8];
     fStack_24 = 20.0;
     fStack_28 = 50.0;
     fStack_1c = (float)(byte)puVar1[5];
   }
-  else if (fVar5 - 10.0 < 0.0 == (bool)((byte)(uVar6 >> 3) & 1)) {
+  else if (10.0 <= fVar5) {
     fStack_18 = (float)(byte)puVar1[0xb];
     fStack_24 = 10.0;
     fStack_28 = 20.0;
