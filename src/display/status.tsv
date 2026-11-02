@@ -478,21 +478,21 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20114edc	uart4_wait_ready	112			not yet	0	
 20114f4c	uart4_link_init	120			not yet	0	
 20114fc4	FUN_20114fc4	40			not yet	0	
-20115000	mainlink_get_last_frame	12			not yet	0	
-2011500c	mainlink_get_frame60	12			not yet	0	
-20115018	mainlink_got_frame60	12			not yet	0	
-20115024	mainlink_get_settings24	24			not yet	0	
-2011503c	mainlink_get_last21	36			not yet	0	
-20115060	mainlink_got_esc	12			not yet	0	
-2011506c	mainlink_last_frame_differs	32			not yet	0	
-2011508c	mainlink_set_last_frame	16			not yet	0	
+20115000	mainlink_get_last_frame	12	mainlink_get_last_frame	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
+2011500c	mainlink_get_frame60	12	mainlink_get_frame60	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
+20115018	mainlink_got_frame60	12	mainlink_got_frame60	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20115024	mainlink_get_settings24	24	mainlink_get_settings24	app/mainlink.o	equivalent	24	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
+2011503c	mainlink_get_last21	36	mainlink_get_last21	app/mainlink.o	equivalent	36	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
+20115060	mainlink_got_esc	12	mainlink_got_esc	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2011506c	mainlink_last_frame_differs	32	mainlink_last_frame_differs	app/mainlink.o	equivalent	32	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
+2011508c	mainlink_set_last_frame	16	mainlink_set_last_frame	app/mainlink.o	equivalent	16	differential emulation: 200 trials agree (90 returned normally, 100% of 1 blocks reached)
 2011509c	task_cmd_interval	68			not yet	0	
-201150e0	mainlink_set_wait_cmd	12			not yet	0	
-201150ec	mainlink_get_wait_cmd	12			not yet	0	
+201150e0	mainlink_set_wait_cmd	12	mainlink_set_wait_cmd	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+201150ec	mainlink_get_wait_cmd	12	mainlink_get_wait_cmd	app/mainlink.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201150f8	mainlink_submit	924			not yet	0	
 20115494	mainlink_queue_frame	644			not yet	0	
 20115780	mainlink_send_enc	420			not yet	0	
-2011593c	minmax4	80			not yet	0	
+2011593c	minmax4	80	minmax4	app/mainlink.o	equivalent	80	differential emulation: 200 trials agree (91 returned normally, 100% of 5 blocks reached)
 2011598c	pot5_filter	188			not yet	0	
 20115a48	pot4_filter	188			not yet	0	
 20115b04	mainlink_renc_event	220			not yet	0	
@@ -500,15 +500,15 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20115c74	mainlink_tx_e1_raw	136			not yet	0	
 20115cfc	mainlink_flush_parked	608			not yet	0	
 20115f5c	mainlink_flush_enc	248			not yet	0	
-2011606c	mainlink_on_ack	72			not yet	0	
-201160b4	mainlink_on_nak	140			not yet	0	
-20116140	mainlink_tx_reset	124			not yet	0	
+2011606c	mainlink_on_ack	72	mainlink_on_ack	app/mainlink.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+201160b4	mainlink_on_nak	140	mainlink_on_nak	app/mainlink.o	equivalent	140	differential emulation: 200 trials agree (196 returned normally, 80% of 10 blocks reached)
+20116140	mainlink_tx_reset	124	mainlink_tx_reset	app/mainlink.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 201161bc	task_mainlink_retry	232			not yet	0	
 201162a4	mainlink_send_hello	116			not yet	0	
-20116334	mainlink_send_f1	52			not yet	0	
-20116368	mainlink_stat_rx_resync	20			not yet	0	
-2011637c	mainlink_stat_nak_sent	20			not yet	0	
-20116390	mainlink_ack_timeout_cyc	16			not yet	0	
+20116334	mainlink_send_f1	52	mainlink_send_f1	app/mainlink.o	not yet	0	emulation: no trial of 200 returned normally (100% of 1 blocks reached)
+20116368	mainlink_stat_rx_resync	20	mainlink_stat_rx_resync	app/mainlink.o	equivalent	20	differential emulation: 200 trials agree (1 returned normally, 100% of 1 blocks reached)
+2011637c	mainlink_stat_nak_sent	20	mainlink_stat_nak_sent	app/mainlink.o	equivalent	20	differential emulation: 200 trials agree (1 returned normally, 100% of 1 blocks reached)
+20116390	mainlink_ack_timeout_cyc	16	mainlink_ack_timeout_cyc	app/mainlink.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201163a0	mainlink_init	300			not yet	0	
 20116518	mainlink_rx_ctrl	72			not yet	0	
 20116560	mainlink_inject_rx	148			not yet	0	
@@ -1400,7 +1400,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013d818	sd_acmd13_read_status	336	sd_acmd13_read_status	drivers/sd_setup.o	equivalent	336	differential emulation: 200 trials agree (200 returned normally, 100% of 16 blocks reached)
 2013d968	sd_cmd6_switch_func	260	sd_cmd6_switch_func	drivers/sd_setup.o	equivalent	260	differential emulation: 200 trials agree (200 returned normally, 100% of 12 blocks reached)
 2013da6c	sd_switch_high_speed	264	sd_switch_high_speed	drivers/sd_setup.o	equivalent	264	differential emulation: 200 trials agree (200 returned normally, 94% of 16 blocks reached)
-2013db74	sd_switch_uhs_speed	716	sd_switch_uhs_speed	drivers/sd_setup.o	equivalent	716	differential emulation: 200 trials agree (200 returned normally, 86% of 44 blocks reached)
+2013db74	sd_switch_uhs_speed	716	sd_switch_uhs_speed	drivers/sd_setup.o	equivalent	716	differential emulation: 200 trials agree (200 returned normally, 98% of 44 blocks reached)
 2013de60	sd_set_driver_strength	296	sd_set_driver_strength	drivers/sd_setup.o	equivalent	296	differential emulation: 200 trials agree (200 returned normally, 94% of 17 blocks reached)
 2013df88	sd_select_bus_speed	104	sd_select_bus_speed	drivers/sd_setup.o	equivalent	104	differential emulation: 200 trials agree (200 returned normally, 71% of 7 blocks reached)
 2013dff0	sd_card_identify	308	sd_card_identify	drivers/sd_setup.o	equivalent	308	differential emulation: 200 trials agree (200 returned normally, 77% of 13 blocks reached)
@@ -1412,8 +1412,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013e350	sd_check_card	12	sd_check_card	drivers/sd_setup.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013e35c	sd_vol_read	112	sd_vol_read	drivers/sd_setup.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 2013e3cc	sd_vol_write	112	sd_vol_write	drivers/sd_setup.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
-2013e43c	sd_mount_volume	208	sd_mount_volume	drivers/sd_drive.o	not yet	0	emulation: 200 trials agree but reach only 40% of 10 blocks reached of the original
-2013e50c	sd_drive_mount	400	sd_drive_mount	drivers/sd_drive.o	not yet	0	emulation: 200 trials agree but reach only 37% of 19 blocks reached of the original
+2013e43c	sd_mount_volume	208	sd_mount_volume	drivers/sd_drive.o	equivalent	208	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
+2013e50c	sd_drive_mount	400	sd_drive_mount	drivers/sd_drive.o	equivalent	400	differential emulation: 200 trials agree (200 returned normally, 68% of 19 blocks reached)
 2013e6a0	sd_drive_unmount	48	sd_drive_unmount	drivers/sd_drive.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 2013e6d0	sd_drive_attach	76	sd_drive_attach	drivers/sd_drive.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
 2013e71c	sd_driver_op	164	sd_driver_op	drivers/sd_drive.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
@@ -1435,7 +1435,7 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2013f1a4	csd_c_size_mult	108	csd_c_size_mult	drivers/sd_card.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 2013f210	fat_format_geometry_small	40	fat_format_geometry_small	app/fat_format.o	equivalent	40	differential emulation: 200 trials agree (91 returned normally, 100% of 3 blocks reached)
 2013f238	fat_format_geometry	264	fat_format_geometry	app/fat_format.o	equivalent	264	differential emulation: 200 trials agree (91 returned normally, 81% of 21 blocks reached)
-2013f340	fat_format_layout	1116	fat_format_layout	app/fat_format.o	equivalent	1116	differential emulation: 200 trials agree (195 returned normally, 91% of 35 blocks reached, 5 trials inconclusive)
+2013f340	fat_format_layout	1116	fat_format_layout	app/fat_format.o	equivalent	1116	differential emulation: 200 trials agree (197 returned normally, 100% of 35 blocks reached, 3 trials inconclusive)
 2013f79c	fat_format_volume	160	fat_format_volume	app/fat_format.o	equivalent	160	differential emulation: 200 trials agree (195 returned normally, 78% of 9 blocks reached, 5 trials inconclusive)
 2013f83c	sd_fat_format	328	sd_fat_format	app/fat_format.o	equivalent	328	differential emulation: 200 trials agree (200 returned normally, 53% of 19 blocks reached)
 2013f984	sd_format	96	sd_format	app/fat_format.o	not yet	0	emulation: 200 trials agree but reach only 33% of 6 blocks reached of the original
@@ -1467,8 +1467,8 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20140158	sdhi_flag_wait	84	sdhi_flag_wait	drivers/sdhi.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 201401ac	sdhi_card_absent	48	sdhi_card_absent	drivers/sdhi.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 201401dc	sdhi_write_protected	44	sdhi_write_protected	drivers/sdhi.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
-20140210	sdhi_read_block	136	sdhi_read_block	drivers/sdhi.o	equivalent	136	differential emulation: 200 trials agree (160 returned normally, 100% of 5 blocks reached)
-20140298	sdhi_write_block	116	sdhi_write_block	drivers/sdhi.o	equivalent	116	differential emulation: 200 trials agree (109 returned normally, 80% of 5 blocks reached)
+20140210	sdhi_read_block	136	sdhi_read_block	drivers/sdhi.o	equivalent	136	differential emulation: 200 trials agree (175 returned normally, 100% of 5 blocks reached)
+20140298	sdhi_write_block	116	sdhi_write_block	drivers/sdhi.o	equivalent	116	differential emulation: 200 trials agree (123 returned normally, 80% of 5 blocks reached)
 2014030c	sdhi_flag_set_4	20	sdhi_flag_set_4	drivers/sdhi.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20140320	sdhi_check_card	20	sdhi_check_card	drivers/sdhi.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
 20140334	sdhi_wait_idle	164	sdhi_wait_idle	drivers/sdhi.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 83% of 18 blocks reached)
@@ -1532,14 +1532,14 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201437a4	file_remove_core	692			not yet	0	
 20143a58	fs_remove_work	200			not yet	0	
 20143b20	fs_remove	68			not yet	0	
-20143b70	fs_fatcache_setup	172			not yet	0	
-20143c1c	fs_fatcache_setup_a	24			not yet	0	
-20143c34	fs_fatcache_setup_b	20			not yet	0	
-20143c48	fatcache_lookup	116			not yet	0	
-20143cbc	fatcache_load	340			not yet	0	
-20143e10	fatcache_touch	156			not yet	0	
-20143eac	fs_dircache_setup	204			not yet	0	
-20143f78	dircache_lookup	136			not yet	0	
+20143b70	fs_fatcache_setup	172	fs_fatcache_setup	fs/fat_cache.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+20143c1c	fs_fatcache_setup_a	24	fs_fatcache_setup_a	fs/fat_cache.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20143c34	fs_fatcache_setup_b	20	fs_fatcache_setup_b	fs/fat_cache.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20143c48	fatcache_lookup	116	fatcache_lookup	fs/fat_cache.o	equivalent	116	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+20143cbc	fatcache_load	340	fatcache_load	fs/fat_cache.o	equivalent	340	differential emulation: 200 trials agree (90 returned normally, 100% of 16 blocks reached)
+20143e10	fatcache_touch	156	fatcache_touch	fs/fat_cache.o	equivalent	156	differential emulation: 200 trials agree (87 returned normally, 100% of 10 blocks reached)
+20143eac	fs_dircache_setup	204	fs_dircache_setup	fs/fat_cache.o	equivalent	204	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+20143f78	dircache_lookup	136	dircache_lookup	fs/fat_cache.o	equivalent	136	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
 20144000	dircache_load	616			not yet	0	
 20144268	dircache_touch	420			not yet	0	
 2014440c	dircache_flush	284			not yet	0	
@@ -1548,26 +1548,26 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20144688	fs_flush	104			not yet	0	
 201446bc	fs_sync	20			not yet	0	
 201446d0	fs_cache_invalidate	292			not yet	0	
-201447f4	FUN_201447f4	12			not yet	0	
-20144800	fs_set_error	52			not yet	0	
-20144834	fs_set_error_m2	40			not yet	0	
-2014485c	fs_set_error_ret	28			not yet	0	
-20144878	fs_file_check	32			not yet	0	
-20144898	fs_dir_check	32			not yet	0	
-201448b8	fat_sector_is_cluster_first	96			not yet	0	
-20144918	fs_find_drive	56			not yet	0	
-20144950	fs_drive_check_mounted	32			not yet	0	
-20144970	fs_drive_check_writable	16			not yet	0	
-20144980	fat_clust2sect	76			not yet	0	
-201449cc	fat_sect2clust	68			not yet	0	
-20144a10	fs_dev_op1	176			not yet	0	
-20144ac0	fs_dev_op2	176			not yet	0	
+201447f4	FUN_201447f4	12	fs_last_error_get	fs/fat_table.o	equivalent	12	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20144800	fs_set_error	52	fs_set_error	fs/fat_table.o	equivalent	52	differential emulation: 200 trials agree (92 returned normally, 100% of 1 blocks reached)
+20144834	fs_set_error_m2	40	fs_set_error_m2	fs/fat_table.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014485c	fs_set_error_ret	28	fs_set_error_ret	fs/fat_table.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20144878	fs_file_check	32	fs_file_check	fs/fat_table.o	equivalent	32	differential emulation: 200 trials agree (98 returned normally, 100% of 3 blocks reached)
+20144898	fs_dir_check	32	fs_dir_check	fs/fat_table.o	equivalent	32	differential emulation: 200 trials agree (98 returned normally, 100% of 3 blocks reached)
+201448b8	fat_sector_is_cluster_first	96	fat_sector_is_cluster_first	fs/fat_table.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+20144918	fs_find_drive	56	fs_find_drive	fs/fat_table.o	equivalent	56	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+20144950	fs_drive_check_mounted	32	fs_drive_check_mounted	fs/fat_table.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+20144970	fs_drive_check_writable	16	fs_drive_check_writable	fs/fat_table.o	equivalent	16	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20144980	fat_clust2sect	76	fat_clust2sect	fs/fat_table.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 2 blocks reached)
+201449cc	fat_sect2clust	68	fat_sect2clust	fs/fat_table.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+20144a10	fs_dev_op1	176	fs_dev_op1	fs/fat_table.o	equivalent	176	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+20144ac0	fs_dev_op2	176	fs_dev_op2	fs/fat_table.o	equivalent	176	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
 20144b74	dir_sector_dirty	144			not yet	0	
 20144c04	root_sector_dirty	88			not yet	0	
 20144c5c	dir_sector_get	168			not yet	0	
 20144d04	root_sector_get	88			not yet	0	
 20144d5c	lfn_entry_fill	348			not yet	0	
-20144eb8	lfn_checksum	60			not yet	0	
+20144eb8	lfn_checksum	60	lfn_checksum	fs/fat_dirent.o	equivalent	60	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
 20144ef4	root_dir_write_lfn	432			not yet	0	
 201450a4	sfn_from_dotted	124			not yet	0	
 20145120	fs_char_lfn_only	100			not yet	0	
@@ -1588,16 +1588,16 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 201465ac	sfn_numtail_next	92			not yet	0	
 20146608	subdir_lfn_match	228			not yet	0	
 201466ec	subdir_write_lfn	408			not yet	0	
-20146884	dirent_get_cluster	60			not yet	0	
+20146884	dirent_get_cluster	60	dirent_get_cluster	fs/fat_dirent.o	equivalent	60	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
 201468c0	subdir_find	2308			not yet	0	
 201471cc	subdir_find_locked	124			not yet	0	
-20147248	path_next_component	96			not yet	0	
-201472a8	path_components_len	108			not yet	0	
+20147248	path_next_component	96	path_next_component	fs/fat_dirent.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+201472a8	path_components_len	108	path_components_len	fs/fat_dirent.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 20147314	fs_name_check	176			not yet	0	
 201473c4	fs_path_validate	224			not yet	0	
 201474a4	dirent_set_time	228			not yet	0	
-20147588	dirent_set_cluster	72			not yet	0	
-201475d0	fat_time_to_tm	112			not yet	0	
+20147588	dirent_set_cluster	72	dirent_set_cluster	fs/fat_dirent.o	equivalent	72	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+201475d0	fat_time_to_tm	112	fat_time_to_tm	fs/fat_dirent.o	equivalent	112	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
 20147640	dirent_name_to_str	176			not yet	0	
 201476f0	fs_attr_check	12			not yet	0	
 201476fc	sjis_fold_case	120			not yet	0	
@@ -1620,60 +1620,61 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 20148c94	ucs2_to_upper	224			not yet	0	
 20148d74	fs_wstricmp_ucs2	120			not yet	0	
 20148dec	fs_wstrnicmp_ucs2	144			not yet	0	
-20148f40	fat32_fsinfo_read	124			not yet	0	
-20148fcc	fat_mount	300			not yet	0	
-201490f8	fat_find_volume	324			not yet	0	
-2014919c	fat_table_sector_get	220			not yet	0	
-20149278	fat_table_sector_dirty	196			not yet	0	
-2014933c	fat32_entry_get	120			not yet	0	
-201493b4	fat32_entry_set	108			not yet	0	
-20149420	fat_entry_rw	636			not yet	0	
-2014969c	clmap_clear	32			not yet	0	
-201496bc	fat_chain_free	204			not yet	0	
-20149788	fat_chain_free_locked	68			not yet	0	
-201497cc	fat_entry_rw_locked	88			not yet	0	
-20149824	clmap_set	32			not yet	0	
-20149844	clmap_test	28			not yet	0	
-20149860	clmap_find_free	224			not yet	0	
-20149940	fat32_find_free	320			not yet	0	
-20149a80	fat32_alloc_cluster	268			not yet	0	
-20149b8c	fat_alloc_cluster	608			not yet	0	
-20149dec	fat_alloc_cluster_locked	92			not yet	0	
-20149e48	fat_next_cluster	96			not yet	0	
-20149eb0	fat_next_sector_alloc	184			not yet	0	
-20149f68	fat_next_sector	184			not yet	0	
-2014a020	fat32_fsinfo_write	132			not yet	0	
-2014a0a4	fat32_fsinfo_write_locked	60			not yet	0	
+20148e80	-	0	fat_detect_superfloppy	fs/fat_volume.o	equivalent	0	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+20148f40	fat32_fsinfo_read	124	fat32_fsinfo_read	fs/fat_volume.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+20148fcc	fat_mount	300	fat_mount	fs/fat_volume.o	equivalent	300	differential emulation: 200 trials agree (200 returned normally, 100% of 14 blocks reached)
+201490f8	fat_find_volume	324	fat_find_volume	fs/fat_volume.o	equivalent	324	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
+2014919c	fat_table_sector_get	220	fat_table_sector_get	fs/fat_table.o	equivalent	220	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
+20149278	fat_table_sector_dirty	196	fat_table_sector_dirty	fs/fat_table.o	equivalent	196	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014933c	fat32_entry_get	120	fat32_entry_get	fs/fat_table.o	equivalent	120	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+201493b4	fat32_entry_set	108	fat32_entry_set	fs/fat_table.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+20149420	fat_entry_rw	636	fat_entry_rw	fs/fat_table.o	equivalent	636	differential emulation: 200 trials agree (200 returned normally, 85% of 33 blocks reached)
+2014969c	clmap_clear	32	clmap_clear	fs/fat_table.o	equivalent	32	differential emulation: 200 trials agree (94 returned normally, 100% of 1 blocks reached)
+201496bc	fat_chain_free	204	fat_chain_free	fs/fat_table.o	equivalent	204	differential emulation: 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+20149788	fat_chain_free_locked	68	fat_chain_free_locked	fs/fat_table.o	equivalent	68	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+201497cc	fat_entry_rw_locked	88	fat_entry_rw_locked	fs/fat_table.o	equivalent	88	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+20149824	clmap_set	32	clmap_set	fs/fat_table.o	equivalent	32	differential emulation: 200 trials agree (94 returned normally, 100% of 1 blocks reached)
+20149844	clmap_test	28	clmap_test	fs/fat_table.o	equivalent	28	differential emulation: 200 trials agree (94 returned normally, 100% of 1 blocks reached)
+20149860	clmap_find_free	224	clmap_find_free	fs/fat_table.o	equivalent	224	differential emulation: 200 trials agree (200 returned normally, 100% of 15 blocks reached)
+20149940	fat32_find_free	320	fat32_find_free	fs/fat_table.o	equivalent	320	differential emulation: 200 trials agree (200 returned normally, 100% of 16 blocks reached)
+20149a80	fat32_alloc_cluster	268	fat32_alloc_cluster	fs/fat_table.o	equivalent	268	differential emulation: 200 trials agree (200 returned normally, 76% of 17 blocks reached)
+20149b8c	fat_alloc_cluster	608	fat_alloc_cluster	fs/fat_table.o	equivalent	608	differential emulation: 200 trials agree (200 returned normally, 97% of 31 blocks reached)
+20149dec	fat_alloc_cluster_locked	92	fat_alloc_cluster_locked	fs/fat_table.o	equivalent	92	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+20149e48	fat_next_cluster	96	fat_next_cluster	fs/fat_table.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+20149eb0	fat_next_sector_alloc	184	fat_next_sector_alloc	fs/fat_table.o	equivalent	184	differential emulation: 200 trials agree (200 returned normally, 62% of 8 blocks reached)
+20149f68	fat_next_sector	184	fat_next_sector	fs/fat_table.o	equivalent	184	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014a020	fat32_fsinfo_write	132	fat32_fsinfo_write	fs/fat_table.o	equivalent	132	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014a0a4	fat32_fsinfo_write_locked	60	fat32_fsinfo_write_locked	fs/fat_table.o	equivalent	60	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
 2014a0e0	fs_clmap_attach	548			not yet	0	
 2014a304	fs_clmap_attach_scan	92			not yet	0	
 2014a360	fs_clmap_size	320			not yet	0	
-2014a4a4	fs_check_ready	44			not yet	0	
-2014a4d0	fs_init	268			not yet	0	
-2014a5dc	fs_drive_attach	572			not yet	0	
-2014a818	fs_drive_attach_thunk	36			not yet	0	
-2014a83c	fs_exit	352			not yet	0	
-2014a99c	fs_vol_clear_geometry	56			not yet	0	
-2014a9d4	fs_drive_mount	284			not yet	0	
-2014aaf0	fs_drive_unmount	132			not yet	0	
-2014ab74	fs_drive_detach	168			not yet	0	
+2014a4a4	fs_check_ready	44	fs_check_ready	fs/fat_volume.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014a4d0	fs_init	268	fs_init	fs/fat_volume.o	equivalent	268	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+2014a5dc	fs_drive_attach	572	fs_drive_attach	fs/fat_volume.o	equivalent	572	differential emulation: 200 trials agree (200 returned normally, 83% of 30 blocks reached)
+2014a818	fs_drive_attach_thunk	36	fs_drive_attach_512	fs/fat_volume.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014a83c	fs_exit	352	fs_exit	fs/fat_volume.o	equivalent	352	differential emulation: 200 trials agree (200 returned normally, 82% of 17 blocks reached)
+2014a99c	fs_vol_clear_geometry	56	fs_vol_clear_geometry	fs/fat_volume.o	equivalent	56	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014a9d4	fs_drive_mount	284	fs_drive_mount	fs/fat_volume.o	equivalent	284	differential emulation: 200 trials agree (200 returned normally, 64% of 14 blocks reached)
+2014aaf0	fs_drive_unmount	132	fs_drive_unmount	fs/fat_volume.o	equivalent	132	differential emulation: 200 trials agree (200 returned normally, 86% of 7 blocks reached)
+2014ab74	fs_drive_detach	168	fs_drive_detach	fs/fat_volume.o	equivalent	168	differential emulation: 200 trials agree (200 returned normally, 58% of 12 blocks reached)
 2014ac30	fs_path_lookup	492			not yet	0	
 2014ae1c	fs_stat_work	172			not yet	0	
 2014aec8	fs_stat	76			not yet	0	
 2014af14	fs_get_attr	48			not yet	0	
-2014af44	fs_file_size_copy	32			not yet	0	
-2014af64	fs_fsize	100			not yet	0	
-2014afcc	fs_split_sectors	84			not yet	0	
-2014b020	fs_disk_total_calc	288			not yet	0	
-2014b140	fs_disk_size	156			not yet	0	
-2014b1e0	fat32_count_free	436			not yet	0	
-2014b394	fat32_count_free_locked	84			not yet	0	
-2014b3e8	fat16_count_free	272			not yet	0	
-2014b500	fat16_count_free_locked	76			not yet	0	
-2014b54c	fat12_count_free	408			not yet	0	
-2014b6e4	fat12_count_free_locked	76			not yet	0	
-2014b730	fs_count_free	172			not yet	0	
-2014b7dc	fs_disk_free_work	164			not yet	0	
-2014b880	fs_disk_free	84			not yet	0	
+2014af44	fs_file_size_copy	32	fs_file_size_copy	fs/fat_space.o	equivalent	32	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014af64	fs_fsize	100	fs_fsize	fs/fat_space.o	equivalent	100	differential emulation: 200 trials agree (200 returned normally, 83% of 6 blocks reached)
+2014afcc	fs_split_sectors	84	fs_split_sectors	fs/fat_space.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014b020	fs_disk_total_calc	288	fs_disk_total_calc	fs/fat_space.o	equivalent	288	differential emulation: 200 trials agree (200 returned normally, 100% of 12 blocks reached)
+2014b140	fs_disk_size	156	fs_disk_size	fs/fat_space.o	equivalent	156	differential emulation: 200 trials agree (200 returned normally, 89% of 9 blocks reached)
+2014b1e0	fat32_count_free	436	fat32_count_free	fs/fat_space.o	equivalent	436	differential emulation: 200 trials agree (200 returned normally, 95% of 19 blocks reached)
+2014b394	fat32_count_free_locked	84	fat32_count_free_locked	fs/fat_space.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014b3e8	fat16_count_free	272	fat16_count_free	fs/fat_space.o	equivalent	272	differential emulation: 200 trials agree (200 returned normally, 88% of 8 blocks reached)
+2014b500	fat16_count_free_locked	76	fat16_count_free_locked	fs/fat_space.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014b54c	fat12_count_free	408	fat12_count_free	fs/fat_space.o	equivalent	408	differential emulation: 200 trials agree (200 returned normally, 90% of 10 blocks reached)
+2014b6e4	fat12_count_free_locked	76	fat12_count_free_locked	fs/fat_space.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014b730	fs_count_free	172	fs_count_free	fs/fat_space.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014b7dc	fs_disk_free_work	164	fs_disk_free_work	fs/fat_space.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 89% of 9 blocks reached)
+2014b880	fs_disk_free	84	fs_disk_free	fs/fat_space.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
 2014b8d4	dirent_init	104			not yet	0	
 2014b93c	dir_init_dot_entries	300			not yet	0	
 2014ba68	dir_create_core	956			not yet	0	
@@ -1689,77 +1690,77 @@ address	ghidra_name	size	source	file	verdict	covered	detail
 2014c688	dir_read_core	812			not yet	0	
 2014ca08	fs_readdir_work	148			not yet	0	
 2014ca4c	fs_readdir	68			not yet	0	
-2014ca90	sjis_is_lead	40			not yet	0	
-2014cab8	sjis_to_ucs2_char	204			not yet	0	
-2014cb84	sjis_to_ucs2_str	152			not yet	0	
-2014cc1c	ucs2_to_ascii_char	332			not yet	0	
+2014ca90	sjis_is_lead	40	sjis_is_lead	fs/fs_string.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014cab8	sjis_to_ucs2_char	204	sjis_to_ucs2_char	fs/fs_string.o	equivalent	204	differential emulation: 200 trials agree (89 returned normally, 100% of 9 blocks reached)
+2014cb84	sjis_to_ucs2_str	152	sjis_to_ucs2_str	fs/fs_string.o	equivalent	152	differential emulation: 200 trials agree (41 returned normally, 100% of 9 blocks reached)
+2014cc1c	ucs2_to_ascii_char	332	ucs2_to_ascii_char	fs/fs_string.o	equivalent	332	differential emulation: 200 trials agree (83 returned normally, 67% of 21 blocks reached)
 2014cd68	sjis_map_ext_chars	652			not yet	0	
-2014cff4	fs_wstrcpy_len	92			not yet	0	
-2014d050	fs_ucs2_to_ascii_upper	196			not yet	0	
-2014d128	fs_memcpy	32			not yet	0	
-2014d148	fs_memset	124			not yet	0	
-2014d1c4	fs_memmove	92			not yet	0	
-2014d220	fs_strlen	40			not yet	0	
-2014d248	fs_wstrlen_bytes	40			not yet	0	
-2014d270	fs_strcpy	24			not yet	0	
-2014d288	fs_strncpy	68			not yet	0	
-2014d2cc	fs_wstrncpy	108			not yet	0	
-2014d338	fs_strchr	36			not yet	0	
-2014d35c	fs_toupper	24			not yet	0	
-2014d374	fs_tolower	24			not yet	0	
-2014d38c	fs_stricmp	108			not yet	0	
-2014d3f8	fs_wstricmp	148			not yet	0	
-2014d48c	fs_strnicmp	124			not yet	0	
-2014d508	fs_wstrnicmp	172			not yet	0	
-2014d5b4	fs_strlwr_sjis	76			not yet	0	
-2014d600	fs_atoi	48			not yet	0	
-2014d630	fs_utoa_digits	72			not yet	0	
-2014d678	fs_itoa	80			not yet	0	
-2014d6c8	fs_stricmp_sjis	168			not yet	0	
-2014d770	fs_strnicmp_sjis	196			not yet	0	
-2014d834	fs_atoi_2	48			not yet	0	
-2014d864	fs_itoa_2	80			not yet	0	
-2014d8b4	FUN_2014d8b4	20			not yet	0	
-2014d8c8	fs_wstr_store_le	36			not yet	0	
-2014d8ec	fat_st_word	20			not yet	0	
-2014d900	fat_ld_word	24			not yet	0	
-2014d918	fat_st_dword	36			not yet	0	
-2014d93c	fat_ld_dword	32			not yet	0	
-2014d95c	fs_task_ctx_get	48			not yet	0	
-2014d98c	fs_task_err_set	48			not yet	0	
-2014d9c0	fs_lock_a	164			not yet	0	
-2014da64	fs_unlock_a	108			not yet	0	
-2014dad0	fs_sem_a_create	76			not yet	0	
-2014db2c	fs_sem_a_delete	64			not yet	0	
-2014db6c	fs_lock_b	164			not yet	0	
-2014dc10	fs_unlock_b	108			not yet	0	
-2014dc7c	fs_sem_b_create	76			not yet	0	
-2014dcd8	fs_sem_b_delete	64			not yet	0	
-2014dd18	fs_sem_wait_1s	28			not yet	0	
-2014dd34	fs_sem_signal	24			not yet	0	
-2014dd4c	fs_drive_sem_create	112			not yet	0	
-2014ddd0	fs_drive_sem_delete	96			not yet	0	
-2014de30	fs_sem1_wait	44			not yet	0	
-2014de5c	fs_sem1_signal	40			not yet	0	
-2014de84	fs_sem1_create	52			not yet	0	
-2014decc	fs_sem1_delete	40			not yet	0	
-2014def4	fs_sem2_wait	44			not yet	0	
-2014df20	fs_sem2_signal	40			not yet	0	
-2014df48	fs_sem2_create	52			not yet	0	
-2014df8c	fs_sem2_delete	40			not yet	0	
-2014dfb4	fsys_sem_wait	40			not yet	0	
-2014dfdc	fsys_sem_signal	36			not yet	0	
-2014e000	fsys_init_sem	52			not yet	0	
-2014e044	fsys_sem_delete	40			not yet	0	
-2014e06c	fs_mpf_alloc	64			not yet	0	
-2014e0ac	fs_mpf_free	28			not yet	0	
-2014e0c8	fs_mpf_create	36			not yet	0	
-2014e100	fs_mpf_delete	24			not yet	0	
-2014e118	fs_work_alloc	52			not yet	0	
-2014e14c	fs_work_free	44			not yet	0	
-2014e178	fs_work_pool_create	44			not yet	0	
-2014e1b4	fs_work_pool_delete	40			not yet	0	
-2014e1dc	fs_get_time_tm	16			not yet	0	
+2014cff4	fs_wstrcpy_len	92	fs_wstrcpy_len	fs/fs_string.o	equivalent	92	differential emulation: 200 trials agree (19 returned normally, 100% of 5 blocks reached)
+2014d050	fs_ucs2_to_ascii_upper	196	fs_ucs2_to_ascii_upper	fs/fs_string.o	equivalent	196	differential emulation: 200 trials agree (45 returned normally, 60% of 15 blocks reached)
+2014d128	fs_memcpy	32	fs_memcpy	fs/fs_string.o	equivalent	32	differential emulation: 200 trials agree (53 returned normally, 100% of 3 blocks reached)
+2014d148	fs_memset	124	fs_memset	fs/fs_string.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 7 blocks reached)
+2014d1c4	fs_memmove	92	fs_memmove	fs/fs_string.o	equivalent	92	differential emulation: 200 trials agree (127 returned normally, 100% of 7 blocks reached)
+2014d220	fs_strlen	40	fs_strlen	fs/fs_string.o	equivalent	40	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+2014d248	fs_wstrlen_bytes	40	fs_wstrlen_bytes	fs/fs_string.o	equivalent	40	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+2014d270	fs_strcpy	24	fs_strcpy	fs/fs_string.o	equivalent	24	differential emulation: 200 trials agree (45 returned normally, 100% of 3 blocks reached)
+2014d288	fs_strncpy	68	fs_strncpy	fs/fs_string.o	equivalent	68	differential emulation: 200 trials agree (53 returned normally, 100% of 4 blocks reached)
+2014d2cc	fs_wstrncpy	108	fs_wstrncpy	fs/fs_string.o	equivalent	108	differential emulation: 200 trials agree (53 returned normally, 100% of 8 blocks reached)
+2014d338	fs_strchr	36	fs_strchr	fs/fs_string.o	equivalent	36	differential emulation: 200 trials agree (89 returned normally, 100% of 5 blocks reached)
+2014d35c	fs_toupper	24	fs_toupper	fs/fs_string.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014d374	fs_tolower	24	fs_tolower	fs/fs_string.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+2014d38c	fs_stricmp	108	fs_stricmp	fs/fs_string.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 9 blocks reached)
+2014d3f8	fs_wstricmp	148	fs_wstricmp	fs/fs_string.o	equivalent	148	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
+2014d48c	fs_strnicmp	124	fs_strnicmp	fs/fs_string.o	equivalent	124	differential emulation: 200 trials agree (200 returned normally, 100% of 10 blocks reached)
+2014d508	fs_wstrnicmp	172	fs_wstrnicmp	fs/fs_string.o	equivalent	172	differential emulation: 200 trials agree (200 returned normally, 100% of 11 blocks reached)
+2014d5b4	fs_strlwr_sjis	76	fs_strlwr_sjis	fs/fs_string.o	equivalent	76	differential emulation: 200 trials agree (89 returned normally, 100% of 6 blocks reached)
+2014d600	fs_atoi	48	fs_atoi	fs/fs_string.o	equivalent	48	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+2014d630	fs_utoa_digits	72	fs_utoa_digits	fs/fs_string.o	equivalent	72	differential emulation: 200 trials agree (90 returned normally, 100% of 3 blocks reached)
+2014d678	fs_itoa	80	fs_itoa	fs/fs_string.o	equivalent	80	differential emulation: 200 trials agree (91 returned normally, 83% of 6 blocks reached)
+2014d6c8	fs_stricmp_sjis	168	fs_stricmp_sjis	fs/fs_string.o	equivalent	168	differential emulation: 200 trials agree (200 returned normally, 100% of 14 blocks reached)
+2014d770	fs_strnicmp_sjis	196	fs_strnicmp_sjis	fs/fs_string.o	equivalent	196	differential emulation: 200 trials agree (200 returned normally, 100% of 15 blocks reached)
+2014d834	fs_atoi_2	48	fs_atoi_2	fs/fs_string.o	equivalent	48	differential emulation: 200 trials agree (89 returned normally, 100% of 3 blocks reached)
+2014d864	fs_itoa_2	80	fs_itoa_2	fs/fs_string.o	equivalent	80	differential emulation: 200 trials agree (91 returned normally, 83% of 6 blocks reached)
+2014d8b4	FUN_2014d8b4	20	fs_byte_pair_sum	fs/fs_string.o	equivalent	20	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014d8c8	fs_wstr_store_le	36	fs_wstr_store_le	fs/fs_string.o	equivalent	36	differential emulation: 200 trials agree (45 returned normally, 100% of 2 blocks reached)
+2014d8ec	fat_st_word	20	fat_st_word	fs/fs_string.o	equivalent	20	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2014d900	fat_ld_word	24	fat_ld_word	fs/fs_string.o	equivalent	24	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2014d918	fat_st_dword	36	fat_st_dword	fs/fs_string.o	equivalent	36	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2014d93c	fat_ld_dword	32	fat_ld_dword	fs/fs_string.o	equivalent	32	differential emulation: 200 trials agree (89 returned normally, 100% of 1 blocks reached)
+2014d95c	fs_task_ctx_get	48	fs_task_ctx_get	fs/fs_os.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+2014d98c	fs_task_err_set	48	fs_task_err_set	fs/fs_os.o	equivalent	48	differential emulation: 200 trials agree (200 returned normally, 67% of 3 blocks reached)
+2014d9c0	fs_lock_a	164	fs_lock_a	fs/fs_os.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+2014da64	fs_unlock_a	108	fs_unlock_a	fs/fs_os.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014dad0	fs_sem_a_create	76	fs_sem_a_create	fs/fs_os.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014db2c	fs_sem_a_delete	64	fs_sem_a_delete	fs/fs_os.o	equivalent	64	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2014db6c	fs_lock_b	164	fs_lock_b	fs/fs_os.o	equivalent	164	differential emulation: 200 trials agree (200 returned normally, 100% of 13 blocks reached)
+2014dc10	fs_unlock_b	108	fs_unlock_b	fs/fs_os.o	equivalent	108	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014dc7c	fs_sem_b_create	76	fs_sem_b_create	fs/fs_os.o	equivalent	76	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014dcd8	fs_sem_b_delete	64	fs_sem_b_delete	fs/fs_os.o	equivalent	64	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2014dd18	fs_sem_wait_1s	28	fs_sem_wait_1s	fs/fs_os.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014dd34	fs_sem_signal	24	fs_sem_signal	fs/fs_os.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014dd4c	fs_drive_sem_create	112	fs_drive_sem_create	fs/fs_os.o	equivalent	112	differential emulation: 200 trials agree (200 returned normally, 100% of 8 blocks reached)
+2014ddd0	fs_drive_sem_delete	96	fs_drive_sem_delete	fs/fs_os.o	equivalent	96	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
+2014de30	fs_sem1_wait	44	fs_sem1_wait	fs/fs_os.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014de5c	fs_sem1_signal	40	fs_sem1_signal	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014de84	fs_sem1_create	52	fs_sem1_create	fs/fs_os.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014decc	fs_sem1_delete	40	fs_sem1_delete	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014def4	fs_sem2_wait	44	fs_sem2_wait	fs/fs_os.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014df20	fs_sem2_signal	40	fs_sem2_signal	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014df48	fs_sem2_create	52	fs_sem2_create	fs/fs_os.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014df8c	fs_sem2_delete	40	fs_sem2_delete	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014dfb4	fsys_sem_wait	40	fsys_sem_wait	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014dfdc	fsys_sem_signal	36	fsys_sem_signal	fs/fs_os.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e000	fsys_init_sem	52	fsys_init_sem	fs/fs_os.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e044	fsys_sem_delete	40	fsys_sem_delete	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e06c	fs_mpf_alloc	64	fs_mpf_alloc	fs/fs_os.o	equivalent	64	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
+2014e0ac	fs_mpf_free	28	fs_mpf_free	fs/fs_os.o	equivalent	28	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e0c8	fs_mpf_create	36	fs_mpf_create	fs/fs_os.o	equivalent	36	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014e100	fs_mpf_delete	24	fs_mpf_delete	fs/fs_os.o	equivalent	24	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e118	fs_work_alloc	52	fs_work_alloc	fs/fs_os.o	equivalent	52	differential emulation: 200 trials agree (200 returned normally, 100% of 4 blocks reached)
+2014e14c	fs_work_free	44	fs_work_free	fs/fs_os.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e178	fs_work_pool_create	44	fs_work_pool_create	fs/fs_os.o	equivalent	44	differential emulation: 200 trials agree (200 returned normally, 100% of 1 blocks reached)
+2014e1b4	fs_work_pool_delete	40	fs_work_pool_delete	fs/fs_os.o	equivalent	40	differential emulation: 200 trials agree (200 returned normally, 100% of 3 blocks reached)
+2014e1dc	fs_get_time_tm	16	fs_get_time_tm	fs/fs_os.o	identical	16	byte-identical at the original address (16 bytes)
 2014e1ec	fs_get_tick	28			not yet	0	
 2014e208	strcasecmp	72	strcasecmp	lib/string.o	equivalent	72	differential emulation: 200 trials agree (200 returned normally, 100% of 5 blocks reached)
 2014e250	strncasecmp	84	strncasecmp	lib/string.o	equivalent	84	differential emulation: 200 trials agree (200 returned normally, 100% of 6 blocks reached)
