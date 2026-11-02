@@ -11,7 +11,7 @@ About two thirds of the HiFi4 functions are library code, linked whole and in so
 | crtbegin + `system_MIMXRT685S_dsp.c` | 0x207CF0–0x208050 | 5 | 2 | [C runtime start](#c-runtime-start-and-system-file) |
 | NXP MCUXpresso SDK 2.10 drivers (35 `fsl_*.c` files) | 0x208060–0x216DC4 | 440 | 156 | [SDK drivers](#nxp-mcuxpresso-sdk-210-drivers) |
 | Cadence NatureDSP HiFi4 (float32) | 0x216E00–0x21A970, 0x233670–0x235190 | 22 | 10 | [NatureDSP](#cadence-naturedsp-hifi4) |
-| rpmsg-lite v3.1.1 | 0x21AA90–0x21BD24 | 69 | 54 | [rpmsg-lite](#rpmsg-lite-v311) |
+| rpmsg-lite v3.1.0 | 0x21AA90–0x21BD24 | 69 | 54 | [rpmsg-lite](#rpmsg-lite-v310) |
 | Cadence XOS and its C-library glue | 0x2266FC–0x229380, 0x235F40–0x236000 | 17 | 11 | [XOS](#cadence-xos-and-c-library-glue) |
 | newlib libm (single precision) | 0x229A20–0x22BA10 | 17 | 17 | [libm](#newlib-libm) |
 | newlib libc | 0x22BA20–0x233250, 0x235F90–0x236430 | 83 | 65 | [libc](#newlib-libc) |
@@ -27,7 +27,7 @@ Edges are caller–callee function pairs in the decompile between the address bl
 flowchart TD
     APP["application<br/>threads, audio I/O, DSP chains<br/>(hifi4.md, dsp-chains.md)"]
     SDK["NXP SDK 2.10 drivers<br/>I2S, DMA, SPI, CLOCK, MU, SEMA42 ..."]
-    RPM["rpmsg-lite 3.1.1<br/>env bm, platform, virtqueue"]
+    RPM["rpmsg-lite 3.1.0<br/>env bm, platform, virtqueue"]
     NDSP["NatureDSP HiFi4<br/>FFT, FIR, biquads, scl_/vec_ math"]
     XOS["Cadence XOS<br/>threads, msgq, mutex, timers"]
     LIBC["newlib<br/>libm, libc, malloc, stdio"]
@@ -774,7 +774,9 @@ NDSP float32 kernels. The rodata tables 0x200650..0x2008BF equal NDSP's `alog10f
 | 0x00234E00 | `vec_scale_sf` | NDSP vectorf: y = clamp(x * s, fmin, fmax) (mul.s, max.s, min.s) **[inference]** |
 | 0x00235190 | `vec_shiftf` | NDSP vectorf: y = x * 2^t **[inference]** |
 
-## rpmsg-lite v3.1.1
+## rpmsg-lite v3.1.0
+
+Version (T24 HiFi4, 2026-11-02): **v3.1.0**, not v3.1.1 as T23 had it **[fact]**: `rpmsg_lite_master_init` 0x21B34C and `rpmsg_lite_remote_init` 0x21B544 accept link ids 0 and 1 (`bgeui a3, 2` at 0x21B547), i.e. `RL_PLATFORM_HIGHEST_LINK_ID` 1, which the `imxrt600_hifi4` platform header has in v3.1.0 and changed to 0 in v3.1.1; the other v3.1.0 → v3.1.1 changes are under `RL_ALLOW_CONSUMED_BUFFERS_NOTIFICATION` (off) and leave the code unchanged. The recreated build (`src/ifdsp_hifi4`) compiles v3.1.0 and passes the differential emulation of both init functions; the M33 uses v3.1.0 as well. `llist.c`'s `add_to_list` / `remove_from_list` are linked late, at 0x235370 / 0x235398 (`FUN_00235370`, `FUN_00235398`, called where `rpmsg_lite_create_ept` / `_destroy_ept` add and remove the endpoint node) **[fact]**.
 
 The remote side of the M33 ↔ HiFi4 link: the bare-metal environment (`rpmsg_env_bm.c`, `env_lock_mutex` is empty), the `imxrt600_hifi4` platform layer (MU-B doorbell, XOS interrupt registration), `rpmsg_lite.c`, `rpmsg_ns.c` and `virtqueue.c`, in source order one to one; `RL_ERR_PARAM` is −5003 and `virtqueue_dump` prints "VQ: %s - size=%d; …" (0x2062E4) **[fact]**. The message flow is on [ipc.md](ipc.md#rpmsg-lite-instance).
 
