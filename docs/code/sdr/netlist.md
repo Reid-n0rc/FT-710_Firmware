@@ -862,6 +862,26 @@ fix below, except where marked):
   (largest |b| 8 at 800 LSB, the ±1 rounding steps of the first stage), and nothing reaches the second-stage RAMs or
   DSP48_X0Y6.B in those 100,000 clocks **[fact, simulation]**.
 
+**RTL of three second-stage parts (T24 SDR round 3) [fact, exhaustive or random evaluation of the cones; each checked
+on every clock against its slice].**
+- **Pre-adders, operand mux, b** (`hdl/sdr/rx_fir_operand_mux.v`, row `rx_fir_operand`). Each pre-adder chain is a
+  **signed** 32 + 32 → 33-bit sum: at bit 31 the carry chain has DI = ~a31 (not a31), so its carry out is the inverted
+  sign of the 33-bit sum; the extra stage above (`SLICE_X8Y17`, `X14Y17`, `X44Y18`, `X36Y13`: S = 1, DI = 0) passes it,
+  and the select LUTs `SLICE_X36Y17/BLUT`, `X37Y14/BLUT` invert it again into b[32] (= b[34:32], one flip-flop). The
+  mux is a plain AND-OR: b[k] = OR of sel_i & chain_i[k] and sel_j & reg_j[k] (eight 32-bit register sources, sign
+  bit repeated into b[32]); b has a synchronous reset over its enable. The copy for DSP48_X1Y2/X1Y3 is one clock late
+  for b[16:0] and two clocks late for b[32:17] (an SRLC32E at address 0 in front of each flip-flop, `SLICE_X52Y5`,
+  `X50Y8`). The 12 selects, the enable and the reset are cut at their LUTs (inputs of the block).
+- **Integrator and difference** (`hdl/sdr/rx_window_sum.v`, row `rx_window_sum`). The operand x is 73 bits: bits 33..0
+  from pipeline flip-flops of the low partial products, bits 72..34 = DSP48_X1Y3.P[38:0]. The integrator
+  `SLICE_X46Y0..Y18` is acc = 0 (sync reset `SLICE_X13Y13/CLUT`) or acc + x (enable `SLICE_X13Y13/DLUT`). The
+  "difference" is not of the integrator but of **two snapshots of x**: sa (73 flip-flops, enable `SLICE_X30Y3/DLUT`) and
+  sb (enable `SLICE_X31Y6/BLUT`), subtracted by the 73-bit chain `SLICE_X45Y0..Y18` (CYINIT = 1), of which bits 71..25
+  are registered (47 FDCE, clear `SLICE_X35Y1/DFF`). The four enables come from the second-stage sequencer
+  (`SLICE_X12..X15Y3..Y22`) and are inputs of the block. This corrects the reading above ("subtracts two snapshots of
+  the same source" was right; that source is the product, not the accumulator).
+- **Output MAC**: 3.10.
+
 **Carrier position per mode [fact, simulation].** `ddc_main` with MAIN's RX register set for each mode at dial 10 MHz (18
 frames: 0x03, 0x04, 0x08/09, 0x0A, 0x0B = 0x006A, 0x0E, 0x0F, 0x12/13, 0x14, 0x15, 0x16, 0x18/19, 0x1D, 0x1E, 0x1F with the
 values of [main/sdr-link.md](../main/sdr-link.md); the scope, NB, RTTY, CW-shape and TX-drive registers left at reset; all
@@ -938,6 +958,11 @@ flowchart LR
   with I2 = 0, O5 = I0 = acc bit 54 via `SLICE_X41Y41/DFF` → DIBDI15, O6 = I4 = acc bit 25 → DIADI2), to RAMB18_X2Y15 (SDP,
   36 bits: DIADI = word bits 15..0, DIBDI = bits 31..16). No LUT compares the top bits, so nothing rounds or saturates
   the word. The serializer's last flip-flop `SLICE_X59Y39/D5FF` (the M17 driver) loads DOBDO15, word bit 31: MSB first.
+- **RTL (T24 SDR round 3) [fact, exhaustive evaluation; checked on every clock against the slice].**
+  `hdl/sdr/rx_out_mac.v` (row `rx_out_mac`): X0Y11.P[16:0] is registered once; the 12-bit phase counter
+  `SLICE_X48Y12..Y14` counts every clock and is cleared by the output strobe `SLICE_X29Y19/AFF`; the accumulator loads
+  {X0Y12.P[37:0], p_lo} at count 24 (`SLICE_X49Y12/BLUT`) and adds it at count 32 (`SLICE_X49Y12/CLUT`), and holds
+  otherwise. So the "dump" is a load at one phase and the accumulation covers exactly two phases per output period.
 - **M17 carries the word one bit clock after the V17 edge [fact, simulation].** In the probed run (2,000 LSB, clocks
   3,000,000–3,350,000) all 203 FIFO input words appear on M17, in order, when each M17 word is taken from the second rising
   U16 edge after a V17 edge to the first after the next (the I2S one-bit delay); framed between V17 edges (as `ddc_main`
@@ -1257,9 +1282,11 @@ transactions every bus flip-flop is 0; a link write holds address and data for t
 strobe `SLICE_X13Y86/A5FF` in the middle one; a read pulses `SLICE_X14Y86/D5FF` instead **[fact, whole-netlist
 simulation, `hdl/sdr/sim/regmap_main.cpp`]**. Address bits: a0 = `SLICE_X13Y86/AFF` (copies `X11Y85/DFF`, `X14Y86/A5FF`,
 `X14Y86/AFF`), a1 = `X14Y86/DFF` (copies `X14Y84/A5FF`, `X11Y89/CFF`, `X14Y84/BFF`), a2 = `X15Y85/A5FF` (copy
-`X15Y85/DFF`), a3 = `X8Y83/AFF`, a4 = `X10Y87/CFF`, a5 = `X12Y89/BFF`; the other ten (`X11Y85/BFF`, `X12Y89/CFF`,
-`X10Y87/AFF`, `X13Y86/BFF`, `X13Y83/AFF`, `X13Y84/DFF`, `X12Y89/AFF`, `X11Y85/CFF`, `X12Y89/DFF`, `X11Y89/AFF`) are
-a6..a15 in an order not settled bit by bit. Data bits d0..d15: `X11Y89/BFF`, `X11Y89/B5FF`, `X13Y86/B5FF`,
+`X15Y85/DFF`), a3 = `X8Y83/AFF`, a4 = `X10Y87/CFF`, a5 = `X12Y89/BFF`, a6 = `X11Y85/BFF`, a7 = `X12Y89/CFF`,
+a8 = `X12Y89/DFF`, a9 = `X11Y85/CFF`, a10 = `X11Y89/AFF`, a11 = `X12Y89/AFF`, a12 = `X13Y83/AFF`, a13 = `X10Y87/AFF`,
+a14 = `X13Y84/DFF`, a15 = `X13Y86/BFF` (a6..a15 settled in T24 round 3: the read frames `r0040`, `r0080`, ..., `r8000`
+each pulsed exactly that one upper flip-flop, `hdl/sdr/sim/regmap_main.cpp` with the 34 address, strobe and read-data
+probes). Data bits d0..d15: `X11Y89/BFF`, `X11Y89/B5FF`, `X13Y86/B5FF`,
 `X13Y84/D5FF`, `X10Y87/A5FF`, `X8Y94/AFF`, `X12Y89/A5FF`, `X11Y89/A5FF`, `X11Y85/C5FF`, `X12Y89/D5FF`, `X12Y89/C5FF`,
 `X11Y85/B5FF`, `X12Y89/B5FF`, `X15Y85/D5FF`, `X10Y87/C5FF`, `X8Y94/BFF`. a0, a1, a2, a4, d0, d1 and d3 were seen pulse
 in the whole-netlist frames (w0001/w0002/w0004/w0015 with data 0001/0002/0008); the data order follows from register
@@ -1332,30 +1359,62 @@ the list above (0x03, 0x04, 0x06, 0x15, 0x30).
   scope byte is about 0x27[7:0] − (0x26 + sample)/16 when 0x27 bit 15 is set (MAIN's 0x8044), /32 when clear; reg 0x27
   = 0x8080 instead of 0x8044 adds 0x3C to every byte, as the frames of 5.6 showed.
 
-**Read side [fact, evaluation of the read mux with a stable address, sync resets included].** The read data are 16
-flip-flops (`SLICE_X9..X14Y63..Y70`; the 16th is `SLICE_X11Y63/AFF`, passed by `SLICE_X7Y101/BLUT`) behind 68
-first-stage flip-flops: stage 1 selects within a register group with the full address (several groups are cleared by
-a synchronous reset decoded from the address), stage 2 selects the group with a4..a15, so a word appears two clocks
-after its address. For 0x0000..0x003F:
+**Read side (T24 SDR round 3) [fact unless marked].** The read data are 16 flip-flops (`SLICE_X9..X14Y63..Y70`; the
+16th is `SLICE_X11Y63/AFF`, passed by `SLICE_X7Y101/BLUT`) behind 64 group flip-flops, a two-stage mux: a word appears
+two clocks after its address is on the bus. Both stages are clean multiplexers of the full 16-bit address: evaluating
+every stage-1 and stage-2 flip-flop's D, R and S cones over all 2^16 addresses (bit-parallel, one source at a time)
+finds for each address exactly one source or a constant **[fact, exhaustive evaluation]**, and `hdl/sdr/regread.v`
+implements that structure:
 
-| Address | Read value |
+- **Stage 1**: four 16-bit group registers, one per 16 addresses of 0x00..0x3F (group 0 = `SLICE_X34Y66`, `X35Y67`,
+  `X35Y70`, `X38Y68..Y70`, `X39Y69`, `X40Y71`, `X41Y76`; group 1 = `X10Y60`, `X13Y54/55/62`, `X14Y56/59`, `X15Y56/60`;
+  group 2 = `X8Y69/70`, `X8Y76`, `X9Y70`, `X10Y80`, `X11Y65/69`, `X15Y79`; group 3 = `X8Y71`, `X9Y67/70`, `X10Y68..Y70`,
+  `X10Y74`, `X11Y68/69/72`, `X12Y65`, `X14Y69`). Group g loads the word of address a while a[15:4] = g and **0xCCCC**
+  otherwise (each flip-flop has one fixed out-of-window value, made by synchronous resets and sets decoded from the
+  address); every source is selected by exactly one address.
+- **Stage 2**: the read-data flip-flops select by the upper address bits:
+
+| Address window | Read value |
 |---|---|
-| 0x00 | constant 0x0104 (the version, built from first-stage reset/set values) |
-| 0x01, 0x02 | status bits of other blocks (0x01: 4 bits such as `SLICE_X39Y62/BFF`, `X31Y67/CFF`, `X33Y75/AFF`; 0x02: 3 bits including `X1Y41/AFF`, the synchronized R15 of 5.6, and `X41Y70/A5FF`), the rest 0 |
-| the 42 registers | their own flip-flops at their own bit positions, unimplemented bits 0; 0x32: bits 3..0 the register, 4 more bits status (`SLICE_X11Y77/AFF`, `X9Y75/A5FF`, `X9Y75/AFF`, ...) |
-| 0x28..0x2D, 0x34..0x36 | constant 0xCCCC (the value of every unmapped address) |
-| 0x2F, 0x33, 0x38..0x3F | 16 (0x3D: 12, 0x3E/0x3F: 13) status bits of other blocks; 0x2F = `SLICE_X1Y55..X1Y57`, `X2Y54/B5FF` |
+| 0x0000..0x003F | the group register a[5:4] (the word of the address one clock earlier) |
+| 0x0100..0x01FF (a[15:8] = 0x01) | status window: `{8'h00, SLICE_X12Y61/C5,B5,A5,D,C,B,AFF, SLICE_X13Y78/AFF}` (bits 7..0); these 8 FDPE share the enable `SLICE_X47Y80/DLUT`, a decode of the address-loaded flip-flops `SLICE_X46Y80..X47Y82` next to the 43rd enable (above) **[fact for the enable cone]** |
+| 0x3000..0x3FFF (a[15:12] = 0x3) | capture RAM pair `RAMB18_X0Y26` (`DO0..7`) / `RAMB18_X0Y27` (`DOADO0..7`) |
+| 0x8000..0x9FFF (a[15:13] = 100) | capture RAM pair `RAMB18_X0Y24` (`DO16..23`) / `RAMB18_X0Y25` (`DOBDO0..7`) |
+| 0xC000..0xDFFF (a[15:13] = 110) | capture RAM pair `RAMB18_X0Y22` (`DO16..23`) / `RAMB18_X0Y23` (`DOBDO0..7`) |
+| every other address | 0xCCCC |
 
-Above 0x003F the word is 0xCCCC except two windows: one passes the ADC capture RAMs (`RAMB18_X0Y22..X0Y27`, e.g.
-`RAMB18_X0Y24.DO16..23` and `X0Y25.DOBDO0..7` interleaved; reached in the samples tried whenever the upper address
-flip-flop `SLICE_X13Y86/BFF` was set), and one passes the seven `SLICE_X12Y61` flip-flops and `SLICE_X13Y78/AFF` in the low
-byte, high byte 0 (sample: only `SLICE_X12Y89/DFF` set); 16 other samples (0x0040, 0x007F, ..., 0xFFFF) read 0xCCCC. The 0x37 flip-flops are passed
-to the read data at 0x37 in this evaluation, and in the whole netlist they hold a written 0xB64C (trace check below);
-T15e read 0 after MAIN's 0xBCC5, on the netlist before the netlist-tool fixes. Open: the exact address windows of the
-RAM and status reads (they depend on a6..a15, whose order is open), and what 0x37 reads back on the current netlist;
-would be settled by the one-hot upper-address frames and an `r0037` frame in the whole netlist.
+  In a RAM window bit 2j of the word is bit j of the first RAM's byte and bit 2j+1 bit j of the second's. The RAM
+  addresses come from other logic (not part of this block). That these are the ADC capture RAMs is **[inference]**
+  from 3.6/3.7 (`RAMB18_X0Y22..Y25` are in the `adc_capture` row).
+- **The word of an address in 0x00..0x3F:**
 
-**Checks.** `hdl/sdr/regfile.v` re-implements the write side (42 registers, 598 flip-flops):
+| Address | Word |
+|---|---|
+| 0x00 | constant 0x0104 (the version, built from the group flip-flops' synchronous set/reset values) |
+| 0x01 | bits 3..0 = `SLICE_X31Y67/DFF`, `X33Y75/AFF`, `X31Y67/CFF`, `X39Y62/BFF` (bit 3 first) |
+| 0x02 | bit 14 = `SLICE_X1Y41/AFF` (the synchronized R15 of 5.6), bit 9 = `X41Y70/A5FF`, bit 8 = `X40Y71/A5FF` |
+| the 42 registers | their own flip-flops at their own bit positions, unimplemented bits 0 |
+| 0x2F | 13 status bits: bits 15..12 all `SLICE_X1Y57/DFF`, 11..0 = `X1Y57/C,B,AFF`, `X1Y56/D..AFF`, `X1Y55/D..AFF`, `X2Y54/B5FF` |
+| 0x32 | bits 3..0 the register; bits 15..12 = `SLICE_X9Y75/BFF`, `X9Y75/AFF`, `X9Y75/A5FF`, `X11Y77/AFF` |
+| 0x33, 0x38..0x3C | 16 status bits each (cells in `hdl/sdr/tb_regread_ports.vh`) |
+| 0x3D | bits 11..0 status, **bit 15 = 1**, bits 14..12 = 0 |
+| 0x3E, 0x3F | bits 15..3 status, bits 2..0 = 0 |
+| 0x28..0x2D, 0x34..0x36 | 0xCCCC |
+| 0x37 | the register: after MAIN's `w0037BCC5` it **reads back 0xBCC5** on the current netlist (whole-netlist frame `r0037`, T24 round 3); the 0 that T15e read came from the netlist before the netlist-tool fixes |
+
+  Which blocks the status bits belong to is open beyond the cells named; would be settled by tracing each cell's D cone.
+- **Whole netlist [fact].** One run of `regmap_main.cpp` (34 probes: the 16 address, write and read strobe and 16 read-data
+  flip-flops), frames `r0040 r0080 r0100 r0200 r0400 r0800 r1000 r2000 r4000 r8000 w0037BCC5 r0037 r0000`: replies
+  0xCCCC for 0x0040, 0x0080, 0x0200 .. 0x4000 (outside every window), 0x0000 for 0x0100 (status window) and 0x8000 (RAM
+  window, RAM contents 0 with the ADC inputs at 0), ACK for the write, 0xBCC5 for 0x37, 0x0104 for 0x00.
+
+**Checks.** `hdl/sdr/regread.v` re-implements the read side: against the `regread` slice (seeds: the 16 read-data and
+64 group flip-flops; the 598 register flip-flops, the 158 status flip-flops, the 8 status-window flip-flops, the address
+flip-flops and 48 capture-RAM pins are inputs), random register, status and RAM bits on every clock, the address held on
+half of the clocks and otherwise new (weighted towards the windows), all 80 flip-flops compared on every clock:
+`tb_regread.v -DSTRUCT`, 2,000,000 clocks, 0 mismatching clocks **[fact, Icarus 11]**.
+
+`hdl/sdr/regfile.v` re-implements the write side (42 registers, 598 flip-flops):
 - against the `regfile` slice (884 cells; bus, reset and every other register as inputs), new random bus values on
   every clock (3/4 of them register addresses), random bits on the 134 other inputs, all 598 flip-flops compared on
   every clock: `tb_regfile.v -DSTRUCT`, 2,000,000 clocks, 0 mismatching clocks **[fact, Icarus 11]**;
@@ -1580,6 +1639,48 @@ so a frame is never read while it is written. Write enable `SLICE_X35Y127/BFF` (
 `SLICE_X37Y120/ALUT`) of **two 10-bit counters**, `SLICE_X35Y120..X35Y122` and `SLICE_X40Y120..X40Y122` (same reset/set
 net `SLICE_X31Y121/DLUT`, same enable `SLICE_X34Y122/BLUT`), switched by `SLICE_X35Y127/CLUT`, one state of the writer's
 sequencer (`SLICE_X30Y125..X30Y127`, `SLICE_X31Y126/127`, `SLICE_X33Y124`) **[fact, LUT INITs]**.
+
+**Writer address side and sequencer (T24 SDR round 3) [fact, exhaustive evaluation of the LUT cones; RTL checked on
+every clock against the slices].** The writer is run by a **16-bit state counter** s (16 FDRE with INIT 1:
+`SLICE_X30Y125..Y127`, `X31Y126/Y127`, `X33Y124`). Bits 0..12 are in the order of its incrementer
+`SLICE_X32Y123..Y125` (`X30Y127/BFF`, `X30Y127/AFF`, `X31Y127/BFF`, `X31Y127/CFF`, `X33Y124/AFF`, `X31Y126/BFF`,
+`X31Y126/B5FF`, `X33Y124/A5FF`, `X31Y126/CFF`, `X31Y126/DFF`, `X30Y125/AFF`, `X31Y127/AFF`, `X30Y125/BFF`); bits 13..15
+(`X31Y126/AFF`, `X30Y126/BFF`, `X30Y126/AFF`) are the order in which the next-state function counts. Evaluating the
+next-state cones of all 16 bits over all 2^16 states and the five condition nets (2^24 cases, bit-parallel) gives
+(`hdl/sdr/scope_wr_seq.v`):
+
+| State | Next state |
+|---|---|
+| any, rst = ~i0 & i1 (`SLICE_X29Y120/ALUT`) | 0x0000 |
+| any, i0 = 1 | holds |
+| 0xFFFF (power-up) | holds: the writer idles until the first rst |
+| 0x0072 | 0x0070 while eq, else 0x0073 |
+| 0x0098 | 0x0099 when cr, else holds |
+| 0x00B2 | ca & cc & ~cd: 0x0090; ca otherwise: 0x00F0; ~ca & cc & ~cd: 0xFF9F; ~ca otherwise: 0xFFFF |
+| any other | s + 1 |
+
+i0 = `SLICE_X10Y117/D5FF` and i1 = `SLICE_X31Y112/AFF` are flip-flops of other logic. The conditions are compares of
+the writer's other counters: eq = `SLICE_X7Y117/CARRY4` CO[3] (12-bit equality of the counter `SLICE_X10Y119..Y121`
+with `SLICE_X8Y121/Y122`, `X9Y124`), cr = `SLICE_X8Y121/CARRY4` CO[1] (a compare with the 12-bit copy
+`SLICE_X28Y74..Y76`), ca, cc, cd = `SLICE_X33Y128/ALUT`, `CLUT`, `DLUT` (decodes of the counter
+`SLICE_X31Y122..Y124`). The address side (`hdl/sdr/scope_wr_addr.v`) decodes single states, each gated by
+~i0 & ~i1:
+
+| State | Action |
+|---|---|
+| 0x0082 | both index counters to 425 (`SLICE_X31Y121/DLUT` on the FDSE/FDRE set/reset pins of `SLICE_X35Y120..Y122` and `X40Y120..Y122`) |
+| 0x00A4 | port-A index = the down counter `X40Y120..Y122`, bank = ~`SLICE_X34Y53/AFF` (enable `SLICE_X33Y119/ALUT`, select `SLICE_X35Y127/CLUT`) |
+| 0x00AA | port-A index = the up counter `X35Y120..Y122`, bank = ~`SLICE_X34Y53/AFF` |
+| 0x00B1 | up counter + 1, down counter − 1 (`SLICE_X34Y122/BLUT`) |
+
+The write enable `SLICE_X35Y127/BFF` (FDCE, cleared by i0) is set in the states 0x00A8 and 0x00B1 while i1 = 0, held in
+23 states (0x0001, 0x0002, 0x000C, 0x0014, 0x0018, 0x001F, 0x0020, 0x0022, 0x0024, 0x006A, 0x006C, 0x0070, 0x0072,
+0x0080, 0x0082, 0x0090, 0x0093, 0x0098, 0x009B, 0x00A0, 0x00A4, 0x00AA, 0xFFFF) and held only while i1 = 1 in every
+other state. So one pass of the loop 0x0090 .. 0x00B2 writes index 425 − k and then 425 + k and steps both counters,
+which is the centre-out sweep below; that the 0x00B2 branch to 0x0090 is the per-pair loop and the branch to 0xFF9F /
+0xFFFF the end of a sweep is **[inference]** from the sweep's 852 writes and the counter compares that steer it. Open: the
+counters behind eq, cr, ca, cc, cd (their loads and enables, the register copy `SLICE_X28Y74..Y76`) and what i0 and i1
+are; would be settled by the same exhaustive evaluation of their cones, as for the address side.
 
 **Write order: one centre-out sweep per frame [fact, whole-netlist simulation, `hdl/sdr/sim/scope_wr_main.cpp`].** With
 MAIN's set-up, every frame period the writer makes exactly **852 writes** into the free bank, in 14,884 clocks: index 425
