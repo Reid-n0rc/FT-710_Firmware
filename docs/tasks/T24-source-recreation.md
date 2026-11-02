@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 23.54 % re-implemented, round 9 (USB track merged after it); MAIN 19.98 % re-implemented, round 4; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (798 of 798 in round 9) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 26.52 % re-implemented, round 9 with the USB track; MAIN 19.98 % re-implemented, round 4; IFDSP HiFi4 3.22 % re-implemented, round 1; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (913 of 913) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -2590,6 +2590,18 @@ python3 -I tools/readability_stats.py readme
 
 After the re-export the round-9 alias rows (`fat_detect_superfloppy`, `fs_last_error_get`, `fs_byte_pair_sum`,
 `fs_drive_attach_512`, `ml_settings24_copy`, `ml_enc_entry_clear`) name the same addresses and become redundant.
+
+### DISPLAY: after merging the USB track (round 9)
+
+The DISPLAY USB track (USB, scope object, text terminal, NORTi helpers; 22.00 %) reached `main` during this round,
+with its Ghidra entries and names applied and `decomp/display` re-exported. After merging it **[fact: the runs]**:
+- `status`: identical 54, equivalent 913, differs 0, not yet 1,278 (of 2,245 Ghidra functions); **re-implemented
+  26.52 %** (105,072 of 396,256 bytes);
+- `make link`: 913 linked, 254 in place, 572 in the gap (82,668 of 82,928 bytes), 87 in RAM2 (9,120 bytes), 659
+  entries patched, 58 byte-identical, 1 held back (`gpio_cfg_reset`);
+- **linkcheck: 913 of 913 agree** (847 s wall, 2 workers);
+- emulated boot: the hybrid **agrees with the original**, without a card (745 / 718 functions reached, 232
+  recreated executed, RAM2 intact) and with the synthetic SD card (operations 5 and 7 on both, card equal).
 
 ### DISPLAY: blockers and next steps (round 9)
 
