@@ -4180,36 +4180,43 @@ void FUN_201343ec(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-/* -- FUN_20134444: 3 callers, export file 20134310_2013512c.c; not on a subsystem page */
-// ===== FUN_20134444 @ 20134444 (36 bytes)
+/* -- scope_set_2e04_2e00: 3 callers, export file 20134310_2013512c.c; not on a subsystem page */
+// ===== scope_set_2e04_2e00 @ 20134444 (36 bytes)
 
-void FUN_20134444(undefined4 param_1,undefined4 param_2)
+/* [fact] (v, on): scope_obj_set_2e04_thunk(0x2047963C, v), then scope_obj_set_2e00(0x2047963C, on);
+   Ghidra FUN_20134444 (T24 USB track) */
+
+void scope_set_2e04_2e00(undefined4 param_1,undefined4 param_2)
 
 {
-  thunk_FUN_20162d48(&DAT_2047963c,param_1);
-  FUN_201584f8(&DAT_2047963c,param_2);
+  scope_obj_set_2e04_thunk(&DAT_2047963c,param_1);
+  scope_obj_set_2e00(&DAT_2047963c,param_2);
   return;
 }
 
 
-/* -- FUN_20134468: 1 callers, export file 20134310_2013512c.c; not on a subsystem page */
-// ===== FUN_20134468 @ 20134468 (12 bytes)
+/* -- scope_set_2e00: 1 callers, export file 20134310_2013512c.c; not on a subsystem page */
+// ===== scope_set_2e00 @ 20134468 (12 bytes)
 
-void FUN_20134468(undefined4 param_1)
+/* [fact] (on): scope_obj_set_2e00(0x2047963C, on); Ghidra FUN_20134468 (T24 USB track) */
+
+void scope_set_2e00(undefined4 param_1)
 
 {
-  FUN_201584f8(&DAT_2047963c,param_1);
+  scope_obj_set_2e00(&DAT_2047963c,param_1);
   return;
 }
 
 
-/* -- FUN_20134474: 2 callers, export file 20134310_2013512c.c; not on a subsystem page */
-// ===== FUN_20134474 @ 20134474 (12 bytes)
+/* -- scope_set_2e02: 2 callers, export file 20134310_2013512c.c; not on a subsystem page */
+// ===== scope_set_2e02 @ 20134474 (12 bytes)
 
-void FUN_20134474(undefined4 param_1)
+/* [fact] (on): scope_obj_set_2e02(0x2047963C, on); Ghidra FUN_20134474 (T24 USB track) */
+
+void scope_set_2e02(undefined4 param_1)
 
 {
-  FUN_20158544(&DAT_2047963c,param_1);
+  scope_obj_set_2e02(&DAT_2047963c,param_1);
   return;
 }
 
@@ -8459,10 +8466,10 @@ void FUN_20157634(int param_1,int param_2,byte *param_3)
 
 
 // ####################################################################################################
-// ## from 201576f4_20159d98.c: 13 functions
+// ## from 201576f4_20159058.c: 12 functions
 // ####################################################################################################
 
-/* -- FUN_20157f8c: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20157f8c: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20157f8c @ 20157f8c (124 bytes)
 
 void FUN_20157f8c(int param_1)
@@ -8483,10 +8490,13 @@ void FUN_20157f8c(int param_1)
 }
 
 
-/* -- FUN_201584f8: 3 callers, export file 201576f4_20159d98.c; not on a subsystem page */
-// ===== FUN_201584f8 @ 201584f8 (88 bytes)
+/* -- scope_obj_set_2e00: 3 callers, export file 201576f4_20159058.c; not on a subsystem page */
+// ===== scope_obj_set_2e00 @ 201584f8 (68 bytes)
 
-void FUN_201584f8(int param_1,int param_2)
+/* [fact] (obj, on): halfword 0x20428294 (on) or 0x20428298 into +0x2E00, +0x3006, +0x3208, then
+   scope_obj_apply_2e00; Ghidra FUN_201584f8 (T24 USB track) */
+
+void scope_obj_set_2e00(int param_1,int param_2)
 
 {
   if (param_2 == 0) {
@@ -8499,19 +8509,21 @@ void FUN_201584f8(int param_1,int param_2)
     *(undefined2 *)(param_1 + 0x3006) = 0xaf4c;
     *(undefined2 *)(param_1 + 0x3208) = 0xaf4c;
   }
-  FUN_20157634(param_1 + 0x2d00,*(undefined1 *)(param_1 + 0x2e04),param_1 + 0x2e00);
+  scope_obj_apply_2e00();
   return;
 }
 
 
-/* -- FUN_20158544: 2 callers, export file 201576f4_20159d98.c; not on a subsystem page */
-// ===== FUN_20158544 @ 20158544 (136 bytes)
+/* -- scope_obj_set_2e02: 2 callers, export file 201576f4_20159058.c; not on a subsystem page */
+// ===== scope_obj_set_2e02 @ 20158544 (28 bytes)
 
-void FUN_20158544(int param_1,int param_2)
+/* [fact] (obj, on): halfword 0x2042829C (on) or 0x204282A0 into +0x2E02, then scope_obj_apply_2e02;
+   Ghidra FUN_20158544 (T24 USB track) */
+
+void scope_obj_set_2e02(int param_1,int param_2)
 
 {
   undefined2 *puVar1;
-  int iVar2;
   
   if (param_2 == 0) {
     puVar1 = &DAT_204282a0;
@@ -8520,23 +8532,12 @@ void FUN_20158544(int param_1,int param_2)
     puVar1 = &DAT_2042829c;
   }
   *(undefined2 *)(param_1 + 0x2e02) = *puVar1;
-  iVar2 = 0;
-  do {
-    FUN_20157634(param_1 + iVar2 * 0x100,*(undefined2 *)(DAT_20450278 + iVar2 * 2),param_1 + 0x2e02)
-    ;
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 0x1e);
-  iVar2 = 0;
-  do {
-    FUN_20157634(param_1 + iVar2 * 0x100 + 0x1e00,*(undefined2 *)(DAT_2045027c + iVar2 * 2),
-                 param_1 + 0x2e02);
-    iVar2 = iVar2 + 1;
-  } while (iVar2 < 0xf);
+  scope_obj_apply_2e02();
   return;
 }
 
 
-/* -- FUN_201587d0: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_201587d0: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_201587d0 @ 201587d0 (44 bytes)
 
 void FUN_201587d0(int param_1)
@@ -8555,7 +8556,7 @@ void FUN_201587d0(int param_1)
 }
 
 
-/* -- FUN_20158838: 4 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158838: 4 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158838 @ 20158838 (16 bytes)
 
 void FUN_20158838(char *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
@@ -8597,7 +8598,7 @@ void FUN_20158838(char *param_1,undefined4 param_2,undefined4 param_3,undefined4
 }
 
 
-/* -- FUN_20158848: 2 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158848: 2 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158848 @ 20158848 (180 bytes)
 
 void FUN_20158848(undefined1 *param_1,int param_2)
@@ -8634,7 +8635,7 @@ void FUN_20158848(undefined1 *param_1,int param_2)
 }
 
 
-/* -- FUN_20158914: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158914: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158914 @ 20158914 (12 bytes)
 
 void FUN_20158914(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
@@ -8647,7 +8648,7 @@ void FUN_20158914(int param_1,undefined4 param_2,undefined4 param_3,undefined4 p
 }
 
 
-/* -- FUN_20158920: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158920: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158920 @ 20158920 (16 bytes)
 
 void FUN_20158920(int param_1)
@@ -8659,7 +8660,7 @@ void FUN_20158920(int param_1)
 }
 
 
-/* -- FUN_201589e4: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_201589e4: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_201589e4 @ 201589e4 (12 bytes)
 
 void FUN_201589e4(undefined4 *param_1)
@@ -8670,7 +8671,7 @@ void FUN_201589e4(undefined4 *param_1)
 }
 
 
-/* -- FUN_20158a60: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158a60: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158a60 @ 20158a60 (16 bytes)
 
 void FUN_20158a60(int param_1)
@@ -8682,7 +8683,7 @@ void FUN_20158a60(int param_1)
 }
 
 
-/* -- FUN_20158aec: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158aec: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158aec @ 20158aec (32 bytes)
 
 int FUN_20158aec(undefined4 *param_1)
@@ -8696,7 +8697,7 @@ int FUN_20158aec(undefined4 *param_1)
 }
 
 
-/* -- FUN_20158fa8: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+/* -- FUN_20158fa8: 1 callers, export file 201576f4_20159058.c; not on a subsystem page */
 // ===== FUN_20158fa8 @ 20158fa8 (40 bytes)
 
 uint FUN_20158fa8(uint param_1)
@@ -8719,7 +8720,12 @@ uint FUN_20158fa8(uint param_1)
 }
 
 
-/* -- FUN_2015933c: 1 callers, export file 201576f4_20159d98.c; not on a subsystem page */
+
+// ####################################################################################################
+// ## from 20159158_2015d958.c: 7 functions
+// ####################################################################################################
+
+/* -- FUN_2015933c: 1 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015933c @ 2015933c (76 bytes)
 
 void FUN_2015933c(void)
@@ -8733,12 +8739,7 @@ void FUN_2015933c(void)
 }
 
 
-
-// ####################################################################################################
-// ## from 2015a17c_2015eb3c.c: 6 functions
-// ####################################################################################################
-
-/* -- FUN_2015a4c8: 1 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015a4c8: 1 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015a4c8 @ 2015a4c8 (52 bytes)
 
 void FUN_2015a4c8(void)
@@ -8754,7 +8755,7 @@ void FUN_2015a4c8(void)
 }
 
 
-/* -- FUN_2015c278: 1 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015c278: 1 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015c278 @ 2015c278 (84 bytes)
 
 bool FUN_2015c278(void)
@@ -8775,7 +8776,7 @@ bool FUN_2015c278(void)
 }
 
 
-/* -- FUN_2015c2d4: 1 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015c2d4: 1 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015c2d4 @ 2015c2d4 (112 bytes)
 
 bool FUN_2015c2d4(int param_1)
@@ -8796,7 +8797,7 @@ bool FUN_2015c2d4(int param_1)
 }
 
 
-/* -- FUN_2015c978: 1 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015c978: 1 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015c978 @ 2015c978 (144 bytes)
 
 undefined2 FUN_2015c978(uint param_1,uint param_2)
@@ -8841,7 +8842,7 @@ undefined2 FUN_2015c978(uint param_1,uint param_2)
 }
 
 
-/* -- FUN_2015ccf8: 2 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015ccf8: 2 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015ccf8 @ 2015ccf8 (208 bytes)
 
 ushort FUN_2015ccf8(uint param_1,uint param_2,ushort *param_3,int param_4)
@@ -8887,7 +8888,7 @@ ushort FUN_2015ccf8(uint param_1,uint param_2,ushort *param_3,int param_4)
 }
 
 
-/* -- FUN_2015cfb4: 4 callers, export file 2015a17c_2015eb3c.c; not on a subsystem page */
+/* -- FUN_2015cfb4: 4 callers, export file 20159158_2015d958.c; not on a subsystem page */
 // ===== FUN_2015cfb4 @ 2015cfb4 (148 bytes)
 
 undefined2 FUN_2015cfb4(uint param_1,uint param_2,int param_3,int param_4,uint param_5,int param_6)
@@ -8933,10 +8934,10 @@ undefined2 FUN_2015cfb4(uint param_1,uint param_2,int param_3,int param_4,uint p
 
 
 // ####################################################################################################
-// ## from 2015eb74_201606bc.c: 9 functions
+// ## from 2015da3c_2016040c.c: 9 functions
 // ####################################################################################################
 
-/* -- FUN_2015f040: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015f040: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015f040 @ 2015f040 (24 bytes)
 
 int FUN_2015f040(undefined4 *param_1)
@@ -8950,7 +8951,7 @@ int FUN_2015f040(undefined4 *param_1)
 }
 
 
-/* -- FUN_2015f05c: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015f05c: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015f05c @ 2015f05c (60 bytes)
 
 void FUN_2015f05c(int param_1)
@@ -8969,7 +8970,7 @@ void FUN_2015f05c(int param_1)
 }
 
 
-/* -- FUN_2015fa40: 3 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015fa40: 3 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015fa40 @ 2015fa40 (68 bytes)
 
 undefined4 FUN_2015fa40(int param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4)
@@ -8989,7 +8990,7 @@ undefined4 FUN_2015fa40(int param_1,undefined4 param_2,undefined4 param_3,undefi
 }
 
 
-/* -- FUN_2015fc80: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015fc80: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015fc80 @ 2015fc80 (64 bytes)
 
 undefined2 FUN_2015fc80(undefined4 param_1,int param_2,int param_3,int param_4)
@@ -9010,7 +9011,7 @@ undefined2 FUN_2015fc80(undefined4 param_1,int param_2,int param_3,int param_4)
 }
 
 
-/* -- FUN_2015ff64: 3 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015ff64: 3 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015ff64 @ 2015ff64 (12 bytes)
 
 void FUN_2015ff64(int param_1,undefined4 param_2)
@@ -9021,7 +9022,7 @@ void FUN_2015ff64(int param_1,undefined4 param_2)
 }
 
 
-/* -- FUN_2015ff70: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015ff70: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015ff70 @ 2015ff70 (32 bytes)
 
 int FUN_2015ff70(undefined4 *param_1)
@@ -9035,7 +9036,7 @@ int FUN_2015ff70(undefined4 *param_1)
 }
 
 
-/* -- FUN_2015ff94: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2015ff94: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2015ff94 @ 2015ff94 (92 bytes)
 
 void FUN_2015ff94(int param_1,undefined4 param_2)
@@ -9061,7 +9062,7 @@ void FUN_2015ff94(int param_1,undefined4 param_2)
 }
 
 
-/* -- FUN_20160018: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_20160018: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_20160018 @ 20160018 (32 bytes)
 
 int FUN_20160018(undefined4 *param_1)
@@ -9075,7 +9076,7 @@ int FUN_20160018(undefined4 *param_1)
 }
 
 
-/* -- FUN_2016040c: 1 callers, export file 2015eb74_201606bc.c; not on a subsystem page */
+/* -- FUN_2016040c: 1 callers, export file 2015da3c_2016040c.c; not on a subsystem page */
 // ===== FUN_2016040c @ 2016040c (12 bytes)
 
 void FUN_2016040c(int param_1)
@@ -9086,12 +9087,11 @@ void FUN_2016040c(int param_1)
 }
 
 
-
 // ####################################################################################################
-// ## from 201607c8_201637d8.c: 23 functions
+// ## from 20160418_201635b8.c: 12 functions
 // ####################################################################################################
 
-/* -- FUN_20160c28: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20160c28: 2 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20160c28 @ 20160c28 (52 bytes)
 
 void FUN_20160c28(undefined1 *param_1,undefined1 *param_2)
@@ -9107,7 +9107,7 @@ void FUN_20160c28(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_20160c5c: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20160c5c: 1 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20160c5c @ 20160c5c (20 bytes)
 
 undefined4 FUN_20160c5c(undefined4 param_1)
@@ -9118,7 +9118,7 @@ undefined4 FUN_20160c5c(undefined4 param_1)
 }
 
 
-/* -- FUN_20161bb0: 5 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20161bb0: 5 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20161bb0 @ 20161bb0 (52 bytes)
 
 void FUN_20161bb0(void)
@@ -9134,7 +9134,7 @@ void FUN_20161bb0(void)
 }
 
 
-/* -- FUN_20162b50: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20162b50: 1 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20162b50 @ 20162b50 (176 bytes)
 
 void FUN_20162b50(int param_1)
@@ -9170,7 +9170,7 @@ void FUN_20162b50(int param_1)
 }
 
 
-/* -- FUN_20162c10: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20162c10: 1 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20162c10 @ 20162c10 (16 bytes)
 
 void FUN_20162c10(undefined2 *param_1)
@@ -9181,7 +9181,7 @@ void FUN_20162c10(undefined2 *param_1)
 }
 
 
-/* -- FUN_20162c18: 3 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20162c18: 3 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20162c18 @ 20162c18 (8 bytes)
 
 void FUN_20162c18(undefined4 param_1)
@@ -9192,7 +9192,7 @@ void FUN_20162c18(undefined4 param_1)
 }
 
 
-/* -- FUN_20162c20: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20162c20: 1 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20162c20 @ 20162c20 (8 bytes)
 
 void FUN_20162c20(undefined4 param_1)
@@ -9203,7 +9203,7 @@ void FUN_20162c20(undefined4 param_1)
 }
 
 
-/* -- FUN_20162c28: 4 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20162c28: 4 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20162c28 @ 20162c28 (212 bytes)
 
 void FUN_20162c28(int param_1,int param_2)
@@ -9253,10 +9253,12 @@ void FUN_20162c28(int param_1,int param_2)
 }
 
 
-/* -- FUN_20162d48: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
-// ===== FUN_20162d48 @ 20162d48 (12 bytes)
+/* -- scope_obj_set_2e04: 2 callers, export file 20160418_201635b8.c; not on a subsystem page */
+// ===== scope_obj_set_2e04 @ 20162d48 (12 bytes)
 
-void FUN_20162d48(int param_1,undefined1 param_2)
+/* [fact] (obj, v): strb r1, [r0, #0x2E04]; Ghidra FUN_20162d48 (T24 USB track) */
+
+void scope_obj_set_2e04(int param_1,undefined1 param_2)
 
 {
   *(undefined1 *)(param_1 + 0x2e04) = param_2;
@@ -9264,7 +9266,7 @@ void FUN_20162d48(int param_1,undefined1 param_2)
 }
 
 
-/* -- FUN_201633a0: 5 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201633a0: 5 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_201633a0 @ 201633a0 (108 bytes)
 
 void FUN_201633a0(int param_1,int param_2,int param_3,int param_4,uint param_5)
@@ -9292,7 +9294,7 @@ void FUN_201633a0(int param_1,int param_2,int param_3,int param_4,uint param_5)
 }
 
 
-/* -- FUN_20163428: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20163428: 2 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_20163428 @ 20163428 (136 bytes)
 
 undefined4 FUN_20163428(int param_1,int param_2,int param_3,undefined4 param_4,undefined4 param_5)
@@ -9321,7 +9323,7 @@ undefined4 FUN_20163428(int param_1,int param_2,int param_3,undefined4 param_4,u
 }
 
 
-/* -- FUN_201635b8: 4 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201635b8: 4 callers, export file 20160418_201635b8.c; not on a subsystem page */
 // ===== FUN_201635b8 @ 201635b8 (44 bytes)
 
 void FUN_201635b8(int param_1,undefined1 *param_2)
@@ -9336,7 +9338,11 @@ void FUN_201635b8(int param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_20163668: 4 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+// ####################################################################################################
+// ## from 201635e4_2016437c.c: 38 functions
+// ####################################################################################################
+
+/* -- FUN_20163668: 4 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163668 @ 20163668 (28 bytes)
 
 void FUN_20163668(undefined2 *param_1)
@@ -9358,7 +9364,7 @@ void FUN_20163668(undefined2 *param_1)
 }
 
 
-/* -- FUN_20163684: 5 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20163684: 5 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163684 @ 20163684 (36 bytes)
 
 void FUN_20163684(undefined2 *param_1)
@@ -9381,7 +9387,7 @@ void FUN_20163684(undefined2 *param_1)
 }
 
 
-/* -- FUN_201636a8: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201636a8: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201636a8 @ 201636a8 (16 bytes)
 
 void FUN_201636a8(undefined4 *param_1)
@@ -9393,7 +9399,7 @@ void FUN_201636a8(undefined4 *param_1)
 }
 
 
-/* -- FUN_201636b8: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201636b8: 2 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201636b8 @ 201636b8 (20 bytes)
 
 void FUN_201636b8(undefined4 *param_1)
@@ -9406,7 +9412,7 @@ void FUN_201636b8(undefined4 *param_1)
 }
 
 
-/* -- FUN_201636f8: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201636f8: 2 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201636f8 @ 201636f8 (52 bytes)
 
 void FUN_201636f8(undefined1 *param_1,undefined1 *param_2)
@@ -9422,7 +9428,7 @@ void FUN_201636f8(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_2016372c: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_2016372c: 2 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_2016372c @ 2016372c (68 bytes)
 
 void FUN_2016372c(undefined1 *param_1,undefined1 *param_2)
@@ -9440,7 +9446,7 @@ void FUN_2016372c(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_20163770: 6 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_20163770: 6 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163770 @ 20163770 (28 bytes)
 
 void FUN_20163770(undefined4 *param_1,undefined4 *param_2)
@@ -9456,7 +9462,7 @@ void FUN_20163770(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_2016378c: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_2016378c: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_2016378c @ 2016378c (20 bytes)
 
 void FUN_2016378c(undefined4 *param_1,undefined4 *param_2)
@@ -9468,7 +9474,7 @@ void FUN_2016378c(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_201637a0: 1 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201637a0: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201637a0 @ 201637a0 (28 bytes)
 
 void FUN_201637a0(undefined4 *param_1,undefined4 *param_2)
@@ -9481,7 +9487,7 @@ void FUN_201637a0(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_201637bc: 4 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201637bc: 4 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201637bc @ 201637bc (28 bytes)
 
 void FUN_201637bc(undefined4 *param_1,undefined4 *param_2)
@@ -9497,7 +9503,7 @@ void FUN_201637bc(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_201637d8: 2 callers, export file 201607c8_201637d8.c; not on a subsystem page */
+/* -- FUN_201637d8: 2 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201637d8 @ 201637d8 (24 bytes)
 
 void FUN_201637d8(ushort *param_1,ushort param_2)
@@ -9513,11 +9519,7 @@ void FUN_201637d8(ushort *param_1,ushort param_2)
 }
 
 
-// ####################################################################################################
-// ## from 201637f0_201645a0.c: 33 functions
-// ####################################################################################################
-
-/* -- FUN_2016385a: 0 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_2016385a: 0 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_2016385a @ 2016385a (10 bytes)
 
 void FUN_2016385a(void)
@@ -9528,7 +9530,7 @@ void FUN_2016385a(void)
 }
 
 
-/* -- FUN_20163874: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163874: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163874 @ 20163874 (34 bytes)
 
 undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
@@ -9544,7 +9546,7 @@ undefined4 FUN_20163874(undefined4 param_1,uint *param_2)
 }
 
 
-/* -- FUN_201638a0: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_201638a0: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201638a0 @ 201638a0 (34 bytes)
 
 undefined4 FUN_201638a0(undefined4 param_1,uint *param_2)
@@ -9560,7 +9562,7 @@ undefined4 FUN_201638a0(undefined4 param_1,uint *param_2)
 }
 
 
-/* -- FUN_201638cc: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_201638cc: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201638cc @ 201638cc (12 bytes)
 
 void FUN_201638cc(undefined2 *param_1,undefined2 param_2,undefined2 param_3)
@@ -9572,7 +9574,7 @@ void FUN_201638cc(undefined2 *param_1,undefined2 param_2,undefined2 param_3)
 }
 
 
-/* -- FUN_201638d8: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_201638d8: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201638d8 @ 201638d8 (40 bytes)
 
 void FUN_201638d8(int param_1,undefined2 param_2)
@@ -9593,7 +9595,7 @@ void FUN_201638d8(int param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20163900: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163900: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163900 @ 20163900 (56 bytes)
 
 void FUN_20163900(undefined4 *param_1,undefined4 *param_2)
@@ -9617,7 +9619,7 @@ void FUN_20163900(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_20163938: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163938: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163938 @ 20163938 (264 bytes)
 
 void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9676,7 +9678,7 @@ void FUN_20163938(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
 }
 
 
-/* -- FUN_20163a40: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163a40: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163a40 @ 20163a40 (160 bytes)
 
 void FUN_20163a40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9708,7 +9710,7 @@ void FUN_20163a40(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-/* -- FUN_20163ae0: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163ae0: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163ae0 @ 20163ae0 (44 bytes)
 
 void FUN_20163ae0(int param_1,undefined2 param_2)
@@ -9729,7 +9731,7 @@ void FUN_20163ae0(int param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20163b0c: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163b0c: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163b0c @ 20163b0c (12 bytes)
 
 void FUN_20163b0c(undefined2 *param_1,undefined2 param_2,undefined2 param_3)
@@ -9741,7 +9743,7 @@ void FUN_20163b0c(undefined2 *param_1,undefined2 param_2,undefined2 param_3)
 }
 
 
-/* -- FUN_20163b18: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163b18: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163b18 @ 20163b18 (48 bytes)
 
 void FUN_20163b18(int param_1,undefined2 param_2)
@@ -9762,7 +9764,7 @@ void FUN_20163b18(int param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20163b48: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163b48: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163b48 @ 20163b48 (12 bytes)
 
 undefined4 FUN_20163b48(int param_1)
@@ -9772,7 +9774,7 @@ undefined4 FUN_20163b48(int param_1)
 }
 
 
-/* -- FUN_20163b54: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163b54: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163b54 @ 20163b54 (72 bytes)
 
 void FUN_20163b54(undefined4 *param_1,undefined4 *param_2)
@@ -9796,7 +9798,7 @@ void FUN_20163b54(undefined4 *param_1,undefined4 *param_2)
 }
 
 
-/* -- FUN_20163b9c: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163b9c: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163b9c @ 20163b9c (264 bytes)
 
 void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9855,7 +9857,7 @@ void FUN_20163b9c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
 }
 
 
-/* -- FUN_20163ca4: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163ca4: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163ca4 @ 20163ca4 (160 bytes)
 
 void FUN_20163ca4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9887,7 +9889,7 @@ void FUN_20163ca4(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-/* -- FUN_20163d44: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163d44: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163d44 @ 20163d44 (40 bytes)
 
 void FUN_20163d44(int param_1,undefined2 param_2)
@@ -9908,7 +9910,7 @@ void FUN_20163d44(int param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20163d6c: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163d6c: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163d6c @ 20163d6c (264 bytes)
 
 void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9967,7 +9969,7 @@ void FUN_20163d6c(undefined4 *param_1,undefined4 param_2,undefined4 param_3,unde
 }
 
 
-/* -- FUN_20163e74: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163e74: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163e74 @ 20163e74 (160 bytes)
 
 void FUN_20163e74(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,
@@ -9999,7 +10001,7 @@ void FUN_20163e74(undefined4 param_1,undefined4 param_2,undefined4 param_3,undef
 }
 
 
-/* -- FUN_20163f14: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163f14: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163f14 @ 20163f14 (48 bytes)
 
 void FUN_20163f14(int param_1,undefined2 param_2)
@@ -10020,7 +10022,7 @@ void FUN_20163f14(int param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20163f44: 3 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163f44: 3 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163f44 @ 20163f44 (52 bytes)
 
 void FUN_20163f44(int param_1,undefined4 param_2)
@@ -10034,7 +10036,7 @@ void FUN_20163f44(int param_1,undefined4 param_2)
 }
 
 
-/* -- FUN_20163f80: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163f80: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163f80 @ 20163f80 (88 bytes)
 
 void FUN_20163f80(undefined1 *param_1,undefined1 param_2,undefined4 param_3,undefined4 param_4,
@@ -10051,7 +10053,7 @@ void FUN_20163f80(undefined1 *param_1,undefined1 param_2,undefined4 param_3,unde
 }
 
 
-/* -- FUN_20163fd0: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20163fd0: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20163fd0 @ 20163fd0 (72 bytes)
 
 undefined1 * FUN_20163fd0(undefined1 *param_1,undefined1 *param_2)
@@ -10067,7 +10069,7 @@ undefined1 * FUN_20163fd0(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_20164018: 3 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164018: 3 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20164018 @ 20164018 (52 bytes)
 
 void FUN_20164018(int param_1,undefined4 param_2)
@@ -10083,7 +10085,7 @@ void FUN_20164018(int param_1,undefined4 param_2)
 }
 
 
-/* -- FUN_20164054: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164054: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20164054 @ 20164054 (88 bytes)
 
 void FUN_20164054(undefined1 *param_1,undefined1 param_2,undefined4 param_3,undefined4 param_4,
@@ -10100,7 +10102,7 @@ void FUN_20164054(undefined1 *param_1,undefined1 param_2,undefined4 param_3,unde
 }
 
 
-/* -- FUN_201640a4: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_201640a4: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_201640a4 @ 201640a4 (72 bytes)
 
 undefined1 * FUN_201640a4(undefined1 *param_1,undefined1 *param_2)
@@ -10116,7 +10118,7 @@ undefined1 * FUN_201640a4(undefined1 *param_1,undefined1 *param_2)
 }
 
 
-/* -- FUN_20164298: 2 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164298: 2 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_20164298 @ 20164298 (156 bytes)
 
 void FUN_20164298(int param_1,int param_2,ushort *param_3,ushort *param_4)
@@ -10145,7 +10147,7 @@ void FUN_20164298(int param_1,int param_2,ushort *param_3,ushort *param_4)
 }
 
 
-/* -- FUN_2016437c: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_2016437c: 1 callers, export file 201635e4_2016437c.c; not on a subsystem page */
 // ===== FUN_2016437c @ 2016437c (12 bytes)
 
 void FUN_2016437c(undefined4 *param_1)
@@ -10156,7 +10158,11 @@ void FUN_2016437c(undefined4 *param_1)
 }
 
 
-/* -- FUN_2016440c: 2 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+// ####################################################################################################
+// ## from 20164388_20164fa4.c: 13 functions
+// ####################################################################################################
+
+/* -- FUN_2016440c: 2 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_2016440c @ 2016440c (8 bytes)
 
 void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
@@ -10167,7 +10173,7 @@ void FUN_2016440c(undefined2 *param_1,undefined2 param_2)
 }
 
 
-/* -- FUN_20164414: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164414: 1 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164414 @ 20164414 (60 bytes)
 
 void FUN_20164414(int param_1)
@@ -10185,7 +10191,7 @@ void FUN_20164414(int param_1)
 }
 
 
-/* -- FUN_20164454: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164454: 1 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164454 @ 20164454 (12 bytes)
 
 void FUN_20164454(int param_1,int param_2,undefined4 param_3)
@@ -10196,7 +10202,7 @@ void FUN_20164454(int param_1,int param_2,undefined4 param_3)
 }
 
 
-/* -- FUN_201644e4: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_201644e4: 1 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_201644e4 @ 201644e4 (60 bytes)
 
 void FUN_201644e4(int param_1)
@@ -10214,7 +10220,7 @@ void FUN_201644e4(int param_1)
 }
 
 
-/* -- FUN_20164524: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164524: 1 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164524 @ 20164524 (12 bytes)
 
 void FUN_20164524(int param_1,int param_2,undefined4 param_3)
@@ -10225,7 +10231,7 @@ void FUN_20164524(int param_1,int param_2,undefined4 param_3)
 }
 
 
-/* -- FUN_20164568: 1 callers, export file 201637f0_201645a0.c; not on a subsystem page */
+/* -- FUN_20164568: 1 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164568 @ 20164568 (56 bytes)
 
 uint FUN_20164568(char *param_1,int param_2,int param_3)
@@ -10255,12 +10261,7 @@ uint FUN_20164568(char *param_1,int param_2,int param_3)
 }
 
 
-
-// ####################################################################################################
-// ## from 201645e4_20164fa4.c: 7 functions
-// ####################################################################################################
-
-/* -- FUN_20164654: 3 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_20164654: 3 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164654 @ 20164654 (12 bytes)
 
 undefined4 FUN_20164654(int param_1)
@@ -10270,7 +10271,7 @@ undefined4 FUN_20164654(int param_1)
 }
 
 
-/* -- FUN_2016466c: 2 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_2016466c: 2 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_2016466c @ 2016466c (8 bytes)
 
 undefined4 FUN_2016466c(int param_1)
@@ -10280,7 +10281,7 @@ undefined4 FUN_2016466c(int param_1)
 }
 
 
-/* -- FUN_20164674: 3 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_20164674: 3 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164674 @ 20164674 (12 bytes)
 
 undefined4 FUN_20164674(int param_1)
@@ -10290,7 +10291,7 @@ undefined4 FUN_20164674(int param_1)
 }
 
 
-/* -- FUN_20164680: 4 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_20164680: 4 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164680 @ 20164680 (36 bytes)
 
 undefined4 FUN_20164680(char *param_1)
@@ -10303,7 +10304,7 @@ undefined4 FUN_20164680(char *param_1)
 }
 
 
-/* -- FUN_2016469c: 4 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_2016469c: 4 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_2016469c @ 2016469c (40 bytes)
 
 undefined4 FUN_2016469c(char *param_1)
@@ -10316,7 +10317,7 @@ undefined4 FUN_2016469c(char *param_1)
 }
 
 
-/* -- FUN_201646bc: 3 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_201646bc: 3 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_201646bc @ 201646bc (84 bytes)
 
 void FUN_201646bc(int param_1,int param_2,int param_3,int param_4)
@@ -10338,7 +10339,7 @@ void FUN_201646bc(int param_1,int param_2,int param_3,int param_4)
 }
 
 
-/* -- FUN_20164714: 3 callers, export file 201645e4_20164fa4.c; not on a subsystem page */
+/* -- FUN_20164714: 3 callers, export file 20164388_20164fa4.c; not on a subsystem page */
 // ===== FUN_20164714 @ 20164714 (68 bytes)
 
 void FUN_20164714(int param_1,int param_2,int param_3,int param_4)

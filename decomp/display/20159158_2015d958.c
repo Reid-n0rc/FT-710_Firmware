@@ -1,5 +1,596 @@
 // FT-710_DISPLAY_V0108.bin — Ghidra decompile, 50 functions
 
+// ===== update_error_screen @ 20159158 (428 bytes)
+
+/* "UPDATE ERROR", waits for a touch */
+
+void update_error_screen(void)
+
+{
+  int iVar1;
+  uint uVar2;
+  uint uVar3;
+  uint uVar4;
+  uint uVar5;
+  uint uVar6;
+  bool bVar7;
+  short sVar8;
+  short sVar9;
+  undefined1 auStack_74 [68];
+  char local_30 [16];
+  
+  __aeabi_memcpy4(auStack_74,"UPDATE ERROR",0x44);
+  confirm_dialog_draw(1,1,1,0,0x105,0xbf,(int)auStack_74);
+  uVar6 = **(ushort **)(&DAT_2080228c + (uint)DAT_20800655 * 4) + 0x119 & 0xffff;
+  uVar5 = (*(ushort **)(&DAT_2080228c + (uint)DAT_20800655 * 4))[1] + 0x11d & 0xffff;
+  pointer_touch_poll();
+  do {
+    cursor_window_update();
+                    /* Radio off from the GUI side [doc] */
+    if (DAT_20800493 != '\0') {
+      display_power_down();
+    }
+    uVar4 = 0;
+    uVar3 = 0;
+    pointer_get_event(local_30,1);
+    touch_cal_apply((int)(short)local_30._4_4_,(int)(short)local_30._8_4_,(short *)&stack0xffffff80,
+                    (short *)&stack0xffffff84);
+    sVar9 = (short)uVar3;
+    sVar8 = (short)uVar4;
+    if ((local_30[0] == '\x02' || local_30[0] == '\x04') ||
+       (local_30[0] == '\x05' || local_30[0] == '\x06')) {
+      mouse_cursor_set_pos(uVar4 & 0xffff,uVar3 & 0xffff);
+      uVar3 = (uint)sVar8;
+      bVar7 = SBORROW4(uVar3,0x119);
+      iVar1 = uVar3 - 0x119;
+      uVar4 = 0x119;
+      if (0x118 < (int)uVar3) {
+        bVar7 = SBORROW4(uVar6,uVar3);
+        iVar1 = uVar6 - uVar3;
+        uVar4 = uVar6;
+      }
+      if (((uVar3 != uVar4 && iVar1 < 0 == bVar7) && (0x11c < sVar9)) && ((int)sVar9 < (int)uVar5))
+      {
+        return;
+      }
+    }
+    pointer_get_event(local_30,0);
+    uVar4 = (uint)(short)local_30._4_4_;
+    uVar3 = (uint)(short)local_30._8_4_;
+    if ((DAT_20800494 != '\0') &&
+       ((local_30[0] == '\x02' || local_30[0] == '\x04' ||
+        (local_30[0] == '\x05' || local_30[0] == '\x06')))) {
+      bVar7 = SBORROW4(uVar4,0x119);
+      iVar1 = uVar4 - 0x119;
+      uVar2 = 0x119;
+      if (0x118 < (int)uVar4) {
+        bVar7 = SBORROW4(uVar6,uVar4);
+        iVar1 = uVar6 - uVar4;
+        uVar2 = uVar6;
+      }
+      if (uVar4 != uVar2 && iVar1 < 0 == bVar7) {
+        bVar7 = SBORROW4(uVar3,0x11d);
+        iVar1 = uVar3 - 0x11d;
+        uVar4 = 0x11d;
+        if (0x11c < (int)uVar3) {
+          bVar7 = SBORROW4(uVar5,uVar3);
+          iVar1 = uVar5 - uVar3;
+          uVar4 = uVar5;
+        }
+        if (uVar3 != uVar4 && iVar1 < 0 == bVar7) {
+          return;
+        }
+      }
+    }
+    gui_update_layers();
+    itron_tslp_tsk(0xffffffff);
+  } while( true );
+}
+
+
+// ===== pointer_touch_poll @ 20159320 (28 bytes)
+
+/* pointer_get_event(evt, 1 = touch) with the event dropped (clears a pending touch before a dialog)
+   [inference] */
+
+void pointer_touch_poll(void)
+
+{
+  undefined1 auStack_10 [12];
+  
+  pointer_get_event(auStack_10,1);
+  return;
+}
+
+
+// ===== FUN_2015933c @ 2015933c (76 bytes)
+
+void FUN_2015933c(void)
+
+{
+  undefined1 auStack_4c [68];
+  
+  __aeabi_memcpy4(auStack_4c,"INSERT FIRMWARE",0x44);
+  confirm_dialog_draw(1,1,3,0,0xe6,0xb7,(int)auStack_4c);
+  return;
+}
+
+
+// ===== bootloader_screen @ 2015938c (552 bytes)
+
+/* YAESU FT-710 BOOT LOADER V01-02 */
+
+void bootloader_screen(undefined4 param_1,undefined4 *param_2)
+
+{
+  byte bVar1;
+  uint uVar2;
+  int iVar3;
+  uint uVar4;
+  
+  iVar3 = DAT_20808540;
+  uVar2 = fb_get_layer_addr(DAT_208085bc);
+  FUN_2010da68();
+  fb_clear_rect(uVar2,0,0,800,0x1e0);
+  fb_fill_rect(uVar2,0x3186,3,3,0x31a,0x18);
+  gui_draw_runs(uVar2,8,400,&DAT_2016dc08);
+  gui_draw_text_centered(uVar2,iVar3,8,400,0xc,0x20803a40);
+  uVar4 = 0;
+  do {
+    gui_draw_text_centered(uVar2,(&DAT_2080856c)[uVar4],uVar4 * 0x20 + 100,400,0xc,0x208038c0);
+    uVar4 = uVar4 + 1 & 0xff;
+  } while (uVar4 < 2);
+  gui_update_layers();
+  DAT_20808532 = 1;
+  uVar2 = bootloader_unlock_wait();
+  if (DAT_20800493 == '\0') {
+    bVar1 = usbkbd_last_key();
+    fwupdate_set_hotkey(bVar1);
+    iVar3 = sd_state_bit7();
+    if (iVar3 == 0) {
+      uVar4 = fb_get_layer_addr(DAT_208085bc);
+      fb_clear_rect(uVar4,100,0,800,0x17c);
+      gui_draw_text_centered(uVar4,DAT_2080856c,100,400,0xc,0x208038c0);
+      gui_update_layers();
+    }
+    iVar3 = sd_state_bit7();
+    while (iVar3 == 0) {
+      if (DAT_20800493 != '\0') {
+        return;
+      }
+      itron_tslp_tsk(0xffffffff);
+      iVar3 = sd_state_bit7();
+    }
+    if (uVar2 != 0) {
+      *param_2 = 0xbbbb;
+      fwupdate_ui_run(param_1,"YAESU FT-710 BOOT LOADER V01-02");
+      return;
+    }
+    param_2[2] = 1;
+    fwupdate_ui_run(param_1,DAT_20808540);
+    DAT_20800496 = 0;
+    DAT_20800495 = 1;
+  }
+  return;
+}
+
+
+// ===== fw_installed_versions_set @ 201595f0 (64 bytes)
+
+/* installed versions from the MAIN 0x60 frame (this = update-UI object, r1 = frame) */
+
+void fw_installed_versions_set(ushort *param_1,byte *param_2)
+
+{
+  ushort uVar1;
+  
+  uVar1 = be16_load(param_2);
+  *param_1 = uVar1;
+  uVar1 = be16_load(param_2 + 2);
+  param_1[1] = uVar1;
+  uVar1 = be16_load(param_2 + 4);
+  param_1[2] = uVar1;
+  uVar1 = be16_load(param_2 + 10);
+  param_1[3] = uVar1;
+  return;
+}
+
+
+// ===== pointer_idle_loop @ 20159630 (220 bytes)
+
+/* Endless loop: cursor_window_update, pointer events with touch_cal_apply to move the mouse cursor,
+   gui_update_layers, 1-tick sleeps; fwupdate_ui_run ends in it [fact] */
+
+void pointer_idle_loop(void)
+
+{
+  char local_28 [12];
+  ushort local_1c [2];
+  ushort local_18 [4];
+  
+  while( true ) {
+    if (DAT_20800493 != '\0') {
+      return;
+    }
+    cursor_window_update();
+    local_1c[0] = 0;
+    local_18[0] = 0;
+    pointer_get_event(local_28,1);
+    touch_cal_apply((int)(short)local_28._4_4_,(int)(short)local_28._8_4_,(short *)local_1c,
+                    (short *)local_18);
+    if ((local_28[0] == '\x02' || local_28[0] == '\x04') ||
+       (local_28[0] == '\x05' || local_28[0] == '\x06')) {
+      mouse_cursor_set_pos((uint)local_1c[0],(uint)local_18[0]);
+      return;
+    }
+    pointer_get_event(local_28,0);
+    if (local_28[0] == '\x02' || local_28[0] == '\x04') {
+      return;
+    }
+    if (local_28[0] == '\x05' || local_28[0] == '\x06') break;
+    if (DAT_20808533 != '\0') {
+      DAT_20808533 = 0;
+      return;
+    }
+    gui_update_layers();
+    itron_tslp_tsk(0xffffffff);
+  }
+  return;
+}
+
+
+// ===== fwupdate_screen @ 20159714 (1376 bytes)
+
+/* MAIN/DISPLAY FIRMWARE UPDATE, STEP 1 of 2 (this = update-UI object) */
+
+void fwupdate_screen(int param_1)
+
+{
+  byte bVar1;
+  byte bVar2;
+  int iVar3;
+  uint uVar4;
+  undefined1 auStack_288 [288];
+  undefined1 auStack_168 [72];
+  char cStack_120;
+  undefined4 uStack_48;
+  undefined4 uStack_44;
+  undefined4 uStack_40;
+  undefined4 uStack_3c;
+  undefined4 uStack_38;
+  undefined4 uStack_34;
+  undefined4 uStack_30;
+  undefined4 uStack_2c;
+  uint uStack_28;
+  
+  uStack_28 = fb_get_layer_addr(DAT_208085bc);
+  fb_clear_rect(uStack_28,0x132,0,800,0xae);
+  uVar4 = 0;
+  do {
+    gui_draw_text_centered(uStack_28,(&DAT_20808564)[uVar4],uVar4 * 0x20 + 0x132,400,0xf,0x20800b1c)
+    ;
+    uVar4 = uVar4 + 1 & 0xff;
+  } while (uVar4 < 4);
+  gui_update_layers();
+  touch_wait_tap();
+  bVar1 = usbkbd_last_key();
+  fwupdate_set_hotkey(bVar1);
+  do {
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    fb_clear_rect(uStack_28,0x132,0,800,0xae);
+    gui_draw_text_centered(uStack_28,DAT_20808538,0x132,400,0xf,0x20800b1c);
+    gui_update_layers();
+    fb_get_layer_addr(DAT_208085bc);
+    fwfile_check_versions(param_1 + 8);
+    *(undefined4 *)(param_1 + 0x3c) = 1;
+    *(undefined4 *)(param_1 + 0x84) = 1;
+    fwfile_status_text(param_1 + 8,1);
+    *(undefined4 *)(param_1 + 0x3c) = 0;
+    *(undefined4 *)(param_1 + 0x84) = 0;
+    gui_update_layers();
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    iVar3 = sd_state_bit7();
+    if (iVar3 != 0) {
+      if ((*(char *)(param_1 + 8) == '\x01') && (*(char *)(param_1 + 0x50) == '\x01')) break;
+      fb_clear_rect(uStack_28,0x132,0,800,0xae);
+      uStack_48 = 0;
+      uStack_44 = 0;
+      uStack_40 = 0;
+      uStack_3c = 0;
+      uStack_38 = 0;
+      uStack_34 = 0;
+      uStack_30 = 0;
+      uStack_2c = 0;
+      if (*(char *)(param_1 + 8) == '\x01') {
+        sprintf(&uStack_48,"[ OK ]");
+      }
+      else {
+        sprintf(&uStack_48,"[ NG : %s ]",param_1 + 0x1d);
+      }
+      gui_draw_text_words(uStack_28,0x204280ef,0x132,0x9d,0xf,0x20800b1c);
+      gui_draw_text_words(uStack_28,(uint)&uStack_48,0x132,0x1a4,0xf,0x20800b1c);
+      uStack_48 = 0;
+      uStack_44 = 0;
+      uStack_40 = 0;
+      uStack_3c = 0;
+      uStack_38 = 0;
+      uStack_34 = 0;
+      uStack_30 = 0;
+      uStack_2c = 0;
+      if (*(char *)(param_1 + 0x50) == '\x01') {
+        sprintf(&uStack_48,"[ OK ] %s",param_1 + 0x8c);
+      }
+      else {
+        sprintf(&uStack_48,"[ NG : %s ]",param_1 + 0x65);
+      }
+      gui_draw_text_words(uStack_28,0x2042810c,0x152,0x9d,0xf,0x20800b1c);
+      gui_draw_text_words(uStack_28,(uint)&uStack_48,0x152,0x1a4,0xf,0x20800b1c);
+      gui_draw_text_centered(uStack_28,DAT_2080853c,0x192,400,0xf,0x20800b1c);
+    }
+    gui_update_layers();
+    uStack_28 = fb_get_layer_addr(DAT_208085bc);
+    iVar3 = sd_state_bit6();
+    while (iVar3 != 0) {
+      if (DAT_20800493 != '\0') {
+        display_power_down();
+      }
+      itron_tslp_tsk(0xffffffff);
+      gui_update_layers();
+      uStack_28 = fb_get_layer_addr(DAT_208085bc);
+      iVar3 = sd_state_bit6();
+    }
+    fb_clear_rect(uStack_28,0x132,0,800,0xae);
+    gui_draw_text_centered(uStack_28,DAT_2080856c,0x132,400,0xf,0x20800b1c);
+    gui_update_layers();
+    fb_get_layer_addr(DAT_208085bc);
+    iVar3 = sd_state_bit7();
+    while (iVar3 == 0) {
+      if (DAT_20800493 != '\0') {
+        display_power_down();
+      }
+      itron_tslp_tsk(0xffffffff);
+      iVar3 = sd_state_bit7();
+    }
+  } while( true );
+  *(undefined4 *)(param_1 + 0x3c) = 1;
+  *(undefined4 *)(param_1 + 0x84) = 1;
+  fb_clear_rect(uStack_28,0x132,0,800,0xae);
+  gui_draw_text_centered(uStack_28,0x20428122,0x132,400,0xf,0x20800b1c);
+  uVar4 = 0;
+  do {
+    gui_draw_text_centered(uStack_28,(&DAT_20808548)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,0x20800b1c)
+    ;
+    uVar4 = uVar4 + 1 & 0xff;
+  } while (uVar4 < 2);
+  __aeabi_memcpy4(auStack_168,param_1 + 8,0x120);
+  __aeabi_memcpy4(auStack_288,param_1 + 8,0x120);
+  bVar1 = 0xff;
+  while( true ) {
+    bVar2 = fwupdate_poll(param_1 + 8);
+    iVar3 = sd_state_bit6();
+    if (iVar3 == 0) break;
+    if ((bVar1 != bVar2) ||
+       (iVar3 = memcmp(param_1 + 8,auStack_288,0x120), bVar1 = bVar2, iVar3 != 0)) {
+      __aeabi_memcpy4(auStack_288,param_1 + 8,0x120);
+      if (*(char *)(param_1 + 8) == '\x04') {
+        gui_draw_progress_bar
+                  (uStack_28,0x1a5,0x129,*(uint *)(param_1 + 0x40) & 0xffff,
+                   *(uint *)(param_1 + 0x40));
+      }
+      else if (*(char *)(param_1 + 0x50) == '\x04') {
+        if (cStack_120 != '\x04') {
+          fb_clear_rect(uStack_28,0x132,0,800,0xae);
+          gui_draw_text_centered(uStack_28,0x2042812f,0x132,400,0xf,0x20800b1c);
+          uVar4 = 0;
+          do {
+            gui_draw_text_centered
+                      (uStack_28,(&DAT_20808550)[uVar4],uVar4 * 0x20 + 0x152,400,0xf,0x20800b1c);
+            uVar4 = uVar4 + 1 & 0xff;
+          } while (uVar4 < 2);
+        }
+        gui_draw_progress_bar
+                  (uStack_28,0x1a5,0x129,*(uint *)(param_1 + 0x88) & 0xffff,
+                   *(uint *)(param_1 + 0x88));
+        gui_update_layers();
+        fb_get_layer_addr(DAT_208085bc);
+      }
+      __aeabi_memcpy4(auStack_168,param_1 + 8,0x120);
+      if (bVar2 != 0) goto LAB_20159c44;
+      gui_update_layers();
+      uStack_28 = fb_get_layer_addr(DAT_208085bc);
+      bVar1 = bVar2;
+    }
+  }
+  bVar2 = 2;
+LAB_20159c44:
+  FUN_2010e4a0();
+  if (bVar2 != 1) {
+    update_error_screen();
+  }
+  system_reboot();
+  return;
+}
+
+
+// ===== bootloader_unlock_wait @ 20159cb0 (216 bytes)
+
+/* key-6 mode: > 4 encoder steps -> loader-install mode */
+
+uint bootloader_unlock_wait(void)
+
+{
+  uint uVar1;
+  char local_30 [12];
+  short local_24 [2];
+  short local_20 [4];
+  
+  uVar1 = 0;
+  pointer_touch_poll();
+  DAT_208001e4 = '\0';
+  while( true ) {
+    if (DAT_20800493 != '\0') {
+      return 0;
+    }
+    if ((g_bootinfo.mode == 2) &&
+       (uVar1 = FUN_20164568(&DAT_20808bcc,uVar1,(int)DAT_208001e4), 4 < uVar1)) {
+      return 1;
+    }
+    gui_update_layers();
+    local_24[0] = 0;
+    local_20[0] = 0;
+    pointer_get_event(local_30,1);
+    touch_cal_apply((int)(short)local_30._4_4_,(int)(short)local_30._8_4_,local_24,local_20);
+    if (local_30[0] == '\x02' || local_30[0] == '\x04') {
+      return 0;
+    }
+    if (local_30[0] == '\x05' || local_30[0] == '\x06') break;
+    pointer_get_event(local_30,0);
+    itron_tslp_tsk(0xffffffff);
+  }
+  return 0;
+}
+
+
+// ===== fwupdate_ui_run @ 20159d98 (956 bytes)
+
+/* Update-UI method behind fwupdate_title_screen_thunk and bootloader_screen ("YAESU FT-710 FIRMWARE
+   UPDATE"): menu, target selection (fwupdate_select_loop), "UPDATE?" confirmation
+   (fwupdate_confirm_loop), then fwupdate_progress_screen; card-missing and error texts [fact] */
+
+void fwupdate_ui_run(int param_1,undefined4 param_2)
+
+{
+  int iVar1;
+  int iVar2;
+  uint uVar3;
+  undefined1 local_4b8 [3];
+  char local_4b5;
+  undefined1 local_4b4;
+  undefined1 local_4b3;
+  undefined1 auStack_278 [5];
+  undefined1 local_273;
+  int iStack_30;
+  undefined4 local_2c;
+  
+  iStack_30 = param_1;
+  local_2c = param_2;
+  iVar1 = fb_get_layer_addr(DAT_208085bc);
+  if (DAT_20800494 != '\0') {
+    mainlink_send_e6(0);
+  }
+  DAT_20800496 = 1;
+  DAT_20800495 = 0;
+LAB_20159dec:
+  fb_clear_rect(iVar1,0,0,800,0x1e0);
+  cursor_window_update();
+  fwupdate_menu_screen(param_1,0,local_2c);
+  gui_update_layers();
+  iVar1 = fb_get_layer_addr(DAT_208085bc);
+  if (*(char *)(param_1 + 0x128) == -0x3d) {
+    __aeabi_memclr4(local_4b8,0x240);
+    local_4b8[0] = 0x43;
+    if ((*(char *)(param_1 + 0x12a) == '\0') && (*(char *)(param_1 + 299) != '\0')) {
+      if ((*(byte *)(param_1 + 299) & 0x40) == 0) {
+        local_4b4 = 0;
+      }
+      else {
+        local_4b4 = 0x40;
+      }
+      local_4b5 = *(char *)(param_1 + 299);
+      local_4b3 = FUN_20158fa8(*(undefined1 *)(param_1 + 299));
+                    /* title bar, four target rows [doc] */
+      fwupdate_select_draw(param_1,local_4b8,local_2c);
+      if (DAT_20800494 == '\0') {
+        iVar1 = fb_get_layer_addr(DAT_208085bc);
+        fb_clear_rect_checked(iVar1,0x19a,0x1a4,0x17c,0x46);
+        gui_update_layers();
+      }
+                    /* Touch/mouse loop of the target list [doc] */
+      iVar2 = fwupdate_select_loop(param_1,local_4b8,local_2c);
+      if (iVar2 == 0) {
+LAB_20159f50:
+        if (DAT_20800493 != '\0') {
+          return;
+        }
+        goto LAB_2015a040;
+      }
+      if ((DAT_20800494 == '\0') || (mainlink_send_e6(0), DAT_20808530 == '\0')) goto LAB_2015a100;
+      local_4b3 = 10;
+      fwupdate_confirm_draw(param_1,local_4b8);
+      gui_update_layers();
+                    /* Touch/mouse loop of the "UPDATE?" box [doc] */
+      iVar2 = fwupdate_confirm_loop(param_1);
+      if (iVar2 == 0) goto LAB_20159f50;
+      mainlink_send_e6(0);
+      if (DAT_20808531 != '\0') goto LAB_2015a100;
+      goto LAB_20159dec;
+    }
+    if (DAT_20800494 != '\0') {
+      __aeabi_memclr4(auStack_278,0x240);
+      local_273 = 0xb;
+      fwupdate_select_draw(param_1,auStack_278,local_2c);
+      gui_update_layers();
+      iVar1 = fwupdate_select_loop(param_1,auStack_278,local_2c);
+      if (iVar1 == 0) {
+        if (DAT_20800493 != '\0') {
+          return;
+        }
+        goto LAB_2015a040;
+      }
+      goto LAB_2015a100;
+    }
+    uVar3 = fb_get_layer_addr(DAT_208085bc);
+    fb_clear_rect_checked(uVar3,0x19a,0,800,0x46);
+    gui_draw_text_centered(uVar3,DAT_2080853c,0x1a7,400,0xc,0x208038c0);
+    iVar1 = sd_state_bit6();
+    while (iVar1 != 0) {
+      if (DAT_20800493 != '\0') {
+        return;
+      }
+      itron_tslp_tsk(0xffffffff);
+      gui_update_layers();
+      fb_get_layer_addr(DAT_208085bc);
+      iVar1 = sd_state_bit6();
+    }
+  }
+LAB_2015a040:
+  if (DAT_20800494 != '\0') {
+    FUN_2015933c();
+    pointer_idle_loop();
+    if (DAT_20800493 == '\0') {
+      mainlink_send_e6(0);
+    }
+LAB_2015a100:
+    layer_alpha_rect_opaque(5);
+    if ((DAT_20800494 != '\0') && (DAT_20808531 == '\0')) {
+      DAT_20800494 = 0;
+      return;
+    }
+    fwupdate_progress_screen(param_1,0,local_2c);
+    do {
+      gui_update_layers();
+      itron_tslp_tsk(0xffffffff);
+    } while( true );
+  }
+  uVar3 = fb_get_layer_addr(DAT_208085bc);
+  fb_clear_rect_checked(uVar3,0x1a,0,800,0x1c6);
+  gui_draw_text_centered(uVar3,DAT_2080856c,100,400,0xc,0x208038c0);
+                    /* full-screen window, alpha 0xFF [doc, inference] */
+  layer_alpha_rect_opaque(5);
+  gui_update_layers();
+  iVar1 = fb_get_layer_addr(DAT_208085bc);
+  iVar2 = sd_state_bit7();
+  while (iVar2 == 0) {
+    if (DAT_20800493 != '\0') {
+      return;
+    }
+    itron_tslp_tsk(0xffffffff);
+    iVar2 = sd_state_bit7();
+  }
+  goto LAB_20159dec;
+}
+
+
 // ===== fwupdate_confirm_loop @ 2015a17c (832 bytes)
 
 /* Touch/mouse loop of the "UPDATE?" box: YES at (0x19A, 0xFA) / NO at (0x19A, 0x1A4), redraws with
@@ -1164,8 +1755,8 @@ void scope3d_render_large(void *param_1,uint n,int param_3,ushort *param_4,uint 
   if (3 < *param_4) {
     local_28 = CONCAT22(param_4[1],*param_4);
   }
-  scope_history_push((uint)DAT_208085b0,&local_28);
-  scope3d_add_line(8,(uint)DAT_208085b0,param_3);
+  scope_history_push(DAT_208085b0,&local_28);
+  scope3d_add_line(8,DAT_208085b0,param_3);
   __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
   if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
                     /* every N frames [doc, inference] */
@@ -1255,8 +1846,8 @@ void scope3d_render_small(void *param_1,uint n,int param_3,ushort *param_4,uint 
   if (3 < *param_4) {
     local_28 = CONCAT22(param_4[1],*param_4);
   }
-  scope_history_push((uint)DAT_208085b0,&local_28);
-  scope3d_add_line(9,(uint)DAT_208085b0,param_3);
+  scope_history_push(DAT_208085b0,&local_28);
+  scope3d_add_line(9,DAT_208085b0,param_3);
   __aeabi_idivmod_ret = __aeabi_idivmod(n,(uint)DAT_208085b0);
   if ((int)(__aeabi_idivmod_ret >> 0x20) == 0) {
                     /* every N frames [doc, inference] */
@@ -2395,7 +2986,7 @@ void multi_panel_draw(undefined4 param_1)
 
 /* 2D spectrum + waterfall 100/133 px (waterfall size 1 NORMAL) */
 
-void scope2d_draw_normal(int param_1,void *param_2)
+void scope2d_draw_normal(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -2415,7 +3006,7 @@ void scope2d_draw_normal(int param_1,void *param_2)
   scope2d_spectrum_fill
             (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push((uint)DAT_208084d2,param_2);
+  scope_history_push(DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
@@ -2456,7 +3047,7 @@ void scope3d_front_large(int param_1,undefined4 param_2)
 
 /* 2D spectrum + waterfall 42/75 px, MULTI layout */
 
-void scope2d_draw_multi(int param_1,void *param_2)
+void scope2d_draw_multi(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -2476,7 +3067,7 @@ void scope2d_draw_multi(int param_1,void *param_2)
   scope2d_spectrum_fill
             (uVar1,((0x11c - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push((uint)DAT_208084d2,param_2);
+  scope_history_push(DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
@@ -2634,7 +3225,7 @@ void scope_front_trace_draw
 
 /* 2D spectrum + waterfall 60/63 px (size 0, never sent by MAIN) */
 
-void scope2d_draw_size0(int param_1,void *param_2)
+void scope2d_draw_size0(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -2654,7 +3245,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
   scope2d_spectrum_fill
             (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push((uint)DAT_208084d2,param_2);
+  scope_history_push(DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
@@ -2670,7 +3261,7 @@ void scope2d_draw_size0(int param_1,void *param_2)
 
 /* 2D spectrum + waterfall 140/213 px (size 2 EXPAND) */
 
-void scope2d_draw_expand(int param_1,void *param_2)
+void scope2d_draw_expand(int param_1,undefined4 param_2)
 
 {
   undefined4 uVar1;
@@ -2690,7 +3281,7 @@ void scope2d_draw_expand(int param_1,void *param_2)
   scope2d_spectrum_fill
             (uVar1,((0x192 - iVar3) - (uint)(ushort)(&DAT_203a1ee0)[iVar2]) - 1 & 0xffff,4,0x317,
              (uint)(ushort)(&DAT_203a1ee0)[iVar2],iVar2,param_2);
-  scope_history_push((uint)DAT_208084d2,param_2);
+  scope_history_push(DAT_208084d2,param_2);
   if ((&DAT_208f463e)[DAT_208084d0] != '\0') {
     scope_wf_add_row(DAT_208084d2);
   }
@@ -2699,767 +3290,5 @@ void scope2d_draw_expand(int param_1,void *param_2)
   DAT_208084d0 = extraout_r1;
   scope2d_waterfall_blit(uVar1,0x192 - iVar3,4,0x317,iVar3);
   return;
-}
-
-
-// ===== affft_waterfall_blit @ 2015da3c (96 bytes)
-
-/* AF-FFT waterfall 39 rows at (405, 365) */
-
-void affft_waterfall_blit(int param_1,int param_2,int param_3,int param_4,int param_5)
-
-{
-  int iVar1;
-  
-  while (param_5 = param_5 + -1, -1 < param_5) {
-    iVar1 = affft_wf_row_addr(param_5);
-    fb_blit_raw(param_1,param_2 + param_5 & 0xffff,param_3,iVar1,param_4,1);
-  }
-  return;
-}
-
-
-// ===== scope2d_waterfall_blit @ 2015da9c (228 bytes)
-
-/* h/2 rows x 2 px from ring 0x2049476C */
-
-void scope2d_waterfall_blit(uint param_1,int param_2,uint param_3,uint param_4,uint param_5)
-
-{
-  int iVar1;
-  uint uVar2;
-  
-  if ((param_5 & 1) != 0) {
-    iVar1 = scope_wf_row_addr(param_5 >> 1);
-    fb_blit_raw(param_1,param_2 + (param_5 >> 1) * 2 & 0xffff,param_3,iVar1 + param_3 * 2,param_4,1)
-    ;
-  }
-  param_5 = param_5 >> 1;
-  fb_fill_box(param_1,param_2 - 1U & 0xffff,param_3,param_4,1,0);
-  while (param_5 = param_5 - 1, -1 < (int)param_5) {
-    iVar1 = scope_wf_row_addr(param_5);
-    uVar2 = param_2 + param_5 * 2;
-    iVar1 = iVar1 + param_3 * 2;
-    fb_blit_raw(param_1,uVar2 & 0xffff,param_3,iVar1,param_4,1);
-    fb_blit_raw(param_1,uVar2 + 1 & 0xffff,param_3,iVar1,param_4,1);
-  }
-  return;
-}
-
-
-// ===== scope2d_spectrum_fill @ 2015db80 (268 bytes)
-
-/* filled spectrum, colour 0x208084CC; height table 0x203A1EE0 */
-
-void scope2d_spectrum_fill
-               (int param_1,int param_2,int param_3,int param_4,int param_5,undefined4 param_6,
-               ushort *param_7)
-
-{
-  int iVar1;
-  undefined2 uVar2;
-  int iVar3;
-  int iVar4;
-  int iVar5;
-  undefined2 *puVar6;
-  int iVar7;
-  int i;
-  int iVar8;
-  byte abStack_348 [800];
-  int local_28;
-  
-  scope_levels_get(param_6,abStack_348);
-  uVar2 = DAT_208084cc;
-  param_4 = param_4 + param_3;
-  iVar1 = param_3 + -0x348;
-  i = 0;
-  iVar7 = (uint)*param_7 - param_3;
-  local_28 = (uint)param_7[1] + iVar7;
-  if (param_3 < param_4) {
-    do {
-      if ((i < iVar7) || (local_28 <= i)) {
-        iVar4 = 0;
-        iVar3 = param_2 * 800;
-        if (0 < param_5) {
-          do {
-            iVar8 = param_5 - iVar4;
-            iVar4 = iVar4 + 1;
-            iVar5 = param_3 + iVar3;
-            iVar3 = iVar3 + 800;
-            puVar6 = (undefined2 *)(param_1 + iVar5 * 2);
-            if ((int)(uint)abStack_348[i + iVar1 + 0x348] < iVar8) {
-              *puVar6 = 0;
-            }
-            else {
-              *puVar6 = uVar2;
-            }
-          } while (iVar4 < param_5);
-        }
-      }
-      else {
-        iVar4 = 0;
-        iVar3 = param_2 * 800;
-        if (0 < param_5) {
-          do {
-            iVar8 = param_5 - iVar4;
-            iVar4 = iVar4 + 1;
-            iVar5 = param_3 + iVar3;
-            iVar3 = iVar3 + 800;
-            puVar6 = (undefined2 *)(param_1 + iVar5 * 2);
-            if ((int)(uint)abStack_348[i + iVar1 + 0x348] < iVar8) {
-              *puVar6 = 0;
-            }
-            else {
-              *puVar6 = uVar2;
-            }
-          } while (iVar4 < param_5);
-        }
-      }
-      param_3 = param_3 + 1;
-      i = i + 1;
-    } while (param_3 < param_4);
-  }
-  return;
-}
-
-
-// ===== affft_spectrum_draw @ 2015dc90 (156 bytes)
-
-/* AF-FFT spectrum 391 x 39 at (405, 325) */
-
-void affft_spectrum_draw(int param_1,int param_2,int param_3,int param_4,undefined4 param_5)
-
-{
-  byte *pbVar1;
-  int iVar2;
-  int iVar3;
-  int iVar4;
-  int i;
-  int iVar5;
-  undefined2 *puVar6;
-  byte local_1b0 [396];
-  
-  iVar2 = affft_spectrum_columns(param_5,local_1b0);
-  param_2 = param_2 * 800;
-  i = 0;
-  if (0 < iVar2) {
-    do {
-      iVar4 = 0;
-      if (param_3 < param_4 + param_3) {
-        iVar3 = param_3;
-        do {
-          pbVar1 = local_1b0 + iVar4;
-          iVar4 = iVar4 + 1;
-          iVar5 = iVar3 + param_2;
-          iVar3 = iVar3 + 1;
-          puVar6 = (undefined2 *)(param_1 + iVar5 * 2);
-          if ((int)(uint)*pbVar1 < iVar2 - i) {
-            *puVar6 = 0;
-          }
-          else {
-            *puVar6 = 0x529b;
-          }
-        } while (iVar3 < param_4 + param_3);
-      }
-      i = i + 1;
-      param_2 = param_2 + 800;
-    } while (i < iVar2);
-  }
-  return;
-}
-
-
-// ===== mainlink_valid_7f @ 2015e16c (28 bytes)
-
-/* byte & 0x7F <= 12 or == 0x7F */
-
-undefined4 mainlink_valid_7f(undefined4 param_1,uint param_2)
-
-{
-  undefined4 uVar1;
-  
-  uVar1 = 1;
-  if ((0xc < (param_2 & 0x7f)) && ((param_2 & 0x7f) != 0x7f)) {
-    uVar1 = 0;
-  }
-  return uVar1;
-}
-
-
-// ===== mainlink_status_valid @ 2015e354 (928 bytes)
-
-/* range checks of the 0x97-byte radio status block */
-
-undefined4
-mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefined4 param_4)
-
-{
-  byte bVar1;
-  ushort uVar2;
-  short sVar3;
-  int iVar4;
-  uint uVar5;
-  
-  if ((((((*param_2 < 2) && (param_2[1] < 0xc)) && ((~param_2[2] & 3) != 0)) &&
-       ((((~param_2[6] & 0x30) != 0 && ((~param_2[9] & 0x70) != 0)) &&
-        (((param_2[10] & 7) < 6 &&
-         (((param_2[0xb] & 0xf) >> 2 != 3 && ((param_2[0xb] & 0x3f) >> 4 != 3)))))))) &&
-      (((param_2[0xc] & 7) < 5 &&
-       ((((((((~param_2[0xe] & 0x18) != 0 && (~param_2[0xe] & 3) != 0 && ((param_2[0xf] & 7) < 5))
-            && ((param_2[0x11] & 0xf) < 0xb)) &&
-           ((uVar5 = (uint)param_2[0x19] + (uint)param_2[0x18] * 0x100 & 0xffff7fff, uVar5 != 0 &&
-            (uVar5 < 0x141)))) &&
-          (uVar2 = (ushort)param_2[0x1b] + (ushort)param_2[0x1a] * 0x100, uVar2 != 0)) &&
-         ((uVar2 < 0x141 && (((uint)param_2[0x13] + (uint)param_2[0x12] * 0x100) - 0x32 < 0x3e4f))))
-        && ((((uint)param_2[0x1d] + (uint)param_2[0x1c] * 0x100) - 0x32 < 0x3e4f &&
-            (((sVar3 = (ushort)param_2[0x1f] + (ushort)param_2[0x1e] * 0x100,
-              (int)sVar3 + 0x4b0U < 0x961 && ((int)(char)param_2[0x20] + 0x19U < 0x33)) &&
-             (param_2[0x21] - 0x1e < 0x4c)))))))))) &&
-     ((param_2[0x23] >> 4 < 3 && ((param_2[0x23] & 0xf) < 5)))) {
-                    /* byte & 0x7F <= 12 or == 0x7F [doc, inference] */
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x24],(uint)param_2[0x1c],param_4,sVar3);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x25]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x26]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x27]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x28]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_7f(param_1,param_2[0x29]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-                    /* small code-set check used by mainlink_status_valid [doc, inference] */
-    iVar4 = mainlink_valid_code(param_1,param_2[0x2a]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    iVar4 = mainlink_valid_code(param_1,param_2[0x2b]);
-    if (iVar4 == 0) {
-      return 0;
-    }
-    if ((param_2[0x2c] < 0xf) && (bVar1 = param_2[0x2d], bVar1 < 0xb)) {
-      if (bVar1 == 2) {
-        if (0x74 < param_2[0x2e]) {
-          return 0;
-        }
-      }
-      else if (bVar1 == 5) {
-        if (9 < param_2[0x2e] - 200) {
-          return 0;
-        }
-      }
-      else if (bVar1 == 7) {
-        if (0xe < param_2[0x2e] - 0x96) {
-          return 0;
-        }
-      }
-      else if ((bVar1 == 8) && (param_2[0x2e] != 199)) {
-        return 0;
-      }
-      if (((((param_2[0x2f] & 0xf) < 0xc) &&
-           ((int)(short)((ushort)param_2[0x43] + (ushort)param_2[0x42] * 0x100) + 9999U < 19999)) &&
-          (param_2[0x45] < 0xf)) && (bVar1 = param_2[0x46], bVar1 < 0xb)) {
-        if (bVar1 == 2) {
-          if (0x74 < param_2[0x47]) {
-            return 0;
-          }
-        }
-        else if (bVar1 == 5) {
-          if (9 < param_2[0x47] - 200) {
-            return 0;
-          }
-        }
-        else if (bVar1 == 7) {
-          if (0xe < param_2[0x47] - 0x96) {
-            return 0;
-          }
-        }
-        else if ((bVar1 == 8) && (param_2[0x47] != 199)) {
-          return 0;
-        }
-        if ((param_2[0x48] & 0xf) < 0xc) {
-          return 1;
-        }
-      }
-    }
-  }
-  return 0;
-}
-
-
-// ===== mainlink_rx_validate @ 2015e6f4 (2324 bytes)
-
-/* per-command range checks; 0x7F with the 8-byte key enters maintenance mode */
-
-bool mainlink_rx_validate(uint param_1,byte *param_2)
-
-{
-  byte bVar1;
-  byte bVar2;
-  bool bVar3;
-  ushort be16_load_ret;
-  uint uVar4;
-  int iVar5;
-  
-  bVar2 = *param_2;
-  if (bVar2 == 0x45) {
-    return true;
-  }
-  if (bVar2 < 0x46) {
-    if (bVar2 == 0x3f) {
-      return param_2[1] < 2;
-    }
-    if (bVar2 < 0x40) {
-      if (bVar2 == 0x1b) {
-        return true;
-      }
-      if (bVar2 == 0x21) {
-        return param_2[2] < 8;
-      }
-      if (bVar2 == 0x23) {
-        return (param_2[1] & 0x3f) < 0x33;
-      }
-      if (bVar2 == 0x33) {
-        return true;
-      }
-    }
-    else if ((bVar2 == 0x42 || bVar2 == 0x43) || bVar2 == 0x44) {
-      return true;
-    }
-  }
-  else {
-    if (bVar2 == 0x7a) {
-      return true;
-    }
-    if (bVar2 < 0x7b) {
-      if (bVar2 == 0x60) {
-        uVar4 = (uint)param_2[0xe] + (uint)param_2[0xd] * 0x100;
-        if (4 < uVar4) {
-          if (uVar4 == 0xdb) {
-            g_ml.err_box_on_fail = 1;
-            goto LAB_2015dd64;
-          }
-          if (uVar4 != 0xff) {
-            return false;
-          }
-        }
-        g_ml.err_box_on_fail = 0;
-LAB_2015dd64:
-        iVar5 = mainlink_status_valid(param_1,param_2 + 0xf);
-        return iVar5 != 0;
-      }
-      if (bVar2 == 100) {
-        return param_2[1] < 6;
-      }
-      if (bVar2 == 0x65) {
-        iVar5 = bcd_to_bin((uint)param_2[1]);
-        if (iVar5 < 100) {
-          uVar4 = bcd_to_bin((uint)param_2[2]);
-          if (((uVar4 & 0xff) != 0) && ((uVar4 & 0xff) < 0xd)) {
-            uVar4 = bcd_to_bin((uint)param_2[3]);
-            if (((uVar4 & 0xff) != 0) &&
-               ((((uVar4 & 0xff) < 0x20 &&
-                 (uVar4 = bcd_to_bin((uint)param_2[4]), (uVar4 & 0xff) < 0x18)) &&
-                (uVar4 = bcd_to_bin((uint)param_2[5]), (uVar4 & 0xff) < 0x3c)))) {
-              return true;
-            }
-          }
-        }
-        return false;
-      }
-      if (bVar2 == 0x71) {
-        if ((param_2[1] - 3 < 0x7e) || (0x82 < param_2[1])) {
-          bVar3 = false;
-        }
-        else {
-          bVar3 = true;
-        }
-        return bVar3;
-      }
-    }
-    else {
-      if (bVar2 == 0x7b) {
-        return param_2[1] < 2;
-      }
-      if (bVar2 == 0x7c) {
-        return true;
-      }
-      if (bVar2 == 0x7f) {
-        bVar2 = param_2[1];
-        if (bVar2 != 0x10) {
-          if (bVar2 < 0x11) {
-            if (2 < bVar2) {
-              return false;
-            }
-            return true;
-          }
-          if (bVar2 != 0x11) {
-            if (bVar2 != 0x80) {
-              return false;
-            }
-            return true;
-          }
-        }
-        iVar5 = memcmp(param_2 + 2,&DAT_20450285,8);
-        if (iVar5 != 0) {
-          return false;
-        }
-        DAT_2080049c = 1;
-        DAT_20800495 = 0;
-        mainlink_tx_reset();
-        mainlink_set_power_cmd(bVar2);
-        return true;
-      }
-    }
-  }
-  iVar5 = mainlink_status_valid(param_1,param_2 + 1);
-  if (iVar5 == 0) {
-    return false;
-  }
-  bVar2 = *param_2;
-  if (bVar2 == 0x39) {
-    if (((param_2[0xb4] < 0xb) && (param_2[0xb5] == 0)) &&
-       ((param_2[0xb7] < 0x65 &&
-        ((param_2[0xb8] < 0x65 && (be16_load_ret = be16_load(param_2 + 0xba), be16_load_ret < 10000)
-         ))))) {
-      bVar3 = true;
-    }
-    else {
-      bVar3 = false;
-    }
-    return bVar3;
-  }
-  if (0x39 < bVar2) {
-    if (bVar2 == 0x50) {
-      if ((param_2[0x98] >> 4 < 5) && ((param_2[0x98] & 0xf) < 3)) {
-        bVar3 = true;
-      }
-      else {
-        bVar3 = false;
-      }
-      return bVar3;
-    }
-    if (bVar2 < 0x51) {
-      if (bVar2 == 0x3a) {
-        switch(param_2[0x98]) {
-        case 0:
-        case 4:
-          break;
-        case 1:
-          if (4 < (param_2[0x9d] & 0xf)) {
-            return false;
-          }
-          if (4 < (param_2[0x9e] & 0xf)) {
-            return false;
-          }
-          break;
-        case 2:
-          if (3 < param_2[0x9d]) {
-            return false;
-          }
-          if (5 < param_2[0x9e]) {
-            return false;
-          }
-          break;
-        case 3:
-          if (3 < param_2[0x9d]) {
-            return false;
-          }
-          break;
-        default:
-          return false;
-        }
-        return true;
-      }
-      if (bVar2 == 0x40) {
-        if ((param_2[0x98] < 2) && (param_2[0x99] != 0)) {
-          bVar2 = param_2[0x9b] >> 4;
-          if ((((bVar2 != 0) && ((bVar2 < 6 && ((param_2[0x9b] & 0xf) < 5)))) &&
-              (param_2[0x9c] >> 4 < 8)) && ((param_2[0x9c] & 0xf) < 5)) {
-            if (param_2[0x98] == 0) {
-              iVar5 = 0;
-              do {
-                if (0x19 < param_2[iVar5 * 0x2d + 0x11a]) {
-                  return false;
-                }
-                iVar5 = iVar5 + 1;
-              } while (iVar5 < 5);
-            }
-            return true;
-          }
-        }
-        return false;
-      }
-      if (bVar2 == 0x41) {
-        if ((param_2[0x98] & 0x40) == 0) {
-          if ((param_2[0x99] & 0xf) < 4) {
-            return true;
-          }
-        }
-        else if (param_2[0x99] >> 4 < 6) {
-          return true;
-        }
-        return false;
-      }
-    }
-    else {
-      if (bVar2 == 0x62) {
-        return (param_2[0x98] & 0xf) < 9;
-      }
-      if (bVar2 == 0x70) {
-        if (((param_2[0x98] < 4) && (param_2[0x99] < 5)) && (param_2[0x9a] < 2)) {
-          bVar3 = true;
-        }
-        else {
-          bVar3 = false;
-        }
-        return bVar3;
-      }
-    }
-    return false;
-  }
-  if (bVar2 == 0x31) {
-    switch(param_2[0x98]) {
-    case 0:
-    case 1:
-    case 4:
-    case 5:
-    case 6:
-    case 7:
-    case 8:
-    case 9:
-    case 10:
-    case 0xb:
-    case 0xc:
-    case 0xd:
-    case 0xe:
-    case 0xf:
-    case 0x11:
-    case 0x12:
-    case 0x13:
-    case 0x14:
-    case 0x15:
-    case 0x1a:
-    case 0x1b:
-    case 0x1c:
-    case 0x22:
-    case 0x23:
-    case 0x24:
-    case 0x25:
-    case 0x26:
-    case 0x27:
-    case 0x28:
-    case 0x29:
-    case 0x2a:
-    case 0x2b:
-    case 0x2c:
-    case 0x37:
-    case 0x3a:
-    case 0x40:
-      return true;
-    default:
-      return false;
-    }
-  }
-  if (0x31 < bVar2) {
-    if (bVar2 == 0x34) {
-      return param_2[0x99] < 100 && param_2[0x98] < 2;
-    }
-    if (bVar2 == 0x37) {
-      if ((param_2[0x99] < 0x2a) && (param_2[0x9a] < 0x2a)) {
-        bVar3 = true;
-      }
-      else {
-        bVar3 = false;
-      }
-      return bVar3;
-    }
-    return false;
-  }
-  if (bVar2 == 0x20) {
-    return true;
-  }
-  if (bVar2 == 0x24) {
-    if (((((param_2[0x99] & 0xf) < 0xb) && ((param_2[0x9a] & 0x1f) < 0x15)) &&
-        ((param_2[0x9b] & 0x7f) < 0x65)) &&
-       (((param_2[0x9c] & 0x7f) < 0x65 && ((param_2[0x9d] & 0x1f) < 0x15)))) {
-      bVar3 = true;
-    }
-    else {
-      bVar3 = false;
-    }
-    return bVar3;
-  }
-  if (bVar2 != 0x30) {
-    return false;
-  }
-  uVar4 = (uint)param_2[0x99];
-  bVar2 = param_2[0x9b];
-  bVar1 = param_2[0x98];
-  if (bVar1 != 7) {
-    if (bVar1 < 8) {
-      switch(bVar1) {
-      case 0:
-        goto joined_r0x2015e0ec;
-      case 1:
-        if (3 < uVar4) {
-          return false;
-        }
-        break;
-      case 2:
-joined_r0x2015e084:
-        if (2 < uVar4) {
-          return false;
-        }
-        break;
-      case 3:
-        if (1 < uVar4) {
-          return false;
-        }
-        break;
-      case 4:
-        if (4 < uVar4) {
-          return false;
-        }
-        break;
-      case 5:
-        if (0xf < uVar4) {
-          return false;
-        }
-        break;
-      case 6:
-        if (9 < uVar4) {
-          return false;
-        }
-        break;
-      default:
-        goto switchD_2015dfdc_default;
-      }
-    }
-    else if (bVar1 == 0xb) {
-      if (10 < (uVar4 & 0xf)) {
-        return false;
-      }
-    }
-    else if (bVar1 < 0xc) {
-      if (bVar1 != 8) {
-        if (bVar1 == 9) goto joined_r0x2015e084;
-        if (bVar1 != 10) {
-          return false;
-        }
-        if (2 < param_2[0x99] >> 6) {
-          return false;
-        }
-        if (2 < (uVar4 & 0x3f) >> 4) {
-          return false;
-        }
-        uVar4 = uVar4 & 0xf;
-joined_r0x2015e0ec:
-        if (5 < uVar4) {
-          return false;
-        }
-      }
-    }
-    else if (bVar1 == 0xc) {
-      if (0xb < uVar4) {
-        return false;
-      }
-    }
-    else {
-      if (bVar1 == 0xd) goto joined_r0x2015e0ec;
-      if (bVar1 != 0xff) {
-        return false;
-      }
-    }
-  }
-  if ((bVar1 == 1 || bVar1 == 2) || (bVar1 == 3 || bVar1 == 4)) {
-    if (1 < param_2[0x9a]) {
-      return false;
-    }
-  }
-  else if (param_2[0x9a] != 0) {
-    return false;
-  }
-  if (bVar1 == 5) {
-    if (bVar2 < 0x10) {
-      return true;
-    }
-  }
-  else if ((bVar1 == 0xb) || (bVar1 == 0xc)) {
-    if (bVar2 < 0xc) {
-      return true;
-    }
-  }
-  else if (bVar2 == 0) {
-    return true;
-  }
-switchD_2015dfdc_default:
-  return false;
-}
-
-
-// ===== mainlink_rx_deliver @ 2015e9b8 (164 bytes)
-
-/* trace, 'D'/'E' block handlers, else post to the dispatcher */
-
-void mainlink_rx_deliver(int param_1,char *param_2,uint param_3)
-
-{
-  uint mainlink_disp_alloc_ret;
-  
-  *(int *)(param_1 + 0x28) = *(int *)(param_1 + 0x28) + 1;
-  if (*param_2 != '\x06' && *param_2 != '\x15') {
-                    /* Log the frame [fact: mainlink.md] */
-    mainlink_trace((uint)param_2,param_3);
-    *(char *)(param_1 + 0x24) = *param_2;
-  }
-  if (*param_2 != 'D') {
-    if (*param_2 != 'E') {
-      mainlink_disp_alloc_ret = mainlink_disp_alloc(*(int *)(param_1 + 0x18));
-      *(undefined2 *)(mainlink_disp_alloc_ret + 4) = 0xaa;
-      *(short *)(mainlink_disp_alloc_ret + 6) = (short)param_3;
-      memcpy(mainlink_disp_alloc_ret + 8,param_2,param_3);
-                    /* Everything but 'D'/'E' goes to the dispatcher [fact: mainlink.md] */
-      mainlink_disp_post(*(undefined4 *)(param_1 + 0x18),mainlink_disp_alloc_ret);
-      return;
-    }
-                    /* 'D'/'E': SD block write / read handled here [fact: mainlink.md] */
-    mainlink_rx_block_write(param_2 + 1);
-    return;
-  }
-  mainlink_rx_block_read(param_2 + 1);
-  return;
-}
-
-
-// ===== mainlink_valid_code @ 2015eb3c (56 bytes)
-
-/* small code-set check used by mainlink_status_valid */
-
-undefined4 mainlink_valid_code(undefined4 param_1,uint param_2)
-
-{
-  undefined4 uVar1;
-  
-  uVar1 = 1;
-  if ((param_2 - 0x16 < 4) ||
-     (((0x21 < param_2 && (param_2 != 0x2d && param_2 != 0x36)) &&
-      (param_2 != 0x3a && param_2 != 0xff)))) {
-    uVar1 = 0;
-  }
-  return uVar1;
 }
 
