@@ -1349,11 +1349,11 @@ after its address. For 0x0000..0x003F:
 Above 0x003F the word is 0xCCCC except two windows: one passes the ADC capture RAMs (`RAMB18_X0Y22..X0Y27`, e.g.
 `RAMB18_X0Y24.DO16..23` and `X0Y25.DOBDO0..7` interleaved; reached in the samples tried whenever the upper address
 flip-flop `SLICE_X13Y86/BFF` was set), and one passes the seven `SLICE_X12Y61` flip-flops and `SLICE_X13Y78/AFF` in the low
-byte, high byte 0 (sample: only `SLICE_X12Y89/DFF` set); 16 other samples (0x0040, 0x007F, ..., 0xFFFF) read 0xCCCC. The 0x37 flip-flops read
-back what was written in this evaluation; T15e saw 0 after MAIN's 0xBCC5, on the netlist before the netlist-tool fixes.
-Open: the exact address windows of the RAM and status reads (they depend on a6..a15, whose order is open), and whether
-0x37 reads back on the current netlist; would be settled by the one-hot upper-address frames and a read of 0x37 in the
-whole netlist.
+byte, high byte 0 (sample: only `SLICE_X12Y89/DFF` set); 16 other samples (0x0040, 0x007F, ..., 0xFFFF) read 0xCCCC. The 0x37 flip-flops are passed
+to the read data at 0x37 in this evaluation, and in the whole netlist they hold a written 0xB64C (trace check below);
+T15e read 0 after MAIN's 0xBCC5, on the netlist before the netlist-tool fixes. Open: the exact address windows of the
+RAM and status reads (they depend on a6..a15, whose order is open), and what 0x37 reads back on the current netlist;
+would be settled by the one-hot upper-address frames and an `r0037` frame in the whole netlist.
 
 **Checks.** `hdl/sdr/regfile.v` re-implements the write side (42 registers, 598 flip-flops):
 - against the `regfile` slice (884 cells; bus, reset and every other register as inputs), new random bus values on
@@ -1362,12 +1362,13 @@ whole netlist.
 - against the whole netlist: `regmap_main.cpp` logs the 598 flip-flops and the bus flip-flops on every change while
   MAIN-style frames arrive on UART B; `tools/sdr_regfile_trace.py trace` turns the log into a clock-by-clock trace,
   and `tb_regfile.v -DTRACE` drives the RTL with the netlist's bus flip-flops and compares all 598 flip-flops on every
-  clock. Runs and results: [T24, SDR round 2](../../tasks/T24-source-recreation.md#sdr-rtl-round-2-2026-11-02).
+  clock: four runs (smoke, FFFF writes, one-hot data, random values to 32 registers; 55 write strobes, about 8 M
+  clocks), 0 mismatching clocks **[fact, Icarus 11]**. Runs: [T24, SDR round 2](../../tasks/T24-source-recreation.md#sdr-rtl-round-2-2026-11-02).
 
 The write-enable pulses per frame (`tools/sdr_regfile_trace.py enables`) agree with the static map for every
 whole-netlist frame logged: each write to a mapped address pulses that register's enable and changes only its
 flip-flops; writes to unmapped addresses (0x0000..0x0002, 0x0056..0x0058, 0x00AC..0x00AE tried) change no register
-**[fact]**.
+(57 frames, 41 addresses, 34 of them registers) **[fact]**.
 
 ### 5.3 Debug console (UART A, M18/L18) [fact unless marked]
 

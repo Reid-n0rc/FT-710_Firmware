@@ -1819,6 +1819,55 @@ thresholds) are in [netlist.md 3.7](../code/sdr/netlist.md#37-adc-capture-two-14
   stops on the BRAM outputs or the BRAMs as seeds; not started.
 - **Override fields of the gain stage.** Open: which MAIN register holds them; would be settled by a register sweep.
 
+## SDR RTL, round 2 (2026-11-02)
+
+### Plan (SDR round 2)
+
+Continue round 1 with the blocks it left open: the register file (map every write enable to its address with a
+whole-netlist write sweep over UART B, write the RTL, check it on every clock against its slice and against the whole
+netlist), the scope writer (cut at the scope RAM's port-A pins: the RTL drives what the netlist drives into
+RAMB18_X2Y21, so neither side needs a block-RAM model), and the decimator stages if time allows.
+
+### SDR: results (round 2)
+
+| Block (tsv row) | RTL | Cells | Check [fact] |
+|---|---|---|---|
+| `regfile` | `hdl/sdr/regfile.v` | 882 | slice: `tb_regfile.v -DSTRUCT`, 2,000,000 clocks, 598 flip-flops, 0 mismatching clocks (Icarus 11); whole netlist: `tb_regfile.v -DTRACE` on four UART B runs (55 write strobes, about 8 M clocks), 0 mismatching clocks |
+| `scope_wr_data` | `hdl/sdr/scope_wr_data.v` | 69 | `tb_scope_wr_data.v -DSTRUCT`: 1,000,000 clocks, 0 mismatching clocks |
+
+SDR re-implemented: **5.0 % -> 6.5 %** of 63,735 cells (3,182 -> 4,133; `decomp/sdr/progress.tsv`).
+
+- **Register map** (netlist.md [5.2, register file](../code/sdr/netlist.md#register-file-write-side-and-address-map-t24-sdr-round-2-fact-unless-marked)):
+  42 write enables, one address each (0x03..0x27, 0x2E, 0x30..0x32, 0x37), 598 flip-flops, reset values matching the
+  T15e reads. Round 1's "974 bits under 86 enables" counted every flip-flop whose cone touched a bus flip-flop through
+  either half of a shared LUT6_2; following only the inputs a LUT output depends on (`tools/sdr_progress.py`
+  `comb_leaves`) leaves 598 register bits, 84 read-mux flip-flops and 25 address-loaded flip-flops of one other block.
+- **Method.** The enables were mapped two ways: exhaustively (each enable's LUT cone evaluated over all 2^16 addresses
+  with the strobe) and in the whole netlist (`hdl/sdr/sim/regmap_main.cpp`, 1,478 probes): 57 whole-netlist
+  frames over UART B, each write pulsing exactly the predicted enable and changing only that register's flip-flops.
+  (41 addresses, 34 of them registers; logs of the smoke run, the FFFF sweep 0x0000..0x000A, 0x0056..0x0058,
+  0x00AC..0x00AE, the one-hot data run and 32 of 42 random writes). The planned 256-address FFFF sweep (4 x 86 frames)
+  did not finish: the shared machine gave each simulation 13-45 % of a core (about 3,000 clocks/s, 45 s per frame) and
+  the background jobs hit their time limit; the exhaustive evaluation covers every address. Open: the one-hot
+  upper-address frames of the mapping run (a6..a15 order) were cut off with it.
+- **Override fields of the gain stage** (round 1's open point): register 0x07, channel A = bits 15..8, channel B = bits
+  7..0 (netlist.md 3.7).
+- **Scope writer.** Cut at RAMB18_X2Y21 port A. Done: the data path into DIADI0..7 (`scope_wr_data.v`); its inputs are
+  copies of reg 0x26 (`lvl`) and reg 0x27[7:0] (`ref`) plus reg 0x27 bit 15 (`g`), so the byte is about
+  0x27[7:0] - (0x26 + sample)/16 (netlist.md 5.6).
+
+### SDR: blockers and next steps (round 2)
+
+- **Read side of the register file**: mapped for 0x0000..0x003F with a stable address (the 42 registers read back at
+  their own address, status words of other blocks elsewhere, 0xCCCC above 0x3F except a capture-RAM window and a
+  status window) but not written as RTL: the two-stage read mux changes on the transaction's address edges in a way
+  that depends on synthesis don't-cares, so a per-clock check needs either that structure or a compare only at stable
+  addresses. Open: the address windows of the capture-RAM and status reads; would be settled by the one-hot
+  upper-address frames (`w0100FFFF` .. `w8000FFFF`, part of the mapping run) in the whole netlist.
+- **Scope writer, address and write-enable side** (two 10-bit index counters, the bank bit, the 16-bit counter
+  sequencer `SLICE_X30Y125..X33Y124` with 117 external inputs): not started. Its cut is the port-A address and WE pins.
+- **Decimator stages** (`rx_fir_operand_mux`, `rx_out_mac`): not started.
+
 ## MAIN, UI track (2026-11-01; parallel to MAIN round 5)
 
 ### Plan (UI track)
