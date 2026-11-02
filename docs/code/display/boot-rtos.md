@@ -522,3 +522,23 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): arm
 | 0x20100F84 | `icache_invalidate_range` | (addr, size): ICIMVAU per cache line, or ICIALLU when addr or size is 0; then BPIALL **[fact]**; name **[inference]** |
 
 All of 0x20100D0C..0x20101183 is recreated in `src/display/drivers/cp15.c` (T24 round 3).
+
+### NORTi helpers, recreated (T24 USB track)
+
+`src/display/lib/norti_knl.c` has the plain-C helpers; the service-call paths (svc, the dispatcher, interrupt entry and
+exit, the TCB queues) stay the image's kernel. Found on the way **[fact: the disassembly]**:
+
+- The pools are free lists of {next, size} blocks (sizes rounded up to 8) whose head is a word: 0x208003FC (the system
+  pool), 0x208003F8 (used by `knl_pool_alloc` / `knl_pool_free` when the configuration word 0x20165A34 is non-zero) and
+  0x208003F4 (used by `knl_sys_alloc` / `knl_sys_free` when 0x20165A30 is non-zero). In this image both words are 0, so
+  every allocation comes from 0x208003FC.
+- `knl_freelist_free` returns E_PAR (-17) when the block overlaps the free block before or after it, and merges with
+  both neighbours when they touch.
+- `knl_mbf_get` / `knl_mbf_put`: the message-buffer control block holds the ring pointer at +4, the write and read
+  indices at +8 / +0xA, the ring size +0xC, the free count +0xE and the maximum message size +0x10 (halfwords); a
+  message is a little-endian 16-bit length and the bytes, both wrapping at the ring size; maximum size 1 stores single
+  bytes without a length.
+- `os_mbx_send` 0x20162D3C ignores its first (object) argument.
+
+Not recreated: the tick processing (`knl_tick_task_timeouts`, `knl_tick_cyclic`, `knl_tick_table_dbf84`) and
+`knl_sys_init`.

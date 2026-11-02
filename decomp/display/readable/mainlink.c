@@ -2293,7 +2293,7 @@ undefined4 mutex_guard_dtor(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_alloc @ 20158630  (12 bytes, 6 callers, export file 201576f4_20159d98.c)
+ * mainlink_tx_alloc @ 20158630  (12 bytes, 6 callers, export file 201576f4_20159058.c)
  * Purpose: TX buffer pool, paced post
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2313,7 +2313,7 @@ uint mainlink_tx_alloc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_init @ 2015863c  (96 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * mainlink_tx_init @ 2015863c  (96 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: 32 x 0x408 B buffer pool + mailbox [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2347,7 +2347,7 @@ void mainlink_tx_init(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_clear_stats @ 2015869c  (16 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * mainlink_tx_clear_stats @ 2015869c  (16 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: no direct calls; 16 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2364,7 +2364,7 @@ void mainlink_tx_clear_stats(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_post @ 20158744  (100 bytes, 7 callers, export file 201576f4_20159d98.c)
+ * mainlink_tx_post @ 20158744  (100 bytes, 7 callers, export file 201576f4_20159058.c)
  * Purpose: TX buffer pool, paced post
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2388,7 +2388,7 @@ void mainlink_tx_post(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_tx_ctor @ 201587ac  (32 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * mainlink_tx_ctor @ 201587ac  (32 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: vtbl 0x20427FAC [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2409,7 +2409,7 @@ int mainlink_tx_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_uart4_rx @ 20158930  (180 bytes, 0 callers, export file 201576f4_20159d98.c)
+ * task_uart4_rx @ 20158930  (180 bytes, 0 callers, export file 201576f4_20159058.c)
  * Purpose: passes raw bytes to FUN_20131154 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2446,7 +2446,7 @@ void task_uart4_rx(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart4_tx_alloc @ 201589f4  (12 bytes, 3 callers, export file 201576f4_20159d98.c)
+ * uart4_tx_alloc @ 201589f4  (12 bytes, 3 callers, export file 201576f4_20159058.c)
  * Purpose: calls `FUN_201644ac`; 12 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2464,7 +2464,7 @@ uint uart4_tx_alloc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart4_tx_init @ 20158a00  (96 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * uart4_tx_init @ 20158a00  (96 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: calls `msgbuf_init`, `os_mbx_create_fifo`, `FUN_20164460`, `FUN_201644a0`; 96 B, callers: 1 [fact] (code
  *     shape)
  * Tag: [fact]
@@ -2497,7 +2497,7 @@ void uart4_tx_init(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * task_uart4_tx @ 20158a70  (108 bytes, 0 callers, export file 201576f4_20159d98.c)
+ * task_uart4_tx @ 20158a70  (108 bytes, 0 callers, export file 201576f4_20159058.c)
  * Purpose: calls `FUN_20158a60`, `itron_dly_tsk`, `itron_trcv_mbx`; 108 B, callers: 0 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2526,7 +2526,7 @@ void task_uart4_tx(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart4_tx_post @ 20158adc  (16 bytes, 3 callers, export file 201576f4_20159d98.c)
+ * uart4_tx_post @ 20158adc  (16 bytes, 3 callers, export file 201576f4_20159058.c)
  * Purpose: calls `os_mbx_send`; 16 B, callers: 3 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2542,7 +2542,7 @@ void uart4_tx_post(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_obj_run @ 20158b10  (240 bytes, 0 callers, export file 201576f4_20159d98.c)
+ * mainlink_obj_run @ 20158b10  (240 bytes, 0 callers, export file 201576f4_20159058.c)
  * Task / object: uart
  * Descriptor: 0x20165880
  * Pri: 7
@@ -2587,7 +2587,7 @@ void mainlink_obj_run(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_obj_ctor @ 20158c10  (48 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * mainlink_obj_ctor @ 20158c10  (48 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: link object constructor
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2610,7 +2610,7 @@ int mainlink_obj_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart4_obj_run @ 20158c44  (548 bytes, 0 callers, export file 201576f4_20159d98.c)
+ * uart4_obj_run @ 20158c44  (548 bytes, 0 callers, export file 201576f4_20159058.c)
  * Purpose: 38400 baud; probes with 0xF0 bytes, then sends 1E 00 31 / 1F 00 32 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2692,7 +2692,7 @@ void uart4_obj_run(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * uart4_obj_ctor @ 20158e8c  (48 bytes, 1 callers, export file 201576f4_20159d98.c)
+ * uart4_obj_ctor @ 20158e8c  (48 bytes, 1 callers, export file 201576f4_20159058.c)
  * Purpose: vtbl 0x20427FE4 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2715,7 +2715,7 @@ int uart4_obj_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_valid_7f @ 2015e16c  (28 bytes, 6 callers, export file 2015a17c_2015eb3c.c)
+ * mainlink_valid_7f @ 2015e16c  (28 bytes, 6 callers, export file 2015da3c_2016040c.c)
  * Purpose: byte & 0x7F <= 12 or == 0x7F [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2738,7 +2738,7 @@ undefined4 mainlink_valid_7f(undefined4 param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_status_valid @ 2015e354  (928 bytes, 2 callers, export file 2015a17c_2015eb3c.c)
+ * mainlink_status_valid @ 2015e354  (928 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: field range checks, 0x7F key
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -2858,7 +2858,7 @@ mainlink_status_valid(undefined4 param_1,byte *param_2,undefined4 param_3,undefi
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_validate @ 2015e6f4  (2324 bytes, 1 callers, export file 2015a17c_2015eb3c.c)
+ * mainlink_rx_validate @ 2015e6f4  (2324 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: field range checks, 0x7F key
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3275,7 +3275,7 @@ switchD_2015dfdc_default:
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_deliver @ 2015e9b8  (164 bytes, 2 callers, export file 2015a17c_2015eb3c.c)
+ * mainlink_rx_deliver @ 2015e9b8  (164 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: trace, D/E, post to the dispatcher
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3315,7 +3315,7 @@ void mainlink_rx_deliver(int param_1,char *param_2,uint param_3)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_valid_code @ 2015eb3c  (56 bytes, 2 callers, export file 2015a17c_2015eb3c.c)
+ * mainlink_valid_code @ 2015eb3c  (56 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: small code-set check used by mainlink_status_valid [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3338,8 +3338,9 @@ undefined4 mainlink_valid_code(undefined4 param_1,uint param_2)
   return uVar1;
 }
 
+
 /* -----------------------------------------------------------------------------
- * mainlink_rx_bind @ 2015eb74  (12 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_rx_bind @ 2015eb74  (12 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: (uart, tx, dispatcher) [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3359,7 +3360,7 @@ void mainlink_rx_bind(int param_1,uint param_2,uint param_3,uint param_4)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_clear_stats @ 2015eb80  (16 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_rx_clear_stats @ 2015eb80  (16 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: no direct calls; 16 B, callers: 1 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3376,7 +3377,7 @@ void mainlink_rx_clear_stats(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_parse @ 2015eb90  (168 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * mainlink_rx_parse @ 2015eb90  (168 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: framing by table length
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3420,7 +3421,7 @@ int mainlink_rx_parse(uint param_1,char *param_2,int param_3,void *param_4)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_ack @ 2015ee40  (68 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_send_ack @ 2015ee40  (68 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
  */
@@ -3444,7 +3445,7 @@ void mainlink_send_ack(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_nak @ 2015ee84  (68 bytes, 3 callers, export file 2015eb74_201606bc.c)
+ * mainlink_send_nak @ 2015ee84  (68 bytes, 3 callers, export file 2015da3c_2016040c.c)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
  */
@@ -3468,7 +3469,7 @@ void mainlink_send_nak(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_frame @ 2015eec8  (116 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * mainlink_rx_frame @ 2015eec8  (116 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: framing by table length
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3505,7 +3506,7 @@ int mainlink_rx_frame(uint param_1,int param_2,uint param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_rx_ctor @ 2015efe4  (12 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_rx_ctor @ 2015efe4  (12 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: vtbl 0x20427FF8 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3523,7 +3524,7 @@ void mainlink_rx_ctor(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * task_uart4_dispatch @ 2015fff0  (40 bytes, 0 callers, export file 2015eb74_201606bc.c)
+ * task_uart4_dispatch @ 2015fff0  (40 bytes, 0 callers, export file 2015da3c_2016040c.c)
  * Purpose: only counts [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3545,7 +3546,7 @@ void task_uart4_dispatch(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_disp_alloc @ 2016003c  (12 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * mainlink_disp_alloc @ 2016003c  (12 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: calls `FUN_201644ac`; 12 B, callers: 2 [fact] (code shape)
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3563,7 +3564,7 @@ uint mainlink_disp_alloc(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_disp_init @ 20160048  (96 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_disp_init @ 20160048  (96 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: 32 x 0x408 B pool + mailbox [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3597,7 +3598,7 @@ void mainlink_disp_init(int param_1,uint param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_disp_post @ 20160278  (16 bytes, 2 callers, export file 2015eb74_201606bc.c)
+ * mainlink_disp_post @ 20160278  (16 bytes, 2 callers, export file 2015da3c_2016040c.c)
  * Purpose: post to the dispatcher mailbox
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3613,7 +3614,7 @@ void mainlink_disp_post(int param_1,undefined4 param_2)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_disp_ctor @ 20160288  (32 bytes, 1 callers, export file 2015eb74_201606bc.c)
+ * mainlink_disp_ctor @ 20160288  (32 bytes, 1 callers, export file 2015da3c_2016040c.c)
  * Purpose: vtbl 0x20428030 [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3634,7 +3635,7 @@ int mainlink_disp_ctor(void *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * mainlink_send_sd_absent @ 20160ed8  (52 bytes, 6 callers, export file 201607c8_201637d8.c)
+ * mainlink_send_sd_absent @ 20160ed8  (52 bytes, 6 callers, export file 20160418_201635b8.c)
  * Purpose: E2 frame with byte 1 = 0 (SD card not present, mainlink.md); the SD menu screens send it when
  *     sd_state_bit7 reads 0 [inference]
  * Tag: [inference]
@@ -3659,7 +3660,7 @@ void mainlink_send_sd_absent(void)
 
 
 /* -----------------------------------------------------------------------------
- * scif_rxi_isr @ 20162dd8  (312 bytes, 3 callers, export file 201607c8_201637d8.c)
+ * scif_rxi_isr @ 20162dd8  (312 bytes, 3 callers, export file 20160418_201635b8.c)
  * Purpose: one byte per interrupt into the RX ring. Counts errors and overflows. Masks RXI and `set_flg(obj+0x818,
  *     1)`
  * Tag: none in the table row
@@ -3705,7 +3706,7 @@ void scif_rxi_isr(scif_uart *uart)
 
 
 /* -----------------------------------------------------------------------------
- * scif_txi_isr @ 20162f10  (156 bytes, 3 callers, export file 201607c8_201637d8.c)
+ * scif_txi_isr @ 20162f10  (156 bytes, 3 callers, export file 20160418_201635b8.c)
  * Purpose: (new entry, Ghidra had merged it into the RXI handler) one byte from the TX ring to SCFTDR. Clears TIE
  *     when the ring is empty
  * Tag: none in the table row
@@ -3741,7 +3742,7 @@ void scif_txi_isr(scif_uart *uart)
 
 
 /* -----------------------------------------------------------------------------
- * uart_obj_init @ 20162fac  (104 bytes, 4 callers, export file 201607c8_201637d8.c)
+ * uart_obj_init @ 20162fac  (104 bytes, 4 callers, export file 20160418_201635b8.c)
  * Purpose: binds registers, ISRs, RX flag
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3771,7 +3772,7 @@ uint uart_obj_init(scif_uart *uart,scif_regs *regs,t_cisr *rxi,t_cisr *txi,uint 
 
 
 /* -----------------------------------------------------------------------------
- * scif_irq_off @ 20163014  (36 bytes, 1 callers, export file 201607c8_201637d8.c)
+ * scif_irq_off @ 20163014  (36 bytes, 1 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+8
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3788,7 +3789,7 @@ void scif_irq_off(scif_uart *uart)
 
 
 /* -----------------------------------------------------------------------------
- * scif_read @ 20163038  (96 bytes, 1 callers, export file 201607c8_201637d8.c)
+ * scif_read @ 20163038  (96 bytes, 1 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+0x10: non-blocking copy out of the 1 KB RX ring (obj+0xC, indices +8/+0xA)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3817,7 +3818,7 @@ int scif_read(scif_uart *uart,byte *buf,int n)
 
 
 /* -----------------------------------------------------------------------------
- * scif_start @ 20163098  (52 bytes, 1 callers, export file 201607c8_201637d8.c)
+ * scif_start @ 20163098  (52 bytes, 1 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+4: `scif_open`, then enables the RXI/TXI GIC lines
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3837,7 +3838,7 @@ void scif_start(scif_uart *uart,uint baud,int bits,int parity,uint stop)
 
 
 /* -----------------------------------------------------------------------------
- * scif_open @ 201630cc  (324 bytes, 1 callers, export file 201607c8_201637d8.c)
+ * scif_open @ 201630cc  (324 bytes, 1 callers, export file 20160418_201635b8.c)
  * Purpose: `(baud, bits, parity, stop)`: SCSMR (bits 7 → CHR, parity 1/2 → PE/PM, stop ≠ 1 → STOP). Below 345600
  *     baud SCBRR = 64 MHz/(32·baud) − 1, at 345600 SCBRR = 0x16 and SEMR |= 0x81. Resets FIFOs and counters
  * Tag: none in the table row
@@ -3910,7 +3911,7 @@ void scif_open(int param_1,uint param_2,int param_3,int param_4,uint param_5)
 
 
 /* -----------------------------------------------------------------------------
- * scif_read_timeout @ 20163218  (104 bytes, 0 callers, export file 201607c8_201637d8.c)
+ * scif_read_timeout @ 20163218  (104 bytes, 0 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+0x18: retries `scif_read` every 1 ms, up to n times
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3943,7 +3944,7 @@ int scif_read_timeout(int *param_1,int param_2,int param_3,int param_4)
 
 
 /* -----------------------------------------------------------------------------
- * scif_flush @ 20163280  (88 bytes, 0 callers, export file 201607c8_201637d8.c)
+ * scif_flush @ 20163280  (88 bytes, 0 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+0x28: empties both rings
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -3966,7 +3967,7 @@ uint scif_flush(scif_uart *uart)
 
 
 /* -----------------------------------------------------------------------------
- * scif_write @ 201632d8  (136 bytes, 0 callers, export file 201607c8_201637d8.c)
+ * scif_write @ 201632d8  (136 bytes, 0 callers, export file 20160418_201635b8.c)
  * Purpose: vtbl+0x24 (new entry): copies into the 1 KB TX ring (obj+0x410), sets SCSCR.TIE. Returns 0 if it does
  *     not fit
  * Tag: none in the table row
@@ -4010,7 +4011,7 @@ uint scif_write(scif_uart *uart,byte *buf,uint n)
 
 
 /* -----------------------------------------------------------------------------
- * uart_obj_ctor @ 20163360  (12 bytes, 3 callers, export file 201607c8_201637d8.c)
+ * uart_obj_ctor @ 20163360  (12 bytes, 3 callers, export file 20160418_201635b8.c)
  * Purpose: (obj): sets the vtable pointer 0x2042803C (first method uart_obj_init) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4028,7 +4029,7 @@ void uart_obj_ctor(undefined4 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * scif_has_flag @ 20163654  (16 bytes, 1 callers, export file 201607c8_201637d8.c)
+ * scif_has_flag @ 20163654  (16 bytes, 1 callers, export file 201635e4_2016437c.c)
  * Purpose: vtbl+0xC: true when an RX flag is bound (the TX task waits for this)
  * Tag: none in the table row
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4045,7 +4046,7 @@ byte scif_has_flag(scif_uart *uart)
 
 
 /* -----------------------------------------------------------------------------
- * copy5 @ 201636cc  (44 bytes, 15 callers, export file 201607c8_201637d8.c)
+ * copy5 @ 201636cc  (44 bytes, 15 callers, export file 201635e4_2016437c.c)
  * Purpose: Copies 5 bytes (encoder events, E1/E2 frames) [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4067,7 +4068,7 @@ void copy5(undefined1 *param_1,undefined1 *param_2)
 
 
 /* -----------------------------------------------------------------------------
- * ring32_post_inc @ 201643f0  (28 bytes, 2 callers, export file 201637f0_201645a0.c)
+ * ring32_post_inc @ 201643f0  (28 bytes, 2 callers, export file 20164388_20164fa4.c)
  * Purpose: Returns *idx and sets it to the next value mod 32 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4090,7 +4091,7 @@ undefined2 ring32_post_inc(undefined2 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txpool_init_mutex @ 20164460  (60 bytes, 3 callers, export file 201637f0_201645a0.c)
+ * txpool_init_mutex @ 20164460  (60 bytes, 3 callers, export file 20164388_20164fa4.c)
  * Purpose: Creates the pool mutex (itron_acre_mtx, TA_INHERIT=2) into obj+0x84; called by mainlink_tx_init /
  *     uart4_tx_init / mainlink_disp_init [fact]
  * Tag: [fact]
@@ -4117,7 +4118,7 @@ void txpool_init_mutex(int param_1)
 
 
 /* -----------------------------------------------------------------------------
- * txpool_set_slot @ 201644a0  (12 bytes, 3 callers, export file 201637f0_201645a0.c)
+ * txpool_set_slot @ 201644a0  (12 bytes, 3 callers, export file 20164388_20164fa4.c)
  * Purpose: obj->slot[n] (obj+4+4n) = buffer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4135,7 +4136,7 @@ void txpool_set_slot(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * txpool_next_slot @ 201644ac  (56 bytes, 3 callers, export file 201637f0_201645a0.c)
+ * txpool_next_slot @ 201644ac  (56 bytes, 3 callers, export file 20164388_20164fa4.c)
  * Purpose: Under the pool mutex returns slot[idx] and advances the ring index (mod 32); mainlink_tx_alloc /
  *     uart4_tx_alloc / mainlink_disp_alloc [fact]
  * Tag: [fact]
@@ -4164,7 +4165,7 @@ undefined4 txpool_next_slot(int param_1,undefined4 param_2,undefined4 param_3,un
 
 
 /* -----------------------------------------------------------------------------
- * ring16_push @ 201645a0  (68 bytes, 1 callers, export file 201637f0_201645a0.c)
+ * ring16_push @ 201645a0  (68 bytes, 1 callers, export file 20164388_20164fa4.c)
  * Purpose: Copies an 8-byte item into the slot at the tail if count < 16; usbkbd_queue_key [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4192,8 +4193,9 @@ void ring16_push(ushort *param_1,undefined4 *param_2)
   return;
 }
 
+
 /* -----------------------------------------------------------------------------
- * ring16_reset @ 201645e4  (20 bytes, 4 callers, export file 201645e4_20164fa4.c)
+ * ring16_reset @ 201645e4  (20 bytes, 4 callers, export file 20164388_20164fa4.c)
  * Purpose: Clears count, head and tail of a 16-entry ring {count, head, tail, slots} [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4213,7 +4215,7 @@ void ring16_reset(undefined2 *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring16_set_slot @ 201645f8  (12 bytes, 1 callers, export file 201645e4_20164fa4.c)
+ * ring16_set_slot @ 201645f8  (12 bytes, 1 callers, export file 20164388_20164fa4.c)
  * Purpose: ring->slot[n] (obj+8+4n) = pointer [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4231,7 +4233,7 @@ void ring16_set_slot(int param_1,int param_2,undefined4 param_3)
 
 
 /* -----------------------------------------------------------------------------
- * ring16_pop @ 20164604  (52 bytes, 1 callers, export file 201645e4_20164fa4.c)
+ * ring16_pop @ 20164604  (52 bytes, 1 callers, export file 20164388_20164fa4.c)
  * Purpose: Returns the slot at the head and advances it (mod 16), 0 when empty; usbkbd_pop_key [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4261,7 +4263,7 @@ undefined4 ring16_pop(short *param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring16_ctor @ 20164638  (20 bytes, 1 callers, export file 201645e4_20164fa4.c)
+ * ring16_ctor @ 20164638  (20 bytes, 1 callers, export file 20164388_20164fa4.c)
  * Purpose: ring16_reset, returns this [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md
@@ -4279,7 +4281,7 @@ undefined4 ring16_ctor(undefined4 param_1)
 
 
 /* -----------------------------------------------------------------------------
- * ring32_next @ 20164870  (24 bytes, 1 callers, export file 201645e4_20164fa4.c)
+ * ring32_next @ 20164870  (24 bytes, 1 callers, export file 20164388_20164fa4.c)
  * Purpose: (idx + 1) mod 32 [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/mainlink.md

@@ -40,6 +40,7 @@ Usage:
   python3 -I tools/equiv_display_emu.py check FUNCTION... [--object OBJ] [--trials N] [--seed S]
                                         the named functions, or all of an object (src/display/out/obj)
   python3 -I tools/equiv_display_emu.py status [--trials N]   every recreated function -> src/display/status.tsv
+  python3 -I tools/equiv_display_emu.py status FUNCTION... [--object OBJ]   only those; the other rows are kept
   python3 -I tools/equiv_display_emu.py linkcheck      the hybrid image (tools/display_link.py) against the original
   python3 -I tools/equiv_display_emu.py abicheck       call sites that rely on registers a recreated callee does not return
 The image is read from build/FT-710_DISPLAY_V0108.bin (or $FT710_BUILD/...); it is never written anywhere.
@@ -1532,6 +1533,174 @@ PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('s
                                                                              'strncpy')})
 
 
+# --- T24 USB track (app/scope_obj.c, drivers/usb_*.c, app/textterm.c, lib/norti_knl.c): presets ---
+SCOPE_OBJ = 0x2047963C        # the scope object instance (data_symbols.tsv scope_obj), RAM of the start state
+
+
+def scope_args(rng, args, kind):
+    """The scope object's methods take the instance (a random pointer would leave the 0x82FB8-byte object's fields in
+    other arguments' buffers), and COLOR indices 0..10 (scope_color_decode clamps to 10), mode 8 / 9 / other,
+    bank selection 0 / 1 / 2."""
+    regs = args['regs']
+    if kind.startswith('obj') and rng.random() < 0.9:
+        regs[0] = SCOPE_OBJ
+    first = 1 if kind.startswith('obj') else 0
+    if kind.endswith('color'):
+        regs[first], regs[first + 1] = rng.randrange(11), rng.randrange(11)
+    elif kind.endswith('bank'):
+        regs[first] = rng.randrange(4)
+    elif kind.endswith('mode'):
+        regs[first] = rng.randrange(-2, 32) & 0xFFFFFFFF
+        regs[first + 1] = rng.choice([8, 9, 0, 1, 10])
+    return []
+
+
+PRESETS.update({n: (lambda rng, args, k=k: scope_args(rng, args, k)) for n, k in (
+    ('scope_obj_palette_set', 'obj_color'), ('scope_palette_set', 'color'), ('scope_obj_init', 'obj'),
+    ('scope_wf_bank_set', 'obj_bank'), ('scope_obj_bank_reset', 'bank'), ('scope_obj_store_record', 'obj'),
+    ('scope_obj_history_clear', 'obj'), ('scope_obj_reset_bank0', 'obj'), ('scope_obj_reset_bank1', 'obj'),
+    ('scope_obj_layout_set', 'obj'), ('scope_obj_set_2e00', 'obj'), ('scope_obj_set_2e02', 'obj'),
+    ('scope_obj_apply_2e00', 'obj'), ('scope_obj_indices_clear', 'obj'), ('scope_obj_vscale', 'obj_mode'),
+    ('scope_obj_wf_row_addr', 'obj_mode'), ('scope_obj_line_offset', 'obj_mode'), ('scope3d_vscale', 'mode'),
+    ('scope3d_line_offset', 'mode'), ('scope_wf_row_addr', 'mode'))})
+
+
+def knl_list_args(rng, args, kind):
+    """A kernel free list {next, size} in argument buffer 4 (address-ordered blocks with sizes and gaps of multiples
+    of 8, the head word first), and a request: (head, size) for knl_freelist_alloc, (head, block, size) for
+    knl_freelist_free (a block in a gap, or overlapping a free block), or the wrappers' (size) / (block, size)
+    with the head word of their pool (fill) pointing at the list."""
+    base = SCRATCH_ARGS + 0x8000
+    data = bytearray(rng.getrandbits(8) for _ in range(0x2000))
+    blocks, a, nblk = [], base + 8 * rng.randrange(1, 8), rng.randrange(0, 9)
+    while len(blocks) < nblk:
+        a += 8 * rng.randrange(0, 40)
+        size = 8 * rng.randrange(1, 64)
+        if a + size > base + 0x1F00:
+            break
+        blocks.append((a, size))
+        a += size
+    for k, (b, size) in enumerate(blocks):
+        nxt = blocks[k + 1][0] if k + 1 < len(blocks) else 0
+        struct.pack_into('<II', data, b - base, nxt, size)
+    first = blocks[0][0] if blocks else 0
+    struct.pack_into('<I', data, 0, first)
+    args['buffers'] = [x for x in args['buffers'] if not base <= x[0] < base + 0x2000] + [(base, bytes(data))]
+    regs = args['regs']
+    size = rng.choice([0, 1, 7, 8, 9, 16, 24]) if rng.random() < 0.3 else rng.randrange(0, 0x300)
+    if rng.random() < 0.6 or not blocks:      # a block where nothing is free (between, before or after the blocks)
+        blk = base + 8 * rng.randrange(1, 0x3E0)
+    else:                                     # at or right after a free block, so that it merges or overlaps
+        b, s = rng.choice(blocks)
+        blk = rng.choice([b, b + s, b - size - (size & 7 and 8 - (size & 7)), b + 8])
+    blk &= 0xFFFFFFFF
+    fill = []
+    if kind == 'alloc':
+        regs[0], regs[1] = base, size
+    elif kind == 'free':
+        regs[0], regs[1], regs[2] = base, blk, size
+    else:                                     # a wrapper: its pool's head word holds the first block
+        for head in (0x208003F4, 0x208003F8, 0x208003FC):
+            fill.append((head, struct.pack('<I', first)))
+        if kind == 'walloc':
+            regs[0] = size
+        else:
+            regs[0], regs[1] = blk, size
+    return fill
+
+
+def knl_mbf_args(rng, args, kind):
+    """A message-buffer control block in argument buffer 0 with its ring in buffer 5: ring size 4..0x200, indices
+    inside it, maximum message size 1 or 0x80; get finds a length (0..size-2) at the read index (both bytes may
+    wrap); put gets a message size and a free count around it."""
+    cb, ring = SCRATCH_ARGS, SCRATCH_ARGS + 0xA000
+    size = rng.randrange(4, 0x200)
+    rd, wr = rng.randrange(size), rng.randrange(size)
+    one = rng.random() < 0.25
+    data = bytearray(rng.getrandbits(8) for _ in range(0x400))
+    length = rng.randrange(0, size - 1)
+    data[rd] = length & 0xFF
+    data[(rd + 1) % size] = length >> 8
+    regs = args['regs']
+    if kind == 'put':
+        regs[2] = rng.randrange(0, size + 2) if rng.random() < 0.8 else rng.choice([0, 1, 0x10000, 0xFFFE])
+        free = rng.randrange(0, size + 4)
+    else:
+        free = rng.randrange(0, 0x10000)
+    blk = struct.pack('<IIHHHHH', rng.getrandbits(32), ring, wr, rd, size, free, 1 if one else 0x80)
+    msg = SCRATCH_ARGS + 0x2000
+    args['buffers'] = [x for x in args['buffers'] if x[0] not in (cb, ring, msg)] + [
+        (cb, blk + bytes(0x40)), (ring, bytes(data)), (msg, bytes(rng.getrandbits(8) for _ in range(0x400)))]
+    regs[0], regs[1] = cb, SCRATCH_ARGS + 0x2000
+    return []
+
+
+PRESETS.update({'knl_freelist_alloc': lambda rng, args: knl_list_args(rng, args, 'alloc'),
+                'knl_freelist_free': lambda rng, args: knl_list_args(rng, args, 'free'),
+                'knl_mbf_get': lambda rng, args: knl_mbf_args(rng, args, 'get'),
+                'knl_mbf_put': lambda rng, args: knl_mbf_args(rng, args, 'put')})
+PRESETS.update({n: (lambda rng, args: knl_list_args(rng, args, 'walloc')) for n in (
+    'knl_stack_alloc', 'knl_pool_alloc', 'knl_sys_alloc')})
+PRESETS.update({n: (lambda rng, args: knl_list_args(rng, args, 'wfree')) for n in (
+    'knl_sys_free_a', 'knl_pool_free', 'knl_sys_free')})
+
+
+def hid_args(rng, args, kind):
+    """HID helpers: an item reader position (a word in buffer 0 pointing at item bytes in buffer 5, any size code),
+    a report with a bit offset and count inside it, or a configuration record (buffer 6) with 0..8 endpoint entries
+    of random type and direction and max packets around 0..256."""
+    regs, bufs = args['regs'], args['buffers']
+    if kind == 'item':
+        items = SCRATCH_ARGS + 0xA000 + rng.randrange(0x40)
+        bufs[:] = [b for b in bufs if b[0] not in (SCRATCH_ARGS, SCRATCH_ARGS + 0xA000)]
+        bufs += [(SCRATCH_ARGS, struct.pack('<I', items) + bytes(0x3C)),
+                 (SCRATCH_ARGS + 0xA000, bytes(rng.getrandbits(8) for _ in range(0x100)))]
+        regs[0], regs[1], regs[2] = SCRATCH_ARGS, SCRATCH_ARGS + 0x2000, rng.randrange(2)
+        bufs[:] = [b for b in bufs if b[0] != SCRATCH_ARGS + 0x2000] + [(SCRATCH_ARGS + 0x2000, bytes(0x40))]
+    elif kind == 'bits':
+        regs[0] = SCRATCH_ARGS + 0xA000
+        bufs[:] = [b for b in bufs if b[0] != regs[0]] + [(regs[0], bytes(rng.getrandbits(8) for _ in range(0x100)))]
+        regs[1], regs[2] = rng.randrange(0, 0x400), rng.randrange(0, 34)
+    else:
+        c = bytearray(rng.getrandbits(8) for _ in range(0x1000))
+        n = rng.randrange(0, 9)
+        struct.pack_into('<i', c, 0x1C, n)
+        for i in range(n):
+            e = 0x860 + 12 * i
+            c[e] = rng.choice([0x81, 0x01, 0x82, 0x83, 0x02])
+            c[e + 1] = rng.choice([3, 3, 2, 1, 0])
+            struct.pack_into('<i', c, e + 4, rng.choice([0, 1, 8, 64, 256, 257, -1, 0x1000]))
+        regs[0], regs[1] = SCRATCH_ARGS, SCRATCH_ARGS + 0xC000
+        bufs[:] = [b for b in bufs if b[0] not in (regs[0], regs[1])] + [(regs[0], bytes(0x40)), (regs[1], bytes(c))]
+    return []
+
+
+PRESETS.update({'hid_item_data': lambda rng, args: hid_args(rng, args, 'item'),
+                'hid_report_bits_get': lambda rng, args: hid_args(rng, args, 'bits'),
+                'usbhid_find_int_in': lambda rng, args: hid_args(rng, args, 'ep')})
+
+
+def textterm_args(rng, args, kind):
+    """The text terminal: the answer ring (0x208F4BAC, 64 bytes, some zero) with random indices, and an expected
+    byte that is often the next one; or a settings frame (a buffer) for textterm_send_all."""
+    regs = args['regs']
+    if kind == 'frame':
+        regs[0], regs[1] = SCRATCH_ARGS + 0x2000, rng.randrange(2)
+        args['buffers'] = [b for b in args['buffers'] if b[0] != regs[0]] + [
+            (regs[0], bytes(rng.getrandbits(8) for _ in range(0x400)))]
+        return []
+    ring = bytes(rng.choice([0, rng.getrandbits(8)]) for _ in range(64))
+    wr, rd = rng.randrange(64), rng.randrange(64)
+    if rng.random() < 0.2:
+        wr = rd
+    regs[0] = ring[rd] if rng.random() < 0.5 else rng.choice([0, rng.getrandbits(8), 0x100 | ring[rd]])
+    return [(0x208F4BAC, ring + bytes([wr, rd]))]
+
+
+PRESETS.update({'textterm_rx_expect': lambda rng, args: textterm_args(rng, args, 'ring'),
+                'textterm_send_all': lambda rng, args: textterm_args(rng, args, 'frame')})
+
+
 def byte_check(res, obj, fname, shndx, off, oaddr):
     """identical: the section linked so that the function lands at its original address gives the image's bytes over
     the whole function symbol (code and its literals), which must cover at least the Ghidra function. In practice
@@ -1908,7 +2077,12 @@ def cmd_status(args):
     require_objects()
     res = Resolver(Image())
     results = {}
-    jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()]
+    # a partial run (functions named, or --object): only those are checked, every other row of status.tsv is kept
+    # as it is (T24 USB track: two sessions add their own objects without re-running each other's)
+    want, objs = set(args.functions or ()), list(args.object or ())
+    partial = bool(want or objs)
+    jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()
+            if not partial or fname in want or any(obj.path.endswith(o) for o in objs)]
     with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
         done = list(pool.imap_unordered(_check_one, jobs))
     for path, fname, a, v, d in sorted(done, key=lambda x: (x[0], x[1])):
@@ -1921,6 +2095,15 @@ def cmd_status(args):
         if cur is None or RANK[v] < RANK[cur[2]]:
             results[a] = (fname, rel, v, d)
     rows = []
+    kept = {}
+    if partial:
+        checked = {fname for _, fname, _, _, _ in done}
+        for r in read_tsv(STATUS_TSV)[1:]:
+            if len(r) >= 8 and r[3] and r[3] not in checked:
+                kept[int(r[0], 16) if r[1] != '-' or r[0] != '00000000' else ('-', r[3])] = r
+        for k, r in kept.items():
+            if k not in results:
+                results[k] = (r[3], r[4], r[5], r[7])
     for g, (a, n, _) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
         if a in results:
             fname, rel, v, d = results[a]
@@ -1970,6 +2153,8 @@ def main():
     lc.add_argument('--trials', type=int, default=100)
     lc.add_argument('--seed', type=int, default=3)
     st = sub.add_parser('status')
+    st.add_argument('functions', nargs='*', help='only these (the other rows of status.tsv are kept)')
+    st.add_argument('--object', action='append', help='only the functions of this object (e.g. drivers/usb_hid.o)')
     st.add_argument('--jobs', type=int, default=0, help='worker processes (default: all cores)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)

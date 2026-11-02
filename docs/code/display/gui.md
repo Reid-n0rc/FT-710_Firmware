@@ -1148,3 +1148,44 @@ Findings **[fact]**:
 | 0x201193C0..0x2011D07F | `drivers/vdc5_reg.c` (part) | initialize, terminate, video input, sync, display output with the TCON helpers, colour matrices, start/stop/release with the per-layer table 0x20165BD8, noise reduction, black stretch, alpha, calibration. Not yet: write/read data control and their changes (scaling, cascade, VIN), image enhancement, alpha rectangle, chroma key, CLUT, gamma |
 | 0x2011D080..0x2011D9A7 | `drivers/vdc5_shrd.c` | every shared-parameter function |
 | 0x20132320..0x201330D3 | `app/gui_vdc5.c` (part) | module clock, TCON tables, LVDS PLL block, sync and output set-up, the line interrupt; not yet `vdc5_layers_setup`, `vdc5_layers_stop`, `vdc5_channel_shutdown` |
+
+### Scope object methods, recreated (T24 USB track)
+
+`src/display/app/scope_obj.c` and `app/scope_rings.c`. The GUI's scope functions 0x201342B4..0x201344AF are thunks:
+each loads the instance 0x2047963C and tail-calls a method of the scope object (the image's C++ class) **[fact: the
+`ldr r0, =0x2047963C; b …` pairs]**. Sixteen of those methods have no Ghidra entry, so Ghidra counted their bodies
+into the thunks (`scope_palette_set` 256 bytes, `scope3d_add_line` 588, `scope_objects_init` 448, for two or three
+instructions each). `tools/ghidra/entries_display.T24usb.tsv` adds them:
+
+| Address | Name | Thunk | What |
+|---|---|---|---|
+| 0x2015781C | `scope_obj_store_record` | `scope_store_frame` | the 850-byte record into +0x9C7F unless frozen (+0x9C7C); blank while 0x208004A0 or +0x9C7E; the 800 default bytes 0x203D9B14 at +0x9C98 with 0x20808A84 bit 10 **[fact]** |
+| 0x201578C4 | `scope_obj_set_2e04_thunk` | `scope_set_2e04_2e00` | b `scope_obj_set_2e04` (FUN_20162d48: byte +0x2E04) **[fact]** |
+| 0x201578F0 / 0x20157BC4 | `scope_obj_freeze_b_set` / `_a_set` | `scope_freeze_b_set` / `_a_set` | bytes +0x9C7D / +0x9C7C **[fact]** |
+| 0x201578FC | `scope_obj_palette_set` | `scope_palette_set` | the colour ramps of COLOR a and b (pointer tables 0x203D9A54, +104, +148) into the four ramp sub-objects and the two 3D objects **[fact]** |
+| 0x20157A00 | `scope_obj_redraw_history` | `scope3d_redraw_history` | not recreated |
+| 0x20157BD0 | `scope_obj_layout_set` | `scope3d_layout_set` | the flag into the four ramp sub-objects and the mode-8/9 scale pointers 0x20450278/7C **[fact]** |
+| 0x20158010 / 0x201580E0 | `scope_obj_history_push` / `scope_obj_add_line` | `scope_history_push` / `scope3d_add_line` | not recreated |
+| 0x20158330 | `scope_obj_init` | `scope_objects_init` | the object's initialisation after the 0x82FB8-byte clear **[fact]** |
+| 0x20162D54 / 0x20162D68 | `scope_obj_apply_2e00` / `_2e02` | (tail calls of `scope_obj_set_2e00` / `_2e02`) | the first recreated, the second not |
+| 0x2016340C | `scope_obj_line_markers` | `scope3d_line_markers` | obj + 0x100E4 + 0x54·i **[fact]** |
+| 0x201634B8 | `scope_obj_vscale` | `scope3d_vscale` | halfword i of the selected mode-8/9 scale, else 0 **[fact]** |
+| 0x201634F0 | `scope_obj_wf_row_addr` | `scope_wf_row_addr` | row ring133_offset(index, ~i) of the selected bank **[fact]** |
+| 0x20163564 | `scope_obj_line_offset` | `scope3d_line_offset` | halfword i of the ROM scale of the layout (not the selected one), else 0 **[fact]** |
+
+The object's layout as far as these methods show it **[fact: their offsets]**: +0x320C / +0x5DC4 / +0x6744 / +0x92FC
+the four colour-ramp sub-objects; +0x2E00..+0x3208 level halfwords; +0x9C7C / +0x9C7D / +0x9C7E the two freeze bytes and
+the blank flag; +0x9C7F the record (850 bytes; 0x204832BB in the instance), +0x9FD1 its hold copy; +0xA323 30 3DSS lines
+of 800 bytes; +0x100E4 30 marker records of 0x54 bytes; +0x10ABC the history (26,520 bytes); +0x17254 the ring30 index;
++0x1B12C the history ring index; +0x1B130 two waterfall banks of 133 rows of 0x640 bytes; +0x82FB0 / +0x82FB4 the
+ring133 indices of banks 1 and 0. 0x20450278 holds the mode-8 and mode-9 scale pointers and, at +8, the selected bank.
+
+Corrections to the tables above **[fact]**: `scope_record_hold_copy` 0x20134390 does not copy the record: it replaces
+only r0 with the instance and tail-calls `scope_obj_levels_get`, so the caller's r1..r3 pass through; it has no caller.
+`scope_wf_bank_set(obj, 1)` selects bank 1 without clearing it; any value other than 0 and 1 clears both banks and both
+ring indices and leaves the selection. `scope_obj_wf_row_addr` ignores its third argument.
+
+Not recreated: the methods behind `scope3d_redraw_history`, `scope3d_add_line`, `scope_history_push`, `scope_obj_levels_get`,
+`scope_obj_wf_add_row`, the 3D draw paths and the AF-FFT object. *Open: `scope_obj_init` and `scope_objects_init` are
+recreated but every trial runs out of the instruction budget (the ramp sub-objects' set-up and the 0x82FB8-byte clear);
+would be settled by a larger budget for these two, or a preset that replaces the ramp methods' delay loops.*
