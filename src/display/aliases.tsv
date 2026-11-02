@@ -112,3 +112,44 @@ dmac9_enable	0x20137dec	[fact] reg_rmw32(CHCTRL_9 0xE8200468, 1, 0, 1) between d
 dmac3_set_callback	0x20137d78	[inference] stores r0 at 0x20808AA0, the first of the five callback slots (4: +4, 5: +8, 9: +0xC, 10: +0x10, set by the named setters), right after dmac3_disable; no caller; Ghidra FUN_20137d78
 sdhi_read_buf_pio	0x20140998	[fact] len / 4 reads of SD_BUF0 (0xE804E030) stored low byte first, returns 0; slot 23 of the SDHI operation table 0x20420564; Ghidra FUN_20140998 (drivers/sdhi.c)
 sdhi_dma_open	0x2013fe68	[fact] the tail call of sdhi_open (b 0x2013FE68 at 0x20140B94): DMARS0 0xC2/0xC1, the two DMA end interrupts (gic_def_inh, priority, ICDISER), CHCTRL0/1 SWRST; Ghidra counts it into sdhi_open
+sd_card_clock	0x2013c928	[fact] (on, handle): on = 1 tail-calls slot 0 of the operation table with the signed halfword +0x2C4, else calls slot 1 and returns 0; sd_card_identify calls it with 1 before CMD0 (drivers/sd_setup.c); Ghidra FUN_2013c928
+sd_cmd11_voltage_switch	0x2013cde8	[fact] CMD11 (three tries), R1 error bits 0x2C80008, clock off, slots 4/14/5, clock on; called by sd_card_identify when flags +0x2C0 bit 2 (S18A) is set (drivers/sd_setup.c); Ghidra FUN_2013cde8
+sd_cmd3_relative_addr	0x2013cf80	[fact] CMD3 (arg 0x10000 for an MMC, 0 for SD), RCA from R6 into +0x2AA; tail call of sd_card_identify (b 0x2013CF80 at 0x2013E0D8); no Ghidra entry (Ghidra counts it into sd_card_identify)
+sd_cid_check	0x2013d2d4	[fact] CID bytes 0..2 and 3..14 not all zero, else -5; tail call of sd_read_csd_cid (b 0x2013D2D4 at 0x2013E188); no Ghidra entry
+sd_switch_high_speed	0x2013da6c	[fact] CMD6 group 1 function 1 (0x00FFFFF1 / 0x80FFFFF1), clock mode +0x2C4 = 2; tail call of sd_select_bus_speed (b 0x2013DA6C at 0x2013DFE8); no Ghidra entry (Ghidra counts it into sd_select_bus_speed)
+sd_switch_uhs_speed	0x2013db74	[fact] CMD6 group 1 functions 1..4 with current limit (0xFF3FF2..4), speed +0x2C2 and clock mode +0x2C4 by function; tail call of sd_select_bus_speed (b 0x2013DB74 at 0x2013DFE0); no Ghidra entry
+sd_set_driver_strength	sd_switch_status_check	[fact] CMD6 group 3 (driver strength) function 0: inquiry 0x00FFF0FF, switch 0x80FFF0FF, gated by slot 6 and group 3 support bit 0 (+0x272); not a status check (drivers/sd_setup.c)
+sd_check_card	0x2013e350	[fact] ldr r0,[r0,#4]; ldr r0,[r0,#8]; bx r0: slot 2 of the handle's operation table; driver op 9 of sd_driver_op (b 0x2013E350 at 0x2013E7DC); no Ghidra entry
+fat_format_volume	fat_clear_root_dir	[fact] fs_memset of the parameters +0x2C8, fat_format_layout, _write_mbr, _write_boot, _write_fsinfo (FAT32), _write_fats, then the root directory zeroed; the whole format of a volume, not only the root directory (app/fat_format.c)
+fat_format_clear_root	0x2013e80c	[fact] zeroes 32 sectors (FAT12/16) or one cluster (FAT32) after the FATs, counted with sd_format_progress_dec; the tail call of fat_format_volume (b 0x2013E80C at 0x2013F834), which Ghidra's C shows inlined; no Ghidra entry
+sd_drive_mount	0x2013e50c	[fact] driver op 7 of sd_driver_op (tail call b 0x2013E50C at 0x2013E7B8): power on, identify, CSD/CID, select, bus width and speed, SD status, clock, sd_mount_volume, flags +0x68 bits 7 and 5; no Ghidra entry (Ghidra counts it into sd_driver_op)
+sd_drive_unmount	0x2013e6a0	[fact] driver op 8 (b 0x2013E6A0 at 0x2013E7C8): slot 10, then +0x68 &= 0x7F between itron_loc_cpu and itron_unl_cpu; no Ghidra entry
+sd_drive_attach	0x2013e6d0	[fact] driver op 5 (b 0x2013E6D0 at 0x2013E7D0): slot 25 (open), sd_card_task_start with the card byte +0, the handle into the drive +0x24; no Ghidra entry
+sd_lock	0x2013f9f4	[fact] b itron_loc_cpu; called around the drive flag updates of sd_drive_mount and sd_drive_unmount; no Ghidra entry
+sd_unlock	0x2013f9f8	[fact] b itron_unl_cpu; the pair of sd_lock; no Ghidra entry
+sd_card_write_protected	0x2013fd70	[fact] (index): bit 5 of +0x68 of the drive 0x20808B60[index], 0 without a handle +0x24; called from 0x20103BC4 (b); no Ghidra entry
+# T24 USB track (scope, USB, text terminal, NORTi helpers): tail-call targets without a Ghidra entry, and FUN_ names
+scope_obj_store_record	0x2015781c	[fact] scope_store_frame 0x201342EC: mov r1, r0; ldr r0, =0x2047963C; b 0x2015781C (app/scope_obj.c)
+scope_obj_set_2e04_thunk	0x201578c4	[fact] b 0x20162D48 (FUN_20162d48: strb r1, [r0, #0x2E04]); called from 0x20134454 and 0x20158470
+scope_obj_freeze_b_set	0x201578f0	[fact] scope_freeze_b_set 0x20134304 tail-calls it; strb r1, [r0, #0x9C7D]
+scope_obj_palette_set	0x201578fc	[fact] scope_palette_set 0x201342DC tail-calls it with (obj, a, b)
+scope_obj_redraw_history	0x20157a00	[fact] scope3d_redraw_history 0x20134318 tail-calls it
+scope_obj_freeze_a_set	0x20157bc4	[fact] scope_freeze_a_set 0x201342F8 tail-calls it; strb r1, [r0, #0x9C7C]
+scope_obj_layout_set	0x20157bd0	[fact] scope3d_layout_set 0x20134480 tail-calls it
+scope_obj_7f8c	FUN_20157f8c	[fact] 0x2013433C tail-calls it with (obj, a)
+scope_obj_history_push	0x20158010	[fact] scope_history_push 0x20134348 tail-calls it
+scope_obj_add_line	0x201580e0	[fact] scope3d_add_line 0x20134328 tail-calls it
+scope_obj_init	0x20158330	[fact] scope_objects_init 0x201342CC: b 0x20158330 after clearing the object
+scope_obj_set_2e00	FUN_201584f8	[fact] halfwords from 0x20428294 / 0x20428298 into +0x2E00, +0x3006, +0x3208 (app/scope_obj.c)
+scope_obj_set_2e02	FUN_20158544	[fact] halfword from 0x2042829C / 0x204282A0 into +0x2E02 (app/scope_obj.c)
+scope_obj_apply_2e00	0x20162d54	[fact] the tail call of 0x20158538: FUN_20157634(obj + 0x2D00, byte +0x2E04, obj + 0x2E00)
+scope_obj_apply_2e02	0x20162d68	[fact] the tail call of 0x2015855C (not recreated)
+scope_obj_line_markers	0x2016340c	[fact] scope3d_line_markers 0x20134408 tail-calls it; obj + 0x100E4 + 0x54 * i
+scope_obj_vscale	0x201634b8	[fact] scope3d_vscale 0x20134358 tail-calls it
+scope_obj_wf_row_addr	0x201634f0	[fact] scope_wf_row_addr 0x20134434 tail-calls it
+scope_obj_line_offset	0x20163564	[fact] scope3d_line_offset 0x20134368 tail-calls it
+scope_obj_7f8c_thunk	FUN_2013433c	[fact] ldr r0, =0x2047963C; b 0x20157F8C
+scope_set_2e04_2e00	FUN_20134444	[fact] bl 0x201578C4 (obj, v), then b 0x201584F8 (obj, on)
+scope_set_2e00	FUN_20134468	[fact] ldr r0, =0x2047963C; b 0x201584F8
+scope_set_2e02	FUN_20134474	[fact] ldr r0, =0x2047963C; b 0x20158544
+scope_obj_set_2e04	FUN_20162d48	[fact] strb r1, [r0, #0x2E04]; bx lr (names_display.T24usb.tsv renames it; the resolver then falls back to this name)

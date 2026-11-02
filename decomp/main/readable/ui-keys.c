@@ -96,7 +96,7 @@ void displink_rx_E0_key(int param_1)
   
   uVar2 = CONCAT11(*(undefined1 *)(param_1 + 2),*(undefined1 *)(param_1 + 3));
   bVar1 = *(byte *)(param_1 + 1);
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
                     /* Checks a key code against about 20 mode locks [doc] */
   key_event_filter_ret = key_event_filter(uVar2,bVar1);
   if (key_event_filter_ret != 0) {
@@ -128,7 +128,7 @@ void displink_rx_E1_encoder(int param_1)
   int iVar3;
   
   if (PTR_g_ui_00025d38->enc_blocked == 1) {
-    DAT_0001b3cc = 1;
+    displink_ack_req = 1;
     return;
   }
   PTR_g_ui_00025d38->enc_ev_id = *(byte *)(param_1 + 1);
@@ -146,21 +146,21 @@ void displink_rx_E1_encoder(int param_1)
     if (bVar2 == 2) {
       bVar2 = key_event_filter(0xff1,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc2_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 3) {
       bVar2 = key_event_filter(0xff2,0);
       if (bVar2 == 0) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       enc3_step(*(char *)(param_1 + 2));
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 4) {
@@ -178,37 +178,37 @@ void displink_rx_E1_encoder(int param_1)
           bVar1 = false;
         }
         if (bVar1) {
-          DAT_0001b3cc = 1;
+          displink_ack_req = 1;
           return;
         }
       }
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc89ef(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       FUN_fffc523a(0,0);
       iVar3 = key_dest_allowed(0,1);
       if (iVar3 != 1) {
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->rf_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 == 5) {
       if (PTR_g_ui_00025d38->numentry_mode != 0) {
         FUN_fffc8a90(*(undefined1 *)(param_1 + 2));
-        DAT_0001b3cc = 1;
+        displink_ack_req = 1;
         return;
       }
       PTR_g_ui_00025d38->af_gain = *(byte *)(param_1 + 2);
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
     if (bVar2 != 6) {
-      DAT_0001b3cc = 1;
+      displink_ack_req = 1;
       return;
     }
   }
@@ -223,7 +223,7 @@ void displink_rx_E1_encoder(int param_1)
       ui_numentry_step(PTR_g_ui_00025d38->enc_ev_steps);
     }
   }
-  DAT_0001b3cc = 1;
+  displink_ack_req = 1;
   return;
 }
 
@@ -655,7 +655,7 @@ byte key_class_of(ushort param_1)
     uVar1 = (uint)key_assign_slot_ret;
     if (uVar1 < 0xd) {
       bStack_5 = *(byte *)((int)&key_class_table +
-                          (uint)*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20));
+                          (uint)*(ushort *)(ch_step_table + uVar1 * 2 + 0x20));
     }
     else {
       bStack_5 = BYTE_ARRAY_fff834b3[uVar1 + 3];
@@ -5057,7 +5057,7 @@ void key_slot_press(byte param_1)
     (*(code *)(&PTR_key_nop_fff8e0cc)[uVar1])();
     return;
   }
-  (*(code *)(&key_press_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_press_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5083,7 +5083,7 @@ void key_slot_short(byte param_1)
     (*(code *)(&PTR_FUN_fff8e0ec)[uVar1])();
     return;
   }
-  (*(code *)(&key_short_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_short_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5109,7 +5109,7 @@ void key_slot_long(byte param_1)
     (*(code *)(&PTR_FUN_fff8e10c)[uVar1])();
     return;
   }
-  (*(code *)(&key_long_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_long_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5135,7 +5135,7 @@ void key_slot_repeat(byte param_1)
     (*(code *)(&PTR_FUN_fff8e12c)[uVar1])();
     return;
   }
-  (*(code *)(&key_repeat_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_repeat_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5161,7 +5161,7 @@ void key_slot_release(byte param_1)
     (*(code *)(&PTR_FUN_fff8e14c)[uVar1])();
     return;
   }
-  (*(code *)(&key_release_table)[*(ushort *)(BYTE_ARRAY_fff88514 + uVar1 * 2 + 0x20)])();
+  (*(code *)(&key_release_table)[*(ushort *)(ch_step_table + uVar1 * 2 + 0x20)])();
   return;
 }
 
@@ -5718,7 +5718,7 @@ uint ch_step_hz(byte param_1)
       if (5 < g_opstate.ex030504_am_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 8));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 8));
       return uVar1;
     }
     if (uVar1 - 6 < 2) {
@@ -5727,7 +5727,7 @@ LAB_fffc6462:
       if (5 < g_opstate.ex030505_fm_ch_step) {
         local_d = 0;
       }
-      uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2 + 0x14));
+      uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2 + 0x14));
       return uVar1;
     }
     if (1 < uVar1 - 8) {
@@ -5741,7 +5741,7 @@ LAB_fffc6462:
   if (3 < g_opstate.ex030503_ch_step) {
     local_d = 0;
   }
-  uVar1 = FUN_fffc648c((uint)*(ushort *)(BYTE_ARRAY_fff88514 + (uint)local_d * 2));
+  uVar1 = ch_step_scale((uint)*(ushort *)(ch_step_table + (uint)local_d * 2));
   return uVar1;
 }
 

@@ -1151,7 +1151,7 @@ void keyer_text_endmark(void)
   }
   else if (bVar1 == 0) {
     pcStack_4 = &DAT_000096a0;
-    pbStack_8 = &DAT_0000969f;
+    pbStack_8 = &keyer_text_mem;
   }
   for (bStack_a = 0; bStack_a < 0x32; bStack_a = bStack_a + 1) {
     if (pcVar2[bStack_a] == '}') {

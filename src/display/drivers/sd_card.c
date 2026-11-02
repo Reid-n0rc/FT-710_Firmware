@@ -11,23 +11,10 @@
 
 extern const uint32_t sd_r1_err_cmd13[];   /* 0x2042022C: R1 error bits per card type that CMD13 tests */
 
-/* three tries of one command; 0 when one of them answered, else -9 [fact: the shape of every caller below] */
-static inline int sd_cmd_retry(const sd_handle_t *h, int cmd, uint32_t arg)
-{
-    for (int i = 0; i < 3; i++)
-    {
-        if (h->ops->cmd(cmd, 0, arg, h->card) == 0)
-        {
-            return 0;
-        }
-    }
-    return -9;
-}
-
-/* 0x2013C960: CMD0 (go idle) after clearing +0x2AC and setting the 1-bit bus (slot 11 with 0) [fact] */
+/* 0x2013C960: CMD0 (go idle) after clearing the bus width +0x2AC and setting the 1-bit bus (slot 11 with 0) [fact] */
 int sd_cmd0_go_idle(const sd_handle_t *h)
 {
-    h->card->state_2ac = 0;
+    h->card->bus_width = 0;
     h->ops->set_bus_width(0);
     return sd_cmd_retry(h, 0, 0);
 }

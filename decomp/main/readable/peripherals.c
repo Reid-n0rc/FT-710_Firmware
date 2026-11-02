@@ -2379,7 +2379,7 @@ void tone_set(float param_1,ushort param_2)
       return;
     }
                     /* Timer General A [sfr] */
-    TPU1_TGRA = SUB42(ROUND(1.0 / ((param_1 * 36.0) / 6e+07) + -1.0),0);
+    TPU1_TGRA = (short)(longlong)(1.0 / ((param_1 * 36.0) / 6e+07) + -1.0);
     tone_play(0x1ff1c,0x24);
   }
   swtimer_start(0x16,param_2);

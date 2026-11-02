@@ -6803,7 +6803,7 @@ void reg_wait_bits27(int param_1,int param_2,ushort param_3)
 
 
 /* -----------------------------------------------------------------------------
- * cpu_delay_cycles4 @ 2013b54c  (64 bytes, 2 callers, export file 2013b484_2013e35c.c)
+ * cpu_delay_cycles4 @ 2013b54c  (64 bytes, 2 callers, export file 2013b484_2013e190.c)
  * Purpose: Spins on the CP15 cycle counter until 4 counts have passed [fact]
  * Tag: [fact]
  * Doc: ../../../docs/code/display/peripherals.md
@@ -6830,7 +6830,7 @@ void cpu_delay_cycles4(void)
 
 
 /* -----------------------------------------------------------------------------
- * gic_default_handler @ 201568e0  (76 bytes, 4 callers, export file 20156748_20158568.c)
+ * gic_default_handler @ 201568e0  (76 bytes, 4 callers, export file 2015620a_20157634.c)
  * Purpose: unregistered interrupt IDs [inference]
  * Tag: [inference]
  * Doc: ../../../docs/code/display/peripherals.md

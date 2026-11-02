@@ -947,8 +947,9 @@ void pa_dac_update(void)
   }
   bVar4 = FUN_fffb4062();
   sVar5 = pa_falc_interp(uVar3,bVar4);
-  sVar5 = SUB42(ROUND((float)(((int)sVar5 & 0x3fffU) << 2) *
-                      *(float *)(BYTE_ARRAY_fff88a14 + (uint)bVar4 * 4 + 0x54) + 0.5),0);
+  sVar5 = (short)(longlong)
+                 ((float)(((int)sVar5 & 0x3fffU) << 2) *
+                  *(float *)(BYTE_ARRAY_fff88a14 + (uint)bVar4 * 4 + 0x54) + 0.5);
   if ((DAT_00020faa == sVar5) && (DAT_00012042 != '\0')) {
     bVar1 = false;
   }
@@ -1071,13 +1072,13 @@ void audio_level_update(void)
 {
   uint uVar1;
   byte bVar2;
-  byte bVar3;
+  byte beep_pattern_get_ret;
   char tx_mod_source_ret;
+  bool bVar3;
   bool bVar4;
-  bool bVar5;
-  byte bVar6;
+  byte bVar5;
   uint audio_route_state_ret;
-  int iVar7;
+  int iVar6;
   byte bStack_f;
   byte bStack_e;
   byte bStack_d;
@@ -1090,10 +1091,10 @@ void audio_level_update(void)
                     /* Returns the audio-route state 0..14 [doc] */
   audio_route_state_ret = audio_route_state();
   bVar2 = vfo_mode(0);
-  bVar3 = FUN_fffb2dfe();
+  beep_pattern_get_ret = beep_pattern_get();
   tx_mod_source(bVar2);
-  bVar6 = g_ui.transmitting;
-  bVar5 = false;
+  bVar5 = g_ui.transmitting;
+  bVar4 = false;
   bStack_e = 0;
   bStack_d = 0;
   bStack_b = 0;
@@ -1247,37 +1248,37 @@ LAB_fffb6009:
     }
   }
 LAB_fffb612b:
-  bVar2 = FUN_fffb418a(bVar6);
-  bVar6 = g_ui.af_gain;
+  bVar2 = FUN_fffb418a(bVar5);
+  bVar5 = g_ui.af_gain;
   switch(audio_route_state_ret) {
   case 0:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 1:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 2:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1286,10 +1287,10 @@ LAB_fffb612b:
     bStack_e = bVar2;
     break;
   case 3:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1298,10 +1299,10 @@ LAB_fffb612b:
     bStack_e = bVar2;
     break;
   case 4:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1315,10 +1316,10 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x32);
     break;
   case 6:
-    bVar4 = ear_det();
-    if (bVar4) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar3 = ear_det();
+    if (bVar3) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
@@ -1333,29 +1334,29 @@ LAB_fffb612b:
     bStack_b = FUN_fffb34cf(0x1a);
     break;
   case 8:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
-    bVar6 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar6);
-    bVar5 = true;
+    bVar5 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar5);
+    bVar4 = true;
     break;
   case 9:
-    bVar5 = ear_det();
-    if (bVar5) {
-      bStack_8 = FUN_fffb354d(bVar6);
-      bStack_f = FUN_fffb3564(bVar6);
+    bVar4 = ear_det();
+    if (bVar4) {
+      bStack_8 = FUN_fffb354d(bVar5);
+      bStack_f = FUN_fffb3564(bVar5);
     }
     else {
       bStack_8 = FUN_fffb34ba();
     }
     bStack_b = FUN_fffb34cf(0x32);
-    bVar5 = true;
+    bVar4 = true;
     break;
   case 10:
     bStack_8 = FUN_fffb34f9(bVar2);
@@ -1368,60 +1369,60 @@ LAB_fffb612b:
     break;
   case 0xd:
     bStack_8 = FUN_fffb34f9(bVar2);
-    bVar6 = tx_mod_gain();
-    bStack_b = FUN_fffb34cf(bVar6);
+    bVar5 = tx_mod_gain();
+    bStack_b = FUN_fffb34cf(bVar5);
     break;
   case 0xe:
     bStack_8 = g_opstate.play_volume;
     bStack_b = FUN_fffb350e(g_opstate.level_9dc2);
   }
-  if ((bVar3 - 1 < 3) || (bVar3 - 5 < 4)) {
+  if ((beep_pattern_get_ret - 1 < 3) || (beep_pattern_get_ret - 5 < 4)) {
     bStack_d = 0;
     bStack_e = g_opstate.ex030101_beep_level;
     if (g_opstate.ex030101_beep_level != 0) goto LAB_fffb6432;
   }
   if (g_ui.af_gain == 0) {
     if ((audio_route_state_ret == 4) || (audio_route_state_ret == 7)) {
-      bVar4 = true;
+      bVar3 = true;
     }
     else {
-      bVar4 = false;
+      bVar3 = false;
     }
-    if (bVar4) {
-      iVar7 = FUN_fffb418a(g_ui.transmitting);
-      if (iVar7 == 0) {
+    if (bVar3) {
+      iVar6 = FUN_fffb418a(g_ui.transmitting);
+      if (iVar6 == 0) {
         FUN_fffb71f5();
       }
     }
-    else if (bVar5) {
+    else if (bVar4) {
       FUN_fffb71f5();
     }
   }
 LAB_fffb6432:
-  if ((g_ui.trx_state < 3) && (bVar6 = swtimer_expired(0xe), bVar6 != 1)) {
-    bVar5 = true;
+  if ((g_ui.trx_state < 3) && (bVar5 = swtimer_expired(0xe), bVar5 != 1)) {
+    bVar4 = true;
   }
   else {
-    bVar5 = false;
+    bVar4 = false;
   }
-  if ((!bVar5) && (g_ui.tx_lamp != 2)) {
+  if ((!bVar4) && (g_ui.tx_lamp != 2)) {
     if ((DAT_00020fbd == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar5 = false;
+      bVar4 = false;
     }
     else {
-      bVar5 = true;
+      bVar4 = true;
     }
-    if (bVar5) {
+    if (bVar4) {
       sst2_write12('\x01',bStack_8);
       DAT_00020fbd = bStack_8;
     }
     if ((DAT_00020fbc == bStack_8) && (DAT_00012042 != '\0')) {
-      bVar5 = false;
+      bVar4 = false;
     }
     else {
-      bVar5 = true;
+      bVar4 = true;
     }
-    if (bVar5) {
+    if (bVar4) {
       sst2_write12('\x05',bStack_8);
       DAT_00020fbc = bStack_8;
     }
@@ -1431,64 +1432,64 @@ LAB_fffb6432:
     bStack_7 = 0;
   }
   if ((DAT_00020fb8 == bStack_7) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x02',bStack_7);
     DAT_00020fb8 = bStack_7;
   }
-  bVar6 = FUN_fffb34f9(bStack_a);
-  if ((DAT_00020fb9 == bVar6) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+  bVar5 = FUN_fffb34f9(bStack_a);
+  if ((DAT_00020fb9 == bVar5) && (DAT_00012042 != '\0')) {
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
-    sst2_write12('\x03',bVar6);
-    DAT_00020fb9 = bVar6;
+  if (bVar4) {
+    sst2_write12('\x03',bVar5);
+    DAT_00020fb9 = bVar5;
   }
   if ((DAT_00020fba == bStack_b) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x04',bStack_b);
     DAT_00020fba = bStack_b;
   }
   if ((DAT_00020fbe == bStack_d) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\x06',bStack_d);
     DAT_00020fbe = bStack_d;
   }
-  bVar6 = FUN_fffb34f9(bStack_e);
-  if ((DAT_00020fbf == bVar6) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+  bVar5 = FUN_fffb34f9(bStack_e);
+  if ((DAT_00020fbf == bVar5) && (DAT_00012042 != '\0')) {
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
-    sst2_write12('\a',bVar6);
-    DAT_00020fbf = bVar6;
+  if (bVar4) {
+    sst2_write12('\a',bVar5);
+    DAT_00020fbf = bVar5;
   }
   if ((DAT_00020fbb == bStack_f) && (DAT_00012042 != '\0')) {
-    bVar5 = false;
+    bVar4 = false;
   }
   else {
-    bVar5 = true;
+    bVar4 = true;
   }
-  if (bVar5) {
+  if (bVar4) {
     sst2_write12('\b',bStack_f);
     DAT_00020fbb = bStack_f;
     return;
@@ -2072,18 +2073,22 @@ byte meter_get_swr_raw(void)
 }
 
 
-// ===== FUN_fffb6e4e @ fffb6e4e (14 bytes)
+// ===== meter_get_swr_f @ fffb6e4e (14 bytes)
 
-void FUN_fffb6e4e(void)
+/* Returns the float SWR word 0x20FC4 [fact: fffb6e4e] */
+
+void meter_get_swr_f(void)
 
 {
   return;
 }
 
 
-// ===== FUN_fffb6e5c @ fffb6e5c (14 bytes)
+// ===== meter_get_swr_avg_f @ fffb6e5c (14 bytes)
 
-void FUN_fffb6e5c(void)
+/* Returns the float SWR average 0x20FC8 [fact: fffb6e5c] */
+
+void meter_get_swr_avg_f(void)
 
 {
   return;

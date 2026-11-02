@@ -17,7 +17,7 @@ void FUN_fffed704(void)
   DAT_0001b3c7 = 0;
   g_ui.tune_cycle_3c = 0;
   g_ui.atu_state = 0;
-  DAT_0001b3c8 = 1;
+  ext_tuner_step = 1;
   return;
 }
 
@@ -31,7 +31,7 @@ void FUN_fffed72b(void)
   
   swtimer_expired_ret = swtimer_expired(0x24);
   if ((swtimer_expired_ret != 0) && (FUN_fffedbc9(), DAT_0001b3c7 == '\0')) {
-    DAT_0001b3c8 = DAT_0001b3c8 + '\x01';
+    ext_tuner_step = ext_tuner_step + '\x01';
     return;
   }
   return;
@@ -48,7 +48,7 @@ void FUN_fffed753(void)
   swtimer_expired_ret = swtimer_expired(7);
   if (swtimer_expired_ret == 1) {
     DAT_0001b5aa = 0;
-    DAT_0001b3c8 = 0;
+    ext_tuner_step = 0;
     return;
   }
   FUN_fffedcb5();
@@ -56,7 +56,7 @@ void FUN_fffed753(void)
     return;
   }
   DAT_0001b5aa = 1;
-  DAT_0001b3c8 = DAT_0001b3c8 + '\x01';
+  ext_tuner_step = ext_tuner_step + '\x01';
   return;
 }
 
@@ -82,7 +82,7 @@ void FUN_fffed796(void)
     if (DAT_0001b3c7 == '\0') {
       if (DAT_0001b5ab == '\x02') {
         DAT_0001b5ab = 0;
-        DAT_0001b3c8 = 4;
+        ext_tuner_step = 4;
         return;
       }
       DAT_0001b5ab = DAT_0001b5ab + '\x01';
@@ -104,24 +104,24 @@ void FUN_fffed7f3(void)
   byte swtimer_expired_ret;
   
   if (g_ui.tune_cycle_3c == 1) {
-    DAT_0001b3c8 = 7;
+    ext_tuner_step = 7;
   }
   else if (g_ui.atu_state == 4) {
     FUN_fffedb42();
     if (DAT_0001b3c7 == '\0') {
-      DAT_0001b3c8 = 0x10;
+      ext_tuner_step = 0x10;
     }
   }
   else if (g_ui.atu_state == 6) {
     FUN_fffedb54();
     if (DAT_0001b3c7 == '\0') {
-      DAT_0001b3c8 = 0x10;
+      ext_tuner_step = 0x10;
     }
   }
   else {
     swtimer_expired_ret = swtimer_expired(0x24);
     if (swtimer_expired_ret == 1) {
-      DAT_0001b3c8 = 4;
+      ext_tuner_step = 4;
     }
   }
   if ((g_ui.atu_state == 5) && (DAT_00025d18 / 10000 != g_ui.freq_tx / 10000)) {
@@ -141,7 +141,7 @@ void FUN_fffed8ab(void)
   
   tx_freq_allowed_ret = tx_freq_allowed(g_ui.freq_tx);
   if (!tx_freq_allowed_ret) {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   g_ui.tune_cycle_3c = 2;
@@ -150,7 +150,7 @@ void FUN_fffed8ab(void)
   if (DAT_0001b3c7 != '\0') {
     return;
   }
-  DAT_0001b3c8 = 8;
+  ext_tuner_step = 8;
   return;
 }
 
@@ -164,7 +164,7 @@ void FUN_fffed8fc(void)
   
   swtimer_expired_ret = swtimer_expired(7);
   if (swtimer_expired_ret == 1) {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   FUN_fffedcb5();
@@ -172,7 +172,7 @@ void FUN_fffed8fc(void)
     return;
   }
   swtimer_start(0x26,0xfa);
-  DAT_0001b3c8 = 9;
+  ext_tuner_step = 9;
   return;
 }
 
@@ -186,11 +186,11 @@ void FUN_fffed934(void)
   
   swtimer_expired_ret = swtimer_expired(0x26);
   if (swtimer_expired_ret != 0) {
-    DAT_00025d14 = FUN_fffb6e5c();
+    DAT_00025d14 = meter_get_swr_avg_f();
     send_a_set(0);
     send_b_set(0);
     swtimer_start(0x26,5);
-    DAT_0001b3c8 = 10;
+    ext_tuner_step = 10;
     return;
   }
   if (g_ui.transmitting != 0) {
@@ -211,7 +211,7 @@ void FUN_fffed983(void)
   swtimer_expired_ret = swtimer_expired(0x26);
   if ((swtimer_expired_ret != 0) && (FUN_fffedb75(), DAT_0001b3c7 == '\0')) {
     swtimer_start(0x26,10000);
-    DAT_0001b3c8 = 0xb;
+    ext_tuner_step = 0xb;
     return;
   }
   return;
@@ -227,11 +227,11 @@ void FUN_fffed9b3(void)
   
   swtimer_expired_ret = swtimer_expired(0x26);
   if (swtimer_expired_ret == 1) {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   if (g_ui.atu_state == 6) {
-    DAT_0001b3c8 = 0xf;
+    ext_tuner_step = 0xf;
     return;
   }
   FUN_fffedcb5();
@@ -242,11 +242,11 @@ void FUN_fffed9b3(void)
   }
   if (DAT_0001b3ca == '\x01') {
     swtimer_start(0x26,0xfa);
-    DAT_0001b3c8 = 0xc;
+    ext_tuner_step = 0xc;
     return;
   }
   if (DAT_0001b3cb == '\x01') {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   return;
@@ -269,13 +269,13 @@ void FUN_fffeda3b(void)
     swtimer_start(0x26,0xfa);
     return;
   }
-  fVar1 = (float)FUN_fffb6e5c();
+  fVar1 = (float)meter_get_swr_avg_f();
   if (DAT_00025d14 <= fVar1) {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   g_ui.ptt_atu_tune = 0;
-  DAT_0001b3c8 = 0xd;
+  ext_tuner_step = 0xd;
   return;
 }
 
@@ -286,7 +286,7 @@ void FUN_fffeda96(void)
 
 {
   g_ui.tune_cycle_3c = 0;
-  DAT_0001b3c8 = 4;
+  ext_tuner_step = 4;
   vfo_tuner_bit_set(1);
   return;
 }
@@ -298,7 +298,7 @@ void FUN_fffedab0(void)
 
 {
   beep_request(3);
-  DAT_0001b3c8 = 0xf;
+  ext_tuner_step = 0xf;
   return;
 }
 
@@ -313,7 +313,7 @@ void FUN_fffedac0(void)
     return;
   }
   g_ui.ptt_atu_tune = 0;
-  DAT_0001b3c8 = 0;
+  ext_tuner_step = 0;
   return;
 }
 
@@ -327,7 +327,7 @@ void FUN_fffedae4(void)
   
   swtimer_expired_ret = swtimer_expired(7);
   if (swtimer_expired_ret == 1) {
-    DAT_0001b3c8 = 0xe;
+    ext_tuner_step = 0xe;
     return;
   }
   FUN_fffedcb5();
@@ -338,7 +338,7 @@ void FUN_fffedae4(void)
     else if (g_ui.atu_state == 6) {
       g_ui.atu_state = 0;
     }
-    DAT_0001b3c8 = 6;
+    ext_tuner_step = 6;
     return;
   }
   return;

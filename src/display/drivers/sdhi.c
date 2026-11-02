@@ -652,7 +652,7 @@ int sdhi_read_op(uint32_t addr, uint8_t *buf, uint32_t n, sd_card_t *c)
         r = sdhi_read_sectors_cmd(addr, buf, 1, c);
         if (r == 0)
         {
-            r = sdhi_read_sectors_cmd(c->addr_mode == 2 ? addr + 1 : addr + 0x200, buf + 0x200, 1, c);
+            r = sdhi_read_sectors_cmd(c->flags == 2 ? addr + 1 : addr + 0x200, buf + 0x200, 1, c);
         }
     }
     if (r != 0)

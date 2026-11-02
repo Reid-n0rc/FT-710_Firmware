@@ -30,7 +30,7 @@ code) or **[inference]** (evidence and reasoning given); anything not supported 
   `fat_ld_dword`; `fat_clust2sect` maps a cluster to its first sector; `sjis_is_lead` handles Shift-JIS file names **[fact]**.
 - **SDHI driver.** `sdhi_init` / `sdhi0_clock_on` (STBCR12 bits 2–3) bring up SDHI0, `sd_card_identify` resets and identifies the
   card, `sd_read_sectors` / `sd_write_sectors` are the driver operations at +0x58 / +0x60 (-7 = write-protected) **[fact]**.
-  `sd_format` → `sd_fat_format` → `fat_clear_root_dir` is the SD **FORMAT** of the menu (#83), reached only from `sd_make_dirs`
+  `sd_format` → `sd_fat_format` → `fat_format_volume` is the SD **FORMAT** of the menu (#83), reached only from `sd_make_dirs`
   **[fact: write calls; inference: format]**.
 
 ```mermaid
@@ -47,7 +47,7 @@ flowchart TD
   FAT --> DRV["fs_find_drive, fs_dev_op1/2<br/>drive list 0x20808BA0"]
   DRV --> SD["SDHI driver<br/>sd_read_sectors +0x58<br/>sd_write_sectors +0x60"]
   SD --> HW["SDHI0 0xE804E000<br/>card on P11_4..11"]
-  MENU["SD FORMAT (sd_make_dirs)"] --> FMT["sd_format -> sd_fat_format<br/>-> fat_clear_root_dir"]
+  MENU["SD FORMAT (sd_make_dirs)"] --> FMT["sd_format -> sd_fat_format<br/>-> fat_format_volume"]
   FMT --> SD
 ```
 
@@ -71,8 +71,8 @@ to the same driver / FAT library is an **[inference]** from the address range an
 | 0x2013DFF0 | `sd_card_identify` |  | card reset/identify, card-type flags at +0x2C0/+0x2C2 **[inference]** |
 | 0x2013E230 | `sd_read_sectors` |  | driver op +0x58 **[inference]** |
 | 0x2013E2B4 | `sd_write_sectors` |  | driver op +0x60; -7 = write-protected **[inference]** |
-| 0x2013F79C | `fat_clear_root_dir` |  | zero the root-directory sectors (FAT12/16: 32, FAT32: 1 cluster) **[inference]** |
-| 0x2013F83C | `sd_fat_format` |  | card init (3 tries), then fat_clear_root_dir **[inference]** |
+| 0x2013F79C | `fat_format_volume` (was `fat_clear_root_dir`) |  | the volume format: parameters cleared, layout, MBR, boot sector, FSInfo, FATs, then `fat_format_clear_root` 0x2013E80C (tail call) **[fact, T24 round 8]** |
+| 0x2013F83C | `sd_fat_format` |  | card init (3 tries), then fat_format_volume **[fact, T24 round 8]** |
 | 0x2013F984 | `sd_format` |  | drive letter; -> sd_fat_format (inference: format, #83) **[inference]** |
 | 0x2013FE50 | `sdhi0_clock_on` |  | STBCR12 &= 0xF3 **[inference]** |
 | 0x201400D4 | `sdhi_init` |  | SDINT_INI **[inference]** |
@@ -401,7 +401,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | Address | Ghidra name | Purpose |
 |---|---|---|
 | 0x2013FDE8 | `sdhi0_irq_enable` | Registers the SDHI0 handler for GIC id 303 (0x12F) once (flag 0x20808B70), sets its ICDIPR75 priority byte and enables it in ICDISER9 (bit 15) **[fact]** |
-| 0x2013FD50 | `sd_card_unmount` | (drive): for an attached removable drive (+0x68 bit 0) runs driver op 8 and clears the mounted bit 7; error to fs_set_error; the card monitor calls it on request 0x20800098 (filesystem.md) **[fact]** |
+| 0x2013FD50 | `sd_card_unmount` | (index): -1 when the drive 0x20808B60[index] has no SD handle (+0x24), else the tail call of `fs_drive_unmount` (0x2014AAF0) for it; the card monitor calls it on request 0x20800098 **[fact: the disassembly; Ghidra's C showed fs_drive_unmount's body here until T24 round 8]** |
 | 0x20103ADC | `sd_card_monitor` | Task body: polls the card state every 10 ms (sd_card_poll -> 0x20800094) and on request 0x20800098 clears bit 7 and calls sd_card_unmount (filesystem.md) **[fact]** |
 | 0x20103A4C | `sd_drive_flush` | (drive index): fs_sync, then fs_cache_invalidate of the drive record 0x20809984 + 0x74*i **[fact]** |
 
@@ -409,7 +409,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
-| 0x2013E71C | `sd_driver_op` | Driver entry of drive I: (op code): 1 read sectors, 2 write sectors, 5 format step, 7 mount (power, sd_card_identify, CSD/CID, RCA select, SCR, bus width, bus speed, SD status, volume mount), 8 unmount, others through a table; registered by sdhi_drv_init **[fact]** |
+| 0x2013E71C | `sd_driver_op` | Driver entry of drive I: (drive, op, a, b, c, handle) through the jump table 0x2013E740: 1 read and 2 write (`sd_vol_read` / `sd_vol_write`; -6 unless the card is in, +0x68 bit 6), 5 attach (`sd_drive_attach`), 7 mount (`sd_drive_mount`, -6 unless the card is in), 8 unmount (`sd_drive_unmount`), 9 card check (`sd_check_card`), -3 for 0, 3, 4, 6 and 10 up; registered by sdhi_drv_init **[fact; T24 round 8: the operations were folded into it]** |
 | 0x2013C960 | `sd_cmd0_go_idle` | CMD0 (GO_IDLE_STATE), 3 tries; clears the RCA +0x2AC first **[fact]** |
 | 0x2013C9D0 | `sd_init_v1_or_mmc` | Initialisation without a CMD8 answer: ACMD41 (CMD55 + 41) polling until the busy bit 31 of the OCR is set, or CMD1 (MMC, arg 0xFF8000) when CMD55 fails; MMC sets the card type +0x2C6 = 1 **[fact]** |
 | 0x2013CBB8 | `sd_init_v2` | CMD8 (arg 0x1AA, echo check), then ACMD41 with HCS (0x41000000 / OCR voltage bits) until ready; returns 1 for a standard-capacity card (CCS clear) **[fact]** |
@@ -426,7 +426,7 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2013D744 | `sd_acmd6_set_bus_width` | ACMD6 (SET_BUS_WIDTH) with the width code +0x2AC, then sets the host bus width (op +0x2C) **[fact]** |
 | 0x2013D818 | `sd_acmd13_read_status` | ACMD13 (SD_STATUS): CMD55 then CMD13 with data, 64 bytes into ctx +0x229 **[fact]** |
 | 0x2013D968 | `sd_cmd6_switch_func` | (arg, ctx): CMD6 (SWITCH_FUNC) with a 64-byte status read into ctx +0x269 **[fact]** |
-| 0x2013DE60 | `sd_switch_status_check` | Checks the CMD6 status block (+0x269 max current <= 800 mA field, function group bits) before a speed switch **[fact for the fields]** |
+| 0x2013DE60 | `sd_set_driver_strength` (was `sd_switch_status_check`) | CMD6 group 3 (driver strength) function 0 for a 1.8 V card: inquiry 0x00FFF0FF, switch 0x80FFF0FF, after the support bit +0x272 and slot 6 (which answers 4 on this host, so it returns 0 at once) **[fact, T24 round 8]** |
 | 0x2013DF88 | `sd_select_bus_speed` | For SCR spec >= 1.10 and CSD class 10: CMD6 query/switch of function group 1 (and 3/4 variants 0xFF3FF2..F4), then sets the host clock mode (op +0x3C) and the speed code +0x2C2/+0x2C4 **[fact]** |
 | 0x2013E1E4 | `sd_scr_bus_width` | Reads the SCR and sets the bus-width code +0x2AC from SD_BUS_WIDTHS (bit 2 of SCR byte 1: 4-bit) **[fact]** |
 | 0x2013E190 | `sd_selected_op` | (rca, a, b, ctx): selects the card, runs op +0x50(a, b) (block length set-up) and deselects **[fact]** |
@@ -437,7 +437,41 @@ From the names-file section header (`tools/ghidra/names_display.T23e2.tsv`): FAT
 | 0x2013E7E8 | `sd_format_progress_dec` | Decrements the format progress counter ctx +0x2F4 while non-zero **[fact]** |
 | 0x2013E800 | `sd_format_progress_set` | (n, ctx): sets the format progress counters +0x2F4 and +0x2F8 to n **[fact]** |
 
-### SD format (sd_fat_format / fat_clear_root_dir), card task and SDHI DMA (T23e round 3)
+### SD card layer, recreated (T24 round 8)
+
+`src/display/drivers/sd_setup.c`, `drivers/sd_drive.c` and `app/fat_format.c` recreate the card layer from the
+disassembly and pass the differential check (docs/tasks/T24-source-recreation.md, round 8). Found on the way:
+
+- **Twelve functions had no Ghidra entry**, reached only by tail calls that Ghidra folded into their callers
+  **[fact: the branches in `tools/ghidra/entries_display.T24r8.tsv`]**: `sd_cmd3_relative_addr` 0x2013CF80 (inside
+  `sd_card_identify`), `sd_cid_check` 0x2013D2D4, `sd_switch_high_speed` 0x2013DA6C and `sd_switch_uhs_speed`
+  0x2013DB74 (both inside `sd_select_bus_speed`, whose own code is 104 bytes), `sd_check_card` 0x2013E350,
+  `sd_drive_mount` 0x2013E50C, `sd_drive_unmount` 0x2013E6A0 and `sd_drive_attach` 0x2013E6D0 (inside
+  `sd_driver_op`), `fat_format_clear_root` 0x2013E80C (the tail of `fat_format_volume`), `sd_lock` / `sd_unlock`
+  0x2013F9F4 / 0x2013F9F8 (`b itron_loc_cpu` / `b itron_unl_cpu`) and `sd_card_write_protected` 0x2013FD70.
+- **Card context** (include/sd.h): +0 the drive index, +1 a 512-byte sector buffer (mount and format), +0x221 SCR,
+  +0x229 SD status, +0x269 the CMD6 status block, +0x2AC the bus-width code, +0x2C0 flags (bit 0 standard capacity,
+  bit 1 block addressing, bit 2 1.8 V accepted), +0x2C2 the access mode, +0x2C4 the clock mode for slot 0 (0
+  identification, 1 default, 2 high speed, -1 MMC), +0x2C8 the 0x2C-byte format parameters, +0x2F4/+0x2F8 the
+  format progress **[fact: the offsets of the functions]**.
+- **Speed.** `sd_select_bus_speed` sets the default clock, and for SCR spec 1.10+ with command class 10 switches
+  to high speed (group 1 function 1), or, for a card that accepted 1.8 V, sets the driver strength and the fastest
+  UHS mode (SDR104, DDR50, SDR50) **[fact]**. This host never gets there: slot 7 (UHS support) answers 5 and
+  `sd_init_v2` records S18A only when it answers 0, and slot 4 (the signalling level) answers -9, so
+  `sd_cmd11_voltage_switch` would fail too **[fact: sdhi_op4..7]**.
+- **Initialisation.** `sd_card_identify`: clock in identification mode, CMD0, CMD8 0x1AA; no answer → version 1 or
+  MMC (`sd_init_v1_or_mmc`: CMD1 0xFF8000 when CMD55 is not answered); a CMD5 answer means SDIO (-5); ACMD41 with
+  HCS and S18R 0x41000000, up to 1000 times 1 ms apart; then CMD2 and CMD3 **[fact]**.
+- **Format.** `fat_format_layout` computes the layout from the CSD: version 2 (high capacity) from C_SIZE, -5 from
+  0x4000000 sectors (32 GB) up, so SDXC cards cannot be formatted; version 1 from READ_BL_LEN, C_SIZE, C_SIZE_MULT
+  with the table 0x20420358 by size; FAT size, reserved sectors and the data alignment iterated until the FAT size
+  fits **[fact]**. The volume id ORs year, minute and hour << 8 where a DOS date code would add them **[fact:
+  0x2013EBC0]**. `fat_format_write_fats` tests a FAT type 0x40 (one FAT) that its first test already rejects
+  **[fact]**.
+- **Drive flags +0x68:** bit 5 write protected, bit 6 card in, bit 7 mounted; `sd_card_poll` reads them signed
+  and returns them sign-extended without bits 6 and 7 after a removal **[fact: ldrsb at 0x2013FD0C]**.
+
+### SD format (sd_fat_format / fat_format_volume), card task and SDHI DMA (T23e round 3)
 
 | Address | Ghidra name | Purpose |
 |---|---|---|
@@ -528,9 +562,12 @@ SD driver calls the SDHI layer through the 26-slot table 0x20420564 that `sdhi_d
 **[fact: the table's words]**: 0 `sdhi_wait_idle`, 1 `sdhi_clock_set_0x200`, 2 `sdhi_check_card`, 3 `sdhi_check_wp`,
 4..7 constants (-9, -10, 4, 5), 8 `sdhi_soft_reset`, 9 `sdhi_power_on`, 10 0x20140470, 11 `sdhi_set_bus_width`,
 12..15 empty, 16 -9, 17 `sdhi_wait_info`, 18 `sdhi_cmd`, 19 `sdhi_read_response`, 20 `sd_cmd16_set_blocklen`,
-21 `sd_cmd12_stop`, 22 `sdhi_read_op`, 23 `sdhi_read_buf_pio` 0x20140998, 24 `sdhi_write_op`, 25 `sdhi_open`. *Open: what the driver asks
-through slots 4..7 and 12..16; would be settled by the call sites of those slots in `sd_driver_op` and the `sd_*`
-functions.* `sdhi_send_cmd` takes (command index, application command?, argument) and writes the command code from
+21 `sd_cmd12_stop`, 22 `sdhi_read_op`, 23 `sdhi_read_buf_pio` 0x20140998, 24 `sdhi_write_op`, 25 `sdhi_open`. The call sites (T24 round 8) **[fact]**: slot 4 the
+signalling level (`sd_cmd11_voltage_switch` wants 2, then 3), 5 after the switch, 6 driver strength, 7 UHS
+support (`sd_init_v2`, `sd_switch_uhs_speed`; 0 = yes), 12 high-speed timing, 13 driver strength, 14 1.8 V,
+15 UHS timing, 16 tuning before transfers at access modes 2 and 3; this host's constants refuse all of the UHS
+path. *Open: whether 4..7 and 12..16 would do anything on another target; would be settled by a second
+operation table in the image (none found) or the vendor's driver source.* `sdhi_send_cmd` takes (command index, application command?, argument) and writes the command code from
 0x204205FC (or 0x2042067C for application commands); CMD7 is 0x307 to select and 0x507 to deselect (argument 0)
 **[fact: 0x20140538]**.
 

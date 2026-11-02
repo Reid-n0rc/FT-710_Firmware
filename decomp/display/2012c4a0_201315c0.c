@@ -727,7 +727,7 @@ void scope_area_setup(int param_1,int param_2,int param_3)
     }
                     /* 2D spectrum height for the current layout [doc] */
     uVar5 = scope2d_spectrum_height(iVar8);
-    FUN_20134444(uVar5,uVar4);
+    scope_set_2e04_2e00(uVar5,uVar4);
     scope_area_frame_draw(0);
     uVar6 = 1;
     uVar5 = 0;
@@ -744,7 +744,7 @@ void scope_area_setup(int param_1,int param_2,int param_3)
     }
     else if (DAT_208004d0 == 1) {
       uVar5 = scope2d_spectrum_height(iVar8);
-      FUN_20134444(uVar5,uVar4);
+      scope_set_2e04_2e00(uVar5,uVar4);
       scope_area_frame_draw(1);
       FUN_2012d000(1,iVar10,1,1,iVar8);
     }
@@ -1214,7 +1214,7 @@ void scr_main_layout(int frame,int old,int param_3)
   uVar6 = *(byte *)(frame + 6) & 0x80;
   uVar5 = *(byte *)(frame + 6) & 0x40;
   if ((param_3 != 0 || bVar7) || ((*(byte *)(old + 6) & 0x80) != uVar6)) {
-    FUN_20134468(uVar6);
+    scope_set_2e00(uVar6);
     bVar2 = true;
     if (param_3 == 0 && !bVar7) goto LAB_2012e4b4;
   }
@@ -1222,7 +1222,7 @@ void scr_main_layout(int frame,int old,int param_3)
 LAB_2012e4b4:
     if ((*(byte *)(old + 6) & 0x40) == uVar5) goto LAB_2012e4d4;
   }
-  FUN_20134474(uVar5);
+  scope_set_2e02(uVar5);
   bVar2 = true;
 LAB_2012e4d4:
   if (bVar3 != 0) {
@@ -2056,8 +2056,8 @@ uint opening_check_main(void)
       scope3d_layout_set((local_24d & 0x3f) >> 5);
                     /* 2D spectrum height for the current layout [doc] */
       uVar1 = scope2d_spectrum_height(local_24d & 0x20);
-      FUN_20134444(uVar1,local_24c & 0x80);
-      FUN_20134474(local_24c & 0x40);
+      scope_set_2e04_2e00(uVar1,local_24c & 0x80);
+      scope_set_2e02(local_24c & 0x40);
                     /* low nibble clamped to 10 into both outputs [doc] */
       scope_color_decode(local_240,local_20,local_1c);
       scope_palette_set(local_20[0],local_1c[0]);

@@ -40,12 +40,15 @@ Usage:
   python3 -I tools/equiv_display_emu.py check FUNCTION... [--object OBJ] [--trials N] [--seed S]
                                         the named functions, or all of an object (src/display/out/obj)
   python3 -I tools/equiv_display_emu.py status [--trials N]   every recreated function -> src/display/status.tsv
+  python3 -I tools/equiv_display_emu.py status FUNCTION... [--object OBJ]   only those; the other rows are kept
   python3 -I tools/equiv_display_emu.py linkcheck      the hybrid image (tools/display_link.py) against the original
   python3 -I tools/equiv_display_emu.py abicheck       call sites that rely on registers a recreated callee does not return
 The image is read from build/FT-710_DISPLAY_V0108.bin (or $FT710_BUILD/...); it is never written anywhere.
 """
 import argparse
 import bisect
+import ctypes
+import mmap
 import glob
 import os
 import random
@@ -388,22 +391,51 @@ def in_ranges(a, ranges):
 
 
 SCTLR = (15, 0, 0, 1, 0, 0, 0)   # cp, is64, sec, crn, crm, opc1, opc2
+RSPI_FLAGS = 0x20800418     # rspi_rx_done[5], rspi_tx_done[5] (src/display/data_symbols.tsv)
+RSPI_BASE, RSPI_STRIDE = 0xE800C800, 0x800      # RSPI0..4 (drivers/rspi.c RSPI_BASE)
+
+
+# Start memory, copy-on-write (round 8). Each trial used to map 36 MB of RAM, write the image's regions into it and
+# read the compared ranges back through mem_read: about 15 ms per run, 70 % of a check's time. Now every worker
+# builds the start contents of each RAM range once per image (a memfd), and each run maps it MAP_PRIVATE and hands
+# the pages to Unicorn (mem_map_ptr): only the pages a trial writes are copied, and the snapshots are slices of the
+# mapping. The memory each run starts from and what is compared are unchanged.
+_TEMPLATES = {}
+
+
+def ram_template(img):
+    """[(lo, hi, fd)] for the RAM ranges, holding img's regions (cached per image object)."""
+    key = id(img)
+    if key not in _TEMPLATES:
+        out = []
+        for lo, hi in RAM:
+            fd = os.memfd_create(f'equiv_display_{lo:08x}')
+            os.ftruncate(fd, hi - lo)
+            for a, data in img.regions:
+                if lo <= a < hi:
+                    os.pwrite(fd, data[:hi - a], a - lo)
+            out.append((lo, hi, fd))
+        _TEMPLATES[key] = (img, out)   # img kept alive, so that its id stays unique
+    return _TEMPLATES[key][1]
 
 
 class Run:
     def __init__(self, img, blobs, stub_addrs, seed, fill, args, cover=None):
+        self.maps = []
+        for lo, hi, fd in ram_template(img):
+            mm = mmap.mmap(fd, hi - lo, flags=mmap.MAP_PRIVATE, prot=mmap.PROT_READ | mmap.PROT_WRITE)
+            self.maps.append((lo, hi, mm, ctypes.addressof(ctypes.c_char.from_buffer(mm))))
         self.uc = uc = Uc(UC_ARCH_ARM, UC_MODE_ARM)
         try:
             uc.ctl_set_cpu_model(A.UC_CPU_ARM_CORTEX_A9)
         except Exception:
             pass
-        for lo, hi in RAM + [(SCRATCH_CODE, SCRATCH_CODE + 0x400000), (STOP, STOP + 0x1000),
-                             (STACK_TOP - STACK_SIZE, STACK_TOP)]:
+        for lo, hi, mm, ptr in self.maps:
+            uc.mem_map_ptr(lo, hi - lo, UC_PROT_ALL, ptr)
+        for lo, hi in [(SCRATCH_CODE, SCRATCH_CODE + 0x400000), (STOP, STOP + 0x1000), (STACK_TOP - STACK_SIZE, STACK_TOP)]:
             uc.mem_map(lo, hi - lo, UC_PROT_ALL)
         for lo, hi in MMIO:
             uc.mmio_map(lo, hi - lo, self.on_mmio_read, lo, self.on_mmio_write, lo)
-        for lo, data in img.regions:
-            uc.mem_write(lo, data)
         uc.mem_write(STOP, struct.pack('<I', 0xE320F000) * 4)
         for a, data in blobs:
             uc.mem_write(a, bytes(data))
@@ -414,6 +446,7 @@ class Run:
         self.rng = random.Random(seed)
         self.stub_addrs = stub_addrs
         self.mmio, self.calls, self.end = [], [], None
+        self.rspi_sprie = {}
         for a in list(stub_addrs) + [STOP]:
             uc.hook_add(UC_HOOK_CODE, self.on_code, begin=a, end=a)
         uc.hook_add(UC_HOOK_MEM_UNMAPPED, self.on_unmapped)
@@ -427,6 +460,8 @@ class Run:
         self.regs = args['regs']
         # a preset may bias chosen registers (round 7): address -> values a read returns, drawn from the run's rng
         self.mmio_pick = args.get('mmio', {})
+        # or return a fixed sequence, cyclically (round 8: a whole CMD6 status block through SD_BUF0)
+        self.mmio_seq = {a: [v, 0] for a, v in args.get('mmio_seq', {}).items()}
         self.snap = SNAP
 
     def on_code(self, uc, addr, size, _):
@@ -471,13 +506,40 @@ class Run:
             uc.hook_del(h)
 
     def on_mmio_read(self, uc, offset, size, base):
+        seq = self.mmio_seq.get(base + offset)
+        if seq:
+            v = seq[0][seq[1] % len(seq[0])]
+            seq[1] += 1
+            self.mmio.append(('r', base + offset, size, v))
+            return v
         pick = self.mmio_pick.get(base + offset)
         v = self.rng.choice(pick) if pick else self.rng.getrandbits(8 * size)
         self.mmio.append(('r', base + offset, size, v))
         return v
 
     def on_mmio_write(self, uc, offset, size, value, base):
-        self.mmio.append(('w', base + offset, size, value & ((1 << (8 * size)) - 1)))
+        value &= (1 << (8 * size)) - 1
+        self.mmio.append(('w', base + offset, size, value))
+        a = base + offset
+        if RSPI_BASE <= a < RSPI_BASE + 5 * RSPI_STRIDE:
+            self.rspi_irq(uc, (a - RSPI_BASE) // RSPI_STRIDE, (a - RSPI_BASE) % RSPI_STRIDE, value)
+
+    def rspi_irq(self, uc, ch, reg, value):
+        """The RSPI interrupts as the ISRs see them (round 8). Nothing raised them before, so every wait for an ISR's
+        flag spun until the budget ran out (the read bursts: 120 of 200 trials inconclusive, half of a status run's
+        time). Model, from the hardware's side: the transmit buffer is always empty, so SPCR written with SPTIE
+        (bit 5) raises SPTI at once and its ISR sets rspi_tx_done[ch] (0x2080041D + ch); a write of SPDR while SPRIE
+        (bit 7) was last written set clocks a frame in, raises SPRI and its ISR sets rspi_rx_done[ch] (0x20800418 +
+        ch) [fact: the ISRs of drivers/rspi.c, the flag addresses in data_symbols.tsv]. Only the flags are modelled:
+        the ISRs' own register writes (SPTIE/SPRIE off, RXRST) and rspi_rx_count are left out, the same for both
+        runs. Open: the receive trigger level (the ISR fires after SPBFCR.RXTRG bytes, not after the first); would be
+        settled by counting the clocked bytes against the trigger table 0x20800434."""
+        if reg == 0:                  # SPCR
+            self.rspi_sprie[ch] = bool(value & 0x80)
+            if value & 0x20:
+                uc.mem_write(RSPI_FLAGS + 5 + ch, b'\x01')
+        elif reg == 4 and self.rspi_sprie.get(ch):      # SPDR
+            uc.mem_write(RSPI_FLAGS + ch, b'\x01')
 
     def on_intr(self, uc, intno, _):
         """An SVC enters the image's own SVC_Handler as the CPU would: SVC mode with IRQs masked, LR_svc = the return
@@ -526,9 +588,29 @@ class Run:
             sctlr = uc.reg_read(A.UC_ARM_REG_CP_REG, SCTLR)
         except Exception:
             sctlr = None
-        snap = b''.join(bytes(uc.mem_read(lo, hi - lo)) for lo, hi in self.snap)
+        snap = tuple(self.read(lo, hi - lo) for lo, hi in self.snap)
         return {'end': self.end[0], 'ret': ret, 'mmio': self.mmio, 'calls': self.calls, 'writes': snap,
-                'sctlr': sctlr, 'ram2': bytes(uc.mem_read(RAM2, RAM2_END - RAM2)) if self.snap is SNAP_LINK else None}
+                'sctlr': sctlr, 'ram2': self.read(RAM2, RAM2_END - RAM2) if self.snap is SNAP_LINK else None}
+
+    def read(self, a, n):
+        """n bytes at a: a slice of the copy-on-write mapping, or through Unicorn outside it."""
+        for lo, hi, mm, _ in self.maps:
+            if lo <= a and a + n <= hi:
+                return mm[a - lo:a - lo + n]
+        return bytes(self.uc.mem_read(a, n))
+
+    def close(self):
+        """Unicorn first, then the mappings it points into."""
+        self.uc = None
+        for _, _, mm, _ in self.maps:
+            try:
+                mm.close()
+            except BufferError:
+                pass       # an exported pointer still alive (ctypes): the mapping goes with the object
+        self.maps = []
+
+    def __del__(self):
+        self.close()
 
 
 def printf_like(rng):
@@ -573,12 +655,10 @@ def compare(a, b, snap=SNAP):
     for k in ('end', 'ret', 'mmio', 'calls', 'sctlr'):
         if a[k] != b[k]:
             return k
-    if a['writes'] != b['writes']:
-        i = next(k for k in range(len(a['writes'])) if a['writes'][k] != b['writes'][k])
-        for lo, hi in snap:
-            if i < hi - lo:
-                return f'memory at {lo + i:#x}'
-            i -= hi - lo
+    for (lo, hi), x, y in zip(snap, a['writes'], b['writes']):    # one bytes object per range (round 8)
+        if x != y:
+            i = next(k for k in range(len(x)) if x[k] != y[k])
+            return f'memory at {lo + i:#x}'
     return None
 
 
@@ -985,13 +1065,11 @@ def vdc5_read_args(rng, args, kind):
     return fill
 
 
-RSPI_FLAGS = 0x20800418     # rspi_rx_done[5], rspi_tx_done[5] (src/display/data_symbols.tsv)
 
 
 def rspi_args(rng, args, kind):
-    """The RSPI driver core (round 7). Nothing raises the transmit and receive interrupts in a trial, so every wait
-    for the ISR flags would spin for ever after the first access (each access clears its flag): the flags are set
-    (1, sometimes 0: then both builds spin and the trial is inconclusive) and the transfers kept to one burst: ch
+    """The RSPI driver core (round 7). The flags start set (1, sometimes 0); since round 8 Run.rspi_irq raises the
+    interrupts the waits are for, so a transfer runs on past its first access. The arguments: ch
     0..4 (5 now and then: the checks), a buffer, an access count 0..2, a trigger 0..7 or 0xFF (keep); the bursts
     (bytes 0, 1, 2, 4, fewer-than-trigger 0/1); rspi_hw_config's mode 0..2, rspi_hw_config_master's SPBR, BRDV 0..3
     and loopback 0/1; rspi_fifo_reset a channel base."""
@@ -1010,6 +1088,18 @@ def rspi_args(rng, args, kind):
         regs[0], regs[2], regs[3] = rng.randrange(5), rng.randrange(4), rng.randrange(2)
     elif kind == 'base':
         regs[0] = 0xE800C800 + 0x800 * rng.randrange(5)
+    # SPDCR keeps its value for the whole trial (round 8): nothing in these functions writes it, and a fresh random
+    # SPLW at every read gave a burst another access size than rspi_read_pio had chosen, so `left -= 4` passed
+    # zero and the loop ran to the budget. A burst gets an access size that divides its byte count (its callers'
+    # contract: rspi_read_pio checks the trigger against the size); its other trials were inconclusive anyway.
+    args.setdefault('mmio', {})
+    for ch in range(5):
+        v = rng.getrandbits(8)
+        if kind == 'burst':
+            n = regs[0]
+            sizes = [0, 1, 2, 3] if n % 4 == 0 else [0, 1, 2] if n % 2 == 0 else [0, 1]
+            v = v & 0x9F | rng.choice(sizes) << 5
+        args['mmio'][RSPI_BASE + RSPI_STRIDE * ch + 0xB] = [v]
     return [(RSPI_FLAGS, flags)]
 
 
@@ -1054,9 +1144,35 @@ def sd_card_args(rng, args, kind):
 
 
 SDHI_OPS = 0x20420564       # the SDHI operation table (src/display/drivers/sdhi.c)
+_FILE = None
 
 
-def sd_handle_args(rng, args, kind):
+def _image_bytes(addr, n):
+    """n bytes of the original image file at addr (constant data a preset copies, e.g. an operation table)."""
+    global _FILE
+    if _FILE is None:
+        _FILE = open(image_path(), 'rb').read()
+    return _FILE[addr - BASE:addr - BASE + n]
+
+
+def switch_status_words(rng):
+    """A CMD6 status block (64 bytes, byte 0 the most significant) as the 16 SD_BUF0 words the PIO read stores low
+    byte first (round 8): the maximum current mostly at most 800 mA, group 1 and 3 support bits, the selected
+    functions of groups 1, 3, 4 among the ones the switches ask for (and 0xF), version 0 or 1, busy bits rarely."""
+    b = bytearray(rng.getrandbits(8) for _ in range(64))
+    ma = rng.choice([100, 200, 800, 801, 0x0320, rng.getrandbits(16)])
+    b[0], b[1] = ma >> 8, ma & 0xFF
+    b[9] |= rng.choice([0, 1, 1])
+    b[13] = rng.choice([0, 2, 6, 0x0E, 0x1E, 0x16, rng.getrandbits(8)])
+    b[15] = rng.choice([0, 3, 3, 0xF, rng.getrandbits(4)]) << 4 | rng.choice([0, 0, 0xF, rng.getrandbits(4)])
+    b[16] = b[16] & 0xF0 | rng.choice([1, 2, 3, 4, 3, 4, 0xF, rng.getrandbits(4)])
+    b[17] = rng.choice([0, 1, 1])
+    for k in (23, 25, 29):
+        b[k] = rng.choice([0, 0, 0, rng.getrandbits(8)])
+    return [struct.unpack_from('<I', b, 4 * k)[0] for k in range(16)]
+
+
+def sd_handle_args(rng, args, kind, fname_kind=None):
     """The SD card layer (round 7): a handle {card context, the image's SDHI operation table} with the context's RCA,
     addressing and card type (0 or 1) set, the SDHI status registers biased as for sd_card_args; (status out,
     handle) for CMD13; a 16-byte CSD for the checks; an MBR geometry block (sectors per track 0/32/63, heads
@@ -1065,7 +1181,18 @@ def sd_handle_args(rng, args, kind):
     regs = args['regs']
     ctx, h = SCRATCH_ARGS + 0xC000, SCRATCH_ARGS + 0xB000
     out = SCRATCH_ARGS + 0xB100
-    args['buffers'] += [(h, struct.pack('<II', ctx, SDHI_OPS)), (out, bytes(16))]
+    ops = SDHI_OPS
+    if kind in ('handle', 'arg', 'sect') and rng.random() < 0.6:
+        # a target that offers what this host's table refuses (round 8): slots 6 (driver strength) and 7 (UHS
+        # function) answer 0 through sdhi_soft_reset 0x20140440 (SOFT_RST off/on, returns 0), so that the switch
+        # functions' accepting paths run; the card layer takes the table from the handle, so it is an input
+        ops = SCRATCH_ARGS + 0xB300
+        tbl = bytearray(_image_bytes(SDHI_OPS, 26 * 4))
+        for slot in (6, 7):
+            if rng.random() < 0.9:
+                struct.pack_into('<I', tbl, 4 * slot, 0x20140440)
+        args['buffers'] += [(ops, bytes(tbl))]
+    args['buffers'] += [(h, struct.pack('<II', ctx, ops)), (out, bytes(16))]
     if kind == 'handle':
         regs[0] = h
     elif kind == 'status':
@@ -1080,6 +1207,93 @@ def sd_handle_args(rng, args, kind):
             csd[12] &= 0xE3 | (rng.randrange(8) << 2)
         args['buffers'] += [(out, bytes(csd))]
         regs[0] = out
+    elif kind in ('rca', 'arg', 'on'):     # (RCA / CMD6 argument / clock on, handle) (round 8)
+        regs[0] = {'rca': rng.choice([0, 0, 1, rng.getrandbits(16)]),
+                   'arg': rng.choice([0x00FFFFFF, 0x00FFFFF1, 0x80FFFFF1, rng.getrandbits(32)]),
+                   'on': rng.choice([0, 1, 1, 2])}[kind]
+        regs[1] = h
+    elif kind == 'sel':                    # (RCA, block length, blocks, handle)
+        regs[0], regs[1], regs[2], regs[3] = rng.choice([0, 1, rng.getrandbits(16)]), rng.choice([8, 64, 512]), \
+            rng.choice([1, 2]), h
+    elif kind == 'sect':                   # (sector, buffer, count, handle)
+        regs[0], regs[1], regs[2], regs[3] = rng.getrandbits(rng.choice([8, 32])), SCRATCH_ARGS + 0xE000, \
+            rng.choice([0, 1, 1, 2]), h
+    elif kind == 'vol':                    # (volume {+0x14 sectors, +0x30 first}, sector, buffer, count, handle)
+        vol = SCRATCH_ARGS + 0xB200
+        size = rng.choice([0, 1, 100, rng.getrandbits(32)])
+        args['buffers'] += [(vol, bytes(0x14) + struct.pack('<I', size) + bytes(0x18) +
+                             struct.pack('<I', rng.getrandbits(rng.choice([8, 32]))))]
+        regs[0], regs[1], regs[2], regs[3] = vol, rng.choice([0, 1, 99, rng.getrandbits(32)]), \
+            SCRATCH_ARGS + 0xE000, rng.choice([0, 1, 2])
+        regs[4] = h
+    elif kind == 'cid':                    # a 16-byte CID: random, or zero runs that the check looks for
+        cid = bytearray(rng.getrandbits(8) for _ in range(16))
+        for k in range(rng.choice([0, 0, 3, 3, 15, 16])):
+            cid[k] = 0
+        if rng.random() < 0.3:
+            cid[0] = rng.getrandbits(8)
+        args['buffers'] += [(out, bytes(cid))]
+        regs[0] = out
+    elif kind in ('fmt', 'card', 'nset'):    # the format code (round 8): the context's format parameters and CSD
+        c = bytearray(dict(args['buffers'])[ctx])
+        csd = bytearray(rng.getrandbits(8) for _ in range(16))
+        csd[0] = rng.choice([0x00, 0x40, 0x40, 0x80]) | csd[0] & 0x3F
+        if rng.random() < 0.5:
+            csd[7], csd[8], csd[9] = 0, rng.choice([0x0F, 0x3B, 0xED]), rng.getrandbits(8)   # 2..32 GB
+        c[0x201:0x211] = csd
+        typ = rng.choice([12, 16, 32, 32, 0, 0x40])
+        struct.pack_into('<HHIIIHHbxxxIHxxIII', c, 0x2C8, rng.choice([0, 63]), rng.choice([0, 255]),
+                         rng.choice([0x2000, 0x8000, 1, 0]), rng.getrandbits(rng.choice([8, 16])),
+                         rng.getrandbits(rng.choice([16, 24, 32])), rng.choice([1, 2, 8, 64]), rng.choice([512, 512, 0x400]),
+                         typ, rng.choice([1, 2, 3]), rng.choice([1, 32, 0x2000]), rng.getrandbits(16), 0, 0)
+        struct.pack_into('<II', c, 0x2F4, rng.choice([0, 1, 100]), 0)
+        args['buffers'] = [b for b in args['buffers'] if b[0] != ctx] + [(ctx, bytes(c))]
+        regs[0] = {'fmt': h, 'card': ctx, 'nset': rng.getrandbits(16)}[kind]
+        regs[1] = ctx
+    elif kind in ('drv', 'drvop', 'idx', 'task'):   # the drive code (round 8): a drive record that points to the handle
+        drv = SCRATCH_ARGS + 0xA000
+        d = bytearray(rng.getrandbits(8) for _ in range(0x74))
+        d[0x10] = rng.choice([0x20, 0x10, 0x0C])
+        struct.pack_into('<I', d, 0x14, rng.choice([0, 100, rng.getrandbits(32)]))
+        struct.pack_into('<I', d, 0x24, h if rng.random() < 0.85 else 0)
+        struct.pack_into('<I', d, 0x30, rng.getrandbits(rng.choice([8, 20])))
+        struct.pack_into('<H', d, 0x3A, rng.choice([1, 6]))
+        d[0x68] = rng.getrandbits(8)
+        args['buffers'] += [(drv, bytes(d))]
+        if kind == 'drv':
+            regs[0], regs[1] = drv, h
+        elif kind == 'drvop':          # (drive, op, sector, buffer, [count, handle])
+            regs[0], regs[1], regs[2], regs[3] = drv, rng.randrange(11), rng.getrandbits(rng.choice([4, 32])), \
+                SCRATCH_ARGS + 0xE000
+            regs[4], regs[5] = rng.choice([0, 1, 2]), h
+        elif kind == 'task':           # (drive, index 0)
+            regs[0], regs[1] = drv, 0
+            fill.append((0x20808B58, struct.pack('<I', rng.choice([0, 0, 5]))))
+        else:                          # (index 0, monitor state)
+            regs[0], regs[1] = 0, rng.choice([0, 0x40, 0xC0, rng.getrandbits(8)])
+        fill.append((0x20808B60, struct.pack('<III', drv, rng.choice([0, 1]), rng.choice([0, 1]))))
+    if kind in ('handle', 'rca', 'arg', 'on', 'sel', 'sect', 'vol', 'fmt', 'drv', 'drvop', 'idx', 'task'):
+        # the card set-up (round 8). The responses (RSP00, RSP01): R1 in the transfer state (0x0900) or standby, few
+        # error bits; for the initialisation also CMD8's echo 0x1AA and the OCR busy, CCS and S18A bits (bit 31 is
+        # OUT_OF_RANGE in R1, so the two cannot share one list)
+        if fname_kind == 'init':
+            args['mmio'][0xE804E00C] = [0x01AA, 0x01AA, 0x0900, 0, rng.getrandbits(16)]
+            args['mmio'][0xE804E00E] = [0, 0, 0x8000, 0xC000, 0xC100]
+        else:
+            args["mmio"][0xE804E00C] = [0x0900] * 20 + [0x0600, 0x0B00, 0x0C00, rng.getrandbits(16)]
+            args["mmio"][0xE804E00E] = [0] * 30 + [rng.getrandbits(16)]
+        # SD_INFO2: buffer ready (0x300) more often than the timeout error 0x40, which ends a command layer call
+        # after a few register reads otherwise
+        args['mmio'][0xE804E01E] = [0x0300, 0x0300, 0x0300, 0x2000, 0x0000, 0x0040]
+        # SD_BUF0: four CMD6 status blocks in turn (switch_status_words), or random words
+        if rng.random() < 0.7:
+            args['mmio_seq'] = {0xE804E030: sum((switch_status_words(rng) for _ in range(4)), [])}
+        else:
+            args['mmio'][0xE804E030] = [rng.getrandbits(32) for _ in range(4)]
+        # SD_CD (PPR11 bit 4, sd_card_detect 0x20101D94): a card in for the whole trial most of the time; the card
+        # check takes 32 samples, so random bits made every trial "no card"
+        pin = rng.getrandbits(16)
+        args['mmio'][0xFCFE322C] = [pin & ~0x10] if rng.random() < 0.8 else [pin & ~0x10, pin | 0x10]
     elif kind == 'geom':
         g = bytearray(0x18)
         lim = 0xFB0400
@@ -1211,9 +1425,27 @@ def preset_for(fname):
         return lambda rng, args: sd_card_args(rng, args, sd)
     sd = {'sd_cmd0_go_idle': 'handle', 'sd_cmd2_all_send_cid': 'handle', 'sd_cmd9_send_csd': 'handle',
           'sd_cmd10_send_cid': 'handle', 'sd_cmd13_send_status': 'status', 'sd_csd_check': 'csd', 'mmc_csd_check': 'csd',
-          'csd_read_bl_len': 'csd', 'csd_c_size': 'csd', 'csd_c_size_mult': 'csd'}.get(fname)
+          'csd_read_bl_len': 'csd', 'csd_c_size': 'csd', 'csd_c_size_mult': 'csd',
+          # round 8 (drivers/sd_setup.c)
+          'sd_init_v1_or_mmc': 'handle', 'sd_init_v2': 'handle', 'sd_cmd11_voltage_switch': 'handle',
+          'sd_cmd3_relative_addr': 'handle', 'sd_select_card': 'handle', 'sd_acmd51_read_scr': 'handle',
+          'sd_acmd6_set_bus_width': 'handle', 'sd_acmd13_read_status': 'handle', 'sd_switch_high_speed': 'handle',
+          'sd_switch_uhs_speed': 'handle', 'sd_set_driver_strength': 'handle', 'sd_select_bus_speed': 'handle',
+          'sd_card_identify': 'handle', 'sd_read_csd_cid': 'handle', 'sd_scr_bus_width': 'handle',
+          'sd_check_card': 'handle', 'sd_cmd7_select': 'rca', 'sd_cmd6_switch_func': 'arg', 'sd_card_clock': 'on',
+          'sd_selected_op': 'sel', 'sd_read_sectors': 'sect', 'sd_write_sectors': 'sect', 'sd_vol_read': 'vol',
+          'sd_vol_write': 'vol', 'sd_cid_check': 'cid',
+          'fat_format_clear_root': 'fmt', 'fat_format_write_fats': 'fmt', 'fat32_format_write_fsinfo': 'fmt',
+          'fat_format_write_boot': 'fmt', 'fat_format_write_mbr': 'fmt', 'fat_format_volume': 'fmt',
+          'fat_format_layout': 'fmt', 'sd_fat_format': 'fmt', 'sd_format_progress_dec': 'card',
+          'sd_format_progress_set': 'nset', 'sd_mount_volume': 'drv', 'sd_drive_mount': 'drv',
+          'sd_drive_unmount': 'drv', 'sd_drive_attach': 'drv', 'sd_driver_op': 'drvop', 'sd_card_task_start': 'task',
+          'sd_card_remount': 'idx', 'sd_card_poll': 'idx', 'sd_card_unmount': 'idx',
+          'sd_card_write_protected': 'idx', 'sd_clmap_prepare': 'idx'}.get(fname)
     if sd or fname.startswith('mbr_'):
-        return lambda rng, args: sd_handle_args(rng, args, sd or 'geom')
+        init = 'init' if fname in ('sd_init_v1_or_mmc', 'sd_init_v2', 'sd_cmd11_voltage_switch', 'sd_card_identify',
+                                   'sd_cmd3_relative_addr') else None
+        return lambda rng, args: sd_handle_args(rng, args, sd or 'geom', init)
     if fname.startswith('rspi'):
         kind = ('xfer' if fname in ('rspi_read', 'rspi_read_pio', 'rspi_write', 'rspi_write_pio') else
                 'burst' if fname.endswith('_read_burst') else 'config' if fname == 'rspi_hw_config' else
@@ -1246,6 +1478,28 @@ PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'obj')) for n in (
 PRESETS.update({n: (lambda rng, args: scif_args(rng, args, 'glob')) for n in (
     'scif3_rxi_isr', 'scif3_txi_isr', 'scif4_rxi_isr', 'scif4_txi_isr', 'scif5_rxi_isr', 'scif5_txi_isr',
     'scif5_get', 'scif4_get', 'scif3_get', 'scif5_rxi_count_get', 'scif4_rxi_count_get', 'scif_uarts_ctor')})
+def range_args(rng, args, k_len, k_buf=None):
+    """A length its callers could pass (round 8): the cache maintenance ranges and the CRCs got a random 32-bit
+    length, so half of their trials ran to the budget (inconclusive, never compared) and they took 15..25 s each.
+    The length now stays within what a loop finishes in the budget, from 0 over the line and word boundaries to
+    64 KB; a CRC's pointer is an argument buffer (1 KB) with a length within it or past it."""
+    regs = args['regs']
+    if k_buf is None:
+        regs[k_len] = rng.choice([0, 1, 31, 32, 33, 0x40, 0x1000, 0x10000, rng.getrandbits(16)])
+    else:
+        a = SCRATCH_ARGS + 0x2000 * k_buf
+        args['buffers'] = [b for b in args['buffers'] if b[0] != a] + [(a, bytes(rng.getrandbits(8) for _ in range(0x400)))]
+        regs[k_buf] = a
+        regs[k_len] = rng.choice([0, 1, 2, 3, 7, 64, 0x3FF, 0x400, rng.randrange(0x400)])
+    return []
+
+
+PRESETS.update({n: (lambda rng, args: range_args(rng, args, 1)) for n in (
+    'icache_invalidate_range', 'dcache_clean_invalidate_range', 'dcache_clean_range', 'dcache_invalidate_range')})
+PRESETS['crc16_xmodem'] = lambda rng, args: range_args(rng, args, 1, 0)
+PRESETS.update({n: (lambda rng, args: range_args(rng, args, 1, 2)) for n in ('crc16_a001', 'crc32_update')})
+
+
 def small_args(rng, args):
     """r0 a small selector (-1..63: command index, mode, wait kind), r1 0 or 1, r2 a random word (an argument)."""
     regs = args['regs']
@@ -1277,6 +1531,174 @@ for _shape, _names in (('bn', ('R_RIIC_Write', 'R_RIIC_Read')), ('vm', ('R_RIIC_
 PRESETS.update({n: two_strings for n in ('strcmp', 'strcasecmp', 'strstr', 'strcat', 'strcpy')})
 PRESETS.update({n: (lambda rng, args: two_strings(rng, args, True)) for n in ('strncmp', 'strncasecmp', 'memcmp',
                                                                              'strncpy')})
+
+
+# --- T24 USB track (app/scope_obj.c, drivers/usb_*.c, app/textterm.c, lib/norti_knl.c): presets ---
+SCOPE_OBJ = 0x2047963C        # the scope object instance (data_symbols.tsv scope_obj), RAM of the start state
+
+
+def scope_args(rng, args, kind):
+    """The scope object's methods take the instance (a random pointer would leave the 0x82FB8-byte object's fields in
+    other arguments' buffers), and COLOR indices 0..10 (scope_color_decode clamps to 10), mode 8 / 9 / other,
+    bank selection 0 / 1 / 2."""
+    regs = args['regs']
+    if kind.startswith('obj') and rng.random() < 0.9:
+        regs[0] = SCOPE_OBJ
+    first = 1 if kind.startswith('obj') else 0
+    if kind.endswith('color'):
+        regs[first], regs[first + 1] = rng.randrange(11), rng.randrange(11)
+    elif kind.endswith('bank'):
+        regs[first] = rng.randrange(4)
+    elif kind.endswith('mode'):
+        regs[first] = rng.randrange(-2, 32) & 0xFFFFFFFF
+        regs[first + 1] = rng.choice([8, 9, 0, 1, 10])
+    return []
+
+
+PRESETS.update({n: (lambda rng, args, k=k: scope_args(rng, args, k)) for n, k in (
+    ('scope_obj_palette_set', 'obj_color'), ('scope_palette_set', 'color'), ('scope_obj_init', 'obj'),
+    ('scope_wf_bank_set', 'obj_bank'), ('scope_obj_bank_reset', 'bank'), ('scope_obj_store_record', 'obj'),
+    ('scope_obj_history_clear', 'obj'), ('scope_obj_reset_bank0', 'obj'), ('scope_obj_reset_bank1', 'obj'),
+    ('scope_obj_layout_set', 'obj'), ('scope_obj_set_2e00', 'obj'), ('scope_obj_set_2e02', 'obj'),
+    ('scope_obj_apply_2e00', 'obj'), ('scope_obj_indices_clear', 'obj'), ('scope_obj_vscale', 'obj_mode'),
+    ('scope_obj_wf_row_addr', 'obj_mode'), ('scope_obj_line_offset', 'obj_mode'), ('scope3d_vscale', 'mode'),
+    ('scope3d_line_offset', 'mode'), ('scope_wf_row_addr', 'mode'))})
+
+
+def knl_list_args(rng, args, kind):
+    """A kernel free list {next, size} in argument buffer 4 (address-ordered blocks with sizes and gaps of multiples
+    of 8, the head word first), and a request: (head, size) for knl_freelist_alloc, (head, block, size) for
+    knl_freelist_free (a block in a gap, or overlapping a free block), or the wrappers' (size) / (block, size)
+    with the head word of their pool (fill) pointing at the list."""
+    base = SCRATCH_ARGS + 0x8000
+    data = bytearray(rng.getrandbits(8) for _ in range(0x2000))
+    blocks, a, nblk = [], base + 8 * rng.randrange(1, 8), rng.randrange(0, 9)
+    while len(blocks) < nblk:
+        a += 8 * rng.randrange(0, 40)
+        size = 8 * rng.randrange(1, 64)
+        if a + size > base + 0x1F00:
+            break
+        blocks.append((a, size))
+        a += size
+    for k, (b, size) in enumerate(blocks):
+        nxt = blocks[k + 1][0] if k + 1 < len(blocks) else 0
+        struct.pack_into('<II', data, b - base, nxt, size)
+    first = blocks[0][0] if blocks else 0
+    struct.pack_into('<I', data, 0, first)
+    args['buffers'] = [x for x in args['buffers'] if not base <= x[0] < base + 0x2000] + [(base, bytes(data))]
+    regs = args['regs']
+    size = rng.choice([0, 1, 7, 8, 9, 16, 24]) if rng.random() < 0.3 else rng.randrange(0, 0x300)
+    if rng.random() < 0.6 or not blocks:      # a block where nothing is free (between, before or after the blocks)
+        blk = base + 8 * rng.randrange(1, 0x3E0)
+    else:                                     # at or right after a free block, so that it merges or overlaps
+        b, s = rng.choice(blocks)
+        blk = rng.choice([b, b + s, b - size - (size & 7 and 8 - (size & 7)), b + 8])
+    blk &= 0xFFFFFFFF
+    fill = []
+    if kind == 'alloc':
+        regs[0], regs[1] = base, size
+    elif kind == 'free':
+        regs[0], regs[1], regs[2] = base, blk, size
+    else:                                     # a wrapper: its pool's head word holds the first block
+        for head in (0x208003F4, 0x208003F8, 0x208003FC):
+            fill.append((head, struct.pack('<I', first)))
+        if kind == 'walloc':
+            regs[0] = size
+        else:
+            regs[0], regs[1] = blk, size
+    return fill
+
+
+def knl_mbf_args(rng, args, kind):
+    """A message-buffer control block in argument buffer 0 with its ring in buffer 5: ring size 4..0x200, indices
+    inside it, maximum message size 1 or 0x80; get finds a length (0..size-2) at the read index (both bytes may
+    wrap); put gets a message size and a free count around it."""
+    cb, ring = SCRATCH_ARGS, SCRATCH_ARGS + 0xA000
+    size = rng.randrange(4, 0x200)
+    rd, wr = rng.randrange(size), rng.randrange(size)
+    one = rng.random() < 0.25
+    data = bytearray(rng.getrandbits(8) for _ in range(0x400))
+    length = rng.randrange(0, size - 1)
+    data[rd] = length & 0xFF
+    data[(rd + 1) % size] = length >> 8
+    regs = args['regs']
+    if kind == 'put':
+        regs[2] = rng.randrange(0, size + 2) if rng.random() < 0.8 else rng.choice([0, 1, 0x10000, 0xFFFE])
+        free = rng.randrange(0, size + 4)
+    else:
+        free = rng.randrange(0, 0x10000)
+    blk = struct.pack('<IIHHHHH', rng.getrandbits(32), ring, wr, rd, size, free, 1 if one else 0x80)
+    msg = SCRATCH_ARGS + 0x2000
+    args['buffers'] = [x for x in args['buffers'] if x[0] not in (cb, ring, msg)] + [
+        (cb, blk + bytes(0x40)), (ring, bytes(data)), (msg, bytes(rng.getrandbits(8) for _ in range(0x400)))]
+    regs[0], regs[1] = cb, SCRATCH_ARGS + 0x2000
+    return []
+
+
+PRESETS.update({'knl_freelist_alloc': lambda rng, args: knl_list_args(rng, args, 'alloc'),
+                'knl_freelist_free': lambda rng, args: knl_list_args(rng, args, 'free'),
+                'knl_mbf_get': lambda rng, args: knl_mbf_args(rng, args, 'get'),
+                'knl_mbf_put': lambda rng, args: knl_mbf_args(rng, args, 'put')})
+PRESETS.update({n: (lambda rng, args: knl_list_args(rng, args, 'walloc')) for n in (
+    'knl_stack_alloc', 'knl_pool_alloc', 'knl_sys_alloc')})
+PRESETS.update({n: (lambda rng, args: knl_list_args(rng, args, 'wfree')) for n in (
+    'knl_sys_free_a', 'knl_pool_free', 'knl_sys_free')})
+
+
+def hid_args(rng, args, kind):
+    """HID helpers: an item reader position (a word in buffer 0 pointing at item bytes in buffer 5, any size code),
+    a report with a bit offset and count inside it, or a configuration record (buffer 6) with 0..8 endpoint entries
+    of random type and direction and max packets around 0..256."""
+    regs, bufs = args['regs'], args['buffers']
+    if kind == 'item':
+        items = SCRATCH_ARGS + 0xA000 + rng.randrange(0x40)
+        bufs[:] = [b for b in bufs if b[0] not in (SCRATCH_ARGS, SCRATCH_ARGS + 0xA000)]
+        bufs += [(SCRATCH_ARGS, struct.pack('<I', items) + bytes(0x3C)),
+                 (SCRATCH_ARGS + 0xA000, bytes(rng.getrandbits(8) for _ in range(0x100)))]
+        regs[0], regs[1], regs[2] = SCRATCH_ARGS, SCRATCH_ARGS + 0x2000, rng.randrange(2)
+        bufs[:] = [b for b in bufs if b[0] != SCRATCH_ARGS + 0x2000] + [(SCRATCH_ARGS + 0x2000, bytes(0x40))]
+    elif kind == 'bits':
+        regs[0] = SCRATCH_ARGS + 0xA000
+        bufs[:] = [b for b in bufs if b[0] != regs[0]] + [(regs[0], bytes(rng.getrandbits(8) for _ in range(0x100)))]
+        regs[1], regs[2] = rng.randrange(0, 0x400), rng.randrange(0, 34)
+    else:
+        c = bytearray(rng.getrandbits(8) for _ in range(0x1000))
+        n = rng.randrange(0, 9)
+        struct.pack_into('<i', c, 0x1C, n)
+        for i in range(n):
+            e = 0x860 + 12 * i
+            c[e] = rng.choice([0x81, 0x01, 0x82, 0x83, 0x02])
+            c[e + 1] = rng.choice([3, 3, 2, 1, 0])
+            struct.pack_into('<i', c, e + 4, rng.choice([0, 1, 8, 64, 256, 257, -1, 0x1000]))
+        regs[0], regs[1] = SCRATCH_ARGS, SCRATCH_ARGS + 0xC000
+        bufs[:] = [b for b in bufs if b[0] not in (regs[0], regs[1])] + [(regs[0], bytes(0x40)), (regs[1], bytes(c))]
+    return []
+
+
+PRESETS.update({'hid_item_data': lambda rng, args: hid_args(rng, args, 'item'),
+                'hid_report_bits_get': lambda rng, args: hid_args(rng, args, 'bits'),
+                'usbhid_find_int_in': lambda rng, args: hid_args(rng, args, 'ep')})
+
+
+def textterm_args(rng, args, kind):
+    """The text terminal: the answer ring (0x208F4BAC, 64 bytes, some zero) with random indices, and an expected
+    byte that is often the next one; or a settings frame (a buffer) for textterm_send_all."""
+    regs = args['regs']
+    if kind == 'frame':
+        regs[0], regs[1] = SCRATCH_ARGS + 0x2000, rng.randrange(2)
+        args['buffers'] = [b for b in args['buffers'] if b[0] != regs[0]] + [
+            (regs[0], bytes(rng.getrandbits(8) for _ in range(0x400)))]
+        return []
+    ring = bytes(rng.choice([0, rng.getrandbits(8)]) for _ in range(64))
+    wr, rd = rng.randrange(64), rng.randrange(64)
+    if rng.random() < 0.2:
+        wr = rd
+    regs[0] = ring[rd] if rng.random() < 0.5 else rng.choice([0, rng.getrandbits(8), 0x100 | ring[rd]])
+    return [(0x208F4BAC, ring + bytes([wr, rd]))]
+
+
+PRESETS.update({'textterm_rx_expect': lambda rng, args: textterm_args(rng, args, 'ring'),
+                'textterm_send_all': lambda rng, args: textterm_args(rng, args, 'frame')})
 
 
 def byte_check(res, obj, fname, shndx, off, oaddr):
@@ -1338,7 +1760,10 @@ def check(res, obj, fname, shndx, off, seed=1, trials=200):
             if a is not None and not (BASE <= a < 0x2042C000) and a not in res.keep:
                 refs.add(a)
     rsize = RET_SIZE.get(fname, returns_value(obj, fname))
-    starts = sorted(a for a, _, _ in res.funcs.values())
+    # the extent ends at the next known entry: Ghidra's, or an entry aliases.tsv gives for a function Ghidra's list
+    # lacks (round 8: 0x2013DA6C's extent ran over 0x2013DB74, so coverage counted both functions' blocks)
+    starts = sorted({a for a, _, _ in res.funcs.values()} |
+                    {int(v, 16) for v in res.alias.values() if v.startswith('0x')})
     i = bisect.bisect_right(starts, oaddr)
     osize = min(starts[i] - oaddr, 0x4000) if i < len(starts) else 0x100
     gsize = res.by_addr.get(oaddr, (None, osize, False))[1]
@@ -1451,7 +1876,7 @@ def _link_one(job):
             runs = [Run(res.img, [], stub_addrs, sd, fill, args), Run(_HYB, [], stub_addrs, sd, fill, args)]
             for r in runs:
                 r.snap = SNAP_LINK
-            before = [bytes(r.uc.mem_read(RAM2, RAM2_END - RAM2)) for r in runs]
+            before = [r.read(RAM2, RAM2_END - RAM2) for r in runs]
             r1, r2 = (r.go(oaddr, thumb, size, budget) for r in runs)
             if 'budget' not in (r1['end'], r2['end']) or r1['end'] == r2['end']:
                 break
@@ -1652,7 +2077,12 @@ def cmd_status(args):
     require_objects()
     res = Resolver(Image())
     results = {}
-    jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()]
+    # a partial run (functions named, or --object): only those are checked, every other row of status.tsv is kept
+    # as it is (T24 USB track: two sessions add their own objects without re-running each other's)
+    want, objs = set(args.functions or ()), list(args.object or ())
+    partial = bool(want or objs)
+    jobs = [(obj.path, fname, args.seed, args.trials) for obj, fname, shndx, off in recreated()
+            if not partial or fname in want or any(obj.path.endswith(o) for o in objs)]
     with multiprocessing.Pool(args.jobs or os.cpu_count()) as pool:
         done = list(pool.imap_unordered(_check_one, jobs))
     for path, fname, a, v, d in sorted(done, key=lambda x: (x[0], x[1])):
@@ -1665,6 +2095,15 @@ def cmd_status(args):
         if cur is None or RANK[v] < RANK[cur[2]]:
             results[a] = (fname, rel, v, d)
     rows = []
+    kept = {}
+    if partial:
+        checked = {fname for _, fname, _, _, _ in done}
+        for r in read_tsv(STATUS_TSV)[1:]:
+            if len(r) >= 8 and r[3] and r[3] not in checked:
+                kept[int(r[0], 16) if r[1] != '-' or r[0] != '00000000' else ('-', r[3])] = r
+        for k, r in kept.items():
+            if k not in results:
+                results[k] = (r[3], r[4], r[5], r[7])
     for g, (a, n, _) in sorted(res.funcs.items(), key=lambda kv: kv[1][0]):
         if a in results:
             fname, rel, v, d = results[a]
@@ -1714,6 +2153,8 @@ def main():
     lc.add_argument('--trials', type=int, default=100)
     lc.add_argument('--seed', type=int, default=3)
     st = sub.add_parser('status')
+    st.add_argument('functions', nargs='*', help='only these (the other rows of status.tsv are kept)')
+    st.add_argument('--object', action='append', help='only the functions of this object (e.g. drivers/usb_hid.o)')
     st.add_argument('--jobs', type=int, default=0, help='worker processes (default: all cores)')
     for p in (c, st):
         p.add_argument('--trials', type=int, default=200)

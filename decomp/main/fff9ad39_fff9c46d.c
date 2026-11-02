@@ -896,7 +896,7 @@ void displink_39_rtty_labels(void)
 
 {
   ram0x00001805 = DAT_000097a2;
-  ram0x00001801 = DAT_0000979e;
+  ram0x00001801 = em_text_mem;
   ram0x0000180d = DAT_000097d4;
   ram0x00001809 = DAT_000097d0;
   DAT_00001815 = DAT_00009806;
@@ -970,7 +970,7 @@ void displink_build_41(void)
     PTR_g_ui_00025d38->memlist_sel_valid = 0;
   }
   else {
-    bVar2 = memch_valid(bStack_1,(byte **)&DAT_00020880);
+    bVar2 = memch_valid(bStack_1,(byte **)&dl41_used_ptr);
     if (bVar2) {
       PTR_g_ui_00025d38->memlist_sel_valid = 0;
     }
@@ -980,94 +980,94 @@ void displink_build_41(void)
   }
   DAT_000017d9 = PTR_g_ui_00025d38->memlist_sel_valid << 7 | PTR_g_ui_00025d38->memlist_flag << 6;
   DAT_000017da = PTR_g_ui_00025d38->memlist_group << 4 | PTR_g_ui_00025d38->memlist_row;
-  DAT_0001b632 = 0x9c;
+  dl41_pos = 0x9c;
   puVar3 = &DAT_000017dd;
-  puVar4 = &DAT_fff804c4;
+  puVar4 = &dl41_header;
   for (iVar5 = 0xf; iVar5 != 0; iVar5 = iVar5 + -1) {
     *puVar3 = *puVar4;
     puVar3 = puVar3 + 1;
     puVar4 = puVar4 + 1;
   }
-  uVar6 = DAT_0001b632 + 0xf;
-  DAT_0001b632 = uVar6;
+  uVar6 = dl41_pos + 0xf;
+  dl41_pos = uVar6;
   if (g_opstate.ex030114_mem_group == 1) {
     bStack_1 = memch_group_of(bStack_1);
-    uVar1 = (uint)DAT_0001b632;
+    uVar1 = (uint)dl41_pos;
     *(undefined2 *)(&DAT_00001745 + uVar1) = 0x2050;
     *(undefined4 *)(&DAT_00001741 + uVar1) = 0x554f5247;
-    DAT_0001b632 = DAT_0001b632 + 6;
+    dl41_pos = dl41_pos + 6;
     if (bStack_1 < 6) {
-      (&DAT_00001741)[DAT_0001b632] = 0x20;
-      DAT_0001b632 = DAT_0001b632 + 1;
-      (&DAT_00001741)[DAT_0001b632] = 0x20;
-      DAT_0001b632 = DAT_0001b632 + 1;
-      (&DAT_00001741)[DAT_0001b632] = bStack_1 + 0x30;
-      DAT_0001b632 = DAT_0001b632 + 1;
-      (&DAT_00001741)[DAT_0001b632] = 0x20;
-      DAT_0001b632 = DAT_0001b632 + 1;
+      (&DAT_00001741)[dl41_pos] = 0x20;
+      dl41_pos = dl41_pos + 1;
+      (&DAT_00001741)[dl41_pos] = 0x20;
+      dl41_pos = dl41_pos + 1;
+      (&DAT_00001741)[dl41_pos] = bStack_1 + 0x30;
+      dl41_pos = dl41_pos + 1;
+      (&DAT_00001741)[dl41_pos] = 0x20;
+      dl41_pos = dl41_pos + 1;
     }
     else {
       bStack_1 = bStack_1 - 6;
-      *(undefined4 *)(&DAT_00001741 + DAT_0001b632) =
+      *(undefined4 *)(&DAT_00001741 + dl41_pos) =
            *(undefined4 *)(BYTE_ARRAY_fff8035e + (uint)bStack_1 * 4 + 0x12);
-      DAT_0001b632 = DAT_0001b632 + 4;
+      dl41_pos = dl41_pos + 4;
     }
   }
   else {
     *(undefined4 *)(&DAT_00001745 + uVar6) = 0x20202020;
     *(undefined4 *)(&DAT_00001741 + uVar6) = 0x20202020;
     *(undefined2 *)(&DAT_00001749 + uVar6) = 0x2020;
-    DAT_0001b632 = DAT_0001b632 + 10;
+    dl41_pos = dl41_pos + 10;
   }
   bStack_4 = PTR_g_ui_00025d38->memlist_first;
   for (bStack_3 = 0; bStack_3 < 4; bStack_3 = bStack_3 + 1) {
-    DAT_00020884 = memch + bStack_4;
-    bVar2 = memch_valid(bStack_4,(byte **)&DAT_00020880);
+    dl41_rec = memch + bStack_4;
+    bVar2 = memch_valid(bStack_4,(byte **)&dl41_used_ptr);
     if (bVar2) {
-      bStack_1 = DAT_00020884->flags5 >> 7 | DAT_00020884->flags1 >> 6 & 2;
-      (&DAT_00001741)[DAT_0001b632] = bStack_1;
-      DAT_0001b632 = DAT_0001b632 + 1;
+      bStack_1 = dl41_rec->flags5 >> 7 | dl41_rec->flags1 >> 6 & 2;
+      (&DAT_00001741)[dl41_pos] = bStack_1;
+      dl41_pos = dl41_pos + 1;
                     /* channel label text [doc] */
-      memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
-      DAT_0001b632 = DAT_0001b632 + 5;
-      FUN_fff9c2f9(&DAT_00001741 + DAT_0001b632,bStack_4);
-      DAT_0001b632 = DAT_0001b632 + 10;
-      bStack_1 = DAT_00020884->mode & 0xf;
+      memch_label_fmt(&DAT_00001741 + dl41_pos,bStack_4);
+      dl41_pos = dl41_pos + 5;
+      FUN_fff9c2f9(&DAT_00001741 + dl41_pos,bStack_4);
+      dl41_pos = dl41_pos + 10;
+      bStack_1 = dl41_rec->mode & 0xf;
       if (0xd < bStack_1) {
         bStack_1 = 0xe;
       }
-      uVar1 = (uint)DAT_0001b632;
-      *(undefined4 *)(&DAT_00001745 + DAT_0001b632) =
+      uVar1 = (uint)dl41_pos;
+      *(undefined4 *)(&DAT_00001745 + dl41_pos) =
            *(undefined4 *)(BYTE_ARRAY_fff8035e + (uint)bStack_1 * 8 + 0x22);
       *(undefined4 *)(&DAT_00001741 + uVar1) =
            *(undefined4 *)(BYTE_ARRAY_fff8035e + (uint)bStack_1 * 8 + 0x1e);
-      p_vfo_rec = DAT_00020884;
-      uVar6 = DAT_0001b632 + 8;
-      DAT_0001b632 = uVar6;
-      *(undefined4 *)(&DAT_00001749 + uVar6) = *(undefined4 *)(DAT_00020884->tag + 8);
+      p_vfo_rec = dl41_rec;
+      uVar6 = dl41_pos + 8;
+      dl41_pos = uVar6;
+      *(undefined4 *)(&DAT_00001749 + uVar6) = *(undefined4 *)(dl41_rec->tag + 8);
       *(undefined4 *)(&DAT_00001745 + uVar6) = *(undefined4 *)(p_vfo_rec->tag + 4);
       *(undefined4 *)(&DAT_00001741 + uVar6) = *(undefined4 *)p_vfo_rec->tag;
     }
     else {
-      (&DAT_00001741)[DAT_0001b632] = 0;
-      DAT_0001b632 = DAT_0001b632 + 1;
-      memch_label_fmt(&DAT_00001741 + DAT_0001b632,bStack_4);
-      uVar6 = DAT_0001b632 + 5;
-      DAT_0001b632 = uVar6;
+      (&DAT_00001741)[dl41_pos] = 0;
+      dl41_pos = dl41_pos + 1;
+      memch_label_fmt(&DAT_00001741 + dl41_pos,bStack_4);
+      uVar6 = dl41_pos + 5;
+      dl41_pos = uVar6;
       *(undefined4 *)(&DAT_00001745 + uVar6) = 0x2d2e2d2d;
       *(undefined4 *)(&DAT_00001741 + uVar6) = 0x2d2e2d2d;
       *(undefined2 *)(&DAT_00001749 + uVar6) = 0x2d2d;
-      DAT_0001b632 = DAT_0001b632 + 10;
-      uVar1 = (uint)DAT_0001b632;
-      *(undefined4 *)(&DAT_00001745 + DAT_0001b632) = 0x2d2d2d2d;
+      dl41_pos = dl41_pos + 10;
+      uVar1 = (uint)dl41_pos;
+      *(undefined4 *)(&DAT_00001745 + dl41_pos) = 0x2d2d2d2d;
       *(undefined4 *)(&DAT_00001741 + uVar1) = 0x2d2d2d2d;
-      uVar6 = DAT_0001b632 + 8;
-      DAT_0001b632 = uVar6;
+      uVar6 = dl41_pos + 8;
+      dl41_pos = uVar6;
       *(undefined4 *)(&DAT_00001749 + uVar6) = 0x2d2d2d2d;
       *(undefined4 *)(&DAT_00001745 + uVar6) = 0x2d2d2d2d;
       *(undefined4 *)(&DAT_00001741 + uVar6) = 0x2d2d2d2d;
     }
-    DAT_0001b632 = DAT_0001b632 + 0xc;
+    dl41_pos = dl41_pos + 0xc;
     FUN_fff9c1a1((char *)&bStack_5,(char *)&bStack_6);
     if (bStack_6 != bStack_5) {
       bStack_6 = bStack_6 + 1;

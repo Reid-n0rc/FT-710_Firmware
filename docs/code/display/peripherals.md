@@ -301,7 +301,7 @@ strings]**. Files and folders the DISPLAY reads or writes:
 
 | Path | Written by | Format |
 |---|---|---|
-| `I:\FT-710\` + `Capture`, `MemList`, `Menu`, `PlayList` | `sd_make_dirs` 0x2010FB90 | created after `sd_format`('I') (`FUN_2013F984` → `sd_fat_format` `FUN_2013F83C`): card init and identify (3 tries), then `fat_clear_root_dir` (`FUN_2013F79C`) writes zeroed sectors over the root directory (32 sectors for FAT12/16, one cluster for FAT32) with `sd_write_sectors` (`FUN_2013E2B4`, −7 = write-protected). Only caller: `sd_make_dirs`, request 3 of `task_sdmenu`. So it is the SD **FORMAT**, not a mount (#83) **[fact: write calls; inference: format]** |
+| `I:\FT-710\` + `Capture`, `MemList`, `Menu`, `PlayList` | `sd_make_dirs` 0x2010FB90 | created after `sd_format`('I') (`FUN_2013F984` → `sd_fat_format` `FUN_2013F83C`): card init and identify (3 tries), then `fat_format_volume` (`FUN_2013F79C`, until T24 round 8 `fat_clear_root_dir`) writes the MBR, boot sector, FSInfo and FATs and zeroes the root directory (32 sectors for FAT12/16, one cluster for FAT32) with `sd_write_sectors` (`FUN_2013E2B4`, −7 = write-protected). Only caller: `sd_make_dirs`, request 3 of `task_sdmenu`. So it is the SD **FORMAT**, not a mount (#83) **[fact: write calls; inference: format]** |
 | `I:\FT-710\Capture\20YYMMDD_HHMMSS.bmp` (fallback `I:\20YYMMDD_HHMMSS.bmp`) | `screen_capture_bmp` (MAIN message 0x7A) | BMP screenshot, see [gui.md](gui.md) |
 | `I:\FT-710\MemList\<name>.dat`, `I:\FT-710\Menu\<name>.dat` | `sdmenu_save_file` 0x2010F60C, read by `sdmenu_load_file` 0x2010F81C (now `sdmenu_load_file`) | below |
 | `I:\FT-710\PlayList\*.wav`, `I:\FT-710\MESSAGE\*.wav` | recorder | section 5 |

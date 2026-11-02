@@ -1141,23 +1141,16 @@ byte sd_state_bit7(void)
 }
 
 
-// ===== sd_drive_flag5 @ 20103bc0 (40 bytes)
+// ===== sd_drive_flag5 @ 20103bc0 (8 bytes)
 
 /* Bit 5 of the drive record byte +0x68 of 0x20808B60 when the drive is attached (+0x24), else 0;
    fs_drive_check_writable returns -58 on the same bit (filesystem.md) [fact] */
 
-uint sd_drive_flag5(void)
+void sd_drive_flag5(void)
 
 {
-  uint uVar1;
-  
-  if (*(int *)(DAT_20808b60 + 0x24) == 0) {
-    uVar1 = 0;
-  }
-  else {
-    uVar1 = (*(byte *)(DAT_20808b60 + 0x68) & 0x3f) >> 5;
-  }
-  return uVar1;
+  sd_card_write_protected(0);
+  return;
 }
 
 

@@ -18,7 +18,9 @@
 //   {"op":"run", "bases":[N,...], "loads":[[addr,"hex"]], "entry":A, "regs":{"R1":v,...}, "sp":S,
 //    "stack":[w,...] (words at SP+4.., [SP] = the return address), "seed":s, "budget":n,
 //    "stubs":{addr:[name,nargs(,ptr_arg,len_arg)]}, "cover":[addr,...], "snap":[[lo,hi],...], "track":[[lo,hi],...],
-//    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions)}
+//    "mmio_fixed":{addr:value}, "trace":true (PC and R1..R15 before each of the first 400 instructions),
+//    "module_fp":true (FTOI/ROUND/FTOU by the module's p-code instead of fpConv),
+//    "stub_rets":{addr:[v,...]} (the return values of a stub, drawn from the seeded sequence)}
 //     -> {"end":"return"|"budget"|"fault", "why":..., "r1":v, "r2":v, "regs":[R1..R15], "psw":v, "steps":n,
 //         "mmio":[["r"|"w",addr,size,value],...], "calls":[[name,arg...],...], "userops":[name,...],
 //         "diff":[[addr,"hex"],...] (snap ranges that differ from the start state), "hits":[addr,...] (cover
@@ -36,7 +38,9 @@
 // (SCMPU p. 184, SUNTIL p. 196, SWHILE p. 198), because the module leaves them as named operations (T21c), and
 // JMP Rs is executed here, because the module's "PC = Rs" does not branch in the emulator (T22a listed it as not
 // fixed: MAIN has no JMP Rs; GCC's switch tables use it). tools/ghidra/rx62t-gccforms-fix.patch (T24 round 2) fixes the
-// module ("goto [Rs]"); the override stays, so a module without that patch gives the same results.
+// module ("goto [Rs]"); the override stays, so a module without that patch gives the same results. FTOI, ROUND and
+// FTOU are executed here after the manual too (T24 MAIN round 4: the module computed a float for all three;
+// tools/ghidra/rx62t-fpconv-fix.patch fixes it for the decompiler).
 // @category FT710
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -240,7 +244,10 @@ public class EquivMainEmu extends GhidraScript {
                     n--;
                     if (until ? (cur == (v & mask)) : (cur != (v & mask))) break;
                 }
-                setReg("R3", n);
+                // R3 is not set here: the module's SUNTIL/SWHILE constructors (rx62t-rxv2-fix.patch) reduce R3 by the
+                // number of elements from the returned pointer themselves, so setting it here counted every compare
+                // twice (T24 MAIN UI track: dl50_memory_name's title copy, SUNTIL.B then SMOVF of -2 - R3 bytes, copied
+                // 23 bytes of "MEMORY NAME" instead of 11; the six SUNTIL/SWHILE of MAIN are all in the dl50_* builders)
                 res = a;
             } else {
                 throw new Fault("unimplemented pcodeop " + name);
@@ -293,6 +300,16 @@ public class EquivMainEmu extends GhidraScript {
                         ? new String[]{a.get(0).getAsString(), a.get(1).getAsString(), a.get(2).getAsString(), a.get(3).getAsString()}
                         : new String[]{a.get(0).getAsString(), a.get(1).getAsString()});
             }
+        // "stub_rets":{addr:[v,...]}: the values a stub returns, drawn from the seeded sequence (default {0, 0, 0, 1,
+        // FFFFFFFFh, random}); T24 MAIN round 4: a task's gate functions stubbed to reach its state machine
+        Map<Long, long[]> stubRets = new HashMap<>();
+        if (q.has("stub_rets"))
+            for (Map.Entry<String, JsonElement> e : q.getAsJsonObject("stub_rets").entrySet()) {
+                JsonArray a = e.getValue().getAsJsonArray();
+                long[] v = new long[a.size()];
+                for (int k = 0; k < v.length; k++) v[k] = lv(a.get(k));
+                stubRets.put(Long.decode(e.getKey()), v);
+            }
         Set<Long> cover = new HashSet<>();
         if (q.has("cover")) for (JsonElement e : q.getAsJsonArray("cover")) cover.add(lv(e));
         Set<Long> hits = new TreeSet<>();
@@ -317,6 +334,8 @@ public class EquivMainEmu extends GhidraScript {
         long entry = lv(q.get("entry"));
         t.overrideCounter(ram.getAddress(entry));
         long budget = q.has("budget") ? q.get("budget").getAsLong() : 2000000;
+        // "module_fp": true runs FTOI/ROUND/FTOU on the module's own p-code (to test a SLEIGH change)
+        boolean moduleFp = q.has("module_fp") && q.get("module_fp").getAsBoolean();
         List<JsonArray> calls = new ArrayList<>();
         JsonArray trace = q.has("trace") && q.get("trace").getAsBoolean() ? new JsonArray() : null;
         String end = "budget", why = "";
@@ -347,7 +366,9 @@ public class EquivMainEmu extends GhidraScript {
                             c.add(hex(shared.inspectConcrete(ram.getAddress(ptr), (int) len), 0, (int) len));
                     }
                     calls.add(c);
-                    long ret = new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];
+                    long[] rv = stubRets.get(pc);
+                    long ret = rv != null ? rv[r.rng.nextInt(rv.length)]
+                            : new long[]{0, 0, 0, 1, 0xFFFFFFFFL, r.rng.nextInt() & 0xFFFFFFFFL}[r.rng.nextInt(6)];
                     r.setReg("R1", ret);
                     long ra = readLE(shared, csp);
                     r.setReg("SP", csp + 4);
@@ -369,6 +390,29 @@ public class EquivMainEmu extends GhidraScript {
                     int rs = op2[1] & 0x0F;
                     t.overrideCounter(ram.getAddress(r.reg(rs == 0 ? "SP" : "R" + rs)));
                     steps++;
+                    continue;
+                }
+                // FTOI (FC 94..97), ROUND (FC 98..9B), FTOU (FC A4..A7): the module's p-code for all three is
+                // "Rd = round(src)", the float bits of src rounded half away from zero (T24 MAIN round 4: FTOU of 50.7
+                // gave 0x424C0000). The instruction is stepped (so its memory load is seen as usual), then Rd and the
+                // Z/S flags are set after the manual: fpConv.
+                if (!moduleFp && (op2[0] & 0xff) == 0xFC && ((op2[1] & 0xff) >= 0x94 && (op2[1] & 0xff) <= 0x9B
+                        || (op2[1] & 0xff) >= 0xA4 && (op2[1] & 0xff) <= 0xA7)) {
+                    byte[] ins = shared.inspectConcrete(ram.getAddress(pc), 5);
+                    int b1 = ins[1] & 0xff, ld = b1 & 3, rs = (ins[2] >> 4) & 15, rd = ins[2] & 15;
+                    long src;
+                    if (ld == 3) src = r.reg(rs == 0 ? "SP" : "R" + rs);
+                    else {
+                        long dsp = ld == 0 ? 0 : ld == 1 ? (ins[3] & 0xffL) * 4 : ((ins[3] & 0xffL) | (ins[4] & 0xffL) << 8) * 4;
+                        long a = (r.reg(rs == 0 ? "SP" : "R" + rs) + dsp) & 0xFFFFFFFFL;
+                        src = (a < RAM_HI || a >= SCRATCH_LO) ? readLE(shared, a) : 0;   // the step below faults on others
+                    }
+                    long psw0 = r.reg("PSW");
+                    t.stepInstruction();
+                    steps++;
+                    long[] v = fpConv(b1 >= 0xA4 ? 2 : b1 >= 0x98 ? 1 : 0, (int) src);
+                    r.setReg(rd == 0 ? "SP" : "R" + rd, v[0]);
+                    r.setReg("PSW", v[1] == 0 ? psw0 : (psw0 & ~6L) | (v[0] == 0 ? 2 : 0) | ((v[0] >>> 31) & 1) << 2);
                     continue;
                 }
                 t.stepInstruction();
@@ -443,6 +487,26 @@ public class EquivMainEmu extends GhidraScript {
     static void writeLE(PcodeExecutorState<byte[]> st, long a, long v) {
         byte[] b = {(byte) v, (byte) (v >> 8), (byte) (v >> 16), (byte) (v >> 24)};
         st.setConcrete(st.getLanguage().getDefaultSpace().getAddress(a), b);
+    }
+
+    /**
+     * Float to integer after the RXv2 software manual R01US0071EJ0100: kind 0 FTOI (p. 103) and 2 FTOU (p. 106) round
+     * towards 0 whatever FPSW.RM says; kind 1 ROUND (p. 171) rounds by FPSW.RM, taken as 0 (round to nearest, ties to
+     * even: MAIN sets FPSW = 0x100 at 0xFFF8FBFF and never another RM). NaN or out of range is the invalid operation
+     * exception; with it disabled (FPSW.EV = 0) the result is 7FFFFFFFh / 80000000h by the sign for FTOI and ROUND,
+     * FFFFFFFFh / 0 for FTOU (Table 1.5, p. 26), and the S and Z flags do not change (p. 106 note). Returns {result, flags
+     * changed}. FPSW's own flags are not modelled (nor are they by the module).
+     */
+    static long[] fpConv(int kind, int bits) {
+        float f = Float.intBitsToFloat(bits);
+        boolean neg = bits < 0;
+        if (kind == 2) {
+            if (Float.isNaN(f) || f >= 4294967296f || f <= -1f) return new long[]{neg ? 0 : 0xFFFFFFFFL, 0};
+            return new long[]{((long) f) & 0xFFFFFFFFL, 1};      // (long) truncates towards 0: -0.5 gives 0
+        }
+        double v = kind == 1 ? Math.rint(f) : (f >= 0 ? Math.floor(f) : Math.ceil(f));
+        if (Float.isNaN(f) || v >= 2147483648.0 || v < -2147483648.0) return new long[]{neg ? 0x80000000L : 0x7FFFFFFFL, 0};
+        return new long[]{((long) v) & 0xFFFFFFFFL, 1};
     }
 
     static long readLE(PcodeExecutorState<byte[]> st, long a) {
