@@ -1189,3 +1189,131 @@ void cat_BA(void)
     vfo_store_back(0);
     g_ui.freq_refresh_req = 1;
 }
+
+/* cat_AB 0xFFFA646D: VFO-A -> VFO-B, the mirror of cat_BA (round 6) */
+void cat_AB(void)
+{
+    if (dial_busy() || g_ui.msgmem_open == 1) {
+        cat_error = 1;
+        return;
+    }
+    if (vfo_tune_locked(1) == 1) {
+        cat_error = 1;
+        return;
+    }
+    g_opstate.vfo_state_b = VFO_STATE_VFO;
+    vfo_rec_copy(&g_opstate.vfo_b, &g_opstate.vfo_a);
+    vfo_mark_edited(1);
+    vfo_store_back(1);
+    g_ui.freq_refresh_req = 1;
+}
+
+void vm_toggle(void);                           /* V/M: VFO <-> memory (radio-control.md) */
+
+/* cat_AM 0xFFFA6A26, cat_BM 0xFFFA7928: VFO-A / VFO-B -> its memory channel (round 6). Refused for the channels
+ * 0x75..0x84. By the VFO state: VFO stores the VFO record; MEMORY TUNE stores the band's current band-stack record;
+ * QMB stores it and returns before the VFO updates; any other state (PMS after leaving it with vm_toggle) stores
+ * the band-stack record and also loads it into the VFO [fact: the state chain 0xFFFA6A6C..0xFFFA6B3E]. The record
+ * pointers are taken before vm_toggle runs. */
+static void vfo_to_mem(uint8_t side)
+{
+    uint8_t ch = side == 0 ? g_mem_hdr.chan_a : g_mem_hdr.chan_b;
+    struct vfo_rec *mem = &memch[ch];
+    struct vfo_rec *vfo = side == 0 ? &g_opstate.vfo_a : &g_opstate.vfo_b;
+    const struct vfo_rec *stack = side == 0 ? &bandstack_a[bandstack_level_a[g_opstate.band_a]][g_opstate.band_a]
+                                            : &bandstack_b[bandstack_level_b[g_opstate.band_b]][g_opstate.band_b];
+    enum vfo_state state;
+
+    if (ch >= 0x75u && ch <= 0x84u) {
+        cat_error = 1;
+        return;
+    }
+    state = side == 0 ? g_opstate.vfo_state_a : g_opstate.vfo_state_b;
+    if (state == VFO_STATE_VFO) {
+        vfo_rec_copy(mem, vfo);
+    } else if (state == VFO_STATE_MEMTUNE) {
+        vfo_rec_copy(mem, stack);
+    } else if (state == VFO_STATE_QMB) {
+        vfo_rec_copy(mem, stack);
+        eeprom_save_memch(ch);
+        return;
+    } else {
+        if (state == VFO_STATE_PMS)
+            vm_toggle();
+        vfo_rec_copy(mem, stack);
+        vfo_rec_copy(vfo, stack);
+    }
+    vfo_mark_edited(g_opstate.active_vfo);
+    vfo_store_back(g_opstate.active_vfo);
+    g_ui.freq_refresh_req = 1;
+    eeprom_save_memch(ch);
+}
+
+void cat_AM(void)
+{
+    vfo_to_mem(0);
+}
+
+void cat_BM(void)
+{
+    vfo_to_mem(1);
+}
+
+uint8_t meter_get_vdd(void);
+uint8_t meter_get_idd(void);
+uint8_t meter_get_alc(void);
+uint8_t meter_get_swr(void);
+uint8_t meter_get_po(void);
+uint8_t meter_get_comp(void);
+
+/* the meters RM P1 names: 1 S, 3 COMP, 4 ALC, 5 PO, 6 SWR, 7 IDD, 8 VDD */
+enum rm_meter { RM_S = 1, RM_COMP = 3, RM_ALC = 4, RM_PO = 5, RM_SWR = 6, RM_IDD = 7, RM_VDD = 8 };
+
+/* cat_RM 0xFFFADB7D: RM P1 + 3 digits + 000 (round 6). P1 0 = the meter shown: S in receive, the METER selection
+ * (EX: 1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR, else PO) while the TX lamp is on. In receive only S and VDD read a value
+ * (the others 0); with the TX lamp on, S reads 0 [fact: 0xFFFADC43..0xFFFADC70] */
+void cat_RM(const uint8_t *text)
+{
+    uint8_t m = (uint8_t)hex2nib(text[2]);
+    uint8_t v;
+
+    if (m == 0) {
+        if (g_ui.tx_lamp != 1)
+            m = RM_S;
+        else if (g_opstate.meter_sel == 1)
+            m = RM_COMP;
+        else if (g_opstate.meter_sel == 2)
+            m = RM_ALC;
+        else if (g_opstate.meter_sel == 3)
+            m = RM_VDD;
+        else if (g_opstate.meter_sel == 4)
+            m = RM_IDD;
+        else if (g_opstate.meter_sel == 5)
+            m = RM_SWR;
+        else
+            m = RM_PO;
+    }
+    switch (m) {
+    case RM_VDD: v = meter_get_vdd(); break;
+    case RM_COMP: v = meter_get_comp(); break;
+    case RM_ALC: v = meter_get_alc(); break;
+    case RM_PO: v = meter_get_po(); break;
+    case RM_SWR: v = meter_get_swr(); break;
+    case RM_IDD: v = meter_get_idd(); break;
+    case RM_S: v = meter_get_s(); break;
+    default:
+        cat_error = 1;
+        return;
+    }
+    if (g_ui.tx_lamp == 0) {
+        if (m != RM_VDD && m != RM_S)
+            v = 0;
+    } else if (m == RM_S) {
+        v = 0;
+    }
+    put_dec(&cat_reply[3], v, 100);
+    cat_reply[6] = '0';
+    cat_reply[7] = '0';
+    cat_reply[8] = '0';
+    reply_done(9);
+}

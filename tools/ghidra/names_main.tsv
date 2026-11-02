@@ -157,13 +157,13 @@ fffafadb	cat_VM
 fffafdbd	cat_VS
 fffaffa0	cat_VX
 fffb006e	cat_ZI
-fffa5c90	cat_ext_EO
+fffa5c90	cat_ext_EO	EO P1 P2 P3 P4 P5..P7: closes the pop-ups, then P2 0 moves VFO 0 by P5..P7 x 1 Hz / 1 kHz / 1 MHz (P4 0/1/2) up (P3 +) or down (-), clamped to 30 kHz..75 MHz; P2 1/2 turns encoder 2/3 (enc2_step, enc3_step). Another P4 moves by an uninitialised stack word (0xFFFA5D7C..0xFFFA5DAC) [fact: fffa5c90]
 fffa53a4	cat_ext_E8
 fffa5a51	cat_ext_FD
-fffa5fdf	cat_ext_PE
+fffa5fdf	cat_ext_PE	PE P1 P2 P3 (parametric EQ EX030302..EX030319): P1 0 = EQ, 2 = PROC EQ; P2 band 0..2; P3 0 freq, 1 level (sign + 2 digits), 2 width. The set form adds the digits to the uninitialised stack byte 10[r0] (no store to it before 0xFFFA638C / 0xFFFA63FC), so the stored value is that byte + P4..; a P1 or P2 outside those values reads or writes through an uninitialised pointer [fact: fffa5fdf]
 fffa58a1	cat_ext_ZZ
 fffa54b3	cat_ext_VE
-fffa556b	cat_ext_JP
+fffa556b	cat_ext_JP	JP0710 + region code (4 hex) + complement (4 hex) + EEPROM header stamp (10 hex); the set checks the complement, maps 0x306F->0xD32D, 0xB5A7->0xA983, 0x9CF7->0x7753, 0xA4C5->0xD950, 0x50E2->0x315B, stamps the header with the clock and calls dest_code_set [fact: fffa556b]
 # --- main / runtime (added after export review)
 fff8f658	main	Called from PowerON_Reset after BSP init; calls app_main
 fff8f9dd	_CLOSEALL	CC-RX runtime: closes the 20 stdio slots at 0x1FF74 (reached only if main returns)
@@ -1362,7 +1362,7 @@ fffe861b	ai_ex010513	AI change detector for menu item EX010513 (table 0xFFF8E1A0
 fffe8667	ai_ex010514	AI change detector for menu item EX010514 (table 0xFFF8E1A0[90])
 fffe86a4	ai_ex010515	AI change detector for menu item EX010515 (table 0xFFF8E1A0[91])
 fffe86f0	ai_ex010516	AI change detector for menu item EX010516 (table 0xFFF8E1A0[92])
-fffe873c	ai_ex010517	AI change detector for menu item EX010517 (table 0xFFF8E1A0[93])
+fffe873c	ai_ex010517	AI change detector for menu item EX010517 POLARITY TX (table 0xFFF8E1A0[93]); stores the setting in its shadow 0x1B2F5 first, then compares the shadow with the uninitialised stack byte 3[r0] and on a difference copies that byte to the shadow and the reply [fact: 0xFFFE874A..0xFFFE8761]
 fffe878e	ai_ex020101	AI change detector for menu item EX020101 (table 0xFFF8E1A0[94])
 fffe87cb	ai_ex020102	AI change detector for menu item EX020102 (table 0xFFF8E1A0[95])
 fffe8808	ai_ex020103	AI change detector for menu item EX020103 (table 0xFFF8E1A0[96])
@@ -2495,10 +2495,10 @@ fffdf85c	cat_ai_KR	AI change detector for KR (called from cat_ai_poll): compares
 fffdf8d4	cat_ai_KS	AI change detector for KS (called from cat_ai_poll): compares with its shadow, on a change builds the KS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.key_speed [fact: fffdf8d4]
 fffdf981	cat_ai_LK	AI change detector for LK (called from cat_ai_poll): compares with its shadow, on a change builds the LK answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.lock_on [fact: fffdf981]
 fffdf9ec	cat_ai_MD	AI change detector for MD (called from cat_ai_poll): compares with its shadow, on a change builds the MD answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: arg 0/1 = VFO side ('M','D') [fact: fffdf9ec]
-fffdfae4	cat_ai_MG	AI change detector for MG (called from cat_ai_poll): compares with its shadow, on a change builds the MG answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.mic_gain [fact: fffdfae4]
+fffdfae4	cat_ai_MG	AI change detector for MG (called from cat_ai_poll): on a change builds MG + 3 digits of mic_gain[mode class] in cat_ai_buf 0x15E06 and returns 6; without a change it returns the uninitialised length word 4[r0] (0xFFFDFB85), not 0 [fact: fffdfae4]
 fffdfbe4	cat_ai_ML	AI change detector for ML (called from cat_ai_poll): compares with its shadow, on a change builds the ML answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: 'M','L' (monitor level) [fact: fffdfbe4]
 fffdfd36	cat_ai_MS	AI change detector for MS (called from cat_ai_poll): compares with its shadow, on a change builds the MS answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.meter_sel [fact: fffdfd36]
-fffdfda4	cat_ai_MX	AI change detector for MX (called from cat_ai_poll): compares with its shadow, on a change builds the MX answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_ui.ptt_mox [fact: fffdfda4]
+fffdfda4	cat_ai_MX	AI change detector for MX (called from cat_ai_poll): on a change builds MX + nib2hex(g_ui.ptt_mox) in cat_ai_buf 0x15E06 and returns 4; without a change it returns the uninitialised length word 2[r0] (0xFFFDFDEE), not 0 [fact: fffdfda4]
 fffdfe0a	cat_ai_NA	AI change detector for NA (called from cat_ai_poll): compares with its shadow, on a change builds the NA answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.na_ai_value [fact: fffdfe0a]
 fffdfe7a	cat_ai_NB	AI change detector for NB (called from cat_ai_poll): compares with its shadow, on a change builds the NB answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: "NB00;" [fact: fffdfe7a]
 fffdfee6	cat_ai_NL	AI change detector for NL (called from cat_ai_poll): compares with its shadow, on a change builds the NL answer in cat_ai_buf 0x15E06 and returns its length, else 0; source: g_opstate.nb_level [fact: fffdfee6]
@@ -2943,3 +2943,19 @@ fffb2dfe	beep_pattern_get	Returns the beep pattern 0x12041 [fact: fffb2dfe]
 fff88514	@ch_step_table	u16 CH STEP values (EX030503, 4) (ch_step_hz 0xFFFC642A) [fact]
 fff8851c	@am_ch_step_table	u16 AM CH STEP values (EX030504, 6) (ch_step_hz 0xFFFC6450) [fact]
 fff88528	@fm_ch_step_table	u16 FM CH STEP values (EX030505, 6) (ch_step_hz 0xFFFC6476) [fact]
+# --- T24 MAIN round 6: RAM and ROM of the recreated CAT auto information (src/main/app/cat_ai.c, cat_ai_ex.c; src/main/data_symbols.tsv)
+00015e06	@cat_ai_buf	the AI frame cat_ai_poll sends to the ports with AI on [fact: cat_ai_poll 0xFFFDDB26, cat_ai_ex 0xFFFDED08]
+000187c3	@ai_sh	the AI detectors' byte shadows 0x187C3..0x18807, one per item in cat_ai_poll's order (struct ai_shadow in src/main/include/main_ram.h) [fact: the address in each cat_ai_* detector]
+0001b504	@ai_ac_last	the last AC frame cat_ai_AC reported (6 bytes, strncmp at 0xFFFDDE1F) [fact]
+0001b51f	@ai_ri_last	the last RI frame cat_ai_RI reported (11 bytes, strncmp at 0xFFFE072A) [fact]
+0001b235	@ai_ex_frame	the AI EX frame: "EX" + 6-digit ID (cat_ai_ex_scan 0xFFFE6DBB) + the value from 0x1B23D (ai_ex_fmt_u8, ai_ex_fmt_u16_4) [fact]
+0001ff12	@ai_ex_len	length of the AI EX frame; cat_ai_ex_scan zeroes it and stops at the first detector that sets it (0xFFFE6D84, 0xFFFE6DA3) [fact]
+0001b299	@ai_ex_held	1 after an EX set until soft timer 0x32 expires (cat_ai_ex_holdoff 0xFFFE6E36, cat_ai_ex_scan 0xFFFE6DF2) [fact]
+0001b29a	@ai_ex_shadow	the EX detectors' byte shadows, one per detector in table order up to 0x1B36F (MY CALL: 12 bytes at 0x1B355) [fact: ai_ex010101 0xFFFE6E3A and the next detectors]
+0001b370	@ai_ex_preset_names	PRESET1..5 NAME shadows, 12 bytes each (ai_ex_preset_name 0xFFFEA63A) [fact]
+0001b555	@ai_ex_preset_shadow	the 17 PRESET rows' shadows, 5 bytes (presets) per row (ai_ex_preset_cat1_rate 0xFFFEA8AA and the other rows) [fact]
+fff8e1a0	@ai_ex_detectors	the 296 EX-menu AI detectors in menu order (cat_ai_ex_scan 0xFFFE6D8C, cmp #296 at 0xFFFE6DEC) [fact]
+fff872b1	@ai_ex_ids	the 296 8-character IDs "EX010101".. of the EX AI frame (cat_ai_ex_scan 0xFFFE6DAE) [fact]
+fff87228	@ai_mode_codes	the AI code's copy of cat_mode_codes 0xFFF806D0 (same bytes; cat_ai_IF_OI 0xFFFDF52E, cat_ai_MD 0xFFFDFAB8) [fact]
+fff87237	@ai_vfo_state_codes	the AI code's copy of cat_vfo_state_codes 0xFFF806DF (cat_ai_IF_OI 0xFFFDF541) [fact]
+fff87241	@ai_pms_names	the AI code's copy of cat_pms_names 0xFFF806E9 (cat_ai_IF_OI 0xFFFDF25E) [fact]

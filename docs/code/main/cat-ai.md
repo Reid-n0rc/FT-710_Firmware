@@ -358,6 +358,57 @@ detectors (`FUN_fffea63a`, `FUN_fffea88c`, `FUN_fffead00`, ...) are not named ye
 | 0x1FF14 / 0x1FF16 / 0x1FF18 | u16 shadows of RPT SHIFT (50 MHz), DATA SHIFT (SSB), CONTEST NUMBER **[fact]** |
 | 0x1B299 | EX hold-off flag (`cat_ai_ex_holdoff`), with soft timer 0x32 **[fact]** |
 | 0x15E06 | `cat_ai_buf`, where `cat_ai_ex` copies the frame **[fact]** |
+| 0x1B370 | PRESET1..5 NAME shadows, 12 bytes each **[fact: `ai_ex_preset_name` 0xFFFEA63A]** |
+| 0x1B555..0x1B5A9 | the 17 PRESET rows after the name, 5 bytes (presets 1..5) per row, in `struct preset` order **[fact: `ai_ex_preset_cat1_rate` 0xFFFEA8AA, `ai_ex_preset_agc_fast_delay` 0xFFFEAD00]** |
+
+## Found by the source recreation (T24 MAIN round 6)
+
+All 316 detectors, the two formatters, `cat_ai_ex_scan`, `cat_ai_ex` and `cat_ai_ex_holdoff` are recreated in
+`src/main/app/cat_ai_ex.c` (one macro per shape) and pass the differential emulation, except `ai_ex010517` (below). **[fact]**
+unless marked:
+
+- **Shapes.** 92 detectors format with `ai_ex_fmt_u8(value, three_digits, is_signed)`, 87 with one `nib2hex` digit, 18 are AGC
+  delays: `ai_ex_fmt_u16_4((n + 1) * 20)` (0xFFFE6F1F..0xFFFE6F23); 90 are the PRESET stubs; 9 have a shape of their own (the
+  active VFO's repeater shift, tone mode and tone number; the three big-endian words; RPT SHIFT (28 MHz) x 10; MY CALL; POLARITY TX).
+- **`ai_ex_fmt_u8`** is called only with 0 or 1 as the digit count. With `is_signed` 0 and another count, it divides by
+  uninitialised stack bytes (0xFFFEC2F3..0xFFFEC30B); no caller does that.
+- **The shadow block** 0x1B29A..0x1B36F holds one byte per detector in table order; the three 16-bit items keep their shadow at
+  0x1FF14/16/18 instead, which shifts the later bytes (EX010401 is at 0x1B2D2, not 0x1B29A + 57).
+- **The PRESET rows write `;` on every call** for the one-digit rows (also without a change, 0xFFFEA9FD); `ai_ex_preset_name`
+  copies the name to the reply whenever 0x1FF12 is not 0 after its compare, from a stack copy made only on a change. Because
+  `cat_ai_ex_scan` zeroes 0x1FF12 and stops at the first detector that sets it, a detector always starts with 0 there, so this
+  is the same as copying on a change.
+- **`ai_ex010517` (EX010517 POLARITY TX) is wrong in the image.** It stores the setting in its shadow 0x1B2F5 first, then
+  compares the shadow with the uninitialised stack byte `3[r0]` and, when they differ, copies that byte to the shadow and
+  formats it (0xFFFE874A..0xFFFE8761). So it reports a change whenever that stack byte is not the setting, with the stack byte
+  as the value. *Open: what that byte holds when `cat_ai_ex_scan` calls the detector (it is whatever the previous detector or its
+  callee left 5 bytes under the scan's SP), and so whether AI floods `EX010517` frames; would be settled by an emulated pass of
+  `cat_ai_ex_scan` over all 296 detectors, or by watching AI on a radio with POLARITY TX unchanged.*
+
+### The other AI detectors (cat_ai_poll)
+
+`cat_ai_poll` and 53 of its 57 detectors are recreated in `src/main/app/cat_ai.c` (`cat_ai_ex` is in `cat_ai_ex.c`); `cat_ai_MG`, `cat_ai_MX` and `cat_ai_SS` are not.
+
+- **`cat_ai_MG` and `cat_ai_MX` return an uninitialised length when nothing changed.** MG returns the word `4[r0]` (0xFFFDFB85)
+  and MX the word `2[r0]` (0xFFFDFDEE); both are written only on a change. `cat_ai_poll` takes any non-zero return as "a frame of
+  that length is in `cat_ai_buf`". *Open: whether the stack holds 0 there in practice (the previous detectors in the poll leave
+  their own locals at those depths); would be settled by an emulated `cat_ai_poll` pass with the image's detectors, or by AI
+  traffic on a radio with MIC GAIN and MOX unchanged.*
+- **Jitter filters.** AG and RG (knob values) drop a change while the 4-entry history alternates (entries 0 = 2 **or** 1 = 3) or,
+  between 3 and 252, spreads by less than 3 (`max4_u8`, `min4_u8`); RM and SQ drop it only when both pairs are equal
+  (0xFFFDDF0A, 0xFFFE09D7, 0xFFFE0F4A).
+- **SQ** reports the RF gain knob as a percentage, `(rf_gain * 100 / 255 + 0.5)` through FTOU, only while EX030102 RF/SQL VR is
+  not 0 (0xFFFE0ECE..0xFFFE0EFB); RG reports only while it is 0.
+- **RM** reports the S meter in receive and the METER selection while the TX lamp is on (1 COMP, 2 ALC, 3 VDD, 4 IDD, 5 SWR,
+  else PO); P1 stays `0` and the frame is `RM0` + 3 digits + `000;`.
+- **RI** copies its frame to `cat_ai_buf` as soon as one of its seven inputs changed, and reports it only when it differs from
+  the last frame reported (0x1B51F, 0xFFFE0718..0xFFFE0747); AC does the same with its 6-byte frame (0x1B504).
+- **CO** writes the CONTOUR frequency x 10 as four digits and then forces the last one to `0` (0xFFFDEB5F).
+- **IF/OI** use their own copies of the mode, VFO-state and channel-name tables (0xFFF87228, 0xFFF87237, 0xFFF87241; the same
+  bytes as 0xFFF806D0.. of `cat_IF_OI`), as do MD's mode characters.
+- The order in `cat_ai_poll` (the first change wins): AC AG AO AS1 AS2 AV BC BI BP CF0 CF1 CN CO CS CT EX FA/FB FN FT GT IF OI
+  IS KP KR KS LK MD0 MD1 MG ML MS MX NA NB NL NR OS PA PC PL PR RA RG RI RL RM SC SD SF0 SF1 SH SQ SS0..SS8 ST TS TX VD VG VX VS
+  FD; while the hold-off runs the detectors still run (their shadows follow) and nothing is sent (0xFFFDDAF2).
 
 <!-- T23e3:begin -->
 

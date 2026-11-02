@@ -1137,6 +1137,82 @@ PRESETS.update(UI_PRESETS)
 FUNC_STUBS.update({'adc_scan_blocking': {'adc_scan_start': (0, [0]), 'adc_scan_done': (0, [0, 0, 1])}})
 
 
+# --- T24 MAIN round 6 (CAT auto information; src/main/app/cat_ai_ex.c, cat_ai.c) ---
+
+AI_EX_LEN = 0x1FF12          # ai_ex_len (src/main/data_symbols.tsv)
+AI_EX_DETECTOR = re.compile(r'ai_ex(\d{6}|_preset_\w+)$')
+
+
+def ai_ex_detector_args(rng, regs):
+    """An EX-menu detector as cat_ai_ex_scan calls it: ai_ex_len 0 (the scan zeroes it and stops at the first
+    detector that sets it, 0xFFFE6D7E/0xFFFE6DA3); a PRESET row's preset number 0..6 (1..5 are the presets)."""
+    if regs:
+        regs[0] = rng.choice(range(7))
+    return [(AI_EX_LEN, b'\0\0')], None
+
+
+R6_PRESETS = {
+    # ai_ex_fmt_u8: every caller passes 0 or 1 as the digit count (with is_signed 0 the original divides by
+    # uninitialised stack bytes for any other value)
+    'ai_ex_fmt_u8': lambda rng, regs: (regs.__setitem__(1, rng.choice((0, 1))) or
+                                       regs.__setitem__(2, rng.choice((0, 0, 1))) or [], None),
+}
+# cat_ai_*: the detectors' arguments as cat_ai_poll passes them (MD, SF: 0 / 1; with another value SF returns an
+# uninitialised length); the mode code 15 is left out where the image reads an uninitialised stack byte for it
+# (ML 0xFFFDFC82, SH 0xFFFE0E0B)
+for _n in ('cat_ai_MD', 'cat_ai_SF', 'cat_ai_CF', 'cat_ai_IF_OI'):
+    R6_PRESETS[_n] = lambda rng, regs: (regs.__setitem__(0, rng.choice((0, 1))) or [], None)
+R6_PRESETS['cat_ai_AS'] = lambda rng, regs: (regs.__setitem__(0, rng.choice((0, 1, 2, 3))) or [], None)
+# cat_ai_poll: the AI flags of the three ports mostly on, the hold-off flag; every detector stubbed (each is
+# checked on its own) and mostly reporting nothing, so that the order of the calls is compared
+CAT_AI_DETECTORS = (('cat_ai_AC', 0), ('cat_ai_AG', 0), ('cat_ai_AO', 0), ('cat_ai_AS', 1), ('cat_ai_AV', 0),
+                    ('cat_ai_BC', 0), ('cat_ai_BI', 0), ('cat_ai_BP', 0), ('cat_ai_CF', 1), ('cat_ai_CN', 0),
+                    ('cat_ai_CO', 0), ('cat_ai_CS', 0), ('cat_ai_CT', 0), ('cat_ai_ex', 0), ('cat_ai_FA_FB', 0),
+                    ('cat_ai_FN', 0), ('cat_ai_FT', 0), ('cat_ai_GT', 0), ('cat_ai_IF_OI', 1), ('cat_ai_IS', 0),
+                    ('cat_ai_KP', 0), ('cat_ai_KR', 0), ('cat_ai_KS', 0), ('cat_ai_LK', 0), ('cat_ai_MD', 1),
+                    ('cat_ai_MG', 0), ('cat_ai_ML', 0), ('cat_ai_MS', 0), ('cat_ai_MX', 0), ('cat_ai_NA', 0),
+                    ('cat_ai_NB', 0), ('cat_ai_NL', 0), ('cat_ai_NR', 0), ('cat_ai_OS', 0), ('cat_ai_PA', 0),
+                    ('cat_ai_PC', 0), ('cat_ai_PL', 0), ('cat_ai_PR', 0), ('cat_ai_RA', 0), ('cat_ai_RG', 0),
+                    ('cat_ai_RI', 0), ('cat_ai_RL', 0), ('cat_ai_RM', 0), ('cat_ai_SC', 0), ('cat_ai_SD', 0),
+                    ('cat_ai_SF', 1), ('cat_ai_SH', 0), ('cat_ai_SQ', 0), ('cat_ai_SS', 1), ('cat_ai_ST', 0),
+                    ('cat_ai_TS', 0), ('cat_ai_TX', 0), ('cat_ai_VD', 0), ('cat_ai_VG', 0), ('cat_ai_VX', 0),
+                    ('cat_ai_VS', 0), ('cat_ai_FD', 0))
+R6_PRESETS['cat_ai_poll'] = ram_bytes({G_UI + 0x1C: (0, 1, 1), G_UI + 0x1D: (0, 1), G_UI + 0x1E: (0, 1),
+                                       0x187C2: (0, 0, 1)})
+FUNC_STUBS['cat_ai_poll'] = {'cat_tx_busy': (1, [0, 0, 0, 0, 0, 1]), 'swtimer_expired': (1, [0, 1, 1]),
+                             'cat_send_reply': (3, [0]),
+                             **{n: (k, [0] * 60 + [5]) for n, k in CAT_AI_DETECTORS}}
+
+
+def cat_ext_jp_args(rng, regs):
+    """JP (text, set): P1 0710 mostly; a code among the five the set maps (cat_ext_JP 0xFFFA5600..) or random, with
+    its complement most of the time."""
+    regs[0] = ARGBUF
+    regs[1] = rng.choice((0, 1, 1))
+    code = rng.choice((0x306F, 0xB5A7, 0x9CF7, 0xA4C5, 0x50E2, rng.getrandbits(16)))
+    comp = code ^ 0xFFFF if rng.random() < 0.7 else rng.getrandbits(16)
+    p1 = '0710' if rng.random() < 0.85 else '%04X' % rng.getrandbits(16)
+    return [(ARGBUF, ('JP' + p1 + '%04X%04X;' % (code, comp)).encode() + bytes(32))], None
+
+
+R6_PRESETS['cat_ext_JP'] = cat_ext_jp_args
+
+
+def cat_ext_eo_args(rng, regs):
+    """EO (text, set): P1 0..3, P2 0..3, P3 '+' / '-' / other, P4 0..2 (another P4 adds an uninitialised stack word,
+    cat_ext_EO 0xFFFA5D7C), three digits (sometimes not)."""
+    regs[0] = ARGBUF
+    t = 'EO' + rng.choice('00123') + rng.choice('00112223') + rng.choice('++--x') + rng.choice('012') + \
+        ''.join(rng.choice('0123456789' * 9 + 'A') for _ in range(3)) + ';'
+    return [(ARGBUF, t.encode() + bytes(16))], None
+
+
+R6_PRESETS['cat_ext_EO'] = cat_ext_eo_args
+FUNC_STUBS['cat_ai_ML'] = {'vfo_mode': (1, list(range(15)))}
+FUNC_STUBS['cat_ai_SH'] = {'vfo_mode': (1, list(range(15)))}
+PRESETS.update(R6_PRESETS)
+
+
 def norm_stack_ptrs(a, h):
     """A changed-RAM run [addr, hex] with each STACK_PTR_SLOTS word that holds a stack address replaced by a
     marker."""
@@ -1286,7 +1362,8 @@ class Checker:
             _TRIAL = t
             regs, loads = draw_args(rng, lk.params)
             fill = fill_globals(rng, seen_reads)
-            pre = PRESETS.get(fname) or (cat_handler_args if CAT_HANDLER.match(fname) else None)
+            pre = PRESETS.get(fname) or (cat_handler_args if CAT_HANDLER.match(fname) else None) or \
+                (ai_ex_detector_args if AI_EX_DETECTOR.match(fname) else None)
             mfix = None
             if pre:
                 extra, mfix = pre(rng, regs)
@@ -1312,6 +1389,8 @@ class Checker:
                     extra = first_diff(r1, r2, key)
                 elif d == 'fault':
                     extra = f' ({r1["why"]} vs {r2["why"]})'
+                elif d == 'end' and 'fault' in (r1['end'], r2['end']):      # round 6: say where it faulted
+                    extra = f' ({r1.get("why", "-")} vs {r2.get("why", "-")})'
                 elif d.startswith('R') or d == 'PSW':
                     extra = f' (orig {[hex(x) for x in r1["regs"]]}, new {[hex(x) for x in r2["regs"]]})'
                 else:

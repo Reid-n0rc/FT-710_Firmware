@@ -7,18 +7,6 @@ uint8_t freq_in_range(uint32_t hz);                      /* 1 = a frequency the 
 void vfo_mem_to_memtune(uint8_t side);                   /* memory channel -> memory tune (the VFO leaves MEMORY) */
 uint32_t freq_clamp(uint8_t side, uint32_t hz);          /* sets g_ui.freq_rejected for a refused frequency */
 
-/* u32 as 9 decimal digits, as the image prints it: each digit (v / place) through nib2hex [fact: cat_FA_FB
- * 0xFFFA9A21..0xFFFA9A4A] */
-static void put_dec32(uint8_t *at, uint32_t v, uint32_t div)
-{
-    for (; div != 0; div /= 10u) {
-        uint32_t n = v / div;
-
-        v -= n * div;
-        *at++ = (uint8_t)nib2hex((uint8_t)n);
-    }
-}
-
 static int get_dec32(const uint8_t *p, unsigned n, uint32_t div, uint32_t *out)
 {
     uint32_t v = 0;
@@ -34,39 +22,6 @@ static int get_dec32(const uint8_t *p, unsigned n, uint32_t div, uint32_t *out)
     }
     *out = v;
     return 1;
-}
-
-extern const uint8_t cat_mode_codes[];        /* 0xFFF806D0: the CAT mode character per mode index */
-extern const uint8_t cat_vfo_state_codes[];   /* 0xFFF806DF: the CAT P7 character per VFO state */
-extern const uint8_t cat_pms_names[][3];      /* 0xFFF806E9: names of the channels from 99 on */
-
-/* the channel as three characters: 001..099, or the name of channel 99 + n [fact: add #-99, cat_IF_OI 0xFFFAA458;
- * cat_MR, cat_MC] */
-static void put_channel(uint8_t *at, uint8_t ch)
-{
-    if (ch < 99u) {
-        put_dec(at, (uint8_t)(ch + 1u), 100);
-    } else {
-        const uint8_t *nm = cat_pms_names[(uint8_t)(ch - 99u)];
-
-        at[2] = nm[2];
-        at[0] = nm[0];
-        at[1] = nm[1];
-    }
-}
-
-/* the clarifier offset (s16, big-endian) as sign and four digits */
-static void put_clar_offset(uint8_t *at, const struct vfo_rec *r)
-{
-    uint16_t off = be16(r->clar_offset_be);
-
-    if (r->clar_offset_be[0] & 0x80u) {
-        at[0] = '-';
-        off = (uint16_t)(~off + 1u);
-    } else {
-        at[0] = '+';
-    }
-    put_dec16(&at[1], off, 1000);
 }
 
 /* P6..P10 of IF / OI / MR at cat_reply[21..26]: mode, VFO state, tone mode (1 -> '2', 2 -> '1', else '0'), "00",
@@ -135,7 +90,6 @@ void cat_IF_OI(uint8_t opposite)
     reply_done(27);
 }
 
-int strncmp(const char *a, const char *b, size_t n);      /* the image's C library (no stop at a shared NUL) */
 uint8_t memch_valid(uint8_t ch, uint8_t **rec);            /* 1 = the channel holds a memory */
 
 /* cat_MR 0xFFFABEA5: MR P1 = memory channel read: 001..099 or a name (P1L .. EMG, 34 names from channel 99 on; upper
@@ -506,6 +460,20 @@ static int vm_busy(void)
 /* cat_VM 0xFFFAFADB: "VM;" = the V/M key; VM0 reads the active VFO's kind as two hex digits (00 VFO, 10 memory tune,
  * 11 memory 001..099, 20 PMS, 21 P1L..P9U, 51 60 m channels, 91 EMG); "VM000;" returns to the VFO (one V/M press,
  * and a second when the first did not reach the VFO). Gated by the V/M key's filter (0x309) and vm_busy. */
+void vfo_ab_toggle(void);                       /* A/B: swap the active VFO (radio-control.md) */
+
+/* cat_SV 0xFFFAF46E: "SV;" = the A/B key (key 0x30A), refused in the states VM refuses (round 6) */
+void cat_SV(const uint8_t *text, uint8_t set)
+{
+    if (!key_allowed(0x30A, 0))
+        return;
+    if (vm_busy()) {
+        cat_error = 1;
+        return;
+    }
+    vfo_ab_toggle();
+}
+
 void cat_VM(const uint8_t *text, uint16_t len)
 {
     uint8_t state, ch, code;
