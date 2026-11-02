@@ -157,7 +157,7 @@ FUNC_STUBS = {
     # cat_GT: the mode of VFO 0 drawn over all 16 codes (round 5; was 68 % of the blocks with the RAM's mode)
     'cat_GT': {'vfo_mode': (1, list(range(16)))},
     'keyer_task': {'tx_cw_keying_class': (0, [0, 1, 1, 1, 1, 2]), 'swtimer_expired': (1, [0, 1, 1, 1]),
-                   'FUN_fffb2dfe': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
+                   'beep_pattern_get': (0, [0, 0, 1]), 'tx_breakin_on': (0, [0, 1])},
 }
 
 

@@ -88,7 +88,7 @@ uint16_t FUN_fffb34e4(uint8_t gain);              /* ROM curve 0xFFF88126[gain] 
 uint16_t FUN_fffb350e(uint8_t level);             /* ROM curve 0xFFF881F0[level] (u16) */
 uint8_t FUN_fffb3523(uint8_t af_gain);            /* ROM curve 0xFFF811E2[af_gain] */
 uint8_t FUN_fffb3538(uint8_t n);                  /* ROM curve 0xFFF812E2[n] */
-uint8_t FUN_fffb2dfe(void);                       /* RAM 0x12041 (a TX state, 4 and 9..11 tested by dsp_set_peq_freq) */
+uint8_t beep_pattern_get(void);                       /* RAM 0x12041 (a TX state, 4 and 9..11 tested by dsp_set_peq_freq) */
 uint32_t aess_level_ptr(void);                    /* address of the active mode's AESS level byte */
 uint32_t aess_mode_ptr(void);                     /* address of the active mode's AESS centre byte */
 uint8_t dsp_sum8(const uint8_t *p, uint8_t n);

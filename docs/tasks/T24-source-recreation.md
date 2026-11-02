@@ -1982,7 +1982,25 @@ vector 0xB, not the FPU's 3 **[inference from the call sites; docs/tooling.md "T
 
 ### MAIN: results (status.tsv, round 5)
 
-STATUS_PLACEHOLDER
+`equiv_main_emu.py status --trials 200 --jobs 3` on every object, after merging the UI track (#266), with `GHIDRA_HEADLESS`
+on a private Ghidra copy that has `rx62t-fpu-fix.patch` and `rx62t-minmax-fix.patch` (about an hour), then
+`status --object app/dsp_link.o --object app/keyer.o` (the first run could not link `dsp_set_peq_freq` and `keyer_task`:
+they called `FUN_fffb2dfe`, which the UI track renamed `beep_pattern_get`):
+
+| Verdict | Ghidra functions | Bytes (of 387,059) |
+|---|---:|---:|
+| identical | 56 | 344 |
+| equivalent | 499 | 95,657 |
+| differs | 0 | 0 |
+| not yet | 3,239 | 291,312 |
+
+**Re-implemented: 24.80 %** (19.98 % after round 4, 23.47 % after the UI track). Round 5 added 9 functions (5,143
+bytes): `beep_task` 1,220, `displink_rx_F0_hello` 892, `ladder_key_task` 699, `displink_tx_schedule` 689,
+`swr_meter_protect` 557, `sdr_upd_r25_tx_drive` 377, `fm_noise_squelch` 373, `signal_level_squelch` 270, `main_loop` 66.
+Every function of rounds 1..4 and of the UI track is still equivalent or identical with the FPU executed by `RxFpu` and
+the signed MIN/MAX, among them the MIN users `cat_SS` (88 %), `displink_build_41` (90 %), `keyer_task` (93 %),
+`meter_vdd`, `meter_comp` and the float users of the UI track (`meter_po`, `meter_comp`, `meter_s`, `meter_vdd`,
+`tone_set`, `funcknob_peak_step`).
 
 ### MAIN: Ghidra (round 5)
 

@@ -301,7 +301,7 @@ void keyer_task(void)
         keyer_has_number = 0;
         if (tx_keying_kind != 1)
             return;
-        if (FUN_fffb2dfe() == 1)
+        if (beep_pattern_get() == 1)
             return;
         idx = (uint8_t)(msg_slot_1to5() - 1u);
         keyer_elem_wr = 0;
