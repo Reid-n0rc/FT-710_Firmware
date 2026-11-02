@@ -1,6 +1,6 @@
 # T24 — Recreate the source code of every image
 
-**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 19.09 % re-implemented, round 8; MAIN 19.98 % re-implemented, round 4; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (634 of 634) and boots in emulation as far as the original) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
+**Status:** in progress (2026-11-01; IFDSP M33 100.0 % re-implemented, round 3; DISPLAY 23.54 % re-implemented, round 9; MAIN 19.98 % re-implemented, round 4; the hybrid image links in place, into the gap and into RAM2, passes linkcheck (798 of 798) and boots in emulation as far as the original, with a synthetic SD card too) · **Depends on:** T12, T21, T23 · **Issue:** (created by `tools/issues_sync.py`)
 
 ## Goal
 
@@ -1915,6 +1915,146 @@ After the re-export the 21 functions carry their new names in `decomp/main/funct
    `sd_set_driver_strength`, the `rsv < 9` boundary of `fat_format_layout`; each gets a preset that reaches it.
 4. After linking: `linkcheck` and the emulated boot, if possible with a synthetic FAT32 SD card so that the boot
    reaches the SD and FAT code; any defect fixed. `status.tsv`, readability stats, Ghidra rows with evidence.
+
+### DISPLAY: harness (round 9)
+
+- **Only the written pages are compared.** After a run, each compared RAM range is read from `/proc/self/pagemap`:
+  a page of the copy-on-write mapping (round 8) that the run wrote is anonymous, every other page still holds the
+  start template. `compare()` looks at the pages either run wrote, plus the pages where the two runs' templates
+  differ (linkcheck: the hybrid's own bytes), and reports the same first differing address as before. A page that
+  was only read can be listed too (the shared zero page); it is then compared, which costs time, never a missed
+  difference. `EQUIV_FULL_COMPARE=1` runs the round-8 whole-range comparison as well and asserts that both agree;
+  it held on the functions tried **[fact: the runs]**. Six functions (`bcd_to_bin` .. `riic_transmit`, 2 workers):
+  12.5 s → 7.3 s.
+- **linkcheck per-entry times** go to `out/linkcheck_times.tsv` with the slowest five printed, and `linkcheck`
+  takes entry names. The first measurement answered round 8's open question **[fact]**: every linkcheck worker
+  spent 80 s before its first entry in `_ret_sizes()`, which walked an object's DWARF once per function
+  (`returns_value`, quadratic); one walk per object, cached, takes 2 s for all objects and gives the same sizes
+  (checked on 120 functions). Eight entries, 2 workers: 86 s → 7 s. The RAM2 change test (XOR of 384 KB twice per
+  trial in Python) uses the written pages too.
+- **abicheck also checks r0 after a void callee** (direct calls): `fs_init` tests r0 after `fs_sem_a_create` and
+  the other creators, which return nothing in C (below).
+- **File-system presets.** `tools/fat_image.py` (new) builds FAT12/16/32 cards from the FAT specification (MBR or
+  superfloppy, FSInfo, backup boot sector, 8.3 and long names); nothing in it comes from the firmware. A RAM disk
+  driver (A32, assembled with the pinned GNU as; source in the harness) serves a card at 0x21300000 through the
+  drive record's entry: commands 1/2 read and write, 7 mounts as `sd_mount_volume` does (the image's
+  `fat_find_volume`, `fat_mount`, `fat32_fsinfo_read` on the card's bytes); its `sdread` routine is an SD
+  operation-table read slot. The card is compared after each run. Drive records (`fs_drive_t`) as `fat_mount`
+  leaves them, optional cluster bitmaps, FAT and directory caches (consistent headers, ages, contents), the lock
+  tables with semaphores, now and then a FAT of random entries or of free runs, argument specs per function
+  (`FS_SPECS`). Kernel stubs can be biased to E_OK (`stub_ok`; with 3 of 8 E_OK hardly a trial got past its
+  second sector access).
+- **`sd_mount_volume` and `sd_drive_mount`** read a synthetic card through the read slot: 100 % and 68 % of
+  their blocks (round 8: 40 % and 37 %, below the floor).
+- **Round 8's surviving mutations**: CMD6 status blocks in the order `sd_switch_uhs_speed` /
+  `sd_set_driver_strength` read them (`sd_switch_args`) catch the SDR104 clock (4 → 2) and the "cannot switch"
+  test (0xF → 0xE); version-2 CSD sizes at the reserved-sector boundary (`rsv_edge_sizes`, a model used only to
+  choose inputs) catch `rsv < 9` → `rsv < 8`. `rsv < 9` → `rsv < 10` is an **equivalent mutant**: the count is
+  the unit (8192) times n less twice the FAT size, always even **[fact: 0x20420300 / 0x2042032C, app/fat_format.c]**.
+  New mutations caught: the FAT12 odd-entry shift, `fat32_find_free`'s one wrap, `fs_memmove`'s backward copy,
+  the longest-free-run test of `fat32_count_free`.
+- `display_link.py`: when the gap overflows, ld may report "address A ... not within region GAP" instead of
+  "overflowed by N bytes"; both now move code to RAM2 (round 9 is the first link that needs RAM2).
+
+### DISPLAY: code (round 9)
+
+| Where | Functions | Notes |
+|---|---:|---|
+| `fs/fs_string.c` (new) | 35 | the layer's string and byte helpers, Shift-JIS / UTF-16 conversion, field accessors |
+| `fs/fs_os.c` (new) | 35 | per-task error, drive locks, device semaphores, named semaphores and pools |
+| `fs/fat_table.c` (new) | 35 | errors, checks, cluster arithmetic, FAT sectors and entries, chains, bitmap, allocation, FSInfo |
+| `fs/fat_volume.c` (new) | 13 | boot sector / MBR / FSInfo, `fs_init`, `fs_exit`, attach, mount, unmount, detach |
+| `fs/fat_cache.c` (new) | 8 | FAT and directory caches |
+| `fs/fat_space.c` (new) | 14 | file size, volume size, FAT12/16/32 free counts |
+| `fs/fat_dirent.c` (new) | 6 | long-name checksum, path components, an entry's cluster, time stamps |
+| `app/mainlink.c` (new) | 18 | MAIN link accessors, ACK / NAK, TX reset, F1, counters, ACK timeout handler |
+| `include/fs.h` (new) | | the drive record `fs_drive_t` (0x74 bytes), `fs_char_t` |
+
+Findings are in docs/code/display/filesystem.md "FAT layer, recreated (T24 round 9)" and mainlink.md "Recreated
+(T24 round 9)". In short **[fact]**: the layer is built with signed chars; `fat_detect_superfloppy` 0x20148E80 has
+no Ghidra entry; FAT types are decided by the BPB's names, not by cluster counts; `fs_memmove` copies backwards
+one byte too high; `fs_split_sectors` splits into 4 GiB units (not 8 MB); `fs_fatcache_setup_a` forces one sector
+per slot; `fs_init` reads r0 of void creators; GCC turned `size / x == 0` into `x > size`, which differs from the
+image for x = 0 (the image's division by zero gives 0), so `fs_fatcache_setup` tests 0 explicitly. Not done: the
+directory and long-name code, the file calls, the update code and the GUI building blocks.
+
+### DISPLAY: results (status.tsv, round 9)
+
+| Verdict | Ghidra functions | Bytes (of 396,256) |
+|---|---:|---:|
+| identical | 49 | 3,958 |
+| equivalent | 798 | 89,314 |
+| differs | 0 | 0 |
+| not yet | 1,383 | 302,984 |
+
+**Re-implemented: 23.54 %** (93,272 bytes; round 8: 19.00 % after the re-export), pinned xPack GCC 10.2.1, 200
+trials per function, 4 workers: 163 more equivalent functions (round 8: 635) and one more identical (`fs_get_time_tm`); `mainlink_send_f1` and `sd_format` stay "not yet".
+
+### DISPLAY: checks and hybrid image (round 9)
+
+- `make link` **[fact: the run]**: 798 recreated functions linked, 203 in place (21,088 bytes), 570 in the gap
+  0x2042BC10..0x2043FEF8 (82,664 of 82,928 bytes) and **25 in RAM2** 0x20920000..0x209208E0 (2,272 bytes, the
+  first round that needs it); 595 entries patched (18,847 bytes changed); 52 byte-identical left as they are; 1
+  held back (`gpio_cfg_reset`, reset path). abicheck: the known `sdhi_error_reset` / `sdhi_soft_reset` hazard and
+  `fs_wstrnicmp` keeping r3 across `fs_toupper`, both dropped because the callers are linked too.
+- **linkcheck: 798 of 798 agree** (100 trials per entry, 3 workers, beside nothing else) **[fact: the run]**: 617 s
+  wall, 1,847 s in the entries (round 8: 2,411 s wall for 634). The slowest entries are now the RIIC waits
+  (`userdef_riic1_wait_tx_empty` 32 s, all 100 trials inconclusive: nothing raises the RIIC interrupt flags they
+  wait for); *open: an RIIC flag model like round 8's RSPI one; would be settled by measuring those entries with
+  it.*
+- **Emulated boot** (`display_boot_emu.py --compare`, seed 1, 1.5·10⁹ instructions each) **[fact: the runs]**: the
+  hybrid, now with code in RAM2, **agrees with the original**: no fault, 33 tasks, `task_root` and `gui_main_loop`
+  reached, 741 image functions reached (original 713), 202 recreated functions executed, RAM2 loaded intact,
+  nothing in the watched range, 5,648 untouched bytes at the bottom of `task_root`'s stack (original 5,672).
+- **Emulated boot with an SD card** (new `--sd`: a synthetic FAT32 card of 0x4000 sectors from
+  `tools/fat_image.py` behind drive I:'s driver entry, see "harness" above) **[fact: the runs]**: both images attach
+  (op 5) and mount (op 7) the card, the original reaches 26 of the FAT layer's 258 functions, the hybrid 21 (the
+  others run as recreations in the gap and RAM2; 214 recreated functions executed), the card is equal after both
+  boots, and the hybrid **agrees with the original**. Found on the way: the first version hooked `sd_driver_op`
+  and missed the hybrid's operations, because the recreated `sdhi_drv_init` calls the recreated `sd_driver_op`
+  directly; the hook is now at the drive's entry `sdhi_drv_init` 0x2013FD98. No defect of the hybrid found. Files
+  are not opened during the boot (no user action), so the file calls are not exercised.
+
+### DISPLAY: Ghidra (round 9)
+
+`tools/ghidra/entries_display.T24r9.tsv`: one entry, `fat_detect_superfloppy` 0x20148E80 (also appended to
+`entries_display.tsv`; `bootstrap.sh` runs the file). `names_display.T24r9.tsv`: 9 rows with evidence (also in
+`names_display.tsv`, whose superseded rows of 0x2014D1C4, 0x2014AFCC, 0x20143C1C, 0x2014A818 are replaced): the
+entry, `fs_last_error_get`, `fs_byte_pair_sum`, `fs_drive_attach_thunk` → `fs_drive_attach_512`,
+`ml_settings24_copy`, `ml_enc_entry_clear`, and corrected comments of `fs_memmove`, `fs_split_sectors`,
+`fs_fatcache_setup_a`. Proved on a copy (`/home/user/ghidra_tasks/t24r9/disp`, OWNER root) **[fact: apply.log,
+modes.tsv there]**: FixFuncEntries 1 created, 0 failed, 1 branch marked as a tail call; ApplyNames 1,944 applied, 0
+failed; ExportFuncModes 2,271 functions (was 2,270): the new 160-byte A32 function, `fat_find_volume` 324 → 164
+bytes, the five renames; nothing else changes. Commands for the canonical project (repository root):
+
+```sh
+export GHIDRA_JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64     # the container; on the owner's Mac leave it unset
+cp decomp/display/quality.tsv /tmp/quality_display_before.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -scriptPath tools/ghidra \
+  -postScript FixFuncEntries.java tools/ghidra/entries_display.T24r9.tsv \
+  -postScript ApplyNames.java tools/ghidra/names_display.tsv
+tools/ghidra-headless.sh "$PWD/ghidra" FT710_DISPLAY -process FT-710_DISPLAY_V0108.bin -noanalysis -readOnly -scriptPath tools/ghidra \
+  -postScript ExportDecomp.java "$PWD/decomp/display" 50 \
+  -postScript ExportFuncModes.java "$PWD/src/display/modes.tsv"
+python3 -I tools/decomp_quality.py compare /tmp/quality_display_before.tsv decomp/display/quality.tsv display
+make -C src/display && python3 -I tools/equiv_display_emu.py status
+python3 -I tools/readability_stats.py readme
+```
+
+After the re-export the round-9 alias rows (`fat_detect_superfloppy`, `fs_last_error_get`, `fs_byte_pair_sum`,
+`fs_drive_attach_512`, `ml_settings24_copy`, `ml_enc_entry_clear`) name the same addresses and become redundant.
+
+### DISPLAY: blockers and next steps (round 9)
+
+- Next by size and self-containment: the FAT directory code (`subdir_find` 2,308, `subdir_add_entry` 2,048,
+  `root_dir_find` 1,340, the long-name helpers) and the file calls (`file_write_core` 2,496, `file_open_core` 2,180,
+  `file_read_locked` 956); the RAM-disk presets carry over (a path preset exists). Then the MAIN link's senders,
+  the update code and the GUI building blocks.
+- The gap is full (264 bytes left): new code goes to RAM2, which the boot check now exercises.
+- Open: the SDHI command path in the emulated boot (the boot's SD card enters at `sd_driver_op`; CMD and DMA are not
+  modelled); would be settled by an SDHI register model with the DMAC channel the sector transfers use.
+- Open: `sd_format` stays below the coverage floor (33 %); would be settled by a preset that makes `fs_find_drive`
+  find the drive and the card answer the format's commands.
 
 ## Open steps
 

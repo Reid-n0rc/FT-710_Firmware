@@ -60,7 +60,7 @@ OSTM0_ID = 0x86
 MMIO = [(0x3FE00000, 0x40000000), (0xE8000000, 0xE8300000), (0xFCFE0000, 0xFD000000)]
 # --sd (round 9): the card's sectors and the RAM disk driver, at addresses the image does not use
 SD_DISK, SD_CODE = 0x30000000, 0x30F00000
-SD_DRIVER_OP = 0x2013E71C          # sd_driver_op, the drive I: driver entry (drivers/sd_drive.c)
+SD_DRIVER_OP = 0x2013FD98          # sdhi_drv_init: drive I:'s driver entry (+0x18), forwards to sd_driver_op
 SD_CD_PORT = 0xFCFE322C            # PPR11: P11_4 is SD_CD (peripherals.md section 6)
 # mirror block (1 MB, top 12 bits) -> normal block (Table 53.1)
 MIRROR = {0x600: 0x200, 0x601: 0x205, 0x602: 0x206, 0x603: 0x201, 0x604: 0x202, 0x605: 0x207, 0x606: 0x208,
@@ -132,9 +132,11 @@ class Boot:
     def _sd_card(self, card):
         """An SD card (round 9): the card's sectors at SD_DISK and the RAM disk driver of the equivalence checks
         (equiv_display_emu.RAMDISK_WORDS, its disk address and size patched) at SD_CODE. The drive's driver entry
-        sd_driver_op (0x2013E71C) is entered by the image for every operation; reads (1), writes (2) and the mount
-        (7) go to the RAM disk instead (code hook at the entry), the rest (attach 5, unmount 8, card check 9) run
-        as they are. SD_CD (PPR11 bit 4, 0xFCFE322C) reads low: a card is in. The SDHI command path itself is not
+        the drive record's entry sdhi_drv_init (0x2013FD98, which forwards its five arguments to sd_driver_op) is
+        entered by the file system for every operation; reads (1), writes (2) and the mount (7) go to the RAM disk
+        instead (code hook at the entry), the rest (attach 5, unmount 8, card check 9) run as they are. (A hook at
+        sd_driver_op itself missed the hybrid: the recreated sdhi_drv_init calls the recreated sd_driver_op
+        directly, past its original entry.) SD_CD (PPR11 bit 4, 0xFCFE322C) reads low: a card is in. The SDHI command path itself is not
         modelled: what this exercises is the card monitor, the drive and the FAT layer above the driver entry."""
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import equiv_display_emu as E
